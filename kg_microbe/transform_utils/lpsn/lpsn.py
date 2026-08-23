@@ -243,6 +243,9 @@ class _NCBILabelIndex:
 class LPSNTransform(Transform):
     """Transform LPSN GSS CSV bulk export into KGX nodes + edges."""
 
+    #: Reads this transform's output; see Transform.TRANSFORM_INPUTS (#845).
+    TRANSFORM_INPUTS = ("gtdb",)
+
     def __init__(
         self,
         input_dir: Optional[Path] = None,

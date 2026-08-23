@@ -55,6 +55,27 @@ class Transform:
     #: constant, derive this from it rather than restating it.
     DATA_INPUTS: tuple = ()
 
+    #: Registered source names whose **output** this transform reads.
+    #:
+    #: `DATA_INPUTS` covers curation files under ``mappings/``. It does not
+    #: cover a dependency on another transform's output, and five exist: gold
+    #: reads ``ontologies/ncbitaxon_nodes.tsv`` (and refuses to run without it)
+    #: plus ``ontologies_stubs/po_nodes.tsv``, lpsn reads ``gtdb/nodes.tsv``,
+    #: lpsn_api and microbedecoder read ``lpsn/nodes.tsv``, and prego reads
+    #: ``ontologies/``.
+    #:
+    #: Undeclared, re-running an upstream leaves every downstream genuinely
+    #: stale while all three freshness signals report fresh — the #812 shape,
+    #: across transforms rather than within one (#845). The ordering was
+    #: already encoded in ``DATA_SOURCES`` comments ("Run gold after
+    #: ontologies…"); this makes it machine-readable so the fingerprint can
+    #: fold the upstream in.
+    #:
+    #: `tests/test_cross_transform_inputs.py` derives the real dependency map
+    #: from the source and fails on anything undeclared, because every previous
+    #: version of this contract was opt-in and was forgotten (#812, #839, #876).
+    TRANSFORM_INPUTS: tuple = ()
+
     def __init__(
         self,
         source_name,

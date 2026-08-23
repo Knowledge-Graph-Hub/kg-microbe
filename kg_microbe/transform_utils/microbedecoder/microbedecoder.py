@@ -134,6 +134,9 @@ _GROUP_TO_KS: Dict[str, str] = {
 class MicrobeDecoderTransform(Transform):
     """Transform the MicrobeDecoder wide CSV into KGX nodes and edges."""
 
+    #: Reads this transform's output; see Transform.TRANSFORM_INPUTS (#845).
+    TRANSFORM_INPUTS = ("lpsn",)
+
     DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
 
     def __init__(

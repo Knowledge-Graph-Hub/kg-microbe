@@ -77,6 +77,21 @@ def _declared_data_inputs(source: str) -> tuple:
         return ()
 
 
+def _declared_transform_inputs(source: str) -> tuple:
+    """
+    Registered sources whose output this transform reads, from ``TRANSFORM_INPUTS``.
+
+    :param source: Transform source name.
+    :return: Tuple of source names, empty when none are declared.
+    """
+    try:
+        from kg_microbe.transform import DATA_SOURCES  # noqa: PLC0415 - optional, see _declared_data_inputs
+    except Exception:
+        return ()
+    cls = DATA_SOURCES.get(source)
+    return tuple(getattr(cls, "TRANSFORM_INPUTS", ()) or ()) if cls is not None else ()
+
+
 def _latest_data_input_commit(source: str, ref: str) -> tuple[Optional[int], Optional[str]]:
     """
     Latest commit time across a source's declared data inputs.
@@ -314,6 +329,7 @@ def _fingerprint_verdict(source: str, code_dir: Path) -> Optional[tuple]:
             code_fingerprint,
             data_fingerprint,
             read_fingerprint,
+            upstream_fingerprint,
         )
     except ImportError:
         return None
@@ -324,6 +340,15 @@ def _fingerprint_verdict(source: str, code_dir: Path) -> Optional[tuple]:
             continue
         code_stale = recorded.get("code") != code_fingerprint(code_dir)
         data_stale = recorded.get("data") != data_fingerprint(REPO, _declared_data_inputs(source))
+        upstream_stale = recorded.get("upstream") != upstream_fingerprint(
+            TRANSFORMED_DIR, _declared_transform_inputs(source)
+        )
+        if upstream_stale and not (code_stale or data_stale):
+            upstreams = ", ".join(_declared_transform_inputs(source)) or "an upstream"
+            return (
+                "STALE_VS_UPSTREAM",
+                f"{upstreams} rebuilt since this output; rerun `poetry run kg transform -s {source}`",
+            )
         if code_stale and data_stale:
             return "STALE_VS_CODE_AND_DATA", f"code and data differ from the recorded build; rerun `poetry run kg transform -s {source}`"
         if code_stale:

@@ -285,6 +285,9 @@ _TAXON_PREFIX = "NCBITaxon:"
 class GOLDTransform(Transform):
     """Conform the pre-transformed GOLD KGX TSVs to the KG-Microbe standard."""
 
+    #: Reads this transform's output; see Transform.TRANSFORM_INPUTS (#845).
+    TRANSFORM_INPUTS = ("ontologies", "ontologies_stubs")
+
     #: The MeSH site curation this transform reads. Declared so the freshness
     #: check notices an edit to it — a transform that reads a curation file
     #: without declaring it is reported fresh while its output is stale, which

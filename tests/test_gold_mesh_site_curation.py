@@ -15,7 +15,6 @@ def _rows():
 
 
 class CurationFileTest(TestCase):
-
     """The file is the mechanism, so its shape is part of the contract."""
 
     def test_every_row_carries_a_decision_and_a_reason(self):
@@ -61,7 +60,6 @@ class CurationFileTest(TestCase):
 
 
 class TransformGateTest(TestCase):
-
     """Unlisted means refused, so a new upstream label cannot readmit the error."""
 
     def test_the_loader_returns_only_site_rows(self):
@@ -99,7 +97,6 @@ class TransformGateTest(TestCase):
 
 
 class DeclaredInputTest(TestCase):
-
     """A curation file a transform reads must be declared, or staleness is invisible."""
 
     def test_the_curation_file_is_declared_as_a_data_input(self):

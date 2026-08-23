@@ -21,6 +21,7 @@ Code and data are fingerprinted separately so a stale output can still say
 versus ``STALE_VS_DATA``.
 """
 
+import ast
 import hashlib
 import json
 from pathlib import Path
@@ -33,7 +34,7 @@ FINGERPRINT_FILE = "source_fingerprint.json"
 
 #: Bumped when the hashing scheme changes, so an old marker is treated as
 #: absent rather than silently compared under different rules.
-FINGERPRINT_VERSION = 1
+FINGERPRINT_VERSION = 2
 
 # Files at or below this size are cheap enough to hash completely. Larger graph
 # TSVs are sampled at evenly spaced offsets so a freshness check does bounded IO
@@ -102,6 +103,35 @@ def _hash_files(paths: Iterable[Path]) -> str:
     return digest.hexdigest()
 
 
+def _behaviour_digest(path: Path) -> bytes:
+    """
+    Digest a Python file by what it *does*, not how it is laid out.
+
+    Hashing raw bytes cannot tell "this transform will produce different
+    output" from "someone ran the formatter". #875 reformatted 98 files —
+    removing one blank line before each class docstring — and every transform's
+    fingerprint moved, so the freshness check indicated a full rebuild when no
+    behaviour had changed (#879). A signal that fires on whitespace gets
+    overridden, and then it is absent when behaviour really does change.
+
+    The AST is insensitive to formatting and comments, and sensitive to
+    everything that can alter output — docstrings included, since they appear
+    in it. A file that will not parse falls back to its bytes: a syntax error
+    must not read as "no change".
+
+    :param path: Python file.
+    :return: Digest bytes.
+    """
+    try:
+        source = path.read_bytes()
+    except OSError:
+        return b"<absent>"
+    try:
+        return hashlib.sha256(ast.dump(ast.parse(source.decode("utf-8"))).encode("utf-8")).digest()
+    except (SyntaxError, UnicodeDecodeError):
+        return hashlib.sha256(source).digest()
+
+
 def code_fingerprint(code_dir: Path) -> str:
     """
     Fingerprint every Python file in a transform's package directory.
@@ -114,7 +144,42 @@ def code_fingerprint(code_dir: Path) -> str:
     :param code_dir: e.g. ``kg_microbe/transform_utils/gold``.
     :return: Hex digest, or the digest of nothing when the directory is absent.
     """
-    return _hash_files(code_dir.rglob("*.py")) if code_dir.is_dir() else _hash_files([])
+    if not code_dir.is_dir():
+        return hashlib.sha256(b"").hexdigest()
+    digest = hashlib.sha256()
+    for path in sorted(code_dir.rglob("*.py"), key=lambda p: p.as_posix()):
+        digest.update(path.as_posix().encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(_behaviour_digest(path))
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
+def upstream_fingerprint(output_base_dir: Path, transform_inputs: Iterable[str]) -> str:
+    """
+    Fingerprint the recorded state of every upstream transform.
+
+    Folds in each upstream's own marker rather than its output TSVs, which can
+    be hundreds of megabytes. If an upstream re-runs, its marker changes and
+    every downstream goes stale — which is the point (#845).
+
+    An upstream with no marker folds in as absent, so a downstream goes stale
+    exactly once when that upstream first records one. That is the correct
+    direction to fail: it prompts a re-run rather than asserting currency that
+    was never established.
+
+    :param output_base_dir: ``data/transformed``.
+    :param transform_inputs: Registered source names read by this transform.
+    :return: Hex digest.
+    """
+    digest = hashlib.sha256()
+    for name in sorted(set(transform_inputs)):
+        digest.update(name.encode("utf-8"))
+        digest.update(b"\0")
+        recorded = read_fingerprint(output_base_dir / name)
+        digest.update(json.dumps(recorded, sort_keys=True).encode("utf-8") if recorded else b"<absent>")
+        digest.update(b"\0")
+    return digest.hexdigest()
 
 
 def data_fingerprint(repo_root: Path, data_inputs: Iterable[str]) -> str:
@@ -128,7 +193,13 @@ def data_fingerprint(repo_root: Path, data_inputs: Iterable[str]) -> str:
     return _hash_files(repo_root / rel for rel in data_inputs)
 
 
-def write_fingerprint(output_dir: Path, code_dir: Path, repo_root: Path, data_inputs: Iterable[str]) -> dict:
+def write_fingerprint(
+    output_dir: Path,
+    code_dir: Path,
+    repo_root: Path,
+    data_inputs: Iterable[str],
+    transform_inputs: Iterable[str] = (),
+) -> dict:
     """
     Record the fingerprint of a completed run.
 
@@ -140,12 +211,16 @@ def write_fingerprint(output_dir: Path, code_dir: Path, repo_root: Path, data_in
     :param code_dir: The transform's package directory.
     :param repo_root: Repository root.
     :param data_inputs: Repo-relative curation paths.
+    :param transform_inputs: Registered sources whose output this one reads.
     :return: The recorded payload.
     """
     payload = {
         "version": FINGERPRINT_VERSION,
         "code": code_fingerprint(code_dir),
         "data": data_fingerprint(repo_root, data_inputs),
+        # Recorded separately so a stale output says which of the three moved:
+        # its code, its curation data, or something it reads (#845).
+        "upstream": upstream_fingerprint(output_dir.parent, transform_inputs),
     }
     with atomic_write(output_dir / FINGERPRINT_FILE, encoding="utf-8") as handle:
         handle.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")

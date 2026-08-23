@@ -186,6 +186,7 @@ def _record_fingerprint(transform_obj, source: str) -> None:
             code_dir=code_dir,
             repo_root=Path(__file__).resolve().parent.parent,
             data_inputs=getattr(type(transform_obj), "DATA_INPUTS", ()),
+            transform_inputs=getattr(type(transform_obj), "TRANSFORM_INPUTS", ()),
         )
     except Exception as exc:  # noqa: BLE001 - bookkeeping must not fail the run
         print(f"[transform] {source}: could not record fingerprint ({exc})", flush=True)

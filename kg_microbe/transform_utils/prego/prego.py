@@ -173,6 +173,9 @@ def _as_float(value) -> float:
 class PregoTransform(Transform):
     """Ingest PREGO taxon↔environment/process associations."""
 
+    #: Reads this transform's output; see Transform.TRANSFORM_INPUTS (#845).
+    TRANSFORM_INPUTS = ("ontologies",)
+
     # Ceiling on distinct habitat values tracked per run. The measured value
     # space is ~42; 1000 leaves generous headroom while bounding memory if the
     # upstream column shape changes.

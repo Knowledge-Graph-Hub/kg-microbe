@@ -3,7 +3,7 @@ name = "kg-microbe"
 version = "0.0.0"
 description = "kg-microbe"
 authors = ["Harshad Hegde <hhegde@lbl.gov>"]
-license = "MIT"
+license = "BSD-3-Clause"
 readme = "README.md"
 
 [tool.poetry.dependencies]

@@ -24,9 +24,10 @@ tracker unless the user separately authorizes that exact mutation.
 backlog; asks what is genuinely urgent; or a review pass has just filed a batch
 of issues that need sorting.
 
-**When NOT to use**: `NEXT_TASKS.md` upkeep or picking the next unit of work —
-that is `next-tasks`. This skill produces a ranking, not a fix, and is
-expensive enough that it should not run on every "what's next" question.
+**When NOT to use**: `NEXT_TASKS.md` upkeep, or picking the next single unit of
+work — read that file directly instead. This skill produces a ranking, not a
+fix, and is expensive enough that it should not run on every "what's next"
+question.
 
 ## Sources of truth
 
@@ -128,8 +129,12 @@ is recent. Two caveats that decide whether a `STALE_*` verdict is real:
   stale on a formatting-only commit (#879). Distinguish behaviour change from
   formatting by comparing ASTs, not bytes, before recommending an expensive
   rerun.
-- **A stale verdict is not automatically a rerun.** Check whether the source has
-  downstream consumers in `TRANSFORM_INPUTS` first — see step 3.
+- **Skipping a behaviourally-fresh source defers work rather than saving it.**
+  A source with no marker reports stale until it runs once regardless, and while
+  it stays markerless every downstream in `TRANSFORM_INPUTS` will go
+  `STALE_VS_UPSTREAM` the moment it finally runs — a second rerun. That is why
+  `gtdb` belongs in a rebuild even when its transform is AST-identical: it feeds
+  `lpsn`, which feeds `lpsn_api` and `microbedecoder`.
 
 ### 3. Build the dependency graph before assigning rank
 
@@ -394,7 +399,8 @@ Do not open cross-repository issues without explicit authorization.
 
 ## Related
 
-- `next-tasks` — lighter, `NEXT_TASKS.md`-scoped; run that during active work.
+- `NEXT_TASKS.md` — the curated short backlog; read it directly during active
+  work. It is a file, not a skill, and it drifts from the issue queue.
 - `kgm-freshness-check` — step 2 depends on it; run it under `poetry run`.
 - `kg-model-review` — answers issues alleging Biolink/KGX modelling violations;
   note its sampling caveat (#810).

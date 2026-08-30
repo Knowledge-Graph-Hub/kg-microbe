@@ -290,6 +290,7 @@ class BacDiveTransform(Transform):
         self.ncbitaxon_synonyms: Dict[str, frozenset] = {}  # {ncbitaxon_id: frozenset(lowercased synonyms)}
         self.ncbitaxon_fallback_cache: Dict[str, Optional[str]] = {}  # Cache for fallback lookups
         self._ncbitaxon_rank_cache: Dict[str, Optional[str]] = {}  # {ncbitaxon_id: rank_name}
+        self._ncbitaxon_ancestor_cache: Dict[str, frozenset] = {}  # {ncbitaxon_id: proper is_a ancestors}
         self._load_ncbitaxon_labels()
 
         # Load CHEBI categories from ontologies transform output (for category alignment).
@@ -917,6 +918,30 @@ class BacDiveTransform(Transform):
             if n >= self._MIN_SHARED_PREFIX and token[: self._MIN_SHARED_PREFIX] == name[: self._MIN_SHARED_PREFIX]:
                 return True
         return False
+
+    def _ncbitaxon_ancestors(self, ncbitaxon_id: str) -> frozenset:
+        """
+        Return the proper ``is_a`` ancestors of an NCBITaxon CURIE, cached.
+
+        Used to tell a real taxonomic disagreement between two records citing one
+        culture-collection deposit from two claims at different depths of the same
+        lineage (#892). Only a few hundred deposits ever reach this, so the cost is
+        a handful of adapter calls per run.
+        """
+        cached = self._ncbitaxon_ancestor_cache.get(ncbitaxon_id)
+        if cached is not None:
+            return cached
+        try:
+            ancestors = frozenset(self.ncbi_impl.ancestors([ncbitaxon_id], predicates=[RDFS_SUBCLASS_OF]))
+            ancestors -= {ncbitaxon_id}
+        except OntologyDbUnavailableError:
+            # An unusable NCBITaxon DB is not an empty ancestry — surface it rather
+            # than silently declaring every pair of claims disjoint.
+            raise
+        except Exception:
+            ancestors = frozenset()
+        self._ncbitaxon_ancestor_cache[ncbitaxon_id] = ancestors
+        return ancestors
 
     def _parse_genus_from_scientific_name(self, scientific_name: str) -> Optional[str]:
         """
@@ -3367,8 +3392,11 @@ class BacDiveTransform(Transform):
                     progress.update()
 
                 # Resolve the buffered culture-collection deposit claims: assert a
-                # parent only where every record citing the deposit agrees (#892).
-                resolved_deposits, deposit_parent_conflicts = resolve_deposit_parents(deposit_parent_claims)
+                # parent only where every record citing the deposit supports it (#892).
+                resolved_deposits, deposit_parent_conflicts = resolve_deposit_parents(
+                    deposit_parent_claims, ancestors_of=self._ncbitaxon_ancestors
+                )
+                deposits_collapsed = sum(1 for curie, _ in resolved_deposits if len(deposit_parent_claims[curie]) > 1)
                 for strain_curie, deposit_parent_id in resolved_deposits:
                     knowledge_level, agent_type = self._add_edge_metadata(
                         SUBCLASS_PREDICATE, RDFS_SUBCLASS_OF, deposit_parent_id
@@ -3409,8 +3437,10 @@ class BacDiveTransform(Transform):
             conflict_writer.writerow(DEPOSIT_CONFLICT_HEADER)
             conflict_writer.writerows(deposit_conflict_rows(deposit_parent_conflicts))
         logger.info(
-            "[bacdive] culture-collection deposits with conflicting parent taxa: %s "
+            "[bacdive] culture-collection deposits claimed by disagreeing records: "
+            "%s collapsed to the taxon every claimant entails, %s disjoint "
             "(subclass_of suppressed; listed in %s)",
+            f"{deposits_collapsed:,}",
             f"{len(deposit_parent_conflicts):,}",
             conflicts_file,
         )

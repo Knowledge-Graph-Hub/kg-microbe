@@ -86,11 +86,13 @@ validators will report it; do not silently change the convention. See issue
 #834 and [the 4.4.2 revalidation](docs/BIOLINK_4_4_2_REVALIDATION.md).
 
 A `kgmicrobe.strain:<code>` node minted from a culture-collection deposit number
-is shared: several source records can cite the same deposit. Such a node gets a
-`subclass_of` parent only when every record citing it agrees on the taxon. When
-they disagree, no parent is asserted and the claim is written to the source's
-deposit-conflict report instead — picking one would make the answer depend on
-file order. See issue #892.
+is shared: several source records can cite the same deposit, and they do not
+always agree on the taxon. Such a node gets the one claimed parent that every
+claimant entails — the claim itself when they agree, the shared ancestor when
+they differ only in depth along one lineage. Never a computed common ancestor
+nobody claimed, and never one of two disjoint claims: those get no parent at all
+and go to the source's deposit-conflict report, because picking one would make
+the answer depend on file order. See issue #892.
 
 ## Operational traps
 

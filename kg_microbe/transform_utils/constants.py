@@ -776,6 +776,9 @@ UNIPROT_DATA_LIST = [
 ]
 
 BACDIVE_MAPPING_FILE = "bacdive_mappings.tsv"
+# Report of culture-collection deposit numbers claimed by more than one BacDive
+# record with a different parent taxon; those deposits get no subclass_of edge (#892).
+BACDIVE_DEPOSIT_CONFLICTS_FILE = "bacdive_strain_deposit_conflicts.tsv"
 MICROMEDIAPARAM_COMPOUND_MAPPINGS_FILE = "compound_mappings_strict.tsv"
 MICROMEDIAPARAM_HYDRATE_MAPPINGS_FILE = "compound_mappings_strict_hydrate.tsv"
 

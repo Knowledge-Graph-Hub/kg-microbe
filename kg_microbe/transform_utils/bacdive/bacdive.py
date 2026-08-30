@@ -22,6 +22,11 @@ from typing import Dict, List, Optional, Union
 import yaml
 from tqdm import tqdm
 
+from kg_microbe.transform_utils.bacdive.emission import (
+    DEPOSIT_CONFLICT_HEADER,
+    deposit_conflict_rows,
+    resolve_deposit_parents,
+)
 from kg_microbe.transform_utils.bacdive.emission import StrainProvenanceWriter as _StrainProvenanceWriter
 from kg_microbe.transform_utils.constants import (
     ACTIVITY_KEY,
@@ -36,6 +41,7 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE,
     BACDIVE_API_BASE_URL,
     BACDIVE_ASSAY_PREDICATE,
+    BACDIVE_DEPOSIT_CONFLICTS_FILE,
     BACDIVE_ENVIRONMENT_CATEGORY,
     BACDIVE_GROWTH_MEDIUM_CLASS,
     BACDIVE_ID_COLUMN,
@@ -1641,6 +1647,13 @@ class BacDiveTransform(Transform):
         # Track non-matching media links
         non_matching_media_links = set()
 
+        # Culture-collection deposit numbers are shared identifiers: several BacDive
+        # records can cite the same deposit, and they do not always agree on the taxon.
+        # Which parent a deposit should get therefore cannot be decided while streaming
+        # records, so claims are buffered here and resolved after the loop (see #892).
+        # Shape: {kgmicrobe.strain:<deposit>: {NCBITaxon:<id>: [bacdive record key, ...]}}
+        deposit_parent_claims: Dict[str, Dict[str, List[str]]] = {}
+
         COLUMN_NAMES = [
             BACDIVE_ID_COLUMN,
             DSM_NUMBER_COLUMN,
@@ -2709,22 +2722,13 @@ class BacDiveTransform(Transform):
                             strain_label = culture_number.strip() if len(culture_number_cleaned) > 3 else None
                             if strain_curie and strain_label:
                                 node_writer.writerow(self._create_node_row(strain_curie, NCBI_CATEGORY, strain_label))
-                                # Link culture collection strain to NCBITaxon (if available)
+                                # Record this record's claim about the deposit's parent
+                                # taxon. The edge itself is written after the loop, once
+                                # every record that cites this deposit has been seen (#892).
                                 if ncbitaxon_id:
-                                    knowledge_level, agent_type = self._add_edge_metadata(
-                                        SUBCLASS_PREDICATE, RDFS_SUBCLASS_OF, ncbitaxon_id
-                                    )
-                                    edge_writer.writerow(
-                                        [
-                                            strain_curie,
-                                            SUBCLASS_PREDICATE,
-                                            ncbitaxon_id,
-                                            RDFS_SUBCLASS_OF,
-                                            self.knowledge_source,
-                                            knowledge_level,
-                                            agent_type,
-                                        ]
-                                    )
+                                    deposit_parent_claims.setdefault(strain_curie, {}).setdefault(
+                                        ncbitaxon_id, []
+                                    ).append(key)
 
                     if phys_and_metabolism_enzymes:
                         # Normalize to list
@@ -3361,6 +3365,26 @@ class BacDiveTransform(Transform):
                     progress.set_description(f"Processing BacDive file: {str(index)}.yaml")
                     # After each iteration, call the update method to advance the progress bar.
                     progress.update()
+
+                # Resolve the buffered culture-collection deposit claims: assert a
+                # parent only where every record citing the deposit agrees (#892).
+                resolved_deposits, deposit_parent_conflicts = resolve_deposit_parents(deposit_parent_claims)
+                for strain_curie, deposit_parent_id in resolved_deposits:
+                    knowledge_level, agent_type = self._add_edge_metadata(
+                        SUBCLASS_PREDICATE, RDFS_SUBCLASS_OF, deposit_parent_id
+                    )
+                    edge_writer.writerow(
+                        [
+                            strain_curie,
+                            SUBCLASS_PREDICATE,
+                            deposit_parent_id,
+                            RDFS_SUBCLASS_OF,
+                            self.knowledge_source,
+                            knowledge_level,
+                            agent_type,
+                        ]
+                    )
+
                 # Write metabolite_map to a file
                 if len(METABOLITE_MAP) > 0 and not Path(METABOLITE_MAPPING_FILE).is_file():
                     with open(METABOLITE_MAPPING_FILE, "w") as f:
@@ -3374,6 +3398,22 @@ class BacDiveTransform(Transform):
             f.write("# These links do not match the https://mediadive.dsmz.de/medium/ pattern\n\n")
             for link in sorted(non_matching_media_links):
                 f.write(f"{link}\n")
+
+        # Culture-collection deposits whose claiming records disagree on the parent
+        # taxon. These get no subclass_of edge (see the resolution loop above); the
+        # report is the record that the claim existed and what it was, so a consumer
+        # who needs the ambiguous taxonomy can still recover it (#892).
+        conflicts_file = os.path.join(self.output_dir, BACDIVE_DEPOSIT_CONFLICTS_FILE)
+        with open(conflicts_file, "w", newline="") as f:
+            conflict_writer = csv.writer(f, delimiter="\t")
+            conflict_writer.writerow(DEPOSIT_CONFLICT_HEADER)
+            conflict_writer.writerows(deposit_conflict_rows(deposit_parent_conflicts))
+        logger.info(
+            "[bacdive] culture-collection deposits with conflicting parent taxa: %s "
+            "(subclass_of suppressed; listed in %s)",
+            f"{len(deposit_parent_conflicts):,}",
+            conflicts_file,
+        )
 
         drop_duplicates(
             self.output_node_file,

@@ -180,3 +180,51 @@ def test_without_ancestry_any_disagreement_is_a_conflict():
     )
     assert resolved == []
     assert len(conflicts) == 1
+
+
+def test_the_record_is_linked_to_every_deposit_it_cites():
+    """
+    A deposit node must reach back to whoever asserted it (#894).
+
+    Without this edge a `kgmicrobe.strain:<deposit>` node has one outgoing
+    `subclass_of` and nothing else, so a deposit whose claimants disagree —
+    which gets no `subclass_of` at all — would reach no taxon by any path.
+
+    Inspected rather than run: `BacDiveTransform.run` needs the NCBITaxon
+    adapter, which makes an end-to-end unit test impractical (see the module
+    docstring of `test_bacdive_lpsn_crossref.py`).
+    """
+    import inspect
+    from pathlib import Path
+
+    from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
+
+    source = Path(inspect.getsourcefile(BacDiveTransform)).read_text()
+    block = source.split("if culture_number_from_external_links:")[1].split("if phys_and_metabolism_enzymes:")[0]
+    assert "CLOSE_MATCH_RELATION" in block
+    # Subject is the record node and object the deposit node, not the reverse —
+    # the record is the thing making the assertion.
+    row = block.split("edge_writer.writerow(")[1].split("]")[0]
+    assert [line.strip().rstrip(",") for line in row.splitlines() if line.strip() and "[" not in line][:3] == [
+        "organism_id",
+        "CLOSE_MATCH_PREDICATE",
+        "strain_curie",
+    ]
+
+
+def test_bacdive_and_lpsn_land_on_the_same_deposit_curie():
+    """
+    Both transforms must mint one CURIE per deposit, or the link does not meet.
+
+    LPSN emits `lpsn:<record> close_match kgmicrobe.strain:<code>` and BacDive
+    now emits `kgmicrobe.strain:bacdive_<id> close_match kgmicrobe.strain:<code>`.
+    They reconcile at merge only while both normalise a deposit string the same
+    way, so pin that rather than trusting two copies of the rule to stay equal.
+    """
+    from kg_microbe.transform_utils.lpsn.lpsn import COL_NOMENCLATURAL_TYPE, LPSNTransform
+
+    lpsn = LPSNTransform.__new__(LPSNTransform)
+    for raw in ("ATCC 11775", "DSM 30083", "JCM 1649", "NCTC 9001"):
+        bacdive_curie = "kgmicrobe.strain:" + raw.strip().replace(" ", "-").replace(":", "-")
+        lpsn_curies = lpsn._extract_strain_curies({COL_NOMENCLATURAL_TYPE: raw})
+        assert lpsn_curies == [bacdive_curie], f"{raw}: {lpsn_curies} != [{bacdive_curie}]"

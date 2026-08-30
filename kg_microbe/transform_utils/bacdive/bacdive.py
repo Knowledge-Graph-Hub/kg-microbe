@@ -61,6 +61,8 @@ from kg_microbe.transform_utils.constants import (
     CHEBI_NODES_FILE,
     CHEBI_PREFIX,
     CLASS,
+    CLOSE_MATCH_PREDICATE,
+    CLOSE_MATCH_RELATION,
     COLONY_MORPHOLOGY,
     COMPOUND_PRODUCTION,
     CULTURE_AND_GROWTH_CONDITIONS,
@@ -2747,6 +2749,26 @@ class BacDiveTransform(Transform):
                             strain_label = culture_number.strip() if len(culture_number_cleaned) > 3 else None
                             if strain_curie and strain_label:
                                 node_writer.writerow(self._create_node_row(strain_curie, NCBI_CATEGORY, strain_label))
+                                # Link the record to the deposit it cites, mirroring the
+                                # edge LPSN already emits onto these same CURIEs
+                                # (``lpsn.py::_make_close_match_edge``). Without it a
+                                # deposit node has no way back to whoever asserted it, and
+                                # a deposit whose claimants disagree — which gets no
+                                # subclass_of below — would reach no taxon at all (#894).
+                                knowledge_level, agent_type = self._add_edge_metadata(
+                                    CLOSE_MATCH_PREDICATE, CLOSE_MATCH_RELATION, strain_curie
+                                )
+                                edge_writer.writerow(
+                                    [
+                                        organism_id,
+                                        CLOSE_MATCH_PREDICATE,
+                                        strain_curie,
+                                        CLOSE_MATCH_RELATION,
+                                        self.knowledge_source,
+                                        knowledge_level,
+                                        agent_type,
+                                    ]
+                                )
                                 # Record this record's claim about the deposit's parent
                                 # taxon. The edge itself is written after the loop, once
                                 # every record that cites this deposit has been seen (#892).

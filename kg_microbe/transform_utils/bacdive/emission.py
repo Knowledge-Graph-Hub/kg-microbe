@@ -29,8 +29,25 @@ class StrainProvenanceWriter:
             self.writerow(row)
 
 
-#: Header of the deposit-conflict report written alongside nodes.tsv / edges.tsv.
-DEPOSIT_CONFLICT_HEADER = ["strain_id", "parent_count", "parents", "bacdive_ids"]
+#: Header of the deposit-claim report written alongside nodes.tsv / edges.tsv.
+DEPOSIT_CONFLICT_HEADER = [
+    "strain_id",
+    "parent_count",
+    "parents",
+    "bacdive_ids",
+    "resolution",
+    "asserted_parent",
+]
+
+#: The claims sat on one lineage; the shared ancestor was asserted (#898).
+RESOLUTION_COLLAPSED = "collapsed"
+#: The claims were disjoint; no parent was asserted.
+RESOLUTION_SUPPRESSED = "suppressed"
+#: Ancestry for at least one claim could not be read, so the claims could not be
+#: compared and the deposit was suppressed as a precaution rather than a verdict.
+#: Distinguishing this matters -- a degraded NCBITaxon adapter otherwise looks
+#: exactly like a data problem in BacDive (#897).
+RESOLUTION_SUPPRESSED_NO_ANCESTRY = "suppressed_ancestry_unavailable"
 
 
 def entailed_by_every_claim(parents, ancestors_of):
@@ -60,7 +77,7 @@ def entailed_by_every_claim(parents, ancestors_of):
     return None
 
 
-def resolve_deposit_parents(claims, ancestors_of=None):
+def resolve_deposit_parents(claims, ancestors_of=None, ancestry_failed=None):
     """
     Decide which culture-collection deposits may assert a parent taxon (#892).
 
@@ -74,15 +91,23 @@ def resolve_deposit_parents(claims, ancestors_of=None):
     only in depth along one lineage -- there the shared ancestor is asserted, per
     :func:`entailed_by_every_claim`. Genuinely disjoint claims get no edge.
 
+    Every deposit with more than one claim is reported, whichever way it went, so
+    the report answers "what happened here and why" rather than listing only the
+    half that lost its edge (#898).
+
     :param claims: ``{strain CURIE: {NCBITaxon CURIE: [BacDive record key, ...]}}``.
     :param ancestors_of: Callable mapping an NCBITaxon CURIE to its proper ``is_a``
         ancestors. When None, any disagreement is treated as a conflict.
-    :return: ``(resolved, conflicts)`` where ``resolved`` is a sorted list of
-        ``(strain CURIE, NCBITaxon CURIE)`` pairs safe to emit, and ``conflicts``
-        is a sorted list of ``(strain CURIE, claims-for-that-deposit)`` pairs.
+    :param ancestry_failed: Callable reporting whether a CURIE's ancestry could not
+        be read, used to mark a suppression that is a precaution rather than a
+        verdict (#897). When None, no suppression is marked that way.
+    :return: ``(resolved, contested)``. ``resolved`` is a sorted list of
+        ``(strain CURIE, NCBITaxon CURIE)`` pairs to emit. ``contested`` is a sorted
+        list of ``(strain CURIE, claims, resolution, asserted parent)`` for every
+        deposit with more than one claim; ``asserted parent`` is empty when none was.
     """
     resolved = []
-    conflicts = []
+    contested = []
     for strain_curie in sorted(claims):
         parents = claims[strain_curie]
         if len(parents) == 1:
@@ -90,30 +115,34 @@ def resolve_deposit_parents(claims, ancestors_of=None):
             continue
         agreed = entailed_by_every_claim(parents, ancestors_of)
         if agreed is None:
-            conflicts.append((strain_curie, parents))
+            degraded = ancestry_failed is not None and any(ancestry_failed(parent) for parent in parents)
+            resolution = RESOLUTION_SUPPRESSED_NO_ANCESTRY if degraded else RESOLUTION_SUPPRESSED
+            contested.append((strain_curie, parents, resolution, ""))
         else:
             resolved.append((strain_curie, agreed))
-    return resolved, conflicts
+            contested.append((strain_curie, parents, RESOLUTION_COLLAPSED, agreed))
+    return resolved, contested
 
 
-def deposit_conflict_rows(conflicts):
+def deposit_conflict_rows(contested):
     """
-    Render conflicting deposit claims as report rows.
+    Render contested deposit claims as report rows.
 
-    The report is the record that a claim existed and what it was, so a consumer
-    who needs the ambiguous taxonomy can still recover what was suppressed.
+    The report is the record that a claim existed and what became of it, so a
+    consumer can recover the taxonomy that was suppressed, and see which deposits
+    had theirs coarsened to a shared ancestor.
 
-    :param conflicts: ``conflicts`` as returned by :func:`resolve_deposit_parents`.
+    :param contested: ``contested`` as returned by :func:`resolve_deposit_parents`.
     :return: List of rows matching :data:`DEPOSIT_CONFLICT_HEADER`.
     """
-    rows = []
-    for strain_curie, parents in conflicts:
-        rows.append(
-            [
-                strain_curie,
-                len(parents),
-                "|".join(sorted(parents)),
-                "|".join(sorted({key for keys in parents.values() for key in keys})),
-            ]
-        )
-    return rows
+    return [
+        [
+            strain_curie,
+            len(parents),
+            "|".join(sorted(parents)),
+            "|".join(sorted({key for keys in parents.values() for key in keys})),
+            resolution,
+            asserted,
+        ]
+        for strain_curie, parents, resolution, asserted in contested
+    ]

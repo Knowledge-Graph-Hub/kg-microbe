@@ -16,6 +16,7 @@ import json
 import logging
 import os
 import re
+from collections import Counter
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
@@ -24,6 +25,9 @@ from tqdm import tqdm
 
 from kg_microbe.transform_utils.bacdive.emission import (
     DEPOSIT_CONFLICT_HEADER,
+    RESOLUTION_COLLAPSED,
+    RESOLUTION_SUPPRESSED,
+    RESOLUTION_SUPPRESSED_NO_ANCESTRY,
     deposit_conflict_rows,
     resolve_deposit_parents,
 )
@@ -293,6 +297,7 @@ class BacDiveTransform(Transform):
         self.ncbitaxon_fallback_cache: Dict[str, Optional[str]] = {}  # Cache for fallback lookups
         self._ncbitaxon_rank_cache: Dict[str, Optional[str]] = {}  # {ncbitaxon_id: rank_name}
         self._ncbitaxon_ancestor_cache: Dict[str, frozenset] = {}  # {ncbitaxon_id: proper is_a ancestors}
+        self._ncbitaxon_ancestry_failures: set = set()  # taxa whose ancestry could not be read (#897)
         self._load_ncbitaxon_labels()
 
         # Load CHEBI categories from ontologies transform output (for category alignment).
@@ -941,6 +946,10 @@ class BacDiveTransform(Transform):
             # than silently declaring every pair of claims disjoint.
             raise
         except Exception:
+            # An empty ancestry makes two claims on one lineage look disjoint, which
+            # suppresses a correct edge. Record the taxon so the suppression can be
+            # reported as a precaution rather than a verdict about BacDive (#897).
+            self._ncbitaxon_ancestry_failures.add(ncbitaxon_id)
             ancestors = frozenset()
         self._ncbitaxon_ancestor_cache[ncbitaxon_id] = ancestors
         return ancestors
@@ -3415,10 +3424,11 @@ class BacDiveTransform(Transform):
 
                 # Resolve the buffered culture-collection deposit claims: assert a
                 # parent only where every record citing the deposit supports it (#892).
-                resolved_deposits, deposit_parent_conflicts = resolve_deposit_parents(
-                    deposit_parent_claims, ancestors_of=self._ncbitaxon_ancestors
+                resolved_deposits, contested_deposits = resolve_deposit_parents(
+                    deposit_parent_claims,
+                    ancestors_of=self._ncbitaxon_ancestors,
+                    ancestry_failed=self._ncbitaxon_ancestry_failures.__contains__,
                 )
-                deposits_collapsed = sum(1 for curie, _ in resolved_deposits if len(deposit_parent_claims[curie]) > 1)
                 for strain_curie, deposit_parent_id in resolved_deposits:
                     knowledge_level, agent_type = self._add_edge_metadata(
                         SUBCLASS_PREDICATE, RDFS_SUBCLASS_OF, deposit_parent_id
@@ -3457,13 +3467,17 @@ class BacDiveTransform(Transform):
         with open(conflicts_file, "w", newline="") as f:
             conflict_writer = csv.writer(f, delimiter="\t")
             conflict_writer.writerow(DEPOSIT_CONFLICT_HEADER)
-            conflict_writer.writerows(deposit_conflict_rows(deposit_parent_conflicts))
+            conflict_writer.writerows(deposit_conflict_rows(contested_deposits))
+        resolution_counts = Counter(resolution for _, _, resolution, _ in contested_deposits)
         logger.info(
             "[bacdive] culture-collection deposits claimed by disagreeing records: "
-            "%s collapsed to the taxon every claimant entails, %s disjoint "
-            "(subclass_of suppressed; listed in %s)",
-            f"{deposits_collapsed:,}",
-            f"{len(deposit_parent_conflicts):,}",
+            "%s collapsed to the taxon every claimant entails, %s disjoint, "
+            "%s undecidable because ancestry for %s taxa could not be read "
+            "(all listed in %s)",
+            f"{resolution_counts[RESOLUTION_COLLAPSED]:,}",
+            f"{resolution_counts[RESOLUTION_SUPPRESSED]:,}",
+            f"{resolution_counts[RESOLUTION_SUPPRESSED_NO_ANCESTRY]:,}",
+            f"{len(self._ncbitaxon_ancestry_failures):,}",
             conflicts_file,
         )
 

@@ -139,3 +139,33 @@ def test_no_taxon_edges_writes_nothing(tmp_path):
     t = _transform(tmp_path, [["a", "biolink:related_to", "CHEBI:1", "rel", "src"]], [], {})
     assert t._emit_stubs_for_unresolvable_taxa() == 0
     assert len(_written(t)) == 0
+
+
+def test_a_taxon_name_is_never_a_bacdive_description_sentence():
+    """
+    An unlabelled taxon fell back to BacDive's free-text description (#919).
+
+    That gave 93 nodes a 130-character sentence about one strain for a name --
+    worse than being unlabelled, because it passes every "does this node have a
+    name" check while being unusable for lookup, display or matching.
+    """
+    import inspect
+    from pathlib import Path
+
+    source = Path(inspect.getsourcefile(BacDiveTransform)).read_text()
+    assert "ncbi_label = ncbi_description" not in source
+
+
+def test_an_unlabelled_taxon_keeps_its_sentence_as_a_description():
+    """
+    The sentence is real information; it just belongs in the description slot.
+
+    Dropping it would lose what BacDive knows about the organism, so both write
+    sites pass it as `description` and fall back to the CURIE for the name.
+    """
+    import inspect
+    from pathlib import Path
+
+    source = Path(inspect.getsourcefile(BacDiveTransform)).read_text()
+    assert source.count("description=None if ncbi_label else ncbi_description") == 2
+    assert source.count("ncbi_label or ncbitaxon_id") == 2

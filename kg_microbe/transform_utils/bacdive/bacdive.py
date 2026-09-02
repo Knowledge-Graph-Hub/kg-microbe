@@ -2156,8 +2156,13 @@ class BacDiveTransform(Transform):
                             ncbitaxon_id = NCBITAXON_PREFIX + str(general_info[NCBITAXON_ID][NCBITAXON_ID])
                         ncbi_description = general_info.get(GENERAL_DESCRIPTION, "")
                         ncbi_label = self._get_ncbitaxon_label(ncbitaxon_id)
-                        if ncbi_label is None:
-                            ncbi_label = ncbi_description
+                        # Deliberately not falling back to ncbi_description here. It is
+                        # a free-text sentence about one strain ("... was isolated from
+                        # wastewater from paper mill."), and using it as a taxon's name
+                        # gave 93 nodes a 130-character sentence for a label -- worse
+                        # than being unlabelled, because it passes every "does this node
+                        # have a name" check while being unusable. The sentence goes to
+                        # the description slot at the write sites instead (#919).
 
                     # If no NCBITaxon ID from BacDive JSON, try searching by name
                     if ncbitaxon_id is None and name_tax_classification:
@@ -2734,7 +2739,12 @@ class BacDiveTransform(Transform):
                             ]
                             if ncbitaxon_id:
                                 nodes_data_to_write.append(
-                                    self._create_node_row(ncbitaxon_id, NCBI_CATEGORY, ncbi_label)
+                                    self._create_node_row(
+                                        ncbitaxon_id,
+                                        NCBI_CATEGORY,
+                                        ncbi_label or ncbitaxon_id,
+                                        description=None if ncbi_label else ncbi_description,
+                                    )
                                 )
 
                             node_writer.writerows(nodes_data_to_write)
@@ -2798,7 +2808,14 @@ class BacDiveTransform(Transform):
                             for _, value in nodes_from_keywords.items()
                         ]
                         if ncbitaxon_id:
-                            nodes_data_to_write.append(self._create_node_row(ncbitaxon_id, NCBI_CATEGORY, ncbi_label))
+                            nodes_data_to_write.append(
+                                self._create_node_row(
+                                    ncbitaxon_id,
+                                    NCBI_CATEGORY,
+                                    ncbi_label or ncbitaxon_id,
+                                    description=None if ncbi_label else ncbi_description,
+                                )
+                            )
 
                         node_writer.writerows(nodes_data_to_write)
 

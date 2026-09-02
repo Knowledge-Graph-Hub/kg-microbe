@@ -829,6 +829,13 @@ CATEGORICAL_TERMS: List[Term] = [
         xrefs=["GO:0001539"],
         synonyms=["flagellation pattern"],
         priority="HIGH",
+        observations=(
+            "Proposed as the parent for METPO:1005031-1005037. Adopted in the "
+            "2026-06-12 release, but those seven still sit under METPO:1000704 "
+            "'flagellated', so the arrangement axis is split across two parents "
+            "(berkeleybop/metpo#616). The released definition turned that claim "
+            "into an illustrative list, so this note is the only record of it."
+        ),
     ),
     # Polytrichous is the only flagellation child not yet in METPO. BacDive
     # uses 'polytrichous, monopolar' (4 strains) — 'monopolar' is treated as a

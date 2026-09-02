@@ -45,7 +45,10 @@ def load_release(release: str, cache: Optional[Path] = None) -> Dict[str, dict]:
     if cache and cache.is_file():
         payload = json.loads(cache.read_text(encoding="utf-8"))
     else:
-        with urllib.request.urlopen(RELEASE_JSON.format(release=release)) as response:  # noqa: S310
+        # Timeout on purpose: this is a script people are told to run, and a
+        # hung fetch with no ceiling looks identical to a slow one.
+        url = RELEASE_JSON.format(release=release)
+        with urllib.request.urlopen(url, timeout=60) as response:  # noqa: S310
             payload = json.loads(response.read().decode("utf-8"))
     graph = payload["graphs"][0]
     terms: Dict[str, dict] = {}

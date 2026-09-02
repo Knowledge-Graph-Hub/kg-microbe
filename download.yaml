@@ -351,11 +351,11 @@
 # METPO
 #
 -
-  url: https://raw.githubusercontent.com/berkeleybop/metpo/refs/heads/main/metpo.owl
+  url: https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2026-06-12/metpo.owl
   local_name: metpo.owl
   tag: ontologies
 -
-  url: https://raw.githubusercontent.com/berkeleybop/metpo/refs/heads/main/metpo.json
+  url: https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2026-06-12/metpo.json
   local_name: metpo.json
   tag: ontologies
 
@@ -600,11 +600,11 @@
 
 # Immutable METPO templates consumed by multiple trait transforms
 -
-  url: https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2026-03-24/src/templates/metpo_sheet.tsv
+  url: https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2026-06-12/src/templates/metpo_sheet.tsv
   local_name: metpo_sheet.tsv
   tag: mappings
 -
-  url: https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2026-03-24/src/templates/metpo-properties.tsv
+  url: https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2026-06-12/src/templates/metpo-properties.tsv
   local_name: metpo-properties.tsv
   tag: mappings
 

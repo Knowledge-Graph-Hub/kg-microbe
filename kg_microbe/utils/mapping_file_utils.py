@@ -25,13 +25,13 @@ LOCAL_METPO_ALIAS_OVERRIDES_PATH = (
     Path(__file__).resolve().parents[2] / "mappings" / "canonical" / "metpo_alias_mappings.tsv"
 )
 
-# remote URL location in metpo GitHub repository for METPO classes and properties
-# sheets/ROBOT templates respectively, which will be used as the source of METPO mappings
-METPO_CLASSES_ROBOT_TEMPLATE_URL = (
-    "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2026-03-24/src/templates/metpo_sheet.tsv"
-)
-METPO_PROPERTIES_ROBOT_TEMPLATE_URL = (
-    "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2026-03-24/src/templates/metpo-properties.tsv"
+# Remote location of the METPO classes and properties ROBOT templates, the source of
+# METPO mappings. Re-exported from constants so the version lives in exactly one place:
+# this module used to carry its own copy of the tag, which then drifted three releases
+# behind the ontology (#900).
+from kg_microbe.transform_utils.constants import (  # noqa: E402
+    METPO_CLASSES_ROBOT_TEMPLATE_URL,
+    METPO_PROPERTIES_ROBOT_TEMPLATE_URL,
 )
 
 

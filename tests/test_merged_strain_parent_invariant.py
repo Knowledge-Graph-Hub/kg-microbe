@@ -137,3 +137,41 @@ def test_an_empty_edge_file_is_survivable(tmp_path):
     path = tmp_path / "merged-kg_edges.tsv"
     path.write_text("", encoding="utf-8")
     assert find_multi_parent_strains(path) == {}
+
+
+def test_a_failing_check_cannot_stop_the_tarball_being_rewritten(monkeypatch, tmp_path):
+    """
+    A data-quality report must not decide whether the artifact ships (#914).
+
+    `_cleanup_merged_outputs` is wrapped by a blanket handler in `load_and_merge`,
+    so an exception raised by the check would skip `_rewrite_tarball` and leave
+    normalized TSVs beside a stale archive while the merge reported success.
+    """
+    import kg_microbe.merge_utils.merge_kg as merge_kg
+
+    def boom(*_args, **_kwargs):
+        raise RuntimeError("simulated check failure")
+
+    monkeypatch.setattr(merge_kg, "check_merged_invariants", boom)
+
+    rewritten = []
+    monkeypatch.setattr(merge_kg, "_rewrite_tarball", lambda archive, files: rewritten.append(archive))
+    monkeypatch.setattr(merge_kg, "_normalize_nodes_tsv", lambda _p: None)
+    monkeypatch.setattr(merge_kg, "_normalize_edges_tsv", lambda _p: None)
+    monkeypatch.setattr(merge_kg, "_warn_about_stale_siblings", lambda *_a: None)
+
+    (tmp_path / "merged-kg_nodes.tsv").write_text("id\n", encoding="utf-8")
+    (tmp_path / "merged-kg_edges.tsv").write_text("subject\n", encoding="utf-8")
+    config = tmp_path / "merge.yaml"
+    config.write_text(
+        "merged_graph:\n"
+        "  destination:\n"
+        "    merged-kg-tsv:\n"
+        "      format: tsv\n"
+        "      compression: tar.gz\n"
+        f"      filename: {tmp_path / 'merged-kg'}\n",
+        encoding="utf-8",
+    )
+
+    merge_kg._cleanup_merged_outputs(str(config))
+    assert rewritten, "a failing invariant check suppressed the tarball rewrite"

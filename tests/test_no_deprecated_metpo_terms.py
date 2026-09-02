@@ -10,12 +10,35 @@ from kg_microbe.utils.metpo_liveness import (
     KNOWN_DEPRECATED,
     deprecated_metpo_terms,
     metpo_json_path,
-    vendored_deprecated_terms,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 CODE_ROOTS = [REPO_ROOT / "kg_microbe"]
 _CURIE = re.compile(r"\bMETPO:\d{6,7}\b")
+
+#: The deprecated set, vendored so the scans run where data/raw is absent — which
+#: is CI, and is where they most need to run (#924). It lives here rather than in
+#: the package because it is test scaffolding: `kg_microbe` is distributable and
+#: `tests/` is not shipped with it, so a library module reaching in here would
+#: silently read nothing once installed (#926). Refresh with
+#: scripts/refresh_deprecated_metpo_curies.py when METPO_VERSION moves.
+VENDORED_DEPRECATED = REPO_ROOT / "tests" / "resources" / "metpo_deprecated_curies.txt"
+
+
+def vendored_deprecated_terms():
+    """
+    Return the deprecated CURIEs recorded for the pinned release.
+
+    :return: Set of CURIEs; empty when the vendored file is missing.
+    """
+    if not VENDORED_DEPRECATED.is_file():
+        return set()
+    return {
+        line.strip()
+        for line in VENDORED_DEPRECATED.read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.startswith("#")
+    }
+
 
 #: The pinned release declares this many deprecated terms. A local metpo.json
 #: with none is not that release — it is the pre-#900 cache, and #911 explains

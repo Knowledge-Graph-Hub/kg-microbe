@@ -177,7 +177,7 @@ def _sources_of(violations: Dict[str, Tuple[Set[str], Set[str]]]) -> List[str]:
 #: Written beside the merged TSVs, alongside the strain-parent report.
 STUB_NODE_REPORT = "merged_stub_nodes.tsv"
 
-STUB_NODE_REPORT_HEADER = ["prefix", "count", "expected", "examples"]
+STUB_NODE_REPORT_HEADER = ["prefix", "count", "expected", "note", "examples"]
 
 #: Prefixes we reference deliberately without ever supplying a node for them.
 #: These are cross-reference identifiers -- a GOLD study id, an IMG genome id, a
@@ -241,6 +241,11 @@ def stub_node_rows(stubs: Dict[str, List[str]]) -> List[List]:
             prefix,
             len(curies),
             "yes" if prefix in EXPECTED_STUB_PREFIXES else "no",
+            # "Expected" is the claim in this file that most needs justifying: it
+            # separates rows that are fine from rows that are not. The reason is
+            # already written down, so it belongs in the report rather than only
+            # in the source a reader would have to go and find (#935).
+            EXPECTED_STUB_PREFIXES.get(prefix, ""),
             "|".join(curies[:3]),
         ]
         for prefix, curies in sorted(stubs.items(), key=lambda item: (-len(item[1]), item[0]))

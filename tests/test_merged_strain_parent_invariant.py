@@ -342,3 +342,37 @@ def test_an_absent_nodes_file_writes_no_stub_report(tmp_path):
     edges = _edges(tmp_path, [_row("kgmicrobe.strain:DSM-1", "NCBITaxon:5")])
     check_merged_invariants(edges)
     assert not (tmp_path / STUB_NODE_REPORT).exists()
+
+
+def test_an_expected_prefix_carries_its_justification(tmp_path):
+    """
+    "Expected" is the claim that most needs justifying, so it must not be bare (#935).
+
+    It separates the 49,568 rows that are fine from the 11,422 that are not, and
+    a reader auditing the graph should not have to read the source to learn why.
+    """
+    from kg_microbe.merge_utils.invariants import (
+        EXPECTED_STUB_PREFIXES,
+        find_stub_nodes,
+        stub_node_rows,
+    )
+
+    path = _nodes(
+        tmp_path,
+        [
+            _node("GOLD:Go1", category="biolink:NamedThing", name=""),
+            _node("kgmicrobe.strain:ATCC-1", category="biolink:NamedThing", name=""),
+        ],
+    )
+    rows = {row[0]: (row[2], row[3]) for row in stub_node_rows(find_stub_nodes(path))}
+    assert rows["GOLD"] == ("yes", EXPECTED_STUB_PREFIXES["GOLD"])
+    assert rows["kgmicrobe.strain"][0] == "no"
+    assert rows["kgmicrobe.strain"][1] == ""
+
+
+def test_every_expected_prefix_states_a_reason():
+    """A prefix allowlisted without a justification is silently exempted."""
+    from kg_microbe.merge_utils.invariants import EXPECTED_STUB_PREFIXES
+
+    unexplained = [p for p, why in EXPECTED_STUB_PREFIXES.items() if not (why or "").strip()]
+    assert not unexplained, f"expected without a reason: {unexplained}"

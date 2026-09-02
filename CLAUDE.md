@@ -36,8 +36,7 @@ poetry run kg merge -y merge.yaml
 make run-summary
 ```
 
-`kg download` skips existing files; `-i` invalidates every selected entry, so
-always combine it with one or more `-t` tags. MediaDive invalidation also clears
+`kg download` skips existing files, but a pin change now takes effect on its own: the URL behind each artifact is recorded in `data/raw/.download_manifest.json`, and a file whose declared URL has moved is re-fetched. A file with no record is left alone — unknown provenance is not wrong provenance (#911). `-i` still invalidates every selected entry, so always combine it with one or more `-t` tags. MediaDive invalidation also clears
 its response cache and can trigger an approximately one-hour crawl.
 
 The normal merge creates `data/merged/merged-kg.tar.gz` and removes the loose

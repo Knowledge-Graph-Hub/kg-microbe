@@ -7,6 +7,7 @@ from typing import List, Optional, Sequence, Tuple
 import yaml
 from kghub_downloader.download_utils import download_from_yaml
 
+from kg_microbe.utils.download_manifest import drop_stale, record
 from kg_microbe.utils.mediadive_bulk_download import download_mediadive_bulk
 
 # Tag (in download.yaml) of the entry that pulls the MediaDive media list. A
@@ -65,6 +66,13 @@ def download(
     if pending:
         _report_pending(pending)
 
+    # kghub-downloader decides by asking whether the file exists and records
+    # nothing about where it came from, so a changed pin in download.yaml has no
+    # effect on disk. Remove the artifacts whose declared URL has moved before
+    # handing over, so an ordinary run picks the change up (#911).
+    if not snippet_only and not ignore_cache:
+        drop_stale(effective_yaml, output_dir, tags)
+
     try:
         download_from_yaml(
             yaml_file=effective_yaml,
@@ -76,6 +84,11 @@ def download(
     finally:
         if effective_yaml != yaml_file:
             Path(effective_yaml).unlink(missing_ok=True)
+
+    # Snippet runs write deliberately truncated files; recording a URL against
+    # one would claim it is the real artifact.
+    if not snippet_only:
+        record(effective_yaml if effective_yaml == yaml_file else yaml_file, output_dir, tags)
 
     # Post-download: Trigger MediaDive bulk download if mediadive.json was downloaded
     if snippet_only:  # Skip bulk download in snippet mode

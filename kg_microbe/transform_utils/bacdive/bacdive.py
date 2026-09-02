@@ -45,7 +45,7 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE,
     BACDIVE_API_BASE_URL,
     BACDIVE_ASSAY_PREDICATE,
-    BACDIVE_DEPOSIT_CONFLICTS_FILE,
+    BACDIVE_DEPOSIT_CLAIMS_FILE,
     BACDIVE_ENVIRONMENT_CATEGORY,
     BACDIVE_GROWTH_MEDIUM_CLASS,
     BACDIVE_ID_COLUMN,
@@ -192,6 +192,7 @@ from kg_microbe.transform_utils.constants import (
     XREF_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.isolation_source_mapping_utils import (
@@ -3452,22 +3453,27 @@ class BacDiveTransform(Transform):
 
         # Write non-matching media links to a file
         media_links_file = os.path.join(self.output_dir, "bacdive_media_links.txt")
-        with open(media_links_file, "w") as f:
+        with atomic_write(media_links_file) as f:
             f.write("# Non-matching media links found in BacDive data\n")
             f.write(f"# Total unique non-matching links: {len(non_matching_media_links)}\n")
             f.write("# These links do not match the https://mediadive.dsmz.de/medium/ pattern\n\n")
             for link in sorted(non_matching_media_links):
                 f.write(f"{link}\n")
 
-        # Culture-collection deposits whose claiming records disagree on the parent
-        # taxon. These get no subclass_of edge (see the resolution loop above); the
-        # report is the record that the claim existed and what it was, so a consumer
-        # who needs the ambiguous taxonomy can still recover it (#892).
-        conflicts_file = os.path.join(self.output_dir, BACDIVE_DEPOSIT_CONFLICTS_FILE)
-        with open(conflicts_file, "w", newline="") as f:
-            conflict_writer = csv.writer(f, delimiter="\t")
-            conflict_writer.writerow(DEPOSIT_CONFLICT_HEADER)
-            conflict_writer.writerows(deposit_conflict_rows(contested_deposits))
+        # Every culture-collection deposit whose claiming records disagreed on the
+        # parent taxon, and what became of it: `collapsed` rows carry the shared
+        # ancestor that was asserted, `suppressed` rows got no subclass_of edge at
+        # all. Both belong here — the file answers "what happened to this deposit
+        # and why", not just "which ones lost their edge" (#892, #898).
+        #
+        # Written atomically: an absent or truncated report reads exactly like
+        # "nothing was contested", which is the silent failure this file exists to
+        # prevent (#903).
+        claims_file = os.path.join(self.output_dir, BACDIVE_DEPOSIT_CLAIMS_FILE)
+        with atomic_write(claims_file, newline="") as f:
+            claims_writer = csv.writer(f, delimiter="\t")
+            claims_writer.writerow(DEPOSIT_CONFLICT_HEADER)
+            claims_writer.writerows(deposit_conflict_rows(contested_deposits))
         resolution_counts = Counter(resolution for _, _, resolution, _ in contested_deposits)
         logger.info(
             "[bacdive] culture-collection deposits claimed by disagreeing records: "
@@ -3478,7 +3484,7 @@ class BacDiveTransform(Transform):
             f"{resolution_counts[RESOLUTION_SUPPRESSED]:,}",
             f"{resolution_counts[RESOLUTION_SUPPRESSED_NO_ANCESTRY]:,}",
             f"{len(self._ncbitaxon_ancestry_failures):,}",
-            conflicts_file,
+            claims_file,
         )
 
         drop_duplicates(

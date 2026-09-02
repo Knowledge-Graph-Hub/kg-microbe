@@ -776,9 +776,12 @@ UNIPROT_DATA_LIST = [
 ]
 
 BACDIVE_MAPPING_FILE = "bacdive_mappings.tsv"
-# Report of culture-collection deposit numbers claimed by more than one BacDive
-# record with a different parent taxon; those deposits get no subclass_of edge (#892).
-BACDIVE_DEPOSIT_CONFLICTS_FILE = "bacdive_strain_deposit_conflicts.tsv"
+# Report of every culture-collection deposit number claimed by more than one
+# BacDive record with a different parent taxon, and what became of it: `collapsed`
+# rows were given the ancestor every claimant entails, `suppressed` rows were given
+# no subclass_of edge at all. Named for the claims, not the conflicts, because a
+# resolved claim is in here too (#892, #898).
+BACDIVE_DEPOSIT_CLAIMS_FILE = "bacdive_strain_deposit_claims.tsv"
 MICROMEDIAPARAM_COMPOUND_MAPPINGS_FILE = "compound_mappings_strict.tsv"
 MICROMEDIAPARAM_HYDRATE_MAPPINGS_FILE = "compound_mappings_strict_hydrate.tsv"
 

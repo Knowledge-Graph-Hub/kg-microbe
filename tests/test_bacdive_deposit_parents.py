@@ -314,3 +314,40 @@ def test_a_real_conflict_is_not_blamed_on_the_ontology():
         ancestry_failed=set().__contains__,
     )
     assert [entry[2] for entry in contested] == [RESOLUTION_SUPPRESSED]
+
+
+def test_the_report_is_written_atomically():
+    """
+    An absent or truncated report reads as "nothing was contested" (#903).
+
+    `nodes.tsv` and `edges.tsv` are closed and complete before this file is
+    written, so a crash in the gap leaves outputs that look finished beside a
+    report that understates what was suppressed — the silent failure the report
+    exists to prevent.
+    """
+    import inspect
+    from pathlib import Path
+
+    from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
+
+    source = Path(inspect.getsourcefile(BacDiveTransform)).read_text()
+    block = source.split("claims_file = os.path.join")[1].split("logger.info")[0]
+    assert "atomic_write(claims_file" in block
+    assert "open(claims_file" not in block
+
+
+def test_the_report_is_not_described_as_edgeless():
+    """
+    Its rows are not all suppressed, and the comments must not say they are (#902).
+
+    `collapsed` rows do get a `subclass_of` edge. A reader who trusts a comment
+    saying otherwise will filter the graph on a false premise.
+    """
+    from pathlib import Path
+
+    from kg_microbe.transform_utils.constants import BACDIVE_DEPOSIT_CLAIMS_FILE
+
+    assert BACDIVE_DEPOSIT_CLAIMS_FILE == "bacdive_strain_deposit_claims.tsv"
+    constants = Path("kg_microbe/transform_utils/constants.py").read_text()
+    stanza = constants.split("BACDIVE_DEPOSIT_CLAIMS_FILE")[0].rsplit("\n\n", 1)[-1]
+    assert "collapsed" in stanza and "suppressed" in stanza

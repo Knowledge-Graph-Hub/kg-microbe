@@ -408,3 +408,49 @@ def test_close_match_is_emitted_after_resolution_not_during_the_loop():
     loop_block = source.split("if culture_number_from_external_links:")[1].split("if phys_and_metabolism_enzymes:")[0]
     assert "deposit_citations.append" in loop_block
     assert "CLOSE_MATCH_PREDICATE" not in loop_block, "citation must not be asserted inline"
+
+
+def test_a_contested_deposit_node_explains_its_own_emptiness():
+    """
+    An edgeless node must not look like an ingest gap (#907).
+
+    A contested deposit gets no parent and no record link, which leaves an
+    organism-typed node carrying a culture number and nothing else. Without a
+    description it is indistinguishable from a term the transform failed to
+    process, which is the failure mode it is the fix for.
+    """
+    from kg_microbe.transform_utils.bacdive.emission import contested_deposit_description
+
+    text = contested_deposit_description({"NCBITaxon:1122236": ["7239"], "NCBITaxon:398036": ["134230"]})
+    assert "NCBITaxon:1122236 (BacDive 7239)" in text
+    assert "NCBITaxon:398036 (BacDive 134230)" in text
+    assert "does not identify a single organism" in text
+
+
+def test_the_description_is_deterministic():
+    """Node rows must not change between runs on dict ordering alone."""
+    from kg_microbe.transform_utils.bacdive.emission import contested_deposit_description
+
+    a = contested_deposit_description({"NCBITaxon:2": ["9", "1"], "NCBITaxon:1": ["5"]})
+    b = contested_deposit_description({"NCBITaxon:1": ["5"], "NCBITaxon:2": ["1", "9"]})
+    assert a == b
+    assert a.index("NCBITaxon:1") < a.index("NCBITaxon:2")
+
+
+def test_only_contested_deposits_carry_a_description():
+    """
+    The 151,575 uncontested deposits must stay as they were.
+
+    A description on every deposit would bury the 437 that mean something.
+    """
+    import inspect
+    from pathlib import Path
+
+    from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
+
+    source = Path(inspect.getsourcefile(BacDiveTransform)).read_text()
+    block = source.split("for strain_curie, strain_label in deposit_labels.items():")[1].split(
+        "for organism_curie, strain_curie in deposit_citations:"
+    )[0]
+    assert "if strain_curie in unsafe_deposits" in block
+    assert "else None" in block

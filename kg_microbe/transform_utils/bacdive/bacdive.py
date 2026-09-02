@@ -28,6 +28,7 @@ from kg_microbe.transform_utils.bacdive.emission import (
     RESOLUTION_COLLAPSED,
     RESOLUTION_SUPPRESSED,
     RESOLUTION_SUPPRESSED_NO_ANCESTRY,
+    contested_deposit_description,
     deposit_conflict_rows,
     resolution_asserts_a_parent,
     resolve_deposit_parents,
@@ -1695,6 +1696,8 @@ class BacDiveTransform(Transform):
         # whether the link is safe to assert depends on what the other records citing
         # that deposit turn out to say (#899).
         deposit_citations: List[tuple] = []
+        # Deposit CURIE -> the label first seen for it, written after resolution (#907).
+        deposit_labels: Dict[str, str] = {}
 
         COLUMN_NAMES = [
             BACDIVE_ID_COLUMN,
@@ -2763,7 +2766,10 @@ class BacDiveTransform(Transform):
                             )
                             strain_label = culture_number.strip() if len(culture_number_cleaned) > 3 else None
                             if strain_curie and strain_label:
-                                node_writer.writerow(self._create_node_row(strain_curie, NCBI_CATEGORY, strain_label))
+                                # The node is buffered too: whether it needs a description
+                                # saying its claimants disagreed is not knowable until every
+                                # record citing it has been read (#907).
+                                deposit_labels.setdefault(strain_curie, strain_label)
                                 # Buffer the record -> deposit link, mirroring the edge
                                 # LPSN emits onto these same CURIEs
                                 # (``lpsn.py::_make_close_match_edge``). It cannot be
@@ -3428,11 +3434,26 @@ class BacDiveTransform(Transform):
                 # record to it with a symmetric, same_as-mapped predicate would put those
                 # organisms two hops apart over close_match, so the citation is recorded
                 # in the claims report instead of asserted in the graph (#899).
+                contested_claims = {curie: parents for curie, parents, _, _ in contested_deposits}
                 unsafe_deposits = {
                     curie
                     for curie, _, resolution, _ in contested_deposits
                     if not resolution_asserts_a_parent(resolution)
                 }
+                for strain_curie, strain_label in deposit_labels.items():
+                    node_writer.writerow(
+                        self._create_node_row(
+                            strain_curie,
+                            NCBI_CATEGORY,
+                            strain_label,
+                            description=(
+                                contested_deposit_description(contested_claims[strain_curie])
+                                if strain_curie in unsafe_deposits
+                                else None
+                            ),
+                        )
+                    )
+
                 for organism_curie, strain_curie in deposit_citations:
                     if strain_curie in unsafe_deposits:
                         continue

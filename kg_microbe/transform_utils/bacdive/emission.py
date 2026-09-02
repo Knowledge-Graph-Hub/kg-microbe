@@ -50,6 +50,27 @@ RESOLUTION_SUPPRESSED = "suppressed"
 RESOLUTION_SUPPRESSED_NO_ANCESTRY = "suppressed_ancestry_unavailable"
 
 
+def contested_deposit_description(parents):
+    """
+    Explain, on the node itself, why a contested deposit has no edges (#907).
+
+    A deposit whose claimants disagreed gets neither a parent nor a link to the
+    records that cited it, which leaves an organism-typed node with a culture
+    number for a label and nothing else -- indistinguishable from an ingest gap.
+    The description says which taxa were claimed so the emptiness reads as a
+    decision.
+
+    :param parents: ``{NCBITaxon CURIE: [BacDive record key, ...]}`` for the deposit.
+    :return: One-sentence description naming the conflicting claims.
+    """
+    claims = ", ".join(f"{taxon} (BacDive {', '.join(sorted(keys))})" for taxon, keys in sorted(parents.items()))
+    return (
+        "Culture-collection designation claimed by BacDive records that disagree on "
+        f"the organism: {claims}. No parent taxon or record link is asserted because "
+        "the designation does not identify a single organism."
+    )
+
+
 def resolution_asserts_a_parent(resolution):
     """
     Report whether a resolution left the deposit with a parent taxon.

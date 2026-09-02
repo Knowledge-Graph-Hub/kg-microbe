@@ -1,0 +1,43 @@
+# METPO proposal vs release 2026-06-12
+
+## classes (49 proposed)
+
+- landed unchanged: 31
+- landed with differences: 0
+- not in the release: 18
+
+### Not in the release
+
+- `METPO:1007022` pH minimum tolerance (HIGH)
+- `METPO:1007023` pH maximum tolerance (HIGH)
+- `METPO:1007026` temperature minimum tolerance (HIGH)
+- `METPO:1007027` temperature maximum tolerance (HIGH)
+- `METPO:1007030` salinity minimum tolerance (HIGH)
+- `METPO:1007031` salinity maximum tolerance (HIGH)
+- `METPO:1007094` aquatic microorganism (MEDIUM)
+- `METPO:1007095` terrestrial microorganism (MEDIUM)
+- `METPO:1007096` marine microorganism (MEDIUM)
+- `METPO:1007097` freshwater microorganism (MEDIUM)
+- `METPO:1007098` soil microorganism (MEDIUM)
+- `METPO:1007099` gut-associated microorganism (MEDIUM)
+- `METPO:1007100` biofilm-associated microorganism (MEDIUM)
+- `METPO:1007101` anthropogenic-environment microorganism (MEDIUM)
+- `METPO:1007102` biofilm-forming (MEDIUM)
+- `METPO:1007103` quorum-sensing capable (MEDIUM)
+- `METPO:1007105` flocculating (LOW)
+- `METPO:1007106` anaerobic ammonium oxidizing (LOW)
+
+## properties (9 proposed)
+
+- landed unchanged: 4
+- landed with differences: 0
+- not in the release: 5
+
+### Not in the release
+
+- `METPO:2000717` has growth temperature optimum value (CRITICAL)
+- `METPO:2000718` has growth pH optimum value (HIGH)
+- `METPO:2000719` has growth salinity optimum value (CRITICAL)
+- `METPO:2000069` has environmental niche (HIGH)
+- `METPO:2000802` is nomenclatural type of (MEDIUM)
+

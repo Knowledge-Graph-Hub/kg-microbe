@@ -776,6 +776,19 @@ UNIPROT_DATA_LIST = [
 ]
 
 BACDIVE_MAPPING_FILE = "bacdive_mappings.tsv"
+
+# The METPO release every METPO artifact in this repo is pinned to: the ontology
+# (metpo.owl / metpo.json) and the two ROBOT templates built from it. They must move
+# together — tracking the ontology from `main` while the templates sat on an older tag
+# is how an obsoleted predicate reached 706,765 shipped edges unnoticed (#900, #909).
+# `download.yaml` repeats these URLs and cannot import them; a test asserts they agree.
+METPO_VERSION = "2026-06-12"
+_METPO_RAW = f"https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/{METPO_VERSION}"
+METPO_OWL_URL = f"{_METPO_RAW}/metpo.owl"
+METPO_JSON_URL = f"{_METPO_RAW}/metpo.json"
+METPO_CLASSES_ROBOT_TEMPLATE_URL = f"{_METPO_RAW}/src/templates/metpo_sheet.tsv"
+METPO_PROPERTIES_ROBOT_TEMPLATE_URL = f"{_METPO_RAW}/src/templates/metpo-properties.tsv"
+
 # Report of every culture-collection deposit number claimed by more than one
 # BacDive record with a different parent taxon, and what became of it: `collapsed`
 # rows were given the ancestor every claimant entails, `suppressed` rows were given

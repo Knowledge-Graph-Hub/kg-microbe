@@ -165,6 +165,14 @@ KGX/BMT must use the pinned local Biolink files downloaded to
 Biolink version requires changing `download.yaml`, the lock file, fixtures, and
 tests together.
 
+METPO is pinned the same way. `METPO_VERSION` in `transform_utils/constants.py`
+is the single source of truth, and the ontology (`metpo.owl`, `metpo.json`) and
+the two ROBOT templates built from it must all move to the same tag together.
+Never fetch METPO from `refs/heads/main`: an upstream obsoletion then arrives
+with a download and changes nothing observable, which is how a deprecated
+predicate reached 706,765 shipped edges. `tests/test_metpo_version_pin.py`
+enforces this against `download.yaml`. See issues #900 and #909.
+
 ## Operational references
 
 - [Data hosting and ontology build costs](docs/DATA_HOSTING.md)

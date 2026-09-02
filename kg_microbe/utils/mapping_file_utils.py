@@ -10,7 +10,12 @@ from typing import Dict, List, Optional
 import curies
 import requests
 
-from kg_microbe.transform_utils.constants import PREFIXMAP_JSON_FILEPATH, RAW_DATA_DIR
+from kg_microbe.transform_utils.constants import (
+    METPO_CLASSES_ROBOT_TEMPLATE_URL,
+    METPO_PROPERTIES_ROBOT_TEMPLATE_URL,
+    PREFIXMAP_JSON_FILEPATH,
+    RAW_DATA_DIR,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -25,14 +30,10 @@ LOCAL_METPO_ALIAS_OVERRIDES_PATH = (
     Path(__file__).resolve().parents[2] / "mappings" / "canonical" / "metpo_alias_mappings.tsv"
 )
 
-# remote URL location in metpo GitHub repository for METPO classes and properties
-# sheets/ROBOT templates respectively, which will be used as the source of METPO mappings
-METPO_CLASSES_ROBOT_TEMPLATE_URL = (
-    "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2026-03-24/src/templates/metpo_sheet.tsv"
-)
-METPO_PROPERTIES_ROBOT_TEMPLATE_URL = (
-    "https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/2026-03-24/src/templates/metpo-properties.tsv"
-)
+# METPO_CLASSES_ROBOT_TEMPLATE_URL and METPO_PROPERTIES_ROBOT_TEMPLATE_URL are
+# imported from constants above rather than spelled out here: this module used to
+# carry its own copy of the tag, which then drifted three releases behind the
+# ontology (#900).
 
 
 class _LocalTemplateResponse:

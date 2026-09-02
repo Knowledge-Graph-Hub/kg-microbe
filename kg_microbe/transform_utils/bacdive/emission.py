@@ -50,6 +50,23 @@ RESOLUTION_SUPPRESSED = "suppressed"
 RESOLUTION_SUPPRESSED_NO_ANCESTRY = "suppressed_ancestry_unavailable"
 
 
+def resolution_asserts_a_parent(resolution):
+    """
+    Report whether a resolution left the deposit with a parent taxon.
+
+    Used to decide whether a record may be linked to the deposit at all. A
+    deposit that got a parent is one identifier its claimants agree about, so
+    linking to it is sound. One that got none is a designation two unrelated
+    organisms happen to share, and ``biolink:close_match`` -- symmetric, and
+    mapped to ``SEMMEDDB:same_as`` -- would put those organisms two hops apart
+    (#899).
+
+    :param resolution: One of the ``RESOLUTION_*`` values.
+    :return: True when a parent was asserted.
+    """
+    return resolution == RESOLUTION_COLLAPSED
+
+
 def entailed_by_every_claim(parents, ancestors_of):
     """
     Return the one claimed taxon that every other claim entails, or None.

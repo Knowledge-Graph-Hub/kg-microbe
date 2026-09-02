@@ -95,10 +95,12 @@ and go to the source's deposit-claim report, because picking one would make
 the answer depend on file order. That report carries every deposit whose
 claimants disagreed, whichever way it went, so a coarsened taxonomy and a
 suppressed one are both visible and neither is confused with an ontology
-lookup that failed. Every record that cites a deposit links to it
-with `biolink:close_match`, so the deposit's provenance is in the graph and its
-taxonomy stays reachable through the record even when no parent is asserted.
-See issues #892 and #894.
+lookup that failed. A record that cites a deposit links to it with
+`biolink:close_match`, so the deposit's provenance is in the graph — but only
+where the deposit kept a parent. `close_match` is symmetric and maps to
+`SEMMEDDB:same_as`, so on a deposit whose claimants proved to be unrelated
+organisms it would assert an equivalence between them; those citations stay in
+the claims report. See issues #892, #894 and #899.
 
 ## Operational traps
 

@@ -29,6 +29,7 @@ from kg_microbe.transform_utils.bacdive.emission import (
     RESOLUTION_SUPPRESSED,
     RESOLUTION_SUPPRESSED_NO_ANCESTRY,
     deposit_conflict_rows,
+    resolution_asserts_a_parent,
     resolve_deposit_parents,
 )
 from kg_microbe.transform_utils.bacdive.emission import StrainProvenanceWriter as _StrainProvenanceWriter
@@ -1690,6 +1691,10 @@ class BacDiveTransform(Transform):
         # records, so claims are buffered here and resolved after the loop (see #892).
         # Shape: {kgmicrobe.strain:<deposit>: {NCBITaxon:<id>: [bacdive record key, ...]}}
         deposit_parent_claims: Dict[str, Dict[str, List[str]]] = {}
+        # Every (BacDive record, deposit) citation seen, buffered for the same reason:
+        # whether the link is safe to assert depends on what the other records citing
+        # that deposit turn out to say (#899).
+        deposit_citations: List[tuple] = []
 
         COLUMN_NAMES = [
             BACDIVE_ID_COLUMN,
@@ -2759,26 +2764,14 @@ class BacDiveTransform(Transform):
                             strain_label = culture_number.strip() if len(culture_number_cleaned) > 3 else None
                             if strain_curie and strain_label:
                                 node_writer.writerow(self._create_node_row(strain_curie, NCBI_CATEGORY, strain_label))
-                                # Link the record to the deposit it cites, mirroring the
-                                # edge LPSN already emits onto these same CURIEs
-                                # (``lpsn.py::_make_close_match_edge``). Without it a
-                                # deposit node has no way back to whoever asserted it, and
-                                # a deposit whose claimants disagree — which gets no
-                                # subclass_of below — would reach no taxon at all (#894).
-                                knowledge_level, agent_type = self._add_edge_metadata(
-                                    CLOSE_MATCH_PREDICATE, CLOSE_MATCH_RELATION, strain_curie
-                                )
-                                edge_writer.writerow(
-                                    [
-                                        organism_id,
-                                        CLOSE_MATCH_PREDICATE,
-                                        strain_curie,
-                                        CLOSE_MATCH_RELATION,
-                                        self.knowledge_source,
-                                        knowledge_level,
-                                        agent_type,
-                                    ]
-                                )
+                                # Buffer the record -> deposit link, mirroring the edge
+                                # LPSN emits onto these same CURIEs
+                                # (``lpsn.py::_make_close_match_edge``). It cannot be
+                                # written yet: ``biolink:close_match`` is symmetric and
+                                # maps to ``SEMMEDDB:same_as``, so on a deposit whose
+                                # claimants turn out to be unrelated organisms it would
+                                # assert an equivalence between them (#899).
+                                deposit_citations.append((organism_id, strain_curie))
                                 # Record this record's claim about the deposit's parent
                                 # taxon. The edge itself is written after the loop, once
                                 # every record that cites this deposit has been seen (#892).
@@ -3430,6 +3423,34 @@ class BacDiveTransform(Transform):
                     ancestors_of=self._ncbitaxon_ancestors,
                     ancestry_failed=self._ncbitaxon_ancestry_failures.__contains__,
                 )
+                # A deposit whose claimants are taxonomically disjoint is a designation
+                # two unrelated organisms happen to share, not one identifier. Linking a
+                # record to it with a symmetric, same_as-mapped predicate would put those
+                # organisms two hops apart over close_match, so the citation is recorded
+                # in the claims report instead of asserted in the graph (#899).
+                unsafe_deposits = {
+                    curie
+                    for curie, _, resolution, _ in contested_deposits
+                    if not resolution_asserts_a_parent(resolution)
+                }
+                for organism_curie, strain_curie in deposit_citations:
+                    if strain_curie in unsafe_deposits:
+                        continue
+                    knowledge_level, agent_type = self._add_edge_metadata(
+                        CLOSE_MATCH_PREDICATE, CLOSE_MATCH_RELATION, strain_curie
+                    )
+                    edge_writer.writerow(
+                        [
+                            organism_curie,
+                            CLOSE_MATCH_PREDICATE,
+                            strain_curie,
+                            CLOSE_MATCH_RELATION,
+                            self.knowledge_source,
+                            knowledge_level,
+                            agent_type,
+                        ]
+                    )
+
                 for strain_curie, deposit_parent_id in resolved_deposits:
                     knowledge_level, agent_type = self._add_edge_metadata(
                         SUBCLASS_PREDICATE, RDFS_SUBCLASS_OF, deposit_parent_id

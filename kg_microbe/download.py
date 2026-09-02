@@ -7,6 +7,7 @@ from typing import List, Optional, Sequence, Tuple
 import yaml
 from kghub_downloader.download_utils import download_from_yaml
 
+from kg_microbe.utils.download_manifest import drop_stale, record
 from kg_microbe.utils.mediadive_bulk_download import download_mediadive_bulk
 
 # Tag (in download.yaml) of the entry that pulls the MediaDive media list. A
@@ -65,6 +66,13 @@ def download(
     if pending:
         _report_pending(pending)
 
+    # kghub-downloader decides by asking whether the file exists and records
+    # nothing about where it came from, so a changed pin in download.yaml has no
+    # effect on disk. Remove the artifacts whose declared URL has moved before
+    # handing over, so an ordinary run picks the change up (#911).
+    if not snippet_only and not ignore_cache:
+        drop_stale(effective_yaml, output_dir, tags)
+
     try:
         download_from_yaml(
             yaml_file=effective_yaml,
@@ -76,6 +84,31 @@ def download(
     finally:
         if effective_yaml != yaml_file:
             Path(effective_yaml).unlink(missing_ok=True)
+        # Recorded even when the download raised. kghub-downloader aborts the
+        # whole run on the first bad URL, so waiting for success means one dead
+        # source among 63 leaves the manifest unwritten forever — and #911's fix
+        # silently does nothing (#930). Only files that exist are recorded, so a
+        # partial run records exactly what landed.
+        #
+        # Snippet runs write deliberately truncated files; recording a URL against
+        # one would claim it is the real artifact.
+        #
+        # Reads the original config, not the filtered one: the filtered copy is
+        # unlinked just above. Pending-hosting entries are excluded explicitly
+        # instead — `_report_pending` tells the user to satisfy those by hand, so
+        # the artifact often exists without ever having been downloaded, and
+        # recording it against a REPLACE_ME_ placeholder claims a provenance it
+        # never had (#929).
+        if not snippet_only:
+            try:
+                record(yaml_file, output_dir, tags, skip_names=[_local_name_of(e) for e in pending])
+            except Exception as exc:  # noqa: BLE001
+                # An exception raised in a finally REPLACES the one propagating
+                # through it, so a failed manifest write would be reported instead
+                # of the upstream 404 that actually stopped the download. The
+                # manifest is bookkeeping about a download; it must never be what a
+                # failed download reports (#931, and #914 for the same argument).
+                print(f"[download] could not record provenance: {exc}")
 
     # Post-download: Trigger MediaDive bulk download if mediadive.json was downloaded
     if snippet_only:  # Skip bulk download in snippet mode
@@ -83,6 +116,19 @@ def download(
     if tags and MEDIADIVE_TAG not in tags:
         return
     _post_download_mediadive_bulk(output_dir, ignore_cache)
+
+
+def _local_name_of(entry: dict) -> str:
+    """
+    Return the on-disk name an entry writes to.
+
+    :param entry: A download.yaml entry.
+    :return: Its ``local_name``, or the basename of its URL when absent.
+    """
+    name = entry.get("local_name")
+    if name:
+        return str(name)
+    return (entry.get("url") or "").rsplit("/", 1)[-1]
 
 
 def _without_pending_hosting(yaml_file: str, tags: Optional[Sequence[str]]) -> Tuple[str, List[dict]]:

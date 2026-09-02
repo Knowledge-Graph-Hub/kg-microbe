@@ -123,8 +123,12 @@ def check_merged_invariants(edges_file: Path, output_dir: Optional[Path] = None)
     # Absent is normal: the strain-parent check needs no nodes file, and callers
     # pointing at an arbitrary edge dump may not have one.
     nodes_file = edges_file.parent / edges_file.name.replace("_edges.tsv", "_nodes.tsv")
-    stubs = find_stub_nodes(nodes_file) if nodes_file.is_file() else {}
-    if stubs:
+    if nodes_file.is_file():
+        # Written whether or not anything was found, for the same reason the
+        # strain-parent report is (#903, #934): an absent file cannot be told from
+        # a check that never ran, and after a multi-hour merge a demonstrably clean
+        # result is worth more than a saved header row.
+        stubs = find_stub_nodes(nodes_file)
         stub_destination = Path(output_dir or edges_file.parent) / STUB_NODE_REPORT
         with atomic_write(stub_destination, newline="") as handle:
             writer = csv.writer(handle, delimiter="\t")

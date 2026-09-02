@@ -310,3 +310,35 @@ def test_an_absent_nodes_file_does_not_break_the_edge_checks(tmp_path):
     path = _edges(tmp_path, [_row("kgmicrobe.strain:DSM-1", "NCBITaxon:5")])
     assert check_merged_invariants(path) == 0
     assert (tmp_path / STRAIN_PARENT_REPORT).is_file()
+
+
+def test_a_graph_with_no_stubs_still_writes_the_stub_report(tmp_path):
+    """
+    An absent report cannot be told from a check that never ran (#934).
+
+    Same reasoning as the strain-parent report, which this one sat beside while
+    behaving differently — a reader who learns one is always present will
+    reasonably assume the same of the other.
+    """
+    from kg_microbe.merge_utils.invariants import STUB_NODE_REPORT, STUB_NODE_REPORT_HEADER
+
+    _nodes(tmp_path, [_node("NCBITaxon:562")])
+    edges = _edges(tmp_path, [_row("kgmicrobe.strain:DSM-1", "NCBITaxon:562")])
+    check_merged_invariants(edges)
+    report = tmp_path / STUB_NODE_REPORT
+    assert report.is_file()
+    assert report.read_text(encoding="utf-8").splitlines() == ["\t".join(STUB_NODE_REPORT_HEADER)]
+
+
+def test_an_absent_nodes_file_writes_no_stub_report(tmp_path):
+    """
+    Not being able to check is not a clean result.
+
+    Writing an empty report there would claim zero stubs on a graph whose nodes
+    were never read.
+    """
+    from kg_microbe.merge_utils.invariants import STUB_NODE_REPORT
+
+    edges = _edges(tmp_path, [_row("kgmicrobe.strain:DSM-1", "NCBITaxon:5")])
+    check_merged_invariants(edges)
+    assert not (tmp_path / STUB_NODE_REPORT).exists()

@@ -226,7 +226,7 @@ def _cleanup_merged_outputs(yaml_file: str) -> None:
             # reporting success. A data-quality report must not be able to
             # decide whether the artifact ships (#914).
             try:
-                check_merged_invariants(edges_file, output_dir)
+                check_merged_invariants(edges_file, output_dir, nodes_file=nodes_file)
             except Exception as exc:  # noqa: BLE001
                 print(f"[merge-invariants] check skipped: {exc}")
 

@@ -126,7 +126,11 @@ the claims report, and the node carries a description saying so. See issues
   sources, so `merge_utils/invariants.py` re-checks after the merge and writes
   `merged_strain_parent_violations.tsv` beside the merged TSVs — empty on a
   clean run, because an absent report cannot be told from a check that never
-  ran. See issues #892 and #896.
+  ran. It also writes `merged_stub_nodes.tsv`: KGX invents a node for any
+  endpoint no source declared, so after a merge the question is not what is
+  missing but what arrived as an invention. Cross-reference prefixes we never
+  supply (IMG, GOLD, GTDB) are marked expected; everything else is a source
+  referencing something it should declare. See issues #892, #896 and #918.
 - Never assert a METPO term the pinned release has deprecated. A hardcoded CURIE
   keeps being emitted long after the ontology retires it — nothing errors, and
   `METPO:2000511` reached 706,765 edges that way. `tests/test_no_deprecated_metpo_terms.py`

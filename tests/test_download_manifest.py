@@ -1,7 +1,9 @@
 """A changed pin must take effect on the next ordinary download (#911)."""
 
+import importlib
 import json
 
+import pytest
 import yaml
 
 from kg_microbe.utils.download_manifest import (
@@ -193,3 +195,59 @@ def test_download_excludes_pending_entries_when_recording():
     source = inspect.getsource(download)
     assert "skip_names=[_local_name_of(e) for e in pending]" in source
     assert "effective_yaml if effective_yaml == yaml_file else yaml_file" not in source
+
+
+def test_a_partial_download_still_records_what_landed(tmp_path, monkeypatch):
+    """
+    One dead URL must not leave the manifest unwritten forever (#930).
+
+    kghub-downloader aborts the whole run on the first bad URL, so recording only
+    on success means a repo with one persistently broken source never builds a
+    manifest — and #911's fix silently does nothing.
+    """
+    # `from .download import download` in kg_microbe/__init__.py shadows the
+    # submodule with the function, so the module has to be fetched explicitly.
+    download_module = importlib.import_module("kg_microbe.download")
+
+    def boom(**_kwargs):
+        raise RuntimeError("upstream 404")
+
+    monkeypatch.setattr(download_module, "download_from_yaml", boom)
+    monkeypatch.setattr(download_module, "_post_download_mediadive_bulk", lambda *_a: None)
+
+    config = _config(tmp_path, [{"url": URL_A, "local_name": "landed.json", "tag": "t"}])
+    _artifact(tmp_path, "landed.json")
+
+    with pytest.raises(RuntimeError):
+        download_module.download(
+            yaml_file=config,
+            output_dir=str(tmp_path),
+            snippet_only=False,
+            ignore_cache=False,
+            tags=None,
+        )
+
+    assert set(read_manifest(str(tmp_path))) == {"landed.json"}, "a partial run recorded nothing"
+
+
+def test_the_failing_download_still_propagates(tmp_path, monkeypatch):
+    """Recording must not swallow the error it recorded alongside."""
+    # `from .download import download` in kg_microbe/__init__.py shadows the
+    # submodule with the function, so the module has to be fetched explicitly.
+    download_module = importlib.import_module("kg_microbe.download")
+
+    def boom(**_kwargs):
+        raise RuntimeError("upstream 404")
+
+    monkeypatch.setattr(download_module, "download_from_yaml", boom)
+    monkeypatch.setattr(download_module, "_post_download_mediadive_bulk", lambda *_a: None)
+    config = _config(tmp_path, [{"url": URL_A, "local_name": "thing.json", "tag": "t"}])
+
+    with pytest.raises(RuntimeError, match="upstream 404"):
+        download_module.download(
+            yaml_file=config,
+            output_dir=str(tmp_path),
+            snippet_only=False,
+            ignore_cache=False,
+            tags=None,
+        )

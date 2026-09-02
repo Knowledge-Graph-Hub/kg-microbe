@@ -84,17 +84,23 @@ def download(
     finally:
         if effective_yaml != yaml_file:
             Path(effective_yaml).unlink(missing_ok=True)
-
-    # Snippet runs write deliberately truncated files; recording a URL against
-    # one would claim it is the real artifact.
-    #
-    # Reads the original config, not the filtered one: the filtered copy is a temp
-    # file already unlinked above. Pending-hosting entries are excluded explicitly
-    # instead — `_report_pending` tells the user to satisfy those by hand, so the
-    # artifact often exists without ever having been downloaded, and recording it
-    # against a REPLACE_ME_ placeholder claims a provenance it never had (#929).
-    if not snippet_only:
-        record(yaml_file, output_dir, tags, skip_names=[_local_name_of(e) for e in pending])
+        # Recorded even when the download raised. kghub-downloader aborts the
+        # whole run on the first bad URL, so waiting for success means one dead
+        # source among 63 leaves the manifest unwritten forever — and #911's fix
+        # silently does nothing (#930). Only files that exist are recorded, so a
+        # partial run records exactly what landed.
+        #
+        # Snippet runs write deliberately truncated files; recording a URL against
+        # one would claim it is the real artifact.
+        #
+        # Reads the original config, not the filtered one: the filtered copy is
+        # unlinked just above. Pending-hosting entries are excluded explicitly
+        # instead — `_report_pending` tells the user to satisfy those by hand, so
+        # the artifact often exists without ever having been downloaded, and
+        # recording it against a REPLACE_ME_ placeholder claims a provenance it
+        # never had (#929).
+        if not snippet_only:
+            record(yaml_file, output_dir, tags, skip_names=[_local_name_of(e) for e in pending])
 
     # Post-download: Trigger MediaDive bulk download if mediadive.json was downloaded
     if snippet_only:  # Skip bulk download in snippet mode

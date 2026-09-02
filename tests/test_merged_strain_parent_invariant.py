@@ -196,3 +196,117 @@ def test_a_duplicated_column_name_does_not_hide_violations(tmp_path):
     )
     found = find_multi_parent_strains(path)
     assert set(found) == {"kgmicrobe.strain:ATCC-13722"}, "a duplicated header hid a real violation"
+
+
+def _nodes(tmp_path, rows):
+    header = ["id", "category", "name", "description", "xref", "provided_by", "synonym", "deprecated", "same_as"]
+    path = tmp_path / "merged-kg_nodes.tsv"
+    with path.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.writer(handle, delimiter="\t")
+        writer.writerow(header)
+        writer.writerows(rows)
+    return path
+
+
+def _node(curie, category="biolink:OrganismTaxon", name="a name"):
+    return [curie, category, name, "", "", "infores:x", "", "", ""]
+
+
+def test_a_named_node_is_not_a_stub(tmp_path):
+    """Only nodes KGX invented are of interest; real ones are the whole graph."""
+    from kg_microbe.merge_utils.invariants import find_stub_nodes
+
+    path = _nodes(tmp_path, [_node("NCBITaxon:562")])
+    assert find_stub_nodes(path) == {}
+
+
+def test_a_namedthing_with_no_name_is_a_stub(tmp_path):
+    """
+    That is what KGX writes for an endpoint no source declared.
+
+    It is the shape #892 objected to: an entity with an id, no type worth the
+    name, and no label.
+    """
+    from kg_microbe.merge_utils.invariants import find_stub_nodes
+
+    path = _nodes(tmp_path, [_node("NCBITaxon:999", category="biolink:NamedThing", name="")])
+    assert find_stub_nodes(path) == {"NCBITaxon": ["NCBITaxon:999"]}
+
+
+def test_a_namedthing_that_carries_a_name_is_not_a_stub(tmp_path):
+    """
+    `biolink:NamedThing` is a legitimate category for a node someone declared.
+
+    Flagging on category alone would report real nodes as inventions.
+    """
+    from kg_microbe.merge_utils.invariants import find_stub_nodes
+
+    path = _nodes(tmp_path, [_node("X:1", category="biolink:NamedThing", name="declared")])
+    assert find_stub_nodes(path) == {}
+
+
+def test_cross_reference_prefixes_are_marked_expected(tmp_path):
+    """
+    A GOLD study id names a record in someone else's system.
+
+    We assert edges to those on purpose and never ingest them as nodes, so a
+    stub is correct. Reporting them as problems would bury the 19% that are not
+    — 49,568 of the 60,990 stubs in `merged/20260815` are of this kind.
+    """
+    from kg_microbe.merge_utils.invariants import find_stub_nodes, stub_node_rows
+
+    path = _nodes(
+        tmp_path,
+        [
+            _node("GOLD:Go0022271", category="biolink:NamedThing", name=""),
+            _node("kgmicrobe.strain:ATCC-1", category="biolink:NamedThing", name=""),
+        ],
+    )
+    rows = {row[0]: row[2] for row in stub_node_rows(find_stub_nodes(path))}
+    assert rows == {"GOLD": "yes", "kgmicrobe.strain": "no"}
+
+
+def test_our_own_namespace_is_never_expected(tmp_path):
+    """
+    A `kgmicrobe.*` stub means we referenced something we did not declare.
+
+    That can never be someone else's system, so it must not be allowlisted —
+    all 4,233 in `merged/20260815` come from LPSN alone (#932).
+    """
+    from kg_microbe.merge_utils.invariants import EXPECTED_STUB_PREFIXES
+
+    assert not [p for p in EXPECTED_STUB_PREFIXES if p.startswith("kgmicrobe")]
+
+
+def test_stub_rows_lead_with_the_largest_prefix(tmp_path):
+    """A report nobody can skim is a report nobody reads."""
+    from kg_microbe.merge_utils.invariants import find_stub_nodes, stub_node_rows
+
+    path = _nodes(
+        tmp_path,
+        [_node("A:1", category="biolink:NamedThing", name="")]
+        + [_node(f"B:{i}", category="biolink:NamedThing", name="") for i in range(3)],
+    )
+    rows = stub_node_rows(find_stub_nodes(path))
+    assert [row[0] for row in rows] == ["B", "A"]
+
+
+def test_a_nodes_file_without_the_expected_columns_is_skipped_not_crashed(tmp_path):
+    """A merge that took hours must not die on an unexpected header."""
+    from kg_microbe.merge_utils.invariants import find_stub_nodes
+
+    path = tmp_path / "merged-kg_nodes.tsv"
+    path.write_text("something\telse\nx\ty\n", encoding="utf-8")
+    assert find_stub_nodes(path) == {}
+
+
+def test_an_absent_nodes_file_does_not_break_the_edge_checks(tmp_path):
+    """
+    The strain-parent check needs no nodes file, and callers may point at any edge dump.
+
+    Failing here would make the stub check able to break the check beside it —
+    the coupling #914 was filed about.
+    """
+    path = _edges(tmp_path, [_row("kgmicrobe.strain:DSM-1", "NCBITaxon:5")])
+    assert check_merged_invariants(path) == 0
+    assert (tmp_path / STRAIN_PARENT_REPORT).is_file()

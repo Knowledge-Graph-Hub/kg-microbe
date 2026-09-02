@@ -87,8 +87,14 @@ def download(
 
     # Snippet runs write deliberately truncated files; recording a URL against
     # one would claim it is the real artifact.
+    #
+    # Reads the original config, not the filtered one: the filtered copy is a temp
+    # file already unlinked above. Pending-hosting entries are excluded explicitly
+    # instead — `_report_pending` tells the user to satisfy those by hand, so the
+    # artifact often exists without ever having been downloaded, and recording it
+    # against a REPLACE_ME_ placeholder claims a provenance it never had (#929).
     if not snippet_only:
-        record(effective_yaml if effective_yaml == yaml_file else yaml_file, output_dir, tags)
+        record(yaml_file, output_dir, tags, skip_names=[_local_name_of(e) for e in pending])
 
     # Post-download: Trigger MediaDive bulk download if mediadive.json was downloaded
     if snippet_only:  # Skip bulk download in snippet mode
@@ -96,6 +102,19 @@ def download(
     if tags and MEDIADIVE_TAG not in tags:
         return
     _post_download_mediadive_bulk(output_dir, ignore_cache)
+
+
+def _local_name_of(entry: dict) -> str:
+    """
+    Return the on-disk name an entry writes to.
+
+    :param entry: A download.yaml entry.
+    :return: Its ``local_name``, or the basename of its URL when absent.
+    """
+    name = entry.get("local_name")
+    if name:
+        return str(name)
+    return (entry.get("url") or "").rsplit("/", 1)[-1]
 
 
 def _without_pending_hosting(yaml_file: str, tags: Optional[Sequence[str]]) -> Tuple[str, List[dict]]:

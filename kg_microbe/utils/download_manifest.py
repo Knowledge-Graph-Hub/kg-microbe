@@ -118,25 +118,35 @@ def drop_stale(yaml_file: str, output_dir: str, tags: Optional[Sequence[str]] = 
     return stale
 
 
-def record(yaml_file: str, output_dir: str, tags: Optional[Sequence[str]] = None) -> int:
+def record(
+    yaml_file: str,
+    output_dir: str,
+    tags: Optional[Sequence[str]] = None,
+    skip_names: Optional[Sequence[str]] = None,
+) -> int:
     """
     Record the URL behind every artifact this run left on disk.
 
     Only files that exist are recorded, so a skipped or failed entry does not
-    gain a provenance claim it has not earned.
+    gain a provenance claim it has not earned. ``skip_names`` excludes entries
+    the caller knows were never downloaded -- pending-hosting sources are
+    satisfied by hand, so their artifact exists without having come from the
+    placeholder URL in the config (#929).
 
     :param yaml_file: Download config that was applied.
     :param output_dir: Directory downloads were written to.
     :param tags: Tags this run was restricted to, or None for all.
+    :param skip_names: Local names to leave unrecorded.
     :return: Number of artifacts recorded.
     """
     from kg_microbe.utils.atomic_io import atomic_write
 
+    excluded = set(skip_names or ())
     recorded = dict(read_manifest(output_dir))
     for entry in _selected_entries(yaml_file, tags):
         name = _local_name(entry)
         url = entry.get("url")
-        if name and url and (Path(output_dir) / name).exists():
+        if name and name not in excluded and url and (Path(output_dir) / name).exists():
             recorded[name] = url
     destination = manifest_path(output_dir)
     destination.parent.mkdir(parents=True, exist_ok=True)

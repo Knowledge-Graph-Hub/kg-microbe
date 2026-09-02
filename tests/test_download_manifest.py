@@ -151,3 +151,45 @@ def test_an_entry_without_local_name_falls_back_to_the_url_basename(tmp_path):
     _artifact(tmp_path, "thing.json")
     record(config, str(tmp_path))
     assert set(read_manifest(str(tmp_path))) == {"thing.json"}
+
+
+def test_a_pending_hosting_entry_gains_no_provenance(tmp_path):
+    """
+    Its artifact is placed by hand, so it never came from the URL in the config (#929).
+
+    `_report_pending` tells the user to copy these from a reference directory, so
+    the file usually exists while the config still holds a `REPLACE_ME_`
+    placeholder. Recording that as its provenance answers "what produced this
+    file" with something that produced nothing — worse than answering nothing,
+    since `stale_by_url` already treats "no record" as "leave alone".
+    """
+    config = _config(
+        tmp_path,
+        [
+            {"url": URL_A, "local_name": "real.json", "tag": "t"},
+            {"url": "REPLACE_ME_pending", "local_name": "handplaced.json", "tag": "t"},
+        ],
+    )
+    _artifact(tmp_path, "real.json")
+    _artifact(tmp_path, "handplaced.json")
+    record(config, str(tmp_path), skip_names=["handplaced.json"])
+    recorded = read_manifest(str(tmp_path))
+    assert set(recorded) == {"real.json"}
+    assert "handplaced.json" not in recorded
+
+
+def test_download_excludes_pending_entries_when_recording():
+    """
+    Pin the wiring, not just the helper.
+
+    The exclusion is only useful if `download()` actually passes the pending
+    names through; the ternary it replaced looked like it chose a config and
+    always returned the same one.
+    """
+    import inspect
+
+    from kg_microbe.download import download
+
+    source = inspect.getsource(download)
+    assert "skip_names=[_local_name_of(e) for e in pending]" in source
+    assert "effective_yaml if effective_yaml == yaml_file else yaml_file" not in source

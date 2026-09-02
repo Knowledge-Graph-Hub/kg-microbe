@@ -376,3 +376,41 @@ def test_every_expected_prefix_states_a_reason():
 
     unexplained = [p for p, why in EXPECTED_STUB_PREFIXES.items() if not (why or "").strip()]
     assert not unexplained, f"expected without a reason: {unexplained}"
+
+
+def test_the_nodes_path_can_be_passed_rather_than_guessed(tmp_path):
+    """
+    A derivation that fails looks exactly like a graph with no stubs (#936).
+
+    `str.replace` leaves the name untouched when the pattern is absent, so a
+    destination not using the `_edges`/`_nodes` convention would report clean on
+    a graph whose nodes were never opened — reassuring, and wrong.
+    """
+    from kg_microbe.merge_utils.invariants import STUB_NODE_REPORT
+
+    nodes = tmp_path / "oddly-named-nodes.tsv"
+    header = ["id", "category", "name", "description", "xref", "provided_by", "synonym", "deprecated", "same_as"]
+    with nodes.open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.writer(handle, delimiter="\t")
+        writer.writerow(header)
+        writer.writerow(_node("X:1", category="biolink:NamedThing", name=""))
+    edges = _edges(tmp_path, [_row("kgmicrobe.strain:DSM-1", "NCBITaxon:5")])
+
+    # Without the path it guesses, finds nothing, and writes no report.
+    check_merged_invariants(edges)
+    assert not (tmp_path / STUB_NODE_REPORT).exists()
+
+    # Given the path it actually reads the file.
+    check_merged_invariants(edges, nodes_file=nodes)
+    body = (tmp_path / STUB_NODE_REPORT).read_text(encoding="utf-8").splitlines()
+    assert any(line.startswith("X\t1\t") for line in body), body
+
+
+def test_the_merge_hands_over_the_path_it_already_built():
+    """The caller computes both paths from one base; discarding one invites the guess."""
+    import inspect
+
+    import kg_microbe.merge_utils.merge_kg as merge_kg
+
+    source = inspect.getsource(merge_kg._cleanup_merged_outputs)
+    assert "check_merged_invariants(edges_file, output_dir, nodes_file=nodes_file)" in source

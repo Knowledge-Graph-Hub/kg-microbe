@@ -101,7 +101,11 @@ def strain_parent_rows(violations: Dict[str, Tuple[Set[str], Set[str]]]) -> List
     ]
 
 
-def check_merged_invariants(edges_file: Path, output_dir: Optional[Path] = None) -> int:
+def check_merged_invariants(
+    edges_file: Path,
+    output_dir: Optional[Path] = None,
+    nodes_file: Optional[Path] = None,
+) -> int:
     """
     Run the merged-graph invariants and write their report.
 
@@ -111,6 +115,10 @@ def check_merged_invariants(edges_file: Path, output_dir: Optional[Path] = None)
 
     :param edges_file: Path to ``merged-kg_edges.tsv``.
     :param output_dir: Where to write the report; defaults to the edge file's directory.
+    :param nodes_file: Path to the matching nodes TSV. Defaults to deriving it from
+        the edge file's name, for callers pointing at a bare edge dump -- but the
+        merge hands over the path it already built, because a derivation that fails
+        looks exactly like a graph with no stubs (#936).
     :return: Number of violating strain nodes.
     """
     violations = find_multi_parent_strains(edges_file)
@@ -119,10 +127,10 @@ def check_merged_invariants(edges_file: Path, output_dir: Optional[Path] = None)
         writer = csv.writer(handle, delimiter="\t")
         writer.writerow(STRAIN_PARENT_REPORT_HEADER)
         writer.writerows(strain_parent_rows(violations))
-    # Derived from the edge file's name so the two reports describe one graph.
     # Absent is normal: the strain-parent check needs no nodes file, and callers
     # pointing at an arbitrary edge dump may not have one.
-    nodes_file = edges_file.parent / edges_file.name.replace("_edges.tsv", "_nodes.tsv")
+    if nodes_file is None:
+        nodes_file = edges_file.parent / edges_file.name.replace("_edges.tsv", "_nodes.tsv")
     if nodes_file.is_file():
         # Written whether or not anything was found, for the same reason the
         # strain-parent report is (#903, #934): an absent file cannot be told from

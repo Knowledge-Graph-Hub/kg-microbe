@@ -23,9 +23,10 @@ What it changes, and why each is safe:
   emitting it keeps the header standard.
 * **Adds ``biolink:OntologyClass`` to ecosystem nodes.** ``subclass_of`` requires
   ``OntologyClass`` on both ends, and the GOLD ecosystem hierarchy is exactly
-  that — a class hierarchy. Pipe-adding the category is the same device METPO
-  nodes already use (``METPO:1001000|biolink:Procedure``). Without it those 4,220
-  edges are a Biolink violation.
+  that — a class hierarchy. Pipe-adding a second category is an established
+  device in this repo. Without it those 4,220 edges are a Biolink violation.
+  (This used to cite ``METPO:1001000|biolink:Procedure`` as the precedent; that
+  pairing was removed in #909 because METPO obsoleted ``METPO:1001000``.)
 
 * **Applies the NCBITaxon trim.** KG-Microbe deliberately restricts NCBITaxon to
   microbes (``exclusion_branches.tsv`` removes Viruses, Viridiplantae, Metazoa

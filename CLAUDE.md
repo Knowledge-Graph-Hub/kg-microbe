@@ -128,6 +128,12 @@ the claims report, and the node carries a description saying so. See issues
   `merged_strain_parent_violations.tsv` beside the merged TSVs — empty on a
   clean run, because an absent report cannot be told from a check that never
   ran. See issues #892 and #896.
+- Never assert a METPO term the pinned release has deprecated. A hardcoded CURIE
+  keeps being emitted long after the ontology retires it — nothing errors, and
+  `METPO:2000511` reached 706,765 edges that way. `tests/test_no_deprecated_metpo_terms.py`
+  checks live code and transform output against the pinned `metpo.json`;
+  `KNOWN_DEPRECATED` in `utils/metpo_liveness.py` is for terms with no live
+  successor and every entry needs a tracking issue. See #909.
 - Ontology acquisition or adapter failures abort the run. Do not catch them as
   per-row lookup failures, and construct/resolve adapters in the parent process
   before creating a `Pool`; adapters are large and generally not picklable.

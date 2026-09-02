@@ -376,12 +376,17 @@ BIOSAFETY_CATEGORY = "biolink:Attribute"
 GENOME_CATEGORY = "biolink:Genome"
 
 # Procedure categories
-# Multi-cat: biolink:Procedure carries the biolink semantic for downstream
-# tooling (Procedure is biolink's closest match for a microbial test kit / well),
-# and METPO:1001000 (observation) makes the node a valid object for the
-# METPO:2000511 (has observation) predicate that BacDive uses on the
-# organism→assay edge — so no METPO range-modification is needed upstream.
-ASSAY_CATEGORY = "biolink:Procedure|METPO:1001000"  # API kit assay tests
+# biolink:Procedure is biolink's closest match for a microbial test kit / well.
+#
+# This used to be "biolink:Procedure|METPO:1001000". The METPO half was carried
+# solely so the assay node satisfied the range of METPO:2000511 "has observation",
+# on the reasoning that it avoided needing an upstream change. Upstream changed
+# anyway: METPO obsoleted both halves of that design — METPO:1001000 is now
+# "obsolete observation" and METPO:2000511 is "obsolete has observation". A range
+# that no longer exists cannot be satisfied, so the METPO half was asserting a
+# deprecated class on 503 nodes and buying nothing. See #909, and metpo#461 for
+# the upstream modelling of tests and their outcomes.
+ASSAY_CATEGORY = "biolink:Procedure"  # API kit assay tests
 
 # Deprecated categories - do not use
 # CHEMICAL_SUBSTANCE_CATEGORY = "biolink:ChemicalSubstance"  # removed from biolink; use CHEBI_CATEGORY

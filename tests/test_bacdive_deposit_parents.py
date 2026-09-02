@@ -189,13 +189,16 @@ def test_without_ancestry_any_disagreement_is_a_conflict():
     assert len(conflicts) == 1
 
 
-def test_the_record_is_linked_to_every_deposit_it_cites():
+def test_the_record_is_linked_to_the_deposits_it_safely_cites():
     """
     A deposit node must reach back to whoever asserted it (#894).
 
     Without this edge a `kgmicrobe.strain:<deposit>` node has one outgoing
-    `subclass_of` and nothing else, so a deposit whose claimants disagree —
-    which gets no `subclass_of` at all — would reach no taxon by any path.
+    `subclass_of` and nothing else, so a deposit whose claimants agree would
+    still have no provenance. The link is written after resolution rather than
+    inline, because whether it is safe to assert depends on records not yet read
+    (#899) — that ordering is pinned by
+    `test_close_match_is_emitted_after_resolution_not_during_the_loop`.
 
     Inspected rather than run: `BacDiveTransform.run` needs the NCBITaxon
     adapter, which makes an end-to-end unit test impractical (see the module
@@ -207,13 +210,16 @@ def test_the_record_is_linked_to_every_deposit_it_cites():
     from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
 
     source = Path(inspect.getsourcefile(BacDiveTransform)).read_text()
-    block = source.split("if culture_number_from_external_links:")[1].split("if phys_and_metabolism_enzymes:")[0]
+    block = source.split("for organism_curie, strain_curie in deposit_citations:")[1].split(
+        "for strain_curie, deposit_parent_id in resolved_deposits:"
+    )[0]
+    assert "CLOSE_MATCH_PREDICATE" in block
     assert "CLOSE_MATCH_RELATION" in block
     # Subject is the record node and object the deposit node, not the reverse —
     # the record is the thing making the assertion.
     row = block.split("edge_writer.writerow(")[1].split("]")[0]
     assert [line.strip().rstrip(",") for line in row.splitlines() if line.strip() and "[" not in line][:3] == [
-        "organism_id",
+        "organism_curie",
         "CLOSE_MATCH_PREDICATE",
         "strain_curie",
     ]
@@ -351,3 +357,103 @@ def test_the_report_is_not_described_as_edgeless():
     constants = Path("kg_microbe/transform_utils/constants.py").read_text()
     stanza = constants.split("BACDIVE_DEPOSIT_CLAIMS_FILE")[0].rsplit("\n\n", 1)[-1]
     assert "collapsed" in stanza and "suppressed" in stanza
+
+
+def test_a_deposit_that_kept_its_parent_is_safe_to_link():
+    """Claimants that agree describe one deposit; linking to it asserts nothing false."""
+    from kg_microbe.transform_utils.bacdive.emission import resolution_asserts_a_parent
+
+    assert resolution_asserts_a_parent(RESOLUTION_COLLAPSED) is True
+
+
+def test_a_deposit_with_disjoint_claims_is_not_safe_to_link():
+    """
+    `close_match` is symmetric and maps to `SEMMEDDB:same_as` (#899).
+
+    `kgmicrobe.strain:AS-1` is claimed by BacDive 7239 (*Methylophilus
+    methylotrophus*) and 134230 (*Alteromonas simiduii*) — one in-house
+    designation two labs reused. Linking both records to it puts two unrelated
+    organisms two hops apart over a predicate consumers read as identity.
+    """
+    from kg_microbe.transform_utils.bacdive.emission import resolution_asserts_a_parent
+
+    assert resolution_asserts_a_parent(RESOLUTION_SUPPRESSED) is False
+
+
+def test_an_unverifiable_deposit_is_not_linked_either():
+    """
+    Not asserting beats asserting what could not be checked (#897, #899).
+
+    When ancestry is unreadable the claims cannot be compared, so the deposit may
+    or may not be a collision. The claims report records which it was.
+    """
+    from kg_microbe.transform_utils.bacdive.emission import resolution_asserts_a_parent
+
+    assert resolution_asserts_a_parent(RESOLUTION_SUPPRESSED_NO_ANCESTRY) is False
+
+
+def test_close_match_is_emitted_after_resolution_not_during_the_loop():
+    """
+    Whether a citation is safe depends on records not yet read (#899).
+
+    Emitting inline is what shipped the false equivalences: the edge was written
+    before the deposit's other claimants had been seen.
+    """
+    import inspect
+    from pathlib import Path
+
+    from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
+
+    source = Path(inspect.getsourcefile(BacDiveTransform)).read_text()
+    loop_block = source.split("if culture_number_from_external_links:")[1].split("if phys_and_metabolism_enzymes:")[0]
+    assert "deposit_citations.append" in loop_block
+    assert "CLOSE_MATCH_PREDICATE" not in loop_block, "citation must not be asserted inline"
+
+
+def test_a_contested_deposit_node_explains_its_own_emptiness():
+    """
+    An edgeless node must not look like an ingest gap (#907).
+
+    A contested deposit gets no parent and no record link, which leaves an
+    organism-typed node carrying a culture number and nothing else. Without a
+    description it is indistinguishable from a term the transform failed to
+    process, which is the failure mode it is the fix for.
+    """
+    from kg_microbe.transform_utils.bacdive.emission import contested_deposit_description
+
+    text = contested_deposit_description({"NCBITaxon:1122236": ["7239"], "NCBITaxon:398036": ["134230"]})
+    assert "NCBITaxon:1122236 (BacDive 7239)" in text
+    assert "NCBITaxon:398036 (BacDive 134230)" in text
+    assert "does not identify a single organism" in text
+    # Scoped to BacDive: 55 of these nodes do carry an LPSN close_match (#908).
+    assert "BacDive asserts no parent taxon and no record link" in text
+    assert "Other sources may still reference this node." in text
+
+
+def test_the_description_is_deterministic():
+    """Node rows must not change between runs on dict ordering alone."""
+    from kg_microbe.transform_utils.bacdive.emission import contested_deposit_description
+
+    a = contested_deposit_description({"NCBITaxon:2": ["9", "1"], "NCBITaxon:1": ["5"]})
+    b = contested_deposit_description({"NCBITaxon:1": ["5"], "NCBITaxon:2": ["1", "9"]})
+    assert a == b
+    assert a.index("NCBITaxon:1") < a.index("NCBITaxon:2")
+
+
+def test_only_contested_deposits_carry_a_description():
+    """
+    The 151,575 uncontested deposits must stay as they were.
+
+    A description on every deposit would bury the 437 that mean something.
+    """
+    import inspect
+    from pathlib import Path
+
+    from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
+
+    source = Path(inspect.getsourcefile(BacDiveTransform)).read_text()
+    block = source.split("for strain_curie, strain_label in deposit_labels.items():")[1].split(
+        "for organism_curie, strain_curie in deposit_citations:"
+    )[0]
+    assert "if strain_curie in unsafe_deposits" in block
+    assert "else None" in block

@@ -50,6 +50,50 @@ RESOLUTION_SUPPRESSED = "suppressed"
 RESOLUTION_SUPPRESSED_NO_ANCESTRY = "suppressed_ancestry_unavailable"
 
 
+def contested_deposit_description(parents):
+    """
+    Explain, on the node itself, why a contested deposit has no edges (#907).
+
+    A deposit whose claimants disagreed gets neither a parent nor a link to the
+    records that cited it, which leaves an organism-typed node with a culture
+    number for a label and nothing else -- indistinguishable from an ingest gap.
+    The description says which taxa were claimed so the emptiness reads as a
+    decision.
+
+    Scoped to BacDive on purpose: 55 of these deposits are the object of an LPSN
+    ``close_match`` edge, so a sentence claiming nothing links to the node would
+    be false in the merged graph (#908). This transform cannot see LPSN's output
+    and should not try to -- it states only what it did itself.
+
+    :param parents: ``{NCBITaxon CURIE: [BacDive record key, ...]}`` for the deposit.
+    :return: One-sentence description naming the conflicting claims.
+    """
+    claims = ", ".join(f"{taxon} (BacDive {', '.join(sorted(keys))})" for taxon, keys in sorted(parents.items()))
+    return (
+        "Culture-collection designation claimed by BacDive records that disagree on "
+        f"the organism: {claims}. BacDive asserts no parent taxon and no record link "
+        "for it, because the designation does not identify a single organism. Other "
+        "sources may still reference this node."
+    )
+
+
+def resolution_asserts_a_parent(resolution):
+    """
+    Report whether a resolution left the deposit with a parent taxon.
+
+    Used to decide whether a record may be linked to the deposit at all. A
+    deposit that got a parent is one identifier its claimants agree about, so
+    linking to it is sound. One that got none is a designation two unrelated
+    organisms happen to share, and ``biolink:close_match`` -- symmetric, and
+    mapped to ``SEMMEDDB:same_as`` -- would put those organisms two hops apart
+    (#899).
+
+    :param resolution: One of the ``RESOLUTION_*`` values.
+    :return: True when a parent was asserted.
+    """
+    return resolution == RESOLUTION_COLLAPSED
+
+
 def entailed_by_every_claim(parents, ancestors_of):
     """
     Return the one claimed taxon that every other claim entails, or None.

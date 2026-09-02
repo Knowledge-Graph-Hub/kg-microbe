@@ -53,3 +53,19 @@ def test_the_generator_holds_the_parent_in_one_place():
     source = GENERATOR.read_text(encoding="utf-8")
     assert '_PHENO_PARENT = "METPO:1000059"' in source
     assert '_PHENO_PARENT = "METPO:1000000"' not in source
+
+
+def test_the_generated_report_says_how_to_regenerate_it():
+    """
+    #901 existed because a report named a generator that no longer existed.
+
+    A reader who opens the report must not have to find a second document to
+    learn it is generated, or that hand-editing it is pointless.
+    """
+    report = REPO_ROOT / "docs" / "metpo" / "metpo_proposal_release_diff.md"
+    text = report.read_text(encoding="utf-8")
+    assert "scripts/diff_metpo_proposals.py" in text
+    assert "Do not edit by hand" in text
+    # The proposal artifacts are generated too, and editing them directly is the
+    # mistake the regenerate-and-diff gate exists to catch.
+    assert "scripts/extract_metpo_proposals.py" in text

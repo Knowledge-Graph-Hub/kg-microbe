@@ -60,14 +60,20 @@ def contested_deposit_description(parents):
     The description says which taxa were claimed so the emptiness reads as a
     decision.
 
+    Scoped to BacDive on purpose: 55 of these deposits are the object of an LPSN
+    ``close_match`` edge, so a sentence claiming nothing links to the node would
+    be false in the merged graph (#908). This transform cannot see LPSN's output
+    and should not try to -- it states only what it did itself.
+
     :param parents: ``{NCBITaxon CURIE: [BacDive record key, ...]}`` for the deposit.
     :return: One-sentence description naming the conflicting claims.
     """
     claims = ", ".join(f"{taxon} (BacDive {', '.join(sorted(keys))})" for taxon, keys in sorted(parents.items()))
     return (
         "Culture-collection designation claimed by BacDive records that disagree on "
-        f"the organism: {claims}. No parent taxon or record link is asserted because "
-        "the designation does not identify a single organism."
+        f"the organism: {claims}. BacDive asserts no parent taxon and no record link "
+        "for it, because the designation does not identify a single organism. Other "
+        "sources may still reference this node."
     )
 
 

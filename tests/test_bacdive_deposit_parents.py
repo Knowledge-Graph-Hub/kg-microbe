@@ -425,6 +425,9 @@ def test_a_contested_deposit_node_explains_its_own_emptiness():
     assert "NCBITaxon:1122236 (BacDive 7239)" in text
     assert "NCBITaxon:398036 (BacDive 134230)" in text
     assert "does not identify a single organism" in text
+    # Scoped to BacDive: 55 of these nodes do carry an LPSN close_match (#908).
+    assert "BacDive asserts no parent taxon and no record link" in text
+    assert "Other sources may still reference this node." in text
 
 
 def test_the_description_is_deterministic():

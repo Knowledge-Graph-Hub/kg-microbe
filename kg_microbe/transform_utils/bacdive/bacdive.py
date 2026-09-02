@@ -957,6 +957,75 @@ class BacDiveTransform(Transform):
         self._ncbitaxon_ancestor_cache[ncbitaxon_id] = ancestors
         return ancestors
 
+    def _emit_stubs_for_unresolvable_taxa(self) -> int:
+        """
+        Give every NCBITaxon this run pointed at a typed node, or KGX invents one.
+
+        A ``subclass_of`` edge whose object has no node row anywhere makes KGX
+        synthesize a bare ``biolink:NamedThing`` with no label. #892 saw 1,652 of
+        those in the 20240826 build and asked whether they were still being
+        emitted; 113 were. They are taxids BacDive carries that the pinned
+        NCBITaxon release does not contain -- retired or merged by NCBI, or newer
+        than the release -- and none of them appear anywhere in the extract, not
+        even as an alternative id.
+
+        Dropping the edges instead was measured and rejected: 857 of the 862
+        affected strains have no other parent, so removing the edge orphans them
+        from the taxonomy entirely, which is worse than an unresolvable parent.
+
+        Reads back this run's own edges rather than hooking the ten places that
+        emit a taxon edge, so a path added later is covered without being
+        remembered.
+
+        :return: Number of stub nodes written.
+        """
+        edge_objects: set = set()
+        with open(self.output_edge_file, encoding="utf-8", errors="replace") as handle:
+            handle.readline()
+            for line in handle:
+                fields = line.split("\t")
+                if len(fields) > 2 and fields[2].startswith(NCBITAXON_PREFIX):
+                    edge_objects.add(fields[2])
+        if not edge_objects:
+            return 0
+        node_ids: set = set()
+        with open(self.output_node_file, encoding="utf-8", errors="replace") as handle:
+            handle.readline()
+            for line in handle:
+                node_id = line.split("\t", 1)[0]
+                if node_id.startswith(NCBITAXON_PREFIX):
+                    node_ids.add(node_id)
+        # Ids in the extract get their node row from the ontologies transform at
+        # merge time, so they are not missing even though we did not write them.
+        missing = sorted(edge_objects - node_ids - set(self.ncbitaxon_labels))
+        if not missing:
+            return 0
+        with open(self.output_node_file, "a", encoding="utf-8", newline="") as handle:
+            writer = csv.writer(handle, delimiter="\t")
+            for curie in missing:
+                label = self._get_ncbitaxon_label(curie)
+                writer.writerow(
+                    self._create_node_row(
+                        curie,
+                        NCBI_CATEGORY,
+                        label or curie,
+                        description=(
+                            "Referenced by BacDive but absent from the pinned NCBITaxon release"
+                            + (
+                                " (label recovered from the ontology adapter)."
+                                if label
+                                else ", including as an alternative id; most likely retired or merged by NCBI."
+                            )
+                        ),
+                    )
+                )
+        logger.info(
+            "[bacdive] %s NCBITaxon parents are not in the pinned release; "
+            "wrote typed stub nodes so they do not become untyped NamedThing (#895)",
+            f"{len(missing):,}",
+        )
+        return len(missing)
+
     def _parse_genus_from_scientific_name(self, scientific_name: str) -> Optional[str]:
         """
         Extract genus name from binomial nomenclature.
@@ -2087,8 +2156,13 @@ class BacDiveTransform(Transform):
                             ncbitaxon_id = NCBITAXON_PREFIX + str(general_info[NCBITAXON_ID][NCBITAXON_ID])
                         ncbi_description = general_info.get(GENERAL_DESCRIPTION, "")
                         ncbi_label = self._get_ncbitaxon_label(ncbitaxon_id)
-                        if ncbi_label is None:
-                            ncbi_label = ncbi_description
+                        # Deliberately not falling back to ncbi_description here. It is
+                        # a free-text sentence about one strain ("... was isolated from
+                        # wastewater from paper mill."), and using it as a taxon's name
+                        # gave 93 nodes a 130-character sentence for a label -- worse
+                        # than being unlabelled, because it passes every "does this node
+                        # have a name" check while being unusable. The sentence goes to
+                        # the description slot at the write sites instead (#919).
 
                     # If no NCBITaxon ID from BacDive JSON, try searching by name
                     if ncbitaxon_id is None and name_tax_classification:
@@ -2665,7 +2739,12 @@ class BacDiveTransform(Transform):
                             ]
                             if ncbitaxon_id:
                                 nodes_data_to_write.append(
-                                    self._create_node_row(ncbitaxon_id, NCBI_CATEGORY, ncbi_label)
+                                    self._create_node_row(
+                                        ncbitaxon_id,
+                                        NCBI_CATEGORY,
+                                        ncbi_label or ncbitaxon_id,
+                                        description=None if ncbi_label else ncbi_description,
+                                    )
                                 )
 
                             node_writer.writerows(nodes_data_to_write)
@@ -2729,7 +2808,14 @@ class BacDiveTransform(Transform):
                             for _, value in nodes_from_keywords.items()
                         ]
                         if ncbitaxon_id:
-                            nodes_data_to_write.append(self._create_node_row(ncbitaxon_id, NCBI_CATEGORY, ncbi_label))
+                            nodes_data_to_write.append(
+                                self._create_node_row(
+                                    ncbitaxon_id,
+                                    NCBI_CATEGORY,
+                                    ncbi_label or ncbitaxon_id,
+                                    description=None if ncbi_label else ncbi_description,
+                                )
+                            )
 
                         node_writer.writerows(nodes_data_to_write)
 
@@ -3528,6 +3614,8 @@ class BacDiveTransform(Transform):
             f"{len(self._ncbitaxon_ancestry_failures):,}",
             claims_file,
         )
+
+        self._emit_stubs_for_unresolvable_taxa()
 
         drop_duplicates(
             self.output_node_file,

@@ -23,6 +23,7 @@ from kg_microbe.transform_utils.constants import (
     SUBCLASS_PREDICATE,
     SUBJECT_COLUMN,
 )
+from kg_microbe.utils.atomic_io import atomic_write
 
 logger = logging.getLogger(__name__)
 
@@ -110,8 +111,6 @@ def check_merged_invariants(edges_file: Path, output_dir: Optional[Path] = None)
     :param output_dir: Where to write the report; defaults to the edge file's directory.
     :return: Number of violating strain nodes.
     """
-    from kg_microbe.utils.atomic_io import atomic_write
-
     violations = find_multi_parent_strains(edges_file)
     destination = Path(output_dir or edges_file.parent) / STRAIN_PARENT_REPORT
     with atomic_write(destination, newline="") as handle:

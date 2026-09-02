@@ -10,6 +10,7 @@ from kg_microbe.utils.metpo_liveness import (
     KNOWN_DEPRECATED,
     deprecated_metpo_terms,
     metpo_json_path,
+    vendored_deprecated_terms,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -64,6 +65,33 @@ def _curies_in_code(path: Path):
     return found
 
 
+def test_the_vendored_list_matches_the_pinned_ontology():
+    """
+    The vendored set must not drift from the release it claims to describe.
+
+    It exists so the scans run in CI (#924); reconciling it here is what stops it
+    becoming a stale allowlist of its own. This is the only check that needs the
+    ontology, so it is the only one that skips without it.
+    """
+    deprecated = _require_pinned_ontology()
+    vendored = vendored_deprecated_terms()
+    assert vendored == deprecated, (
+        f"vendored list is stale ({len(vendored)} vs {len(deprecated)} in the ontology); "
+        "run scripts/refresh_deprecated_metpo_curies.py"
+    )
+
+
+def _require_vendored():
+    """
+    Return the vendored deprecated set, which is committed and so available everywhere.
+
+    :return: Set of deprecated CURIEs.
+    """
+    vendored = vendored_deprecated_terms()
+    assert vendored, "tests/resources/metpo_deprecated_curies.txt is missing or empty"
+    return vendored
+
+
 def test_the_allowlist_only_holds_terms_that_are_actually_deprecated():
     """
     An entry that is no longer deprecated is debt that has silently been paid.
@@ -71,7 +99,7 @@ def test_the_allowlist_only_holds_terms_that_are_actually_deprecated():
     Left in place it hides the next real one, because the reader assumes the
     allowlist is current.
     """
-    deprecated = _require_pinned_ontology()
+    deprecated = _require_vendored()
     stale = sorted(set(KNOWN_DEPRECATED) - deprecated)
     assert not stale, f"no longer deprecated upstream, drop from KNOWN_DEPRECATED: {stale}"
 
@@ -90,7 +118,7 @@ def test_no_new_deprecated_metpo_term_is_referenced_in_code():
     categories because both are hardcoded constants: the ontology changed under
     them and nothing compared what we emit against what it declares.
     """
-    deprecated = _require_pinned_ontology()
+    deprecated = _require_vendored()
     offenders = {}
     for root in CODE_ROOTS:
         for path in sorted(root.rglob("*.py")):
@@ -115,23 +143,54 @@ def test_the_assay_category_no_longer_carries_the_obsolete_observation_class():
     assert "METPO:1001000" not in ASSAY_CATEGORY
 
 
-def test_transform_outputs_carry_no_unexpected_deprecated_term(tmp_path):
+def test_transform_outputs_carry_no_unexpected_deprecated_term():
     """
     Guard the artifacts too, not just the source.
 
     A CURIE can reach the graph from a mapping TSV without appearing in any
     Python file, which the source scan above would miss entirely.
+
+    Sweeps predicates, node categories and edge endpoints across every transform
+    — not just bacdive's predicate column. `METPO:1001000` was deprecated while
+    sitting in the *category* of 503 assay nodes, so a predicate-only scan of one
+    transform would have missed the defect that motivated this check (#925).
     """
-    deprecated = _require_pinned_ontology()
-    edges = REPO_ROOT / "data" / "transformed" / "bacdive" / "edges.tsv"
-    if not edges.is_file():
-        pytest.skip("bacdive transform output not present")
-    seen = set()
-    with edges.open(encoding="utf-8", errors="replace") as handle:
-        handle.readline()
-        for line in handle:
-            fields = line.split("\t")
-            if len(fields) > 2 and fields[1].startswith("METPO:"):
-                seen.add(fields[1])
-    offenders = sorted((seen & deprecated) - set(KNOWN_DEPRECATED))
-    assert not offenders, f"deprecated METPO predicates in bacdive/edges.tsv: {offenders}"
+    deprecated = _require_vendored()
+    transformed = REPO_ROOT / "data" / "transformed"
+    if not transformed.is_dir():
+        pytest.skip("no transform output present")
+    offenders = {}
+
+    def note(curie, where):
+        if curie in deprecated and curie not in KNOWN_DEPRECATED:
+            offenders.setdefault(curie, set()).add(where)
+
+    for edges in sorted(transformed.glob("*/edges.tsv")):
+        with edges.open(encoding="utf-8", errors="replace") as handle:
+            handle.readline()
+            for line in handle:
+                fields = line.rstrip("\n").split("\t")
+                if len(fields) < 3:
+                    continue
+                note(fields[1], f"{edges.parent.name}/edges.tsv predicate")
+                for endpoint in (fields[0], fields[2]):
+                    note(endpoint, f"{edges.parent.name}/edges.tsv endpoint")
+    for nodes in sorted(transformed.glob("*/nodes.tsv")):
+        with nodes.open(encoding="utf-8", errors="replace") as handle:
+            header = handle.readline().rstrip("\n").split("\t")
+            category_at = header.index("category") if "category" in header else 1
+            for line in handle:
+                fields = line.rstrip("\n").split("\t")
+                if len(fields) <= category_at:
+                    continue
+                # Multi-category is exactly how METPO:1001000 was carried.
+                for token in fields[category_at].split("|"):
+                    note(token, f"{nodes.parent.name}/nodes.tsv category")
+                note(fields[0], f"{nodes.parent.name}/nodes.tsv id")
+
+    assert not offenders, (
+        "deprecated METPO terms in transform output: "
+        + "; ".join(f"{curie} in {sorted(where)}" for curie, where in sorted(offenders.items()))
+        + ". If the code no longer references the term, the artifact predates the fix and the "
+        "transform needs rerunning — this checks what was shipped, not what would be shipped now."
+    )

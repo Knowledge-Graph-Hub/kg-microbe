@@ -49,6 +49,27 @@ def metpo_json_path() -> Path:
     return Path(RAW_DATA_DIR) / "metpo.json"
 
 
+#: Vendored copy of the deprecated set, so the guard runs where data/raw is not
+#: available — which is CI, and is where it most needs to run (#924). Refresh with
+#: scripts/refresh_deprecated_metpo_curies.py whenever METPO_VERSION moves.
+VENDORED_DEPRECATED = Path(__file__).resolve().parents[2] / "tests" / "resources" / "metpo_deprecated_curies.txt"
+
+
+def vendored_deprecated_terms() -> Set[str]:
+    """
+    Return the deprecated CURIEs recorded for the pinned release.
+
+    :return: Set of CURIEs; empty when the vendored file is missing.
+    """
+    if not VENDORED_DEPRECATED.is_file():
+        return set()
+    return {
+        line.strip()
+        for line in VENDORED_DEPRECATED.read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.startswith("#")
+    }
+
+
 def deprecated_metpo_terms(path: Optional[Path] = None) -> Set[str]:
     """
     Return every METPO CURIE the pinned release marks deprecated.

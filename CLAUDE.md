@@ -122,6 +122,12 @@ the claims report, and the node carries a description saying so. See issues
 - Cache existence must imply completeness. Use `atomic_write` from
   `kg_microbe.utils.atomic_io`, including completion markers where the helper
   requires them; never publish a partially written cache path.
+- The merge checks invariants that no single transform can. A transform only
+  polices the edges it writes, and `kgmicrobe.strain:*` is minted by several
+  sources, so `merge_utils/invariants.py` re-checks after the merge and writes
+  `merged_strain_parent_violations.tsv` beside the merged TSVs — empty on a
+  clean run, because an absent report cannot be told from a check that never
+  ran. See issues #892 and #896.
 - Ontology acquisition or adapter failures abort the run. Do not catch them as
   per-row lookup failures, and construct/resolve adapters in the parent process
   before creating a `Pool`; adapters are large and generally not picklable.

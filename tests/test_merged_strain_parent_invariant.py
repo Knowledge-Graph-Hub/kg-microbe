@@ -175,3 +175,24 @@ def test_a_failing_check_cannot_stop_the_tarball_being_rewritten(monkeypatch, tm
 
     merge_kg._cleanup_merged_outputs(str(config))
     assert rewritten, "a failing invariant check suppressed the tarball rewrite"
+
+
+def test_a_duplicated_column_name_does_not_hide_violations(tmp_path):
+    """
+    A merged header can repeat a column, and last-wins would read the wrong one (#915).
+
+    KGX takes the column union across sources, which is why `merge_kg` has
+    `_first_index`. Resolving last-wins here would find no strain subjects and
+    report a clean graph — silent, and in the reassuring direction.
+    """
+    header = HEADER + ["subject"]
+    path = _edges(
+        tmp_path,
+        [
+            _row("kgmicrobe.strain:ATCC-13722", "NCBITaxon:272240") + ["something-else"],
+            _row("kgmicrobe.strain:ATCC-13722", "NCBITaxon:1915061") + ["something-else"],
+        ],
+        header=header,
+    )
+    found = find_multi_parent_strains(path)
+    assert set(found) == {"kgmicrobe.strain:ATCC-13722"}, "a duplicated header hid a real violation"

@@ -53,7 +53,14 @@ def find_multi_parent_strains(
             header = next(reader)
         except StopIteration:
             return {}
-        index = {name: i for i, name in enumerate(header)}
+        # First occurrence, matching `merge_kg._first_index`. A merged header can
+        # carry a repeated column name -- KGX takes the column union across sources
+        # -- and a last-wins lookup would read the wrong column, find no strain
+        # subjects, and report a clean graph. Silent, and in the reassuring
+        # direction, which is the worst way for a check like this to fail (#915).
+        index = {}
+        for position, name in enumerate(header):
+            index.setdefault(name, position)
         needed = (SUBJECT_COLUMN, PREDICATE_COLUMN, OBJECT_COLUMN)
         if any(column not in index for column in needed):
             logger.warning(

@@ -88,6 +88,28 @@ def _curies_in_code(path: Path):
     return found
 
 
+def test_the_vendored_list_names_the_pinned_release():
+    """
+    The vendored set must not outlive the release it describes (#927).
+
+    The deep reconciliation below needs the ontology, so it skips in CI and,
+    while #911 stands, locally too. Without this the list would keep describing
+    an old release after METPO_VERSION moved, and every scan would pass against
+    it — clean, and blind to exactly the terms the guard exists for.
+
+    Same shape as the `download.yaml` guard in `test_metpo_version_pin.py`: a
+    file that cannot import the constant is checked against it instead.
+    """
+    from kg_microbe.transform_utils.constants import METPO_VERSION
+
+    header = [line for line in VENDORED_DEPRECATED.read_text(encoding="utf-8").splitlines() if line.startswith("#")]
+    declared = next((line.split(":", 1)[1].strip() for line in header if line.startswith("# release:")), None)
+    assert declared == METPO_VERSION, (
+        f"vendored list describes METPO {declared}, but METPO_VERSION is {METPO_VERSION}; "
+        "run scripts/refresh_deprecated_metpo_curies.py"
+    )
+
+
 def test_the_vendored_list_matches_the_pinned_ontology():
     """
     The vendored set must not drift from the release it claims to describe.

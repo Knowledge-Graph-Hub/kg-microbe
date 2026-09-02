@@ -100,7 +100,15 @@ def download(
         # recording it against a REPLACE_ME_ placeholder claims a provenance it
         # never had (#929).
         if not snippet_only:
-            record(yaml_file, output_dir, tags, skip_names=[_local_name_of(e) for e in pending])
+            try:
+                record(yaml_file, output_dir, tags, skip_names=[_local_name_of(e) for e in pending])
+            except Exception as exc:  # noqa: BLE001
+                # An exception raised in a finally REPLACES the one propagating
+                # through it, so a failed manifest write would be reported instead
+                # of the upstream 404 that actually stopped the download. The
+                # manifest is bookkeeping about a download; it must never be what a
+                # failed download reports (#931, and #914 for the same argument).
+                print(f"[download] could not record provenance: {exc}")
 
     # Post-download: Trigger MediaDive bulk download if mediadive.json was downloaded
     if snippet_only:  # Skip bulk download in snippet mode

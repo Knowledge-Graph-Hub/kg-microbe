@@ -251,3 +251,34 @@ def test_the_failing_download_still_propagates(tmp_path, monkeypatch):
             ignore_cache=False,
             tags=None,
         )
+
+
+def test_a_manifest_failure_does_not_mask_the_download_error(tmp_path, monkeypatch):
+    """
+    An exception in a `finally` replaces the one propagating through it (#931).
+
+    The manifest is bookkeeping about a download; a failed write must never be
+    what a failed download reports, or the user chases a disk error instead of
+    the upstream 404 that actually stopped them.
+    """
+    download_module = importlib.import_module("kg_microbe.download")
+
+    def boom(**_kwargs):
+        raise RuntimeError("upstream 404")
+
+    def cannot_record(*_a, **_k):
+        raise OSError("read-only file system")
+
+    monkeypatch.setattr(download_module, "download_from_yaml", boom)
+    monkeypatch.setattr(download_module, "record", cannot_record)
+    monkeypatch.setattr(download_module, "_post_download_mediadive_bulk", lambda *_a: None)
+    config = _config(tmp_path, [{"url": URL_A, "local_name": "thing.json", "tag": "t"}])
+
+    with pytest.raises(RuntimeError, match="upstream 404"):
+        download_module.download(
+            yaml_file=config,
+            output_dir=str(tmp_path),
+            snippet_only=False,
+            ignore_cache=False,
+            tags=None,
+        )

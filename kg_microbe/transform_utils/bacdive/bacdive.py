@@ -3298,10 +3298,14 @@ class BacDiveTransform(Transform):
                                         # trait itself, so it must NOT use the trait predicate (ferments /
                                         # assimilates etc.) — that would map an organism to a procedure as
                                         # if it were a substrate, violating the predicate's biolink-mapped
-                                        # range. Use METPO:2000511 (has observation); the assay nodes carry
-                                        # METPO:1001000 (observation) in their multi-category (see
-                                        # ASSAY_CATEGORY in constants.py) so the predicate's existing
-                                        # METPO:1001000 range is satisfied without an upstream change.
+                                        # range.
+                                        #
+                                        # BACDIVE_ASSAY_PREDICATE is METPO:2000511, which upstream has
+                                        # obsoleted with no successor declared. It is still emitted
+                                        # deliberately and is the single entry on the known-deprecated
+                                        # allowlist in tests/test_no_deprecated_metpo_terms.py — see #909
+                                        # for why no live term replaces it, and metpo#461 for the upstream
+                                        # modelling that would.
                                         assay_predicate = BACDIVE_ASSAY_PREDICATE
                                         knowledge_level, agent_type = self._add_edge_metadata(
                                             assay_predicate, INTERACTS_WITH_RELATION, assay_id

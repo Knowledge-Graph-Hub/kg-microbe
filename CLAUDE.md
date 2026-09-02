@@ -100,7 +100,8 @@ lookup that failed. A record that cites a deposit links to it with
 where the deposit kept a parent. `close_match` is symmetric and maps to
 `SEMMEDDB:same_as`, so on a deposit whose claimants proved to be unrelated
 organisms it would assert an equivalence between them; those citations stay in
-the claims report. See issues #892, #894 and #899.
+the claims report, and the node carries a description saying so. See issues
+#892, #894, #899 and #907.
 
 ## Operational traps
 

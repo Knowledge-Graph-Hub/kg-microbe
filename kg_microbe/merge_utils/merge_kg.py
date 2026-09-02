@@ -11,6 +11,7 @@ from typing import Dict, List, Optional
 import networkx as nx  # type: ignore
 import yaml
 
+from kg_microbe.merge_utils.invariants import check_merged_invariants
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
     CATEGORY_COLUMN,
@@ -214,6 +215,10 @@ def _cleanup_merged_outputs(yaml_file: str) -> None:
             _normalize_nodes_tsv(nodes_file)
         if edges_file.is_file():
             _normalize_edges_tsv(edges_file)
+            # Checked here rather than in each transform: a transform can only
+            # police the edges it writes, and kgmicrobe.strain is a namespace
+            # several sources mint into (#896).
+            check_merged_invariants(edges_file, output_dir)
 
         if dest.get("compression") == "tar.gz":
             if nodes_file.is_file() and edges_file.is_file():

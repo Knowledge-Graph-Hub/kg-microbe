@@ -85,6 +85,21 @@ traversable; it is not a claim that the isolate is an ontology class. Biolink
 validators will report it; do not silently change the convention. See issue
 #834 and [the 4.4.2 revalidation](docs/BIOLINK_4_4_2_REVALIDATION.md).
 
+A `kgmicrobe.strain:<code>` node minted from a culture-collection deposit number
+is shared: several source records can cite the same deposit, and they do not
+always agree on the taxon. Such a node gets the one claimed parent that every
+claimant entails — the claim itself when they agree, the shared ancestor when
+they differ only in depth along one lineage. Never a computed common ancestor
+nobody claimed, and never one of two disjoint claims: those get no parent at all
+and go to the source's deposit-claim report, because picking one would make
+the answer depend on file order. That report carries every deposit whose
+claimants disagreed, whichever way it went, so a coarsened taxonomy and a
+suppressed one are both visible and neither is confused with an ontology
+lookup that failed. Every record that cites a deposit links to it
+with `biolink:close_match`, so the deposit's provenance is in the graph and its
+taxonomy stays reachable through the record even when no parent is asserted.
+See issues #892 and #894.
+
 ## Operational traps
 
 - PREGO defaults to `PREGO_SHAPES=habitat` and `PREGO_MIN_CONFIDENCE=0`.

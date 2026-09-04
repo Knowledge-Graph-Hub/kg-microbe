@@ -110,5 +110,108 @@ class CliTests(unittest.TestCase):
         self.assertTrue(ccm._parse_args(["--allow-stale-vendored"]).allow_stale_vendored)
 
 
+class DryRunTests(unittest.TestCase):
+    """--dry-run must preview without touching a single tracked byte."""
+
+    def test_flag_defaults_off(self):
+        """Writing is the default; the preview is opt-in."""
+        self.assertFalse(ccm._parse_args([]).dry_run)
+
+    def test_flag_parses(self):
+        """The preview flag is reachable from the command line."""
+        self.assertTrue(ccm._parse_args(["--dry-run"]).dry_run)
+
+    def test_sync_does_not_copy_under_dry_run(self):
+        """A diverging source of truth is reported, not copied over."""
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            mim = tmp / "mim" / "mappings"
+            mim.mkdir(parents=True)
+            (mim / "ingredient_mappings.sssom.tsv").write_text("fresh\n", encoding="utf-8")
+
+            vendored = tmp / "mappings" / "ingredient_mappings.sssom.tsv"
+            vendored.parent.mkdir(parents=True)
+            vendored.write_text("stale\n", encoding="utf-8")
+
+            with mock.patch.dict("os.environ", {ccm._MIM_ROOT_ENV: str(tmp / "mim")}):
+                ccm.sync_mim_sssom(tmp, dry_run=True)
+
+            # The whole point: the stale copy is still stale afterwards.
+            self.assertEqual(vendored.read_text(encoding="utf-8"), "stale\n")
+
+    def test_sync_copies_when_not_dry_run(self):
+        """The same divergence is actually synced on a real run."""
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            mim = tmp / "mim" / "mappings"
+            mim.mkdir(parents=True)
+            (mim / "ingredient_mappings.sssom.tsv").write_text("fresh\n", encoding="utf-8")
+
+            vendored = tmp / "mappings" / "ingredient_mappings.sssom.tsv"
+            vendored.parent.mkdir(parents=True)
+            vendored.write_text("stale\n", encoding="utf-8")
+
+            with mock.patch.dict("os.environ", {ccm._MIM_ROOT_ENV: str(tmp / "mim")}):
+                ccm.sync_mim_sssom(tmp)
+
+            self.assertEqual(vendored.read_text(encoding="utf-8"), "fresh\n")
+
+
+class ExportDeltaTests(unittest.TestCase):
+    """The preview has to report the shape of a change, not just its size."""
+
+    @staticmethod
+    def _write(path: Path, triples) -> None:
+        header = "subject_id\tpredicate_id\tobject_id\n"
+        body = "".join(f"{s}\t{p}\t{o}\n" for s, p, o in triples)
+        path.write_text("# comment\n" + header + body, encoding="utf-8")
+
+    def test_triples_skips_comments_and_header(self):
+        """SSSOM metadata blocks must not be mistaken for mappings."""
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            f = Path(td) / "a.tsv"
+            self._write(f, [("A:1", "skos:exactMatch", "B:1")])
+            self.assertEqual(ccm._sssom_triples(f), {("A:1", "skos:exactMatch", "B:1")})
+
+    def test_delta_separates_added_from_removed(self):
+        """A net count hides removals; +2091/-279 nets to +1812."""
+        import io
+        import tempfile
+        from contextlib import redirect_stdout
+
+        with tempfile.TemporaryDirectory() as td:
+            published = Path(td) / "published.tsv"
+            candidate = Path(td) / "candidate.tsv"
+            self._write(published, [("A:1", "p", "B:1"), ("A:2", "p", "B:2")])
+            self._write(candidate, [("A:1", "p", "B:1"), ("A:3", "p", "B:3")])
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                ccm._report_export_delta(candidate, published)
+        out = buf.getvalue()
+        self.assertIn("added     1", out)
+        self.assertIn("removed   1", out)
+        self.assertIn("Nothing was written", out)
+
+    def test_missing_published_artifact_is_reported(self):
+        """A first run has nothing to diff against and must say so."""
+        import io
+        import tempfile
+        from contextlib import redirect_stdout
+
+        with tempfile.TemporaryDirectory() as td:
+            candidate = Path(td) / "candidate.tsv"
+            self._write(candidate, [("A:1", "p", "B:1")])
+            buf = io.StringIO()
+            with redirect_stdout(buf):
+                ccm._report_export_delta(candidate, Path(td) / "absent.tsv")
+        self.assertIn("would create it", buf.getvalue())
+
+
 if __name__ == "__main__":
     unittest.main()

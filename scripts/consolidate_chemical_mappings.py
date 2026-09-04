@@ -63,11 +63,13 @@ Output:
 
 import argparse
 import csv
+import gzip
 import hashlib
 import json
 import os
 import re
 import shutil
+import tempfile
 from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Set
@@ -239,12 +241,52 @@ def _file_sha256(path: Path) -> str:
     return h.hexdigest()
 
 
+def _sssom_triples(path: Path) -> set:
+    """The (subject, predicate, object) triples in a unified SSSOM export."""
+    opener = gzip.open if str(path).endswith(".gz") else open
+    triples = set()
+    with opener(path, "rt", encoding="utf-8") as fh:
+        header = None
+        for line in fh:
+            if line.startswith("#"):
+                continue
+            parts = line.rstrip("\n").split("\t")
+            if header is None:
+                header = parts
+                continue
+            row = dict(zip(header, parts))
+            triples.add((row.get("subject_id"), row.get("predicate_id"), row.get("object_id")))
+    return triples
+
+
+def _report_export_delta(candidate: Path, published: Path) -> None:
+    """Print what promoting ``candidate`` over ``published`` would change.
+
+    A row count alone hides the shape of a change: the refresh that prompted
+    this preview was +1,812 net, which was 2,091 added against 279 removed.
+    """
+    if not published.exists():
+        print(f"[dry-run] no published artifact at {published}; would create it")
+        return
+    before, after = _sssom_triples(published), _sssom_triples(candidate)
+    added, removed = after - before, before - after
+    print(f"\n[dry-run] would write {candidate.name} over {published}")
+    print(f"  triples   {len(before):,} -> {len(after):,}  ({len(after) - len(before):+,})")
+    print(f"  added     {len(added):,}")
+    print(f"  removed   {len(removed):,}")
+    for label, sample in (("added", added), ("removed", removed)):
+        for subject, predicate, obj in list(sample)[:5]:
+            print(f"    {label[:1]} {subject}  {predicate}  {obj}")
+    print("  Nothing was written. Re-run without --dry-run to apply.")
+
+
 def _sync_vendored_from_sibling(
     base_dir: Path,
     sibling_relpath: Path,
     vendored_relpath: Path,
     label: str,
     allow_stale_vendored: bool = False,
+    dry_run: bool = False,
 ) -> Path:
     """
     Refresh a vendored copy of a MediaIngredientMech artifact from the sibling repo.
@@ -271,10 +313,13 @@ def _sync_vendored_from_sibling(
     if sibling.exists():
         if not vendored.exists():
             print(f"Syncing {label} (vendored copy missing): {sibling} → {vendored}")
-            shutil.copy2(sibling, vendored)
+            if not dry_run:
+                shutil.copy2(sibling, vendored)
         elif _file_sha256(sibling) != _file_sha256(vendored):
-            print(f"Syncing {label} from source of truth: {sibling} → {vendored}")
-            shutil.copy2(sibling, vendored)
+            verb = "[dry-run] would sync" if dry_run else "Syncing"
+            print(f"{verb} {label} from source of truth: {sibling} → {vendored}")
+            if not dry_run:
+                shutil.copy2(sibling, vendored)
         else:
             print(f"{label} up-to-date with sibling repo ({sibling})")
         print(f"  {label} source of truth: {sibling} sha256={_file_sha256(sibling)[:12]}")
@@ -308,7 +353,9 @@ def _sync_vendored_from_sibling(
     )
 
 
-def sync_mim_sssom(base_dir: Path, allow_stale_vendored: bool = False) -> Path:
+def sync_mim_sssom(
+    base_dir: Path, allow_stale_vendored: bool = False, dry_run: bool = False
+) -> Path:
     """Sync the vendored MIM SSSOM mapping from the sibling repo if present."""
     return _sync_vendored_from_sibling(
         base_dir,
@@ -316,10 +363,13 @@ def sync_mim_sssom(base_dir: Path, allow_stale_vendored: bool = False) -> Path:
         _MIM_VENDORED_RELPATH,
         "MIM SSSOM",
         allow_stale_vendored=allow_stale_vendored,
+        dry_run=dry_run,
     )
 
 
-def sync_culturebotai_reviewed(base_dir: Path, allow_stale_vendored: bool = False) -> Path:
+def sync_culturebotai_reviewed(
+    base_dir: Path, allow_stale_vendored: bool = False, dry_run: bool = False
+) -> Path:
     """
     Sync the vendored unified ingredient mapping from the sibling repo.
 
@@ -335,6 +385,7 @@ def sync_culturebotai_reviewed(base_dir: Path, allow_stale_vendored: bool = Fals
         _CBAI_VENDORED_RELPATH,
         "CultureBotAI reviewed ingredients",
         allow_stale_vendored=allow_stale_vendored,
+        dry_run=dry_run,
     )
 
 
@@ -2645,6 +2696,14 @@ class ChemicalMappingConsolidator:
 def _parse_args(argv=None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__.strip().splitlines()[0])
     parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help=(
+            "Run the full consolidation and report what would change, without writing "
+            "the vendored copies or the unified artifact."
+        ),
+    )
+    parser.add_argument(
         "--allow-stale-vendored",
         action="store_true",
         help=(
@@ -2706,12 +2765,18 @@ def main(argv=None):
     # Authoritative CultureBotAI reviewed mappings (required).
     # MIM sibling repo is the source of truth — sync the vendored copy first.
     consolidator.load_culturebotai_reviewed(
-        sync_culturebotai_reviewed(base_dir, allow_stale_vendored=args.allow_stale_vendored)
+        sync_culturebotai_reviewed(
+            base_dir,
+            allow_stale_vendored=args.allow_stale_vendored,
+            dry_run=args.dry_run,
+        )
     )
 
     # Authoritative MediaIngredientMech SSSOM mapping set (required).
     # MIM sibling repo is the source of truth — sync the vendored copy first.
-    mim_sssom_path = sync_mim_sssom(base_dir, allow_stale_vendored=args.allow_stale_vendored)
+    mim_sssom_path = sync_mim_sssom(
+        base_dir, allow_stale_vendored=args.allow_stale_vendored, dry_run=args.dry_run
+    )
     consolidator.load_mediaingredientmech_sssom(mim_sssom_path)
 
     # Optional complementary MIM artifact: complex_ingredients.tsv.gz
@@ -2720,14 +2785,13 @@ def main(argv=None):
     # available, otherwise we try the sibling repo's mappings/ folder.
     complex_path = base_dir / "mappings" / "complex_ingredients.tsv.gz"
     if not complex_path.exists():
-        sibling_complex = (
-            base_dir.parent / "MediaIngredientMech" / "mappings"
-            / "complex_ingredients.tsv.gz"
-        )
+        sibling_complex = _mim_root(base_dir) / "mappings" / "complex_ingredients.tsv.gz"
         if sibling_complex.exists():
-            import shutil as _shutil
-            _shutil.copy2(sibling_complex, complex_path)
-            print(f"Synced complex_ingredients.tsv.gz: {sibling_complex} → {complex_path}")
+            if args.dry_run:
+                print(f"[dry-run] would sync complex_ingredients.tsv.gz from {sibling_complex}")
+            else:
+                shutil.copy2(sibling_complex, complex_path)
+                print(f"Synced complex_ingredients.tsv.gz: {sibling_complex} → {complex_path}")
     if complex_path.exists():
         consolidator.load_complex_ingredients(complex_path)
     else:
@@ -2775,6 +2839,16 @@ def main(argv=None):
     # product. Runtime transforms read this same file via
     # ``kg_microbe.utils.chemical_mapping_utils``; the entity-centric TSV
     # index has been retired in favour of SSSOM-with-extension-columns.
+    if args.dry_run:
+        # Export to a scratch path so the whole pipeline still runs -- including
+        # the sssom round-trip validation -- then report the delta and discard.
+        # Skipping the write instead would preview nothing worth reviewing.
+        with tempfile.TemporaryDirectory() as scratch:
+            candidate = Path(scratch) / sssom_output_path.name
+            consolidator.export_unified_sssom(candidate)
+            _report_export_delta(candidate, sssom_output_path)
+        return
+
     consolidator.export_unified_sssom(sssom_output_path)
 
     print(f"\n✓ Unified SSSOM created: {sssom_output_path}")

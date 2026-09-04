@@ -73,8 +73,18 @@ Missing-legacy handling: when a priority-1/2/5 source file is absent (items 1 & 
 ### Regenerating
 
 ```bash
+# Preview: runs the full consolidation, reports what would change, writes nothing.
+poetry run python scripts/consolidate_chemical_mappings.py --dry-run
+
+# Apply.
 poetry run python scripts/consolidate_chemical_mappings.py
 ```
+
+`--dry-run` exports to a scratch path rather than skipping the write, so the
+`sssom` round-trip validation still runs and the preview reports a real delta —
+added and removed counts separately, with samples. A net row count hides the
+shape of a change: the #946 refresh was +1,812 net, which was 2,091 added
+against 279 removed, and the removals were the half worth checking.
 
 Pipeline order:
 1. Seed from the existing `mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz` (priority reconstructed per row from `source` labels).

@@ -61,9 +61,11 @@ Output:
       entity-centric view in memory by grouping rows on ``object_id``.
 """
 
+import argparse
 import csv
 import hashlib
 import json
+import os
 import re
 import shutil
 from collections import defaultdict
@@ -78,15 +80,31 @@ from kg_microbe.utils.chemical_mapping_utils import (
 )
 from kg_microbe.utils.ontology_utils import FatalOntologyError, get_chebi_adapter
 
+# Environment override for the MediaIngredientMech checkout. Filesystem adjacency
+# is not a contract: worktrees, CI checkouts and containers routinely place MIM
+# somewhere other than `../MediaIngredientMech`, and silently falling back to the
+# vendored copy there produces a "successful" run built on stale data (#947).
+# `build_mim_ingredient_sssom.py` on the claw side already honours this variable.
+_MIM_ROOT_ENV = "MEDIAINGREDIENTMECH_ROOT"
+
+
+def _mim_root(base_dir: Path) -> Path:
+    """The MediaIngredientMech checkout: env override first, sibling by default."""
+    override = os.environ.get(_MIM_ROOT_ENV)
+    if override:
+        return Path(override).expanduser()
+    return base_dir / ".." / "MediaIngredientMech"
+
+
 # Path (relative to kg-microbe repo root) where the sibling MediaIngredientMech
 # checkout is expected to live. The MIM repo is the source of truth for the
 # ingredient SSSOM mapping set and is synced into ``mappings/`` on every run.
-_MIM_SIBLING_RELPATH = Path("..") / "MediaIngredientMech" / "mappings" / "ingredient_mappings.sssom.tsv"
+_MIM_SIBLING_RELPATH = Path("mappings") / "ingredient_mappings.sssom.tsv"
 _MIM_VENDORED_RELPATH = Path("mappings") / "ingredient_mappings.sssom.tsv"
 # MIM publishes the unified ingredient mapping at the repo root. kg-microbe's
 # vendored copy keeps its historical name (`culturebotai_reviewed_ingredients`)
 # and carries one extra column (`synonyms`) that the loader ignores.
-_CBAI_SIBLING_RELPATH = Path("..") / "MediaIngredientMech" / "UNIFIED_INGREDIENT_MAPPING.tsv"
+_CBAI_SIBLING_RELPATH = Path("UNIFIED_INGREDIENT_MAPPING.tsv")
 _CBAI_VENDORED_RELPATH = Path("mappings") / "culturebotai_reviewed_ingredients.tsv"
 
 
@@ -226,26 +244,29 @@ def _sync_vendored_from_sibling(
     sibling_relpath: Path,
     vendored_relpath: Path,
     label: str,
+    allow_stale_vendored: bool = False,
 ) -> Path:
     """
     Refresh a vendored copy of a MediaIngredientMech artifact from the sibling repo.
 
     The MediaIngredientMech repo is the authoritative source of truth for the
-    ingredient mapping artifacts kg-microbe consumes. When checked out as a
-    sibling of kg-microbe, this refreshes the vendored copy so the consolidator
+    ingredient mapping artifacts kg-microbe consumes. Its location comes from
+    ``MEDIAINGREDIENTMECH_ROOT`` when set, else the ``../MediaIngredientMech``
+    sibling; either way this refreshes the vendored copy so the consolidator
     always ingests the latest curations.
 
     Behaviour:
       - sibling present, content differs → overwrite vendored (sibling wins)
       - sibling present, content matches → no copy, just confirm up-to-date
-      - sibling absent, vendored present → warn and continue with vendored
+      - sibling absent, vendored present → raise, unless allow_stale_vendored
+        (a refresh that cannot reach its source of truth is a failed refresh, #947)
       - neither present → raise FileNotFoundError
 
     Returns the path to use (always the vendored path, which is authoritative
     once synced).
     """
     vendored = (base_dir / vendored_relpath).resolve()
-    sibling = (base_dir / sibling_relpath).resolve()
+    sibling = (_mim_root(base_dir) / sibling_relpath).resolve()
 
     if sibling.exists():
         if not vendored.exists():
@@ -256,14 +277,26 @@ def _sync_vendored_from_sibling(
             shutil.copy2(sibling, vendored)
         else:
             print(f"{label} up-to-date with sibling repo ({sibling})")
+        print(f"  {label} source of truth: {sibling} sha256={_file_sha256(sibling)[:12]}")
         return vendored
 
     if vendored.exists():
-        print(
-            f"Warning: MediaIngredientMech sibling repo not found at {sibling};\n"
-            f"  using vendored {label} copy {vendored} (may be stale — "
-            "clone/pull MediaIngredientMech as a sibling of kg-microbe and re-run)"
+        message = (
+            f"MediaIngredientMech source of truth not found for {label}.\n"
+            f"  expected: {sibling}\n"
+            f"  vendored: {vendored} (may be stale)\n"
+            f"  Set {_MIM_ROOT_ENV} to the MediaIngredientMech checkout, or clone it\n"
+            "  as a sibling of kg-microbe, and re-run."
         )
+        if not allow_stale_vendored:
+            # Exiting 0 here regenerates every artifact from stale input while
+            # every downstream validation still passes, because the output is
+            # internally consistent with the wrong source (#947). A refresh that
+            # cannot reach its source of truth is a failed refresh.
+            raise FileNotFoundError(
+                message + "\n  Pass --allow-stale-vendored to proceed anyway."
+            )
+        print(f"Warning: {message}\n  Proceeding on the vendored copy (--allow-stale-vendored).")
         return vendored
 
     raise FileNotFoundError(
@@ -275,14 +308,18 @@ def _sync_vendored_from_sibling(
     )
 
 
-def sync_mim_sssom(base_dir: Path) -> Path:
+def sync_mim_sssom(base_dir: Path, allow_stale_vendored: bool = False) -> Path:
     """Sync the vendored MIM SSSOM mapping from the sibling repo if present."""
     return _sync_vendored_from_sibling(
-        base_dir, _MIM_SIBLING_RELPATH, _MIM_VENDORED_RELPATH, "MIM SSSOM"
+        base_dir,
+        _MIM_SIBLING_RELPATH,
+        _MIM_VENDORED_RELPATH,
+        "MIM SSSOM",
+        allow_stale_vendored=allow_stale_vendored,
     )
 
 
-def sync_culturebotai_reviewed(base_dir: Path) -> Path:
+def sync_culturebotai_reviewed(base_dir: Path, allow_stale_vendored: bool = False) -> Path:
     """
     Sync the vendored unified ingredient mapping from the sibling repo.
 
@@ -297,6 +334,7 @@ def sync_culturebotai_reviewed(base_dir: Path) -> Path:
         _CBAI_SIBLING_RELPATH,
         _CBAI_VENDORED_RELPATH,
         "CultureBotAI reviewed ingredients",
+        allow_stale_vendored=allow_stale_vendored,
     )
 
 
@@ -2604,8 +2642,23 @@ class ChemicalMappingConsolidator:
         self._validate_sssom_file(sssom_output_path)
 
 
-def main():
+def _parse_args(argv=None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__.strip().splitlines()[0])
+    parser.add_argument(
+        "--allow-stale-vendored",
+        action="store_true",
+        help=(
+            "Proceed when the MediaIngredientMech checkout cannot be found, using the "
+            "possibly-stale vendored copies. Off by default: a refresh that cannot reach "
+            "its source of truth is a failed refresh (#947)."
+        ),
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv=None):
     """Main consolidation workflow."""
+    args = _parse_args(argv)
     base_dir = Path(__file__).parent.parent
     consolidator = ChemicalMappingConsolidator()
 
@@ -2652,11 +2705,13 @@ def main():
 
     # Authoritative CultureBotAI reviewed mappings (required).
     # MIM sibling repo is the source of truth — sync the vendored copy first.
-    consolidator.load_culturebotai_reviewed(sync_culturebotai_reviewed(base_dir))
+    consolidator.load_culturebotai_reviewed(
+        sync_culturebotai_reviewed(base_dir, allow_stale_vendored=args.allow_stale_vendored)
+    )
 
     # Authoritative MediaIngredientMech SSSOM mapping set (required).
     # MIM sibling repo is the source of truth — sync the vendored copy first.
-    mim_sssom_path = sync_mim_sssom(base_dir)
+    mim_sssom_path = sync_mim_sssom(base_dir, allow_stale_vendored=args.allow_stale_vendored)
     consolidator.load_mediaingredientmech_sssom(mim_sssom_path)
 
     # Optional complementary MIM artifact: complex_ingredients.tsv.gz

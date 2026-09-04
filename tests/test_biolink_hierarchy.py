@@ -124,7 +124,7 @@ class TestBiolinkHierarchy:
     def test_get_ancestors_named_thing(self, hierarchy):
         """Test get_ancestors for NamedThing (root has no ancestors)."""
         ancestors = hierarchy.get_ancestors("biolink:NamedThing")
-        # NamedThing is root, but has Entity as parent in Biolink v4.3.6
+        # NamedThing is root, but has Entity as parent in the pinned Biolink model
         # Check if it returns Entity
         assert len(ancestors) >= 0
 

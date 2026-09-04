@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import os
-import re
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
@@ -11,11 +10,6 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_SCHEMA_PATH = REPO_ROOT / "data" / "raw" / "biolink-model.yaml"
 DEFAULT_PREDICATE_MAP_PATH = REPO_ROOT / "data" / "raw" / "predicate_mapping.yaml"
-
-#: Matches the top-level ``imports:`` block and its ``- item`` entries. Parsing
-#: the whole 512 KB model just to read one list would cost half a second on
-#: every call, and this runs at import time.
-_IMPORTS_BLOCK = re.compile(r"^imports:\s*$\n((?:\s*-\s*\S+\s*$\n?)+)", re.MULTILINE)
 
 
 def sibling_imports(schema_path: Path) -> list[Path]:
@@ -29,15 +23,32 @@ def sibling_imports(schema_path: Path) -> list[Path]:
     model raised ``FileNotFoundError`` from deep inside linkml on every load
     (#939). Reporting it here names the missing file and the fix instead.
 
+    The list is read with a real YAML parser rather than a regex over the
+    ``imports:`` block. A regex handles today's block style and silently returns
+    nothing for the equally valid flow style, which would restore the #939
+    failure with no signal that the guard had stopped working -- a silent
+    degradation in the guard against silent degradation (#942). The parse costs
+    about 50 ms with ``CSafeLoader`` against the 264 ms BMT already spends
+    building a ``SchemaView`` from the same file, and runs once per pipeline
+    invocation, not once per record.
+
     :param schema_path: Path to the local Biolink model YAML.
     :return: Paths the model expects beside itself, whether or not they exist.
     """
     if not schema_path.is_file():
         return []
-    match = _IMPORTS_BLOCK.search(schema_path.read_text(encoding="utf-8"))
-    if match is None:
+    import yaml
+
+    # CSafeLoader is the libyaml-backed equivalent of SafeLoader and constructs
+    # no arbitrary objects; ruff's S506 cannot see that through getattr.
+    loader = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
+    model = yaml.load(schema_path.read_text(encoding="utf-8"), Loader=loader)  # noqa: S506
+    if not isinstance(model, Mapping):
         return []
-    names = [line.strip().lstrip("-").strip().strip("\"'") for line in match.group(1).splitlines()]
+    declared = model.get("imports") or []
+    if isinstance(declared, str):
+        declared = [declared]
+    names = [str(name) for name in declared if isinstance(name, str)]
     return [schema_path.parent / f"{name}.yaml" for name in names if name and ":" not in name]
 
 

@@ -113,3 +113,27 @@ def test_prepare_kgx_names_the_missing_import_rather_than_failing_inside_linkml(
     monkeypatch.setenv("KG_MICROBE_BIOLINK_PREDICATE_MAP", str(predicate_map))
     with pytest.raises(FileNotFoundError, match="attributes.yaml"):
         prepare_kgx()
+
+
+def test_sibling_imports_reads_flow_style_too(tmp_path):
+    """
+    A regex over the ``imports:`` block returned nothing for this form.
+
+    Both spellings are valid YAML and mean the same thing, so a guard that reads
+    one and silently returns ``[]`` for the other restores the #939 failure with
+    no signal that it stopped working (#942).
+    """
+    from kg_microbe.utils.biolink_model import sibling_imports
+
+    schema = tmp_path / "biolink-model.yaml"
+    schema.write_text("id: https://example.org/t\nname: t\nimports: [linkml:types, attributes]\n", encoding="utf-8")
+    assert [p.name for p in sibling_imports(schema)] == ["attributes.yaml"]
+
+
+def test_sibling_imports_tolerates_a_model_with_no_imports(tmp_path):
+    """A model that imports nothing is not an error, and must not be one."""
+    from kg_microbe.utils.biolink_model import sibling_imports
+
+    schema = tmp_path / "biolink-model.yaml"
+    schema.write_text("id: https://example.org/t\nname: t\n", encoding="utf-8")
+    assert sibling_imports(schema) == []

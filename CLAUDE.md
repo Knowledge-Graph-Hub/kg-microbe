@@ -176,9 +176,22 @@ environment variables, defaults, and risk warnings. Do not duplicate that
 inventory here.
 
 KGX/BMT must use the pinned local Biolink files downloaded to
-`data/raw/biolink-model.yaml` and `data/raw/predicate_mapping.yaml`. Updating the
+`data/raw/biolink-model.yaml`, `data/raw/predicate_mapping.yaml`, and
+`data/raw/attributes.yaml`. The last of these is not optional: the model
+declares `imports: [linkml:types, attributes]` and linkml resolves `attributes`
+as a sibling file, so without it the pinned model cannot be loaded at all. All
+three move together — half a schema at one version is worse than either version
+alone — and `tests/test_biolink_schema_pin.py` checks that `download.yaml`
+fetches every file the shipped model imports, at one pinned tag. Updating the
 Biolink version requires changing `download.yaml`, the lock file, fixtures, and
 tests together.
+
+A pin bump alone does not refresh `data/raw`. The 4.4.2 bump landed in August
+2026 and the 4.3.6 file already on disk was never replaced, so every run since
+validated against a version nothing declared; the download manifest then
+recorded the 4.4.2 URL for it, which made the skew self-perpetuating. After
+changing a pin, confirm the file on disk actually moved. See issues #937, #939
+and #940.
 
 METPO is pinned the same way. `METPO_VERSION` in `transform_utils/constants.py`
 is the single source of truth, and the ontology (`metpo.owl`, `metpo.json`) and

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
@@ -10,6 +11,34 @@ from typing import Any
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_SCHEMA_PATH = REPO_ROOT / "data" / "raw" / "biolink-model.yaml"
 DEFAULT_PREDICATE_MAP_PATH = REPO_ROOT / "data" / "raw" / "predicate_mapping.yaml"
+
+#: Matches the top-level ``imports:`` block and its ``- item`` entries. Parsing
+#: the whole 512 KB model just to read one list would cost half a second on
+#: every call, and this runs at import time.
+_IMPORTS_BLOCK = re.compile(r"^imports:\s*$\n((?:\s*-\s*\S+\s*$\n?)+)", re.MULTILINE)
+
+
+def sibling_imports(schema_path: Path) -> list[Path]:
+    """
+    Return the files ``schema_path`` imports from its own directory.
+
+    ``biolink-model.yaml`` declares ``imports: [linkml:types, attributes]``.
+    A prefixed name such as ``linkml:types`` is resolved from the installed
+    linkml runtime, but a bare one is a sibling file that must be downloaded
+    alongside the model -- and ``attributes.yaml`` never was, so the pinned
+    model raised ``FileNotFoundError`` from deep inside linkml on every load
+    (#939). Reporting it here names the missing file and the fix instead.
+
+    :param schema_path: Path to the local Biolink model YAML.
+    :return: Paths the model expects beside itself, whether or not they exist.
+    """
+    if not schema_path.is_file():
+        return []
+    match = _IMPORTS_BLOCK.search(schema_path.read_text(encoding="utf-8"))
+    if match is None:
+        return []
+    names = [line.strip().lstrip("-").strip().strip("\"'") for line in match.group(1).splitlines()]
+    return [schema_path.parent / f"{name}.yaml" for name in names if name and ":" not in name]
 
 
 def _configured_path(env_name: str, default: Path) -> Path:
@@ -29,7 +58,8 @@ def prepare_kgx() -> None:
     """
     schema_path = _configured_path("KG_MICROBE_BIOLINK_MODEL", DEFAULT_SCHEMA_PATH)
     predicate_map_path = _configured_path("KG_MICROBE_BIOLINK_PREDICATE_MAP", DEFAULT_PREDICATE_MAP_PATH)
-    missing = [path for path in (schema_path, predicate_map_path) if not path.is_file()]
+    required = [schema_path, predicate_map_path, *sibling_imports(schema_path)]
+    missing = [path for path in required if not path.is_file()]
     if missing:
         formatted = ", ".join(str(path) for path in missing)
         raise FileNotFoundError(

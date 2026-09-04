@@ -597,6 +597,15 @@
   url: https://raw.githubusercontent.com/biolink/biolink-model/v4.4.2/predicate_mapping.yaml
   local_name: predicate_mapping.yaml
   tag: schema
+# biolink-model.yaml declares `imports: [linkml:types, attributes]`, and linkml
+# resolves `attributes` as a sibling file. Without it the pinned local model
+# cannot be loaded at all, so this is a required half of the schema, not an
+# extra (#939). It must move with biolink-model.yaml: pairing the two halves at
+# different versions is worse than either version alone.
+-
+  url: https://raw.githubusercontent.com/biolink/biolink-model/v4.4.2/attributes.yaml
+  local_name: attributes.yaml
+  tag: schema
 
 # Immutable METPO templates consumed by multiple trait transforms
 -

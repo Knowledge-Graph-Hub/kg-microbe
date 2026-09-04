@@ -1,4 +1,5 @@
-"""The consolidator must not regenerate artifacts from stale input (#947).
+"""
+The consolidator must not regenerate artifacts from stale input (#947).
 
 A run whose MediaIngredientMech checkout is unreachable used to print one
 warning and exit 0, rewriting ~610k rows from a vendored copy that was three
@@ -35,10 +36,12 @@ class MimRootResolutionTests(unittest.TestCase):
     """``MEDIAINGREDIENTMECH_ROOT`` wins; the sibling is only the default."""
 
     def test_env_override_wins(self):
+        """The env var is honoured verbatim, ignoring repo adjacency."""
         with mock.patch.dict("os.environ", {ccm._MIM_ROOT_ENV: "/somewhere/else/MIM"}):
             self.assertEqual(ccm._mim_root(Path("/repo")), Path("/somewhere/else/MIM"))
 
     def test_sibling_is_the_default(self):
+        """With no override, MIM is expected beside the kg-microbe checkout."""
         with mock.patch.dict("os.environ", {}, clear=True):
             self.assertEqual(
                 ccm._mim_root(Path("/repo")).resolve(),
@@ -56,6 +59,7 @@ class StaleVendoredFallbackTests(unittest.TestCase):
         return vendored
 
     def test_missing_source_raises_by_default(self):
+        """An unreachable source of truth fails the run rather than warning."""
         import tempfile
 
         with tempfile.TemporaryDirectory() as td:
@@ -70,6 +74,7 @@ class StaleVendoredFallbackTests(unittest.TestCase):
         self.assertIn("--allow-stale-vendored", str(ctx.exception))
 
     def test_opt_in_allows_the_stale_copy(self):
+        """--allow-stale-vendored is the only way to proceed on stale data."""
         import tempfile
 
         with tempfile.TemporaryDirectory() as td:
@@ -80,6 +85,7 @@ class StaleVendoredFallbackTests(unittest.TestCase):
         self.assertEqual(got, vendored.resolve())
 
     def test_reviewed_ingredients_follows_the_same_contract(self):
+        """Both synced artifacts fail closed, not just the SSSOM."""
         import tempfile
 
         with tempfile.TemporaryDirectory() as td:
@@ -93,10 +99,14 @@ class StaleVendoredFallbackTests(unittest.TestCase):
 
 
 class CliTests(unittest.TestCase):
+    """The safe default has to survive contact with the command line."""
+
     def test_flag_defaults_off(self):
+        """Failing closed is the default; nobody has to remember a flag."""
         self.assertFalse(ccm._parse_args([]).allow_stale_vendored)
 
     def test_flag_parses(self):
+        """The opt-in flag is reachable from the command line."""
         self.assertTrue(ccm._parse_args(["--allow-stale-vendored"]).allow_stale_vendored)
 
 

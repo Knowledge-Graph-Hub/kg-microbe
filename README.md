@@ -56,14 +56,18 @@ The release workflow publishes the checksum-verified Jenkins artifact as
 release also includes `artifact-provenance.txt` with the build URL, checksum,
 and workflow revision.
 
-- Immutable dated builds:
-  `https://kg-hub.berkeleybop.io/kg-microbe/YYYYMMDD/kg-microbe.tar.gz`
-- Mutable most-recent build:
-  `https://kg-hub.berkeleybop.io/kg-microbe/current/kg-microbe.tar.gz`
-- Latest curated GitHub release: [releases/latest](https://github.com/Knowledge-Graph-Hub/kg-microbe/releases/latest)
+Download builds from GitHub releases:
 
-Use a dated URL or a GitHub release checksum for reproducible downstream work;
-the `current` URL changes after a successful pipeline publication.
+- All releases: [releases](https://github.com/Knowledge-Graph-Hub/kg-microbe/releases)
+- Latest curated release: [releases/latest](https://github.com/Knowledge-Graph-Hub/kg-microbe/releases/latest)
+- Merged graph matching the 2024-08-26 taxa-to-media predictions:
+  [2024-08-26/20240826.tar.gz](https://github.com/Knowledge-Graph-Hub/kg-microbe/releases/download/2024-08-26/20240826.tar.gz)
+  (SHA-256 `5eae75b3d189dc61cb53a3b2348435c6fcf6941d98538af3e789f7059d0a67fa`)
+
+Pin a specific release tag and verify the checksum for reproducible downstream
+work. The former `https://kg-hub.berkeleybop.io/kg-microbe/...` dated and
+`current` URLs are no longer served (they return 404); GitHub releases are the
+supported distribution channel.
 
 ## Release
  ### Requirements

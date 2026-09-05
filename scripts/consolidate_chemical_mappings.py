@@ -323,7 +323,12 @@ def _sync_vendored_from_sibling(
         else:
             print(f"{label} up-to-date with sibling repo ({sibling})")
         print(f"  {label} source of truth: {sibling} sha256={_file_sha256(sibling)[:12]}")
-        return vendored
+        # Under --dry-run nothing was copied, so handing back the vendored path
+        # would have callers load the pre-refresh content and preview the delta
+        # of doing nothing -- wrong in exactly the case the preview exists for
+        # (#951). Return the source instead: read what the apply would install,
+        # write nothing.
+        return sibling if dry_run else vendored
 
     if vendored.exists():
         message = (
@@ -2784,16 +2789,17 @@ def main(argv=None):
     # carry. Published by MIM alongside the SSSOM — vendored here if
     # available, otherwise we try the sibling repo's mappings/ folder.
     complex_path = base_dir / "mappings" / "complex_ingredients.tsv.gz"
+    sibling_complex = _mim_root(base_dir) / "mappings" / "complex_ingredients.tsv.gz"
     if not complex_path.exists():
-        sibling_complex = _mim_root(base_dir) / "mappings" / "complex_ingredients.tsv.gz"
         if sibling_complex.exists():
             if args.dry_run:
                 print(f"[dry-run] would sync complex_ingredients.tsv.gz from {sibling_complex}")
             else:
                 shutil.copy2(sibling_complex, complex_path)
                 print(f"Synced complex_ingredients.tsv.gz: {sibling_complex} → {complex_path}")
-    if complex_path.exists():
-        consolidator.load_complex_ingredients(complex_path)
+    complex_source = complex_path if complex_path.exists() else sibling_complex
+    if complex_source is not None and complex_source.exists():
+        consolidator.load_complex_ingredients(complex_source)
     else:
         print("Skipping complex_ingredients.tsv.gz: not present")
 

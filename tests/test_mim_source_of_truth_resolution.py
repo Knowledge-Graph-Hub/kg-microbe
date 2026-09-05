@@ -141,6 +141,55 @@ class DryRunTests(unittest.TestCase):
             # The whole point: the stale copy is still stale afterwards.
             self.assertEqual(vendored.read_text(encoding="utf-8"), "stale\n")
 
+    def test_dry_run_returns_the_source_not_the_stale_vendored_copy(self):
+        """
+        The preview must read what the apply would install, not the old copy.
+
+        Returning the vendored path under --dry-run made callers load
+        pre-refresh content, so the preview reported the delta of doing nothing
+        -- wrong in exactly the case a preview exists for (#951).
+        """
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            mim = tmp / "mim" / "mappings"
+            mim.mkdir(parents=True)
+            source = mim / "ingredient_mappings.sssom.tsv"
+            source.write_text("fresh\n", encoding="utf-8")
+
+            vendored = tmp / "mappings" / "ingredient_mappings.sssom.tsv"
+            vendored.parent.mkdir(parents=True)
+            vendored.write_text("stale\n", encoding="utf-8")
+
+            with mock.patch.dict("os.environ", {ccm._MIM_ROOT_ENV: str(tmp / "mim")}):
+                got = ccm.sync_mim_sssom(tmp, dry_run=True)
+
+            self.assertEqual(got.resolve(), source.resolve())
+            self.assertEqual(got.read_text(encoding="utf-8"), "fresh\n")
+            # ...and still nothing written.
+            self.assertEqual(vendored.read_text(encoding="utf-8"), "stale\n")
+
+    def test_real_run_returns_the_vendored_copy(self):
+        """A real run installs the content first, so the vendored path is right."""
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            tmp = Path(td)
+            mim = tmp / "mim" / "mappings"
+            mim.mkdir(parents=True)
+            (mim / "ingredient_mappings.sssom.tsv").write_text("fresh\n", encoding="utf-8")
+
+            vendored = tmp / "mappings" / "ingredient_mappings.sssom.tsv"
+            vendored.parent.mkdir(parents=True)
+            vendored.write_text("stale\n", encoding="utf-8")
+
+            with mock.patch.dict("os.environ", {ccm._MIM_ROOT_ENV: str(tmp / "mim")}):
+                got = ccm.sync_mim_sssom(tmp)
+
+            self.assertEqual(got.resolve(), vendored.resolve())
+            self.assertEqual(got.read_text(encoding="utf-8"), "fresh\n")
+
     def test_sync_copies_when_not_dry_run(self):
         """The same divergence is actually synced on a real run."""
         import tempfile

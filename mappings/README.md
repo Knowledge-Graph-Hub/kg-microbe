@@ -73,20 +73,37 @@ Missing-legacy handling: when a priority-1/2/5 source file is absent (items 1 & 
 ### Regenerating
 
 ```bash
+# Preview: runs the full consolidation, reports what would change, writes nothing.
+poetry run python scripts/consolidate_chemical_mappings.py --dry-run
+
+# Apply.
 poetry run python scripts/consolidate_chemical_mappings.py
 ```
+
+`--dry-run` exports to a scratch path rather than skipping the write, so the
+`sssom` round-trip validation still runs and the preview reports a real delta —
+added and removed counts separately, with samples. A net row count hides the
+shape of a change: the #946 refresh was +1,812 net, which was 2,091 added
+against 279 removed, and the removals were the half worth checking.
 
 Pipeline order:
 1. Seed from the existing `mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz` (priority reconstructed per row from `source` labels).
 2. Layer in any still-present legacy inputs (absent ones are skipped).
 3. Load `mappings/culturebotai_reviewed_ingredients.tsv` (priority=10).
-4. **Sync MIM SSSOM from sibling repo** (`../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv` → `mappings/ingredient_mappings.sssom.tsv`) via `sync_mim_sssom()` when content hashes differ. If the sibling repo is absent, the vendored copy is used with a warning.
+4. **Sync MIM SSSOM from the MediaIngredientMech checkout** (`$MEDIAINGREDIENTMECH_ROOT/mappings/ingredient_mappings.sssom.tsv`, defaulting to the `../MediaIngredientMech` sibling → `mappings/ingredient_mappings.sssom.tsv`) via `sync_mim_sssom()` when content hashes differ. The resolved path and its SHA-256 are logged, so the run records which MIM state built the artifact. If the checkout cannot be found the run **fails**; pass `--allow-stale-vendored` to fall back to the vendored copy (#947).
 5. Load `mappings/ingredient_mappings.sssom.tsv` (priority=11) — parsed and validated with the `sssom` Python package before any row is ingested.
 6. Enrich from `data/raw/chebi.db` via OAK (labels only fill when no higher-priority name already exists; aliases always accumulate).
 7. **Harvest CHEBI xref labels via OAK** — for every CHEBI CURIE that appears as an xref but has no primary row of its own, pull its label + aliases into the owning record's synonyms. Closes the gap where a non-CHEBI primary (or a secondary CHEBI ID) carries an xref whose preferred term would otherwise be lost.
 8. **Propagate names across equivalent-CURIE records via xrefs** — for every record, any xref that is itself a primary key of another record contributes that record's `canonical_name` + synonyms into this record's synonyms. Symmetric (both sides pick up each other's names), snapshot-based (no feedback), no record merge or deletion.
 9. Resolve name-index conflicts by priority (highest-priority name mapping wins); no cross-CURIE merge pass is performed.
 10. Write `kgmicrobe_unified_entity_mappings.sssom.tsv.gz` and round-trip-validate it with the `sssom` package.
+
+Note that step 1 seeds from the script's own previous output, so the artifact is
+not a pure function of its inputs: a run can derive names that the previous run
+created, and re-running immediately may add a handful of rows. This converges
+rather than growing without bound — in the #947 refresh, run 2 added 2 rows over
+run 1 and run 3 was byte-identical to run 2. If you need the fixed point, run
+until the output hash stops changing.
 
 ### Usage Examples
 

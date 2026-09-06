@@ -15,9 +15,14 @@ kgx = "^2.4.0"
 koza = "*"
 biolink-model = "4.4.2"
 watchdog = "<4.0.0" # ! This is a temporary fix 4.0.0 breaks on GH Actions
-oaklib = ">=0.5.25"
+# ! Below 0.7.2 OAK resolves `sqlite:obo:` against https://s3.amazonaws.com/bbop-sqlite, which is retired and
+# ! answers 403; 0.7.2 moved the default to https://semanticsql.berkeleybop.io (oaklib#897, semantic-sql#110).
+# ! >=0.7.3 matches the KG-Microbe Mechs. 0.7.4 also drops 0.7.3's `linkml==1.10.0` exact pin.
+oaklib = ">=0.7.3"
 requests-cache = "^1.1.0"
-llm = "^0.11"
+# ! oaklib >=0.7.3 requires llm >=0.14,<1. Nothing here imports llm directly; it is only reached through OAK's
+# ! `llm:` selector in kg_microbe/utils/ner_utils.py.
+llm = ">=0.14,<1"
 pyobo = ">=0.12.0"
 curies = ">=0.8.0"
 biopython = "^1.83"

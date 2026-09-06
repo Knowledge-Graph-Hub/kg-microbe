@@ -65,6 +65,7 @@ import argparse
 import csv
 import gzip
 import hashlib
+import io
 import json
 import os
 import re
@@ -72,7 +73,7 @@ import shutil
 import tempfile
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List, Set
+from typing import Dict, List, Optional, Set
 
 import pandas as pd
 
@@ -240,6 +241,113 @@ def _file_sha256(path: Path) -> str:
         for chunk in iter(lambda: f.read(1 << 20), b""):
             h.update(chunk)
     return h.hexdigest()
+
+
+#: A ``mapping_date`` this exporter is willing to carry forward. Anything else
+#: is treated as absent; see :func:`published_mapping_dates`.
+_ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
+
+
+def open_deterministic_gzip(path: Path):
+    """
+    Open a gzip stream whose bytes depend only on what is written to it.
+
+    Two header fields otherwise leak the environment into the archive, so two
+    runs over identical rows produced different 13 MB blobs and git stored a
+    fresh one each time (#953):
+
+    * ``mtime`` carries wall-clock seconds, pinned to 0 here;
+    * ``FNAME`` carries the output filename, which ``GzipFile(path, ...)`` fills
+      in automatically -- so an export to a scratch path would not match the
+      same content exported to the published path.
+
+    Passing an explicit ``fileobj`` with ``filename=""`` suppresses the second.
+    The returned wrapper closes the underlying file as well as the gzip stream;
+    ``GzipFile`` does not close a ``fileobj`` it was handed.
+
+    :param path: Destination ``.gz`` path.
+    :return: A text-mode writable stream.
+    """
+    raw = path.open("wb")
+    try:
+        stream = gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=0)
+    except BaseException:
+        # The helper owns two handles instead of one, so it has to release the
+        # outer one when the inner never comes into existence (#959).
+        raw.close()
+        raise
+
+    class _ClosingWrapper(io.TextIOWrapper):
+        """Text wrapper that closes the gzip stream and the file beneath it."""
+
+        def close(self) -> None:
+            """Flush through the gzip stream, then release the file handle."""
+            try:
+                super().close()
+            finally:
+                raw.close()
+
+    try:
+        return _ClosingWrapper(stream, encoding="utf-8")
+    except BaseException:
+        stream.close()
+        raw.close()
+        raise
+
+
+def published_mapping_dates(path: Path) -> Dict[tuple, str]:
+    """
+    Read ``(subject, predicate, object) -> mapping_date`` from a published set.
+
+    A mapping's date records when the assertion was made, not when the exporter
+    last ran. Restamping every row with today's date rewrote 609,864 of 609,975
+    rows on a refresh that changed 1,814 of them, which buried the real change
+    and made the artifact churn on every run (#953).
+
+    Only ``YYYY-MM-DD`` values are accepted. The header's ``mapping_set_version``
+    is ``max()`` over these, and any non-digit string sorts above every real
+    date, so one malformed row would silently claim the version for the whole
+    set -- and, being preserved on the next run too, would keep it (#958). A
+    rejected value falls back to today for that row, which is the behaviour
+    every row had before this function existed.
+
+    Where a triple appears twice, the earliest date wins: the field records when
+    a mapping was first asserted, and file order is no basis for choosing.
+
+    Returns an empty mapping when the file is absent, unreadable or malformed:
+    the worst case is that rows fall back to today's date, which is the old
+    behaviour, and a refresh must not fail because a previous artifact could
+    not be parsed.
+
+    :param path: A published SSSOM set, plain or gzipped.
+    :return: Mapping from ``(subject_id, predicate_id, object_id)`` to date.
+    """
+    dates: Dict[tuple, str] = {}
+    if not path.exists():
+        return dates
+    opener = gzip.open if str(path).endswith(".gz") else open
+    try:
+        with opener(path, "rt", encoding="utf-8") as fh:
+            header = None
+            for line in fh:
+                if line.startswith("#"):
+                    continue
+                parts = line.rstrip("\n").split("\t")
+                if header is None:
+                    header = parts
+                    continue
+                row = dict(zip(header, parts))
+                recorded = (row.get("mapping_date") or "").strip()
+                if not _ISO_DATE.fullmatch(recorded):
+                    continue
+                triple = (row.get("subject_id"), row.get("predicate_id"), row.get("object_id"))
+                previous = dates.get(triple)
+                if previous is None or recorded < previous:
+                    dates[triple] = recorded
+    except (OSError, EOFError, UnicodeDecodeError) as exc:
+        print(f"Warning: could not read prior mapping dates from {path} ({exc}); using today for every row")
+        return {}
+    return dates
 
 
 def _sssom_triples(path: Path) -> set:
@@ -2252,7 +2360,7 @@ class ChemicalMappingConsolidator:
             + (f" (blocked {blocked} retracted name(s) from returning)" if blocked else "")
         )
 
-    def export_unified_sssom(self, sssom_output_path: Path):
+    def export_unified_sssom(self, sssom_output_path: Path, published_path: Optional[Path] = None):
         """
         Export the unified mapping as a standards-compliant SSSOM set.
 
@@ -2354,11 +2462,15 @@ class ChemicalMappingConsolidator:
             if prefix not in prefix_map:
                 prefix_map[prefix] = f"https://bioregistry.io/{prefix}:"
 
-        # Git SHA for reproducibility in the mapping-set header.
+        # Git SHA for reproducibility in the mapping-set header. Resolved from
+        # this script's own location, not from the output path: --dry-run
+        # exports to a temporary directory, where `git rev-parse` fails and the
+        # header silently became "@unknown" -- a preview differing from the
+        # apply for a reason unrelated to the mappings (#961).
         try:
             git_sha = (
                 subprocess.check_output(
-                    ["git", "-C", str(sssom_output_path.parent.parent), "rev-parse", "HEAD"],
+                    ["git", "-C", str(Path(__file__).resolve().parent), "rev-parse", "HEAD"],
                     stderr=subprocess.DEVNULL,
                 )
                 .decode()
@@ -2442,6 +2554,12 @@ class ChemicalMappingConsolidator:
 
         mapping_rows = []
         today = date.today().isoformat()
+        # A row's date belongs to the assertion, not to this run. Reusing the
+        # published date for a triple that already existed keeps the diff to the
+        # rows that actually changed (#953).
+        prior_dates = published_mapping_dates(
+            published_path if published_path is not None else sssom_output_path
+        )
 
         for curie in sorted(self.chemicals.keys()):
             if curie in KNOWN_BAD_PRIMARY_IDS:
@@ -2469,7 +2587,7 @@ class ChemicalMappingConsolidator:
                     "object_source": object_source,
                     "mapping_justification": justification,
                     "source": source_tag,
-                    "mapping_date": today,
+                    "mapping_date": prior_dates.get((subject_id, predicate, object_id), today),
                     "confidence": "",
                     "comment": comment,
                     "object_formula": object_formula,
@@ -2583,7 +2701,10 @@ class ChemicalMappingConsolidator:
                 "object_source": normalized_source,
                 "mapping_justification": rel["mapping_justification"] or "semapv:ManualMappingCuration",
                 "source": rel["source"],
-                "mapping_date": rel["mapping_date"] or today,
+                "mapping_date": (
+                    rel["mapping_date"]
+                    or prior_dates.get((translated_subject, rel["predicate_id"], obj_id), today)
+                ),
                 "confidence": rel["confidence"],
                 "comment": rel["comment"],
                 "object_formula": "",
@@ -2620,7 +2741,7 @@ class ChemicalMappingConsolidator:
                 "object_source": "obo:chebi.owl",
                 "mapping_justification": "semapv:UnspecifiedMatching",
                 "source": "mediadive_compounds_hydrate",
-                "mapping_date": today,
+                "mapping_date": prior_dates.get((anhydrous, "skos:closeMatch", hydrated), today),
                 "confidence": "",
                 "comment": "recipe_equivalent_hydrate",
                 "object_formula": hydrated_chem.get("formula") or "",
@@ -2630,6 +2751,11 @@ class ChemicalMappingConsolidator:
 
         rows_emitted = xref_rows + name_rows + synonym_rows + parent_rows + hydrate_rows
 
+        # The set's version is the newest assertion it carries, not the moment
+        # it was serialised. Stamping the clock here would change two header
+        # lines on every run and defeat the point of stabilising the rows (#953).
+        set_version = max((row["mapping_date"] for row in mapping_rows if row["mapping_date"]), default=today)
+
         # Build the header.
         header_lines = ["# curie_map:"]
         for prefix in sorted(prefix_map.keys()):
@@ -2637,9 +2763,9 @@ class ChemicalMappingConsolidator:
         header_lines += [
             '# license: "https://creativecommons.org/publicdomain/zero/1.0/"',
             '# mapping_set_id: "https://w3id.org/sssom/mappings/kg_microbe_unified_ingredients"',
-            f'# mapping_set_version: "{today}"',
+            f'# mapping_set_version: "{set_version}"',
             '# mapping_set_description: "kg-microbe unified ingredient mappings (CHEBI + FOODON + UBERON + ENVO + NCIT + kgmicrobe.compound). Emitted from scripts/consolidate_chemical_mappings.py. Row types: (1) xref-CURIE → primary-CURIE as skos:exactMatch; (2) canonical-name via kgm.name:<slug> → primary-CURIE as skos:exactMatch / semapv:LexicalMatching; (3) free-text synonym via kgm.name:<slug> → primary-CURIE as skos:closeMatch / semapv:LexicalMatching; (4) anhydrous-CHEBI → hydrated-CHEBI as skos:closeMatch with comment=recipe_equivalent_hydrate (NOT chemically identical, but media-recipe interchangeable). Per-row `comment` is empty for xrefs, `canonical_name` for name rows, `synonym` for synonym rows, `recipe_equivalent_hydrate` for hydrate pairs."',
-            f'# mapping_date: "{today}"',
+            f'# mapping_date: "{set_version}"',
         ]
         if self.predicate_semantics:
             header_lines.append(f'# {PREDICATE_SEMANTICS_KEY}: "{self.predicate_semantics}"')
@@ -2670,9 +2796,10 @@ class ChemicalMappingConsolidator:
         # Gzip if the output path ends in .gz — the sssom parser accepts
         # gzipped input transparently. Uncompressed the file is ~150 MB
         # (over GitHub's 100 MB per-file limit); compressed it is ~18 MB.
-        import gzip
+        # Deterministic archive: see open_deterministic_gzip. Without it "run
+        # until the output hash stops changing" is advice that cannot terminate.
         open_fn = (
-            (lambda p: gzip.open(p, "wt", encoding="utf-8"))
+            open_deterministic_gzip
             if str(sssom_output_path).endswith(".gz")
             else (lambda p: p.open("w", encoding="utf-8"))
         )
@@ -2853,7 +2980,10 @@ def main(argv=None):
         # Skipping the write instead would preview nothing worth reviewing.
         with tempfile.TemporaryDirectory() as scratch:
             candidate = Path(scratch) / sssom_output_path.name
-            consolidator.export_unified_sssom(candidate)
+            # The published artifact, not the scratch path, is where prior
+            # mapping dates live -- without this the preview would restamp
+            # every row and report a delta the apply would never produce.
+            consolidator.export_unified_sssom(candidate, published_path=sssom_output_path)
             _report_export_delta(candidate, sssom_output_path)
         return
 

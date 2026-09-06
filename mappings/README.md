@@ -83,8 +83,11 @@ poetry run python scripts/consolidate_chemical_mappings.py
 `--dry-run` exports to a scratch path rather than skipping the write, so the
 `sssom` round-trip validation still runs and the preview reports a real delta —
 added and removed counts separately, with samples. A net row count hides the
-shape of a change: the #946 refresh was +1,812 net, which was 2,091 added
-against 279 removed, and the removals were the half worth checking.
+shape of a change: the #946 refresh was +1,814 net, which was 2,093 added
+against 279 removed, and the removals were the half worth checking. Measure
+against the artifact you are about to ship, not an earlier run of it — the
+figures here were first written from run 1 and were each off by the 2 rows the
+convergence note below predicts.
 
 Pipeline order:
 1. Seed from the existing `mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz` (priority reconstructed per row from `source` labels).

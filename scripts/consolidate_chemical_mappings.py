@@ -104,8 +104,9 @@ def _mim_root(base_dir: Path) -> Path:
 _MIM_SIBLING_RELPATH = Path("mappings") / "ingredient_mappings.sssom.tsv"
 _MIM_VENDORED_RELPATH = Path("mappings") / "ingredient_mappings.sssom.tsv"
 # MIM publishes the unified ingredient mapping at the repo root. kg-microbe's
-# vendored copy keeps its historical name (`culturebotai_reviewed_ingredients`)
-# and carries one extra column (`synonyms`) that the loader ignores.
+# vendored copy keeps its historical name (`culturebotai_reviewed_ingredients`);
+# the columns are identical, as they must be -- the sync copies the source over
+# the vendored file wholesale, so a divergent column could not survive a run.
 _CBAI_SIBLING_RELPATH = Path("UNIFIED_INGREDIENT_MAPPING.tsv")
 _CBAI_VENDORED_RELPATH = Path("mappings") / "culturebotai_reviewed_ingredients.tsv"
 
@@ -312,7 +313,8 @@ def _sync_vendored_from_sibling(
 
     if sibling.exists():
         if not vendored.exists():
-            print(f"Syncing {label} (vendored copy missing): {sibling} → {vendored}")
+            verb = "[dry-run] would sync" if dry_run else "Syncing"
+            print(f"{verb} {label} (vendored copy missing): {sibling} → {vendored}")
             if not dry_run:
                 shutil.copy2(sibling, vendored)
         elif _file_sha256(sibling) != _file_sha256(vendored):

@@ -6,13 +6,15 @@ from pathlib import Path
 
 
 def validate_edges_file(edges_file: Path) -> dict:
-    """Check knowledge source column in edges file.
+    """
+    Check knowledge source column in edges file.
 
     Args:
         edges_file: Path to the edges.tsv file
 
     Returns:
         Dictionary with validation results
+
     """
     issues = []
     valid_count = 0
@@ -115,8 +117,13 @@ def main():
             total_valid_edges += result['valid_count']
             total_invalid_edges += result['invalid_count']
 
-            print(f"  Total edges: {result['total_edges']}")
-            print(f"  Valid: {result['valid_count']} ({'100.0' if result['total_edges'] == 0 else f'{result['valid_count']/result['total_edges']*100:.1f}'}%)")
+            total = result['total_edges']
+            # Computed rather than nested inside the f-string: reusing the same
+            # quote character inside a replacement field is PEP 701 syntax, valid
+            # only on 3.12+, and this repo supports 3.10 (#966).
+            valid_pct = 100.0 if total == 0 else result['valid_count'] / total * 100
+            print(f"  Total edges: {total}")
+            print(f"  Valid: {result['valid_count']} ({valid_pct:.1f}%)")
 
             if result['total_issues'] > 0:
                 print(f"  Issues: {result['total_issues']}")
@@ -126,7 +133,7 @@ def main():
                     print(f"    - {issue}")
                 all_valid = False
             else:
-                print(f"  ✓ All edges have valid infores: knowledge sources")
+                print("  ✓ All edges have valid infores: knowledge sources")
 
         print()
 

@@ -73,7 +73,7 @@ import shutil
 import tempfile
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List, Optional, Set
+from typing import Dict, List, Optional, Set, Tuple
 
 import pandas as pd
 
@@ -336,7 +336,7 @@ def published_mapping_dates(path: Path) -> Dict[tuple, str]:
                 if header is None:
                     header = parts
                     continue
-                row = dict(zip(header, parts))
+                row = dict(zip(header, parts, strict=False))
                 recorded = (row.get("mapping_date") or "").strip()
                 if not _ISO_DATE.fullmatch(recorded):
                     continue
@@ -363,13 +363,14 @@ def _sssom_triples(path: Path) -> set:
             if header is None:
                 header = parts
                 continue
-            row = dict(zip(header, parts))
+            row = dict(zip(header, parts, strict=False))
             triples.add((row.get("subject_id"), row.get("predicate_id"), row.get("object_id")))
     return triples
 
 
 def _report_export_delta(candidate: Path, published: Path) -> None:
-    """Print what promoting ``candidate`` over ``published`` would change.
+    """
+    Print what promoting ``candidate`` over ``published`` would change.
 
     A row count alone hides the shape of a change: the refresh that prompted
     this preview was +1,812 net, which was 2,091 added against 279 removed.
@@ -387,6 +388,41 @@ def _report_export_delta(candidate: Path, published: Path) -> None:
         for subject, predicate, obj in list(sample)[:5]:
             print(f"    {label[:1]} {subject}  {predicate}  {obj}")
     print("  Nothing was written. Re-run without --dry-run to apply.")
+
+
+def _report_convergence(seed_triples, written: Path) -> None:
+    """
+    Say whether the run reached the fixed point, or how far it moved.
+
+    ``main()`` seeds from this script's own previous output, so run *N*'s input
+    includes run *N-1*'s output: a name one run derives can seed another row on
+    the next. The artifact therefore depends on how many times the script has
+    been run, not only on the source data (#948).
+
+    The seeding is load-bearing -- it is how the absent legacy priority-1/2
+    inputs survive their own absence -- so this reports the property rather than
+    removing it. Without the report, a reviewer regenerating to check the
+    committed artifact sees a non-empty diff that looks exactly like
+    non-determinism, and nothing says whether what was committed is the fixed
+    point or one step short.
+
+    :param seed_triples: Triples read before the export, or None on a first run.
+    :param written: The artifact just written.
+    :return: None.
+    """
+    if seed_triples is None:
+        print("\n  First run: no previous artifact to converge against.")
+        return
+    after = _sssom_triples(written)
+    added, removed = after - seed_triples, seed_triples - after
+    if not added and not removed:
+        print(f"\n  Converged: identical to the seed ({len(after):,} triples). This is the fixed point.")
+        return
+    print(
+        f"\n  Not yet converged: {len(added):,} added, {len(removed):,} removed "
+        f"({len(seed_triples):,} -> {len(after):,}). The seeding is intentional, but the "
+        "output is one step ahead of its input -- re-run to reach the fixed point before committing."
+    )
 
 
 def _sync_vendored_from_sibling(
@@ -1843,12 +1879,11 @@ class ChemicalMappingConsolidator:
         added = 0
         with _gzip.open(filepath, "rt", encoding="utf-8") as f:
             header = f.readline().rstrip("\n").split("\t")
-            col = {name: i for i, name in enumerate(header)}
             for raw in f:
                 parts = raw.rstrip("\n").split("\t")
                 if len(parts) < len(header):
                     parts += [""] * (len(header) - len(parts))
-                row = dict(zip(header, parts))
+                row = dict(zip(header, parts, strict=False))
                 primary = (row.get("id") or "").strip()
                 if not primary or not is_accepted_primary(primary):
                     continue
@@ -2856,6 +2891,9 @@ def main(argv=None):
     consolidator = ChemicalMappingConsolidator()
 
     sssom_output_path = base_dir / "mappings" / "kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+    # Read before anything can overwrite it: the export writes in place, so this
+    # is the only chance to compare the result against what seeded it (#948).
+    seed_triples = _sssom_triples(sssom_output_path) if sssom_output_path.exists() else None
 
     # Seed from the existing unified SSSOM (single source of truth). Each
     # row's sources contribute to the accumulated per-entity source set;
@@ -2988,6 +3026,7 @@ def main(argv=None):
         return
 
     consolidator.export_unified_sssom(sssom_output_path)
+    _report_convergence(seed_triples, sssom_output_path)
 
     print(f"\n✓ Unified SSSOM created: {sssom_output_path}")
     print(f"  To inspect: gunzip -c {sssom_output_path.name} | head")

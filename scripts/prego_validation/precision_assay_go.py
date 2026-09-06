@@ -9,6 +9,8 @@ BacDive phenotype assays are also provenance-disjoint from both UniProt
 import pickle
 from collections import defaultdict
 
+from channel_compat import assert_non_empty, continuous_predicate
+
 tri = pickle.load(open("/tmp/assay_gold.pkl", "rb"))
 # Unanimous labels only; conflicting strain-level evidence is excluded.
 label = {}

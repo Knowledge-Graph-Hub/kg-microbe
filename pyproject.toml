@@ -114,16 +114,28 @@ select = [
 "kg_microbe/query_utils/*" = ["S608"]  # DuckDB queries use database CURIEs, not user input
 # scripts/ entered the lint gate with 405 findings (#950). The three that could
 # bite were fixed outright -- two undefined names and an f-string that was a
-# SyntaxError on 3.10 and 3.11 -- and 274 more were auto-fixed. What is left is
-# style and bandit noise on local analysis scripts, grandfathered per rule so
-# the gate protects against new findings today rather than after a cleanup that
-# may never happen. Burn these down in place; do not add to the list.
-"scripts/*" = [
-    "B023",  # closures over loop variables, each called inside the same iteration
-    "D100", "D103", "D205", "D400", "D401", "D415",  # docstring style
-    "E501", "E701", "E702",  # long lines, compound statements
-    "S108", "S110", "S311", "S603", "S607",  # bandit: /tmp paths, subprocess, random
-]
+# SyntaxError on 3.10 and 3.11 -- and 274 more were auto-fixed. What remains is
+# style and bandit noise, grandfathered PER FILE rather than for the directory:
+# the other 18 scripts are already clean and stay strict, and so does every new
+# one (#968). Each entry disappears when its file is cleaned; do not add to the
+# list, and `tests/test_scripts_lint_debt.py` fails if an entry stops firing.
+"scripts/analyze_custom_metpo_mappings.py" = ["D401", "E501"]
+"scripts/analyze_gtdb_metatraits_overlap.py" = ["D401", "E501"]
+"scripts/consolidate_chemical_mappings.py" = ["B023", "D205", "D401", "E501", "S110", "S603", "S607"]
+"scripts/download_kegg_bulk.py" = ["D401"]
+"scripts/download_kegg_minimal.py" = ["D401"]
+"scripts/examples/visualization/create_1hop_full_labels.py" = ["D100", "D400", "D415", "E501"]
+"scripts/examples/visualization/create_1hop_subgraph.py" = ["D100", "D103", "D400", "D415", "E501"]
+"scripts/examples/visualization/create_2hop_full_labels.py" = ["D100", "D400", "D415"]
+"scripts/examples/visualization/create_full_label_visualizations.py" = ["D100", "D103", "D400", "D415", "E501"]
+"scripts/extract_metpo_proposals.py" = ["E501", "S603", "S607"]
+"scripts/mediadive_coverage_check.py" = ["E501"]
+"scripts/prego_validation/build_assay_gold.py" = ["S108"]
+"scripts/prego_validation/build_uniprot_gold.py" = ["D103", "E701", "E702", "S108"]
+"scripts/prego_validation/fold_enrichment_go.py" = ["E701", "E702", "S108"]
+"scripts/prego_validation/precision_assay_go.py" = ["D400", "E701", "E702", "S108"]
+"scripts/prego_validation/predicate_interaction.py" = ["D400", "E501", "S108", "S311"]
+"scripts/validate_knowledge_sources.py" = ["E501"]
 
 [tool.ruff.lint.mccabe]
 # Unlike Flake8, default to a complexity level of 10.

@@ -368,17 +368,29 @@ def _sssom_triples(path: Path) -> set:
     return triples
 
 
-def _report_export_delta(candidate: Path, published: Path) -> None:
+def _report_export_delta(candidate: Path, published: Path, before=None) -> None:
     """
     Print what promoting ``candidate`` over ``published`` would change.
 
     A row count alone hides the shape of a change: the refresh that prompted
-    this preview was +1,812 net, which was 2,091 added against 279 removed.
+    this preview was +1,814 net, which was 2,093 added against 279 removed.
+
+    ``before`` is the caller's already-parsed view of ``published``. Re-reading
+    it here made a preview decompress and parse 609,975 rows twice for a value
+    it had in hand, and left room for the two reports to disagree about what the
+    seed was (#969).
+
+    :param candidate: The artifact just written to a scratch path.
+    :param published: The artifact it would replace.
+    :param before: Triples already read from ``published``, if the caller has them.
+    :return: None.
     """
     if not published.exists():
         print(f"[dry-run] no published artifact at {published}; would create it")
         return
-    before, after = _sssom_triples(published), _sssom_triples(candidate)
+    if before is None:
+        before = _sssom_triples(published)
+    after = _sssom_triples(candidate)
     added, removed = after - before, before - after
     print(f"\n[dry-run] would write {candidate.name} over {published}")
     print(f"  triples   {len(before):,} -> {len(after):,}  ({len(after) - len(before):+,})")
@@ -2893,6 +2905,9 @@ def main(argv=None):
     sssom_output_path = base_dir / "mappings" / "kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
     # Read before anything can overwrite it: the export writes in place, so this
     # is the only chance to compare the result against what seeded it (#948).
+    # The preview and the apply share this one read, so they cannot disagree
+    # about what the seed was -- and the preview no longer parses 609,975 rows
+    # twice to throw one copy away (#969).
     seed_triples = _sssom_triples(sssom_output_path) if sssom_output_path.exists() else None
 
     # Seed from the existing unified SSSOM (single source of truth). Each
@@ -3022,7 +3037,7 @@ def main(argv=None):
             # mapping dates live -- without this the preview would restamp
             # every row and report a delta the apply would never produce.
             consolidator.export_unified_sssom(candidate, published_path=sssom_output_path)
-            _report_export_delta(candidate, sssom_output_path)
+            _report_export_delta(candidate, sssom_output_path, before=seed_triples)
         return
 
     consolidator.export_unified_sssom(sssom_output_path)

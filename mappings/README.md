@@ -106,7 +106,16 @@ not a pure function of its inputs: a run can derive names that the previous run
 created, and re-running immediately may add a handful of rows. This converges
 rather than growing without bound — in the #947 refresh, run 2 added 2 rows over
 run 1 and run 3 was byte-identical to run 2. If you need the fixed point, run
-until the output hash stops changing.
+until the output hash stops changing; `md5 mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz`
+is now a valid way to check that, and was not before (#953).
+
+Everything else in the artifact is a pure function of its inputs. Each row keeps
+the `mapping_date` it was first published with, so a refresh diffs only the rows
+that changed rather than all of them; `mapping_set_version` and the header
+`mapping_date` are the newest row date, not the clock; and the gzip archive is
+written with `mtime=0`, so identical content always compresses to identical
+bytes. The one field that legitimately moves without a data change is
+`mapping_tool`, which carries the commit the script ran from.
 
 ### Usage Examples
 

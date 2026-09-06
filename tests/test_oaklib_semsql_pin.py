@@ -45,17 +45,29 @@ S3_HOST = "s3.amazonaws.com"
 
 
 def _spec() -> str:
+    """
+    Return the declared oaklib version spec.
+
+    :return: The raw spec string from ``[tool.poetry.dependencies]``.
+    """
     data = tomllib.loads((REPO / "pyproject.toml").read_text())
     return data["tool"]["poetry"]["dependencies"]["oaklib"]
 
 
 def test_the_pin_floor_keeps_the_cdn_default():
-    """The declared floor is at or above the release that moved off the bucket."""
+    """
+    The declared floor is at or above the release that moved off the bucket.
+
+    ``^`` and ``~`` count: both state a lower bound, and both appear elsewhere in
+    this pyproject. Matching only ``>=`` made a caret pin fail with "no lower
+    bound", which is false of ``^0.7.3`` and sends the reader looking for a
+    missing bound instead of reading the one in front of them (#965).
+    """
     spec = _spec()
-    match = re.search(r">=\s*(\d+)\.(\d+)\.(\d+)", spec)
+    match = re.search(r"(?:>=|\^|~=?)\s*(\d+)\.(\d+)\.(\d+)", spec)
     assert match, (
-        f"no lower bound in {spec!r} — below 0.7.2, `sqlite:obo:` resolves against "
-        "the raw S3 bucket semantic-sql retired"
+        f"no lower bound in {spec!r} — use >=, ^ or ~. Below 0.7.2, `sqlite:obo:` "
+        "resolves against the raw S3 bucket semantic-sql retired"
     )
     assert tuple(int(g) for g in match.groups()) >= MIN_OAKLIB, (
         f"{spec!r} is below {'.'.join(map(str, MIN_OAKLIB))}, the floor the KG-Microbe Mechs share"
@@ -85,3 +97,16 @@ def test_the_resolved_default_is_not_the_retired_bucket():
         "bucket INCATools/semantic-sql retired (semantic-sql#112)"
     )
     assert SEMSQL_SQLITE_URL_BASE.startswith("https://"), SEMSQL_SQLITE_URL_BASE
+
+
+def test_a_caret_pin_reads_as_the_lower_bound_it_is():
+    """
+    ``^0.7.3`` is a lower bound of 0.7.3, and must be recognised as one.
+
+    Guards the message as much as the verdict: the old regex rejected this form
+    while claiming the pin had no lower bound at all (#965).
+    """
+    for spec, expected in (("^0.7.3", (0, 7, 3)), ("~0.8.0", (0, 8, 0)), (">=0.7.3", (0, 7, 3))):
+        match = re.search(r"(?:>=|\^|~=?)\s*(\d+)\.(\d+)\.(\d+)", spec)
+        assert match, spec
+        assert tuple(int(g) for g in match.groups()) == expected

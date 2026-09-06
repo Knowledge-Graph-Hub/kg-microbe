@@ -13,7 +13,6 @@ def main():
 
     # Paths
     test_json = Path("tests/resources/raw/bacdive_strains.json")
-    test_tmp_dir = Path("kg_microbe/transform_utils/bacdive/tmp_test")
     output_dir = Path("data/transformed_test/bacdive")
 
     # Validate test data exists
@@ -23,7 +22,7 @@ def main():
         return 1
 
     # Copy test JSON to data/raw for transform to find
-    print(f"\nCopying test JSON to data/raw/bacdive_strains.json...")
+    print("\nCopying test JSON to data/raw/bacdive_strains.json...")
     backup_json = Path("data/raw/bacdive_strains.json.backup")
     original_json = Path("data/raw/bacdive_strains.json")
 
@@ -34,15 +33,15 @@ def main():
 
     # Copy test JSON
     shutil.copy(test_json, original_json)
-    print(f"  ✅ Test JSON in place (20 records)")
+    print("  ✅ Test JSON in place (20 records)")
 
     try:
         # Create test output directory
         output_dir.mkdir(parents=True, exist_ok=True)
 
         # Run transform
-        print(f"\nRunning BacDive transform...")
-        print(f"  Input directory: data/raw")
+        print("\nRunning BacDive transform...")
+        print("  Input directory: data/raw")
         print(f"  Output directory: {output_dir}")
         transform = BacDiveTransform(input_dir=Path("data/raw"), output_dir=output_dir)
         transform.run(show_status=True)
@@ -59,12 +58,12 @@ def main():
             with open(edges_file) as f:
                 edge_count = sum(1 for _ in f) - 1  # subtract header
 
-            print(f"\n✅ Transform completed successfully!")
+            print("\n✅ Transform completed successfully!")
             print(f"   Nodes: {node_count}")
             print(f"   Edges: {edge_count}")
 
             # Check for empty relations
-            print(f"\nChecking for empty relation values...")
+            print("\nChecking for empty relation values...")
             empty_count = 0
             with open(edges_file) as f:
                 header = f.readline().strip().split("\t")
@@ -77,30 +76,30 @@ def main():
                             empty_count += 1
 
             if empty_count == 0:
-                print(f"   ✅ No empty relations found!")
+                print("   ✅ No empty relations found!")
             else:
                 print(f"   ❌ Found {empty_count} empty relations")
 
-            print(f"\nOutput files:")
+            print("\nOutput files:")
             print(f"   {nodes_file}")
             print(f"   {edges_file}")
 
             return 0
         else:
-            print(f"\n❌ Transform failed - output files not created")
+            print("\n❌ Transform failed - output files not created")
             return 1
 
     finally:
         # Restore original JSON
-        print(f"\nRestoring original bacdive_strains.json...")
+        print("\nRestoring original bacdive_strains.json...")
         if backup_json.exists():
             shutil.move(backup_json, original_json)
-            print(f"  ✅ Restored from backup")
+            print("  ✅ Restored from backup")
         else:
             # Remove test JSON if no backup existed
             if original_json.exists():
                 original_json.unlink()
-            print(f"  ✅ Removed test JSON (no original existed)")
+            print("  ✅ Removed test JSON (no original existed)")
 
 
 if __name__ == "__main__":

@@ -128,7 +128,7 @@ def main():
     print("\n" + "=" * 60)
     print("SUMMARY")
     print("=" * 60)
-    print(f"Test dataset locations:")
+    print("Test dataset locations:")
     print(f"  TSV/YAML: {TEST_DIR}")
     print(f"  JSON: {TEST_RAW_DIR / 'bacdive_strains.json'}")
     print(f"\nNumber of taxa: {N_TAXA}")
@@ -137,7 +137,7 @@ def main():
     print(f"JSON records: {len(test_records) if 'test_records' in locals() else 'N/A'}")
     print("\nTo run transform on test data:")
     print(f"  cp {TEST_RAW_DIR / 'bacdive_strains.json'} data/raw/bacdive_strains_test.json")
-    print(f"  # Modify BacDive transform to read from bacdive_strains_test.json")
+    print("  # Modify BacDive transform to read from bacdive_strains_test.json")
     print("=" * 60)
 
 

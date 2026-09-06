@@ -105,8 +105,16 @@ Note that step 1 seeds from the script's own previous output, so the artifact is
 not a pure function of its inputs: a run can derive names that the previous run
 created, and re-running immediately may add a handful of rows. This converges
 rather than growing without bound — in the #947 refresh, run 2 added 2 rows over
-run 1 and run 3 was byte-identical to run 2. If you need the fixed point, run
-until the output hash stops changing; `md5 mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz`
+run 1 and run 3 was byte-identical to run 2.
+
+**The run now tells you which state you are in** (#948). It ends with either
+`Converged: identical to the seed (N triples). This is the fixed point.` or
+`Not yet converged: N added, M removed ... re-run to reach the fixed point
+before committing.` Before that, regenerating to check a committed artifact
+produced a non-empty diff that looked exactly like non-determinism, and nothing
+said whether what had been committed was the fixed point or one step short.
+
+If you need the fixed point, run until the message says converged; `md5 mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz`
 is now a valid way to check that, and was not before (#953).
 
 Everything else in the artifact is a pure function of its inputs. Each row keeps

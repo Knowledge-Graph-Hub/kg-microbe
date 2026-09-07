@@ -247,7 +247,8 @@ def script_fingerprint(path: Optional[Path] = None) -> str:
     """
     Identify the exporter by the content of its own source file.
 
-    Returned as ``sha256:<hex>`` for the ``mapping_tool`` header. A commit SHA
+    Returned as ``sha256:<hex>`` for the ``mapping_tool_version`` header. A
+    commit SHA
     cannot do this job: ``git rev-parse HEAD`` names the commit the checkout
     sits on, not the code that ran, and the normal workflow -- regenerate from
     a modified tree, then commit -- stamps the *parent* commit, whose version
@@ -264,10 +265,13 @@ def script_fingerprint(path: Optional[Path] = None) -> str:
     target = Path(__file__).resolve() if path is None else Path(path)
     try:
         return f"sha256:{_file_sha256(target)}"
-    except OSError:
+    except OSError as exc:
         # Reachable only when the source is not on disk (frozen/zipped
         # deployment). "unknown" is the honest answer; a stale or invented
-        # identifier would be worse than none.
+        # identifier would be worse than none. Say so on the way out: the
+        # alternative evidence is a header line inside a 13 MB gzip nobody
+        # opens, which is the silence #961 was about (#975).
+        print(f"  ! Could not fingerprint {target}: {exc}. mapping_tool_version will read 'unknown'.")
         return "unknown"
 
 
@@ -2536,8 +2540,9 @@ class ChemicalMappingConsolidator:
             if prefix not in prefix_map:
                 prefix_map[prefix] = f"https://bioregistry.io/{prefix}:"
 
-        # Provenance of the exporter, for the mapping-set header. This is the
-        # script's own content hash, not a commit: see script_fingerprint for
+        # Provenance of the exporter, for the mapping-set header's
+        # `mapping_tool_version`. This is the script's own content hash, not a
+        # commit: see script_fingerprint for
         # why a commit SHA is a claim the artifact cannot support (#961). It is
         # also independent of where the output lands, so --dry-run and the
         # apply agree -- deriving it from the output path made the preview
@@ -2835,7 +2840,11 @@ class ChemicalMappingConsolidator:
         if self.predicate_semantics:
             header_lines.append(f'# {PREDICATE_SEMANTICS_KEY}: "{self.predicate_semantics}"')
         header_lines += [
-            f'# mapping_tool: "kg-microbe/scripts/consolidate_chemical_mappings.py@{tool_fingerprint}"',
+            # `mapping_tool` names the tool and `mapping_tool_version` its version:
+            # both are MappingSet slots, and packing the second into the first
+            # made a spec-aware reader see a tool called "...py@sha256:..." (#971).
+            '# mapping_tool: "kg-microbe/scripts/consolidate_chemical_mappings.py"',
+            f'# mapping_tool_version: "{tool_fingerprint}"',
             '# extension_definitions:',
             '#   - slot_name: source',
             '#     property: "https://w3id.org/kg-microbe/source"',

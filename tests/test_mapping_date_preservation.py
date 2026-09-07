@@ -178,21 +178,25 @@ class MappingDatePreservationTests(unittest.TestCase):
 
 
 class ProvenanceHeaderTests(unittest.TestCase):
-    """`mapping_tool` must name the code that ran, not the commit it sat on (#961)."""
+    """Provenance must name the code that ran, not the commit it sat on (#961)."""
+
+    TOOL = "kg-microbe/scripts/consolidate_chemical_mappings.py"
 
     @staticmethod
-    def _recorded_fingerprint(path):
+    def _export(directory):
         """
-        Read the identifier out of the exported ``mapping_tool`` header.
+        Export the one-chemical set and return the path written.
 
-        :param path: The exported ``.gz``.
-        :return: Everything after the ``@``.
+        :param directory: Directory to write into.
+        :return: The exported ``.gz`` path.
         """
-        return _header(path, "mapping_tool").rsplit("@", 1)[1]
+        out = Path(directory) / "out.sssom.tsv.gz"
+        _consolidator().export_unified_sssom(out)
+        return out
 
-    def test_the_tool_identifier_survives_an_export_outside_the_repository(self):
+    def test_the_tool_version_survives_an_export_outside_the_repository(self):
         """
-        --dry-run exports to a temp dir, where the old lookup wrote "@unknown".
+        --dry-run exports to a temp dir, where the old lookup wrote "unknown".
 
         The provenance of the script has nothing to do with where its output
         lands, so resolving it from the output path made the preview differ
@@ -201,13 +205,11 @@ class ProvenanceHeaderTests(unittest.TestCase):
         import tempfile
 
         with tempfile.TemporaryDirectory() as td:
-            out = Path(td) / "out.sssom.tsv.gz"
-            _consolidator().export_unified_sssom(out)
-            tool = _header(out, "mapping_tool")
-            self.assertTrue(tool.startswith("kg-microbe/scripts/consolidate_chemical_mappings.py@"))
-            self.assertNotEqual(self._recorded_fingerprint(out), "unknown")
+            out = self._export(td)
+            self.assertEqual(_header(out, "mapping_tool"), self.TOOL)
+            self.assertNotEqual(_header(out, "mapping_tool_version"), "unknown")
 
-    def test_the_header_names_the_hash_of_the_script_that_ran(self):
+    def test_the_version_is_the_hash_of_the_script_that_ran(self):
         """
         The claim has to be checkable against the file, or it is decoration.
 
@@ -220,11 +222,9 @@ class ProvenanceHeaderTests(unittest.TestCase):
 
         expected = "sha256:" + hashlib.sha256(SCRIPT.read_bytes()).hexdigest()
         with tempfile.TemporaryDirectory() as td:
-            out = Path(td) / "out.sssom.tsv.gz"
-            _consolidator().export_unified_sssom(out)
-            self.assertEqual(self._recorded_fingerprint(out), expected)
+            self.assertEqual(_header(self._export(td), "mapping_tool_version"), expected)
 
-    def test_the_identifier_is_not_a_git_commit(self):
+    def test_the_version_is_not_a_git_commit(self):
         """
         Guard against a well-meaning revert to `rev-parse HEAD`.
 
@@ -234,9 +234,19 @@ class ProvenanceHeaderTests(unittest.TestCase):
         import tempfile
 
         with tempfile.TemporaryDirectory() as td:
-            out = Path(td) / "out.sssom.tsv.gz"
-            _consolidator().export_unified_sssom(out)
-            self.assertNotRegex(self._recorded_fingerprint(out), r"^[0-9a-f]{40}$")
+            self.assertNotRegex(_header(self._export(td), "mapping_tool_version"), r"^[0-9a-f]{40}$")
+
+    def test_the_tool_name_does_not_carry_the_version(self):
+        """
+        `mapping_tool` and `mapping_tool_version` are separate SSSOM slots.
+
+        Packing the version into the name made a spec-aware reader see a tool
+        called "...py@sha256:..." (#971).
+        """
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            self.assertNotIn("@", _header(self._export(td), "mapping_tool"))
 
     def test_editing_the_script_changes_the_fingerprint(self):
         """One byte of behaviour change must not leave the identifier alone."""
@@ -263,12 +273,23 @@ class ProvenanceHeaderTests(unittest.TestCase):
             second.write_text("print('same')\n", encoding="utf-8")
             self.assertEqual(ccm.script_fingerprint(first), ccm.script_fingerprint(second))
 
-    def test_a_missing_script_reports_unknown_rather_than_raising(self):
-        """An export must not die because provenance could not be computed."""
+    def test_a_missing_script_reports_unknown_out_loud(self):
+        """
+        An export must not die because provenance could not be computed.
+
+        It must not fall silent either: the only other evidence is a header
+        line inside a 13 MB gzip (#975).
+        """
+        import contextlib
+        import io
         import tempfile
 
         with tempfile.TemporaryDirectory() as td:
-            self.assertEqual(ccm.script_fingerprint(Path(td) / "absent.py"), "unknown")
+            said = io.StringIO()
+            with contextlib.redirect_stdout(said):
+                fingerprint = ccm.script_fingerprint(Path(td) / "absent.py")
+            self.assertEqual(fingerprint, "unknown")
+            self.assertIn("absent.py", said.getvalue())
 
 
 if __name__ == "__main__":

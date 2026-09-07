@@ -192,3 +192,54 @@ class FreshnessDataStalenessTest(TestCase):
         ):
             report = self.mod.check_source("bacdive", "origin/master")
         self.assertEqual(report.status, "STALE_VS_CODE_AND_DATA")
+
+
+class FreshnessSchemaTest(TestCase):
+    """A schema change must mark output stale, once the marker records one (#943)."""
+
+    def setUp(self):
+        """Import the standalone freshness script."""
+        spec = importlib.util.spec_from_file_location(
+            "kgm_freshness_check",
+            REPO_ROOT / ".claude" / "skills" / "kgm-freshness-check" / "kgm_freshness_check.py",
+        )
+        self.mod = importlib.util.module_from_spec(spec)
+        sys.modules["kgm_freshness_check"] = self.mod
+        spec.loader.exec_module(self.mod)
+
+    def _verdict(self, recorded_schema):
+        """
+        Run ``_fingerprint_verdict`` over a marker whose other fields all match.
+
+        :param recorded_schema: The ``schema`` value in the marker.
+        :return: ``(status, note)``.
+        """
+        import kg_microbe.utils.transform_fingerprint as fp
+
+        marker = {"version": fp.FINGERPRINT_VERSION, "code": "c", "data": "d", "upstream": "u"}
+        if recorded_schema is not None:
+            marker["schema"] = recorded_schema
+        with (
+            mock.patch.object(fp, "read_fingerprint", return_value=marker),
+            mock.patch.object(fp, "code_fingerprint", return_value="c"),
+            mock.patch.object(fp, "data_fingerprint", return_value="d"),
+            mock.patch.object(fp, "upstream_fingerprint", return_value="u"),
+            mock.patch.object(fp, "schema_fingerprint", return_value={"version": "4.4.2", "digest": "new"}),
+        ):
+            code_dir = REPO_ROOT / "kg_microbe" / "transform_utils" / "bactotraits"
+            return self.mod._fingerprint_verdict("bactotraits", code_dir)
+
+    def test_a_recorded_schema_that_moved_is_stale(self):
+        """The #941 case: pin moved 4.3.6 -> 4.4.2, code and data untouched."""
+        status, note = self._verdict({"version": "4.3.6", "digest": "old"})
+        self.assertEqual(status, "STALE_VS_SCHEMA")
+        self.assertIn("4.3.6", note)
+        self.assertIn("4.4.2", note)
+
+    def test_a_matching_schema_is_fresh(self):
+        """Recording the schema must not invent staleness."""
+        self.assertEqual(self._verdict({"version": "4.4.2", "digest": "new"})[0], "FRESH")
+
+    def test_a_marker_without_a_schema_is_not_judged_on_it(self):
+        """Unknown provenance is not wrong provenance (#911)."""
+        self.assertEqual(self._verdict(None)[0], "FRESH")

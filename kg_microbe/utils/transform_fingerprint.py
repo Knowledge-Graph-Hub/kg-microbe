@@ -24,6 +24,7 @@ versus ``STALE_VS_DATA``.
 import ast
 import hashlib
 import json
+import re
 from pathlib import Path
 from typing import Iterable, Optional
 
@@ -193,6 +194,46 @@ def data_fingerprint(repo_root: Path, data_inputs: Iterable[str]) -> str:
     return _hash_files(repo_root / rel for rel in data_inputs)
 
 
+#: The pinned Biolink schema every transform validates against, relative to
+#: the repository root. All three move together (see CLAUDE.md).
+SCHEMA_FILES = (
+    Path("data") / "raw" / "biolink-model.yaml",
+    Path("data") / "raw" / "attributes.yaml",
+    Path("data") / "raw" / "predicate_mapping.yaml",
+)
+
+_SCHEMA_VERSION_LINE = re.compile(r"^version:\s*['\"]?([^'\"\s]+)")
+
+
+def schema_fingerprint(repo_root: Path) -> Optional[dict]:
+    """
+    Identify the Biolink schema a transform ran against.
+
+    The pinned model is a real pipeline input -- ``prepare_kgx`` makes it the
+    default schema for every KGX ``Toolkit`` -- but no transform declares it,
+    so swapping it (as #941 did, 4.3.6 -> 4.4.2) marked nothing stale and a
+    partial rerun could mix schema versions in one merged graph (#943). Record
+    it in the marker so the artifact says which schema produced it.
+
+    :param repo_root: Repository root.
+    :return: ``{"version": ..., "digest": ...}``, or None when no schema file
+        is on disk -- unknown provenance is recorded as unknown, not invented.
+    """
+    present = [repo_root / rel for rel in SCHEMA_FILES if (repo_root / rel).is_file()]
+    if not present:
+        return None
+    version = "unknown"
+    model = repo_root / SCHEMA_FILES[0]
+    if model.is_file():
+        with model.open("r", encoding="utf-8", errors="replace") as handle:
+            for line in handle:
+                match = _SCHEMA_VERSION_LINE.match(line)
+                if match:
+                    version = match.group(1)
+                    break
+    return {"version": version, "digest": _hash_files(present)}
+
+
 def write_fingerprint(
     output_dir: Path,
     code_dir: Path,
@@ -221,6 +262,8 @@ def write_fingerprint(
         # Recorded separately so a stale output says which of the three moved:
         # its code, its curation data, or something it reads (#845).
         "upstream": upstream_fingerprint(output_dir.parent, transform_inputs),
+        # Which Biolink schema this output was validated against (#943).
+        "schema": schema_fingerprint(repo_root),
     }
     with atomic_write(output_dir / FINGERPRINT_FILE, encoding="utf-8") as handle:
         handle.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")

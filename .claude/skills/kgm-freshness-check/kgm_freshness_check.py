@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Freshness check for KG-Microbe transform / merge outputs vs origin/master.
+"""
+Freshness check for KG-Microbe transform / merge outputs vs origin/master.
 
 For every transform directory under kg_microbe/transform_utils/<source>/,
 compare:
@@ -13,6 +14,7 @@ Also report:
 
 Per-source status codes:
   FRESH             — output mtime > latest code commit AND no local changes
+  STALE_VS_SCHEMA   — the recorded Biolink schema differs from the pinned one (#943)
   STALE_VS_CODE     — output mtime < latest code commit on origin/master
   LOCAL_CHANGES     — working tree diverges from origin/master for this dir
                      (in that case, "current relative to master" is not
@@ -38,11 +40,10 @@ from __future__ import annotations
 
 import argparse
 import json
-import os
+import re
 import subprocess
 import sys
-from dataclasses import dataclass, asdict, field
-import re
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Iterable, Optional
 
@@ -329,6 +330,7 @@ def _fingerprint_verdict(source: str, code_dir: Path) -> Optional[tuple]:
             code_fingerprint,
             data_fingerprint,
             read_fingerprint,
+            schema_fingerprint,
             upstream_fingerprint,
         )
     except ImportError:
@@ -343,6 +345,17 @@ def _fingerprint_verdict(source: str, code_dir: Path) -> Optional[tuple]:
         upstream_stale = recorded.get("upstream") != upstream_fingerprint(
             TRANSFORMED_DIR, _declared_transform_inputs(source)
         )
+        # Only judged when the marker recorded a schema. A marker written before
+        # the field existed says nothing about the schema, and unknown provenance
+        # is not wrong provenance (#911, #943).
+        recorded_schema = recorded.get("schema")
+        if recorded_schema is not None and recorded_schema != schema_fingerprint(REPO):
+            current = schema_fingerprint(REPO) or {}
+            return (
+                "STALE_VS_SCHEMA",
+                f"built against Biolink {recorded_schema.get('version', '?')}, pinned model is now "
+                f"{current.get('version', 'absent')}; rerun `poetry run kg transform -s {source}`",
+            )
         if upstream_stale and not (code_stale or data_stale):
             upstreams = ", ".join(_declared_transform_inputs(source)) or "an upstream"
             return (
@@ -641,6 +654,7 @@ def main() -> int:
             "STALE_VS_CODE",
             "STALE_VS_DATA",
             "STALE_VS_CODE_AND_DATA",
+            "STALE_VS_SCHEMA",
             "LOCAL_CHANGES",
             "MISSING_OUTPUT",
             "NO_CODE",

@@ -177,6 +177,62 @@ class MappingDatePreservationTests(unittest.TestCase):
             self.assertEqual(first.read_bytes(), second.read_bytes())
 
 
+class ParentRelationDateTests(unittest.TestCase):
+    """Asymmetric MIM rows must keep their published date too (#978)."""
+
+    RELATION = {
+        "subject_id": "MIM:Water_Sample",
+        "subject_label": "Water sample",
+        "predicate_id": "skos:narrowMatch",
+        "object_id": "CHEBI:15377",
+        "object_label": "water",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:ManualMappingCuration",
+        "source": "mediaingredientmech_reviewed",
+        "mapping_date": "2026-09-06",
+        "confidence": "0.9",
+        "comment": "",
+    }
+    TRIPLE = ("MIM:Water_Sample", "skos:narrowMatch", "CHEBI:15377")
+
+    def _export(self, directory, prior=None):
+        """
+        Export a one-chemical set carrying one parent relation.
+
+        :param directory: Directory to write into.
+        :param prior: Optional published set to read dates from.
+        :return: The exported parent-relation row.
+        """
+        consolidator = _consolidator()
+        consolidator.parent_relations.append(dict(self.RELATION))
+        out = Path(directory) / "out.sssom.tsv.gz"
+        consolidator.export_unified_sssom(out, published_path=prior)
+        rows = [r for r in _rows(out) if (r["subject_id"], r["predicate_id"], r["object_id"]) == self.TRIPLE]
+        self.assertEqual(len(rows), 1)
+        return rows[0]
+
+    def test_a_published_parent_relation_keeps_its_date(self):
+        """
+        MIM re-stamps mapping_date on every build.
+
+        With MIM's date winning, a refresh that changed nothing about the
+        relation still moved its date -- 18 rows in #977.
+        """
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            prior = Path(td) / "prior.sssom.tsv.gz"
+            _write_prior(prior, self.TRIPLE, "2026-05-02")
+            self.assertEqual(self._export(td, prior)["mapping_date"], "2026-05-02")
+
+    def test_a_first_export_records_the_date_mim_asserted(self):
+        """With nothing published, MIM's own date is the best record there is."""
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            self.assertEqual(self._export(td)["mapping_date"], "2026-09-06")
+
+
 class ProvenanceHeaderTests(unittest.TestCase):
     """Provenance must name the code that ran, not the commit it sat on (#961)."""
 

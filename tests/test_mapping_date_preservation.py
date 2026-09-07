@@ -177,27 +177,120 @@ class MappingDatePreservationTests(unittest.TestCase):
             self.assertEqual(first.read_bytes(), second.read_bytes())
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class ProvenanceHeaderTests(unittest.TestCase):
-    """The preview and the apply must agree on provenance (#961)."""
+    """Provenance must name the code that ran, not the commit it sat on (#961)."""
 
-    def test_the_tool_sha_survives_an_export_outside_the_repository(self):
+    TOOL = "kg-microbe/scripts/consolidate_chemical_mappings.py"
+
+    @staticmethod
+    def _export(directory):
         """
-        --dry-run exports to a temp dir, where the old lookup wrote "@unknown".
+        Export the one-chemical set and return the path written.
+
+        :param directory: Directory to write into.
+        :return: The exported ``.gz`` path.
+        """
+        out = Path(directory) / "out.sssom.tsv.gz"
+        _consolidator().export_unified_sssom(out)
+        return out
+
+    def test_the_tool_version_survives_an_export_outside_the_repository(self):
+        """
+        --dry-run exports to a temp dir, where the old lookup wrote "unknown".
 
         The provenance of the script has nothing to do with where its output
-        lands, so resolving the SHA from the output path made the preview differ
+        lands, so resolving it from the output path made the preview differ
         from the apply in a header line no mapping had touched.
         """
         import tempfile
 
         with tempfile.TemporaryDirectory() as td:
-            out = Path(td) / "out.sssom.tsv.gz"
-            _consolidator().export_unified_sssom(out)
-            tool = _header(out, "mapping_tool")
-            self.assertTrue(tool.endswith("consolidate_chemical_mappings.py@" + tool.rsplit("@", 1)[1]))
-            self.assertNotEqual(tool.rsplit("@", 1)[1], "unknown")
-            self.assertRegex(tool.rsplit("@", 1)[1], r"^[0-9a-f]{40}$")
+            out = self._export(td)
+            self.assertEqual(_header(out, "mapping_tool"), self.TOOL)
+            self.assertNotEqual(_header(out, "mapping_tool_version"), "unknown")
+
+    def test_the_version_is_the_hash_of_the_script_that_ran(self):
+        """
+        The claim has to be checkable against the file, or it is decoration.
+
+        A commit SHA is not: the run precedes the commit that carries its
+        output, so the recorded commit's copy of the script can differ from
+        the one that produced the artifact.
+        """
+        import hashlib
+        import tempfile
+
+        expected = "sha256:" + hashlib.sha256(SCRIPT.read_bytes()).hexdigest()
+        with tempfile.TemporaryDirectory() as td:
+            self.assertEqual(_header(self._export(td), "mapping_tool_version"), expected)
+
+    def test_the_version_is_not_a_git_commit(self):
+        """
+        Guard against a well-meaning revert to `rev-parse HEAD`.
+
+        A bare 40-hex value is exactly what the old code wrote, and it reads
+        as provenance while being unverifiable against anything on disk.
+        """
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            self.assertNotRegex(_header(self._export(td), "mapping_tool_version"), r"^[0-9a-f]{40}$")
+
+    def test_the_tool_name_does_not_carry_the_version(self):
+        """
+        `mapping_tool` and `mapping_tool_version` are separate SSSOM slots.
+
+        Packing the version into the name made a spec-aware reader see a tool
+        called "...py@sha256:..." (#971).
+        """
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            self.assertNotIn("@", _header(self._export(td), "mapping_tool"))
+
+    def test_editing_the_script_changes_the_fingerprint(self):
+        """One byte of behaviour change must not leave the identifier alone."""
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            first, second = Path(td) / "a.py", Path(td) / "b.py"
+            first.write_text("print('one')\n", encoding="utf-8")
+            second.write_text("print('two')\n", encoding="utf-8")
+            self.assertNotEqual(ccm.script_fingerprint(first), ccm.script_fingerprint(second))
+
+    def test_identical_scripts_at_different_paths_agree(self):
+        """
+        The identifier is the content, so a copy of the script is the same tool.
+
+        This is the property a commit SHA lacked: it moved with the checkout,
+        not with the code.
+        """
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            first, second = Path(td) / "here.py", Path(td) / "elsewhere.py"
+            first.write_text("print('same')\n", encoding="utf-8")
+            second.write_text("print('same')\n", encoding="utf-8")
+            self.assertEqual(ccm.script_fingerprint(first), ccm.script_fingerprint(second))
+
+    def test_a_missing_script_reports_unknown_out_loud(self):
+        """
+        An export must not die because provenance could not be computed.
+
+        It must not fall silent either: the only other evidence is a header
+        line inside a 13 MB gzip (#975).
+        """
+        import contextlib
+        import io
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            said = io.StringIO()
+            with contextlib.redirect_stdout(said):
+                fingerprint = ccm.script_fingerprint(Path(td) / "absent.py")
+            self.assertEqual(fingerprint, "unknown")
+            self.assertIn("absent.py", said.getvalue())
+
+
+if __name__ == "__main__":
+    unittest.main()

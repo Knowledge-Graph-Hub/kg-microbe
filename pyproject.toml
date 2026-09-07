@@ -121,7 +121,7 @@ select = [
 # list, and `tests/test_scripts_lint_debt.py` fails if an entry stops firing.
 "scripts/analyze_custom_metpo_mappings.py" = ["D401", "E501"]
 "scripts/analyze_gtdb_metatraits_overlap.py" = ["D401", "E501"]
-"scripts/consolidate_chemical_mappings.py" = ["B023", "D205", "D401", "E501", "S110", "S603", "S607"]
+"scripts/consolidate_chemical_mappings.py" = ["B023", "D205", "D401", "E501", "S110"]
 "scripts/download_kegg_bulk.py" = ["D401"]
 "scripts/download_kegg_minimal.py" = ["D401"]
 "scripts/examples/visualization/create_1hop_full_labels.py" = ["D100", "D400", "D415", "E501"]

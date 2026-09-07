@@ -243,6 +243,38 @@ def _file_sha256(path: Path) -> str:
     return h.hexdigest()
 
 
+def script_fingerprint(path: Optional[Path] = None) -> str:
+    """
+    Identify the exporter by the content of its own source file.
+
+    Returned as ``sha256:<hex>`` for the ``mapping_tool_version`` header. A
+    commit SHA
+    cannot do this job: ``git rev-parse HEAD`` names the commit the checkout
+    sits on, not the code that ran, and the normal workflow -- regenerate from
+    a modified tree, then commit -- stamps the *parent* commit, whose version
+    of this script is not the one that produced the artifact (#961). The run
+    also necessarily precedes the commit containing its output, so no commit
+    SHA escapes this. A content hash is exact, needs no git, and does not move
+    for commits that leave this script alone.
+
+    It covers this file only. A behaviour change inside an imported module
+    (``kg_microbe.utils.chemical_mapping_utils``, ``ontology_utils``) is not
+    reflected here; the field claims the exporter's identity, not a closure
+    over everything it calls.
+    """
+    target = Path(__file__).resolve() if path is None else Path(path)
+    try:
+        return f"sha256:{_file_sha256(target)}"
+    except OSError as exc:
+        # Reachable only when the source is not on disk (frozen/zipped
+        # deployment). "unknown" is the honest answer; a stale or invented
+        # identifier would be worse than none. Say so on the way out: the
+        # alternative evidence is a header line inside a 13 MB gzip nobody
+        # opens, which is the silence #961 was about (#975).
+        print(f"  ! Could not fingerprint {target}: {exc}. mapping_tool_version will read 'unknown'.")
+        return "unknown"
+
+
 #: A ``mapping_date`` this exporter is willing to carry forward. Anything else
 #: is treated as absent; see :func:`published_mapping_dates`.
 _ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
@@ -2444,7 +2476,6 @@ class ChemicalMappingConsolidator:
         loader can reconstruct the entity-centric view directly from
         this file without a separate TSV index.
         """
-        import subprocess
         from datetime import date
 
         # Prefixes emitted as exactMatch equivalences. Everything else is
@@ -2509,22 +2540,14 @@ class ChemicalMappingConsolidator:
             if prefix not in prefix_map:
                 prefix_map[prefix] = f"https://bioregistry.io/{prefix}:"
 
-        # Git SHA for reproducibility in the mapping-set header. Resolved from
-        # this script's own location, not from the output path: --dry-run
-        # exports to a temporary directory, where `git rev-parse` fails and the
-        # header silently became "@unknown" -- a preview differing from the
-        # apply for a reason unrelated to the mappings (#961).
-        try:
-            git_sha = (
-                subprocess.check_output(
-                    ["git", "-C", str(Path(__file__).resolve().parent), "rev-parse", "HEAD"],
-                    stderr=subprocess.DEVNULL,
-                )
-                .decode()
-                .strip()
-            )
-        except Exception:
-            git_sha = "unknown"
+        # Provenance of the exporter, for the mapping-set header's
+        # `mapping_tool_version`. This is the script's own content hash, not a
+        # commit: see script_fingerprint for
+        # why a commit SHA is a claim the artifact cannot support (#961). It is
+        # also independent of where the output lands, so --dry-run and the
+        # apply agree -- deriving it from the output path made the preview
+        # write "@unknown" from its temporary directory.
+        tool_fingerprint = script_fingerprint()
 
         def _sanitize_tsv(value: str) -> str:
             if value is None:
@@ -2817,7 +2840,11 @@ class ChemicalMappingConsolidator:
         if self.predicate_semantics:
             header_lines.append(f'# {PREDICATE_SEMANTICS_KEY}: "{self.predicate_semantics}"')
         header_lines += [
-            f'# mapping_tool: "kg-microbe/scripts/consolidate_chemical_mappings.py@{git_sha}"',
+            # `mapping_tool` names the tool and `mapping_tool_version` its version:
+            # both are MappingSet slots, and packing the second into the first
+            # made a spec-aware reader see a tool called "...py@sha256:..." (#971).
+            '# mapping_tool: "kg-microbe/scripts/consolidate_chemical_mappings.py"',
+            f'# mapping_tool_version: "{tool_fingerprint}"',
             '# extension_definitions:',
             '#   - slot_name: source',
             '#     property: "https://w3id.org/kg-microbe/source"',

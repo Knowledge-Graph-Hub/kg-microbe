@@ -122,8 +122,27 @@ the `mapping_date` it was first published with, so a refresh diffs only the rows
 that changed rather than all of them; `mapping_set_version` and the header
 `mapping_date` are the newest row date, not the clock; and the gzip archive is
 written with `mtime=0`, so identical content always compresses to identical
-bytes. The one field that legitimately moves without a data change is
-`mapping_tool`, which carries the commit the script ran from.
+bytes. `mapping_tool_version` now carries the SHA-256 of
+`scripts/consolidate_chemical_mappings.py` itself rather than the commit the
+checkout sat on (#961) — a commit named code that may not be the code that ran,
+since the run necessarily precedes the commit carrying its output, and it moved
+on every commit that touched anything. The hash covers that one script, not the
+modules it imports (#974). The tool's name stays in `mapping_tool`, where SSSOM
+puts it (#971).
+
+A content hash is exact but not a lookup: `git show <sha>:path` works for a
+commit, and nothing equivalent works here (it is not the git blob hash either,
+which is taken over `blob <len>\0` + content). To find the commits whose copy
+of the exporter produced an artifact (#972):
+
+```bash
+TARGET=$(gunzip -c mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz |
+  sed -n 's/^# mapping_tool_version: "sha256:\(.*\)"/\1/p')
+git log --all --format=%H -- scripts/consolidate_chemical_mappings.py | while read -r c; do
+  h=$(git show "$c:scripts/consolidate_chemical_mappings.py" | shasum -a 256 | cut -d' ' -f1)
+  [ "$h" = "$TARGET" ] && echo "$c"
+done
+```
 
 ### Usage Examples
 

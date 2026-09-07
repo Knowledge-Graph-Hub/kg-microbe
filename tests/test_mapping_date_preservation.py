@@ -177,19 +177,25 @@ class MappingDatePreservationTests(unittest.TestCase):
             self.assertEqual(first.read_bytes(), second.read_bytes())
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class ProvenanceHeaderTests(unittest.TestCase):
-    """The preview and the apply must agree on provenance (#961)."""
+    """`mapping_tool` must name the code that ran, not the commit it sat on (#961)."""
 
-    def test_the_tool_sha_survives_an_export_outside_the_repository(self):
+    @staticmethod
+    def _recorded_fingerprint(path):
+        """
+        Read the identifier out of the exported ``mapping_tool`` header.
+
+        :param path: The exported ``.gz``.
+        :return: Everything after the ``@``.
+        """
+        return _header(path, "mapping_tool").rsplit("@", 1)[1]
+
+    def test_the_tool_identifier_survives_an_export_outside_the_repository(self):
         """
         --dry-run exports to a temp dir, where the old lookup wrote "@unknown".
 
         The provenance of the script has nothing to do with where its output
-        lands, so resolving the SHA from the output path made the preview differ
+        lands, so resolving it from the output path made the preview differ
         from the apply in a header line no mapping had touched.
         """
         import tempfile
@@ -198,6 +204,72 @@ class ProvenanceHeaderTests(unittest.TestCase):
             out = Path(td) / "out.sssom.tsv.gz"
             _consolidator().export_unified_sssom(out)
             tool = _header(out, "mapping_tool")
-            self.assertTrue(tool.endswith("consolidate_chemical_mappings.py@" + tool.rsplit("@", 1)[1]))
-            self.assertNotEqual(tool.rsplit("@", 1)[1], "unknown")
-            self.assertRegex(tool.rsplit("@", 1)[1], r"^[0-9a-f]{40}$")
+            self.assertTrue(tool.startswith("kg-microbe/scripts/consolidate_chemical_mappings.py@"))
+            self.assertNotEqual(self._recorded_fingerprint(out), "unknown")
+
+    def test_the_header_names_the_hash_of_the_script_that_ran(self):
+        """
+        The claim has to be checkable against the file, or it is decoration.
+
+        A commit SHA is not: the run precedes the commit that carries its
+        output, so the recorded commit's copy of the script can differ from
+        the one that produced the artifact.
+        """
+        import hashlib
+        import tempfile
+
+        expected = "sha256:" + hashlib.sha256(SCRIPT.read_bytes()).hexdigest()
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td) / "out.sssom.tsv.gz"
+            _consolidator().export_unified_sssom(out)
+            self.assertEqual(self._recorded_fingerprint(out), expected)
+
+    def test_the_identifier_is_not_a_git_commit(self):
+        """
+        Guard against a well-meaning revert to `rev-parse HEAD`.
+
+        A bare 40-hex value is exactly what the old code wrote, and it reads
+        as provenance while being unverifiable against anything on disk.
+        """
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            out = Path(td) / "out.sssom.tsv.gz"
+            _consolidator().export_unified_sssom(out)
+            self.assertNotRegex(self._recorded_fingerprint(out), r"^[0-9a-f]{40}$")
+
+    def test_editing_the_script_changes_the_fingerprint(self):
+        """One byte of behaviour change must not leave the identifier alone."""
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            first, second = Path(td) / "a.py", Path(td) / "b.py"
+            first.write_text("print('one')\n", encoding="utf-8")
+            second.write_text("print('two')\n", encoding="utf-8")
+            self.assertNotEqual(ccm.script_fingerprint(first), ccm.script_fingerprint(second))
+
+    def test_identical_scripts_at_different_paths_agree(self):
+        """
+        The identifier is the content, so a copy of the script is the same tool.
+
+        This is the property a commit SHA lacked: it moved with the checkout,
+        not with the code.
+        """
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            first, second = Path(td) / "here.py", Path(td) / "elsewhere.py"
+            first.write_text("print('same')\n", encoding="utf-8")
+            second.write_text("print('same')\n", encoding="utf-8")
+            self.assertEqual(ccm.script_fingerprint(first), ccm.script_fingerprint(second))
+
+    def test_a_missing_script_reports_unknown_rather_than_raising(self):
+        """An export must not die because provenance could not be computed."""
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as td:
+            self.assertEqual(ccm.script_fingerprint(Path(td) / "absent.py"), "unknown")
+
+
+if __name__ == "__main__":
+    unittest.main()

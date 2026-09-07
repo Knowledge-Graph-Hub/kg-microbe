@@ -184,7 +184,9 @@ three move together — half a schema at one version is worse than either versio
 alone — and `tests/test_biolink_schema_pin.py` checks that `download.yaml`
 fetches every file the shipped model imports, at one pinned tag. Updating the
 Biolink version requires changing `download.yaml`, the lock file, fixtures, and
-tests together.
+tests together. Each transform's `source_fingerprint.json` records the schema
+it was built against, and `kgm-freshness-check` reports `STALE_VS_SCHEMA` when
+the pinned model has moved since (#943).
 
 A pin bump alone does not refresh `data/raw`. The 4.4.2 bump landed in August
 2026 and the 4.3.6 file already on disk was never replaced, so every run since

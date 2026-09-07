@@ -206,16 +206,27 @@ def _describe_output(transform_obj, source: str) -> str:
     out_dir = getattr(transform_obj, "output_dir", None)
     if out_dir is None:
         return f"no output_dir attribute on {source} transform"
+    # Every `*nodes.tsv` / `*edges.tsv`, not the two literal names: the
+    # ontologies transform writes `<ontology>_nodes.tsv` per ontology and the
+    # stub transform does the same, so the literal check reported a successful
+    # 415 MB, 28-file run as "wrote no nodes.tsv/edges.tsv" -- the inverse of
+    # what the guard is for (#949).
     parts = []
-    for name in ("nodes.tsv", "edges.tsv"):
-        path = Path(out_dir) / name
-        if not path.is_file():
+    for kind in ("nodes", "edges"):
+        files = sorted(Path(out_dir).glob(f"*{kind}.tsv"))
+        if not files:
             continue
-        try:
-            with path.open("r", encoding="utf-8") as handle:
-                rows = max(sum(1 for _ in handle) - 1, 0)
-        except OSError as exc:  # pragma: no cover - unreadable output is rare
-            parts.append(f"{name} unreadable ({exc})")
-            continue
-        parts.append(f"{name}: {rows:,} rows")
-    return "; ".join(parts) if parts else f"wrote no nodes.tsv/edges.tsv in {out_dir}"
+        counted = []
+        for path in files:
+            try:
+                with path.open("r", encoding="utf-8") as handle:
+                    counted.append((path.name, max(sum(1 for _ in handle) - 1, 0)))
+            except OSError as exc:  # pragma: no cover - unreadable output is rare
+                parts.append(f"{path.name} unreadable ({exc})")
+        if len(counted) == 1:
+            name, rows = counted[0]
+            parts.append(f"{name}: {rows:,} rows")
+        elif counted:
+            total = sum(rows for _, rows in counted)
+            parts.append(f"{len(counted)} {kind} files: {total:,} rows")
+    return "; ".join(parts) if parts else f"wrote no *nodes.tsv/*edges.tsv in {out_dir}"

@@ -10,6 +10,7 @@ from kg_microbe.utils.transform_fingerprint import (
     code_fingerprint,
     data_fingerprint,
     read_fingerprint,
+    schema_fingerprint,
     write_fingerprint,
 )
 
@@ -114,3 +115,68 @@ class FingerprintTest(TestCase):
     def test_an_absent_marker_reads_as_absent(self):
         """Fresh checkouts and pre-existing outputs have none; that is not an error."""
         self.assertIsNone(read_fingerprint(self.tmp / "nowhere"))
+
+
+class SchemaFingerprintTests(TestCase):
+    """The marker must say which Biolink schema produced the output (#943)."""
+
+    def _root(self, td, version="4.4.2", extra=""):
+        """
+        Lay out a repo root with a pinned model.
+
+        :param td: Temp directory.
+        :param version: The ``version:`` line to write.
+        :param extra: Extra text appended to the model.
+        :return: The root path.
+        """
+        root = Path(td)
+        raw = root / "data" / "raw"
+        raw.mkdir(parents=True)
+        (raw / "biolink-model.yaml").write_text(
+            f"id: https://w3id.org/biolink/biolink-model\nname: Biolink-Model\nversion: {version}\n{extra}",
+            encoding="utf-8",
+        )
+        (raw / "attributes.yaml").write_text("id: attributes\n", encoding="utf-8")
+        return root
+
+    def test_the_version_is_read_from_the_model(self):
+        """The human-readable half of the record."""
+        with tempfile.TemporaryDirectory() as td:
+            self.assertEqual(schema_fingerprint(self._root(td))["version"], "4.4.2")
+
+    def test_editing_the_model_changes_the_digest_even_at_the_same_version(self):
+        """Two files claiming one version are still two schemas."""
+        with tempfile.TemporaryDirectory() as td_a, tempfile.TemporaryDirectory() as td_b:
+            a = schema_fingerprint(self._root(td_a))
+            b = schema_fingerprint(self._root(td_b, extra="classes:\n  thing: {}\n"))
+        self.assertEqual(a["version"], b["version"])
+        self.assertNotEqual(a["digest"], b["digest"])
+
+    def test_the_same_schema_in_two_checkouts_is_one_schema(self):
+        """
+        The digest must not fold in the absolute path.
+
+        A marker travels with its output directory; comparing it from another
+        checkout, or on another machine, must not read as a schema change.
+        """
+        with tempfile.TemporaryDirectory() as td_a, tempfile.TemporaryDirectory() as td_b:
+            self.assertEqual(schema_fingerprint(self._root(td_a)), schema_fingerprint(self._root(td_b)))
+
+    def test_no_schema_on_disk_records_none_rather_than_inventing_one(self):
+        """Unknown provenance is recorded as unknown (#911)."""
+        with tempfile.TemporaryDirectory() as td:
+            self.assertIsNone(schema_fingerprint(Path(td)))
+
+    def test_the_marker_carries_the_schema(self):
+        """Wired into ``write_fingerprint``, not just available beside it."""
+        with tempfile.TemporaryDirectory() as td:
+            root = self._root(td)
+            code = root / "pkg"
+            code.mkdir()
+            (code / "t.py").write_text("x = 1\n", encoding="utf-8")
+            out = root / "out"
+            out.mkdir()
+            payload = write_fingerprint(out, code, root, data_inputs=())
+            recorded = read_fingerprint(out)
+        self.assertEqual(payload["schema"]["version"], "4.4.2")
+        self.assertEqual(recorded["schema"], payload["schema"])

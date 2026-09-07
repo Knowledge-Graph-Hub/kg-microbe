@@ -76,8 +76,9 @@ def test_nodes_emitted_for_every_valid_row(lpsn_transform):
     """One node per LPSN record (fixture has 6 rows, all with record_no)."""
     lpsn_transform.run()
     nodes = _read_tsv(lpsn_transform.output_node_file)
-    assert len(nodes) == 6
-    ids = {n["id"] for n in nodes}
+    # Deposit nodes (#932) live in the same file; this test is about records.
+    ids = {n["id"] for n in nodes if n["id"].startswith(LPSN_PREFIX)}
+    assert len(ids) == 6
     assert ids == {
         f"{LPSN_PREFIX}1001",
         f"{LPSN_PREFIX}1002",
@@ -478,3 +479,58 @@ def test_gtdb_disabled_when_index_absent(lpsn_transform):
     edges = _read_tsv(lpsn_transform.output_edge_file)
     gtdb_edges = [e for e in edges if e["object"].startswith("GTDB:")]
     assert gtdb_edges == []
+
+
+def test_every_cited_deposit_gets_a_node_row(lpsn_transform):
+    """
+    A close_match edge to a deposit nobody declares is a stub at merge time.
+
+    KGX invents a bare ``biolink:NamedThing`` with no label for each
+    undeclared endpoint -- 4,233 of them in the 20260815 graph, every one
+    LPSN's (#932). The node row is the same shape BacDive emits for the
+    deposits it cites, so the merge collapses shared ones.
+    """
+    lpsn_transform.run()
+    nodes = {n["id"]: n for n in _read_tsv(lpsn_transform.output_node_file)}
+    edges = _read_tsv(lpsn_transform.output_edge_file)
+    cited = {e["object"] for e in edges if e["object"].startswith("kgmicrobe.strain:")}
+    assert cited, "fixture should cite at least one deposit"
+    missing = cited - set(nodes)
+    assert not missing, f"deposits cited without a node row: {sorted(missing)}"
+    deposit = nodes["kgmicrobe.strain:ATCC-11775"]
+    assert deposit["category"] == "biolink:OrganismTaxon"
+    assert deposit["name"] == "ATCC 11775"  # the code as written, not the slug
+    assert deposit["provided_by"] == LPSN_KNOWLEDGE_SOURCE
+
+
+def test_a_deposit_cited_by_two_records_gets_one_node_row(lpsn_transform, tmp_path):
+    """The node belongs to the deposit, not to the citation."""
+    lpsn_transform.run()
+    ids = [n["id"] for n in _read_tsv(lpsn_transform.output_node_file)]
+    deposits = [i for i in ids if i.startswith("kgmicrobe.strain:")]
+    assert len(deposits) == len(set(deposits))
+
+
+def test_a_run_that_dies_midway_leaves_no_output_file(lpsn_transform, monkeypatch):
+    """
+    A truncated nodes.tsv is worse than none (#820).
+
+    microbedecoder treats an empty id set as "lpsn has not run" and stubs
+    accordingly; a partial set reads as a complete one, so the ids that were
+    cut off look unsupplied. Absence is the state the fail-safes understand.
+    """
+    calls = {"n": 0}
+
+    def explode(self_, record_no, row):
+        calls["n"] += 1
+        if calls["n"] == 2:
+            raise RuntimeError("simulated crash after the first record")
+        return original(record_no, row)
+
+    original = lpsn_transform._make_node_row
+    monkeypatch.setattr(type(lpsn_transform), "_make_node_row", explode)
+    with pytest.raises(RuntimeError):
+        lpsn_transform.run()
+    assert not lpsn_transform.output_node_file.exists()
+    assert not lpsn_transform.output_edge_file.exists()
+    assert not list(Path(lpsn_transform.output_dir).glob("*.partial"))

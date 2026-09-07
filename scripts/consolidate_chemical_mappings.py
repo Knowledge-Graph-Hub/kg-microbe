@@ -2144,9 +2144,17 @@ class ChemicalMappingConsolidator:
                     rec["canonical_name"] = ""
                     retracted_canonical = True
                     hit = True
+                # Register the retraction whether or not the record carries the
+                # name right now. ``propagate_synonyms_via_xrefs`` reads this set
+                # as its guard, and registering only on a hit made the guard
+                # depend on the seed: a run whose seed lacked the name had no
+                # guard, propagation handed the name back across the xref, and
+                # the next run's seed carried it again -- a two-cycle, never a
+                # fixed point (#976). The retraction is a standing rule about
+                # the object, not a removal event.
+                self._retracted_names.setdefault(oid, set()).add(norm)
                 if hit:
                     removed += 1
-                    self._retracted_names.setdefault(oid, set()).add(norm)
                     if self.name_index.get(norm) == oid:
                         del self.name_index[norm]
 
@@ -2771,9 +2779,14 @@ class ChemicalMappingConsolidator:
                 "object_source": normalized_source,
                 "mapping_justification": rel["mapping_justification"] or "semapv:ManualMappingCuration",
                 "source": rel["source"],
+                # Published date first, like every other row class. MIM
+                # re-stamps mapping_date at build time, so letting it win
+                # moved 18 rows on a refresh that changed nothing about them
+                # (#978). MIM's date is what a first-ever export records.
                 "mapping_date": (
-                    rel["mapping_date"]
-                    or prior_dates.get((translated_subject, rel["predicate_id"], obj_id), today)
+                    prior_dates.get((translated_subject, rel["predicate_id"], obj_id))
+                    or rel["mapping_date"]
+                    or today
                 ),
                 "confidence": rel["confidence"],
                 "comment": rel["comment"],

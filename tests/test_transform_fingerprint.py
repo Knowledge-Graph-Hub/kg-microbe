@@ -152,6 +152,16 @@ class SchemaFingerprintTests(TestCase):
         self.assertEqual(a["version"], b["version"])
         self.assertNotEqual(a["digest"], b["digest"])
 
+    def test_the_same_schema_in_two_checkouts_is_one_schema(self):
+        """
+        The digest must not fold in the absolute path.
+
+        A marker travels with its output directory; comparing it from another
+        checkout, or on another machine, must not read as a schema change.
+        """
+        with tempfile.TemporaryDirectory() as td_a, tempfile.TemporaryDirectory() as td_b:
+            self.assertEqual(schema_fingerprint(self._root(td_a)), schema_fingerprint(self._root(td_b)))
+
     def test_no_schema_on_disk_records_none_rather_than_inventing_one(self):
         """Unknown provenance is recorded as unknown (#911)."""
         with tempfile.TemporaryDirectory() as td:

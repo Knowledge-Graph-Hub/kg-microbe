@@ -219,7 +219,7 @@ def schema_fingerprint(repo_root: Path) -> Optional[dict]:
     :return: ``{"version": ..., "digest": ...}``, or None when no schema file
         is on disk -- unknown provenance is recorded as unknown, not invented.
     """
-    present = [repo_root / rel for rel in SCHEMA_FILES if (repo_root / rel).is_file()]
+    present = [rel for rel in SCHEMA_FILES if (repo_root / rel).is_file()]
     if not present:
         return None
     version = "unknown"
@@ -231,7 +231,16 @@ def schema_fingerprint(repo_root: Path) -> Optional[dict]:
                 if match:
                     version = match.group(1)
                     break
-    return {"version": version, "digest": _hash_files(present)}
+    # Folded in by repo-relative name, not by absolute path: the same schema
+    # in a different checkout is the same schema, and a marker carried to
+    # another machine must not read as a schema change.
+    digest = hashlib.sha256()
+    for rel in present:
+        digest.update(rel.as_posix().encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(hashlib.sha256((repo_root / rel).read_bytes()).digest())
+        digest.update(b"\0")
+    return {"version": version, "digest": digest.hexdigest()}
 
 
 def write_fingerprint(

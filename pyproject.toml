@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.10,<3.13"
 click = "*"
-importlib-metadata = "^6.8.0"
+importlib-metadata = ">=6.8,<10.0"
 kghub-downloader = "^0.3.7"
 kgx = "^2.4.0"
 koza = "*"

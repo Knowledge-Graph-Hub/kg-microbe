@@ -26,7 +26,7 @@ import hashlib
 import json
 import re
 from pathlib import Path
-from typing import Iterable, Optional
+from typing import Dict, Iterable, Optional
 
 from kg_microbe.utils.atomic_io import atomic_write
 
@@ -35,7 +35,16 @@ FINGERPRINT_FILE = "source_fingerprint.json"
 
 #: Bumped when the hashing scheme changes, so an old marker is treated as
 #: absent rather than silently compared under different rules.
-FINGERPRINT_VERSION = 2
+FINGERPRINT_VERSION = 3
+
+#: First-party code every transform runs through besides its own package.
+#: A change here changes outputs just as much as a change in the package, and
+#: most behaviour-changing PRs land here (#1002).
+SHARED_CODE = (
+    Path("kg_microbe") / "utils",
+    Path("kg_microbe") / "transform_utils" / "constants.py",
+    Path("kg_microbe") / "transform_utils" / "transform.py",
+)
 
 # Files at or below this size are cheap enough to hash completely. Larger graph
 # TSVs are sampled at evenly spaced offsets so a freshness check does bounded IO
@@ -80,21 +89,47 @@ def bounded_file_fingerprint(path: Path) -> str:
     return f"sampled-sha256:{digest.hexdigest()}"
 
 
-def _hash_files(paths: Iterable[Path]) -> str:
-    """
-    Hash a set of files by path and content, order-independently.
+def _repo_root() -> Path:
+    """Return the repository root this module lives in."""
+    return Path(__file__).resolve().parents[2]
 
-    The path is folded in as well as the bytes, so renaming a file — which
+
+def _folded_name(path: Path, relative_to: Optional[Path]) -> str:
+    """
+    Return the name folded into a digest for ``path``.
+
+    Repo-relative when ``relative_to`` is given: the absolute path made the
+    same files under two checkouts hash differently, so a marker carried with
+    its output directory read as stale from any other root (#983).
+
+    :param path: File path.
+    :param relative_to: Root to relativise against, or None for the path as is.
+    :return: The name to fold in.
+    """
+    if relative_to is not None:
+        try:
+            return path.resolve().relative_to(relative_to.resolve()).as_posix()
+        except ValueError:
+            pass
+    return path.as_posix()
+
+
+def _hash_files(paths: Iterable[Path], relative_to: Optional[Path] = None) -> str:
+    """
+    Hash a set of files by name and content, order-independently.
+
+    The name is folded in as well as the bytes, so renaming a file — which
     changes what runs without changing any content — is a different
     fingerprint. Missing files are folded in as such rather than skipped: a
     deleted curation file is a change, and skipping it would read as no change.
 
     :param paths: Files to fingerprint.
+    :param relative_to: Fold repo-relative names rather than absolute paths.
     :return: Hex digest.
     """
     digest = hashlib.sha256()
     for path in sorted(set(paths), key=lambda p: p.as_posix()):
-        digest.update(path.as_posix().encode("utf-8"))
+        digest.update(_folded_name(path, relative_to).encode("utf-8"))
         digest.update(b"\0")
         try:
             digest.update(hashlib.sha256(path.read_bytes()).digest())
@@ -133,7 +168,24 @@ def _behaviour_digest(path: Path) -> bytes:
         return hashlib.sha256(source).digest()
 
 
-def code_fingerprint(code_dir: Path) -> str:
+def _behaviour_tree_digest(paths: Iterable[Path], relative_to: Optional[Path]) -> str:
+    """
+    Digest Python files by behaviour, keyed by repo-relative name.
+
+    :param paths: Python files.
+    :param relative_to: Root the names are relative to.
+    :return: Hex digest.
+    """
+    digest = hashlib.sha256()
+    for path in sorted(paths, key=lambda p: p.as_posix()):
+        digest.update(_folded_name(path, relative_to).encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(_behaviour_digest(path))
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
+def code_fingerprint(code_dir: Path, repo_root: Optional[Path] = None) -> str:
     """
     Fingerprint every Python file in a transform's package directory.
 
@@ -142,18 +194,41 @@ def code_fingerprint(code_dir: Path) -> str:
     across helper modules in the same package, and a change to one of those
     changes the output just as much.
 
+    Names are folded in repo-relative, so the same package under two
+    checkouts is one fingerprint (#983).
+
     :param code_dir: e.g. ``kg_microbe/transform_utils/gold``.
+    :param repo_root: Repository root; inferred from this module when omitted.
     :return: Hex digest, or the digest of nothing when the directory is absent.
     """
     if not code_dir.is_dir():
         return hashlib.sha256(b"").hexdigest()
-    digest = hashlib.sha256()
-    for path in sorted(code_dir.rglob("*.py"), key=lambda p: p.as_posix()):
-        digest.update(path.as_posix().encode("utf-8"))
-        digest.update(b"\0")
-        digest.update(_behaviour_digest(path))
-        digest.update(b"\0")
-    return digest.hexdigest()
+    return _behaviour_tree_digest(code_dir.rglob("*.py"), repo_root or _repo_root())
+
+
+def shared_code_fingerprint(repo_root: Optional[Path] = None) -> str:
+    """
+    Fingerprint the first-party code every transform shares.
+
+    ``code_fingerprint`` sees only the transform's own package, so a change in
+    ``kg_microbe/utils/`` -- the mapping loaders, the ontology adapters, the
+    chemical-mapping utils -- or in ``constants.py`` marked nothing stale:
+    #999 changed three transforms' predicates and the freshness table stayed
+    FRESH (#1002). Blunt by design: an edit here reads as "every output may
+    differ", which is the honest answer.
+
+    :param repo_root: Repository root; inferred from this module when omitted.
+    :return: Hex digest.
+    """
+    root = repo_root or _repo_root()
+    paths = []
+    for rel in SHARED_CODE:
+        target = root / rel
+        if target.is_dir():
+            paths.extend(target.rglob("*.py"))
+        elif target.is_file():
+            paths.append(target)
+    return _behaviour_tree_digest(paths, root)
 
 
 def upstream_fingerprint(output_base_dir: Path, transform_inputs: Iterable[str]) -> str:
@@ -191,7 +266,7 @@ def data_fingerprint(repo_root: Path, data_inputs: Iterable[str]) -> str:
     :param data_inputs: Repo-relative paths from ``Transform.DATA_INPUTS``.
     :return: Hex digest.
     """
-    return _hash_files(repo_root / rel for rel in data_inputs)
+    return _hash_files((repo_root / rel for rel in data_inputs), relative_to=repo_root)
 
 
 #: The pinned Biolink schema every transform validates against, relative to
@@ -266,7 +341,10 @@ def write_fingerprint(
     """
     payload = {
         "version": FINGERPRINT_VERSION,
-        "code": code_fingerprint(code_dir),
+        "code": code_fingerprint(code_dir, repo_root),
+        # Shared first-party code, recorded apart from the package so the
+        # report can say which of the two moved (#1002).
+        "shared": shared_code_fingerprint(repo_root),
         "data": data_fingerprint(repo_root, data_inputs),
         # Recorded separately so a stale output says which of the three moved:
         # its code, its curation data, or something it reads (#845).
@@ -299,3 +377,125 @@ def read_fingerprint(output_dir: Path) -> Optional[dict]:
     if not isinstance(payload, dict) or payload.get("version") != FINGERPRINT_VERSION:
         return None
     return payload
+
+
+# ---------------------------------------------------------------------------
+# Migration from scheme 2
+# ---------------------------------------------------------------------------
+# Scheme 2 folded absolute paths into every digest and did not see shared code.
+# Bumping the version makes every existing marker read as absent, which would
+# send a freshly rebuilt tree back to timestamp comparison until each source
+# ran again. A marker whose scheme-2 digests still match its inputs vouches
+# for the same output under scheme 3; rewrite those, leave the rest alone.
+
+
+def _read_marker_any_version(output_dir: Path) -> Optional[dict]:
+    """
+    Read a marker regardless of scheme version.
+
+    :param output_dir: Directory holding the marker.
+    :return: The payload, or None.
+    """
+    try:
+        payload = json.loads((output_dir / FINGERPRINT_FILE).read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+    return payload if isinstance(payload, dict) else None
+
+
+def _v2_hash_files(paths: Iterable[Path]) -> str:
+    """Scheme-2 file digest: absolute paths folded in."""
+    return _hash_files(paths, relative_to=None)
+
+
+def _v2_code_fingerprint(code_dir: Path) -> str:
+    """Scheme-2 package digest: absolute paths folded in."""
+    if not code_dir.is_dir():
+        return hashlib.sha256(b"").hexdigest()
+    return _behaviour_tree_digest(code_dir.rglob("*.py"), None)
+
+
+def _v2_upstream_fingerprint(output_base_dir: Path, transform_inputs: Iterable[str]) -> str:
+    """Scheme-2 upstream digest, read from the markers as they were before migration."""
+    digest = hashlib.sha256()
+    for name in sorted(set(transform_inputs)):
+        digest.update(name.encode("utf-8"))
+        digest.update(b"\0")
+        recorded = _read_marker_any_version(output_base_dir / name)
+        if recorded is not None and recorded.get("version") != 2:
+            recorded = None
+        digest.update(json.dumps(recorded, sort_keys=True).encode("utf-8") if recorded else b"<absent>")
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
+def migrate_markers(transformed_dir: Path, repo_root: Path, sources: Iterable[dict]) -> Dict[str, str]:
+    """
+    Rewrite scheme-2 markers that still vouch for their output as scheme 3.
+
+    Two phases, because upstream digests read other markers: first judge every
+    scheme-2 marker against its inputs under scheme 2, while all markers are
+    still scheme 2; then rewrite the ones that were FRESH, in dependency order,
+    so each downstream's new upstream digest sees its upstreams' new markers.
+
+    :param transformed_dir: ``data/transformed``.
+    :param repo_root: Repository root.
+    :param sources: One dict per registered source: ``name``, ``output_dir``
+        (the directory under ``transformed_dir``), ``code_dir``,
+        ``data_inputs``, ``transform_inputs``.
+    :return: ``{source name: "migrated" | "left: <reason>"}``.
+    """
+    sources = list(sources)
+    by_name = {src["name"]: src for src in sources}
+
+    # Phase 1: verdicts under scheme 2, before anything is rewritten.
+    fresh_v2: Dict[str, bool] = {}
+    reasons: Dict[str, str] = {}
+    for src in sources:
+        out = transformed_dir / src["output_dir"]
+        marker = _read_marker_any_version(out)
+        if marker is None:
+            reasons[src["name"]] = "left: no marker"
+            continue
+        if marker.get("version") == FINGERPRINT_VERSION:
+            reasons[src["name"]] = "left: already current"
+            continue
+        if marker.get("version") != 2:
+            reasons[src["name"]] = f"left: unknown scheme {marker.get('version')!r}"
+            continue
+        ok = (
+            marker.get("code") == _v2_code_fingerprint(src["code_dir"])
+            and marker.get("data") == _v2_hash_files(repo_root / rel for rel in src["data_inputs"])
+            and marker.get("upstream") == _v2_upstream_fingerprint(transformed_dir, src["transform_inputs"])
+        )
+        fresh_v2[src["name"]] = ok
+        if not ok:
+            reasons[src["name"]] = "left: stale under scheme 2; rerun the transform"
+
+    # Phase 2: rewrite in dependency order.
+    done: set = set()
+    order = []
+    remaining = [name for name, ok in fresh_v2.items() if ok]
+    while remaining:
+        progressed = False
+        for name in list(remaining):
+            deps = [d for d in by_name[name]["transform_inputs"] if d in fresh_v2 and fresh_v2[d]]
+            if all(d in done for d in deps):
+                order.append(name)
+                done.add(name)
+                remaining.remove(name)
+                progressed = True
+        if not progressed:  # a cycle; write the rest in registration order
+            order.extend(remaining)
+            remaining = []
+    for name in order:
+        src = by_name[name]
+        write_fingerprint(
+            output_dir=transformed_dir / src["output_dir"],
+            code_dir=src["code_dir"],
+            repo_root=repo_root,
+            data_inputs=src["data_inputs"],
+            transform_inputs=src["transform_inputs"],
+        )
+        reasons[name] = "migrated"
+    return reasons

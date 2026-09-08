@@ -207,6 +207,28 @@ class FreshnessSchemaTest(TestCase):
         sys.modules["kgm_freshness_check"] = self.mod
         spec.loader.exec_module(self.mod)
 
+    def test_a_shared_code_change_is_stale_and_says_so(self):
+        """
+        #1002: a change under kg_microbe/utils/ must not read FRESH.
+
+        Recorded apart from the package digest, so the note can name which moved.
+        """
+        import kg_microbe.utils.transform_fingerprint as fp
+
+        marker = {"version": fp.FINGERPRINT_VERSION, "code": "c", "shared": "old", "data": "d", "upstream": "u"}
+        with (
+            mock.patch.object(fp, "read_fingerprint", return_value=marker),
+            mock.patch.object(fp, "code_fingerprint", return_value="c"),
+            mock.patch.object(fp, "shared_code_fingerprint", return_value="new"),
+            mock.patch.object(fp, "data_fingerprint", return_value="d"),
+            mock.patch.object(fp, "upstream_fingerprint", return_value="u"),
+            mock.patch.object(fp, "schema_fingerprint", return_value=None),
+        ):
+            code_dir = REPO_ROOT / "kg_microbe" / "transform_utils" / "bactotraits"
+            status, note = self.mod._fingerprint_verdict("bactotraits", code_dir)
+        self.assertEqual(status, "STALE_VS_CODE")
+        self.assertIn("shared code", note)
+
     def _verdict(self, recorded_schema):
         """
         Run ``_fingerprint_verdict`` over a marker whose other fields all match.
@@ -216,12 +238,13 @@ class FreshnessSchemaTest(TestCase):
         """
         import kg_microbe.utils.transform_fingerprint as fp
 
-        marker = {"version": fp.FINGERPRINT_VERSION, "code": "c", "data": "d", "upstream": "u"}
+        marker = {"version": fp.FINGERPRINT_VERSION, "code": "c", "shared": "s", "data": "d", "upstream": "u"}
         if recorded_schema is not None:
             marker["schema"] = recorded_schema
         with (
             mock.patch.object(fp, "read_fingerprint", return_value=marker),
             mock.patch.object(fp, "code_fingerprint", return_value="c"),
+            mock.patch.object(fp, "shared_code_fingerprint", return_value="s"),
             mock.patch.object(fp, "data_fingerprint", return_value="d"),
             mock.patch.object(fp, "upstream_fingerprint", return_value="u"),
             mock.patch.object(fp, "schema_fingerprint", return_value={"version": "4.4.2", "digest": "new"}),

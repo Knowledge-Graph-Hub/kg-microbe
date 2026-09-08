@@ -186,7 +186,13 @@ fetches every file the shipped model imports, at one pinned tag. Updating the
 Biolink version requires changing `download.yaml`, the lock file, fixtures, and
 tests together. Each transform's `source_fingerprint.json` records the schema
 it was built against, and `kgm-freshness-check` reports `STALE_VS_SCHEMA` when
-the pinned model has moved since (#943).
+the pinned model has moved since (#943). The marker also covers the shared
+code every transform runs through (`kg_microbe/utils/`, `constants.py`,
+`transform.py`), not only the transform's own package, and hashes by
+repo-relative name so a marker reads the same from any checkout (#1002,
+#983). When the fingerprint scheme changes, run
+`poetry run python scripts/migrate_fingerprints.py` before trusting the table:
+it rewrites markers that still hold and leaves stale ones for a real rerun.
 
 A pin bump alone does not refresh `data/raw`. The 4.4.2 bump landed in August
 2026 and the 4.3.6 file already on disk was never replaced, so every run since

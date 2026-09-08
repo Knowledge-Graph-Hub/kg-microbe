@@ -7,10 +7,14 @@ from unittest import TestCase
 
 from kg_microbe.utils.transform_fingerprint import (
     FINGERPRINT_FILE,
+    FINGERPRINT_VERSION,
     code_fingerprint,
     data_fingerprint,
+    migrate_markers,
     read_fingerprint,
     schema_fingerprint,
+    shared_code_fingerprint,
+    upstream_fingerprint,
     write_fingerprint,
 )
 
@@ -180,3 +184,180 @@ class SchemaFingerprintTests(TestCase):
             recorded = read_fingerprint(out)
         self.assertEqual(payload["schema"]["version"], "4.4.2")
         self.assertEqual(recorded["schema"], payload["schema"])
+
+
+def _package(root: Path, name: str, body: str) -> Path:
+    """
+    Lay out a one-module transform package under ``root``.
+
+    :param root: Repository root.
+    :param name: Package name.
+    :param body: Module source.
+    :return: The package directory.
+    """
+    pkg = root / "kg_microbe" / "transform_utils" / name
+    pkg.mkdir(parents=True, exist_ok=True)
+    (pkg / f"{name}.py").write_text(body, encoding="utf-8")
+    return pkg
+
+
+def _shared(root: Path, body: str) -> None:
+    """
+    Lay out the shared code every transform runs through.
+
+    :param root: Repository root.
+    :param body: Source for the one utils module.
+    :return: None.
+    """
+    (root / "kg_microbe" / "utils").mkdir(parents=True, exist_ok=True)
+    (root / "kg_microbe" / "utils" / "helper.py").write_text(body, encoding="utf-8")
+
+
+class PathIndependenceTests(TestCase):
+    """The same code and data under two checkouts is one fingerprint (#983)."""
+
+    def test_the_package_digest_does_not_fold_in_the_checkout_path(self):
+        """A marker carried with its output must not read stale from another root."""
+        with tempfile.TemporaryDirectory() as a, tempfile.TemporaryDirectory() as b:
+            pa = _package(Path(a), "gold", "x = 1\n")
+            pb = _package(Path(b), "gold", "x = 1\n")
+            self.assertEqual(code_fingerprint(pa, Path(a)), code_fingerprint(pb, Path(b)))
+
+    def test_the_data_digest_does_not_fold_in_the_checkout_path(self):
+        """Same rule for declared curation inputs."""
+        with tempfile.TemporaryDirectory() as a, tempfile.TemporaryDirectory() as b:
+            for root in (a, b):
+                (Path(root) / "mappings").mkdir()
+                (Path(root) / "mappings" / "m.tsv").write_text("k\tv\n", encoding="utf-8")
+            self.assertEqual(
+                data_fingerprint(Path(a), ["mappings/m.tsv"]), data_fingerprint(Path(b), ["mappings/m.tsv"])
+            )
+
+    def test_renaming_a_file_still_changes_the_digest(self):
+        """Path independence must not lose rename detection."""
+        with tempfile.TemporaryDirectory() as a:
+            (Path(a) / "mappings").mkdir()
+            (Path(a) / "mappings" / "m.tsv").write_text("k\tv\n", encoding="utf-8")
+            before = data_fingerprint(Path(a), ["mappings/m.tsv"])
+            (Path(a) / "mappings" / "m.tsv").rename(Path(a) / "mappings" / "n.tsv")
+            self.assertNotEqual(before, data_fingerprint(Path(a), ["mappings/n.tsv"]))
+
+
+class SharedCodeTests(TestCase):
+    """A change under kg_microbe/utils/ must mark every transform stale (#1002)."""
+
+    def test_editing_shared_code_changes_the_shared_digest_not_the_package(self):
+        """The two are recorded apart so the report can say which moved."""
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            pkg = _package(root, "gold", "x = 1\n")
+            _shared(root, "def f():\n    return 1\n")
+            code_before, shared_before = code_fingerprint(pkg, root), shared_code_fingerprint(root)
+            _shared(root, "def f():\n    return 2\n")
+            self.assertEqual(code_fingerprint(pkg, root), code_before)
+            self.assertNotEqual(shared_code_fingerprint(root), shared_before)
+
+    def test_the_marker_records_the_shared_digest(self):
+        """Wired into write_fingerprint."""
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            pkg = _package(root, "gold", "x = 1\n")
+            _shared(root, "y = 1\n")
+            out = root / "out"
+            out.mkdir()
+            payload = write_fingerprint(out, pkg, root, data_inputs=())
+            self.assertEqual(payload["shared"], shared_code_fingerprint(root))
+            self.assertEqual(payload["version"], FINGERPRINT_VERSION)
+
+
+class MigrationTests(TestCase):
+    """Scheme-2 markers that still vouch for their output are carried forward."""
+
+    def _v2_marker(self, out: Path, pkg: Path, root: Path, data_inputs=(), upstream=None):
+        """
+        Write a scheme-2 marker the way the old code did (absolute paths, no shared).
+
+        :param out: Output directory.
+        :param pkg: Package directory.
+        :param root: Repository root.
+        :param data_inputs: Declared inputs.
+        :param upstream: Precomputed scheme-2 upstream digest, if any.
+        :return: None.
+        """
+        import kg_microbe.utils.transform_fingerprint as fp
+
+        payload = {
+            "version": 2,
+            "code": fp._v2_code_fingerprint(pkg),
+            "data": fp._v2_hash_files(root / rel for rel in data_inputs),
+            "upstream": upstream or fp._v2_upstream_fingerprint(out.parent, ()),
+        }
+        (out / "source_fingerprint.json").write_text(json.dumps(payload), encoding="utf-8")
+
+    def test_a_marker_that_still_holds_is_rewritten_as_scheme_3(self):
+        """The rebuilt tree keeps its FRESH verdicts across the scheme bump."""
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            pkg = _package(root, "gold", "x = 1\n")
+            _shared(root, "y = 1\n")
+            out = root / "data" / "transformed" / "gold"
+            out.mkdir(parents=True)
+            self._v2_marker(out, pkg, root)
+            outcome = migrate_markers(
+                root / "data" / "transformed",
+                root,
+                [{"name": "gold", "output_dir": "gold", "code_dir": pkg, "data_inputs": (), "transform_inputs": ()}],
+            )
+            self.assertEqual(outcome, {"gold": "migrated"})
+            recorded = read_fingerprint(out)
+            self.assertEqual(recorded["version"], FINGERPRINT_VERSION)
+            self.assertEqual(recorded["code"], code_fingerprint(pkg, root))
+            self.assertEqual(recorded["shared"], shared_code_fingerprint(root))
+
+    def test_a_marker_that_no_longer_holds_is_left_for_a_real_rerun(self):
+        """Migration must not launder staleness into a fresh marker."""
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            pkg = _package(root, "gold", "x = 1\n")
+            out = root / "data" / "transformed" / "gold"
+            out.mkdir(parents=True)
+            self._v2_marker(out, pkg, root)
+            _package(root, "gold", "x = 2\n")  # behaviour changed after the marker was written
+            outcome = migrate_markers(
+                root / "data" / "transformed",
+                root,
+                [{"name": "gold", "output_dir": "gold", "code_dir": pkg, "data_inputs": (), "transform_inputs": ()}],
+            )
+            self.assertEqual(outcome, {"gold": "left: stale under scheme 2; rerun the transform"})
+            self.assertIsNone(read_fingerprint(out))
+
+    def test_downstream_is_rewritten_after_its_upstream(self):
+        """A downstream's new upstream digest must see the upstream's new marker."""
+        import kg_microbe.utils.transform_fingerprint as fp
+
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            up_pkg = _package(root, "gtdb", "x = 1\n")
+            down_pkg = _package(root, "lpsn", "x = 1\n")
+            transformed = root / "data" / "transformed"
+            for name in ("gtdb", "lpsn"):
+                (transformed / name).mkdir(parents=True)
+            self._v2_marker(transformed / "gtdb", up_pkg, root)
+            self._v2_marker(
+                transformed / "lpsn", down_pkg, root, upstream=fp._v2_upstream_fingerprint(transformed, ("gtdb",))
+            )
+            sources = [
+                {
+                    "name": "lpsn",
+                    "output_dir": "lpsn",
+                    "code_dir": down_pkg,
+                    "data_inputs": (),
+                    "transform_inputs": ("gtdb",),
+                },
+                {"name": "gtdb", "output_dir": "gtdb", "code_dir": up_pkg, "data_inputs": (), "transform_inputs": ()},
+            ]
+            outcome = migrate_markers(transformed, root, sources)
+            self.assertEqual(outcome, {"gtdb": "migrated", "lpsn": "migrated"})
+            self.assertEqual(
+                read_fingerprint(transformed / "lpsn")["upstream"], upstream_fingerprint(transformed, ("gtdb",))
+            )

@@ -216,12 +216,13 @@ class FreshnessSchemaTest(TestCase):
         """
         import kg_microbe.utils.transform_fingerprint as fp
 
-        marker = {"version": fp.FINGERPRINT_VERSION, "code": "c", "data": "d", "upstream": "u"}
+        marker = {"version": fp.FINGERPRINT_VERSION, "code": "c", "shared": "s", "data": "d", "upstream": "u"}
         if recorded_schema is not None:
             marker["schema"] = recorded_schema
         with (
             mock.patch.object(fp, "read_fingerprint", return_value=marker),
             mock.patch.object(fp, "code_fingerprint", return_value="c"),
+            mock.patch.object(fp, "shared_code_fingerprint", return_value="s"),
             mock.patch.object(fp, "data_fingerprint", return_value="d"),
             mock.patch.object(fp, "upstream_fingerprint", return_value="u"),
             mock.patch.object(fp, "schema_fingerprint", return_value={"version": "4.4.2", "digest": "new"}),

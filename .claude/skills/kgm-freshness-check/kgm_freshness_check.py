@@ -331,6 +331,7 @@ def _fingerprint_verdict(source: str, code_dir: Path) -> Optional[tuple]:
             data_fingerprint,
             read_fingerprint,
             schema_fingerprint,
+            shared_code_fingerprint,
             upstream_fingerprint,
         )
     except ImportError:
@@ -340,7 +341,12 @@ def _fingerprint_verdict(source: str, code_dir: Path) -> Optional[tuple]:
         recorded = read_fingerprint(TRANSFORMED_DIR / name)
         if recorded is None:
             continue
-        code_stale = recorded.get("code") != code_fingerprint(code_dir)
+        # The package, then the first-party code every transform shares (#1002):
+        # either moving means the output may differ, and the note says which.
+        package_stale = recorded.get("code") != code_fingerprint(code_dir, REPO)
+        shared_stale = recorded.get("shared") != shared_code_fingerprint(REPO)
+        code_stale = package_stale or shared_stale
+        code_what = "code" if package_stale else "shared code (utils/, constants.py, transform.py)"
         data_stale = recorded.get("data") != data_fingerprint(REPO, _declared_data_inputs(source))
         upstream_stale = recorded.get("upstream") != upstream_fingerprint(
             TRANSFORMED_DIR, _declared_transform_inputs(source)
@@ -363,9 +369,15 @@ def _fingerprint_verdict(source: str, code_dir: Path) -> Optional[tuple]:
                 f"{upstreams} rebuilt since this output; rerun `poetry run kg transform -s {source}`",
             )
         if code_stale and data_stale:
-            return "STALE_VS_CODE_AND_DATA", f"code and data differ from the recorded build; rerun `poetry run kg transform -s {source}`"
+            return (
+                "STALE_VS_CODE_AND_DATA",
+                f"{code_what} and data differ from the recorded build; rerun `poetry run kg transform -s {source}`",
+            )
         if code_stale:
-            return "STALE_VS_CODE", f"code differs from the recorded build; rerun `poetry run kg transform -s {source}`"
+            return (
+                "STALE_VS_CODE",
+                f"{code_what} differs from the recorded build; rerun `poetry run kg transform -s {source}`",
+            )
         if data_stale:
             return "STALE_VS_DATA", f"a declared data input differs from the recorded build; rerun `poetry run kg transform -s {source}`"
         return "FRESH", "verified by content fingerprint"

@@ -34,7 +34,9 @@ requests-ftp = "^0.3"
 pandas = ">=2.0.0"
 psutil = "^5.9.0"
 duckdb = "^1.5.1"
-setuptools = "<82" # ! Keep pkg_resources available for eutils (via oaklib); removed in setuptools 81
+# ! eutils (via oaklib) still does `import pkg_resources`. setuptools has announced its removal but
+# ! 81.0.0 still ships it (checked the wheel, #994); re-check the wheel before raising this cap.
+setuptools = "<82"
 lpsn = "^1.0.0"
 
 [tool.poetry.group.dev.dependencies]

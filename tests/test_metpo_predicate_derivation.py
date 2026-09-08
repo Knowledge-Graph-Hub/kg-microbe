@@ -98,6 +98,23 @@ class PredicateDerivationTests(unittest.TestCase):
             # A URI here; the transforms compress it with uri_to_curie at emit time.
             self.assertTrue(m["motile"]["inferred_category"].endswith("/PhenotypicQuality"))
 
+    def test_a_process_with_no_declared_category_is_typed_as_a_process(self):
+        """
+        #438: four METPO processes reached the graph as PhenotypicQuality.
+
+        `biological process` declares no Biolink category, so the transforms'
+        default won and 148,357 `capable_of` edges pointed at "qualities".
+        The RANGE ancestor implies the category when nothing on the path
+        declares one.
+        """
+        with _Templates() as m:
+            self.assertEqual(m["nitrogen fixer"]["inferred_category"], "biolink:BiologicalProcess")
+
+    def test_a_declared_category_beats_the_range_fallback(self):
+        """The fallback is a fallback: `phenotype` declares PhenotypicQuality and keeps it."""
+        with _Templates() as m:
+            self.assertTrue(m["motile"]["inferred_category"].endswith("/PhenotypicQuality"))
+
     def test_a_term_with_no_range_ancestor_falls_to_the_default(self):
         """Unplaced is still unplaced; the default is a fallback, not the rule."""
         with _Templates() as m:

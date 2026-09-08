@@ -481,7 +481,7 @@ class OntologiesStubsTransform(Transform):
         """
         Run ``robot extract --method MIREOT`` and convert the result to OBO Graph JSON.
 
-        Writes intermediate ``.ofn`` and ``.json`` files into ``self.output_dir``
+        Writes intermediate ``.owl`` (RDF/XML) and ``.json`` files into ``self.output_dir``
         so they're available for inspection if the module needs auditing.
         """
         robot_bin = shutil.which("robot")
@@ -499,7 +499,12 @@ class OntologiesStubsTransform(Transform):
 
         lower_terms_file = self.output_dir / f"{prefix.lower()}_mireot_lower.txt"
         lower_terms_file.write_text("\n".join(lower_iris) + "\n", encoding="utf-8")
-        module_ofn = self.output_dir / f"{prefix.lower()}_mireot_module.ofn"
+        # RDF/XML, not functional syntax. ROBOT 1.9.6 writes an `.ofn` it then
+        # cannot parse back once the module carries MICRO literals with
+        # embedded newlines and a `™` -- every OWLAPI parser rejects it and the
+        # convert step fails with INVALID ONTOLOGY FILE ERROR. RDF/XML round-
+        # trips the same content (#986).
+        module_owl = self.output_dir / f"{prefix.lower()}_mireot_module.owl"
         module_json = self.output_dir / f"{prefix.lower()}_mireot_module.json"
 
         extract_cmd: List[str] = [
@@ -514,7 +519,7 @@ class OntologiesStubsTransform(Transform):
         ]
         for iri in upper_iris:
             extract_cmd += ["--upper-term", iri]
-        extract_cmd += ["--output", str(module_ofn)]
+        extract_cmd += ["--output", str(module_owl)]
         subprocess.run(extract_cmd, check=True)  # noqa: S603
 
         subprocess.run(  # noqa: S603
@@ -522,7 +527,7 @@ class OntologiesStubsTransform(Transform):
                 robot_bin,
                 "convert",
                 "--input",
-                str(module_ofn),
+                str(module_owl),
                 "--output",
                 str(module_json),
                 "-f",

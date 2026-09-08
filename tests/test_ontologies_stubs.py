@@ -276,6 +276,45 @@ def test_transform_raises_when_mireot_owl_missing(tmp_path):
         )
 
 
+def test_mireot_intermediate_is_rdfxml_not_functional_syntax(tmp_path, monkeypatch):
+    """
+    ROBOT cannot re-read the `.ofn` it writes for this content (#986).
+
+    Once the MICRO module carried literals with embedded newlines and a
+    trademark sign, every OWLAPI parser rejected ROBOT's own functional-syntax
+    output and the convert step died with INVALID ONTOLOGY FILE ERROR. RDF/XML
+    round-trips the same module, so the extract must be written as `.owl` and
+    the convert must read that same file.
+    """
+    import subprocess
+
+    calls = []
+
+    def fake_run(cmd, check):
+        calls.append(list(cmd))
+        return None
+
+    monkeypatch.setattr("shutil.which", lambda _name: "/fake/robot")
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    transform = OntologiesStubsTransform(input_dir=tmp_path / "raw", output_dir=tmp_path / "out")
+    (tmp_path / "out").mkdir(parents=True, exist_ok=True)
+    module_json = transform._run_mireot_extract(
+        prefix="MICRO",
+        lower_curies=["MICRO:0000082"],
+        upper_curie="MICRO:0000031",
+        owl_path=tmp_path / "raw" / "micro.owl",
+    )
+    extract, convert = calls
+    assert extract[1] == "extract"
+    written = extract[extract.index("--output") + 1]
+    assert written.endswith("_mireot_module.owl"), written
+    assert not written.endswith(".ofn")
+    assert convert[1] == "convert"
+    assert convert[convert.index("--input") + 1] == written
+    assert convert[convert.index("--output") + 1] == str(module_json)
+    assert module_json.suffix == ".json"
+
+
 # ---------------------------------------------------------------------------
 # Module-level helpers
 # ---------------------------------------------------------------------------

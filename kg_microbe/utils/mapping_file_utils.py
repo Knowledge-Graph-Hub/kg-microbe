@@ -371,6 +371,19 @@ def _load_metpo_properties() -> Dict[str, Dict[str, str]]:
         raise requests.exceptions.HTTPError(f"Please ensure the METPO properties URL is accessible: {e}") from e
 
 
+#: Biolink category implied by a RANGE ancestor when no class on the path
+#: declares one. The METPO `biological process` class carries no close match,
+#: so every term under it fell to the transforms' default (PhenotypicQuality)
+#: and 148,357 `capable_of` edges pointed at "qualities" that are processes
+#: (#438). Declared categories always win; this is the fallback.
+_RANGE_FALLBACK_CATEGORY = {
+    "biological process": "biolink:BiologicalProcess",
+    "chemical entity": "biolink:ChemicalEntity",
+    "phenotype": "biolink:PhenotypicQuality",
+    "quality": "biolink:PhenotypicQuality",
+}
+
+
 def _resolve_metpo_predicate(
     metpo_curie: str,
     nodes: Dict[str, "MetpoTreeNode"],
@@ -410,10 +423,12 @@ def _resolve_metpo_predicate(
     inferred_category = ""
     node = nodes.get(metpo_curie)
 
+    range_label = ""
     current = node
     while current is not None:
         if current.label in range_to_predicate:
             prop = range_to_predicate[current.label]
+            range_label = current.label
             predicate_label = prop["label"]
             predicate_biolink_equivalent = prop["biolink_equivalent"] or METPO_TO_BIOLINK_PREDICATE.get(
                 prop.get("id", ""), ""
@@ -428,6 +443,9 @@ def _resolve_metpo_predicate(
             inferred_category = normalize_biolink_category(current.biolink_equivalent)
             break
         current = current.parent
+
+    if not inferred_category:
+        inferred_category = _RANGE_FALLBACK_CATEGORY.get(range_label, "")
 
     return {
         "predicate": predicate_label,

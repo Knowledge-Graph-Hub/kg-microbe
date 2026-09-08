@@ -77,6 +77,19 @@ def api_records():
                 {"kind": "16S rRNA gene", "database": "silva", "identifier": "SILVA123"},
             ],
         },
+        "1001": {
+            "id": 1001,
+            "full_name": "Escherichia",
+            "publication_doi": "",
+            "publication_pmid": None,
+            "ijsem_list_doi": "",
+            "lpsn_parent_id": 999,  # family; deliberately absent from the fake API
+            "basonym_id": None,
+            "is_legitimate": True,
+            "nomenclatural_status": "correct name",
+            "lpsn_taxonomic_status": "correct name",
+            "molecules": [],
+        },
         "1005": {
             "id": 1005,
             "publication_doi": "",
@@ -276,3 +289,66 @@ def test_empty_molecules_emit_no_insdc_edges(api_transform):
     edges = _read_tsv(api_transform.output_edge_file)
     hits = [e for e in edges if e["subject"] == f"{LPSN_PREFIX}1005" and e["object"].startswith("INSDC:")]
     assert hits == []
+
+
+def _linked_targets(edges):
+    """Every lpsn:* object of a subclass_of / same_as edge."""
+    return {
+        e["object"]
+        for e in edges
+        if e["object"].startswith(LPSN_PREFIX) and e["predicate"] in ("biolink:subclass_of", "biolink:same_as")
+    }
+
+
+def test_every_linked_record_has_a_node_row(api_transform):
+    """
+    #991: 1,344 lpsn:* endpoints were invented by KGX at merge time.
+
+    The parent chain above genus and the basonym targets are not in the GSS,
+    so nothing declared them. Every record this file links to now has a row.
+    """
+    api_transform.run()
+    nodes = {n["id"] for n in _read_tsv(api_transform.output_node_file)}
+    missing = _linked_targets(_read_tsv(api_transform.output_edge_file)) - nodes
+    assert not missing, sorted(missing)
+
+
+def test_a_fetchable_linked_record_is_named_and_walks_up(api_transform):
+    """The genus (1001) is fetched, labelled from full_name, and its own parent edge is emitted."""
+    api_transform.run()
+    nodes = {n["id"]: n for n in _read_tsv(api_transform.output_node_file)}
+    genus = nodes[f"{LPSN_PREFIX}1001"]
+    assert genus["name"] == "Escherichia"
+    assert genus["category"] == "biolink:OrganismTaxon"
+    edges = _read_tsv(api_transform.output_edge_file)
+    assert any(
+        e["subject"] == f"{LPSN_PREFIX}1001"
+        and e["object"] == f"{LPSN_PREFIX}999"
+        and e["predicate"] == "biolink:subclass_of"
+        for e in edges
+    )
+    assert api_transform._stats["linked_declared"] >= 1
+
+
+def test_an_unfetchable_linked_record_gets_a_declared_stub(api_transform):
+    """
+    The family (999) and the basonym (1004) are not in the API.
+
+    A bare stub in our own namespace, saying so, beats a NamedThing KGX
+    invents with nothing on it.
+    """
+    api_transform.run()
+    nodes = {n["id"]: n for n in _read_tsv(api_transform.output_node_file)}
+    for ref in ("999", "1004"):
+        stub = nodes[f"{LPSN_PREFIX}{ref}"]
+        assert stub["category"] == "biolink:OrganismTaxon"
+        assert stub["name"] == ""
+        assert "not retrievable" in stub["description"]
+    assert api_transform._stats["linked_stubbed"] == 2
+
+
+def test_a_linked_record_is_declared_once(api_transform):
+    """1002 and 1005 both sit under genus 1001 (via 1002); one row for it, not two."""
+    api_transform.run()
+    ids = [n["id"] for n in _read_tsv(api_transform.output_node_file)]
+    assert ids.count(f"{LPSN_PREFIX}1001") == 1

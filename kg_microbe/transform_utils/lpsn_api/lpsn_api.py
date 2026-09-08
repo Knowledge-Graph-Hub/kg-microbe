@@ -153,7 +153,7 @@ class LPSNAPITransform(Transform):
         super().__init__(LPSN_API_SOURCE, input_dir, output_dir)
         self.knowledge_source = LPSN_KNOWLEDGE_SOURCE
         self._client_override = client
-        self._stats = {"fetched": 0, "from_cache": 0, "errors": 0}
+        self._stats = {"fetched": 0, "from_cache": 0, "errors": 0, "linked_declared": 0, "linked_stubbed": 0}
 
     # ------------------------------------------------------------------
     # public entry point
@@ -202,16 +202,26 @@ class LPSNAPITransform(Transform):
             node_writer.writerow(self.node_header)
             edge_writer.writerow(self.edge_header)
 
-            for record_no in self._iter_record_nos(gss_nodes):
+            # Every record the GSS declares, plus every record this file links
+            # to. The parent chain above genus and the basonym targets are not
+            # in the GSS, and without a node row KGX invents a bare NamedThing
+            # for each at merge time -- 1,344 of them in the 2026-09-08 graph
+            # (#991). Same rule LPSN applies to deposits (#932).
+            self._declared = set(self._iter_record_nos(gss_nodes))
+            for record_no in sorted(self._declared):
                 record = self._fetch(client, record_no, cache_dir)
                 if record is None:
                     continue
                 self._emit(record_no, record, node_writer, edge_writer)
+                for ref in self._linked_record_nos(record_no, record):
+                    self._ensure_declared(client, ref, cache_dir, node_writer, edge_writer)
 
         print(
             f"[lpsn_api] fetched={self._stats['fetched']:,} "
             f"cached={self._stats['from_cache']:,} "
-            f"errors={self._stats['errors']:,}"
+            f"errors={self._stats['errors']:,} "
+            f"linked_records_declared={self._stats.get('linked_declared', 0):,} "
+            f"linked_records_stubbed={self._stats.get('linked_stubbed', 0):,}"
         )
 
     # ------------------------------------------------------------------
@@ -318,6 +328,59 @@ class LPSNAPITransform(Transform):
         self._stats["fetched"] += 1
         return record
 
+    #: How far up `lpsn_parent_id` to walk. LPSN's ranks stop at domain; a
+    #: cycle in the data would otherwise be an infinite fetch loop.
+    _MAX_LINK_DEPTH = 12
+
+    @staticmethod
+    def _linked_record_nos(record_no: str, record: dict) -> list:
+        """
+        Return the LPSN record numbers this record's edges point at.
+
+        :param record_no: The record being emitted.
+        :param record: Its JSON payload.
+        :return: Parent and basonym record numbers, as strings, excluding self.
+        """
+        refs = []
+        for key in (JSON_LPSN_PARENT_ID, JSON_BASONYM_ID):
+            value = str(record.get(key) or "").strip()
+            if value.isdigit() and value != record_no:
+                refs.append(value)
+        return refs
+
+    def _ensure_declared(
+        self, client: Any, record_no: str, cache_dir: Path, node_writer, edge_writer, depth: int = 0
+    ) -> None:
+        """
+        Write a node row for a linked record the GSS does not cover, once.
+
+        Fetches the record so the node carries LPSN's own name and status,
+        emits its own parent/basonym edges, and walks up so the chain to the
+        domain is declared end to end. When the API has nothing for it, a
+        bare stub still declares the endpoint -- an unnamed node in our own
+        namespace beats one KGX invents, because it says where it came from.
+
+        :param client: The LPSN client.
+        :param record_no: The referenced record number.
+        :param cache_dir: API cache directory.
+        :param node_writer: Nodes writer.
+        :param edge_writer: Edges writer.
+        :param depth: Recursion depth, capped at :attr:`_MAX_LINK_DEPTH`.
+        """
+        if record_no in self._declared or depth > self._MAX_LINK_DEPTH:
+            return
+        self._declared.add(record_no)
+        record = self._fetch(client, record_no, cache_dir)
+        if record is None:
+            node_writer.writerow(self._stub_linked_node(record_no))
+            self._stats["linked_stubbed"] = self._stats.get("linked_stubbed", 0) + 1
+            return
+        node_writer.writerow(self._make_linked_node(record_no, record))
+        self._stats["linked_declared"] = self._stats.get("linked_declared", 0) + 1
+        self._emit_links(record_no, record, edge_writer)
+        for ref in self._linked_record_nos(record_no, record):
+            self._ensure_declared(client, ref, cache_dir, node_writer, edge_writer, depth + 1)
+
     def _emit(self, record_no: str, record: dict, node_writer, edge_writer) -> None:
         """Write enrichment rows for one LPSN record's JSON payload."""
         # Node update: description enriched with nomenclatural + taxonomic
@@ -326,17 +389,7 @@ class LPSNAPITransform(Transform):
         # merger keeps the union of columns).
         node_writer.writerow(self._make_enrichment_node(record_no, record))
 
-        # Parent link (above-genus taxonomy). LPSN returns record_no as
-        # an int, so coerce before doing string operations.
-        parent = str(record.get(JSON_LPSN_PARENT_ID) or "").strip()
-        if parent.isdigit() and parent != record_no:
-            edge_writer.writerow(self._edge(record_no, SUBCLASS_PREDICATE, f"{LPSN_PREFIX}{parent}", RDFS_SUBCLASS_OF))
-
-        # Basonym link (nomenclatural equivalence — a comb. nov. / new
-        # combination points at its basonym, the original name).
-        basonym = str(record.get(JSON_BASONYM_ID) or "").strip()
-        if basonym.isdigit() and basonym != record_no:
-            edge_writer.writerow(self._edge(record_no, SAME_AS_PREDICATE, f"{LPSN_PREFIX}{basonym}", EXACT_MATCH))
+        self._emit_links(record_no, record, edge_writer)
 
         # Publication cross-refs. LPSN populates one or both of DOI/PMID
         # per record for the valid publication of the name, plus (often)
@@ -405,6 +458,61 @@ class LPSNAPITransform(Transform):
         for col, val in {
             "id": curie,
             "category": "biolink:NucleicAcidEntity",
+            "provided_by": LPSN_KNOWLEDGE_SOURCE,
+        }.items():
+            if col in headers:
+                row[headers.index(col)] = val
+        return row
+
+    def _emit_links(self, record_no: str, record: dict, edge_writer) -> None:
+        """
+        Write the parent and basonym edges for one record.
+
+        :param record_no: The record.
+        :param record: Its JSON payload.
+        :param edge_writer: Edges writer.
+        """
+        # Parent link (above-genus taxonomy). LPSN returns record_no as
+        # an int, so coerce before doing string operations.
+        parent = str(record.get(JSON_LPSN_PARENT_ID) or "").strip()
+        if parent.isdigit() and parent != record_no:
+            edge_writer.writerow(self._edge(record_no, SUBCLASS_PREDICATE, f"{LPSN_PREFIX}{parent}", RDFS_SUBCLASS_OF))
+
+        # Basonym link (nomenclatural equivalence — a comb. nov. / new
+        # combination points at its basonym, the original name).
+        basonym = str(record.get(JSON_BASONYM_ID) or "").strip()
+        if basonym.isdigit() and basonym != record_no:
+            edge_writer.writerow(self._edge(record_no, SAME_AS_PREDICATE, f"{LPSN_PREFIX}{basonym}", EXACT_MATCH))
+
+    def _make_linked_node(self, record_no: str, record: dict) -> list:
+        """
+        Build a full node row for a linked record the GSS does not carry.
+
+        :param record_no: The record.
+        :param record: Its JSON payload; ``full_name`` becomes the label.
+        :return: A row aligned to ``node_header``.
+        """
+        row = self._make_enrichment_node(record_no, record)
+        headers = self.node_header
+        if "name" in headers:
+            row[headers.index("name")] = (record.get(JSON_FULL_NAME) or "").strip()
+        return row
+
+    def _stub_linked_node(self, record_no: str) -> list:
+        """
+        Build a bare node row for a linked record the API could not supply.
+
+        :param record_no: The record.
+        :return: A row aligned to ``node_header``.
+        """
+        headers = self.node_header
+        row = [""] * len(headers)
+        for col, val in {
+            "id": f"{LPSN_PREFIX}{record_no}",
+            "category": NCBI_CATEGORY,
+            "description": (
+                "LPSN record linked from another record; not retrievable from the LPSN API when this file was built"
+            ),
             "provided_by": LPSN_KNOWLEDGE_SOURCE,
         }.items():
             if col in headers:

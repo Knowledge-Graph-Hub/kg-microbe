@@ -185,6 +185,25 @@ class MetpoTreeNode:
         return None
 
 
+#: Classes-tab columns that can carry a Biolink category URI, in precedence order.
+_CLASS_CATEGORY_COLUMNS = ("biolink equivalent", "biolink close match", "biolink broad match")
+
+
+def _class_biolink_category(row: Dict[str, str]) -> str:
+    """
+    Return the Biolink category URI a classes-tab row declares, if any.
+
+    :param row: One row of the METPO classes template.
+    :return: The first URI found across :data:`_CLASS_CATEGORY_COLUMNS`, or "".
+    """
+    for column in _CLASS_CATEGORY_COLUMNS:
+        value = (row.get(column) or "").strip()
+        # The ROBOT template row carries `AI skos:closeMatch`, not a URI.
+        if value.startswith("http"):
+            return value
+    return ""
+
+
 def _build_metpo_tree() -> Dict[str, MetpoTreeNode]:
     """
     Build a tree structure from METPO classes based on parent-child relationships.
@@ -221,7 +240,11 @@ def _build_metpo_tree() -> Dict[str, MetpoTreeNode]:
             label = row.get("label", "").strip()
             madin_synonym = row.get("madin synonym or field", "").strip()
             bacdive_synonym = row.get("bacdive keyword synonym", "").strip()
-            biolink_equivalent = row.get("biolink equivalent", "").strip()
+            # The 2026-06-12 classes tab has no `biolink equivalent` column any more;
+            # the Biolink category now travels in `biolink close match` (and, for a
+            # handful of rows, `biolink broad match`). Reading only the old column
+            # made every lookup below fall to its defaults for months (#568).
+            biolink_equivalent = _class_biolink_category(row)
 
             if iri and label:
                 # handle pipe-separated synonyms from madin column
@@ -303,18 +326,44 @@ def _load_metpo_properties() -> Dict[str, Dict[str, str]]:
         lines = response.text.splitlines()
         reader = csv.DictReader(lines[2:], fieldnames=lines[0].split("\t"), delimiter="\t")
 
-        range_to_predicate = {}
+        # Several properties share one RANGE ("quality" is claimed by `has quality`,
+        # `isolated from host with quality` and `isolated from environment with
+        # quality`; "chemical entity" by eleven). "Last row wins" handed a
+        # class under `quality` to `isolated from environment with quality`
+        # (#568). Prefer, in order: the generic `has <RANGE>` property, one with
+        # a Biolink equivalent, a family root (no parent property), then the
+        # lowest id. Ids alone are not enough: `isolated from host with
+        # quality` is METPO:2000067 and `has quality` METPO:2000101.
+        candidates: Dict[str, list] = {}
         for row in reader:
             range_class = row.get("RANGE", "").strip()
             label = row.get("label", "").strip()
-            biolink_equivalent = row.get("biolink equivalent", "").strip()
-
             if range_class and label:
-                # Map RANGE class labels to property info
-                range_to_predicate[range_class] = {
-                    "label": label,
-                    "biolink_equivalent": biolink_equivalent,
-                }
+                candidates.setdefault(range_class, []).append(
+                    {
+                        "id": row.get("ID", "").strip(),
+                        "label": label,
+                        "biolink_equivalent": row.get("biolink equivalent", "").strip(),
+                        "parent": (row.get("parent property") or "").strip(),
+                    }
+                )
+
+        range_to_predicate = {}
+        for range_class, rows in candidates.items():
+            rows.sort(
+                key=lambda r: (
+                    r["label"] != f"has {range_class}",
+                    not r["biolink_equivalent"],
+                    bool(r["parent"]),
+                    r["id"],
+                )
+            )
+            chosen = rows[0]
+            range_to_predicate[range_class] = {
+                "id": chosen["id"],
+                "label": chosen["label"],
+                "biolink_equivalent": chosen["biolink_equivalent"],
+            }
 
         return range_to_predicate
 
@@ -330,29 +379,55 @@ def _resolve_metpo_predicate(
     """
     Resolve a METPO term's predicate routing via parent-chain traversal.
 
-    Walks the METPO parent chain to find the ``biolink equivalent``
-    ancestor that determines this term's predicate, biolink equivalent,
-    and category. Returns the same five fields the main mapping loop
-    populates so override entries are shape-compatible with
-    remote-fetched ones.
+    Two independent walks up the class tree (#568):
+
+    * **predicate** -- the nearest ancestor (self included) whose *label* is a
+      RANGE in the properties template names the property that relates an
+      organism to this kind of term: a class under ``biological process`` is
+      asserted with ``capable of``, one under ``phenotype`` with ``has
+      phenotype``, one under ``quality`` with ``has quality``. The Biolink
+      predicate is the property's ``biolink equivalent`` when the template
+      declares one, else the shared METPO -> Biolink map.
+    * **category** -- the nearest ancestor (self included) that declares a
+      Biolink category URI on the classes tab.
+
+    The previous single walk required an ancestor with a class-level
+    ``biolink equivalent`` before it would even consult the RANGE table; the
+    pinned classes tab has no such column, so every term fell to the
+    defaults and three transforms asserted ``has_phenotype`` for everything.
+
+    :param metpo_curie: The term to resolve.
+    :param nodes: The class tree from :func:`_build_metpo_tree`.
+    :param range_to_predicate: The RANGE table from :func:`_load_metpo_properties`.
+    :return: ``predicate``, ``predicate_biolink_equivalent``, ``biolink_equivalent``
+        and ``inferred_category``; defaults when the term is unknown.
     """
+    from kg_microbe.utils.metpo_predicates import METPO_TO_BIOLINK_PREDICATE
+
     predicate_label = "has phenotype"
     predicate_biolink_equivalent = ""
     biolink_equivalent = ""
     inferred_category = ""
+    node = nodes.get(metpo_curie)
 
-    if metpo_curie in nodes:
-        current = nodes[metpo_curie]
-        while current is not None:
-            if current.biolink_equivalent:
-                biolink_equivalent = current.biolink_equivalent
-                inferred_category = normalize_biolink_category(current.biolink_equivalent)
-                parent_label = current.label
-                if parent_label in range_to_predicate:
-                    predicate_label = range_to_predicate[parent_label]["label"]
-                    predicate_biolink_equivalent = range_to_predicate[parent_label]["biolink_equivalent"]
-                break
-            current = current.parent
+    current = node
+    while current is not None:
+        if current.label in range_to_predicate:
+            prop = range_to_predicate[current.label]
+            predicate_label = prop["label"]
+            predicate_biolink_equivalent = prop["biolink_equivalent"] or METPO_TO_BIOLINK_PREDICATE.get(
+                prop.get("id", ""), ""
+            )
+            break
+        current = current.parent
+
+    current = node
+    while current is not None:
+        if current.biolink_equivalent:
+            biolink_equivalent = current.biolink_equivalent
+            inferred_category = normalize_biolink_category(current.biolink_equivalent)
+            break
+        current = current.parent
 
     return {
         "predicate": predicate_label,
@@ -475,37 +550,20 @@ def load_metpo_mappings(synonym_column: str) -> Dict[str, Dict[str, str]]:
             synonym = row.get(synonym_column, "").strip()
             metpo_curie = row.get("ID", "").strip()  # already a CURIE
             metpo_label = row.get("label", "").strip()
-            biolink_equivalent = row.get("biolink equivalent", "").strip()
 
             if synonym and metpo_curie:
-                # Find the appropriate predicate and category using tree traversal logic:
-                # 1. find the closest parent with `biolink equivalent`
-                # 2. use the parent's label to find matching RANGE in properties sheet
-                # 3. get the predicate info for that RANGE
-                # 4. use the parent's label as the category
-                predicate_label = "has phenotype"  # default
-                predicate_biolink_equivalent = ""  # default empty
-                inferred_category = ""  # default empty, will be inferred from parent
+                # One implementation of the walk, shared with the alias overrides
+                # (#568): predicate from the nearest RANGE ancestor, category from
+                # the nearest ancestor declaring a Biolink category.
+                resolved = _resolve_metpo_predicate(metpo_curie, nodes, range_to_predicate)
+                predicate_label = resolved["predicate"]
+                predicate_biolink_equivalent = resolved["predicate_biolink_equivalent"]
+                biolink_equivalent = resolved["biolink_equivalent"]
+                inferred_category = resolved["inferred_category"]
                 immediate_parent_label = None  # Track the immediate parent for compound keys
 
-                if metpo_curie in nodes:
-                    node = nodes[metpo_curie]
-                    # Get immediate parent label for compound key creation
-                    if node.parent:
-                        immediate_parent_label = node.parent.label
-
-                    # find the parent node that has a `biolink equivalent`
-                    current = node
-                    while current is not None:
-                        if current.biolink_equivalent:
-                            # use the parent's biolink_equivalent URL as the category
-                            parent_label = current.label
-                            inferred_category = normalize_biolink_category(current.biolink_equivalent)
-                            if parent_label in range_to_predicate:
-                                predicate_label = range_to_predicate[parent_label]["label"]
-                                predicate_biolink_equivalent = range_to_predicate[parent_label]["biolink_equivalent"]
-                            break
-                        current = current.parent
+                if metpo_curie in nodes and nodes[metpo_curie].parent:
+                    immediate_parent_label = nodes[metpo_curie].parent.label
 
                 # handle pipe-separated synonyms
                 synonyms = [s.strip() for s in synonym.split("|")]

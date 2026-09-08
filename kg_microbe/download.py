@@ -6,6 +6,7 @@ from typing import List, Optional, Sequence, Tuple
 
 import yaml
 from kghub_downloader.download_utils import download_from_yaml
+from kghub_downloader.model import DownloadOptions
 
 from kg_microbe.utils.download_manifest import drop_stale, record
 from kg_microbe.utils.mediadive_bulk_download import download_mediadive_bulk
@@ -74,11 +75,15 @@ def download(
         drop_stale(effective_yaml, output_dir, tags)
 
     try:
+        # kghub-downloader >=0.5 takes the flags as a DownloadOptions object and
+        # returns a DownloadReport; the old keyword arguments are a TypeError
+        # there, which the mocked unit tests could not see (#997).
+        # fail_on_error is left at its default (True) so a bad URL still aborts
+        # the run as before; adopting the report is #938's business.
         download_from_yaml(
             yaml_file=effective_yaml,
             output_dir=output_dir,
-            snippet_only=snippet_only,
-            ignore_cache=ignore_cache,
+            download_options=DownloadOptions(snippet_only=snippet_only, ignore_cache=ignore_cache),
             tags=tags,
         )
     finally:

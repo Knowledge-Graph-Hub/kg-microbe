@@ -6,9 +6,9 @@ Uses GTDB metadata files to map GTDB species names to NCBITaxon IDs.
 """
 
 import gzip
-from collections import defaultdict
+from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Dict, Optional, Set, Union
+from typing import Dict, Optional, Union
 
 from kg_microbe.transform_utils.constants import METATRAITS_GTDB, RAW_DATA_DIR
 from kg_microbe.transform_utils.gtdb.utils import clean_taxon_name
@@ -98,8 +98,12 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         self.unresolved_taxa_file = self.output_dir / "unresolved_taxa.tsv"
         self.measurement_traits_file = self.output_dir / "measurement_traits.tsv"
 
-        # GTDB species name -> set of NCBITaxon IDs mapping
-        self.gtdb_to_ncbi: Dict[str, Set[str]] = defaultdict(set)
+        # GTDB name -> how many member genomes carry each NCBITaxon id. A set
+        # here, read back with list(...)[0], picked a taxid in hash order: a
+        # fifth of GTDB species carry more than one (species record plus
+        # subspecies/strain ids), so ~22% of this transform's edges changed
+        # subject on every run (#1006).
+        self.gtdb_to_ncbi: Dict[str, Counter] = defaultdict(Counter)
         # Genome accession -> NCBITaxon ID mapping (for equivalence links)
         self.accession_to_ncbi: Dict[str, str] = {}
         # Genome accession -> current GTDB species name (for hierarchical links)
@@ -169,19 +173,19 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
                             if len(tax_parts) >= 7:
                                 species = tax_parts[6].replace("s__", "")  # Remove 's__' prefix
                                 if species:
-                                    self.gtdb_to_ncbi[species].add(ncbi_id)
+                                    self.gtdb_to_ncbi[species][ncbi_id] += 1
 
                             # Also map genus level (for gtdb_genus_summary.jsonl.gz)
                             if len(tax_parts) >= 6:
                                 genus = tax_parts[5].replace("g__", "")
                                 if genus:
-                                    self.gtdb_to_ncbi[genus].add(ncbi_id)
+                                    self.gtdb_to_ncbi[genus][ncbi_id] += 1
 
                             # Also map family level (for gtdb_family_summary.jsonl.gz)
                             if len(tax_parts) >= 5:
                                 family = tax_parts[4].replace("f__", "")
                                 if family:
-                                    self.gtdb_to_ncbi[family].add(ncbi_id)
+                                    self.gtdb_to_ncbi[family][ncbi_id] += 1
 
                             # Map genome accession to NCBITaxon for fallback lookup
                             # Accession format: GB_GCA_001788565.1 or RS_GCF_001788565.1
@@ -192,7 +196,12 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
                                 # Store with 'sp' prefix for matching metatraits format
                                 self.accession_to_ncbi[f"sp{acc_parts}"] = ncbi_id
 
+        ambiguous = sum(1 for counts in self.gtdb_to_ncbi.values() if len(counts) > 1)
         print(f"  Loaded {len(self.gtdb_to_ncbi)} unique GTDB → NCBITaxon name mappings")
+        print(
+            f"  {ambiguous:,} of them carry more than one NCBI taxid across their genomes; "
+            "the taxid most genomes carry is used, ties to the lowest id (#1006)"
+        )
         print(f"  Loaded {len(self.accession_to_ncbi)} unique accession → NCBITaxon mappings")
 
     def _load_gtdb_taxonomy(self) -> None:
@@ -244,7 +253,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         super()._init_from_shared_data(shared_data)
 
         # Restore GTDB-specific state
-        self.gtdb_to_ncbi = defaultdict(set, shared_data.get("gtdb_to_ncbi", {}))
+        self.gtdb_to_ncbi = defaultdict(Counter, shared_data.get("gtdb_to_ncbi", {}))
         self.accession_to_ncbi = shared_data.get("accession_to_ncbi", {})
         self.accession_to_gtdb_species = shared_data.get("accession_to_gtdb_species", {})
         self.synthetic_nodes_metadata = {}  # Will be populated during processing
@@ -252,6 +261,26 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         # Disable OAK adapter in worker (GTDB uses metadata mapping only)
         self.ncbitaxon_name_to_id.clear()
         self._ncbi_adapter = "DISABLED"
+
+    @staticmethod
+    def _pick_ncbi_id(counts: "Counter") -> str:
+        """
+        Choose one NCBITaxon id for a GTDB name, deterministically.
+
+        The id most member genomes carry is, in practice, the species-level
+        record -- subspecies and strain ids are usually one genome each. Ties
+        go to the lowest numeric id, so the answer never depends on iteration
+        order (#1006).
+
+        :param counts: ``{NCBITaxon CURIE: number of genomes}``.
+        :return: The chosen CURIE.
+        """
+
+        def numeric(curie: str) -> int:
+            tail = curie.rsplit(":", 1)[-1]
+            return int(tail) if tail.isdigit() else 0
+
+        return max(counts, key=lambda curie: (counts[curie], -numeric(curie)))
 
     def _get_ncbitaxon_impl(self):
         """Override parent method - GTDB transform doesn't use OAK adapter."""
@@ -283,7 +312,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         ncbi_ids = self.gtdb_to_ncbi.get(search_name)
         if ncbi_ids:
             # Current taxonomy - use NCBITaxon directly (no synthetic node needed)
-            return list(ncbi_ids)[0]
+            return self._pick_ncbi_id(ncbi_ids)
 
         # Create synthetic GTDB: node for historical/renamed taxonomy
         if not search_name or search_name.startswith("NCBITaxon:"):

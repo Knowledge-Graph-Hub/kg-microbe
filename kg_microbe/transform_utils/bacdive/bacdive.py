@@ -3367,7 +3367,7 @@ class BacDiveTransform(Transform):
                                         predicate_override,
                                         subject_id,
                                         predicate_override,
-                                        self.source_name,
+                                        self.knowledge_source,
                                         knowledge_level,
                                         agent_type,
                                     ]
@@ -3460,6 +3460,9 @@ class BacDiveTransform(Transform):
                                 )
                             )
                         # Write edge from the isolation source to organism
+                        # knowledge_source, not source_name: the bare "bacdive" that used
+                        # to land here is not a CURIE, and 228,738 location_of edges
+                        # shipped with it while every other edge said infores:bacdive (#432).
                         knowledge_level, agent_type = self._add_edge_metadata(
                             NCBI_TO_ISOLATION_SOURCE_EDGE, LOCATION_OF, organism_id
                         )
@@ -3469,7 +3472,7 @@ class BacDiveTransform(Transform):
                                 NCBI_TO_ISOLATION_SOURCE_EDGE,
                                 organism_id,
                                 LOCATION_OF,
-                                self.source_name,
+                                self.knowledge_source,
                                 knowledge_level,
                                 agent_type,
                             ]

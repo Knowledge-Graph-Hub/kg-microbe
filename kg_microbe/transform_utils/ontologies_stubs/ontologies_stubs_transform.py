@@ -506,6 +506,9 @@ class OntologiesStubsTransform(Transform):
         # trips the same content (#986).
         module_owl = self.output_dir / f"{prefix.lower()}_mireot_module.owl"
         module_json = self.output_dir / f"{prefix.lower()}_mireot_module.json"
+        # The superseded intermediate: leaving the unparseable file beside the
+        # parseable one says nothing about which is current (#988).
+        module_owl.with_suffix(".ofn").unlink(missing_ok=True)
 
         extract_cmd: List[str] = [
             robot_bin,

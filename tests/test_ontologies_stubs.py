@@ -298,6 +298,8 @@ def test_mireot_intermediate_is_rdfxml_not_functional_syntax(tmp_path, monkeypat
     monkeypatch.setattr(subprocess, "run", fake_run)
     transform = OntologiesStubsTransform(input_dir=tmp_path / "raw", output_dir=tmp_path / "out")
     (tmp_path / "out").mkdir(parents=True, exist_ok=True)
+    stale = tmp_path / "out" / "micro_mireot_module.ofn"
+    stale.write_text("Ontology()\n", encoding="utf-8")
     module_json = transform._run_mireot_extract(
         prefix="MICRO",
         lower_curies=["MICRO:0000082"],
@@ -313,6 +315,8 @@ def test_mireot_intermediate_is_rdfxml_not_functional_syntax(tmp_path, monkeypat
     assert convert[convert.index("--input") + 1] == written
     assert convert[convert.index("--output") + 1] == str(module_json)
     assert module_json.suffix == ".json"
+    # The superseded intermediate does not linger beside the new one (#988).
+    assert not stale.exists()
 
 
 # ---------------------------------------------------------------------------

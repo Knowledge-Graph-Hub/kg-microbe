@@ -82,6 +82,35 @@ merged_graph:
         filename:
           - data/transformed/ontologies/metpo_nodes.tsv
           - data/transformed/ontologies/metpo_edges.tsv
+    # UBERON, FOODON and PATO are built by the ontologies transform on every run
+    # but were never merged, so every isolation-source anatomy (bacdive, gold),
+    # food (bacdive, gold, mediadive) and quality (bacdive) term they reference
+    # arrived as a label-less NamedThing KGX invented -- 168 of them in the
+    # 2026-09-08 graph -- while the labelled rows sat unused on disk. gold's
+    # label join assumes UBERON is loaded (gold.py). Most of those ids are not
+    # in any mappings/ file, so the selective stub import cannot see them; the
+    # full files are small (UBERON 25.9k, FOODON 39.3k, PATO 8.0k nodes) (#1010).
+    uberon:
+      name: "UBERON"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/ontologies/uberon_nodes.tsv
+          - data/transformed/ontologies/uberon_edges.tsv
+    foodon:
+      name: "FOODON"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/ontologies/foodon_nodes.tsv
+          - data/transformed/ontologies/foodon_edges.tsv
+    pato:
+      name: "PATO"
+      input:
+        format: tsv
+        filename:
+          - data/transformed/ontologies/pato_nodes.tsv
+          - data/transformed/ontologies/pato_edges.tsv
     # Selective per-CURIE stub-import for NCIT, mesh, BTO, PO, and MICRO —
     # only the IDs referenced by mappings/* are imported (not the full
     # ontologies). See kg_microbe/transform_utils/ontologies_stubs/ for

@@ -439,3 +439,16 @@ def test_a_linked_record_is_declared_once(api_transform):
     api_transform.run()
     ids = [n["id"] for n in _read_tsv(api_transform.output_node_file)]
     assert ids.count(f"{LPSN_PREFIX}1001") == 1
+
+
+def test_an_api_miss_is_counted_apart_from_errors(api_transform):
+    """
+    #1020: the summary line read errors=665 beside linked_records_from_web=665.
+
+    An empty result set is the API answering "no such record"; a transport or
+    parse failure is an error. The fixture has two misses (999, 1004) and no
+    failures.
+    """
+    api_transform.run()
+    assert api_transform._stats["api_misses"] == 2
+    assert api_transform._stats["errors"] == 0

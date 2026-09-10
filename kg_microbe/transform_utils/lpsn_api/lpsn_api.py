@@ -234,6 +234,7 @@ class LPSNAPITransform(Transform):
             "fetched": 0,
             "from_cache": 0,
             "errors": 0,
+            "api_misses": 0,
             "linked_declared": 0,
             "linked_from_web": 0,
             "linked_stubbed": 0,
@@ -306,6 +307,7 @@ class LPSNAPITransform(Transform):
             f"[lpsn_api] fetched={self._stats['fetched']:,} "
             f"cached={self._stats['from_cache']:,} "
             f"errors={self._stats['errors']:,} "
+            f"api_misses={self._stats.get('api_misses', 0):,} "
             f"linked_records_declared={self._stats.get('linked_declared', 0):,} "
             f"linked_records_from_web={self._stats.get('linked_from_web', 0):,} "
             f"linked_records_stubbed={self._stats.get('linked_stubbed', 0):,}"
@@ -402,7 +404,11 @@ class LPSNAPITransform(Transform):
             return None
 
         if not records:
-            self._stats["errors"] += 1
+            # Not an error: the API answered and has no record. Counted apart
+            # from transport/parse failures, because 665 of these are expected
+            # (pre-Approved-Lists basonyms) and are then labelled from the web
+            # page; reading them as errors next to 665 successes misled (#1020).
+            self._stats["api_misses"] = self._stats.get("api_misses", 0) + 1
             print(f"[lpsn_api] no record returned for {record_no}")
             return None
         record = records[0] if isinstance(records[0], dict) else records[0].__dict__

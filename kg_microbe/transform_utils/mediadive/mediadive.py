@@ -19,6 +19,7 @@ import csv
 import json
 import math
 import os
+import shutil
 import time
 from pathlib import Path
 from typing import Dict, Optional, Union
@@ -26,8 +27,9 @@ from urllib.parse import urlparse
 
 import pandas as pd
 import requests
-import requests_cache
 import yaml
+from requests_cache import CachedSession
+from requests_cache.backends.sqlite import SQLiteCache
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
@@ -124,6 +126,12 @@ from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
 )
 
+#: HTTP response cache for the API fallback, kept beside the bulk JSONs. The
+#: old name is the file `requests_cache.install_cache("mediadive_cache")` left
+#: in the working directory; it is adopted on first use so nothing re-downloads.
+HTTP_CACHE_FILENAME = "mediadive_transform_cache.sqlite"
+LEGACY_HTTP_CACHE_FILENAME = "mediadive_cache.sqlite"
+
 
 class MediaDiveTransform(Transform):
     """Template for how the transform class would be designed."""
@@ -138,7 +146,12 @@ class MediaDiveTransform(Transform):
         # can carry the recipe's amount + unit (g/l, mmol/l, ml/l, ...).
         # Other edge sites in this transform leave both columns empty.
         self.edge_header = self.edge_header + ["value", "unit"]
-        requests_cache.install_cache("mediadive_cache")
+        # No `requests_cache.install_cache()` here: that monkeypatched
+        # `requests.Session` for the whole process from a constructor, so every
+        # HTTP client in the run became a CachedSession and a test that merely
+        # built this transform changed the outcome of unrelated tests (#624).
+        # The cache is a session this transform owns, opened on first API call.
+        self._http: Optional[requests.Session] = None
         self.translation_table = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)
 
         # Load ChEBI role relationships from ontologies transform output (fast TSV lookup).
@@ -471,7 +484,7 @@ class MediaDiveTransform(Transform):
         """
         for attempt in range(retry_count):
             try:
-                r = requests.get(url, timeout=30)
+                r = self._http_session().get(url, timeout=30)
                 r.raise_for_status()
                 data_json = r.json()
                 return data_json.get(DATA_KEY, {})
@@ -482,6 +495,43 @@ class MediaDiveTransform(Transform):
                 else:
                     print(f"  Failed after {retry_count} attempts: {e} (URL: {url})")
                     return {}
+
+    def _http_cache_path(self) -> Path:
+        """
+        Return the API fallback's cache file, adopting the legacy one if present.
+
+        Older code cached in the working directory (usually the repo root).
+        Moving that file, rather than ignoring it, keeps its responses; it is
+        an optimisation, so a failed move is reported and a fresh cache used.
+        """
+        cache_path = self.bulk_data_dir / HTTP_CACHE_FILENAME
+        legacy = Path.cwd() / LEGACY_HTTP_CACHE_FILENAME
+        if not cache_path.exists() and legacy.is_file():
+            try:
+                cache_path.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(legacy), str(cache_path))
+                print(f"  Adopted legacy HTTP cache {legacy} -> {cache_path}")
+            except OSError as e:
+                print(f"  Could not adopt {legacy} ({e}); using a fresh HTTP cache")
+        return cache_path
+
+    def _http_session(self) -> requests.Session:
+        """Return this transform's cached HTTP session, opening it on first use."""
+        if self._http is None:
+            cache_path = self._http_cache_path()
+            cache_path.parent.mkdir(parents=True, exist_ok=True)
+            self._http = CachedSession(backend=SQLiteCache(str(cache_path)))
+        return self._http
+
+    def _close_http(self) -> None:
+        """Close the HTTP session so its SQLite connection does not linger."""
+        # getattr: tests build the transform with __new__ and no __init__.
+        session = getattr(self, "_http", None)
+        if session is not None:
+            try:
+                session.close()
+            finally:
+                self._http = None
 
     def _get_chebi_label(self, curie: str) -> str:
         """
@@ -796,7 +846,7 @@ class MediaDiveTransform(Transform):
         Refuse to transform when the bulk MediaDive download is missing.
 
         Without it the medium/solution lookups fall back to the YAML cache
-        under ``tmp/medium_yaml`` and to ``requests_cache``, neither of
+        under ``tmp/medium_yaml`` and to this transform's HTTP cache, neither of
         which carries an expiry. Those caches hold responses from 2023 and
         2025 that predate MediaDive restructuring solutions, so the run
         succeeds with exit code 0 while emitting a graph built from years-old
@@ -821,6 +871,13 @@ class MediaDiveTransform(Transform):
         )
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
+        """Run the transformation, closing the API session afterwards."""
+        try:
+            self._run(data_file, show_status)
+        finally:
+            self._close_http()
+
+    def _run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
         self._assert_bulk_data_available()
         # replace with downloaded data filename for this source

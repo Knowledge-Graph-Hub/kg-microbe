@@ -3,6 +3,7 @@
 from datetime import datetime, timezone
 from pathlib import Path
 
+import pytest
 import yaml
 
 from kg_microbe.merge_utils.stats_provenance import (
@@ -124,6 +125,73 @@ def test_the_real_canonical_config_names_a_stats_file():
     """merge.yaml's summarize operation is what the hook reads; keep them in step."""
     config = yaml.safe_load(Path("merge.yaml").read_text(encoding="utf-8"))
     assert stats_filename_from_config(config) == "merged_graph_stats.yaml"
+
+
+def _init_repo(tmp_path: Path) -> Path:
+    """Build a real git checkout with one commit, so git_commit has something to read."""
+    import os
+    import shutil
+    import subprocess
+
+    git = shutil.which("git")
+    if git is None:
+        pytest.skip("git is not on PATH")
+    repo = tmp_path / "repo"
+    repo.mkdir()
+    env = {
+        **os.environ,
+        "GIT_AUTHOR_NAME": "t",
+        "GIT_AUTHOR_EMAIL": "t@e",
+        "GIT_COMMITTER_NAME": "t",
+        "GIT_COMMITTER_EMAIL": "t@e",
+    }
+    subprocess.run([git, "init", "-q"], cwd=repo, check=True, env=env)  # noqa: S603 - resolved path
+    (repo / "stats.yaml").write_text("a: 1\n", encoding="utf-8")
+    (repo / "other.txt").write_text("x\n", encoding="utf-8")
+    subprocess.run([git, "add", "."], cwd=repo, check=True, env=env)  # noqa: S603 - resolved path
+    subprocess.run([git, "commit", "-qm", "init"], cwd=repo, check=True, env=env)  # noqa: S603 - resolved path
+    return repo
+
+
+def test_the_ignored_stats_file_alone_does_not_make_the_tree_dirty(tmp_path):
+    """
+    #1038: `_git` stripped the leading space off `git status --porcelain`.
+
+    Porcelain emits "XY PATH", so " M stats.yaml" became "M stats.yaml" and the
+    `line[3:]` slice produced "tats.yaml" — which never matched the ignore set,
+    so every merge stamped -dirty regardless of the tree. The old assertions
+    passed against that constant answer; this constructs the exact state.
+    """
+    from kg_microbe.merge_utils.stats_provenance import git_commit
+
+    repo = _init_repo(tmp_path)
+    stats = repo / "stats.yaml"
+    stats.write_text("a: 2\n", encoding="utf-8")
+
+    clean = git_commit(repo, ignore=(stats,))
+    self_dirty = git_commit(repo)
+    assert not clean.endswith("-dirty"), f"only the ignored file changed, got {clean!r}"
+    assert self_dirty.endswith("-dirty"), "without the ignore it must still report dirty"
+    assert clean == self_dirty[: -len("-dirty")]
+
+
+def test_a_second_modified_file_still_reports_dirty(tmp_path):
+    """Ignoring the stats file must not blind the flag to everything else."""
+    from kg_microbe.merge_utils.stats_provenance import git_commit
+
+    repo = _init_repo(tmp_path)
+    (repo / "stats.yaml").write_text("a: 2\n", encoding="utf-8")
+    (repo / "other.txt").write_text("changed\n", encoding="utf-8")
+    assert git_commit(repo, ignore=(repo / "stats.yaml",)).endswith("-dirty")
+
+
+def test_porcelain_paths_parses_the_column_format(tmp_path):
+    """Status columns, renames and quoted paths all have to yield the path itself."""
+    from kg_microbe.merge_utils.stats_provenance import _porcelain_paths
+
+    status = " M merged_graph_stats.yaml\n?? untracked.txt\nR  old.py -> new.py\nMM both.py\n"
+    assert _porcelain_paths(status) == ["merged_graph_stats.yaml", "untracked.txt", "new.py", "both.py"]
+    assert _porcelain_paths("") == []
 
 
 def test_the_stats_file_itself_never_makes_the_commit_dirty():

@@ -84,24 +84,56 @@ def git_commit(repo_root: Path, ignore: Iterable[Path] = ()) -> str:
     if git is None:
         return "unknown"
     try:
-        head = _git(git, repo_root, "rev-parse", "--short", "HEAD")
+        head = _git(git, repo_root, "rev-parse", "--short", "HEAD").strip()
+        # Not stripped: `git status --porcelain` emits "XY PATH", two status
+        # columns then a space, so an unstaged change reads " M path". Stripping
+        # the leading space shifted every column and the path parsed one
+        # character short, which made `ignore` a no-op and stamped -dirty on
+        # every merge (#1038).
         status = _git(git, repo_root, "status", "--porcelain", "--untracked-files=no")
     except (OSError, subprocess.SubprocessError):
         return "unknown"
     if not head:
         return "unknown"
     ignored = {_relative(Path(path), repo_root) for path in ignore}
-    changed = [line[3:] for line in status.splitlines() if line.strip()]
-    dirty = any(path not in ignored for path in changed)
+    dirty = any(path not in ignored for path in _porcelain_paths(status))
     return f"{head}-dirty" if dirty else head
 
 
 def _git(git: str, repo_root: Path, *args: str) -> str:
-    """Run one git command in the checkout and return stripped stdout."""
+    """
+    Run one git command in the checkout and return stdout verbatim.
+
+    Deliberately unstripped: porcelain output is column-oriented and a caller
+    that strips it before slicing loses a character off every path (#1038).
+    Callers wanting a bare value strip it themselves.
+    """
     result = subprocess.run(  # noqa: S603 - fixed argv, no shell
         [git, *args], cwd=repo_root, capture_output=True, text=True, check=False, timeout=30
     )
-    return result.stdout.strip() if result.returncode == 0 else ""
+    return result.stdout if result.returncode == 0 else ""
+
+
+def _porcelain_paths(status: str) -> list:
+    """
+    Return the paths named by ``git status --porcelain`` output.
+
+    Each line is ``XY PATH``: two status columns, a space, then the path. A
+    rename reads ``R  old -> new``; the destination is what changed, so that is
+    what is returned.
+
+    :param status: Raw stdout of ``git status --porcelain``, unmodified.
+    :return: One path per changed file.
+    """
+    paths = []
+    for line in status.splitlines():
+        if len(line) < 4:
+            continue
+        path = line[3:]
+        if " -> " in path:
+            path = path.split(" -> ", 1)[1]
+        paths.append(path.strip('"'))
+    return paths
 
 
 def _relative(path: Path, repo_root: Path) -> str:

@@ -1,6 +1,7 @@
 """Transform module."""
 
 import inspect
+import traceback
 from functools import cached_property
 from importlib import import_module
 from pathlib import Path
@@ -107,6 +108,77 @@ DATA_SOURCES = {
 }
 
 
+class TransformBatchError(RuntimeError):
+    """
+    One or more sources in a batch failed; raised after the others ran.
+
+    Carries ``failed`` (source -> exception) and ``skipped`` (source -> the
+    upstream sources it declares in ``TRANSFORM_INPUTS`` that failed first),
+    and renders both, so the exit is non-zero and the summary is unmissable.
+    """
+
+    def __init__(self, failed: dict, skipped: dict):
+        """Render the per-source outcome into the message."""
+        self.failed = failed
+        self.skipped = skipped
+        lines = [f"{len(failed)} transform(s) failed" + (f", {len(skipped)} skipped" if skipped else "")]
+        for source, exc in failed.items():
+            lines.append(f"  failed:  {source}: {type(exc).__name__}: {exc}")
+        for source, upstream in skipped.items():
+            lines.append(f"  skipped: {source}: upstream {', '.join(upstream)} did not complete")
+        super().__init__("\n".join(lines))
+
+
+def _ontology_map() -> dict:
+    """Return ONTOLOGIES_MAP, imported lazily so ``kg --help`` stays light."""
+    from kg_microbe.transform_utils.ontologies.ontologies_transform import ONTOLOGIES_MAP
+
+    return ONTOLOGIES_MAP
+
+
+def _missing_declared_inputs(sources: List[str], repo_root: Path) -> List[str]:
+    """
+    Return ``"source: path"`` for every declared curation input that is absent.
+
+    Checked before any source runs (#685): a missing prerequisite should fail
+    in seconds, not after the hours of upstream work that precede it in the
+    batch. Only ``DATA_INPUTS`` can be checked this way -- raw downloads are
+    not declared per transform.
+    """
+    missing = []
+    for source in sources:
+        cls = DATA_SOURCES.get(source)
+        for rel in getattr(cls, "DATA_INPUTS", ()) if cls is not None else ():
+            if not (repo_root / rel).exists():
+                missing.append(f"{source}: {rel}")
+    return missing
+
+
+def _run_one(source: str, input_dir: Optional[Path], output_dir: Optional[Path], show_status: bool) -> None:
+    """Run one registered source, or one ontology by name, and report what it wrote."""
+    if source in DATA_SOURCES:
+        t = DATA_SOURCES[source](input_dir, output_dir)
+        t.run(show_status=show_status)
+        written = _describe_output(t, source)
+        # After the outputs, so a run that dies partway leaves no marker
+        # claiming its output matches the current inputs. Central here rather
+        # than in each transform: every source gets it, and none can forget.
+        _record_fingerprint(t, source)
+        print(f"[transform] {source}: done — {written}", flush=True)
+        return
+
+    # A single ontology (#690). OntologiesTransform.run(data_file) has always
+    # scoped to one file; the CLI branch meant to reach it tested a source
+    # name against ONTOLOGIES_MAP, whose keys never overlapped DATA_SOURCES.
+    t = DATA_SOURCES[ONTOLOGIES](input_dir, output_dir)
+    t.run(_ontology_map()[source], show_status=show_status)
+    written = _describe_output(t, source, file_prefix=f"{source}_")
+    # Deliberately no fingerprint: the marker covers the whole ontologies
+    # directory, and one refreshed ontology does not make the other thirteen
+    # current. The existing marker stays, and reads STALE if the code moved.
+    print(f"[transform] {source}: done — {written} (single ontology; ontologies fingerprint not updated)", flush=True)
+
+
 def transform(
     input_dir: Optional[Path],
     output_dir: Optional[Path],
@@ -123,8 +195,17 @@ def transform(
 
     :param input_dir: A string pointing to the directory to import data from.
     :param output_dir: A string pointing to the directory to output data to.
-    :param sources: A list of sources to transform.
+    :param sources: A list of sources to transform. A registered source name,
+        or one ontology name from ``ONTOLOGIES_MAP`` (``ec``, ``chebi``, ...)
+        to refresh that ontology alone (#690).
     :raises ValueError: If a requested source is not registered in DATA_SOURCES.
+    :raises FileNotFoundError: If a selected source declares a curation input
+        that is not on disk; nothing runs (#685).
+    :raises TransformBatchError: After the batch, if any source failed. A
+        failure is isolated to its source: later sources still run unless
+        they declare the failed one in ``TRANSFORM_INPUTS``, in which case they
+        are skipped rather than built on stale upstream output (#685).
+        ``BaseException`` (``FatalOntologyError``, Ctrl-C) still aborts at once.
     """
     if not sources:
         # run all sources
@@ -135,32 +216,50 @@ def transform(
     # no output — indistinguishable from a successful run, and from a transform
     # that died early (#813).
     unknown = [s for s in sources if s not in DATA_SOURCES]
+    ontology_names: List[str] = []
+    if unknown:
+        ontology_names = sorted(_ontology_map())
+        unknown = [s for s in unknown if s not in ontology_names]
     if unknown:
         raise ValueError(
             f"Unknown transform source(s): {', '.join(sorted(unknown))}. "
-            f"Registered sources: {', '.join(sorted(DATA_SOURCES))}"
+            f"Registered sources: {', '.join(sorted(DATA_SOURCES))}; "
+            f"single ontologies: {', '.join(ontology_names)}"
         )
 
+    missing = _missing_declared_inputs(sources, Path(__file__).resolve().parent.parent)
+    if missing:
+        raise FileNotFoundError("Declared curation input(s) missing; nothing was run: " + "; ".join(missing))
+
+    failed: dict = {}
+    skipped: dict = {}
+    # Names a later source may declare in TRANSFORM_INPUTS that did not
+    # complete. A single ontology failing counts as `ontologies` failing:
+    # gold and prego declare the directory, not the ontology inside it.
+    unavailable: set = set()
     for source in sources:
+        upstream = [u for u in getattr(DATA_SOURCES.get(source), "TRANSFORM_INPUTS", ()) if u in unavailable]
+        if upstream:
+            skipped[source] = upstream
+            unavailable.add(source)
+            print(f"[transform] {source}: skipped — upstream {', '.join(upstream)} did not complete", flush=True)
+            continue
         # print, not logging.info: the CLI does not configure a handler that
         # shows INFO, so the old log line was invisible and a run that produced
         # nothing looked identical to one that worked.
         print(f"[transform] {source}: starting", flush=True)
-        t = DATA_SOURCES[source](input_dir, output_dir)
-        if source == ONTOLOGIES:
-            from kg_microbe.transform_utils.ontologies.ontologies_transform import ONTOLOGIES_MAP
+        try:
+            _run_one(source, input_dir, output_dir, show_status)
+        except Exception as exc:  # noqa: BLE001 - isolate one source; BaseException still aborts the batch
+            failed[source] = exc
+            unavailable.add(source)
+            if source not in DATA_SOURCES:
+                unavailable.add(ONTOLOGIES)
+            print(f"[transform] {source}: FAILED — {type(exc).__name__}: {exc}", flush=True)
+            traceback.print_exc()
 
-        if source == ONTOLOGIES and source in ONTOLOGIES_MAP:
-            t.run(ONTOLOGIES_MAP[source])
-        else:
-            t.run(show_status=show_status)
-
-        written = _describe_output(t, source)
-        # After the outputs, so a run that dies partway leaves no marker
-        # claiming its output matches the current inputs. Central here rather
-        # than in each transform: every source gets it, and none can forget.
-        _record_fingerprint(t, source)
-        print(f"[transform] {source}: done — {written}", flush=True)
+    if failed:
+        raise TransformBatchError(failed, skipped)
 
 
 def _record_fingerprint(transform_obj, source: str) -> None:
@@ -192,7 +291,7 @@ def _record_fingerprint(transform_obj, source: str) -> None:
         print(f"[transform] {source}: could not record fingerprint ({exc})", flush=True)
 
 
-def _describe_output(transform_obj, source: str) -> str:
+def _describe_output(transform_obj, source: str, file_prefix: str = "") -> str:
     """
     Summarise what a transform actually wrote, for the completion line.
 
@@ -201,6 +300,8 @@ def _describe_output(transform_obj, source: str) -> str:
 
     :param transform_obj: The Transform instance that just ran.
     :param source: Source name, used when the instance exposes no output dir.
+    :param file_prefix: Count only ``<prefix>nodes.tsv`` / ``<prefix>edges.tsv``;
+        a single-ontology run must not report the whole ontologies directory.
     :return: Human-readable summary of the files written.
     """
     out_dir = getattr(transform_obj, "output_dir", None)
@@ -213,7 +314,7 @@ def _describe_output(transform_obj, source: str) -> str:
     # what the guard is for (#949).
     parts = []
     for kind in ("nodes", "edges"):
-        files = sorted(Path(out_dir).glob(f"*{kind}.tsv"))
+        files = sorted(Path(out_dir).glob(f"{file_prefix or '*'}{kind}.tsv"))
         if not files:
             continue
         counted = []

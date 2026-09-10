@@ -132,10 +132,19 @@ class DataInputsTest(TestCase):
 
 
 class FreshnessDataStalenessTest(TestCase):
-    """The freshness check must report data staleness, not just code staleness."""
+    """
+    The freshness check must report data staleness, not just code staleness.
+
+    These tests drive the *timestamp* path. ``check_source`` consults the
+    content fingerprint first, and on a checkout where the transform has run
+    the real ``data/transformed/<source>/source_fingerprint.json`` decided the
+    verdict and the mocks below never mattered -- two tests failed locally and
+    passed in CI, which has no output (#1001). The fingerprint verdict is
+    stubbed to "no marker" here; the content path has its own tests below.
+    """
 
     def setUp(self):
-        """Import the standalone freshness script."""
+        """Import the standalone freshness script and take the marker out of play."""
         spec = importlib.util.spec_from_file_location(
             "kgm_freshness_check",
             REPO_ROOT / ".claude" / "skills" / "kgm-freshness-check" / "kgm_freshness_check.py",
@@ -143,6 +152,28 @@ class FreshnessDataStalenessTest(TestCase):
         self.mod = importlib.util.module_from_spec(spec)
         sys.modules["kgm_freshness_check"] = self.mod
         spec.loader.exec_module(self.mod)
+        no_marker = mock.patch.object(self.mod, "_fingerprint_verdict", return_value=None)
+        no_marker.start()
+        self.addCleanup(no_marker.stop)
+
+    def test_a_content_verdict_wins_over_stale_timestamps(self):
+        """
+        #1001: this is why the marker had to be stubbed for the tests below.
+
+        With a marker that verifies, ``check_source`` reports FRESH whatever the
+        timestamps say -- correct for the tool, and exactly what made the
+        timestamp-path tests depend on the developer having run the pipeline.
+        """
+        with (
+            mock.patch.object(self.mod, "_fingerprint_verdict", return_value=("FRESH", "verified by content")),
+            mock.patch.object(self.mod, "_latest_commit", return_value=(3000, "deadbee")),
+            mock.patch.object(self.mod, "_has_local_diff", return_value=False),
+            mock.patch.object(self.mod, "_output_mtime", return_value=2000),
+            mock.patch.object(self.mod, "_latest_data_input_commit", return_value=(4000, f"{ISO} @ abc1234")),
+        ):
+            report = self.mod.check_source("bacdive", "origin/master")
+        self.assertEqual(report.status, "FRESH")
+        self.assertIn("verified by content", report.note)
 
     def test_it_reads_declared_inputs_from_the_transform_classes(self):
         """

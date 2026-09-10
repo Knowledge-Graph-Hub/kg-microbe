@@ -12,6 +12,7 @@ import networkx as nx  # type: ignore
 import yaml
 
 from kg_microbe.merge_utils.invariants import check_merged_invariants
+from kg_microbe.merge_utils.stats_provenance import annotate_graph_stats, stats_filename_from_config
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
     CATEGORY_COLUMN,
@@ -142,6 +143,11 @@ def load_and_merge(
     return merged_graph
 
 
+def _repo_root() -> Path:
+    """Return the checkout root; merge configs and stats paths are relative to it."""
+    return Path(__file__).resolve().parents[2]
+
+
 def _cleanup_merged_outputs(yaml_file: str) -> None:
     r"""
     Defensive post-merge normalization of the KGX-merged TSVs.
@@ -229,6 +235,17 @@ def _cleanup_merged_outputs(yaml_file: str) -> None:
                 check_merged_invariants(edges_file, output_dir, nodes_file=nodes_file)
             except Exception as exc:  # noqa: BLE001
                 print(f"[merge-invariants] check skipped: {exc}")
+            # The stats file KGX wrote says nothing about what produced it and
+            # cannot name a METPO predicate (#1013, #993). Annotate it here,
+            # while the loose edges file exists. Same isolation as above: a
+            # bookkeeping failure must not stop the archive from shipping.
+            stats_name = stats_filename_from_config(config)
+            if stats_name:
+                try:
+                    annotate_graph_stats(Path(stats_name), edges_file, Path(yaml_file), _repo_root())
+                    print(f"[merge-stats] {stats_name}: provenance and raw predicate counts written")
+                except Exception as exc:  # noqa: BLE001
+                    print(f"[merge-stats] annotation skipped: {exc}")
 
         if dest.get("compression") == "tar.gz":
             if nodes_file.is_file() and edges_file.is_file():

@@ -58,6 +58,13 @@ transform classes -> data/transformed/<source>/{nodes,edges}.tsv
 merge.yaml -> data/merged/merged-kg.tar.gz + merged_graph_stats.yaml
 ```
 
+`merged_graph_stats.yaml` carries a `provenance` block (when, commit, merge
+config, each source's fingerprint digest) and
+`edge_stats.count_by_raw_predicate`, the predicate column counted as
+written. KGX's own `count_by_predicates` resolves through Biolink and records
+every METPO predicate as `None`, so it cannot see two thirds of the edges;
+compare predicates with the raw block. See #993 and #1013.
+
 - `download.yaml` owns upstream URLs and pinned versions.
 - `kg_microbe/transform_utils/<source>/` owns source parsing and normalization.
 - `kg_microbe/transform_utils/transform.py` owns the standard TSV headers.

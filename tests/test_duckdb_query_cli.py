@@ -73,16 +73,17 @@ def test_same_size_same_mtime_content_change_rebuilds_database(tmp_path: Path) -
     db_path = tmp_path / "graph.duckdb"
     get_or_create_database(nodes, edges, db_path).close()
     original_stat = edges.stat()
-    changed = edges.read_text(encoding="utf-8").replace("located_in", "related_to")
+    # Same byte length: "grows in" becomes "does not grow in" by one digit.
+    changed = edges.read_text(encoding="utf-8").replace("METPO:2000517\tinfores", "METPO:2000518\tinfores")
     assert len(changed.encode()) == edges.stat().st_size
     edges.write_text(changed, encoding="utf-8")
     os.utime(edges, ns=(original_stat.st_atime_ns, original_stat.st_mtime_ns))
 
     conn = get_or_create_database(nodes, edges, db_path)
     try:
-        predicates = {row[0] for row in conn.execute("SELECT predicate FROM edges").fetchall()}
-        assert "biolink:related_to" in predicates
-        assert "biolink:located_in" not in predicates
+        relations = {row[0] for row in conn.execute("SELECT relation FROM edges").fetchall()}
+        assert "METPO:2000518" in relations
+        assert "METPO:2000517" not in relations
     finally:
         conn.close()
 

@@ -136,6 +136,11 @@ LEGACY_HTTP_CACHE_FILENAME = "mediadive_cache.sqlite"
 class MediaDiveTransform(Transform):
     """Template for how the transform class would be designed."""
 
+    #: Reads ``ontologies/chebi_nodes.tsv`` (ChEBI roles and categories) via
+    #: CHEBI_NODES_FILE; the path lives in constants.py, which is why this went
+    #: undeclared (#1035).
+    TRANSFORM_INPUTS = ("ontologies",)
+
     DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):

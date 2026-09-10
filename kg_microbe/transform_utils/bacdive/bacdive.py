@@ -237,6 +237,11 @@ logger = logging.getLogger(__name__)
 class BacDiveTransform(Transform):
     """Template for how the transform class would be designed."""
 
+    #: Reads ``ontologies/ncbitaxon_nodes.tsv`` and ``ontologies/chebi_nodes.tsv``
+    #: via NCBITAXON_NODES_FILE / CHEBI_NODES_FILE. Undeclared until #1035: the
+    #: path lives in constants.py, so the cross-transform guard never saw it.
+    TRANSFORM_INPUTS = ("ontologies",)
+
     DATA_INPUTS = (
         "mappings/isolation_source_to_ontology.tsv",
         "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",

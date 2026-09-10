@@ -424,7 +424,7 @@ class SingleOntologySourceTest(TestCase):
         self.assertNotIn("chebi", done[0])
 
     def test_a_failed_single_ontology_skips_what_depends_on_ontologies(self):
-        """gold declares `ontologies`, not `ec`; a failed `-s ec` must still keep gold from running on it."""
+        """A dependent declares `ontologies`, not `ec`; a failed `-s ec` must still keep it from running."""
         calls = []
         fake = self._ontologies_fake(calls)
         original_run = fake.run

@@ -150,38 +150,57 @@ try:
 except ImportError:
     pass
 
-# Predicate → (allowed_subject_categories, allowed_object_categories) constraint.
-# Each set lists biolink category CURIEs; an edge's subject/object is compliant if
-# its declared category is either in the set or (via bmt) a descendant of any
-# member. Violations surface as WARNING under the new "DomainRange" check bucket.
-# The map covers: (a) every biolink predicate KG-Microbe emits with a non-trivial
-# domain or range narrower than NamedThing, and (b) every METPO:2000xxx predicate
-# KG-Microbe emits — METPO domain/range is not machine-readable yet, so these are
-# hand-curated from metpo.json labels. Keys are intentionally narrow; predicates
-# absent here are skipped (no false positives from permissive biolink defaults).
-PREDICATE_DOMAIN_RANGE = {
-    # ── Biolink ─────────────────────────────────────────────────────────────
+# Domain/range comes from three places, and every reported violation says which:
+#
+#   [model]  — the pinned Biolink model, read through BMT for every biolink:*
+#              predicate an edge uses. Nothing is hand-copied: a hand-written
+#              row for located_in once contradicted the model and produced
+#              228,762 false violations in one review (#1011).
+#   [house]  — HOUSE_ALLOWANCES: deliberate, documented KG-Microbe conventions
+#              that are *looser* than the model. An edge that fails the model
+#              but passes a house rule is counted and reported under that rule
+#              as INFO, so the model's verdict stays visible instead of being
+#              silently absorbed.
+#   [table]  — HAND_DOMAIN_RANGE: predicates the model cannot describe (METPO
+#              properties have no machine-readable domain/range yet) or where
+#              KG-Microbe chooses to be *stricter* than the model.
+#: Looser-than-model allowances. ``(extra subject cats, extra object cats, why)``.
+HOUSE_ALLOWANCES = {
+    # METPO qualities are typed PhenotypicQuality, an Attribute, not a
+    # PhenotypicFeature; ~2.1M has_phenotype edges point at them. Whether they
+    # move to has_attribute at scale is #643/#1000's call, not the reviewer's.
+    # ...and OrganismTaxon is not a biological entity in 4.4.2, so taxa as
+    # phenotype bearers (2.1M edges) pass the model only by this rule too.
+    "biolink:has_phenotype": (
+        {"biolink:OrganismTaxon"},
+        {"biolink:Attribute", "biolink:OntologyClass"},
+        "#643/#1000: taxa as phenotype bearers, qualities as Attributes",
+    ),
+    # METPO process classes without a Biolink category reach the graph as OntologyClass.
+    "biolink:capable_of": (set(), {"biolink:OntologyClass"}, "METPO process classes typed OntologyClass"),
+    "biolink:has_chemical_role": (set(), {"biolink:OntologyClass"}, "CHEBI role terms typed OntologyClass"),
+    # `enables` has domain physical entity in the pinned model, and Protein is
+    # not a physical entity in 4.4.2. EC nodes carry MolecularActivity|Protein
+    # (constants.EC_CATEGORY) so EC -> GO edges pass only by this convention (#645).
+    "biolink:enables": ({"biolink:Protein", "biolink:Gene", "biolink:MacromolecularComplex"}, set(), "#645: EC nodes typed Protein enable GO activities"),
+    # Strains and isolates sit under NCBITaxon as biolink:subclass_of by house
+    # convention (CLAUDE.md, #834); Biolink gives subclass_of an OntologyClass
+    # domain and range, so the model reports every one of them.
+    "biolink:subclass_of": ({"biolink:OrganismTaxon"}, {"biolink:OrganismTaxon"}, "#834 house convention: strain subclass_of taxon"),
+    # KG-Microbe deliberately categorizes CHEBI:33839 (macromolecule) descendants
+    # -- polysaccharides, peptides, polynucleotides -- as MacromolecularComplex,
+    # which is not a ChemicalEntity in Biolink (see ontology_utils.get_chebi_category).
+    "biolink:associated_with_resistance_to": (set(), {"biolink:MacromolecularComplex"}, "CHEBI macromolecules as MacromolecularComplex"),
+    "biolink:associated_with_sensitivity_to": (set(), {"biolink:MacromolecularComplex"}, "CHEBI macromolecules as MacromolecularComplex"),
+}
+
+#: Hand-written rows: METPO properties (no model to read), plus stricter-than-
+#: model house rules. ``predicate -> (allowed subject cats, allowed object cats)``.
+HAND_DOMAIN_RANGE = {
+    # Stricter than the model (which says named thing -> named thing / nothing):
+    # KG-Microbe asserts these only from an organism to a chemical.
     "biolink:consumes":       ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:ChemicalEntity"}),
     "biolink:produces":       ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:ChemicalEntity"}),
-    "biolink:located_in":     ({"biolink:BiologicalEntity", "biolink:Protein", "biolink:Gene"}, {"biolink:NamedThing"}),
-    "biolink:has_phenotype":  ({"biolink:BiologicalEntity", "biolink:OrganismTaxon"},  {"biolink:PhenotypicFeature", "biolink:Attribute", "biolink:OntologyClass"}),
-    "biolink:capable_of":     ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:BiologicalProcess", "biolink:MolecularActivity", "biolink:OntologyClass"}),
-    "biolink:has_chemical_role": ({"biolink:ChemicalEntity"}, {"biolink:ChemicalRole", "biolink:OntologyClass"}),
-    # MacromolecularComplex is included in the object set for chemical-targeting
-    # predicates because KG-Microbe deliberately categorizes CHEBI:33839
-    # (macromolecule) descendants — polysaccharides, peptides, polynucleotides —
-    # as biolink:MacromolecularComplex (see kg_microbe/utils/ontology_utils.py
-    # get_chebi_category and kg_microbe/utils/category_consolidation_rules.yaml).
-    # MacromolecularComplex is not a descendant of ChemicalEntity in biolink,
-    # so without this explicit addition the reviewer would flag legitimate
-    # organism→polysaccharide edges (e.g. ferments starch).
-    "biolink:associated_with_resistance_to":  ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),
-    "biolink:associated_with_sensitivity_to": ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),
-    # EC nodes carry the multi-cat biolink:MolecularActivity|biolink:Protein
-    # per kg_microbe/transform_utils/constants.py:EC_CATEGORY, which satisfies
-    # the Protein clause of biolink's GeneProductOrComplex domain/range.
-    "biolink:enables":        ({"biolink:Protein", "biolink:Gene", "biolink:MacromolecularComplex"}, {"biolink:MolecularActivity", "biolink:BiologicalProcess", "biolink:OntologyClass"}),
-    "biolink:enabled_by":     ({"biolink:MolecularActivity", "biolink:BiologicalProcess", "biolink:OntologyClass"}, {"biolink:Protein", "biolink:Gene", "biolink:MacromolecularComplex"}),
     # ── METPO:2000xxx (organism → chemical / pathway / medium) ──────────────
     # Same MacromolecularComplex note as biolink:associated_with_resistance_to above.
     "METPO:2000002": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),  # assimilates
@@ -405,8 +424,9 @@ def _expand_allowed(cats: set) -> set:
         return _DR_EXPANDED_CACHE[key]
     expanded = set(cats)
     try:
-        import bmt
-        t = bmt.Toolkit()
+        t = _toolkit()
+        if t is None:
+            raise RuntimeError("bmt unavailable")
         for cat in cats:
             slug = cat.replace("biolink:", "")
             # bmt expects human-readable names; convert CamelCase → "space-separated"
@@ -423,11 +443,64 @@ def _expand_allowed(cats: set) -> set:
     return expanded
 
 
+_MODEL_DR_CACHE: dict = {}
+_TOOLKIT = None
+
+
+def _toolkit():
+    """Return one BMT Toolkit over the pinned local model, or None if bmt is unavailable.
+
+    ``prepare_kgx`` must run first: without it ``bmt.Toolkit()`` reaches for
+    the bundled/remote schema, which the offline test environment refuses, and
+    the swallowed exception made every biolink predicate read as unconstrained.
+    """
+    global _TOOLKIT
+    if _TOOLKIT is None:
+        try:
+            from kg_microbe.utils.biolink_model import prepare_kgx
+            prepare_kgx()
+            import bmt
+            _TOOLKIT = bmt.Toolkit()
+        except Exception:
+            _TOOLKIT = False
+    return _TOOLKIT or None
+
+
+def _model_domain_range(pred: str):
+    """Return ``(domain cats, range cats)`` for a biolink predicate from the pinned model, or None.
+
+    A side whose model value is absent, ``named thing`` or ``entity`` is
+    unconstrained and returned as None for that side.
+    """
+    if pred in _MODEL_DR_CACHE:
+        return _MODEL_DR_CACHE[pred]
+    result = None
+    if pred.startswith("biolink:"):
+        try:
+            t = _toolkit()
+            element = None if t is None else t.get_element(pred.replace("biolink:", "").replace("_", " "))
+            if element is not None:
+                def _side(value):
+                    if not value or str(value) in ("named thing", "entity"):
+                        return None
+                    return {"biolink:" + "".join(w.capitalize() for w in str(value).split())}
+                result = (_side(getattr(element, "domain", None)), _side(getattr(element, "range", None)))
+                if result == (None, None):
+                    result = None
+        except Exception:
+            result = None
+    _MODEL_DR_CACHE[pred] = result
+    return result
+
+
 def check_domain_range(node_rows: list, edge_rows: list, verbose: bool) -> list:
     """Check that each edge's subject/object categories match the predicate's domain/range.
 
-    Violations are grouped by (predicate, side, observed-category); only
-    predicates present in ``PREDICATE_DOMAIN_RANGE`` are checked.
+    biolink:* predicates are judged against the pinned model; edges that fail
+    the model but pass a HOUSE_ALLOWANCES rule are counted separately and
+    reported as INFO under that rule. HAND_DOMAIN_RANGE rows are judged as
+    written and labelled [table]. Violations are grouped by
+    (predicate, side, observed category).
     """
     findings: list = []
     if not edge_rows:
@@ -441,54 +514,67 @@ def check_domain_range(node_rows: list, edge_rows: list, verbose: bool) -> list:
         if nid and cats:
             id_to_cats[nid] = cats
 
-    # group violations: (predicate, side, observed_cat) -> [example subject→object strings]
-    violations: dict = defaultdict(list)
+    violations: dict = defaultdict(list)   # (pred, side, cat, source) -> examples
+    house_saved: dict = defaultdict(int)   # (pred, side, cat, why) -> count
     checked_edges = 0
-    constrained_preds = set(PREDICATE_DOMAIN_RANGE.keys())
+
+    def _judge(pred, side, cats, allowed, source, ex):
+        """Record a violation unless a house allowance covers it."""
+        if any(c in allowed for c in cats):
+            return
+        extra = HOUSE_ALLOWANCES.get(pred)
+        if extra is not None:
+            extra_cats, why = (extra[0], extra[2]) if side == "subject" else (extra[1], extra[2])
+            if extra_cats and any(c in _expand_allowed(extra_cats) for c in cats):
+                house_saved[(pred, side, cats[0], why)] += 1
+                return
+        violations[(pred, side, cats[0], source)].append(ex)
+
     for e in edge_rows:
         pred = (e.get("predicate") or "").strip()
-        if pred not in constrained_preds:
-            continue
+        if pred in HAND_DOMAIN_RANGE:
+            domain_allowed, range_allowed = HAND_DOMAIN_RANGE[pred]
+            source = "table"
+        else:
+            model = _model_domain_range(pred)
+            if model is None:
+                continue
+            domain_allowed, range_allowed = model
+            source = "model"
         checked_edges += 1
-        domain_allowed, range_allowed = PREDICATE_DOMAIN_RANGE[pred]
-        domain_ok = _expand_allowed(domain_allowed)
-        range_ok = _expand_allowed(range_allowed)
-
-        subj = e.get("subject", "")
-        obj = e.get("object", "")
-        subj_cats = id_to_cats.get(subj)
-        obj_cats = id_to_cats.get(obj)
-
-        # An edge is compliant if ANY of the node's categories is in the allowed
-        # set (categories are pipe-delimited; we expand each side via bmt
-        # descendants in _expand_allowed). Report against the primary (first)
-        # category for grouping purposes.
-        if subj_cats and not any(c in domain_ok for c in subj_cats):
-            violations[(pred, "subject", subj_cats[0])].append(f"{subj} → {obj}")
-        if obj_cats and not any(c in range_ok for c in obj_cats):
-            violations[(pred, "object", obj_cats[0])].append(f"{subj} → {obj}")
+        subj, obj = e.get("subject", ""), e.get("object", "")
+        ex = f"{subj} → {obj}"
+        subj_cats, obj_cats = id_to_cats.get(subj), id_to_cats.get(obj)
+        if subj_cats and domain_allowed is not None:
+            _judge(pred, "subject", subj_cats, _expand_allowed(domain_allowed), source, ex)
+        if obj_cats and range_allowed is not None:
+            _judge(pred, "object", obj_cats, _expand_allowed(range_allowed), source, ex)
 
     if not checked_edges:
         return findings  # nothing constrained in this batch
 
+    if house_saved:
+        total = sum(house_saved.values())
+        lines = [f"{pred} ({side}={cat}) [house: {why}]: {n:,} edges"
+                 for (pred, side, cat, why), n in sorted(house_saved.items(), key=lambda kv: -kv[1])]
+        findings.append(Finding(
+            "INFO", "DomainRange",
+            f"{total:,} edges conform only under a house allowance, not the model ({len(house_saved)} rules)",
+            lines if verbose else [],
+        ))
+
     if violations:
         total_bad = sum(len(v) for v in violations.values())
         ranked = sorted(violations.items(), key=lambda kv: -len(kv[1]))
-        examples = []
-        for (pred, side, cat), exs in ranked[:5]:
-            examples.append(f"{pred} ({side}={cat}): {len(exs)} edges, e.g. {exs[0]}")
-        findings.append(
-            Finding(
-                "WARNING",
-                "DomainRange",
-                f"{total_bad} edges violate predicate domain/range across {len(violations)} distinct constraints",
-                examples if verbose else [],
-            )
-        )
+        examples = [f"{pred} ({side}={cat}) [{source}]: {len(exs):,} edges, e.g. {exs[0]}"
+                    for (pred, side, cat, source), exs in ranked]
+        findings.append(Finding(
+            "WARNING", "DomainRange",
+            f"{total_bad:,} edges violate predicate domain/range across {len(violations)} distinct constraints",
+            examples if verbose else [],
+        ))
     else:
-        findings.append(
-            Finding("INFO", "DomainRange", f"Domain/range OK across {checked_edges:,} constrained edges")
-        )
+        findings.append(Finding("INFO", "DomainRange", f"Domain/range OK across {checked_edges:,} constrained edges"))
     return findings
 
 

@@ -36,6 +36,32 @@ class _FakeLpsnClient:
         yield rec
 
 
+#: LPSN's web page for a record the API does not serve (#1004): the rank
+#: and name sit in the title, the statuses in labelled paragraphs. 1004 is
+#: the fixture's basonym target; the family (999) has no page in the fake.
+_WEB_PAGES = {
+    "1004": """<html><head><title>Species: Bacterium coli</title></head><body>
+    <p><b>Nomenclatural status:</b>
+        not validly published, basonym of name in Approved Lists        </p>
+    <p><b>Taxonomic status:</b>
+        <span>synonym (and no standing)</span></p></body></html>""",
+}
+
+
+class _FakePageFetch:
+    """Serve canned LPSN pages; record every request so tests can assert on it."""
+
+    def __init__(self, pages):
+        """Keep the ``{record_no: html}`` map."""
+        self._pages = pages
+        self.calls = []
+
+    def __call__(self, record_no):
+        """Return the page for ``record_no`` or ``None`` when the fake has none."""
+        self.calls.append(record_no)
+        return self._pages.get(record_no)
+
+
 def _write_gss_nodes(path: Path, record_nos):
     """Write a fake GSS nodes.tsv with one row per requested record_no."""
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -119,6 +145,7 @@ def api_transform(tmp_path, api_records):
         input_dir=input_dir,
         output_dir=output_dir,
         client=_FakeLpsnClient(api_records),
+        page_fetch=_FakePageFetch(_WEB_PAGES),
     )
     return xform
 
@@ -332,19 +359,79 @@ def test_a_fetchable_linked_record_is_named_and_walks_up(api_transform):
 
 def test_an_unfetchable_linked_record_gets_a_declared_stub(api_transform):
     """
-    The family (999) and the basonym (1004) are not in the API.
+    The family (999) is in neither the API nor the fake web.
 
     A bare stub in our own namespace, saying so, beats a NamedThing KGX
     invents with nothing on it.
     """
     api_transform.run()
     nodes = {n["id"]: n for n in _read_tsv(api_transform.output_node_file)}
-    for ref in ("999", "1004"):
-        stub = nodes[f"{LPSN_PREFIX}{ref}"]
-        assert stub["category"] == "biolink:OrganismTaxon"
-        assert stub["name"] == ""
-        assert "not retrievable" in stub["description"]
-    assert api_transform._stats["linked_stubbed"] == 2
+    stub = nodes[f"{LPSN_PREFIX}999"]
+    assert stub["category"] == "biolink:OrganismTaxon"
+    assert stub["name"] == ""
+    assert "not retrievable" in stub["description"]
+    assert api_transform._stats["linked_stubbed"] == 1
+    assert "999" in api_transform._page_fetch.calls
+
+
+def test_a_basonym_the_api_lacks_is_labelled_from_its_web_page(api_transform):
+    """
+    #1004: every one of the 665 API misses is a pre-Approved-Lists basonym.
+
+    The JSON API has no record for them by any route, but the website has
+    a page per record number. The node takes its name and rank from the
+    page and its description says where the label came from; no edges are
+    minted from it because the page carries no ids.
+    """
+    api_transform.run()
+    nodes = {n["id"]: n for n in _read_tsv(api_transform.output_node_file)}
+    basonym = nodes[f"{LPSN_PREFIX}1004"]
+    assert basonym["name"] == "Bacterium coli"
+    assert basonym["category"] == "biolink:OrganismTaxon"
+    assert "not served by the LPSN JSON API" in basonym["description"]
+    assert "https://lpsn.dsmz.de/taxon/1004" in basonym["description"]
+    assert "basonym of name in Approved Lists" in basonym["description"]
+    assert api_transform._stats["linked_from_web"] == 1
+    edges = _read_tsv(api_transform.output_edge_file)
+    assert not [e for e in edges if e["subject"] == f"{LPSN_PREFIX}1004"]
+
+
+def test_a_web_labelled_record_is_cached_apart_from_the_api_cache(api_transform, tmp_path):
+    """The page is fetched once; the second run reads the web cache and never touches the fetcher."""
+    api_transform.run()
+    web_cache = tmp_path / "raw" / "lpsn" / "web_cache" / "1004.json"
+    assert web_cache.exists()
+    assert not (tmp_path / "raw" / "lpsn" / "api_cache" / "1004.json").exists()
+    cached = json.loads(web_cache.read_text())
+    assert cached["kgmicrobe_source"] == "lpsn-web-page"
+    api_transform._page_fetch = _FakePageFetch({})
+    api_transform.run()
+    assert api_transform._page_fetch.calls == ["999"]
+    nodes = {n["id"]: n for n in _read_tsv(api_transform.output_node_file)}
+    assert nodes[f"{LPSN_PREFIX}1004"]["name"] == "Bacterium coli"
+
+
+def test_parse_taxon_page_reads_rank_name_and_statuses():
+    """Title gives rank and name (quotes and italics stripped); statuses are optional."""
+    from kg_microbe.transform_utils.lpsn_api.lpsn_api import parse_taxon_page
+
+    record = parse_taxon_page(
+        "4387", _WEB_PAGES["1004"].replace("Bacterium coli", "&quot;<i>Bacterium</i> sonnei&quot;")
+    )
+    assert record["full_name"] == "Bacterium sonnei"
+    assert record["category"] == "species"
+    assert record["id"] == 4387
+    assert record["nomenclatural_status"] == "not validly published, basonym of name in Approved Lists"
+    assert record["lpsn_taxonomic_status"] == "synonym (and no standing)"
+    assert parse_taxon_page("1", "<html><title>Genus: Escherichia</title></html>") == {
+        "id": 1,
+        "category": "genus",
+        "full_name": "Escherichia",
+        "lpsn_address": "https://lpsn.dsmz.de/taxon/1",
+        "kgmicrobe_source": "lpsn-web-page",
+    }
+    assert parse_taxon_page("1", "<html><title>LPSN</title></html>") is None
+    assert parse_taxon_page("1", "<html></html>") is None
 
 
 def test_a_linked_record_is_declared_once(api_transform):

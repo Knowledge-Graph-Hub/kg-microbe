@@ -27,7 +27,8 @@ def _write_graph(tmp_path: Path, newline: str = "\n") -> tuple[Path, Path]:
     ]
     edge_rows = [
         "NCBITaxon:562\tbiolink:has_phenotype\tMETPO:1000699\tRO:0002200\tinfores:test",
-        "NCBITaxon:562\tbiolink:located_in\tmediadive.medium:1\tMETPO:2000517\tinfores:test",
+        # The shape the transforms emit: the METPO term is the predicate and the relation (#539).
+        "NCBITaxon:562\tMETPO:2000517\tmediadive.medium:1\tMETPO:2000517\tinfores:test",
     ]
     nodes.write_bytes((NODE_HEADER.rstrip("\n") + newline + newline.join(node_rows) + newline).encode())
     edges.write_bytes((EDGE_HEADER.rstrip("\n") + newline + newline.join(edge_rows) + newline).encode())
@@ -163,3 +164,29 @@ def test_holdouts_is_not_advertised_until_implemented() -> None:
     result = CliRunner().invoke(main, ["--help"])
     assert result.exit_code == 0
     assert "holdouts" not in result.output
+
+
+def test_media_preferences_match_the_shape_the_transforms_emit(tmp_path: Path) -> None:
+    """
+    #539: the query filtered on ``relation`` while the docs promised ``biolink:located_in``.
+
+    Both BacDive and MediaDive put the METPO term in ``predicate`` and ``relation``.
+    The predicate is matched first; an edge that only carries the term in
+    ``relation`` (a graph built before the METPO predicate) still answers.
+    """
+    from kg_microbe.query_utils.organism_queries import get_media_preferences
+
+    nodes, edges = _write_graph(tmp_path)
+    with nodes.open("a", encoding="utf-8") as handle:
+        handle.write("mediadive.medium:2\tMETPO:1004005\tNo-growth medium\t\n")
+        handle.write("mediadive.medium:3\tMETPO:1004005\tLegacy medium\t\n")
+    with edges.open("a", encoding="utf-8") as handle:
+        handle.write("NCBITaxon:562\tMETPO:2000518\tmediadive.medium:2\tMETPO:2000518\tinfores:test\n")
+        handle.write("NCBITaxon:562\tbiolink:located_in\tmediadive.medium:3\tMETPO:2000517\tinfores:old\n")
+    conn = get_or_create_database(nodes, edges, tmp_path / "graph.duckdb")
+    try:
+        prefs = get_media_preferences(conn, "NCBITaxon:562")
+    finally:
+        conn.close()
+    assert [m["medium_id"] for m in prefs["grows_in"]] == ["mediadive.medium:3", "mediadive.medium:1"]
+    assert [m["medium_id"] for m in prefs["no_growth"]] == ["mediadive.medium:2"]

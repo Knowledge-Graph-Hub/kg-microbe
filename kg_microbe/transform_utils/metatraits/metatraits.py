@@ -253,6 +253,11 @@ def _process_file_worker(args: Tuple[Path, Path, Dict[str, Any], bool]) -> Dict[
 class MetaTraitsTransform(Transform):
     """Transform metatraits summary JSONL files into KGX nodes and edges."""
 
+    #: Reads ``ontologies/ncbitaxon_nodes.tsv`` via NCBITAXON_NODES_FILE in
+    #: _load_ncbitaxon_labels. metatraits_gtdb inherits this. Undeclared until
+    #: #1035, because the path lives in constants.py rather than here.
+    TRANSFORM_INPUTS = ("ontologies",)
+
     DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
 
     # Measurement traits that should be excluded from unmapped_traits.tsv

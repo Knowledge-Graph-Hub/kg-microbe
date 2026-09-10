@@ -19,6 +19,12 @@
 #           and project IDs surfaced by MicrobeDecoder's pre-joined crosswalk.
 #   IMG   — JGI Integrated Microbial Genomes (https://bioregistry.io/registry/img.genome),
 #           genome IDs from the same MicrobeDecoder crosswalk.
+#   ncbi.assembly — NCBI Assembly accessions (https://bioregistry.io/registry/ncbi.assembly),
+#           minted by the gtdb transform for every classified genome. One prefix covers both
+#           archives: GCA_* comes from GenBank, GCF_* from RefSeq, and the accession says which.
+#           The version suffix is part of the identifier (GCA_000005845.1 and .2 are different
+#           assemblies). A RefSeq-primary genome carries its GenBank twin in `same_as` rather
+#           than getting a second node. See #882.
 #
 # Any kgmicrobe.* CURIE that exists as a placeholder for a proposed METPO term
 # (i.e. one that appears in mappings/metpo_proposal_*.tsv and will be swapped to

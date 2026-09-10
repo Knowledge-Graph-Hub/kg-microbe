@@ -1,11 +1,15 @@
 """Test GTDB transform."""
 
+import csv
 import tempfile
 import unittest
 from pathlib import Path
 
+from kg_microbe.transform_utils.constants import GTDB_BAC120_METADATA
 from kg_microbe.transform_utils.gtdb.gtdb import GTDBTransform
 from kg_microbe.transform_utils.gtdb.utils import (
+    assembly_archive,
+    assembly_curie,
     clean_taxon_name,
     extract_accession_type,
     parse_taxonomy_string,
@@ -218,16 +222,19 @@ class TestGTDBTransform(unittest.TestCase):
 
         # Should have 2 nodes: taxon + genome
         self.assertEqual(len(self.transform.nodes), 2)
-        genome_node = [n for n in self.transform.nodes if n["id"].startswith("GenBank:")][0]
-        self.assertEqual(genome_node["id"], "GenBank:GCF_000005845")
+        genome_node = [n for n in self.transform.nodes if n["id"].startswith("ncbi.assembly:")][0]
+        # #882: the version is part of the identifier, and GCF_ is a RefSeq accession.
+        self.assertEqual(genome_node["id"], "ncbi.assembly:GCF_000005845.2")
         self.assertEqual(genome_node["category"], "biolink:Genome")
         self.assertEqual(genome_node["name"], "GCF_000005845.2")
+        self.assertEqual(genome_node["description"], "RefSeq assembly GCF_000005845.2")
+        self.assertEqual(genome_node["same_as"], "")
 
         # Should have 2 edges: genome->taxon and taxon->NCBITaxon
         self.assertEqual(len(self.transform.edges), 2)
 
         # Check genome->taxon edge
-        genome_edge = [e for e in self.transform.edges if e["subject"].startswith("GenBank:")][0]
+        genome_edge = [e for e in self.transform.edges if e["subject"].startswith("ncbi.assembly:")][0]
         self.assertEqual(genome_edge["predicate"], "biolink:subclass_of")
         self.assertEqual(genome_edge["object"], "GTDB:s__Escherichia_coli")
 
@@ -275,3 +282,100 @@ class TestGTDBTransform(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestAssemblyAccessionIdentity(unittest.TestCase):
+    """#882: one physical assembly, two accessions, one resolvable identifier."""
+
+    def setUp(self):
+        """Build a transform writing to a scratch directory."""
+        self.tmp = tempfile.TemporaryDirectory()
+        self.transform = GTDBTransform(input_dir=Path(self.tmp.name), output_dir=Path(self.tmp.name))
+
+    def tearDown(self):
+        """Drop the scratch directory."""
+        self.tmp.cleanup()
+
+    def test_the_curie_names_the_right_archive_and_keeps_the_version(self):
+        """`GenBank:GCF_...` asserted the wrong archive and dropped the version, twice wrong."""
+        self.assertEqual(assembly_curie("RS_GCF_000005845.2"), "ncbi.assembly:GCF_000005845.2")
+        self.assertEqual(assembly_curie("GB_GCA_000008865.2"), "ncbi.assembly:GCA_000008865.2")
+        self.assertEqual(assembly_archive("RS_GCF_000005845.2"), "RefSeq")
+        self.assertEqual(assembly_archive("GB_GCA_000008865.2"), "GenBank")
+
+    def test_a_missing_version_is_not_invented(self):
+        """extract_accession_type defaults to version 1; an identifier must not guess."""
+        self.assertEqual(assembly_curie("GCF_000005845"), "ncbi.assembly:GCF_000005845")
+
+    def test_a_refseq_genome_records_its_genbank_twin_in_same_as(self):
+        """The pairing GTDB already ships makes the other accession findable without a second node."""
+        self.transform._get_or_create_taxon_id("s__Escherichia_coli")
+        self.transform._create_genome_node(
+            accession="RS_GCF_000005845.2",
+            gtdb_taxon="s__Escherichia_coli",
+            ncbi_taxid="562",
+            genbank_accession="GCA_000005845.2",
+        )
+        genome = [n for n in self.transform.nodes if n["id"].startswith("ncbi.assembly:")][0]
+        self.assertEqual(genome["id"], "ncbi.assembly:GCF_000005845.2")
+        self.assertEqual(genome["same_as"], "ncbi.assembly:GCA_000005845.2")
+        # GTDB's RS_/GB_ key is not an NCBI identifier and must not be presented as one.
+        self.assertEqual(genome["name"], "GCF_000005845.2")
+        self.assertEqual(genome["description"], "RefSeq assembly GCF_000005845.2")
+        # One node for one physical assembly: the twin is not declared separately.
+        self.assertEqual(len([n for n in self.transform.nodes if n["id"].startswith("ncbi.assembly:")]), 1)
+
+    def test_a_genbank_genome_does_not_point_same_as_at_itself(self):
+        """For a GB_GCA_* genome the paired accession IS the accession; same_as must stay empty."""
+        self.transform._get_or_create_taxon_id("s__Escherichia_coli")
+        self.transform._create_genome_node(
+            accession="GB_GCA_000008865.2",
+            gtdb_taxon="s__Escherichia_coli",
+            ncbi_taxid="562",
+            genbank_accession="GCA_000008865.2",
+        )
+        genome = [n for n in self.transform.nodes if n["id"].startswith("ncbi.assembly:")][0]
+        self.assertEqual(genome["same_as"], "")
+
+    def test_the_paired_accession_can_be_at_a_different_version(self):
+        """3,016 GTDB rows pair accessions whose versions differ; the twin keeps its own."""
+        self.transform._get_or_create_taxon_id("s__Escherichia_coli")
+        self.transform._create_genome_node(
+            accession="RS_GCF_000005845.3",
+            gtdb_taxon="s__Escherichia_coli",
+            ncbi_taxid="562",
+            genbank_accession="GCA_000005845.2",
+        )
+        genome = [n for n in self.transform.nodes if n["id"].startswith("ncbi.assembly:")][0]
+        self.assertEqual(genome["id"], "ncbi.assembly:GCF_000005845.3")
+        self.assertEqual(genome["same_as"], "ncbi.assembly:GCA_000005845.2")
+
+    def test_same_as_is_written_to_the_nodes_tsv(self):
+        """A column the writer drops is a column that does not exist."""
+        self.transform._get_or_create_taxon_id("s__Escherichia_coli")
+        self.transform._create_genome_node(
+            accession="RS_GCF_000005845.2",
+            gtdb_taxon="s__Escherichia_coli",
+            ncbi_taxid="562",
+            genbank_accession="GCA_000005845.2",
+        )
+        self.transform._write_tsv_files()
+        with open(self.transform.output_node_file) as handle:
+            rows = list(csv.DictReader(handle, delimiter="\t"))
+        genome = [r for r in rows if r["id"].startswith("ncbi.assembly:")][0]
+        self.assertEqual(genome["same_as"], "ncbi.assembly:GCA_000005845.2")
+
+    def test_metadata_rows_pass_the_pairing_through(self):
+        """GTDB spells an absent pairing "none"; that must not become a CURIE."""
+        self.transform.input_dir.mkdir(parents=True, exist_ok=True)
+        metadata = self.transform.input_dir / GTDB_BAC120_METADATA.replace(".gz", "")
+        header = "accession\tncbi_taxid\tncbi_genbank_assembly_accession\n"
+        metadata.write_text(
+            header + "RS_GCF_000005845.2\t562\tGCA_000005845.2\n" + "RS_GCF_000009999.1\t563\tnone\n",
+            encoding="utf-8",
+        )
+        taxa = [("RS_GCF_000005845.2", ["s__Escherichia_coli"]), ("RS_GCF_000009999.1", ["s__Escherichia_coli"])]
+        self.transform._parse_metadata_file(metadata.name, taxa)
+        by_id = {n["id"]: n for n in self.transform.nodes}
+        self.assertEqual(by_id["ncbi.assembly:GCF_000005845.2"]["same_as"], "ncbi.assembly:GCA_000005845.2")
+        self.assertEqual(by_id["ncbi.assembly:GCF_000009999.1"]["same_as"], "")

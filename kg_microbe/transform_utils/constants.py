@@ -225,6 +225,13 @@ BACDIVE_API_BASE_URL = "https://mediadive.dsmz.de/"
 BIOSAFETY_LEVEL_PREFIX = "BSL:"
 GTDB_PREFIX = "GTDB:"
 GENBANK_PREFIX = "GenBank:"
+# NCBI Assembly accessions (GCA_* from GenBank, GCF_* from RefSeq). One
+# registered prefix covers both archives, and the accession itself says which
+# one it came from; `GenBank:GCF_...` asserted the wrong archive for 447,137
+# nodes and resolved to the nucleotide endpoint rather than the assembly one
+# (#882). Bioregistry `ncbi.assembly` ->
+# https://www.ncbi.nlm.nih.gov/datasets/genome/$1
+NCBI_ASSEMBLY_PREFIX = "ncbi.assembly:"
 # LPSN nomenclature spine (used both by the standalone `lpsn` transform and,
 # for organism identity, by MicrobeDecoder — whose row primary key is LPSN_ID).
 LPSN_PREFIX = "lpsn:"

@@ -26,6 +26,7 @@ from kg_microbe.transform_utils.constants import (
     SUBJECT_COLUMN,
 )
 from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.tsv_io import tsv_writer
 
 logger = logging.getLogger(__name__)
 
@@ -124,7 +125,7 @@ def check_merged_invariants(
     violations = find_multi_parent_strains(edges_file)
     destination = Path(output_dir or edges_file.parent) / STRAIN_PARENT_REPORT
     with atomic_write(destination, newline="") as handle:
-        writer = csv.writer(handle, delimiter="\t")
+        writer = tsv_writer(handle)
         writer.writerow(STRAIN_PARENT_REPORT_HEADER)
         writer.writerows(strain_parent_rows(violations))
     # Absent is normal: the strain-parent check needs no nodes file, and callers
@@ -139,7 +140,7 @@ def check_merged_invariants(
         stubs = find_stub_nodes(nodes_file)
         stub_destination = Path(output_dir or edges_file.parent) / STUB_NODE_REPORT
         with atomic_write(stub_destination, newline="") as handle:
-            writer = csv.writer(handle, delimiter="\t")
+            writer = tsv_writer(handle)
             writer.writerow(STUB_NODE_REPORT_HEADER)
             writer.writerows(stub_node_rows(stubs))
         unexpected = {p: c for p, c in stubs.items() if p not in EXPECTED_STUB_PREFIXES}

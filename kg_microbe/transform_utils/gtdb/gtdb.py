@@ -44,6 +44,7 @@ from kg_microbe.transform_utils.gtdb.utils import (
     strip_gtdb_prefix,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.tsv_io import tsv_dict_writer, tsv_writer
 
 
 class GTDBTransform(Transform):
@@ -431,7 +432,7 @@ class GTDBTransform(Transform):
         )
         report = self.output_dir / GTDB_NCBI_POOLING_REPORT
         with open(report, "w", newline="") as handle:
-            writer = csv.writer(handle, delimiter="\t")
+            writer = tsv_writer(handle)
             writer.writerow(["ncbi_taxon", "gtdb_taxa", "predicate", "examples"])
             for ncbi_id, taxa in rows:
                 writer.writerow([ncbi_id, len(taxa), BROAD_MATCH_PREDICATE, "|".join(sorted(taxa)[:3])])
@@ -478,12 +479,12 @@ class GTDBTransform(Transform):
 
         # Write nodes
         with open(self.output_node_file, "w") as nf:
-            writer = csv.DictWriter(nf, fieldnames=node_fields, delimiter="\t")
+            writer = tsv_dict_writer(nf, fieldnames=node_fields)
             writer.writeheader()
             writer.writerows(self.nodes)
 
         # Write edges
         with open(self.output_edge_file, "w") as ef:
-            writer = csv.DictWriter(ef, fieldnames=self.edge_header, delimiter="\t")
+            writer = tsv_dict_writer(ef, fieldnames=self.edge_header)
             writer.writeheader()
             writer.writerows(self.edges)

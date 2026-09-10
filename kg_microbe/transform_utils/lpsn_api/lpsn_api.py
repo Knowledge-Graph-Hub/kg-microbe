@@ -75,6 +75,7 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.lpsn.lpsn import LPSN_KNOWLEDGE_SOURCE, LPSN_PREFIX
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.atomic_io import atomic_write
 
 # JSON keys returned by the LPSN API (documented at
 # https://lpsn.dsmz.de/text/lpsn-api). Kept as module constants so a
@@ -280,9 +281,12 @@ class LPSNAPITransform(Transform):
         self._web_cache_dir.mkdir(parents=True, exist_ok=True)
 
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        # Atomic: a crash mid-run must leave no nodes.tsv/edges.tsv at all. A
+        # truncated pair reads as complete to the merge, and the lpsn transform
+        # already publishes this way (#820, #981, #985).
         with (
-            open(self.output_node_file, "w", newline="") as node_fh,
-            open(self.output_edge_file, "w", newline="") as edge_fh,
+            atomic_write(self.output_node_file, newline="") as node_fh,
+            atomic_write(self.output_edge_file, newline="") as edge_fh,
         ):
             node_writer = csv.writer(node_fh, delimiter="\t")
             edge_writer = csv.writer(edge_fh, delimiter="\t")

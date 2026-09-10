@@ -452,3 +452,27 @@ def test_an_api_miss_is_counted_apart_from_errors(api_transform):
     api_transform.run()
     assert api_transform._stats["api_misses"] == 2
     assert api_transform._stats["errors"] == 0
+
+
+def test_a_run_that_dies_midway_leaves_no_output_file(api_transform, monkeypatch):
+    """
+    A truncated nodes.tsv is worse than none (#985, same rule as lpsn's #820).
+
+    The merge reads whatever pair is on disk as complete; absence is the state
+    the freshness check and the merge both understand.
+    """
+    calls = {"n": 0}
+    original = api_transform._emit
+
+    def explode(record_no, record, node_writer, edge_writer):
+        calls["n"] += 1
+        if calls["n"] == 2:
+            raise RuntimeError("simulated crash after the first record")
+        return original(record_no, record, node_writer, edge_writer)
+
+    monkeypatch.setattr(api_transform, "_emit", explode)
+    with pytest.raises(RuntimeError):
+        api_transform.run()
+    assert not api_transform.output_node_file.exists()
+    assert not api_transform.output_edge_file.exists()
+    assert not list(Path(api_transform.output_dir).glob("*.partial"))

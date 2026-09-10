@@ -423,6 +423,28 @@ class SingleOntologySourceTest(TestCase):
         self.assertIn("ec_nodes.tsv: 1 rows", done[0])
         self.assertNotIn("chebi", done[0])
 
+    def test_a_failed_single_ontology_skips_what_depends_on_ontologies(self):
+        """gold declares `ontologies`, not `ec`; a failed `-s ec` must still keep gold from running on it."""
+        calls = []
+        fake = self._ontologies_fake(calls)
+        original_run = fake.run
+
+        def failing_run(self_, data_file=None, show_status=True):
+            original_run(self_, data_file, show_status)
+            raise RuntimeError("robot died")
+
+        fake.run = failing_run
+        log = []
+        registry = {"ontologies": fake, "gold": _fake_source("gold", log, self.base, inputs=("ontologies",))}
+        with (
+            mock.patch.dict(DATA_SOURCES, registry, clear=True),
+            mock.patch("kg_microbe.transform._ontology_map", return_value={"ec": "ec.json"}),
+        ):
+            with pytest.raises(TransformBatchError) as excinfo:
+                transform(None, None, sources=["ec", "gold"])
+        self.assertEqual(log, [])
+        self.assertEqual(excinfo.value.skipped, {"gold": ["ontologies"]})
+
     def test_an_unknown_name_lists_the_ontologies_too(self):
         """The error names both kinds of accepted source, so `-s EC` is an obvious typo."""
         with (

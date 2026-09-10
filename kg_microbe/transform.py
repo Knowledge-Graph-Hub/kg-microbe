@@ -233,10 +233,15 @@ def transform(
 
     failed: dict = {}
     skipped: dict = {}
+    # Names a later source may declare in TRANSFORM_INPUTS that did not
+    # complete. A single ontology failing counts as `ontologies` failing:
+    # gold and prego declare the directory, not the ontology inside it.
+    unavailable: set = set()
     for source in sources:
-        upstream = [u for u in getattr(DATA_SOURCES.get(source), "TRANSFORM_INPUTS", ()) if u in failed or u in skipped]
+        upstream = [u for u in getattr(DATA_SOURCES.get(source), "TRANSFORM_INPUTS", ()) if u in unavailable]
         if upstream:
             skipped[source] = upstream
+            unavailable.add(source)
             print(f"[transform] {source}: skipped — upstream {', '.join(upstream)} did not complete", flush=True)
             continue
         # print, not logging.info: the CLI does not configure a handler that
@@ -247,6 +252,9 @@ def transform(
             _run_one(source, input_dir, output_dir, show_status)
         except Exception as exc:  # noqa: BLE001 - isolate one source; BaseException still aborts the batch
             failed[source] = exc
+            unavailable.add(source)
+            if source not in DATA_SOURCES:
+                unavailable.add(ONTOLOGIES)
             print(f"[transform] {source}: FAILED — {type(exc).__name__}: {exc}", flush=True)
             traceback.print_exc()
 

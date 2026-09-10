@@ -40,7 +40,7 @@ def _bare_csv_writers(path: Path):
 
 @pytest.mark.parametrize("relpath", GRAPH_WRITERS)
 def test_graph_writers_do_not_use_a_bare_csv_writer(relpath):
-    """
+    r"""
     csv.writer defaults to lineterminator="\\r\\n" on every platform.
 
     `newline=""` does not change it -- gold, lpsn and lpsn_api all passed
@@ -77,7 +77,7 @@ def test_the_dict_helper_writes_lf_too():
 
 
 def test_an_empty_last_field_is_empty_not_a_carriage_return():
-    """
+    r"""
     The corruption this prevents: a trailing CR lands in the last column.
 
     An "empty" last field then holds "\\r", so a truthiness test on it inverts --

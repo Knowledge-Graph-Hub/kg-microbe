@@ -1,4 +1,4 @@
-"""
+r"""
 One place that decides how KG-Microbe writes a TSV.
 
 ``csv.writer``'s default ``lineterminator`` is ``"\r\n"`` on every platform,
@@ -22,7 +22,7 @@ LINE_TERMINATOR = "\n"
 
 
 def tsv_writer(handle: Any, **kwargs: Any):
-    """
+    r"""
     Return a tab-delimited ``csv.writer`` that terminates lines with ``\n``.
 
     :param handle: A file opened with ``newline=""`` (so the text layer does
@@ -37,7 +37,7 @@ def tsv_writer(handle: Any, **kwargs: Any):
 
 
 def tsv_dict_writer(handle: Any, fieldnames, **kwargs: Any):
-    """
+    r"""
     Return a tab-delimited ``csv.DictWriter`` terminating lines with ``\n``.
 
     :param handle: A file opened with ``newline=""``.

@@ -367,6 +367,7 @@ PATHWAY_CATEGORY = "biolink:BiologicalProcess"
 
 # Anatomical and environmental categories
 ANATOMICAL_ENTITY_CATEGORY = "biolink:AnatomicalEntity"  # For UBERON anatomical terms
+FOOD_CATEGORY = "biolink:Food"  # FOODON terms (#1015)
 ENVIRONMENT_CATEGORY = "biolink:EnvironmentalFeature"  # "ENVO:01000254"
 
 # Phenotype and attribute categories

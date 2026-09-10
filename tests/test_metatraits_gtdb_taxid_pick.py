@@ -25,11 +25,40 @@ class TaxidPickTests(unittest.TestCase):
         self.assertEqual(MetaTraitsGTDBTransform._pick_ncbi_id(a), "NCBITaxon:1001739")
         self.assertEqual(MetaTraitsGTDBTransform._pick_ncbi_id(b), "NCBITaxon:1001739")
 
+    def test_the_species_labelled_record_beats_the_majority(self):
+        """
+        #1008: 1,611 species had a species-labelled id in the set that lost on genome count.
+
+        When the parent found the record whose NCBITaxon label is the GTDB
+        name, that record is the answer regardless of how many genomes each
+        candidate carries.
+        """
+        counts = Counter({"NCBITaxon:1000562": 5, "NCBITaxon:119224": 1})
+        chosen = MetaTraitsGTDBTransform._pick_ncbi_id(counts, preferred="NCBITaxon:119224")
+        self.assertEqual(chosen, "NCBITaxon:119224")
+
+    def test_a_preferred_id_that_is_not_a_candidate_is_ignored(self):
+        """The preference is only ever one of the genomes' own taxids."""
+        counts = Counter({"NCBITaxon:1000562": 5, "NCBITaxon:119224": 1})
+        self.assertEqual(MetaTraitsGTDBTransform._pick_ncbi_id(counts, preferred="NCBITaxon:1"), "NCBITaxon:1000562")
+
+    def test_the_resolver_consults_the_preferred_map(self):
+        """The dict computed in the parent reaches the lookup site."""
+        transform = object.__new__(MetaTraitsGTDBTransform)
+        counts = Counter({"NCBITaxon:1000562": 5, "NCBITaxon:119224": 1})
+        transform.gtdb_to_ncbi = defaultdict(Counter, {"Streptococcus phocae": counts})
+        transform.gtdb_preferred_ncbi = {"Streptococcus phocae": "NCBITaxon:119224"}
+        transform.accession_to_ncbi = {}
+        transform.accession_to_gtdb_species = {}
+        transform.synthetic_nodes_metadata = {}
+        self.assertEqual(transform._search_ncbitaxon_by_label("Streptococcus phocae"), "NCBITaxon:119224")
+
     def test_the_resolver_uses_the_rule(self):
         """The consumer at the lookup site, driven without constructing the whole transform."""
         transform = object.__new__(MetaTraitsGTDBTransform)
         counts = Counter({"NCBITaxon:1000562": 1, "NCBITaxon:119224": 4})
         transform.gtdb_to_ncbi = defaultdict(Counter, {"Streptococcus phocae": counts})
+        transform.gtdb_preferred_ncbi = {}
         transform.accession_to_ncbi = {}
         transform.accession_to_gtdb_species = {}
         transform.synthetic_nodes_metadata = {}

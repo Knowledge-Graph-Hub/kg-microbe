@@ -725,12 +725,19 @@ class OntologiesTransform(Transform):
                 add_lines = []
                 for line in nf:
                     if line.startswith("id"):
+                        # KGX's own header for this file. Kept so each row can be
+                        # projected onto self.node_header by column name: KGX
+                        # leaks subsets/meta/iri onto node rows, and padding
+                        # positionally left those extra fields under a canonical
+                        # 9-column header, producing a file pandas could not read
+                        # (#1033).
+                        source_header = line.strip().split("\t")
                         # get the index for the term 'id'
-                        id_index = line.strip().split("\t").index(ID_COLUMN)
+                        id_index = source_header.index(ID_COLUMN)
                         # get the index for the term 'xref'
-                        xref_index = line.strip().split("\t").index(XREF_COLUMN)
+                        xref_index = source_header.index(XREF_COLUMN)
                         # get the index for the term 'category'
-                        category_index = line.strip().split("\t").index(CATEGORY_COLUMN)
+                        category_index = source_header.index(CATEGORY_COLUMN)
                     else:
                         line = remove_unwanted_prefixes_from_node_xrefs(line, xref_index)
                         # For Reactions only
@@ -744,6 +751,7 @@ class OntologiesTransform(Transform):
                                 category_index,
                                 nodes_dictionary,
                                 self.node_header,
+                                source_header,
                             )
                             for new_line in new_lines:
                                 if len(new_line) > 0:
@@ -754,7 +762,7 @@ class OntologiesTransform(Transform):
                             substring in line for substring in [UNIPATHWAYS_PATHWAY_PREFIX]
                         ):  # ,UNIPATHWAYS_LINEAR_SUB_PATHWAY_PREFIX]):
                             new_line = replace_category_for_unipathways(
-                                line, id_index, category_index, self.node_header
+                                line, id_index, category_index, self.node_header, source_header
                             )
                             if len(new_line) > 0:
                                 add_lines.append(new_line + "\n")

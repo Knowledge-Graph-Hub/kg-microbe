@@ -112,6 +112,27 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         self.synthetic_nodes_metadata: Dict[str, Dict[str, str]] = {}
         self._load_gtdb_to_ncbi_mapping()
         self._load_gtdb_taxonomy()
+        # Computed here, while the parent's name -> id map is still loaded:
+        # for a GTDB name whose genomes carry several taxids, the id whose
+        # NCBITaxon label *is* that name is the species record, and beats the
+        # genome-count majority (#1008). Only this small dict travels to the
+        # workers; the 925k-entry name map does not.
+        # This class re-implements the parent's __init__ by hand and never
+        # calls _load_ncbitaxon_labels (its workers never use OAK), so the map
+        # is empty here; load it once, in the parent process only, and drop it
+        # again below.
+        MetaTraitsTransform._load_ncbitaxon_labels(self)
+        self.gtdb_preferred_ncbi: Dict[str, str] = {}
+        for name, counts in self.gtdb_to_ncbi.items():
+            if len(counts) > 1:
+                labelled = self.ncbitaxon_name_to_id.get(name.lower())
+                if labelled in counts:
+                    self.gtdb_preferred_ncbi[name] = labelled
+        ambiguous = sum(1 for counts in self.gtdb_to_ncbi.values() if len(counts) > 1)
+        print(
+            f"  {len(self.gtdb_preferred_ncbi):,} of {ambiguous:,} ambiguous GTDB names have an NCBITaxon "
+            "record labelled with that name; it is preferred over the genome-count majority (#1008)"
+        )
 
         # GTDB transform uses GTDB metadata mapping, not OAK adapter
         # Clear the parent's ncbitaxon cache and prevent adapter initialization
@@ -244,6 +265,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         """Override to include GTDB-specific data for workers."""
         shared_data = super()._get_shared_init_data()
         shared_data["gtdb_to_ncbi"] = dict(self.gtdb_to_ncbi)  # Convert defaultdict to dict for pickling
+        shared_data["gtdb_preferred_ncbi"] = self.gtdb_preferred_ncbi
         shared_data["accession_to_ncbi"] = self.accession_to_ncbi  # Already a dict
         shared_data["accession_to_gtdb_species"] = self.accession_to_gtdb_species  # Already a dict
         return shared_data
@@ -254,6 +276,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
 
         # Restore GTDB-specific state
         self.gtdb_to_ncbi = defaultdict(Counter, shared_data.get("gtdb_to_ncbi", {}))
+        self.gtdb_preferred_ncbi = shared_data.get("gtdb_preferred_ncbi", {})
         self.accession_to_ncbi = shared_data.get("accession_to_ncbi", {})
         self.accession_to_gtdb_species = shared_data.get("accession_to_gtdb_species", {})
         self.synthetic_nodes_metadata = {}  # Will be populated during processing
@@ -263,18 +286,22 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         self._ncbi_adapter = "DISABLED"
 
     @staticmethod
-    def _pick_ncbi_id(counts: "Counter") -> str:
+    def _pick_ncbi_id(counts: "Counter", preferred: Optional[str] = None) -> str:
         """
         Choose one NCBITaxon id for a GTDB name, deterministically.
 
-        The id most member genomes carry is, in practice, the species-level
-        record -- subspecies and strain ids are usually one genome each. Ties
-        go to the lowest numeric id, so the answer never depends on iteration
-        order (#1006).
+        The record whose NCBITaxon label is the GTDB name wins when it is one
+        of the candidates (#1008). Otherwise the id most member genomes carry
+        -- in practice the species-level record; subspecies and strain ids are
+        usually one genome each -- with ties to the lowest numeric id, so the
+        answer never depends on iteration order (#1006).
 
         :param counts: ``{NCBITaxon CURIE: number of genomes}``.
+        :param preferred: The species-labelled candidate, if the parent found one.
         :return: The chosen CURIE.
         """
+        if preferred is not None and preferred in counts:
+            return preferred
 
         def numeric(curie: str) -> int:
             tail = curie.rsplit(":", 1)[-1]
@@ -312,7 +339,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         ncbi_ids = self.gtdb_to_ncbi.get(search_name)
         if ncbi_ids:
             # Current taxonomy - use NCBITaxon directly (no synthetic node needed)
-            return self._pick_ncbi_id(ncbi_ids)
+            return self._pick_ncbi_id(ncbi_ids, self.gtdb_preferred_ncbi.get(search_name))
 
         # Create synthetic GTDB: node for historical/renamed taxonomy
         if not search_name or search_name.startswith("NCBITaxon:"):

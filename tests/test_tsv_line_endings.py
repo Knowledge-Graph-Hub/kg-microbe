@@ -19,6 +19,7 @@ GRAPH_WRITERS = (
     "kg_microbe/transform_utils/lpsn/lpsn.py",
     "kg_microbe/transform_utils/lpsn_api/lpsn_api.py",
     "kg_microbe/transform_utils/gold/gold.py",
+    "kg_microbe/transform_utils/bacdive/bacdive.py",
 )
 
 

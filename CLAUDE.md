@@ -32,9 +32,16 @@ poetry run kg download -t ontologies -t gtdb
 poetry run kg download -i -t mediadive
 poetry run kg transform
 poetry run kg transform -s bacdive -s mediadive
+poetry run kg transform -s ec          # one ontology; leaves the ontologies fingerprint alone
 poetry run kg merge -y merge.yaml
 make run-summary
 ```
+
+`kg transform` checks every selected source's declared `DATA_INPUTS` before
+running anything, isolates a failure to its source (later sources still run;
+those that declare the failed one in `TRANSFORM_INPUTS` are skipped rather
+than built on stale upstream output), and exits non-zero with a per-source
+summary. `FatalOntologyError` and Ctrl-C still abort at once. See #685, #690.
 
 `kg download` skips existing files, but a pin change now takes effect on its own: the URL behind each artifact is recorded in `data/raw/.download_manifest.json`, and a file whose declared URL has moved is re-fetched. A file with no record is left alone — unknown provenance is not wrong provenance (#911). `-i` still invalidates every selected entry, so always combine it with one or more `-t` tags. MediaDive invalidation also clears
 its response cache and can trigger an approximately one-hour crawl.

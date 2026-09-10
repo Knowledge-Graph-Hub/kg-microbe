@@ -222,6 +222,7 @@ from kg_microbe.utils.ontology_utils import (
 # Note: get_label and search_by_label are imported lazily in fallback methods
 from kg_microbe.utils.pandas_utils import drop_duplicates
 from kg_microbe.utils.string_coding import remove_nextlines
+from kg_microbe.utils.tsv_io import tsv_writer
 
 # Anitibiotic resistance
 if Path(METABOLITE_MAPPING_FILE).is_file():
@@ -1006,7 +1007,7 @@ class BacDiveTransform(Transform):
         if not missing:
             return 0
         with open(self.output_node_file, "a", encoding="utf-8", newline="") as handle:
-            writer = csv.writer(handle, delimiter="\t")
+            writer = tsv_writer(handle)
             for curie in missing:
                 label = self._get_ncbitaxon_label(curie)
                 writer.writerow(
@@ -1839,19 +1840,25 @@ class BacDiveTransform(Transform):
             open(str(BACDIVE_TMP_DIR / "bacdive_physiology_metabolism.tsv"), "w") as tsvfile_2,
             open(str(BACDIVE_TMP_DIR / BACDIVE_MAPPING_FILE), "r") as tsvfile_3,
             open(str(BACDIVE_TMP_DIR / "bacdive_name_tax_classification.tsv"), "w") as tsvfile_4,
-            open(self.output_node_file, "w") as node,
-            open(self.output_edge_file, "w") as edge,
+            # Atomic: a run that dies here used to leave a truncated pair on
+            # disk with nothing marking it partial -- a SIGTERM during the
+            # 2026-09-10 rebuild left 173 MB of a 633 MB build, which the merge
+            # would have read as complete (#1036). The later
+            # `drop_duplicates` rewrite is already atomic; this was the gap
+            # before it. Same rule as lpsn (#820) and lpsn_api (#985).
+            atomic_write(self.output_node_file, newline="") as node,
+            atomic_write(self.output_edge_file, newline="") as edge,
             open(CUSTOM_CURIES_YAML_FILE, "r") as cc_file,
         ):
-            writer = csv.writer(tsvfile_1, delimiter="\t")
+            writer = tsv_writer(tsvfile_1)
             # Write the column names to the output file
             writer.writerow(COLUMN_NAMES)
-            writer_2 = csv.writer(tsvfile_2, delimiter="\t")
+            writer_2 = tsv_writer(tsvfile_2)
             writer_2.writerow(PHYS_AND_META_COL_NAMES)
-            writer_3 = csv.writer(tsvfile_4, delimiter="\t")
+            writer_3 = tsv_writer(tsvfile_4)
             writer_3.writerow(NAME_TAX_CLASSIFICATION_COL_NAMES)
 
-            node_writer = csv.writer(node, delimiter="\t")
+            node_writer = tsv_writer(node)
             node_writer.writerow(self.node_header)
             # Wrap edge_writer so every infores:bacdive-sourced edge that
             # involves a kgmicrobe.strain:bacdive_NNN node (subject or object)
@@ -1860,7 +1867,7 @@ class BacDiveTransform(Transform):
             # so downstream merge collapses these rows with their mediadive-
             # sourced twins (which carry just "bacdive:NNN") into a single
             # multi-provenance row instead of leaving them as two singletons.
-            raw_edge_writer = csv.writer(edge, delimiter="\t")
+            raw_edge_writer = tsv_writer(edge)
             raw_edge_writer.writerow(self.edge_header)
             edge_writer = _StrainProvenanceWriter(
                 raw_edge_writer,
@@ -3611,7 +3618,7 @@ class BacDiveTransform(Transform):
         # prevent (#903).
         claims_file = os.path.join(self.output_dir, BACDIVE_DEPOSIT_CLAIMS_FILE)
         with atomic_write(claims_file, newline="") as f:
-            claims_writer = csv.writer(f, delimiter="\t")
+            claims_writer = tsv_writer(f)
             claims_writer.writerow(DEPOSIT_CONFLICT_HEADER)
             claims_writer.writerows(deposit_conflict_rows(contested_deposits))
         resolution_counts = Counter(resolution for _, _, resolution, _ in contested_deposits)

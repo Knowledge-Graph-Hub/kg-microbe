@@ -98,6 +98,17 @@ traversable; it is not a claim that the isolate is an ontology class. Biolink
 validators will report it; do not silently change the convention. See issue
 #834 and [the 4.4.2 revalidation](docs/BIOLINK_4_4_2_REVALIDATION.md).
 
+Cross-source organism joins use the **GTDB identifier**, not `ncbi_taxon_id`.
+NCBI carries coarse placeholder taxa (`bacterium`, `uncultured bacterium`,
+`Pseudomonadota bacterium`) that park unclassified sequence; GTDB names every
+genome, so the bridge is many-to-one and pathologically concentrated — 0.3% of
+NCBI taxa absorb 42.7% of the links, one of them 3,695 GTDB taxa. Joining
+through NCBI pools unrelated species and produces fan-out that looks like
+signal. A mapping edge onto a shared NCBI taxon is `biolink:broad_match`, not
+`close_match`, and every shared taxon is listed worst-first in
+`data/transformed/gtdb/gtdb_ncbi_pooling_report.tsv` — the deny-list to exclude
+them deliberately rather than discovering them in a result set. See #883.
+
 A `kgmicrobe.strain:<code>` node minted from a culture-collection deposit number
 is shared: several source records can cite the same deposit, and they do not
 always agree on the taxon. Such a node gets the one claimed parent that every

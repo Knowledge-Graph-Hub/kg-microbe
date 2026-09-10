@@ -18,7 +18,7 @@ It is intentionally a *tree* view, not a network view — for network views use 
 Every edge in the merged KG is classified by looking at its two endpoints and predicate:
 
 - If **both** endpoints are taxon-prefixed (`NCBITaxon:`, `GTDB:`, `kgmicrobe.strain:`, `kgmicrobe.genus:`) the edge is *structural* — it carries the GTDB hierarchy, GTDB↔NCBITaxon `close_match` links, or strain→species `subclass_of` links. **Excluded** from node sizing.
-- If the predicate is `biolink:subclass_of` (regardless of the other endpoint) the edge is *classification* — most importantly the ~732K `GenBank:<genome> --subclass_of--> GTDB:<species>` edges (one per GTDB genome). **Excluded** from node sizing, otherwise the circles would measure "how many genomes GTDB has for this clade" rather than metadata richness.
+- If the predicate is `biolink:subclass_of` (regardless of the other endpoint) the edge is *classification* — most importantly the ~901K `ncbi.assembly:<accession> --subclass_of--> GTDB:<species>` edges (`GenBank:<genome>` before #882) (one per GTDB genome). **Excluded** from node sizing, otherwise the circles would measure "how many genomes GTDB has for this clade" rather than metadata richness.
 - Otherwise the edge contributes +1 to the count for whichever endpoint is a taxon. These are the biologically interesting edges: `has_phenotype`, `location_of` (isolation source), growth-media (`METPO:2000517`), and the METPO trait predicates.
 
 Counts on NCBITaxon are folded onto their GTDB equivalent via the mapping built in step 1; strain counts are folded onto the NCBITaxon parent and then onto GTDB. Cumulative counts propagate up the tree.

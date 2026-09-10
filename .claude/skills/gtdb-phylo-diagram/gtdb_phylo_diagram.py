@@ -189,7 +189,7 @@ def stream_edges(
                 continue
 
             # subclass_of with one taxon endpoint is a classification edge,
-            # not metadata -- e.g. GenBank:<genome> --subclass_of--> GTDB:<species>
+            # not metadata -- e.g. ncbi.assembly:<accession> --subclass_of--> GTDB:<species>
             # (~732K of these, one per GTDB genome). Excluding them keeps the
             # circle size meaning "biologically interesting edges" (phenotype,
             # isolation source, growth media, METPO traits) rather than

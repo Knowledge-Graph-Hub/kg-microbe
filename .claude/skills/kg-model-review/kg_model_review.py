@@ -275,6 +275,9 @@ STANDARD_PREFIXES = {
     "PO",        # Plant Ontology (OBO; reachable via ENVO/FOODON closure)
     "TAXRANK",   # Taxonomic Rank vocabulary (OBO; from NCBITaxon)
     "GenBank",   # GenBank sequence accessions (from NCBITaxon xrefs)
+    # NCBI Assembly accessions (GCA_*/GCF_*) minted by the gtdb transform.
+    # One prefix for both archives; the accession says which one (#882).
+    "ncbi.assembly",
     "chemrof",   # chemical role framework (CHEBI-adjacent)
     "debio",     # domain entity for biology (Rhea-adjacent)
     "kgmicrobe", # KG-Microbe native prefix (bare form; dotted variants also registered)

@@ -10,7 +10,6 @@ from kg_microbe.transform_utils.constants import (
     CLOSE_MATCH_PREDICATE,
     CLOSE_MATCH_RELATION,
     DESCRIPTION_COLUMN,
-    GENBANK_PREFIX,
     GENOME_CATEGORY,
     GTDB,
     GTDB_AR53_METADATA,
@@ -29,13 +28,16 @@ from kg_microbe.transform_utils.constants import (
     PROVIDED_BY_COLUMN,
     RDFS_SUBCLASS_OF,
     RELATION_COLUMN,
+    SAME_AS_COLUMN,
     SUBCLASS_PREDICATE,
     SUBJECT_COLUMN,
 )
 from kg_microbe.transform_utils.gtdb.utils import (
+    assembly_archive,
+    assembly_curie,
     clean_taxon_name,
-    extract_accession_type,
     parse_taxonomy_string,
+    strip_gtdb_prefix,
 )
 from kg_microbe.transform_utils.transform import Transform
 
@@ -211,7 +213,7 @@ class GTDBTransform(Transform):
         Parse GTDB metadata file.
 
         For each genome:
-        1. Create GenBank genome node
+        1. Create the ncbi.assembly genome node
         2. Create subclass_of edge to GTDB taxon
         3. Create skos:closeMatch edge to NCBITaxon (if available)
         """
@@ -230,6 +232,11 @@ class GTDBTransform(Transform):
             for row in reader:
                 accession = row.get("accession", "").strip()
                 ncbi_taxid = row.get("ncbi_taxid", "").strip()
+                # The same physical assembly's GenBank accession; "none" is how
+                # GTDB spells absent here (#882).
+                genbank_accession = row.get("ncbi_genbank_assembly_accession", "").strip()
+                if genbank_accession.lower() in {"", "none", "na"}:
+                    genbank_accession = None
 
                 # Get taxonomy for this accession
                 taxa = accession_to_taxa.get(accession)
@@ -240,7 +247,7 @@ class GTDBTransform(Transform):
                 gtdb_taxon = clean_taxon_name(taxa[-1]) if taxa else None
 
                 # Create genome node and edges
-                self._create_genome_node(accession, gtdb_taxon, ncbi_taxid)
+                self._create_genome_node(accession, gtdb_taxon, ncbi_taxid, genbank_accession)
 
     def _create_genomes_from_taxonomy(self, taxa_list: List[Tuple[str, List[str]]]):
         """
@@ -291,25 +298,50 @@ class GTDBTransform(Transform):
 
         return self.taxon_to_id[cleaned]
 
-    def _create_genome_node(self, accession: str, gtdb_taxon: str, ncbi_taxid: str = None):
+    def _create_genome_node(
+        self,
+        accession: str,
+        gtdb_taxon: str,
+        ncbi_taxid: str = None,
+        genbank_accession: str = None,
+    ):
         """
         Create genome node and associated edges.
 
+        The node id is the ``ncbi.assembly:`` CURIE for the accession GTDB
+        classified, version intact (#882). ``genbank_accession`` is GTDB's
+        ``ncbi_genbank_assembly_accession`` column: for a genome GTDB took from
+        RefSeq it names the *same physical assembly* in GenBank, so it is
+        recorded in ``same_as``. Without it a consumer holding one of an
+        assembly's two accessions found nothing -- measured on the 2026-09-10
+        output, 0 of 901,341 genomes were reachable by both.
+
+        A second node for the paired accession was considered and rejected: one
+        physical assembly is one thing, and declaring both would double the
+        largest node block after NCBITaxon to say nothing new.
+
         Args:
-            accession: "GCF_000005845.2"
+            accession: "RS_GCF_000005845.2" or "GCF_000005845.2"
             gtdb_taxon: "s__Escherichia_coli"
             ncbi_taxid: "562" (optional)
+            genbank_accession: "GCA_000005845.2" (optional; from GTDB metadata)
 
         """
         # Create genome node
-        base_accession, version = extract_accession_type(accession)
-        genome_id = f"{GENBANK_PREFIX}{base_accession}"
+        genome_id = assembly_curie(accession)
+        paired = assembly_curie(genbank_accession) if genbank_accession else ""
+        same_as = paired if paired and paired != genome_id else ""
 
+        # The NCBI accession, not GTDB's RS_/GB_-prefixed key: "RefSeq assembly
+        # RS_GCF_000005845.2" named a string RefSeq does not issue. GTDB's form
+        # is recoverable (RS_ for GCF, GB_ for GCA) and adds nothing here.
+        ncbi_accession = strip_gtdb_prefix(accession)
         self._add_node(
             node_id=genome_id,
             category=GENOME_CATEGORY,
-            name=accession,
-            description=f"GenBank genome {accession}",
+            name=ncbi_accession,
+            description=f"{assembly_archive(accession)} assembly {ncbi_accession}",
+            same_as=same_as,
         )
 
         # Create genome -> GTDB taxon edge
@@ -336,7 +368,7 @@ class GTDBTransform(Transform):
                 )
                 self._created_mappings.add(mapping_key)
 
-    def _add_node(self, node_id: str, category: str, name: str, description: str = ""):
+    def _add_node(self, node_id: str, category: str, name: str, description: str = "", same_as: str = ""):
         """Add node to internal list."""
         if node_id not in self.seen_nodes:
             self.nodes.append(
@@ -345,6 +377,7 @@ class GTDBTransform(Transform):
                     CATEGORY_COLUMN: category,
                     NAME_COLUMN: name,
                     DESCRIPTION_COLUMN: description,
+                    SAME_AS_COLUMN: same_as,
                     PROVIDED_BY_COLUMN: self.knowledge_source,
                 }
             )
@@ -370,6 +403,7 @@ class GTDBTransform(Transform):
             CATEGORY_COLUMN,
             NAME_COLUMN,
             DESCRIPTION_COLUMN,
+            SAME_AS_COLUMN,
             PROVIDED_BY_COLUMN,
         ]
 

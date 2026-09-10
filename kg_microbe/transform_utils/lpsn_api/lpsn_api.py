@@ -54,11 +54,14 @@ The merge step then combines both nodes.tsv / edges.tsv files.
 """
 
 import csv
+import html
 import json
 import os
+import re
 from pathlib import Path
-from typing import Any, Dict, Iterator, Optional, Union
+from typing import Any, Callable, Dict, Iterator, Optional, Union
 
+import requests
 from dotenv import load_dotenv
 
 from kg_microbe.transform_utils.constants import (
@@ -109,9 +112,76 @@ INSDC_DATABASE_PREFIX = "insdc"
 # (typically ``data/raw/``).
 API_CACHE_SUBDIR = "lpsn/api_cache"
 
+# Names the JSON API does not serve at all: the 665 basonym targets in the
+# 2026-09-10 graph are pre-Approved-Lists names ("not validly published,
+# basonym of name in Approved Lists") and ``fetch/<id>`` returns an empty
+# result set for every one of them by every route (#1004). LPSN's website
+# still has a page per record number, unauthenticated, with the rank and
+# name in the title. Those pages are cached here, apart from the API
+# cache, so a web-derived record is never mistaken for an API record.
+WEB_CACHE_SUBDIR = "lpsn/web_cache"
+LPSN_TAXON_PAGE_URL = "https://lpsn.dsmz.de/taxon/{record_no}"
+WEB_PAGE_TIMEOUT_S = 30
+#: Marks a record dict assembled from the web page rather than the API.
+WEB_RECORD_SOURCE_KEY = "kgmicrobe_source"
+WEB_RECORD_SOURCE = "lpsn-web-page"
+_TITLE_RE = re.compile(r"<title>\s*([A-Za-z ]+?)\s*:\s*(.+?)\s*</title>", re.IGNORECASE | re.DOTALL)
+_STATUS_RE = re.compile(r"<b>\s*(Nomenclatural|Taxonomic) status:\s*</b>\s*(?:<[^>]*>\s*)*([^<]+)", re.IGNORECASE)
+
 # Path (relative to ``input_base_dir``'s parent) to the GSS transform's
 # output, which we read to know which record_no's to enrich.
 GSS_NODES_RELPATH = "transformed/lpsn/nodes.tsv"
+
+
+def fetch_taxon_page(record_no: str) -> Optional[str]:
+    """
+    Return the HTML of LPSN's web page for ``record_no``, or ``None``.
+
+    Only reached for records the JSON API has no result for; the page is
+    public and needs no credentials. Any transport or HTTP failure is
+    reported and yields ``None`` so the caller falls back to a bare stub
+    rather than aborting the run.
+    """
+    url = LPSN_TAXON_PAGE_URL.format(record_no=record_no)
+    try:
+        resp = requests.get(url, timeout=WEB_PAGE_TIMEOUT_S, headers={"User-Agent": "kg-microbe lpsn_api transform"})
+    except requests.RequestException as e:
+        print(f"[lpsn_api] web page fetch failed for {record_no}: {e}")
+        return None
+    if resp.status_code != 200:
+        print(f"[lpsn_api] web page fetch for {record_no} returned HTTP {resp.status_code}")
+        return None
+    return resp.text
+
+
+def parse_taxon_page(record_no: str, page: str) -> Optional[dict]:
+    """
+    Build an API-shaped record from an LPSN taxon page, or ``None``.
+
+    The page title is ``<rank>: <name>`` (``Species: Bacterium sonnei``);
+    that is the whole reason the page is worth fetching, so no title means
+    no record. Nomenclatural and taxonomic status are taken when present.
+    The dict carries :data:`WEB_RECORD_SOURCE_KEY` so consumers can tell
+    it from an API record; it never carries ids to link to.
+    """
+    match = _TITLE_RE.search(page)
+    if not match:
+        return None
+    rank, name = match.groups()
+    name = html.unescape(re.sub(r"<[^>]+>", "", name)).strip().strip('"').strip()
+    if not name:
+        return None
+    record = {
+        "id": int(record_no) if record_no.isdigit() else record_no,
+        "category": rank.strip().lower(),
+        JSON_FULL_NAME: name,
+        "lpsn_address": LPSN_TAXON_PAGE_URL.format(record_no=record_no),
+        WEB_RECORD_SOURCE_KEY: WEB_RECORD_SOURCE,
+    }
+    for kind, text in _STATUS_RE.findall(page):
+        key = JSON_NOMENCLATURAL_STATUS if kind.lower() == "nomenclatural" else JSON_LPSN_TAXONOMIC_STATUS
+        record[key] = html.unescape(text).strip()
+    return record
 
 
 class LPSNAPITransform(Transform):
@@ -125,6 +195,7 @@ class LPSNAPITransform(Transform):
         input_dir: Optional[Path] = None,
         output_dir: Optional[Path] = None,
         client: Any = None,
+        page_fetch: Optional[Callable[[str], Optional[str]]] = None,
     ):
         """
         Instantiate.
@@ -148,12 +219,25 @@ class LPSNAPITransform(Transform):
             -s lpsn`` (GSS path) with no LPSN Python-package
             dependency. Tests inject a fake client to keep the
             fixture self-contained.
+        page_fetch:
+            Fetches LPSN's web page for a record number the API has no
+            record for (#1004). Defaults to :func:`fetch_taxon_page`;
+            tests inject a fake so nothing touches the network.
 
         """
         super().__init__(LPSN_API_SOURCE, input_dir, output_dir)
         self.knowledge_source = LPSN_KNOWLEDGE_SOURCE
         self._client_override = client
-        self._stats = {"fetched": 0, "from_cache": 0, "errors": 0, "linked_declared": 0, "linked_stubbed": 0}
+        self._page_fetch = page_fetch or fetch_taxon_page
+        self._web_cache_dir: Optional[Path] = None
+        self._stats = {
+            "fetched": 0,
+            "from_cache": 0,
+            "errors": 0,
+            "linked_declared": 0,
+            "linked_from_web": 0,
+            "linked_stubbed": 0,
+        }
 
     # ------------------------------------------------------------------
     # public entry point
@@ -191,6 +275,8 @@ class LPSNAPITransform(Transform):
 
         cache_dir = Path(self.input_base_dir) / API_CACHE_SUBDIR
         cache_dir.mkdir(parents=True, exist_ok=True)
+        self._web_cache_dir = Path(self.input_base_dir) / WEB_CACHE_SUBDIR
+        self._web_cache_dir.mkdir(parents=True, exist_ok=True)
 
         self.output_dir.mkdir(parents=True, exist_ok=True)
         with (
@@ -221,6 +307,7 @@ class LPSNAPITransform(Transform):
             f"cached={self._stats['from_cache']:,} "
             f"errors={self._stats['errors']:,} "
             f"linked_records_declared={self._stats.get('linked_declared', 0):,} "
+            f"linked_records_from_web={self._stats.get('linked_from_web', 0):,} "
             f"linked_records_stubbed={self._stats.get('linked_stubbed', 0):,}"
         )
 
@@ -356,9 +443,12 @@ class LPSNAPITransform(Transform):
 
         Fetches the record so the node carries LPSN's own name and status,
         emits its own parent/basonym edges, and walks up so the chain to the
-        domain is declared end to end. When the API has nothing for it, a
-        bare stub still declares the endpoint -- an unnamed node in our own
-        namespace beats one KGX invents, because it says where it came from.
+        domain is declared end to end. When the API has nothing for it --
+        every basonym that predates the Approved Lists, #1004 -- the name
+        and rank come from LPSN's web page for the record instead, and the
+        description says so. Only when that fails too does a bare stub
+        declare the endpoint: an unnamed node in our own namespace beats one
+        KGX invents, because it says where it came from.
 
         :param client: The LPSN client.
         :param record_no: The referenced record number.
@@ -372,8 +462,13 @@ class LPSNAPITransform(Transform):
         self._declared.add(record_no)
         record = self._fetch(client, record_no, cache_dir)
         if record is None:
-            node_writer.writerow(self._stub_linked_node(record_no))
-            self._stats["linked_stubbed"] = self._stats.get("linked_stubbed", 0) + 1
+            web_record = self._fetch_from_web(record_no)
+            if web_record is None:
+                node_writer.writerow(self._stub_linked_node(record_no))
+                self._stats["linked_stubbed"] = self._stats.get("linked_stubbed", 0) + 1
+                return
+            node_writer.writerow(self._make_web_linked_node(record_no, web_record))
+            self._stats["linked_from_web"] = self._stats.get("linked_from_web", 0) + 1
             return
         node_writer.writerow(self._make_linked_node(record_no, record))
         self._stats["linked_declared"] = self._stats.get("linked_declared", 0) + 1
@@ -496,6 +591,56 @@ class LPSNAPITransform(Transform):
         headers = self.node_header
         if "name" in headers:
             row[headers.index("name")] = (record.get(JSON_FULL_NAME) or "").strip()
+        return row
+
+    def _fetch_from_web(self, record_no: str) -> Optional[dict]:
+        """
+        Return a record assembled from LPSN's web page, using the web cache.
+
+        A cached ``None`` is not stored: a page that failed once is retried
+        on the next run, the same as an API miss. Parse failures are
+        reported so a changed page layout shows up as a count, not as a
+        quiet return to 665 unnamed stubs.
+        """
+        cache_dir = self._web_cache_dir
+        cache_path = cache_dir / f"{record_no}.json" if cache_dir is not None else None
+        if cache_path is not None and cache_path.exists():
+            try:
+                with open(cache_path) as fh:
+                    return json.load(fh)
+            except (json.JSONDecodeError, OSError) as e:
+                print(f"[lpsn_api] web cache read failed for {record_no}: {e}")
+        page = self._page_fetch(record_no)
+        if page is None:
+            return None
+        record = parse_taxon_page(record_no, page)
+        if record is None:
+            print(f"[lpsn_api] web page for {record_no} has no parsable title")
+            return None
+        if cache_path is not None:
+            try:
+                with open(cache_path, "w") as fh:
+                    json.dump(record, fh)
+            except OSError as e:
+                print(f"[lpsn_api] web cache write failed for {record_no}: {e}")
+        return record
+
+    def _make_web_linked_node(self, record_no: str, record: dict) -> list:
+        """
+        Build a node row for a linked record labelled from its LPSN web page.
+
+        Same shape as :meth:`_make_linked_node`; the description records
+        that the API had no record and where the label came from.
+        """
+        row = self._make_linked_node(record_no, record)
+        headers = self.node_header
+        if "description" in headers:
+            idx = headers.index("description")
+            note = (
+                "LPSN record linked from another record; not served by the LPSN JSON API, "
+                f"name and rank taken from {record.get('lpsn_address', 'its LPSN web page')}"
+            )
+            row[idx] = f"{row[idx]}; {note}" if row[idx] else note
         return row
 
     def _stub_linked_node(self, record_no: str) -> list:

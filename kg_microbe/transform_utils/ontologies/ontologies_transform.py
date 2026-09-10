@@ -499,8 +499,10 @@ class OntologiesTransform(Transform):
         from kg_microbe.utils.ontology_utils import (
             assert_go_version_alignment,
             get_chebi_category,
+            get_foodon_category,
             get_go_category_by_aspect,
             get_ncbitaxon_category,
+            get_pato_category,
             get_uberon_category,
             replace_deprecated_categories,
         )
@@ -562,6 +564,33 @@ class OntologiesTransform(Transform):
                 return replace_deprecated_categories(str(row["category"]))
 
             df["category"] = df.apply(fix_uberon_category, axis=1)
+
+        elif ontology_name == "foodon":
+            # FOODON terms are foods; the obograph default (OntologyClass)
+            # disagreed with mediadive's biolink:Food for the same ids (#1015).
+            print("  Fixing FOODON categories (all terms → Food)...")
+
+            def fix_foodon_category(row):
+                """Fix FOODON category (all FOODON terms are Food; imports keep theirs)."""
+                foodon_id = row["id"]
+                if pd.notna(foodon_id) and foodon_id.startswith("FOODON:"):
+                    return get_foodon_category(foodon_id)
+                return replace_deprecated_categories(str(row["category"]))
+
+            df["category"] = df.apply(fix_foodon_category, axis=1)
+
+        elif ontology_name == "pato":
+            # PATO terms are qualities; madin_etal types them PhenotypicQuality (#1015).
+            print("  Fixing PATO categories (all terms → PhenotypicQuality)...")
+
+            def fix_pato_category(row):
+                """Fix PATO category (all PATO terms are PhenotypicQuality; imports keep theirs)."""
+                pato_id = row["id"]
+                if pd.notna(pato_id) and pato_id.startswith("PATO:"):
+                    return get_pato_category(pato_id)
+                return replace_deprecated_categories(str(row["category"]))
+
+            df["category"] = df.apply(fix_pato_category, axis=1)
 
         elif ontology_name == "ncbitaxon":
             # Fix NCBITaxon categories: all NCBITaxon terms should be OrganismTaxon

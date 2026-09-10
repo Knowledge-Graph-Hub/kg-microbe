@@ -8,6 +8,7 @@ from kg_microbe.transform_utils.constants import (
     CELLULAR_COMPONENT_CATEGORY,
     EC_CATEGORY,
     EC_PREFIX,
+    FOOD_CATEGORY,
     GENE_CATEGORY,
     GO_CATEGORY,
     GO_PREFIX,
@@ -15,6 +16,7 @@ from kg_microbe.transform_utils.constants import (
     MACROMOLECULE_CATEGORY,
     MOLECULAR_ACTIVITY_CATEGORY,
     NCBI_CATEGORY,
+    PHENOTYPIC_CATEGORY,
     PROTEIN_CATEGORY,
     RHEA_CATEGORY,
     RHEA_NEW_PREFIX,
@@ -122,6 +124,22 @@ def uberon_category(_term_id: str) -> str:
 def ncbitaxon_category(_term_id: str) -> str:
     """Return the invariant category for an NCBITaxon term."""
     return NCBI_CATEGORY
+
+
+def foodon_category(_term_id: str) -> str:
+    """
+    Return the invariant category for a FOODON term.
+
+    Without this the ontologies transform typed every FOODON term
+    biolink:OntologyClass while mediadive typed the same ids biolink:Food,
+    and the merge turned the disagreement into list-valued categories (#1015).
+    """
+    return FOOD_CATEGORY
+
+
+def pato_category(_term_id: str) -> str:
+    """Return the invariant category for a PATO term (madin_etal's choice, #1015)."""
+    return PHENOTYPIC_CATEGORY
 
 
 def replace_deprecated_category_names(category: str) -> str:

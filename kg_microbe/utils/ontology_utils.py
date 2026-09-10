@@ -36,8 +36,10 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.utils.ontology_resolution import (
     chebi_category,
+    foodon_category,
     go_category_for_namespace,
     ncbitaxon_category,
+    pato_category,
     replace_category_by_prefix,
     replace_deprecated_category_names,
     uberon_category,
@@ -2824,6 +2826,16 @@ def get_ncbitaxon_category(ncbitaxon_id: str) -> str:
 
     """
     return ncbitaxon_category(ncbitaxon_id)
+
+
+def get_foodon_category(foodon_term_id: str) -> str:
+    """Return the Biolink category for a FOODON term: always biolink:Food (#1015)."""
+    return foodon_category(foodon_term_id)
+
+
+def get_pato_category(pato_term_id: str) -> str:
+    """Return the Biolink category for a PATO term: always biolink:PhenotypicQuality (#1015)."""
+    return pato_category(pato_term_id)
 
 
 def replace_deprecated_categories(category_str: str) -> str:

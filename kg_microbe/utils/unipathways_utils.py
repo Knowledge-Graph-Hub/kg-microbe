@@ -3,7 +3,9 @@
 import re
 
 from kg_microbe.transform_utils.constants import (
+    CATEGORY_COLUMN,
     GO_PREFIX,
+    ID_COLUMN,
     OBJECT_COLUMN,
     RHEA_CATEGORY,
     RHEA_NEW_PREFIX,
@@ -17,7 +19,34 @@ from kg_microbe.transform_utils.constants import (
 )
 
 
-def replace_id_with_xref(line, xref_index, id_index, category_index, nodes_dictionary, node_header):
+def project_onto_header(parts, source_header, node_header):
+    """
+    Reshape one row onto ``node_header``, matching columns by name.
+
+    The caller writes ``node_header`` as the file's header, so every row has to
+    be exactly that wide. Padding positionally is not enough: KGX leaks
+    ``subsets``, ``meta`` and ``iri`` onto node rows (the columns
+    ``_normalize_schema`` strips), and a row wider than the header made
+    ``[""] * (len(node_header) - len(parts))`` evaluate to ``[]`` -- so the
+    extra fields survived and the file became unreadable (#1033). Matching by
+    name rather than truncating also means an extra, missing or reordered
+    upstream column cannot shift a value into the wrong field.
+
+    :param parts: The row's fields.
+    :param source_header: Column names of the row, in order. ``None`` falls
+        back to positional pad-or-truncate, for callers that never saw a header.
+    :param node_header: Canonical column names to emit.
+    :return: Exactly ``len(node_header)`` fields.
+    """
+    if source_header is None:
+        return (parts + [""] * len(node_header))[: len(node_header)]
+    # strict=False on purpose: a row may be short (KGX omits trailing empties)
+    # or long (leaked columns); both are handled by name lookup below.
+    by_name = dict(zip(source_header, parts, strict=False))
+    return [by_name.get(column, "") for column in node_header]
+
+
+def replace_id_with_xref(line, xref_index, id_index, category_index, nodes_dictionary, node_header, source_header=None):
     """
     Replace node ID with corresponding xref.
 
@@ -31,6 +60,9 @@ def replace_id_with_xref(line, xref_index, id_index, category_index, nodes_dicti
     :type category_index: int
     :param node_header: List of all values in nodes file header.
     :type node_header: list
+    :param source_header: Column names of ``line``, so fields are matched by
+        name rather than by position (#1033).
+    :type source_header: list
     """
     parts = line.strip().split("\t")
     xrefs = parts[xref_index].split("|") if parts[xref_index] != "" else None
@@ -44,18 +76,23 @@ def replace_id_with_xref(line, xref_index, id_index, category_index, nodes_dicti
             # category-aware consumers (and validators) don't see an empty
             # category column (biolink:MolecularActivity matches the
             # rhea_mappings transform's own RHEA category).
-            l_parts = [xref] + ([""] * (len(node_header) - 1))
+            stub = {ID_COLUMN: xref}
             if xref.startswith(RHEA_NEW_PREFIX):
-                l_parts[category_index] = RHEA_CATEGORY
+                # Set category on Rhea stubs so downstream category-aware
+                # consumers (and validators) don't see an empty category
+                # column. Keyed by name: category_index is an index into the
+                # *source* header and only matched by luck (#1033).
+                stub[CATEGORY_COLUMN] = RHEA_CATEGORY
+            l_parts = [stub.get(column, "") for column in node_header]
             nodes_dictionary[parts[id_index]].append(xref)
             l_joined = "\t".join(l_parts)
             new_lines.append(l_joined)
     else:
-        new_lines.append(replace_category_for_unipathways(line, id_index, category_index, node_header))
+        new_lines.append(replace_category_for_unipathways(line, id_index, category_index, node_header, source_header))
     return new_lines, nodes_dictionary
 
 
-def replace_category_for_unipathways(line, id_index, category_index, node_header):
+def replace_category_for_unipathways(line, id_index, category_index, node_header, source_header=None):
     """
     Replace category of a given node.
 
@@ -65,13 +102,16 @@ def replace_category_for_unipathways(line, id_index, category_index, node_header
     :type id_index: int
     :param category_index: The index of the tab delimited line with the node category.
     :type category_index: int
+    :param source_header: Column names of ``line``, so fields are matched by
+        name rather than by position (#1033).
+    :type source_header: list
     """
     parts = line.strip().split("\t")
     id_substring = get_unipathways_prefix(parts[id_index])
     # Get defined category
     category = UNIPATHWAYS_CATEGORIES_DICT[id_substring]
     parts[category_index] = category
-    complete_parts = parts + ([""] * (len(node_header) - len(parts)))
+    complete_parts = project_onto_header(parts, source_header, node_header)
     # Join the parts back together with a tab separator
     new_line = "\t".join(complete_parts)
     return new_line

@@ -305,7 +305,10 @@ class Finding:
     def __str__(self):
         icon = {"ERROR": "❌", "WARNING": "⚠️ ", "INFO": "ℹ️ "}.get(self.severity, "  ")
         s = f"    [{self.check:<8}] {icon} {self.severity}: {self.message}"
-        for ex in self.examples[:3]:
+        # Every example the check chose to return. A cap here hid three of
+        # six domain/range constraints from the #810 review; the checks decide
+        # how many examples are worth showing, the renderer does not.
+        for ex in self.examples:
             s += f"\n              e.g. {ex!r}"
         return s
 

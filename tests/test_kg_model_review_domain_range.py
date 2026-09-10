@@ -140,6 +140,13 @@ class DomainRangeFromTheModelTests(unittest.TestCase):
         self.assertIn("WARNING", out)
         self.assertIn("[table]", out["WARNING"][0].examples[0])
 
+    def test_the_renderer_prints_every_example_the_check_returned(self):
+        """The checker returned all six constraints; the markdown renderer used to print three."""
+        finding = self.mod.Finding("WARNING", "DomainRange", "six constraints", [f"constraint {i}" for i in range(6)])
+        rendered = finding.render() if hasattr(finding, "render") else str(finding)
+        for i in range(6):
+            self.assertIn(f"constraint {i}", rendered)
+
     def test_verbose_lists_every_constraint_not_the_first_five(self):
         """A release reviewer needs all of them; the old cap hid three of six."""
         cats = [

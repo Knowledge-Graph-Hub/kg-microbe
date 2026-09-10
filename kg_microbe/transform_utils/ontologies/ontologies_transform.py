@@ -118,6 +118,18 @@ ONTOLOGIES_MAP = {
 # RDF/OWL predicate CURIEs — not biolink entity relationships — so they clutter
 # the merged KG (kgxval flags them as non-biolink) without carrying queryable
 # entity data. Dropped from the edge output; nodes are left untouched.
+#: Prefixes of the annotation and metadata vocabulary an OWL file annotates
+#: *with* -- never anything it defines. KGX's OBO-JSON loader emits a node for
+#: each one it encounters, so `rdfs:label`, `owl:deprecated`, `dc:title` and
+#: `dcterms:license` arrived as biolink:OntologyClass nodes connected to
+#: nothing: 55 distinct ids, 172 rows across ten ontologies, 0 edges, 36 of
+#: them in the shipped graph (#1023). Matching on the id column of a *nodes*
+#: file only -- `skos:closeMatch` as a relation value is legitimate and lives
+#: in a different column of a different file.
+METAMODEL_NODE_PREFIXES = frozenset(
+    {"dc", "dct", "dcterms", "terms", "doap", "foaf", "oio", "owl", "pav", "rdf", "rdfs", "skos"}
+)
+
 METAMODEL_EDGE_PREDICATES = frozenset(
     {
         "rdfs:subPropertyOf",
@@ -459,6 +471,23 @@ class OntologiesTransform(Transform):
             return df, 0
         before = len(df)
         df = df[~df[PREDICATE_COLUMN].isin(METAMODEL_EDGE_PREDICATES)]
+        return df, before - len(df)
+
+    def _drop_metamodel_nodes(self, df: pd.DataFrame) -> tuple:
+        """
+        Return ``(filtered_df, dropped_count)`` with annotation-property nodes removed.
+
+        Drops rows whose ``id`` prefix is in :data:`METAMODEL_NODE_PREFIXES` --
+        the vocabulary an ontology annotates with rather than anything it
+        defines. Pure DataFrame transform (no I/O), mirroring
+        :meth:`_drop_metamodel_edges`; returns the frame unchanged when the id
+        column is absent.
+        """
+        if ID_COLUMN not in df.columns:
+            return df, 0
+        before = len(df)
+        prefixes = df[ID_COLUMN].astype(str).str.split(":", n=1).str[0]
+        df = df[~prefixes.isin(METAMODEL_NODE_PREFIXES)]
         return df, before - len(df)
 
     def _add_kgx_metadata_to_edges(self, edges_file_path: Path):
@@ -1015,7 +1044,13 @@ class OntologiesTransform(Transform):
             for col in added_node_cols:
                 df[col] = ""
             df = df[self.node_header]
+            df, dropped_metamodel_nodes = self._drop_metamodel_nodes(df)
             df.to_csv(nodes_file, sep="\t", index=False)
+            if dropped_metamodel_nodes:
+                print(
+                    f"  [_normalize_schema] {nodes_file.name}: dropped "
+                    f"{dropped_metamodel_nodes} annotation-property node(s) (#1023)"
+                )
             if dropped_node_cols or added_node_cols:
                 print(f"  [_normalize_schema] {nodes_file.name}: dropped={dropped_node_cols} added={added_node_cols}")
 

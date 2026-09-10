@@ -31,6 +31,7 @@ from kg_microbe.transform_utils.constants import (
     SYNONYM_COLUMN,
     XREF_COLUMN,
 )
+from kg_microbe.utils.tsv_io import tsv_writer
 
 CANONICAL_NODE_HEADER = [
     ID_COLUMN,
@@ -328,7 +329,7 @@ def _normalize_nodes_tsv(path: Path) -> None:
             header, CANONICAL_NODE_HEADER, NODE_COLUMNS_TO_DROP, extension_columns=set()
         )
         _log_schema_diff("nodes", path, header, out_header)
-        writer = csv.writer(tmp, delimiter="\t")
+        writer = tsv_writer(tmp)
         writer.writerow(out_header)
         for row in reader:
             writer.writerow(_project_row(row, keep_indices))
@@ -357,7 +358,7 @@ def _normalize_edges_tsv(path: Path) -> None:
             extension_columns=EDGE_EXTENSION_COLUMNS,
         )
         _log_schema_diff("edges", path, header, out_header)
-        writer = csv.writer(tmp, delimiter="\t")
+        writer = tsv_writer(tmp)
         writer.writerow(out_header)
         for row in reader:
             if ks_idx is not None and pks_idx is not None and pks_idx < len(row):

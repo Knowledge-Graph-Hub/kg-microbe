@@ -76,6 +76,7 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.transform_utils.lpsn.lpsn import LPSN_KNOWLEDGE_SOURCE, LPSN_PREFIX
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.tsv_io import tsv_writer
 
 # JSON keys returned by the LPSN API (documented at
 # https://lpsn.dsmz.de/text/lpsn-api). Kept as module constants so a
@@ -288,8 +289,8 @@ class LPSNAPITransform(Transform):
             atomic_write(self.output_node_file, newline="") as node_fh,
             atomic_write(self.output_edge_file, newline="") as edge_fh,
         ):
-            node_writer = csv.writer(node_fh, delimiter="\t")
-            edge_writer = csv.writer(edge_fh, delimiter="\t")
+            node_writer = tsv_writer(node_fh)
+            edge_writer = tsv_writer(edge_fh)
             node_writer.writerow(self.node_header)
             edge_writer.writerow(self.edge_header)
 

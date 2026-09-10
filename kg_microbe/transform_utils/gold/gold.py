@@ -124,6 +124,7 @@ from kg_microbe.transform_utils.constants import (
     RDFS_SUBCLASS_OF,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.tsv_io import tsv_writer
 
 #: Upstream filenames inside ``data/raw/gold/``.
 GOLD_NODES_FILE = "GOLD_nodes.tsv"
@@ -825,7 +826,7 @@ class GOLDTransform(Transform):
             self.output_edge_file.open("w", newline="") as out,
         ):
             reader = csv.DictReader(handle, delimiter="\t")
-            writer = csv.writer(out, delimiter="\t")
+            writer = tsv_writer(out)
             # `original_object` is Biolink's slot for what the source said before
             # transformation, so an upward resolution stays auditable and
             # reversible rather than silently rewriting the target.
@@ -1068,7 +1069,7 @@ class GOLDTransform(Transform):
             self.output_node_file.open("w", newline="") as out,
         ):
             reader = csv.DictReader(handle, delimiter="\t")
-            writer = csv.writer(out, delimiter="\t")
+            writer = tsv_writer(out)
             writer.writerow(self.node_header)
             written: set = set()
             for row in reader:

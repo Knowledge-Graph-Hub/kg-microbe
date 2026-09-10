@@ -5,7 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from kg_microbe.transform_utils.constants import GTDB_BAC120_METADATA
+from kg_microbe.transform_utils.constants import GTDB_BAC120_METADATA, GTDB_NCBI_POOLING_REPORT
 from kg_microbe.transform_utils.gtdb.gtdb import GTDBTransform
 from kg_microbe.transform_utils.gtdb.utils import (
     assembly_archive,
@@ -230,15 +230,16 @@ class TestGTDBTransform(unittest.TestCase):
         self.assertEqual(genome_node["description"], "RefSeq assembly GCF_000005845.2")
         self.assertEqual(genome_node["same_as"], "")
 
-        # Should have 2 edges: genome->taxon and taxon->NCBITaxon
-        self.assertEqual(len(self.transform.edges), 2)
-
-        # Check genome->taxon edge
-        genome_edge = [e for e in self.transform.edges if e["subject"].startswith("ncbi.assembly:")][0]
+        # genome->taxon is emitted inline; the NCBI mapping waits for the whole
+        # file, because its predicate depends on the fan-in (#883).
+        self.assertEqual(len(self.transform.edges), 1)
+        genome_edge = self.transform.edges[0]
+        self.assertEqual(genome_edge["subject"], "ncbi.assembly:GCF_000005845.2")
         self.assertEqual(genome_edge["predicate"], "biolink:subclass_of")
         self.assertEqual(genome_edge["object"], "GTDB:s__Escherichia_coli")
 
-        # Check taxon->NCBI edge
+        # Check taxon->NCBI edge once the deferred pass runs
+        self.transform._emit_ncbi_mapping_edges()
         ncbi_edge = [e for e in self.transform.edges if e["object"].startswith("NCBITaxon:")][0]
         self.assertEqual(ncbi_edge["predicate"], "biolink:close_match")
         self.assertEqual(ncbi_edge["object"], "NCBITaxon:562")
@@ -255,6 +256,7 @@ class TestGTDBTransform(unittest.TestCase):
         )
 
         # Should only have 1 edge: genome->taxon (no NCBI mapping)
+        self.transform._emit_ncbi_mapping_edges()
         self.assertEqual(len(self.transform.edges), 1)
         self.assertEqual(self.transform.edges[0]["predicate"], "biolink:subclass_of")
 
@@ -379,3 +381,102 @@ class TestAssemblyAccessionIdentity(unittest.TestCase):
         by_id = {n["id"]: n for n in self.transform.nodes}
         self.assertEqual(by_id["ncbi.assembly:GCF_000005845.2"]["same_as"], "ncbi.assembly:GCA_000005845.2")
         self.assertEqual(by_id["ncbi.assembly:GCF_000009999.1"]["same_as"], "")
+
+
+class TestNCBIPooling(unittest.TestCase):
+    """#883: 0.3% of NCBI taxa absorb 42.7% of the GTDB mapping; close_match overstates that."""
+
+    def setUp(self):
+        """Build a transform writing to a scratch directory."""
+        self.tmp = tempfile.TemporaryDirectory()
+        self.transform = GTDBTransform(input_dir=Path(self.tmp.name), output_dir=Path(self.tmp.name))
+
+    def tearDown(self):
+        """Drop the scratch directory."""
+        self.tmp.cleanup()
+
+    def _map(self, pairs):
+        for gtdb_name, taxid in pairs:
+            self.transform._get_or_create_taxon_id(gtdb_name)
+            self.transform._create_genome_node(
+                accession=f"GCA_{abs(hash((gtdb_name, taxid))) % 10**9:09d}.1",
+                gtdb_taxon=gtdb_name,
+                ncbi_taxid=taxid,
+            )
+
+    def test_a_shared_ncbi_taxon_gets_broad_match_and_a_solo_one_keeps_close_match(self):
+        """
+        close_match is defined as "not strictly equivalent, broader, or narrower".
+
+        The moment two GTDB taxa share an NCBI taxon, that taxon is broader, so
+        close_match asserts more than the data supports.
+        """
+        self._map(
+            [
+                ("s__Escherichia_coli", "562"),
+                ("s__Grabbag_one", "1869227"),
+                ("s__Grabbag_two", "1869227"),
+                ("s__Grabbag_three", "1869227"),
+            ]
+        )
+        self.transform._emit_ncbi_mapping_edges()
+        by_object = {}
+        for e in self.transform.edges:
+            if e["object"].startswith("NCBITaxon:"):
+                by_object.setdefault(e["object"], []).append((e["predicate"], e["relation"]))
+        self.assertEqual(by_object["NCBITaxon:562"], [("biolink:close_match", "skos:closeMatch")])
+        self.assertEqual(
+            by_object["NCBITaxon:1869227"],
+            [("biolink:broad_match", "skos:broadMatch")] * 3,
+        )
+
+    def test_the_predicate_cannot_be_decided_row_by_row(self):
+        """The first of three rows onto one taxon looks 1:1 until the third arrives."""
+        self._map([("s__A", "1869227")])
+        self.assertEqual([e for e in self.transform.edges if e["object"].startswith("NCBITaxon:")], [])
+        self._map([("s__B", "1869227")])
+        counts = self.transform._emit_ncbi_mapping_edges()
+        self.assertEqual(counts["biolink:close_match"], 0)
+        self.assertEqual(counts["biolink:broad_match"], 2)
+
+    def test_the_pooling_report_is_written_even_when_empty(self):
+        """An absent report cannot be told from a check that never ran."""
+        self._map([("s__Escherichia_coli", "562")])
+        self.assertEqual(self.transform._write_ncbi_pooling_report(), 0)
+        report = self.transform.output_dir / GTDB_NCBI_POOLING_REPORT
+        self.assertTrue(report.exists())
+        with open(report) as handle:
+            rows = list(csv.DictReader(handle, delimiter="\t"))
+        self.assertEqual(rows, [])
+
+    def test_the_pooling_report_names_the_grab_bags_worst_first(self):
+        """The report is the deny-list a query needs to exclude them deliberately."""
+        self._map(
+            [
+                ("s__A", "1869227"),
+                ("s__B", "1869227"),
+                ("s__C", "1869227"),
+                ("s__D", "77133"),
+                ("s__E", "77133"),
+                ("s__Solo", "562"),
+            ]
+        )
+        self.assertEqual(self.transform._write_ncbi_pooling_report(), 2)
+        with open(self.transform.output_dir / GTDB_NCBI_POOLING_REPORT) as handle:
+            rows = list(csv.DictReader(handle, delimiter="\t"))
+        self.assertEqual([r["ncbi_taxon"] for r in rows], ["NCBITaxon:1869227", "NCBITaxon:77133"])
+        self.assertEqual([r["gtdb_taxa"] for r in rows], ["3", "2"])
+        self.assertEqual(rows[0]["predicate"], "biolink:broad_match")
+        self.assertIn("GTDB:s__A", rows[0]["examples"])
+        self.assertNotIn("NCBITaxon:562", [r["ncbi_taxon"] for r in rows])
+
+    def test_a_duplicate_pair_is_still_counted_once(self):
+        """Two genomes of one GTDB species pointing at one NCBI taxon is 1:1, not pooling."""
+        self._map([("s__Escherichia_coli", "562")])
+        self.transform._create_genome_node(
+            accession="GCA_000000002.1", gtdb_taxon="s__Escherichia_coli", ncbi_taxid="562"
+        )
+        counts = self.transform._emit_ncbi_mapping_edges()
+        self.assertEqual(counts["biolink:close_match"], 1)
+        self.assertEqual(counts["biolink:broad_match"], 0)
+        self.assertEqual(self.transform._write_ncbi_pooling_report(), 0)

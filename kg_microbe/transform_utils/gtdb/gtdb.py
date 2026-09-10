@@ -2,10 +2,13 @@
 
 import csv
 import gzip
+from collections import Counter
 from pathlib import Path
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 from kg_microbe.transform_utils.constants import (
+    BROAD_MATCH_PREDICATE,
+    BROAD_MATCH_RELATION,
     CATEGORY_COLUMN,
     CLOSE_MATCH_PREDICATE,
     CLOSE_MATCH_RELATION,
@@ -16,6 +19,7 @@ from kg_microbe.transform_utils.constants import (
     GTDB_AR53_TAXONOMY,
     GTDB_BAC120_METADATA,
     GTDB_BAC120_TAXONOMY,
+    GTDB_NCBI_POOLING_REPORT,
     GTDB_PREFIX,
     GTDB_RAW_DIR,
     ID_COLUMN,
@@ -66,6 +70,11 @@ class GTDBTransform(Transform):
         # ID allocator. Example: "d__Bacteria" -> "GTDB:d__Bacteria".
         self.taxon_to_id = {}
         self._created_mappings = set()  # Track GTDB->NCBI mappings to avoid duplicates
+        # GTDB->NCBI pairs, held until every metadata row is read: the right
+        # predicate for one of these edges depends on how many *other* GTDB
+        # taxa land on the same NCBI taxon, which is not knowable row by row
+        # (#883).
+        self._ncbi_mappings: List[Tuple[str, str]] = []
 
         # Resolve input directory: prefer CLI-provided base dir, fall back to global default
         if self.input_base_dir:
@@ -118,6 +127,15 @@ class GTDBTransform(Transform):
         else:
             print("Archaeal metadata not found, creating genomes without NCBI mappings...")
             self._create_genomes_from_taxonomy(ar_taxa)
+
+        # After every metadata row: the predicate depends on the whole set (#883).
+        mapping_counts = self._emit_ncbi_mapping_edges()
+        pooled = self._write_ncbi_pooling_report()
+        print(
+            f"  GTDB->NCBITaxon mappings: {mapping_counts[CLOSE_MATCH_PREDICATE]:,} close_match (1:1), "
+            f"{mapping_counts[BROAD_MATCH_PREDICATE]:,} broad_match onto {pooled:,} shared NCBI taxa; "
+            f"see {GTDB_NCBI_POOLING_REPORT}"
+        )
 
         print(f"  Total nodes: {len(self.nodes)}")
         print(f"  Total edges: {len(self.edges)}")
@@ -354,19 +372,70 @@ class GTDBTransform(Transform):
                 relation=RDFS_SUBCLASS_OF,
             )
 
-        # Create GTDB -> NCBI mapping edge (if available)
+        # Record the GTDB -> NCBI mapping; the edges are emitted once every
+        # row has been read (see _emit_ncbi_mapping_edges).
         # Dedup on (gtdb_taxon_id, ncbi_taxid) to allow multiple NCBI IDs per GTDB taxon
         if ncbi_taxid and gtdb_taxon_id:
             mapping_key = (gtdb_taxon_id, ncbi_taxid)
             if mapping_key not in self._created_mappings:
-                ncbi_id = f"{NCBITAXON_PREFIX}{ncbi_taxid}"
-                self._add_edge(
-                    subject=gtdb_taxon_id,
-                    predicate=CLOSE_MATCH_PREDICATE,
-                    obj=ncbi_id,
-                    relation=CLOSE_MATCH_RELATION,
-                )
+                self._ncbi_mappings.append((gtdb_taxon_id, f"{NCBITAXON_PREFIX}{ncbi_taxid}"))
                 self._created_mappings.add(mapping_key)
+
+    def _emit_ncbi_mapping_edges(self) -> Dict[str, int]:
+        """
+        Emit the GTDB->NCBITaxon mapping edges, choosing the predicate by fan-in.
+
+        NCBI carries coarse placeholder taxa -- ``bacterium``, ``uncultured
+        bacterium``, ``Pseudomonadota bacterium`` -- that park unclassified
+        sequence; GTDB names every genome, so the bridge between them is
+        many-to-one and severely so at the top: 0.3% of NCBI taxa absorb 42.7%
+        of the links, one of them 3,492 GTDB taxa (#883).
+
+        ``close_match`` is defined as "semantically similar but not strictly
+        equivalent, **broader**, or narrower", so it is the wrong predicate the
+        moment two GTDB taxa share an NCBI taxon: that NCBI taxon is broader.
+        A 1:1 mapping keeps ``close_match``; anything many-to-one becomes
+        ``broad_match`` (``skos:broadMatch``, i.e. the object is the broader
+        term), which is what the data supports. No threshold is chosen -- the
+        line is exactly "is this NCBI taxon shared".
+
+        :return: Counts of the edges emitted, by predicate.
+        """
+        fan_in: Counter = Counter(ncbi_id for _, ncbi_id in self._ncbi_mappings)
+        counts = {CLOSE_MATCH_PREDICATE: 0, BROAD_MATCH_PREDICATE: 0}
+        for gtdb_taxon_id, ncbi_id in self._ncbi_mappings:
+            shared = fan_in[ncbi_id] > 1
+            predicate = BROAD_MATCH_PREDICATE if shared else CLOSE_MATCH_PREDICATE
+            relation = BROAD_MATCH_RELATION if shared else CLOSE_MATCH_RELATION
+            self._add_edge(subject=gtdb_taxon_id, predicate=predicate, obj=ncbi_id, relation=relation)
+            counts[predicate] += 1
+        return counts
+
+    def _write_ncbi_pooling_report(self) -> int:
+        """
+        Write the NCBI taxa that several GTDB taxa map onto.
+
+        Written on every run, empty or not: an absent report cannot be told
+        from a check that never ran. It is the deny-list a query needs to
+        exclude the grab-bags deliberately rather than discovering them in a
+        result set (#883).
+
+        :return: Number of pooled NCBI taxa reported.
+        """
+        pooled: Dict[str, list] = {}
+        for gtdb_taxon_id, ncbi_id in self._ncbi_mappings:
+            pooled.setdefault(ncbi_id, []).append(gtdb_taxon_id)
+        rows = sorted(
+            ((ncbi_id, taxa) for ncbi_id, taxa in pooled.items() if len(taxa) > 1),
+            key=lambda item: (-len(item[1]), item[0]),
+        )
+        report = self.output_dir / GTDB_NCBI_POOLING_REPORT
+        with open(report, "w", newline="") as handle:
+            writer = csv.writer(handle, delimiter="\t")
+            writer.writerow(["ncbi_taxon", "gtdb_taxa", "predicate", "examples"])
+            for ncbi_id, taxa in rows:
+                writer.writerow([ncbi_id, len(taxa), BROAD_MATCH_PREDICATE, "|".join(sorted(taxa)[:3])])
+        return len(rows)
 
     def _add_node(self, node_id: str, category: str, name: str, description: str = "", same_as: str = ""):
         """Add node to internal list."""

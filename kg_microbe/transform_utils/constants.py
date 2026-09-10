@@ -445,6 +445,9 @@ ASSESSED_ACTIVITY_RELATIONSHIP = "NCIT:C153110"
 CLOSE_MATCH = "skos:closeMatch"
 CLOSE_MATCH_PREDICATE = "biolink:close_match"
 CLOSE_MATCH_RELATION = "skos:closeMatch"
+BROAD_MATCH = "skos:broadMatch"
+BROAD_MATCH_PREDICATE = "biolink:broad_match"
+BROAD_MATCH_RELATION = "skos:broadMatch"
 EXACT_MATCH = "skos:exactMatch"
 EXACT_MATCH_PREDICATE = "biolink:exact_match"
 ASSOCIATED_WITH = "PATO:0001668"
@@ -713,6 +716,9 @@ GTDB_RAW_DIR = RAW_DATA_DIR / GTDB
 GTDB_BAC120_TAXONOMY = "bac120_taxonomy.tsv"
 GTDB_AR53_TAXONOMY = "ar53_taxonomy.tsv"
 GTDB_BAC120_METADATA = "bac120_metadata.tsv.gz"
+#: Report of NCBI taxa that several GTDB taxa map onto (#883). Written on
+#: every gtdb run, empty or not.
+GTDB_NCBI_POOLING_REPORT = "gtdb_ncbi_pooling_report.tsv"
 GTDB_AR53_METADATA = "ar53_metadata.tsv.gz"
 
 # Metatraits-specific paths

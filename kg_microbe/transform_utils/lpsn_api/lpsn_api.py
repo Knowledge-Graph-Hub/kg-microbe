@@ -656,7 +656,8 @@ class LPSNAPITransform(Transform):
             "id": f"{LPSN_PREFIX}{record_no}",
             "category": NCBI_CATEGORY,
             "description": (
-                "LPSN record linked from another record; not retrievable from the LPSN API when this file was built"
+                "LPSN record linked from another record; not retrievable from the LPSN API "
+                "or its web page when this file was built"
             ),
             "provided_by": LPSN_KNOWLEDGE_SOURCE,
         }.items():

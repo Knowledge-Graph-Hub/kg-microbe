@@ -17,6 +17,7 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings
 from kg_microbe.utils.microbial_trait_mappings import load_microbial_trait_mappings
+from kg_microbe.utils.tsv_io import tsv_dict_writer
 
 # Input file names for GTDB metatraits (species-level only)
 METATRAITS_GTDB_INPUT_FILES = [
@@ -474,7 +475,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         # Append to existing edge file
         if hierarchical_edges:
             with open(self.output_edge_file, "a") as f:
-                writer = csv.DictWriter(f, fieldnames=self.edge_header, delimiter="\t")
+                writer = tsv_dict_writer(f, fieldnames=self.edge_header)
                 for edge in hierarchical_edges:
                     # Fill in missing columns with empty strings
                     for col in self.edge_header:

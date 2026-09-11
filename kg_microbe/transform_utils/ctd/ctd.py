@@ -30,6 +30,7 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.pandas_utils import drop_duplicates
+from kg_microbe.utils.tsv_io import tsv_writer
 
 RELATIONS_DICT = {
     CHEMICAL_TO_DISEASE_EDGE: ASSOCIATED_WITH,
@@ -78,8 +79,8 @@ class CTDTransform(Transform):
         edge_filename = self.output_edge_file
 
         with open(node_filename, "w") as nf, open(edge_filename, "w") as ef:
-            nodes_file_writer = csv.writer(nf, delimiter="\t")
-            edges_file_writer = csv.writer(ef, delimiter="\t")
+            nodes_file_writer = tsv_writer(nf)
+            edges_file_writer = tsv_writer(ef)
 
             nodes_file_writer.writerow(self.node_header)
             edges_file_writer.writerow(self.edge_header)

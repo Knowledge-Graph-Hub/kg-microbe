@@ -107,6 +107,7 @@ from kg_microbe.transform_utils.microbedecoder.utils import (
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.lpsn_utils import resolve_accepted_records
 from kg_microbe.utils.pandas_utils import drop_duplicates
+from kg_microbe.utils.tsv_io import tsv_dict_writer, tsv_writer
 
 logger = logging.getLogger(__name__)
 
@@ -251,8 +252,8 @@ class MicrobeDecoderTransform(Transform):
             open(self.output_node_file, "w", newline="") as node_fh,
             open(self.output_edge_file, "w", newline="") as edge_fh,
         ):
-            node_writer = csv.writer(node_fh, delimiter="\t")
-            edge_writer = csv.writer(edge_fh, delimiter="\t")
+            node_writer = tsv_writer(node_fh)
+            edge_writer = tsv_writer(edge_fh)
             node_writer.writerow(self.node_header)
             edge_writer.writerow(self.edge_header)
 
@@ -790,10 +791,9 @@ class MicrobeDecoderTransform(Transform):
         # Sort by count desc, then CURIE asc for stable output.
         rows.sort(key=lambda r: (-int(r["occurrences"]), r["placeholder_curie"]))
         with open(target, "w", newline="") as fh:
-            writer = csv.DictWriter(
+            writer = tsv_dict_writer(
                 fh,
                 fieldnames=["placeholder_curie", "category", "label", "source_columns", "occurrences"],
-                delimiter="\t",
             )
             writer.writeheader()
             writer.writerows(rows)

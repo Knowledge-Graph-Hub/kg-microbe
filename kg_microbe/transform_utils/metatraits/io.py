@@ -1,9 +1,10 @@
 """File I/O primitives for the MetaTraits transform."""
 
-import csv
 import gzip
 from pathlib import Path
 from typing import IO, List
+
+from kg_microbe.utils.tsv_io import tsv_writer
 
 
 def open_maybe_gzipped(path: Path) -> IO[str]:
@@ -41,7 +42,7 @@ class StreamingRowWriter:
         """Open the output and write its header."""
         self.output_file.parent.mkdir(exist_ok=True, parents=True)
         self.file_handle = self.output_file.open("w", newline="", encoding="utf-8")
-        self.writer = csv.writer(self.file_handle, delimiter="\t")
+        self.writer = tsv_writer(self.file_handle)
         self.writer.writerow(self.header)
         return self
 

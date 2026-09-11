@@ -79,6 +79,7 @@ from kg_microbe.utils.ontology_utils import (
     get_go_adapter,
     resolve_adapter,
 )
+from kg_microbe.utils.tsv_io import tsv_writer
 
 logger = logging.getLogger(__name__)
 
@@ -259,9 +260,9 @@ class RheaMappingsTransform(Transform):
             open(self.output_dir / "nodes.tsv", "w") as nodes_file,
             open(self.output_dir / "edges.tsv", "w") as edges_file,
         ):
-            tmp_file_writer = csv.writer(tmp_file, delimiter="\t")
-            nodes_file_writer = csv.writer(nodes_file, delimiter="\t")
-            edges_file_writer = csv.writer(edges_file, delimiter="\t")
+            tmp_file_writer = tsv_writer(tmp_file)
+            nodes_file_writer = tsv_writer(nodes_file)
+            edges_file_writer = tsv_writer(edges_file)
 
             tmp_file_writer.writerow([RHEA_ID_COLUMN, RHEA_CATEGORY_COLUMN, RHEA_NAME_COLUMN, RHEA_DIRECTION_COLUMN])
             nodes_file_writer.writerow(self.node_header)
@@ -353,7 +354,7 @@ class RheaMappingsTransform(Transform):
                                 )
 
                     with open(RHEAMAPPINGS_TMP_DIR / "all_terms.tsv", "w", newline="") as tsvfile:
-                        all_terms_writer = csv.writer(tsvfile, delimiter="\t")
+                        all_terms_writer = tsv_writer(tsvfile)
                         # Write headers
                         all_terms_writer.writerow(
                             [

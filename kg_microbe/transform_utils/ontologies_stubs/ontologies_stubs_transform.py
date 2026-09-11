@@ -52,7 +52,6 @@ fuller record.
 
 from __future__ import annotations
 
-import csv
 import gzip
 import json
 import re
@@ -76,6 +75,7 @@ from kg_microbe.utils.stub_curie_collection import (
 from kg_microbe.utils.stub_curie_collection import (
     REPO_ROOT as _STUB_REPO_ROOT,
 )
+from kg_microbe.utils.tsv_io import tsv_writer
 
 # Stub ontologies handled by this transform. Each entry maps the canonical
 # CURIE prefix (case-sensitive — must match how the prefix appears in
@@ -904,7 +904,7 @@ class OntologiesStubsTransform(Transform):
         """Write ``rows`` to ``path`` using the canonical Transform node header."""
         path.parent.mkdir(parents=True, exist_ok=True)
         with path.open("w", newline="", encoding="utf-8") as fh:
-            writer = csv.writer(fh, delimiter="\t", lineterminator="\n")
+            writer = tsv_writer(fh)
             writer.writerow(self.node_header)
             for row in rows:
                 writer.writerow(["" if cell is None else cell for cell in row])
@@ -913,7 +913,7 @@ class OntologiesStubsTransform(Transform):
         """Write ``rows`` to ``path`` using the canonical Transform edge header."""
         path.parent.mkdir(parents=True, exist_ok=True)
         with path.open("w", newline="", encoding="utf-8") as fh:
-            writer = csv.writer(fh, delimiter="\t", lineterminator="\n")
+            writer = tsv_writer(fh)
             writer.writerow(self.edge_header)
             for row in rows:
                 writer.writerow(["" if cell is None else cell for cell in row])

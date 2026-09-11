@@ -27,7 +27,6 @@ threshold on confidence.
 
 from __future__ import annotations
 
-import csv
 import os
 import pickle
 import tarfile
@@ -93,6 +92,7 @@ from kg_microbe.transform_utils.prego.utils import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.tsv_io import tsv_writer
 
 # ---------------------------------------------------------------------------
 # Edge predicates and relations. PREGO uses only biolink predicates; the
@@ -362,8 +362,8 @@ class PregoTransform(Transform):
             self.output_node_file.open("w", newline="") as node_fh,
             self.output_edge_file.open("w", newline="") as edge_fh,
         ):
-            node_writer = csv.writer(node_fh, delimiter="\t")
-            edge_writer = csv.writer(edge_fh, delimiter="\t")
+            node_writer = tsv_writer(node_fh)
+            edge_writer = tsv_writer(edge_fh)
             node_writer.writerow(self.node_header)
             edge_writer.writerow(self.edge_header)
 
@@ -1111,7 +1111,7 @@ class PregoTransform(Transform):
         first.
         """
         with self.unmapped_report_file.open("w", newline="") as fh:
-            writer = csv.writer(fh, delimiter="\t")
+            writer = tsv_writer(fh)
             writer.writerow(["reason", "exemplar_row", "occurrences", "reason_total"])
             for reason in sorted(self._drop_examples):
                 total = self._stats["rows_dropped_by_reason"][reason]

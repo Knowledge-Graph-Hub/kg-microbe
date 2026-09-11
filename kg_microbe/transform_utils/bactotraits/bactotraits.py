@@ -44,6 +44,7 @@ from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curi
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.ontology_utils import get_ncbitaxon_adapter, resolve_adapter
 from kg_microbe.utils.pandas_utils import drop_duplicates
+from kg_microbe.utils.tsv_io import tsv_writer
 
 
 class BactoTraitsTransform(Transform):
@@ -257,7 +258,7 @@ class BactoTraitsTransform(Transform):
             ):
                 # get 3 columns from bacdive.tsv: ['bacdive_id', 'culture_collection_number', 'ncbitaxon_id']
                 bacdive_reader = csv.DictReader(bacdive_file, delimiter="\t")
-                mapping_writer = csv.writer(mapping_handle, delimiter="\t")
+                mapping_writer = tsv_writer(mapping_handle)
                 mapping_writer.writerow(["Bacdive_ID", BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN, NCBITAXON_ID_COLUMN])
                 for row in bacdive_reader:
                     collection_number_list = row[BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN]
@@ -307,10 +308,10 @@ class BactoTraitsTransform(Transform):
             open(self.output_edge_file, "w") as edge,
         ):
             reader = csv.reader(infile, delimiter=";")
-            writer = csv.writer(outfile, delimiter="\t")
-            node_writer = csv.writer(node, delimiter="\t")
+            writer = tsv_writer(outfile)
+            node_writer = tsv_writer(node)
             node_writer.writerow(self.node_header)
-            edge_writer = csv.writer(edge, delimiter="\t")
+            edge_writer = tsv_writer(edge)
             edge_writer.writerow(self.edge_header)
 
             # Load custom YAML mappings for terms not in METPO

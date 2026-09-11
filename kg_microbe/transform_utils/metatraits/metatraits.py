@@ -62,6 +62,7 @@ from kg_microbe.utils.ontology_utils import (  # noqa: E402
     _db_is_for_ontology,
 )
 from kg_microbe.utils.pandas_utils import drop_duplicates  # noqa: E402
+from kg_microbe.utils.tsv_io import tsv_writer  # noqa: E402
 
 # Input file names (transform accepts either ncbi_* or metatraits_* convention)
 # NOTE: Only process species-level files, not genus or family summaries
@@ -3029,19 +3030,19 @@ class MetaTraitsTransform(Transform):
 
         # Write unmapped traits
         with open(self.unmapped_traits_file, "w", newline="") as uf:
-            uw = csv.writer(uf, delimiter="\t")
+            uw = tsv_writer(uf)
             uw.writerow(["trait_name", "tax_name", "majority_label", "num_observations"])
             uw.writerows(all_unmapped)
 
         # Write measurement traits
         with open(self.measurement_traits_file, "w", newline="") as mf:
-            mw = csv.writer(mf, delimiter="\t")
+            mw = tsv_writer(mf)
             mw.writerow(["trait_name", "tax_name", "majority_label", "num_observations"])
             mw.writerows(all_measurements)
 
         # Write unresolved taxa
         with open(self.unresolved_taxa_file, "w", newline="") as rf:
-            rw = csv.writer(rf, delimiter="\t")
+            rw = tsv_writer(rf)
             rw.writerow(["tax_name"])
             for t in sorted(all_unresolved):
                 rw.writerow([t])
@@ -3574,17 +3575,17 @@ class MetaTraitsTransform(Transform):
 
         # Write unmapped traits, measurement traits, and unresolved taxa
         with open(self.unmapped_traits_file, "w", newline="") as uf:
-            uw = csv.writer(uf, delimiter="\t")
+            uw = tsv_writer(uf)
             uw.writerow(["trait_name", "tax_name", "majority_label", "num_observations"])
             uw.writerows(unmapped_traits)
 
         with open(self.measurement_traits_file, "w", newline="") as mf:
-            mw = csv.writer(mf, delimiter="\t")
+            mw = tsv_writer(mf)
             mw.writerow(["trait_name", "tax_name", "majority_label", "num_observations"])
             mw.writerows(measurement_traits)
 
         with open(self.unresolved_taxa_file, "w", newline="") as rf:
-            rw = csv.writer(rf, delimiter="\t")
+            rw = tsv_writer(rf)
             rw.writerow(["tax_name"])
             for t in sorted(set(unresolved_taxa)):
                 rw.writerow([t])

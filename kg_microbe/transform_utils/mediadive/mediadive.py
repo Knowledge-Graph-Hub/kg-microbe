@@ -15,7 +15,6 @@ Output these two files:
 - edges.tsv
 """
 
-import csv
 import json
 import math
 import os
@@ -125,6 +124,7 @@ from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
 )
+from kg_microbe.utils.tsv_io import tsv_writer
 
 #: HTTP response cache for the API fallback, kept beside the bulk JSONs. The
 #: old name is the file `requests_cache.install_cache("mediadive_cache")` left
@@ -920,13 +920,13 @@ class MediaDiveTransform(Transform):
             open(self.output_node_file, "w") as node,
             open(self.output_edge_file, "w") as edge,
         ):
-            writer = csv.writer(tsvfile, delimiter="\t")
+            writer = tsv_writer(tsvfile)
             # Write the column names to the output file
             writer.writerow(COLUMN_NAMES)
 
-            node_writer = csv.writer(node, delimiter="\t")
+            node_writer = tsv_writer(node)
             node_writer.writerow(self.node_header)
-            edge_writer = csv.writer(edge, delimiter="\t")
+            edge_writer = tsv_writer(edge)
             edge_writer.writerow(self.edge_header)
 
             # Choose the appropriate context manager based on the flag

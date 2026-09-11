@@ -1,4 +1,4 @@
-"""KG-Microbe writes LF, not CRLF, in every TSV another tool parses (#1041)."""
+r"""KG-Microbe writes LF, not CRLF, in every TSV another tool parses (#1041)."""
 
 import ast
 import io
@@ -9,22 +9,25 @@ import pytest
 from kg_microbe.utils.tsv_io import tsv_dict_writer, tsv_writer
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+TRANSFORMED = REPO_ROOT / "data" / "transformed"
 
-#: Modules that write a nodes/edges TSV or a report beside one. A bare
-#: ``csv.writer`` here reintroduces CRLF into the shipped graph.
-GRAPH_WRITERS = (
-    "kg_microbe/merge_utils/merge_kg.py",
-    "kg_microbe/merge_utils/invariants.py",
-    "kg_microbe/transform_utils/gtdb/gtdb.py",
-    "kg_microbe/transform_utils/lpsn/lpsn.py",
-    "kg_microbe/transform_utils/lpsn_api/lpsn_api.py",
-    "kg_microbe/transform_utils/gold/gold.py",
-    "kg_microbe/transform_utils/bacdive/bacdive.py",
-)
+#: Every module that can write a graph TSV, enumerated rather than listed.
+#: The first version of this guard carried a hand-written list of seven files
+#: and silently missed `prego`, `rhea_mappings`, `metatraits`,
+#: `metatraits_gtdb` and `microbedecoder` -- 11 CRLF files still shipped. A
+#: list someone has to remember to extend is the same failure mode #1035 was
+#: about, so the scan now walks the trees.
+SCANNED_TREES = ("kg_microbe/transform_utils", "kg_microbe/merge_utils")
+
+
+def _modules():
+    """Yield every Python module under the scanned trees."""
+    for tree in SCANNED_TREES:
+        yield from sorted((REPO_ROOT / tree).rglob("*.py"))
 
 
 def _bare_csv_writers(path: Path):
-    """Return the line numbers of ``csv.writer``/``csv.DictWriter`` calls without an explicit terminator."""
+    """Return line numbers of ``csv.writer``/``csv.DictWriter`` calls without an explicit terminator."""
     found = []
     for node in ast.walk(ast.parse(path.read_text(encoding="utf-8"))):
         if not isinstance(node, ast.Call) or not isinstance(node.func, ast.Attribute):
@@ -39,24 +42,53 @@ def _bare_csv_writers(path: Path):
     return found
 
 
-@pytest.mark.parametrize("relpath", GRAPH_WRITERS)
-def test_graph_writers_do_not_use_a_bare_csv_writer(relpath):
+@pytest.mark.parametrize("module", list(_modules()), ids=lambda p: str(p.relative_to(REPO_ROOT)))
+def test_no_module_uses_a_bare_csv_writer(module):
     r"""
-    csv.writer defaults to lineterminator="\\r\\n" on every platform.
+    csv.writer defaults to lineterminator="\r\n" on every platform.
 
     `newline=""` does not change it -- gold, lpsn and lpsn_api all passed
     `newline=""` and still emitted CRLF, which is how every line of the shipped
     merged graph ended with a carriage return.
     """
-    bare = _bare_csv_writers(REPO_ROOT / relpath)
+    bare = _bare_csv_writers(module)
     assert not bare, (
-        f"{relpath} constructs csv.writer/DictWriter without lineterminator at line(s) {bare}; "
-        "use kg_microbe.utils.tsv_io.tsv_writer / tsv_dict_writer"
+        f"{module.relative_to(REPO_ROOT)} constructs csv.writer/DictWriter without lineterminator "
+        f"at line(s) {bare}; use kg_microbe.utils.tsv_io.tsv_writer / tsv_dict_writer"
     )
 
 
+def test_the_scan_actually_covers_the_transforms():
+    """A glob that silently matches nothing would make every check above vacuous."""
+    modules = list(_modules())
+    assert len(modules) > 30, f"only {len(modules)} modules scanned"
+    names = {m.name for m in modules}
+    for expected in ("prego.py", "rhea_mappings.py", "metatraits.py", "merge_kg.py", "gtdb.py"):
+        assert expected in names, f"{expected} is not being scanned"
+
+
+@pytest.mark.skipif(not TRANSFORMED.is_dir(), reason="no transform output on this checkout")
+def test_no_transform_output_on_disk_has_crlf():
+    r"""
+    Enumerate the files; never guess their paths.
+
+    Both misses in the first pass came from guessing: the survey looked for
+    `data/transformed/prego/nodes.tsv` when PREGO writes to `prego_habitat`
+    (`PREGO_SHAPES=habitat` changes the output directory, #885), and it tested
+    only `nodes.tsv` for sources whose `edges.tsv` was the CRLF one. A
+    `find`-shaped check cannot make either mistake.
+    """
+    offenders = []
+    for tsv in sorted(TRANSFORMED.rglob("*.tsv")):
+        with tsv.open("rb") as handle:
+            chunk = handle.read(200_000)
+        if b"\r\n" in chunk:
+            offenders.append(str(tsv.relative_to(REPO_ROOT)))
+    assert not offenders, "CRLF in transform output (rerun these sources): " + ", ".join(offenders)
+
+
 def test_the_helper_writes_lf_where_a_bare_writer_writes_crlf():
-    """The premise, pinned: this is the difference the whole change rests on."""
+    r"""The premise, pinned: this is the difference the whole change rests on."""
     import csv
 
     bare = io.StringIO()
@@ -81,7 +113,7 @@ def test_an_empty_last_field_is_empty_not_a_carriage_return():
     r"""
     The corruption this prevents: a trailing CR lands in the last column.
 
-    An "empty" last field then holds "\\r", so a truthiness test on it inverts --
+    An "empty" last field then holds "\r", so a truthiness test on it inverts --
     which is how a count of gtdb nodes carrying a `same_as` read 901,341 instead
     of 447,137.
     """

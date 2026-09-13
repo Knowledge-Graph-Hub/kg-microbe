@@ -56,7 +56,7 @@ CANONICAL_EDGE_HEADER = [
     AGENT_TYPE_COLUMN,
 ]
 
-EDGE_COLUMNS_TO_DROP = {ID_COLUMN, "meta"}
+EDGE_COLUMNS_TO_DROP = {ID_COLUMN, "meta", "key"}
 NODE_COLUMNS_TO_DROP = {"subsets", "meta", "iri"}
 #: Known non-canonical edge columns. Membership is not what keeps a column:
 #: ``_resolve_column_plan`` appends any unrecognised header anyway, so an
@@ -69,13 +69,40 @@ EDGE_EXTENSION_COLUMNS = {"has_percentage", "original_object"}
 
 
 def merge(*args, **kwargs):
-    """Invoke KGX merge after configuring its import-time BMT toolkit locally."""
+    """Invoke KGX with local schema and provenance-preserving graph export (#1049)."""
     from kg_microbe.utils.biolink_model import prepare_kgx
 
     prepare_kgx()
-    from kgx.cli.cli_utils import merge as kgx_merge
+    from kgx import transformer as transformer_module
+    from kgx.cli import cli_utils
 
-    return kgx_merge(*args, **kwargs)
+    from kg_microbe.merge_utils.kgx_source import (
+        ProvenancePreservingTransformer,
+        RelationAwareGraphSink,
+        RelationAwareGraphSource,
+        RelationAwareTsvSink,
+        parse_source,
+    )
+
+    original_transformer = cli_utils.Transformer
+    original_parser = cli_utils.parse_source
+    original_sink = transformer_module.GraphSink
+    original_graph_source = transformer_module.SOURCE_MAP["graph"]
+    original_tsv_sinks = {name: transformer_module.SINK_MAP[name] for name in ("tsv", "csv")}
+
+    cli_utils.Transformer = ProvenancePreservingTransformer
+    cli_utils.parse_source = parse_source
+    transformer_module.GraphSink = RelationAwareGraphSink
+    transformer_module.SOURCE_MAP["graph"] = RelationAwareGraphSource
+    transformer_module.SINK_MAP.update({name: RelationAwareTsvSink for name in original_tsv_sinks})
+    try:
+        return cli_utils.merge(*args, **kwargs)
+    finally:
+        cli_utils.Transformer = original_transformer
+        cli_utils.parse_source = original_parser
+        transformer_module.GraphSink = original_sink
+        transformer_module.SOURCE_MAP["graph"] = original_graph_source
+        transformer_module.SINK_MAP.update(original_tsv_sinks)
 
 
 def parse_load_config(yaml_file: str) -> Dict:
@@ -243,7 +270,13 @@ def _cleanup_merged_outputs(yaml_file: str) -> None:
             stats_name = stats_filename_from_config(config)
             if stats_name:
                 try:
-                    annotate_graph_stats(Path(stats_name), edges_file, Path(yaml_file), _repo_root())
+                    annotate_graph_stats(
+                        Path(stats_name),
+                        edges_file,
+                        Path(yaml_file),
+                        _repo_root(),
+                        edges_archive=archive if dest.get("compression") == "tar.gz" else None,
+                    )
                     print(f"[merge-stats] {stats_name}: provenance and raw predicate counts written")
                 except Exception as exc:  # noqa: BLE001
                     print(f"[merge-stats] annotation skipped: {exc}")

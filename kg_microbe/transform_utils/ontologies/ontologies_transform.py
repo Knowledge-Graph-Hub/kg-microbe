@@ -45,6 +45,7 @@ from kg_microbe.transform_utils.constants import (
     XREF_COLUMN,
 )
 from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.graph_canonicalization import canonical_node_category, compact_identifier
 from kg_microbe.utils.ontology_utils import (
     _decompress_atomically,
     _derived_json_is_stale,
@@ -417,6 +418,11 @@ class OntologiesTransform(Transform):
         dangling edges remain. Active terms are untouched. The file is only
         rewritten when something is actually removed.
         """
+        # Remember actual annotation declarations while this JSON is already
+        # in memory. A prefix allowlist alone misses custom metadata such as
+        # QUDT's ucumCode and GO's applies-pattern (#1054). Reset per ontology
+        # so declarations cannot leak into the next source in a batch.
+        self._annotation_property_ids = set()
         if not json_path.is_file() or json_path.suffix != ".json":
             return
         try:
@@ -428,6 +434,11 @@ class OntologiesTransform(Transform):
         dropped_nodes = 0
         dropped_edges = 0
         for graph in data.get("graphs", []) or []:
+            self._annotation_property_ids.update(
+                compact_identifier(node["id"])
+                for node in graph.get("nodes", []) or []
+                if node.get("id") and node.get("propertyType") == "ANNOTATION"
+            )
             deprecated_ids = {
                 node["id"] for node in graph.get("nodes", []) or [] if node.get("id") and self._is_deprecated_node(node)
             }
@@ -477,9 +488,10 @@ class OntologiesTransform(Transform):
         """
         Return ``(filtered_df, dropped_count)`` with annotation-property nodes removed.
 
-        Drops rows whose ``id`` prefix is in :data:`METAMODEL_NODE_PREFIXES` --
-        the vocabulary an ontology annotates with rather than anything it
-        defines. Pure DataFrame transform (no I/O), mirroring
+        Drops declared annotation properties collected from obograph JSON as
+        well as ids in :data:`METAMODEL_NODE_PREFIXES` -- the vocabulary an
+        ontology annotates with rather than anything it defines. Pure
+        DataFrame transform (no I/O), mirroring
         :meth:`_drop_metamodel_edges`; returns the frame unchanged when the id
         column is absent.
         """
@@ -487,7 +499,8 @@ class OntologiesTransform(Transform):
             return df, 0
         before = len(df)
         prefixes = df[ID_COLUMN].astype(str).str.split(":", n=1).str[0]
-        df = df[~prefixes.isin(METAMODEL_NODE_PREFIXES)]
+        annotation_ids = getattr(self, "_annotation_property_ids", set())
+        df = df[~(prefixes.isin(METAMODEL_NODE_PREFIXES) | df[ID_COLUMN].isin(annotation_ids))]
         return df, before - len(df)
 
     def _add_kgx_metadata_to_edges(self, edges_file_path: Path):
@@ -1044,6 +1057,13 @@ class OntologiesTransform(Transform):
             for col in added_node_cols:
                 df[col] = ""
             df = df[self.node_header]
+            # Apply namespace-owned categories to imported terms too. The
+            # per-file handlers cannot fix FOODON/PATO rows in ENVO, UBERON,
+            # etc., and KGX later unions their stale OntologyClass category.
+            df[CATEGORY_COLUMN] = [
+                canonical_node_category(str(identifier), category)
+                for identifier, category in zip(df[ID_COLUMN], df[CATEGORY_COLUMN], strict=True)
+            ]
             df, dropped_metamodel_nodes = self._drop_metamodel_nodes(df)
             df.to_csv(nodes_file, sep="\t", index=False)
             if dropped_metamodel_nodes:
@@ -1122,6 +1142,14 @@ class OntologiesTransform(Transform):
             # above). These property-level / typing statements are not biolink
             # entity relationships. Nodes are left untouched.
             df, dropped_metamodel = self._drop_metamodel_edges(df)
+            annotation_ids = getattr(self, "_annotation_property_ids", set())
+            if annotation_ids:
+                # Annotation *predicates* remain in metadata. Only graph
+                # endpoints purporting to describe an annotation as an
+                # entity are removed with their non-entity node.
+                before = len(df)
+                df = df[~(df[SUBJECT_COLUMN].isin(annotation_ids) | df[OBJECT_COLUMN].isin(annotation_ids))]
+                dropped_metamodel += before - len(df)
 
             df.to_csv(edges_file, sep="\t", index=False)
             if dropped_metamodel:
@@ -1150,30 +1178,25 @@ class OntologiesTransform(Transform):
         # Process nodes file
         df_nodes = pd.read_csv(nodes_file, sep="\t", low_memory=False)
 
-        # Track URL to CURIE mappings for updating edges
-        url_to_curie_map = {}
-
         # Convert URL IDs to CURIEs
         if "id" in df_nodes.columns:
             for idx, node_id in df_nodes["id"].items():
                 if isinstance(node_id, str) and url_pattern.match(node_id):
                     curie = uri_to_curie(node_id)
-                    url_to_curie_map[node_id] = curie
                     df_nodes.at[idx, "id"] = curie
 
         # Save updated nodes file
         df_nodes.to_csv(nodes_file, sep="\t", index=False)
 
-        # Process edges file if there were any URL conversions
-        if url_to_curie_map:
+        # Edge-only references must compact as well: another ontology may own
+        # the corresponding node, so a local node lookup is not sufficient.
+        if edges_file.is_file():
             df_edges = pd.read_csv(edges_file, sep="\t", low_memory=False)
 
             # Update subject and object columns
             for col in ["subject", "object"]:
                 if col in df_edges.columns:
-                    df_edges[col] = df_edges[col].apply(
-                        lambda x: url_to_curie_map.get(x, x) if isinstance(x, str) else x
-                    )
+                    df_edges[col] = df_edges[col].apply(lambda x: uri_to_curie(x) if isinstance(x, str) else x)
 
             # Save updated edges file
             df_edges.to_csv(edges_file, sep="\t", index=False)

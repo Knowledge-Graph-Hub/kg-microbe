@@ -15,7 +15,7 @@ blocks the merge step already knows how to fill:
 ``provenance``
     when, from which commit (short HEAD, ``-dirty`` if tracked files other than
     the stats file differ), which merge
-    config, which edges file, and each source's ``source_fingerprint.json``
+    config, which edges artifact (archive and member, or loose file), and each source's ``source_fingerprint.json``
     digest or ``no marker``.
 ``edge_stats.count_by_raw_predicate``
     the predicate column counted directly from the merged edges TSV, no
@@ -183,6 +183,7 @@ def annotate_graph_stats(
     yaml_file: Path,
     repo_root: Path,
     now: Optional[datetime] = None,
+    edges_archive: Optional[Path] = None,
 ) -> Dict:
     """
     Add ``provenance`` and ``edge_stats.count_by_raw_predicate`` to a stats file.
@@ -192,6 +193,8 @@ def annotate_graph_stats(
     :param yaml_file: The merge config that produced both.
     :param repo_root: Checkout root, for ``git describe`` and the markers.
     :param now: Timestamp to record; defaults to UTC now.
+    :param edges_archive: Published archive containing the edges; when supplied,
+        record it and its member instead of the temporary loose TSV (#1055).
     :return: The annotated stats dict, as written.
     :raises ValueError: If the raw predicate total disagrees with KGX's
         ``total_edges`` -- the two counted different files.
@@ -218,7 +221,11 @@ def annotate_graph_stats(
         "generated_at": stamp.isoformat(),
         "commit": git_commit(repo_root, ignore=(stats_file,)),
         "merge_config": str(yaml_file),
-        "edges_file": str(edges_file),
+        **(
+            {"edges_archive": str(edges_archive), "edges_archive_member": edges_file.name}
+            if edges_archive is not None
+            else {"edges_file": str(edges_file)}
+        ),
         "python": sys.version.split()[0],
         "kgx": _kgx_version(),
         "sources": source_markers(config, repo_root),

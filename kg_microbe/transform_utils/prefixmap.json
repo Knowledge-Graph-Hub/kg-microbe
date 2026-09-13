@@ -14,5 +14,6 @@
     "orcid": "https://orcid.org/",
     "schema": "http://schema.org/",
     "doap": "http://usefulinc.com/ns/doap#",
-    "GO": "http://purl.obolibrary.org/obo/GO_"
+    "GO": "http://purl.obolibrary.org/obo/GO_",
+    "time": "http://www.w3.org/2006/time#"
 }

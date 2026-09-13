@@ -1,0 +1,3 @@
+id	category	name	provided_by
+time:Instant	biolink:OntologyClass	instant	infores:beta
+FOODON:1	biolink:Food	food	infores:beta

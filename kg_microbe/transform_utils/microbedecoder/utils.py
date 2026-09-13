@@ -12,6 +12,16 @@ from __future__ import annotations
 import re
 from typing import Dict, Iterable, List, Optional, Tuple
 
+from kg_microbe.transform_utils.constants import (
+    GOLD_PREFIX,
+    GTDB_PREFIX,
+    IMG_PREFIX,
+    NCBI_ASSEMBLY_PREFIX,
+    NCBITAXON_PREFIX,
+    STRAIN_PREFIX,
+)
+from kg_microbe.transform_utils.gtdb.utils import assembly_curie
+
 # ---------------------------------------------------------------------------
 # Column groups (matches the wide `database.csv` produced by MicrobeDecoder's
 # `Database/assembleDatabase.R`). Grouped by source-of-record so the transform
@@ -39,12 +49,33 @@ LPSN_SUBSPECIES_COLUMN = "LPSN_Subspecies"
 # `bacdive:<id>` form this used to emit is not a node anywhere in the graph,
 # so all ~19 K of these edges dangled and KGX turned them into empty stubs.
 CROSSWALK_COLUMNS: Tuple[Tuple[str, str, Optional[str]], ...] = (
-    ("NCBI_Taxonomy_ID", "NCBITaxon:", None),
-    ("GTDB_ID", "GTDB:", None),
-    ("BacDive_ID", "kgmicrobe.strain:bacdive_", "bacdive:"),
-    ("GOLD_Organism_ID", "GOLD:", None),
-    ("IMG_Genome_ID", "IMG:", None),
+    ("NCBI_Taxonomy_ID", NCBITAXON_PREFIX, None),
+    ("GTDB_ID", GTDB_PREFIX, None),
+    ("BacDive_ID", f"{STRAIN_PREFIX}bacdive_", "bacdive:"),
+    ("GOLD_Organism_ID", GOLD_PREFIX, None),
+    ("IMG_Genome_ID", IMG_PREFIX, None),
 )
+
+# GTDB_ID holds both assembly accessions and taxonomy strings. Only the former
+# use the NCBI Assembly namespace; rank-qualified strings must stay GTDB (#1050).
+_ASSEMBLY_ACCESSION = re.compile(r"(?:RS_|GB_)?GC[AF]_\d+(?:\.\d+)?")
+
+
+def crosswalk_curie(local_id: str, prefix: str, source_prefix: Optional[str] = None) -> str:
+    """Normalize a crosswalk token to the identifier its owner transform emits."""
+    # Source cells may already be CURIEs. Matching case-insensitively also
+    # repairs legacy GOLD: without changing the case-sensitive local ID (#1051).
+    candidates = (prefix, source_prefix)
+    if prefix == GTDB_PREFIX:
+        candidates += (NCBI_ASSEMBLY_PREFIX,)
+    for candidate in candidates:
+        if candidate and local_id.upper().startswith(candidate.upper()):
+            local_id = local_id[len(candidate) :]
+            break
+    if prefix == GTDB_PREFIX and _ASSEMBLY_ACCESSION.fullmatch(local_id):
+        return assembly_curie(local_id)
+    return f"{prefix}{local_id}"
+
 
 # The BacDive crosswalk is not an identifier equivalence like the others. Its
 # target is a *strain*, not another name for the same taxon, and the source says

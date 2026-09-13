@@ -1,0 +1,4 @@
+subject	predicate	object	relation	primary_knowledge_source	knowledge_level	agent_type
+GTDB:s__Current_one	biolink:broad_match	NCBITaxon:1	skos:broadMatch	infores:gtdb	knowledge_assertion	automated_agent
+GTDB:s__Outside_this_metatraits_input	biolink:broad_match	NCBITaxon:1	skos:broadMatch	infores:gtdb	knowledge_assertion	automated_agent
+GTDB:s__Current_solo	biolink:close_match	NCBITaxon:2	skos:closeMatch	infores:gtdb	knowledge_assertion	automated_agent

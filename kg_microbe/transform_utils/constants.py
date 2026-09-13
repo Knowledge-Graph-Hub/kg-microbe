@@ -239,7 +239,9 @@ LPSN_PREFIX = "lpsn:"
 # LPSN ↔ GOLD ↔ IMG crosswalk. Registered here so cross_ref edges emit
 # well-formed CURIEs and validators (kg_model_review STANDARD_PREFIXES,
 # custom_curies.yaml loader) accept them.
-GOLD_PREFIX = "GOLD:"  # Genomes OnLine Database (organism/project IDs)
+GOLD_PREFIX = "gold:"  # Same namespace as the GOLD transform's organism/project IDs.
+GOLD_ORGANISM_FOLD_FILE = "organism_folds.tsv"
+GOLD_ORGANISM_FOLD_HEADER = ("original_id", "canonical_id")
 IMG_PREFIX = "IMG:"  # JGI Integrated Microbial Genomes
 
 # Knowledge-source infores identifiers for the four curated sources

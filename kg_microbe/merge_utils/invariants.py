@@ -10,6 +10,7 @@ this module is the check that notices if another source reintroduces them (#896)
 
 import csv
 import logging
+import re
 from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
@@ -143,7 +144,11 @@ def check_merged_invariants(
             writer = tsv_writer(handle)
             writer.writerow(STUB_NODE_REPORT_HEADER)
             writer.writerows(stub_node_rows(stubs))
-        unexpected = {p: c for p, c in stubs.items() if p not in EXPECTED_STUB_PREFIXES}
+        unexpected = {
+            prefix: offenders
+            for prefix, curies in stubs.items()
+            if (offenders := [curie for curie in curies if not expected_stub_reason(curie)])
+        }
         if unexpected:
             logger.warning(
                 "[merge-invariants] %s nodes across %s prefixes were invented by KGX for endpoints "
@@ -188,16 +193,31 @@ STUB_NODE_REPORT = "merged_stub_nodes.tsv"
 
 STUB_NODE_REPORT_HEADER = ["prefix", "count", "expected", "note", "examples"]
 
-#: Prefixes we reference deliberately without ever supplying a node for them.
-#: These are cross-reference identifiers -- a GOLD study id, an IMG genome id, a
-#: GTDB taxon string -- that name a record in someone else's system. We assert
-#: edges to them on purpose and do not ingest those systems as nodes, so a stub is
-#: the correct outcome, not a gap. Everything else is reported (#918).
+#: Only prefixes whose *every* identifier is an external cross-reference belong
+#: here. GOLD organisms and GTDB assemblies have owner transforms, so exempting
+#: their entire prefixes hid namespace defects affecting 31 K nodes (#1050/1051).
 EXPECTED_STUB_PREFIXES = {
     "IMG": "IMG genome and taxon identifiers, referenced from GOLD",
-    "GOLD": "GOLD study, project and biosample identifiers",
-    "GTDB": "GTDB taxon strings, referenced as cross-references",
 }
+
+#: Narrow exceptions for identifiers we deliberately do not declare. Keep the
+#: namespace canonical: uppercase GOLD is always a legacy-namespace defect.
+EXPECTED_STUB_PATTERNS = (
+    (re.compile(r"GTDB:[dpcofgs]__.+"), "GTDB taxon strings, referenced as cross-references"),
+    (re.compile(r"gold:G[spb]\d+"), "GOLD study, project and biosample identifiers"),
+)
+
+
+def expected_stub_reason(curie: str) -> str:
+    """Return the justification for an intentionally undeclared CURIE, if any."""
+    prefix = curie.split(":", 1)[0]
+    if prefix in EXPECTED_STUB_PREFIXES:
+        return EXPECTED_STUB_PREFIXES[prefix]
+    for pattern, reason in EXPECTED_STUB_PATTERNS:
+        if pattern.fullmatch(curie):
+            return reason
+    return ""
+
 
 #: What KGX types a node it invented for an undeclared endpoint.
 NAMED_THING_CATEGORY = "biolink:NamedThing"
@@ -240,22 +260,29 @@ def find_stub_nodes(nodes_file: Path) -> Dict[str, List[str]]:
 
 def stub_node_rows(stubs: Dict[str, List[str]]) -> List[List]:
     """
-    Render stub counts per prefix, flagging the ones we did not intend.
+    Render stub counts per prefix and expectation, flagging unintended ones.
+
+    A mixed prefix produces separate yes/no rows: 25 taxon references must not
+    cause 15,584 mis-prefixed assembly references to be called expected (#1050).
 
     :param stubs: Result of :func:`find_stub_nodes`.
     :return: Rows matching :data:`STUB_NODE_REPORT_HEADER`.
     """
+    groups: Dict[Tuple[str, str], List[str]] = defaultdict(list)
+    for prefix, curies in stubs.items():
+        for curie in curies:
+            groups[prefix, expected_stub_reason(curie)].append(curie)
     return [
         [
             prefix,
             len(curies),
-            "yes" if prefix in EXPECTED_STUB_PREFIXES else "no",
+            "yes" if reason else "no",
             # "Expected" is the claim in this file that most needs justifying: it
             # separates rows that are fine from rows that are not. The reason is
             # already written down, so it belongs in the report rather than only
             # in the source a reader would have to go and find (#935).
-            EXPECTED_STUB_PREFIXES.get(prefix, ""),
-            "|".join(curies[:3]),
+            reason,
+            "|".join(sorted(curies)[:3]),
         ]
-        for prefix, curies in sorted(stubs.items(), key=lambda item: (-len(item[1]), item[0]))
+        for (prefix, reason), curies in sorted(groups.items(), key=lambda item: (-len(item[1]), item[0]))
     ]

@@ -5,12 +5,34 @@ Extends MetaTraitsTransform to process GTDB-based metatraits data.
 Uses GTDB metadata files to map GTDB species names to NCBITaxon IDs.
 """
 
+import csv
 import gzip
 from collections import Counter, defaultdict
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, Optional, Set, Tuple, Union
 
-from kg_microbe.transform_utils.constants import METATRAITS_GTDB, RAW_DATA_DIR
+from kg_microbe.transform_utils.constants import (
+    AGENT_TYPE_COLUMN,
+    AUTOMATED_AGENT,
+    BROAD_MATCH_PREDICATE,
+    BROAD_MATCH_RELATION,
+    CLOSE_MATCH_PREDICATE,
+    CLOSE_MATCH_RELATION,
+    GTDB,
+    ID_COLUMN,
+    KNOWLEDGE_ASSERTION,
+    KNOWLEDGE_LEVEL_COLUMN,
+    METATRAITS_GTDB,
+    NAME_COLUMN,
+    OBJECT_COLUMN,
+    PREDICATE_COLUMN,
+    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+    RAW_DATA_DIR,
+    RDFS_SUBCLASS_OF,
+    RELATION_COLUMN,
+    SUBCLASS_PREDICATE,
+    SUBJECT_COLUMN,
+)
 from kg_microbe.transform_utils.gtdb.utils import clean_taxon_name
 from kg_microbe.transform_utils.metatraits.metatraits import MetaTraitsTransform
 from kg_microbe.transform_utils.transform import Transform
@@ -30,6 +52,9 @@ METATRAITS_GTDB_INPUT_FILES = [
 
 class MetaTraitsGTDBTransform(MetaTraitsTransform):
     """Transform GTDB metatraits summary JSONL files into KGX nodes and edges."""
+
+    # Synthetic crosswalks reuse GTDB's whole-release fan-in decisions (#1053).
+    TRANSFORM_INPUTS = (*MetaTraitsTransform.TRANSFORM_INPUTS, GTDB)
 
     def __init__(
         self,
@@ -105,7 +130,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         # subspecies/strain ids), so ~22% of this transform's edges changed
         # subject on every run (#1006).
         self.gtdb_to_ncbi: Dict[str, Counter] = defaultdict(Counter)
-        # Genome accession -> NCBITaxon ID mapping (for equivalence links)
+        # Genome accession -> NCBITaxon ID mapping (for cross-database links)
         self.accession_to_ncbi: Dict[str, str] = {}
         # Genome accession -> current GTDB species name (for hierarchical links)
         self.accession_to_gtdb_species: Dict[str, str] = {}
@@ -323,7 +348,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         Overrides parent class method. Instead of returning NCBITaxon IDs,
         creates synthetic GTDB: nodes and stores metadata for creating:
         - rdfs:subClassOf edges to GTDB taxonomy (via genome accession)
-        - owl:sameAs edges to NCBITaxon (when available)
+        - canonical GTDB close_match/broad_match links to NCBITaxon (when available)
 
         Strategy:
         1. Try direct lookup by current taxonomy name → use if matches
@@ -369,10 +394,49 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
                 "original_name": search_name,
                 "accession": accession,
                 "current_gtdb_species": current_gtdb_species,  # For subClassOf edge
-                "ncbi_taxon": ncbi_id,  # For sameAs edge
+                "ncbi_taxon": ncbi_id,  # For a canonical GTDB mapping edge
             }
 
         return synthetic_node_id
+
+    def _load_canonical_ncbi_mappings(self, pairs: Set[Tuple[str, str]]) -> Dict[Tuple[str, str], Tuple[str, str]]:
+        """
+        Read requested mapping decisions from the canonical GTDB transform.
+
+        The #883 fan-in rule uses *all* GTDB taxa, not just the historical
+        taxa in this input. Recomputing it over synthetic nodes or counting
+        genomes instead of taxa would silently strengthen broad_match back
+        to close_match. Reuse the exact upstream pair and relation instead;
+        an absent pair supplies no evidence for a cross-database assertion.
+
+        The edge file is streamed and only requested pairs are retained.
+        """
+        if not pairs:
+            return {}
+        edge_file = self.output_base_dir / GTDB / "edges.tsv"
+        if not edge_file.is_file():
+            raise FileNotFoundError(
+                f"Canonical GTDB mappings not found at {edge_file}. Run the gtdb transform before metatraits_gtdb."
+            )
+        expected_relations = {
+            CLOSE_MATCH_PREDICATE: CLOSE_MATCH_RELATION,
+            BROAD_MATCH_PREDICATE: BROAD_MATCH_RELATION,
+        }
+        mappings = {}
+        with edge_file.open(encoding="utf-8", newline="") as handle:
+            for edge in csv.DictReader(handle, delimiter="\t"):
+                pair = (edge[SUBJECT_COLUMN], edge[OBJECT_COLUMN])
+                if pair not in pairs:
+                    continue
+                predicate = edge[PREDICATE_COLUMN]
+                relation = edge[RELATION_COLUMN]
+                if predicate not in expected_relations or relation != expected_relations[predicate]:
+                    raise ValueError(f"Invalid canonical GTDB mapping for {pair}: {predicate} / {relation}")
+                mapping = (predicate, relation)
+                if pair in mappings and mappings[pair] != mapping:
+                    raise ValueError(f"Conflicting canonical GTDB mappings for {pair}")
+                mappings[pair] = mapping
+        return mappings
 
     def _create_hierarchical_edges(self) -> None:
         """
@@ -380,7 +444,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
 
         For each synthetic node, creates:
         1. rdfs:subClassOf edge to current GTDB species (via genome accession)
-        2. owl:sameAs edge to NCBITaxon (if available)
+        2. Canonical close_match/broad_match edge to NCBITaxon (if available)
 
         These edges enable graph traversal from historical taxonomy to current
         taxonomy and cross-database integration.
@@ -388,21 +452,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         Note: Reads synthetic nodes from output file since worker metadata is not
         available in main process after multiprocessing.
         """
-        import csv
         import re
-
-        from kg_microbe.transform_utils.constants import (
-            ID_COLUMN,
-            NAME_COLUMN,
-            OBJECT_COLUMN,
-            PREDICATE_COLUMN,
-            PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
-            RDFS_SUBCLASS_OF,
-            RELATION_COLUMN,
-            SAME_AS_PREDICATE,
-            SUBCLASS_PREDICATE,
-            SUBJECT_COLUMN,
-        )
 
         print("\n  Creating hierarchical edges for synthetic GTDB nodes...")
 
@@ -424,6 +474,12 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         print(f"  Found {len(synthetic_nodes)} synthetic GTDB nodes")
 
         hierarchical_edges = []
+        mapping_candidates = []
+        provenance = {
+            PRIMARY_KNOWLEDGE_SOURCE_COLUMN: self.knowledge_source,
+            KNOWLEDGE_LEVEL_COLUMN: KNOWLEDGE_ASSERTION,
+            AGENT_TYPE_COLUMN: AUTOMATED_AGENT,
+        }
 
         # Create edges for each synthetic node
         for node_info in synthetic_nodes:
@@ -443,6 +499,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
 
             # Edge 1: rdfs:subClassOf to current GTDB species
             if current_species:
+                current_id = f"GTDB:s__{clean_taxon_name(current_species)}"
                 hierarchical_edges.append(
                     {
                         SUBJECT_COLUMN: node_id,
@@ -450,27 +507,41 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
                         # s__ prefix matches the canonical gtdb-transform CURIE
                         # scheme (GTDB:s__<species>) so this subClassOf edge lands
                         # on a real GTDB taxonomy node in the merged graph.
-                        OBJECT_COLUMN: f"GTDB:s__{clean_taxon_name(current_species)}",
+                        OBJECT_COLUMN: current_id,
                         RELATION_COLUMN: RDFS_SUBCLASS_OF,
-                        PRIMARY_KNOWLEDGE_SOURCE_COLUMN: "infores:gtdb-metatraits",
+                        **provenance,
                     }
                 )
+                if ncbi_taxon:
+                    mapping_candidates.append((node_id, current_id, ncbi_taxon))
 
-            # Edge 2: owl:sameAs to NCBITaxon (equivalence)
-            if ncbi_taxon:
-                hierarchical_edges.append(
-                    {
-                        SUBJECT_COLUMN: node_id,
-                        PREDICATE_COLUMN: SAME_AS_PREDICATE,
-                        OBJECT_COLUMN: ncbi_taxon,
-                        RELATION_COLUMN: "owl:sameAs",
-                        PRIMARY_KNOWLEDGE_SOURCE_COLUMN: "infores:gtdb-metatraits",
-                    }
-                )
+        # Edge 2: preserve GTDB's whole-release fan-in decision, never identity.
+        mappings = self._load_canonical_ncbi_mappings(
+            {(current_id, ncbi_taxon) for _, current_id, ncbi_taxon in mapping_candidates}
+        )
+        missing_mappings = 0
+        for node_id, current_id, ncbi_taxon in mapping_candidates:
+            mapping = mappings.get((current_id, ncbi_taxon))
+            if mapping is None:
+                missing_mappings += 1
+                continue
+            predicate, relation = mapping
+            hierarchical_edges.append(
+                {
+                    SUBJECT_COLUMN: node_id,
+                    PREDICATE_COLUMN: predicate,
+                    OBJECT_COLUMN: ncbi_taxon,
+                    RELATION_COLUMN: relation,
+                    **provenance,
+                }
+            )
 
         print(f"  Created {len(hierarchical_edges)} hierarchical edges:")
         print(f"    - {sum(1 for e in hierarchical_edges if 'subClassOf' in e[RELATION_COLUMN])} subClassOf edges")
-        print(f"    - {sum(1 for e in hierarchical_edges if 'sameAs' in e[RELATION_COLUMN])} sameAs edges")
+        for predicate in (CLOSE_MATCH_PREDICATE, BROAD_MATCH_PREDICATE):
+            print(f"    - {sum(e[PREDICATE_COLUMN] == predicate for e in hierarchical_edges)} {predicate} edges")
+        if missing_mappings:
+            print(f"    - {missing_mappings} NCBI links skipped: no matching canonical GTDB mapping")
 
         # Append to existing edge file
         if hierarchical_edges:

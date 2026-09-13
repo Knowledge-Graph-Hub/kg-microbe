@@ -118,12 +118,15 @@ from kg_microbe.transform_utils.constants import (
     EXACT_MATCH,
     EXACT_MATCH_PREDICATE,
     GOLD,
+    GOLD_ORGANISM_FOLD_FILE,
+    GOLD_ORGANISM_FOLD_HEADER,
     KNOWLEDGE_ASSERTION,
     MANUAL_AGENT,
     NCBI_CATEGORY,
     RDFS_SUBCLASS_OF,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.tsv_io import tsv_writer
 
 #: Upstream filenames inside ``data/raw/gold/``.
@@ -336,6 +339,13 @@ class GOLDTransform(Transform):
         collapse = self._organism_collapse(nodes_in, edges_in, dropped)
         incident = self._write_edges(edges_in, dropped, resolution, ecosystem_labels, collapse)
         self._write_nodes(nodes_in, dropped, seen_before, incident, collapse)
+        # The fold removes IDs that another source can still reference (#1051).
+        # Publish the actual decision, including retired-taxid remapping, rather
+        # than making consumers repeat name matching or invent same_as edges.
+        with atomic_write(self.output_dir / GOLD_ORGANISM_FOLD_FILE, encoding="utf-8", newline="") as handle:
+            writer = tsv_writer(handle)
+            writer.writerow(GOLD_ORGANISM_FOLD_HEADER)
+            writer.writerows(sorted(collapse.items()))
 
     def _trimmed_taxa(self) -> Optional[set]:
         """

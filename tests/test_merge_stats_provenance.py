@@ -91,6 +91,40 @@ def test_provenance_names_when_config_commit_and_source_markers(tmp_path):
     assert on_disk["provenance"] == prov
 
 
+def test_compressed_merge_provenance_names_a_surviving_artifact(tmp_path):
+    """The archive locator still resolves after cleanup removes the loose TSVs (#1055)."""
+    import tarfile
+
+    from kg_microbe.merge_utils.merge_kg import _cleanup_merged_outputs
+
+    stats, edges, config = _write_fixture(tmp_path)
+    nodes = tmp_path / "merged-kg_nodes.tsv"
+    nodes.write_text("id\tcategory\tname\nNCBITaxon:1\tbiolink:OrganismTaxon\tone\n", encoding="utf-8")
+    archive_path = tmp_path / "merged-kg.tar.gz"
+    with tarfile.open(archive_path, "w:gz") as archive:
+        for path in (nodes, edges):
+            archive.add(path, arcname=path.name)
+    nodes.unlink()
+    edges.unlink()
+    settings = yaml.safe_load(config.read_text(encoding="utf-8"))
+    settings["configuration"] = {"output_directory": str(tmp_path)}
+    settings["merged_graph"]["destination"] = {
+        "tsv": {"format": "tsv", "filename": "merged-kg", "compression": "tar.gz"}
+    }
+    settings["merged_graph"]["operations"][0]["args"]["filename"] = str(stats)
+    config.write_text(yaml.safe_dump(settings), encoding="utf-8")
+
+    _cleanup_merged_outputs(str(config))
+
+    provenance = yaml.safe_load(stats.read_text(encoding="utf-8"))["provenance"]
+    assert "edges_file" not in provenance, "must not cite the deleted working file"
+    assert Path(provenance["edges_archive"]).is_file()
+    with tarfile.open(provenance["edges_archive"]) as archive:
+        assert archive.getmember(provenance["edges_archive_member"]).isfile()
+    assert not edges.exists()
+    assert not nodes.exists()
+
+
 def test_annotating_twice_replaces_rather_than_appends(tmp_path):
     """Re-running the merge must not stack provenance blocks or double the raw counts."""
     stats, edges, config = _write_fixture(tmp_path)

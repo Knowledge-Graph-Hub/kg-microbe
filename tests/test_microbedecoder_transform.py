@@ -1,6 +1,7 @@
 """Tests for the MicrobeDecoder transform."""
 
 import csv
+import shutil
 from pathlib import Path
 
 import pytest
@@ -10,6 +11,7 @@ from kg_microbe.transform_utils.constants import (
     CLOSE_MATCH_PREDICATE,
     COMPOUND_PREFIX,
     FAPROTAX_KNOWLEDGE_SOURCE,
+    GOLD_ORGANISM_FOLD_FILE,
     HAS_PHENOTYPE_PREDICATE,
     LITERATURE_KNOWLEDGE_SOURCE,
     LPSN_PREFIX,
@@ -21,6 +23,13 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
 
 FIXTURE_DIR = Path(__file__).parent / "resources" / "microbedecoder"
+
+
+def _supply_gold_fold_report(output_dir):
+    """Supply the explicit empty GOLD fold report for tests not exercising folds."""
+    gold_dir = output_dir / "gold"
+    gold_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(FIXTURE_DIR / GOLD_ORGANISM_FOLD_FILE, gold_dir / GOLD_ORGANISM_FOLD_FILE)
 
 
 class _NoChebi:
@@ -49,6 +58,7 @@ def microbedecoder_transform(tmp_path):
     land in isolation. ``_NoChebi`` is injected so the tests never depend
     on the unified chemical mapping file being present.
     """
+    _supply_gold_fold_report(tmp_path)
     return MicrobeDecoderTransform(
         input_dir=FIXTURE_DIR,
         output_dir=tmp_path,
@@ -122,10 +132,9 @@ def test_identifier_crosswalk_edges_use_close_match(microbedecoder_transform):
     """
     The identifier crosswalks stay ``biolink:close_match`` from lpsn:<id>.
 
-    NCBITaxon, GTDB, GOLD and IMG really are other identifiers for the same
-    taxon, so near-identity is right. BacDive is excluded — its target is a
-    *strain*, not another name, and it is asserted as subsumption instead
-    (#687); see :func:`test_bacdive_crosswalk_is_subsumption_not_close_match`.
+    Preserve the source's crosswalk predicate while fixing endpoint identifiers.
+    BacDive is excluded: it is asserted as subsumption instead (#687); see
+    :func:`test_bacdive_crosswalk_is_subsumption_not_close_match`.
     """
     microbedecoder_transform.run()
     edges = _read_tsv(microbedecoder_transform.output_edge_file)
@@ -135,7 +144,7 @@ def test_identifier_crosswalk_edges_use_close_match(microbedecoder_transform):
     objects = {e["object"] for e in e_101}
     assert "NCBITaxon:1423" in objects
     assert "GTDB:d__Bacteria;g__Bacillus;s__Bacillus subtilis" in objects
-    assert "GOLD:Gs0000101" in objects
+    assert "gold:Gs0000101" in objects
     assert "IMG:3300000001" in objects
     assert not any(o.startswith("kgmicrobe.strain:") for o in objects), (
         "the BacDive crosswalk must not be a close_match"
@@ -280,7 +289,17 @@ def test_crosswalk_targets_are_not_stubbed(microbedecoder_transform):
     # "bacdive:" stays in the list even though nothing emits it now — it is the
     # prefix this transform used to target, and stubbing it would be a silent
     # return of the dangling-edge bug.
-    for prefix in ("NCBITaxon:", "GTDB:", "kgmicrobe.strain:", "bacdive:", "GOLD:", "IMG:", "CHEBI:"):
+    for prefix in (
+        "NCBITaxon:",
+        "GTDB:",
+        "ncbi.assembly:",
+        "kgmicrobe.strain:",
+        "bacdive:",
+        "gold:",
+        "GOLD:",
+        "IMG:",
+        "CHEBI:",
+    ):
         stubs = [n["id"] for n in nodes if n["id"].startswith(prefix)]
         assert stubs == [], (
             f"MicrobeDecoder must not emit stub nodes for cross-ref target "
@@ -298,6 +317,45 @@ def test_crosswalk_normalizes_prefixed_source_ids(microbedecoder_transform):
     # None should be "NCBITaxon:NCBITaxon:1423".
     for o in objects:
         assert o.count("NCBITaxon:") == 1, f"double-prefixed: {o}"
+
+
+@pytest.mark.parametrize(
+    "column,raw,expected",
+    [
+        ("GTDB_ID", "RS_GCF_000005845.2", "ncbi.assembly:GCF_000005845.2"),
+        ("GTDB_ID", "GB_GCA_000008865.2", "ncbi.assembly:GCA_000008865.2"),
+        ("GTDB_ID", "GTDB:RS_GCF_000005845.2", "ncbi.assembly:GCF_000005845.2"),
+        ("GTDB_ID", "GTDB:GB_GCA_000008865.2", "ncbi.assembly:GCA_000008865.2"),
+        ("GTDB_ID", "GCF_000005845", "ncbi.assembly:GCF_000005845"),
+        ("GTDB_ID", "ncbi.assembly:GCF_000005845.3", "ncbi.assembly:GCF_000005845.3"),
+        ("GTDB_ID", "GTDB:s__Bacillus_subtilis", "GTDB:s__Bacillus_subtilis"),
+        ("GTDB_ID", "d__Bacteria;s__Bacillus subtilis", "GTDB:d__Bacteria;s__Bacillus subtilis"),
+        ("GOLD_Organism_ID", "Go0000002", "gold:Go0000002"),
+        ("GOLD_Organism_ID", "GOLD:Go0000002", "gold:Go0000002"),
+        ("GOLD_Organism_ID", "gold:Go0000002", "gold:Go0000002"),
+        ("GOLD_Organism_ID", "Gold:Go0000002", "gold:Go0000002"),
+    ],
+)
+def test_crosswalk_uses_owner_namespaces(tmp_path, column, raw, expected):
+    """Assemblies and GOLD organisms join the owner IDs, not KGX stubs (#1050/1051)."""
+    input_dir = tmp_path / "raw"
+    input_dir.mkdir()
+    with (input_dir / "database.csv").open("w", newline="") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(["LPSN_ID", column])
+        writer.writerow(["101", raw])
+    _supply_gold_fold_report(tmp_path / "transformed")
+    transform = MicrobeDecoderTransform(
+        input_dir=input_dir,
+        output_dir=tmp_path / "transformed",
+        chemical_loader=_NoChebi(),
+    )
+    transform.run()
+    edges = _read_tsv(transform.output_edge_file)
+    assert len(edges) == 1
+    assert edges[0]["object"] == expected
+    assert edges[0]["primary_knowledge_source"] == MICROBEDECODER_KNOWLEDGE_SOURCE
+    assert not any(n["id"] == expected for n in _read_tsv(transform.output_node_file))
 
 
 # ---------------------------------------------------------------------------
@@ -554,6 +612,7 @@ def test_unmapped_labels_report_omitted_when_no_placeholders(tmp_path):
         w.writerow(header)
         w.writerow(["999", "acetate, lactate", "glucose"])
 
+    _supply_gold_fold_report(tmp_path)
     xform = MicrobeDecoderTransform(
         input_dir=fixture_dir,
         output_dir=tmp_path,
@@ -582,6 +641,7 @@ def test_mixed_encoding_csv_is_read_with_replacement(tmp_path):
     Latin-1 ``é`` byte injected post-write. Both must land in the
     output; nothing about the malformed byte should abort the run.
     """
+    _supply_gold_fold_report(tmp_path)
     xform = MicrobeDecoderTransform(
         input_dir=FIXTURE_DIR,
         output_dir=tmp_path,

@@ -17,8 +17,8 @@ sources KG-Microbe does not otherwise cover:
 - **FAPROTAX** — functional labels joined at strain granularity
 
 Also emits a `biolink:close_match` crosswalk from every `lpsn:<LPSN_ID>`
-row to `NCBITaxon:`, `GTDB:`, `bacdive:`, `GOLD:`, and `IMG:` — a
-pre-joined identity mapping worth ~50 K edges in its own right.
+row to `NCBITaxon:`, `ncbi.assembly:` (or `GTDB:` taxonomy strings), `gold:`,
+and `IMG:`. BacDive crosswalks use `kgmicrobe.strain:bacdive_*` subsumption.
 
 Design decisions locked from the plan-mode Q&A:
 
@@ -57,6 +57,9 @@ from kg_microbe.transform_utils.constants import (
     COMPOUND_PREFIX,
     DESCRIPTION_COLUMN,
     FAPROTAX_KNOWLEDGE_SOURCE,
+    GOLD_ORGANISM_FOLD_FILE,
+    GOLD_ORGANISM_FOLD_HEADER,
+    GOLD_PREFIX,
     HAS_OUTPUT_RELATION,
     HAS_PHENOTYPE,
     HAS_PHENOTYPE_PREDICATE,
@@ -73,6 +76,7 @@ from kg_microbe.transform_utils.constants import (
     NAME_COLUMN,
     NCBI_CATEGORY,
     NCBI_TO_SUBSTRATE_EDGE,
+    NCBITAXON_PREFIX,
     OBJECT_COLUMN,
     PATHWAY_PREFIX,
     PHENOTYPIC_CATEGORY,
@@ -97,6 +101,7 @@ from kg_microbe.transform_utils.microbedecoder.utils import (
     LPSN_ID_COLUMN,
     LPSN_SPECIES_COLUMN,
     LPSN_SUBSPECIES_COLUMN,
+    crosswalk_curie,
     format_citation,
     is_empty_cell,
     iter_metabolism_columns,
@@ -136,7 +141,7 @@ class MicrobeDecoderTransform(Transform):
     """Transform the MicrobeDecoder wide CSV into KGX nodes and edges."""
 
     #: Reads this transform's output; see Transform.TRANSFORM_INPUTS (#845).
-    TRANSFORM_INPUTS = ("lpsn",)
+    TRANSFORM_INPUTS = ("lpsn", "gold")
 
     DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
 
@@ -195,6 +200,7 @@ class MicrobeDecoderTransform(Transform):
         self._accepted_lpsn: Optional[Dict[str, str]] = None
         self._lpsn_supplied: Optional[set] = None
         self._stubbed_lpsn: set = set()
+        self._gold_folds: Dict[str, str] = {}
 
     # ------------------------------------------------------------------
     # Public entry point
@@ -229,6 +235,10 @@ class MicrobeDecoderTransform(Transform):
                 "(fetches https://github.com/thackmann/MicrobeDecoder/raw/main/"
                 "Shiny/MicrobeDecoder/data/database/database.zip; CC BY 4.0)."
             )
+
+        # Validate the upstream report before opening outputs or loading heavy
+        # chemical resources. A bad alias table must not redirect identities.
+        self._gold_folds = self._load_gold_organism_folds()
 
         # Lazy loader: constructor stays inert with respect to expensive
         # chemical-mapping resources. Matches the round-34 lpsn pattern
@@ -353,6 +363,41 @@ class MicrobeDecoderTransform(Transform):
     # ------------------------------------------------------------------
     # Crosswalk edges (novel identity mapping MicrobeDecoder pre-joins)
     # ------------------------------------------------------------------
+    def _load_gold_organism_folds(self) -> Dict[str, str]:
+        """
+        Load only GOLD's explicit organism folds; never infer a missing mapping.
+
+        The sibling ``gold/organism_folds.tsv`` records the exact ID replacement
+        already applied by GOLD, including retired-taxid resolution. An absent
+        report requires a GOLD rerun; a valid empty report means no IDs folded.
+        """
+        path = self.output_dir.parent / "gold" / GOLD_ORGANISM_FOLD_FILE
+        if not path.is_file():
+            raise FileNotFoundError(
+                f"{path} is missing; run `poetry run kg transform -s gold` first "
+                "to resolve folded GOLD organism references (#1051)."
+            )
+        folds: Dict[str, str] = {}
+        with path.open(encoding="utf-8", newline="") as handle:
+            reader = csv.reader(handle, delimiter="\t")
+            if next(reader, None) != list(GOLD_ORGANISM_FOLD_HEADER):
+                raise ValueError(f"{path}: expected header {GOLD_ORGANISM_FOLD_HEADER}")
+            for line, row in enumerate(reader, start=2):
+                if len(row) != 2:
+                    raise ValueError(f"{path}:{line}: expected an original and canonical ID")
+                original, canonical = row
+                if (
+                    not original.startswith(GOLD_PREFIX)
+                    or len(original) == len(GOLD_PREFIX)
+                    or not canonical.startswith(NCBITAXON_PREFIX)
+                    or not canonical[len(NCBITAXON_PREFIX) :].isdigit()
+                ):
+                    raise ValueError(f"{path}:{line}: invalid GOLD organism fold {row!r}")
+                if original in folds and folds[original] != canonical:
+                    raise ValueError(f"{path}:{line}: conflicting folds for {original}")
+                folds[original] = canonical
+        return folds
+
     def _accepted_lpsn_records(self) -> Dict[str, str]:
         """
         Return the LPSN synonym-to-accepted mapping, loading it once.
@@ -482,18 +527,9 @@ class MicrobeDecoderTransform(Transform):
             if is_empty_cell(raw):
                 continue
             for local_id in split_multivalue_comma_only(raw):
-                # Strip a stray leading prefix if the source already CURIE'd
-                # it (``NCBI_Taxonomy_ID`` occasionally arrives as
-                # ``"NCBITaxon:562"`` rather than a bare integer — normalise
-                # so downstream nodes merge cleanly). Both the emitted prefix
-                # and the source's own prefix are stripped, because they
-                # differ for BacDive; slice by length rather than splitting on
-                # ":" so a prefix ending in "_" strips fully.
-                for candidate in (prefix, source_prefix):
-                    if candidate and local_id.upper().startswith(candidate.upper()):
-                        local_id = local_id[len(candidate) :]
-                        break
-                object_curie = f"{prefix}{local_id}"
+                object_curie = crosswalk_curie(local_id, prefix, source_prefix)
+                if prefix == GOLD_PREFIX:
+                    object_curie = self._gold_folds.get(object_curie, object_curie)
                 if column == BACDIVE_CROSSWALK_COLUMN:
                     # Strain -> name subsumption, matching what the bacdive
                     # transform asserts for the same pair. See the note on

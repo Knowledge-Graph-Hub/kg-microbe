@@ -1,0 +1,4 @@
+id	category	name	provided_by
+https://www.w3.org/TR/owl-time/#time:Instant	biolink:OntologyClass	instant	infores:iri
+time:Instant	biolink:OntologyClass	instant	infores:curie
+http://purl.obolibrary.org/obo/FOODON_1	biolink:OntologyClass|biolink:Food	food	infores:alpha

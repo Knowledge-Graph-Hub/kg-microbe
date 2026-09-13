@@ -1,0 +1,22 @@
+{
+  "graphs": [
+    {
+      "id": "https://example.org/ontology-canonicalization",
+      "nodes": [
+        {"id": "http://geneontology.org/foo/applies-pattern", "type": "PROPERTY", "propertyType": "ANNOTATION"},
+        {"id": "http://qudt.org/schema/qudt/ucumCode", "type": "PROPERTY", "propertyType": "ANNOTATION"},
+        {"id": "https://w3id.org/sssom/mapping_justification", "type": "PROPERTY", "propertyType": "ANNOTATION"},
+        {"id": "http://www.ebi.ac.uk/efo/MSH_definition_citation", "type": "PROPERTY", "propertyType": "ANNOTATION"},
+        {"id": "http://purl.obolibrary.org/obo/RO_0002215", "type": "PROPERTY", "propertyType": "OBJECT"},
+        {"id": "http://purl.obolibrary.org/obo/FOODON_03301710", "type": "CLASS"},
+        {"id": "http://purl.obolibrary.org/obo/PATO_0001421", "type": "CLASS"},
+        {"id": "https://www.w3.org/TR/owl-time/#time:Duration", "type": "CLASS"},
+        {"id": "https://www.w3.org/TR/owl-time/#time:TemporalDuration", "type": "CLASS"}
+      ],
+      "edges": [
+        {"sub": "https://www.w3.org/TR/owl-time/#time:Duration", "pred": "is_a", "obj": "https://www.w3.org/TR/owl-time/#time:TemporalDuration"},
+        {"sub": "http://purl.obolibrary.org/obo/FOODON_03301710", "pred": "is_a", "obj": "http://qudt.org/schema/qudt/ucumCode"}
+      ]
+    }
+  ]
+}

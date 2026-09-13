@@ -7,15 +7,14 @@ import os
 from pathlib import Path
 from typing import Dict, List, Optional
 
-import curies
 import requests
 
 from kg_microbe.transform_utils.constants import (
     METPO_CLASSES_ROBOT_TEMPLATE_URL,
     METPO_PROPERTIES_ROBOT_TEMPLATE_URL,
-    PREFIXMAP_JSON_FILEPATH,
     RAW_DATA_DIR,
 )
+from kg_microbe.utils.graph_canonicalization import compact_identifier
 
 logger = logging.getLogger(__name__)
 
@@ -84,7 +83,7 @@ def normalize_biolink_category(category: str) -> str:
 
 def uri_to_curie(uri: str) -> str:
     """
-    Convert a URI to a CURIE using a `curies` library specified custom Prefix Map.
+    Convert a URI to a CURIE using the local prefix map and known ontology aliases.
 
     It also checks if the input uri is already a CURIE, in which case it returns
     the CURIE value as-is.
@@ -98,18 +97,7 @@ def uri_to_curie(uri: str) -> str:
     :param uri: The URI to convert, or a CURIE that's already in the correct format
     :return: The CURIE representation of the URI, or the original input if it's already a CURIE
     """
-    with open(PREFIXMAP_JSON_FILEPATH, "r") as f:
-        prefix_map = json.load(f)
-
-    converter = curies.Converter.from_prefix_map(prefix_map)
-
-    # If it's already a CURIE, return the string as-is
-    if converter.is_curie(uri):
-        return uri
-
-    curie = converter.compress(uri)
-
-    return curie if curie is not None else uri
+    return compact_identifier(uri)
 
 
 class MetpoTreeNode:

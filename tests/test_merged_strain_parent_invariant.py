@@ -250,20 +250,19 @@ def test_cross_reference_prefixes_are_marked_expected(tmp_path):
     A GOLD study id names a record in someone else's system.
 
     We assert edges to those on purpose and never ingest them as nodes, so a
-    stub is correct. Reporting them as problems would bury the 19% that are not
-    — 49,568 of the 60,990 stubs in `merged/20260815` are of this kind.
+    stub is expected. Organisms are different: GOLD supplies those node rows.
     """
     from kg_microbe.merge_utils.invariants import find_stub_nodes, stub_node_rows
 
     path = _nodes(
         tmp_path,
         [
-            _node("GOLD:Go0022271", category="biolink:NamedThing", name=""),
+            _node("gold:Gs0022271", category="biolink:NamedThing", name=""),
             _node("kgmicrobe.strain:ATCC-1", category="biolink:NamedThing", name=""),
         ],
     )
     rows = {row[0]: row[2] for row in stub_node_rows(find_stub_nodes(path))}
-    assert rows == {"GOLD": "yes", "kgmicrobe.strain": "no"}
+    assert rows == {"gold": "yes", "kgmicrobe.strain": "no"}
 
 
 def test_our_own_namespace_is_never_expected(tmp_path):
@@ -348,11 +347,10 @@ def test_an_expected_prefix_carries_its_justification(tmp_path):
     """
     "Expected" is the claim that most needs justifying, so it must not be bare (#935).
 
-    It separates the 49,568 rows that are fine from the 11,422 that are not, and
-    a reader auditing the graph should not have to read the source to learn why.
+    A reader auditing the graph should not have to read the source to learn why.
     """
     from kg_microbe.merge_utils.invariants import (
-        EXPECTED_STUB_PREFIXES,
+        expected_stub_reason,
         find_stub_nodes,
         stub_node_rows,
     )
@@ -360,12 +358,12 @@ def test_an_expected_prefix_carries_its_justification(tmp_path):
     path = _nodes(
         tmp_path,
         [
-            _node("GOLD:Go1", category="biolink:NamedThing", name=""),
+            _node("gold:Gs1", category="biolink:NamedThing", name=""),
             _node("kgmicrobe.strain:ATCC-1", category="biolink:NamedThing", name=""),
         ],
     )
     rows = {row[0]: (row[2], row[3]) for row in stub_node_rows(find_stub_nodes(path))}
-    assert rows["GOLD"] == ("yes", EXPECTED_STUB_PREFIXES["GOLD"])
+    assert rows["gold"] == ("yes", expected_stub_reason("gold:Gs1"))
     assert rows["kgmicrobe.strain"][0] == "no"
     assert rows["kgmicrobe.strain"][1] == ""
 
@@ -376,6 +374,44 @@ def test_every_expected_prefix_states_a_reason():
 
     unexplained = [p for p, why in EXPECTED_STUB_PREFIXES.items() if not (why or "").strip()]
     assert not unexplained, f"expected without a reason: {unexplained}"
+
+
+def test_mixed_stub_prefixes_do_not_hide_namespace_defects(tmp_path, caplog):
+    """Expected GTDB taxa/GOLD studies must not excuse dangling assemblies/organisms."""
+    from kg_microbe.merge_utils.invariants import find_stub_nodes, stub_node_rows
+
+    nodes = _nodes(
+        tmp_path,
+        [
+            _node(curie, category="biolink:NamedThing", name="")
+            for curie in (
+                "GTDB:s__Bacillus_subtilis",
+                "GTDB:RS_GCF_000005845.2",
+                "GTDB:GB_GCA_000008865.2",
+                "gold:Gs1",
+                "gold:Gp2",
+                "gold:Gb3",
+                "gold:Go4",
+                "GOLD:Go4",
+                "GOLD:Gs1",
+                "ncbi.assembly:GCF_000005845.2",
+            )
+        ],
+    )
+    rows = {(row[0], row[2]): row for row in stub_node_rows(find_stub_nodes(nodes))}
+    assert rows["GTDB", "yes"][1] == 1
+    assert rows["GTDB", "no"][1] == 2
+    assert rows["gold", "yes"][1] == 3
+    assert rows["gold", "no"][1] == 1
+    assert rows["GOLD", "no"][1] == 2
+    assert rows["ncbi.assembly", "no"][1] == 1
+    assert len(rows) == 6
+    assert sum(row[1] for row in rows.values()) == 10
+    assert all(bool(row[3]) == (row[2] == "yes") for row in rows.values())
+
+    edges = _edges(tmp_path, [_row("kgmicrobe.strain:DSM-1", "NCBITaxon:562")])
+    check_merged_invariants(edges, nodes_file=nodes)
+    assert "6 nodes across 4 prefixes were invented" in caplog.text
 
 
 def test_the_nodes_path_can_be_passed_rather_than_guessed(tmp_path):

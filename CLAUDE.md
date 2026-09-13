@@ -59,11 +59,16 @@ merge.yaml -> data/merged/merged-kg.tar.gz + merged_graph_stats.yaml
 ```
 
 `merged_graph_stats.yaml` carries a `provenance` block (when, commit, merge
-config, each source's fingerprint digest) and
+config, each source's fingerprint digest, and a surviving artifact locator) and
 `edge_stats.count_by_raw_predicate`, the predicate column counted as
 written. KGX's own `count_by_predicates` resolves through Biolink and records
-every METPO predicate as `None`, so it cannot see two thirds of the edges;
-compare predicates with the raw block. See #993 and #1013.
+every METPO predicate as `None`. In the merged graph reviewed in #1055,
+METPO predicates accounted for 50.09% of edges, not the roughly two-thirds
+share measured before merging. The fraction is build-dependent; compare
+predicates with the raw block. See #993, #1013 and #1055.
+Compressed outputs use `edges_archive` plus `edges_archive_member`; only
+uncompressed outputs use `edges_file`. The extracted working TSV is not a
+published artifact.
 
 - `download.yaml` owns upstream URLs and pinned versions.
 - `kg_microbe/transform_utils/<source>/` owns source parsing and normalization.
@@ -153,9 +158,19 @@ the claims report, and the node carries a description saying so. See issues
   clean run, because an absent report cannot be told from a check that never
   ran. It also writes `merged_stub_nodes.tsv`: KGX invents a node for any
   endpoint no source declared, so after a merge the question is not what is
-  missing but what arrived as an invention. Cross-reference prefixes we never
-  supply (IMG, GOLD, GTDB) are marked expected; everything else is a source
-  referencing something it should declare. See issues #892, #896 and #918.
+  missing but what arrived as an invention. Expected exceptions are checked
+  by identifier shape, not by a blanket GOLD/GTDB prefix exemption: a missing
+  assembly or GOLD organism is unexpected even if other references in the
+  same namespace are intentional. See #892, #896, #918, #1050 and #1051.
+- GOLD writes `organism_folds.tsv` from its explicit organism-to-taxon
+  collapse map. MicrobeDecoder consumes this report rather than inventing
+  undeclared nodes for folded organism IDs. Regenerate GOLD before
+  MicrobeDecoder; a missing report is an error, not permission to guess.
+- Merge assertion identity includes `relation` as well as subject, predicate,
+  and object. Different original relations must retain separate source
+  evidence; never split a merged relation list and copy its pooled provenance
+  onto every resulting assertion. See #1054 and
+  [merge integrity repairs](docs/MERGE_INTEGRITY_REPAIRS.md).
 - Never assert a METPO term the pinned release has deprecated. A hardcoded CURIE
   keeps being emitted long after the ontology retires it — nothing errors, and
   `METPO:2000511` reached 706,765 edges that way. `tests/test_no_deprecated_metpo_terms.py`

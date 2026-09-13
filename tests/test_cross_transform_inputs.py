@@ -120,6 +120,7 @@ class CrossTransformDeclarationTest(TestCase):
         self.assertIn("ontologies", observed.get("gold", set()))
         self.assertIn("gtdb", observed.get("lpsn", set()))
         self.assertIn("lpsn", observed.get("microbedecoder", set()))
+        self.assertIn("gold", observed.get("microbedecoder", set()))
         # Reached only through a constants.py path; see _constants_naming_a_transform_output (#1035).
         self.assertIn("ontologies", observed.get("bacdive", set()))
         self.assertIn("ontologies", observed.get("mediadive", set()))

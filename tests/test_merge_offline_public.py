@@ -15,6 +15,8 @@ import yaml
 from kg_microbe.merge_utils import merge_kg
 from tests.test_merge_source_freshness import merge_config, prepare_source
 
+pytestmark = pytest.mark.usefixtures("local_source_schema")
+
 
 def _reject_http(*args, **kwargs):
     """Fail HTTP attempts without replacing KGX's real JSON-LD reader or supplying its context."""

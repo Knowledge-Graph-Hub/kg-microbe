@@ -1,12 +1,26 @@
 """Integration tests for transform category alignment."""
 
 import csv
+from pathlib import Path
 
 import pytest
 
 from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
 from kg_microbe.transform_utils.constants import CHEBI_NODES_FILE
+from kg_microbe.transform_utils.mediadive import mediadive as mediadive_module
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
+
+
+@pytest.fixture
+def mediadive_categories(monkeypatch):
+    """Exercise the category loader without unrelated API/ontology orchestration."""
+    fixture = Path(__file__).parent / "resources/transform_category_alignment/chebi_nodes.tsv"
+    monkeypatch.setattr(mediadive_module, "CHEBI_NODES_FILE", fixture)
+    transform = MediaDiveTransform.__new__(MediaDiveTransform)
+    transform.chebi_categories = {}
+    transform._load_chebi_categories()
+    assert len(transform.chebi_categories) == 3
+    return transform
 
 
 class TestTransformCategoryAlignment:
@@ -58,14 +72,9 @@ class TestTransformCategoryAlignment:
             print(f"\n✓ CHEBI:16828 category: {category}")
             assert category == bacdive.chebi_categories["CHEBI:16828"]
 
-    def test_mediadive_get_chebi_category_specific_examples(self):
+    def test_mediadive_get_chebi_category_specific_examples(self, mediadive_categories):
         """Test that MediaDive returns correct categories for specific CHEBI IDs."""
-        mediadive = MediaDiveTransform()
-
-        if "CHEBI:16828" in mediadive.chebi_categories:
-            category = mediadive._get_chebi_category("CHEBI:16828")
-            print(f"\n✓ CHEBI:16828 category: {category}")
-            assert category == mediadive.chebi_categories["CHEBI:16828"]
+        assert mediadive_categories._get_chebi_category("CHEBI:16828") == "biolink:ChemicalEntity"
 
     def test_bacdive_category_matches_ontologies(self, chebi_categories_from_ontologies):
         """Test that BacDive categories match ontologies transform categories."""
@@ -116,11 +125,11 @@ class TestTransformCategoryAlignment:
         assert category == METABOLITE_CATEGORY
         print(f"\n✓ BacDive correctly falls back to {METABOLITE_CATEGORY} for unknown CHEBI IDs")
 
-    def test_mediadive_fallback_to_ingredient_category(self):
+    def test_mediadive_fallback_to_ingredient_category(self, mediadive_categories):
         """Test that MediaDive falls back to INGREDIENT_CATEGORY for unknown CHEBI IDs."""
         from kg_microbe.transform_utils.constants import INGREDIENT_CATEGORY
 
-        mediadive = MediaDiveTransform()
+        mediadive = mediadive_categories
 
         # Test with a CHEBI ID that definitely doesn't exist
         fake_chebi = "CHEBI:99999999"
@@ -143,12 +152,13 @@ class TestTransformCategoryAlignment:
         assert "biolink:ChemicalEntity" in category_counts
         assert category_counts["biolink:ChemicalEntity"] > 100000, "Most CHEBI compounds should be ChemicalEntity"
 
-    def test_mediadive_classify_ingredient_uses_chebi_category(self):
+    def test_mediadive_classify_ingredient_uses_chebi_category(self, mediadive_categories):
         """Test that MediaDive _classify_ingredient_category uses CHEBI categories for CHEBI IDs."""
-        mediadive = MediaDiveTransform()
+        mediadive = mediadive_categories
 
         # Test with a known CHEBI ID from ontologies
         test_chebi_ids = [cid for cid in list(mediadive.chebi_categories.keys())[:5] if cid.startswith("CHEBI:")]
+        assert len(test_chebi_ids) == 3
 
         for chebi_id in test_chebi_ids:
             expected_category = mediadive.chebi_categories[chebi_id]

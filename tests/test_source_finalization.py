@@ -213,6 +213,7 @@ def test_merge_projection_rejects_conflicting_duplicate_fields(tmp_path):
     assert path.read_bytes() == original
 
 
+@pytest.mark.usefixtures("local_source_schema")
 def test_public_merge_gate_requires_exact_prepared_inputs(tmp_path, monkeypatch):
     """An arbitrary external directory is not a silent exemption from source preparation."""
     import yaml

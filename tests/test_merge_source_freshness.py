@@ -18,6 +18,7 @@ from kg_microbe.utils.transform_fingerprint import upstream_fingerprint, write_f
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = Path(__file__).parent / "resources/merge_source_freshness"
+pytestmark = pytest.mark.usefixtures("local_source_schema")
 
 
 def record_source(transform):
@@ -225,6 +226,33 @@ def test_scoped_ontology_rejects_matching_unknown_schema(tmp_path, monkeypatch, 
     config = merge_config(tmp_path, [source])
     with pytest.raises(SourceFinalizationRequired, match="schema"):
         merge_kg._assert_sources_finalized(str(config))
+
+
+@pytest.mark.parametrize("damage", ["missing", "changed"])
+def test_real_schema_fixture_damage_blocks_public_merge(tmp_path, monkeypatch, local_source_schema, damage):
+    """Hermetic schema selection still rejects actual missing or changed bytes before KGX."""
+    from kg_microbe.utils.transform_fingerprint import schema_fingerprint
+
+    source = prepare_source(tmp_path, "rhea_mappings")
+    config = merge_config(tmp_path, [source])
+    marker = json.loads((source.output_dir / "source_fingerprint.json").read_text())
+    assert marker["schema"] == schema_fingerprint(ROOT)
+    assert marker["schema"]["version"] == "4.4.2"
+    merge_kg._assert_sources_finalized(str(config))
+    model = local_source_schema[0]
+    if damage == "missing":
+        model.unlink()
+    else:
+        model.write_text(model.read_text() + "\n# a different schema input\n")
+    assert schema_fingerprint(ROOT) != marker["schema"]
+
+    def no_kgx(*args, **kwargs):
+        """Reject any attempt to publish after schema evidence changed."""
+        pytest.fail("KGX must not run with missing or changed schema inputs")
+
+    monkeypatch.setattr(merge_kg, "merge", no_kgx)
+    with pytest.raises(SourceFinalizationRequired, match="schema"):
+        merge_kg.load_and_merge(str(config))
 
 
 def test_unknown_producer_metadata_is_not_a_silent_exemption(tmp_path):

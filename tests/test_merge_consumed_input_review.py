@@ -12,6 +12,8 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, verify_finalized_source_files
 from tests.test_merge_source_freshness import FIXTURES, merge_config, prepare_source, record_source
 
+pytestmark = pytest.mark.usefixtures("local_source_schema")
+
 
 def _prepared_consumer(tmp_path, source="mediadive"):
     """Build only tiny immutable source pairs and their real registered dependency metadata."""

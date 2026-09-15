@@ -16,6 +16,7 @@ from kg_microbe.utils.transform_fingerprint import upstream_fingerprint, write_f
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = Path(__file__).parent / "resources/merge_source_freshness"
+pytestmark = pytest.mark.usefixtures("local_source_schema")
 
 
 def _record(transform):

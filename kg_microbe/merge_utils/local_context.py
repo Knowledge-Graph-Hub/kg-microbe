@@ -1,12 +1,13 @@
-"""Scope KGX's TSV prefix context to the pinned local model, including spawned merge workers."""
+"""Scope KGX conversion/merge prefix contexts to the pinned local model, including spawned workers."""
 
 from contextlib import contextmanager
 from threading import RLock
 
 _CONTEXT_LOCK = RLock()
 _ABSENT = object()
+_CONTEXT_NAMES = ("biolink", "monarch_context", "obo_context")
 _USERS = 0
-_PREVIOUS = _ABSENT
+_PREVIOUS = {}
 _ACTIVE = None
 
 
@@ -30,7 +31,7 @@ def _pinned_prefix_map():
 
 @contextmanager
 def local_prefix_context():
-    """Temporarily seed the real KGX reader, restoring its exact prior entry after nested users finish."""
+    """Seed all real KGX prefix readers, restoring exact prior entries after nested users finish."""
     from kgx.config import jsonld_context_map
 
     global _USERS, _PREVIOUS, _ACTIVE
@@ -39,11 +40,15 @@ def local_prefix_context():
     # callers and forked workers must be able to enter their own parser scope.
     with _CONTEXT_LOCK:
         if _USERS == 0:
-            _PREVIOUS = jsonld_context_map.get("biolink", _ABSENT)
+            _PREVIOUS = {name: jsonld_context_map.get(name, _ABSENT) for name in _CONTEXT_NAMES}
             _ACTIVE = context
-            jsonld_context_map["biolink"] = context
+            # KGX contract/expand eagerly load both fallback contexts even
+            # when an explicit prefix map already resolves the identifier.
+            # All three use the same selected schema/default-map precedence.
+            for name in _CONTEXT_NAMES:
+                jsonld_context_map[name] = context
         elif context != _ACTIVE:
-            raise ValueError("Concurrent merge prefix contexts use different pinned namespaces")
+            raise ValueError("Concurrent KGX prefix contexts use different pinned namespaces")
         _USERS += 1
     try:
         yield
@@ -51,8 +56,9 @@ def local_prefix_context():
         with _CONTEXT_LOCK:
             _USERS -= 1
             if _USERS == 0:
-                if _PREVIOUS is _ABSENT:
-                    jsonld_context_map.pop("biolink", None)
-                else:
-                    jsonld_context_map["biolink"] = _PREVIOUS
-                _PREVIOUS, _ACTIVE = _ABSENT, None
+                for name, previous in _PREVIOUS.items():
+                    if previous is _ABSENT:
+                        jsonld_context_map.pop(name, None)
+                    else:
+                        jsonld_context_map[name] = previous
+                _PREVIOUS, _ACTIVE = {}, None

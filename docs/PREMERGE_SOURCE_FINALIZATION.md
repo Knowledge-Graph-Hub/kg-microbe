@@ -163,13 +163,18 @@ opt-out**, printed prominently and recorded as
 Such an output is not a finalized release. The lower-level `merge` function
 is a prepared-input KGX API; its caller owns preflight and publication.
 
-For TSV/CSV merge, both the parent and spawned parsers initialize KGX's
-prefix manager from the selected local Biolink schema and its installed
-default namespace maps. The schema's explicit namespace overrides take
+For ontology OBOJSON-to-TSV conversion and TSV/CSV merge, including the parent
+and spawned merge parsers, KGX's prefix readers use the selected local Biolink
+schema and its installed default namespace maps. The schema's explicit namespace overrides take
 precedence. This avoids KGX's independent hard-coded remote JSON-LD context;
-it is a prefix map for tabular merge, not a general replacement JSON-LD
-serialization context. The previous KGX cache entry is restored when the
-scoped merge/parser users finish, including on failure. As with the existing
+it is a prefix map for identifier conversion and tabular merge, not a general
+replacement JSON-LD serialization context. All three KGX context keys
+(`biolink`, `monarch_context`, `obo_context`) use that same nonempty map:
+KGX's IRI contraction/expansion eagerly loads both fallback contexts even
+when its explicit map resolves the identifier. Each exact previous cache
+entry, or its absence, is restored when scoped users finish, including on
+failure. The shared prefix helper is included in source code fingerprints,
+so changes invalidate source builds. As with the existing
 KGX compatibility overrides, this process-global scope does not isolate
 unrelated simultaneous KGX callers. No source output or success marker is
 modified by prefix initialization.

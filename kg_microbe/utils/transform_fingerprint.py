@@ -46,6 +46,7 @@ SHARED_CODE = (
     Path("kg_microbe") / "transform_utils" / "transform.py",
     Path("kg_microbe") / "transform.py",
     Path("kg_microbe") / "merge_utils" / "external_node_closure.py",
+    Path("kg_microbe") / "merge_utils" / "local_context.py",
 )
 
 # Shared canonicalization is used by source transforms and merge ingestion.

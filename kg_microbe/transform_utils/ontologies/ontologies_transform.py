@@ -151,12 +151,14 @@ _RAW_TYPE_PREDICATES = frozenset({"type", "rdf:type", "http://www.w3.org/1999/02
 
 def _run_kgx_transform(**kwargs) -> None:
     """Load KGX only when ontology parsing reaches graph conversion."""
+    from kg_microbe.merge_utils.local_context import local_prefix_context
     from kg_microbe.utils.biolink_model import prepare_kgx
 
     prepare_kgx()
     from kgx.cli.cli_utils import transform
 
-    transform(**kwargs)
+    with local_prefix_context():
+        transform(**kwargs)
 
 
 class OntologiesTransform(Transform):

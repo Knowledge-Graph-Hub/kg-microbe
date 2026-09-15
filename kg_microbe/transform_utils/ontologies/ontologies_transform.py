@@ -1,8 +1,10 @@
 """Ontology transform module."""
 
+import csv
 import json
 import re
 from collections import defaultdict
+from contextlib import ExitStack
 from itertools import chain
 from os import makedirs
 from pathlib import Path
@@ -10,14 +12,15 @@ from typing import Optional, Union
 
 import pandas as pd
 
-# from kgx.transformer import Transformer
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
     CATEGORY_COLUMN,
+    DEPRECATED_COLUMN,
     DESCRIPTION_COLUMN,
     EXCLUSION_TERMS_FILE,
     GO_PREFIX,
     ID_COLUMN,
+    IRI_COLUMN,
     KNOWLEDGE_ASSERTION,
     KNOWLEDGE_LEVEL_COLUMN,
     MANUAL_AGENT,
@@ -29,13 +32,17 @@ from kg_microbe.transform_utils.constants import (
     PART_OF_PREDICATE,
     PREDICATE_COLUMN,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+    PROVIDED_BY_COLUMN,
+    PUBLICATIONS_COLUMN,
     RELATED_TO_PREDICATE,
     RELATED_TO_RELATION,
     RELATION_COLUMN,
     RHEA_NEW_PREFIX,
     ROBOT_REMOVED_SUFFIX,
+    SAME_AS_COLUMN,
     SPECIAL_PREFIXES,
     SUBJECT_COLUMN,
+    SUBSETS_COLUMN,
     TREMBL_PREFIX,
     UNIPATHWAYS_ENZYMATIC_REACTION_PREFIX,
     UNIPATHWAYS_INCLUDE_PAIRS,
@@ -149,16 +156,94 @@ _CONTRIBUTOR_ANNOTATIONS = frozenset(
 _RAW_TYPE_PREDICATES = frozenset({"type", "rdf:type", "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"})
 
 
-def _run_kgx_transform(**kwargs) -> None:
-    """Load KGX only when ontology parsing reaches graph conversion."""
+def _run_kgx_transform(*, inputs, input_format, output, output_format) -> None:
+    """Stream one OBOJSON to TSV without the CLI's relation-losing SPO graph store."""
+    import ijson
+
     from kg_microbe.merge_utils.local_context import local_prefix_context
     from kg_microbe.utils.biolink_model import prepare_kgx
 
+    if input_format != "obojson" or output_format != "tsv" or len(inputs) != 1:
+        raise ValueError("Ontology conversion supports one uncompressed OBOJSON input and TSV output only")
+    source = Path(inputs[0])
+    if source.suffix != ".json":
+        raise ValueError("Ontology conversion requires an uncompressed .json input")
     prepare_kgx()
-    from kgx.cli.cli_utils import transform
+    from kgx.sink.tsv_sink import DEFAULT_EDGE_COLUMNS, DEFAULT_NODE_COLUMNS, TsvSink
+    from kgx.transformer import Transformer
+    from kgx.utils.kgx_utils import GraphEntityType, knowledge_provenance_properties
+
+    # KGX's default streaming node columns omit several OBO reader outputs.
+    node_columns = set(DEFAULT_NODE_COLUMNS) | {
+        XREF_COLUMN,
+        SAME_AS_COLUMN,
+        DEPRECATED_COLUMN,
+        IRI_COLUMN,
+        SUBSETS_COLUMN,
+        PROVIDED_BY_COLUMN,
+    }
+    base_edge_columns = set(DEFAULT_EDGE_COLUMNS) | {"meta", "key"}
+    optional_edge_columns = set(knowledge_provenance_properties) | {
+        KNOWLEDGE_LEVEL_COLUMN,
+        AGENT_TYPE_COLUMN,
+        PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+        PUBLICATIONS_COLUMN,
+        DESCRIPTION_COLUMN,
+        XREF_COLUMN,
+    }
+    allowed_raw = {"sub", "pred", "obj"} | base_edge_columns | optional_edge_columns
+    present = set()
+    # Preserve absent-vs-blank semantics: declaring empty KL/AT/PKS columns
+    # would suppress the existing ontology metadata defaults/legacy rename.
+    with source.open("rb") as stream:
+        for edge in ijson.items(stream, "graphs.item.edges.item"):
+            unknown = set(edge) - allowed_raw
+            if unknown:
+                raise ValueError(f"Undeclared OBOJSON edge fields in {source}: {sorted(unknown)}")
+            present.update(edge)
+    edge_columns = base_edge_columns | (present & optional_edge_columns)
+
+    def inspect_columns(kind, record):
+        """Abort before a streaming sink could silently discard an emitted property."""
+        columns = node_columns if kind == GraphEntityType.NODE else edge_columns
+        unknown = set(record[-1]) - columns
+        if unknown:
+            raise ValueError(f"Undeclared KGX {kind.value} fields in {source}: {sorted(unknown)}")
 
     with local_prefix_context():
-        transform(**kwargs)
+        transformer = Transformer(stream=True)
+        owned_sinks = []
+
+        def capture_sink(**sink_args):
+            """Capture this instance's native sink before initialization can open either handle."""
+            if sink_args.get("format") != "tsv" or sink_args.get("compression"):
+                raise ValueError("Ontology conversion requires an uncompressed TSV sink")
+            sink = TsvSink.__new__(TsvSink)
+            owned_sinks.append(sink)
+            TsvSink.__init__(sink, transformer, **sink_args)
+            return sink
+
+        # No global KGX factory/graph patches: only this local Transformer owns
+        # the override. Native transform lacks a finally around sink.finalize().
+        transformer.get_sink = capture_sink
+        try:
+            transformer.transform(
+                input_args={"filename": [str(source)], "format": "obojson"},
+                output_args={
+                    "filename": str(output),
+                    "format": "tsv",
+                    "node_properties": node_columns,
+                    "edge_properties": edge_columns,
+                },
+                inspector=inspect_columns,
+            )
+        finally:
+            with ExitStack() as cleanup:
+                for sink in owned_sinks:
+                    for attribute in ("NFH", "EFH"):
+                        handle = getattr(sink, attribute, None)
+                        if handle is not None and not handle.closed:
+                            cleanup.callback(handle.close)
 
 
 class OntologiesTransform(Transform):
@@ -888,41 +973,39 @@ class OntologiesTransform(Transform):
                     new_nf.write(line)
 
             edges_df = pd.DataFrame(columns=self.edge_header)
-            with open(edges_file, "r") as ef:
-                for line in ef:
-                    add_edge = []
-                    if line.startswith("id"):
-                        # get the index for the 'subject'
-                        subject_index = line.strip().split("\t").index(SUBJECT_COLUMN)
-                        # get the index for the 'predicate'
-                        predicate_index = line.strip().split("\t").index(PREDICATE_COLUMN)
-                        # get the index for the 'object'
-                        object_index = line.strip().split("\t").index(OBJECT_COLUMN)
-                        # get the index for the 'relation'
-                        relation_index = line.strip().split("\t").index(RELATION_COLUMN)
-                    else:
-                        # Remove unwanted triples
-                        line = check_wanted_pairs(line, subject_index, object_index)
-                        if line:
-                            new_lines = replace_triples_with_labels(
-                                line,
-                                subject_index,
-                                object_index,
-                                predicate_index,
-                                relation_index,
-                                nodes_dictionary,
-                            )
-                            for new_line in new_lines:
-                                add_edge.append(new_line + "\n")
-                    # new_ef.write(add_edge)
-                    if len(add_edge) > 0:
-                        for edge_line in add_edge:
-                            parts = edge_line.strip().split("\t")
-                            if len(parts) == len(self.edge_header) + 1:
-                                parts = parts[1:]
-                            df = pd.DataFrame([parts], columns=self.edge_header)
-                            # Add the list as a new row to the DataFrame
-                            edges_df = pd.concat([edges_df, df], ignore_index=True)
+            # These legacy helpers use positional fields and strip whitespace.
+            # Project by header name first, so an optional/blank KGX id or any
+            # extra emitted metadata cannot shift biological or source fields.
+            subject_index = self.edge_header.index(SUBJECT_COLUMN)
+            predicate_index = self.edge_header.index(PREDICATE_COLUMN)
+            object_index = self.edge_header.index(OBJECT_COLUMN)
+            relation_index = self.edge_header.index(RELATION_COLUMN)
+            with open(edges_file, "r", newline="") as ef:
+                reader = csv.DictReader(ef, delimiter="\t")
+                source_header = reader.fieldnames or []
+                if not {SUBJECT_COLUMN, PREDICATE_COLUMN, OBJECT_COLUMN, RELATION_COLUMN} <= set(source_header):
+                    raise ValueError(f"UPA intermediate edge file has an invalid header: {edges_file}")
+                for original in reader:
+                    if None in original or any(value is None for value in original.values()):
+                        raise ValueError(f"UPA intermediate edge row does not match its header: {edges_file}")
+                    row = {column: original.get(column, "") for column in self.edge_header}
+                    # A present modern column, including an explicit blank,
+                    # takes precedence. This matches _normalize_schema below.
+                    if PRIMARY_KNOWLEDGE_SOURCE_COLUMN not in source_header:
+                        row[PRIMARY_KNOWLEDGE_SOURCE_COLUMN] = original.get("knowledge_source", "")
+                    line = check_wanted_pairs("\t".join(row.values()), subject_index, object_index)
+                    if not line:
+                        continue
+                    for edge_line in replace_triples_with_labels(
+                        line, subject_index, object_index, predicate_index, relation_index, nodes_dictionary
+                    ):
+                        parts = edge_line.rstrip("\r\n").split("\t")
+                        if len(parts) > len(self.edge_header):
+                            raise ValueError(f"UPA rewritten edge exceeds its canonical header: {edges_file}")
+                        # The unchanged helper can strip trailing empty fields.
+                        parts.extend([""] * (len(self.edge_header) - len(parts)))
+                        df = pd.DataFrame([parts], columns=self.edge_header)
+                        edges_df = pd.concat([edges_df, df], ignore_index=True)
             # First write existing edges to file before establishing transitive relationships
             edges_df.to_csv(edges_file, sep="\t", index=False)
 
@@ -1006,19 +1089,17 @@ class OntologiesTransform(Transform):
                         line = _replace_special_prefixes(line)
                         line = replace_category_ontology(line, id_index, category_index, raw_dir=self.input_base_dir)
                         new_nf_lines.append(line + "\n")
-                # Drop the incoming header; a canonical one is written below.
-                # KGX's edges TSV leads with an `id` column, so its header's
-                # first field is "id", not "subject". PR #680 changed this
-                # guard to match "subject" only, on the mistaken belief that an
-                # edges header cannot start with "id" — which silently left the
-                # real header in the body as a data row, and KGX then read
-                # "subject"/"object" as endpoint CURIEs in the merged KG.
-                # Both tokens are accepted so the guard survives a schema
-                # change in either direction.
+                # Retain the actual intermediate column order while rewriting
+                # values. Replacing it with the seven canonical column names
+                # shifts every field when KGX emits id/category/meta columns.
+                # The final _normalize_schema step owns name-based projection.
+                incoming_edge_header = ef.readline()
+                if not {SUBJECT_COLUMN, PREDICATE_COLUMN, OBJECT_COLUMN, RELATION_COLUMN} <= set(
+                    incoming_edge_header.rstrip("\r\n").split("\t")
+                ):
+                    raise ValueError(f"EC intermediate edge file has an invalid header: {edges_file}")
                 new_ef_lines = []
-                for edge_line_index, line in enumerate(ef):
-                    if edge_line_index == 0 and line.split("\t")[0] in (SUBJECT_COLUMN, ID_COLUMN):
-                        continue
+                for line in ef:
                     line = _replace_special_prefixes(line)
                     new_ef_lines.append(line)
             if name == "ec":
@@ -1043,7 +1124,7 @@ class OntologiesTransform(Transform):
 
             # Rewrite edges file
             with open(edges_file, "w") as new_ef:
-                new_ef.write("\t".join(self.edge_header) + "\n")
+                new_ef.write(incoming_edge_header)
                 for line in new_ef_lines:
                     new_ef.write(line)
 
@@ -1108,8 +1189,8 @@ class OntologiesTransform(Transform):
         """
         Enforce canonical KGX-TSV schema on KGX-generated ontology outputs.
 
-        Why this step exists: `kgx.cli.cli_utils.transform(obojson -> tsv)`
-        passes obograph artifacts through its TsvSink unchanged. This leaks
+        Why this step exists: the native KGX OBO reader and streaming TsvSink
+        retain obograph artifacts in the intermediate output. This includes
         three categories of columns that are not part of the KGX-TSV spec
         (https://github.com/biolink/kgx/blob/master/specification/kgx-format.md):
 
@@ -1119,10 +1200,10 @@ class OntologiesTransform(Transform):
             `knowledge_source` column (superseded by `primary_knowledge_source`
             in biolink 3.x).
 
-        Fixing this upstream would require replacing KGX's TsvSink or
-        bypassing `kgx.cli.cli_utils.transform` entirely. The normalization
-        below is the least-invasive option and is intentionally idempotent:
-        if KGX stops leaking these columns, the step becomes a no-op.
+        Conversion preserves reader-emitted fields until this explicit
+        canonical source projection. The normalization below retains the
+        existing column policy and is intentionally idempotent: already
+        canonical headers do not require another projection change.
 
         Resulting shape:
           * nodes: exactly `self.node_header` (base Transform canonical shape)

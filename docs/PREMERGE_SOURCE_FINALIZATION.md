@@ -179,6 +179,27 @@ KGX compatibility overrides, this process-global scope does not isolate
 unrelated simultaneous KGX callers. No source output or success marker is
 modified by prefix initialization.
 
+Ontology OBOJSON conversion uses KGX's native streaming transformer directly,
+not the CLI's intermediate graph keyed only by subject/predicate/object. Thus
+distinct source relations that map to one Biolink predicate remain separate
+rows in either input order. The intermediate TSV explicitly retains all
+reader-emitted node properties and reviewed edge properties, including raw
+`meta` and `key`; existing ontology postprocessing still owns canonical column
+selection, while exact assertion deduplication remains downstream. A bounded raw-edge-key preflight declares
+optional provenance columns only when present, preserving the existing
+absent-versus-blank metadata behavior. Unknown raw edge or emitted properties
+abort instead of being silently discarded. A converter-local sink factory
+closes opened handles even after partial initialization or parser failure;
+it does not replace global KGX factories. Streaming does not invent undeclared
+endpoint nodes: reference resolution and required authority checks remain at
+the source-finalization boundary.
+
+EC preserves the actual intermediate edge header through its prefix/filter
+rewrite. UPA projects edge fields by name before its existing positional
+path helpers, with modern source provenance taking precedence by column
+presence rather than truthiness. These compatibility steps retain existing
+EC/UPA modeling and metadata policies while avoiding shifted or oversized rows.
+
 KGX ingestion rejects noncanonical source identifiers, imported fallback
 categories, and nonscalar relations rather than repairing them. After graph
 union, required validation checks canonical representation and endpoint

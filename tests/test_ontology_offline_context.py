@@ -36,7 +36,7 @@ def test_real_ontology_conversion_is_offline_and_restores_exact_context(
 
     prepare_kgx()
     from kgx import config, prefix_manager
-    from kgx.cli import cli_utils
+    from kgx.transformer import Transformer
 
     contexts = config.jsonld_context_map
     previous = {
@@ -62,19 +62,19 @@ def test_real_ontology_conversion_is_offline_and_restores_exact_context(
         raise AssertionError("Ontology conversion attempted HTTP for a prefix context")
 
     monkeypatch.setattr(requests.sessions.Session, "request", reject_http)
-    real_transform = cli_utils.transform
+    real_transform = Transformer.transform
     completed_conversions = []
     if conversion_failure:
 
-        def fail_after_real_conversion(**kwargs):
+        def fail_after_real_conversion(self, **kwargs):
             """Fail inside the production wrapper after actual KGX parsing/export succeeds."""
-            result = real_transform(**kwargs)
+            result = real_transform(self, **kwargs)
             completed_conversions.append(result)
             assert contexts["biolink"]["biolink"] == "https://w3id.org/biolink/vocab/"
             assert contexts["biolink"]["GO"] == "http://purl.obolibrary.org/obo/GO_"
             raise OSError("injected ontology conversion failure")
 
-        monkeypatch.setattr(cli_utils, "transform", fail_after_real_conversion)
+        monkeypatch.setattr(Transformer, "transform", fail_after_real_conversion)
     output = tmp_path / "converted"
     kwargs = {"inputs": [OBOJSON], "input_format": "obojson", "output": output, "output_format": "tsv"}
     if conversion_failure:
@@ -120,18 +120,18 @@ def test_missing_pinned_input_aborts_before_ontology_converter(tmp_path, monkeyp
     from kg_microbe.utils.biolink_model import prepare_kgx
 
     prepare_kgx()
-    from kgx.cli import cli_utils
     from kgx.config import jsonld_context_map
+    from kgx.transformer import Transformer
 
     previous = {"caller": "urn:caller:"}
     monkeypatch.setitem(jsonld_context_map, "biolink", previous)
     monkeypatch.setenv(missing_input, str(tmp_path / "missing.yaml"))
 
-    def unexpected_conversion(**kwargs):
+    def unexpected_conversion(self, **kwargs):
         """Reject conversion once pinned authority preflight fails."""
         pytest.fail("Missing pinned input reached KGX conversion")
 
-    monkeypatch.setattr(cli_utils, "transform", unexpected_conversion)
+    monkeypatch.setattr(Transformer, "transform", unexpected_conversion)
     with pytest.raises(FileNotFoundError, match="Pinned Biolink"):
         _run_kgx_transform(inputs=[OBOJSON], input_format="obojson", output=tmp_path / "out", output_format="tsv")
     assert jsonld_context_map["biolink"] is previous

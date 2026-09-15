@@ -1,0 +1,40 @@
+id: https://w3id.org/biolink/tests/ontology-relations
+name: Ontology-Relation-Preservation-Fixture
+version: 4.4.2
+prefixes:
+  biolink: https://w3id.org/biolink/vocab/
+  linkml: https://w3id.org/linkml/
+  PATO: http://purl.obolibrary.org/obo/PATO_
+  BFO: http://purl.obolibrary.org/obo/BFO_
+  RO: http://purl.obolibrary.org/obo/RO_
+default_prefix: biolink
+default_range: string
+default_curi_maps:
+  - obo_context
+  - idot_context
+  - monarch_context
+  - semweb_context
+imports:
+  - linkml:types
+classes:
+  named thing:
+    class_uri: biolink:NamedThing
+  association:
+    class_uri: biolink:Association
+slots:
+  related to:
+    slot_uri: biolink:related_to
+    domain: named thing
+    range: named thing
+  part of:
+    slot_uri: biolink:part_of
+    is_a: related to
+    exact_mappings:
+      - BFO:0000050
+      - RO:0002007
+  knowledge level:
+    slot_uri: biolink:knowledge_level
+    multivalued: false
+  agent type:
+    slot_uri: biolink:agent_type
+    multivalued: false

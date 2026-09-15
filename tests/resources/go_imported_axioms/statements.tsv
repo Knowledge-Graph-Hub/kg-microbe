@@ -1,0 +1,25 @@
+subject	predicate	object	value
+GO:0008150	rdfs:label		biological process
+GO:0008150	oio:hasOBONamespace		biological_process
+GO:0008152	rdfs:label		metabolic process
+GO:0008152	oio:hasOBONamespace		biological_process
+GO:0009058	rdfs:label		biosynthetic process
+GO:0009058	oio:hasOBONamespace		biological_process
+GO:0044281	rdfs:label		small molecule metabolic process
+GO:0044281	oio:hasOBONamespace		biological_process
+GO:0044283	rdfs:label		small molecule biosynthetic process
+GO:0044283	oio:hasOBONamespace		biological_process
+GO:0140253	rdfs:label		cell-cell fusion
+GO:0140253	oio:hasOBONamespace		biological_process
+GO:0016053	rdfs:label		obsolete organic acid biosynthetic process
+GO:0016053	oio:hasOBONamespace		biological_process
+GO:0016053	owl:deprecated		true
+GO:0016053	IAO:0100001	GO:0008152	
+GO:0006082	rdfs:label		obsolete organic acid metabolic process
+GO:0006082	oio:hasOBONamespace		biological_process
+GO:0006082	owl:deprecated		true
+GO:0006082	IAO:0100001	GO:0008152	
+GO:0045026	rdfs:label		obsolete plasma membrane fusion
+GO:0045026	oio:hasOBONamespace		biological_process
+GO:0045026	owl:deprecated		true
+GO:0045026	IAO:0100001	GO:0140253	

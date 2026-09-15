@@ -131,6 +131,7 @@ def test_loader_reads_selected_root_and_invalidates_changed_bytes(tmp_path, monk
         directory.mkdir()
         with sqlite3.connect(directory / "go.db") as connection:
             connection.execute("CREATE TABLE statements(subject,predicate,object,value)")
+            connection.execute("CREATE TABLE edge(subject,predicate,object)")
             connection.executemany("INSERT INTO statements VALUES(?,?,?,?)", statements)
     first = load_go_authority(tmp_path / "first")
     with sqlite3.connect(tmp_path / "second" / "go.db") as connection:
@@ -173,6 +174,7 @@ def test_ontology_and_bakta_use_selected_authority_before_finalization(tmp_path,
     raw_dir.mkdir()
     with sqlite3.connect(raw_dir / "go.db") as connection:
         connection.execute("CREATE TABLE statements(subject,predicate,object,value)")
+        connection.execute("CREATE TABLE edge(subject,predicate,object)")
         connection.executemany("INSERT INTO statements VALUES(?,?,?,?)", statements)
     prepared_roots = []
 
@@ -218,6 +220,7 @@ def test_imported_go_postprocessing_uses_selected_root(tmp_path, monkeypatch, st
     raw_dir.mkdir()
     with sqlite3.connect(raw_dir / "go.db") as connection:
         connection.execute("CREATE TABLE statements(subject,predicate,object,value)")
+        connection.execute("CREATE TABLE edge(subject,predicate,object)")
         connection.executemany("INSERT INTO statements VALUES(?,?,?,?)", statements)
 
     def prepare_selected(directory):
@@ -451,6 +454,7 @@ def test_go_loader_fails_loudly_without_caching_bad_authority(tmp_path, monkeypa
     path.unlink()
     with sqlite3.connect(path) as connection:
         connection.execute("CREATE TABLE statements(subject,predicate,object,value)")
+        connection.execute("CREATE TABLE edge(subject,predicate,object)")
         connection.executemany("INSERT INTO statements VALUES(?,?,?,?)", statements)
     assert load_go_authority(tmp_path).resolve("GO:0004096").category == "biolink:MolecularActivity"
 
@@ -469,6 +473,7 @@ def test_prepared_cache_does_not_reinitialize_authority_per_term(tmp_path, monke
     monkeypatch.setattr(module, "_prepare_go_database", prepare)
     with sqlite3.connect(tmp_path / "go.db") as connection:
         connection.execute("CREATE TABLE statements(subject,predicate,object,value)")
+        connection.execute("CREATE TABLE edge(subject,predicate,object)")
         connection.executemany("INSERT INTO statements VALUES(?,?,?,?)", statements)
     first = load_go_authority(tmp_path)
     assert load_go_authority(tmp_path) is first

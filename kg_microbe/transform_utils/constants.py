@@ -398,6 +398,7 @@ ASSAY_CATEGORY = "biolink:Procedure"  # API kit assay tests
 # CHEMICAL_SUBSTANCE_CATEGORY = "biolink:ChemicalSubstance"  # removed from biolink; use CHEBI_CATEGORY
 
 HAS_PART = "BFO:0000051"
+HAS_PART_PREDICATE = "biolink:has_part"
 IS_GROWN_IN = "METPO:2000517"  # RO relation for grows in (organism -> growth medium), used in relation column
 DOES_NOT_GROW_IN = "METPO:2000518"  # RO relation for does not grow in, used in relation column
 USES_AS_CARBON_SOURCE = NCBI_TO_CARBON_SUBSTRATE_EDGE  # Alias for uses as carbon source

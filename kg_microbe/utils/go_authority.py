@@ -20,11 +20,19 @@ from kg_microbe.transform_utils.constants import (
     DEPRECATED_COLUMN,
     DESCRIPTION_COLUMN,
     GO_REFERENCE_CONTEXT_COLUMN,
+    HAS_PART,
+    HAS_PART_PREDICATE,
     ID_COLUMN,
     MOLECULAR_ACTIVITY_CATEGORY,
     NAME_COLUMN,
     OBJECT_COLUMN,
+    PART_OF_PREDICATE,
+    PART_OF_RELATION,
+    PREDICATE_COLUMN,
     PROVIDED_BY_COLUMN,
+    RDFS_SUBCLASS_OF,
+    RELATION_COLUMN,
+    SUBCLASS_PREDICATE,
     SUBJECT_COLUMN,
 )
 from kg_microbe.utils.atomic_io import atomic_write
@@ -57,6 +65,17 @@ for _prefix in ("oio:", "oboInOwl:", "http://www.geneontology.org/formats/oboInO
 
 _CACHE = {}
 _REPORT_VERSION = 1
+_STRUCTURAL_POLICY_VERSION = 1
+_STRUCTURAL_RELATIONS = {
+    RDFS_SUBCLASS_OF: SUBCLASS_PREDICATE,
+    PART_OF_RELATION: PART_OF_PREDICATE,
+    HAS_PART: HAS_PART_PREDICATE,
+}
+_STRUCTURAL_RELATION_IRIS = {
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": RDFS_SUBCLASS_OF,
+    "http://purl.obolibrary.org/obo/BFO_0000050": PART_OF_RELATION,
+    "http://purl.obolibrary.org/obo/BFO_0000051": HAS_PART,
+}
 _REPORT_FIELDS = [
     "source_file",
     "record_kind",
@@ -68,6 +87,7 @@ _REPORT_FIELDS = [
     "replacement_chain",
     "consider",
     "original_record_json",
+    "candidate_record_json",
     "bundle_fingerprint",
 ]
 
@@ -131,6 +151,7 @@ class GoAuthority:
     authority_path: str = ""
     authority_sha256: str = ""
     source_paths: tuple[str, ...] = ()
+    structural_edges: frozenset[tuple[str, str, str]] | None = None
 
     def __post_init__(self):
         """Freeze the records and reject contradictory alternative identities."""
@@ -149,6 +170,17 @@ class GoAuthority:
                 aliases[alternate] = identifier
         object.__setattr__(self, "records", MappingProxyType(records))
         object.__setattr__(self, "_aliases", MappingProxyType(aliases))
+        if self.structural_edges is not None:
+            structural_edges = frozenset(tuple(edge) for edge in self.structural_edges)
+            for edge in structural_edges:
+                if (
+                    len(edge) != 3
+                    or not _GO_ID.fullmatch(edge[0])
+                    or edge[1] not in _STRUCTURAL_RELATIONS
+                    or not _GO_ID.fullmatch(edge[2])
+                ):
+                    raise ValueError(f"Invalid asserted GO structural edge: {edge}")
+            object.__setattr__(self, "structural_edges", structural_edges)
         for identifier in records:
             self.resolve(identifier)  # Validate exact chains before a producer opens its outputs.
         for alternate, owner in aliases.items():
@@ -157,7 +189,13 @@ class GoAuthority:
 
     def __reduce__(self):
         """Recreate mapping proxies when a multiprocessing worker unpickles this authority."""
-        return type(self), (dict(self.records), self.authority_path, self.authority_sha256, self.source_paths)
+        return type(self), (
+            dict(self.records),
+            self.authority_path,
+            self.authority_sha256,
+            self.source_paths,
+            self.structural_edges,
+        )
 
     @classmethod
     def from_statements(
@@ -167,6 +205,7 @@ class GoAuthority:
         authority_path: str = "",
         authority_sha256: str = "",
         source_paths: tuple[str, ...] = (),
+        structural_edges: frozenset[tuple[str, str, str]] | None = None,
     ):
         """Build from exact SemSQL-shaped rows, also supporting immutable offline fixtures."""
         metadata = defaultdict(lambda: defaultdict(set))
@@ -195,7 +234,7 @@ class GoAuthority:
             )
         if not terms:
             raise ValueError("GO authority contains no usable GO metadata")
-        return cls(terms, str(authority_path), authority_sha256, source_paths)
+        return cls(terms, str(authority_path), authority_sha256, source_paths, structural_edges)
 
     def resolve(self, identifier: str) -> GoResolution:
         """Follow unique explicit identity links; retain obsolete terms with only suggestions."""
@@ -262,6 +301,23 @@ def _authority_key(path: Path, raw_dir: Path) -> tuple:
     return _file_key(path), sources
 
 
+def _load_asserted_structural_edges(connection) -> frozenset[tuple[str, str, str]]:
+    """Read exact asserted SemSQL edges, never an entailed or reflexive closure."""
+    relations = (*_STRUCTURAL_RELATIONS, *_STRUCTURAL_RELATION_IRIS)
+    placeholders = ",".join("?" for _ in relations)
+    query = (
+        "SELECT subject,predicate,object FROM edge "  # noqa: S608 — only bound placeholders are interpolated
+        f"WHERE predicate IN ({placeholders})"
+    )
+    edges = set()
+    for subject, relation, obj in connection.execute(query, relations):
+        subject, obj = _compact_go(subject or ""), _compact_go(obj or "")
+        relation = _STRUCTURAL_RELATION_IRIS.get(relation, relation)
+        if _GO_ID.fullmatch(subject) and _GO_ID.fullmatch(obj):
+            edges.add((subject, relation, obj))
+    return frozenset(edges)
+
+
 def load_go_authority(raw_dir: Path) -> GoAuthority:
     """Load verified local GO metadata once per authority file version, with an exact byte digest."""
     from kg_microbe.utils.ontology_utils import OntologyDbUnavailableError
@@ -287,6 +343,7 @@ def load_go_authority(raw_dir: Path) -> GoAuthority:
             f"WHERE subject LIKE 'GO:%' AND predicate IN ({placeholders})"
         )
         with sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True) as connection:
+            structural_edges = _load_asserted_structural_edges(connection)
             rows = connection.execute(query, tuple(_PREDICATES))
             authority = GoAuthority.from_statements(
                 rows,
@@ -295,6 +352,7 @@ def load_go_authority(raw_dir: Path) -> GoAuthority:
                 source_paths=tuple(
                     str(source.resolve()) for source in (raw_dir / "go.owl", raw_dir / "go.owl.gz") if source.exists()
                 ),
+                structural_edges=structural_edges,
             )
         if key != _authority_key(path, raw_dir):
             raise ValueError(f"GO authority changed while being read: {path}")
@@ -367,11 +425,43 @@ def _authority_fingerprint(authority):
     for identifier in sorted(authority.records):
         digest.update(json.dumps(vars(authority.records[identifier]), sort_keys=True).encode("utf-8"))
         digest.update(b"\n")
+    structural_digest = None
+    if authority.structural_edges is not None:
+        structural_digest = hashlib.sha256(
+            json.dumps(sorted(authority.structural_edges), separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
     return {
         "path": authority.authority_path,
         "sha256": authority.authority_sha256,
         "metadata_sha256": digest.hexdigest(),
+        "structural_edges_sha256": structural_digest,
+        "structural_policy_version": _STRUCTURAL_POLICY_VERSION,
     }
+
+
+def _replacement_structural_axiom(row):
+    """Identify replacement-affected GO structure, including previously normalized rows."""
+    subject, obj = row[SUBJECT_COLUMN], row[OBJECT_COLUMN]
+    if not (_GO_ID.fullmatch(subject) and _GO_ID.fullmatch(obj)):
+        return None
+    relation, predicate = row.get(RELATION_COLUMN), row.get(PREDICATE_COLUMN)
+    if relation not in _STRUCTURAL_RELATIONS and predicate not in _STRUCTURAL_RELATIONS.values():
+        return None
+    history = json.loads(row.get(GO_REFERENCE_CONTEXT_COLUMN) or "[]")
+    if not isinstance(history, list) or any(not isinstance(item, dict) for item in history):
+        raise GoReferenceError("Invalid GO replacement history for a structural assertion")
+    affected = any(
+        item.get("column") in (SUBJECT_COLUMN, OBJECT_COLUMN)
+        and _compact_go(item.get("original_id") or "") != _compact_go(item.get("canonical_id") or "")
+        for item in history
+    )
+    if not affected:
+        return None
+    if _STRUCTURAL_RELATIONS.get(relation) != predicate:
+        raise GoReferenceError(
+            f"Inconsistent replacement-affected GO structural predicate/relation: {predicate}/{relation}"
+        )
+    return subject, relation, obj
 
 
 def _report_checkpoint(report_path):
@@ -400,7 +490,10 @@ def normalize_go_bundle(
     All references are resolved before writes begin, then complete replacements
     are staged. The caller owns whole-source publication atomicity: this helper
     never edits a merged graph. Memory holds GO identifiers/declarations only,
-    not the complete edge graph. Source membership and edge rows are preserved.
+    not the complete edge graph. Observation rows and source evidence are
+    preserved. Replacement-affected GO-to-GO structural rows require exact
+    asserted-authority support; unsupported candidates are quarantined in the
+    audit rather than transferred into a current hierarchy.
     """
     node_paths, edge_paths = [Path(path) for path in node_paths], [Path(path) for path in edge_paths]
     report_path = Path(report_path)
@@ -563,6 +656,31 @@ def normalize_go_bundle(
                                 )
                                 record(path, "edge", identifier, original)
                                 counts["remapped_endpoints"] += 1
+                        axiom = _replacement_structural_axiom(row)
+                        if axiom is not None:
+                            if authority.structural_edges is None:
+                                raise GoReferenceError(
+                                    "Asserted GO structural authority is required for replacement-affected axioms"
+                                )
+                            if axiom not in authority.structural_edges:
+                                emit_report(
+                                    {
+                                        "source_file": path.name,
+                                        "record_kind": "quarantined_structural_edge",
+                                        "original_id": original[SUBJECT_COLUMN],
+                                        "canonical_id": row[SUBJECT_COLUMN],
+                                        "disposition": "unsupported_replacement_structural_axiom",
+                                        "authority": authority.authority_path,
+                                        "authority_sha256": authority.authority_sha256,
+                                        "original_record_json": json.dumps(
+                                            original, ensure_ascii=False, sort_keys=True
+                                        ),
+                                        "candidate_record_json": json.dumps(row, ensure_ascii=False, sort_keys=True),
+                                    }
+                                )
+                                counts["quarantined_structural_edges"] += 1
+                                continue
+                            counts["supported_replacement_structural_edges"] += 1
                         output.writerow(row)
                 replacements.append((target, path))
             for identifier, result in resolutions.items():

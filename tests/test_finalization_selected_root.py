@@ -18,6 +18,7 @@ def _authority_database(raw_dir, fixture):
     raw_dir.mkdir()
     with (FIXTURES / fixture).open(newline="") as source, sqlite3.connect(raw_dir / "go.db") as connection:
         connection.execute("CREATE TABLE statements(subject,predicate,object,value)")
+        connection.execute("CREATE TABLE edge(subject,predicate,object)")
         reader = csv.DictReader(source, delimiter="\t")
         connection.executemany(
             "INSERT INTO statements VALUES(?,?,?,?)",

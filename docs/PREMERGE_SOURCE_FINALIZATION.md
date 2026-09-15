@@ -34,6 +34,50 @@ public merge gate.
   fingerprint additionally records these dynamic inputs; freshness checking
   detects missing or changed inputs alongside static code/data dependencies.
 
+### Replaced GO identifiers do not transfer every imported axiom
+
+An obsolete GO term's unique replacement remains usable for external
+organism/assay annotations, with the original endpoint and source context
+retained. It does not alone justify transferring an imported GO hierarchy:
+an old narrower class can be replaced by a broader current class, turning
+its former parent assertion into a reverse edge or self-loop.
+
+The safeguard is intentionally narrow. Only GO-to-GO rows affected by a GO
+replacement, including already-normalized rows with `go_reference_context`,
+are checked when their relation/predicate identifies `rdfs:subClassOf`,
+`BFO:0000050` (part of), or `BFO:0000051` (has part). A mismatched Biolink
+predicate/relation fails in either direction. Pure IRI/CURIE spelling
+changes do not activate this policy. Unchanged imported structure,
+cross-ontology assertions, and external observations are outside this gate.
+
+The candidate triple must occur in the selected `go.db` **asserted `edge`
+view**, which projects named subclass and existential restrictions. The
+normalizer never uses `entailed_edge`, reflexive closure, labels, or
+`consider` suggestions to manufacture structural support. Supported rows
+retain source attribution and all observation/context fields. Unsupported
+rows are omitted from the active source graph and retained losslessly in
+`go_reference_resolution.tsv`, with an explicit unsupported-structural-axiom
+disposition, full `original_record_json`, full `candidate_record_json`, and
+the exact authority hash. This is a source disposition, not a merge repair
+or a claim that every excluded historical statement was false in its
+original ontology release.
+
+The asserted index is immutable and travels with prepared GO metadata into
+workers; its digest and the structural policy version are part of the
+normalization checkpoint. Matching older bundle audits are retained but
+rechecked under the new policy, rather than bypassing it or discarding
+their earlier original records. The production loader requires the
+asserted view and fails on missing or broken ontology infrastructure.
+Deliberately metadata-only in-memory fixture authorities can omit the
+index, but cannot authorize a replacement-affected structural row.
+
+No new raw dependency is introduced: the existing selected GO database and
+OWL inputs are already fingerprinted. Changes to the shared GO normalizer
+invalidate all source-finalization fingerprints under the current shared
+code policy; regenerate sources rather than re-stamping existing outputs.
+This safeguard does not certify unchanged imported GO axioms or the
+entire graph as acyclic. Those are separate review scopes.
+
 ## Generated lookup consumption
 
 MediaDive and BactoTraits declare `bacdive_taxon_lookup` as a required

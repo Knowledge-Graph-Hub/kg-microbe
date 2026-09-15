@@ -1,0 +1,3 @@
+subject	predicate	object	relation	primary_knowledge_source	knowledge_level	agent_type
+GO:0016053	biolink:related_to	GO:0044283	rdfs:subClassOf	infores:pato	knowledge_assertion	manual_agent
+GO:0016053	biolink:subclass_of	GO:0044283	RO:0002215	infores:pato	knowledge_assertion	manual_agent

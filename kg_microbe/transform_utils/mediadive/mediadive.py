@@ -35,6 +35,7 @@ from tqdm import tqdm
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
     AMOUNT_COLUMN,
+    BACDIVE,
     BACDIVE_ID_COLUMN,
     BACDIVE_PREFIX,
     BACDIVE_TMP_DIR,
@@ -147,9 +148,8 @@ class MediaDiveTransform(Transform):
     """Template for how the transform class would be designed."""
 
     #: Reads ``ontologies/chebi_nodes.tsv`` and ``chebi_edges.tsv`` (roles/categories)
-    #: via constants.py, which is why this went
-    #: undeclared (#1035).
-    TRANSFORM_INPUTS = ("ontologies",)
+    #: via constants.py (#1035), plus BacDive's intermediate strain-taxid TSV (#1091).
+    TRANSFORM_INPUTS = ("ontologies", BACDIVE)
 
     DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
 

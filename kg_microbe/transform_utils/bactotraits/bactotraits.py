@@ -10,6 +10,7 @@ from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
     ASSOCIATED_WITH,
+    BACDIVE,
     BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN,
     BACDIVE_ID_COLUMN,
     BACDIVE_PREFIX,
@@ -162,6 +163,9 @@ class BactoTraitsTransform(Transform):
     - Pigment_carotenoid
 
     """
+
+    #: The BacDive-produced intermediate TSV supplies strain-taxid mappings (#1091).
+    TRANSFORM_INPUTS = (BACDIVE,)
 
     def __init__(self, input_dir: Optional[Union[str, Path]], output_dir: Optional[Union[str, Path]]):
         """Initialize BactoTraitsTransform."""

@@ -1,10 +1,9 @@
 """Enforce recorded producer/dependency freshness before KGX without changing transform contracts."""
 
-import hashlib
 import inspect
-import json
 from pathlib import Path
 
+from kg_microbe.merge_utils.source_admission import SourceAdmission
 from kg_microbe.utils.source_finalization import (
     FINALIZATION_FILE,
     FINALIZATION_VERSION,
@@ -13,10 +12,12 @@ from kg_microbe.utils.source_finalization import (
 )
 from kg_microbe.utils.transform_fingerprint import (
     FINGERPRINT_FILE,
+    FINGERPRINT_VERSION,
+    SCHEMA_FILES,
+    SHARED_CODE,
     code_fingerprint,
     data_fingerprint,
     finalization_inputs_current,
-    read_fingerprint,
     resolve_data_input,
     schema_fingerprint,
     shared_code_fingerprint,
@@ -27,15 +28,23 @@ from kg_microbe.utils.transform_fingerprint import (
 class _SourceFreshness:
     """Cache streamed identities and recursive validations for one public merge request."""
 
-    def __init__(self):
+    def __init__(self, admission=None):
         """Resolve only local metadata, without constructing producers or ontology adapters."""
         from kg_microbe.transform import DATA_SOURCES
 
         self.registry = DATA_SOURCES
         self.root = Path(__file__).resolve().parents[2]
+        self.admission = admission if admission is not None else SourceAdmission()
+        for relative in SHARED_CODE:
+            path = self.root / relative
+            if path.is_dir():
+                self.admission.capture_tree(path)
+            else:
+                self.admission.capture(path, optional=True)
+        for relative in SCHEMA_FILES:
+            self.admission.capture(self.root / relative, optional=True)
         self.shared = shared_code_fingerprint(self.root)
         self.schema = schema_fingerprint(self.root)
-        self.identities = {}
         self.reports = {}
         self.checked = set()
         self.active = set()
@@ -43,22 +52,13 @@ class _SourceFreshness:
 
     def _identity(self, path):
         """Stream each graph, audit or authority at most once per gate invocation."""
-        path = Path(path).resolve()
-        if path not in self.identities:
-            if not path.is_file():
-                raise SourceFinalizationRequired(f"Required prepared input is missing: {path}")
-            digest = hashlib.sha256()
-            with path.open("rb") as stream:
-                for block in iter(lambda: stream.read(1024 * 1024), b""):
-                    digest.update(block)
-            self.identities[path] = {"bytes": path.stat().st_size, "sha256": digest.hexdigest()}
-        return self.identities[path]
+        return self.admission.capture(path)
 
     def _load(self, path):
         """Read completion metadata strictly; unsupported records cannot supply upstream evidence."""
         if path not in self.reports:
             try:
-                report = json.loads(path.read_text(encoding="utf-8"))
+                report = self.admission.read_json(path)
             except (OSError, ValueError) as error:
                 raise SourceFinalizationRequired(
                     f"Missing/unreadable whole-source finalization record: {path}"
@@ -84,6 +84,7 @@ class _SourceFreshness:
             actual_directory = Path(inspect.getsourcefile(cls)).resolve().parent
             if actual_directory != directory:
                 raise SourceFinalizationRequired(f"Producer metadata does not match registered source {source}")
+            self.admission.capture_tree(directory)
             self.packages[source] = (cls, directory, code_fingerprint(directory, self.root))
         cls, directory, fingerprint = self.packages[source]
         if producer.get("fingerprint") != fingerprint:
@@ -138,7 +139,13 @@ class _SourceFreshness:
         # but its dispatcher writes one producer marker beside those datasets.
         if source == "bakta" and not (directory / FINGERPRINT_FILE).is_file():
             directory = directory.parent
-        marker = read_fingerprint(directory)
+        marker_path = directory / FINGERPRINT_FILE
+        try:
+            marker = self.admission.read_json(marker_path)
+        except (SourceFinalizationRequired, ValueError):
+            marker = None
+        if not isinstance(marker, dict) or marker.get("version") != FINGERPRINT_VERSION:
+            marker = None
         if marker is None:
             if source == "ontologies":
                 raise SourceFinalizationRequired(
@@ -163,6 +170,7 @@ class _SourceFreshness:
             selected = resolve_data_input(self.root, declaration, raw)
             if not selected.is_file():
                 raise SourceFinalizationRequired(f"{source}: declared input missing: {selected}")
+            self._identity(selected)
         expected = {
             "code": code,
             "shared": self.shared,
@@ -174,6 +182,8 @@ class _SourceFreshness:
                 raise SourceFinalizationRequired(
                     f"{source}: producer fingerprint stale versus {key}; rerun kg transform"
                 )
+        for name in marker.get("finalization_inputs", ()):
+            self._identity(self.root / name)
         if not finalization_inputs_current(marker, self.root):
             raise SourceFinalizationRequired(f"{source}: recorded consumed inputs changed; rerun kg transform")
         for upstream in cls.TRANSFORM_INPUTS:
@@ -224,8 +234,10 @@ class _SourceFreshness:
         raise SourceFinalizationRequired(f"{path}: {detail}")
 
 
-def verify_source_freshness(paths):
+def verify_source_freshness(paths, *, admission=None):
     """Reject stale selected sources and declared dependencies before staging or running KGX."""
-    gate = _SourceFreshness()
+    gate = _SourceFreshness(admission)
     for path in paths:
         gate.validate_path(path)
+    gate.admission.verify(metadata_only=True)
+    return gate.admission

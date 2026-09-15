@@ -177,7 +177,7 @@ def load_and_merge(
     """
     if sources:
         _assert_sources_exist(yaml_file, sources)
-    _assert_sources_finalized(yaml_file, sources)
+    admission = _assert_sources_finalized(yaml_file, sources)
     # KGX writes the destination before post-processing starts. Never give it
     # a published pathname: a later required failure must preserve the old
     # artifact, not merely propagate after KGX has already overwritten it.
@@ -186,6 +186,8 @@ def load_and_merge(
         failed_stats = _cleanup_merged_outputs(
             str(staged_config), original_yaml_file=yaml_file, published_output_dir=final_output
         )
+        if admission is not None:
+            admission.verify()
         written = _publish_staged_outputs(staged_output, final_output, stats_outputs, failed_stats)
         _warn_about_stale_siblings(final_output, written)
     return merged_graph
@@ -193,13 +195,18 @@ def load_and_merge(
 
 def _assert_sources_finalized(yaml_file, sources=None):
     """Require prepared graph bytes by default, independent of their directory or current working path."""
+    from kg_microbe.merge_utils.source_admission import SourceAdmission
+
+    admission = SourceAdmission()
+    admission.capture(yaml_file)
     config = parse_load_config(yaml_file)
     allow = config.get("configuration", {}).get("allow_unfinalized_sources", False)
     if not isinstance(allow, bool):
         raise ValueError("configuration.allow_unfinalized_sources must be a boolean")
     if allow:
         print("[merge-validation] WARNING: DIAGNOSTIC OPT-OUT allow_unfinalized_sources=true; not a finalized release")
-        return
+        admission.verify(metadata_only=True)
+        return admission
     filenames = []
     for name, source in (config.get("merged_graph", {}).get("source") or {}).items():
         if sources and name not in sources:
@@ -207,13 +214,20 @@ def _assert_sources_finalized(yaml_file, sources=None):
         inputs = source.get("input") or {}
         values = inputs.get("filename") or []
         values = [values] if isinstance(values, str) else values
-        filenames.extend(
-            _source_filename_at_original_location(value, Path(yaml_file).resolve().parent) for value in values
-        )
+        for value in values:
+            lexical = Path(value)
+            if not lexical.is_absolute() and not lexical.exists():
+                lexical = Path(yaml_file).resolve().parent / lexical
+            admission.bind_path(lexical)
+            filenames.append(
+                admission.capture_resolution(
+                    _source_filename_at_original_location, value, Path(yaml_file).resolve().parent
+                )
+            )
     verify_finalized_source_files(filenames)
     from kg_microbe.merge_utils.source_freshness import verify_source_freshness
 
-    verify_source_freshness(filenames)
+    return verify_source_freshness(filenames, admission=admission)
 
 
 def _source_filename_at_original_location(filename: str, config_dir: Path) -> str:

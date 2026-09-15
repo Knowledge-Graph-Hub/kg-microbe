@@ -9,6 +9,7 @@ import yaml
 from kg_microbe.merge_utils.stats_provenance import (
     annotate_graph_stats,
     count_raw_predicates,
+    recount_finalized_stats,
     stats_filename_from_config,
 )
 
@@ -211,6 +212,35 @@ def test_finalized_recount_is_idempotent_and_keeps_original_kgx_block(tmp_path):
     assert second == first
     assert second["pre_normalization_stats"] == original
     assert "pre_normalization_stats" not in second["pre_normalization_stats"]
+
+
+def test_finalized_recount_preserves_literal_quotes_and_row_boundaries():
+    """Quotes in valid literal TSV text never join records or swap provider facets."""
+    fixture = Path(__file__).parent / "resources" / "stats_literal_quotes"
+    nodes, edges = recount_finalized_stats(fixture / "nodes.tsv", fixture / "edges.tsv")
+    assert nodes["total_nodes"] == 2
+    assert nodes["count_by_raw_category_and_provided_by"] == {
+        "biolink:NamedThing": {"infores:first": 1},
+        "biolink:OrganismTaxon": {"infores:second": 1},
+    }
+    assert edges["total_edges"] == 2
+    assert edges["count_by_raw_primary_knowledge_source"] == {"infores:other": 1, "infores:test": 1}
+    assert edges["count_by_raw_knowledge_level"] == {"knowledge_assertion": 1, "prediction": 1}
+
+
+def test_literal_quote_recount_is_used_by_published_stats(tmp_path):
+    """The public annotation path records literal TSV totals and provider/category pairings."""
+    stats, _, config = _write_fixture(tmp_path)
+    fixture = Path(__file__).parent / "resources" / "stats_literal_quotes"
+    result = annotate_graph_stats(
+        stats, fixture / "edges.tsv", config, tmp_path, finalized_nodes_file=fixture / "nodes.tsv"
+    )
+    assert result["node_stats"]["total_nodes"] == result["edge_stats"]["total_edges"] == 2
+    assert result["node_stats"]["count_by_raw_category_and_provided_by"] == {
+        "biolink:NamedThing": {"infores:first": 1},
+        "biolink:OrganismTaxon": {"infores:second": 1},
+    }
+    assert yaml.safe_load(stats.read_text(encoding="utf-8")) == result
 
 
 def test_loose_locator_can_be_published_while_reading_staged_edges(tmp_path):

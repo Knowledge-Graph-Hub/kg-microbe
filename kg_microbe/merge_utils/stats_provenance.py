@@ -47,9 +47,9 @@ PRE_NORMALIZATION_KEY = "pre_normalization_stats"
 
 
 def _final_rows(path: Path, required: set):
-    """Read a finalized TSV once, honoring quotes and rejecting malformed record shapes."""
+    """Read literal finalized TSV fields, rejecting malformed record shapes."""
     with path.open(encoding="utf-8", newline="") as handle:
-        reader = csv.DictReader(handle, delimiter="\t")
+        reader = csv.DictReader(handle, delimiter="\t", quoting=csv.QUOTE_NONE)
         if not required <= set(reader.fieldnames or []):
             raise ValueError(f"{path}: missing required columns {sorted(required)}")
         for number, row in enumerate(reader, start=2):

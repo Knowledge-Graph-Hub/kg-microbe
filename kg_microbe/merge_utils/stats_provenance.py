@@ -37,11 +37,82 @@ from typing import Dict, Iterable, Optional
 
 import yaml
 
+from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.transform_fingerprint import FINGERPRINT_FILE, read_fingerprint
 
 STATS_OPERATION = "kgx.graph_operations.summarize_graph.generate_graph_stats"
 PROVENANCE_KEY = "provenance"
 RAW_PREDICATE_KEY = "count_by_raw_predicate"
+PRE_NORMALIZATION_KEY = "pre_normalization_stats"
+
+
+def _final_rows(path: Path, required: set):
+    """Read a finalized TSV once, honoring quotes and rejecting malformed record shapes."""
+    with path.open(encoding="utf-8", newline="") as handle:
+        reader = csv.DictReader(handle, delimiter="\t")
+        if not required <= set(reader.fieldnames or []):
+            raise ValueError(f"{path}: missing required columns {sorted(required)}")
+        for number, row in enumerate(reader, start=2):
+            if None in row or any(value is None for value in row.values()):
+                raise ValueError(f"{path}:{number}: malformed TSV row")
+            yield row
+
+
+def _incidence_tokens(value: str) -> set:
+    """Count each category/provider at most once per node, including explicit blank membership."""
+    return set(filter(None, value.split("|"))) or {"(blank)"}
+
+
+def _plain_counts(counts: Counter) -> Dict:
+    """Return stable primitive counts, suitable for YAML without Python-specific tags."""
+    return {key: counts[key] for key in sorted(counts)}
+
+
+def recount_finalized_stats(nodes_file: Path, edges_file: Path) -> tuple:
+    """
+    Count current totals and raw/incidence facets without materializing graph rows.
+
+    Node category and provided_by slots are multivalued; their membership
+    counts can exceed total_nodes. Edge slots counted here are scalar and
+    counted exactly as written. No KGX/Biolink predicate resolution or SPO
+    category inference is claimed by these deliberately named raw facets.
+    """
+    categories, prefixes, providers = Counter(), Counter(), Counter()
+    category_prefixes, category_providers = {}, {}
+    node_total = 0
+    for row in _final_rows(nodes_file, {"id", "category"}):
+        node_total += 1
+        prefix = row["id"].split(":", 1)[0] if ":" in row["id"] else "(unprefixed)"
+        node_categories = _incidence_tokens(row["category"])
+        node_providers = _incidence_tokens(row.get("provided_by", ""))
+        categories.update(node_categories)
+        prefixes[prefix] += 1
+        providers.update(node_providers)
+        for category in node_categories:
+            category_prefixes.setdefault(category, Counter())[prefix] += 1
+            category_providers.setdefault(category, Counter()).update(node_providers)
+    node_stats = {
+        "total_nodes": node_total,
+        "count_by_raw_category_incidence": _plain_counts(categories),
+        "count_by_raw_id_prefix": _plain_counts(prefixes),
+        "count_by_provided_by_incidence": _plain_counts(providers),
+        "count_by_raw_category_and_prefix": {
+            key: _plain_counts(value) for key, value in sorted(category_prefixes.items())
+        },
+        "count_by_raw_category_and_provided_by": {
+            key: _plain_counts(value) for key, value in sorted(category_providers.items())
+        },
+    }
+    slots = ("predicate", "relation", "primary_knowledge_source", "knowledge_level", "agent_type")
+    counts = {slot: Counter() for slot in slots}
+    edge_total = 0
+    for row in _final_rows(edges_file, {"subject", "predicate", "object"}):
+        edge_total += 1
+        for slot in slots:
+            counts[slot][row.get(slot, "") or "(blank)"] += 1
+    edge_stats = {"total_edges": edge_total}
+    edge_stats.update({f"count_by_raw_{slot}": _plain_counts(counts[slot]) for slot in slots})
+    return node_stats, edge_stats
 
 
 def stats_filename_from_config(config: Dict) -> Optional[str]:
@@ -184,6 +255,8 @@ def annotate_graph_stats(
     repo_root: Path,
     now: Optional[datetime] = None,
     edges_archive: Optional[Path] = None,
+    published_edges_file: Optional[Path] = None,
+    finalized_nodes_file: Optional[Path] = None,
 ) -> Dict:
     """
     Add ``provenance`` and ``edge_stats.count_by_raw_predicate`` to a stats file.
@@ -195,6 +268,9 @@ def annotate_graph_stats(
     :param now: Timestamp to record; defaults to UTC now.
     :param edges_archive: Published archive containing the edges; when supplied,
         record it and its member instead of the temporary loose TSV (#1055).
+    :param published_edges_file: Final loose locator, while counts read ``edges_file`` in staging.
+    :param finalized_nodes_file: Opt into a full streaming recount of the finalized TSV pair;
+        preserve the entire original KGX summary only under ``pre_normalization_stats``.
     :return: The annotated stats dict, as written.
     :raises ValueError: If the raw predicate total disagrees with KGX's
         ``total_edges`` -- the two counted different files.
@@ -204,17 +280,29 @@ def annotate_graph_stats(
     with Path(yaml_file).open(encoding="utf-8") as handle:
         config = yaml.safe_load(handle) or {}
 
-    raw = count_raw_predicates(edges_file)
-    raw_total = sum(raw.values())
-    kgx_total = (stats.get("edge_stats") or {}).get("total_edges")
-    if kgx_total is not None and kgx_total != raw_total:
-        raise ValueError(
-            f"raw predicate count {raw_total:,} != KGX total_edges {kgx_total:,}; "
-            f"{edges_file} is not the file the stats describe"
-        )
-
-    edge_stats = stats.setdefault("edge_stats", {})
-    edge_stats[RAW_PREDICATE_KEY] = {predicate: raw[predicate] for predicate in sorted(raw)}
+    if finalized_nodes_file is not None:
+        node_stats, edge_stats = recount_finalized_stats(Path(finalized_nodes_file), edges_file)
+        # Preserve the original block exactly once, not a stack of recounts.
+        # Unknown KGX facets also belong to the pre-cleanup graph; do not leave
+        # any of them at top level pretending they describe current TSVs.
+        before = stats.get(PRE_NORMALIZATION_KEY, stats)
+        stats = {
+            "graph_name": stats.get("graph_name"),
+            PRE_NORMALIZATION_KEY: before,
+            "node_stats": node_stats,
+            "edge_stats": edge_stats,
+        }
+    else:
+        raw = count_raw_predicates(edges_file)
+        raw_total = sum(raw.values())
+        kgx_total = (stats.get("edge_stats") or {}).get("total_edges")
+        if kgx_total is not None and kgx_total != raw_total:
+            raise ValueError(
+                f"raw predicate count {raw_total:,} != KGX total_edges {kgx_total:,}; "
+                f"{edges_file} is not the file the stats describe"
+            )
+        edge_stats = stats.setdefault("edge_stats", {})
+        edge_stats[RAW_PREDICATE_KEY] = {predicate: raw[predicate] for predicate in sorted(raw)}
 
     stamp = (now or datetime.now(timezone.utc)).astimezone(timezone.utc).replace(microsecond=0)
     stats[PROVENANCE_KEY] = {
@@ -224,19 +312,26 @@ def annotate_graph_stats(
         **(
             {"edges_archive": str(edges_archive), "edges_archive_member": edges_file.name}
             if edges_archive is not None
-            else {"edges_file": str(edges_file)}
+            else {"edges_file": str(published_edges_file if published_edges_file is not None else edges_file)}
         ),
         "python": sys.version.split()[0],
         "kgx": _kgx_version(),
         "sources": source_markers(config, repo_root),
         "note": (
-            f"{RAW_PREDICATE_KEY} is the predicate column counted as written; KGX's "
-            "count_by_predicates resolves through Biolink and records METPO and other "
-            "non-Biolink predicates as None (#993). provenance is written by kg merge (#1013)."
+            "Current node_stats and edge_stats are streamed from the finalized TSV pair. "
+            "Node category/provider incidence counts include each pipe token once per node and may exceed total_nodes; "
+            "edge raw facets count scalar cells as written, with (blank) for missing values. "
+            "All original KGX totals/facets are historical under pre_normalization_stats, not current graph counts."
+            if finalized_nodes_file is not None
+            else (
+                f"{RAW_PREDICATE_KEY} is the predicate column counted as written; KGX's "
+                "count_by_predicates resolves through Biolink and records METPO and other "
+                "non-Biolink predicates as None (#993). provenance is written by kg merge (#1013)."
+            )
         ),
     }
 
-    with stats_file.open("w", encoding="utf-8") as handle:
+    with atomic_write(stats_file, encoding="utf-8") as handle:
         yaml.safe_dump(stats, handle, sort_keys=True, allow_unicode=True)
     return stats
 

@@ -169,6 +169,7 @@ from kg_microbe.transform_utils.constants import (
     PROVIDED_BY_COLUMN,
     PROVISIONAL_GENUS_PREFIX,
     PROVISIONAL_SPECIES_PREFIX,
+    PUBLICATIONS_COLUMN,
     RDFS_SUBCLASS_OF,
     RESISTANCE_KEY,
     RISK_ASSESSMENT,
@@ -258,7 +259,7 @@ class BacDiveTransform(Transform):
         super().__init__(source_name, input_dir, output_dir)
         # Extend edge schema with `value`/`unit` for quantitative provenance
         # (e.g. antibiogram zone-of-inhibition diameter in mm).
-        self.edge_header = self.edge_header + ["value", "unit"]
+        self.edge_header = self.edge_header + ["value", "unit", PUBLICATIONS_COLUMN]
         self.knowledge_source = "infores:bacdive"  # InforES standard knowledge source
         self.ncbi_impl = get_ncbitaxon_adapter()
 
@@ -1862,17 +1863,15 @@ class BacDiveTransform(Transform):
             node_writer.writerow(self.node_header)
             # Wrap edge_writer so every infores:bacdive-sourced edge that
             # involves a kgmicrobe.strain:bacdive_NNN node (subject or object)
-            # gets the BacDive strain id added to its primary_knowledge_source.
-            # The serialized list form matches KGX's multi-source convention,
-            # so downstream merge collapses these rows with their mediadive-
-            # sourced twins (which carry just "bacdive:NNN") into a single
-            # multi-provenance row instead of leaving them as two singletons.
+            # gets its public BacDive record page added to publications.
+            # PKS remains the scalar information resource infores:bacdive.
             raw_edge_writer = tsv_writer(edge)
             raw_edge_writer.writerow(self.edge_header)
             edge_writer = _StrainProvenanceWriter(
                 raw_edge_writer,
                 knowledge_source=self.knowledge_source,
                 ks_column_index=self.edge_header.index(PRIMARY_KNOWLEDGE_SOURCE_COLUMN),
+                publications_column_index=self.edge_header.index(PUBLICATIONS_COLUMN),
             )
 
             # Generate and write assay nodes and edges upfront (before processing organisms)

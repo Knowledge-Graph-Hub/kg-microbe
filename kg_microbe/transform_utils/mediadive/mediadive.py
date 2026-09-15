@@ -99,6 +99,7 @@ from kg_microbe.transform_utils.constants import (
     PROVIDED_BY_COLUMN,
     PUBCHEM_KEY,
     PUBCHEM_PREFIX,
+    PUBLICATIONS_COLUMN,
     RAW_DATA_DIR,
     RDFS_SUBCLASS_OF,
     RECIPE_KEY,
@@ -124,6 +125,7 @@ from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
 )
+from kg_microbe.utils.provenance import bacdive_record_url
 from kg_microbe.utils.tsv_io import tsv_writer
 
 #: HTTP response cache for the API fallback, kept beside the bulk JSONs. The
@@ -150,7 +152,7 @@ class MediaDiveTransform(Transform):
         # Extend edge schema with `value`/`unit` so solution→ingredient edges
         # can carry the recipe's amount + unit (g/l, mmol/l, ml/l, ...).
         # Other edge sites in this transform leave both columns empty.
-        self.edge_header = self.edge_header + ["value", "unit"]
+        self.edge_header = self.edge_header + ["value", "unit", PUBLICATIONS_COLUMN]
         # No `requests_cache.install_cache()` here: that monkeypatched
         # `requests.Session` for the whole process from a constructor, so every
         # HTTP client in the run became a CachedSession and a test that merely
@@ -978,7 +980,7 @@ class MediaDiveTransform(Transform):
                                 SUBCLASS_PREDICATE,
                                 MEDIADIVE_MEDIUM_TYPE_COMPLEX_ID,
                                 RDFS_SUBCLASS_OF,
-                                "MediaDive",
+                                self.knowledge_source,
                                 OBSERVATION,
                                 MANUAL_AGENT,
                             ]
@@ -990,7 +992,7 @@ class MediaDiveTransform(Transform):
                                 SUBCLASS_PREDICATE,
                                 MEDIADIVE_MEDIUM_TYPE_DEFINED_ID,
                                 RDFS_SUBCLASS_OF,
-                                "MediaDive",
+                                self.knowledge_source,
                                 OBSERVATION,
                                 MANUAL_AGENT,
                             ]
@@ -1052,16 +1054,8 @@ class MediaDiveTransform(Transform):
                                             ]
                                         )
 
-                                        # Emit primary_knowledge_source as the list literal
-                                        # ['infores:bacdive', 'bacdive:NNN'] — matches the
-                                        # bacdive transform's _StrainProvenanceWriter output
-                                        # byte-for-byte so KGX dedupes the two rows (this
-                                        # mediadive row + the corresponding bacdive row for the
-                                        # same s,p,o) by exact-string match in the merge step.
-                                        # Without the matching format KGX nests the two values
-                                        # under a 2-element list of strings — uglier and harder
-                                        # to query.
-                                        provenance = f"['infores:bacdive', '{strain_id}']"
+                                        # The resource is scalar; its public record page is
+                                        # publication evidence, matching BacDive (#688, #1070).
                                         medium_strain_edge.extend(
                                             [
                                                 [
@@ -1069,9 +1063,12 @@ class MediaDiveTransform(Transform):
                                                     predicate,
                                                     medium_id,
                                                     relation,
-                                                    provenance,
+                                                    "infores:bacdive",
                                                     OBSERVATION,
                                                     MANUAL_AGENT,
+                                                    "",
+                                                    "",
+                                                    bacdive_record_url(strain_id),
                                                 ],
                                             ]
                                         )
@@ -1168,15 +1165,14 @@ class MediaDiveTransform(Transform):
                     # Each MediaDive solution is a chemical mixture — subclass it under
                     # CHEBI:60004 (mixture) so OBO-aware reasoners can navigate from any
                     # solution back to the canonical chemical hierarchy. Edge schema is
-                    # the standard 9-col MediaDive edge_header (subject, predicate, object,
-                    # relation, primary_knowledge_source, knowledge_level, agent_type, value, unit).
+                    # the standard edge_header, with the final publications cell empty.
                     solution_subclass_edges = [
                         [
                             MEDIADIVE_SOLUTION_PREFIX + str(k),
                             "biolink:subclass_of",
                             "CHEBI:60004",
                             "rdfs:subClassOf",
-                            self.source_name,
+                            self.knowledge_source,
                             "knowledge_assertion",
                             "manual_agent",
                             "",

@@ -147,6 +147,86 @@ def test_a_mismatched_edges_file_is_refused(tmp_path):
         raise AssertionError("expected ValueError")
 
 
+def test_finalized_recount_replaces_all_stale_totals_and_facets(tmp_path):
+    """Removed edges/nodes and changed categories/providers never leave KGX facets at top level."""
+    stats, edges, config = _write_fixture(tmp_path)
+    original = yaml.safe_load(stats.read_text())
+    original["edge_stats"]["count_by_spo"] = {"old-category-old-predicate-old-category": 4}
+    original["node_stats"]["count_by_category"] = {"obsolete-category": {"count": 4}}
+    original["custom_old_graph_facet"] = {"old": 4}
+    stats.write_text(yaml.safe_dump(original))
+    nodes = tmp_path / "final_nodes.tsv"
+    nodes.write_text(
+        "id\tcategory\tname\tprovided_by\n"
+        "NCBITaxon:12\tbiolink:OrganismTaxon\tAccepted taxon\tinfores:ncbitaxon\n"
+        "CHEBI:3\tbiolink:ChemicalEntity|biolink:OntologyClass|biolink:ChemicalEntity\tCompound\tinfores:chebi|infores:source\n"
+    )
+    edges.write_text(
+        "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\n"
+        "NCBITaxon:12\tMETPO:2000517\tCHEBI:3\tMETPO:2000517\tinfores:source\tknowledge_assertion\tmanual_agent\n"
+        "NCBITaxon:12\tbiolink:related_to\tCHEBI:3\tRO:0001\tinfores:other\tprediction\tautomated_agent\n"
+    )
+    result = annotate_graph_stats(stats, edges, config, tmp_path, finalized_nodes_file=nodes)
+    assert result["pre_normalization_stats"] == original
+    assert "custom_old_graph_facet" not in result
+    assert "count_by_predicates" not in result["edge_stats"]
+    assert "count_by_spo" not in result["edge_stats"]
+    assert "count_by_category" not in result["node_stats"]
+    assert result["node_stats"]["total_nodes"] == 2
+    assert result["edge_stats"]["total_edges"] == 2
+    assert result["edge_stats"]["count_by_raw_predicate"] == {"METPO:2000517": 1, "biolink:related_to": 1}
+    assert result["edge_stats"]["count_by_raw_primary_knowledge_source"] == {"infores:other": 1, "infores:source": 1}
+    assert result["edge_stats"]["count_by_raw_agent_type"] == {"automated_agent": 1, "manual_agent": 1}
+    assert result["node_stats"]["count_by_raw_category_incidence"] == {
+        "biolink:OrganismTaxon": 1,
+        "biolink:ChemicalEntity": 1,
+        "biolink:OntologyClass": 1,
+    }
+    assert result["node_stats"]["count_by_raw_id_prefix"] == {"CHEBI": 1, "NCBITaxon": 1}
+    assert result["node_stats"]["count_by_provided_by_incidence"] == {
+        "infores:ncbitaxon": 1,
+        "infores:chebi": 1,
+        "infores:source": 1,
+    }
+    assert "may exceed total_nodes" in result["provenance"]["note"]
+    assert yaml.safe_load(stats.read_text()) == result
+
+
+def test_finalized_recount_is_idempotent_and_keeps_original_kgx_block(tmp_path):
+    """Repeated recounts replace current counts without nesting or rewriting original observations."""
+    stats, edges, config = _write_fixture(tmp_path)
+    original = yaml.safe_load(stats.read_text())
+    nodes = tmp_path / "nodes.tsv"
+    nodes.write_text("id\tcategory\nNCBITaxon:1\tbiolink:OrganismTaxon\n")
+    now = datetime(2026, 9, 14, tzinfo=timezone.utc)
+    first = annotate_graph_stats(stats, edges, config, tmp_path, now=now, finalized_nodes_file=nodes)
+    second = annotate_graph_stats(stats, edges, config, tmp_path, now=now, finalized_nodes_file=nodes)
+    assert second == first
+    assert second["pre_normalization_stats"] == original
+    assert "pre_normalization_stats" not in second["pre_normalization_stats"]
+
+
+def test_loose_locator_can_be_published_while_reading_staged_edges(tmp_path):
+    """Provenance must not name the private staging directory once files are published."""
+    stats, edges, config = _write_fixture(tmp_path)
+    published = tmp_path / "published" / "merged-kg_edges.tsv"
+    result = annotate_graph_stats(stats, edges, config, tmp_path, published_edges_file=published)
+    assert result["provenance"]["edges_file"] == str(published)
+    assert result["edge_stats"]["total_edges"] == 4
+    assert not published.exists(), "the annotation only reads the real staged file"
+
+
+def test_failed_final_recount_does_not_clobber_original_stats(tmp_path):
+    """A malformed final TSV raises without rewriting pre-cleanup statistics as current."""
+    stats, edges, config = _write_fixture(tmp_path)
+    original = stats.read_bytes()
+    nodes = tmp_path / "nodes.tsv"
+    nodes.write_text("id\tcategory\nNCBITaxon:1\n")
+    with pytest.raises(ValueError, match="malformed TSV row"):
+        annotate_graph_stats(stats, edges, config, tmp_path, finalized_nodes_file=nodes)
+    assert stats.read_bytes() == original
+
+
 def test_the_stats_filename_comes_from_the_config_operation(tmp_path):
     """The merge config, not a hardcoded name, says which file to annotate — variants differ."""
     _, _, config = _write_fixture(tmp_path)

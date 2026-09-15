@@ -26,8 +26,10 @@ from kg_microbe.transform_utils.constants import (
     GO_CATEGORY,
     GO_PREFIX,
     ID_COLUMN,
+    KNOWLEDGE_ASSERTION,
     KNOWLEDGE_LEVEL_COLUMN,
     LOGICAL_ENTAILMENT,
+    MANUAL_AGENT,
     MANUAL_VALIDATION_OF_AUTOMATED_AGENT,
     NAME_COLUMN,
     OBJECT_COLUMN,
@@ -50,7 +52,6 @@ from kg_microbe.transform_utils.constants import (
     RHEA_MAPPING_OBJECT_COLUMN,
     RHEA_NAME_COLUMN,
     RHEA_NEW_PREFIX,
-    RHEA_PREDICATE_MAPPER,
     RHEA_PYOBO_PREFIXES_MAPPER,
     RHEA_PYOBO_RELATIONS_MAPPER,
     RHEA_RIGHT_TO_LEFT_DIRECTION,
@@ -59,6 +60,7 @@ from kg_microbe.transform_utils.constants import (
     RHEA_TO_EC_EDGE,
     RHEA_TO_GO_EDGE,
     RHEA_UNDEFINED_DIRECTION,
+    RHEA_XREF_RELATION,
     RHEAMAPPINGS,
     RHEAMAPPINGS_TMP_DIR,
     SAME_AS_COLUMN,
@@ -151,6 +153,21 @@ class RheaMappingsTransform(Transform):
         node_row[self.node_header.index(SYNONYM_COLUMN)] = synonym
         node_row[self.node_header.index(SAME_AS_COLUMN)] = same_as
         return node_row
+
+    def _curated_xref_row(self, subject: str, target: str) -> list:
+        """Represent a curated Rhea activity cross-reference, not gene-product enablement."""
+        if not subject.startswith(RHEA_NEW_PREFIX) or not target.startswith((EC_PREFIX, GO_PREFIX)):
+            raise ValueError(f"Not a Rhea activity cross-reference: {subject} -> {target}")
+        values = {
+            SUBJECT_COLUMN: subject,
+            PREDICATE_COLUMN: RHEA_TO_EC_EDGE if target.startswith(EC_PREFIX) else RHEA_TO_GO_EDGE,
+            OBJECT_COLUMN: target,
+            RELATION_COLUMN: RHEA_XREF_RELATION,
+            PRIMARY_KNOWLEDGE_SOURCE_COLUMN: self.knowledge_source,
+            KNOWLEDGE_LEVEL_COLUMN: KNOWLEDGE_ASSERTION,
+            AGENT_TYPE_COLUMN: MANUAL_AGENT,
+        }
+        return [values.get(column, "") for column in self.edge_header]
 
     def _reference_to_tuple(self, ref):
         """Convert a reference to a tuple."""
@@ -333,25 +350,10 @@ class RheaMappingsTransform(Transform):
                         for row in mapping_tsv_reader:
                             subject_info = RHEA_NEW_PREFIX + str(row[rhea_idx])
                             object = xref_prefix + str(row[xref_idx])
-                            relation = (
-                                [k for k, v in RHEA_PYOBO_RELATIONS_MAPPER.items() if v == predicate][0]
-                                if predicate in RHEA_PYOBO_RELATIONS_MAPPER.values()
-                                else None
-                            )
                             # Remove rows other than Rhea-Rhea relations, accounted for elsewhere
                             if not any(substring in object for substring in relation_types_to_remove_rhea2_files):
                                 nodes_file_writer.writerow(self._create_node_row(object, category, None))
-                                edges_file_writer.writerow(
-                                    [
-                                        subject_info,
-                                        predicate,
-                                        object,
-                                        relation,
-                                        ks,
-                                        LOGICAL_ENTAILMENT,
-                                        MANUAL_VALIDATION_OF_AUTOMATED_AGENT,
-                                    ]
-                                )
+                                edges_file_writer.writerow(self._curated_xref_row(subject_info, object))
 
                     with open(RHEAMAPPINGS_TMP_DIR / "all_terms.tsv", "w", newline="") as tsvfile:
                         all_terms_writer = tsv_writer(tsvfile)
@@ -405,15 +407,7 @@ class RheaMappingsTransform(Transform):
                                             )
 
                                             edges_file_writer.writerow(
-                                                [
-                                                    subject_info[0],
-                                                    RHEA_PREDICATE_MAPPER.get(predicate_info[1], predicate_info[1]),
-                                                    object_info[0],
-                                                    predicate_info[0],
-                                                    ks,
-                                                    LOGICAL_ENTAILMENT,
-                                                    MANUAL_VALIDATION_OF_AUTOMATED_AGENT,
-                                                ]
+                                                self._curated_xref_row(subject_info[0], object_info[0])
                                             )
                 progress.set_description(f"Processing {file} ...")
                 # After each iteration, call the update method to advance the progress bar.

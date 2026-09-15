@@ -96,6 +96,30 @@ class TestGTDBTransform(unittest.TestCase):
         # CURIE allocation is deterministic; no counter to assert on.
         self.assertFalse(hasattr(self.transform, "taxon_id_counter"))
 
+    def test_retired_taxids_coalesce_before_fan_in(self):
+        """Two retired taxids sharing one accepted ID must produce broad, not close matches."""
+        self.transform._taxid_merges = {"10": "12", "11": "12"}
+        self.transform.taxon_to_id = {"s__First": "GTDB:s__First", "s__Second": "GTDB:s__Second"}
+        self.transform._create_genome_node("GCF_1.1", "s__First", "10")
+        self.transform._create_genome_node("GCF_2.1", "s__Second", "11")
+        self.transform._emit_ncbi_mapping_edges()
+        edges = [row for row in self.transform.edges if row["object"] == "NCBITaxon:12"]
+        self.assertEqual(len(edges), 2)
+        self.assertTrue(all(row["predicate"] == "biolink:broad_match" for row in edges))
+        self.assertEqual({row["original_object"] for row in edges}, {"NCBITaxon:10", "NCBITaxon:11"})
+
+    def test_same_mapping_retains_scalar_original_taxid_assertions(self):
+        """Different retired references to one GTDB taxon are evidence, not extra fan-in taxa."""
+        self.transform._taxid_merges = {"10": "12", "11": "12"}
+        self.transform.taxon_to_id = {"s__First": "GTDB:s__First"}
+        for accession, taxid in (("GCF_1.1", "10"), ("GCF_2.1", "11"), ("GCF_3.1", "12")):
+            self.transform._create_genome_node(accession, "s__First", taxid)
+        self.transform._emit_ncbi_mapping_edges()
+        edges = [row for row in self.transform.edges if row["object"] == "NCBITaxon:12"]
+        self.assertEqual(len(edges), 3)
+        self.assertTrue(all(row["predicate"] == "biolink:close_match" for row in edges))
+        self.assertEqual({row["original_object"] for row in edges}, {"NCBITaxon:10", "NCBITaxon:11", ""})
+
     def test_parse_taxonomy_file(self):
         """Test parsing taxonomy file."""
         taxa_list = self.transform._parse_taxonomy_file("bac120_taxonomy.tsv")
@@ -207,6 +231,37 @@ class TestGTDBTransform(unittest.TestCase):
         self.assertEqual(edge["object"], "GTDB:50")
         self.assertEqual(edge["relation"], "rdfs:subClassOf")
         self.assertEqual(edge["primary_knowledge_source"], "infores:gtdb")
+        self.assertEqual(edge["knowledge_level"], "knowledge_assertion")
+        self.assertEqual(edge["agent_type"], "not_provided")
+
+    def test_edge_metadata_survives_tsv_for_taxonomy_and_both_mapping_shapes(self):
+        """Imported assignments and locally inferred crosswalks are distinguishable (#1071)."""
+        self.transform._add_edge("GTDB:s__one", "biolink:subclass_of", "GTDB:g__one", "rdfs:subClassOf")
+        self.transform._ncbi_mappings = [
+            ("GTDB:s__one", "NCBITaxon:1"),
+            ("GTDB:s__two", "NCBITaxon:2"),
+            ("GTDB:s__three", "NCBITaxon:2"),
+        ]
+        self.transform._emit_ncbi_mapping_edges()
+        self.transform._write_tsv_files()
+        with open(self.transform.output_edge_file) as stream:
+            rows = list(csv.DictReader(stream, delimiter="\t"))
+        self.assertEqual(len(rows), 4)
+        self.assertEqual(
+            {r["predicate"] for r in rows},
+            {
+                "biolink:subclass_of",
+                "biolink:close_match",
+                "biolink:broad_match",
+            },
+        )
+        for row in rows:
+            expected = (
+                ("knowledge_assertion", "not_provided")
+                if row["predicate"] == "biolink:subclass_of"
+                else ("prediction", "automated_agent")
+            )
+            self.assertEqual((row["knowledge_level"], row["agent_type"]), expected)
 
     def test_create_genome_node(self):
         """Test creating genome node with edges."""
@@ -237,6 +292,8 @@ class TestGTDBTransform(unittest.TestCase):
         self.assertEqual(genome_edge["subject"], "ncbi.assembly:GCF_000005845.2")
         self.assertEqual(genome_edge["predicate"], "biolink:subclass_of")
         self.assertEqual(genome_edge["object"], "GTDB:s__Escherichia_coli")
+        self.assertEqual(genome_edge["knowledge_level"], "knowledge_assertion")
+        self.assertEqual(genome_edge["agent_type"], "not_provided")
 
         # Check taxon->NCBI edge once the deferred pass runs
         self.transform._emit_ncbi_mapping_edges()

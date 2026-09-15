@@ -48,7 +48,10 @@ def _read(path):
 
 
 def _microbedecoder(gold):
-    """Build the consumer against the same temporary transform-output tree."""
+    """Supply the immutable empty GTDB authority and build the consumer in the temporary output tree."""
+    gtdb_dir = gold.output_base_dir / "gtdb"
+    gtdb_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(FIXTURES.parent / "microbedecoder" / "gtdb_nodes.tsv", gtdb_dir / "nodes.tsv")
     return MicrobeDecoderTransform(
         input_dir=gold.input_base_dir,
         output_dir=gold.output_base_dir,

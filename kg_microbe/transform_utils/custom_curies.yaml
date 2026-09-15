@@ -15,8 +15,9 @@
 # recognized by validators (kg_model_review.py STANDARD_PREFIXES):
 #   MICRO — Microbiology Ontology (https://obofoundry.org/ontology/micro), used by MediaDive
 #           to label growth-medium ingredients (e.g. MICRO:0000082 "Nutrient broth No. 2").
-#   GOLD  — Genomes OnLine Database (https://bioregistry.io/registry/gold.genome), organism
-#           and project IDs surfaced by MicrobeDecoder's pre-joined crosswalk.
+#   gold  — Genomes OnLine Database (https://bioregistry.io/registry/gold.genome), organism
+#           and project IDs surfaced by MicrobeDecoder's pre-joined crosswalk; canonical
+#           lowercase namespace shared with the gold transform (#1051/#1065).
 #   IMG   — JGI Integrated Microbial Genomes (https://bioregistry.io/registry/img.genome),
 #           genome IDs from the same MicrobeDecoder crosswalk.
 #   ncbi.assembly — NCBI Assembly accessions (https://bioregistry.io/registry/ncbi.assembly),

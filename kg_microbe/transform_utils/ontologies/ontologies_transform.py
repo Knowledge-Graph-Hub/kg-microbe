@@ -3,6 +3,7 @@
 import json
 import re
 from collections import defaultdict
+from itertools import chain
 from os import makedirs
 from pathlib import Path
 from typing import Optional, Union
@@ -139,6 +140,14 @@ METAMODEL_EDGE_PREDICATES = frozenset(
     }
 )
 
+# Explicit provenance annotation predicates, not a namespace-wide entity ban.
+_CONTRIBUTOR_ANNOTATIONS = frozenset(
+    f"http://purl.org/dc/{namespace}/{role}"
+    for namespace in ("elements/1.1", "terms")
+    for role in ("creator", "contributor")
+)
+_RAW_TYPE_PREDICATES = frozenset({"type", "rdf:type", "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"})
+
 
 def _run_kgx_transform(**kwargs) -> None:
     """Load KGX only when ontology parsing reaches graph conversion."""
@@ -152,6 +161,8 @@ def _run_kgx_transform(**kwargs) -> None:
 
 class OntologiesTransform(Transform):
     """OntologyTransform parses an Obograph JSON form of an Ontology into nodes nad edges."""
+
+    DATA_INPUTS = ("mappings/foodon_model_dispositions.tsv",)
 
     # Mapping of ontology names to InforES standard knowledge sources
     # (po and micro removed — now emitted as per-CURIE stubs via
@@ -409,6 +420,59 @@ class OntologiesTransform(Transform):
                 return True
         return False
 
+    @staticmethod
+    def _annotation_only_individuals(graphs: list) -> set:
+        """
+        Find declared contributor individuals with no retained logical role (#1074).
+
+        Creator/contributor annotations are retained in the raw ontology. Only
+        their redundant graph nodes are excluded; namespace membership alone
+        is insufficient. Any class declaration, non-type edge, or other axiom
+        referencing the individual protects it, including across graphs.
+        """
+        individuals = set()
+        protected = set()
+        contributors = set()
+        for graph in graphs:
+            for node in graph.get("nodes", []) or []:
+                if node.get("type") == "INDIVIDUAL":
+                    individuals.add(node.get("id"))
+                else:
+                    protected.add(node.get("id"))
+            for item in chain((graph,), graph.get("nodes", []) or [], graph.get("edges", []) or []):
+                for annotation in (item.get("meta") or {}).get("basicPropertyValues", []) or []:
+                    if annotation.get("pred") in _CONTRIBUTOR_ANNOTATIONS and isinstance(annotation.get("val"), str):
+                        contributors.add(annotation.get("val"))
+        candidates = (individuals & contributors) - protected - {None}
+        if not candidates:
+            return set()
+
+        def referenced_candidates(value):
+            """Visit only logical fields; metadata annotations are not entity axioms."""
+            if isinstance(value, str):
+                if value in candidates:
+                    protected.add(value)
+            elif isinstance(value, dict):
+                for key, child in value.items():
+                    if key != "meta":
+                        referenced_candidates(child)
+            elif isinstance(value, list):
+                for child in value:
+                    referenced_candidates(child)
+
+        for graph in graphs:
+            for edge in graph.get("edges", []) or []:
+                if edge.get("pred") not in _RAW_TYPE_PREDICATES:
+                    referenced_candidates(edge)
+            for key, value in graph.items():
+                if key not in {"nodes", "edges", "meta", "id"}:
+                    referenced_candidates(value)
+            for node in graph.get("nodes", []) or []:
+                for key, value in node.items():
+                    if key not in {"id", "type", "propertyType", "lbl", "meta"}:
+                        referenced_candidates(value)
+        return {compact_identifier(identifier) for identifier in candidates - protected}
+
     def _drop_deprecated_terms(self, json_path: Path) -> None:
         """
         Remove ``owl:deprecated`` (obsolete) classes from an obograph JSON in place.
@@ -423,6 +487,7 @@ class OntologiesTransform(Transform):
         # QUDT's ucumCode and GO's applies-pattern (#1054). Reset per ontology
         # so declarations cannot leak into the next source in a batch.
         self._annotation_property_ids = set()
+        self._annotation_individual_ids = set()
         if not json_path.is_file() or json_path.suffix != ".json":
             return
         try:
@@ -431,6 +496,7 @@ class OntologiesTransform(Transform):
         except (OSError, json.JSONDecodeError):
             return  # let downstream KGX raise the more informative error
 
+        self._annotation_individual_ids = self._annotation_only_individuals(data.get("graphs", []) or [])
         dropped_nodes = 0
         dropped_edges = 0
         for graph in data.get("graphs", []) or []:
@@ -486,7 +552,7 @@ class OntologiesTransform(Transform):
 
     def _drop_metamodel_nodes(self, df: pd.DataFrame) -> tuple:
         """
-        Return ``(filtered_df, dropped_count)`` with annotation-property nodes removed.
+        Return ``(filtered_df, dropped_count)`` with annotation-only nodes removed.
 
         Drops declared annotation properties collected from obograph JSON as
         well as ids in :data:`METAMODEL_NODE_PREFIXES` -- the vocabulary an
@@ -500,7 +566,9 @@ class OntologiesTransform(Transform):
         before = len(df)
         prefixes = df[ID_COLUMN].astype(str).str.split(":", n=1).str[0]
         annotation_ids = getattr(self, "_annotation_property_ids", set())
-        df = df[~(prefixes.isin(METAMODEL_NODE_PREFIXES) | df[ID_COLUMN].isin(annotation_ids))]
+        contributor_ids = getattr(self, "_annotation_individual_ids", set())
+        normalized_ids = df[ID_COLUMN].astype(str).map(compact_identifier)
+        df = df[~(prefixes.isin(METAMODEL_NODE_PREFIXES) | normalized_ids.isin(annotation_ids | contributor_ids))]
         return df, before - len(df)
 
     def _add_kgx_metadata_to_edges(self, edges_file_path: Path):
@@ -608,12 +676,10 @@ class OntologiesTransform(Transform):
             df["category"] = df.apply(fix_uberon_category, axis=1)
 
         elif ontology_name == "foodon":
-            # FOODON terms are foods; the obograph default (OntologyClass)
-            # disagreed with mediadive's biolink:Food for the same ids (#1015).
-            print("  Fixing FOODON categories (all terms → Food)...")
+            print("  Fixing FOODON categories (asserted organism branches; food material → Food)...")
 
             def fix_foodon_category(row):
-                """Fix FOODON category (all FOODON terms are Food; imports keep theirs)."""
+                """Separate whole-organism classes from food materials."""
                 foodon_id = row["id"]
                 if pd.notna(foodon_id) and foodon_id.startswith("FOODON:"):
                     return get_foodon_category(foodon_id)
@@ -648,9 +714,8 @@ class OntologiesTransform(Transform):
             df["category"] = df.apply(fix_ncbitaxon_category, axis=1)
 
         elif ontology_name == "ec":
-            # EC terms get a multi-cat (MolecularActivity|MacromolecularMachineMixin)
-            # so RHEA→EC enables/enabled_by edges satisfy biolink's macromolecular-machine
-            # subject/object requirement while preserving the activity semantics.
+            # Preserve the repository's EC activity/protein classification;
+            # RHEA cross-references no longer pretend to be physical enablement.
             from kg_microbe.transform_utils.constants import EC_CATEGORY, EC_PREFIX
 
             print(f"  Fixing EC categories (all terms → {EC_CATEGORY})...")
@@ -880,16 +945,8 @@ class OntologiesTransform(Transform):
             # Add the list as a new row to the DataFrame
             edges_df = pd.concat([edges_df, transitive_df_uer_go], ignore_index=True)
 
-            # Add edges between GO and pathways using patwhay GO xrefs
-            upa_go_df = pd.DataFrame(list(unipathways_xref_dict.items()), columns=["id", "xref"])
-            upa_go_df = upa_go_df.loc[
-                (upa_go_df["id"].str.contains("UPA:UPA")) & (upa_go_df["xref"].str.contains(GO_PREFIX))
-            ]
-            upa_go_df.rename(columns={"xref": SUBJECT_COLUMN, "id": OBJECT_COLUMN}, inplace=True)
-            upa_go_df[PREDICATE_COLUMN] = RELATED_TO_PREDICATE
-            upa_go_df[RELATION_COLUMN] = RELATED_TO_RELATION
-            # Use InforES standard knowledge source instead of filename
-            upa_go_df[PRIMARY_KNOWLEDGE_SOURCE_COLUMN] = self.ONTOLOGY_KNOWLEDGE_SOURCES.get("upa", "infores:upa")
+            # These late-added curated xrefs need their own metadata (#1071).
+            upa_go_df = self._make_upa_go_xref_edges(unipathways_xref_dict)
             # Add the list as a new row to the DataFrame
             edges_df = pd.concat([edges_df, upa_go_df], ignore_index=True)
             # Write existing edges to file before establishing more transitive relationships
@@ -1011,6 +1068,25 @@ class OntologiesTransform(Transform):
         # Normalize schema to canonical node_header / edge_header shape
         self._normalize_schema(nodes_file, edges_file)
 
+    def _make_upa_go_xref_edges(self, xrefs: dict) -> pd.DataFrame:
+        """
+        Project curated UPA pathway GO xrefs, with explicit metadata (#1071).
+
+        These rows are added after the initial ontology metadata pass. They
+        restate supplied cross-references, unlike transitive path deductions;
+        use the existing curated-ontology assertion policy here, not a late
+        blanket fill that could overwrite metadata on other edge families.
+        """
+        edges = pd.DataFrame(list(xrefs.items()), columns=[ID_COLUMN, XREF_COLUMN])
+        edges = edges.loc[edges[ID_COLUMN].str.contains("UPA:UPA") & edges[XREF_COLUMN].str.contains(GO_PREFIX)].copy()
+        edges.rename(columns={XREF_COLUMN: SUBJECT_COLUMN, ID_COLUMN: OBJECT_COLUMN}, inplace=True)
+        edges[PREDICATE_COLUMN] = RELATED_TO_PREDICATE
+        edges[RELATION_COLUMN] = RELATED_TO_RELATION
+        edges[PRIMARY_KNOWLEDGE_SOURCE_COLUMN] = self.ONTOLOGY_KNOWLEDGE_SOURCES.get("upa", "infores:upa")
+        edges[KNOWLEDGE_LEVEL_COLUMN] = KNOWLEDGE_ASSERTION
+        edges[AGENT_TYPE_COLUMN] = MANUAL_AGENT
+        return edges
+
     def _remove_iri_column(self, nodes_file: Path) -> None:
         """Remove IRI column from nodes file since it's not used downstream."""
         import pandas as pd
@@ -1064,18 +1140,37 @@ class OntologiesTransform(Transform):
                 canonical_node_category(str(identifier), category)
                 for identifier, category in zip(df[ID_COLUMN], df[CATEGORY_COLUMN], strict=True)
             ]
+            before_metadata_filter = df
             df, dropped_metamodel_nodes = self._drop_metamodel_nodes(df)
+            excluded = before_metadata_filter.loc[~before_metadata_filter.index.isin(df.index), [ID_COLUMN]].copy()
+            individual_ids = getattr(self, "_annotation_individual_ids", set())
+            property_ids = getattr(self, "_annotation_property_ids", set())
+            excluded[ID_COLUMN] = excluded[ID_COLUMN].astype(str).map(compact_identifier)
+            excluded["reason"] = [
+                "annotation_only_contributor"
+                if identifier in individual_ids
+                else "declared_annotation_property"
+                if identifier in property_ids
+                else "metamodel_vocabulary"
+                for identifier in excluded[ID_COLUMN]
+            ]
+            # Always write the header, so a later clean run cannot leave a
+            # stale exclusion report from a previous ontology build.
+            report_name = nodes_file.stem.removesuffix("_nodes") + "_metadata_exclusions.tsv"
+            with atomic_write(nodes_file.with_name(report_name), encoding="utf-8", newline="") as report:
+                excluded.to_csv(report, sep="\t", index=False, lineterminator="\n")
             df.to_csv(nodes_file, sep="\t", index=False)
             if dropped_metamodel_nodes:
                 print(
                     f"  [_normalize_schema] {nodes_file.name}: dropped "
-                    f"{dropped_metamodel_nodes} annotation-property node(s) (#1023)"
+                    f"{dropped_metamodel_nodes} annotation-only node(s) (#1023/#1074); see {report_name}"
                 )
             if dropped_node_cols or added_node_cols:
                 print(f"  [_normalize_schema] {nodes_file.name}: dropped={dropped_node_cols} added={added_node_cols}")
 
         if edges_file.is_file():
-            df = pd.read_csv(edges_file, sep="\t", low_memory=False)
+            df = pd.read_csv(edges_file, sep="\t", dtype=str, keep_default_na=False)
+            original_edges = df.copy()
             # Backstop against a header line reaching the body. The producer
             # fix lives in the ec branch above; this catches a leak from any
             # ontology and any future producer, and costs ~35 ms on the
@@ -1107,6 +1202,41 @@ class OntologiesTransform(Transform):
             for col in added_edge_cols:
                 df[col] = ""
             df = df[self.edge_header]
+
+            ontology_name = edges_file.stem.removesuffix("_edges")
+            source = self.ONTOLOGY_KNOWLEDGE_SOURCES.get(ontology_name)
+            if source:
+                aliases = {"", f"{ontology_name}.json", f"{ontology_name}_removed_subset.json"}
+                df[PRIMARY_KNOWLEDGE_SOURCE_COLUMN] = (
+                    df[PRIMARY_KNOWLEDGE_SOURCE_COLUMN]
+                    .fillna("")
+                    .map(lambda value: source if value in aliases else value)
+                )
+            # RO has_role is specifically chemical role, not a generic attribute.
+            # Preserve the exact originating relation and every unrelated edge.
+            role_edges = (df[PREDICATE_COLUMN] == "biolink:has_attribute") & (df[RELATION_COLUMN] == "RO:0000087")
+            df.loc[role_edges, PREDICATE_COLUMN] = "biolink:has_chemical_role"
+            if ontology_name == "foodon":
+                from kg_microbe.utils.foodon_classification import foodon_dispositions
+
+                dispositions = foodon_dispositions()
+                bad_targets = {
+                    identifier: row["evidence"]
+                    for identifier, row in dispositions.items()
+                    if row["disposition"] == "invalid_in_taxon_target"
+                }
+                invalid = (
+                    (df[PREDICATE_COLUMN] == "biolink:in_taxon")
+                    & (df[RELATION_COLUMN] == "RO:0002162")
+                    & df[OBJECT_COLUMN].isin(bad_targets)
+                )
+                quarantine = original_edges.loc[df.index[invalid]].copy()
+                quarantine["reason"] = quarantine[OBJECT_COLUMN].map(bad_targets)
+                with atomic_write(
+                    edges_file.with_name("foodon_model_quarantine.tsv"), encoding="utf-8", newline=""
+                ) as stream:
+                    quarantine.to_csv(stream, sep="\t", index=False, lineterminator="\n")
+                df = df.loc[~invalid]
 
             # KGX/obograph emits OWL/RDF meta-predicates under the `biolink:`
             # namespace by default (e.g. `biolink:subPropertyOf`). Those are
@@ -1142,13 +1272,20 @@ class OntologiesTransform(Transform):
             # above). These property-level / typing statements are not biolink
             # entity relationships. Nodes are left untouched.
             df, dropped_metamodel = self._drop_metamodel_edges(df)
-            annotation_ids = getattr(self, "_annotation_property_ids", set())
+            annotation_ids = getattr(self, "_annotation_property_ids", set()) | getattr(
+                self, "_annotation_individual_ids", set()
+            )
             if annotation_ids:
                 # Annotation *predicates* remain in metadata. Only graph
                 # endpoints purporting to describe an annotation as an
                 # entity are removed with their non-entity node.
                 before = len(df)
-                df = df[~(df[SUBJECT_COLUMN].isin(annotation_ids) | df[OBJECT_COLUMN].isin(annotation_ids))]
+                df = df[
+                    ~(
+                        df[SUBJECT_COLUMN].astype(str).map(compact_identifier).isin(annotation_ids)
+                        | df[OBJECT_COLUMN].astype(str).map(compact_identifier).isin(annotation_ids)
+                    )
+                ]
                 dropped_metamodel += before - len(df)
 
             df.to_csv(edges_file, sep="\t", index=False)
@@ -1166,14 +1303,10 @@ class OntologiesTransform(Transform):
                 )
 
     def _convert_urls_to_curies(self, nodes_file: Path, edges_file: Path) -> None:
-        """Convert URL-formatted node IDs to CURIEs in both nodes and edges files."""
-        import re
-
+        """Compact URLs and verified CURIE aliases consistently in node and edge files."""
         import pandas as pd
 
         from kg_microbe.utils.mapping_file_utils import uri_to_curie
-
-        url_pattern = re.compile(r"^https?://")
 
         # Process nodes file
         df_nodes = pd.read_csv(nodes_file, sep="\t", low_memory=False)
@@ -1181,7 +1314,7 @@ class OntologiesTransform(Transform):
         # Convert URL IDs to CURIEs
         if "id" in df_nodes.columns:
             for idx, node_id in df_nodes["id"].items():
-                if isinstance(node_id, str) and url_pattern.match(node_id):
+                if isinstance(node_id, str):
                     curie = uri_to_curie(node_id)
                     df_nodes.at[idx, "id"] = curie
 

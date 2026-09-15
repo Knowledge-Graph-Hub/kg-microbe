@@ -72,6 +72,7 @@ def test_export_provenance_override_is_restored_on_failure(monkeypatch):
 
     original = cli_utils.Transformer
     parser = cli_utils.parse_source
+    graph_merger = cli_utils.merge_all_graphs
     sink = transformer_module.GraphSink
     graph_source = transformer_module.SOURCE_MAP["graph"]
     tsv_sinks = {name: transformer_module.SINK_MAP[name] for name in ("tsv", "csv")}
@@ -85,6 +86,7 @@ def test_export_provenance_override_is_restored_on_failure(monkeypatch):
         merge("unused.yaml")
     assert cli_utils.Transformer is original
     assert cli_utils.parse_source is parser
+    assert cli_utils.merge_all_graphs is graph_merger
     assert transformer_module.GraphSink is sink
     assert transformer_module.SOURCE_MAP["graph"] is graph_source
     assert all(transformer_module.SINK_MAP[name] is sink for name, sink in tsv_sinks.items())

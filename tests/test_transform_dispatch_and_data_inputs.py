@@ -92,9 +92,11 @@ class DataInputsTest(TestCase):
         self.assertIn(SSSOM, declared)
 
     def test_every_declared_input_exists_on_disk(self):
-        """A declaration naming a moved or deleted file silently checks nothing."""
+        """Curated declarations must exist; declared raw downloads may be absent from an offline checkout."""
         for name, cls in DATA_SOURCES.items():
             for rel in getattr(cls, "DATA_INPUTS", ()):
+                if Path(rel).parts[:2] == ("data", "raw"):
+                    continue
                 self.assertTrue(
                     (REPO_ROOT / rel).exists(),
                     f"{name} declares DATA_INPUTS {rel!r}, which does not exist",
@@ -102,10 +104,10 @@ class DataInputsTest(TestCase):
 
     def test_metatraits_gtdb_inherits_rather_than_redeclaring(self):
         """Subclasses must not need their own copy — a second list is a second thing to forget."""
-        self.assertEqual(
-            DATA_SOURCES["metatraits_gtdb"].DATA_INPUTS,
-            DATA_SOURCES["metatraits"].DATA_INPUTS,
-        )
+        inherited = DATA_SOURCES["metatraits"].DATA_INPUTS
+        combined = DATA_SOURCES["metatraits_gtdb"].DATA_INPUTS
+        self.assertEqual(combined[: len(inherited)], inherited)
+        self.assertEqual(combined[len(inherited) :], ("data/raw/taxdump.tar.gz",))
 
     def test_every_sssom_consumer_declares_it(self):
         """
@@ -304,14 +306,18 @@ def _fake_source(name: str, log: list, base: Path, raises=None, inputs=()):
     """Build a registry entry that records its run and optionally fails."""
 
     class Fake:
+        """Provide a configurable transform for dispatch tests."""
+
         DATA_INPUTS = ()
         TRANSFORM_INPUTS = inputs
 
         def __init__(self, input_dir, output_dir):
+            """Create isolated output for this fake source."""
             self.output_dir = base / name
             self.output_dir.mkdir(parents=True, exist_ok=True)
 
         def run(self, show_status=True):
+            """Record dispatch and optionally simulate a source failure."""
             log.append(name)
             if raises is not None:
                 raise raises
@@ -369,6 +375,8 @@ class BatchIsolationTest(TestCase):
         """FatalOntologyError subclasses BaseException on purpose; isolation must not swallow it."""
 
         class Fatal(BaseException):
+            """Represent a nonrecoverable ontology infrastructure failure."""
+
             pass
 
         registry = {
@@ -398,6 +406,46 @@ class BatchIsolationTest(TestCase):
         self.assertEqual(self.log, [])
         self.assertIn("a: mappings/this-file-does-not-exist.tsv", str(excinfo.value))
 
+    def test_alternate_raw_declaration_does_not_require_repository_default(self):
+        """CLI -i determines the raw authority preflight path, not an unrelated repo file."""
+        from kg_microbe.transform import _missing_declared_inputs
+
+        raw_dir = self.base / "alternate-raw"
+        raw_dir.mkdir()
+        (raw_dir / "taxdump.tar.gz").write_bytes(b"explicit alternate authority")
+        fake = _fake_source("a", self.log, self.base)
+        fake.DATA_INPUTS = ("data/raw/taxdump.tar.gz",)
+        fake_repo = self.base / "repo-with-no-default-raw"
+        with mock.patch.dict(DATA_SOURCES, {"a": fake}, clear=True):
+            self.assertEqual(_missing_declared_inputs(["a"], fake_repo, raw_dir), [])
+            self.assertEqual(_missing_declared_inputs(["a"], fake_repo), ["a: data/raw/taxdump.tar.gz"])
+
+    def test_dispatch_and_recording_use_effective_raw_directory(self):
+        """An alternate-only declared file passes preflight and the marker records its consumed bytes."""
+        from kg_microbe.utils.transform_fingerprint import data_fingerprint, read_fingerprint
+
+        raw_dir = self.base / "alternate-raw"
+        raw_dir.mkdir()
+        filename = "offline-test-alternate-authority.tsv"
+        (raw_dir / filename).write_text("explicit alternate authority")
+
+        class Alternate(_fake_source("a", self.log, self.base)):
+            """A source whose declared raw authority exists only under the supplied input root."""
+
+            DATA_INPUTS = (f"data/raw/{filename}",)
+
+            def __init__(self, input_dir, output_dir):
+                """Remember the same effective input directory a real Transform consumes."""
+                super().__init__(input_dir, output_dir)
+                self.input_base_dir = input_dir
+
+        with mock.patch.dict(DATA_SOURCES, {"a": Alternate}, clear=True):
+            transform(raw_dir, self.base, sources=["a"])
+        self.assertEqual(self.log, ["a"])
+        marker = read_fingerprint(self.base / "a")
+        self.assertEqual(marker["data"], data_fingerprint(REPO_ROOT, Alternate.DATA_INPUTS, input_dir=raw_dir))
+        self.assertNotEqual(marker["data"], data_fingerprint(REPO_ROOT, Alternate.DATA_INPUTS))
+
 
 class SingleOntologySourceTest(TestCase):
     """#690: `-s ec` runs one ontology; the branch meant to do this was unreachable."""
@@ -415,14 +463,18 @@ class SingleOntologySourceTest(TestCase):
         base = self.base
 
         class FakeOntologies:
+            """Provide ontology outputs without invoking external tooling."""
+
             DATA_INPUTS = ()
             TRANSFORM_INPUTS = ()
 
             def __init__(self, input_dir, output_dir):
+                """Create isolated ontology output for this test."""
                 self.output_dir = base / "ontologies"
                 self.output_dir.mkdir(parents=True, exist_ok=True)
 
             def run(self, data_file=None, show_status=True):
+                """Write fixture outputs and record the requested ontology."""
                 calls.append(data_file)
                 (self.output_dir / "ec_nodes.tsv").write_text("id\tname\nEC:1.1.1.1\tx\n")
                 (self.output_dir / "chebi_nodes.tsv").write_text("id\tname\nCHEBI:1\ty\nCHEBI:2\tz\n")
@@ -461,6 +513,7 @@ class SingleOntologySourceTest(TestCase):
         original_run = fake.run
 
         def failing_run(self_, data_file=None, show_status=True):
+            """Fail after writing outputs to test dependent-source suppression."""
             original_run(self_, data_file, show_status)
             raise RuntimeError("robot died")
 

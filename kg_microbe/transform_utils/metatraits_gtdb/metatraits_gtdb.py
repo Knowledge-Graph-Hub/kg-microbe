@@ -37,6 +37,7 @@ from kg_microbe.transform_utils.gtdb.utils import clean_taxon_name
 from kg_microbe.transform_utils.metatraits.metatraits import MetaTraitsTransform
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
+from kg_microbe.utils.external_identifiers import load_taxid_merges
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings
 from kg_microbe.utils.microbial_trait_mappings import load_microbial_trait_mappings
 from kg_microbe.utils.tsv_io import tsv_dict_writer
@@ -55,6 +56,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
 
     # Synthetic crosswalks reuse GTDB's whole-release fan-in decisions (#1053).
     TRANSFORM_INPUTS = (*MetaTraitsTransform.TRANSFORM_INPUTS, GTDB)
+    DATA_INPUTS = (*MetaTraitsTransform.DATA_INPUTS, "data/raw/taxdump.tar.gz")
 
     def __init__(
         self,
@@ -179,7 +181,9 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
 
         Also builds accession-based mapping to resolve species with renamed taxonomy.
         """
-        gtdb_dir = RAW_DATA_DIR / "gtdb"
+        raw_dir = Path(getattr(self, "input_base_dir", RAW_DATA_DIR))
+        gtdb_dir = raw_dir / "gtdb"
+        taxid_merges = load_taxid_merges(raw_dir)
 
         # Process both bacterial and archaeal metadata
         for metadata_file in ["bac120_metadata.tsv.gz", "ar53_metadata.tsv.gz"]:
@@ -209,6 +213,9 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
                         accession = parts[accession_idx]
                         gtdb_taxonomy = parts[taxonomy_idx]
                         ncbi_taxid = parts[taxid_idx]
+                        # Retirement precedes genome majority/label selection,
+                        # matching canonical GTDB's pre-fan-in normalization.
+                        ncbi_taxid = taxid_merges.get(ncbi_taxid, ncbi_taxid)
 
                         # Extract species name from taxonomy string
                         # Format: d__Bacteria;p__...;s__Species_name
@@ -330,6 +337,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
             return preferred
 
         def numeric(curie: str) -> int:
+            """Extract the numeric taxid for deterministic lowest-ID tie breaking."""
             tail = curie.rsplit(":", 1)[-1]
             return int(tail) if tail.isdigit() else 0
 

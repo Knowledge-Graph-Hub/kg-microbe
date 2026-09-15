@@ -27,7 +27,7 @@ from kg_microbe.transform_utils.constants import (
     PREGO,
     RHEAMAPPINGS,
 )
-from kg_microbe.utils.transform_fingerprint import write_fingerprint
+from kg_microbe.utils.transform_fingerprint import resolve_data_input, write_fingerprint
 
 
 class LazyTransform:
@@ -136,21 +136,22 @@ def _ontology_map() -> dict:
     return ONTOLOGIES_MAP
 
 
-def _missing_declared_inputs(sources: List[str], repo_root: Path) -> List[str]:
+def _missing_declared_inputs(sources: List[str], repo_root: Path, input_dir: Optional[Path] = None) -> List[str]:
     """
-    Return ``"source: path"`` for every declared curation input that is absent.
+    Return ``"source: path"`` for every declared input absent from its effective location.
 
     Checked before any source runs (#685): a missing prerequisite should fail
     in seconds, not after the hours of upstream work that precede it in the
-    batch. Only ``DATA_INPUTS`` can be checked this way -- raw downloads are
-    not declared per transform.
+    batch. Raw authorities declared under ``data/raw`` follow the CLI input
+    directory; curated mappings remain repository-relative.
     """
     missing = []
     for source in sources:
         cls = DATA_SOURCES.get(source)
         for rel in getattr(cls, "DATA_INPUTS", ()) if cls is not None else ():
-            if not (repo_root / rel).exists():
-                missing.append(f"{source}: {rel}")
+            path = resolve_data_input(repo_root, rel, input_dir)
+            if not path.exists():
+                missing.append(f"{source}: {rel}" + (f" ({path})" if input_dir is not None else ""))
     return missing
 
 
@@ -227,7 +228,7 @@ def transform(
             f"single ontologies: {', '.join(ontology_names)}"
         )
 
-    missing = _missing_declared_inputs(sources, Path(__file__).resolve().parent.parent)
+    missing = _missing_declared_inputs(sources, Path(__file__).resolve().parent.parent, input_dir)
     if missing:
         raise FileNotFoundError("Declared curation input(s) missing; nothing was run: " + "; ".join(missing))
 
@@ -286,6 +287,7 @@ def _record_fingerprint(transform_obj, source: str) -> None:
             repo_root=Path(__file__).resolve().parent.parent,
             data_inputs=getattr(type(transform_obj), "DATA_INPUTS", ()),
             transform_inputs=getattr(type(transform_obj), "TRANSFORM_INPUTS", ()),
+            input_dir=getattr(transform_obj, "input_base_dir", None),
         )
     except Exception as exc:  # noqa: BLE001 - bookkeeping must not fail the run
         print(f"[transform] {source}: could not record fingerprint ({exc})", flush=True)

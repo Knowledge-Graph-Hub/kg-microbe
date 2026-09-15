@@ -57,6 +57,7 @@ from kg_microbe.transform_utils.constants import (
     COMPOUND_PREFIX,
     DESCRIPTION_COLUMN,
     FAPROTAX_KNOWLEDGE_SOURCE,
+    GENOME_CATEGORY,
     GOLD_ORGANISM_FOLD_FILE,
     GOLD_ORGANISM_FOLD_HEADER,
     GOLD_PREFIX,
@@ -64,6 +65,7 @@ from kg_microbe.transform_utils.constants import (
     HAS_PHENOTYPE,
     HAS_PHENOTYPE_PREDICATE,
     ID_COLUMN,
+    INGREDIENT_PREFIX,
     KNOWLEDGE_ASSERTION,
     KNOWLEDGE_LEVEL_COLUMN,
     LITERATURE_KNOWLEDGE_SOURCE,
@@ -74,6 +76,7 @@ from kg_microbe.transform_utils.constants import (
     MICROBEDECODER_KNOWLEDGE_SOURCE,
     MICROBEDECODER_RAW_DIR,
     NAME_COLUMN,
+    NCBI_ASSEMBLY_PREFIX,
     NCBI_CATEGORY,
     NCBI_TO_SUBSTRATE_EDGE,
     NCBITAXON_PREFIX,
@@ -110,6 +113,7 @@ from kg_microbe.transform_utils.microbedecoder.utils import (
     split_multivalue_comma_only,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.external_identifiers import ASSEMBLY_ACCESSION, load_assembly_aliases
 from kg_microbe.utils.lpsn_utils import resolve_accepted_records
 from kg_microbe.utils.pandas_utils import drop_duplicates
 from kg_microbe.utils.tsv_io import tsv_dict_writer, tsv_writer
@@ -141,7 +145,7 @@ class MicrobeDecoderTransform(Transform):
     """Transform the MicrobeDecoder wide CSV into KGX nodes and edges."""
 
     #: Reads this transform's output; see Transform.TRANSFORM_INPUTS (#845).
-    TRANSFORM_INPUTS = ("lpsn", "gold")
+    TRANSFORM_INPUTS = ("lpsn", "gold", "gtdb")
 
     DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
 
@@ -173,6 +177,7 @@ class MicrobeDecoderTransform(Transform):
 
         """
         super().__init__(MICROBEDECODER, input_dir, output_dir)
+        self.edge_header = [*self.edge_header, "original_object"]
         self.knowledge_source = MICROBEDECODER_KNOWLEDGE_SOURCE
         self.chemical_loader = chemical_loader
         # Track dedup state so unmatched-label placeholders are emitted
@@ -201,6 +206,9 @@ class MicrobeDecoderTransform(Transform):
         self._lpsn_supplied: Optional[set] = None
         self._stubbed_lpsn: set = set()
         self._gold_folds: Dict[str, str] = {}
+        self._assembly_declared = set()
+        self._assembly_aliases = {}
+        self._assembly_references = {}
 
     # ------------------------------------------------------------------
     # Public entry point
@@ -239,6 +247,10 @@ class MicrobeDecoderTransform(Transform):
         # Validate the upstream report before opening outputs or loading heavy
         # chemical resources. A bad alias table must not redirect identities.
         self._gold_folds = self._load_gold_organism_folds()
+        assembly_nodes = self.output_dir.parent / "gtdb" / "nodes.tsv"
+        if not assembly_nodes.is_file():
+            raise FileNotFoundError(f"{assembly_nodes} is missing; run the gtdb transform first (#1064).")
+        self._assembly_declared, self._assembly_aliases = load_assembly_aliases(assembly_nodes)
 
         # Lazy loader: constructor stays inert with respect to expensive
         # chemical-mapping resources. Matches the round-34 lpsn pattern
@@ -301,6 +313,7 @@ class MicrobeDecoderTransform(Transform):
         # Curation queue: per-label placeholder tally sorted by frequency
         # descending. Matches the metatraits `unmapped_traits.tsv` pattern.
         self._write_unmapped_report()
+        self._write_assembly_reference_report()
         self._log_summary()
 
     # ------------------------------------------------------------------
@@ -363,6 +376,41 @@ class MicrobeDecoderTransform(Transform):
     # ------------------------------------------------------------------
     # Crosswalk edges (novel identity mapping MicrobeDecoder pre-joins)
     # ------------------------------------------------------------------
+    def _resolve_assembly_reference(self, curie: str, node_writer: "csv._writer") -> str:
+        """Use exact GTDB aliases; declare unmatched versioned source accessions honestly."""
+        if not ASSEMBLY_ACCESSION.fullmatch(curie):
+            # Older releases also carry unversioned references. Keep their
+            # original representation; never append an assumed version or
+            # treat them as a uniquely resolved physical assembly.
+            self._assembly_references[curie] = (curie, "unresolved_unversioned_reference")
+            return curie
+        canonical = self._assembly_aliases.get(curie, curie)
+        status = "gtdb_same_as" if canonical != curie else "gtdb_declared"
+        if canonical not in self._assembly_declared:
+            # The accession is a source assertion, not an independently
+            # validated NCBI record or an inferred GenBank/RefSeq identity.
+            status = "source_reported_not_in_gtdb"
+            if curie not in self._seen_nodes:
+                node = self._make_node_row(curie, GENOME_CATEGORY, curie.removeprefix(NCBI_ASSEMBLY_PREFIX))
+                node[self.node_header.index(DESCRIPTION_COLUMN)] = (
+                    "Versioned assembly accession reported by MicrobeDecoder; "
+                    "not declared in the current GTDB release; no cross-release identity inferred."
+                )
+                node_writer.writerow(node)
+                self._seen_nodes.add(curie)
+        self._assembly_references[curie] = (canonical, status)
+        return canonical
+
+    def _write_assembly_reference_report(self) -> None:
+        """Keep the exact source accession and GTDB resolution disposition for every reference."""
+        path = self.output_dir / "assembly_references.tsv"
+        with path.open("w", encoding="utf-8", newline="") as handle:
+            writer = tsv_writer(handle)
+            writer.writerow(["original_id", "canonical_id", "disposition", "evidence_source"])
+            for original, (canonical, status) in sorted(self._assembly_references.items()):
+                evidence = "gtdb/nodes.tsv:same_as" if status == "gtdb_same_as" else self.knowledge_source
+                writer.writerow([original, canonical, status, evidence])
+
     def _load_gold_organism_folds(self) -> Dict[str, str]:
         """
         Load only GOLD's explicit organism folds; never infer a missing mapping.
@@ -528,6 +576,9 @@ class MicrobeDecoderTransform(Transform):
                 continue
             for local_id in split_multivalue_comma_only(raw):
                 object_curie = crosswalk_curie(local_id, prefix, source_prefix)
+                original_object = object_curie
+                if object_curie.startswith(NCBI_ASSEMBLY_PREFIX):
+                    object_curie = self._resolve_assembly_reference(object_curie, node_writer)
                 if prefix == GOLD_PREFIX:
                     object_curie = self._gold_folds.get(object_curie, object_curie)
                 if column == BACDIVE_CROSSWALK_COLUMN:
@@ -551,6 +602,7 @@ class MicrobeDecoderTransform(Transform):
                             object_curie,
                             CLOSE_MATCH_RELATION,
                             self.knowledge_source,
+                            original_object=original_object if original_object != object_curie else None,
                         )
                     )
                 self._stats["crosswalk_edges"] += 1
@@ -681,9 +733,12 @@ class MicrobeDecoderTransform(Transform):
         """
         Resolve an end-product / substrate label to a CHEBI CURIE or placeholder.
 
-        Successful CHEBI resolution → return the CURIE **without** emitting
-        a node stub; the ontologies transform owns the authoritative CHEBI
-        node (per the add-transform skill's "don't stub cross-refs" rule).
+        Successful external ontology resolution → return the CURIE **without**
+        emitting a node stub; its ontology owns the authoritative node. The
+        unified loader also resolves local compound/ingredient identifiers:
+        these require a named declaration here because no ontology supplies
+        them (#1073). Preserve their mapped identity and category; do not infer
+        an external chemical grounding from their label.
         Miss → mint a ``kgmicrobe.compound:<slug>`` placeholder and emit
         the terminal stub (nothing else will). ``source_column`` is
         recorded in the unmapped-labels report so curators know which
@@ -696,6 +751,10 @@ class MicrobeDecoderTransform(Transform):
             except Exception as exc:  # noqa: BLE001 — chemical loader has broad failure modes
                 logger.debug("[microbedecoder] chebi lookup failed for %r: %s", label, exc)
         if curie:
+            if curie.startswith((COMPOUND_PREFIX, INGREDIENT_PREFIX)):
+                name = self.chemical_loader.get_canonical_name(curie) or label
+                category = self.chemical_loader.get_category(curie) or SMALL_MOLECULE_CATEGORY
+                self._ensure_terminal_node(curie, category, name, node_writer)
             return curie
         return self._mint_placeholder(
             label,
@@ -844,8 +903,8 @@ class MicrobeDecoderTransform(Transform):
         """
         Emit a placeholder terminal node once per run (dedup via _seen_nodes).
 
-        Only ever called for placeholder / unmatched-label CURIEs — never
-        for a resolved cross-reference target (NCBITaxon, GTDB, CHEBI,
+        Called for locally owned placeholder or mapped compound/ingredient
+        CURIEs — never for an external cross-reference target (NCBITaxon, GTDB, CHEBI,
         bacdive, GOLD, IMG) whose authoritative node is provided by
         another transform. See the add-transform skill's Phase 6
         "anti-patterns" for the reasoning.
@@ -883,6 +942,7 @@ class MicrobeDecoderTransform(Transform):
         primary_knowledge_source: str,
         description: Optional[str] = None,
         publications: Optional[str] = None,
+        original_object: Optional[str] = None,
     ) -> List:
         """
         Build an edge row in canonical Transform.edge_header order.
@@ -904,6 +964,7 @@ class MicrobeDecoderTransform(Transform):
         row[self.edge_header.index(PRIMARY_KNOWLEDGE_SOURCE_COLUMN)] = primary_knowledge_source
         row[self.edge_header.index(KNOWLEDGE_LEVEL_COLUMN)] = KNOWLEDGE_ASSERTION
         row[self.edge_header.index(AGENT_TYPE_COLUMN)] = MANUAL_AGENT
+        row[self.edge_header.index("original_object")] = original_object
         return row
 
     # ------------------------------------------------------------------

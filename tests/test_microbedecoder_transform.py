@@ -1,6 +1,7 @@
 """Tests for the MicrobeDecoder transform."""
 
 import csv
+import io
 import shutil
 from pathlib import Path
 
@@ -30,6 +31,9 @@ def _supply_gold_fold_report(output_dir):
     gold_dir = output_dir / "gold"
     gold_dir.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(FIXTURE_DIR / GOLD_ORGANISM_FOLD_FILE, gold_dir / GOLD_ORGANISM_FOLD_FILE)
+    gtdb_dir = output_dir / "gtdb"
+    gtdb_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(FIXTURE_DIR / "gtdb_nodes.tsv", gtdb_dir / "nodes.tsv")
 
 
 class _NoChebi:
@@ -70,6 +74,29 @@ def _read_tsv(path: Path) -> list:
     """Read a TSV into a list of dicts (header row → per-row dicts)."""
     with open(path, newline="") as fh:
         return list(csv.DictReader(fh, delimiter="\t"))
+
+
+def test_explicit_assembly_alias_and_source_reported_versions(tmp_path):
+    """Only the exact GTDB same_as alias redirects; version skew remains an explicit source node."""
+    transform = MicrobeDecoderTransform(input_dir=tmp_path, output_dir=tmp_path, chemical_loader=_NoChebi())
+    transform._assembly_declared = {"ncbi.assembly:GCF_1.2", "ncbi.assembly:GCA_2.1"}
+    transform._assembly_aliases = {"ncbi.assembly:GCA_1.2": "ncbi.assembly:GCF_1.2"}
+    node_stream, edge_stream = io.StringIO(), io.StringIO()
+    transform._emit_crosswalk_edges(
+        "lpsn:101",
+        {"GTDB_ID": "GB_GCA_1.2, GB_GCA_1.1, RS_GCF_2.1"},
+        csv.writer(node_stream, delimiter="\t"),
+        csv.writer(edge_stream, delimiter="\t"),
+    )
+    nodes = list(csv.DictReader(io.StringIO(node_stream.getvalue()), fieldnames=transform.node_header, delimiter="\t"))
+    edges = list(csv.DictReader(io.StringIO(edge_stream.getvalue()), fieldnames=transform.edge_header, delimiter="\t"))
+    assert {node["id"] for node in nodes} == {"ncbi.assembly:GCA_1.1", "ncbi.assembly:GCF_2.1"}
+    assert all(node["category"] == "biolink:Genome" for node in nodes)
+    assert all("no cross-release identity inferred" in node["description"] for node in nodes)
+    assert edges[0]["object"] == "ncbi.assembly:GCF_1.2"
+    assert edges[0]["original_object"] == "ncbi.assembly:GCA_1.2"
+    assert edges[1]["object"] == "ncbi.assembly:GCA_1.1"
+    assert edges[2]["object"] == "ncbi.assembly:GCF_2.1"
 
 
 # ---------------------------------------------------------------------------
@@ -355,7 +382,14 @@ def test_crosswalk_uses_owner_namespaces(tmp_path, column, raw, expected):
     assert len(edges) == 1
     assert edges[0]["object"] == expected
     assert edges[0]["primary_knowledge_source"] == MICROBEDECODER_KNOWLEDGE_SOURCE
-    assert not any(n["id"] == expected for n in _read_tsv(transform.output_node_file))
+    nodes = {n["id"]: n for n in _read_tsv(transform.output_node_file)}
+    if expected.startswith("ncbi.assembly:") and "." in expected.split(":", 1)[1]:
+        # The fixture GTDB release is empty. Source-reported assemblies now
+        # have explicit declarations, without asserting a GTDB identity.
+        assert nodes[expected]["category"] == "biolink:Genome"
+        assert nodes[expected]["provided_by"] == MICROBEDECODER_KNOWLEDGE_SOURCE
+    else:
+        assert expected not in nodes
 
 
 # ---------------------------------------------------------------------------

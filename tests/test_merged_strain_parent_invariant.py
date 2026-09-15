@@ -143,19 +143,19 @@ def test_a_failing_check_cannot_stop_the_tarball_being_rewritten(monkeypatch, tm
     """
     A data-quality report must not decide whether the artifact ships (#914).
 
-    `_cleanup_merged_outputs` is wrapped by a blanket handler in `load_and_merge`,
-    so an exception raised by the check would skip `_rewrite_tarball` and leave
-    normalized TSVs beside a stale archive while the merge reported success.
+    A diagnostic exception must be isolated from required archive publication.
+    Publication failures themselves now propagate to the caller (#1075).
     """
     import kg_microbe.merge_utils.merge_kg as merge_kg
 
     def boom(*_args, **_kwargs):
+        """Fail an optional diagnostic without blocking archive publication."""
         raise RuntimeError("simulated check failure")
 
     monkeypatch.setattr(merge_kg, "check_merged_invariants", boom)
 
     rewritten = []
-    monkeypatch.setattr(merge_kg, "_rewrite_tarball", lambda archive, files: rewritten.append(archive))
+    monkeypatch.setattr(merge_kg, "_rewrite_tarball", lambda archive, files, **kwargs: rewritten.append(archive))
     monkeypatch.setattr(merge_kg, "_normalize_nodes_tsv", lambda _p: None)
     monkeypatch.setattr(merge_kg, "_normalize_edges_tsv", lambda _p: None)
     monkeypatch.setattr(merge_kg, "_warn_about_stale_siblings", lambda *_a: None)

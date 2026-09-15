@@ -1,18 +1,23 @@
 """Merging module."""
 
 import csv
+import os
 import shutil
 import tarfile
 import tempfile
 import time
+from contextlib import contextmanager
+from copy import deepcopy
 from pathlib import Path
 from typing import Dict, List, Optional
 
 import networkx as nx  # type: ignore
 import yaml
 
+from kg_microbe.merge_utils.artifact_manifest import build_provenance, write_graph_archive, write_loose_manifest
+from kg_microbe.merge_utils.external_node_closure import resolve_external_references
 from kg_microbe.merge_utils.invariants import check_merged_invariants
-from kg_microbe.merge_utils.stats_provenance import annotate_graph_stats, stats_filename_from_config
+from kg_microbe.merge_utils.stats_provenance import STATS_OPERATION, annotate_graph_stats, stats_filename_from_config
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
     CATEGORY_COLUMN,
@@ -31,6 +36,7 @@ from kg_microbe.transform_utils.constants import (
     SYNONYM_COLUMN,
     XREF_COLUMN,
 )
+from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.tsv_io import tsv_writer
 
 CANONICAL_NODE_HEADER = [
@@ -81,17 +87,20 @@ def merge(*args, **kwargs):
         RelationAwareGraphSink,
         RelationAwareGraphSource,
         RelationAwareTsvSink,
+        merge_assertion_graphs,
         parse_source,
     )
 
     original_transformer = cli_utils.Transformer
     original_parser = cli_utils.parse_source
+    original_graph_merge = cli_utils.merge_all_graphs
     original_sink = transformer_module.GraphSink
     original_graph_source = transformer_module.SOURCE_MAP["graph"]
     original_tsv_sinks = {name: transformer_module.SINK_MAP[name] for name in ("tsv", "csv")}
 
     cli_utils.Transformer = ProvenancePreservingTransformer
     cli_utils.parse_source = parse_source
+    cli_utils.merge_all_graphs = merge_assertion_graphs
     transformer_module.GraphSink = RelationAwareGraphSink
     transformer_module.SOURCE_MAP["graph"] = RelationAwareGraphSource
     transformer_module.SINK_MAP.update({name: RelationAwareTsvSink for name in original_tsv_sinks})
@@ -100,6 +109,7 @@ def merge(*args, **kwargs):
     finally:
         cli_utils.Transformer = original_transformer
         cli_utils.parse_source = original_parser
+        cli_utils.merge_all_graphs = original_graph_merge
         transformer_module.GraphSink = original_sink
         transformer_module.SOURCE_MAP["graph"] = original_graph_source
         transformer_module.SINK_MAP.update(original_tsv_sinks)
@@ -157,18 +167,119 @@ def load_and_merge(
     :param processes: Number of processes to use. Each concurrent process
         holds its own source graph, so raising this raises peak memory.
     :param sources: Optional subset of source keys to merge. None merges all.
-    :return: networkx.MultiDiGraph: The merged graph.
+    :return: The pre-serialization KGX in-memory graph. Required cleanup
+        repairs the published TSV/archive, not this returned object; use the
+        published artifact/manifest for final identities and row counts.
     :raises KeyError: If a requested source is absent from the config.
     """
     if sources:
         _assert_sources_exist(yaml_file, sources)
-    merged_graph = merge(yaml_file, source=list(sources) if sources else None, processes=processes)
-    try:
-        _cleanup_merged_outputs(yaml_file)
-    except Exception as exc:  # noqa: BLE001
-        # Cleanup is belt-and-suspenders; never let it mask a successful merge.
-        print(f"[merge] post-merge cleanup skipped: {exc}")
+    # KGX writes the destination before post-processing starts. Never give it
+    # a published pathname: a later required failure must preserve the old
+    # artifact, not merely propagate after KGX has already overwritten it.
+    with _staged_merge_configuration(yaml_file) as (staged_config, staged_output, final_output, stats_outputs):
+        merged_graph = merge(str(staged_config), source=list(sources) if sources else None, processes=processes)
+        failed_stats = _cleanup_merged_outputs(
+            str(staged_config), original_yaml_file=yaml_file, published_output_dir=final_output
+        )
+        written = _publish_staged_outputs(staged_output, final_output, stats_outputs, failed_stats)
+        _warn_about_stale_siblings(final_output, written)
     return merged_graph
+
+
+def _source_filename_at_original_location(filename: str, config_dir: Path) -> str:
+    """Preserve KGX's existing-path-first, config-directory-second source resolution."""
+    path = Path(filename)
+    if path.is_absolute() or path.exists():
+        return str(path.resolve())
+    return str((config_dir / path).resolve())
+
+
+@contextmanager
+def _staged_merge_configuration(yaml_file: str):
+    """Redirect file publication into a unique same-filesystem workspace without editing user YAML."""
+    config_file = Path(yaml_file).absolute()
+    config = deepcopy(parse_load_config(str(config_file)))
+    configured = config.get("configuration", {}).get("output_directory")
+    configured_output = Path(configured or "output")
+    final_output = (
+        configured_output
+        if configured_output.is_absolute() or not configured
+        else config_file.parent / configured_output
+    ).resolve()
+    final_output.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=f".{final_output.name}.merge-", dir=final_output.parent) as temporary:
+        staging = Path(temporary)
+        staged_output = staging / "graph"
+        staged_output.mkdir()
+        config.setdefault("configuration", {})["output_directory"] = str(staged_output)
+        graph = config.get("merged_graph", {})
+        for source in (graph.get("source") or {}).values():
+            inputs = source.get("input") or {}
+            filenames = inputs.get("filename")
+            if filenames:
+                inputs["filename"] = [
+                    _source_filename_at_original_location(filename, config_file.parent)
+                    for filename in ([filenames] if isinstance(filenames, str) else filenames)
+                ]
+        for destination in (graph.get("destination") or {}).values():
+            filename = destination.get("filename")
+            if not filename:
+                continue
+            base = Path(filename[0] if isinstance(filename, list) else filename)
+            if base.is_absolute() or ".." in base.parts:
+                raise ValueError(f"Merge destination filename must stay inside output_directory: {filename}")
+            (staged_output / base).parent.mkdir(parents=True, exist_ok=True)
+
+        # KGX graph-operation filenames are interpreted relative to the process
+        # cwd, not the config directory. Preserve that location on publication.
+        stats_outputs = {}
+        operation_lists = [graph.get("operations") or []]
+        operation_lists.extend(source.get("operations") or [] for source in (graph.get("source") or {}).values())
+        for operations in operation_lists:
+            for operation in operations:
+                if operation.get("name") != STATS_OPERATION:
+                    continue
+                args = operation.get("args") or {}
+                if not args.get("filename"):
+                    continue
+                published = Path(args["filename"]).resolve()
+                staged = stats_outputs.setdefault(published, staging / "stats" / f"{len(stats_outputs)}.yaml")
+                staged.parent.mkdir(exist_ok=True)
+                args["filename"] = str(staged)
+        staged_config = staging / "merge.yaml"
+        with staged_config.open("w", encoding="utf-8", newline="\n") as stream:
+            yaml.safe_dump(config, stream, sort_keys=False)
+        yield staged_config, staged_output, final_output, stats_outputs
+
+
+def _publish_staged_outputs(
+    staged_output: Path, final_output: Path, stats_outputs: Dict, failed_stats: Optional[set] = None
+) -> set:
+    """Publish completed files only after all required preparation; renames are per-file, not a transaction."""
+    staged_files = sorted(path for path in staged_output.rglob("*") if path.is_file())
+    for path in staged_files:
+        if path.is_symlink():
+            raise ValueError(f"Staged graph output must be a regular file, not a symlink: {path}")
+    # Optional stats can live on another filesystem; their small atomic copy
+    # is separate from graph publication and never puts an archive at risk.
+    for published, staged in stats_outputs.items():
+        if staged.is_file() and staged not in (failed_stats or set()):
+            try:
+                with staged.open("rb") as source, atomic_write(published, "wb") as target:
+                    shutil.copyfileobj(source, target)
+            except OSError as exc:
+                print(f"[merge-stats] publication skipped: {exc}")
+    written = set()
+    # Ship archive/manifest markers last. This does not claim cross-file
+    # atomicity for loose pairs or several independent destinations.
+    staged_files.sort(key=lambda path: path.name.endswith((".tar.gz", "_manifest.json")))
+    for staged in staged_files:
+        published = final_output / staged.relative_to(staged_output)
+        published.parent.mkdir(parents=True, exist_ok=True)
+        os.replace(staged, published)
+        written.add(published)
+    return written
 
 
 def _repo_root() -> Path:
@@ -176,7 +287,9 @@ def _repo_root() -> Path:
     return Path(__file__).resolve().parents[2]
 
 
-def _cleanup_merged_outputs(yaml_file: str) -> None:
+def _cleanup_merged_outputs(
+    yaml_file: str, original_yaml_file: Optional[str] = None, published_output_dir: Optional[Path] = None
+) -> set:
     r"""
     Defensive post-merge normalization of the KGX-merged TSVs.
 
@@ -207,9 +320,12 @@ def _cleanup_merged_outputs(yaml_file: str) -> None:
     "no changes", we can (a) drop it, or (b) demote it to an assertion
     that fails CI when KGX regresses.
 
-    Handles both the uncompressed TSV pair and the tar.gz archive.
+    Handles both the uncompressed TSV pair and the tar.gz archive. Returns
+    optional stats paths whose annotation failed, so staging can withhold
+    those files without suppressing a valid graph publication.
     """
     config = parse_load_config(yaml_file)
+    provenance_config = Path(original_yaml_file or yaml_file)
     output_dir = Path(config.get("configuration", {}).get("output_directory", "data/merged"))
     destinations = config.get("merged_graph", {}).get("destination", {})
 
@@ -217,6 +333,7 @@ def _cleanup_merged_outputs(yaml_file: str) -> None:
     # is a property of the whole run. Warning per-destination made each one
     # report the others' fresh output as stale (#848).
     written: set = set()
+    failed_stats: set = set()
 
     for dest in destinations.values():
         base = dest.get("filename")
@@ -229,6 +346,7 @@ def _cleanup_merged_outputs(yaml_file: str) -> None:
             continue
         nodes_file = output_dir / f"{base}_nodes.tsv"
         edges_file = output_dir / f"{base}_edges.tsv"
+        reference_report = output_dir / f"{base}_reference_resolution.tsv"
         archive = output_dir / f"{base}.tar.gz"
 
         # KGX's TsvSink with compression: tar.gz writes the TSVs into the
@@ -242,23 +360,41 @@ def _cleanup_merged_outputs(yaml_file: str) -> None:
         ):
             print(f"[merge-cleanup] extracting {archive.name} to normalize TSVs in place")
             with tarfile.open(archive, "r:gz") as tar:
-                tar.extractall(output_dir)
+                # Read only the requested graph pair. In particular do not
+                # unpack a generic manifest.json over another destination's
+                # manifest, or trust arbitrary paths/links from an old archive.
+                for graph_file in (nodes_file, edges_file):
+                    member = tar.getmember(graph_file.name)
+                    if not member.isfile():
+                        raise ValueError(f"Graph member must be a regular file: {member.name}")
+                    with tar.extractfile(member) as source, atomic_write(graph_file, "wb") as target:
+                        shutil.copyfileobj(source, target)
             extracted_from_archive = True
 
+        if not nodes_file.is_file() or not edges_file.is_file():
+            raise FileNotFoundError(f"Merge destination is missing its TSV pair: {nodes_file}, {edges_file}")
         if nodes_file.is_file():
             _normalize_nodes_tsv(nodes_file)
         if edges_file.is_file():
             _normalize_edges_tsv(edges_file)
+            # Required source-aware reconciliation precedes diagnostics and
+            # manifest hashing. Exact authority replacements retain original
+            # endpoints; uncertain identities are never guessed or pooled.
+            resolution_counts = resolve_external_references(
+                nodes_file,
+                edges_file,
+                _repo_root() / "data" / "raw",
+                reference_report,
+            )
+            if resolution_counts:
+                print(f"[merge-references] {base}: {resolution_counts}")
             # Checked here rather than in each transform: a transform can only
             # police the edges it writes, and kgmicrobe.strain is a namespace
             # several sources mint into (#896).
             #
-            # Isolated from the steps around it. `_cleanup_merged_outputs` is
-            # wrapped by a blanket handler in `load_and_merge`, so an exception
-            # raised here would skip `_rewrite_tarball` below and leave the
-            # normalized TSVs beside a stale archive, with the merge still
-            # reporting success. A data-quality report must not be able to
-            # decide whether the artifact ships (#914).
+            # Optional diagnostics must not decide whether the artifact ships
+            # (#914). Required normalization/manifest/publication failures,
+            # unlike this report, propagate to the caller (#1075).
             try:
                 check_merged_invariants(edges_file, output_dir, nodes_file=nodes_file)
             except Exception as exc:  # noqa: BLE001
@@ -273,25 +409,41 @@ def _cleanup_merged_outputs(yaml_file: str) -> None:
                     annotate_graph_stats(
                         Path(stats_name),
                         edges_file,
-                        Path(yaml_file),
+                        provenance_config,
                         _repo_root(),
-                        edges_archive=archive if dest.get("compression") == "tar.gz" else None,
+                        edges_archive=(published_output_dir or output_dir) / archive.relative_to(output_dir)
+                        if dest.get("compression") == "tar.gz"
+                        else None,
+                        published_edges_file=(published_output_dir or output_dir) / edges_file.relative_to(output_dir),
+                        finalized_nodes_file=nodes_file,
                     )
                     print(f"[merge-stats] {stats_name}: provenance and raw predicate counts written")
                 except Exception as exc:  # noqa: BLE001
                     print(f"[merge-stats] annotation skipped: {exc}")
+                    # Keep the failed staged file private, rather than publish
+                    # pre-normalization stats as a description of this graph.
+                    failed_stats.add(Path(stats_name))
 
-        if dest.get("compression") == "tar.gz":
-            if nodes_file.is_file() and edges_file.is_file():
-                _rewrite_tarball(archive, [nodes_file, edges_file])
+        if nodes_file.is_file() and edges_file.is_file():
+            stats_name = stats_filename_from_config(config)
+            provenance = build_provenance(
+                provenance_config, _repo_root(), ignore=(Path(stats_name),) if stats_name else ()
+            )
+            if dest.get("compression") == "tar.gz":
+                _rewrite_tarball(archive, [nodes_file, edges_file, reference_report], provenance=provenance)
                 if extracted_from_archive:
                     # KGX didn't leave loose TSVs before, so don't leave them now.
                     nodes_file.unlink(missing_ok=True)
                     edges_file.unlink(missing_ok=True)
+            else:
+                manifest_file = output_dir / f"{base}_manifest.json"
+                write_loose_manifest(manifest_file, [nodes_file, edges_file, reference_report], provenance)
+                written.add(manifest_file)
 
-        written |= {nodes_file, edges_file, archive}
+        written |= {nodes_file, edges_file, reference_report, archive}
 
     _warn_about_stale_siblings(output_dir, written)
+    return failed_stats
 
 
 def _warn_about_stale_siblings(output_dir: Path, written: set) -> None:
@@ -467,15 +619,6 @@ def _project_row(row: List[str], keep_indices: List[List[int]]) -> List[str]:
     return out
 
 
-def _rewrite_tarball(archive: Path, files: List[Path]) -> None:
-    """Re-archive the cleaned TSVs into the same tar.gz path."""
-    with tempfile.NamedTemporaryFile("wb", delete=False, dir=archive.parent, suffix=".tar.gz") as tmp:
-        tmp_path = Path(tmp.name)
-    try:
-        with tarfile.open(tmp_path, "w:gz") as tar:
-            for f in files:
-                tar.add(f, arcname=f.name)
-        shutil.move(str(tmp_path), str(archive))
-    finally:
-        if tmp_path.exists():
-            tmp_path.unlink()
+def _rewrite_tarball(archive: Path, files: List[Path], provenance: Optional[Dict] = None) -> None:
+    """Atomically re-archive cleaned TSVs with a portable manifest (#1075)."""
+    write_graph_archive(archive, files, provenance)

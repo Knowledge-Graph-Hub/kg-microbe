@@ -17,24 +17,47 @@ from kg_microbe.transform_utils.constants import (
     ID_COLUMN,
     OBJECT_COLUMN,
     PREDICATE_COLUMN,
+    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PROVIDED_BY_COLUMN,
+    PUBLICATIONS_COLUMN,
     RELATION_COLUMN,
+    SOURCE_ASSERTION_ID_COLUMN,
     SUBJECT_COLUMN,
 )
 from kg_microbe.utils.biolink_model import prepare_kgx
 from kg_microbe.utils.graph_canonicalization import canonical_node_category, compact_identifier
+from kg_microbe.utils.provenance import (
+    knowledge_source_tokens,
+    primary_source_and_publications,
+    serialize_knowledge_sources,
+)
 
 prepare_kgx()
 
+from bmt import Toolkit  # noqa: E402
 from kgx import transformer as transformer_module  # noqa: E402
 from kgx.cli import cli_utils as cli_utils_module  # noqa: E402
 from kgx.cli.cli_utils import parse_source as _kgx_parse_source  # noqa: E402
+from kgx.graph_operations.graph_merge import add_all_nodes  # noqa: E402
 from kgx.sink.graph_sink import GraphSink  # noqa: E402
 from kgx.sink.tsv_sink import TsvSink  # noqa: E402
 from kgx.source.graph_source import GraphSource  # noqa: E402
 from kgx.source.tsv_source import TsvSource  # noqa: E402
 from kgx.transformer import Transformer  # noqa: E402
-from kgx.utils.kgx_utils import knowledge_provenance_properties, prepare_data_dict, sanitize_import  # noqa: E402
+from kgx.utils.kgx_utils import (  # noqa: E402
+    column_types,
+    prepare_data_dict,
+    sentencecase_to_snakecase,
+)
+
+# Consult the pinned schema plus KGX's explicit TSV list types, never the
+# runtime value type or prepare_data_dict's "unknown means multivalued" rule.
+# Unknown extension fields remain scalar. PKS is always scalar, as declared
+# by the pinned model; source-record evidence belongs in publications.
+_MULTIVALUED_EDGE_PROPERTIES = (
+    {sentencecase_to_snakecase(slot) for slot in Toolkit().get_all_multivalued_slots()}
+    | {column for column, value_type in column_types.items() if value_type is list}
+) - {PRIMARY_KNOWLEDGE_SOURCE_COLUMN}
 
 # Independent multiprocessing workers never share this lock. It also makes
 # scoped overrides safe for callers that use a ThreadPool for tiny merges.
@@ -73,6 +96,82 @@ def relation_aware_key(subject: str, predicate: str, obj: str, relation: str) ->
     return hashlib.sha256(identity.encode("utf-8")).hexdigest()
 
 
+def canonical_assertion(record):
+    """Normalize one observation without pooling its scalars or changing evidence pairing."""
+    result = {}
+    source, publications = primary_source_and_publications(
+        record.get(PRIMARY_KNOWLEDGE_SOURCE_COLUMN), record.get(PUBLICATIONS_COLUMN)
+    )
+    for column, value in record.items():
+        if column in {"key", ID_COLUMN, PRIMARY_KNOWLEDGE_SOURCE_COLUMN, PUBLICATIONS_COLUMN}:
+            continue
+        if value is None or value == "" or (isinstance(value, (list, tuple, set)) and not value):
+            continue
+        if column in _MULTIVALUED_EDGE_PROPERTIES:
+            result[column] = sorted(knowledge_source_tokens(value))
+        elif column_types.get(column) is bool:
+            if isinstance(value, (list, tuple, set)):
+                values = knowledge_source_tokens(value)
+                if len(values) != 1:
+                    raise ValueError(f"Pooled scalar {column}={value!r}; rebuild from original source observations")
+                value = values[0]
+            if isinstance(value, str):
+                if value.lower() not in {"true", "false", "1", "0"}:
+                    raise ValueError(f"Invalid boolean assertion field {column}={value!r}")
+                value = value.lower() in {"true", "1"}
+            result[column] = bool(value)
+        elif isinstance(value, (list, tuple, set)):
+            values = knowledge_source_tokens(value)
+            if len(values) > 1:
+                raise ValueError(
+                    f"Pooled scalar {column}={value!r}; rebuild from original source observations, "
+                    "because their evidence associations cannot be reconstructed"
+                )
+            if values:
+                result[column] = values[0]
+        else:
+            result[column] = value
+    result[RELATION_COLUMN] = canonical_relation(result.get(RELATION_COLUMN, ""))
+    if source:
+        result[PRIMARY_KNOWLEDGE_SOURCE_COLUMN] = source
+    if publications:
+        result[PUBLICATIONS_COLUMN] = sorted(publications)
+    return result
+
+
+def assertion_key(record) -> str:
+    """Hash the entire normalized observation, including provider, context, and evidence."""
+    return _hash_assertion(canonical_assertion(record))
+
+
+def _hash_assertion(normalized) -> str:
+    """Hash an already normalized payload without repeating graph-scale normalization."""
+    payload = json.dumps(normalized, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def _add_assertion(graph, record):
+    """Collapse only a fully identical observation; every conflicting attribute changes its key."""
+    data = canonical_assertion(record)
+    key = _hash_assertion(data)
+    data[ID_COLUMN] = key
+    graph.add_edge(data[SUBJECT_COLUMN], data[OBJECT_COLUMN], edge_key=key, **data)
+
+
+def merge_assertion_graphs(graphs, preserve=True):
+    """Retain KGX node merging, but never pool independent observations across source graphs."""
+    graphs = list(graphs)
+    if not graphs:
+        raise ValueError("Cannot merge an empty graph list")
+    largest = max(range(len(graphs)), key=lambda index: graphs[index].number_of_edges())
+    result = graphs.pop(largest)
+    for graph in graphs:
+        add_all_nodes(result, graph, preserve)
+        for _, _, data in graph.edges(data=True):
+            _add_assertion(result, data)
+    return result
+
+
 class RelationAwareTsvSource(TsvSource):
     """Canonicalize before keying, keeping distinct relations and their evidence apart."""
 
@@ -87,21 +186,34 @@ class RelationAwareTsvSource(TsvSource):
         return super().read_node(normalized)
 
     def read_edge(self, edge):
-        """Set the sink's explicit key and union evidence for exact repeated assertions."""
+        """Keep one canonical provider/context/evidence bundle per observation."""
         normalized = dict(edge)
         for column in (SUBJECT_COLUMN, PREDICATE_COLUMN, OBJECT_COLUMN):
             if normalized.get(column):
                 normalized[column] = compact_identifier(normalized[column])
         relation = canonical_relation(normalized.get(RELATION_COLUMN, ""))
         normalized[RELATION_COLUMN] = relation
+        original_id = normalized.get(ID_COLUMN)
+        normalized = canonical_assertion(normalized)
+        if original_id and original_id != assertion_key(normalized):
+            normalized[SOURCE_ASSERTION_ID_COLUMN] = original_id
         result = super().read_edge(normalized)
         if result is None:
             return None
         subject, obj, _, data = result
-        key = relation_aware_key(subject, data[PREDICATE_COLUMN], obj, relation)
+        # Retain only supplied assertion attributes, not KGX's autogenerated
+        # knowledge_source=filename. Also restore raw scalar pipe text rather
+        # than confusing it with a pooled list. Keep KGX's explicit bool type.
+        data = {
+            column: data.get(column, value) if column_types.get(column) is bool else value
+            for column, value in normalized.items()
+        }
+        data = canonical_assertion(data)
+        key = _hash_assertion(data)
         # GraphSink discards the tuple key and regenerates a triple-only key
         # unless the record itself carries it. Both boundaries need this key.
         data["key"] = key
+        data[ID_COLUMN] = key
         data[RELATION_COLUMN] = relation
         self.edge_properties.update(data)
         return subject, obj, key, data
@@ -118,39 +230,23 @@ class RelationAwareGraphSink(GraphSink):
         super().write_node(record)
 
     def write_edge(self, record):
-        """Keep exact-repeat evidence, without passing a duplicate ``key`` kwarg to NxGraph."""
-        data = dict(record)
-        relation = canonical_relation(data.get(RELATION_COLUMN, ""))
-        subject, predicate, obj = (data[column] for column in (SUBJECT_COLUMN, PREDICATE_COLUMN, OBJECT_COLUMN))
-        key = relation_aware_key(subject, predicate, obj, relation)
-        # NxGraph passes its own key= argument to NetworkX, so the record's
-        # transport key must not also be passed through **data.
-        data.pop("key", None)
-        if self.graph.has_edge(subject, obj, key):
-            data = prepare_data_dict(copy.deepcopy(self.graph.get_edge(subject, obj, key)), copy.deepcopy(data), True)
-        data[RELATION_COLUMN] = relation
-        self.graph.add_edge(subject, obj, edge_key=key, **data)
+        """Preserve distinct observations within one source and at intermediate export."""
+        _add_assertion(self.graph, record)
 
 
 class RelationAwareGraphSource(GraphSource):
     """Retain provenance collections when reading merged graph edges for export."""
 
     def read_edges(self):
-        """Do not stringify primary-source lists before applying provenance rules."""
+        """Restore canonical scalar metadata after KGX's generic graph sanitization."""
         for subject, obj, key, data in self.graph.edges(keys=True, data=True):
             validated = self.validate_edge(dict(data))
             if not validated:
                 continue
-            edge = sanitize_import(validated)
-            # KGX types primary_knowledge_source as str during ingestion but
-            # unions it into a list at merge time. Its GraphSource then turns
-            # that list into a Python repr, losing the machine-readable union.
-            for column in knowledge_provenance_properties:
-                value = validated.get(column)
-                if isinstance(value, (list, tuple, set)):
-                    edge[column] = list(value)
-            edge[RELATION_COLUMN] = canonical_relation(edge.get(RELATION_COLUMN, ""))
-            self.set_edge_provenance(edge)
+            edge = canonical_assertion(validated)
+            # The graph already carries source provenance. Export must not
+            # inject a filename or the literal "Graph" as another provider.
+            edge[ID_COLUMN] = _hash_assertion(edge)
             if self.check_edge_filter(edge):
                 self.edge_properties.update(edge)
                 yield subject, obj, key, edge
@@ -161,11 +257,14 @@ class RelationAwareTsvSink(TsvSink):
 
     def write_edge(self, record):
         """Override only merged knowledge-source collections before normal TSV export."""
-        data = dict(record)
-        for column in knowledge_provenance_properties:
+        data = canonical_assertion(record)
+        data[ID_COLUMN] = _hash_assertion(data)
+        for column in _MULTIVALUED_EDGE_PROPERTIES:
             values = data.get(column)
             if isinstance(values, (list, tuple, set)):
-                data[column] = self.list_delimiter.join(sorted({str(value) for value in values}))
+                data[column] = serialize_knowledge_sources(
+                    sorted(knowledge_source_tokens(values, self.list_delimiter)), delimiter=self.list_delimiter
+                )
         super().write_edge(data)
 
 

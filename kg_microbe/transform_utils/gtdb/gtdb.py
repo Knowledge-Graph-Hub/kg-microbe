@@ -7,6 +7,9 @@ from pathlib import Path
 from typing import Dict, List, Tuple
 
 from kg_microbe.transform_utils.constants import (
+    AGENT_TYPE_COLUMN,
+    AGENT_TYPE_NOT_PROVIDED,
+    AUTOMATED_AGENT,
     BROAD_MATCH_PREDICATE,
     BROAD_MATCH_RELATION,
     CATEGORY_COLUMN,
@@ -23,11 +26,14 @@ from kg_microbe.transform_utils.constants import (
     GTDB_PREFIX,
     GTDB_RAW_DIR,
     ID_COLUMN,
+    KNOWLEDGE_ASSERTION,
+    KNOWLEDGE_LEVEL_COLUMN,
     NAME_COLUMN,
     NCBI_CATEGORY,
     NCBITAXON_PREFIX,
     OBJECT_COLUMN,
     PREDICATE_COLUMN,
+    PREDICTION,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PROVIDED_BY_COLUMN,
     RDFS_SUBCLASS_OF,
@@ -44,11 +50,14 @@ from kg_microbe.transform_utils.gtdb.utils import (
     strip_gtdb_prefix,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.external_identifiers import load_taxid_merges
 from kg_microbe.utils.tsv_io import tsv_dict_writer, tsv_writer
 
 
 class GTDBTransform(Transform):
     """Transform GTDB taxonomy and genome data into KGX format."""
+
+    DATA_INPUTS = ("data/raw/taxdump.tar.gz",)
 
     def __init__(self, input_dir=None, output_dir=None):
         """
@@ -61,6 +70,7 @@ class GTDBTransform(Transform):
         """
         source_name = GTDB
         super().__init__(source_name, input_dir, output_dir)
+        self.edge_header = [*self.edge_header, "original_object"]
         self.nodes = []
         self.edges = []
         self.seen_nodes = set()
@@ -76,6 +86,8 @@ class GTDBTransform(Transform):
         # taxa land on the same NCBI taxon, which is not knowable row by row
         # (#883).
         self._ncbi_mappings: List[Tuple[str, str]] = []
+        self._taxid_merges = None
+        self._mapping_original_taxids = {}
 
         # Resolve input directory: prefer CLI-provided base dir, fall back to global default
         if self.input_base_dir:
@@ -377,7 +389,14 @@ class GTDBTransform(Transform):
         # row has been read (see _emit_ncbi_mapping_edges).
         # Dedup on (gtdb_taxon_id, ncbi_taxid) to allow multiple NCBI IDs per GTDB taxon
         if ncbi_taxid and gtdb_taxon_id:
+            # Retirement normalization precedes fan-in counting: two retired
+            # IDs may now identify one broader taxon, never two 1:1 matches.
+            if self._taxid_merges is None:
+                self._taxid_merges = load_taxid_merges(Path(self.input_base_dir))
+            original_taxid = ncbi_taxid
+            ncbi_taxid = self._taxid_merges.get(ncbi_taxid, ncbi_taxid)
             mapping_key = (gtdb_taxon_id, ncbi_taxid)
+            self._mapping_original_taxids.setdefault(mapping_key, set()).add(f"{NCBITAXON_PREFIX}{original_taxid}")
             if mapping_key not in self._created_mappings:
                 self._ncbi_mappings.append((gtdb_taxon_id, f"{NCBITAXON_PREFIX}{ncbi_taxid}"))
                 self._created_mappings.add(mapping_key)
@@ -408,8 +427,26 @@ class GTDBTransform(Transform):
             shared = fan_in[ncbi_id] > 1
             predicate = BROAD_MATCH_PREDICATE if shared else CLOSE_MATCH_PREDICATE
             relation = BROAD_MATCH_RELATION if shared else CLOSE_MATCH_RELATION
-            self._add_edge(subject=gtdb_taxon_id, predicate=predicate, obj=ncbi_id, relation=relation)
-            counts[predicate] += 1
+            # The fan-in rule generates a cross-taxonomy similarity mapping;
+            # it is not a source-curated identity or a formal entailment (#1071).
+            originals = self._mapping_original_taxids.get(
+                (gtdb_taxon_id, ncbi_id.removeprefix(NCBITAXON_PREFIX)), {ncbi_id}
+            )
+            # Each original is distinct evidence. original_object is scalar;
+            # never concatenate retired IDs or erase convergent references.
+            # The fan-in decision above still counts distinct normalized taxa,
+            # not the number of historical accession/name assertions.
+            for original in sorted(originals):
+                self._add_edge(
+                    subject=gtdb_taxon_id,
+                    predicate=predicate,
+                    obj=ncbi_id,
+                    relation=relation,
+                    knowledge_level=PREDICTION,
+                    agent_type=AUTOMATED_AGENT,
+                    original_object=original if original != ncbi_id else "",
+                )
+                counts[predicate] += 1
         return counts
 
     def _write_ncbi_pooling_report(self) -> int:
@@ -453,8 +490,25 @@ class GTDBTransform(Transform):
             )
             self.seen_nodes.add(node_id)
 
-    def _add_edge(self, subject: str, predicate: str, obj: str, relation: str):
-        """Add edge to internal list."""
+    def _add_edge(
+        self,
+        subject: str,
+        predicate: str,
+        obj: str,
+        relation: str,
+        *,
+        knowledge_level: str = KNOWLEDGE_ASSERTION,
+        agent_type: str = AGENT_TYPE_NOT_PROVIDED,
+        original_object: str = "",
+    ):
+        """
+        Add a source assertion or explicitly characterized derived mapping.
+
+        GTDB publishes taxonomy assignments, but combines computational species
+        assignment and manual curation without per-edge agent provenance in the
+        ingested TSVs. Do not label all imported assignments manual or automated;
+        ``not_provided`` records that uncertainty (#1071).
+        """
         self.edges.append(
             {
                 SUBJECT_COLUMN: subject,
@@ -462,6 +516,9 @@ class GTDBTransform(Transform):
                 OBJECT_COLUMN: obj,
                 RELATION_COLUMN: relation,
                 PRIMARY_KNOWLEDGE_SOURCE_COLUMN: self.knowledge_source,
+                KNOWLEDGE_LEVEL_COLUMN: knowledge_level,
+                AGENT_TYPE_COLUMN: agent_type,
+                "original_object": original_object,
             }
         )
 

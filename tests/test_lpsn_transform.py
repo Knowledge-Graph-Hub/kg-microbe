@@ -89,6 +89,19 @@ def test_nodes_emitted_for_every_valid_row(lpsn_transform):
     }
 
 
+def test_curated_edge_metadata_is_present_in_output(lpsn_transform):
+    """Declared hierarchy, synonym and type-deposit links preserve LPSN curation (#1071)."""
+    lpsn_transform.run()
+    edges = _read_tsv(lpsn_transform.output_edge_file)
+    assert {e["predicate"] for e in edges} == {
+        "biolink:subclass_of",
+        "biolink:same_as",
+        "biolink:close_match",
+    }
+    assert all(e["knowledge_level"] == "knowledge_assertion" for e in edges)
+    assert all(e["agent_type"] == "manual_agent" for e in edges)
+
+
 def test_node_fields_are_shaped_correctly(lpsn_transform):
     """A species row emits id/category/name/description/xref/provided_by."""
     lpsn_transform.run()
@@ -334,6 +347,8 @@ def test_single_hit_emits_ncbitaxon_close_match(lpsn_transform_with_ncbi):
     assert len(hits) == 1
     assert hits[0]["relation"] == "skos:closeMatch"
     assert hits[0]["primary_knowledge_source"] == LPSN_KNOWLEDGE_SOURCE
+    assert hits[0]["knowledge_level"] == "prediction"
+    assert hits[0]["agent_type"] == "automated_agent"
 
 
 def test_ambiguous_hit_emits_no_edge(lpsn_transform_with_ncbi):
@@ -440,6 +455,8 @@ def test_species_gets_gtdb_close_match(lpsn_transform_with_gtdb):
     ]
     assert len(hits) == 1
     assert hits[0]["relation"] == "skos:closeMatch"
+    assert hits[0]["knowledge_level"] == "prediction"
+    assert hits[0]["agent_type"] == "automated_agent"
 
 
 def test_genus_gets_gtdb_close_match(lpsn_transform_with_gtdb):
@@ -522,6 +539,7 @@ def test_a_run_that_dies_midway_leaves_no_output_file(lpsn_transform, monkeypatc
     calls = {"n": 0}
 
     def explode(self_, record_no, row):
+        """Crash after one record to exercise atomic output publication."""
         calls["n"] += 1
         if calls["n"] == 2:
             raise RuntimeError("simulated crash after the first record")

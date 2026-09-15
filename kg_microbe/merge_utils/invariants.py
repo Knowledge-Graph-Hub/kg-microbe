@@ -144,6 +144,11 @@ def check_merged_invariants(
             writer = tsv_writer(handle)
             writer.writerow(STUB_NODE_REPORT_HEADER)
             writer.writerows(stub_node_rows(stubs))
+        detail_destination = Path(output_dir or edges_file.parent) / STUB_NODE_DETAILS_REPORT
+        with atomic_write(detail_destination, encoding="utf-8", newline="") as handle:
+            writer = tsv_writer(handle)
+            writer.writerow(STUB_NODE_DETAILS_HEADER)
+            writer.writerows(stub_incident_rows(edges_file, stubs))
         unexpected = {
             prefix: offenders
             for prefix, curies in stubs.items()
@@ -157,7 +162,7 @@ def check_merged_invariants(
                 f"{sum(len(c) for c in unexpected.values()):,}",
                 len(unexpected),
                 ", ".join(sorted(unexpected)),
-                stub_destination,
+                detail_destination,
             )
 
     if violations:
@@ -192,6 +197,9 @@ def _sources_of(violations: Dict[str, Tuple[Set[str], Set[str]]]) -> List[str]:
 STUB_NODE_REPORT = "merged_stub_nodes.tsv"
 
 STUB_NODE_REPORT_HEADER = ["prefix", "count", "expected", "note", "examples"]
+
+STUB_NODE_DETAILS_REPORT = "merged_stub_node_details.tsv"
+STUB_NODE_DETAILS_HEADER = ["id", "expected", "note", "incident_edges", "predicates", "knowledge_sources"]
 
 #: Only prefixes whose *every* identifier is an external cross-reference belong
 #: here. GOLD organisms and GTDB assemblies have owner transforms, so exempting
@@ -285,4 +293,50 @@ def stub_node_rows(stubs: Dict[str, List[str]]) -> List[List]:
             "|".join(sorted(curies)[:3]),
         ]
         for (prefix, reason), curies in sorted(groups.items(), key=lambda item: (-len(item[1]), item[0]))
+    ]
+
+
+def stub_incident_rows(edges_file: Path, stubs: Dict[str, List[str]]) -> List[List]:
+    """
+    Attribute every anonymous node to its incident assertions, not just prefix samples.
+
+    Only stub IDs, counts and distinct predicate/source strings are retained in
+    memory. Source cells are recorded verbatim: malformed legacy serialization
+    must remain inspectable, not be silently interpreted as Python (#1070).
+    A self-loop counts once for its one incident node. Duplicate headers use
+    the first occurrence, consistent with the other merge invariants (#915).
+    """
+    counts = {curie: 0 for curies in stubs.values() for curie in curies}
+    predicates: Dict[str, Set[str]] = defaultdict(set)
+    sources: Dict[str, Set[str]] = defaultdict(set)
+    if counts:
+        with edges_file.open(encoding="utf-8", newline="") as handle:
+            reader = csv.reader(handle, delimiter="\t")
+            header = next(reader, [])
+            required = [SUBJECT_COLUMN, OBJECT_COLUMN, PREDICATE_COLUMN, PRIMARY_KNOWLEDGE_SOURCE_COLUMN]
+            missing = [column for column in required if column not in header]
+            if missing:
+                raise ValueError(f"Cannot attribute stub nodes: {edges_file} lacks {missing}")
+            sub_at, obj_at, pred_at, source_at = [header.index(column) for column in required]
+            for row in reader:
+                if len(row) <= max(sub_at, obj_at, pred_at, source_at):
+                    raise ValueError(f"Cannot attribute stub nodes: short edge row at line {reader.line_num}")
+                for curie in {row[sub_at], row[obj_at]}:
+                    if curie not in counts:
+                        continue
+                    counts[curie] += 1
+                    if row[pred_at]:
+                        predicates[curie].add(row[pred_at])
+                    if row[source_at]:
+                        sources[curie].add(row[source_at])
+    return [
+        [
+            curie,
+            "yes" if expected_stub_reason(curie) else "no",
+            expected_stub_reason(curie),
+            counts[curie],
+            "|".join(sorted(predicates[curie])),
+            "|".join(sorted(sources[curie])),
+        ]
+        for curie in sorted(counts)
     ]

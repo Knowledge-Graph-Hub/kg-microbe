@@ -44,11 +44,16 @@ SHARED_CODE = (
     Path("kg_microbe") / "utils",
     Path("kg_microbe") / "transform_utils" / "constants.py",
     Path("kg_microbe") / "transform_utils" / "transform.py",
+    Path("kg_microbe") / "transform.py",
+    Path("kg_microbe") / "merge_utils" / "external_node_closure.py",
 )
 
 # Shared canonicalization is used by source transforms and merge ingestion.
 # Curation changes affect output even when no Python code has changed.
-SHARED_DATA_INPUTS = ("mappings/foodon_model_dispositions.tsv",)
+SHARED_DATA_INPUTS = (
+    "mappings/foodon_model_dispositions.tsv",
+    "kg_microbe/transform_utils/prefixmap.json",
+)
 
 # Files at or below this size are cheap enough to hash completely. Larger graph
 # TSVs are sampled at evenly spaced offsets so a freshness check does bounded IO
@@ -363,6 +368,7 @@ def write_fingerprint(
     data_inputs: Iterable[str],
     transform_inputs: Iterable[str] = (),
     input_dir: Optional[Path] = None,
+    finalization_inputs: Iterable[str] = (),
 ) -> dict:
     """
     Record the fingerprint of a completed run.
@@ -377,6 +383,7 @@ def write_fingerprint(
     :param data_inputs: Repo-relative curation paths.
     :param transform_inputs: Registered sources whose output this one reads.
     :param input_dir: Effective raw directory read by the completed transform.
+    :param finalization_inputs: Exact authority/dependency paths consumed by source finalization.
     :return: The recorded payload.
     """
     payload = {
@@ -392,9 +399,23 @@ def write_fingerprint(
         # Which Biolink schema this output was validated against (#943).
         "schema": schema_fingerprint(repo_root),
     }
+    finalization_paths = [Path(path) for path in finalization_inputs]
+    if finalization_paths:
+        payload["finalization_inputs"] = sorted(_folded_name(path, repo_root) for path in finalization_paths)
+        payload["finalization_data"] = _hash_files(finalization_paths, repo_root)
     with atomic_write(output_dir / FINGERPRINT_FILE, encoding="utf-8") as handle:
         handle.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
     return payload
+
+
+def finalization_inputs_current(recorded: dict, repo_root: Path) -> bool:
+    """Verify exact consumed authorities; missing or changed bytes invalidate finalized output."""
+    paths = [repo_root / name for name in recorded.get("finalization_inputs", ())]
+    if not paths:
+        return True
+    if not all(path.is_file() for path in paths):
+        return False
+    return recorded.get("finalization_data") == _hash_files(paths, repo_root)
 
 
 def read_fingerprint(output_dir: Path) -> Optional[dict]:

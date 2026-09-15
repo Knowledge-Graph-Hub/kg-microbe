@@ -169,6 +169,23 @@ class Transform:
         """
         pass
 
+    def finalize(self, *, file_prefix="", fresh_run=False):
+        """
+        Validate and finalize produced TSVs before publication as a current source.
+
+        The CLI invokes this after ``run`` and before writing the source
+        fingerprint. Direct Python callers must invoke it explicitly after
+        ``run``; producer writes themselves are not a bundle transaction.
+        """
+        from kg_microbe.utils.source_finalization import finalize_selected_sources, finalize_source
+
+        selected = getattr(self, "finalization_output_dirs", None)
+        if selected is not None:
+            if file_prefix:
+                raise ValueError("Dataset selection and ontology file_prefix cannot be combined")
+            return finalize_selected_sources(self, selected, fresh_run=fresh_run)
+        return finalize_source(self, file_prefix=file_prefix, fresh_run=fresh_run)
+
     def pass_through(self, nodes_file: str, edges_file: str) -> None:
         """
         Copy nodes and edges files to output directory.

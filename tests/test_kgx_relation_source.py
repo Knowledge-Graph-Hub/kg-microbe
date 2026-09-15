@@ -34,6 +34,7 @@ def local_prefix_context(monkeypatch):
 
 def _source(name):
     """Use the immutable node and edge inputs for a source."""
+    name = "alpha_final" if name == "alpha" else name
     return {
         "input": {
             "format": "tsv",
@@ -187,13 +188,22 @@ def test_cross_source_exact_duplicates_only_and_archive_reingestion_is_idempoten
     assert {key: canonical_assertion(edge) for _, _, key, edge in again.edges(keys=True, data=True)} == before
 
 
-def test_canonical_node_aliases_union_sources_and_normalize_imported_categories(tmp_path):
-    """Compaction happens before identity matching, for both nodes and edge endpoints."""
+def test_finalized_node_aliases_union_sources_without_retyping_at_merge(tmp_path):
+    """Source finalization precedes merge; merging only unions canonical declarations."""
     graph = parse_source("alpha", _source("alpha"), str(tmp_path)).graph
     assert set(graph.nodes(data=False)) == {"time:Instant", "FOODON:1"}
     assert _values(graph.nodes()["time:Instant"]["provided_by"]) == {"infores:iri", "infores:curie"}
     assert graph.nodes()["FOODON:1"]["category"] == ["biolink:Food"]
     assert all(subject == "time:Instant" and obj == "FOODON:1" for subject, obj in graph.edges(data=False))
+
+
+def test_merge_rejects_unfinalized_iri_source(tmp_path):
+    """A legacy source must be finalized explicitly, not silently fixed while loading KGX."""
+    from kg_microbe.utils.source_finalization import SourceFinalizationRequired
+
+    source = {"input": {"format": "tsv", "filename": [str(FIXTURES / "alpha_nodes.tsv")]}}
+    with pytest.raises(SourceFinalizationRequired, match="Noncanonical identifier"):
+        parse_source("legacy", source, str(tmp_path))
 
 
 def test_cross_source_merge_preserves_relation_specific_metadata(tmp_path, monkeypatch):
@@ -313,7 +323,7 @@ def test_csv_uses_the_same_identity_adapter(tmp_path):
     files = []
     for kind in ("nodes", "edges"):
         target = tmp_path / f"alpha_{kind}.csv"
-        with (FIXTURES / f"alpha_{kind}.tsv").open(newline="") as source, target.open("w", newline="") as output:
+        with (FIXTURES / f"alpha_final_{kind}.tsv").open(newline="") as source, target.open("w", newline="") as output:
             csv.writer(output, lineterminator="\n").writerows(csv.reader(source, delimiter="\t"))
         files.append(str(target))
     graph = parse_source("alpha", {"input": {"format": "csv", "filename": files}}, str(tmp_path)).graph

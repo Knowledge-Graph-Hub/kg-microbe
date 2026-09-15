@@ -72,9 +72,9 @@ def foodon_organism_classes(path: Path | None = None) -> frozenset:
     return _load_organism_classes(str(path.resolve()), stat.st_size, stat.st_mtime_ns) | _curated_organisms()
 
 
-def authoritative_foodon_category(identifier: str) -> str:
+def authoritative_foodon_category(identifier: str, *, path: Path | None = None) -> str:
     """Distinguish FOODON organism classes from the default food-material category."""
     # KGX has historically compacted this imported COB root through OBO:.
     if identifier == "OBO:COB_0000022":
         identifier = "COB:0000022"
-    return NCBI_CATEGORY if identifier in foodon_organism_classes() else FOOD_CATEGORY
+    return NCBI_CATEGORY if identifier in foodon_organism_classes(path) else FOOD_CATEGORY

@@ -15,7 +15,6 @@ import networkx as nx  # type: ignore
 import yaml
 
 from kg_microbe.merge_utils.artifact_manifest import build_provenance, write_graph_archive, write_loose_manifest
-from kg_microbe.merge_utils.external_node_closure import resolve_external_references
 from kg_microbe.merge_utils.invariants import check_merged_invariants
 from kg_microbe.merge_utils.stats_provenance import STATS_OPERATION, annotate_graph_stats, stats_filename_from_config
 from kg_microbe.transform_utils.constants import (
@@ -37,6 +36,7 @@ from kg_microbe.transform_utils.constants import (
     XREF_COLUMN,
 )
 from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.source_finalization import verify_finalized_source_files, write_merge_validation_report
 from kg_microbe.utils.tsv_io import tsv_writer
 
 CANONICAL_NODE_HEADER = [
@@ -167,13 +167,15 @@ def load_and_merge(
     :param processes: Number of processes to use. Each concurrent process
         holds its own source graph, so raising this raises peak memory.
     :param sources: Optional subset of source keys to merge. None merges all.
-    :return: The pre-serialization KGX in-memory graph. Required cleanup
-        repairs the published TSV/archive, not this returned object; use the
-        published artifact/manifest for final identities and row counts.
+    :return: The pre-serialization KGX in-memory graph. Serialization projection
+        affects the published TSV/archive, not this returned object; use its
+        manifest for final byte identity and row counts. No post-merge semantic
+        repairs are permitted. Sources must be explicitly finalized first.
     :raises KeyError: If a requested source is absent from the config.
     """
     if sources:
         _assert_sources_exist(yaml_file, sources)
+    _assert_sources_finalized(yaml_file, sources)
     # KGX writes the destination before post-processing starts. Never give it
     # a published pathname: a later required failure must preserve the old
     # artifact, not merely propagate after KGX has already overwritten it.
@@ -185,6 +187,28 @@ def load_and_merge(
         written = _publish_staged_outputs(staged_output, final_output, stats_outputs, failed_stats)
         _warn_about_stale_siblings(final_output, written)
     return merged_graph
+
+
+def _assert_sources_finalized(yaml_file, sources=None):
+    """Require prepared graph bytes by default, independent of their directory or current working path."""
+    config = parse_load_config(yaml_file)
+    allow = config.get("configuration", {}).get("allow_unfinalized_sources", False)
+    if not isinstance(allow, bool):
+        raise ValueError("configuration.allow_unfinalized_sources must be a boolean")
+    if allow:
+        print("[merge-validation] WARNING: DIAGNOSTIC OPT-OUT allow_unfinalized_sources=true; not a finalized release")
+        return
+    filenames = []
+    for name, source in (config.get("merged_graph", {}).get("source") or {}).items():
+        if sources and name not in sources:
+            continue
+        inputs = source.get("input") or {}
+        values = inputs.get("filename") or []
+        values = [values] if isinstance(values, str) else values
+        filenames.extend(
+            _source_filename_at_original_location(value, Path(yaml_file).resolve().parent) for value in values
+        )
+    verify_finalized_source_files(filenames)
 
 
 def _source_filename_at_original_location(filename: str, config_dir: Path) -> str:
@@ -291,34 +315,19 @@ def _cleanup_merged_outputs(
     yaml_file: str, original_yaml_file: Optional[str] = None, published_output_dir: Optional[Path] = None
 ) -> set:
     r"""
-    Defensive post-merge normalization of the KGX-merged TSVs.
+    Project KGX serialization, validate immutable semantics, and package the result.
 
-    Why this step exists: `kgx.cli.cli_utils.merge` takes the column union
-    across source TSVs, and `kgx.sink.TsvSink` writes them out. That
-    combination produces three classes of artifacts we see in practice:
+    This boundary orders columns, removes documented auxiliary/internal
+    columns, coalesces only nonconflicting duplicate fields, and normalizes
+    transport CRLF. It preserves literal quote text. Conflicting values and
+    embedded carriage returns fail instead of silently losing observations.
+    Legacy knowledge_source filling remains explicit format compatibility.
 
-      1. Duplicate header columns (e.g. `provided_by` x2, `agent_type` x2)
-         when source files are headerless-subsets of each other and column
-         order is reconstructed from per-record property sets.
-      2. Auxiliary columns from obograph ingestion that leak through
-         (`subsets`, `meta`, edge `id`) plus the deprecated
-         `knowledge_source` alongside its biolink 3.x replacement
-         `primary_knowledge_source`.
-      3. Stray `\r` characters emitted mid-header by TsvSink when a source
-         description field contained an embedded CR (seen in ChEBI
-         descriptions). This corrupts CSV-reader parsing downstream.
-
-    Upstream schema normalization in each transform (see Task #7, #8 in
-    the PR) removes most causes of (1) and (2); this step is therefore
-    largely defensive and is idempotent — it becomes a no-op when sources
-    are already uniform. It does NOT fix the `\r` issue upstream because
-    that byte is injected by KGX's sink, not by the source files.
-
-    TODO: After the transform-level schema normalization (Task #7/#8) has
-    been validated across a full pipeline run, re-evaluate whether this
-    post-merge cleanup still detects drift. If it consistently logs
-    "no changes", we can (a) drop it, or (b) demote it to an assertion
-    that fails CI when KGX regresses.
+    Identity, category and ontology-reference decisions happen in source
+    finalization, before KGX. This function never consults live raw ontology
+    authorities or repairs biological assertions. Required validation and
+    manifest failures propagate before staged publication; optional reports
+    and statistics retain their isolated failure behavior.
 
     Handles both the uncompressed TSV pair and the tar.gz archive. Returns
     optional stats paths whose annotation failed, so staging can withhold
@@ -377,17 +386,11 @@ def _cleanup_merged_outputs(
             _normalize_nodes_tsv(nodes_file)
         if edges_file.is_file():
             _normalize_edges_tsv(edges_file)
-            # Required source-aware reconciliation precedes diagnostics and
-            # manifest hashing. Exact authority replacements retain original
-            # endpoints; uncertain identities are never guessed or pooled.
-            resolution_counts = resolve_external_references(
-                nodes_file,
-                edges_file,
-                _repo_root() / "data" / "raw",
-                reference_report,
-            )
-            if resolution_counts:
-                print(f"[merge-references] {base}: {resolution_counts}")
+            # Semantic decisions belong to source finalization (#1082).
+            # Merge checks the result without consulting live raw authorities
+            # or remapping categories, identities or original assertions.
+            validation_counts = write_merge_validation_report(nodes_file, edges_file, reference_report)
+            print(f"[merge-validation] {base}: {validation_counts}; no semantic rewrites")
             # Checked here rather than in each transform: a transform can only
             # police the edges it writes, and kgmicrobe.strain is a namespace
             # several sources mint into (#896).
@@ -429,6 +432,8 @@ def _cleanup_merged_outputs(
             provenance = build_provenance(
                 provenance_config, _repo_root(), ignore=(Path(stats_name),) if stats_name else ()
             )
+            diagnostic = config.get("configuration", {}).get("allow_unfinalized_sources", False)
+            provenance["source_finalization"] = {"required": not diagnostic, "diagnostic_opt_out": diagnostic}
             if dest.get("compression") == "tar.gz":
                 _rewrite_tarball(archive, [nodes_file, edges_file, reference_report], provenance=provenance)
                 if extracted_from_archive:
@@ -483,10 +488,14 @@ def _warn_about_stale_siblings(output_dir: Path, written: set) -> None:
 
 
 def _iter_clean_lines(path: Path):
-    r"""Yield lines with stray carriage returns stripped (KGX occasionally emits \r mid-line)."""
+    r"""Normalize transport CRLF only; embedded controls are source errors, never erased."""
     with open(path, "r", newline="\n") as src:
         for line in src:
-            yield line.replace("\r", "")
+            if line.endswith("\r\n"):
+                line = line[:-2] + "\n"
+            if "\r" in line:
+                raise ValueError(f"{path}: embedded carriage return requires source finalization")
+            yield line
 
 
 def _log_schema_diff(kind: str, path: Path, in_header: List[str], out_header: List[str]) -> None:
@@ -504,7 +513,7 @@ def _normalize_nodes_tsv(path: Path) -> None:
     """Dedup node columns, drop auxiliary KGX columns, order by canonical header."""
     with tempfile.NamedTemporaryFile("w", delete=False, dir=path.parent, newline="") as tmp:
         tmp_path = Path(tmp.name)
-        reader = csv.reader(_iter_clean_lines(path), delimiter="\t")
+        reader = csv.reader(_iter_clean_lines(path), delimiter="\t", quoting=csv.QUOTE_NONE)
         try:
             header = next(reader)
         except StopIteration:
@@ -514,7 +523,7 @@ def _normalize_nodes_tsv(path: Path) -> None:
             header, CANONICAL_NODE_HEADER, NODE_COLUMNS_TO_DROP, extension_columns=set()
         )
         _log_schema_diff("nodes", path, header, out_header)
-        writer = tsv_writer(tmp)
+        writer = tsv_writer(tmp, quoting=csv.QUOTE_NONE, quotechar=None)
         writer.writerow(out_header)
         for row in reader:
             writer.writerow(_project_row(row, keep_indices))
@@ -525,7 +534,7 @@ def _normalize_edges_tsv(path: Path) -> None:
     """Dedup edge columns, drop `id`/`meta`, merge `knowledge_source` into primary."""
     with tempfile.NamedTemporaryFile("w", delete=False, dir=path.parent, newline="") as tmp:
         tmp_path = Path(tmp.name)
-        reader = csv.reader(_iter_clean_lines(path), delimiter="\t")
+        reader = csv.reader(_iter_clean_lines(path), delimiter="\t", quoting=csv.QUOTE_NONE)
         try:
             header = next(reader)
         except StopIteration:
@@ -543,7 +552,7 @@ def _normalize_edges_tsv(path: Path) -> None:
             extension_columns=EDGE_EXTENSION_COLUMNS,
         )
         _log_schema_diff("edges", path, header, out_header)
-        writer = tsv_writer(tmp)
+        writer = tsv_writer(tmp, quoting=csv.QUOTE_NONE, quotechar=None)
         writer.writerow(out_header)
         for row in reader:
             if ks_idx is not None and pks_idx is not None and pks_idx < len(row):
@@ -610,12 +619,10 @@ def _project_row(row: List[str], keep_indices: List[List[int]]) -> List[str]:
     """Project a row onto the resolved column plan, coalescing duplicates."""
     out = []
     for group in keep_indices:
-        value = ""
-        for idx in group:
-            if idx < len(row) and row[idx]:
-                value = row[idx]
-                break
-        out.append(value)
+        values = {row[idx] for idx in group if idx < len(row) and row[idx]}
+        if len(values) > 1:
+            raise ValueError("Conflicting duplicate KGX columns cannot be silently coalesced")
+        out.append(next(iter(values), ""))
     return out
 
 

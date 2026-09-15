@@ -27,7 +27,7 @@ from kg_microbe.transform_utils.constants import (
     PREGO,
     RHEAMAPPINGS,
 )
-from kg_microbe.utils.transform_fingerprint import resolve_data_input, write_fingerprint
+from kg_microbe.utils.transform_fingerprint import FINGERPRINT_FILE, resolve_data_input, write_fingerprint
 
 
 class LazyTransform:
@@ -159,7 +159,9 @@ def _run_one(source: str, input_dir: Optional[Path], output_dir: Optional[Path],
     """Run one registered source, or one ontology by name, and report what it wrote."""
     if source in DATA_SOURCES:
         t = DATA_SOURCES[source](input_dir, output_dir)
+        _invalidate_fingerprint(t)
         t.run(show_status=show_status)
+        _finalize_output(t)
         written = _describe_output(t, source)
         # After the outputs, so a run that dies partway leaves no marker
         # claiming its output matches the current inputs. Central here rather
@@ -172,12 +174,28 @@ def _run_one(source: str, input_dir: Optional[Path], output_dir: Optional[Path],
     # scoped to one file; the CLI branch meant to reach it tested a source
     # name against ONTOLOGIES_MAP, whose keys never overlapped DATA_SOURCES.
     t = DATA_SOURCES[ONTOLOGIES](input_dir, output_dir)
+    _invalidate_fingerprint(t)
     t.run(_ontology_map()[source], show_status=show_status)
+    _finalize_output(t, file_prefix=f"{source}_")
     written = _describe_output(t, source, file_prefix=f"{source}_")
     # Deliberately no fingerprint: the marker covers the whole ontologies
     # directory, and one refreshed ontology does not make the other thirteen
-    # current. The existing marker stays, and reads STALE if the code moved.
+    # current. The previous whole-directory marker has been invalidated.
     print(f"[transform] {source}: done — {written} (single ontology; ontologies fingerprint not updated)", flush=True)
+
+
+def _invalidate_fingerprint(transform_obj):
+    """Remove only the prior success claim before a producer can change its graph."""
+    output_dir = getattr(transform_obj, "output_dir", None)
+    if output_dir is not None:
+        (Path(output_dir) / FINGERPRINT_FILE).unlink(missing_ok=True)
+
+
+def _finalize_output(transform_obj, *, file_prefix=""):
+    """Use the explicit source contract; registry test doubles may have no graph output."""
+    finalizer = getattr(transform_obj, "finalize", None)
+    if finalizer is not None:
+        finalizer(file_prefix=file_prefix, fresh_run=True)
 
 
 def transform(
@@ -288,6 +306,7 @@ def _record_fingerprint(transform_obj, source: str) -> None:
             data_inputs=getattr(type(transform_obj), "DATA_INPUTS", ()),
             transform_inputs=getattr(type(transform_obj), "TRANSFORM_INPUTS", ()),
             input_dir=getattr(transform_obj, "input_base_dir", None),
+            finalization_inputs=getattr(transform_obj, "finalization_inputs", ()),
         )
     except Exception as exc:  # noqa: BLE001 - bookkeeping must not fail the run
         print(f"[transform] {source}: could not record fingerprint ({exc})", flush=True)

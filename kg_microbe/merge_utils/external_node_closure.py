@@ -14,6 +14,7 @@ import sqlite3
 import tarfile
 from array import array
 from collections import Counter
+from contextlib import ExitStack
 from pathlib import Path
 
 from lxml import etree
@@ -61,10 +62,14 @@ _AUTHORITY_SOURCES = {
 }
 
 
-def _rows(path):
-    """Stream a KGX TSV with header-aware quoted-field handling."""
+def _rows(path, quoting=csv.QUOTE_MINIMAL):
+    """Stream a KGX TSV or ordered source bundle with header-aware quoted-field handling."""
+    if isinstance(path, (list, tuple)):
+        for member in path:
+            yield from _rows(member, quoting=quoting)
+        return
     with Path(path).open(encoding="utf-8", newline="") as handle:
-        yield from csv.DictReader(handle, delimiter="\t")
+        yield from csv.DictReader(handle, delimiter="\t", quoting=quoting)
 
 
 def _digest(path):
@@ -280,16 +285,62 @@ def resolve_external_references(nodes_path, edges_path, raw_dir, report_path):
     Return disposition counts. Files are replaced atomically only after all
     authority reads and output writes succeed; failures propagate to prevent
     publishing an apparently successful, partially repaired archive. The
-    caller runs this on unpublished merge staging files, before diagnostics.
+    compatibility caller supplies unpublished staging files. The production
+    pipeline invokes the bundle API during source finalization, not merge.
     """
-    nodes_path, edges_path, raw_dir, report_path = map(Path, (nodes_path, edges_path, raw_dir, report_path))
-    original_nodes = {
-        row[ID_COLUMN]: row
-        for row in _rows(nodes_path)
-        if row[ID_COLUMN].startswith(_SUPPORTED)
-        and not row.get(NAME_COLUMN)
-        and row.get(CATEGORY_COLUMN) in ("", "biolink:NamedThing")
-    }
+    return resolve_external_reference_bundle([nodes_path], [edges_path], raw_dir, report_path)
+
+
+def resolve_external_reference_bundle(
+    node_paths,
+    edge_paths,
+    raw_dir,
+    report_path,
+    *,
+    discover_references=False,
+    include_go=True,
+    strict=False,
+    quoting=csv.QUOTE_MINIMAL,
+    known_declarations=frozenset(),
+    consumed_authorities=None,
+):
+    """
+    Resolve one staged source bundle, preserving file membership and every original assertion.
+
+    The single-pair compatibility API retains its existing anonymous-node
+    behavior. Source finalization additionally discovers referenced external
+    IDs not declared locally: KGX must no longer invent those nodes before
+    authority normalization can see them. GO is handled by its all-ID source
+    authority normalizer when ``include_go`` is false. No adapters are created
+    in pool workers; callers invoke this after producer workers have completed.
+    """
+    node_paths, edge_paths = [Path(path) for path in node_paths], [Path(path) for path in edge_paths]
+    raw_dir, report_path = Path(raw_dir), Path(report_path)
+    if not node_paths or not edge_paths:
+        raise ValueError("External reference finalization requires node and edge files")
+    supported = _SUPPORTED if include_go else tuple(prefix for prefix in _SUPPORTED if prefix != "GO:")
+    original_nodes, original_node_rows, declared = {}, {}, set()
+    for row in _rows(node_paths, quoting=quoting):
+        identifier = row[ID_COLUMN]
+        declared.add(identifier)
+        if (
+            identifier.startswith(supported)
+            and identifier not in known_declarations
+            and not row.get(NAME_COLUMN)
+            and row.get(CATEGORY_COLUMN) in ("", "biolink:NamedThing")
+        ):
+            original_nodes.setdefault(identifier, row)
+            original_node_rows.setdefault(identifier, []).append(row)
+    if discover_references:
+        for row in _rows(edge_paths, quoting=quoting):
+            for column in (SUBJECT_COLUMN, OBJECT_COLUMN):
+                identifier = row[column]
+                if (
+                    identifier.startswith(supported)
+                    and identifier not in declared
+                    and identifier not in known_declarations
+                ):
+                    original_nodes.setdefault(identifier, {ID_COLUMN: identifier})
     targets = set(original_nodes)
     if not targets:
         with atomic_write(report_path, encoding="utf-8", newline="") as output:
@@ -298,6 +349,8 @@ def resolve_external_references(nodes_path, edges_path, raw_dir, report_path):
     decisions, authorities = {}, {}
     ncbi = {curie for curie in targets if curie.startswith("NCBITaxon:")}
     taxdump = raw_dir / "taxdump.tar.gz"
+    if strict and ncbi and not taxdump.is_file():
+        raise FileNotFoundError(f"Required NCBI authority is missing: {taxdump}")
     if ncbi and taxdump.is_file():
         authorities[taxdump.name] = _digest(taxdump)
         merges = load_taxid_merges(raw_dir)
@@ -322,8 +375,24 @@ def resolve_external_references(nodes_path, edges_path, raw_dir, report_path):
     for prefix in ("GO", "CHEBI"):
         selected = {curie for curie in targets if curie.startswith(f"{prefix}:")}
         if selected:
+            if strict and not (raw_dir / f"{prefix.lower()}.db").is_file():
+                raise FileNotFoundError(f"Required {prefix} authority is missing from {raw_dir}")
             _ontology_decisions(raw_dir, prefix, selected, decisions, authorities)
+    if strict:
+        required_local = []
+        if "MICRO:0000903" in targets:
+            required_local.append(raw_dir / "micro.owl")
+        if "OBI:0000079" in targets:
+            required_local.append(raw_dir / "metpo.owl")
+        if any(identifier.startswith("gold:") for identifier in targets):
+            required_local.append(raw_dir / "gold" / "GOLD_nodes.tsv")
+            required_local.append(raw_dir / "taxdump.tar.gz")
+        for path in required_local:
+            if not path.is_file():
+                raise FileNotFoundError(f"Required local reference authority is missing: {path}")
     _local_declarations(raw_dir, targets, decisions, authorities)
+    if consumed_authorities is not None:
+        consumed_authorities.update(raw_dir / name for name in authorities)
     for identifier in targets - decisions.keys():
         decisions[identifier] = {
             "canonical_id": identifier,
@@ -332,7 +401,11 @@ def resolve_external_references(nodes_path, edges_path, raw_dir, report_path):
         }
     replacements = {old: value["canonical_id"] for old, value in decisions.items() if value["canonical_id"] != old}
     canonical_ids = {value["canonical_id"] for value in decisions.values()} - {""}
-    existing = {row[ID_COLUMN] for row in _rows(nodes_path) if row[ID_COLUMN] in canonical_ids and row.get(NAME_COLUMN)}
+    existing = {
+        row[ID_COLUMN]
+        for row in _rows(node_paths, quoting=quoting)
+        if row[ID_COLUMN] in canonical_ids and row.get(NAME_COLUMN)
+    }
     # Anonymous donors may converge on a declaration already in the graph.
     # Preserve their provenance and descriptive context without copying stale
     # scalar metadata (e.g. a retired node's deprecated flag) onto that node.
@@ -342,39 +415,36 @@ def resolve_external_references(nodes_path, edges_path, raw_dir, report_path):
         if not decision.get("name") or not decision["canonical_id"]:
             continue
         details = enrichment.setdefault(decision["canonical_id"], {"providers": set(), "descriptions": set()})
-        details["providers"].update(knowledge_source_tokens(original_nodes[original].get(PROVIDED_BY_COLUMN)))
+        for original_row in original_node_rows.get(original, [original_nodes[original]]):
+            details["providers"].update(knowledge_source_tokens(original_row.get(PROVIDED_BY_COLUMN)))
+            description = original_row.get(DESCRIPTION_COLUMN)
+            if description:
+                details["descriptions"].add(description)
         details["providers"].add(_AUTHORITY_SOURCES[decision["authority"]])
-        description = original_nodes[original].get(DESCRIPTION_COLUMN)
-        if description:
-            details["descriptions"].add(description)
     counts = Counter(value["disposition"] for value in decisions.values())
-    with nodes_path.open(encoding="utf-8", newline="") as source:
-        node_header = next(csv.reader(source, delimiter="\t"))
-    with edges_path.open(encoding="utf-8", newline="") as source:
-        edge_header = next(csv.reader(source, delimiter="\t"))
-    edge_header = list(dict.fromkeys([*edge_header, "original_subject", "original_object"]))
     # Nested atomic contexts stage all outputs before any replacement. Merge
     # publication is a separate outer boundary; no claim of multi-file rename
     # atomicity is made if the filesystem itself fails during final renames.
-    with (
-        atomic_write(nodes_path, encoding="utf-8", newline="") as node_output,
-        atomic_write(edges_path, encoding="utf-8", newline="") as edge_output,
-        atomic_write(report_path, encoding="utf-8", newline="") as report_output,
-    ):
-        node_writer = tsv_dict_writer(node_output, fieldnames=node_header)
-        edge_writer = tsv_dict_writer(edge_output, fieldnames=edge_header)
+    with ExitStack() as stack:
+        report_output = stack.enter_context(atomic_write(report_path, encoding="utf-8", newline=""))
         report_writer = tsv_dict_writer(report_output, fieldnames=_REPORT_HEADER)
-        node_writer.writeheader()
-        edge_writer.writeheader()
         report_writer.writeheader()
-        for row in _rows(nodes_path):
+
+        def normalized_node(row, node_header):
+            """Normalize a single declaration; preserve its source file unless it converges."""
             original = row[ID_COLUMN]
             decision = decisions.get(original)
             if decision:
                 canonical = decision["canonical_id"]
-                if not canonical or canonical in existing:
-                    continue
-                if decision.get("name"):
+                if not canonical:
+                    return None
+                if canonical in existing:
+                    # A donor and a named declaration can share one ID across
+                    # source files. Only discard the anonymous donor, never
+                    # the named row which receives its provenance below.
+                    if original != canonical or not row.get(NAME_COLUMN):
+                        return None
+                elif decision.get("name"):
                     row = {column: "" for column in node_header}
                     row[ID_COLUMN] = canonical
                     row[NAME_COLUMN] = decision["name"]
@@ -394,14 +464,99 @@ def resolve_external_references(nodes_path, edges_path, raw_dir, report_path):
                     descriptions = [row[DESCRIPTION_COLUMN]] if row[DESCRIPTION_COLUMN] else []
                     descriptions.extend(value for value in sorted(details["descriptions"]) if value not in descriptions)
                     row[DESCRIPTION_COLUMN] = " ".join(descriptions)
-            node_writer.writerow(row)
-        seen_affected = set()
+            return row
+
+        node_writers = []
+        for nodes_path in node_paths:
+            with nodes_path.open(encoding="utf-8", newline="") as source:
+                node_header = next(csv.reader(source, delimiter="\t"))
+            node_output = stack.enter_context(atomic_write(nodes_path, encoding="utf-8", newline=""))
+            node_writer = tsv_dict_writer(
+                node_output,
+                fieldnames=node_header,
+                quoting=quoting,
+                quotechar=None if quoting == csv.QUOTE_NONE else '"',
+            )
+            node_writer.writeheader()
+            node_writers.append((node_writer, node_header))
+            for row in _rows(nodes_path, quoting=quoting):
+                normalized = normalized_node(row, node_header)
+                if normalized is not None:
+                    node_writer.writerow(normalized)
+        # References missing from the producer's node files have no original
+        # node row to rewrite. Declare only authority-supported identities in
+        # the first supplied node file, which is already a configured input.
+        node_writer, node_header = node_writers[0]
+        for identifier in sorted(targets - declared):
+            if not decisions[identifier].get("name"):
+                continue
+            row = {column: "" for column in node_header}
+            row[ID_COLUMN] = identifier
+            normalized = normalized_node(row, node_header)
+            if normalized is not None:
+                node_writer.writerow(normalized)
         reported = set()
-        for row in _rows(edges_path):
-            changed = [value for value in (row[SUBJECT_COLUMN], row[OBJECT_COLUMN]) if value in decisions]
-            original_row = dict(row)
-            for original in dict.fromkeys(changed):
-                decision = decisions[original]
+        for edges_path in edge_paths:
+            with edges_path.open(encoding="utf-8", newline="") as source:
+                edge_header = next(csv.reader(source, delimiter="\t"))
+            edge_header = list(dict.fromkeys([*edge_header, "original_subject", "original_object"]))
+            edge_output = stack.enter_context(atomic_write(edges_path, encoding="utf-8", newline=""))
+            edge_writer = tsv_dict_writer(
+                edge_output,
+                fieldnames=edge_header,
+                quoting=quoting,
+                quotechar=None if quoting == csv.QUOTE_NONE else '"',
+            )
+            edge_writer.writeheader()
+            _write_resolved_edges(
+                edges_path,
+                edge_writer,
+                edge_header,
+                report_writer,
+                decisions,
+                authorities,
+                original_node_rows,
+                replacements,
+                reported,
+                quoting,
+            )
+        for original in sorted(decisions.keys() - reported):
+            decision = decisions[original]
+            for node_row in original_node_rows.get(original, [None]):
+                report_writer.writerow(
+                    {
+                        "original_id": original,
+                        "canonical_id": decision["canonical_id"],
+                        "disposition": decision["disposition"],
+                        "authority": decision["authority"],
+                        "authority_sha256": authorities.get(decision["authority"], ""),
+                        "original_edge_json": "",
+                        "original_node_json": json.dumps(node_row, sort_keys=True) if node_row is not None else "",
+                    }
+                )
+    return dict(counts)
+
+
+def _write_resolved_edges(
+    edges_path,
+    edge_writer,
+    edge_header,
+    report_writer,
+    decisions,
+    authorities,
+    original_node_rows,
+    replacements,
+    reported,
+    quoting,
+):
+    """Apply already validated bundle decisions without pooling source assertions."""
+    seen_affected = set()
+    for row in _rows(edges_path, quoting=quoting):
+        changed = [value for value in (row[SUBJECT_COLUMN], row[OBJECT_COLUMN]) if value in decisions]
+        original_row = dict(row)
+        for original in dict.fromkeys(changed):
+            decision = decisions[original]
+            for node_row in original_node_rows.get(original, [None]):
                 report_writer.writerow(
                     {
                         "original_id": original,
@@ -410,41 +565,25 @@ def resolve_external_references(nodes_path, edges_path, raw_dir, report_path):
                         "authority": decision["authority"],
                         "authority_sha256": authorities.get(decision["authority"], ""),
                         "original_edge_json": json.dumps(original_row, sort_keys=True),
-                        "original_node_json": json.dumps(original_nodes[original], sort_keys=True),
+                        "original_node_json": json.dumps(node_row, sort_keys=True) if node_row is not None else "",
                     }
                 )
-                reported.add(original)
-            excluded = False
-            for column in (SUBJECT_COLUMN, OBJECT_COLUMN):
-                original = row[column]
-                if original in replacements:
-                    canonical = replacements[original]
-                    if not canonical:
-                        excluded = True
-                        break
-                    row[f"original_{column}"] = row.get(f"original_{column}") or original
-                    row[column] = canonical
-            if excluded:
+            reported.add(original)
+        excluded = False
+        for column in (SUBJECT_COLUMN, OBJECT_COLUMN):
+            original = row[column]
+            if original in replacements:
+                canonical = replacements[original]
+                if not canonical:
+                    excluded = True
+                    break
+                row[f"original_{column}"] = row.get(f"original_{column}") or original
+                row[column] = canonical
+        if excluded:
+            continue
+        if changed:
+            key = tuple(row.get(column, "") for column in edge_header)
+            if key in seen_affected:
                 continue
-            if changed:
-                # Only byte-identical affected assertions dedup. Distinct
-                # original IDs/provenance remain distinct evidence, not pooled.
-                key = tuple(row.get(column, "") for column in edge_header)
-                if key in seen_affected:
-                    continue
-                seen_affected.add(key)
-            edge_writer.writerow(row)
-        for original in sorted(decisions.keys() - reported):
-            decision = decisions[original]
-            report_writer.writerow(
-                {
-                    "original_id": original,
-                    "canonical_id": decision["canonical_id"],
-                    "disposition": decision["disposition"],
-                    "authority": decision["authority"],
-                    "authority_sha256": authorities.get(decision["authority"], ""),
-                    "original_edge_json": "",
-                    "original_node_json": json.dumps(original_nodes[original], sort_keys=True),
-                }
-            )
-    return dict(counts)
+            seen_affected.add(key)
+        edge_writer.writerow(row)

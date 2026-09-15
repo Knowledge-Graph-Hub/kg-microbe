@@ -25,11 +25,16 @@ from kg_microbe.transform_utils.constants import (
     SUBJECT_COLUMN,
 )
 from kg_microbe.utils.biolink_model import prepare_kgx
-from kg_microbe.utils.graph_canonicalization import canonical_node_category, compact_identifier
+from kg_microbe.utils.graph_canonicalization import compact_identifier
 from kg_microbe.utils.provenance import (
     knowledge_source_tokens,
     primary_source_and_publications,
     serialize_knowledge_sources,
+)
+from kg_microbe.utils.source_finalization import (
+    SourceFinalizationRequired,
+    validate_identifier,
+    validate_node_representation,
 )
 
 prepare_kgx()
@@ -173,16 +178,13 @@ def merge_assertion_graphs(graphs, preserve=True):
 
 
 class RelationAwareTsvSource(TsvSource):
-    """Canonicalize before keying, keeping distinct relations and their evidence apart."""
+    """Validate finalized syntax before keying distinct source assertions."""
 
     def read_node(self, node):
-        """Coalesce IRI/CURIE aliases without overwriting their source provenance."""
+        """Reject source semantic drift; merge only unions already canonical declarations."""
         normalized = dict(node)
         if normalized.get(ID_COLUMN):
-            normalized[ID_COLUMN] = compact_identifier(normalized[ID_COLUMN])
-            category = canonical_node_category(normalized[ID_COLUMN], normalized.get(CATEGORY_COLUMN, ""))
-            if category or CATEGORY_COLUMN in normalized:
-                normalized[CATEGORY_COLUMN] = category
+            validate_node_representation(normalized[ID_COLUMN], normalized.get(CATEGORY_COLUMN, ""))
         return super().read_node(normalized)
 
     def read_edge(self, edge):
@@ -190,8 +192,10 @@ class RelationAwareTsvSource(TsvSource):
         normalized = dict(edge)
         for column in (SUBJECT_COLUMN, PREDICATE_COLUMN, OBJECT_COLUMN):
             if normalized.get(column):
-                normalized[column] = compact_identifier(normalized[column])
+                validate_identifier(normalized[column])
         relation = canonical_relation(normalized.get(RELATION_COLUMN, ""))
+        if relation != normalized.get(RELATION_COLUMN, ""):
+            raise SourceFinalizationRequired("Noncanonical source relation; rerun source finalization")
         normalized[RELATION_COLUMN] = relation
         original_id = normalized.get(ID_COLUMN)
         normalized = canonical_assertion(normalized)

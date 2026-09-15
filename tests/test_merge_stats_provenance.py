@@ -99,7 +99,14 @@ def test_compressed_merge_provenance_names_a_surviving_artifact(tmp_path):
 
     stats, edges, config = _write_fixture(tmp_path)
     nodes = tmp_path / "merged-kg_nodes.tsv"
-    nodes.write_text("id\tcategory\tname\nNCBITaxon:1\tbiolink:OrganismTaxon\tone\n", encoding="utf-8")
+    nodes.write_text(
+        "id\tcategory\tname\n"
+        "NCBITaxon:1\tbiolink:OrganismTaxon\tone\n"
+        "NCBITaxon:2\tbiolink:OrganismTaxon\ttwo\n"
+        "medium:1\tbiolink:ChemicalMixture\tmedium one\n"
+        "medium:2\tbiolink:ChemicalMixture\tmedium two\n",
+        encoding="utf-8",
+    )
     archive_path = tmp_path / "merged-kg.tar.gz"
     with tarfile.open(archive_path, "w:gz") as archive:
         for path in (nodes, edges):

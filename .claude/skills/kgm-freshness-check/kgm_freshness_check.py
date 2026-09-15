@@ -329,6 +329,7 @@ def _fingerprint_verdict(source: str, code_dir: Path) -> Optional[tuple]:
         from kg_microbe.utils.transform_fingerprint import (
             code_fingerprint,
             data_fingerprint,
+            finalization_inputs_current,
             read_fingerprint,
             schema_fingerprint,
             shared_code_fingerprint,
@@ -348,6 +349,7 @@ def _fingerprint_verdict(source: str, code_dir: Path) -> Optional[tuple]:
         code_stale = package_stale or shared_stale
         code_what = "code" if package_stale else "shared code (utils/, constants.py, transform.py)"
         data_stale = recorded.get("data") != data_fingerprint(REPO, _declared_data_inputs(source))
+        data_stale = data_stale or not finalization_inputs_current(recorded, REPO)
         upstream_stale = recorded.get("upstream") != upstream_fingerprint(
             TRANSFORMED_DIR, _declared_transform_inputs(source)
         )

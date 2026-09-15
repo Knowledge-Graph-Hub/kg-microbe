@@ -115,7 +115,7 @@ def test_cleanup_bundles_manifest_without_external_stats(tmp_path, monkeypatch, 
         result = json.loads((tmp_path / "merged-kg_manifest.json").read_text())
         assert all(path.exists() for path in files)
     assert all(result["members"][path.name]["rows"] == 1 for path in files)
-    assert result["members"]["merged-kg_reference_resolution.tsv"]["rows"] == 0
+    assert result["members"]["merged-kg_reference_resolution.tsv"]["rows"] == 1
     assert result["provenance"]["merge_config"] == {
         "name": config.name,
         "sha256": hashlib.sha256(config.read_bytes()).hexdigest(),
@@ -124,7 +124,7 @@ def test_cleanup_bundles_manifest_without_external_stats(tmp_path, monkeypatch, 
 
 
 @pytest.mark.parametrize(
-    "stage", ["resolve_external_references", "build_provenance", "write_graph_archive", "write_loose_manifest"]
+    "stage", ["write_merge_validation_report", "build_provenance", "write_graph_archive", "write_loose_manifest"]
 )
 def test_merge_does_not_report_success_when_required_publication_fails(tmp_path, monkeypatch, stage):
     """Exercise the public merge boundary, not just helper-level atomic replacement."""
@@ -168,9 +168,12 @@ def test_merge_does_not_report_success_when_required_publication_fails(tmp_path,
 
 
 @pytest.mark.parametrize("compression", [None, "tar.gz"])
-def test_reference_reconciliation_precedes_diagnostics_and_manifest(tmp_path, monkeypatch, compression):
-    """The shipped bytes and diagnostics see exact retired-ID repairs, not the old pair."""
+def test_source_reconciliation_precedes_merge_diagnostics_and_manifest(tmp_path, monkeypatch, compression):
+    """Repairs happen in explicit source finalization, never implicitly inside merge."""
+    from types import SimpleNamespace
+
     from kg_microbe.merge_utils import merge_kg
+    from kg_microbe.utils.source_finalization import finalize_source
 
     raw = tmp_path / "data" / "raw"
     raw.mkdir(parents=True)
@@ -193,6 +196,9 @@ def test_reference_reconciliation_precedes_diagnostics_and_manifest(tmp_path, mo
     edges.write_text(
         "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\n"
         "NCBITaxon:33\tbiolink:related_to\tNCBITaxon:2\tro:fixture\tinfores:test\n"
+    )
+    finalize_source(
+        SimpleNamespace(output_dir=tmp_path, output_base_dir=tmp_path.parent, input_base_dir=raw, source_name="fixture")
     )
     config = tmp_path / "merge.yaml"
     config.write_text(
@@ -226,7 +232,8 @@ def test_reference_reconciliation_precedes_diagnostics_and_manifest(tmp_path, mo
     merge_kg._cleanup_merged_outputs(str(config))
     assert observed == [True]
     report = tmp_path / "merged-kg_reference_resolution.tsv"
-    assert "retired_id_replaced" in report.read_text()
+    assert "no_semantic_rewrites" in report.read_text()
+    assert "retired_id_replaced" in (tmp_path / "source_reference_resolution.tsv").read_text()
     if compression:
         with tarfile.open(tmp_path / "merged-kg.tar.gz") as archive:
             manifest = json.load(archive.extractfile(MANIFEST_MEMBER))
@@ -239,7 +246,7 @@ def test_reference_reconciliation_precedes_diagnostics_and_manifest(tmp_path, mo
     assert b"NCBITaxon:3\tbiolink:related_to" in payload
     assert manifest["members"][edges.name]["sha256"] == hashlib.sha256(payload).hexdigest()
     assert manifest["members"][nodes.name]["rows"] == 2
-    assert b"retired_id_replaced" in report_payload
+    assert b"no_semantic_rewrites" in report_payload
     assert manifest["members"][report.name]["sha256"] == hashlib.sha256(report_payload).hexdigest()
 
 
@@ -267,6 +274,13 @@ def test_public_merge_stages_real_kgx_before_publishing(tmp_path, monkeypatch, f
         "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\n"
         "NCBITaxon:1\tbiolink:related_to\tNCBITaxon:1\tro:fixture\tinfores:fixture\tknowledge_assertion\tmanual_agent\n"
     )
+    from types import SimpleNamespace
+
+    from kg_microbe.utils.source_finalization import finalize_source
+
+    finalize_source(
+        SimpleNamespace(output_dir=inputs, output_base_dir=config_dir, input_base_dir=tmp_path, source_name="fixture")
+    )
     output = config_dir / "published"
     output.mkdir()
     final_graph = output / ("merged-kg.tar.gz" if compression else "merged-kg_nodes.tsv")
@@ -291,9 +305,9 @@ def test_public_merge_stages_real_kgx_before_publishing(tmp_path, monkeypatch, f
         )
     )
     config_bytes = config.read_bytes()
-    real_closure = merge_kg.resolve_external_references
+    real_closure = merge_kg.write_merge_validation_report
 
-    def checked_closure(nodes, edges, raw_dir, report):
+    def checked_closure(nodes, edges, report):
         """Observe actual new KGX bytes in staging while the existing release remains untouched."""
         assert nodes.parent != output
         assert "new root" in nodes.read_text()
@@ -301,9 +315,9 @@ def test_public_merge_stages_real_kgx_before_publishing(tmp_path, monkeypatch, f
         assert stats.read_bytes() == b"prior published stats"
         if failure_stage == "closure":
             raise OSError("injected required closure failure")
-        return real_closure(nodes, edges, raw_dir, report)
+        return real_closure(nodes, edges, report)
 
-    monkeypatch.setattr(merge_kg, "resolve_external_references", checked_closure)
+    monkeypatch.setattr(merge_kg, "write_merge_validation_report", checked_closure)
     if failure_stage == "stats":
 
         def fail_recount(*args, **kwargs):

@@ -15,6 +15,12 @@ _OWL_TIME_VOCAB_IRI = "http://www.w3.org/2006/time#"
 # FOODON/ENVO refer to Wikidata entities through their human-readable pages.
 # Only exact Q-identifier pages are aliases, not arbitrary wiki endpoints (#1074).
 _WIKIDATA_ENTITY_PAGE = re.compile(r"^https://www\.wikidata\.org/wiki/(Q[0-9]+)$")
+_RDF_VOCABULARIES = {
+    "http://www.w3.org/2000/01/rdf-schema#": "rdfs:",
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf:",
+    "http://www.w3.org/2002/07/owl#": "owl:",
+    "http://www.w3.org/2004/02/skos/core#": "skos:",
+}
 
 
 @lru_cache(maxsize=1)
@@ -32,6 +38,9 @@ def compact_identifier(identifier: str) -> str:
         return "orcid:" + identifier[len("ORCID:") :]
     if not identifier.startswith(("http://", "https://")):
         return identifier
+    for uri, prefix in _RDF_VOCABULARIES.items():
+        if identifier.startswith(uri):
+            return prefix + identifier[len(uri) :]
     if identifier.startswith(_OWL_TIME_DOCUMENT_IRI):
         identifier = _OWL_TIME_VOCAB_IRI + identifier[len(_OWL_TIME_DOCUMENT_IRI) :]
     wikidata = _WIKIDATA_ENTITY_PAGE.fullmatch(identifier)
@@ -46,13 +55,13 @@ def compact_identifier(identifier: str) -> str:
     return identifier
 
 
-def canonical_node_category(identifier: str, category: str) -> str:
+def canonical_node_category(identifier: str, category: str, *, foodon_path=None) -> str:
     """Replace imported OntologyClass fallbacks without discarding substantive multi-typing."""
     identifier = compact_identifier(identifier)
     if identifier.startswith("FOODON:") or identifier in {"COB:0000022", "OBO:COB_0000022", "PO:0000003"}:
         from kg_microbe.utils.foodon_classification import authoritative_foodon_category
 
-        canonical = authoritative_foodon_category(identifier)
+        canonical = authoritative_foodon_category(identifier, path=foodon_path)
     elif identifier.startswith("PATO:"):
         canonical = PHENOTYPIC_CATEGORY
     else:

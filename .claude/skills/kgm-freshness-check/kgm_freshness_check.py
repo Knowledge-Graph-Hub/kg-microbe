@@ -13,13 +13,15 @@ Also report:
   - merge-stage freshness: merge.yaml + merge_utils/ vs data/merged/*.
 
 Per-source status codes:
-  FRESH             — output mtime > latest code commit AND no local changes
+  FRESH             — usable content fingerprint matches checked code and inputs
   STALE_VS_SCHEMA   — the recorded Biolink schema differs from the pinned one (#943)
   STALE_VS_CODE     — output mtime < latest code commit on origin/master
   LOCAL_CHANGES     — working tree diverges from origin/master for this dir
                      (in that case, "current relative to master" is not
                      meaningful; still report code-commit-vs-output for info)
   MISSING_OUTPUT    — no nodes.tsv/edges.tsv on disk
+  MISSING_BUILD_RECORD — finalized output has no usable producer success marker
+  UNVERIFIED_BUILD — timestamps look current but no content fingerprint proves completion
   NO_CODE           — code dir exists but no matching <source>.py (skip)
 
 Merge status codes:
@@ -263,20 +265,19 @@ def _output_dirs(source_name: str) -> list[Path]:
     Candidate output directories for a source, most authoritative first.
 
     The directory the merge config names wins. Only when the config names none
-    does this fall back to whichever alias is populated, newest first — that
+    does this fall back to populated aliases in their declared order — that
     fallback is for a source not in the merge at all, where "any output" is the
     best available answer.
 
     :param source_name: Transform name.
-    :return: Existing directories that could hold this source's output.
+    :return: Configured directories, even when missing; otherwise existing aliases.
     """
     names = OUTPUT_DIR_ALIASES.get(source_name, (source_name,))
+    merged_refs = _dirs_referenced_by_merge_config()
+    selected = [TRANSFORMED_DIR / name for name in names if name in merged_refs]
+    if selected:
+        return selected
     existing = [n for n in names if (TRANSFORMED_DIR / n).is_dir()]
-    if len(existing) > 1:
-        merged_refs = _dirs_referenced_by_merge_config()
-        preferred = [n for n in existing if n in merged_refs]
-        if preferred:
-            existing = preferred
     return [TRANSFORMED_DIR / n for n in existing]
 
 
@@ -322,11 +323,13 @@ def _fingerprint_verdict(source: str, code_dir: Path) -> Optional[tuple]:
 
     :param source: Transform source name.
     :param code_dir: The transform's package directory.
-    :return: ``(status, note)``, or None when there is no usable marker and the
-        caller should fall back to comparing timestamps.
+    :return: ``(status, note)``, or None for unmarked legacy outputs where the
+        caller may use the weaker diagnostic timestamp comparison. Explicit
+        but unusable completion evidence must never fall back to FRESH.
     """
     try:
         from kg_microbe.utils.transform_fingerprint import (
+            FINGERPRINT_FILE,
             code_fingerprint,
             data_fingerprint,
             finalization_inputs_current,
@@ -338,9 +341,18 @@ def _fingerprint_verdict(source: str, code_dir: Path) -> Optional[tuple]:
     except ImportError:
         return None
 
-    for name in OUTPUT_DIR_ALIASES.get(source, (source,)):
-        recorded = read_fingerprint(TRANSFORMED_DIR / name)
+    directories = _output_dirs(source) or [
+        TRANSFORMED_DIR / name for name in OUTPUT_DIR_ALIASES.get(source, (source,))
+    ]
+    for directory in directories:
+        recorded = read_fingerprint(directory)
         if recorded is None:
+            if (directory / FINGERPRINT_FILE).exists() or any(directory.glob("*source_finalization.json")):
+                return (
+                    "MISSING_BUILD_RECORD",
+                    f"{directory.name} has missing, unreadable, or unsupported producer completion evidence; "
+                    f"timestamps cannot certify a completed rebuild; rerun `poetry run kg transform -s {source}`",
+                )
             continue
         # The package, then the first-party code every transform shares (#1002):
         # either moving means the output may differ, and the note says which.
@@ -471,6 +483,14 @@ def check_source(source: str, ref: str) -> SourceReport:
                 f"({data_desc}); rerun `poetry run kg transform -s {source}`"
                 + (f" — {note}" if note else "")
             )
+
+    if status == "FRESH":
+        status = "UNVERIFIED_BUILD"
+        note = (
+            "timestamp comparison passed, but no usable producer completion fingerprint exists; "
+            "legacy output and an interrupted first rebuild are indistinguishable; "
+            f"rerun `poetry run kg transform -s {source}`"
+        )
 
     return SourceReport(
         source=source,
@@ -671,6 +691,8 @@ def main() -> int:
             "STALE_VS_SCHEMA",
             "LOCAL_CHANGES",
             "MISSING_OUTPUT",
+            "MISSING_BUILD_RECORD",
+            "UNVERIFIED_BUILD",
             "NO_CODE",
         ]
         for status in known + sorted(set(c) - set(known)):

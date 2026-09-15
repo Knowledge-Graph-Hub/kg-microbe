@@ -1,6 +1,6 @@
 ---
 name: kgm-freshness-check
-description: Determine whether local KG-Microbe transform outputs (data/transformed/<source>/) and merged KG (data/merged/) are current relative to origin/master. Compares latest commit times on origin/master touching each transform's code directory against local output mtimes; also checks merge stage against merge_utils/, merge.yaml, and every transform output. Use before cutting a release, before running kg-release, or when triaging "why did my merged KG change".
+description: Determine whether local KG-Microbe transform outputs (data/transformed/SOURCE/) and merged KG (data/merged/) are current relative to origin/master. Compares latest commit times on origin/master touching each transform's code directory against local output mtimes; also checks merge stage against merge_utils/, merge.yaml, and every transform output. Use before cutting a release, before running kg-release, or when triaging "why did my merged KG change".
 ---
 
 # kgm-freshness-check
@@ -41,10 +41,12 @@ error (ref unresolved, etc.).
 
 | Status | Meaning | Suggested action |
 |---|---|---|
-| `FRESH` | Output mtime is newer than the latest commit on `origin/master` touching the code dir, AND the local working tree matches master. | Nothing to do. |
+| `FRESH` | A usable content fingerprint matches the current code and inputs checked by this diagnostic. This is not a substitute for production merge's exact graph/audit/dependency validation. | Continue to the production merge gate and graph reviews. |
 | `STALE_VS_CODE` | Master has commits touching this transform newer than the local output. | `poetry run kg transform -s <source>` |
 | `LOCAL_CHANGES` | Local working tree diverges from `origin/master` for this transform's code dir. "Current vs master" is undefined until the diff lands. | Land the local diff (PR + merge), then re-check. |
 | `MISSING_OUTPUT` | No `.tsv` / `.tsv.gz` in `data/transformed/<source>/`. | `poetry run kg transform -s <source>` |
+| `MISSING_BUILD_RECORD` | Finalization evidence exists but the producer success fingerprint is missing, unreadable, or unsupported. An interrupted rebuild must not fall back to timestamp freshness. | Complete a real source rebuild; do not re-stamp old output. |
+| `UNVERIFIED_BUILD` | Legacy timestamps look current but no content fingerprint proves completion; an interrupted first finalized build looks the same. | Complete a real source rebuild; not eligible for production merge. |
 | `NO_CODE` | `<source>/` directory exists but no `<source>.py` — probably a helper folder, not a transform. Skipped from freshness scoring. | none |
 
 ### Merge
@@ -114,8 +116,11 @@ SUMMARY
 - Timestamps are file mtimes, not commit-time metadata inside the file.
   Copying an output from another checkout with `cp -p` preserves mtime;
   a fresh `poetry run kg transform` sets mtime to now.
-- Multiprocessing rebuilds set the mtime on every worker's output, so a
-  half-finished transform can look partially fresh.
+- Unmarked legacy outputs can still use timestamps to reveal known staleness,
+  but a passing timestamp comparison reports `UNVERIFIED_BUILD`, not `FRESH`.
+  Production merge requires valid source-finalization and producer completion records. Outputs
+  with explicit but missing/unusable completion evidence instead report
+  `MISSING_BUILD_RECORD`, including interrupted reruns of finalized sources.
 - The ref default is `origin/master`. On a fork, override with `--ref`.
 - The `data/raw/` inputs are not currently checked. If a raw input was
   refreshed but its transform wasn't rerun, this skill will report the

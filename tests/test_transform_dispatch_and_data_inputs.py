@@ -206,7 +206,7 @@ class FreshnessDataStalenessTest(TestCase):
         self.assertIn(ISO, report.note)
 
     def test_a_source_with_no_declared_inputs_is_unaffected(self):
-        """The check must not invent staleness for transforms that read no curation files."""
+        """Do not invent data staleness, but timestamps cannot prove a completed build."""
         with (
             mock.patch.object(self.mod, "_latest_commit", return_value=(1000, "deadbee")),
             mock.patch.object(self.mod, "_has_local_diff", return_value=False),
@@ -214,7 +214,7 @@ class FreshnessDataStalenessTest(TestCase):
             mock.patch.object(self.mod, "_latest_data_input_commit", return_value=(None, None)),
         ):
             report = self.mod.check_source("bactotraits", "origin/master")
-        self.assertEqual(report.status, "FRESH")
+        self.assertEqual(report.status, "UNVERIFIED_BUILD")
 
     def test_stale_code_and_stale_data_are_reported_together(self):
         """Fixing only the one you were told about would leave the other in place."""

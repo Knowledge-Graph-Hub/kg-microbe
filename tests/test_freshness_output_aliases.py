@@ -5,6 +5,7 @@ import sys
 import time
 from pathlib import Path
 from unittest import TestCase
+from unittest.mock import patch
 
 _SPEC = importlib.util.spec_from_file_location(
     "kgm_freshness_check",
@@ -57,9 +58,10 @@ class FreshnessOutputAliasTest(TestCase):
         self.assertAlmostEqual(mtime, newest.stat().st_mtime, places=3)
 
     def test_the_legacy_dir_alone_still_counts(self):
-        """`PREGO_SHAPES=all` writes prego/, which must not become invisible."""
+        """An unconfigured legacy output remains visible without substituting for a configured alias."""
         only = self._write("prego", age_seconds=10)
-        self.assertAlmostEqual(_MODULE._output_mtime("prego"), only.stat().st_mtime, places=3)
+        with patch.object(_MODULE, "_dirs_referenced_by_merge_config", return_value=set()):
+            self.assertAlmostEqual(_MODULE._output_mtime("prego"), only.stat().st_mtime, places=3)
 
     def test_a_source_with_no_alias_is_unchanged(self):
         """The aliasing must not disturb the ordinary one-dir case."""

@@ -291,7 +291,9 @@ def test_public_merge_stages_real_kgx_before_publishing(tmp_path, monkeypatch, f
     config.write_text(
         yaml.safe_dump(
             {
-                "configuration": {"output_directory": "published"},
+                # This test isolates actual KGX publication with an unregistered
+                # fixture producer; production freshness has separate coverage.
+                "configuration": {"output_directory": "published", "allow_unfinalized_sources": True},
                 "merged_graph": {
                     "source": {
                         "fixture": {"input": {"format": "tsv", "filename": ["input/nodes.tsv", "input/edges.tsv"]}}

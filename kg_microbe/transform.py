@@ -291,8 +291,10 @@ def _record_fingerprint(transform_obj, source: str) -> None:
     verdicts on output that was byte-for-byte current.
 
     Best-effort: a transform that ran successfully must not be reported as
-    failed because bookkeeping could not be written. A missing marker degrades
-    to the timestamp comparison, which is what every consumer did before.
+    failed because bookkeeping could not be written. A missing marker is
+    rejected by production merge; diagnostics may still use weaker checks.
+    Verify producer-time consumed inputs inside atomic marker publication so
+    changed bytes cannot be rehashed into a misleading success certificate.
 
     :param transform_obj: The transform that just ran.
     :param source: Registered source name.
@@ -307,8 +309,10 @@ def _record_fingerprint(transform_obj, source: str) -> None:
             transform_inputs=getattr(type(transform_obj), "TRANSFORM_INPUTS", ()),
             input_dir=getattr(transform_obj, "input_base_dir", None),
             finalization_inputs=getattr(transform_obj, "finalization_inputs", ()),
+            verify_inputs=getattr(transform_obj, "verify_consumed_inputs", None),
         )
     except Exception as exc:  # noqa: BLE001 - bookkeeping must not fail the run
+        _invalidate_fingerprint(transform_obj)
         print(f"[transform] {source}: could not record fingerprint ({exc})", flush=True)
 
 

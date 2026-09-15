@@ -69,6 +69,101 @@ def _sha256(path):
     return digest.hexdigest()
 
 
+def _verify_input_snapshot(name, snapshot):
+    """Compare current bytes with the original producer-read identity, never restamp it."""
+    path = Path(snapshot["path"])
+    if not path.is_file() or _sha256(path) != snapshot["sha256"]:
+        raise SourceFinalizationRequired(f"Consumed input {name!r} changed or missing: {path}; rerun the producer")
+
+
+def verify_consumed_inputs(transform):
+    """Require every declared producer read and verify its immutable path/digest snapshot."""
+    if getattr(transform, "_consumed_input_error", None) is not None:
+        raise SourceFinalizationRequired(
+            f"Consumed-input read failed: {transform._consumed_input_error}; rerun the producer"
+        )
+    snapshots = getattr(transform, "consumed_input_snapshots", {})
+    missing = set(getattr(type(transform), "REQUIRED_CONSUMED_INPUTS", ())) - snapshots.keys()
+    if missing:
+        raise SourceFinalizationRequired(f"Required consumed inputs were not read: {', '.join(sorted(missing))}")
+    for name, snapshot in snapshots.items():
+        _verify_input_snapshot(name, snapshot)
+
+
+@contextmanager
+def snapshot_consumed_input(transform, name, path):
+    """Yield immutable UTF-8 text with literal newlines; stream-copy/hash before parsing."""
+    path = Path(path).resolve()
+    if not isinstance(name, str) or not name:
+        raise ValueError("A consumed input requires a nonempty logical name")
+    # Owned temporary storage bounds memory even for large lookup TSVs. Open a
+    # separate O_RDONLY parser handle: wrapping w+b directly would expose write
+    # methods through both the text and underlying buffer APIs.
+    try:
+        with tempfile.NamedTemporaryFile(mode="w+b", dir=transform.output_dir) as snapshot_file:
+            digest = hashlib.sha256()
+            with path.open("rb") as source:
+                for block in iter(lambda: source.read(1024 * 1024), b""):
+                    snapshot_file.write(block)
+                    digest.update(block)
+            snapshot_file.flush()
+            expected = {"path": str(path), "sha256": digest.hexdigest()}
+            previous = transform._consumed_input_snapshots.get(name)
+            if previous is not None and previous != expected:
+                raise SourceFinalizationRequired(f"Consumed input {name!r} changed within one producer run: {path}")
+            _verify_input_snapshot(name, expected)
+            transform._consumed_input_snapshots[name] = expected
+            with open(snapshot_file.name, encoding="utf-8", newline="") as reader:
+                yield reader
+            _verify_input_snapshot(name, expected)
+    except BaseException as exc:
+        # A caller that catches a parse failure must not later certify partial
+        # consumption. Only an explicit new producer run resets this failure.
+        transform._consumed_input_error = str(exc)
+        raise
+
+
+def _verify_recorded_consumed_inputs(report):
+    """Enforce current registered producer requirements and their persisted input identities."""
+    from kg_microbe.transform import DATA_SOURCES, LazyTransform
+
+    # A mutable source label must not erase the requirements of the code that
+    # produced the bundle. Match registered code directories without eagerly
+    # importing every transform (including optional ones).
+    producer = DATA_SOURCES.get(report.get("source"))
+    code_directory = report.get("producer_code", {}).get("directory")
+    if code_directory:
+        root = Path(__file__).resolve().parents[2]
+        for candidate in DATA_SOURCES.values():
+            if isinstance(candidate, LazyTransform):
+                module = candidate.dotted_path.rsplit(".", 1)[0]
+                directory = root.joinpath(*module.split(".")[:-1])
+            else:
+                source_file = inspect.getsourcefile(candidate)
+                directory = Path(source_file).parent if source_file else None
+            if directory is not None and directory.resolve() == Path(code_directory).resolve():
+                producer = candidate
+                break
+    if isinstance(producer, LazyTransform):
+        producer = producer.transform_class
+    required = set(getattr(producer, "REQUIRED_CONSUMED_INPUTS", ()))
+    snapshots = report.get("consumed_inputs", {})
+    if not isinstance(snapshots, dict) or not required <= snapshots.keys():
+        raise SourceFinalizationRequired("Missing required consumed-input snapshots; rerun the producer")
+    inputs = {item["path"]: item["sha256"] for item in report.get("inputs", ())}
+    for name, snapshot in snapshots.items():
+        if (
+            not isinstance(name, str)
+            or not isinstance(snapshot, dict)
+            or set(snapshot) != {"path", "sha256"}
+            or not isinstance(snapshot["path"], str)
+            or not isinstance(snapshot["sha256"], str)
+            or inputs.get(snapshot["path"]) != snapshot["sha256"]
+        ):
+            raise SourceFinalizationRequired(f"Invalid consumed-input snapshot {name!r}; rerun the producer")
+        _verify_input_snapshot(name, snapshot)
+
+
 def validate_identifier(identifier):
     """Reject known noncanonical representations without guessing unknown URI identities."""
     if compact_identifier(identifier) != identifier:
@@ -195,6 +290,14 @@ def _repeat_finalization(transform, file_prefix):
     if not report.get("members"):
         return None
     verify_finalized_source_files([output_dir / name for name in report["members"]])
+    snapshots = report.get("consumed_inputs", {})
+    previous = getattr(transform, "consumed_input_snapshots", {})
+    if previous and previous != snapshots:
+        raise SourceFinalizationRequired(
+            "Consumed inputs differ from finalized run; rerun and finalize(fresh_run=True)"
+        )
+    transform._consumed_input_snapshots = {name: dict(snapshot) for name, snapshot in snapshots.items()}
+    verify_consumed_inputs(transform)
     transform.finalization_inputs = tuple(item["path"] for item in report.get("inputs", []))
     return report
 
@@ -202,6 +305,7 @@ def _repeat_finalization(transform, file_prefix):
 def _publish_finalization(transform, prepared):
     """Publish one validated staging area, with its exact-byte completion record last."""
     staging, report_path, used_inputs, report = prepared
+    verify_consumed_inputs(transform)
     for path in sorted(staging.iterdir(), key=lambda path: (path == report_path, path.name)):
         os.replace(path, Path(transform.output_dir) / path.name)
     transform.finalization_inputs = tuple(str(path.resolve()) for path in sorted(used_inputs))
@@ -257,10 +361,13 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
     if not node_paths or not edge_paths:
         raise SourceFinalizationRequired(f"{output_dir}: source finalization requires node and edge TSV files")
     repo_root = Path(__file__).resolve().parents[2]
+    verify_consumed_inputs(transform)
+    consumed = getattr(transform, "consumed_input_snapshots", {})
     used_inputs = {
         resolve_data_input(repo_root, declaration, raw_dir)
         for declaration in (*getattr(type(transform), "DATA_INPUTS", ()), *SHARED_DATA_INPUTS)
     }
+    used_inputs.update(Path(snapshot["path"]) for snapshot in consumed.values())
     with tempfile.TemporaryDirectory(prefix=".finalize-", dir=output_dir) as temporary:
         staging = Path(temporary)
         staged_nodes = [staging / path.name for path in node_paths]
@@ -323,6 +430,8 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
         # bytes which external declaration/enrichment subsequently changes.
         summaries["go"] = normalize_go_bundle(staged_nodes, staged_edges, authority, go_report)
         summaries["rows"] = validate_graph_bundle(staged_nodes, staged_edges)
+        verify_consumed_inputs(transform)
+        consumed_hashes = {snapshot["path"]: snapshot["sha256"] for snapshot in consumed.values()}
         report = {
             "version": FINALIZATION_VERSION,
             "source": transform.source_name,
@@ -338,7 +447,16 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
                 path.name: {"bytes": path.stat().st_size, "sha256": _sha256(path)}
                 for path in (audit_path, external_report, go_report)
             },
-            "inputs": [{"path": str(path.resolve()), "sha256": _sha256(path)} for path in sorted(used_inputs)],
+            "consumed_inputs": consumed,
+            "inputs": [
+                {
+                    "path": str(path.resolve()),
+                    "sha256": consumed_hashes[str(path.resolve())]
+                    if str(path.resolve()) in consumed_hashes
+                    else _sha256(path),
+                }
+                for path in sorted(used_inputs)
+            ],
         }
         try:
             producer_file = inspect.getsourcefile(type(transform))
@@ -398,6 +516,10 @@ def verify_finalized_source_files(paths):
                 producer = report.get("producer_code")
                 if producer and producer["fingerprint"] != code_fingerprint(Path(producer["directory"]), repo_root):
                     error = "producer code changed; rerun kg transform"
+                try:
+                    _verify_recorded_consumed_inputs(report)
+                except SourceFinalizationRequired as exc:
+                    error = str(exc)
                 for authority in report.get("inputs", []):
                     authority_path = Path(authority["path"])
                     if authority_path not in authority_hashes:

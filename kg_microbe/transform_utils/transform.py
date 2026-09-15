@@ -81,6 +81,10 @@ class Transform:
     #: version of this contract was opt-in and was forgotten (#812, #839, #876).
     TRANSFORM_INPUTS: tuple = ()
 
+    #: Named generated inputs that must actually be read before fresh finalization.
+    #: Unlike DATA_INPUTS, these are checked after upstream producers have run.
+    REQUIRED_CONSUMED_INPUTS: tuple = ()
+
     def __init__(
         self,
         source_name,
@@ -98,6 +102,7 @@ class Transform:
         """
         # default columns, can be appended to or overwritten as necessary
         self.source_name = source_name
+        self.begin_consumed_inputs()
         self.node_header = [
             ID_COLUMN,
             CATEGORY_COLUMN,
@@ -168,6 +173,28 @@ class Transform:
         :param data_file: Input data file, defaults to None
         """
         pass
+
+    def begin_consumed_inputs(self):
+        """Start a real producer run with no inherited input-consumption claims."""
+        self._consumed_input_snapshots = {}
+        self._consumed_input_error = None
+
+    @property
+    def consumed_input_snapshots(self):
+        """Return copied named path/digest snapshots so callers cannot mutate recorded evidence."""
+        return {name: dict(snapshot) for name, snapshot in self._consumed_input_snapshots.items()}
+
+    def consume_input(self, name, path):
+        """Read a generated UTF-8 input from an immutable, exact-byte tracked snapshot."""
+        from kg_microbe.utils.source_finalization import snapshot_consumed_input
+
+        return snapshot_consumed_input(self, name, path)
+
+    def verify_consumed_inputs(self):
+        """Reject missing required reads or changed/deleted bytes consumed by this run."""
+        from kg_microbe.utils.source_finalization import verify_consumed_inputs
+
+        verify_consumed_inputs(self)
 
     def finalize(self, *, file_prefix="", fresh_run=False):
         """

@@ -26,7 +26,7 @@ import hashlib
 import json
 import re
 from pathlib import Path
-from typing import Dict, Iterable, Optional
+from typing import Callable, Dict, Iterable, Optional
 
 from kg_microbe.utils.atomic_io import atomic_write
 
@@ -369,6 +369,7 @@ def write_fingerprint(
     transform_inputs: Iterable[str] = (),
     input_dir: Optional[Path] = None,
     finalization_inputs: Iterable[str] = (),
+    verify_inputs: Optional[Callable[[], None]] = None,
 ) -> dict:
     """
     Record the fingerprint of a completed run.
@@ -384,8 +385,12 @@ def write_fingerprint(
     :param transform_inputs: Registered sources whose output this one reads.
     :param input_dir: Effective raw directory read by the completed transform.
     :param finalization_inputs: Exact authority/dependency paths consumed by source finalization.
+    :param verify_inputs: Optional producer-time snapshot verifier. Raises if consumed bytes changed;
+        checked before hashing and immediately before atomic marker publication.
     :return: The recorded payload.
     """
+    if verify_inputs is not None:
+        verify_inputs()
     payload = {
         "version": FINGERPRINT_VERSION,
         "code": code_fingerprint(code_dir, repo_root),
@@ -405,6 +410,8 @@ def write_fingerprint(
         payload["finalization_data"] = _hash_files(finalization_paths, repo_root)
     with atomic_write(output_dir / FINGERPRINT_FILE, encoding="utf-8") as handle:
         handle.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+        if verify_inputs is not None:
+            verify_inputs()
     return payload
 
 

@@ -251,7 +251,7 @@ class TestAllPoisonedCachesHeal:
 
 class TestCallSitesUseTheGuardedHelpers:
     """
-    Each cache guard must *decide* regeneration, and each writer must be used.
+    Reused caches need deciding guards; every cache needs an atomic writer.
 
     Three attempts precede this. Substrings were satisfied by comments.
     Behavioural tests of the helpers exercised no call site at all. Counting
@@ -268,13 +268,18 @@ class TestCallSitesUseTheGuardedHelpers:
     # Naming the cache is what stops `cache_is_complete(unrelated_path)` beside
     # an unconditionally regenerated real cache from satisfying the assertion.
     GUARDS = [
-        ("kg_microbe/transform_utils/bactotraits/bactotraits.py", 1, ("mapping_file",)),
         ("kg_microbe/transform_utils/wallen_etal/wallen_etal.py", 1, ("WALLEN_ETAL_TMP_FILEPATH",)),
         ("kg_microbe/transform_utils/madin_etal/madin_etal.py", 1, ("chebi_result_fn",)),
         ("kg_microbe/transform_utils/madin_etal/madin_etal.py", 1, ("go_result_fn",)),
         ("kg_microbe/transform_utils/uniprot_functional_microbes/uniprot_functional_microbes.py", 1, ()),
         ("kg_microbe/transform_utils/uniprot_human/uniprot_human.py", 1, ()),
     ]
+
+    # Completeness cannot establish freshness against the consumed BacDive
+    # lookup. Actual rebuilding of a complete stale cache, including a second
+    # run with changed lookup bytes, is pinned by tests/test_consumed_inputs.py::
+    # test_real_bactotraits_refreshes_complete_cache_and_resets_on_second_run.
+    ALWAYS_REBUILT = [("kg_microbe/transform_utils/bactotraits/bactotraits.py", ("mapping_file",))]
 
     WRITERS = [
         ("kg_microbe/transform_utils/bactotraits/bactotraits.py", 1),
@@ -355,8 +360,16 @@ class TestCallSitesUseTheGuardedHelpers:
         actual = self._context_managed_writes(module_path)
         assert actual >= count, f"{module_path}: expected >= {count} atomic_write context manager(s), found {actual}"
 
-    @pytest.mark.parametrize("module_path, _count, _names", GUARDS)
-    def test_no_cache_path_is_guarded_by_bare_existence(self, module_path, _count, _names):
+    @pytest.mark.parametrize("module_path, names_cache", ALWAYS_REBUILT)
+    def test_always_rebuilt_cache_has_no_completeness_reuse_guard(self, module_path, names_cache):
+        """A completion certificate must not bypass fresh lookup consumption."""
+        assert self._deciding_guard_calls(module_path, names_cache) == 0
+
+    @pytest.mark.parametrize(
+        "module_path",
+        [module for module, _, _ in GUARDS] + [module for module, _ in ALWAYS_REBUILT],
+    )
+    def test_no_cache_path_is_guarded_by_bare_existence(self, module_path):
         """
         No branch may test a cache path's mere existence.
 

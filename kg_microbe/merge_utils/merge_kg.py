@@ -209,6 +209,9 @@ def _assert_sources_finalized(yaml_file, sources=None):
             _source_filename_at_original_location(value, Path(yaml_file).resolve().parent) for value in values
         )
     verify_finalized_source_files(filenames)
+    from kg_microbe.merge_utils.source_freshness import verify_source_freshness
+
+    verify_source_freshness(filenames)
 
 
 def _source_filename_at_original_location(filename: str, config_dir: Path) -> str:

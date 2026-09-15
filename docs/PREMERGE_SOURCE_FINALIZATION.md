@@ -34,6 +34,35 @@ public merge gate.
   fingerprint additionally records these dynamic inputs; freshness checking
   detects missing or changed inputs alongside static code/data dependencies.
 
+## Generated lookup consumption
+
+MediaDive and BactoTraits declare `bacdive_taxon_lookup` as a required
+producer-time input. At each real run they reset prior consumption claims and
+parse an owned immutable snapshot of BacDive's generated `bacdive.tsv`, copied
+and SHA256-hashed with bounded memory. The source path is checked against those
+exact bytes after copying and parsing, before finalization, and before its
+record is published. A missing input, an unperformed required read, or changed
+bytes fail rather than being certified as current. Repeated finalization
+retains the original snapshots and audit evidence; it does not invent a read.
+
+Named snapshots are recorded in `source_finalization.json.consumed_inputs`
+and in its existing input list. The source fingerprint binds those paths too.
+Producer verification runs before fingerprint hashing and again inside atomic
+marker writing, before publication. A bookkeeping failure withholds the success
+marker. Public merge and repeat-finalization verification require the recorded
+snapshots to satisfy the registered producer's current required-input contract.
+
+BactoTraits rebuilds its small derived mapping from that lookup each run;
+a complete but stale local mapping cache is no longer an authoritative input.
+Generated lookups are intentionally not unconditional `DATA_INPUTS` entries:
+batch preflight runs before BacDive can create them in a clean checkout.
+`TRANSFORM_INPUTS` still declares the producer dependency.
+
+This is an exact-byte contract for these tracked reads, not a claim that every
+raw file consumed anywhere in the pipeline is now snapshotted. Multiple source
+files are not a filesystem transaction; later changes are rejected when the
+recorded inputs and graph members are verified again.
+
 ## TSV representation is explicit
 
 Legacy producers default to CSV-quoted TSV. A producer writing native KGX
@@ -54,6 +83,36 @@ The public `load_and_merge`/`kg merge` entry requires versioned source
 finalization records, exact configured graph member sizes and SHA256 hashes,
 mandatory audit-report hashes, current producer/finalizer code, and unchanged
 consumed authorities/declared inputs. There is no path-based fixture exemption.
+The merge-only dependency gate also requires a current producer success marker
+and recursively validates every declared `TRANSFORM_INPUTS` upstream. It checks
+producer/shared code, currently declared curation/raw inputs, recorded dynamic
+inputs, schema identity, and the recorded upstream digest. Re-recording a
+consumer marker cannot legitimize a missing, unsupported, or stale upstream
+marker. Producer identity follows the registered code in finalization metadata,
+not a merge-config label or an output-directory alias such as `prego_habitat`.
+Unknown producer metadata is rejected with an actionable diagnostic option.
+
+An explicitly scoped, registered ontology record (for example
+`pato_source_finalization.json`) covers only its matching node/edge pair. It
+can authorize that directly selected pair, including when an older full graph
+record is stale, **only alongside a current whole producer fingerprint**
+proving declared-input and pinned-schema freshness. The scoped record alone
+does not record schema identity; missing evidence must not be inferred. Without
+that producer fingerprint, run `poetry run kg transform -s ontologies` before
+production merge, or deliberately select the diagnostic opt-out below. A scoped
+record cannot establish currency of the whole `ontologies` dependency. Bakta
+dataset records use their parent producer marker, following the explicit
+selected-dataset protocol below.
+
+This enforces **recorded and declared evidence**, not complete raw-snapshot
+currency. An upstream marker does not necessarily hash every intermediate
+lookup or raw download. If an unrecorded lookup changes without changing any
+recorded metadata, marker comparison cannot discover that change; exact
+consumed-input declarations must be added by the producing/consuming workflow.
+The #1092 smoke reproduction deliberately fingerprints its temporary BacDive
+lookup to isolate changed-marker enforcement; this does not claim production
+BacDive already fingerprints every generated lookup byte.
+
 `configuration.allow_unfinalized_sources: true` is an explicit **diagnostic
 opt-out**, printed prominently and recorded as
 `provenance.source_finalization.diagnostic_opt_out` in the resulting manifest.

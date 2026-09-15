@@ -150,6 +150,7 @@ class MediaDiveTransform(Transform):
     #: Reads ``ontologies/chebi_nodes.tsv`` and ``chebi_edges.tsv`` (roles/categories)
     #: via constants.py (#1035), plus BacDive's intermediate strain-taxid TSV (#1091).
     TRANSFORM_INPUTS = ("ontologies", BACDIVE)
+    REQUIRED_CONSUMED_INPUTS = ("bacdive_taxon_lookup",)
 
     DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
 
@@ -917,11 +918,13 @@ class MediaDiveTransform(Transform):
 
     def _run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
+        self.begin_consumed_inputs()
         self._assert_bulk_data_available()
         # replace with downloaded data filename for this source
         input_file = os.path.join(self.input_base_dir, "mediadive.json")  # must exist already
         bacdive_input_file = BACDIVE_TMP_DIR / "bacdive.tsv"
-        bacdive_df = pd.read_csv(bacdive_input_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN])
+        with self.consume_input("bacdive_taxon_lookup", bacdive_input_file) as bacdive_file:
+            bacdive_df = pd.read_csv(bacdive_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN])
 
         # Create dictionary lookup for O(1) access instead of O(n) DataFrame filtering
         bacdive_strain_to_ncbi = dict(zip(bacdive_df[BACDIVE_ID_COLUMN], bacdive_df[NCBITAXON_ID_COLUMN], strict=True))

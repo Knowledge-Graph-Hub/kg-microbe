@@ -218,8 +218,13 @@ def test_public_merge_gate_requires_exact_prepared_inputs(tmp_path, monkeypatch)
     import yaml
 
     from kg_microbe.merge_utils import merge_kg
+    from kg_microbe.transform_utils.rhea_mappings.rhea_mappings import RheaMappingsTransform
+    from tests.test_merge_source_freshness import record_source
 
-    transform = _transform(tmp_path)
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    transform = RheaMappingsTransform.__new__(RheaMappingsTransform)
+    Transform.__init__(transform, "rhea_mappings", raw, tmp_path / "transformed")
     _pair(transform)
     config = tmp_path / "merge.yaml"
     config.write_text(
@@ -242,6 +247,7 @@ def test_public_merge_gate_requires_exact_prepared_inputs(tmp_path, monkeypatch)
     with pytest.raises(SourceFinalizationRequired, match="absent/stale"):
         merge_kg.load_and_merge(str(config))
     transform.finalize()
+    record_source(transform)
     merge_kg._assert_sources_finalized(str(config))
     transform.output_edge_file.write_text(transform.output_edge_file.read_text().replace("plain", "changed"))
     with pytest.raises(SourceFinalizationRequired, match="absent/stale"):

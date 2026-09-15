@@ -1,0 +1,34 @@
+id: https://w3id.org/biolink/tests/merge-offline-context
+name: Biolink-Merge-Offline-Context-Fixture
+version: 4.4.2
+prefixes:
+  biolink: https://w3id.org/biolink/vocab/
+  linkml: https://w3id.org/linkml/
+default_prefix: biolink
+default_range: string
+default_curi_maps:
+  - obo_context
+  - idot_context
+  - monarch_context
+  - semweb_context
+imports:
+  - linkml:types
+classes:
+  named thing:
+    class_uri: biolink:NamedThing
+  association:
+    class_uri: biolink:Association
+slots:
+  related to:
+    slot_uri: biolink:related_to
+    domain: named thing
+    range: named thing
+  has evidence:
+    slot_uri: biolink:has_evidence
+    multivalued: true
+  knowledge level:
+    slot_uri: biolink:knowledge_level
+    multivalued: false
+  agent type:
+    slot_uri: biolink:agent_type
+    multivalued: false

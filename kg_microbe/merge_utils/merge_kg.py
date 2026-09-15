@@ -90,6 +90,7 @@ def merge(*args, **kwargs):
         merge_assertion_graphs,
         parse_source,
     )
+    from kg_microbe.merge_utils.local_context import local_prefix_context
 
     original_transformer = cli_utils.Transformer
     original_parser = cli_utils.parse_source
@@ -105,7 +106,8 @@ def merge(*args, **kwargs):
     transformer_module.SOURCE_MAP["graph"] = RelationAwareGraphSource
     transformer_module.SINK_MAP.update({name: RelationAwareTsvSink for name in original_tsv_sinks})
     try:
-        return cli_utils.merge(*args, **kwargs)
+        with local_prefix_context():
+            return cli_utils.merge(*args, **kwargs)
     finally:
         cli_utils.Transformer = original_transformer
         cli_utils.parse_source = original_parser

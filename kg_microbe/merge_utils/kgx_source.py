@@ -12,6 +12,7 @@ import hashlib
 import json
 from threading import RLock
 
+from kg_microbe.merge_utils.local_context import local_prefix_context
 from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
     ID_COLUMN,
@@ -297,7 +298,7 @@ def parse_source(
     checkpoint=False,
 ):
     """Delegate to KGX under a worker-local, exception-safe TSV/CSV source override."""
-    with _SOURCE_MAP_LOCK:
+    with _SOURCE_MAP_LOCK, local_prefix_context():
         original = {format_name: transformer_module.SOURCE_MAP[format_name] for format_name in ("tsv", "csv", "graph")}
         original_sink = transformer_module.GraphSink
         original_tsv_sinks = {format_name: transformer_module.SINK_MAP[format_name] for format_name in ("tsv", "csv")}

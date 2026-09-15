@@ -1,0 +1,3 @@
+subject	predicate	object	relation	primary_knowledge_source	knowledge_level	agent_type	original_object	publications
+NCBITaxon:2	biolink:capable_of	GO:9999002	RO:0002215	infores:rhea	knowledge_assertion	manual_agent	GO:9999001	PMID:1
+NCBITaxon:2	biolink:capable_of	GO:9999003	RO:0002215	infores:rhea	knowledge_assertion	manual_agent	GO:9999001	PMID:1

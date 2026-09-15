@@ -625,7 +625,10 @@ class OntologiesTransform(Transform):
             # Fail loudly if go.owl (→ go.db aspect map) and go.json (→ this TSV)
             # are different releases — otherwise MF/CC terms silently become
             # BiologicalProcess.
-            assert_go_version_alignment()
+            from kg_microbe.utils.go_authority import load_go_authority
+
+            assert_go_version_alignment(raw_dir=self.input_base_dir)
+            go_authority = load_go_authority(self.input_base_dir)
             # Apply GO aspect-based categorization (cached in-memory dict, no OAK).
             print("  Applying GO aspect-based categorization...")
 
@@ -633,7 +636,7 @@ class OntologiesTransform(Transform):
                 """Fix GO category based on aspect (namespace)."""
                 go_id = row["id"]
                 if pd.notna(go_id) and go_id.startswith("GO:"):
-                    return get_go_category_by_aspect(go_id)
+                    return get_go_category_by_aspect(go_id, authority=go_authority)
                 return replace_deprecated_categories(str(row["category"]))
 
             df["category"] = df.apply(fix_go_category, axis=1)
@@ -817,7 +820,7 @@ class OntologiesTransform(Transform):
                         new_nf_lines.append(line)
                     else:
                         line = _replace_special_prefixes(line)
-                        line = replace_category_ontology(line, id_index, category_index)
+                        line = replace_category_ontology(line, id_index, category_index, raw_dir=self.input_base_dir)
                         line = _replace_quotation_marks(line, description_index)
                         new_nf_lines.append(line + "\n")
             # Rewrite nodes file
@@ -999,7 +1002,7 @@ class OntologiesTransform(Transform):
                         new_nf_lines.append(line)
                     else:
                         line = _replace_special_prefixes(line)
-                        line = replace_category_ontology(line, id_index, category_index)
+                        line = replace_category_ontology(line, id_index, category_index, raw_dir=self.input_base_dir)
                         new_nf_lines.append(line + "\n")
                 # Drop the incoming header; a canonical one is written below.
                 # KGX's edges TSV leads with an `id` column, so its header's

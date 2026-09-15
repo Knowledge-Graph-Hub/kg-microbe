@@ -1,7 +1,6 @@
 """Test the assay node and edge generation functions."""
 
 import csv
-import io
 import unittest
 
 from parameterized import parameterized
@@ -61,6 +60,14 @@ class TestAssayGeneration(unittest.TestCase):
             KNOWLEDGE_LEVEL_COLUMN,
             AGENT_TYPE_COLUMN,
         ]
+        from kg_microbe.utils.go_authority import GoAuthority, GoTerm
+
+        self.go_authority = GoAuthority(
+            {
+                curie: GoTerm(curie, "Fixture molecular function", "molecular_function")
+                for curie in ("GO:0004565", "GO:0004032")
+            }
+        )
 
         # Mock assay data matching assay_kits_simple.json structure
         self.mock_assay_data = {
@@ -188,7 +195,7 @@ class TestAssayGeneration(unittest.TestCase):
 
     def test_generate_assay_entity_edges_count(self):
         """Test that generate_assay_entity_edges creates correct number of edges."""
-        edges = generate_assay_entity_edges(self.mock_assay_data, self.edge_header)
+        edges = generate_assay_entity_edges(self.mock_assay_data, self.edge_header, go_authority=self.go_authority)
 
         # Expected edges:
         # API_20E/ONPG: 1 GO + 1 EC = 2 edges
@@ -201,7 +208,7 @@ class TestAssayGeneration(unittest.TestCase):
 
     def test_generate_assay_entity_edges_structure(self):
         """Test that generated edges have correct structure."""
-        edges = generate_assay_entity_edges(self.mock_assay_data, self.edge_header)
+        edges = generate_assay_entity_edges(self.mock_assay_data, self.edge_header, go_authority=self.go_authority)
 
         # Check first edge structure
         first_edge = edges[0]
@@ -215,7 +222,7 @@ class TestAssayGeneration(unittest.TestCase):
 
     def test_generate_assay_entity_edges_enzyme_predicates(self):
         """Test that enzyme test edges use correct predicates."""
-        edges = generate_assay_entity_edges(self.mock_assay_data, self.edge_header)
+        edges = generate_assay_entity_edges(self.mock_assay_data, self.edge_header, go_authority=self.go_authority)
 
         # Find edges from enzyme tests (ONPG and ADH)
         enzyme_edges = []
@@ -235,7 +242,7 @@ class TestAssayGeneration(unittest.TestCase):
 
     def test_generate_assay_entity_edges_chemical_predicates(self):
         """Test that chemical test edges use correct predicates."""
-        edges = generate_assay_entity_edges(self.mock_assay_data, self.edge_header)
+        edges = generate_assay_entity_edges(self.mock_assay_data, self.edge_header, go_authority=self.go_authority)
 
         # Find edges from chemical tests (GLU, GLC, FRU)
         chemical_edges = []
@@ -255,7 +262,7 @@ class TestAssayGeneration(unittest.TestCase):
 
     def test_generate_assay_entity_edges_knowledge_source(self):
         """Test that edges have correct knowledge source attribution."""
-        edges = generate_assay_entity_edges(self.mock_assay_data, self.edge_header)
+        edges = generate_assay_entity_edges(self.mock_assay_data, self.edge_header, go_authority=self.go_authority)
 
         # All edges should have infores:assay-metadata as primary knowledge source
         for edge in edges:
@@ -275,7 +282,7 @@ class TestAssayGeneration(unittest.TestCase):
     )
     def test_generate_assay_entity_edges_correct_targets(self, assay_id, expected_objects):
         """Test that edges connect to correct entity IDs."""
-        edges = generate_assay_entity_edges(self.mock_assay_data, self.edge_header)
+        edges = generate_assay_entity_edges(self.mock_assay_data, self.edge_header, go_authority=self.go_authority)
 
         # Find edges from this assay
         assay_edges = []
@@ -327,159 +334,68 @@ class TestAssayGeneration(unittest.TestCase):
 
 
 class TestECSubstrateEdges(unittest.TestCase):
-    """Tests for EC→substrate edge generation from bacdive_mappings.tsv."""
+    """Exercise the production BacDive enzyme-substrate emitter, not a copied loop."""
 
     def setUp(self) -> None:
-        """Set up test fixtures."""
-        self.edge_header = [
-            SUBJECT_COLUMN,
-            PREDICATE_COLUMN,
+        """Use a tiny immutable mapping fixture and the real transform methods."""
+        from pathlib import Path
+        from tempfile import TemporaryDirectory
+
+        from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
+        from kg_microbe.transform_utils.transform import Transform
+
+        self.transform = BacDiveTransform.__new__(BacDiveTransform)
+        workspace = TemporaryDirectory()
+        self.addCleanup(workspace.cleanup)
+        root = Path(workspace.name)
+        Transform.__init__(self.transform, "bacdive", input_dir=root / "raw", output_dir=root / "out")
+        self.transform.knowledge_source = "infores:bacdive"
+        self.transform.chebi_categories = {}
+        fixture = Path(__file__).parent / "resources" / "assay_reference_repairs" / "ec_substrates.tsv"
+        with fixture.open(newline="", encoding="utf-8") as stream:
+            self.mappings = list(csv.DictReader(stream, delimiter="\t"))
+
+    def test_real_ec_substrate_predicates_and_metadata(self):
+        """Changing assay constants must not turn enzymes into assay procedure subjects."""
+        edges, nodes = self.transform._generate_ec_substrate_rows(self.mappings)
+        self.assertEqual(len(edges), 3)
+        self.assertEqual(len(nodes), 3)
+        rows = [dict(zip(self.transform.edge_header, row, strict=True)) for row in edges]
+        self.assertEqual(
+            {(row[SUBJECT_COLUMN], row[OBJECT_COLUMN]) for row in rows},
+            {("EC:4.1.99.1", "CHEBI:16828"), ("EC:3.5.1.5", "CHEBI:16199"), ("EC:3.2.1.21", "CHEBI:4853")},
+        )
+        for row in rows:
+            self.assertEqual(row[PREDICATE_COLUMN], "biolink:has_input")
+            self.assertEqual(row[RELATION_COLUMN], "RO:0002233")
+            self.assertNotEqual(row[PREDICATE_COLUMN], ASSAY_HAS_INPUT_PREDICATE)
+            self.assertEqual(row[PRIMARY_KNOWLEDGE_SOURCE_COLUMN], "infores:bacdive")
+            self.assertEqual(row[KNOWLEDGE_LEVEL_COLUMN], "knowledge_assertion")
+            self.assertEqual(row[AGENT_TYPE_COLUMN], "manual_agent")
+
+    def test_real_emitter_projects_extended_and_reordered_headers(self):
+        """All fields follow the caller's header, including empty observation extensions."""
+        self.transform.edge_header = [
+            "value",
             OBJECT_COLUMN,
+            SUBJECT_COLUMN,
+            "original_object",
+            PREDICATE_COLUMN,
             RELATION_COLUMN,
             PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
             KNOWLEDGE_LEVEL_COLUMN,
             AGENT_TYPE_COLUMN,
         ]
+        edges, _ = self.transform._generate_ec_substrate_rows(self.mappings)
+        self.assertTrue(all(len(row) == len(self.transform.edge_header) for row in edges))
+        row = dict(zip(self.transform.edge_header, edges[0], strict=True))
+        self.assertEqual(row[SUBJECT_COLUMN], "EC:4.1.99.1")
+        self.assertEqual(row[OBJECT_COLUMN], "CHEBI:16828")
+        self.assertEqual(row["value"], "")
+        self.assertEqual(row["original_object"], "")
 
-        # Mock bacdive_mappings.tsv data
-        _mock_mappings_rows = [
-            "CHEBI_ID\tsubstrate\tKEGG_ID\tCAS_RN_ID\tEC_ID\tenzyme\tpseudo_CURIE\treaction_name",
-            "CHEBI:16828\tL-tryptophan\tKEGG:C00078\tCAS-RN:73-22-3\tEC:4.1.99.1\t"
-            "tryptophanase\tkgmicrobe.assay:API_20A_IND\tIndole production",
-            "CHEBI:16199\tUrea\tKEGG:C00086\tCAS-RN:57-13-6\tEC:3.5.1.5\t"
-            "Urease\tkgmicrobe.assay:API_20A_URE\tUrease/urea hydrolysis",
-            "CHEBI:17634\tD-glucose\tKEGG:C00031\tCAS-RN:50-99-7\t\t\tkgmicrobe.assay:API_20A_GLU\tAcid from D-glucose",
-            "\t\t\t\tEC:1.11.1.6\tcatalase\tkgmicrobe.assay:API_20A_CAT\tCatalase",
-            "CHEBI:4853\tEsculin ferric citrate\tKEGG:C09264\tCAS-RN:531-75-9\t"
-            "EC:3.2.1.21\tbeta-glucosidase\tkgmicrobe.assay:API_20A_ESC\tEsculin hydrolysis",
-        ]
-        self.mock_mappings_tsv = "\n".join(_mock_mappings_rows)
-
-    def test_ec_substrate_edges_count(self):
-        """Test that correct number of EC→substrate edges are generated."""
-        # Parse the mock TSV data
-        reader = csv.DictReader(io.StringIO(self.mock_mappings_tsv), delimiter="\t")
-        mappings = list(reader)
-
-        # Generate edges (simulating the code in bacdive.py)
-        ec_substrate_edges = []
-        for mapping in mappings:
-            ec_id = mapping.get("EC_ID", "").strip()
-            chebi_id = mapping.get("CHEBI_ID", "").strip()
-
-            if ec_id and chebi_id:
-                ec_substrate_edges.append(
-                    [
-                        ec_id,
-                        ASSAY_HAS_INPUT_PREDICATE,
-                        chebi_id,
-                        ASSAY_INPUT_RELATION,
-                        "infores:bacdive",
-                        "knowledge_assertion",
-                        "manual_agent",
-                    ]
-                )
-
-        # Should have 3 edges (rows 1, 2, and 5 have both EC and ChEBI)
-        self.assertEqual(len(ec_substrate_edges), 3)
-
-    def test_ec_substrate_edges_structure(self):
-        """Test that EC→substrate edges have correct structure."""
-        reader = csv.DictReader(io.StringIO(self.mock_mappings_tsv), delimiter="\t")
-        mappings = list(reader)
-
-        ec_substrate_edges = []
-        for mapping in mappings:
-            ec_id = mapping.get("EC_ID", "").strip()
-            chebi_id = mapping.get("CHEBI_ID", "").strip()
-
-            if ec_id and chebi_id:
-                ec_substrate_edges.append(
-                    [
-                        ec_id,
-                        ASSAY_HAS_INPUT_PREDICATE,
-                        chebi_id,
-                        ASSAY_INPUT_RELATION,
-                        "infores:bacdive",
-                        "knowledge_assertion",
-                        "manual_agent",
-                    ]
-                )
-
-        # Check first edge structure
-        self.assertGreater(len(ec_substrate_edges), 0)
-        first_edge = ec_substrate_edges[0]
-        self.assertEqual(len(first_edge), len(self.edge_header))
-
-        # Check that edge has correct components
-        edge_dict = dict(zip(self.edge_header, first_edge, strict=False))
-        self.assertTrue(edge_dict[SUBJECT_COLUMN].startswith("EC:"))
-        self.assertTrue(edge_dict[OBJECT_COLUMN].startswith("CHEBI:"))
-        self.assertEqual(edge_dict[PREDICATE_COLUMN], ASSAY_HAS_INPUT_PREDICATE)
-        self.assertEqual(edge_dict[RELATION_COLUMN], ASSAY_INPUT_RELATION)
-
-    @parameterized.expand(
-        [
-            ("EC:4.1.99.1", "CHEBI:16828"),
-            ("EC:3.5.1.5", "CHEBI:16199"),
-            ("EC:3.2.1.21", "CHEBI:4853"),
-        ]
-    )
-    def test_ec_substrate_specific_edges(self, expected_ec, expected_chebi):
-        """Test that specific EC→ChEBI edges are created correctly."""
-        reader = csv.DictReader(io.StringIO(self.mock_mappings_tsv), delimiter="\t")
-        mappings = list(reader)
-
-        ec_substrate_edges = []
-        for mapping in mappings:
-            ec_id = mapping.get("EC_ID", "").strip()
-            chebi_id = mapping.get("CHEBI_ID", "").strip()
-
-            if ec_id and chebi_id:
-                ec_substrate_edges.append(
-                    [
-                        ec_id,
-                        ASSAY_HAS_INPUT_PREDICATE,
-                        chebi_id,
-                        ASSAY_INPUT_RELATION,
-                        "infores:bacdive",
-                        "knowledge_assertion",
-                        "manual_agent",
-                    ]
-                )
-
-        # Find the edge
-        found = False
-        for edge in ec_substrate_edges:
-            edge_dict = dict(zip(self.edge_header, edge, strict=False))
-            if edge_dict[SUBJECT_COLUMN] == expected_ec and edge_dict[OBJECT_COLUMN] == expected_chebi:
-                found = True
-                break
-
-        self.assertTrue(found, f"Edge {expected_ec}→{expected_chebi} not found")
-
-    def test_ec_substrate_edges_skip_missing_data(self):
-        """Test that edges are not created when EC or ChEBI is missing."""
-        reader = csv.DictReader(io.StringIO(self.mock_mappings_tsv), delimiter="\t")
-        mappings = list(reader)
-
-        ec_substrate_edges = []
-        for mapping in mappings:
-            ec_id = mapping.get("EC_ID", "").strip()
-            chebi_id = mapping.get("CHEBI_ID", "").strip()
-
-            if ec_id and chebi_id:
-                ec_substrate_edges.append(
-                    [
-                        ec_id,
-                        ASSAY_HAS_INPUT_PREDICATE,
-                        chebi_id,
-                        ASSAY_INPUT_RELATION,
-                        "infores:bacdive",
-                        "knowledge_assertion",
-                        "manual_agent",
-                    ]
-                )
-
-        # Should only have 3 edges, not 5 (rows 3 and 4 are missing data)
-        self.assertEqual(len(ec_substrate_edges), 3)
+    def test_repeated_substrates_do_not_duplicate_stub_nodes(self):
+        """References retain their assertions while target declarations are emitted once."""
+        edges, nodes = self.transform._generate_ec_substrate_rows(self.mappings + self.mappings)
+        self.assertEqual(len(edges), 6)
+        self.assertEqual(len(nodes), 3)

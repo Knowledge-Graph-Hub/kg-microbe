@@ -37,7 +37,10 @@ License: CC BY 4.0 (matches the upstream repo).
 
 from __future__ import annotations
 
+import base64
 import csv
+import hashlib
+import json
 import logging
 import shutil
 import zipfile
@@ -81,19 +84,27 @@ from kg_microbe.transform_utils.constants import (
     NCBI_TO_SUBSTRATE_EDGE,
     NCBITAXON_PREFIX,
     OBJECT_COLUMN,
+    ORIGINAL_OBJECT_COLUMN,
     PATHWAY_PREFIX,
     PHENOTYPIC_CATEGORY,
     PREDICATE_COLUMN,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PRODUCES_PREDICATE,
     PROVIDED_BY_COLUMN,
+    PUBLICATIONS_COLUMN,
     RDFS_SUBCLASS_OF,
     RELATION_COLUMN,
     SMALL_MOLECULE_CATEGORY,
+    SOURCE_CITATION_BYTES_COLUMN,
+    SOURCE_CITATION_COLUMN,
+    SOURCE_COLUMN,
+    SOURCE_RECORD_COLUMN,
     SUBCLASS_PREDICATE,
     SUBJECT_COLUMN,
     TRAIT_PREFIX,
     TROPHICALLY_INTERACTS_WITH,
+    VALUE_COLUMN,
+    VALUE_ENCODING_COLUMN,
     VPI_KNOWLEDGE_SOURCE,
 )
 from kg_microbe.transform_utils.microbedecoder.utils import (
@@ -104,6 +115,7 @@ from kg_microbe.transform_utils.microbedecoder.utils import (
     LPSN_ID_COLUMN,
     LPSN_SPECIES_COLUMN,
     LPSN_SUBSPECIES_COLUMN,
+    METABOLISM_GROUPS,
     crosswalk_curie,
     format_citation,
     is_empty_cell,
@@ -113,9 +125,9 @@ from kg_microbe.transform_utils.microbedecoder.utils import (
     split_multivalue_comma_only,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.external_identifiers import ASSEMBLY_ACCESSION, load_assembly_aliases
 from kg_microbe.utils.lpsn_utils import resolve_accepted_records
-from kg_microbe.utils.pandas_utils import drop_duplicates
 from kg_microbe.utils.tsv_io import tsv_dict_writer, tsv_writer
 
 logger = logging.getLogger(__name__)
@@ -143,6 +155,8 @@ _GROUP_TO_KS: Dict[str, str] = {
 
 class MicrobeDecoderTransform(Transform):
     """Transform the MicrobeDecoder wide CSV into KGX nodes and edges."""
+
+    TSV_QUOTING = csv.QUOTE_NONE
 
     #: Reads this transform's output; see Transform.TRANSFORM_INPUTS (#845).
     TRANSFORM_INPUTS = ("lpsn", "gold", "gtdb")
@@ -177,7 +191,22 @@ class MicrobeDecoderTransform(Transform):
 
         """
         super().__init__(MICROBEDECODER, input_dir, output_dir)
-        self.edge_header = [*self.edge_header, "original_object"]
+        self.edge_header = list(
+            dict.fromkeys(
+                [
+                    *self.edge_header,
+                    ORIGINAL_OBJECT_COLUMN,
+                    DESCRIPTION_COLUMN,
+                    PUBLICATIONS_COLUMN,
+                    SOURCE_COLUMN,
+                    SOURCE_RECORD_COLUMN,
+                    SOURCE_CITATION_COLUMN,
+                    SOURCE_CITATION_BYTES_COLUMN,
+                    VALUE_COLUMN,
+                    VALUE_ENCODING_COLUMN,
+                ]
+            )
+        )
         self.knowledge_source = MICROBEDECODER_KNOWLEDGE_SOURCE
         self.chemical_loader = chemical_loader
         # Track dedup state so unmatched-label placeholders are emitted
@@ -209,6 +238,18 @@ class MicrobeDecoderTransform(Transform):
         self._assembly_declared = set()
         self._assembly_aliases = {}
         self._assembly_references = {}
+        self._source_record = ""
+
+    def _reset_run_state(self) -> None:
+        """Reset producer caches so repeated runs never inherit old output state."""
+        self._seen_nodes.clear()
+        self._unmapped.clear()
+        self._stats = dict.fromkeys(self._stats, 0)
+        self._accepted_lpsn = None
+        self._lpsn_supplied = None
+        self._stubbed_lpsn.clear()
+        self._assembly_references.clear()
+        self._source_record = ""
 
     # ------------------------------------------------------------------
     # Public entry point
@@ -251,6 +292,12 @@ class MicrobeDecoderTransform(Transform):
         if not assembly_nodes.is_file():
             raise FileNotFoundError(f"{assembly_nodes} is missing; run the gtdb transform first (#1064).")
         self._assembly_declared, self._assembly_aliases = load_assembly_aliases(assembly_nodes)
+        self._reset_run_state()
+        source_digest = hashlib.sha256()
+        with csv_path.open("rb") as source:
+            for block in iter(lambda: source.read(1024 * 1024), b""):
+                source_digest.update(block)
+        source_fingerprint = source_digest.hexdigest()
 
         # Lazy loader: constructor stays inert with respect to expensive
         # chemical-mapping resources. Matches the round-34 lpsn pattern
@@ -258,63 +305,49 @@ class MicrobeDecoderTransform(Transform):
         if self.chemical_loader is None:
             from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 
-            try:
-                self.chemical_loader = ChemicalMappingLoader()
-            except FileNotFoundError:
-                logger.warning(
-                    "[microbedecoder] Unified chemical mappings not present; "
-                    "end-product CHEBI resolution disabled — every metabolism "
-                    "label falls through to a kgmicrobe.compound:* placeholder."
-                )
-                self.chemical_loader = None
+            self.chemical_loader = ChemicalMappingLoader()
 
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
         with (
-            open(self.output_node_file, "w", newline="") as node_fh,
-            open(self.output_edge_file, "w", newline="") as edge_fh,
+            atomic_write(self.output_node_file, "w", newline="", encoding="utf-8") as node_fh,
+            atomic_write(self.output_edge_file, "w", newline="", encoding="utf-8") as edge_fh,
         ):
-            node_writer = tsv_writer(node_fh)
-            edge_writer = tsv_writer(edge_fh)
+            # KGX reads TSV with QUOTE_NONE. Escape control characters in
+            # literal values explicitly; CSV quotation is not a TSV escape.
+            node_writer = tsv_writer(node_fh, quoting=csv.QUOTE_NONE, quotechar=None)
+            edge_writer = tsv_writer(edge_fh, quoting=csv.QUOTE_NONE, quotechar=None)
             node_writer.writerow(self.node_header)
             edge_writer.writerow(self.edge_header)
 
-            # ``dtype=str`` on the whole CSV so numeric-looking columns
-            # (LPSN_ID, NCBI_Taxonomy_ID, IMG_Genome_ID) don't get coerced
-            # to floats with a ``.0`` suffix that then leaks into CURIEs.
-            # NaN cells arrive as the string ``"nan"``; :func:`is_empty_cell`
-            # recognises that already.
-            #
-            # ``encoding_errors="replace"`` because the real MicrobeDecoder
-            # CSV (R-produced) is mixed encoding: mostly UTF-8 (0xc3 lead
-            # bytes for ``°``, ``©``, fraction glyphs) with a handful of
-            # sporadic raw Latin-1 bytes (e.g. ``0xe9`` = ``é``) that break
-            # strict UTF-8 decode. Replace on error rather than fall back
-            # to Latin-1: latin-1 would misread every legitimate UTF-8
-            # multi-byte sequence (``°`` becomes ``°``, etc). U+FFFD
-            # affects ~2 bytes out of 57 MB — acceptable aesthetic loss
-            # on the name field, no impact on any CURIE.
-            df = pd.read_csv(
-                csv_path,
-                dtype=str,
-                keep_default_na=False,
-                low_memory=False,
-                encoding="utf-8",
-                encoding_errors="replace",
-            )
-            for _, row_series in df.iterrows():
-                row = row_series.to_dict()
-                self._process_row(row, node_writer, edge_writer)
+            # CSV strings retain operators, zeros and leading zeros. Record
+            # ordinals count CSV records, not physical lines (quoted cells
+            # can contain newlines). The digest anchors the original bytes,
+            # including the upstream file's rare non-UTF8 label bytes.
+            with csv_path.open(newline="", encoding="utf-8", errors="surrogateescape") as source:
+                for ordinal, row in enumerate(csv.DictReader(source), start=1):
+                    self._source_record = f"sha256:{source_fingerprint}#record={ordinal}"
+                    self._process_row(row, node_writer, edge_writer)
 
         # Sorted dedup: keeps the output stable across runs and lets the
         # merged KG collapse duplicates cheaply.
-        drop_duplicates(self.output_node_file, sort_by_column=ID_COLUMN)
-        drop_duplicates(self.output_edge_file, sort_by_column=SUBJECT_COLUMN)
+        self._deduplicate_literal_tsv(self.output_node_file, ID_COLUMN)
+        self._deduplicate_literal_tsv(self.output_edge_file, SUBJECT_COLUMN)
         # Curation queue: per-label placeholder tally sorted by frequency
         # descending. Matches the metatraits `unmapped_traits.tsv` pattern.
         self._write_unmapped_report()
         self._write_assembly_reference_report()
         self._log_summary()
+
+    @staticmethod
+    def _deduplicate_literal_tsv(path: Path, sort_column: str) -> None:
+        """Deduplicate complete source assertions without numeric/NA coercion."""
+        frame = pd.read_csv(path, sep="\t", dtype=str, keep_default_na=False, quoting=csv.QUOTE_NONE)
+        frame.drop_duplicates(inplace=True)
+        columns = [sort_column, *[column for column in frame.columns if column != sort_column]]
+        frame.sort_values(columns, kind="stable", inplace=True)
+        with atomic_write(path, "w", newline="", encoding="utf-8") as output:
+            frame.to_csv(output, sep="\t", index=False, quoting=csv.QUOTE_NONE, quotechar=None, lineterminator="\n")
 
     # ------------------------------------------------------------------
     # Row processing
@@ -621,6 +654,10 @@ class MicrobeDecoderTransform(Transform):
         for group_label, fields in iter_metabolism_columns(row):
             provenance = _GROUP_TO_KS[group_label]
             citation_curie = format_citation(fields.get("citation"))
+            citation_text = fields.get("citation")
+            source_columns = next(
+                group["columns"] for group in METABOLISM_GROUPS if group["group_label"] == group_label
+            )
 
             # `Type_of_metabolism` label → capable_of a metabolism-class
             # object. Uses a kgmicrobe.pathway: placeholder for now;
@@ -640,6 +677,9 @@ class MicrobeDecoderTransform(Transform):
                             CAPABLE_OF,
                             provenance,
                             publications=citation_curie,
+                            source_citation=citation_text,
+                            source_column=source_columns["type_of_metabolism"],
+                            value=label,
                         )
                     )
                     self._stats["metabolism_edges"] += 1
@@ -662,6 +702,9 @@ class MicrobeDecoderTransform(Transform):
                             provenance,
                             description=qualifier,
                             publications=citation_curie,
+                            source_citation=citation_text,
+                            source_column=source_columns[role],
+                            value=label,
                         )
                     )
                     self._stats["metabolism_edges"] += 1
@@ -680,6 +723,9 @@ class MicrobeDecoderTransform(Transform):
                         TROPHICALLY_INTERACTS_WITH,
                         provenance,
                         publications=citation_curie,
+                        source_citation=citation_text,
+                        source_column=source_columns["substrates"],
+                        value=label,
                     )
                 )
                 self._stats["metabolism_edges"] += 1
@@ -717,6 +763,8 @@ class MicrobeDecoderTransform(Transform):
                         HAS_PHENOTYPE,
                         self.knowledge_source,
                         description=column.replace("BacDive_", "").replace("_", " "),
+                        source_column=column,
+                        value=label,
                     )
                 )
                 self._stats["bacdive_snapshot_edges"] += 1
@@ -746,10 +794,7 @@ class MicrobeDecoderTransform(Transform):
         """
         curie: Optional[str] = None
         if self.chemical_loader is not None:
-            try:
-                curie = self.chemical_loader.find_chebi_by_name(label, fuzzy_stereochemistry=True)
-            except Exception as exc:  # noqa: BLE001 — chemical loader has broad failure modes
-                logger.debug("[microbedecoder] chebi lookup failed for %r: %s", label, exc)
+            curie = self.chemical_loader.find_chebi_by_name(label, fuzzy_stereochemistry=True)
         if curie:
             if curie.startswith((COMPOUND_PREFIX, INGREDIENT_PREFIX)):
                 name = self.chemical_loader.get_canonical_name(curie) or label
@@ -795,14 +840,11 @@ class MicrobeDecoderTransform(Transform):
         node_writer: "csv._writer",
     ) -> str:
         """
-        Resolve a BacDive_* value. v1: placeholder in the trait prefix.
+        Preserve the source dimension and exact token, without interpreting codes.
 
-        Category is left generic (:data:`PHENOTYPIC_CATEGORY`); the fresher
-        ``bacdive`` transform provides the semantically-correct edge
-        (MicrobeDecoder ingests the 2024-11-07 snapshot per the plan-mode
-        Q&A). ``source_column`` is recorded in the unmapped-labels report
-        so curators can distinguish the same short string (``yes``, ``0``)
-        appearing under different BacDive columns.
+        A source value of zero is not evidence for a named negative phenotype
+        until its coding scheme is mapped. Column-scoped IDs keep motility,
+        spores, temperature and inequalities distinct in the graph itself.
         """
         return self._mint_placeholder(
             label,
@@ -833,7 +875,14 @@ class MicrobeDecoderTransform(Transform):
         column(s) contributed this placeholder.
         """
         curie = f"{prefix}{slugify_label(label)}"
-        self._ensure_terminal_node(curie, category, label, node_writer)
+        name = label
+        if prefix == TRAIT_PREFIX:
+            identity = json.dumps([source_column, label], ensure_ascii=False, separators=(",", ":"))
+            digest = hashlib.sha256(identity.encode("utf-8", errors="surrogateescape")).hexdigest()
+            curie = f"{prefix}{slugify_label(source_column)}_{digest}"
+            dimension = source_column.removeprefix("BacDive_").replace("_", " ")
+            name = f"{dimension}: {label} (source value)"
+        self._ensure_terminal_node(curie, category, name, node_writer)
         self._stats["unmatched_labels"] += 1
         # Aggregate per placeholder CURIE. Same CURIE from multiple
         # columns keeps them all in the ``source_columns`` set so the
@@ -867,17 +916,15 @@ class MicrobeDecoderTransform(Transform):
           ``vpi:major_end_products`` / ``BacDive_Oxygen_tolerance`` / …)
         - ``occurrences`` — how many edges this placeholder anchors this run
 
-        No file is written when the run produced zero placeholders (all
-        labels mapped — the aspirational state).
+        An empty report is still written so a later run with no placeholders
+        cannot inherit a stale curation queue from an earlier run.
         """
-        if not self._unmapped:
-            return
         target = self.output_dir / _UNMAPPED_REPORT_FILENAME
         rows = [
             {
                 "placeholder_curie": curie,
                 "category": category,
-                "label": entry["label"],
+                "label": self._escape_literal(entry["label"]),
                 "source_columns": "|".join(sorted(entry["source_columns"])),  # type: ignore[arg-type]
                 "occurrences": entry["occurrences"],
             }
@@ -928,8 +975,8 @@ class MicrobeDecoderTransform(Transform):
         row = [None] * len(self.node_header)
         row[self.node_header.index(ID_COLUMN)] = node_id
         row[self.node_header.index(CATEGORY_COLUMN)] = category
-        row[self.node_header.index(NAME_COLUMN)] = name
-        row[self.node_header.index(DESCRIPTION_COLUMN)] = description
+        row[self.node_header.index(NAME_COLUMN)] = self._escape_literal(name)
+        row[self.node_header.index(DESCRIPTION_COLUMN)] = self._escape_literal(description)
         row[self.node_header.index(PROVIDED_BY_COLUMN)] = self.knowledge_source
         return row
 
@@ -943,19 +990,18 @@ class MicrobeDecoderTransform(Transform):
         description: Optional[str] = None,
         publications: Optional[str] = None,
         original_object: Optional[str] = None,
+        source_column: Optional[str] = None,
+        value: Optional[str] = None,
+        source_citation: Optional[str] = None,
     ) -> List:
         """
         Build an edge row in canonical Transform.edge_header order.
 
-        ``description`` (currently used for the major/minor qualifier) and
-        ``publications`` (PMID/DOI CURIE) are accepted for forward-compat but
-        currently unused: the canonical edge header has no slot for them,
-        and no other transform ships per-edge citation columns today. A
-        follow-up (issue #TBD) can promote them to their own columns without
-        touching call sites.
+        Context is part of assertion identity, not merely a curation report.
+        ``value`` uses reversible backslash escaping for TSV control characters
+        and literal backslashes, explicitly declared by ``value_encoding``.
+        Numeric operators and source codes remain unchanged.
         """
-        del description  # v1: dropped; canonical header has no description column
-        del publications  # v1: dropped; canonical header has no publications column
         row = [None] * len(self.edge_header)
         row[self.edge_header.index(SUBJECT_COLUMN)] = subject
         row[self.edge_header.index(PREDICATE_COLUMN)] = predicate
@@ -964,8 +1010,30 @@ class MicrobeDecoderTransform(Transform):
         row[self.edge_header.index(PRIMARY_KNOWLEDGE_SOURCE_COLUMN)] = primary_knowledge_source
         row[self.edge_header.index(KNOWLEDGE_LEVEL_COLUMN)] = KNOWLEDGE_ASSERTION
         row[self.edge_header.index(AGENT_TYPE_COLUMN)] = MANUAL_AGENT
-        row[self.edge_header.index("original_object")] = original_object
+        row[self.edge_header.index(ORIGINAL_OBJECT_COLUMN)] = original_object
+        row[self.edge_header.index(DESCRIPTION_COLUMN)] = self._escape_literal(description)
+        row[self.edge_header.index(PUBLICATIONS_COLUMN)] = publications
+        row[self.edge_header.index(SOURCE_COLUMN)] = source_column
+        row[self.edge_header.index(SOURCE_RECORD_COLUMN)] = self._source_record
+        row[self.edge_header.index(VALUE_COLUMN)] = self._escape_literal(value)
+        row[self.edge_header.index(SOURCE_CITATION_COLUMN)] = self._escape_literal(source_citation)
+        row[self.edge_header.index(SOURCE_CITATION_BYTES_COLUMN)] = (
+            base64.b64encode(source_citation.encode("utf-8", errors="surrogateescape")).decode("ascii")
+            if source_citation is not None
+            else None
+        )
+        row[self.edge_header.index(VALUE_ENCODING_COLUMN)] = "backslash" if value is not None else None
         return row
+
+    @staticmethod
+    def _escape_literal(value: Optional[str]) -> Optional[str]:
+        """Encode backslashes and TSV control characters without CSV quoting."""
+        if value is None:
+            return None
+        # Display the upstream CSV's rare non-UTF8 citation bytes with the
+        # historical replacement policy; source_citation_base64 keeps exact bytes.
+        value = value.encode("utf-8", errors="surrogateescape").decode("utf-8", errors="replace")
+        return value.replace("\\", "\\\\").replace("\t", "\\t").replace("\r", "\\r").replace("\n", "\\n")
 
     # ------------------------------------------------------------------
     # Input resolution + summary

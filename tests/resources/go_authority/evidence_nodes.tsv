@@ -1,0 +1,4 @@
+id	name	category	provided_by	description
+NCBITaxon:2	Bacteria	biolink:OrganismTaxon	infores:ncbitaxon	
+GO:9999002	original activity declaration	biolink:BiologicalProcess	infores:rhea	Original source-specific activity context.
+GO:0004096	current activity declaration	biolink:MolecularActivity	infores:ec	Current source-specific activity context.

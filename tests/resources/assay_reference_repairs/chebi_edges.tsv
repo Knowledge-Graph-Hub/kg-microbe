@@ -1,0 +1,5 @@
+subject	predicate	object	relation	primary_knowledge_source	knowledge_level	agent_type
+CHEBI:100	biolink:has_chemical_role	CHEBI:76924	RO:0000087	infores:chebi	knowledge_assertion	manual_agent
+CHEBI:100	biolink:has_chemical_role	CHEBI:76924	RO:0000087	infores:chebi	knowledge_assertion	manual_agent
+CHEBI:10002	biolink:has_chemical_role	CHEBI:35620	RO:0000087	infores:chebi	knowledge_assertion	manual_agent
+CHEBI:100	biolink:subclass_of	CHEBI:16114	rdfs:subClassOf	infores:chebi	knowledge_assertion	manual_agent

@@ -315,6 +315,7 @@ RHEA_XREF_RELATION = "oboInOwl:hasDbXref"
 # Assay → Entity predicates (methodological reference edges)
 ASSAY_HAS_OUTPUT_PREDICATE = "MICRO:0001206"  # is an assay for the enzymatic activity of
 ASSAY_HAS_INPUT_PREDICATE = "MICRO:0000065"  # is an assay using the chemical reagent
+ASSAY_BIOLOGICAL_PROCESS_PREDICATE = "MICRO:0001215"  # assay for the biological process of
 
 # Assay → Entity relations
 ASSAY_OUTPUT_RELATION = ASSAY_HAS_OUTPUT_PREDICATE
@@ -460,6 +461,13 @@ PROVIDED_BY_COLUMN = "provided_by"
 PRIMARY_KNOWLEDGE_SOURCE_COLUMN = "primary_knowledge_source"
 PUBLICATIONS_COLUMN = "publications"
 SOURCE_ASSERTION_ID_COLUMN = "source_assertion_id"
+SOURCE_COLUMN = "source_column"
+SOURCE_RECORD_COLUMN = "source_record"
+SOURCE_CITATION_COLUMN = "source_citation"
+SOURCE_CITATION_BYTES_COLUMN = "source_citation_base64"
+ORIGINAL_OBJECT_COLUMN = "original_object"
+GO_REFERENCE_CONTEXT_COLUMN = "go_reference_context"
+VALUE_ENCODING_COLUMN = "value_encoding"
 KNOWLEDGE_LEVEL_COLUMN = "knowledge_level"
 AGENT_TYPE_COLUMN = "agent_type"
 

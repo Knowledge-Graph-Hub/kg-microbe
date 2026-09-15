@@ -463,17 +463,7 @@ def test_substrates_use_consumes_predicate(microbedecoder_transform):
 
 
 def test_multivalue_split_produces_one_edge_per_token(microbedecoder_transform):
-    """
-    LPSN_ID=101 Literature_Major_end_products='acetate, lactate, 2,3-butanediol'.
-
-    Documented v1 behavior: the splitter splits on every ``,`` or ``;``,
-    so a chemical name containing a literal comma (``2,3-butanediol``)
-    over-splits into ``2`` and ``3-butanediol``. This is the same
-    limitation madin_etal ships with; both transforms produce accurate
-    edges for the common case of simple names (``acetate``, ``lactate``,
-    ``butanol``) and can be tightened in a follow-up once a curated
-    exceptions list exists.
-    """
+    """Preserve 2,3-butanediol as one chemical alongside the ordinary comma-separated products."""
     microbedecoder_transform.run()
     edges = _read_tsv(microbedecoder_transform.output_edge_file)
     lit_produces = {
@@ -486,11 +476,9 @@ def test_multivalue_split_produces_one_edge_per_token(microbedecoder_transform):
     # Simple names must land as expected
     assert f"{COMPOUND_PREFIX}acetate" in lit_produces
     assert f"{COMPOUND_PREFIX}lactate" in lit_produces
-    # And the known over-split fragments prove the fixture actually
-    # exercised the multi-value path (fixture carries the corner case
-    # deliberately as a regression anchor for the future smart-splitter).
-    assert f"{COMPOUND_PREFIX}2" in lit_produces
-    assert f"{COMPOUND_PREFIX}3_butanediol" in lit_produces
+    assert f"{COMPOUND_PREFIX}2_3_butanediol" in lit_produces
+    assert f"{COMPOUND_PREFIX}2" not in lit_produces
+    assert f"{COMPOUND_PREFIX}3_butanediol" not in lit_produces
 
 
 # ---------------------------------------------------------------------------
@@ -511,7 +499,12 @@ def test_bacdive_snapshot_edges_carry_microbedecoder_provenance(microbedecoder_t
     assert bacdive_snapshot, "BacDive_* columns must produce has_phenotype edges"
     # LPSN_ID=101 has BacDive_Oxygen_tolerance='facultative anaerobe'
     e_101 = [e for e in bacdive_snapshot if e["subject"] == f"{LPSN_PREFIX}101"]
-    assert any(e["object"] == f"{TRAIT_PREFIX}facultative_anaerobe" for e in e_101)
+    assert any(
+        e["object"].startswith(TRAIT_PREFIX)
+        and e["source_column"] == "BacDive_Oxygen_tolerance"
+        and e["value"] == "facultative anaerobe"
+        for e in e_101
+    )
 
 
 def test_bacdive_only_row_still_emits_snapshot(microbedecoder_transform):
@@ -610,9 +603,9 @@ def test_unmapped_labels_report_is_written(microbedecoder_transform):
     )
 
 
-def test_unmapped_labels_report_omitted_when_no_placeholders(tmp_path):
+def test_unmapped_labels_report_is_empty_when_no_placeholders(tmp_path):
     """
-    No report is written when every label maps cleanly (aspirational state).
+    A header-only report records no placeholders without leaving an old curation queue.
 
     Injects a chemical loader that resolves every label to a stub CHEBI
     CURIE. The transform's fixture also carries BacDive_* and
@@ -654,9 +647,8 @@ def test_unmapped_labels_report_omitted_when_no_placeholders(tmp_path):
     )
     xform.run(data_file="database.csv")
     report = xform.output_dir / "unmapped_labels.tsv"
-    assert not report.exists(), (
-        "no report should be written when every label mapped cleanly; found unmapped_labels.tsv anyway"
-    )
+    assert report.exists()
+    assert _read_tsv(report) == []
 
 
 def test_mixed_encoding_csv_is_read_with_replacement(tmp_path):

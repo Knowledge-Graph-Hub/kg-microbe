@@ -1,0 +1,4 @@
+id	category	name
+CHEBI:100	biolink:ChemicalEntity	fixture compound
+CHEBI:76924	biolink:ChemicalRole	fixture role
+CHEBI:35620	biolink:ChemicalRole	second fixture role

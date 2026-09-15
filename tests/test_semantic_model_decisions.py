@@ -172,6 +172,24 @@ def test_native_assay_rules_are_typed_extensions_not_biological_process_typing()
     assert any(f.severity == "WARNING" for f in review.check_domain_range(nodes, [edge], True))
 
 
+@pytest.mark.parametrize(
+    "subject_category,object_category,valid",
+    [
+        ("biolink:Procedure", "biolink:BiologicalProcess", True),
+        ("biolink:Procedure", "biolink:MolecularActivity", False),
+        ("biolink:MolecularActivity", "biolink:BiologicalProcess", False),
+    ],
+)
+def test_assay_for_biological_process_has_an_explicit_typed_rule(subject_category, object_category, valid):
+    """MICRO:0001215 is a native typed extension, not a generic excuse for arbitrary assay targets."""
+    review = _load()
+    nodes = [{"id": "kgmicrobe.assay:1", "category": subject_category}, {"id": "GO:1", "category": object_category}]
+    edge = {"subject": nodes[0]["id"], "predicate": "MICRO:0001215", "object": "GO:1"}
+    assert "MICRO:0001215" in review.KGMICROBE_EXTENSION_PREDICATES
+    warnings = [finding for finding in review.check_domain_range(nodes, [edge], True) if finding.severity == "WARNING"]
+    assert bool(warnings) is not valid
+
+
 @pytest.mark.parametrize("change", [None, "wrong_relation", "instance", "unknown_category", "self"])
 def test_ontology_class_house_rule_requires_structural_class_evidence(change):
     """A class axiom is allowed visibly; an instance, fallback, self-loop, or different relation is not."""

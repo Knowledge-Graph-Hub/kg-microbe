@@ -825,7 +825,7 @@ def load_metpo_enzyme_mappings() -> Dict[str, Dict[str, str]]:
         raise requests.exceptions.HTTPError(f"Please ensure the METPO properties URL is accessible: {e}") from e
 
 
-def load_assay_kit_mappings() -> Dict[str, Dict[str, Dict]]:
+def load_assay_kit_mappings(assay_file: Optional[Path] = None) -> Dict[str, Dict[str, Dict]]:
     """
     Load assay kit mappings from the local assay_kits_simple.json file.
 
@@ -882,6 +882,7 @@ def load_assay_kit_mappings() -> Dict[str, Dict[str, Dict]]:
         }
     }
 
+    :param assay_file: Exact selected raw-root file; defaults to the repository download location
     :return: Dictionary mapping kit names to well labels to their properties
     :rtype: Dict[str, Dict[str, Dict]]
     :raises FileNotFoundError: If the assay kits file is not found
@@ -890,12 +891,13 @@ def load_assay_kit_mappings() -> Dict[str, Dict[str, Dict]]:
     try:
         from kg_microbe.transform_utils.constants import ASSAY_KITS_FILE
 
-        if not ASSAY_KITS_FILE.exists():
+        assay_file = Path(assay_file) if assay_file is not None else ASSAY_KITS_FILE
+        if not assay_file.exists():
             raise FileNotFoundError(
-                f"Assay metadata file not found at {ASSAY_KITS_FILE}. Run 'poetry run kg download' to download it."
+                f"Assay metadata file not found at {assay_file}. Run 'poetry run kg download' to download it."
             )
 
-        with open(ASSAY_KITS_FILE, "r") as f:
+        with open(assay_file, "r") as f:
             data = json.load(f)
 
         if not data:
@@ -1038,7 +1040,14 @@ def generate_assay_nodes(assay_data: dict, node_header: List[str]) -> List[List]
     return nodes
 
 
-def generate_assay_entity_nodes(assay_data: dict, node_header: List[str]) -> List[List]:
+def _assay_go_resolution(go_authority, go_term: str):
+    """Require shared GO authority for assay targets; an enzyme label cannot determine GO aspect."""
+    if go_authority is None:
+        raise ValueError("Assay GO targets require validated go_authority; load local GO authority before emission")
+    return go_authority.resolve(go_term)
+
+
+def generate_assay_entity_nodes(assay_data: dict, node_header: List[str], *, go_authority=None) -> List[List]:
     """
     Generate stub node rows for CHEBI / EC / GO entities referenced by assays.
 
@@ -1049,13 +1058,13 @@ def generate_assay_entity_nodes(assay_data: dict, node_header: List[str]) -> Lis
     ``biolink:NamedThing`` stub with empty name/category — which fails biolink
     domain/range checks and erases the label.
 
-    Emitting a labelled node row here ensures every assay target has a proper
-    biolink category and human-readable name. KGX merge will prefer the
-    canonical ontology row when both exist (chebi.json / ec.json / go.json),
-    so this only "wins" for IDs missing from those sources.
+    GO declarations come from shared local authority, including historical
+    labels/aspects/deprecation. Imported defaults must not pollute canonical
+    categories; ``consider`` hints never assert identity with another GO ID.
 
     :param assay_data: Dictionary loaded from assay_kits_simple.json
     :param node_header: Node header (from Transform base class)
+    :param go_authority: Validated, in-memory GO authority shared with assay edges
     :return: List of node rows
     """
     from kg_microbe.transform_utils.constants import (
@@ -1063,7 +1072,6 @@ def generate_assay_entity_nodes(assay_data: dict, node_header: List[str]) -> Lis
         CHEBI_PREFIX,
         EC_CATEGORY,
         EC_PREFIX,
-        GO_CATEGORY,
         ID_COLUMN,
         METABOLITE_CATEGORY,
         NAME_COLUMN,
@@ -1075,7 +1083,8 @@ def generate_assay_entity_nodes(assay_data: dict, node_header: List[str]) -> Lis
     category_idx = node_header.index(CATEGORY_COLUMN)
     name_idx = node_header.index(NAME_COLUMN)
 
-    def _emit(node_id: str, name: str, category: str) -> None:
+    def _emit(node_id: str, name: str, category: str, fields=None) -> None:
+        """Emit one target declaration, projecting authoritative metadata to its named columns."""
         if not node_id or node_id in seen:
             return
         seen.add(node_id)
@@ -1083,6 +1092,9 @@ def generate_assay_entity_nodes(assay_data: dict, node_header: List[str]) -> Lis
         row[id_idx] = node_id
         row[category_idx] = category
         row[name_idx] = name or ""
+        for column, value in (fields or {}).items():
+            if column in node_header:
+                row[node_header.index(column)] = value
         nodes.append(row)
 
     for kit in assay_data.get("api_kits", []):
@@ -1093,7 +1105,8 @@ def generate_assay_entity_nodes(assay_data: dict, node_header: List[str]) -> Lis
 
             if well_type[0] == "enzyme":
                 for go_term in well.get("go_terms", []) or []:
-                    _emit(go_term, "", GO_CATEGORY)
+                    resolved = _assay_go_resolution(go_authority, go_term)
+                    _emit(resolved.canonical_id, resolved.label, resolved.category, resolved.node_fields())
                 ec_names = well.get("ec_name", []) or []
                 for idx, ec_number in enumerate(well.get("ec_number", []) or []):
                     ec_id = f"{EC_PREFIX}{ec_number}"
@@ -1110,29 +1123,31 @@ def generate_assay_entity_nodes(assay_data: dict, node_header: List[str]) -> Lis
     return nodes
 
 
-def generate_assay_entity_edges(assay_data: dict, edge_header: List[str]) -> List[List]:
+def generate_assay_entity_edges(assay_data: dict, edge_header: List[str], *, go_authority=None) -> List[List]:
     """
     Generate assay→entity edges from assay_kits_simple.json data.
 
     Creates methodological reference edges showing what each assay tests:
-    - Enzyme assays → GO terms (has_output)
-    - Enzyme assays → EC numbers (has_output)
-    - Chemical assays → ChEBI entities (has_input)
+    - Assays → GO molecular functions / EC activities: MICRO:0001206
+    - Assays → GO biological processes: MICRO:0001215
+    - Chemical assays → ChEBI reagents: MICRO:0000065
 
     These edges are created once upfront, independent of organism data.
 
     :param assay_data: Dictionary loaded from assay_kits_simple.json
     :param edge_header: List of column names for edge rows (from Transform base class)
+    :param go_authority: Validated, in-memory GO authority shared with target nodes
     :return: List of edge rows formatted for writerows(), each row matching edge_header length
     :rtype: List[List]
 
     Example edges:
-        kgmicrobe.assay:API_zym_alkaline_phosphatase → biolink:has_output → GO:0004035
-        kgmicrobe.assay:API_zym_alkaline_phosphatase → biolink:has_output → EC:3.1.3.1
-        kgmicrobe.assay:API_50CHac_ERY → biolink:has_input → CHEBI:17113
+        kgmicrobe.assay:API_zym_alkaline_phosphatase → MICRO:0001206 → GO:0004035
+        kgmicrobe.assay:API_20NE_GLU__Ferm → MICRO:0001215 → GO:0019660
+        kgmicrobe.assay:API_50CHac_ERY → MICRO:0000065 → CHEBI:17113
     """
     from kg_microbe.transform_utils.constants import (
         AGENT_TYPE_COLUMN,
+        ASSAY_BIOLOGICAL_PROCESS_PREDICATE,
         ASSAY_HAS_INPUT_PREDICATE,
         ASSAY_HAS_OUTPUT_PREDICATE,
         ASSAY_INPUT_RELATION,
@@ -1141,6 +1156,7 @@ def generate_assay_entity_edges(assay_data: dict, edge_header: List[str]) -> Lis
         EC_PREFIX,
         KNOWLEDGE_LEVEL_COLUMN,
         OBJECT_COLUMN,
+        ORIGINAL_OBJECT_COLUMN,
         PREDICATE_COLUMN,
         PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
         RELATION_COLUMN,
@@ -1183,12 +1199,23 @@ def generate_assay_entity_edges(assay_data: dict, edge_header: List[str]) -> Lis
             if test_type == "enzyme":
                 # Assay → GO terms (enzyme activity output)
                 for go_term in well.get("go_terms", []):
+                    resolved = _assay_go_resolution(go_authority, go_term)
+                    if resolved.namespace == "biological_process":
+                        predicate = ASSAY_BIOLOGICAL_PROCESS_PREDICATE
+                    elif resolved.namespace == "molecular_function":
+                        predicate = ASSAY_HAS_OUTPUT_PREDICATE
+                    else:
+                        raise ValueError(f"Unsupported GO assay aspect {resolved.namespace!r} for {go_term}")
                     edge_row = [None] * len(edge_header)
                     edge_row[subject_idx] = assay_id
-                    edge_row[predicate_idx] = ASSAY_HAS_OUTPUT_PREDICATE
-                    edge_row[object_idx] = go_term
+                    edge_row[predicate_idx] = predicate
+                    edge_row[object_idx] = resolved.canonical_id
+                    if resolved.canonical_id != go_term:
+                        if ORIGINAL_OBJECT_COLUMN not in edge_header:
+                            raise ValueError("Assay GO replacement requires original_object in edge_header")
+                        edge_row[edge_header.index(ORIGINAL_OBJECT_COLUMN)] = go_term
                     if relation_idx is not None:
-                        edge_row[relation_idx] = ASSAY_OUTPUT_RELATION
+                        edge_row[relation_idx] = predicate
                     if pks_idx is not None:
                         edge_row[pks_idx] = "infores:assay-metadata"
                     if knowledge_level_idx is not None:

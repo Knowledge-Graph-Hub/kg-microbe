@@ -89,6 +89,7 @@ KGMICROBE_EXTENSION_PREDICATES = {
     "biolink:positively_regulates",  # emitted by some transforms; not in current biolink
     "biolink:negatively_regulates",
     "MICRO:0001206",  # assay for the enzymatic activity of (GO/EC), raw micro.owl
+    "MICRO:0001215",  # assay for the biological process of, raw micro.owl
     "MICRO:0000065",  # assay using the chemical reagent, raw micro.owl
 }
 
@@ -195,6 +196,7 @@ HOUSE_ALLOWANCES = {
 HAND_DOMAIN_RANGE = {
     # Native MICRO methodological references, explicitly not strict Biolink.
     "MICRO:0001206": ({"biolink:Procedure"}, {"biolink:MolecularActivity"}),
+    "MICRO:0001215": ({"biolink:Procedure"}, {"biolink:BiologicalProcess"}),
     "MICRO:0000065": ({"biolink:Procedure"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),
     # Stricter than the model (which says named thing -> named thing / nothing):
     # KG-Microbe asserts these only from an organism to a chemical.
@@ -1750,7 +1752,7 @@ def _summarize_kgxval_csv(out_csv: Path) -> str:
             if err == "BAD BIOLINK":
                 if pred.startswith("METPO:"):
                     bad_biolink_metpo.add(pred)
-                elif pred in {"MICRO:0001206", "MICRO:0000065"}:
+                elif pred in {"MICRO:0001206", "MICRO:0001215", "MICRO:0000065"}:
                     bad_biolink_micro.add(pred)
                 elif pred in STRUCTURAL_PREDICATES:
                     bad_biolink_structural.add(pred)

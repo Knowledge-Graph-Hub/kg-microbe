@@ -26,6 +26,7 @@ from kg_microbe.transform_utils.constants import (
     NAME_COLUMN,
     OBJECT_COLUMN,
     PREDICATE_COLUMN,
+    PREDICTION,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     RAW_DATA_DIR,
     RDFS_SUBCLASS_OF,
@@ -264,7 +265,9 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
 
         This enables hierarchical linking of synthetic nodes to GTDB taxonomy.
         """
-        gtdb_dir = RAW_DATA_DIR / "gtdb"
+        # Keep taxonomy and metadata in the same explicitly selected release.
+        raw_dir = Path(getattr(self, "input_base_dir", RAW_DATA_DIR))
+        gtdb_dir = raw_dir / "gtdb"
 
         # Process both bacterial and archaeal taxonomy
         for taxonomy_file in ["bac120_taxonomy.tsv", "ar53_taxonomy.tsv"]:
@@ -541,6 +544,9 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
                     OBJECT_COLUMN: ncbi_taxon,
                     RELATION_COLUMN: relation,
                     **provenance,
+                    # GTDB's fan-in-derived similarity is a prediction. A
+                    # historical subject supplies no stronger direct evidence.
+                    KNOWLEDGE_LEVEL_COLUMN: PREDICTION,
                 }
             )
 

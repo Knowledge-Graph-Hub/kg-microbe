@@ -74,7 +74,8 @@ def test_appended_hierarchy_and_mapping_edges_have_complete_provenance_and_lf(tr
         for column in transform.edge_header[:7]:
             assert edge[column], f"Missing {column} in {edge}"
         assert edge["primary_knowledge_source"] == "infores:gtdb-metatraits"
-        assert edge["knowledge_level"] == "knowledge_assertion"
+        expected_level = "knowledge_assertion" if edge["predicate"] == "biolink:subclass_of" else "prediction"
+        assert edge["knowledge_level"] == expected_level
         assert edge["agent_type"] == "automated_agent"
     assert b"\r\n" not in transform.output_edge_file.read_bytes()
 
@@ -118,3 +119,32 @@ def test_invalid_or_conflicting_upstream_mapping_is_not_silently_strengthened(tr
 def test_canonical_gtdb_dependency_is_declared():
     """Upstream reruns must invalidate this output's freshness fingerprint."""
     assert {"ontologies", GTDB} <= set(MetaTraitsGTDBTransform.TRANSFORM_INPUTS)
+
+
+def test_taxonomy_lookup_uses_selected_raw_root_not_default(monkeypatch):
+    """Metadata and taxonomy must not combine selected and default GTDB releases."""
+    import kg_microbe.transform_utils.metatraits_gtdb.metatraits_gtdb as module
+
+    roots = Path(__file__).parent / "resources" / "metatraits_gtdb_selected_root"
+    monkeypatch.setattr(module, "RAW_DATA_DIR", roots / "default")
+    instance = object.__new__(MetaTraitsGTDBTransform)
+    instance.input_base_dir = roots / "selected"
+    instance.accession_to_gtdb_species = {}
+    instance._load_gtdb_taxonomy()
+    assert instance.accession_to_gtdb_species == {
+        "sp000000001": "Selected bacterium sp000000001",
+        "sp000000002": "Selected archaeon sp000000002",
+    }
+
+
+def test_missing_selected_taxonomy_does_not_borrow_default_release(tmp_path, monkeypatch):
+    """Absent selected taxonomy cannot silently substitute valid default-release files."""
+    import kg_microbe.transform_utils.metatraits_gtdb.metatraits_gtdb as module
+
+    roots = Path(__file__).parent / "resources" / "metatraits_gtdb_selected_root"
+    monkeypatch.setattr(module, "RAW_DATA_DIR", roots / "default")
+    instance = object.__new__(MetaTraitsGTDBTransform)
+    instance.input_base_dir = tmp_path
+    instance.accession_to_gtdb_species = {}
+    instance._load_gtdb_taxonomy()
+    assert instance.accession_to_gtdb_species == {}

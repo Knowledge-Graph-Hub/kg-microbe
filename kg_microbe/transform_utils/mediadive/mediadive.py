@@ -15,6 +15,7 @@ Output these two files:
 - edges.tsv
 """
 
+import csv
 import json
 import math
 import os
@@ -32,7 +33,9 @@ from requests_cache.backends.sqlite import SQLiteCache
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
+    AGENT_TYPE_COLUMN,
     AMOUNT_COLUMN,
+    BACDIVE,
     BACDIVE_ID_COLUMN,
     BACDIVE_PREFIX,
     BACDIVE_TMP_DIR,
@@ -58,6 +61,7 @@ from kg_microbe.transform_utils.constants import (
     IS_GROWN_IN,
     KEGG_KEY,
     KEGG_PREFIX,
+    KNOWLEDGE_LEVEL_COLUMN,
     MANUAL_AGENT,
     MEDIADIVE,
     MEDIADIVE_COMPLEX_MEDIUM_COLUMN,
@@ -95,13 +99,18 @@ from kg_microbe.transform_utils.constants import (
     NCBI_TO_MEDIUM_EDGE,
     NCBI_TO_MEDIUM_NEGATIVE_EDGE,
     NCBITAXON_ID_COLUMN,
+    OBJECT_COLUMN,
     OBSERVATION,
+    PREDICATE_COLUMN,
+    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PROVIDED_BY_COLUMN,
     PUBCHEM_KEY,
     PUBCHEM_PREFIX,
+    PUBLICATIONS_COLUMN,
     RAW_DATA_DIR,
     RDFS_SUBCLASS_OF,
     RECIPE_KEY,
+    RELATION_COLUMN,
     ROLE_CATEGORY,
     SAME_AS_COLUMN,
     SOLUTION,
@@ -113,6 +122,7 @@ from kg_microbe.transform_utils.constants import (
     SPECIES,
     STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
+    SUBJECT_COLUMN,
     SYNONYM_COLUMN,
     TRANSLATION_TABLE_FOR_LABELS,
     UNIT_COLUMN,
@@ -124,6 +134,7 @@ from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
 )
+from kg_microbe.utils.provenance import bacdive_record_url
 from kg_microbe.utils.tsv_io import tsv_writer
 
 #: HTTP response cache for the API fallback, kept beside the bulk JSONs. The
@@ -136,10 +147,10 @@ LEGACY_HTTP_CACHE_FILENAME = "mediadive_cache.sqlite"
 class MediaDiveTransform(Transform):
     """Template for how the transform class would be designed."""
 
-    #: Reads ``ontologies/chebi_nodes.tsv`` (ChEBI roles and categories) via
-    #: CHEBI_NODES_FILE; the path lives in constants.py, which is why this went
-    #: undeclared (#1035).
-    TRANSFORM_INPUTS = ("ontologies",)
+    #: Reads ``ontologies/chebi_nodes.tsv`` and ``chebi_edges.tsv`` (roles/categories)
+    #: via constants.py (#1035), plus BacDive's intermediate strain-taxid TSV (#1091).
+    TRANSFORM_INPUTS = ("ontologies", BACDIVE)
+    REQUIRED_CONSUMED_INPUTS = ("bacdive_taxon_lookup",)
 
     DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
 
@@ -150,7 +161,7 @@ class MediaDiveTransform(Transform):
         # Extend edge schema with `value`/`unit` so solution→ingredient edges
         # can carry the recipe's amount + unit (g/l, mmol/l, ml/l, ...).
         # Other edge sites in this transform leave both columns empty.
-        self.edge_header = self.edge_header + ["value", "unit"]
+        self.edge_header = self.edge_header + ["value", "unit", PUBLICATIONS_COLUMN]
         # No `requests_cache.install_cache()` here: that monkeypatched
         # `requests.Session` for the whole process from a constructor, so every
         # HTTP client in the run became a CachedSession and a test that merely
@@ -161,9 +172,9 @@ class MediaDiveTransform(Transform):
 
         # Load ChEBI role relationships from ontologies transform output (fast TSV lookup).
         # NOTE: This depends on TSV files produced by the ontologies transform being present.
-        # If the required files are missing, _load_chebi_roles() will silently skip loading,
-        # and self.chebi_roles and self.chebi_labels will remain empty.
+        # Missing or incompatible required tables fail before any graph output is opened.
         self.chebi_roles: Dict[str, list] = {}  # {chebi_id: [role_ids]}
+        self.chebi_role_edges: Dict[str, list] = {}  # Original ontology assertion metadata.
         self.chebi_labels: Dict[str, str] = {}  # {chebi_id: label}
         self.chebi_categories: Dict[str, str] = {}  # {chebi_id: category} for category alignment
         self._load_chebi_roles()
@@ -295,46 +306,69 @@ class MediaDiveTransform(Transform):
         This is much faster than querying the ChEBI SQLite database via OakLib.
         Loads roles and labels from chebi_edges.tsv and chebi_nodes.tsv.
         """
-        chebi_edges_file = CHEBI_EDGES_FILE
-        chebi_nodes_file = CHEBI_NODES_FILE
+        required_edges = {
+            SUBJECT_COLUMN,
+            PREDICATE_COLUMN,
+            OBJECT_COLUMN,
+            RELATION_COLUMN,
+            PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+            KNOWLEDGE_LEVEL_COLUMN,
+            AGENT_TYPE_COLUMN,
+        }
+        roles, role_edges, labels = {}, {}, {}
+        seen = set()
+        print("Loading ChEBI roles from ontologies transform output...")
+        for path, required in (
+            (CHEBI_EDGES_FILE, required_edges),
+            (CHEBI_NODES_FILE, {ID_COLUMN, NAME_COLUMN}),
+        ):
+            if not path.is_file():
+                raise FileNotFoundError(
+                    f"Missing required MediaDive ontology input {path}; run 'poetry run kg transform -s ontologies'"
+                )
+            with path.open(encoding="utf-8", newline="") as stream:
+                # Ontology finalization writes unquoted KGX TSV: quotes inside
+                # labels or scalar metadata are data, not CSV escape syntax.
+                reader = csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE)
+                if len(reader.fieldnames or ()) != len(set(reader.fieldnames or ())):
+                    raise ValueError(f"Invalid MediaDive ontology input {path}: duplicate column names")
+                missing = required - set(reader.fieldnames or ())
+                if missing:
+                    raise ValueError(f"Invalid MediaDive ontology input {path}: missing columns {sorted(missing)}")
+                for line, row in enumerate(reader, 2):
+                    if None in row or any(row.get(column) is None for column in required):
+                        raise ValueError(f"Malformed MediaDive ontology input {path}, row {line}")
+                    if path == CHEBI_NODES_FILE:
+                        if row[ID_COLUMN].startswith(CHEBI_PREFIX) and row[NAME_COLUMN]:
+                            labels[row[ID_COLUMN]] = row[NAME_COLUMN]
+                        continue
+                    subject, obj = row[SUBJECT_COLUMN], row[OBJECT_COLUMN]
+                    if row[RELATION_COLUMN] != HAS_ROLE or not subject.startswith(CHEBI_PREFIX):
+                        continue
+                    if not obj.startswith(CHEBI_PREFIX) or not all(
+                        row[column]
+                        for column in (PRIMARY_KNOWLEDGE_SOURCE_COLUMN, KNOWLEDGE_LEVEL_COLUMN, AGENT_TYPE_COLUMN)
+                    ):
+                        raise ValueError(f"Incomplete ChEBI role assertion in {path}, row {line}")
+                    key = tuple(sorted(row.items()))
+                    if key not in seen:
+                        seen.add(key)
+                        role_edges.setdefault(subject, []).append(row)
+                    if obj not in roles.setdefault(subject, []):
+                        roles[subject].append(obj)
+        # Publish the in-memory index only after both tables validate successfully.
+        self.chebi_roles, self.chebi_role_edges, self.chebi_labels = roles, role_edges, labels
+        print(f"  Loaded {len(roles)} ChEBI compounds with roles")
+        print(f"  Loaded {len(labels)} ChEBI labels")
 
-        # Load role relationships from edges file
-        if chebi_edges_file.exists():
-            try:
-                print("Loading ChEBI roles from ontologies transform output...")
-                with open(chebi_edges_file) as f:
-                    f.readline()  # skip header
-                    for line in f:
-                        parts = line.strip().split("\t")
-                        if len(parts) >= 5:
-                            # KGX edges.tsv columns: [0]=id, [1]=subject, [2]=predicate, [3]=object, [4]=relation
-                            subject = parts[1]  # ChEBI compound ID
-                            obj = parts[3]  # ChEBI role ID
-                            relation = parts[4]  # RO relation (looking for HAS_ROLE)
-                            if relation == HAS_ROLE and subject.startswith("CHEBI:"):
-                                if subject not in self.chebi_roles:
-                                    self.chebi_roles[subject] = []
-                                self.chebi_roles[subject].append(obj)
-                print(f"  Loaded {len(self.chebi_roles)} ChEBI compounds with roles")
-            except Exception as e:
-                print(f"Warning: Could not load ChEBI roles: {e}")
-
-        # Load labels from nodes file
-        if chebi_nodes_file.exists():
-            try:
-                with open(chebi_nodes_file) as f:
-                    f.readline()  # skip header
-                    for line in f:
-                        parts = line.strip().split("\t")
-                        if len(parts) >= 3:
-                            # KGX nodes.tsv columns: [0]=id, [1]=category, [2]=name, ...
-                            node_id = parts[0]
-                            name = parts[2]
-                            if node_id.startswith("CHEBI:") and name:
-                                self.chebi_labels[node_id] = name
-                print(f"  Loaded {len(self.chebi_labels)} ChEBI labels")
-            except Exception as e:
-                print(f"Warning: Could not load ChEBI labels: {e}")
+    def _generate_chebi_role_edges(self, chebi_ids):
+        """Project source ontology assertions to the actual output header without inventing observations."""
+        edges = []
+        for chebi_id in dict.fromkeys(chebi_ids):
+            for assertion in self.chebi_role_edges.get(chebi_id, ()):
+                fields = {**assertion, PREDICATE_COLUMN: CHEBI_TO_ROLE_EDGE, RELATION_COLUMN: HAS_ROLE}
+                edges.append([fields.get(column, "") for column in self.edge_header])
+        return edges
 
     def _load_chebi_categories(self):
         """
@@ -884,11 +918,13 @@ class MediaDiveTransform(Transform):
 
     def _run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
+        self.begin_consumed_inputs()
         self._assert_bulk_data_available()
         # replace with downloaded data filename for this source
         input_file = os.path.join(self.input_base_dir, "mediadive.json")  # must exist already
         bacdive_input_file = BACDIVE_TMP_DIR / "bacdive.tsv"
-        bacdive_df = pd.read_csv(bacdive_input_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN])
+        with self.consume_input("bacdive_taxon_lookup", bacdive_input_file) as bacdive_file:
+            bacdive_df = pd.read_csv(bacdive_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN])
 
         # Create dictionary lookup for O(1) access instead of O(n) DataFrame filtering
         bacdive_strain_to_ncbi = dict(zip(bacdive_df[BACDIVE_ID_COLUMN], bacdive_df[NCBITAXON_ID_COLUMN], strict=True))
@@ -978,7 +1014,7 @@ class MediaDiveTransform(Transform):
                                 SUBCLASS_PREDICATE,
                                 MEDIADIVE_MEDIUM_TYPE_COMPLEX_ID,
                                 RDFS_SUBCLASS_OF,
-                                "MediaDive",
+                                self.knowledge_source,
                                 OBSERVATION,
                                 MANUAL_AGENT,
                             ]
@@ -990,7 +1026,7 @@ class MediaDiveTransform(Transform):
                                 SUBCLASS_PREDICATE,
                                 MEDIADIVE_MEDIUM_TYPE_DEFINED_ID,
                                 RDFS_SUBCLASS_OF,
-                                "MediaDive",
+                                self.knowledge_source,
                                 OBSERVATION,
                                 MANUAL_AGENT,
                             ]
@@ -1052,16 +1088,8 @@ class MediaDiveTransform(Transform):
                                             ]
                                         )
 
-                                        # Emit primary_knowledge_source as the list literal
-                                        # ['infores:bacdive', 'bacdive:NNN'] — matches the
-                                        # bacdive transform's _StrainProvenanceWriter output
-                                        # byte-for-byte so KGX dedupes the two rows (this
-                                        # mediadive row + the corresponding bacdive row for the
-                                        # same s,p,o) by exact-string match in the merge step.
-                                        # Without the matching format KGX nests the two values
-                                        # under a 2-element list of strings — uglier and harder
-                                        # to query.
-                                        provenance = f"['infores:bacdive', '{strain_id}']"
+                                        # The resource is scalar; its public record page is
+                                        # publication evidence, matching BacDive (#688, #1070).
                                         medium_strain_edge.extend(
                                             [
                                                 [
@@ -1069,9 +1097,12 @@ class MediaDiveTransform(Transform):
                                                     predicate,
                                                     medium_id,
                                                     relation,
-                                                    provenance,
+                                                    "infores:bacdive",
                                                     OBSERVATION,
                                                     MANUAL_AGENT,
+                                                    "",
+                                                    "",
+                                                    bacdive_record_url(strain_id),
                                                 ],
                                             ]
                                         )
@@ -1168,15 +1199,14 @@ class MediaDiveTransform(Transform):
                     # Each MediaDive solution is a chemical mixture — subclass it under
                     # CHEBI:60004 (mixture) so OBO-aware reasoners can navigate from any
                     # solution back to the canonical chemical hierarchy. Edge schema is
-                    # the standard 9-col MediaDive edge_header (subject, predicate, object,
-                    # relation, primary_knowledge_source, knowledge_level, agent_type, value, unit).
+                    # the standard edge_header, with the final publications cell empty.
                     solution_subclass_edges = [
                         [
                             MEDIADIVE_SOLUTION_PREFIX + str(k),
                             "biolink:subclass_of",
                             "CHEBI:60004",
                             "rdfs:subClassOf",
-                            self.source_name,
+                            self.knowledge_source,
                             "knowledge_assertion",
                             "manual_agent",
                             "",
@@ -1192,22 +1222,11 @@ class MediaDiveTransform(Transform):
                     if len(chebi_list) > 0 and self.chebi_roles:
                         # Collect all role relationships for these compounds
                         role_set = set()
-                        role_edges_data = []
+                        role_edges_data = self._generate_chebi_role_edges(chebi_list)
                         for chebi_id in chebi_list:
                             if chebi_id in self.chebi_roles:
                                 for role_id in self.chebi_roles[chebi_id]:
                                     role_set.add(role_id)
-                                    role_edges_data.append(
-                                        [
-                                            chebi_id,
-                                            CHEBI_TO_ROLE_EDGE,
-                                            role_id,
-                                            HAS_ROLE,
-                                            "infores:chebi",
-                                            OBSERVATION,
-                                            MANUAL_AGENT,
-                                        ]
-                                    )
                         # Write role nodes with labels
                         role_nodes = []
                         for role in role_set:

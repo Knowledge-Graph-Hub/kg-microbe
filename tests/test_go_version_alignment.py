@@ -93,6 +93,21 @@ def test_mismatch_raises_in_strict_mode(tmp_path, monkeypatch):
         ou.assert_go_version_alignment(strict=True)
 
 
+def test_alignment_uses_explicit_raw_root_instead_of_default(tmp_path, monkeypatch):
+    """An unrelated default release cannot reject or conceal the producer's selected release."""
+    default, selected = tmp_path / "default", tmp_path / "selected"
+    default.mkdir()
+    selected.mkdir()
+    owl = _write_go_pair(default, "2026-05-19", "2026-04-01")
+    _write_go_pair(selected, "2026-06-01", "2026-06-01")
+    monkeypatch.setattr("kg_microbe.transform_utils.constants.GO_SOURCE", owl)
+    ou.assert_go_version_alignment(strict=True, raw_dir=selected)
+    _write_go_pair(default, "2026-05-19", "2026-05-19")
+    _write_go_pair(selected, "2026-06-01", "2026-04-01")
+    with pytest.raises(ou.OntologyVersionMismatchError, match="go.owl=2026-06-01"):
+        ou.assert_go_version_alignment(strict=True, raw_dir=selected)
+
+
 def test_mismatch_warns_when_not_strict(tmp_path, monkeypatch, capsys):
     """Under strict=False a mismatch warns instead of raising."""
     owl = _write_go_pair(tmp_path, "2026-05-19", "2026-04-01")
@@ -132,6 +147,7 @@ def test_fix_node_categories_invokes_gate(tmp_path, monkeypatch):
         "kg_microbe.utils.ontology_utils.get_go_category_by_aspect",
         lambda go_id, **k: "biolink:MolecularActivity",
     )
+    monkeypatch.setattr("kg_microbe.utils.go_authority.load_go_authority", lambda raw_dir: object())
     nodes = tmp_path / "go_nodes.tsv"
     pd.DataFrame(
         [["GO:0004096", "biolink:BiologicalProcess", "catalase activity"]],
@@ -139,6 +155,7 @@ def test_fix_node_categories_invokes_gate(tmp_path, monkeypatch):
     ).to_csv(nodes, sep="\t", index=False)
 
     t = OntologiesTransform.__new__(OntologiesTransform)
+    t.input_base_dir = tmp_path
     t._fix_node_categories(nodes, "go")
 
     assert called["gate"] is True

@@ -1,16 +1,19 @@
 """KGX row-emission helpers for the BacDive transform."""
 
+from kg_microbe.utils.provenance import bacdive_record_url, serialize_knowledge_sources
+
 STRAIN_BACDIVE_PREFIX = "kgmicrobe.strain:bacdive_"
 
 
 class StrainProvenanceWriter:
-    """Add a BacDive strain CURIE to provenance for strain-derived edges."""
+    """Keep PKS scalar and attach a BacDive record page to strain-derived evidence."""
 
-    def __init__(self, inner_writer, *, knowledge_source: str, ks_column_index: int):
+    def __init__(self, inner_writer, *, knowledge_source: str, ks_column_index: int, publications_column_index: int):
         """Wrap a CSV writer and record the provenance column position."""
         self._inner = inner_writer
         self._ks = knowledge_source
         self._ks_idx = ks_column_index
+        self._publications_idx = publications_column_index
 
     def writerow(self, row) -> None:
         """Write one row, augmenting bare source provenance when applicable."""
@@ -19,7 +22,10 @@ class StrainProvenanceWriter:
             for endpoint in (row[0], row[2] if len(row) > 2 else None):
                 if isinstance(endpoint, str) and endpoint.startswith(STRAIN_BACDIVE_PREFIX):
                     bacdive_id = endpoint[len(STRAIN_BACDIVE_PREFIX) :]
-                    row[self._ks_idx] = f"['{self._ks}', 'bacdive:{bacdive_id}']"
+                    row.extend([""] * max(0, self._publications_idx + 1 - len(row)))
+                    row[self._publications_idx] = serialize_knowledge_sources(
+                        row[self._publications_idx], bacdive_record_url(bacdive_id)
+                    )
                     break
         self._inner.writerow(row)
 

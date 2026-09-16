@@ -270,6 +270,7 @@ _EDGE_HEADER = [
     "primary_knowledge_source",
     "knowledge_level",
     "agent_type",
+    "publications",
 ]
 
 
@@ -291,7 +292,16 @@ def _provenance_writer():
             captured.append(list(row))
 
     index = _EDGE_HEADER.index("primary_knowledge_source")
-    return captured, _StrainProvenanceWriter(_Sink(), knowledge_source="infores:bacdive", ks_column_index=index), index
+    return (
+        captured,
+        _StrainProvenanceWriter(
+            _Sink(),
+            knowledge_source="infores:bacdive",
+            ks_column_index=index,
+            publications_column_index=_EDGE_HEADER.index("publications"),
+        ),
+        index,
+    )
 
 
 def _edge_row(subject, obj, knowledge_source):
@@ -311,22 +321,19 @@ def _edge_row(subject, obj, knowledge_source):
         knowledge_source,
         "knowledge_assertion",
         "manual_agent",
+        "",
     ]
 
 
-def test_lpsn_edge_carries_the_list_form_knowledge_source():
+def test_lpsn_edge_keeps_scalar_resource_and_public_record_evidence():
     """
-    The LPSN cross-ref edge must carry the same list-form provenance as its siblings.
+    The LPSN cross-ref edge must retain source and record attribution (#688, #1070).
 
     #680 changed the subject from ``bacdive:NNN`` to
     ``kgmicrobe.strain:bacdive_NNN``, which as a side effect brought all
     62,096 of these edges under ``_StrainProvenanceWriter``. The provenance
-    flipped from ``infores:bacdive`` to ``['infores:bacdive', 'bacdive:NNN']``.
-
-    That is the wanted value — mediadive emits a byte-identical literal so KGX
-    collapses the two rows by exact-string match at merge — but it was an
-    unintended side effect, unmentioned in any commit on #680, and nothing
-    pinned it. A refactor could flip it back silently (#688).
+    gained record attribution. #1070 retains that public record page in
+    publications while PKS identifies only the source information resource.
     """
     from kg_microbe.transform_utils.bacdive.bacdive import _StrainProvenanceWriter
 
@@ -339,12 +346,15 @@ def test_lpsn_edge_carries_the_list_form_knowledge_source():
             """Record one row."""
             captured.append(list(row))
 
-    writer = _StrainProvenanceWriter(_Sink(), knowledge_source="infores:bacdive", ks_column_index=4)
+    writer = _StrainProvenanceWriter(
+        _Sink(), knowledge_source="infores:bacdive", ks_column_index=4, publications_column_index=7
+    )
     writer.writerow(
         ["kgmicrobe.strain:bacdive_7249", "biolink:subclass_of", "lpsn:12345", "rdfs:subClassOf", "infores:bacdive"]
     )
 
-    assert captured[0][4] == "['infores:bacdive', 'bacdive:7249']", captured[0][4]
+    assert captured[0][4] == "infores:bacdive", captured[0][4]
+    assert captured[0][7] == "https://bacdive.dsmz.de/strain/7249"
 
 
 def test_non_strain_edges_keep_their_bare_knowledge_source():
@@ -365,7 +375,9 @@ def test_non_strain_edges_keep_their_bare_knowledge_source():
             """Record one row."""
             captured.append(list(row))
 
-    writer = _StrainProvenanceWriter(_Sink(), knowledge_source="infores:bacdive", ks_column_index=4)
+    writer = _StrainProvenanceWriter(
+        _Sink(), knowledge_source="infores:bacdive", ks_column_index=4, publications_column_index=7
+    )
     writer.writerow(["METPO:1000601", "biolink:subclass_of", "METPO:1000600", "rdfs:subClassOf", "infores:bacdive"])
     writer.writerow(["kgmicrobe.strain:bacdive_7249", "biolink:location_of", "ENVO:00002006", "RO:1", "infores:metpo"])
 

@@ -1,0 +1,31 @@
+{
+  "graphs": [
+    {
+      "id": "https://example.org/ontology-offline-context.owl",
+      "nodes": [
+        {"id": "http://purl.obolibrary.org/obo/GO_0008152", "lbl": "metabolic process", "type": "CLASS"},
+        {"id": "http://purl.obolibrary.org/obo/CHEBI_15377", "lbl": "water", "type": "CLASS"},
+        {"id": "http://purl.obolibrary.org/obo/NCBITaxon_287", "lbl": "Pseudomonas aeruginosa", "type": "CLASS"},
+        {"id": "https://w3id.org/biolink/vocab/NamedThing", "lbl": "named thing", "type": "CLASS"},
+        {"id": "https://unmapped-ontology.invalid/term/Unknown", "lbl": "unmapped class", "type": "CLASS"}
+      ],
+      "edges": [
+        {
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_287",
+          "pred": "https://w3id.org/biolink/vocab/related_to",
+          "obj": "http://purl.obolibrary.org/obo/GO_0008152"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/GO_0008152",
+          "pred": "https://w3id.org/biolink/vocab/related_to",
+          "obj": "http://purl.obolibrary.org/obo/CHEBI_15377"
+        },
+        {
+          "sub": "https://unmapped-ontology.invalid/term/Unknown",
+          "pred": "https://w3id.org/biolink/vocab/related_to",
+          "obj": "https://w3id.org/biolink/vocab/NamedThing"
+        }
+      ]
+    }
+  ]
+}

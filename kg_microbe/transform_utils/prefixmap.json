@@ -14,5 +14,10 @@
     "orcid": "https://orcid.org/",
     "schema": "http://schema.org/",
     "doap": "http://usefulinc.com/ns/doap#",
-    "GO": "http://purl.obolibrary.org/obo/GO_"
+    "GO": "http://purl.obolibrary.org/obo/GO_",
+    "GOP": "http://purl.obolibrary.org/obo/go#",
+    "GOREL": "http://purl.obolibrary.org/obo/GOREL_",
+    "UBERON_CORE": "http://purl.obolibrary.org/obo/uberon/core#",
+    "WIKIDATA": "https://www.wikidata.org/entity/",
+    "time": "http://www.w3.org/2006/time#"
 }

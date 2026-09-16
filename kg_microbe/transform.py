@@ -27,7 +27,7 @@ from kg_microbe.transform_utils.constants import (
     PREGO,
     RHEAMAPPINGS,
 )
-from kg_microbe.utils.transform_fingerprint import write_fingerprint
+from kg_microbe.utils.transform_fingerprint import FINGERPRINT_FILE, resolve_data_input, write_fingerprint
 
 
 class LazyTransform:
@@ -136,21 +136,22 @@ def _ontology_map() -> dict:
     return ONTOLOGIES_MAP
 
 
-def _missing_declared_inputs(sources: List[str], repo_root: Path) -> List[str]:
+def _missing_declared_inputs(sources: List[str], repo_root: Path, input_dir: Optional[Path] = None) -> List[str]:
     """
-    Return ``"source: path"`` for every declared curation input that is absent.
+    Return ``"source: path"`` for every declared input absent from its effective location.
 
     Checked before any source runs (#685): a missing prerequisite should fail
     in seconds, not after the hours of upstream work that precede it in the
-    batch. Only ``DATA_INPUTS`` can be checked this way -- raw downloads are
-    not declared per transform.
+    batch. Raw authorities declared under ``data/raw`` follow the CLI input
+    directory; curated mappings remain repository-relative.
     """
     missing = []
     for source in sources:
         cls = DATA_SOURCES.get(source)
         for rel in getattr(cls, "DATA_INPUTS", ()) if cls is not None else ():
-            if not (repo_root / rel).exists():
-                missing.append(f"{source}: {rel}")
+            path = resolve_data_input(repo_root, rel, input_dir)
+            if not path.exists():
+                missing.append(f"{source}: {rel}" + (f" ({path})" if input_dir is not None else ""))
     return missing
 
 
@@ -158,7 +159,9 @@ def _run_one(source: str, input_dir: Optional[Path], output_dir: Optional[Path],
     """Run one registered source, or one ontology by name, and report what it wrote."""
     if source in DATA_SOURCES:
         t = DATA_SOURCES[source](input_dir, output_dir)
+        _invalidate_fingerprint(t)
         t.run(show_status=show_status)
+        _finalize_output(t)
         written = _describe_output(t, source)
         # After the outputs, so a run that dies partway leaves no marker
         # claiming its output matches the current inputs. Central here rather
@@ -171,12 +174,28 @@ def _run_one(source: str, input_dir: Optional[Path], output_dir: Optional[Path],
     # scoped to one file; the CLI branch meant to reach it tested a source
     # name against ONTOLOGIES_MAP, whose keys never overlapped DATA_SOURCES.
     t = DATA_SOURCES[ONTOLOGIES](input_dir, output_dir)
+    _invalidate_fingerprint(t)
     t.run(_ontology_map()[source], show_status=show_status)
+    _finalize_output(t, file_prefix=f"{source}_")
     written = _describe_output(t, source, file_prefix=f"{source}_")
     # Deliberately no fingerprint: the marker covers the whole ontologies
     # directory, and one refreshed ontology does not make the other thirteen
-    # current. The existing marker stays, and reads STALE if the code moved.
+    # current. The previous whole-directory marker has been invalidated.
     print(f"[transform] {source}: done — {written} (single ontology; ontologies fingerprint not updated)", flush=True)
+
+
+def _invalidate_fingerprint(transform_obj):
+    """Remove only the prior success claim before a producer can change its graph."""
+    output_dir = getattr(transform_obj, "output_dir", None)
+    if output_dir is not None:
+        (Path(output_dir) / FINGERPRINT_FILE).unlink(missing_ok=True)
+
+
+def _finalize_output(transform_obj, *, file_prefix=""):
+    """Use the explicit source contract; registry test doubles may have no graph output."""
+    finalizer = getattr(transform_obj, "finalize", None)
+    if finalizer is not None:
+        finalizer(file_prefix=file_prefix, fresh_run=True)
 
 
 def transform(
@@ -227,7 +246,7 @@ def transform(
             f"single ontologies: {', '.join(ontology_names)}"
         )
 
-    missing = _missing_declared_inputs(sources, Path(__file__).resolve().parent.parent)
+    missing = _missing_declared_inputs(sources, Path(__file__).resolve().parent.parent, input_dir)
     if missing:
         raise FileNotFoundError("Declared curation input(s) missing; nothing was run: " + "; ".join(missing))
 
@@ -272,8 +291,10 @@ def _record_fingerprint(transform_obj, source: str) -> None:
     verdicts on output that was byte-for-byte current.
 
     Best-effort: a transform that ran successfully must not be reported as
-    failed because bookkeeping could not be written. A missing marker degrades
-    to the timestamp comparison, which is what every consumer did before.
+    failed because bookkeeping could not be written. A missing marker is
+    rejected by production merge; diagnostics may still use weaker checks.
+    Verify producer-time consumed inputs inside atomic marker publication so
+    changed bytes cannot be rehashed into a misleading success certificate.
 
     :param transform_obj: The transform that just ran.
     :param source: Registered source name.
@@ -286,8 +307,12 @@ def _record_fingerprint(transform_obj, source: str) -> None:
             repo_root=Path(__file__).resolve().parent.parent,
             data_inputs=getattr(type(transform_obj), "DATA_INPUTS", ()),
             transform_inputs=getattr(type(transform_obj), "TRANSFORM_INPUTS", ()),
+            input_dir=getattr(transform_obj, "input_base_dir", None),
+            finalization_inputs=getattr(transform_obj, "finalization_inputs", ()),
+            verify_inputs=getattr(transform_obj, "verify_consumed_inputs", None),
         )
     except Exception as exc:  # noqa: BLE001 - bookkeeping must not fail the run
+        _invalidate_fingerprint(transform_obj)
         print(f"[transform] {source}: could not record fingerprint ({exc})", flush=True)
 
 

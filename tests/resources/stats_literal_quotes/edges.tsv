@@ -1,0 +1,3 @@
+subject	predicate	object	relation	primary_knowledge_source	knowledge_level	agent_type	description
+fixture:1	biolink:related_to	fixture:2		infores:test	knowledge_assertion	manual_agent	"Open evidence
+fixture:2	biolink:related_to	fixture:1		infores:other	prediction	automated_agent	Closed evidence"

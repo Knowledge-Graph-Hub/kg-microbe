@@ -210,6 +210,7 @@ CARBON_SUBSTRATE_PREFIX = "kgmicrobe.carbon_substrate:"
 # slugs without repeating the string. See the yaml header for guidance on
 # what belongs under each.
 COMPOUND_PREFIX = "kgmicrobe.compound:"
+INGREDIENT_PREFIX = "kgmicrobe.ingredient:"
 TRAIT_PREFIX = "kgmicrobe.trait:"
 ISOLATION_SOURCE_PREFIX = "bacdive.isolation_source:"
 RHEA_OLD_PREFIX = "OBO:rhea_"
@@ -239,7 +240,9 @@ LPSN_PREFIX = "lpsn:"
 # LPSN ↔ GOLD ↔ IMG crosswalk. Registered here so cross_ref edges emit
 # well-formed CURIEs and validators (kg_model_review STANDARD_PREFIXES,
 # custom_curies.yaml loader) accept them.
-GOLD_PREFIX = "GOLD:"  # Genomes OnLine Database (organism/project IDs)
+GOLD_PREFIX = "gold:"  # Same namespace as the GOLD transform's organism/project IDs.
+GOLD_ORGANISM_FOLD_FILE = "organism_folds.tsv"
+GOLD_ORGANISM_FOLD_HEADER = ("original_id", "canonical_id")
 IMG_PREFIX = "IMG:"  # JGI Integrated Microbial Genomes
 
 # Knowledge-source infores identifiers for the four curated sources
@@ -303,25 +306,20 @@ ENZYME_TO_ASSAY_EDGE = "biolink:related_to_at_instance_level"  # [enzyme -> assa
 SUBSTRATE_TO_ASSAY_EDGE = "biolink:occurs_in"  # [substrate -> assay]
 ENZYME_TO_SUBSTRATE_EDGE = "biolink:has_input"  # [enzyme -> substrate]
 NCBI_TO_SUBSTRATE_EDGE = "biolink:consumes"
-# Rhea reactions → EC enzyme classes. Semantically "this reaction is enabled
-# by this enzyme class" — the historical and downstream-expected predicate is
-# biolink:enabled_by. Note: the kg-model-review domain/range checker flags
-# these edges because biolink:enabled_by has range=physical_entity and EC
-# nodes carry biolink:MolecularActivity in this graph. The mismatch is an
-# artifact of biolink's enabled_by being defined for gene-product → activity
-# (not activity-class → activity-class as Rhea↔EC is); changing the predicate
-# loses the directional reaction-to-enzyme semantics that the Rhea loader and
-# downstream consumers expect, so we accept the validator warning instead.
-RHEA_TO_EC_EDGE = "biolink:enabled_by"
+# Rhea's curated rhea2ec/rhea2go tables are cross-references between reaction
+# and activity classifications, not assertions about a physical gene product.
+RHEA_TO_EC_EDGE = "biolink:close_match"
+RHEA_TO_GO_EDGE = "biolink:close_match"
+RHEA_XREF_RELATION = "oboInOwl:hasDbXref"
 
 # Assay → Entity predicates (methodological reference edges)
-ASSAY_HAS_OUTPUT_PREDICATE = "biolink:has_output"  # [assay -> GO/EC]
-ASSAY_HAS_INPUT_PREDICATE = "biolink:has_input"  # [assay -> ChEBI]
+ASSAY_HAS_OUTPUT_PREDICATE = "MICRO:0001206"  # is an assay for the enzymatic activity of
+ASSAY_HAS_INPUT_PREDICATE = "MICRO:0000065"  # is an assay using the chemical reagent
+ASSAY_BIOLOGICAL_PROCESS_PREDICATE = "MICRO:0001215"  # assay for the biological process of
 
 # Assay → Entity relations
-ASSAY_OUTPUT_RELATION = "NCIT:C25284"  # output
-ASSAY_INPUT_RELATION = "RO:0002233"  # has input (already defined as HAS_INPUT_RELATION)
-RHEA_TO_GO_EDGE = "biolink:enables"
+ASSAY_OUTPUT_RELATION = ASSAY_HAS_OUTPUT_PREDICATE
+ASSAY_INPUT_RELATION = ASSAY_HAS_INPUT_PREDICATE
 NCBI_TO_METABOLITE_RESISTANCE_EDGE = "biolink:associated_with_resistance_to"
 NCBI_TO_METABOLITE_SENSITIVITY_EDGE = "biolink:associated_with_sensitivity_to"
 
@@ -400,6 +398,7 @@ ASSAY_CATEGORY = "biolink:Procedure"  # API kit assay tests
 # CHEMICAL_SUBSTANCE_CATEGORY = "biolink:ChemicalSubstance"  # removed from biolink; use CHEBI_CATEGORY
 
 HAS_PART = "BFO:0000051"
+HAS_PART_PREDICATE = "biolink:has_part"
 IS_GROWN_IN = "METPO:2000517"  # RO relation for grows in (organism -> growth medium), used in relation column
 DOES_NOT_GROW_IN = "METPO:2000518"  # RO relation for does not grow in, used in relation column
 USES_AS_CARBON_SOURCE = NCBI_TO_CARBON_SUBSTRATE_EDGE  # Alias for uses as carbon source
@@ -461,6 +460,15 @@ OBJECT_COLUMN = "object"
 RELATION_COLUMN = "relation"
 PROVIDED_BY_COLUMN = "provided_by"
 PRIMARY_KNOWLEDGE_SOURCE_COLUMN = "primary_knowledge_source"
+PUBLICATIONS_COLUMN = "publications"
+SOURCE_ASSERTION_ID_COLUMN = "source_assertion_id"
+SOURCE_COLUMN = "source_column"
+SOURCE_RECORD_COLUMN = "source_record"
+SOURCE_CITATION_COLUMN = "source_citation"
+SOURCE_CITATION_BYTES_COLUMN = "source_citation_base64"
+ORIGINAL_OBJECT_COLUMN = "original_object"
+GO_REFERENCE_CONTEXT_COLUMN = "go_reference_context"
+VALUE_ENCODING_COLUMN = "value_encoding"
 KNOWLEDGE_LEVEL_COLUMN = "knowledge_level"
 AGENT_TYPE_COLUMN = "agent_type"
 

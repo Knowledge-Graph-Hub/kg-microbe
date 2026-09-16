@@ -1,0 +1,4 @@
+LPSN_ID,BacDive_Motility,BacDive_Spore_formation,BacDive_Salt_concentration,BacDive_Temperature_for_growth,Literature_Major_end_products,Literature_Minor_end_products,Literature_Citation
+101,0,0,<1;1;>1,1,acetate,acetate,PMID:12345
+101,0,,,,,,PMID:12346
+202,1,0,>0,0,,,

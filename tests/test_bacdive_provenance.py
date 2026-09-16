@@ -23,12 +23,13 @@ def _make_writer() -> tuple[StrainProvenanceWriter, _DummyWriter]:
         inner,
         knowledge_source="infores:bacdive",
         ks_column_index=4,
+        publications_column_index=7,
     )
     return wrapped, inner
 
 
-def test_strain_subject_with_infores_rewrites_to_list_form():
-    """A bacdive grows-in edge from a strain subject should gain the strain id in its KS."""
+def test_strain_subject_keeps_scalar_resource_and_adds_record_publication():
+    """A strain growth edge gains its record page without changing the primary resource."""
     wrapped, inner = _make_writer()
     wrapped.writerow(
         [
@@ -41,11 +42,12 @@ def test_strain_subject_with_infores_rewrites_to_list_form():
             "a",
         ]
     )
-    assert inner.rows[0][4] == "['infores:bacdive', 'bacdive:160227']"
+    assert inner.rows[0][4] == "infores:bacdive"
+    assert inner.rows[0][7] == "https://bacdive.dsmz.de/strain/160227"
 
 
-def test_strain_object_with_infores_rewrites_to_list_form():
-    """An isolation-source-style edge with the strain as object also gets the strain id added."""
+def test_strain_object_keeps_scalar_resource_and_adds_record_publication():
+    """An isolation-source-style edge retains record evidence when the strain is the object."""
     wrapped, inner = _make_writer()
     wrapped.writerow(
         [
@@ -58,7 +60,8 @@ def test_strain_object_with_infores_rewrites_to_list_form():
             "a",
         ]
     )
-    assert inner.rows[0][4] == "['infores:bacdive', 'bacdive:999']"
+    assert inner.rows[0][4] == "infores:bacdive"
+    assert inner.rows[0][7] == "https://bacdive.dsmz.de/strain/999"
 
 
 def test_non_strain_endpoints_passthrough():
@@ -109,5 +112,6 @@ def test_writerows_applies_to_each_row():
             ["NCBITaxon:9", "p", "X:1", "rel", "infores:bacdive", "k", "a"],
         ]
     )
-    assert inner.rows[0][4] == "['infores:bacdive', 'bacdive:1']"
+    assert inner.rows[0][4] == "infores:bacdive"
+    assert inner.rows[0][7] == "https://bacdive.dsmz.de/strain/1"
     assert inner.rows[1][4] == "infores:bacdive"

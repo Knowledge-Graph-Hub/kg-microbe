@@ -1,6 +1,8 @@
 """Tests for the MicrobeDecoder transform."""
 
 import csv
+import io
+import shutil
 from pathlib import Path
 
 import pytest
@@ -10,6 +12,7 @@ from kg_microbe.transform_utils.constants import (
     CLOSE_MATCH_PREDICATE,
     COMPOUND_PREFIX,
     FAPROTAX_KNOWLEDGE_SOURCE,
+    GOLD_ORGANISM_FOLD_FILE,
     HAS_PHENOTYPE_PREDICATE,
     LITERATURE_KNOWLEDGE_SOURCE,
     LPSN_PREFIX,
@@ -21,6 +24,16 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
 
 FIXTURE_DIR = Path(__file__).parent / "resources" / "microbedecoder"
+
+
+def _supply_gold_fold_report(output_dir):
+    """Supply the explicit empty GOLD fold report for tests not exercising folds."""
+    gold_dir = output_dir / "gold"
+    gold_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(FIXTURE_DIR / GOLD_ORGANISM_FOLD_FILE, gold_dir / GOLD_ORGANISM_FOLD_FILE)
+    gtdb_dir = output_dir / "gtdb"
+    gtdb_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(FIXTURE_DIR / "gtdb_nodes.tsv", gtdb_dir / "nodes.tsv")
 
 
 class _NoChebi:
@@ -49,6 +62,7 @@ def microbedecoder_transform(tmp_path):
     land in isolation. ``_NoChebi`` is injected so the tests never depend
     on the unified chemical mapping file being present.
     """
+    _supply_gold_fold_report(tmp_path)
     return MicrobeDecoderTransform(
         input_dir=FIXTURE_DIR,
         output_dir=tmp_path,
@@ -60,6 +74,29 @@ def _read_tsv(path: Path) -> list:
     """Read a TSV into a list of dicts (header row → per-row dicts)."""
     with open(path, newline="") as fh:
         return list(csv.DictReader(fh, delimiter="\t"))
+
+
+def test_explicit_assembly_alias_and_source_reported_versions(tmp_path):
+    """Only the exact GTDB same_as alias redirects; version skew remains an explicit source node."""
+    transform = MicrobeDecoderTransform(input_dir=tmp_path, output_dir=tmp_path, chemical_loader=_NoChebi())
+    transform._assembly_declared = {"ncbi.assembly:GCF_1.2", "ncbi.assembly:GCA_2.1"}
+    transform._assembly_aliases = {"ncbi.assembly:GCA_1.2": "ncbi.assembly:GCF_1.2"}
+    node_stream, edge_stream = io.StringIO(), io.StringIO()
+    transform._emit_crosswalk_edges(
+        "lpsn:101",
+        {"GTDB_ID": "GB_GCA_1.2, GB_GCA_1.1, RS_GCF_2.1"},
+        csv.writer(node_stream, delimiter="\t"),
+        csv.writer(edge_stream, delimiter="\t"),
+    )
+    nodes = list(csv.DictReader(io.StringIO(node_stream.getvalue()), fieldnames=transform.node_header, delimiter="\t"))
+    edges = list(csv.DictReader(io.StringIO(edge_stream.getvalue()), fieldnames=transform.edge_header, delimiter="\t"))
+    assert {node["id"] for node in nodes} == {"ncbi.assembly:GCA_1.1", "ncbi.assembly:GCF_2.1"}
+    assert all(node["category"] == "biolink:Genome" for node in nodes)
+    assert all("no cross-release identity inferred" in node["description"] for node in nodes)
+    assert edges[0]["object"] == "ncbi.assembly:GCF_1.2"
+    assert edges[0]["original_object"] == "ncbi.assembly:GCA_1.2"
+    assert edges[1]["object"] == "ncbi.assembly:GCA_1.1"
+    assert edges[2]["object"] == "ncbi.assembly:GCF_2.1"
 
 
 # ---------------------------------------------------------------------------
@@ -122,10 +159,9 @@ def test_identifier_crosswalk_edges_use_close_match(microbedecoder_transform):
     """
     The identifier crosswalks stay ``biolink:close_match`` from lpsn:<id>.
 
-    NCBITaxon, GTDB, GOLD and IMG really are other identifiers for the same
-    taxon, so near-identity is right. BacDive is excluded — its target is a
-    *strain*, not another name, and it is asserted as subsumption instead
-    (#687); see :func:`test_bacdive_crosswalk_is_subsumption_not_close_match`.
+    Preserve the source's crosswalk predicate while fixing endpoint identifiers.
+    BacDive is excluded: it is asserted as subsumption instead (#687); see
+    :func:`test_bacdive_crosswalk_is_subsumption_not_close_match`.
     """
     microbedecoder_transform.run()
     edges = _read_tsv(microbedecoder_transform.output_edge_file)
@@ -135,7 +171,7 @@ def test_identifier_crosswalk_edges_use_close_match(microbedecoder_transform):
     objects = {e["object"] for e in e_101}
     assert "NCBITaxon:1423" in objects
     assert "GTDB:d__Bacteria;g__Bacillus;s__Bacillus subtilis" in objects
-    assert "GOLD:Gs0000101" in objects
+    assert "gold:Gs0000101" in objects
     assert "IMG:3300000001" in objects
     assert not any(o.startswith("kgmicrobe.strain:") for o in objects), (
         "the BacDive crosswalk must not be a close_match"
@@ -280,7 +316,17 @@ def test_crosswalk_targets_are_not_stubbed(microbedecoder_transform):
     # "bacdive:" stays in the list even though nothing emits it now — it is the
     # prefix this transform used to target, and stubbing it would be a silent
     # return of the dangling-edge bug.
-    for prefix in ("NCBITaxon:", "GTDB:", "kgmicrobe.strain:", "bacdive:", "GOLD:", "IMG:", "CHEBI:"):
+    for prefix in (
+        "NCBITaxon:",
+        "GTDB:",
+        "ncbi.assembly:",
+        "kgmicrobe.strain:",
+        "bacdive:",
+        "gold:",
+        "GOLD:",
+        "IMG:",
+        "CHEBI:",
+    ):
         stubs = [n["id"] for n in nodes if n["id"].startswith(prefix)]
         assert stubs == [], (
             f"MicrobeDecoder must not emit stub nodes for cross-ref target "
@@ -298,6 +344,52 @@ def test_crosswalk_normalizes_prefixed_source_ids(microbedecoder_transform):
     # None should be "NCBITaxon:NCBITaxon:1423".
     for o in objects:
         assert o.count("NCBITaxon:") == 1, f"double-prefixed: {o}"
+
+
+@pytest.mark.parametrize(
+    "column,raw,expected",
+    [
+        ("GTDB_ID", "RS_GCF_000005845.2", "ncbi.assembly:GCF_000005845.2"),
+        ("GTDB_ID", "GB_GCA_000008865.2", "ncbi.assembly:GCA_000008865.2"),
+        ("GTDB_ID", "GTDB:RS_GCF_000005845.2", "ncbi.assembly:GCF_000005845.2"),
+        ("GTDB_ID", "GTDB:GB_GCA_000008865.2", "ncbi.assembly:GCA_000008865.2"),
+        ("GTDB_ID", "GCF_000005845", "ncbi.assembly:GCF_000005845"),
+        ("GTDB_ID", "ncbi.assembly:GCF_000005845.3", "ncbi.assembly:GCF_000005845.3"),
+        ("GTDB_ID", "GTDB:s__Bacillus_subtilis", "GTDB:s__Bacillus_subtilis"),
+        ("GTDB_ID", "d__Bacteria;s__Bacillus subtilis", "GTDB:d__Bacteria;s__Bacillus subtilis"),
+        ("GOLD_Organism_ID", "Go0000002", "gold:Go0000002"),
+        ("GOLD_Organism_ID", "GOLD:Go0000002", "gold:Go0000002"),
+        ("GOLD_Organism_ID", "gold:Go0000002", "gold:Go0000002"),
+        ("GOLD_Organism_ID", "Gold:Go0000002", "gold:Go0000002"),
+    ],
+)
+def test_crosswalk_uses_owner_namespaces(tmp_path, column, raw, expected):
+    """Assemblies and GOLD organisms join the owner IDs, not KGX stubs (#1050/1051)."""
+    input_dir = tmp_path / "raw"
+    input_dir.mkdir()
+    with (input_dir / "database.csv").open("w", newline="") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(["LPSN_ID", column])
+        writer.writerow(["101", raw])
+    _supply_gold_fold_report(tmp_path / "transformed")
+    transform = MicrobeDecoderTransform(
+        input_dir=input_dir,
+        output_dir=tmp_path / "transformed",
+        chemical_loader=_NoChebi(),
+    )
+    transform.run()
+    edges = _read_tsv(transform.output_edge_file)
+    assert len(edges) == 1
+    assert edges[0]["object"] == expected
+    assert edges[0]["primary_knowledge_source"] == MICROBEDECODER_KNOWLEDGE_SOURCE
+    nodes = {n["id"]: n for n in _read_tsv(transform.output_node_file)}
+    if expected.startswith("ncbi.assembly:") and "." in expected.split(":", 1)[1]:
+        # The fixture GTDB release is empty. Source-reported assemblies now
+        # have explicit declarations, without asserting a GTDB identity.
+        assert nodes[expected]["category"] == "biolink:Genome"
+        assert nodes[expected]["provided_by"] == MICROBEDECODER_KNOWLEDGE_SOURCE
+    else:
+        assert expected not in nodes
 
 
 # ---------------------------------------------------------------------------
@@ -371,17 +463,7 @@ def test_substrates_use_consumes_predicate(microbedecoder_transform):
 
 
 def test_multivalue_split_produces_one_edge_per_token(microbedecoder_transform):
-    """
-    LPSN_ID=101 Literature_Major_end_products='acetate, lactate, 2,3-butanediol'.
-
-    Documented v1 behavior: the splitter splits on every ``,`` or ``;``,
-    so a chemical name containing a literal comma (``2,3-butanediol``)
-    over-splits into ``2`` and ``3-butanediol``. This is the same
-    limitation madin_etal ships with; both transforms produce accurate
-    edges for the common case of simple names (``acetate``, ``lactate``,
-    ``butanol``) and can be tightened in a follow-up once a curated
-    exceptions list exists.
-    """
+    """Preserve 2,3-butanediol as one chemical alongside the ordinary comma-separated products."""
     microbedecoder_transform.run()
     edges = _read_tsv(microbedecoder_transform.output_edge_file)
     lit_produces = {
@@ -394,11 +476,9 @@ def test_multivalue_split_produces_one_edge_per_token(microbedecoder_transform):
     # Simple names must land as expected
     assert f"{COMPOUND_PREFIX}acetate" in lit_produces
     assert f"{COMPOUND_PREFIX}lactate" in lit_produces
-    # And the known over-split fragments prove the fixture actually
-    # exercised the multi-value path (fixture carries the corner case
-    # deliberately as a regression anchor for the future smart-splitter).
-    assert f"{COMPOUND_PREFIX}2" in lit_produces
-    assert f"{COMPOUND_PREFIX}3_butanediol" in lit_produces
+    assert f"{COMPOUND_PREFIX}2_3_butanediol" in lit_produces
+    assert f"{COMPOUND_PREFIX}2" not in lit_produces
+    assert f"{COMPOUND_PREFIX}3_butanediol" not in lit_produces
 
 
 # ---------------------------------------------------------------------------
@@ -419,7 +499,12 @@ def test_bacdive_snapshot_edges_carry_microbedecoder_provenance(microbedecoder_t
     assert bacdive_snapshot, "BacDive_* columns must produce has_phenotype edges"
     # LPSN_ID=101 has BacDive_Oxygen_tolerance='facultative anaerobe'
     e_101 = [e for e in bacdive_snapshot if e["subject"] == f"{LPSN_PREFIX}101"]
-    assert any(e["object"] == f"{TRAIT_PREFIX}facultative_anaerobe" for e in e_101)
+    assert any(
+        e["object"].startswith(TRAIT_PREFIX)
+        and e["source_column"] == "BacDive_Oxygen_tolerance"
+        and e["value"] == "facultative anaerobe"
+        for e in e_101
+    )
 
 
 def test_bacdive_only_row_still_emits_snapshot(microbedecoder_transform):
@@ -518,9 +603,9 @@ def test_unmapped_labels_report_is_written(microbedecoder_transform):
     )
 
 
-def test_unmapped_labels_report_omitted_when_no_placeholders(tmp_path):
+def test_unmapped_labels_report_is_empty_when_no_placeholders(tmp_path):
     """
-    No report is written when every label maps cleanly (aspirational state).
+    A header-only report records no placeholders without leaving an old curation queue.
 
     Injects a chemical loader that resolves every label to a stub CHEBI
     CURIE. The transform's fixture also carries BacDive_* and
@@ -554,6 +639,7 @@ def test_unmapped_labels_report_omitted_when_no_placeholders(tmp_path):
         w.writerow(header)
         w.writerow(["999", "acetate, lactate", "glucose"])
 
+    _supply_gold_fold_report(tmp_path)
     xform = MicrobeDecoderTransform(
         input_dir=fixture_dir,
         output_dir=tmp_path,
@@ -561,9 +647,8 @@ def test_unmapped_labels_report_omitted_when_no_placeholders(tmp_path):
     )
     xform.run(data_file="database.csv")
     report = xform.output_dir / "unmapped_labels.tsv"
-    assert not report.exists(), (
-        "no report should be written when every label mapped cleanly; found unmapped_labels.tsv anyway"
-    )
+    assert report.exists()
+    assert _read_tsv(report) == []
 
 
 def test_mixed_encoding_csv_is_read_with_replacement(tmp_path):
@@ -582,6 +667,7 @@ def test_mixed_encoding_csv_is_read_with_replacement(tmp_path):
     Latin-1 ``é`` byte injected post-write. Both must land in the
     output; nothing about the malformed byte should abort the run.
     """
+    _supply_gold_fold_report(tmp_path)
     xform = MicrobeDecoderTransform(
         input_dir=FIXTURE_DIR,
         output_dir=tmp_path,

@@ -1,5 +1,6 @@
 """Content fingerprints, because timestamps do not survive git (#797, #836)."""
 
+import hashlib
 import json
 import tempfile
 from pathlib import Path
@@ -8,6 +9,7 @@ from unittest import TestCase
 from kg_microbe.utils.transform_fingerprint import (
     FINGERPRINT_FILE,
     FINGERPRINT_VERSION,
+    _hash_files,
     code_fingerprint,
     data_fingerprint,
     migrate_markers,
@@ -96,6 +98,39 @@ class FingerprintTest(TestCase):
         payload = write_fingerprint(self.out, self.code, self.repo, ["mappings/m.tsv"])
         self.assertNotEqual(payload["code"], payload["data"])
         self.assertEqual(read_fingerprint(self.out), payload)
+
+    def test_alternate_raw_bytes_are_hashed_not_repository_default(self):
+        """Fingerprint the authority actually consumed, while mappings remain repository-relative."""
+        alternate = self.tmp / "alternate"
+        alternate.mkdir()
+        authority = alternate / "taxdump.tar.gz"
+        authority.write_bytes(b"alternate authority")
+        declarations = ["data/raw/taxdump.tar.gz", "mappings/m.tsv"]
+        before = data_fingerprint(self.repo, declarations, input_dir=alternate)
+        raw_default = self.repo / "data/raw"
+        raw_default.mkdir(parents=True)
+        (raw_default / "taxdump.tar.gz").write_bytes(b"unrelated default authority")
+        self.assertEqual(data_fingerprint(self.repo, declarations, input_dir=alternate), before)
+        authority.write_bytes(b"changed alternate authority")
+        self.assertNotEqual(data_fingerprint(self.repo, declarations, input_dir=alternate), before)
+        payload = write_fingerprint(self.out, self.code, self.repo, declarations, input_dir=alternate)
+        self.assertEqual(payload["data"], data_fingerprint(self.repo, declarations, input_dir=alternate))
+        self.assertEqual(
+            data_fingerprint(self.repo, declarations), data_fingerprint(self.repo, declarations, input_dir=raw_default)
+        )
+
+    def test_streaming_hash_preserves_exact_previous_digest(self):
+        """Chunking changes memory usage, never the digest format or missing-file semantics."""
+        present = self.repo / "large.bin"
+        present.write_bytes(b"0123456789abcdef" * 200000)
+        missing = self.repo / "missing.bin"
+        expected = hashlib.sha256()
+        for path in sorted([present, missing]):
+            expected.update(path.relative_to(self.repo).as_posix().encode())
+            expected.update(b"\0")
+            expected.update(hashlib.sha256(path.read_bytes()).digest() if path.exists() else b"<absent>")
+            expected.update(b"\0")
+        self.assertEqual(_hash_files([present, missing], relative_to=self.repo), expected.hexdigest())
 
     def test_an_unparseable_marker_reads_as_absent(self):
         """

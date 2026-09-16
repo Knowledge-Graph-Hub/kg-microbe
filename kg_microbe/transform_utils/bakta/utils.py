@@ -161,7 +161,9 @@ def get_protein_id(annotations: Dict[str, List[str]], prefer_refseq: bool = True
     return None
 
 
-def get_go_aspect(go_id: str, go_adapter=None, cache: Optional[Dict[str, str]] = None) -> str:
+def get_go_aspect(
+    go_id: str, go_adapter=None, cache: Optional[Dict[str, str]] = None, *, raw_dir=None, authority=None
+) -> str:
     """
     Determine the aspect (namespace) of a GO term.
 
@@ -177,15 +179,22 @@ def get_go_aspect(go_id: str, go_adapter=None, cache: Optional[Dict[str, str]] =
     :param go_id: GO identifier (e.g., 'GO:0003677')
     :param go_adapter: Unused; kept for backward compatibility with existing callers.
     :param cache: Optional cache dictionary for GO term → aspect mappings.
+    :param raw_dir: Explicit producer raw root; use the authority's fingerprinted cache.
+    :param authority: Prepared immutable authority, avoiding ontology IO entirely.
     :return: One of 'biological_process', 'molecular_function', 'cellular_component'.
     """
     del go_adapter  # see docstring
-    if cache is not None and go_id in cache:
+    explicit_authority = raw_dir is not None or authority is not None
+    if not explicit_authority and cache is not None and go_id in cache:
         return cache[go_id]
 
     from kg_microbe.utils.ontology_utils import get_go_aspect as _lookup_go_aspect
 
-    aspect = _lookup_go_aspect(go_id)
+    aspect = (
+        _lookup_go_aspect(go_id, raw_dir=raw_dir, authority=authority)
+        if explicit_authority
+        else _lookup_go_aspect(go_id)
+    )
     if aspect is None:
         # Genuinely missing from the namespace map (obsolete/replaced term).
         # Distinct from the case-collision failure this refactor closes: that
@@ -193,7 +202,7 @@ def get_go_aspect(go_id: str, go_adapter=None, cache: Optional[Dict[str, str]] =
         logger.debug(f"GO term {go_id} not in GO namespace map; defaulting to molecular_function")
         aspect = "molecular_function"
 
-    if cache is not None:
+    if not explicit_authority and cache is not None:
         cache[go_id] = aspect
 
     return aspect

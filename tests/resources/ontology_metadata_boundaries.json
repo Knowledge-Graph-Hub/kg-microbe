@@ -1,0 +1,24 @@
+{
+  "graphs": [{
+    "id": "https://example.org/fixtures/ontology_metadata_boundaries",
+    "meta": {"basicPropertyValues": [{
+      "pred": "http://purl.org/dc/terms/contributor",
+      "val": "https://orcid.org/0000-0001-5208-3432"
+    }]},
+    "nodes": [
+      {"id": "https://orcid.org/0000-0001-5208-3432", "lbl": "Nicole Vasilevsky", "type": "INDIVIDUAL", "meta": {"basicPropertyValues": [{"pred": "http://purl.org/dc/terms/description", "val": "researcher"}]}},
+      {"id": "http://purl.obolibrary.org/obo/go#gocheck_do_not_annotate", "type": "PROPERTY", "propertyType": "ANNOTATION"},
+      {"id": "http://purl.obolibrary.org/obo/uberon/core#BRAIN_NAME_ABV", "lbl": "brain name abbreviations (drosophila)", "type": "PROPERTY", "propertyType": "ANNOTATION"},
+      {"id": "http://purl.obolibrary.org/obo/uberon/core#anastomoses_with", "lbl": "anastomoses with", "type": "PROPERTY", "propertyType": "OBJECT"},
+      {"id": "http://purl.obolibrary.org/obo/GOREL_0002003", "lbl": "results_in_distribution_of", "type": "PROPERTY", "propertyType": "OBJECT"},
+      {"id": "https://www.wikidata.org/wiki/Q105560983", "lbl": "Capsicum annuum ‘New Mexico No. 9'", "type": "CLASS"},
+      {"id": "https://www.wikidata.org/wiki/Q2", "lbl": "Earth", "type": "INDIVIDUAL"},
+      {"id": "http://purl.obolibrary.org/obo/NCBITaxon_9606", "type": "CLASS"},
+      {"id": "http://purl.obolibrary.org/obo/ENVO_01000958", "type": "CLASS"}
+    ],
+    "edges": [
+      {"sub": "https://orcid.org/0000-0001-5208-3432", "pred": "type", "obj": "http://purl.obolibrary.org/obo/NCBITaxon_9606"},
+      {"sub": "https://www.wikidata.org/wiki/Q2", "pred": "type", "obj": "http://purl.obolibrary.org/obo/ENVO_01000958"}
+    ]
+  }]
+}

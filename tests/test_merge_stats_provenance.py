@@ -9,6 +9,7 @@ import yaml
 from kg_microbe.merge_utils.stats_provenance import (
     annotate_graph_stats,
     count_raw_predicates,
+    recount_finalized_stats,
     stats_filename_from_config,
 )
 
@@ -91,6 +92,47 @@ def test_provenance_names_when_config_commit_and_source_markers(tmp_path):
     assert on_disk["provenance"] == prov
 
 
+def test_compressed_merge_provenance_names_a_surviving_artifact(tmp_path):
+    """The archive locator still resolves after cleanup removes the loose TSVs (#1055)."""
+    import tarfile
+
+    from kg_microbe.merge_utils.merge_kg import _cleanup_merged_outputs
+
+    stats, edges, config = _write_fixture(tmp_path)
+    nodes = tmp_path / "merged-kg_nodes.tsv"
+    nodes.write_text(
+        "id\tcategory\tname\n"
+        "NCBITaxon:1\tbiolink:OrganismTaxon\tone\n"
+        "NCBITaxon:2\tbiolink:OrganismTaxon\ttwo\n"
+        "medium:1\tbiolink:ChemicalMixture\tmedium one\n"
+        "medium:2\tbiolink:ChemicalMixture\tmedium two\n",
+        encoding="utf-8",
+    )
+    archive_path = tmp_path / "merged-kg.tar.gz"
+    with tarfile.open(archive_path, "w:gz") as archive:
+        for path in (nodes, edges):
+            archive.add(path, arcname=path.name)
+    nodes.unlink()
+    edges.unlink()
+    settings = yaml.safe_load(config.read_text(encoding="utf-8"))
+    settings["configuration"] = {"output_directory": str(tmp_path)}
+    settings["merged_graph"]["destination"] = {
+        "tsv": {"format": "tsv", "filename": "merged-kg", "compression": "tar.gz"}
+    }
+    settings["merged_graph"]["operations"][0]["args"]["filename"] = str(stats)
+    config.write_text(yaml.safe_dump(settings), encoding="utf-8")
+
+    _cleanup_merged_outputs(str(config))
+
+    provenance = yaml.safe_load(stats.read_text(encoding="utf-8"))["provenance"]
+    assert "edges_file" not in provenance, "must not cite the deleted working file"
+    assert Path(provenance["edges_archive"]).is_file()
+    with tarfile.open(provenance["edges_archive"]) as archive:
+        assert archive.getmember(provenance["edges_archive_member"]).isfile()
+    assert not edges.exists()
+    assert not nodes.exists()
+
+
 def test_annotating_twice_replaces_rather_than_appends(tmp_path):
     """Re-running the merge must not stack provenance blocks or double the raw counts."""
     stats, edges, config = _write_fixture(tmp_path)
@@ -111,6 +153,115 @@ def test_a_mismatched_edges_file_is_refused(tmp_path):
         assert "5 != KGX total_edges 4" in str(exc)
     else:
         raise AssertionError("expected ValueError")
+
+
+def test_finalized_recount_replaces_all_stale_totals_and_facets(tmp_path):
+    """Removed edges/nodes and changed categories/providers never leave KGX facets at top level."""
+    stats, edges, config = _write_fixture(tmp_path)
+    original = yaml.safe_load(stats.read_text())
+    original["edge_stats"]["count_by_spo"] = {"old-category-old-predicate-old-category": 4}
+    original["node_stats"]["count_by_category"] = {"obsolete-category": {"count": 4}}
+    original["custom_old_graph_facet"] = {"old": 4}
+    stats.write_text(yaml.safe_dump(original))
+    nodes = tmp_path / "final_nodes.tsv"
+    nodes.write_text(
+        "id\tcategory\tname\tprovided_by\n"
+        "NCBITaxon:12\tbiolink:OrganismTaxon\tAccepted taxon\tinfores:ncbitaxon\n"
+        "CHEBI:3\tbiolink:ChemicalEntity|biolink:OntologyClass|biolink:ChemicalEntity\tCompound\tinfores:chebi|infores:source\n"
+    )
+    edges.write_text(
+        "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\n"
+        "NCBITaxon:12\tMETPO:2000517\tCHEBI:3\tMETPO:2000517\tinfores:source\tknowledge_assertion\tmanual_agent\n"
+        "NCBITaxon:12\tbiolink:related_to\tCHEBI:3\tRO:0001\tinfores:other\tprediction\tautomated_agent\n"
+    )
+    result = annotate_graph_stats(stats, edges, config, tmp_path, finalized_nodes_file=nodes)
+    assert result["pre_normalization_stats"] == original
+    assert "custom_old_graph_facet" not in result
+    assert "count_by_predicates" not in result["edge_stats"]
+    assert "count_by_spo" not in result["edge_stats"]
+    assert "count_by_category" not in result["node_stats"]
+    assert result["node_stats"]["total_nodes"] == 2
+    assert result["edge_stats"]["total_edges"] == 2
+    assert result["edge_stats"]["count_by_raw_predicate"] == {"METPO:2000517": 1, "biolink:related_to": 1}
+    assert result["edge_stats"]["count_by_raw_primary_knowledge_source"] == {"infores:other": 1, "infores:source": 1}
+    assert result["edge_stats"]["count_by_raw_agent_type"] == {"automated_agent": 1, "manual_agent": 1}
+    assert result["node_stats"]["count_by_raw_category_incidence"] == {
+        "biolink:OrganismTaxon": 1,
+        "biolink:ChemicalEntity": 1,
+        "biolink:OntologyClass": 1,
+    }
+    assert result["node_stats"]["count_by_raw_id_prefix"] == {"CHEBI": 1, "NCBITaxon": 1}
+    assert result["node_stats"]["count_by_provided_by_incidence"] == {
+        "infores:ncbitaxon": 1,
+        "infores:chebi": 1,
+        "infores:source": 1,
+    }
+    assert "may exceed total_nodes" in result["provenance"]["note"]
+    assert yaml.safe_load(stats.read_text()) == result
+
+
+def test_finalized_recount_is_idempotent_and_keeps_original_kgx_block(tmp_path):
+    """Repeated recounts replace current counts without nesting or rewriting original observations."""
+    stats, edges, config = _write_fixture(tmp_path)
+    original = yaml.safe_load(stats.read_text())
+    nodes = tmp_path / "nodes.tsv"
+    nodes.write_text("id\tcategory\nNCBITaxon:1\tbiolink:OrganismTaxon\n")
+    now = datetime(2026, 9, 14, tzinfo=timezone.utc)
+    first = annotate_graph_stats(stats, edges, config, tmp_path, now=now, finalized_nodes_file=nodes)
+    second = annotate_graph_stats(stats, edges, config, tmp_path, now=now, finalized_nodes_file=nodes)
+    assert second == first
+    assert second["pre_normalization_stats"] == original
+    assert "pre_normalization_stats" not in second["pre_normalization_stats"]
+
+
+def test_finalized_recount_preserves_literal_quotes_and_row_boundaries():
+    """Quotes in valid literal TSV text never join records or swap provider facets."""
+    fixture = Path(__file__).parent / "resources" / "stats_literal_quotes"
+    nodes, edges = recount_finalized_stats(fixture / "nodes.tsv", fixture / "edges.tsv")
+    assert nodes["total_nodes"] == 2
+    assert nodes["count_by_raw_category_and_provided_by"] == {
+        "biolink:NamedThing": {"infores:first": 1},
+        "biolink:OrganismTaxon": {"infores:second": 1},
+    }
+    assert edges["total_edges"] == 2
+    assert edges["count_by_raw_primary_knowledge_source"] == {"infores:other": 1, "infores:test": 1}
+    assert edges["count_by_raw_knowledge_level"] == {"knowledge_assertion": 1, "prediction": 1}
+
+
+def test_literal_quote_recount_is_used_by_published_stats(tmp_path):
+    """The public annotation path records literal TSV totals and provider/category pairings."""
+    stats, _, config = _write_fixture(tmp_path)
+    fixture = Path(__file__).parent / "resources" / "stats_literal_quotes"
+    result = annotate_graph_stats(
+        stats, fixture / "edges.tsv", config, tmp_path, finalized_nodes_file=fixture / "nodes.tsv"
+    )
+    assert result["node_stats"]["total_nodes"] == result["edge_stats"]["total_edges"] == 2
+    assert result["node_stats"]["count_by_raw_category_and_provided_by"] == {
+        "biolink:NamedThing": {"infores:first": 1},
+        "biolink:OrganismTaxon": {"infores:second": 1},
+    }
+    assert yaml.safe_load(stats.read_text(encoding="utf-8")) == result
+
+
+def test_loose_locator_can_be_published_while_reading_staged_edges(tmp_path):
+    """Provenance must not name the private staging directory once files are published."""
+    stats, edges, config = _write_fixture(tmp_path)
+    published = tmp_path / "published" / "merged-kg_edges.tsv"
+    result = annotate_graph_stats(stats, edges, config, tmp_path, published_edges_file=published)
+    assert result["provenance"]["edges_file"] == str(published)
+    assert result["edge_stats"]["total_edges"] == 4
+    assert not published.exists(), "the annotation only reads the real staged file"
+
+
+def test_failed_final_recount_does_not_clobber_original_stats(tmp_path):
+    """A malformed final TSV raises without rewriting pre-cleanup statistics as current."""
+    stats, edges, config = _write_fixture(tmp_path)
+    original = stats.read_bytes()
+    nodes = tmp_path / "nodes.tsv"
+    nodes.write_text("id\tcategory\nNCBITaxon:1\n")
+    with pytest.raises(ValueError, match="malformed TSV row"):
+        annotate_graph_stats(stats, edges, config, tmp_path, finalized_nodes_file=nodes)
+    assert stats.read_bytes() == original
 
 
 def test_the_stats_filename_comes_from_the_config_operation(tmp_path):

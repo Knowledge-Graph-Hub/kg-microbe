@@ -65,9 +65,13 @@ import requests
 from dotenv import load_dotenv
 
 from kg_microbe.transform_utils.constants import (
+    AGENT_TYPE_COLUMN,
     CLOSE_MATCH_PREDICATE,
     EXACT_MATCH,
+    KNOWLEDGE_ASSERTION,
+    KNOWLEDGE_LEVEL_COLUMN,
     LPSN_API_SOURCE,
+    MANUAL_AGENT,
     NCBI_CATEGORY,
     RDFS_SUBCLASS_OF,
     SAME_AS_PREDICATE,
@@ -722,7 +726,13 @@ class LPSNAPITransform(Transform):
         return row
 
     def _edge(self, subject_record_no: str, predicate: str, obj: str, relation: str) -> list:
-        """Build one edges.tsv row for the enrichment layer."""
+        """
+        Restate a curated LPSN hierarchy, name, publication or sequence link.
+
+        API transport (or linked-record HTML fallback) is not the agent that
+        originally asserted these source fields. Unlike GSS name matching, this
+        layer does not infer cross-taxonomy associations (#1071).
+        """
         headers = self.edge_header
         row = [""] * len(headers)
         for col, val in {
@@ -731,6 +741,8 @@ class LPSNAPITransform(Transform):
             "object": obj,
             "relation": relation,
             "primary_knowledge_source": LPSN_KNOWLEDGE_SOURCE,
+            KNOWLEDGE_LEVEL_COLUMN: KNOWLEDGE_ASSERTION,
+            AGENT_TYPE_COLUMN: MANUAL_AGENT,
         }.items():
             if col in headers:
                 row[headers.index(col)] = val

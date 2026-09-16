@@ -12,6 +12,16 @@ from __future__ import annotations
 import re
 from typing import Dict, Iterable, List, Optional, Tuple
 
+from kg_microbe.transform_utils.constants import (
+    GOLD_PREFIX,
+    GTDB_PREFIX,
+    IMG_PREFIX,
+    NCBI_ASSEMBLY_PREFIX,
+    NCBITAXON_PREFIX,
+    STRAIN_PREFIX,
+)
+from kg_microbe.transform_utils.gtdb.utils import assembly_curie
+
 # ---------------------------------------------------------------------------
 # Column groups (matches the wide `database.csv` produced by MicrobeDecoder's
 # `Database/assembleDatabase.R`). Grouped by source-of-record so the transform
@@ -39,12 +49,33 @@ LPSN_SUBSPECIES_COLUMN = "LPSN_Subspecies"
 # `bacdive:<id>` form this used to emit is not a node anywhere in the graph,
 # so all ~19 K of these edges dangled and KGX turned them into empty stubs.
 CROSSWALK_COLUMNS: Tuple[Tuple[str, str, Optional[str]], ...] = (
-    ("NCBI_Taxonomy_ID", "NCBITaxon:", None),
-    ("GTDB_ID", "GTDB:", None),
-    ("BacDive_ID", "kgmicrobe.strain:bacdive_", "bacdive:"),
-    ("GOLD_Organism_ID", "GOLD:", None),
-    ("IMG_Genome_ID", "IMG:", None),
+    ("NCBI_Taxonomy_ID", NCBITAXON_PREFIX, None),
+    ("GTDB_ID", GTDB_PREFIX, None),
+    ("BacDive_ID", f"{STRAIN_PREFIX}bacdive_", "bacdive:"),
+    ("GOLD_Organism_ID", GOLD_PREFIX, None),
+    ("IMG_Genome_ID", IMG_PREFIX, None),
 )
+
+# GTDB_ID holds both assembly accessions and taxonomy strings. Only the former
+# use the NCBI Assembly namespace; rank-qualified strings must stay GTDB (#1050).
+_ASSEMBLY_ACCESSION = re.compile(r"(?:RS_|GB_)?GC[AF]_\d+(?:\.\d+)?")
+
+
+def crosswalk_curie(local_id: str, prefix: str, source_prefix: Optional[str] = None) -> str:
+    """Normalize a crosswalk token to the identifier its owner transform emits."""
+    # Source cells may already be CURIEs. Matching case-insensitively also
+    # repairs legacy GOLD: without changing the case-sensitive local ID (#1051).
+    candidates = (prefix, source_prefix)
+    if prefix == GTDB_PREFIX:
+        candidates += (NCBI_ASSEMBLY_PREFIX,)
+    for candidate in candidates:
+        if candidate and local_id.upper().startswith(candidate.upper()):
+            local_id = local_id[len(candidate) :]
+            break
+    if prefix == GTDB_PREFIX and _ASSEMBLY_ACCESSION.fullmatch(local_id):
+        return assembly_curie(local_id)
+    return f"{prefix}{local_id}"
+
 
 # The BacDive crosswalk is not an identifier equivalence like the others. Its
 # target is a *strain*, not another name for the same taxon, and the source says
@@ -80,6 +111,7 @@ METABOLISM_GROUPS: Tuple[Dict[str, object], ...] = (
             "substrates": "Bergey_Substrates_for_end_products",
             "end_products_text": "Bergey_Text_for_end_products",
             "substrates_text": "Bergey_Text_for_substrates",
+            "citation": "Bergey_Article_link",
         },
     },
     {
@@ -180,24 +212,24 @@ BACDIVE_SNAPSHOT_COLUMNS: Tuple[str, ...] = (
 # orphan ``)``. MediaIngredientMech hit the same defect on the ingredient side
 # (its #308) and had to tombstone the fragments after the fact.
 #
-# Still a known limitation, shared with ``madin_etal``: a comma inside a
-# chemical name with no brackets around it (``2,3-butanediol``) is
-# indistinguishable from a separator by any structural rule, and still
-# over-splits. MicrobeDecoder rows use simple end-product names in practice.
+# Numeric locants followed by a name hyphen are also protected (#1085).
+# This is deliberately not a general chemical-name parser: ordinary numeric
+# lists remain lists, and ambiguous nonnumeric commas still require curation.
 _MULTIVALUE_SEPARATORS = ",;"
 _COMMA_ONLY_SEPARATORS = ","
 _OPENERS = "([{"
 _CLOSERS = ")]}"
+_NUMERIC_LOCANTS = re.compile(r"(?<!\w)\d+(?:,\d+)+-(?=[^\W\d_])")
 
 
 def split_multivalue(cell: object) -> List[str]:
     """
-    Split a multi-value cell on comma OR semicolon, outside brackets only.
+    Split outside brackets, preserving numeric chemical locants such as 2,3-butanediol.
 
     :param cell: Raw cell value.
     :return: Trimmed, non-empty tokens.
     """
-    return _split(cell, _MULTIVALUE_SEPARATORS)
+    return _split(cell, _MULTIVALUE_SEPARATORS, preserve_locants=True)
 
 
 def split_multivalue_comma_only(cell: object) -> List[str]:
@@ -211,7 +243,7 @@ def split_multivalue_comma_only(cell: object) -> List[str]:
     return _split(cell, _COMMA_ONLY_SEPARATORS)
 
 
-def _split(cell: object, separators: str) -> List[str]:
+def _split(cell: object, separators: str, preserve_locants: bool = False) -> List[str]:
     """
     Split a cell on separators that sit outside any bracket.
 
@@ -223,6 +255,7 @@ def _split(cell: object, separators: str) -> List[str]:
 
     :param cell: Raw cell value.
     :param separators: Characters that separate values at bracket depth zero.
+    :param preserve_locants: Protect commas in numeric locant sequences before a name hyphen.
     :return: Trimmed, non-empty tokens.
     """
     if cell is None:
@@ -234,14 +267,24 @@ def _split(cell: object, separators: str) -> List[str]:
     tokens: List[str] = []
     buffer: List[str] = []
     depth = 0
-    for char in text:
+    protected = (
+        {
+            index
+            for match in _NUMERIC_LOCANTS.finditer(text)
+            for index in range(match.start(), match.end())
+            if text[index] == ","
+        }
+        if preserve_locants
+        else set()
+    )
+    for index, char in enumerate(text):
         if char in _OPENERS:
             depth += 1
         elif char in _CLOSERS:
             # Clamp at zero: a stray closer must not drive the depth negative
             # and make every later separator look nested.
             depth = max(0, depth - 1)
-        if depth == 0 and char in separators:
+        if depth == 0 and char in separators and index not in protected:
             tokens.append("".join(buffer))
             buffer = []
         else:
@@ -280,18 +323,17 @@ def slugify_label(label: str) -> str:
 
 # Publication attribute formatter. MicrobeDecoder's `Literature_Citation`
 # column carries either a DOI, a PMID, or free-text — normalise to a
-# `PMID:<int>` or `doi:<slug>` CURIE where possible; otherwise return the raw
-# citation string as a fallback attribute value (which the KGX loader carries
-# through without validation).
+# `PMID:<int>` or `doi:<slug>` CURIEs where possible. The producer separately
+# retains the complete source citation, including unparsed prose (#1083).
 _DOI_RE = re.compile(r"10\.\d{4,9}/[-._;()/:A-Z0-9]+", re.IGNORECASE)
 _PMID_RE = re.compile(r"\bPMID[:\s]?\s*(\d+)", re.IGNORECASE)
 
 
 def format_citation(raw: object) -> Optional[str]:
     """
-    Return a ``PMID:`` / ``doi:`` CURIE for the citation cell, or None.
+    Return all recognized ``PMID:`` / ``doi:`` CURIEs, pipe-separated, or None.
 
-    Accepts free text; extracts the first DOI or PMID it finds. Returns None
+    Accepts free text; extracts each explicit DOI or PMID it finds. Returns None
     when the cell is empty (per :func:`is_empty_cell`) or contains no
     recognisable citation token — the caller can then decide whether to drop
     the citation attribute or store the raw prose.
@@ -299,13 +341,9 @@ def format_citation(raw: object) -> Optional[str]:
     if is_empty_cell(raw):
         return None
     text = str(raw)
-    pmid_match = _PMID_RE.search(text)
-    if pmid_match:
-        return f"PMID:{pmid_match.group(1)}"
-    doi_match = _DOI_RE.search(text)
-    if doi_match:
-        return f"doi:{doi_match.group(0)}"
-    return None
+    citations = {f"PMID:{match.group(1)}" for match in _PMID_RE.finditer(text)}
+    citations.update(f"doi:{match.group(0)}" for match in _DOI_RE.finditer(text))
+    return "|".join(sorted(citations)) if citations else None
 
 
 def iter_metabolism_columns(

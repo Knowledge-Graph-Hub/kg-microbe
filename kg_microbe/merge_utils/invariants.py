@@ -10,6 +10,7 @@ this module is the check that notices if another source reintroduces them (#896)
 
 import csv
 import logging
+import re
 from collections import defaultdict
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
@@ -143,7 +144,16 @@ def check_merged_invariants(
             writer = tsv_writer(handle)
             writer.writerow(STUB_NODE_REPORT_HEADER)
             writer.writerows(stub_node_rows(stubs))
-        unexpected = {p: c for p, c in stubs.items() if p not in EXPECTED_STUB_PREFIXES}
+        detail_destination = Path(output_dir or edges_file.parent) / STUB_NODE_DETAILS_REPORT
+        with atomic_write(detail_destination, encoding="utf-8", newline="") as handle:
+            writer = tsv_writer(handle)
+            writer.writerow(STUB_NODE_DETAILS_HEADER)
+            writer.writerows(stub_incident_rows(edges_file, stubs))
+        unexpected = {
+            prefix: offenders
+            for prefix, curies in stubs.items()
+            if (offenders := [curie for curie in curies if not expected_stub_reason(curie)])
+        }
         if unexpected:
             logger.warning(
                 "[merge-invariants] %s nodes across %s prefixes were invented by KGX for endpoints "
@@ -152,7 +162,7 @@ def check_merged_invariants(
                 f"{sum(len(c) for c in unexpected.values()):,}",
                 len(unexpected),
                 ", ".join(sorted(unexpected)),
-                stub_destination,
+                detail_destination,
             )
 
     if violations:
@@ -188,16 +198,34 @@ STUB_NODE_REPORT = "merged_stub_nodes.tsv"
 
 STUB_NODE_REPORT_HEADER = ["prefix", "count", "expected", "note", "examples"]
 
-#: Prefixes we reference deliberately without ever supplying a node for them.
-#: These are cross-reference identifiers -- a GOLD study id, an IMG genome id, a
-#: GTDB taxon string -- that name a record in someone else's system. We assert
-#: edges to them on purpose and do not ingest those systems as nodes, so a stub is
-#: the correct outcome, not a gap. Everything else is reported (#918).
+STUB_NODE_DETAILS_REPORT = "merged_stub_node_details.tsv"
+STUB_NODE_DETAILS_HEADER = ["id", "expected", "note", "incident_edges", "predicates", "knowledge_sources"]
+
+#: Only prefixes whose *every* identifier is an external cross-reference belong
+#: here. GOLD organisms and GTDB assemblies have owner transforms, so exempting
+#: their entire prefixes hid namespace defects affecting 31 K nodes (#1050/1051).
 EXPECTED_STUB_PREFIXES = {
     "IMG": "IMG genome and taxon identifiers, referenced from GOLD",
-    "GOLD": "GOLD study, project and biosample identifiers",
-    "GTDB": "GTDB taxon strings, referenced as cross-references",
 }
+
+#: Narrow exceptions for identifiers we deliberately do not declare. Keep the
+#: namespace canonical: uppercase GOLD is always a legacy-namespace defect.
+EXPECTED_STUB_PATTERNS = (
+    (re.compile(r"GTDB:[dpcofgs]__.+"), "GTDB taxon strings, referenced as cross-references"),
+    (re.compile(r"gold:G[spb]\d+"), "GOLD study, project and biosample identifiers"),
+)
+
+
+def expected_stub_reason(curie: str) -> str:
+    """Return the justification for an intentionally undeclared CURIE, if any."""
+    prefix = curie.split(":", 1)[0]
+    if prefix in EXPECTED_STUB_PREFIXES:
+        return EXPECTED_STUB_PREFIXES[prefix]
+    for pattern, reason in EXPECTED_STUB_PATTERNS:
+        if pattern.fullmatch(curie):
+            return reason
+    return ""
+
 
 #: What KGX types a node it invented for an undeclared endpoint.
 NAMED_THING_CATEGORY = "biolink:NamedThing"
@@ -240,22 +268,75 @@ def find_stub_nodes(nodes_file: Path) -> Dict[str, List[str]]:
 
 def stub_node_rows(stubs: Dict[str, List[str]]) -> List[List]:
     """
-    Render stub counts per prefix, flagging the ones we did not intend.
+    Render stub counts per prefix and expectation, flagging unintended ones.
+
+    A mixed prefix produces separate yes/no rows: 25 taxon references must not
+    cause 15,584 mis-prefixed assembly references to be called expected (#1050).
 
     :param stubs: Result of :func:`find_stub_nodes`.
     :return: Rows matching :data:`STUB_NODE_REPORT_HEADER`.
     """
+    groups: Dict[Tuple[str, str], List[str]] = defaultdict(list)
+    for prefix, curies in stubs.items():
+        for curie in curies:
+            groups[prefix, expected_stub_reason(curie)].append(curie)
     return [
         [
             prefix,
             len(curies),
-            "yes" if prefix in EXPECTED_STUB_PREFIXES else "no",
+            "yes" if reason else "no",
             # "Expected" is the claim in this file that most needs justifying: it
             # separates rows that are fine from rows that are not. The reason is
             # already written down, so it belongs in the report rather than only
             # in the source a reader would have to go and find (#935).
-            EXPECTED_STUB_PREFIXES.get(prefix, ""),
-            "|".join(curies[:3]),
+            reason,
+            "|".join(sorted(curies)[:3]),
         ]
-        for prefix, curies in sorted(stubs.items(), key=lambda item: (-len(item[1]), item[0]))
+        for (prefix, reason), curies in sorted(groups.items(), key=lambda item: (-len(item[1]), item[0]))
+    ]
+
+
+def stub_incident_rows(edges_file: Path, stubs: Dict[str, List[str]]) -> List[List]:
+    """
+    Attribute every anonymous node to its incident assertions, not just prefix samples.
+
+    Only stub IDs, counts and distinct predicate/source strings are retained in
+    memory. Source cells are recorded verbatim: malformed legacy serialization
+    must remain inspectable, not be silently interpreted as Python (#1070).
+    A self-loop counts once for its one incident node. Duplicate headers use
+    the first occurrence, consistent with the other merge invariants (#915).
+    """
+    counts = {curie: 0 for curies in stubs.values() for curie in curies}
+    predicates: Dict[str, Set[str]] = defaultdict(set)
+    sources: Dict[str, Set[str]] = defaultdict(set)
+    if counts:
+        with edges_file.open(encoding="utf-8", newline="") as handle:
+            reader = csv.reader(handle, delimiter="\t")
+            header = next(reader, [])
+            required = [SUBJECT_COLUMN, OBJECT_COLUMN, PREDICATE_COLUMN, PRIMARY_KNOWLEDGE_SOURCE_COLUMN]
+            missing = [column for column in required if column not in header]
+            if missing:
+                raise ValueError(f"Cannot attribute stub nodes: {edges_file} lacks {missing}")
+            sub_at, obj_at, pred_at, source_at = [header.index(column) for column in required]
+            for row in reader:
+                if len(row) <= max(sub_at, obj_at, pred_at, source_at):
+                    raise ValueError(f"Cannot attribute stub nodes: short edge row at line {reader.line_num}")
+                for curie in {row[sub_at], row[obj_at]}:
+                    if curie not in counts:
+                        continue
+                    counts[curie] += 1
+                    if row[pred_at]:
+                        predicates[curie].add(row[pred_at])
+                    if row[source_at]:
+                        sources[curie].add(row[source_at])
+    return [
+        [
+            curie,
+            "yes" if expected_stub_reason(curie) else "no",
+            expected_stub_reason(curie),
+            counts[curie],
+            "|".join(sorted(predicates[curie])),
+            "|".join(sorted(sources[curie])),
+        ]
+        for curie in sorted(counts)
     ]

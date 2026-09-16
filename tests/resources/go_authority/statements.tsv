@@ -1,0 +1,30 @@
+subject	predicate	object	value
+GO:0004096	rdfs:label		catalase activity
+GO:0004096	oio:hasOBONamespace		molecular_function
+GO:0004096	oio:hasAlternativeId	GO:9999001	
+GO:0008152	rdfs:label		metabolic process
+GO:0008152	oio:hasOBONamespace		biological_process
+GO:0005575	rdfs:label		cellular component
+GO:0005575	oboInOwl:hasOBONamespace		cellular_component
+GO:0003840	rdfs:label		obsolete gamma-glutamyltransferase activity
+GO:0003840	oio:hasOBONamespace		molecular_function
+GO:0003840	owl:deprecated		true
+GO:0003840	oio:consider	GO:0036374	
+GO:0036374	rdfs:label		glutathione hydrolase activity
+GO:0036374	oio:hasOBONamespace		molecular_function
+GO:9999002	rdfs:label		obsolete first activity
+GO:9999002	oio:hasOBONamespace		molecular_function
+GO:9999002	owl:deprecated		true
+GO:9999002	IAO:0100001	GO:9999003	
+GO:9999003	rdfs:label		obsolete second activity
+GO:9999003	oio:hasOBONamespace		molecular_function
+GO:9999003	owl:deprecated		true
+GO:9999003	IAO:0100001	GO:0004096	
+GO:9999004	rdfs:label		obsolete ambiguous activity
+GO:9999004	oio:hasOBONamespace		molecular_function
+GO:9999004	owl:deprecated		true
+GO:9999004	IAO:0100001	GO:0004096	
+GO:9999004	IAO:0100001	GO:0036374	
+GO:9999005	rdfs:label		obsolete unreplaced process
+GO:9999005	oio:hasOBONamespace		biological_process
+GO:9999005	owl:deprecated		true

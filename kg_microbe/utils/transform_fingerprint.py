@@ -26,7 +26,7 @@ import hashlib
 import json
 import re
 from pathlib import Path
-from typing import Dict, Iterable, Optional
+from typing import Callable, Dict, Iterable, Optional
 
 from kg_microbe.utils.atomic_io import atomic_write
 
@@ -44,6 +44,16 @@ SHARED_CODE = (
     Path("kg_microbe") / "utils",
     Path("kg_microbe") / "transform_utils" / "constants.py",
     Path("kg_microbe") / "transform_utils" / "transform.py",
+    Path("kg_microbe") / "transform.py",
+    Path("kg_microbe") / "merge_utils" / "external_node_closure.py",
+    Path("kg_microbe") / "merge_utils" / "local_context.py",
+)
+
+# Shared canonicalization is used by source transforms and merge ingestion.
+# Curation changes affect output even when no Python code has changed.
+SHARED_DATA_INPUTS = (
+    "mappings/foodon_model_dispositions.tsv",
+    "kg_microbe/transform_utils/prefixmap.json",
 )
 
 # Files at or below this size are cheap enough to hash completely. Larger graph
@@ -132,11 +142,20 @@ def _hash_files(paths: Iterable[Path], relative_to: Optional[Path] = None) -> st
         digest.update(_folded_name(path, relative_to).encode("utf-8"))
         digest.update(b"\0")
         try:
-            digest.update(hashlib.sha256(path.read_bytes()).digest())
+            digest.update(_stream_file_digest(path))
         except OSError:
             digest.update(b"<absent>")
         digest.update(b"\0")
     return digest.hexdigest()
+
+
+def _stream_file_digest(path: Path) -> bytes:
+    """Hash exact file bytes with bounded memory, including large declared raw authorities."""
+    digest = hashlib.sha256()
+    with path.open("rb") as handle:
+        for block in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(block)
+    return digest.digest()
 
 
 def _behaviour_digest(path: Path) -> bytes:
@@ -258,15 +277,40 @@ def upstream_fingerprint(output_base_dir: Path, transform_inputs: Iterable[str])
     return digest.hexdigest()
 
 
-def data_fingerprint(repo_root: Path, data_inputs: Iterable[str]) -> str:
+def resolve_data_input(repo_root: Path, declaration: str, input_dir: Optional[Path] = None) -> Path:
+    """Resolve raw declarations under the effective CLI raw directory; keep curation repo-relative."""
+    relative = Path(declaration)
+    if input_dir is not None and relative.parts[:2] == ("data", "raw"):
+        return Path(input_dir) / Path(*relative.parts[2:])
+    return repo_root / relative
+
+
+def data_fingerprint(repo_root: Path, data_inputs: Iterable[str], input_dir: Optional[Path] = None) -> str:
     """
     Fingerprint a transform's declared curation inputs.
 
     :param repo_root: Repository root, which ``DATA_INPUTS`` are relative to.
     :param data_inputs: Repo-relative paths from ``Transform.DATA_INPUTS``.
+    :param input_dir: Effective raw input directory for ``data/raw`` declarations.
     :return: Hex digest.
     """
-    return _hash_files((repo_root / rel for rel in data_inputs), relative_to=repo_root)
+    declarations = {*data_inputs, *SHARED_DATA_INPUTS}
+    has_raw_declaration = any(Path(value).parts[:2] == ("data", "raw") for value in declarations)
+    if input_dir is None or not has_raw_declaration or Path(input_dir).resolve() == (repo_root / "data/raw").resolve():
+        return _hash_files((repo_root / rel for rel in declarations), relative_to=repo_root)
+    # Hash alternate raw bytes under their same logical declaration names,
+    # not workstation-specific absolute paths. Curated mappings never move.
+    digest = hashlib.sha256()
+    for declaration in sorted(declarations):
+        logical_name = _folded_name(repo_root / declaration, repo_root)
+        digest.update(logical_name.encode("utf-8"))
+        digest.update(b"\0")
+        try:
+            digest.update(_stream_file_digest(resolve_data_input(repo_root, declaration, input_dir)))
+        except OSError:
+            digest.update(b"<absent>")
+        digest.update(b"\0")
+    return digest.hexdigest()
 
 
 #: The pinned Biolink schema every transform validates against, relative to
@@ -324,6 +368,9 @@ def write_fingerprint(
     repo_root: Path,
     data_inputs: Iterable[str],
     transform_inputs: Iterable[str] = (),
+    input_dir: Optional[Path] = None,
+    finalization_inputs: Iterable[str] = (),
+    verify_inputs: Optional[Callable[[], None]] = None,
 ) -> dict:
     """
     Record the fingerprint of a completed run.
@@ -337,24 +384,46 @@ def write_fingerprint(
     :param repo_root: Repository root.
     :param data_inputs: Repo-relative curation paths.
     :param transform_inputs: Registered sources whose output this one reads.
+    :param input_dir: Effective raw directory read by the completed transform.
+    :param finalization_inputs: Exact authority/dependency paths consumed by source finalization.
+    :param verify_inputs: Optional producer-time snapshot verifier. Raises if consumed bytes changed;
+        checked before hashing and immediately before atomic marker publication.
     :return: The recorded payload.
     """
+    if verify_inputs is not None:
+        verify_inputs()
     payload = {
         "version": FINGERPRINT_VERSION,
         "code": code_fingerprint(code_dir, repo_root),
         # Shared first-party code, recorded apart from the package so the
         # report can say which of the two moved (#1002).
         "shared": shared_code_fingerprint(repo_root),
-        "data": data_fingerprint(repo_root, data_inputs),
+        "data": data_fingerprint(repo_root, data_inputs, input_dir=input_dir),
         # Recorded separately so a stale output says which of the three moved:
         # its code, its curation data, or something it reads (#845).
         "upstream": upstream_fingerprint(output_dir.parent, transform_inputs),
         # Which Biolink schema this output was validated against (#943).
         "schema": schema_fingerprint(repo_root),
     }
+    finalization_paths = [Path(path) for path in finalization_inputs]
+    if finalization_paths:
+        payload["finalization_inputs"] = sorted(_folded_name(path, repo_root) for path in finalization_paths)
+        payload["finalization_data"] = _hash_files(finalization_paths, repo_root)
     with atomic_write(output_dir / FINGERPRINT_FILE, encoding="utf-8") as handle:
         handle.write(json.dumps(payload, indent=2, sort_keys=True) + "\n")
+        if verify_inputs is not None:
+            verify_inputs()
     return payload
+
+
+def finalization_inputs_current(recorded: dict, repo_root: Path) -> bool:
+    """Verify exact consumed authorities; missing or changed bytes invalidate finalized output."""
+    paths = [repo_root / name for name in recorded.get("finalization_inputs", ())]
+    if not paths:
+        return True
+    if not all(path.is_file() for path in paths):
+        return False
+    return recorded.get("finalization_data") == _hash_files(paths, repo_root)
 
 
 def read_fingerprint(output_dir: Path) -> Optional[dict]:

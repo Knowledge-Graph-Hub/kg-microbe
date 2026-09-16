@@ -31,7 +31,6 @@ except ImportError:  # pragma: no cover — Windows/Jython fallback
 from oaklib.interfaces import OboGraphInterface
 
 from kg_microbe.transform_utils.constants import (
-    BIOLOGICAL_PROCESS_CATEGORY,
     SMALL_MOLECULE_CATEGORY,
 )
 from kg_microbe.utils.ontology_resolution import (
@@ -251,7 +250,7 @@ def _version_check_strict(env_var: str, strict: Optional[bool], default_strict: 
     return default_strict
 
 
-def assert_go_version_alignment(strict: Optional[bool] = None) -> None:
+def assert_go_version_alignment(strict: Optional[bool] = None, *, raw_dir: Optional[Path] = None) -> None:
     """
     Guard that GO's derived ``go.json`` matches its single source ``go.owl``.
 
@@ -269,19 +268,22 @@ def assert_go_version_alignment(strict: Optional[bool] = None) -> None:
     ``strict`` defaults to fail-loud (raise). Since the verdict rests on a
     release-stamp heuristic, ``KG_GO_VERSION_CHECK=warn`` downgrades to a
     warning — an escape hatch if the stamps ever disagree spuriously.
+    An explicit ``raw_dir`` selects the same source release as the producer;
+    only legacy callers without that argument use ``GO_SOURCE``.
     """
     from kg_microbe.transform_utils.constants import GO_SOURCE
 
     strict = _version_check_strict("KG_GO_VERSION_CHECK", strict)
-    if not GO_SOURCE:
+    source_path = Path(raw_dir) / "go.owl" if raw_dir is not None else GO_SOURCE
+    if not source_path:
         return
-    json_path = Path(GO_SOURCE).with_suffix(".json")
+    json_path = Path(source_path).with_suffix(".json")
     if not json_path.exists():
         # _read_head falls back to `<path>.gz`, so without this a *missing*
         # go.json beside a stray go.json.gz would read as stale — and this gate
         # defaults to strict, so it would abort over a file nothing reads (F8).
         return
-    owl_release = _obo_release_from_head(Path(GO_SOURCE), prefer_archive=True)
+    owl_release = _obo_release_from_head(Path(source_path), prefer_archive=True)
     json_release = _obo_release_from_head(json_path)
     if owl_release and json_release and owl_release != json_release:
         msg = (
@@ -2450,7 +2452,7 @@ def _ensure_ncbitaxon_db(db_path: str) -> DbEnsureResult:
     )
 
 
-def _ensure_go_db(go_db_path: str) -> DbEnsureResult:
+def _ensure_go_db(go_db_path: str, *, source_path: Optional[Path] = None) -> DbEnsureResult:
     """
     Build the GO SemSQL DB from ``go.owl`` if missing/empty; return True if usable.
 
@@ -2464,7 +2466,8 @@ def _ensure_go_db(go_db_path: str) -> DbEnsureResult:
     """
     from kg_microbe.transform_utils.constants import GO_SOURCE
 
-    owl_release = _obo_release_from_head(Path(GO_SOURCE), prefer_archive=True) if GO_SOURCE else None
+    owl_source = Path(source_path) if source_path is not None else (Path(GO_SOURCE) if GO_SOURCE else None)
+    owl_release = _obo_release_from_head(owl_source, prefer_archive=True) if owl_source else None
     _note_orphaned_prev(go_db_path)
     if _servable_db(go_db_path, _GO_DB_MIN_SIZE, "go"):
         # An existing, non-stub go.db is reused — unless it has drifted from the
@@ -2481,7 +2484,7 @@ def _ensure_go_db(go_db_path: str) -> DbEnsureResult:
             f"go.owl {owl_release} (single-source realign)..."
         )
     return _build_semsql_db(
-        Path(GO_SOURCE) if GO_SOURCE else None,
+        owl_source,
         go_db_path,
         _GO_DB_MIN_SIZE,
         "GO",
@@ -2658,42 +2661,55 @@ def _load_go_namespace_map(go_db_path: str) -> Dict[str, str]:
         ) from exc
 
 
-def replace_category_ontology(line, id_index, category_index):
+def replace_category_ontology(line, id_index, category_index, *, raw_dir: Optional[Path] = None, authority=None):
     """
     Replace node category according to prefix that has already been fixed.
 
     :param line: A line from the original triples.
     :type line: str
+    :param raw_dir: Selected producer authority root for imported GO references.
+    :param authority: Optional prepared immutable GO authority.
     """
+    parts = line.rstrip("\r\n").split("\t")
+    if parts[id_index].startswith("GO:"):
+        parts[category_index] = get_go_category_by_aspect(parts[id_index], raw_dir=raw_dir, authority=authority)
+        return "\t".join(parts)
     return replace_category_by_prefix(line, id_index, category_index)
 
 
-def get_go_aspect(go_term_id: str) -> Optional[str]:
+def get_go_aspect(go_term_id: str, *, raw_dir: Optional[Path] = None, authority=None) -> str:
     """
     Return the OBO namespace/aspect for a GO term (from ``go.db``).
 
-    Reads via :func:`_load_go_namespace_map` (raw sqlite), which bypasses OAK's
-    curies converter — the converter fails to build on GO databases carrying
-    case-collision prefix rows (e.g. both ``CHR`` and ``chr`` → ``obo/CHR_``),
-    so every ``entity_metadata_map`` call throws and any caller wrapped in
-    ``except Exception`` silently falls through to its default aspect. On a
-    GO DB with that prefix, the default was ``molecular_function``, filing
-    every biological-process / cellular-component term as MF.
+    Uses the shared, fingerprinted GO authority. Exact replacements inherit
+    the canonical aspect; retained obsolete terms keep their historical
+    aspect. Missing references raise rather than guessing a namespace.
 
     :param go_term_id: GO CURIE (e.g. ``"GO:0004096"``).
+    :param raw_dir: Producer's selected raw authority directory, when supplied.
+    :param authority: Already prepared immutable authority; performs no IO.
     :return: One of ``"molecular_function"``, ``"biological_process"``,
-        ``"cellular_component"``, or ``None`` when the term is not present in
-        the namespace map. Raises :class:`OntologyDbUnavailableError` (a
-        :class:`BaseException`) if the DB itself cannot be read.
+        ``"cellular_component"``. Raises :class:`OntologyDbUnavailableError`
+        for an unusable authority or ``GoReferenceError`` for an unknown term.
     """
     from kg_microbe.transform_utils.constants import GO_SOURCE
+    from kg_microbe.utils.go_authority import load_go_authority
 
-    go_db_path = str(GO_SOURCE.with_suffix(".db")) if GO_SOURCE else "data/raw/go.db"
-    ns_map = _load_go_namespace_map(go_db_path)
-    return ns_map.get(go_term_id)
+    if authority is None:
+        selected_dir = (
+            Path(raw_dir) if raw_dir is not None else (Path(GO_SOURCE).parent if GO_SOURCE else Path("data/raw"))
+        )
+        authority = load_go_authority(selected_dir)
+    return authority.resolve(go_term_id).namespace
 
 
-def get_go_category_by_aspect(go_term_id: str, go_adapter: Optional[OboGraphInterface] = None) -> str:
+def get_go_category_by_aspect(
+    go_term_id: str,
+    go_adapter: Optional[OboGraphInterface] = None,
+    *,
+    raw_dir: Optional[Path] = None,
+    authority=None,
+) -> str:
     """
     Return Biolink category based on GO aspect (namespace).
 
@@ -2706,7 +2722,9 @@ def get_go_category_by_aspect(go_term_id: str, go_adapter: Optional[OboGraphInte
     ----
         go_term_id: GO term ID (e.g., "GO:0004096")
         go_adapter: Unused (kept for backward compatibility with existing callers).
-            Namespace lookup uses a cached direct sqlite query against GO_SOURCE.
+            Lookup uses the shared fingerprinted authority beside GO_SOURCE.
+        raw_dir: Producer's explicit raw directory; overrides the legacy GO_SOURCE root.
+        authority: Prepared immutable authority to use without any database IO.
 
     Returns:
     -------
@@ -2722,17 +2740,7 @@ def get_go_category_by_aspect(go_term_id: str, go_adapter: Optional[OboGraphInte
 
     """
     del go_adapter  # see docstring
-    from kg_microbe.transform_utils.constants import GO_SOURCE
-
-    go_db_path = str(GO_SOURCE.with_suffix(".db")) if GO_SOURCE else "data/raw/go.db"
-
-    try:
-        ns_map = _load_go_namespace_map(go_db_path)
-    except Exception as e:
-        print(f"Warning: Could not load GO namespace map from {go_db_path}: {e}")
-        return BIOLOGICAL_PROCESS_CATEGORY
-
-    return go_category_for_namespace(ns_map.get(go_term_id))
+    return go_category_for_namespace(get_go_aspect(go_term_id, raw_dir=raw_dir, authority=authority))
 
 
 def get_chebi_category(chebi_term_id: str, chebi_adapter: Optional[OboGraphInterface] = None) -> str:

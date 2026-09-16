@@ -18,3 +18,12 @@ slots:
     slot_uri: biolink:related_to
     domain: named thing
     range: named thing
+  has evidence:
+    slot_uri: biolink:has_evidence
+    multivalued: true
+  knowledge level:
+    slot_uri: biolink:knowledge_level
+    multivalued: false
+  agent type:
+    slot_uri: biolink:agent_type
+    multivalued: false

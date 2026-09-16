@@ -1,0 +1,21 @@
+{
+  "api_kits": [
+    {"kit_name": "API 20E", "wells": [
+      {"name": "TDA Trp", "type": ["enzyme"], "go_terms": ["GO:0006569"], "go_names": ["tryptophan catabolic process"], "ec_number": ["4.1.99.1"]}
+    ]},
+    {"kit_name": "API 20NE", "wells": [
+      {"name": "GLU_ Assim", "type": ["enzyme"], "go_terms": ["GO:1904659"], "go_names": ["glucose transmembrane transport"]},
+      {"name": "GLU_ Ferm", "type": ["enzyme"], "go_terms": ["GO:0019660"], "go_names": ["glycolytic fermentation"]}
+    ]},
+    {"kit_name": "API CAM", "wells": [
+      {"name": "GGT", "type": ["enzyme"], "go_terms": ["GO:0003840"], "go_names": ["gamma-glutamyltransferase activity"], "ec_number": ["2.3.2.2"]}
+    ]},
+    {"kit_name": "API NH", "wells": [
+      {"name": "GGT", "type": ["enzyme"], "go_terms": ["GO:0003840"], "go_names": ["gamma-glutamyltransferase activity"], "ec_number": ["2.3.2.2"]}
+    ]},
+    {"kit_name": "Fixture", "wells": [
+      {"name": "Catalase", "type": ["enzyme"], "go_terms": ["GO:0004096"]},
+      {"name": "Glucose", "type": ["chemical"], "chebi_id": ["CHEBI:17234"], "chebi_name": ["D-glucose"]}
+    ]}
+  ]
+}

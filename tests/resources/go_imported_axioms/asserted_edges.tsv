@@ -1,0 +1,7 @@
+subject	predicate	object
+GO:0008152	rdfs:subClassOf	GO:0008150
+GO:0044283	rdfs:subClassOf	GO:0044281
+GO:0044283	rdfs:subClassOf	GO:0009058
+GO:0044281	rdfs:subClassOf	GO:0008152
+GO:0009058	rdfs:subClassOf	GO:0008152
+GO:0008152	BFO:0000051	GO:0140253

@@ -162,6 +162,20 @@ def test_species_row_emits_publication_edges(api_transform):
     assert "PMID:12345" in targets
 
 
+def test_all_api_edge_families_restate_curated_metadata(api_transform):
+    """An automated fetch does not make the asserted source facts automated (#1071)."""
+    api_transform.run()
+    edges = _read_tsv(api_transform.output_edge_file)
+    assert {e["predicate"] for e in edges} == {
+        "biolink:subclass_of",
+        "biolink:same_as",
+        "biolink:close_match",
+    }
+    assert {e["object"].split(":", 1)[0] for e in edges} >= {"lpsn", "doi", "PMID", "INSDC"}
+    assert all(e["knowledge_level"] == "knowledge_assertion" for e in edges)
+    assert all(e["agent_type"] == "manual_agent" for e in edges)
+
+
 def test_publication_stub_nodes_are_emitted(api_transform):
     """DOI / PMID stubs land as biolink:Publication nodes so edges aren't dangling."""
     api_transform.run()
@@ -465,6 +479,7 @@ def test_a_run_that_dies_midway_leaves_no_output_file(api_transform, monkeypatch
     original = api_transform._emit
 
     def explode(record_no, record, node_writer, edge_writer):
+        """Crash after one record to exercise atomic output publication."""
         calls["n"] += 1
         if calls["n"] == 2:
             raise RuntimeError("simulated crash after the first record")

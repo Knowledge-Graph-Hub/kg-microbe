@@ -735,8 +735,9 @@ def archetype_false_majority(args: argparse.Namespace) -> Report:
 # Archetype: family-mismatch
 # ---------------------------------------------------------------------------
 
-# Predicates whose subject is asserted to be a substrate, location, or part —
-# i.e. a *thing*, not a quality / role / phenotype / unit. Catches the bug
+# Candidate predicates for substrate/location misuse. ``has_part`` also
+# expresses ontology quality decomposition, distinguished below (#1072).
+# Catches the bug
 # class where PATO 'increased depth' or PATO 'female' ended up as the
 # subject of ``location_of`` (madin_etal/bacdive 2026-05-02 fixes).
 _SUBSTRATE_SUBJECT_PREDICATES = frozenset({
@@ -745,7 +746,7 @@ _SUBSTRATE_SUBJECT_PREDICATES = frozenset({
 })
 
 # Ontology prefixes whose terms denote qualities / roles / units / phenotype
-# classes — categorically wrong as the subject of a substrate-shaped predicate.
+# classes — wrong in the substrate/location role, but not all ontology uses.
 # Mirror of ``DISALLOWED_OBJECT_SOURCES`` in
 # ``kg_microbe/utils/isolation_source_mapping_utils.py``; keep in sync.
 _DISALLOWED_SUBSTRATE_SUBJECT_PREFIXES = frozenset({
@@ -753,6 +754,22 @@ _DISALLOWED_SUBSTRATE_SUBJECT_PREFIXES = frozenset({
     "UO:",       # unit of measurement
     "METPO:",    # microbial phenotype class — phenotype, not substrate
 })
+
+
+def _is_quality_partonomy_candidate(row: List[str]) -> bool:
+    """Recognize a narrow ontology shape, not evidence that every such axiom is valid.
+
+    PATO qualities can have quality parts. This is outside the habitat-routing
+    heuristic, not a reason to exempt an ontology or every ``has_part`` edge.
+    Retain self-loops and mismatched/absent relation terms as suspicious.
+    """
+    return (
+        row[PREDICATE_IDX] == "biolink:has_part"
+        and row[RELATION_IDX] == "BFO:0000051"
+        and row[SUBJECT_IDX].startswith("PATO:")
+        and row[OBJECT_IDX].startswith("PATO:")
+        and row[SUBJECT_IDX] != row[OBJECT_IDX]
+    )
 
 
 def archetype_family_mismatch(args: argparse.Namespace) -> Report:
@@ -771,6 +788,11 @@ def archetype_family_mismatch(args: argparse.Namespace) -> Report:
     Catches different patterns from ``self-loops`` / ``cardinality``: this
     archetype is about the *kind* of subject vs the *meaning* of the
     predicate, not about cycles or fanout.
+
+    PATO-to-PATO ``has_part``/BFO:0000051 is reported separately as an INFO
+    quality-partonomy candidate. It does not by itself establish substrate
+    misuse or contradiction of raw data. Other namespace/relation shapes and
+    self-loops remain subject to the existing critical check.
     """
     report = Report(archetype="family-mismatch")
     pred_filter = set(args.predicate) if args.predicate else _SUBSTRATE_SUBJECT_PREDICATES
@@ -778,6 +800,7 @@ def archetype_family_mismatch(args: argparse.Namespace) -> Report:
 
     flagged = 0
     scanned = 0
+    quality_partonomies = 0
     by_prefix: Counter = Counter()
     for tr in transforms:
         try:
@@ -787,6 +810,19 @@ def archetype_family_mismatch(args: argparse.Namespace) -> Report:
                 if pred not in pred_filter:
                     continue
                 if not any(subj.startswith(p) for p in _DISALLOWED_SUBSTRATE_SUBJECT_PREFIXES):
+                    continue
+                if _is_quality_partonomy_candidate(row):
+                    quality_partonomies += 1
+                    if quality_partonomies <= 50:
+                        report.add(
+                            Finding(
+                                severity="INFO",
+                                archetype="family-mismatch",
+                                subject=subj,
+                                detail="PATO quality-partonomy candidate; outside substrate-routing heuristic",
+                                evidence=f"transform={tr} object={row[OBJECT_IDX]} relation={row[RELATION_IDX]}",
+                            )
+                        )
                     continue
                 flagged += 1
                 prefix = subj.split(":", 1)[0] + ":"
@@ -806,6 +842,7 @@ def archetype_family_mismatch(args: argparse.Namespace) -> Report:
 
     report.stats["edges_scanned"] = scanned
     report.stats["flagged"] = flagged
+    report.stats["quality_partonomy_candidates"] = quality_partonomies
     for (prefix, pred), n in by_prefix.most_common():
         report.stats[f"by_pair[{prefix}_{pred}]"] = n
     return report

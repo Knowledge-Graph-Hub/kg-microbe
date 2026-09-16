@@ -22,7 +22,7 @@ import yaml as yaml_lib
 from kg_microbe.merge_utils.merge_kg import load_and_merge
 
 _CONFIG = {
-    "configuration": {"output_directory": "data/merged"},
+    "configuration": {"output_directory": "data/merged", "allow_unfinalized_sources": True},
     "merged_graph": {
         "name": "test graph",
         "source": {

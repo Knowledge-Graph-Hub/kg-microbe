@@ -1,0 +1,7 @@
+subject	predicate	object	value
+GO:0006569	rdfs:label		L-tryptophan catabolic process
+GO:0006569	oio:hasOBONamespace		biological_process
+GO:1904659	rdfs:label		D-glucose transmembrane transport
+GO:1904659	oio:hasOBONamespace		biological_process
+GO:0019660	rdfs:label		pyruvate fermentation
+GO:0019660	oio:hasOBONamespace		biological_process

@@ -1,0 +1,5 @@
+id	category	name	description	xref	provided_by	synonym	deprecated	same_as
+NCBITaxon:356	biolink:OrganismTaxon	Hyphomicrobiales			infores:ncbitaxon	Rhizobiales|alpha-2 proteobacteria		
+NCBITaxon:203683	biolink:OrganismTaxon	Planctomycetia			infores:ncbitaxon			
+NCBITaxon:201174	biolink:OrganismTaxon	Actinomycetota			infores:ncbitaxon	Actinobacteria		
+NCBITaxon:561	biolink:OrganismTaxon	Escherichia			infores:ncbitaxon	fixture genus alias		

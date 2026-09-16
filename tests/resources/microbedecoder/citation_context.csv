@@ -1,0 +1,5 @@
+LPSN_ID,Literature_Major_end_products,Literature_Citation,Bergey_Major_end_products,Bergey_Article_link
+101,acetate,PMID:123; PMID:456; 10.1234/demo,lactate,https://doi.org/10.1002/9781118960608.gbm00580
+101,acetate,"Author ""Title"" (1989).
+Second line",,
+101,acetate,"Author B, book (1980)",,

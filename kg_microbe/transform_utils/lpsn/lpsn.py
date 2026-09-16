@@ -47,12 +47,18 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
 from kg_microbe.transform_utils.constants import (
+    AGENT_TYPE_COLUMN,
+    AUTOMATED_AGENT,
     CLOSE_MATCH_PREDICATE,
     CLOSE_MATCH_RELATION,
     EXACT_MATCH,
     ID_COLUMN,
+    KNOWLEDGE_ASSERTION,
+    KNOWLEDGE_LEVEL_COLUMN,
     LPSN_SOURCE,
+    MANUAL_AGENT,
     NCBI_CATEGORY,
+    PREDICTION,
     RDFS_SUBCLASS_OF,
     SAME_AS_PREDICATE,
     STRAIN_PREFIX,
@@ -478,7 +484,7 @@ class LPSNTransform(Transform):
                 # Bacillus``).
                 ncbi_curie = self._lookup_ncbi(row)
                 if ncbi_curie:
-                    edge_writer.writerow(self._make_close_match_edge(record_no, ncbi_curie))
+                    edge_writer.writerow(self._make_close_match_edge(record_no, ncbi_curie, inferred=True))
                 # GTDB cross-ref: rank-aware name match against a
                 # pre-loaded (rank, name) index of data/transformed/gtdb/
                 # nodes.tsv. GTDB is bacteria+archaea only so no subtree
@@ -490,7 +496,7 @@ class LPSNTransform(Transform):
                 # hops.
                 gtdb_curie = self._lookup_gtdb(row)
                 if gtdb_curie:
-                    edge_writer.writerow(self._make_close_match_edge(record_no, gtdb_curie))
+                    edge_writer.writerow(self._make_close_match_edge(record_no, gtdb_curie, inferred=True))
 
             # Every deposit this file references gets a node row. Without one,
             # KGX invents a bare `biolink:NamedThing` with no label for each of
@@ -642,6 +648,9 @@ class LPSNTransform(Transform):
             "object": f"{LPSN_PREFIX}{parent_record_no}",
             "relation": RDFS_SUBCLASS_OF,
             "primary_knowledge_source": LPSN_KNOWLEDGE_SOURCE,
+            # Hierarchy and nomenclatural links restate LPSN curation (#1071).
+            KNOWLEDGE_LEVEL_COLUMN: KNOWLEDGE_ASSERTION,
+            AGENT_TYPE_COLUMN: MANUAL_AGENT,
         }.items():
             if col in headers:
                 row_out[headers.index(col)] = val
@@ -803,6 +812,8 @@ class LPSNTransform(Transform):
             "object": f"{LPSN_PREFIX}{correct_record_no}",
             "relation": EXACT_MATCH,
             "primary_knowledge_source": LPSN_KNOWLEDGE_SOURCE,
+            KNOWLEDGE_LEVEL_COLUMN: KNOWLEDGE_ASSERTION,
+            AGENT_TYPE_COLUMN: MANUAL_AGENT,
         }.items():
             if col in headers:
                 row_out[headers.index(col)] = val
@@ -828,7 +839,7 @@ class LPSNTransform(Transform):
                 row_out[headers.index(col)] = val
         return row_out
 
-    def _make_close_match_edge(self, record_no: str, strain_curie: str) -> list:
+    def _make_close_match_edge(self, record_no: str, strain_curie: str, *, inferred: bool = False) -> list:
         """
         Build one edges.tsv row linking an LPSN taxon to a culture-collection strain.
 
@@ -837,6 +848,11 @@ class LPSNTransform(Transform):
         primary_knowledge_source=infores:lpsn``. BacDive's transform emits
         the same ``kgmicrobe.strain:*`` CURIE for every culture-collection
         deposit it sees, so the merge step reconciles both sides.
+
+        Declared type deposits restate expert-curated LPSN records. NCBI/GTDB
+        name-and-rank matches instead set ``inferred=True``: the match is a
+        software-generated similarity prediction, not a curator's assertion or
+        a logical entailment from equal labels (#1071).
         """
         headers = self.edge_header
         row_out = [""] * len(headers)
@@ -846,6 +862,8 @@ class LPSNTransform(Transform):
             "object": strain_curie,
             "relation": CLOSE_MATCH_RELATION,
             "primary_knowledge_source": LPSN_KNOWLEDGE_SOURCE,
+            KNOWLEDGE_LEVEL_COLUMN: PREDICTION if inferred else KNOWLEDGE_ASSERTION,
+            AGENT_TYPE_COLUMN: AUTOMATED_AGENT if inferred else MANUAL_AGENT,
         }.items():
             if col in headers:
                 row_out[headers.index(col)] = val

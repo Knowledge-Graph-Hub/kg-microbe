@@ -1,0 +1,15 @@
+subject	predicate	object	relation	primary_knowledge_source	knowledge_level	agent_type	publications	source_record	value	original_object
+GO:0016053	biolink:subclass_of	GO:0044283	rdfs:subClassOf	infores:pato	knowledge_assertion	manual_agent	PMID:1	unsupported-cycle	"exact imported context"	
+GO:0016053	biolink:subclass_of	GO:0006082	rdfs:subClassOf	infores:pato	knowledge_assertion	manual_agent	PMID:2	unsupported-subclass-self	preserve literal context	
+GO:0016053	biolink:part_of	GO:0006082	BFO:0000050	infores:pato	knowledge_assertion	manual_agent	PMID:3	unsupported-part-self	preserve literal context	
+GO:0140253	biolink:has_part	GO:0045026	BFO:0000051	infores:pato	knowledge_assertion	manual_agent	PMID:4	unsupported-haspart-self	preserve literal context	
+GO:0016053	biolink:part_of	GO:0140253	BFO:0000050	infores:pato	knowledge_assertion	manual_agent	PMID:5	unsupported-wrong-relation	preserve direction	
+GO:0016053	biolink:subclass_of	GO:0008150	rdfs:subClassOf	infores:pato	knowledge_assertion	manual_agent	PMID:6	supported-import	preserve supported context	
+GO:0016053	biolink:has_part	GO:0140253	BFO:0000051	infores:pato	knowledge_assertion	manual_agent	PMID:7	supported-partonomy	preserve supported context	
+GO:0044283	biolink:subclass_of	GO:0044281	rdfs:subClassOf	infores:go	knowledge_assertion	manual_agent	PMID:8	current-small-molecule-parent		
+GO:0044283	biolink:subclass_of	GO:0009058	rdfs:subClassOf	infores:go	knowledge_assertion	manual_agent	PMID:9	current-biosynthesis-parent		
+GO:0044281	biolink:subclass_of	GO:0008152	rdfs:subClassOf	infores:go	knowledge_assertion	manual_agent	PMID:10	current-metabolism-parent		
+GO:0009058	biolink:subclass_of	GO:0008152	rdfs:subClassOf	infores:go	knowledge_assertion	manual_agent	PMID:11	current-biosynthesis-metabolism-parent		
+GO:0044281	biolink:has_part	GO:0009058	BFO:0000051	infores:pato	knowledge_assertion	manual_agent	PMID:12	unchanged-unsupported-import	outside narrow remapping gate	
+NCBITaxon:1	biolink:capable_of	GO:0016053	RO:0002215	infores:bacdive	knowledge_assertion	manual_agent	PMID:13	organism-observation	"quoted observation"	GO:9999001
+MICRO:0000903	biolink:related_to	GO:0016053	MICRO:9000001	infores:bacdive	knowledge_assertion	manual_agent	PMID:14	assay-observation	literal|scalar	

@@ -36,11 +36,11 @@ from kg_microbe.transform_utils.bacdive.emission import (
 from kg_microbe.transform_utils.bacdive.emission import StrainProvenanceWriter as _StrainProvenanceWriter
 from kg_microbe.transform_utils.constants import (
     ACTIVITY_KEY,
+    AGENT_TYPE_COLUMN,
     ANTIBIOGRAM,
     ANTIBIOTIC_RESISTANCE,
     API_X_COLUMN,
-    ASSAY_HAS_INPUT_PREDICATE,
-    ASSAY_INPUT_RELATION,
+    ASSAY_KITS_FILE,
     ASSAY_PREFIX,
     ASSOCIATED_WITH,
     ATTRIBUTE_CATEGORY,
@@ -86,6 +86,7 @@ from kg_microbe.transform_utils.constants import (
     EC_CATEGORY,
     EC_KEY,
     EC_PREFIX,
+    ENZYME_TO_SUBSTRATE_EDGE,
     ENZYMES,
     EXTERNAL_LINKS,
     EXTERNAL_LINKS_CULTURE_NUMBER,
@@ -97,6 +98,7 @@ from kg_microbe.transform_utils.constants import (
     GENERAL_DESCRIPTION,
     GENUS,
     HALOPHILY,
+    HAS_INPUT_RELATION,
     HAS_PARTICIPANT,
     HAS_PHENOTYPE,
     HAS_PHENOTYPE_PREDICATE,
@@ -114,6 +116,7 @@ from kg_microbe.transform_utils.constants import (
     KEYWORDS,
     KEYWORDS_COLUMN,
     KNOWLEDGE_ASSERTION,
+    KNOWLEDGE_LEVEL_COLUMN,
     LOCATION_OF,
     LPSN,
     MANUAL_AGENT,
@@ -156,8 +159,10 @@ from kg_microbe.transform_utils.constants import (
     NCBITAXON_NODES_FILE,
     NCBITAXON_PREFIX,
     NUTRITION_TYPE,
+    OBJECT_COLUMN,
     OBSERVATION,
     ORDER,
+    ORIGINAL_OBJECT_COLUMN,
     OXYGEN_TOLERANCE,
     PHENOTYPIC_CATEGORY,
     PHYLUM,
@@ -169,7 +174,9 @@ from kg_microbe.transform_utils.constants import (
     PROVIDED_BY_COLUMN,
     PROVISIONAL_GENUS_PREFIX,
     PROVISIONAL_SPECIES_PREFIX,
+    PUBLICATIONS_COLUMN,
     RDFS_SUBCLASS_OF,
+    RELATION_COLUMN,
     RESISTANCE_KEY,
     RISK_ASSESSMENT,
     RISK_ASSESSMENT_COLUMN,
@@ -182,6 +189,7 @@ from kg_microbe.transform_utils.constants import (
     STRAIN_DESIGNATION,
     STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
+    SUBJECT_COLUMN,
     SYNONYM,
     SYNONYM_COLUMN,
     SYNONYMS,
@@ -258,7 +266,7 @@ class BacDiveTransform(Transform):
         super().__init__(source_name, input_dir, output_dir)
         # Extend edge schema with `value`/`unit` for quantitative provenance
         # (e.g. antibiogram zone-of-inhibition diameter in mm).
-        self.edge_header = self.edge_header + ["value", "unit"]
+        self.edge_header = self.edge_header + ["value", "unit", PUBLICATIONS_COLUMN, ORIGINAL_OBJECT_COLUMN]
         self.knowledge_source = "infores:bacdive"  # InforES standard knowledge source
         self.ncbi_impl = get_ncbitaxon_adapter()
 
@@ -270,7 +278,7 @@ class BacDiveTransform(Transform):
         self.metpo_metabolite_production_mappings = load_metpo_metabolite_production_mappings()
         self.metpo_enzyme_mappings = load_metpo_enzyme_mappings()
         try:
-            self.assay_kit_mappings = load_assay_kit_mappings()
+            self.assay_kit_mappings = load_assay_kit_mappings(Path(self.input_base_dir) / ASSAY_KITS_FILE.name)
         except FileNotFoundError:
             logger.warning(
                 "Assay metadata file not found. Assay generation will be skipped. "
@@ -285,6 +293,8 @@ class BacDiveTransform(Transform):
         self.assay_raw_data: Optional[dict] = None  # Raw JSON from assay_kits_simple.json
         self.assay_nodes_generated: Optional[List] = None  # Generated assay node rows
         self.assay_edges_generated: Optional[List] = None  # Generated assay→entity edge rows
+        self.assay_target_nodes_generated: Optional[List] = None
+        self.go_authority = None  # Validated once, before assay output is opened.
 
         # LPSN name → record_no index, loaded from data/raw/lpsn_gss.csv when
         # present. Used to emit kgmicrobe.strain:bacdive_<id> →
@@ -712,6 +722,57 @@ class BacDiveTransform(Transform):
         """
         return self.chebi_categories.get(chebi_id, METABOLITE_CATEGORY)
 
+    def _generate_ec_substrate_rows(self, mappings: List[dict]) -> tuple[List[list], List[list]]:
+        """Emit enzyme-substrate assertions, independently of assay-reagent predicates (#1078)."""
+        edges, nodes = [], []
+        seen_chebi = set()
+        for mapping in mappings:
+            ec_id = (mapping.get("EC_ID") or "").strip()
+            chebi_id = (mapping.get("CHEBI_ID") or "").strip()
+            if not ec_id or not chebi_id:
+                continue
+            fields = {
+                SUBJECT_COLUMN: ec_id,
+                PREDICATE_COLUMN: ENZYME_TO_SUBSTRATE_EDGE,
+                OBJECT_COLUMN: chebi_id,
+                RELATION_COLUMN: HAS_INPUT_RELATION,
+                PRIMARY_KNOWLEDGE_SOURCE_COLUMN: self.knowledge_source,
+                KNOWLEDGE_LEVEL_COLUMN: KNOWLEDGE_ASSERTION,
+                AGENT_TYPE_COLUMN: MANUAL_AGENT,
+            }
+            edges.append([fields.get(column, "") for column in self.edge_header])
+            if chebi_id not in seen_chebi:
+                seen_chebi.add(chebi_id)
+                nodes.append(
+                    self._create_node_row(
+                        chebi_id, self._get_chebi_category(chebi_id), (mapping.get("substrate") or "").strip()
+                    )
+                )
+        return edges, nodes
+
+    def _prepare_assay_outputs(self):
+        """Validate GO and all assay references before opening graph outputs (#1079)."""
+        if not self.assay_kit_mappings:
+            return
+        from kg_microbe.utils.go_authority import load_go_authority
+        from kg_microbe.utils.mapping_file_utils import (
+            generate_assay_entity_edges,
+            generate_assay_entity_nodes,
+            generate_assay_nodes,
+        )
+
+        self.go_authority = load_go_authority(Path(self.input_base_dir))
+        if self.assay_raw_data is None:
+            with (Path(self.input_base_dir) / ASSAY_KITS_FILE.name).open(encoding="utf-8") as stream:
+                self.assay_raw_data = json.load(stream)
+        self.assay_nodes_generated = generate_assay_nodes(self.assay_raw_data, self.node_header)
+        self.assay_edges_generated = generate_assay_entity_edges(
+            self.assay_raw_data, self.edge_header, go_authority=self.go_authority
+        )
+        self.assay_target_nodes_generated = generate_assay_entity_nodes(
+            self.assay_raw_data, self.node_header, go_authority=self.go_authority
+        )
+
     def _add_edge_metadata(self, predicate: str, relation: str, object_id: str) -> tuple[str, str]:
         """
         Return appropriate knowledge_level and agent_type for an edge.
@@ -934,6 +995,30 @@ class BacDiveTransform(Transform):
             if n >= self._MIN_SHARED_PREFIX and token[: self._MIN_SHARED_PREFIX] == name[: self._MIN_SHARED_PREFIX]:
                 return True
         return False
+
+    def _resolve_special_taxon_parent(self, token: str) -> Optional[str]:
+        """Resolve an unclassified higher-rank label/synonym without first-hit ambiguity (#1081)."""
+        # Special patterns are rare. Scan the already loaded label/synonym maps
+        # instead of allocating another graph-size index or searching only OAK labels.
+        for candidate in self._higher_rank_candidates(token):
+            name = candidate.lower()
+            matches = {
+                curie
+                for curie, label in self.ncbitaxon_labels.items()
+                if (label.lower() == name or name in self.ncbitaxon_synonyms.get(curie, ()))
+                and self._validate_higher_rank_match(curie, token)
+            }
+            if len(matches) == 1:
+                return next(iter(matches))
+            if len(matches) > 1:
+                logger.warning("Ambiguous higher-rank taxon %r: %s; no inferred parent", token, sorted(matches))
+                return None
+        logger.warning("Unresolved higher-rank taxon %r; no genus inferred from an unclassified name", token)
+        return None
+
+    def _genus_for_unmatched_name(self, full_name: str, is_special: bool) -> Optional[str]:
+        """Unclassified higher-rank tokens are never provisionally relabelled as genera."""
+        return None if is_special else self._parse_genus_from_scientific_name(full_name)
 
     def _ncbitaxon_ancestors(self, ncbitaxon_id: str) -> frozenset:
         """
@@ -1738,6 +1823,7 @@ class BacDiveTransform(Transform):
         # complete nodes/edges truncated to whatever had been flushed. Failing
         # before the truncation costs a run; failing after costs the outputs.
         resolve_adapter(self.ncbi_impl)
+        self._prepare_assay_outputs()
         # replace with downloaded data filename for this source
         input_file = os.path.join(self.input_base_dir, "bacdive_strains.json")  # must exist already
         # Read the JSON file into the variable input_json
@@ -1862,100 +1948,46 @@ class BacDiveTransform(Transform):
             node_writer.writerow(self.node_header)
             # Wrap edge_writer so every infores:bacdive-sourced edge that
             # involves a kgmicrobe.strain:bacdive_NNN node (subject or object)
-            # gets the BacDive strain id added to its primary_knowledge_source.
-            # The serialized list form matches KGX's multi-source convention,
-            # so downstream merge collapses these rows with their mediadive-
-            # sourced twins (which carry just "bacdive:NNN") into a single
-            # multi-provenance row instead of leaving them as two singletons.
+            # gets its public BacDive record page added to publications.
+            # PKS remains the scalar information resource infores:bacdive.
             raw_edge_writer = tsv_writer(edge)
             raw_edge_writer.writerow(self.edge_header)
             edge_writer = _StrainProvenanceWriter(
                 raw_edge_writer,
                 knowledge_source=self.knowledge_source,
                 ks_column_index=self.edge_header.index(PRIMARY_KNOWLEDGE_SOURCE_COLUMN),
+                publications_column_index=self.edge_header.index(PUBLICATIONS_COLUMN),
             )
 
-            # Generate and write assay nodes and edges upfront (before processing organisms)
+            # GO/reference validation and all generation completed in preflight.
+            # Publication errors must abort the atomic output pair, not silently
+            # publish a graph missing its methodological assay declarations.
             if self.assay_kit_mappings:
-                try:
-                    from kg_microbe.transform_utils.constants import ASSAY_KITS_FILE
-                    from kg_microbe.utils.mapping_file_utils import (
-                        generate_assay_entity_edges,
-                        generate_assay_entity_nodes,
-                        generate_assay_nodes,
-                    )
-
-                    # Load raw assay data from downloaded file if not already loaded
-                    if self.assay_raw_data is None:
-                        print("Loading assay metadata from local file...")
-                        if ASSAY_KITS_FILE.exists():
-                            with open(ASSAY_KITS_FILE, "r") as f:
-                                self.assay_raw_data = json.load(f)
-                        else:
-                            print(
-                                f"Warning: Assay metadata file not found at {ASSAY_KITS_FILE}. "
-                                "Run 'poetry run kg download' to download it. Skipping assay generation."
-                            )
-                            self.assay_raw_data = None
-
-                    # Generate assay nodes
-                    if self.assay_nodes_generated is None:
-                        print("Generating assay nodes...")
-                        self.assay_nodes_generated = generate_assay_nodes(self.assay_raw_data, self.node_header)
-
-                    # Generate assay→entity edges (methodological reference)
-                    if self.assay_edges_generated is None:
-                        print("Generating assay→entity edges...")
-                        self.assay_edges_generated = generate_assay_entity_edges(self.assay_raw_data, self.edge_header)
-
-                    # Write assay nodes
-                    if self.assay_nodes_generated:
-                        print(f"Writing {len(self.assay_nodes_generated)} assay nodes...")
-                        node_writer.writerows(self.assay_nodes_generated)
-
-                        # Type each kgmicrobe.assay:* node as a subclass of MICRO:0000903
-                        # (microbial-conditions-ontology assay parent class). Pulls the
-                        # 503 stub-prefix assay nodes into the OBO hierarchy via the
-                        # MICRO ontology that ontologies_transform now loads.
-                        id_idx = self.node_header.index(ID_COLUMN)
-                        assay_subclass_edges = [
-                            [
-                                row[id_idx],
-                                "biolink:subclass_of",
-                                "MICRO:0000903",
-                                "rdfs:subClassOf",
-                                self.knowledge_source,
-                                "knowledge_assertion",
-                                "manual_agent",
-                                "",
-                                "",
-                            ]
-                            for row in self.assay_nodes_generated
-                            if row[id_idx]
-                        ]
-                        if assay_subclass_edges:
-                            print(f"Writing {len(assay_subclass_edges)} assay→MICRO subclass_of edges...")
-                            edge_writer.writerows(assay_subclass_edges)
-
-                    # Write assay→entity edges
-                    if self.assay_edges_generated:
-                        print(f"Writing {len(self.assay_edges_generated)} assay→entity edges...")
-                        edge_writer.writerows(self.assay_edges_generated)
-
-                    # Emit labelled stubs for CHEBI/EC/GO targets referenced by
-                    # the assay edges. Most are also supplied by the ontologies
-                    # transform (merge prefers the canonical row); these stubs
-                    # cover obsolete / out-of-version CHEBI IDs (e.g. CHEBI:17004
-                    # D-Tagatose) that would otherwise become biolink:NamedThing
-                    # stubs at merge time.
-                    assay_target_nodes = generate_assay_entity_nodes(self.assay_raw_data, self.node_header)
-                    if assay_target_nodes:
-                        print(f"Writing {len(assay_target_nodes)} assay-target stub nodes...")
-                        node_writer.writerows(assay_target_nodes)
-
-                except Exception as e:
-                    print(f"Warning: Failed to generate assay nodes/edges: {e}")
-                    # Continue with transform even if assay generation fails
+                if self.assay_nodes_generated:
+                    print(f"Writing {len(self.assay_nodes_generated)} assay nodes...")
+                    node_writer.writerows(self.assay_nodes_generated)
+                    id_idx = self.node_header.index(ID_COLUMN)
+                    assay_subclass_edges = []
+                    for assay_node in self.assay_nodes_generated:
+                        if not assay_node[id_idx]:
+                            continue
+                        fields = {
+                            SUBJECT_COLUMN: assay_node[id_idx],
+                            PREDICATE_COLUMN: SUBCLASS_PREDICATE,
+                            OBJECT_COLUMN: "MICRO:0000903",
+                            RELATION_COLUMN: RDFS_SUBCLASS_OF,
+                            PRIMARY_KNOWLEDGE_SOURCE_COLUMN: self.knowledge_source,
+                            KNOWLEDGE_LEVEL_COLUMN: KNOWLEDGE_ASSERTION,
+                            AGENT_TYPE_COLUMN: MANUAL_AGENT,
+                        }
+                        assay_subclass_edges.append([fields.get(column, "") for column in self.edge_header])
+                    edge_writer.writerows(assay_subclass_edges)
+                if self.assay_edges_generated:
+                    print(f"Writing {len(self.assay_edges_generated)} assay→entity edges...")
+                    edge_writer.writerows(self.assay_edges_generated)
+                if self.assay_target_nodes_generated:
+                    print(f"Writing {len(self.assay_target_nodes_generated)} assay-target nodes...")
+                    node_writer.writerows(self.assay_target_nodes_generated)
 
             custom_curie_data = yaml.safe_load(cc_file)
             bacdive_mappings_list_of_dicts = list(csv.DictReader(tsvfile_3, delimiter="\t"))
@@ -1967,36 +1999,9 @@ class BacDiveTransform(Transform):
             # missing from chebi_nodes.tsv, so we emit a labelled stub here using the
             # `substrate` column from bacdive_mappings.tsv to prevent KGX from creating
             # a biolink:NamedThing stub at merge time.
-            ec_substrate_edges = []
-            ec_substrate_stub_nodes: list = []
-            seen_chebi_stub: set = set()
-            for mapping in bacdive_mappings_list_of_dicts:
-                ec_id = mapping.get("EC_ID", "").strip()
-                chebi_id = mapping.get("CHEBI_ID", "").strip()
-
-                # Only create edge if both EC and ChEBI IDs are present
-                if ec_id and chebi_id:
-                    ec_substrate_edges.append(
-                        [
-                            ec_id,  # subject (enzyme)
-                            ASSAY_HAS_INPUT_PREDICATE,  # biolink:has_input
-                            chebi_id,  # object (substrate)
-                            ASSAY_INPUT_RELATION,  # RO:0002233 (has input)
-                            self.knowledge_source,  # infores:bacdive
-                            KNOWLEDGE_ASSERTION,
-                            MANUAL_AGENT,
-                        ]
-                    )
-                    if chebi_id not in seen_chebi_stub:
-                        seen_chebi_stub.add(chebi_id)
-                        substrate_name = (mapping.get("substrate") or "").strip()
-                        ec_substrate_stub_nodes.append(
-                            self._create_node_row(
-                                chebi_id,
-                                self._get_chebi_category(chebi_id),
-                                substrate_name,
-                            )
-                        )
+            ec_substrate_edges, ec_substrate_stub_nodes = self._generate_ec_substrate_rows(
+                bacdive_mappings_list_of_dicts
+            )
 
             # Write EC→substrate edges
             if ec_substrate_edges:
@@ -2269,26 +2274,7 @@ class BacDiveTransform(Transform):
                         # higher-rank tokens like "actinobacterium".
                         higher_rank_ncbitaxon_id = None
                         if is_special:
-                            # Keep the original extracted token (e.g. "actinobacterium")
-                            # for post-hit validation; ``full_name`` gets overwritten
-                            # with the matched candidate label below.
-                            original_token = full_name
-                            # Fast path: check the preloaded name→id dict for each
-                            # candidate (O(1) per try) before any OAK fallback.
-                            # A full OAK search per candidate is too expensive here:
-                            # 5 candidates × obscure tokens × 99k strains adds up.
-                            for candidate in self._higher_rank_candidates(full_name):
-                                dict_hit = self.ncbitaxon_name_to_id.get(candidate.lower())
-                                if dict_hit and self._validate_higher_rank_match(dict_hit, original_token):
-                                    higher_rank_ncbitaxon_id = dict_hit
-                                    full_name = candidate
-                                    break
-                            # Single OAK fallback on the original extract if nothing
-                            # in the candidate list was preloaded and validated.
-                            if not higher_rank_ncbitaxon_id:
-                                fallback_id = self._search_ncbitaxon_by_label(original_token)
-                                if fallback_id and self._validate_higher_rank_match(fallback_id, original_token):
-                                    higher_rank_ncbitaxon_id = fallback_id
+                            higher_rank_ncbitaxon_id = self._resolve_special_taxon_parent(full_name)
                             if higher_rank_ncbitaxon_id:
                                 print(f"  Higher-rank match for '{full_name}': {higher_rank_ncbitaxon_id}")
                                 knowledge_level, agent_type = self._add_edge_metadata(
@@ -2309,7 +2295,9 @@ class BacDiveTransform(Transform):
                                 )
 
                         # Step 1: Parse genus from scientific name (skipped if higher-rank matched)
-                        genus = None if higher_rank_ncbitaxon_id else self._parse_genus_from_scientific_name(full_name)
+                        # An unclassified order/class token is not a genus even
+                        # when its authoritative resolution is absent or ambiguous.
+                        genus = self._genus_for_unmatched_name(full_name, is_special)
 
                         if genus:
                             print(f"  Extracted genus: {genus}")
@@ -2527,7 +2515,7 @@ class BacDiveTransform(Transform):
                                     )
                                     print(f"  Created edge (orphaned): {organism_id} -> {provisional_genus_id}")
                         elif not higher_rank_ncbitaxon_id:
-                            print(f"  Could not parse genus from: {full_name}")
+                            print(f"  Unresolved {'higher-rank taxon' if is_special else 'genus'}: {full_name}")
                             print("  Strain will remain unmapped")
 
                     # All feature edges now target the strain node directly (organism_id)

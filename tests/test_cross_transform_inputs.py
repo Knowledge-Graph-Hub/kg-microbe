@@ -5,6 +5,7 @@ from pathlib import Path
 from unittest import TestCase
 
 from kg_microbe.transform import DATA_SOURCES
+from kg_microbe.utils.transform_fingerprint import upstream_fingerprint, write_fingerprint
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 TRANSFORM_ROOT = REPO_ROOT / "kg_microbe" / "transform_utils"
@@ -34,6 +35,11 @@ _DIR_CONSTANT = re.compile(
     r"^([A-Z][A-Z0-9_]*) *= *TRANSFORMED_DATA_DIR *(?:/ *([A-Z][A-Z0-9_]*)|/ *[\"\']([a-z_]+)[\"\'])", re.M
 )
 _FILE_CONSTANT = re.compile(r"^([A-Z][A-Z0-9_]*) *= *([A-Z][A-Z0-9_]*) *//? *[\"\']", re.M)
+_PACKAGE_DIR_CONSTANT = re.compile(
+    r"^([A-Z][A-Z0-9_]*)(?: *: *Path)? *= *TRANSFORM_UTILS_DIR *(?:/ *([A-Z][A-Z0-9_]*)|/ *[\"\']([a-z_]+)[\"\'])",
+    re.M,
+)
+_TMP_DIR_CONSTANT = re.compile(r"^([A-Z][A-Z0-9_]*) *= *([A-Z][A-Z0-9_]*) */ *[\"\']tmp[\"\']", re.M)
 
 
 def _constants_naming_a_transform_output():
@@ -51,6 +57,15 @@ def _constants_naming_a_transform_output():
         source = via_literal or literals.get(via_constant)
         if source in DATA_SOURCES:
             dirs[name] = source
+    # Legacy producers also publish intermediate TSVs under their package's
+    # tmp/ directory. Do not classify curated package assets as produced data.
+    packages = {
+        name: via_literal or literals.get(via_constant)
+        for name, via_constant, via_literal in _PACKAGE_DIR_CONSTANT.findall(text)
+    }
+    for name, parent in _TMP_DIR_CONSTANT.findall(text):
+        if packages.get(parent) in DATA_SOURCES:
+            dirs[name] = packages[parent]
     # Then every file constant built on one of those directories.
     resolved = dict(dirs)
     for name, parent in _FILE_CONSTANT.findall(text):
@@ -120,10 +135,13 @@ class CrossTransformDeclarationTest(TestCase):
         self.assertIn("ontologies", observed.get("gold", set()))
         self.assertIn("gtdb", observed.get("lpsn", set()))
         self.assertIn("lpsn", observed.get("microbedecoder", set()))
+        self.assertIn("gold", observed.get("microbedecoder", set()))
         # Reached only through a constants.py path; see _constants_naming_a_transform_output (#1035).
         self.assertIn("ontologies", observed.get("bacdive", set()))
         self.assertIn("ontologies", observed.get("mediadive", set()))
         self.assertIn("ontologies", observed.get("metatraits", set()))
+        self.assertIn("bacdive", observed.get("mediadive", set()))
+        self.assertIn("bacdive", observed.get("bactotraits", set()))
 
     def test_a_constant_pointing_into_a_transform_output_is_resolved(self):
         """The premise of the constants scan, pinned so a refactor cannot quietly empty it."""
@@ -131,6 +149,9 @@ class CrossTransformDeclarationTest(TestCase):
         self.assertEqual(resolved.get("NCBITAXON_NODES_FILE"), "ontologies")
         self.assertEqual(resolved.get("CHEBI_NODES_FILE"), "ontologies")
         self.assertEqual(resolved.get("ONTOLOGIES_TRANSFORMED_DIR"), "ontologies")
+        self.assertEqual(resolved.get("BACDIVE_TMP_DIR"), "bacdive")
+        self.assertEqual(resolved.get("BACDIVE_YAML_DIR"), "bacdive")
+        self.assertNotIn("METABOLITE_MAPPING_FILE", resolved)
 
     def test_no_transform_declares_an_unregistered_upstream(self):
         """A typo would fold an always-absent marker in and never clear."""
@@ -159,3 +180,35 @@ class CrossTransformDeclarationTest(TestCase):
                     order.index(source),
                     f"{upstream} must be registered before {source} in DATA_SOURCES",
                 )
+
+
+def test_bacdive_marker_changes_invalidate_both_tmp_consumers(tmp_path):
+    """Changing the producing marker makes MediaDive and BactoTraits stale, not unrelated sources."""
+    transformed = tmp_path / "transformed"
+    producer_code = tmp_path / "bacdive_code"
+    producer_code.mkdir()
+    producer_module = producer_code / "producer.py"
+    producer_module.write_text("revision = 1\n", encoding="utf-8")
+    producer_output = transformed / "bacdive"
+    producer_output.mkdir(parents=True)
+    write_fingerprint(producer_output, producer_code, tmp_path, data_inputs=())
+    recorded = {}
+    for source in ("mediadive", "bactotraits"):
+        consumer_code = tmp_path / f"{source}_code"
+        consumer_code.mkdir()
+        (consumer_code / "consumer.py").write_text("revision = 1\n", encoding="utf-8")
+        consumer_output = transformed / source
+        consumer_output.mkdir()
+        declarations = DATA_SOURCES[source].TRANSFORM_INPUTS
+        marker = write_fingerprint(
+            consumer_output, consumer_code, tmp_path, data_inputs=(), transform_inputs=declarations
+        )
+        recorded[source] = marker["upstream"]
+        assert recorded[source] == upstream_fingerprint(transformed, declarations)
+
+    unrelated_before = upstream_fingerprint(transformed, ("ontologies",))
+    producer_module.write_text("revision = 2\n", encoding="utf-8")
+    write_fingerprint(producer_output, producer_code, tmp_path, data_inputs=())
+    for source, original in recorded.items():
+        assert original != upstream_fingerprint(transformed, DATA_SOURCES[source].TRANSFORM_INPUTS)
+    assert unrelated_before == upstream_fingerprint(transformed, ("ontologies",))

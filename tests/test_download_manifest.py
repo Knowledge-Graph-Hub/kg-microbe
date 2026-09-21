@@ -210,6 +210,7 @@ def test_a_partial_download_still_records_what_landed(tmp_path, monkeypatch):
     download_module = importlib.import_module("kg_microbe.download")
 
     def boom(**_kwargs):
+        """Simulate an upstream download failure."""
         raise RuntimeError("upstream 404")
 
     monkeypatch.setattr(download_module, "download_from_yaml", boom)
@@ -237,6 +238,7 @@ def test_the_failing_download_still_propagates(tmp_path, monkeypatch):
     download_module = importlib.import_module("kg_microbe.download")
 
     def boom(**_kwargs):
+        """Simulate an upstream download failure."""
         raise RuntimeError("upstream 404")
 
     monkeypatch.setattr(download_module, "download_from_yaml", boom)
@@ -264,9 +266,11 @@ def test_a_manifest_failure_does_not_mask_the_download_error(tmp_path, monkeypat
     download_module = importlib.import_module("kg_microbe.download")
 
     def boom(**_kwargs):
+        """Simulate an upstream download failure."""
         raise RuntimeError("upstream 404")
 
     def cannot_record(*_a, **_k):
+        """Simulate a failed manifest publication."""
         raise OSError("read-only file system")
 
     monkeypatch.setattr(download_module, "download_from_yaml", boom)

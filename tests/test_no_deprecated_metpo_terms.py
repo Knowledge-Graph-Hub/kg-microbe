@@ -207,6 +207,7 @@ def test_transform_outputs_carry_no_unexpected_deprecated_term():
     offenders = {}
 
     def note(curie, where):
+        """Record an unapproved deprecated term and its occurrence location."""
         if curie in deprecated and curie not in KNOWN_DEPRECATED:
             offenders.setdefault(curie, set()).add(where)
 

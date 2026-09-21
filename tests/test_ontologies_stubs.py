@@ -291,6 +291,7 @@ def test_mireot_intermediate_is_rdfxml_not_functional_syntax(tmp_path, monkeypat
     calls = []
 
     def fake_run(cmd, check):
+        """Capture the ROBOT command without launching it."""
         calls.append(list(cmd))
         return None
 

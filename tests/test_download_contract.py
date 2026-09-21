@@ -16,7 +16,6 @@ from kghub_downloader.model import DownloadOptions
 download_module = import_module("kg_microbe.download")
 
 
-
 class DownloaderContractTests(unittest.TestCase):
     """Every unit test mocks ``download_from_yaml``; this one binds the real signature."""
 
@@ -30,6 +29,7 @@ class DownloaderContractTests(unittest.TestCase):
         seen = {}
 
         def recorder(**kwargs):
+            """Capture arguments passed to the downloader."""
             seen.update(kwargs)
 
         with TemporaryDirectory() as td:

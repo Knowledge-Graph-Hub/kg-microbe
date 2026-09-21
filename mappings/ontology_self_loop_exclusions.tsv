@@ -1,0 +1,3 @@
+subject	predicate	object	relation	reason
+PR:000000001	biolink:has_part	PR:000000001	BFO:0000051	Reviewed UBERON protein class self-reference; exclude from the query graph, not a claim that the upstream OWL axiom is invalid.
+FOODON:02021808	biolink:subclass_of	FOODON:02021808	rdfs:subClassOf	Reviewed FOODON atlantic cod material reflexive subclass assertion; exclude the query-graph cycle while retaining its audit evidence.

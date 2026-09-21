@@ -42,6 +42,14 @@ The counted INFO allowance requires `rdfs:subClassOf`, different endpoints, know
 
 Taxon phenotype assertions may target METPO/PATO/OMP phenotype classes, including their PhenotypicQuality/OntologyClass representation. Arbitrary Attribute/chemical targets are not accepted merely because `has_phenotype` is involved. All house-only passes remain separately counted from strict model conformance; native MICRO properties remain separately typed project extensions.
 
+## Reviewed query-graph self-loops (2026-09-17)
+
+Quarantine the two exact assertions reviewed in the September 17 merged graph: `PR:000000001 biolink:has_part PR:000000001` with relation `BFO:0000051`, and `FOODON:02021808 biolink:subclass_of FOODON:02021808` with relation `rdfs:subClassOf`. The policy lives in `mappings/ontology_self_loop_exclusions.tsv` and is applied after identifier compaction to every ontology output, including imported copies.
+
+These are query-graph exclusions, not a blanket declaration that reflexive OWL assertions or class-level partonomy are invalid. Other self-references, different source relations, and all node declarations remain unchanged. Atomic LF `<ontology>_self_loop_exclusions.tsv` reports retain the original pre-projection row as JSON, provenance, and the exclusion reason. A clean run replaces a stale report with a header-only file; malformed curation aborts instead of silently changing the exclusion scope.
+
+The policy is a declared ontology transform input and participates in its freshness fingerprint. Regression coverage is in `tests/test_ontology_self_loops.py`. Raw ontologies and existing transformed/merged artifacts are not rewritten by this code change; rebuild before reporting the released graph corrected.
+
 ## Verification and freshness
 
 Regression coverage is in `tests/test_semantic_model_decisions.py`, `tests/test_ontology_resolution.py`, `tests/test_assay_generation.py`, and `tests/test_kg_model_review_domain_range.py`. Negative controls cover non-class endpoints, relation mismatches, self-loops, unexpected assay ranges, chemical role-label false positives, uncertain FOODON targets, unrelated attributes/proteins, and unknown MICRO predicates.

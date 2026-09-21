@@ -12,3 +12,6 @@ CHEBI:78018	dodecylphosphocholine	xref	MICRO:0000175	Trypticase peptone is not d
 CHEBI:78018	dodecylphosphocholine	xref	MICRO:0000182	Tryptone is not dodecylphosphocholine.
 FOODON:03302071	green kidney bean	xref	FOODON:03315718	Hydrolyzed animal protein is not green kidney bean.
 FOODON:03302071	green kidney bean	xref	cas:91079-38-8	The imported protein digest cross-reference does not identify green kidney bean.
+FOODON:03315719	mammalian milk protein (hydrolyzed)	name_pattern	(?i)(?:trypton|trypticase|tripticase|pancreatic digest of casein)	MIM:Tryptone and MIM:Bacto-tryptone are exactMatch MICRO:0000182; MIM:Trypticase is exactMatch MICRO:0000175. Broad milk-protein synonyms collapse distinct Tryptone and Casamino-acid recipe entries.
+FOODON:03315719	mammalian milk protein (hydrolyzed)	xref	MICRO:0000175	Trypticase peptone has a specific reviewed MIM identity; the broader milk-protein class is not an equivalent identifier.
+FOODON:03315719	mammalian milk protein (hydrolyzed)	xref	MICRO:0000182	Tryptone has a specific reviewed MIM identity; the broader milk-protein class is not an equivalent identifier.

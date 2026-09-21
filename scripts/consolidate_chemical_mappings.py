@@ -2986,7 +2986,7 @@ def refresh_identity_policy(source: Path, output: Path) -> dict:
                 outgoing.write(line)
             else:
                 raise ValueError("SSSOM input has no column header")
-            required = {"subject_id", "subject_label", "object_id", "object_label", "comment"}
+            required = {"subject_id", "subject_label", "predicate_id", "object_id", "object_label", "comment"}
             if not required.issubset(fields):
                 raise ValueError(f"Missing SSSOM identity columns: {required - set(fields)}")
             outgoing.write(line)
@@ -2999,6 +2999,11 @@ def refresh_identity_policy(source: Path, output: Path) -> dict:
                 row = dict(zip(fields, values, strict=True))
                 changed = False
                 stats["rows_read"] += 1
+                # A rejected equivalence can still be a valid parent relation.
+                # Preserve asymmetric assertions, including their labels/dates.
+                if row["predicate_id"] in {"skos:broadMatch", "skos:narrowMatch"}:
+                    outgoing.write(line)
+                    continue
                 target, subject = row["object_id"], row["subject_id"]
                 if not ingredient_xref_allowed(subject, target):
                     stats["rows_removed"] += 1

@@ -1,0 +1,2 @@
+subject	predicate	object	relation	primary_knowledge_source	knowledge_level	agent_type
+fixture:current	biolink:related_to	fixture:historical	biolink:related_to	infores:fixture	knowledge_assertion	manual_agent

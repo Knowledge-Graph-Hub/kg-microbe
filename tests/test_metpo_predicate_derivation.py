@@ -12,36 +12,47 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 #: A classes tab shaped like the pinned 2026-06-12 template: no `biolink
 #: equivalent` column, categories in `biolink close match`, a ROBOT row second.
-SHEET = "\t".join(
-    ["ID", "label", "parent classes (one strongly preferred)", "metatraits synonym", "biolink close match"]
-) + "\n" + "\t".join(["ID", "LABEL", "SC %", "A oboInOwl:hasRelatedSynonym", "AI skos:closeMatch"]) + "\n" + "\n".join(
-    [
-        "METPO:1\tphenotype\t\t\thttps://biolink.github.io/biolink-model/PhenotypicQuality",
-        "METPO:2\tbiological process\t\t\t",
-        "METPO:3\tquality\t\t\t",
-        "METPO:4\tmotility\tphenotype\tmotile\t",
-        "METPO:5\tnitrogen fixation\tbiological process\tnitrogen fixer\t",
-        "METPO:6\tsalt tolerance\tquality\thalotolerant\t",
-        "METPO:7\tunplaced trait\t\torphan\t",
-    ]
-) + "\n"
+SHEET = (
+    "\t".join(["ID", "label", "parent classes (one strongly preferred)", "metatraits synonym", "biolink close match"])
+    + "\n"
+    + "\t".join(["ID", "LABEL", "SC %", "A oboInOwl:hasRelatedSynonym", "AI skos:closeMatch"])
+    + "\n"
+    + "\n".join(
+        [
+            "METPO:1\tphenotype\t\t\thttps://biolink.github.io/biolink-model/PhenotypicQuality",
+            "METPO:2\tbiological process\t\t\t",
+            "METPO:3\tquality\t\t\t",
+            "METPO:4\tmotility\tphenotype\tmotile\t",
+            "METPO:5\tnitrogen fixation\tbiological process\tnitrogen fixer\t",
+            "METPO:6\tsalt tolerance\tquality\thalotolerant\t",
+            "METPO:7\tunplaced trait\t\torphan\t",
+        ]
+    )
+    + "\n"
+)
 
-PROPERTIES = "\t".join(["ID", "label", "RANGE", "parent property", "biolink equivalent"]) + "\n" + "\t".join(
-    ["ID", "LABEL", "RANGE", "SP %", "AI skos:exactMatch"]
-) + "\n" + "\n".join(
-    [
-        "METPO:2000101\thas quality\tquality\t\t",
-        "METPO:2000067\tisolated from host with quality\tquality\t\t",
-        "METPO:2000102\thas phenotype\tphenotype\thas quality\thttps://biolink.github.io/biolink-model/has_phenotype",
-        "METPO:2000103\tcapable of\tbiological process\t\thttps://biolink.github.io/biolink-model/capable_of",
-    ]
-) + "\n"
+PROPERTIES = (
+    "\t".join(["ID", "label", "RANGE", "parent property", "biolink equivalent"])
+    + "\n"
+    + "\t".join(["ID", "LABEL", "RANGE", "SP %", "AI skos:exactMatch"])
+    + "\n"
+    + "\n".join(
+        [
+            "METPO:2000101\thas quality\tquality\t\t",
+            "METPO:2000067\tisolated from host with quality\tquality\t\t",
+            "METPO:2000102\thas phenotype\tphenotype\thas quality\thttps://biolink.github.io/biolink-model/has_phenotype",
+            "METPO:2000103\tcapable of\tbiological process\t\thttps://biolink.github.io/biolink-model/capable_of",
+        ]
+    )
+    + "\n"
+)
 
 
 class _Templates:
     """Point the loaders at a throwaway template directory for one test."""
 
     def __init__(self, sheet=SHEET, properties=PROPERTIES):
+        """Retain fixture payloads for the temporary templates."""
         self.sheet, self.properties = sheet, properties
 
     def __enter__(self):

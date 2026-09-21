@@ -1,0 +1,10 @@
+# predicate_semantics: skos
+subject_id	subject_label	predicate_id	object_id	object_label	comment	object_category	source
+kgm.name:milk	mammalian milk protein (hydrolyzed)	skos:exactMatch	FOODON:03315719	mammalian milk protein (hydrolyzed)	canonical_name	biolink:ChemicalMixture	fixture
+kgm.name:casamino_acids	Casamino acids	skos:closeMatch	FOODON:03315719	mammalian milk protein (hydrolyzed)	synonym	biolink:ChemicalMixture	fixture
+kgm.name:tryptone	Tryptone	skos:closeMatch	FOODON:03315719	mammalian milk protein (hydrolyzed)	synonym	biolink:ChemicalMixture	fixture
+kgm.name:trypticase	Trypticase	skos:closeMatch	FOODON:03315719	mammalian milk protein (hydrolyzed)	synonym	biolink:ChemicalMixture	fixture
+kgm.name:trypticase	Trypticase	skos:closeMatch	MICRO:0000175	Trypticase peptone	synonym	biolink:ChemicalEntity	fixture
+kgm.name:tryptone	Tryptone	skos:closeMatch	MICRO:0000182	Tryptone peptone	synonym	biolink:ChemicalEntity	fixture
+MICRO:0000182	Tryptone	skos:exactMatch	FOODON:03315719	mammalian milk protein (hydrolyzed)		biolink:ChemicalMixture	fixture
+MICRO:0000182	Tryptone	skos:broadMatch	FOODON:03315719	mammalian milk protein (hydrolyzed)		biolink:ChemicalMixture	fixture

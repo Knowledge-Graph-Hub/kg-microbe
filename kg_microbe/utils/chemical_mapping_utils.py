@@ -366,11 +366,6 @@ def _build_indices(mappings_path: Path):
         subject = (row.get("subject_id") or "").strip()
         if not subject:
             continue
-        if not ingredient_xref_allowed(subject, curie):
-            continue
-        if subject.startswith("kgm.name:") and not ingredient_mapping_allowed(row.get("subject_label", ""), curie):
-            continue
-
         predicate = (row.get("predicate_id") or "").strip()
         # skos:narrowMatch / skos:broadMatch carry parent-of (asymmetric)
         # relationships that the entity-centric indices above can't express.
@@ -392,6 +387,12 @@ def _build_indices(mappings_path: Path):
             else:
                 parent_sets.setdefault(curie, set()).add(subject)
             continue
+        # Identity exclusions do not reject asymmetric parent assertions.
+        if not ingredient_xref_allowed(subject, curie):
+            continue
+        if subject.startswith("kgm.name:") and not ingredient_mapping_allowed(row.get("subject_label", ""), curie):
+            continue
+
         # Recipe-equivalent hydrate pairs (anhydrous CHEBI ↔ hydrated
         # CHEBI). Tagged at consolidator export time with
         # ``predicate_id == 'skos:closeMatch'`` and

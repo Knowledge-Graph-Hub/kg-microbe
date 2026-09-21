@@ -1,0 +1,992 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kg_microbe.transform_utils.bakta package &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="kg_microbe.transform_utils.cog package" href="kg_microbe.transform_utils.cog.html" />
+    <link rel="prev" title="kg_microbe.transform_utils.bactotraits package" href="kg_microbe.transform_utils.bactotraits.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">kg_microbe</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="kg_microbe.html">kg_microbe package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="kg_microbe.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.merge_utils.html">kg_microbe.merge_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.query_utils.html">kg_microbe.query_utils package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html">kg_microbe.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.bactotraits_to_mongo">kg_microbe.bactotraits_to_mongo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.download">kg_microbe.download module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.query">kg_microbe.query module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.run">kg_microbe.run module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.transform">kg_microbe.transform module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">kg_microbe</a></li>
+          <li class="breadcrumb-item"><a href="kg_microbe.html">kg_microbe package</a></li>
+          <li class="breadcrumb-item"><a href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a></li>
+      <li class="breadcrumb-item active">kg_microbe.transform_utils.bakta package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/kg_microbe.transform_utils.bakta.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kg-microbe-transform-utils-bakta-package">
+<h1>kg_microbe.transform_utils.bakta package<a class="headerlink" href="#kg-microbe-transform-utils-bakta-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-kg_microbe.transform_utils.bakta.bakta">
+<span id="kg-microbe-transform-utils-bakta-bakta-module"></span><h2>kg_microbe.transform_utils.bakta.bakta module<a class="headerlink" href="#module-kg_microbe.transform_utils.bakta.bakta" title="Link to this heading"></a></h2>
+<p>Transform for Bakta genome annotations.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.bakta.BaktaTransform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bakta.bakta.</span></span><span class="sig-name descname"><span class="pre">BaktaTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.bakta.BaktaTransform" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
+<p>Transform Bakta genome annotations into KGX format.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_cog_annotation">
+<span class="sig-name descname"><span class="pre">add_cog_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cog_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_cog_annotation" title="Link to this definition"></a></dt>
+<dd><p>Add COG node and gene -&gt; COG edge.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gene_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Gene identifier</p></li>
+<li><p><strong>cog_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – COG identifier (e.g., ‘COG:COG0665’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_ec_annotation">
+<span class="sig-name descname"><span class="pre">add_ec_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protein_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ec_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_ec_annotation" title="Link to this definition"></a></dt>
+<dd><p>Add EC number node and protein -&gt; EC edge.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>protein_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Protein identifier</p></li>
+<li><p><strong>ec_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – EC identifier (e.g., ‘EC:1.4.99.6’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_edge">
+<span class="sig-name descname"><span class="pre">add_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predicate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_edge" title="Link to this definition"></a></dt>
+<dd><p>Add an edge to the collection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subject</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Subject node ID</p></li>
+<li><p><strong>predicate</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Biolink predicate</p></li>
+<li><p><strong>obj</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Object node ID</p></li>
+<li><p><strong>relation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – RO or other relation ontology term</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_functional_annotations">
+<span class="sig-name descname"><span class="pre">add_functional_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protein_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_functional_annotations" title="Link to this definition"></a></dt>
+<dd><p>Add functional annotation nodes and edges.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>protein_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Protein identifier</p></li>
+<li><p><strong>gene_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Gene identifier</p></li>
+<li><p><strong>annotations</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Parsed annotations dictionary</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_gene_node">
+<span class="sig-name descname"><span class="pre">add_gene_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_symbol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_gene_node" title="Link to this definition"></a></dt>
+<dd><p>Add a gene node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gene_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Composite gene ID</p></li>
+<li><p><strong>gene_symbol</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Gene symbol (may be empty)</p></li>
+<li><p><strong>product</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Gene product description</p></li>
+<li><p><strong>annotations</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Parsed annotations dictionary</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_go_annotation">
+<span class="sig-name descname"><span class="pre">add_go_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protein_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">go_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_go_annotation" title="Link to this definition"></a></dt>
+<dd><p>Add GO term node and protein -&gt; GO edge.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>protein_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Protein identifier</p></li>
+<li><p><strong>go_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – GO identifier (e.g., ‘<a class="reference external" href="GO:0003677">GO:0003677</a>’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_kegg_annotation">
+<span class="sig-name descname"><span class="pre">add_kegg_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kegg_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_kegg_annotation" title="Link to this definition"></a></dt>
+<dd><p>Add KEGG KO node and gene -&gt; KEGG edge.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gene_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Gene identifier</p></li>
+<li><p><strong>kegg_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – KEGG identifier (e.g., ‘KEGG:K19746’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_organism_node">
+<span class="sig-name descname"><span class="pre">add_organism_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">organism_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samn_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_organism_node" title="Link to this definition"></a></dt>
+<dd><p>Add a strain-level organism node (SAMN) and link to species (NCBITaxon).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>organism_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – SAMN organism identifier (e.g., ‘SAMN:00139461’)</p></li>
+<li><p><strong>samn_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – SAMN identifier for lookup</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_protein_node">
+<span class="sig-name descname"><span class="pre">add_protein_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protein_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_protein_node" title="Link to this definition"></a></dt>
+<dd><p>Add a protein node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>protein_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Protein identifier (RefSeq or UniRef)</p></li>
+<li><p><strong>product</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Protein product description</p></li>
+<li><p><strong>annotations</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Parsed annotations dictionary</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.bakta.BaktaTransform.get_ncbitaxon_id">
+<span class="sig-name descname"><span class="pre">get_ncbitaxon_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samn_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.get_ncbitaxon_id" title="Link to this definition"></a></dt>
+<dd><p>Get NCBITaxon ID for a SAMN identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>samn_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – SAMN identifier</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>NCBITaxon ID or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.bakta.BaktaTransform.get_organism_id">
+<span class="sig-name descname"><span class="pre">get_organism_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samn_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.get_organism_id" title="Link to this definition"></a></dt>
+<dd><p>Get the organism ID (SAMN-level for strain resolution).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>samn_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – SAMN identifier</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SAMN organism ID (e.g., ‘SAMN:00139461’)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.bakta.BaktaTransform.process_gene">
+<span class="sig-name descname"><span class="pre">process_gene</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samn_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organism_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.process_gene" title="Link to this definition"></a></dt>
+<dd><p>Process a single gene annotation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gene_data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Gene data dictionary from Bakta TSV</p></li>
+<li><p><strong>samn_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – SAMN identifier</p></li>
+<li><p><strong>organism_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Organism identifier (if available)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.bakta.BaktaTransform.process_genome">
+<span class="sig-name descname"><span class="pre">process_genome</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samn_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samn_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.process_genome" title="Link to this definition"></a></dt>
+<dd><p>Process a single genome directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>samn_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Path to SAMN directory</p></li>
+<li><p><strong>samn_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – SAMN identifier</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.bakta.BaktaTransform.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.run" title="Link to this definition"></a></dt>
+<dd><p>Run the Bakta transform.</p>
+<p>Processes all dataset subdirectories in data/raw/bakta/ (e.g., pfas_bakta, cmm_bakta)
+and outputs to data/transformed/bakta/[dataset_name]/ for each.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Not used (kept for API compatibility)</p></li>
+<li><p><strong>show_status</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Show progress bar (default: True)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.bakta.BaktaTransform.write_output">
+<span class="sig-name descname"><span class="pre">write_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.write_output" title="Link to this definition"></a></dt>
+<dd><p>Write nodes and edges to TSV files for a specific dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataset_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Name of the dataset (e.g., ‘pfas_bakta’, ‘cmm_bakta’)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.bakta.create_samn_mapping">
+<span id="kg-microbe-transform-utils-bakta-create-samn-mapping-module"></span><h2>kg_microbe.transform_utils.bakta.create_samn_mapping module<a class="headerlink" href="#module-kg_microbe.transform_utils.bakta.create_samn_mapping" title="Link to this heading"></a></h2>
+<p>Helper script to create SAMN to NCBITaxon mapping file.</p>
+<p>This script can be used to generate the samn_to_ncbitaxon.tsv mapping file
+needed by the Bakta transform. It queries NCBI databases to map BioSample
+accessions (SAMN) to NCBI Taxonomy IDs.</p>
+<dl class="simple">
+<dt>Usage:</dt><dd><p>python create_samn_mapping.py –input bakta_dir –output samn_to_ncbitaxon.tsv</p>
+</dd>
+<dt>Requirements:</dt><dd><p>pip install biopython</p>
+</dd>
+</dl>
+<p>Note: This requires network access to query NCBI Entrez API.
+You may need to set NCBI_API_KEY environment variable for higher rate limits.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.create_samn_mapping.create_mapping_file">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bakta.create_samn_mapping.</span></span><span class="sig-name descname"><span class="pre">create_mapping_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samn_ids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.4</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.create_samn_mapping.create_mapping_file" title="Link to this definition"></a></dt>
+<dd><p>Create SAMN to NCBITaxon mapping file by querying NCBI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>samn_ids</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></span>) – List of SAMN IDs to map</p></li>
+<li><p><strong>output_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Path to output TSV file</p></li>
+<li><p><strong>email</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Email for NCBI Entrez</p></li>
+<li><p><strong>delay</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Delay between queries in seconds (default: 0.4s for 3 requests/sec)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary of successfully mapped IDs</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.create_samn_mapping.get_all_samn_ids">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bakta.create_samn_mapping.</span></span><span class="sig-name descname"><span class="pre">get_all_samn_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bakta_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.create_samn_mapping.get_all_samn_ids" title="Link to this definition"></a></dt>
+<dd><p>Extract all SAMN IDs from Bakta directory structure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bakta_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Path to bakta directory containing SAMN subdirectories</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of SAMN IDs</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.create_samn_mapping.load_existing_mapping">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bakta.create_samn_mapping.</span></span><span class="sig-name descname"><span class="pre">load_existing_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.create_samn_mapping.load_existing_mapping" title="Link to this definition"></a></dt>
+<dd><p>Load existing mapping file to avoid re-querying.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mapping_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Path to existing mapping file</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary of SAMN to NCBITaxon mappings</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.create_samn_mapping.main">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bakta.create_samn_mapping.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.create_samn_mapping.main" title="Link to this definition"></a></dt>
+<dd><p>Run the SAMN to NCBITaxon mapping creation process.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.create_samn_mapping.query_ncbi_for_taxon">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bakta.create_samn_mapping.</span></span><span class="sig-name descname"><span class="pre">query_ncbi_for_taxon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samn_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'your_email&#64;example.com'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.create_samn_mapping.query_ncbi_for_taxon" title="Link to this definition"></a></dt>
+<dd><p>Query NCBI to get NCBITaxon ID for a BioSample accession.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>samn_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – BioSample accession (e.g., ‘SAMN00139461’)</p></li>
+<li><p><strong>email</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Email for NCBI Entrez (required by NCBI)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>NCBITaxon ID or None if not found</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.bakta.utils">
+<span id="kg-microbe-transform-utils-bakta-utils-module"></span><h2>kg_microbe.transform_utils.bakta.utils module<a class="headerlink" href="#module-kg_microbe.transform_utils.bakta.utils" title="Link to this heading"></a></h2>
+<p>Utility functions for Bakta genome annotations transform.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.utils.create_gene_id">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bakta.utils.</span></span><span class="sig-name descname"><span class="pre">create_gene_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samn_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">locus_tag</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.utils.create_gene_id" title="Link to this definition"></a></dt>
+<dd><p>Create a composite gene ID from SAMN ID and locus tag.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>samn_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – SAMN identifier (e.g., ‘SAMN00139461’)</p></li>
+<li><p><strong>locus_tag</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Gene locus tag (e.g., ‘JEECHJ_00005’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Composite gene ID (e.g., ‘SAMN00139461:JEECHJ_00005’)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.utils.extract_samn_from_path">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bakta.utils.</span></span><span class="sig-name descname"><span class="pre">extract_samn_from_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.utils.extract_samn_from_path" title="Link to this definition"></a></dt>
+<dd><p>Extract SAMN ID from directory or file path.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Path containing SAMN ID</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SAMN ID (e.g., ‘SAMN00139461’) or None if not found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.utils.find_bakta_tsv">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bakta.utils.</span></span><span class="sig-name descname"><span class="pre">find_bakta_tsv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samn_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.utils.find_bakta_tsv" title="Link to this definition"></a></dt>
+<dd><p>Find the .bakta.tsv file in a SAMN directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>samn_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Path to SAMN directory</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Path to .bakta.tsv file or None if not found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.utils.get_all_samn_directories">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bakta.utils.</span></span><span class="sig-name descname"><span class="pre">get_all_samn_directories</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.utils.get_all_samn_directories" title="Link to this definition"></a></dt>
+<dd><p>Get all SAMN directories in the base Bakta directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>base_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Base directory containing SAMN subdirectories</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of paths to SAMN directories</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.utils.get_biolink_category_for_go">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bakta.utils.</span></span><span class="sig-name descname"><span class="pre">get_biolink_category_for_go</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aspect</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.utils.get_biolink_category_for_go" title="Link to this definition"></a></dt>
+<dd><p>Map GO aspect to Biolink category.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>aspect</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – GO aspect (‘biological_process’, ‘molecular_function’, ‘cellular_component’)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Biolink category string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.utils.get_biolink_predicate_for_go">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bakta.utils.</span></span><span class="sig-name descname"><span class="pre">get_biolink_predicate_for_go</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">aspect</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.utils.get_biolink_predicate_for_go" title="Link to this definition"></a></dt>
+<dd><p>Get Biolink predicate and RO relation for a GO aspect.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>aspect</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – GO aspect (‘biological_process’, ‘molecular_function’, ‘cellular_component’)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple of (predicate, relation)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.utils.get_go_aspect">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bakta.utils.</span></span><span class="sig-name descname"><span class="pre">get_go_aspect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">go_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">go_adapter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authority</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.utils.get_go_aspect" title="Link to this definition"></a></dt>
+<dd><p>Determine the aspect (namespace) of a GO term.</p>
+<p>Reads via the raw-sqlite namespace map exposed by
+<code class="docutils literal notranslate"><span class="pre">kg_microbe.utils.ontology_utils.get_go_aspect</span></code> — OAK’s
+<code class="docutils literal notranslate"><span class="pre">entity_metadata_map</span></code> throws on GO databases with case-collision
+prefixes, and the swallowed exception used to leave <code class="docutils literal notranslate"><span class="pre">aspect</span></code> at the
+<code class="docutils literal notranslate"><span class="pre">molecular_function</span></code> default, silently miscategorising every
+biological-process and cellular-component term. An unusable GO DB
+raises <code class="xref py py-class docutils literal notranslate"><span class="pre">OntologyDbUnavailableError</span></code> (a <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseException</span></code>),
+which is intentionally not catchable as <code class="docutils literal notranslate"><span class="pre">Exception</span></code> here.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>go_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – GO identifier (e.g., ‘<a class="reference external" href="GO:0003677">GO:0003677</a>’)</p></li>
+<li><p><strong>go_adapter</strong> – Unused; kept for backward compatibility with existing callers.</p></li>
+<li><p><strong>cache</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Optional cache dictionary for GO term → aspect mappings.</p></li>
+<li><p><strong>raw_dir</strong> – Explicit producer raw root; use the authority’s fingerprinted cache.</p></li>
+<li><p><strong>authority</strong> – Prepared immutable authority, avoiding ontology IO entirely.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>One of ‘biological_process’, ‘molecular_function’, ‘cellular_component’.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.utils.get_protein_id">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bakta.utils.</span></span><span class="sig-name descname"><span class="pre">get_protein_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">annotations</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefer_refseq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.utils.get_protein_id" title="Link to this definition"></a></dt>
+<dd><p>Get the best protein identifier from annotations.</p>
+<p>Strategy: Prefer RefSeq, fall back to UniRef50.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>annotations</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Dictionary of parsed annotations from parse_dbxrefs()</p></li>
+<li><p><strong>prefer_refseq</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to prefer RefSeq over UniRef (default: True)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Protein ID string with prefix, or None if no protein ID found</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.utils.load_samn_to_ncbitaxon_mapping">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bakta.utils.</span></span><span class="sig-name descname"><span class="pre">load_samn_to_ncbitaxon_mapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.utils.load_samn_to_ncbitaxon_mapping" title="Link to this definition"></a></dt>
+<dd><p>Load SAMN to NCBITaxon mapping from TSV file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>mapping_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Path to TSV file with columns: samn_id, ncbitaxon_id</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary mapping SAMN IDs to NCBITaxon IDs</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.utils.parse_bakta_tsv">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bakta.utils.</span></span><span class="sig-name descname"><span class="pre">parse_bakta_tsv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tsv_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">feature_types</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.utils.parse_bakta_tsv" title="Link to this definition"></a></dt>
+<dd><p>Parse a Bakta TSV annotation file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tsv_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Path to .bakta.tsv file</p></li>
+<li><p><strong>feature_types</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Set of feature types to include (default: {‘cds’})</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of dictionaries with gene annotations</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.utils.parse_dbxrefs">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bakta.utils.</span></span><span class="sig-name descname"><span class="pre">parse_dbxrefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dbxref_string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.utils.parse_dbxrefs" title="Link to this definition"></a></dt>
+<dd><p>Parse the DbXrefs column from Bakta TSV into structured annotations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dbxref_string</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Comma-separated string of database cross-references</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary with annotation types as keys and lists of IDs as values</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.bakta">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-kg_microbe.transform_utils.bakta" title="Link to this heading"></a></h2>
+<p>Bakta genome annotations transform.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.BaktaTransform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bakta.</span></span><span class="sig-name descname"><span class="pre">BaktaTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.BaktaTransform" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
+<p>Transform Bakta genome annotations into KGX format.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.BaktaTransform.add_cog_annotation">
+<span class="sig-name descname"><span class="pre">add_cog_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cog_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.BaktaTransform.add_cog_annotation" title="Link to this definition"></a></dt>
+<dd><p>Add COG node and gene -&gt; COG edge.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gene_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Gene identifier</p></li>
+<li><p><strong>cog_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – COG identifier (e.g., ‘COG:COG0665’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.BaktaTransform.add_ec_annotation">
+<span class="sig-name descname"><span class="pre">add_ec_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protein_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ec_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.BaktaTransform.add_ec_annotation" title="Link to this definition"></a></dt>
+<dd><p>Add EC number node and protein -&gt; EC edge.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>protein_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Protein identifier</p></li>
+<li><p><strong>ec_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – EC identifier (e.g., ‘EC:1.4.99.6’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.BaktaTransform.add_edge">
+<span class="sig-name descname"><span class="pre">add_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predicate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">obj</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.BaktaTransform.add_edge" title="Link to this definition"></a></dt>
+<dd><p>Add an edge to the collection.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subject</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Subject node ID</p></li>
+<li><p><strong>predicate</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Biolink predicate</p></li>
+<li><p><strong>obj</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Object node ID</p></li>
+<li><p><strong>relation</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – RO or other relation ontology term</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.BaktaTransform.add_functional_annotations">
+<span class="sig-name descname"><span class="pre">add_functional_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protein_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.BaktaTransform.add_functional_annotations" title="Link to this definition"></a></dt>
+<dd><p>Add functional annotation nodes and edges.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>protein_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Protein identifier</p></li>
+<li><p><strong>gene_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Gene identifier</p></li>
+<li><p><strong>annotations</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Parsed annotations dictionary</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.BaktaTransform.add_gene_node">
+<span class="sig-name descname"><span class="pre">add_gene_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gene_symbol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.BaktaTransform.add_gene_node" title="Link to this definition"></a></dt>
+<dd><p>Add a gene node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gene_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Composite gene ID</p></li>
+<li><p><strong>gene_symbol</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Gene symbol (may be empty)</p></li>
+<li><p><strong>product</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Gene product description</p></li>
+<li><p><strong>annotations</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Parsed annotations dictionary</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.BaktaTransform.add_go_annotation">
+<span class="sig-name descname"><span class="pre">add_go_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protein_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">go_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.BaktaTransform.add_go_annotation" title="Link to this definition"></a></dt>
+<dd><p>Add GO term node and protein -&gt; GO edge.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>protein_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Protein identifier</p></li>
+<li><p><strong>go_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – GO identifier (e.g., ‘<a class="reference external" href="GO:0003677">GO:0003677</a>’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.BaktaTransform.add_kegg_annotation">
+<span class="sig-name descname"><span class="pre">add_kegg_annotation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kegg_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.BaktaTransform.add_kegg_annotation" title="Link to this definition"></a></dt>
+<dd><p>Add KEGG KO node and gene -&gt; KEGG edge.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gene_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Gene identifier</p></li>
+<li><p><strong>kegg_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – KEGG identifier (e.g., ‘KEGG:K19746’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.BaktaTransform.add_organism_node">
+<span class="sig-name descname"><span class="pre">add_organism_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">organism_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samn_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.BaktaTransform.add_organism_node" title="Link to this definition"></a></dt>
+<dd><p>Add a strain-level organism node (SAMN) and link to species (NCBITaxon).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>organism_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – SAMN organism identifier (e.g., ‘SAMN:00139461’)</p></li>
+<li><p><strong>samn_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – SAMN identifier for lookup</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.BaktaTransform.add_protein_node">
+<span class="sig-name descname"><span class="pre">add_protein_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">protein_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">product</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">annotations</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.BaktaTransform.add_protein_node" title="Link to this definition"></a></dt>
+<dd><p>Add a protein node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>protein_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Protein identifier (RefSeq or UniRef)</p></li>
+<li><p><strong>product</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Protein product description</p></li>
+<li><p><strong>annotations</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Parsed annotations dictionary</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.BaktaTransform.get_ncbitaxon_id">
+<span class="sig-name descname"><span class="pre">get_ncbitaxon_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samn_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.BaktaTransform.get_ncbitaxon_id" title="Link to this definition"></a></dt>
+<dd><p>Get NCBITaxon ID for a SAMN identifier.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>samn_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – SAMN identifier</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>NCBITaxon ID or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.BaktaTransform.get_organism_id">
+<span class="sig-name descname"><span class="pre">get_organism_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samn_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.BaktaTransform.get_organism_id" title="Link to this definition"></a></dt>
+<dd><p>Get the organism ID (SAMN-level for strain resolution).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>samn_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – SAMN identifier</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SAMN organism ID (e.g., ‘SAMN:00139461’)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.BaktaTransform.process_gene">
+<span class="sig-name descname"><span class="pre">process_gene</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samn_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organism_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.BaktaTransform.process_gene" title="Link to this definition"></a></dt>
+<dd><p>Process a single gene annotation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gene_data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Gene data dictionary from Bakta TSV</p></li>
+<li><p><strong>samn_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – SAMN identifier</p></li>
+<li><p><strong>organism_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Organism identifier (if available)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.BaktaTransform.process_genome">
+<span class="sig-name descname"><span class="pre">process_genome</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">samn_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samn_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.BaktaTransform.process_genome" title="Link to this definition"></a></dt>
+<dd><p>Process a single genome directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>samn_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Path to SAMN directory</p></li>
+<li><p><strong>samn_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – SAMN identifier</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.BaktaTransform.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.BaktaTransform.run" title="Link to this definition"></a></dt>
+<dd><p>Run the Bakta transform.</p>
+<p>Processes all dataset subdirectories in data/raw/bakta/ (e.g., pfas_bakta, cmm_bakta)
+and outputs to data/transformed/bakta/[dataset_name]/ for each.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Not used (kept for API compatibility)</p></li>
+<li><p><strong>show_status</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Show progress bar (default: True)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.BaktaTransform.write_output">
+<span class="sig-name descname"><span class="pre">write_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dataset_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.BaktaTransform.write_output" title="Link to this definition"></a></dt>
+<dd><p>Write nodes and edges to TSV files for a specific dataset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dataset_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Name of the dataset (e.g., ‘pfas_bakta’, ‘cmm_bakta’)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="kg_microbe.transform_utils.bactotraits.html" class="btn btn-neutral float-left" title="kg_microbe.transform_utils.bactotraits package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="kg_microbe.transform_utils.cog.html" class="btn btn-neutral float-right" title="kg_microbe.transform_utils.cog package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

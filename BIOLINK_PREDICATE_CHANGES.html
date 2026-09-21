@@ -1,0 +1,452 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biolink Model Predicate Changes - assesses / is_assessed_by &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Biolink Model Predicate Changes - assesses / is_assessed_by</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/BIOLINK_PREDICATE_CHANGES.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="biolink-model-predicate-changes-assesses-is-assessed-by">
+<h1>Biolink Model Predicate Changes - assesses / is_assessed_by<a class="headerlink" href="#biolink-model-predicate-changes-assesses-is-assessed-by" title="Link to this heading"></a></h1>
+<p><strong>Date</strong>: January 10, 2026
+<strong>Update</strong>: Biolink Model v3.6.0 → v4.3.6
+<strong>Status</strong>: DEPRECATED in v4.3.3</p>
+<hr class="docutils" />
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>⚠️ <strong>DEPRECATED</strong>: The predicates <code class="docutils literal notranslate"><span class="pre">biolink:assesses</span></code> and <code class="docutils literal notranslate"><span class="pre">biolink:is_assessed_by</span></code> were deprecated in Biolink Model v4.3.3 (Nov 5, 2024) via <a class="reference external" href="https://github.com/biolink/biolink-model/pull/1622">PR #1622</a>.</p>
+<p><strong>Recommendation</strong>: Use <code class="docutils literal notranslate"><span class="pre">biolink:affects</span></code> predicate to represent actual experimental outcomes instead of merely recording that an experiment was conducted.</p>
+</section>
+<hr class="docutils" />
+<section id="what-changed">
+<h2>What Changed<a class="headerlink" href="#what-changed" title="Link to this heading"></a></h2>
+<section id="v3-6-0-previous-version">
+<h3>v3.6.0 (Previous Version)<a class="headerlink" href="#v3-6-0-previous-version" title="Link to this heading"></a></h3>
+<p><strong>Available predicates:</strong></p>
+<ul class="simple">
+<li><p>✅ <code class="docutils literal notranslate"><span class="pre">biolink:assesses</span></code> - Active predicate</p></li>
+<li><p>✅ <code class="docutils literal notranslate"><span class="pre">biolink:is_assessed_by</span></code> - Active predicate (inverse of assesses)</p></li>
+<li><p>✅ <code class="docutils literal notranslate"><span class="pre">biolink:was_tested_for_effect_on</span></code> - Active predicate (parent of assesses)</p></li>
+</ul>
+<p><strong>Association class:</strong></p>
+<ul class="simple">
+<li><p>✅ <code class="docutils literal notranslate"><span class="pre">ChemicalEntityAssessesNamedThingAssociation</span></code> - Active</p></li>
+</ul>
+</section>
+<section id="v4-3-6-current-version">
+<h3>v4.3.6 (Current Version)<a class="headerlink" href="#v4-3-6-current-version" title="Link to this heading"></a></h3>
+<p><strong>Deprecated predicates:</strong></p>
+<ul class="simple">
+<li><p>⚠️ <code class="docutils literal notranslate"><span class="pre">biolink:assesses</span></code> - <strong>REMOVED</strong> from predicates</p></li>
+<li><p>⚠️ <code class="docutils literal notranslate"><span class="pre">biolink:is_assessed_by</span></code> - <strong>REMOVED</strong> from predicates</p></li>
+<li><p>⚠️ <code class="docutils literal notranslate"><span class="pre">biolink:was_tested_for_effect_on</span></code> - <strong>DEPRECATED</strong> (marked with <code class="docutils literal notranslate"><span class="pre">deprecated:</span> <span class="pre">true</span></code>)</p></li>
+</ul>
+<p><strong>Association class:</strong></p>
+<ul class="simple">
+<li><p>⚠️ <code class="docutils literal notranslate"><span class="pre">ChemicalEntityAssessesNamedThingAssociation</span></code> - <strong>DEPRECATED</strong> (marked with <code class="docutils literal notranslate"><span class="pre">deprecated:</span> <span class="pre">true</span></code>)</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="why-were-they-deprecated">
+<h2>Why Were They Deprecated?<a class="headerlink" href="#why-were-they-deprecated" title="Link to this heading"></a></h2>
+<p>From <a class="reference external" href="https://github.com/biolink/biolink-model/pull/1622">PR #1622 discussion</a>:</p>
+<blockquote>
+<div><p>“The fact that an experiment was done to test if X affects Y is not particularly useful. What is useful is outcomes of such assays.”</p>
+</div></blockquote>
+<p><strong>Key points:</strong></p>
+<ol class="arabic simple">
+<li><p>These predicates only recorded that testing occurred, not the results</p></li>
+<li><p>Limited applicability - originally created for ChEMBL experimental assay data</p></li>
+<li><p>Not broadly useful across knowledge graphs</p></li>
+<li><p>Replaced by more meaningful predicates that capture actual experimental findings</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="recommended-replacement">
+<h2>Recommended Replacement<a class="headerlink" href="#recommended-replacement" title="Link to this heading"></a></h2>
+<section id="instead-of-assesses-is-assessed-by">
+<h3>Instead of: <code class="docutils literal notranslate"><span class="pre">assesses</span></code> / <code class="docutils literal notranslate"><span class="pre">is_assessed_by</span></code><a class="headerlink" href="#instead-of-assesses-is-assessed-by" title="Link to this heading"></a></h3>
+<p><strong>Use</strong>: <code class="docutils literal notranslate"><span class="pre">biolink:affects</span></code> and its subpredicates</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># OLD (deprecated):</span>
+<span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CHEBI:12345</span>
+<span class="nt">predicate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">biolink:assesses</span>
+<span class="nt">object</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NCBIGene:67890</span>
+
+<span class="c1"># NEW (recommended):</span>
+<span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CHEBI:12345</span>
+<span class="nt">predicate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">biolink:affects</span>
+<span class="nt">object</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NCBIGene:67890</span>
+</pre></div>
+</div>
+</section>
+<section id="better-practice-capture-actual-outcomes">
+<h3>Better Practice: Capture Actual Outcomes<a class="headerlink" href="#better-practice-capture-actual-outcomes" title="Link to this heading"></a></h3>
+<p>Use specific subpredicates of <code class="docutils literal notranslate"><span class="pre">affects</span></code> that describe the actual experimental result:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">biolink:increases_activity_of</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">biolink:decreases_activity_of</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">biolink:regulates</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">biolink:positively_regulates</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">biolink:negatively_regulates</span></code></p></li>
+</ul>
+<p><strong>Example:</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1"># Instead of just recording that testing happened:</span>
+<span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CHEBI:16737</span>
+<span class="nt">predicate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">biolink:assesses</span>
+<span class="nt">object</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NCBIGene:1234</span>
+
+<span class="c1"># Record what the experiment showed:</span>
+<span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CHEBI:16737</span>
+<span class="nt">predicate</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">biolink:increases_activity_of</span>
+<span class="nt">object</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NCBIGene:1234</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="available-predicates-in-v4-3-6">
+<h2>Available Predicates in v4.3.6<a class="headerlink" href="#available-predicates-in-v4-3-6" title="Link to this heading"></a></h2>
+<section id="for-chemical-gene-protein-interactions">
+<h3>For Chemical-Gene/Protein Interactions<a class="headerlink" href="#for-chemical-gene-protein-interactions" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Predicate</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Status</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">affects</span></code></p></td>
+<td><p>General causal relationship</p></td>
+<td><p>✅ Active</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">increases_activity_of</span></code></p></td>
+<td><p>Positive effect on activity</p></td>
+<td><p>✅ Active</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">decreases_activity_of</span></code></p></td>
+<td><p>Negative effect on activity</p></td>
+<td><p>✅ Active</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">regulates</span></code></p></td>
+<td><p>Regulatory relationship</p></td>
+<td><p>✅ Active</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">interacts_with</span></code></p></td>
+<td><p>General interaction (symmetric)</p></td>
+<td><p>✅ Active</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">physically_interacts_with</span></code></p></td>
+<td><p>Physical contact interaction</p></td>
+<td><p>✅ Active</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="deprecated-predicates-do-not-use">
+<h3>Deprecated Predicates (Do Not Use)<a class="headerlink" href="#deprecated-predicates-do-not-use" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Predicate</p></th>
+<th class="head"><p>Status</p></th>
+<th class="head"><p>Replacement</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">assesses</span></code></p></td>
+<td><p>⚠️ REMOVED</p></td>
+<td><p>Use <code class="docutils literal notranslate"><span class="pre">affects</span></code> or subpredicates</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">is_assessed_by</span></code></p></td>
+<td><p>⚠️ REMOVED</p></td>
+<td><p>Use inverse of <code class="docutils literal notranslate"><span class="pre">affects</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">was_tested_for_effect_on</span></code></p></td>
+<td><p>⚠️ DEPRECATED</p></td>
+<td><p>Use <code class="docutils literal notranslate"><span class="pre">affects</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<hr class="docutils" />
+<section id="migration-guide-for-kg-microbe">
+<h2>Migration Guide for kg-microbe<a class="headerlink" href="#migration-guide-for-kg-microbe" title="Link to this heading"></a></h2>
+<section id="step-1-search-for-usage">
+<h3>Step 1: Search for Usage<a class="headerlink" href="#step-1-search-for-usage" title="Link to this heading"></a></h3>
+<p>Check if kg-microbe uses deprecated predicates:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>grep<span class="w"> </span>-r<span class="w"> </span><span class="s2">&quot;assesses\|is_assessed_by\|was_tested_for_effect_on&quot;</span><span class="w"> </span>kg_microbe/
+grep<span class="w"> </span><span class="s2">&quot;assesses\|is_assessed_by\|was_tested_for_effect_on&quot;</span><span class="w"> </span>data/transformed/*/edges.tsv
+</pre></div>
+</div>
+</section>
+<section id="step-2-replace-with-appropriate-predicates">
+<h3>Step 2: Replace with Appropriate Predicates<a class="headerlink" href="#step-2-replace-with-appropriate-predicates" title="Link to this heading"></a></h3>
+<p>Based on the context of your data:</p>
+<ol class="arabic simple">
+<li><p><strong>If recording experimental results</strong>: Use <code class="docutils literal notranslate"><span class="pre">affects</span></code> subpredicates</p>
+<ul class="simple">
+<li><p>Chemical increases enzyme activity → <code class="docutils literal notranslate"><span class="pre">increases_activity_of</span></code></p></li>
+<li><p>Chemical decreases protein function → <code class="docutils literal notranslate"><span class="pre">decreases_activity_of</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>If recording general relationships</strong>: Use <code class="docutils literal notranslate"><span class="pre">affects</span></code> or <code class="docutils literal notranslate"><span class="pre">interacts_with</span></code></p>
+<ul class="simple">
+<li><p>Unknown mechanism → <code class="docutils literal notranslate"><span class="pre">affects</span></code></p></li>
+<li><p>Known physical interaction → <code class="docutils literal notranslate"><span class="pre">physically_interacts_with</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>If using StudyResult objects</strong>: Link to experimental evidence</p>
+<ul class="simple">
+<li><p>Create StudyResult nodes with detailed outcomes</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">has_evidence</span></code> to link to supporting studies</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="step-3-update-validation">
+<h3>Step 3: Update Validation<a class="headerlink" href="#step-3-update-validation" title="Link to this heading"></a></h3>
+<p>Ensure your transforms validate against Biolink Model v4.3.6:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Update biolink-model package</span>
+poetry<span class="w"> </span>add<span class="w"> </span>biolink-model@latest
+
+<span class="c1"># Download latest model YAML</span>
+poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </span>download
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="impact-on-kg-microbe">
+<h2>Impact on kg-microbe<a class="headerlink" href="#impact-on-kg-microbe" title="Link to this heading"></a></h2>
+<section id="data-sources-to-check">
+<h3>Data Sources to Check<a class="headerlink" href="#data-sources-to-check" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Rhea Mappings</strong> (<code class="docutils literal notranslate"><span class="pre">rhea_mappings/</span></code>)</p>
+<ul class="simple">
+<li><p>May use assesses for reaction-enzyme relationships</p></li>
+<li><p>Replace with <code class="docutils literal notranslate"><span class="pre">enables</span></code> or <code class="docutils literal notranslate"><span class="pre">catalyzes</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>BacDive</strong> (<code class="docutils literal notranslate"><span class="pre">bacdive/</span></code>)</p>
+<ul class="simple">
+<li><p>May use assesses for substrate-organism relationships</p></li>
+<li><p>Replace with <code class="docutils literal notranslate"><span class="pre">metabolizes</span></code> or appropriate trait predicates</p></li>
+</ul>
+</li>
+<li><p><strong>MediaDive</strong> (<code class="docutils literal notranslate"><span class="pre">mediadive/</span></code>)</p>
+<ul class="simple">
+<li><p>May use assesses for chemical-organism growth relationships</p></li>
+<li><p>Replace with <code class="docutils literal notranslate"><span class="pre">affects</span></code> or <code class="docutils literal notranslate"><span class="pre">enables_growth_of</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Custom transforms</strong></p>
+<ul class="simple">
+<li><p>Review any hardcoded predicate mappings</p></li>
+<li><p>Update to use v4.3.6 compliant predicates</p></li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+<hr class="docutils" />
+<section id="reference-links">
+<h2>Reference Links<a class="headerlink" href="#reference-links" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/biolink/biolink-model/releases/tag/v4.3.6">Biolink Model v4.3.6 Release</a></p></li>
+<li><p><a class="reference external" href="https://github.com/biolink/biolink-model/pull/1622">PR #1622: Deprecate assesses predicates</a></p></li>
+<li><p><a class="reference external" href="https://biolink.github.io/biolink-model/">Biolink Model Documentation</a></p></li>
+<li><p><a class="reference external" href="https://kgx.readthedocs.io/en/latest/kgx_format.html">KGX Format Specification</a></p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="updated-download-yaml-configuration">
+<h2>Updated download.yaml Configuration<a class="headerlink" href="#updated-download-yaml-configuration" title="Link to this heading"></a></h2>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="c1">#</span>
+<span class="c1"># Biolink Model</span>
+<span class="c1"># The standard schema for biological knowledge graphs</span>
+<span class="c1"># Version 4.3.6 (latest as of Dec 2024)</span>
+<span class="c1"># NOTE: is_assessed_by predicate was removed after v3.6.0</span>
+<span class="c1">#</span>
+<span class="p p-Indicator">-</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://raw.githubusercontent.com/biolink/biolink-model/v4.3.6/biolink-model.yaml</span>
+<span class="w">  </span><span class="nt">local_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">biolink-model.yaml</span>
+
+<span class="c1">#</span>
+<span class="c1"># KGX Format Specification</span>
+<span class="c1"># Specification for Knowledge Graph Exchange format (TSV/CSV/JSON serialization)</span>
+<span class="c1">#</span>
+<span class="p p-Indicator">-</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://raw.githubusercontent.com/biolink/kgx/master/docs/kgx_format.md</span>
+<span class="w">  </span><span class="nt">local_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kgx-format.md</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="dependency-conflict-notice">
+<h2>Dependency Conflict Notice<a class="headerlink" href="#dependency-conflict-notice" title="Link to this heading"></a></h2>
+<p>⚠️ <strong>Cannot upgrade biolink-model Python package to v4.3.6 due to dependency conflict:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">biolink</span><span class="o">-</span><span class="n">model</span> <span class="mf">4.3.6</span> <span class="n">requires</span><span class="p">:</span> <span class="n">curies</span> <span class="o">&gt;=</span><span class="mf">0.9.0</span><span class="p">,</span> <span class="o">&lt;</span><span class="mf">0.10.0</span>
+<span class="n">pyobo</span> <span class="mf">0.12.4</span> <span class="n">requires</span><span class="p">:</span>        <span class="n">curies</span> <span class="o">&gt;=</span><span class="mf">0.10.17</span>
+<span class="n">kg</span><span class="o">-</span><span class="n">microbe</span> <span class="n">requires</span><span class="p">:</span>          <span class="n">pyobo</span> <span class="o">&gt;=</span><span class="mf">0.12.0</span>
+</pre></div>
+</div>
+<p><strong>Current solution:</strong></p>
+<ul class="simple">
+<li><p>Python package: biolink-model 3.6.0 (installed via Poetry)</p></li>
+<li><p>YAML reference: biolink-model.yaml 4.3.6 (downloaded to data/raw/)</p></li>
+</ul>
+<p><strong>Impact:</strong></p>
+<ul class="simple">
+<li><p>Python validation uses v3.6.0 rules (accepts is_assessed_by)</p></li>
+<li><p>YAML documentation shows v4.3.6 deprecations (is_assessed_by removed)</p></li>
+<li><p>Use YAML file as authoritative reference for schema compliance</p></li>
+</ul>
+<p><strong>Tracking issue:</strong> https://github.com/biolink/biolink-model/issues/[to be filed]</p>
+</section>
+<hr class="docutils" />
+<section id="migration-completed-bacdive-mappings-tsv-enzyme-assay-edges">
+<h2>Migration Completed: bacdive_mappings.tsv Enzyme-Assay Edges<a class="headerlink" href="#migration-completed-bacdive-mappings-tsv-enzyme-assay-edges" title="Link to this heading"></a></h2>
+<p><strong>Date</strong>: January 10, 2026</p>
+<p><strong>Change</strong>: Replaced <code class="docutils literal notranslate"><span class="pre">biolink:is_assessed_by</span></code> with <code class="docutils literal notranslate"><span class="pre">biolink:related_to_at_instance_level</span></code></p>
+<p><strong>Affected Edges</strong>: 112 methodological reference edges</p>
+<ul class="simple">
+<li><p>Pattern: EC enzyme → related_to_at_instance_level → assay:API_[kit]_[test]</p></li>
+<li><p>Relation: NCIT:C153110 (assessed_activity)</p></li>
+<li><p>Purpose: Reference metadata showing which API kit tests detect which enzymes</p></li>
+</ul>
+<p><strong>Example edges:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>EC:4.1.99.1 → biolink:related_to_at_instance_level → assay:API_20A_IND
+EC:3.5.1.5  → biolink:related_to_at_instance_level → assay:API_20A_URE
+</pre></div>
+</div>
+<p><strong>Not Affected</strong>: Organism-specific enzyme activity outcomes</p>
+<ul class="simple">
+<li><p>Pattern: NCBITaxon → METPO:2000302/2000303 → EC enzyme</p></li>
+<li><p>Already using correct METPO predicates (shows_activity_of / does_not_show_activity_of)</p></li>
+</ul>
+<p><strong>Rationale</strong>:</p>
+<ul class="simple">
+<li><p>METPO predicates apply to organism→enzyme outcomes, not enzyme→assay methodology</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">biolink:related_to_at_instance_level</span></code> is semantically appropriate for factual instance relationships</p></li>
+<li><p>Preserves current direction (enzyme→assay) to avoid breaking changes</p></li>
+<li><p>More specific than generic <code class="docutils literal notranslate"><span class="pre">biolink:related_to</span></code></p></li>
+</ul>
+<p><strong>Code Changes</strong>:</p>
+<ul class="simple">
+<li><p>File: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/constants.py</span></code> (line 215)</p></li>
+<li><p>Constant: <code class="docutils literal notranslate"><span class="pre">ENZYME_TO_ASSAY_EDGE</span></code></p></li>
+<li><p>Old value: <code class="docutils literal notranslate"><span class="pre">&quot;biolink:is_assessed_by&quot;</span></code></p></li>
+<li><p>New value: <code class="docutils literal notranslate"><span class="pre">&quot;biolink:related_to_at_instance_level&quot;</span></code></p></li>
+</ul>
+<p><strong>Deprecated Constants</strong> (commented out in constants.py lines 212-214):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ASSAY_TO_NCBI_EDGE</span> <span class="pre">=</span> <span class="pre">&quot;biolink:assesses&quot;</span></code> - UNUSED</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MEDIUM_TO_METABOLITE_EDGE</span> <span class="pre">=</span> <span class="pre">&quot;biolink:assesses&quot;</span></code> - UNUSED</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NCBI_TO_ASSAY_EDGE</span> <span class="pre">=</span> <span class="pre">&quot;biolink:is_assessed_by&quot;</span></code> - UNUSED</p></li>
+</ul>
+<p><strong>API Kit Context</strong>:
+API (Analytical Profile Index) kits are standardized bacterial identification test strips containing 20+ miniaturized biochemical tests. Each test well (e.g., API_20A_IND, API_20A_URE) detects specific enzyme activities. The 112 reference edges document which enzymes each assay can detect, separate from organism-specific test outcomes.</p>
+<hr class="docutils" />
+<p><strong>Generated</strong>: January 10, 2026
+<strong>Author</strong>: Claude Code
+<strong>Repository</strong>: kg-microbe
+<strong>Biolink Model Version</strong>: v4.3.6</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

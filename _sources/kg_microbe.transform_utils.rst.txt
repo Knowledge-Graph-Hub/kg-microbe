@@ -7,11 +7,42 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   kg_microbe.transform_utils.ontology
-   kg_microbe.transform_utils.traits
+   kg_microbe.transform_utils.bacdive
+   kg_microbe.transform_utils.bactotraits
+   kg_microbe.transform_utils.bakta
+   kg_microbe.transform_utils.cog
+   kg_microbe.transform_utils.ctd
+   kg_microbe.transform_utils.disbiome
+   kg_microbe.transform_utils.example_transform
+   kg_microbe.transform_utils.gold
+   kg_microbe.transform_utils.gtdb
+   kg_microbe.transform_utils.kegg
+   kg_microbe.transform_utils.lpsn
+   kg_microbe.transform_utils.lpsn_api
+   kg_microbe.transform_utils.madin_etal
+   kg_microbe.transform_utils.mediadive
+   kg_microbe.transform_utils.metatraits
+   kg_microbe.transform_utils.metatraits_gtdb
+   kg_microbe.transform_utils.microbedecoder
+   kg_microbe.transform_utils.ontologies
+   kg_microbe.transform_utils.ontologies_stubs
+   kg_microbe.transform_utils.prego
+   kg_microbe.transform_utils.rhea_mappings
+   kg_microbe.transform_utils.uniprot_functional_microbes
+   kg_microbe.transform_utils.uniprot_human
+   kg_microbe.transform_utils.uniprot_trembl
+   kg_microbe.transform_utils.wallen_etal
 
 Submodules
 ----------
+
+kg\_microbe.transform\_utils.constants module
+---------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.constants
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 kg\_microbe.transform\_utils.transform module
 ---------------------------------------------

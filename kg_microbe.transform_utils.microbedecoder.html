@@ -1,0 +1,365 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kg_microbe.transform_utils.microbedecoder package &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="kg_microbe.transform_utils.ontologies package" href="kg_microbe.transform_utils.ontologies.html" />
+    <link rel="prev" title="kg_microbe.transform_utils.metatraits_gtdb package" href="kg_microbe.transform_utils.metatraits_gtdb.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">kg_microbe</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="kg_microbe.html">kg_microbe package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="kg_microbe.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.merge_utils.html">kg_microbe.merge_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.query_utils.html">kg_microbe.query_utils package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html">kg_microbe.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.bactotraits_to_mongo">kg_microbe.bactotraits_to_mongo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.download">kg_microbe.download module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.query">kg_microbe.query module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.run">kg_microbe.run module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.transform">kg_microbe.transform module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">kg_microbe</a></li>
+          <li class="breadcrumb-item"><a href="kg_microbe.html">kg_microbe package</a></li>
+          <li class="breadcrumb-item"><a href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a></li>
+      <li class="breadcrumb-item active">kg_microbe.transform_utils.microbedecoder package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/kg_microbe.transform_utils.microbedecoder.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kg-microbe-transform-utils-microbedecoder-package">
+<h1>kg_microbe.transform_utils.microbedecoder package<a class="headerlink" href="#kg-microbe-transform-utils-microbedecoder-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-kg_microbe.transform_utils.microbedecoder.microbedecoder">
+<span id="kg-microbe-transform-utils-microbedecoder-microbedecoder-module"></span><h2>kg_microbe.transform_utils.microbedecoder.microbedecoder module<a class="headerlink" href="#module-kg_microbe.transform_utils.microbedecoder.microbedecoder" title="Link to this heading"></a></h2>
+<p>MicrobeDecoder transform (Hackmann &amp; Zhang, Sci Adv 2023).</p>
+<p>Ingests the wide per-LPSN-strain CSV MicrobeDecoder publishes on GitHub —
+<cite>Shiny/MicrobeDecoder/data/database/database.zip</cite> — into KGX-format nodes
+and edges. The database is the actively-maintained successor to
+FermentationExplorer and pre-joins four curated fermentation-metabolism
+sources KG-Microbe does not otherwise cover:</p>
+<ul class="simple">
+<li><p><strong>Bergey’s Manual of Systematics of Archaea and Bacteria</strong> — expert
+curation of <cite>Type_of_metabolism</cite>, <cite>Major_end_products</cite>,
+<cite>Minor_end_products</cite>, <cite>Substrates_for_end_products</cite></p></li>
+<li><p><strong>VPI Anaerobe Laboratory Manual</strong> — independent second-opinion
+fermentation profiles for anaerobes</p></li>
+<li><p><strong>Primary literature</strong> — hand-curated end-products with DOI/PMID
+citations</p></li>
+<li><p><strong>FAPROTAX</strong> — functional labels joined at strain granularity</p></li>
+</ul>
+<p>Also emits a <cite>biolink:close_match</cite> crosswalk from every <cite>lpsn:&lt;LPSN_ID&gt;</cite>
+row to <cite>NCBITaxon:</cite>, <cite>ncbi.assembly:</cite> (or <cite>GTDB:</cite> taxonomy strings), <cite>gold:</cite>,
+and <cite>IMG:</cite>. BacDive crosswalks use <cite>kgmicrobe.strain:bacdive_*</cite> subsumption.</p>
+<p>Design decisions locked from the plan-mode Q&amp;A:</p>
+<ol class="arabic simple">
+<li><p><strong>Node identity</strong>: attach every edge to the <em>existing</em> <cite>lpsn:&lt;LPSN_ID&gt;</cite>
+node emitted by the LPSN transform. This transform emits edges only
+(plus terminal nodes for end-products / cross-refs / provisional
+placeholders); it does not re-emit LPSN taxon nodes.</p></li>
+<li><p><strong>BacDive_* replay</strong>: ingested with <cite>primary_knowledge_source =
+infores:microbedecoder</cite> so the paper’s 2024-11-07 BacDive snapshot
+stays reproducible. The fresher <cite>bacdive</cite> transform is authoritative
+in the merged KG; merge-time dedup keeps both edges around,
+distinguishable by provenance.</p></li>
+</ol>
+<p>License: CC BY 4.0 (matches the upstream repo).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.microbedecoder.</span></span><span class="sig-name descname"><span class="pre">MicrobeDecoderTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chemical_loader</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
+<p>Transform the MicrobeDecoder wide CSV into KGX nodes and edges.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.DATA_INPUTS">
+<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Repo-relative curation files this transform reads, beyond its own
+<code class="docutils literal notranslate"><span class="pre">data/raw/</span></code> download.</p>
+<p>Declared so freshness tooling can tell that an output is stale against
+its <em>data</em> rather than only its code. Without it a mapping correction
+lands, every consumer keeps reporting FRESH, and a re-merge silently
+ships the old groundings: #778 corrected 16 isolation-source ids and
+#786 rewrote the unified chemical SSSOM, and the merged KG built
+afterwards still asserted 75 organisms isolated from a “Cell Line”,
+because nothing re-ran the transforms that read those files (#812).</p>
+<p>Paths are relative to the repo root. Keep them tracked in git — the
+freshness check uses commit time, not mtime, because <cite>git checkout</cite>
+rewrites mtimes without changing content (#797).</p>
+<p>List <strong>every</strong> curation file read, not a representative one. A partial
+declaration fails silently and looks identical to a complete one:
+ontologies_stubs declared 1 of the 11 files it read and was reported
+fresh after changes to the other ten (#839). Where the set comes from a
+constant, derive this from it rather than restating it.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.TRANSFORM_INPUTS">
+<span class="sig-name descname"><span class="pre">TRANSFORM_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('lpsn',</span> <span class="pre">'gold',</span> <span class="pre">'gtdb')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.TRANSFORM_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Reads this transform’s output; see Transform.TRANSFORM_INPUTS (#845).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.TSV_QUOTING">
+<span class="sig-name descname"><span class="pre">TSV_QUOTING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.TSV_QUOTING" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.run" title="Link to this definition"></a></dt>
+<dd><p>Emit nodes.tsv and edges.tsv from <code class="docutils literal notranslate"><span class="pre">database.csv</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h3>
+<dl class="simple">
+<dt>data_file:</dt><dd><p>Optional override for the input path. Accepts either a zip
+(extracted here) or an already-unzipped CSV. Default resolves
+to <code class="docutils literal notranslate"><span class="pre">&lt;input_base_dir&gt;/microbedecoder_database.zip</span></code> when the
+zip is present, else <code class="docutils literal notranslate"><span class="pre">&lt;input_base_dir&gt;/database.csv</span></code>.</p>
+</dd>
+<dt>show_status:</dt><dd><p>Accepted for CLI compatibility; unused because the parse pass
+is fast enough (~8 K rows) that a progress bar isn’t worth
+pulling <code class="docutils literal notranslate"><span class="pre">tqdm</span></code> in for.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.microbedecoder.utils">
+<span id="kg-microbe-transform-utils-microbedecoder-utils-module"></span><h2>kg_microbe.transform_utils.microbedecoder.utils module<a class="headerlink" href="#module-kg_microbe.transform_utils.microbedecoder.utils" title="Link to this heading"></a></h2>
+<p>Helpers for the MicrobeDecoder transform.</p>
+<p>Column definitions and light per-cell parsers so <code class="docutils literal notranslate"><span class="pre">microbedecoder.py</span></code> stays
+focused on row → node/edge emission and cross-ref wiring. All heavy semantic
+work (label → CURIE resolution, NER fallback) reuses existing utilities in
+<code class="docutils literal notranslate"><span class="pre">kg_microbe.utils</span></code> — see the transform module docstring for the full list.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.utils.LPSN_GENUS_COLUMN">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.utils.</span></span><span class="sig-name descname"><span class="pre">LPSN_GENUS_COLUMN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'LPSN_Genus'</span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.utils.LPSN_GENUS_COLUMN" title="Link to this definition"></a></dt>
+<dd><p>Naming columns, used to label stubs for ids the lpsn transform cannot
+supply (botanical-code cyanobacteria absent from lpsn_gss.csv, #811).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.utils.crosswalk_curie">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.utils.</span></span><span class="sig-name descname"><span class="pre">crosswalk_curie</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">local_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.utils.crosswalk_curie" title="Link to this definition"></a></dt>
+<dd><p>Normalize a crosswalk token to the identifier its owner transform emits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.utils.format_citation">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.utils.</span></span><span class="sig-name descname"><span class="pre">format_citation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.utils.format_citation" title="Link to this definition"></a></dt>
+<dd><p>Return all recognized <code class="docutils literal notranslate"><span class="pre">PMID:</span></code> / <code class="docutils literal notranslate"><span class="pre">doi:</span></code> CURIEs, pipe-separated, or None.</p>
+<p>Accepts free text; extracts each explicit DOI or PMID it finds. Returns None
+when the cell is empty (per <a class="reference internal" href="#kg_microbe.transform_utils.microbedecoder.utils.is_empty_cell" title="kg_microbe.transform_utils.microbedecoder.utils.is_empty_cell"><code class="xref py py-func docutils literal notranslate"><span class="pre">is_empty_cell()</span></code></a>) or contains no
+recognisable citation token — the caller can then decide whether to drop
+the citation attribute or store the raw prose.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.utils.is_empty_cell">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.utils.</span></span><span class="sig-name descname"><span class="pre">is_empty_cell</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.utils.is_empty_cell" title="Link to this definition"></a></dt>
+<dd><p>Report whether a cell value should be treated as absent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.utils.iter_metabolism_columns">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.utils.</span></span><span class="sig-name descname"><span class="pre">iter_metabolism_columns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.utils.iter_metabolism_columns" title="Link to this definition"></a></dt>
+<dd><p>Yield (<code class="docutils literal notranslate"><span class="pre">group_label</span></code>, <code class="docutils literal notranslate"><span class="pre">fields</span></code>) for every metabolism source with data.</p>
+<p><code class="docutils literal notranslate"><span class="pre">fields</span></code> carries the raw cell values for each column-role the group
+declares (see <code class="xref py py-data docutils literal notranslate"><span class="pre">METABOLISM_GROUPS</span></code>). Groups whose columns are all
+empty (via <a class="reference internal" href="#kg_microbe.transform_utils.microbedecoder.utils.is_empty_cell" title="kg_microbe.transform_utils.microbedecoder.utils.is_empty_cell"><code class="xref py py-func docutils literal notranslate"><span class="pre">is_empty_cell()</span></code></a>) are skipped so the caller only iterates
+over sources that actually contributed to this row. Missing columns
+(source doesn’t declare that role) simply are absent from <code class="docutils literal notranslate"><span class="pre">fields</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code>]]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.utils.slugify_label">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.utils.</span></span><span class="sig-name descname"><span class="pre">slugify_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">label</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.utils.slugify_label" title="Link to this definition"></a></dt>
+<dd><p>Produce a stable CURIE-safe slug from a raw source label.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.utils.split_multivalue">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.utils.</span></span><span class="sig-name descname"><span class="pre">split_multivalue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.utils.split_multivalue" title="Link to this definition"></a></dt>
+<dd><p>Split outside brackets, preserving numeric chemical locants such as 2,3-butanediol.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>cell</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></span>) – Raw cell value.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Trimmed, non-empty tokens.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.utils.split_multivalue_comma_only">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.utils.</span></span><span class="sig-name descname"><span class="pre">split_multivalue_comma_only</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cell</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.utils.split_multivalue_comma_only" title="Link to this definition"></a></dt>
+<dd><p>Split a multi-value cell on comma ONLY (preserves in-value semicolons).</p>
+<p>Use for identity-crosswalk cells (<code class="docutils literal notranslate"><span class="pre">IMG_Genome_ID</span></code> and friends) where
+a raw semicolon is part of the identifier (<code class="docutils literal notranslate"><span class="pre">GTDB_ID</span></code> rank separator)
+rather than a value separator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.utils.split_snapshot_values">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.utils.</span></span><span class="sig-name descname"><span class="pre">split_snapshot_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cell</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.utils.split_snapshot_values" title="Link to this definition"></a></dt>
+<dd><p>Preserve a lone assay sign without decoding its biological interpretation.</p>
+<p>The generic parser treats ‘-’ as missing, but these two source columns
+report ‘+’ and ‘-’ assay tokens. A mixed ‘+,-’ already preserved both;
+the lone ‘-’ must also survive. Other columns retain their existing
+missing-value and multivalue conventions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.microbedecoder">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-kg_microbe.transform_utils.microbedecoder" title="Link to this heading"></a></h2>
+<p>MicrobeDecoder transform (Hackmann &amp; Zhang 2023, Sci Adv).</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="kg_microbe.transform_utils.metatraits_gtdb.html" class="btn btn-neutral float-left" title="kg_microbe.transform_utils.metatraits_gtdb package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="kg_microbe.transform_utils.ontologies.html" class="btn btn-neutral float-right" title="kg_microbe.transform_utils.ontologies package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

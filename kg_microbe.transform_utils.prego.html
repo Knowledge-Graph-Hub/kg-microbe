@@ -1,0 +1,1044 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kg_microbe.transform_utils.prego package &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="kg_microbe.transform_utils.rhea_mappings package" href="kg_microbe.transform_utils.rhea_mappings.html" />
+    <link rel="prev" title="kg_microbe.transform_utils.ontologies_stubs package" href="kg_microbe.transform_utils.ontologies_stubs.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">kg_microbe</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="kg_microbe.html">kg_microbe package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="kg_microbe.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.merge_utils.html">kg_microbe.merge_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.query_utils.html">kg_microbe.query_utils package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html">kg_microbe.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.bactotraits_to_mongo">kg_microbe.bactotraits_to_mongo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.download">kg_microbe.download module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.query">kg_microbe.query module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.run">kg_microbe.run module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.transform">kg_microbe.transform module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">kg_microbe</a></li>
+          <li class="breadcrumb-item"><a href="kg_microbe.html">kg_microbe package</a></li>
+          <li class="breadcrumb-item"><a href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a></li>
+      <li class="breadcrumb-item active">kg_microbe.transform_utils.prego package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/kg_microbe.transform_utils.prego.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kg-microbe-transform-utils-prego-package">
+<h1>kg_microbe.transform_utils.prego package<a class="headerlink" href="#kg-microbe-transform-utils-prego-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-kg_microbe.transform_utils.prego.calibration">
+<span id="kg-microbe-transform-utils-prego-calibration-module"></span><h2>kg_microbe.transform_utils.prego.calibration module<a class="headerlink" href="#module-kg_microbe.transform_utils.prego.calibration" title="Link to this heading"></a></h2>
+<p>Per-resource confidence calibration for PREGO association scores.</p>
+<p><code class="docutils literal notranslate"><span class="pre">prego_score</span></code> is not one scale. PREGO’s authors assign the genome-derived
+channels (Isolates, Genome annotation, MAG, SAG) a flat 4-of-5 and the
+BioProject/PMID rows a flat 3-of-5 — “assigned arbitrarily a confidence
+level of four out of five” (Zafeiropoulos et al. 2022, §2.3) — while only
+the Environmental Samples channel carries a computed, varying score. PREGO
+computes no cross-channel combined score; the shared (0, 5] range is a
+display convention.</p>
+<p>So a single global cutoff is a provenance filter wearing a confidence
+filter’s clothes: at <code class="docutils literal notranslate"><span class="pre">&gt;=</span> <span class="pre">4.0</span></code> it retains 55% of edges, ~85% of which are
+flat rows carrying no ordering, while deleting ~87% of the one channel
+whose score actually varies.</p>
+<p>This module implements the alternative used by the same lab for TISSUES and
+DISEASES, and by STRING for its database channel: monotone per-channel
+recalibration onto one shared star axis, with degenerate channels pinned to
+a documented constant tier rather than score-ranked.</p>
+<ul class="simple">
+<li><p>Continuous channel: <code class="docutils literal notranslate"><span class="pre">star</span> <span class="pre">=</span> <span class="pre">4</span> <span class="pre">*</span> <span class="pre">F_r(score)</span></code>, where <code class="docutils literal notranslate"><span class="pre">F_r</span></code> is the
+empirical CDF <em>within resource r</em> (MGnify / MG-RAST metagenome / MG-RAST
+amplicon each have their own marginal, so a shared CDF would conflate
+them).</p></li>
+<li><p>Flat channels: <code class="docutils literal notranslate"><span class="pre">star</span> <span class="pre">=</span> <span class="pre">&lt;author-assigned</span> <span class="pre">constant&gt;</span></code>.</p></li>
+</ul>
+<p>One user-facing knob, <code class="docutils literal notranslate"><span class="pre">tau</span></code> in [0, 4]: keep an edge iff <code class="docutils literal notranslate"><span class="pre">star</span> <span class="pre">&gt;=</span> <span class="pre">tau</span></code>.</p>
+<p>Determinism is a requirement, not a nicety — a calibration that shifts
+between runs silently changes which edges ship. Cutoffs therefore come from
+fixed-width binned histograms, which are exact to the bin width, O(1) in
+memory, and independent of row order. Streaming quantile sketches (t-digest,
+P-square) are deliberately not used: they are order- and
+implementation-dependent, so two passes over the same file in different
+chunk orders can disagree.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.calibration.ScoreHistogram">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.calibration.</span></span><span class="sig-name descname"><span class="pre">ScoreHistogram</span></span><a class="headerlink" href="#kg_microbe.transform_utils.prego.calibration.ScoreHistogram" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Fixed-width histogram of raw scores for one resource.</p>
+<p>Accumulates in pass 1; inverted to a cutoff in pass 2. Order-independent
+by construction, so the cutoff is a pure function of the input bytes.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.calibration.ScoreHistogram.add">
+<span class="sig-name descname"><span class="pre">add</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">score</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.calibration.ScoreHistogram.add" title="Link to this definition"></a></dt>
+<dd><p>Record one observation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>score</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Raw PREGO score.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.calibration.ScoreHistogram.as_row">
+<span class="sig-name descname"><span class="pre">as_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.calibration.ScoreHistogram.as_row" title="Link to this definition"></a></dt>
+<dd><p>Return a serializable calibration row for this resource.</p>
+<p><code class="docutils literal notranslate"><span class="pre">kept_fraction</span></code> is what the cutoff actually achieves, which can
+differ from the requested <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">-</span> <span class="pre">tau/4</span></code> when a large tie block
+straddles the target — reporting the realized value keeps the
+calibration table honest about that.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>resource</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Resource name this histogram was built from.</p></li>
+<li><p><strong>tau</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Star threshold the cutoff was derived for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Mapping of column name to value.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.calibration.ScoreHistogram.cutoff">
+<span class="sig-name descname"><span class="pre">cutoff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.calibration.ScoreHistogram.cutoff" title="Link to this definition"></a></dt>
+<dd><p>Return the smallest raw score whose star rating is at least <code class="docutils literal notranslate"><span class="pre">tau</span></code>.</p>
+<p>Solves <code class="docutils literal notranslate"><span class="pre">4</span> <span class="pre">*</span> <span class="pre">F(s)</span> <span class="pre">&gt;=</span> <span class="pre">tau</span></code> for the smallest such <code class="docutils literal notranslate"><span class="pre">s</span></code>, where <code class="docutils literal notranslate"><span class="pre">F</span></code>
+is the fraction of observations at or below <code class="docutils literal notranslate"><span class="pre">s</span></code>. Filtering with
+<code class="docutils literal notranslate"><span class="pre">score</span> <span class="pre">&gt;=</span> <span class="pre">cutoff</span></code> then retains approximately <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">-</span> <span class="pre">tau/4</span></code> of the
+resource.</p>
+<p>Ties are never split: every row sharing a bin is kept or dropped
+together, so the ~13% of rows piled at the score cap move as a unit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tau</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Requested star threshold in [0, STAR_MAX].</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Raw-score cutoff. 0.0 keeps everything.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the histogram is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.calibration.ScoreHistogram.cutoff_bin">
+<span class="sig-name descname"><span class="pre">cutoff_bin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.calibration.ScoreHistogram.cutoff_bin" title="Link to this definition"></a></dt>
+<dd><p>Return the lowest histogram bin retained at <code class="docutils literal notranslate"><span class="pre">tau</span></code>.</p>
+<p>Both the calibration table and the row filter compare against this,
+rather than one using a bin edge and the other a raw score. Those are
+not interchangeable: <code class="docutils literal notranslate"><span class="pre">int(score</span> <span class="pre">/</span> <span class="pre">1e-4)</span> <span class="pre">*</span> <span class="pre">1e-4</span></code> can exceed <code class="docutils literal notranslate"><span class="pre">score</span></code>
+for 11.5% of representable 4-dp values — including 1.71, the measured
+p50 of the real continuous channel. Mixing the two let the table report
+a tie block as kept while the filter dropped it, a 40-point divergence
+on a constructed probe.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tau</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Star threshold in [0, STAR_MAX].</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Bin index; 0 retains everything.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the histogram is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.calibration.build_cutoffs">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.calibration.</span></span><span class="sig-name descname"><span class="pre">build_cutoffs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">histograms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.calibration.build_cutoffs" title="Link to this definition"></a></dt>
+<dd><p>Invert per-resource histograms into per-resource raw-score cutoffs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>histograms</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="#kg_microbe.transform_utils.prego.calibration.ScoreHistogram" title="kg_microbe.transform_utils.prego.calibration.ScoreHistogram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScoreHistogram</span></code></a>]</span>) – Resource name to its accumulated histogram.</p></li>
+<li><p><strong>tau</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Star threshold in [0, STAR_MAX].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Resource name to cutoff BIN INDEX (not a raw score) — the filter
+and the calibration table must compare on the same quantity.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">tau</span></code> is outside [0, STAR_MAX].</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.calibration.estimate_retention">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.calibration.</span></span><span class="sig-name descname"><span class="pre">estimate_retention</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel_shares</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">continuous_share</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.calibration.estimate_retention" title="Link to this definition"></a></dt>
+<dd><p>Predict the fraction of edges retained at <code class="docutils literal notranslate"><span class="pre">tau</span></code>, before running a filter.</p>
+<p>Flat channels contribute all-or-nothing at their constant tier; the
+continuous channel contributes <code class="docutils literal notranslate"><span class="pre">1</span> <span class="pre">-</span> <span class="pre">tau/4</span></code> by construction of the
+percentile remap. Useful for warning that a threshold has become
+provenance-dominant.</p>
+<p>Fails closed on an unrecognised channel. Scoring one as 0.0 and excluding
+it silently — the previous behaviour — turns a typo or a stale key into a
+confidently wrong number rather than an error, and this function exists
+precisely to answer “what will this threshold cost me” before a run. Fed
+the keys of <code class="xref py py-data docutils literal notranslate"><span class="pre">PREGO_RESOURCE_CLASS_STARS</span></code>, which are resource classes rather
+than channels (#712), it returned 0.265 where the answer was 0.734.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel_shares</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – Flat channel name to its share of all edges (0-1).
+Keys must be CHANNEL_* values, not PREGO resource-class names.</p></li>
+<li><p><strong>tau</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Star threshold.</p></li>
+<li><p><strong>continuous_share</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Share of all edges in the continuous channel.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Predicted retained fraction in [0, 1].</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If a key is not a recognised flat channel.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.calibration.flat_channel_star">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.calibration.</span></span><span class="sig-name descname"><span class="pre">flat_channel_star</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.calibration.flat_channel_star" title="Link to this definition"></a></dt>
+<dd><p>Return a constant tier for a recognised flat channel, or None.</p>
+<p>Only the genome/isolate channel is flat. Its rows carry a score PREGO’s
+authors assigned by fiat rather than computed, so the value is already on
+the star axis and <a class="reference internal" href="#kg_microbe.transform_utils.prego.calibration.star_for_row" title="kg_microbe.transform_utils.prego.calibration.star_for_row"><code class="xref py py-func docutils literal notranslate"><span class="pre">star_for_row()</span></code></a> uses the row’s own score; this
+function exists to answer “is this channel recognised”, not to substitute a
+value. PREGO_RESOURCE_CLASS_STARS documents the expected constants.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>channel</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Value of the <code class="docutils literal notranslate"><span class="pre">prego_channel</span></code> column.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The channel’s documented constant, or None if unrecognised.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.calibration.is_continuous_channel">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.calibration.</span></span><span class="sig-name descname"><span class="pre">is_continuous_channel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.calibration.is_continuous_channel" title="Link to this definition"></a></dt>
+<dd><p>Return True for the channel whose score is computed and varies.</p>
+<p>This used to match the shape of an evidence tally (<code class="docutils literal notranslate"><span class="pre">402</span> <span class="pre">of</span> <span class="pre">487</span> <span class="pre">samples</span></code>)
+because <code class="docutils literal notranslate"><span class="pre">prego_channel</span></code> carried PREGO’s column 6 verbatim, which was a
+grab-bag of tallies, resource classes, citations and habitat names. Since
+that column now holds the archive-derived channel, the check is a direct
+comparison — and the shape-matching, which silently defined “continuous”
+for every measurement in PREGO_SCORE_VALIDATION.md, is gone.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>channel</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Value of the <code class="docutils literal notranslate"><span class="pre">prego_channel</span></code> column.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the row’s score is computed and varies within-channel.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.calibration.iter_calibration_rows">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.calibration.</span></span><span class="sig-name descname"><span class="pre">iter_calibration_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">histograms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.calibration.iter_calibration_rows" title="Link to this definition"></a></dt>
+<dd><p>Yield <code class="docutils literal notranslate"><span class="pre">(resource,</span> <span class="pre">row)</span></code> calibration-table entries in deterministic order.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>histograms</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="#kg_microbe.transform_utils.prego.calibration.ScoreHistogram" title="kg_microbe.transform_utils.prego.calibration.ScoreHistogram"><code class="xref py py-class docutils literal notranslate"><span class="pre">ScoreHistogram</span></code></a>]</span>) – Resource name to its accumulated histogram.</p></li>
+<li><p><strong>tau</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Star threshold the table is being generated for.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code>]]]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Iterable of resource name and serializable row.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.calibration.keep_row">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.calibration.</span></span><span class="sig-name descname"><span class="pre">keep_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.calibration.keep_row" title="Link to this definition"></a></dt>
+<dd><p>Return whether an edge survives the <code class="docutils literal notranslate"><span class="pre">tau</span></code> threshold.</p>
+<p>An unrecognised channel is kept. Dropping rows we cannot calibrate would
+silently delete data for a reason unrelated to confidence — the same
+failure this module exists to prevent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Raw <code class="docutils literal notranslate"><span class="pre">prego_channel</span></code> value.</p></li>
+<li><p><strong>score</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Raw <code class="docutils literal notranslate"><span class="pre">prego_score</span></code> value.</p></li>
+<li><p><strong>resource</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Resource the row came from.</p></li>
+<li><p><strong>cutoffs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – Per-resource cutoff bin indices.</p></li>
+<li><p><strong>tau</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Star threshold in [0, STAR_MAX].</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the edge should be emitted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.calibration.star_for_row">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.calibration.</span></span><span class="sig-name descname"><span class="pre">star_for_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">score</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resource</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cutoffs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.calibration.star_for_row" title="Link to this definition"></a></dt>
+<dd><p>Return the calibrated star rating for one edge, or None if uncalibratable.</p>
+<p>Flat channels return their constant tier. Continuous rows are compared
+against their resource’s cutoff; because the cutoff already encodes
+<code class="docutils literal notranslate"><span class="pre">tau</span></code>, this returns <code class="docutils literal notranslate"><span class="pre">STAR_MAX</span></code> for rows at or above it and 0.0 below,
+which is all the keep/drop decision needs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Raw <code class="docutils literal notranslate"><span class="pre">prego_channel</span></code> value.</p></li>
+<li><p><strong>score</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Raw <code class="docutils literal notranslate"><span class="pre">prego_score</span></code> value.</p></li>
+<li><p><strong>resource</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Resource the row came from (MGnify, MG-RAST, …).</p></li>
+<li><p><strong>cutoffs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Mapping</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – Per-resource cutoff bin indices from <a class="reference internal" href="#kg_microbe.transform_utils.prego.calibration.build_cutoffs" title="kg_microbe.transform_utils.prego.calibration.build_cutoffs"><code class="xref py py-func docutils literal notranslate"><span class="pre">build_cutoffs()</span></code></a>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Star rating, or None when the channel is unrecognised.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.calibration.validate_tau">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.calibration.</span></span><span class="sig-name descname"><span class="pre">validate_tau</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tau</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.calibration.validate_tau" title="Link to this definition"></a></dt>
+<dd><p>Reject a threshold outside the star axis.</p>
+<p>Above <code class="docutils literal notranslate"><span class="pre">STAR_MAX</span></code> every channel drops to zero retention, which is never
+what a caller means; refusing is better than silently emitting nothing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>tau</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Requested threshold.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">tau</span></code> is negative or exceeds STAR_MAX.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.prego.prego">
+<span id="kg-microbe-transform-utils-prego-prego-module"></span><h2>kg_microbe.transform_utils.prego.prego module<a class="headerlink" href="#module-kg_microbe.transform_utils.prego.prego" title="Link to this heading"></a></h2>
+<p>PREGO transform — ingest taxon↔environment/process associations.</p>
+<p>Reads the three <code class="docutils literal notranslate"><span class="pre">database_pairs.tsv</span></code> archives from
+<a class="reference external" href="https://prego.hcmr.gr/download/">https://prego.hcmr.gr/download/</a> (documented in the paper’s Appendix D — see
+<cite>docs/PREGO_INGEST_PLAN.md</cite> for the full acquisition trail and schema
+discovery) and emits KGX-format node + edge TSVs plus an
+<code class="docutils literal notranslate"><span class="pre">unmapped_associations.tsv</span></code> curation report for rows that were
+intentionally skipped.</p>
+<p>Phase 6a scope (this module): the associations themselves. Phase 6b
+(dictionary synonym enrichment from <code class="docutils literal notranslate"><span class="pre">prego_dictionary.tar.gz</span></code>) is a
+follow-up per the plan’s own ship-6a-first guidance.</p>
+<p>Emitted edge shapes (canonical directions matching KGM convention — see
+<cite>utils.classify_row</cite>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">NCBITaxon:X</span> <span class="pre">→</span> <span class="pre">biolink:capable_of</span> <span class="pre">→</span> <span class="pre">GO:Y</span></code>  (all 3 GO namespaces)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ENVO:Y</span> <span class="pre">→</span> <span class="pre">biolink:location_of</span> <span class="pre">→</span> <span class="pre">NCBITaxon:X</span></code>  (matches bacdive)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">NCBITaxon:X</span> <span class="pre">→</span> <span class="pre">biolink:associated_with</span> <span class="pre">→</span> <span class="pre">MONDO:Y</span></code>  (DOID routed via xref)</p></li>
+</ul>
+<p>Each edge carries per-row PREGO metadata (<code class="docutils literal notranslate"><span class="pre">score</span></code>, <code class="docutils literal notranslate"><span class="pre">channel</span></code>,
+<code class="docutils literal notranslate"><span class="pre">direct_flag</span></code>, <code class="docutils literal notranslate"><span class="pre">evidence_url</span></code>) as extra columns beyond the KGX
+minimum, so downstream consumers can filter by evidence type or
+threshold on confidence.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.prego.PregoTransform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.prego.</span></span><span class="sig-name descname"><span class="pre">PregoTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_confidence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shapes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">habitat_min_score</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.prego.PregoTransform" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
+<p>Ingest PREGO taxon↔environment/process associations.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.prego.PregoTransform.TRANSFORM_INPUTS">
+<span class="sig-name descname"><span class="pre">TRANSFORM_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ontologies',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.prego.prego.PregoTransform.TRANSFORM_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Reads this transform’s output; see Transform.TRANSFORM_INPUTS (#845).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.prego.PregoTransform.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.prego.PregoTransform.run" title="Link to this definition"></a></dt>
+<dd><p>Read every PREGO archive and emit nodes + edges + unmapped-associations report.</p>
+<p><code class="docutils literal notranslate"><span class="pre">data_file</span></code> is accepted for base-class compatibility but ignored.
+PREGO ingests every <code class="docutils literal notranslate"><span class="pre">*.tar.gz</span></code> in its raw directory — the full
+three-channel set (literature / environmental_samples /
+annotated_genomes_isolates) is the intended production input, but any
+subset works (e.g. the isolates-only canary). <code class="docutils literal notranslate"><span class="pre">show_status</span></code> toggles
+the tqdm progress bar; false is used by the pytest suite to keep
+captured output clean.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.prego.quality">
+<span id="kg-microbe-transform-utils-prego-quality-module"></span><h2>kg_microbe.transform_utils.prego.quality module<a class="headerlink" href="#module-kg_microbe.transform_utils.prego.quality" title="Link to this heading"></a></h2>
+<p>Fold-enrichment measurement for PREGO association scores.</p>
+<p>The percentile calibration in <code class="xref py py-mod docutils literal notranslate"><span class="pre">calibration</span></code> equalizes <strong>rank</strong>: at
+<code class="docutils literal notranslate"><span class="pre">min-confidence</span> <span class="pre">2.0</span></code> it keeps the top half of each resource. It makes no
+claim about quality, because nothing anchors it to an external truth.</p>
+<p>TISSUES closes that gap by calibrating against a gold standard — “we select
+the genes and tissues that are in common between the dataset and the gold
+standard, sort the gene–tissue pairs by raw expression value and calculate
+fold enrichment in sliding windows of 100 pairs” (Palasca et al. 2018). This
+module is the equivalent measurement for taxon→GO associations.</p>
+<blockquote>
+<div><p>fold enrichment = P(pair in gold | pair in window) / P(pair in gold)</p>
+</div></blockquote>
+<p>where the denominator is the density of the gold standard over the shared
+entity space. Fold 1.0 means the window matches that baseline — <strong>not</strong>
+that the score carries no information, since the baseline weights every
+subject x object cell equally and so controls for neither taxon annotation
+depth nor GO-term ubiquity. A degree-preserving null would be a stronger
+test and is not implemented here.</p>
+<p><strong>What this measured, and why the answer depends on the gold standard.</strong>
+Two were tried, and they disagree — which is the most important result
+here.</p>
+<p>Against <strong>UniProt proteome annotations</strong> (14.4M taxon→GO pairs derived
+from <code class="docutils literal notranslate"><span class="pre">kg-microbe-function</span></code>; 4,209 GO terms, 41% of PREGO’s taxon→GO
+edges comparable), fold enrichment <em>rises</em> with score across the
+continuous channel: 0.94x → 0.96x → 1.04x → 1.19x. The flat channels sit
+at 2.19x.</p>
+<p>Against <strong>metatraits + madin_etal</strong> (trait-derived; 78 GO terms, ~1%
+comparable), it <em>falls</em>: 1.61x → 1.59x → 1.56x, with the flat channels at
+1.00x.</p>
+<p>The leading <em>hypothesis</em> for the reversal is provenance alignment, which is
+not established: UniProt annotations come from genome annotation and PREGO’s
+flat channels are genome-derived (JGI IMG, Struo-GTDB), so their agreement
+may reflect a shared source rather than either being right. metatraits is
+trait/literature-derived. Testing this needs a source-overlap exclusion and
+a degree-matched comparison; until then treat the UniProt figure for the
+genome channels as provenance agreement rather than quality, and treat any
+single-gold-standard verdict as provisional.</p>
+<p>Effect sizes, stated per benchmark rather than pooled: against UniProt the
+continuous channel spans 0.94x-1.19x; against the trait-derived standard it
+spans 1.56x-1.61x. Neither range is accompanied by an uncertainty estimate.
+The observations are not independent — edges reuse the same taxa, GO terms
+and resources — so clustered intervals are needed before any ordering of
+these point estimates is called directional.</p>
+<p><strong>Status of the predicate hypothesis: NOT ESTABLISHED.</strong> An earlier version of
+this docstring stated that the score discriminates on <code class="docutils literal notranslate"><span class="pre">location_of</span></code> edges and
+not on <code class="docutils literal notranslate"><span class="pre">capable_of</span></code> ones, citing 1.57x (18/19 ENVO terms) and 1.94x (7/9 BTO
+terms). Those figures came from a within-term split that used an index median
+and therefore split tied scores; tie-safe boundaries give 1.49x (18/20) and
+1.69x (6/8). BTO is also not an independent replication — it projects the same
+BacDive isolation source as ENVO.</p>
+<p>Under matched taxa <em>and</em> matched label policy the contrast largely dissolves:
+interaction +0.281, two-way clustered 95% CI [-0.237, +0.624], 82.5% one-sided.
+Both predicates show weak positive discrimination (1.40 and 1.12) and the
+difference between them is not distinguishable from zero.</p>
+<p>See <code class="docutils literal notranslate"><span class="pre">docs/PREGO_SCORE_VALIDATION.md</span></code> for the full record, including the
+corrections list. Do not cite the withdrawn figures.</p>
+<p>Separately, the score tracks evidence volume: a GO term’s edge count
+correlates with its mean score at Spearman +0.26, driven by rare terms
+scoring low (mean 0.67 in the lowest-ubiquity decile vs ~2.0 everywhere
+above). Raising a threshold therefore strips rare, specific annotations
+first — a coverage bias worth knowing about independent of quality.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.quality.GoldStandard">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.quality.</span></span><span class="sig-name descname"><span class="pre">GoldStandard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pairs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.quality.GoldStandard" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A set of curated <code class="docutils literal notranslate"><span class="pre">(subject,</span> <span class="pre">object)</span></code> pairs plus the entity space it covers.</p>
+<p>The entity sets matter as much as the pairs: fold enrichment is only
+meaningful over subjects and objects the gold standard actually knows
+about. Scoring a pair whose object the gold standard has never seen
+would count as a miss for a reason that has nothing to do with quality.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.quality.GoldStandard.baseline">
+<span class="sig-name descname"><span class="pre">baseline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subjects</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">objects</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.quality.GoldStandard.baseline" title="Link to this definition"></a></dt>
+<dd><p>Return the density of the gold standard over a shared entity space.</p>
+<p>This is the rate a random pair drawn from <code class="docutils literal notranslate"><span class="pre">subjects</span> <span class="pre">x</span> <span class="pre">objects</span></code>
+would hit, and the denominator of every fold-enrichment figure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subjects</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Subjects shared with the dataset under test.</p></li>
+<li><p><strong>objects</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Objects shared with the dataset under test.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Expected hit rate in [0, 1]; 0.0 if the space is empty.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If either shared set is empty.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.quality.GoldStandard.contains">
+<span class="sig-name descname"><span class="pre">contains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.quality.GoldStandard.contains" title="Link to this definition"></a></dt>
+<dd><p>Return whether the gold standard asserts this pair.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subject</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Subject CURIE.</p></li>
+<li><p><strong>object</strong> – Object CURIE.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the pair is a curated hit.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.quality.GoldStandard.covers">
+<span class="sig-name descname"><span class="pre">covers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.quality.GoldStandard.covers" title="Link to this definition"></a></dt>
+<dd><p>Return whether both endpoints are inside the gold standard’s entity space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subject</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Subject CURIE.</p></li>
+<li><p><strong>object</strong> – Object CURIE.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if the pair is comparable.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.quality.LabelledEvidence">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.quality.</span></span><span class="sig-name descname"><span class="pre">LabelledEvidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">positives</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negatives</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.quality.LabelledEvidence" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Positive/negative labels for <code class="docutils literal notranslate"><span class="pre">(subject,</span> <span class="pre">object)</span></code> pairs.</p>
+<p>Unlike <a class="reference internal" href="#kg_microbe.transform_utils.prego.quality.GoldStandard" title="kg_microbe.transform_utils.prego.quality.GoldStandard"><code class="xref py py-class docutils literal notranslate"><span class="pre">GoldStandard</span></code></a>, which only knows which pairs are asserted,
+this knows which are asserted <em>false</em>. That is what makes precision
+measurable without a null model.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.quality.LabelledEvidence.base_rate">
+<span class="sig-name descname"><span class="pre">base_rate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.quality.LabelledEvidence.base_rate" title="Link to this definition"></a></dt>
+<dd><p>Return the fraction of labelled pairs that are positive.</p>
+<p>This is the precision a selector achieves by picking labelled pairs at
+random, and the only reference point precision needs — it is measured,
+not modelled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Base rate in [0, 1].</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – If there are no labelled pairs.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.quality.LabelledEvidence.label">
+<span class="sig-name descname"><span class="pre">label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.quality.LabelledEvidence.label" title="Link to this definition"></a></dt>
+<dd><p>Return True, False, or None when the pair is unlabelled.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>subject</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Subject CURIE.</p></li>
+<li><p><strong>object</strong> – Object CURIE.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The label, or None if this evidence says nothing about the pair.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.quality.enrichment_by_window">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.quality.</span></span><span class="sig-name descname"><span class="pre">enrichment_by_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scored</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.quality.enrichment_by_window" title="Link to this definition"></a></dt>
+<dd><p>Return fold enrichment per equal-count score window, ascending by score.</p>
+<p>Equal-count windows rather than equal-width: PREGO’s scores pile up at
+the cap, so equal-width bins would put most of the mass in one bin and
+measure nothing.</p>
+<p>A window whose score range is a single value is flagged via <code class="docutils literal notranslate"><span class="pre">degenerate</span></code>.
+Such a window is an arbitrary slice of tied rows — its hit rate reflects
+whatever order the ties arrived in, not the score — so it must not be
+read as signal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scored</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>]]</span>) – <code class="docutils literal notranslate"><span class="pre">(score,</span> <span class="pre">is_hit)</span></code> pairs; sorted internally.</p></li>
+<li><p><strong>baseline</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Random-expectation hit rate.</p></li>
+<li><p><strong>windows</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Number of equal-count windows.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>One dict per window with score bounds, n, hit rate, and fold.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">windows</span></code> is not positive.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.quality.fold_enrichment">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.quality.</span></span><span class="sig-name descname"><span class="pre">fold_enrichment</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hit_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">baseline</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.quality.fold_enrichment" title="Link to this definition"></a></dt>
+<dd><p>Return enrichment of an observed hit rate over the random expectation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hit_rate</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Observed fraction of pairs that are curated hits.</p></li>
+<li><p><strong>baseline</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Expected fraction for a random pair.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Fold enrichment relative to <code class="docutils literal notranslate"><span class="pre">baseline</span></code>; 1.0 matches it.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">baseline</span></code> is not positive.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.quality.is_monotone_increasing">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.quality.</span></span><span class="sig-name descname"><span class="pre">is_monotone_increasing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">results</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.quality.is_monotone_increasing" title="Link to this definition"></a></dt>
+<dd><p>Return whether fold enrichment rises with score across non-degenerate windows.</p>
+<p>This is the property a usable confidence score must have: a higher score
+should mean a higher chance of agreeing with curated knowledge. Whether
+PREGO’s has it depends on the gold standard — rising against UniProt,
+falling against metatraits — so this predicate exists to make the
+question checkable per gold standard rather than a matter of opinion.</p>
+<p>Degenerate (all-ties) windows are excluded; their ordering is arbitrary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>results</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</span>) – Output of <a class="reference internal" href="#kg_microbe.transform_utils.prego.quality.enrichment_by_window" title="kg_microbe.transform_utils.prego.quality.enrichment_by_window"><code class="xref py py-func docutils literal notranslate"><span class="pre">enrichment_by_window()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if fold is non-decreasing across usable windows.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.quality.lift">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.quality.</span></span><span class="sig-name descname"><span class="pre">lift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">precision</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base_rate</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.quality.lift" title="Link to this definition"></a></dt>
+<dd><p>Return precision relative to the measured base rate.</p>
+<p>Distinct from <a class="reference internal" href="#kg_microbe.transform_utils.prego.quality.fold_enrichment" title="kg_microbe.transform_utils.prego.quality.fold_enrichment"><code class="xref py py-func docutils literal notranslate"><span class="pre">fold_enrichment()</span></code></a> in that the denominator is observed
+rather than derived from a uniform-cell null, so it carries none of that
+null’s assumptions about how pairs are drawn.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>precision</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Observed precision.</p></li>
+<li><p><strong>base_rate</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Fraction of labelled pairs that are positive.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Lift; 1.0 means no better than picking labelled pairs at random.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">base_rate</span></code> is not positive.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.quality.precision_by_window">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.quality.</span></span><span class="sig-name descname"><span class="pre">precision_by_window</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">scored</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">windows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.quality.precision_by_window" title="Link to this definition"></a></dt>
+<dd><p>Return precision per equal-count score window, ascending by score.</p>
+<p>Precision is the fraction of labelled edges in the window whose label is
+positive. Compare against <a class="reference internal" href="#kg_microbe.transform_utils.prego.quality.LabelledEvidence.base_rate" title="kg_microbe.transform_utils.prego.quality.LabelledEvidence.base_rate"><code class="xref py py-meth docutils literal notranslate"><span class="pre">LabelledEvidence.base_rate()</span></code></a>; a score that
+discriminates produces windows rising above it.</p>
+<p>Windows break only where the score changes, for the same reason as
+<a class="reference internal" href="#kg_microbe.transform_utils.prego.quality.enrichment_by_window" title="kg_microbe.transform_utils.prego.quality.enrichment_by_window"><code class="xref py py-func docutils literal notranslate"><span class="pre">enrichment_by_window()</span></code></a> — an index-based slice would let the sort’s
+tiebreak decide which tied rows land in which window.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>scored</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sequence</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>]]</span>) – <code class="docutils literal notranslate"><span class="pre">(score,</span> <span class="pre">is_positive)</span></code> pairs for labelled edges only.</p></li>
+<li><p><strong>windows</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Number of equal-count windows.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>One dict per window with score bounds, n, precision, degenerate.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If <code class="docutils literal notranslate"><span class="pre">windows</span></code> is not positive.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.prego.utils">
+<span id="kg-microbe-transform-utils-prego-utils-module"></span><h2>kg_microbe.transform_utils.prego.utils module<a class="headerlink" href="#module-kg_microbe.transform_utils.prego.utils" title="Link to this heading"></a></h2>
+<p>Helpers for the PREGO transform.</p>
+<p>Keeps <code class="docutils literal notranslate"><span class="pre">prego.py</span></code> focused on row → edge emission. Everything here is a pure
+function that <code class="xref py py-func docutils literal notranslate"><span class="pre">prego.PregoTransform._process_row()</span></code> can call without
+touching the transform’s own state.</p>
+<p>The JensenLab tagger convention is documented in
+<code class="docutils literal notranslate"><span class="pre">docs/PREGO_INGEST_PLAN.md</span></code> §Phase 3. The nine-column <code class="docutils literal notranslate"><span class="pre">database_pairs.tsv</span></code>
+schema and the integer entity-type codes live in the constants below; the
+canonical-direction filter (<a class="reference internal" href="#kg_microbe.transform_utils.prego.utils.classify_row" title="kg_microbe.transform_utils.prego.utils.classify_row"><code class="xref py py-func docutils literal notranslate"><span class="pre">classify_row()</span></code></a>) implements the dedup step
+described in the plan’s §Phase 6a (every unique association appears twice in
+the raw archives as <code class="docutils literal notranslate"><span class="pre">(X,</span> <span class="pre">Y)</span></code> AND as <code class="docutils literal notranslate"><span class="pre">(Y,</span> <span class="pre">X)</span></code> — the filter keeps one
+canonical direction per row shape and drops the inverse in O(1) memory).</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.utils.channel_for_archive">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.utils.</span></span><span class="sig-name descname"><span class="pre">channel_for_archive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">archive_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.utils.channel_for_archive" title="Link to this definition"></a></dt>
+<dd><p>Return the PREGO channel an archive belongs to.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>archive_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Archive filename or stem, e.g. <code class="docutils literal notranslate"><span class="pre">environmental_samples.tar.gz</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>One of the CHANNEL_* constants, or the normalised stem when the
+archive is not one of the three documented channels.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.utils.classify_evidence">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.utils.</span></span><span class="sig-name descname"><span class="pre">classify_evidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.utils.classify_evidence" title="Link to this definition"></a></dt>
+<dd><p>Classify a raw PREGO column-6 value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>value</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The raw value as shipped.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>One of the EVIDENCE_* constants.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.utils.classify_row">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.utils.</span></span><span class="sig-name descname"><span class="pre">classify_row</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity1_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity2_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.utils.classify_row" title="Link to this definition"></a></dt>
+<dd><p>Return a short outcome tag for one raw PREGO row.</p>
+<p>Callers use the tag either to route the row to <code class="xref py py-func docutils literal notranslate"><span class="pre">build_edge()</span></code> (any
+<code class="docutils literal notranslate"><span class="pre">KEEP_*</span></code> tag) or to increment the unmapped-associations report bucket
+(any <code class="docutils literal notranslate"><span class="pre">DROP_*</span></code> tag). See the module docstring for the canonical-direction
+dedup rationale.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.utils.edge_metadata_for">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.utils.</span></span><span class="sig-name descname"><span class="pre">edge_metadata_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">channel</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evidence_class</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.utils.edge_metadata_for" title="Link to this definition"></a></dt>
+<dd><p>Return <code class="docutils literal notranslate"><span class="pre">(knowledge_level,</span> <span class="pre">agent_type)</span></code> for a PREGO edge.</p>
+<p>PREGO edges shipped with both fields empty, so 44.7M text-mined and
+statistically-derived associations were indistinguishable from curated
+assertions anywhere in the merged KG. The values differ by channel because
+the channels are generated by genuinely different processes — a single
+constant would misdescribe most of them.</p>
+<p>A citation overrides the channel default: the row combines curated metadata
+with text mining over the linked abstract, which the authors themselves
+score one tier lower.</p>
+<p>Within the genome channel, a habitat value means the association comes from
+sample/isolation metadata rather than the annotation pipeline the channel is
+named for, so <code class="docutils literal notranslate"><span class="pre">observation</span></code> describes it and <code class="docutils literal notranslate"><span class="pre">knowledge_assertion</span></code> does
+not (#716).</p>
+<p>Note this is <strong>not</strong> a confidence demotion, and the two signals are
+orthogonal: measured over the first 3M rows of the real genome archive, all
+1,693 habitat rows carry score <strong>4</strong> — PREGO’s highest tier, not its lowest.
+Biolink’s <code class="docutils literal notranslate"><span class="pre">knowledge_level</span></code> is an unordered description of <em>how</em> the
+knowledge was produced, so a high-confidence observation is coherent. An
+earlier version of this docstring claimed those rows scored 3; that was
+inherited from a review comment and is false.</p>
+<p>The habitat rule is deliberately nested inside the genome-channel branch
+rather than checked before it. Hoisted, it answered for channels this code
+knows nothing about — <code class="docutils literal notranslate"><span class="pre">edge_metadata_for(&quot;metagenomes&quot;,</span> <span class="pre">&quot;habitat&quot;)</span></code>
+returned a confident <code class="docutils literal notranslate"><span class="pre">(&quot;observation&quot;,</span> <span class="pre">&quot;automated_agent&quot;)</span></code> — which breaks
+the invariant that an unrecognised channel declines to assert provenance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>channel</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – One of the CHANNEL_* constants.</p></li>
+<li><p><strong>evidence_class</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – One of the EVIDENCE_* constants.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Biolink <code class="docutils literal notranslate"><span class="pre">knowledge_level</span></code> and <code class="docutils literal notranslate"><span class="pre">agent_type</span></code> values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.utils.entity_to_curie">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.utils.</span></span><span class="sig-name descname"><span class="pre">entity_to_curie</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.utils.entity_to_curie" title="Link to this definition"></a></dt>
+<dd><p>Return the KG-Microbe CURIE for a tagger <code class="docutils literal notranslate"><span class="pre">(type,</span> <span class="pre">source_id)</span></code> pair, or None.</p>
+<p>Handles the direct-mapping types (NCBITaxon, all 3 GO namespaces, ENVO,
+BTO). DOID is intentionally NOT handled here — DOID→MONDO xref
+resolution is context-dependent (needs the ontologies output’s xref
+map) so <code class="docutils literal notranslate"><span class="pre">_load_dictionary</span></code> routes DOID synonyms to their MONDO
+CURIEs separately.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.utils.go_category_for_type">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.utils.</span></span><span class="sig-name descname"><span class="pre">go_category_for_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">entity_type</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.utils.go_category_for_type" title="Link to this definition"></a></dt>
+<dd><p>Return the biolink category matching a GO tagger type integer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.utils.iter_database_pairs">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.utils.</span></span><span class="sig-name descname"><span class="pre">iter_database_pairs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.utils.iter_database_pairs" title="Link to this definition"></a></dt>
+<dd><p>Yield <code class="docutils literal notranslate"><span class="pre">(row,</span> <span class="pre">error)</span></code> pairs from a <code class="docutils literal notranslate"><span class="pre">database_pairs.tsv</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">row</span></code> is the raw split list of exactly nine strings when the row is
+well-formed and <code class="docutils literal notranslate"><span class="pre">error</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>. When a row is malformed, <code class="docutils literal notranslate"><span class="pre">row</span></code>
+is the raw list (may be any length) and <code class="docutils literal notranslate"><span class="pre">error</span></code> is a short reason
+string. Callers should count malformed rows and continue rather than
+raise — real files carry ~10^8 rows, and one bad line shouldn’t sink
+the whole transform.</p>
+<p>Encoded as a plain generator over line-oriented reads; the caller is
+responsible for opening a stream-friendly file handle (raw TSV, or
+<code class="docutils literal notranslate"><span class="pre">tarfile.extractfile()</span></code> output). No CSV quoting is expected — PREGO
+files are pure tab-delimited, no embedded quotes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.utils.iter_dictionary_entities">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.utils.</span></span><span class="sig-name descname"><span class="pre">iter_dictionary_entities</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.utils.iter_dictionary_entities" title="Link to this definition"></a></dt>
+<dd><p>Yield <code class="docutils literal notranslate"><span class="pre">(serial,</span> <span class="pre">entity_type,</span> <span class="pre">source_id)</span></code> triples from <code class="docutils literal notranslate"><span class="pre">prego_entities.tsv</span></code>.</p>
+<p>JensenLab tagger convention: three tab-separated columns per row —
+serial (unique positive integer), entity type (positive for NCBI-species
+proteins, negative for the standardized vocabularies), and the
+source-native identifier. Malformed rows are silently skipped; ~2.5 M
+well-formed rows in the full PREGO dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.utils.iter_dictionary_names">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.utils.</span></span><span class="sig-name descname"><span class="pre">iter_dictionary_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.utils.iter_dictionary_names" title="Link to this definition"></a></dt>
+<dd><p>Yield <code class="docutils literal notranslate"><span class="pre">(serial,</span> <span class="pre">synonym)</span></code> pairs from <code class="docutils literal notranslate"><span class="pre">prego_names.tsv</span></code>.</p>
+<p>~13.9 M rows in the full dictionary. Callers must be O(1) per row —
+materialising as a list defeats the streaming intent.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.utils.load_doid_to_mondo">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.utils.</span></span><span class="sig-name descname"><span class="pre">load_doid_to_mondo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mondo_nodes_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.utils.load_doid_to_mondo" title="Link to this definition"></a></dt>
+<dd><p>Build a <code class="docutils literal notranslate"><span class="pre">{DOID:xxx:</span> <span class="pre">MONDO:yyy}</span></code> lookup from the ontologies output.</p>
+<p>Reads <code class="docutils literal notranslate"><span class="pre">data/transformed/ontologies/mondo_nodes.tsv</span></code>, which carries a
+pipe-delimited <code class="docutils literal notranslate"><span class="pre">xref</span></code> column containing DOID / MESH / NCIT / … aliases
+per MONDO term. The lookup is small enough (a few tens of thousands of
+DOID entries) to sit in memory for the full PREGO run.</p>
+<p>Returns an empty dict if the file does not exist — the transform will
+then log-and-skip every DOID row rather than crash, which is the correct
+behavior when the ontologies transform hasn’t been re-run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.prego">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-kg_microbe.transform_utils.prego" title="Link to this heading"></a></h2>
+<p>PREGO transform package — taxon↔environment/process associations from text-mining.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="kg_microbe.transform_utils.ontologies_stubs.html" class="btn btn-neutral float-left" title="kg_microbe.transform_utils.ontologies_stubs package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="kg_microbe.transform_utils.rhea_mappings.html" class="btn btn-neutral float-right" title="kg_microbe.transform_utils.rhea_mappings package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

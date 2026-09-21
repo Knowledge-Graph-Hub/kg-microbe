@@ -1,0 +1,328 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kg_microbe.transform_utils.gold package &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="kg_microbe.transform_utils.gtdb package" href="kg_microbe.transform_utils.gtdb.html" />
+    <link rel="prev" title="kg_microbe.transform_utils.example_transform package" href="kg_microbe.transform_utils.example_transform.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">kg_microbe</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="kg_microbe.html">kg_microbe package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="kg_microbe.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.merge_utils.html">kg_microbe.merge_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.query_utils.html">kg_microbe.query_utils package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html">kg_microbe.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.bactotraits_to_mongo">kg_microbe.bactotraits_to_mongo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.download">kg_microbe.download module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.query">kg_microbe.query module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.run">kg_microbe.run module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.transform">kg_microbe.transform module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">kg_microbe</a></li>
+          <li class="breadcrumb-item"><a href="kg_microbe.html">kg_microbe package</a></li>
+          <li class="breadcrumb-item"><a href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a></li>
+      <li class="breadcrumb-item active">kg_microbe.transform_utils.gold package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/kg_microbe.transform_utils.gold.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kg-microbe-transform-utils-gold-package">
+<h1>kg_microbe.transform_utils.gold package<a class="headerlink" href="#kg-microbe-transform-utils-gold-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-kg_microbe.transform_utils.gold.gold">
+<span id="kg-microbe-transform-utils-gold-gold-module"></span><h2>kg_microbe.transform_utils.gold.gold module<a class="headerlink" href="#module-kg_microbe.transform_utils.gold.gold" title="Link to this heading"></a></h2>
+<p>Transform the GOLD (Genomes OnLine Database, JGI) pre-transformed KGX TSVs.</p>
+<p>GOLD is unusual among our sources: it arrives <strong>already in KGX shape</strong>, so there
+is nothing to parse. That makes a blind copy tempting and wrong. The modeling
+review of the shipped payload (<code class="docutils literal notranslate"><span class="pre">docs/GOLD_TRANSFORM_REVIEW.md</span></code>) found nine
+issues that a copy would carry straight into a merge — including 279,618
+<code class="docutils literal notranslate"><span class="pre">MaterialSample</span></code> nodes with no incident edge, and 4,220 <code class="docutils literal notranslate"><span class="pre">subclass_of</span></code> edges
+that violate Biolink’s domain/range.</p>
+<p>So this is a <em>validating</em> passthrough. It conforms the schema to the KG-Microbe
+standard, repairs what can be repaired mechanically, and reports the rest rather
+than silently propagating it.</p>
+<p>What it changes, and why each is safe:</p>
+<ul class="simple">
+<li><p><strong>Adds the standard columns.</strong> Upstream nodes lack <code class="docutils literal notranslate"><span class="pre">description</span></code>,
+<code class="docutils literal notranslate"><span class="pre">synonym</span></code>, <code class="docutils literal notranslate"><span class="pre">deprecated</span></code> and <code class="docutils literal notranslate"><span class="pre">same_as</span></code>; edges lack <code class="docutils literal notranslate"><span class="pre">knowledge_level</span></code> and
+<code class="docutils literal notranslate"><span class="pre">agent_type</span></code>. Every other transform emits them, and they are how a consumer
+tells an assertion from a prediction. GOLD entries are curated submissions, so
+they are filled as <code class="docutils literal notranslate"><span class="pre">knowledge_assertion</span></code> / <code class="docutils literal notranslate"><span class="pre">manual_agent</span></code>.</p></li>
+<li><p><strong>Drops the upstream edge ``id``.</strong> The post-merge cleanup drops it anyway; not
+emitting it keeps the header standard.</p></li>
+<li><p><strong>Adds ``biolink:OntologyClass`` to ecosystem nodes.</strong> <code class="docutils literal notranslate"><span class="pre">subclass_of</span></code> requires
+<code class="docutils literal notranslate"><span class="pre">OntologyClass</span></code> on both ends, and the GOLD ecosystem hierarchy is exactly
+that — a class hierarchy. Pipe-adding the category is the same device METPO
+nodes already use (<code class="docutils literal notranslate"><span class="pre">METPO:1001000|biolink:Procedure</span></code>). Without it those 4,220
+edges are a Biolink violation.</p></li>
+<li><p><strong>Applies the NCBITaxon trim.</strong> KG-Microbe deliberately restricts NCBITaxon to
+microbes (<code class="docutils literal notranslate"><span class="pre">exclusion_branches.tsv</span></code> removes Viruses, Viridiplantae, Metazoa
+and others). GOLD is a genome database covering all of life, so ingesting it
+unfiltered reintroduces 23,695 excluded taxa — phages, marine viruses,
+<code class="docutils literal notranslate"><span class="pre">Picea</span> <span class="pre">glauca</span></code>, a starling — and the 76,034 organisms typed to them, undoing
+the trim the ontologies transform performs. Those, and the study nodes left
+holding nothing but them, are dropped.</p></li>
+<li><p><strong>Drops samples and studies.</strong> KG-Microbe wants neither. <code class="docutils literal notranslate"><span class="pre">MaterialSample</span></code>
+was 279,670 nodes with 242 incident edges, and <code class="docutils literal notranslate"><span class="pre">Study</span></code> was reachable only
+via <code class="docutils literal notranslate"><span class="pre">IndividualOrganism</span> <span class="pre">-related_to-&gt;</span> <span class="pre">Study</span></code>, a predicate asserting nothing
+usable (27.5% of the export). What the ingest is <em>for</em> — the organism to
+environment link, <code class="docutils literal notranslate"><span class="pre">occurs_in</span></code> — is kept. Measured: nodes 975,839 -&gt; 637,286,
+edges 1,110,984 -&gt; 823,250, and the pre-existing orphan warning falls from
+279,618 to 5. <code class="docutils literal notranslate"><span class="pre">occurs_in</span></code> ends at 287,706 rather than its upstream 286,725 —
+it <em>rises</em>, because organisms the taxid remap rescues keep their environment
+edges.</p></li>
+<li><p><strong>Remaps retired NCBI taxids</strong> from <code class="docutils literal notranslate"><span class="pre">merged.dmp</span></code> in the taxonomy dump.
+GOLD’s export carries taxa NCBI has since merged, and judging them by the
+retired id makes the trim drop them along with the organisms typed to them.
+Measured against the real payload: 611 taxa and 1,473 organisms retained that
+would otherwise have been discarded, with 561 nodes collapsing onto an
+existing id. Applied before the trim, since that is the point.</p></li>
+<li><p><strong>Resolves uninformative ecosystems upward, and drops what resolves to
+nothing.</strong> 63.5% of <code class="docutils literal notranslate"><span class="pre">occurs_in</span></code> edges pointed at a node labelled
+“Unclassified”, across 1,663 distinct such nodes — not a bucket you can
+filter, but 1,663 empty ids. The meaning is in the hierarchy: the single
+largest target, carrying 39,446 organisms, sits three “Unclassified” hops
+below <code class="docutils literal notranslate"><span class="pre">Mammals:</span> <span class="pre">Human</span></code>. Each edge now names the nearest informative
+ancestor and keeps the original target in Biolink’s <code class="docutils literal notranslate"><span class="pre">original_object</span></code>, so
+the collapse is auditable and reversible. Edges resolving only to the
+hierarchy root — 58,340 of them, asserting an organism lives somewhere — are
+dropped. Measured: 229,366 <code class="docutils literal notranslate"><span class="pre">occurs_in</span></code> edges remain, <strong>none</strong> pointing at an
+“Unclassified”, with <code class="docutils literal notranslate"><span class="pre">Mammals:</span> <span class="pre">Human</span></code> (39,472), <code class="docutils literal notranslate"><span class="pre">Fecal</span></code>, <code class="docutils literal notranslate"><span class="pre">Soil</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Plants</span></code>, <code class="docutils literal notranslate"><span class="pre">Blood</span></code> and <code class="docutils literal notranslate"><span class="pre">Marine</span></code> the largest targets.</p></li>
+</ul>
+<p>What it deliberately does <strong>not</strong> change, because each needs a modelling decision
+rather than a patch, and is reported instead:</p>
+<ul>
+<li><p>the 23,695 GOLD-only taxa absent from the NCBITaxon output;</p></li>
+<li><p>the 78 taxon <code class="docutils literal notranslate"><span class="pre">name</span></code> disagreements with the ontologies output.</p></li>
+<li><p><strong>Corrects the environment predicate and bridges the vocabulary.</strong> Upstream
+ships <code class="docutils literal notranslate"><span class="pre">occurs_in</span></code>, which Biolink defines as holding “between a <strong>process</strong>
+and a material entity or site” — the subject here is an organism, a material
+entity, so <code class="docutils literal notranslate"><span class="pre">located_in</span></code> is the right one. Neither constrains domain/range
+beyond <code class="docutils literal notranslate"><span class="pre">named</span> <span class="pre">thing</span></code>, which is why KGXVal never flagged it. All 229,366
+environment edges are re-predicated.</p>
+<p>The ecosystem vocabulary is then bridged two ways: the GOLD ontology’s
+curated <code class="docutils literal notranslate"><span class="pre">skos:exactMatch</span></code> links (531 nodes), then a label join against
+ontologies KG-Microbe already loads (537 more, overwhelmingly UBERON host
+anatomy — <code class="docutils literal notranslate"><span class="pre">Rumen</span></code>, <code class="docutils literal notranslate"><span class="pre">Blood</span></code>, <code class="docutils literal notranslate"><span class="pre">Nasopharynx</span></code>, <code class="docutils literal notranslate"><span class="pre">Urine</span></code>). Together
+<strong>45.7%</strong> of environment edges reach an ontology term in two hops, against
+26.9% from the curated mapping alone. Label normalisation was measured and
+contributes one edge, so the uncovered remainder is genuinely absent rather
+than spelled differently.</p>
+<p>The label join is restricted to site-shaped prefixes. Unrestricted it
+produced <code class="docutils literal notranslate"><span class="pre">Alkaline</span> <span class="pre">-&gt;</span> <span class="pre">PATO:0001430</span></code>, <code class="docutils literal notranslate"><span class="pre">Benzene</span> <span class="pre">-&gt;</span> <span class="pre">CHEBI:16716</span></code> and
+<code class="docutils literal notranslate"><span class="pre">Sperm</span> <span class="pre">-&gt;</span> <span class="pre">CL:0000019</span></code>; an organism is not <code class="docutils literal notranslate"><span class="pre">located_in</span></code> a quality, a
+molecule or a cell type. 18 further labels name a host <em>taxon</em> rather than a
+site and are left alone — <code class="docutils literal notranslate"><span class="pre">in_taxon</span></code> would assert the microbe <em>is</em> a plant,
+and the correct shape is bacdive’s inverse <code class="docutils literal notranslate"><span class="pre">taxon</span> <span class="pre">location_of</span> <span class="pre">organism</span></code>.</p>
+</li>
+</ul>
+<p>Still open: better coverage of the <code class="docutils literal notranslate"><span class="pre">gold.ecosystem:</span></code> vocabulary. Without it these
+edges remain an island — KG-Microbe models environments in ENVO everywhere else
+(BacDive isolation sources, Madin habitats, PREGO), so a GOLD environment and a
+BacDive environment for the same organism never meet. Resolution shrinks the
+target vocabulary from 4,226 nodes to the named ones, which is what makes a
+crosswalk tractable.</p>
+<p>Still open upstream, unaffected by this transform: versioned filenames or a
+published checksum, and the six <code class="docutils literal notranslate"><span class="pre">Saccharomyces</span></code> rows that lose their hybrid
+<code class="docutils literal notranslate"><span class="pre">x</span></code> marker.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.gold.gold.GOLDTransform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.gold.gold.</span></span><span class="sig-name descname"><span class="pre">GOLDTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.gold.gold.GOLDTransform" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
+<p>Conform the pre-transformed GOLD KGX TSVs to the KG-Microbe standard.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.gold.gold.GOLDTransform.DATA_INPUTS">
+<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/gold_ecosystem_mesh_sites.tsv',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.gold.gold.GOLDTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>The MeSH site curation this transform reads. Declared so the freshness
+check notices an edit to it — a transform that reads a curation file
+without declaring it is reported fresh while its output is stale, which
+is #812, then #839, and would have been this transform next (#876).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.gold.gold.GOLDTransform.TRANSFORM_INPUTS">
+<span class="sig-name descname"><span class="pre">TRANSFORM_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ontologies',</span> <span class="pre">'ontologies_stubs')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.gold.gold.GOLDTransform.TRANSFORM_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Reads this transform’s output; see Transform.TRANSFORM_INPUTS (#845).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.gold.gold.GOLDTransform.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.gold.gold.GOLDTransform.run" title="Link to this definition"></a></dt>
+<dd><p>Conform the upstream TSVs and write standard nodes/edges.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Unused; the filenames are fixed by the download entry.</p></li>
+<li><p><strong>show_status</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Unused; retained for the base-class signature.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>FileNotFoundError</strong> – If either upstream file is missing.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.gold.gold.GOLD_NODES_FILE">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.gold.gold.</span></span><span class="sig-name descname"><span class="pre">GOLD_NODES_FILE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'GOLD_nodes.tsv'</span></em><a class="headerlink" href="#kg_microbe.transform_utils.gold.gold.GOLD_NODES_FILE" title="Link to this definition"></a></dt>
+<dd><p>Upstream filenames inside <code class="docutils literal notranslate"><span class="pre">data/raw/gold/</span></code>.</p>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.gold">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-kg_microbe.transform_utils.gold" title="Link to this heading"></a></h2>
+<p>GOLD transform module.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.gold.GOLDTransform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.gold.</span></span><span class="sig-name descname"><span class="pre">GOLDTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.gold.GOLDTransform" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
+<p>Conform the pre-transformed GOLD KGX TSVs to the KG-Microbe standard.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.gold.GOLDTransform.DATA_INPUTS">
+<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/gold_ecosystem_mesh_sites.tsv',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.gold.GOLDTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>The MeSH site curation this transform reads. Declared so the freshness
+check notices an edit to it — a transform that reads a curation file
+without declaring it is reported fresh while its output is stale, which
+is #812, then #839, and would have been this transform next (#876).</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.gold.GOLDTransform.TRANSFORM_INPUTS">
+<span class="sig-name descname"><span class="pre">TRANSFORM_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ontologies',</span> <span class="pre">'ontologies_stubs')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.gold.GOLDTransform.TRANSFORM_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Reads this transform’s output; see Transform.TRANSFORM_INPUTS (#845).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.gold.GOLDTransform.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.gold.GOLDTransform.run" title="Link to this definition"></a></dt>
+<dd><p>Conform the upstream TSVs and write standard nodes/edges.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Unused; the filenames are fixed by the download entry.</p></li>
+<li><p><strong>show_status</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Unused; retained for the base-class signature.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>FileNotFoundError</strong> – If either upstream file is missing.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="kg_microbe.transform_utils.example_transform.html" class="btn btn-neutral float-left" title="kg_microbe.transform_utils.example_transform package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="kg_microbe.transform_utils.gtdb.html" class="btn btn-neutral float-right" title="kg_microbe.transform_utils.gtdb package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

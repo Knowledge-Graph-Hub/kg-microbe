@@ -1,0 +1,593 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dual-Edge Design for API Kit Assays &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Dual-Edge Design for API Kit Assays</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/ASSAY_DUAL_EDGE_DESIGN.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dual-edge-design-for-api-kit-assays">
+<h1>Dual-Edge Design for API Kit Assays<a class="headerlink" href="#dual-edge-design-for-api-kit-assays" title="Link to this heading"></a></h1>
+<p><strong>Date</strong>: 2026-01-12
+<strong>Status</strong>: ✅ APPROVED
+<strong>Decision</strong>: Keep both direct organism→entity edges AND add 2-hop paths via assay nodes</p>
+<hr class="docutils" />
+<section id="design-decision">
+<h2>Design Decision<a class="headerlink" href="#design-decision" title="Link to this heading"></a></h2>
+<p>We will implement a <strong>dual-edge pattern</strong> that maintains both:</p>
+<ol class="arabic simple">
+<li><p><strong>Direct edges</strong>: Organism → GO/EC/ChEBI (biological facts)</p></li>
+<li><p><strong>Two-hop paths</strong>: Organism → Assay → GO/EC/ChEBI (methodology + provenance)</p></li>
+</ol>
+<p>This is the original design from the 20250222 release, which we are now modernizing with:</p>
+<ul class="simple">
+<li><p>✅ Proper assay nodes (503 nodes with rich metadata)</p></li>
+<li><p>✅ Correct categories (<code class="docutils literal notranslate"><span class="pre">biolink:Procedure</span></code>)</p></li>
+<li><p>✅ No deprecated predicates</p></li>
+<li><p>✅ Full API kit-specific METPO predicates (8 types)</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="graph-structure">
+<h2>Graph Structure<a class="headerlink" href="#graph-structure" title="Link to this heading"></a></h2>
+<section id="complete-pattern">
+<h3>Complete Pattern<a class="headerlink" href="#complete-pattern" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Direct edge (biological fact)</span>
+<span class="n">NCBITaxon</span><span class="p">:</span><span class="mi">562</span> <span class="o">--</span><span class="n">METPO</span><span class="p">:</span><span class="mi">2000302</span> <span class="p">(</span><span class="n">shows</span> <span class="n">activity</span> <span class="n">of</span><span class="p">)</span><span class="o">--&gt;</span> <span class="n">GO</span><span class="p">:</span><span class="mi">0004035</span> <span class="p">(</span><span class="n">alkaline</span> <span class="n">phosphatase</span> <span class="n">activity</span><span class="p">)</span>
+
+<span class="c1"># Two-hop path (methodology + provenance)</span>
+<span class="n">NCBITaxon</span><span class="p">:</span><span class="mi">562</span> <span class="o">--</span><span class="n">METPO</span><span class="p">:</span><span class="mi">2000302</span> <span class="p">(</span><span class="n">shows</span> <span class="n">activity</span> <span class="n">of</span><span class="p">)</span><span class="o">--&gt;</span> <span class="n">assay</span><span class="p">:</span><span class="n">API_zym_alkaline_phosphatase</span>
+<span class="n">assay</span><span class="p">:</span><span class="n">API_zym_alkaline_phosphatase</span> <span class="o">--</span><span class="n">biolink</span><span class="p">:</span><span class="n">has_output</span><span class="o">--&gt;</span> <span class="n">GO</span><span class="p">:</span><span class="mi">0004035</span> <span class="p">(</span><span class="n">alkaline</span> <span class="n">phosphatase</span> <span class="n">activity</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="visual-representation">
+<h3>Visual Representation<a class="headerlink" href="#visual-representation" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>                    ┌─────────────────────────────────────────────┐
+                    │                                             │
+                    │        Direct Edge (biological fact)        │
+                    │                                             │
+    NCBITaxon:562 ──┼────────── METPO:2000302 ──────────────────►│──► GO:0004035
+         │          │                                             │       │
+         │          └─────────────────────────────────────────────┘       │
+         │                                                                 │
+         │                                                                 │
+         └────── METPO:2000302 ─────► assay:API_zym_alkaline_phosphatase │
+                                               │                          │
+                                               │                          │
+                                               └───── biolink:has_output ─┘
+
+                                      Two-hop path (with methodology)
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="rationale">
+<h2>Rationale<a class="headerlink" href="#rationale" title="Link to this heading"></a></h2>
+<section id="why-keep-both-patterns">
+<h3>Why Keep Both Patterns?<a class="headerlink" href="#why-keep-both-patterns" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Query Simplicity vs. Detail</strong></p>
+<ul class="simple">
+<li><p>Simple queries: Use direct edges</p></li>
+<li><p>Detailed queries: Use 2-hop paths to see methodology</p></li>
+</ul>
+</li>
+<li><p><strong>Different Use Cases</strong></p>
+<ul class="simple">
+<li><p><strong>Biologists</strong>: “Which organisms have this enzyme?” → Direct edges</p></li>
+<li><p><strong>Data curators</strong>: “Which assay detected this?” → 2-hop paths</p></li>
+<li><p><strong>Tool developers</strong>: “What’s the experimental basis?” → 2-hop paths</p></li>
+</ul>
+</li>
+<li><p><strong>Backward Compatibility</strong></p>
+<ul class="simple">
+<li><p>Existing queries continue to work</p></li>
+<li><p>No breaking changes to API</p></li>
+<li><p>Users can migrate gradually</p></li>
+</ul>
+</li>
+<li><p><strong>Original Design Intent</strong></p>
+<ul class="simple">
+<li><p>This was the pattern in 20250222 (though with wrong predicates)</p></li>
+<li><p>We’re modernizing, not redesigning from scratch</p></li>
+<li><p>Captures both biological facts AND experimental methodology</p></li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+<hr class="docutils" />
+<section id="benefits-of-dual-edge-pattern">
+<h2>Benefits of Dual-Edge Pattern<a class="headerlink" href="#benefits-of-dual-edge-pattern" title="Link to this heading"></a></h2>
+<section id="for-direct-edges">
+<h3>For Direct Edges<a class="headerlink" href="#for-direct-edges" title="Link to this heading"></a></h3>
+<p>✅ <strong>Fast queries</strong>: Single hop to answer “what enzymes does this organism have?”
+✅ <strong>Simple SPARQL</strong>: No joins needed for basic biological questions
+✅ <strong>Backward compatible</strong>: Existing queries continue working
+✅ <strong>Semantic clarity</strong>: Direct statement of biological capability</p>
+<p><strong>Example query</strong>:</p>
+<div class="highlight-sparql notranslate"><div class="highlight"><pre><span></span><span class="c"># Simple: Find all organisms with alkaline phosphatase activity</span>
+<span class="k">SELECT</span> <span class="nv">?organism</span> <span class="nv">?name</span>
+<span class="k">WHERE</span> <span class="p">{</span>
+  <span class="nv">?organism</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000302</span> <span class="nn">GO</span><span class="p">:</span><span class="nt">0004035</span> <span class="p">.</span>
+  <span class="nv">?organism</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="nv">?name</span> <span class="p">.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="for-two-hop-paths">
+<h3>For Two-Hop Paths<a class="headerlink" href="#for-two-hop-paths" title="Link to this heading"></a></h3>
+<p>✅ <strong>Methodology capture</strong>: Know which specific assay was used
+✅ <strong>Provenance tracking</strong>: Trace back to experimental method
+✅ <strong>Data quality</strong>: Assess reliability based on assay type
+✅ <strong>Granular queries</strong>: Filter by specific API kit tests</p>
+<p><strong>Example query</strong>:</p>
+<div class="highlight-sparql notranslate"><div class="highlight"><pre><span></span><span class="c"># Detailed: Find organisms tested with API zym kit</span>
+<span class="k">SELECT</span> <span class="nv">?organism</span> <span class="nv">?assay</span> <span class="nv">?enzyme</span>
+<span class="k">WHERE</span> <span class="p">{</span>
+  <span class="nv">?organism</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000302</span> <span class="nv">?assay</span> <span class="p">.</span>
+  <span class="nv">?assay</span> <span class="err">kit_name</span> <span class="s">&quot;API zym&quot;</span> <span class="p">.</span>
+  <span class="nv">?assay</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">has_output</span> <span class="nv">?enzyme</span> <span class="p">.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="for-combined-analysis">
+<h3>For Combined Analysis<a class="headerlink" href="#for-combined-analysis" title="Link to this heading"></a></h3>
+<p>✅ <strong>Cross-validation</strong>: Compare results across different assays
+✅ <strong>Method comparison</strong>: See if different assays give same results
+✅ <strong>Data reconciliation</strong>: Identify discrepancies between direct and assay-based assertions</p>
+<p><strong>Example query</strong>:</p>
+<div class="highlight-sparql notranslate"><div class="highlight"><pre><span></span><span class="c"># Advanced: Find cases where organism has enzyme but no assay evidence</span>
+<span class="k">SELECT</span> <span class="nv">?organism</span> <span class="nv">?enzyme</span>
+<span class="k">WHERE</span> <span class="p">{</span>
+  <span class="c"># Has direct assertion</span>
+  <span class="nv">?organism</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000302</span> <span class="nv">?enzyme</span> <span class="p">.</span>
+
+  <span class="c"># But no assay path</span>
+  <span class="k">FILTER</span> <span class="nf">NOT EXISTS</span> <span class="p">{</span>
+    <span class="nv">?organism</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000302</span> <span class="nv">?assay</span> <span class="p">.</span>
+    <span class="nv">?assay</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">has_output</span> <span class="nv">?enzyme</span> <span class="p">.</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="edge-counts">
+<h2>Edge Counts<a class="headerlink" href="#edge-counts" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Edge Type</p></th>
+<th class="head"><p>Pattern</p></th>
+<th class="head"><p>Count</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Direct</strong></p></td>
+<td><p>Organism → GO/EC/ChEBI</p></td>
+<td><p>~74,000</p></td>
+<td><p>Biological facts</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Organism→Assay</strong></p></td>
+<td><p>Organism → Assay</p></td>
+<td><p>~50,000-100,000</p></td>
+<td><p>Test outcomes</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Assay→Entity</strong></p></td>
+<td><p>Assay → GO/EC/ChEBI</p></td>
+<td><p>~600-800</p></td>
+<td><p>Methodology</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total edges</strong>: ~124,600 - 174,800 (existing + new)</p>
+<p><strong>Storage impact</strong>:</p>
+<ul class="simple">
+<li><p>Direct edges: Already exist (~74K)</p></li>
+<li><p>New edges: ~50K-100K organism→assay + ~600-800 assay→entity</p></li>
+<li><p>Net addition: ~50K-101K edges (minimal compared to ~10M total graph edges)</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="implementation-details">
+<h2>Implementation Details<a class="headerlink" href="#implementation-details" title="Link to this heading"></a></h2>
+<section id="for-enzyme-tests">
+<h3>For Enzyme Tests<a class="headerlink" href="#for-enzyme-tests" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Process GO terms</span>
+<span class="k">for</span> <span class="n">go_term</span> <span class="ow">in</span> <span class="n">go_terms</span><span class="p">:</span>
+    <span class="c1"># EXISTING: Direct organism → GO edge (KEEP THIS)</span>
+    <span class="n">edge_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span>
+        <span class="n">organism_id</span><span class="p">,</span>
+        <span class="n">metpo_predicate</span><span class="p">,</span>  <span class="c1"># e.g., METPO:2000302</span>
+        <span class="n">go_term</span><span class="p">,</span>          <span class="c1"># e.g., GO:0004035</span>
+        <span class="n">CAPABLE_OF</span><span class="p">,</span>       <span class="c1"># RO:0002215</span>
+        <span class="n">knowledge_source</span><span class="p">,</span>
+        <span class="o">...</span>
+    <span class="p">])</span>
+
+<span class="c1"># NEW: Add organism → assay edge</span>
+<span class="n">edge_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span>
+    <span class="n">organism_id</span><span class="p">,</span>
+    <span class="n">metpo_predicate</span><span class="p">,</span>      <span class="c1"># Same METPO predicate</span>
+    <span class="n">assay_id</span><span class="p">,</span>             <span class="c1"># e.g., assay:API_zym_alkaline_phosphatase</span>
+    <span class="n">CAPABLE_OF</span><span class="p">,</span>
+    <span class="n">knowledge_source</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">])</span>
+
+<span class="c1"># UPFRONT: Assay → GO edge (created once at start)</span>
+<span class="n">edge_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span>
+    <span class="n">assay_id</span><span class="p">,</span>             <span class="c1"># e.g., assay:API_zym_alkaline_phosphatase</span>
+    <span class="s2">&quot;biolink:has_output&quot;</span><span class="p">,</span>
+    <span class="n">go_term</span><span class="p">,</span>              <span class="c1"># e.g., GO:0004035</span>
+    <span class="s2">&quot;NCIT:C25284&quot;</span><span class="p">,</span>        <span class="c1"># output relation</span>
+    <span class="s2">&quot;infores:assay-metadata&quot;</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</section>
+<section id="for-chemical-tests">
+<h3>For Chemical Tests<a class="headerlink" href="#for-chemical-tests" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Process ChEBI entities</span>
+<span class="k">for</span> <span class="n">chebi_id</span> <span class="ow">in</span> <span class="n">chebi_ids</span><span class="p">:</span>
+    <span class="c1"># EXISTING: Direct organism → ChEBI edge (KEEP THIS)</span>
+    <span class="n">edge_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span>
+        <span class="n">organism_id</span><span class="p">,</span>
+        <span class="n">metpo_predicate</span><span class="p">,</span>  <span class="c1"># e.g., METPO:2000011 (ferments)</span>
+        <span class="n">chebi_id</span><span class="p">,</span>         <span class="c1"># e.g., CHEBI:17113</span>
+        <span class="s2">&quot;biolink:interacts_with&quot;</span><span class="p">,</span>
+        <span class="n">knowledge_source</span><span class="p">,</span>
+        <span class="o">...</span>
+    <span class="p">])</span>
+
+<span class="c1"># NEW: Add organism → assay edge</span>
+<span class="n">edge_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span>
+    <span class="n">organism_id</span><span class="p">,</span>
+    <span class="n">metpo_predicate</span><span class="p">,</span>      <span class="c1"># Same METPO predicate</span>
+    <span class="n">assay_id</span><span class="p">,</span>             <span class="c1"># e.g., assay:API_50CHac_ERY</span>
+    <span class="s2">&quot;biolink:interacts_with&quot;</span><span class="p">,</span>
+    <span class="n">knowledge_source</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">])</span>
+
+<span class="c1"># UPFRONT: Assay → ChEBI edge (created once at start)</span>
+<span class="n">edge_writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span>
+    <span class="n">assay_id</span><span class="p">,</span>             <span class="c1"># e.g., assay:API_50CHac_ERY</span>
+    <span class="s2">&quot;biolink:has_input&quot;</span><span class="p">,</span>
+    <span class="n">chebi_id</span><span class="p">,</span>             <span class="c1"># e.g., CHEBI:17113</span>
+    <span class="s2">&quot;RO:0002233&quot;</span><span class="p">,</span>         <span class="c1"># has input relation</span>
+    <span class="s2">&quot;infores:assay-metadata&quot;</span><span class="p">,</span>
+    <span class="o">...</span>
+<span class="p">])</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="query-examples-by-use-case">
+<h2>Query Examples by Use Case<a class="headerlink" href="#query-examples-by-use-case" title="Link to this heading"></a></h2>
+<section id="use-case-1-simple-biological-question">
+<h3>Use Case 1: Simple Biological Question<a class="headerlink" href="#use-case-1-simple-biological-question" title="Link to this heading"></a></h3>
+<p><strong>Question</strong>: “Which organisms can ferment erythritol?”</p>
+<p><strong>Simple query (direct edges)</strong>:</p>
+<div class="highlight-sparql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="nv">?organism</span> <span class="nv">?name</span>
+<span class="k">WHERE</span> <span class="p">{</span>
+  <span class="nv">?organism</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000011</span> <span class="nn">CHEBI</span><span class="p">:</span><span class="nt">17113</span> <span class="p">.</span>  <span class="c"># ferments erythritol</span>
+  <span class="nv">?organism</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="nv">?name</span> <span class="p">.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Detailed query (via assay)</strong>:</p>
+<div class="highlight-sparql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="nv">?organism</span> <span class="nv">?name</span> <span class="nv">?assay</span> <span class="nv">?kit</span>
+<span class="k">WHERE</span> <span class="p">{</span>
+  <span class="nv">?organism</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000011</span> <span class="nv">?assay</span> <span class="p">.</span>
+  <span class="nv">?assay</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">has_input</span> <span class="nn">CHEBI</span><span class="p">:</span><span class="nt">17113</span> <span class="p">.</span>
+  <span class="nv">?assay</span> <span class="err">kit_name</span> <span class="nv">?kit</span> <span class="p">.</span>
+  <span class="nv">?organism</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="nv">?name</span> <span class="p">.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="use-case-2-methodology-question">
+<h3>Use Case 2: Methodology Question<a class="headerlink" href="#use-case-2-methodology-question" title="Link to this heading"></a></h3>
+<p><strong>Question</strong>: “Which assays test for alkaline phosphatase activity?”</p>
+<p><strong>Query (requires assay nodes)</strong>:</p>
+<div class="highlight-sparql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="nv">?assay</span> <span class="nv">?kit</span> <span class="nv">?description</span>
+<span class="k">WHERE</span> <span class="p">{</span>
+  <span class="nv">?assay</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">has_output</span> <span class="nn">GO</span><span class="p">:</span><span class="nt">0004035</span> <span class="p">.</span>
+  <span class="nv">?assay</span> <span class="err">kit_name</span> <span class="nv">?kit</span> <span class="p">.</span>
+  <span class="nv">?assay</span> <span class="err">description</span> <span class="nv">?description</span> <span class="p">.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="use-case-3-data-quality-check">
+<h3>Use Case 3: Data Quality Check<a class="headerlink" href="#use-case-3-data-quality-check" title="Link to this heading"></a></h3>
+<p><strong>Question</strong>: “Which organisms have enzyme activity assertions without assay evidence?”</p>
+<p><strong>Query (combines both patterns)</strong>:</p>
+<div class="highlight-sparql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="nv">?organism</span> <span class="nv">?enzyme</span> <span class="nv">?name</span>
+<span class="k">WHERE</span> <span class="p">{</span>
+  <span class="c"># Has direct assertion</span>
+  <span class="nv">?organism</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000302</span> <span class="nv">?enzyme</span> <span class="p">.</span>
+  <span class="k">FILTER</span><span class="p">(</span><span class="nf">STRSTARTS</span><span class="p">(</span><span class="nf">STR</span><span class="p">(</span><span class="nv">?enzyme</span><span class="p">),</span> <span class="s">&quot;GO:&quot;</span><span class="p">)</span> <span class="o">||</span> <span class="nf">STRSTARTS</span><span class="p">(</span><span class="nf">STR</span><span class="p">(</span><span class="nv">?enzyme</span><span class="p">),</span> <span class="s">&quot;EC:&quot;</span><span class="p">))</span>
+
+  <span class="c"># But no assay support</span>
+  <span class="k">FILTER</span> <span class="nf">NOT EXISTS</span> <span class="p">{</span>
+    <span class="nv">?organism</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000302</span> <span class="nv">?assay</span> <span class="p">.</span>
+    <span class="nv">?assay</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">has_output</span> <span class="nv">?enzyme</span> <span class="p">.</span>
+  <span class="p">}</span>
+
+  <span class="nv">?organism</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="nv">?name</span> <span class="p">.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="use-case-4-cross-assay-validation">
+<h3>Use Case 4: Cross-Assay Validation<a class="headerlink" href="#use-case-4-cross-assay-validation" title="Link to this heading"></a></h3>
+<p><strong>Question</strong>: “Show me all assays that detected the same enzyme in this organism”</p>
+<p><strong>Query (requires assay paths)</strong>:</p>
+<div class="highlight-sparql notranslate"><div class="highlight"><pre><span></span><span class="k">SELECT</span> <span class="nv">?organism</span> <span class="nv">?enzyme</span> <span class="nv">?assay1</span> <span class="nv">?assay2</span>
+<span class="k">WHERE</span> <span class="p">{</span>
+  <span class="nv">?organism</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000302</span> <span class="nv">?assay1</span> <span class="p">.</span>
+  <span class="nv">?assay1</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">has_output</span> <span class="nv">?enzyme</span> <span class="p">.</span>
+
+  <span class="nv">?organism</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000302</span> <span class="nv">?assay2</span> <span class="p">.</span>
+  <span class="nv">?assay2</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">has_output</span> <span class="nv">?enzyme</span> <span class="p">.</span>
+
+  <span class="k">FILTER</span><span class="p">(</span><span class="nv">?assay1</span> <span class="o">!=</span> <span class="nv">?assay2</span><span class="p">)</span>  <span class="c"># Different assays, same enzyme</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="comparison-with-previous-releases">
+<h2>Comparison with Previous Releases<a class="headerlink" href="#comparison-with-previous-releases" title="Link to this heading"></a></h2>
+<section id="february-2025-original-dual-pattern">
+<h3>20250222 (February 2025) - Original Dual Pattern<a class="headerlink" href="#february-2025-original-dual-pattern" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># Had both patterns but with issues:
+assay:API_rID32A_alpha_GAL --biolink:assesses--&gt; NCBITaxon:1262  ❌ Backwards!
+NCBITaxon:296 --biolink:consumes--&gt; CHEBI:27689                  ⚠️ Generic predicate
+</pre></div>
+</div>
+<p><strong>Issues</strong>:</p>
+<ul class="simple">
+<li><p>❌ Wrong edge direction (assay→organism instead of organism→assay)</p></li>
+<li><p>❌ Deprecated <code class="docutils literal notranslate"><span class="pre">assesses</span></code> predicate (119K edges)</p></li>
+<li><p>⚠️ Generic Biolink predicates (not domain-specific)</p></li>
+<li><p>⚠️ Assays as <code class="docutils literal notranslate"><span class="pre">PhenotypicQuality</span></code> (wrong category)</p></li>
+</ul>
+</section>
+<section id="december-2025-direct-only">
+<h3>20251217 (December 2025) - Direct Only<a class="headerlink" href="#december-2025-direct-only" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># Lost the dual pattern:
+NCBITaxon:693023 --METPO:2000006--&gt; CHEBI:17992  ✅ METPO predicates
+# (No assay connections for organisms)
+</pre></div>
+</div>
+<p><strong>Issues</strong>:</p>
+<ul class="simple">
+<li><p>✅ Uses METPO predicates (improvement!)</p></li>
+<li><p>❌ Lost organism→assay edges</p></li>
+<li><p>❌ Orphaned assay nodes</p></li>
+<li><p>❌ No methodology capture</p></li>
+</ul>
+</section>
+<section id="proposed-2026-modern-dual-pattern">
+<h3>Proposed (2026+) - Modern Dual Pattern<a class="headerlink" href="#proposed-2026-modern-dual-pattern" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span># Both patterns, correctly implemented:
+NCBITaxon:562 --METPO:2000302--&gt; GO:0004035                                    ✅ Direct
+NCBITaxon:562 --METPO:2000302--&gt; assay:API_zym_alkaline_phosphatase           ✅ Via assay
+assay:API_zym_alkaline_phosphatase --biolink:has_output--&gt; GO:0004035          ✅ Methodology
+</pre></div>
+</div>
+<p><strong>Improvements</strong>:</p>
+<ul class="simple">
+<li><p>✅ Correct edge direction (organism→assay)</p></li>
+<li><p>✅ No deprecated predicates</p></li>
+<li><p>✅ Rich METPO predicates (8 types: shows_activity_of, ferments, assimilates, uses_for_growth, etc.)</p></li>
+<li><p>✅ Proper assay node category (<code class="docutils literal notranslate"><span class="pre">biolink:Procedure</span></code>)</p></li>
+<li><p>✅ Rich metadata (names, descriptions, kit info)</p></li>
+<li><p>✅ Both direct edges AND assay paths</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="migration-notes">
+<h2>Migration Notes<a class="headerlink" href="#migration-notes" title="Link to this heading"></a></h2>
+<section id="non-breaking-changes">
+<h3>Non-Breaking Changes<a class="headerlink" href="#non-breaking-changes" title="Link to this heading"></a></h3>
+<p>✅ <strong>All direct organism→entity edges preserved</strong></p>
+<ul class="simple">
+<li><p>Existing queries continue to work</p></li>
+<li><p>No changes to current edge structure</p></li>
+<li><p>Same METPO predicates used</p></li>
+</ul>
+<p>✅ <strong>Additive only</strong></p>
+<ul class="simple">
+<li><p>New assay nodes (503)</p></li>
+<li><p>New organism→assay edges (~50K-100K)</p></li>
+<li><p>New assay→entity edges (~600-800)</p></li>
+<li><p>Nothing removed (except deprecated EC→assay edges)</p></li>
+</ul>
+</section>
+<section id="breaking-changes">
+<h3>Breaking Changes<a class="headerlink" href="#breaking-changes" title="Link to this heading"></a></h3>
+<p>⚠️ <strong>Only one breaking change</strong>: Removal of 112 EC→assay edges using deprecated <code class="docutils literal notranslate"><span class="pre">biolink:is_assessed_by</span></code></p>
+<ul class="simple">
+<li><p>These were never used by organism queries</p></li>
+<li><p>Only affected methodological metadata</p></li>
+<li><p>Already documented as replaced with <code class="docutils literal notranslate"><span class="pre">related_to_at_instance_level</span></code></p></li>
+</ul>
+</section>
+<section id="user-impact">
+<h3>User Impact<a class="headerlink" href="#user-impact" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>User Type</p></th>
+<th class="head"><p>Impact</p></th>
+<th class="head"><p>Action Needed</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Biologists</strong> (simple queries)</p></td>
+<td><p>None</p></td>
+<td><p>No changes needed</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Tool developers</strong> (use assays)</p></td>
+<td><p>Positive</p></td>
+<td><p>Can now query methodology</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Data curators</strong></p></td>
+<td><p>Positive</p></td>
+<td><p>Better provenance tracking</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>API consumers</strong></p></td>
+<td><p>None</p></td>
+<td><p>Direct edges unchanged</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<hr class="docutils" />
+<section id="validation-checklist">
+<h2>Validation Checklist<a class="headerlink" href="#validation-checklist" title="Link to this heading"></a></h2>
+<p>Implementation must verify:</p>
+<ul class="simple">
+<li><p>[ ] All 503 assay nodes created with proper metadata</p></li>
+<li><p>[ ] All assay nodes have category <code class="docutils literal notranslate"><span class="pre">biolink:Procedure</span></code></p></li>
+<li><p>[ ] ~600-800 assay→entity edges created (methodological reference)</p></li>
+<li><p>[ ] ~50K-100K organism→assay edges created (per organism results)</p></li>
+<li><p>[ ] ~74K direct organism→entity edges preserved (no changes)</p></li>
+<li><p>[ ] Same METPO predicates used for both direct and assay edges</p></li>
+<li><p>[ ] No deprecated predicates used</p></li>
+<li><p>[ ] No orphaned assay nodes</p></li>
+<li><p>[ ] Sample queries work for both direct and 2-hop patterns</p></li>
+<li><p>[ ] Graph validates against Biolink v4.3.6</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading"></a></h2>
+<p>The dual-edge pattern is the optimal design because it:</p>
+<ol class="arabic simple">
+<li><p><strong>Preserves existing functionality</strong> (direct edges)</p></li>
+<li><p><strong>Adds new capabilities</strong> (methodology capture via assays)</p></li>
+<li><p><strong>Maintains backward compatibility</strong> (no breaking changes to organism queries)</p></li>
+<li><p><strong>Follows original design intent</strong> (modernizes 20250222 pattern)</p></li>
+<li><p><strong>Supports multiple use cases</strong> (simple queries + detailed analysis)</p></li>
+</ol>
+<p>This is not redundancy—it’s providing users with <strong>choice of query complexity</strong> based on their needs.</p>
+<hr class="docutils" />
+<p><strong>Approved</strong>: 2026-01-12
+<strong>Implementation</strong>: See <code class="docutils literal notranslate"><span class="pre">docs/ASSAY_IMPLEMENTATION_SUMMARY.md</span></code>
+<strong>Related</strong>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">docs/ASSAY_NODE_MODELING.md</span></code> (full proposal)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs/ASSAY_CURRENT_STATE_ANALYSIS.md</span></code> (current state)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs/ASSAY_RELEASES_COMPARISON.md</span></code> (historical comparison)</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

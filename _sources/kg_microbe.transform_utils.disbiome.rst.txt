@@ -1,0 +1,21 @@
+kg\_microbe.transform\_utils.disbiome package
+=============================================
+
+Submodules
+----------
+
+kg\_microbe.transform\_utils.disbiome.disbiome module
+-----------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.disbiome.disbiome
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.transform_utils.disbiome
+   :members:
+   :undoc-members:
+   :show-inheritance:

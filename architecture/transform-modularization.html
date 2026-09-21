@@ -1,0 +1,193 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Transform modularization plan &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7026087e"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Transform modularization plan</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/architecture/transform-modularization.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="transform-modularization-plan">
+<h1>Transform modularization plan<a class="headerlink" href="#transform-modularization-plan" title="Link to this heading"></a></h1>
+<p>This note defines dependency direction before the staged splits tracked in
+#858, #859, and #860. The split is mechanical: public transform classes and TSV
+output remain compatible, and each move needs focused tests plus a golden graph
+comparison before the next layer moves.</p>
+<section id="dependency-rule">
+<h2>Dependency rule<a class="headerlink" href="#dependency-rule" title="Link to this heading"></a></h2>
+<p>Dependencies point inward in this order:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>entry point/orchestration -&gt; domain services -&gt; parsing + resolution + emission
+                                              -&gt; shared typed records/interfaces
+</pre></div>
+</div>
+<p>Parsing and emission modules may use the standard library and shared record
+types. They must not import a transform class, instantiate ontology adapters,
+read repository-global data at import time, or perform network access. Domain
+services receive paths, adapters, and mappings explicitly. Orchestrators own
+configuration, lifecycle, multiprocessing, progress, and final deduplication.</p>
+<p>Compatibility imports may re-export a moved symbol from its historical module,
+but may not copy its implementation. They should be removed after internal and
+external callers migrate.</p>
+</section>
+<section id="metatraits-858">
+<h2>MetaTraits (#858)<a class="headerlink" href="#metatraits-858" title="Link to this heading"></a></h2>
+<p>Target package boundaries:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">io.py</span></code>: tolerant JSONL/gzip readers and streaming TSV writers.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">records.py</span></code>: typed normalized taxon, trait, and measurement records.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">parsing.py</span></code>: JSONL-to-record parsing; no ontology or output concerns.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">resolution.py</span></code>: microbial, chemical, METPO, and NCBITaxon resolution against
+injected mappings/adapters.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">emission.py</span></code>: records/resolutions to KGX node and edge rows.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">orchestration.py</span></code>: worker setup, chunking, merging, and output lifecycle.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">metatraits.py</span></code>: stable <code class="docutils literal notranslate"><span class="pre">MetaTraitsTransform</span></code> entry point and temporary
+compatibility re-exports.</p></li>
+</ul>
+<p>The first stage moves file I/O, whose behavior is covered for real gzip,
+misnamed plain text, corrupt headers, streaming writes, and archive-independent
+fixtures. Subsequent stages should establish a small golden JSONL fixture and
+snapshot sorted node/edge rows before moving trait-resolution branches.</p>
+</section>
+<section id="bacdive-859">
+<h2>BacDive (#859)<a class="headerlink" href="#bacdive-859" title="Link to this heading"></a></h2>
+<p>Target package boundaries:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">parsing.py</span></code>: JSON path extraction and normalized BacDive record access.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">taxonomy.py</span></code>: strain/LPSN/NCBITaxon normalization and provisional taxa.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">resolution.py</span></code>: injected ontology and curated-mapping lookups.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">traits.py</span></code>: phenotype, metabolite, medium, pathogenicity, and assay modeling.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">emission.py</span></code>: row construction and provenance-aware writers.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bacdive.py</span></code>: configuration, orchestration, and compatibility imports.</p></li>
+</ul>
+<p>The first stage moves the provenance writer, already covered by focused
+fixture-based tests. Before moving the large <code class="docutils literal notranslate"><span class="pre">run()</span></code> branches, capture a tiny
+BacDive record that exercises taxon, medium, metabolite, isolation, and assay
+output and compare sorted output rows byte-for-byte.</p>
+</section>
+<section id="ontology-utilities-860">
+<h2>Ontology utilities (#860)<a class="headerlink" href="#ontology-utilities-860" title="Link to this heading"></a></h2>
+<p>Current caller groups are transforms (<code class="docutils literal notranslate"><span class="pre">bacdive</span></code>, <code class="docutils literal notranslate"><span class="pre">bactotraits</span></code>, <code class="docutils literal notranslate"><span class="pre">bakta</span></code>,
+<code class="docutils literal notranslate"><span class="pre">lpsn</span></code>, <code class="docutils literal notranslate"><span class="pre">madin_etal</span></code>, <code class="docutils literal notranslate"><span class="pre">metatraits</span></code>, <code class="docutils literal notranslate"><span class="pre">ontologies</span></code>, <code class="docutils literal notranslate"><span class="pre">rhea_mappings</span></code>, and UniProt),
+plus <code class="docutils literal notranslate"><span class="pre">ner_utils</span></code>, <code class="docutils literal notranslate"><span class="pre">oak_utils</span></code>, and <code class="docutils literal notranslate"><span class="pre">uniprot_utils</span></code>. Tests also use private cache
+helpers while validating rebuild recovery; compatibility exports are required
+during migration.</p>
+<p>Target boundaries:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ontology_cache.py</span></code>: release inspection, file/database validation, locking,
+atomic decompression, SemSQL building, and injectable command execution.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ontology_access.py</span></code>: adapter registry, lazy proxies, and typed access
+protocol; it depends on cache management, never the reverse.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ontology_resolution.py</span></code>: pure category/resolution policy over injected
+adapters and lookup results.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ontology_validation.py</span></code>: version gates and diagnostics.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ontology_utils.py</span></code>: compatibility exports during caller migration only.</p></li>
+</ul>
+<p>The first policy extraction must keep cache and adapter creation in
+<code class="docutils literal notranslate"><span class="pre">ontology_utils</span></code> while moving deterministic category decisions to
+<code class="docutils literal notranslate"><span class="pre">ontology_resolution</span></code>. Later changes can move one ontology builder at a time,
+starting with EC (smallest), and run the existing corruption, release-drift,
+lock-contention, synonym, obsolete-term, ambiguity, and missing-term tests after
+each move.</p>
+</section>
+<section id="golden-comparison-gate">
+<h2>Golden comparison gate<a class="headerlink" href="#golden-comparison-gate" title="Link to this heading"></a></h2>
+<p>Each phase records the exact command, fixture version, environment, and sorted
+node/edge hashes in its pull request. Only documented corrections may change
+the hashes. Imports of each new low-level module are tested with sockets blocked
+and without <code class="docutils literal notranslate"><span class="pre">data/raw</span></code> present.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

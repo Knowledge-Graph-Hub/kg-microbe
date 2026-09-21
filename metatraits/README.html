@@ -1,0 +1,139 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Metatraits Unmapped Traits &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7026087e"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Metatraits Unmapped Traits</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/metatraits/README.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="metatraits-unmapped-traits">
+<h1>Metatraits Unmapped Traits<a class="headerlink" href="#metatraits-unmapped-traits" title="Link to this heading"></a></h1>
+<p>This directory contains a curated list of unique unmapped relationship types from the metatraits transform, as described in <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/493">GitHub Issue #493</a>.</p>
+<section id="source">
+<h2>Source<a class="headerlink" href="#source" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>unmapped_traits.tsv</strong> — traits that could not be mapped to ontology terms</p></li>
+<li><p><strong>unresolved_taxa.tsv</strong> — taxa that could not be resolved</p></li>
+<li><p><strong>Location</strong>: <code class="docutils literal notranslate"><span class="pre">data/transformed/metatraits/</span></code> (created when running the metatraits transform)</p></li>
+</ul>
+</section>
+<section id="downloading-data-files">
+<h2>Downloading Data Files<a class="headerlink" href="#downloading-data-files" title="Link to this heading"></a></h2>
+<p>The large TSV files (<code class="docutils literal notranslate"><span class="pre">unmapped_traits.tsv</span></code>, <code class="docutils literal notranslate"><span class="pre">unresolved_taxa.tsv</span></code>, <code class="docutils literal notranslate"><span class="pre">edges.tsv</span></code>, <code class="docutils literal notranslate"><span class="pre">nodes.tsv</span></code>) are not stored in version control due to their size.</p>
+<p>To download these files:</p>
+<ol class="arabic simple">
+<li><p>Visit the Google Drive folder: https://drive.google.com/drive/folders/1oOqxKWnpue15QHvI3Viqk7mPag7E4jHY</p></li>
+<li><p>Download the required files to <code class="docutils literal notranslate"><span class="pre">data/transformed/metatraits/</span></code></p></li>
+</ol>
+<p><strong>Note</strong>: This Google Drive folder is currently not world-writable. If you need access or have permission issues, please contact Anthea at antheaguo&#64;berkeley.edu.</p>
+</section>
+<section id="regeneration-optional">
+<h2>Regeneration (Optional)<a class="headerlink" href="#regeneration-optional" title="Link to this heading"></a></h2>
+<p>If you need to regenerate <code class="docutils literal notranslate"><span class="pre">unmapped_traits_unique.tsv</span></code> from the source data:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>data/transformed/metatraits/
+cut<span class="w"> </span>-f1<span class="w"> </span>unmapped_traits.tsv<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span><span class="p">|</span><span class="w"> </span>uniq<span class="w"> </span>&gt;<span class="w"> </span>unmapped_traits_unique.tsv
+cut<span class="w"> </span>-f1<span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;:&#39;</span><span class="w"> </span>unmapped_traits_unique.tsv<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="w"> </span><span class="p">|</span><span class="w"> </span>uniq
+</pre></div>
+</div>
+<p>The second command outputs the unique relationship types (one per line). Save that output to <code class="docutils literal notranslate"><span class="pre">docs/metatraits/unmapped_traits_unique.tsv</span></code>.</p>
+</section>
+<section id="metpo-skill">
+<h2>METPO Skill<a class="headerlink" href="#metpo-skill" title="Link to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">.cursor/skills/metpo-ontology/</span></code> skill helps ensure metatraits output follows KGX format and METPO semantics without adding extra terms. Use it when working with unmapped traits or trait ontology mapping.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

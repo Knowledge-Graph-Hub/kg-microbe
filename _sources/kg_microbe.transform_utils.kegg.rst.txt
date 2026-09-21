@@ -1,0 +1,29 @@
+kg\_microbe.transform\_utils.kegg package
+=========================================
+
+Submodules
+----------
+
+kg\_microbe.transform\_utils.kegg.kegg module
+---------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.kegg.kegg
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.kegg.utils module
+----------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.kegg.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.transform_utils.kegg
+   :members:
+   :undoc-members:
+   :show-inheritance:

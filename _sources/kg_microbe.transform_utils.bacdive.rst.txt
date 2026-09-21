@@ -1,0 +1,29 @@
+kg\_microbe.transform\_utils.bacdive package
+============================================
+
+Submodules
+----------
+
+kg\_microbe.transform\_utils.bacdive.bacdive module
+---------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bacdive.bacdive
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.bacdive.emission module
+----------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bacdive.emission
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.transform_utils.bacdive
+   :members:
+   :undoc-members:
+   :show-inheritance:

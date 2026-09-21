@@ -1,0 +1,422 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kg_microbe.transform_utils.bactotraits package &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="kg_microbe.transform_utils.bakta package" href="kg_microbe.transform_utils.bakta.html" />
+    <link rel="prev" title="kg_microbe.transform_utils.bacdive package" href="kg_microbe.transform_utils.bacdive.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">kg_microbe</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="kg_microbe.html">kg_microbe package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="kg_microbe.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.merge_utils.html">kg_microbe.merge_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.query_utils.html">kg_microbe.query_utils package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html">kg_microbe.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.bactotraits_to_mongo">kg_microbe.bactotraits_to_mongo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.download">kg_microbe.download module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.query">kg_microbe.query module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.run">kg_microbe.run module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.transform">kg_microbe.transform module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">kg_microbe</a></li>
+          <li class="breadcrumb-item"><a href="kg_microbe.html">kg_microbe package</a></li>
+          <li class="breadcrumb-item"><a href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a></li>
+      <li class="breadcrumb-item active">kg_microbe.transform_utils.bactotraits package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/kg_microbe.transform_utils.bactotraits.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kg-microbe-transform-utils-bactotraits-package">
+<h1>kg_microbe.transform_utils.bactotraits package<a class="headerlink" href="#kg-microbe-transform-utils-bactotraits-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-kg_microbe.transform_utils.bactotraits.bactotraits">
+<span id="kg-microbe-transform-utils-bactotraits-bactotraits-module"></span><h2>kg_microbe.transform_utils.bactotraits.bactotraits module<a class="headerlink" href="#module-kg_microbe.transform_utils.bactotraits.bactotraits" title="Link to this heading"></a></h2>
+<p>BactoTraits transform class.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bactotraits.bactotraits.</span></span><span class="sig-name descname"><span class="pre">BactoTraitsTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
+<p>BactoTraits transform.</p>
+<p>Essentially just ingests and transforms this file:
+<a class="reference external" href="https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv">https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv</a></p>
+<p>Columns available in the file:
+- strain n¡
+- Bacdive_ID
+- culture collection codes
+- Kingdom
+- Phylum
+- Class
+- Order
+- Family
+- Genus
+- Species
+- Full_name
+- pHO_0_to_6
+- pHO_6_to_7
+- pHO_7_to_8
+- pHO_8_to_14
+- pHR_0_to_4
+- pHR_4_to_6
+- pHR_6_to_7
+- pHR_7_to_8
+- pHR_8_to_10
+- 10_to_14
+- pHd_&lt;=1
+- pHd_1_2
+- pHd_2_3
+- pHd_3_4
+- pHd_4_5
+- pHd_5_9
+- NaO_&lt;=1
+- NaO_1_to_3
+- NaO_3_to_8
+- <a href="#id1"><span class="problematic" id="id2">NaO_</span></a>&gt;8
+- NaR_&lt;=1
+- NaR_1_to_3
+- NaR_3_to_8
+- <a href="#id3"><span class="problematic" id="id4">NaR_</span></a>&gt;8
+- Nad_&lt;=1
+- Nad_1_3
+- Nad_3_8
+- <a href="#id5"><span class="problematic" id="id6">Nad_</span></a>&gt;8
+- TO_&lt;=10
+- TO_10_to_22
+- TO_22_to_27
+- TO_27_to_30
+- TO_30_to_34
+- TO_34_to_40
+- <a href="#id7"><span class="problematic" id="id8">TO_</span></a>&gt;40
+- TR_&lt;=10
+- TR_10_to_22
+- TR_22_to_27
+- TR_27_to_30
+- TR_30_to_34
+- TR_34_to_40
+- <a href="#id9"><span class="problematic" id="id10">TR_</span></a>&gt;40
+- Td_1_5
+- Td_5_10
+- Td_10_20
+- Td_20_30
+- <a href="#id11"><span class="problematic" id="id12">Td_</span></a>&gt;30
+- Ox_anaerobic
+- Ox_aerobic
+- Ox_facultative_aerobe_anaerobe
+- Ox_microerophile
+- G_negative
+- G_positive
+- non-motile
+- motile
+- spore
+- no_spore
+- GC_&lt;=42.65
+- GC_42.65_57.0
+- GC_57.0_66.3
+- <a href="#id13"><span class="problematic" id="id14">GC_</span></a>&gt;66.3
+- W_&lt;=0.5
+- W_0.5_0.65
+- W_0.65_0.9
+- <a href="#id15"><span class="problematic" id="id16">W_</span></a>&gt;0.9
+- L_&lt;=1.3
+- L_1.3_2
+- L_2_3
+- <a href="#id17"><span class="problematic" id="id18">L_</span></a>&gt;3
+- S_rod
+- S_sphere
+- S_curved_spiral
+- S_filament
+- S_ovoid
+- S_star_dumbbell_pleomorphic
+- TT_heterotroph
+- TT_autotroph
+- TT_organotroph
+- TT_lithotroph
+- TT_chemotroph
+- TT_phototroph
+- TT_copiotroph_diazotroph
+- TT_methylotroph
+- TT_oligotroph
+- Pigment_pink
+- Pigment_yellow
+- Pigment_brown
+- Pigment_black
+- Pigment_orange
+- Pigment_white
+- Pigment_cream
+- Pigment_red
+- Pigment_green
+- Pigment_carotenoid</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform.REQUIRED_CONSUMED_INPUTS">
+<span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('bacdive_taxon_lookup',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Named generated inputs that must actually be read before fresh finalization.
+Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform.TRANSFORM_INPUTS">
+<span class="sig-name descname"><span class="pre">TRANSFORM_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('bacdive',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform.TRANSFORM_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>The BacDive-produced intermediate TSV supplies strain-taxid mappings (#1091).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.bactotraits.BactoTraitsTransform.run" title="Link to this definition"></a></dt>
+<dd><p>Run BactoTraitsTransform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.bactotraits">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-kg_microbe.transform_utils.bactotraits" title="Link to this heading"></a></h2>
+<p>BactoTraits transform.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.BactoTraitsTransform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bactotraits.</span></span><span class="sig-name descname"><span class="pre">BactoTraitsTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.BactoTraitsTransform" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
+<p>BactoTraits transform.</p>
+<p>Essentially just ingests and transforms this file:
+<a class="reference external" href="https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv">https://ordar.otelo.univ-lorraine.fr/files/ORDAR-53/BactoTraits_databaseV2_Jun2022.csv</a></p>
+<p>Columns available in the file:
+- strain n¡
+- Bacdive_ID
+- culture collection codes
+- Kingdom
+- Phylum
+- Class
+- Order
+- Family
+- Genus
+- Species
+- Full_name
+- pHO_0_to_6
+- pHO_6_to_7
+- pHO_7_to_8
+- pHO_8_to_14
+- pHR_0_to_4
+- pHR_4_to_6
+- pHR_6_to_7
+- pHR_7_to_8
+- pHR_8_to_10
+- 10_to_14
+- pHd_&lt;=1
+- pHd_1_2
+- pHd_2_3
+- pHd_3_4
+- pHd_4_5
+- pHd_5_9
+- NaO_&lt;=1
+- NaO_1_to_3
+- NaO_3_to_8
+- <a href="#id19"><span class="problematic" id="id20">NaO_</span></a>&gt;8
+- NaR_&lt;=1
+- NaR_1_to_3
+- NaR_3_to_8
+- <a href="#id21"><span class="problematic" id="id22">NaR_</span></a>&gt;8
+- Nad_&lt;=1
+- Nad_1_3
+- Nad_3_8
+- <a href="#id23"><span class="problematic" id="id24">Nad_</span></a>&gt;8
+- TO_&lt;=10
+- TO_10_to_22
+- TO_22_to_27
+- TO_27_to_30
+- TO_30_to_34
+- TO_34_to_40
+- <a href="#id25"><span class="problematic" id="id26">TO_</span></a>&gt;40
+- TR_&lt;=10
+- TR_10_to_22
+- TR_22_to_27
+- TR_27_to_30
+- TR_30_to_34
+- TR_34_to_40
+- <a href="#id27"><span class="problematic" id="id28">TR_</span></a>&gt;40
+- Td_1_5
+- Td_5_10
+- Td_10_20
+- Td_20_30
+- <a href="#id29"><span class="problematic" id="id30">Td_</span></a>&gt;30
+- Ox_anaerobic
+- Ox_aerobic
+- Ox_facultative_aerobe_anaerobe
+- Ox_microerophile
+- G_negative
+- G_positive
+- non-motile
+- motile
+- spore
+- no_spore
+- GC_&lt;=42.65
+- GC_42.65_57.0
+- GC_57.0_66.3
+- <a href="#id31"><span class="problematic" id="id32">GC_</span></a>&gt;66.3
+- W_&lt;=0.5
+- W_0.5_0.65
+- W_0.65_0.9
+- <a href="#id33"><span class="problematic" id="id34">W_</span></a>&gt;0.9
+- L_&lt;=1.3
+- L_1.3_2
+- L_2_3
+- <a href="#id35"><span class="problematic" id="id36">L_</span></a>&gt;3
+- S_rod
+- S_sphere
+- S_curved_spiral
+- S_filament
+- S_ovoid
+- S_star_dumbbell_pleomorphic
+- TT_heterotroph
+- TT_autotroph
+- TT_organotroph
+- TT_lithotroph
+- TT_chemotroph
+- TT_phototroph
+- TT_copiotroph_diazotroph
+- TT_methylotroph
+- TT_oligotroph
+- Pigment_pink
+- Pigment_yellow
+- Pigment_brown
+- Pigment_black
+- Pigment_orange
+- Pigment_white
+- Pigment_cream
+- Pigment_red
+- Pigment_green
+- Pigment_carotenoid</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.BactoTraitsTransform.REQUIRED_CONSUMED_INPUTS">
+<span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('bacdive_taxon_lookup',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.BactoTraitsTransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Named generated inputs that must actually be read before fresh finalization.
+Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.BactoTraitsTransform.TRANSFORM_INPUTS">
+<span class="sig-name descname"><span class="pre">TRANSFORM_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('bacdive',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.BactoTraitsTransform.TRANSFORM_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>The BacDive-produced intermediate TSV supplies strain-taxid mappings (#1091).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bactotraits.BactoTraitsTransform.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bactotraits.BactoTraitsTransform.run" title="Link to this definition"></a></dt>
+<dd><p>Run BactoTraitsTransform.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="kg_microbe.transform_utils.bacdive.html" class="btn btn-neutral float-left" title="kg_microbe.transform_utils.bacdive package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="kg_microbe.transform_utils.bakta.html" class="btn btn-neutral float-right" title="kg_microbe.transform_utils.bakta package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

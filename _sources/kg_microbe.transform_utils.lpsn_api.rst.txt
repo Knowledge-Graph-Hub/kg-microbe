@@ -1,0 +1,21 @@
+kg\_microbe.transform\_utils.lpsn\_api package
+==============================================
+
+Submodules
+----------
+
+kg\_microbe.transform\_utils.lpsn\_api.lpsn\_api module
+-------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.lpsn_api.lpsn_api
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.transform_utils.lpsn_api
+   :members:
+   :undoc-members:
+   :show-inheritance:

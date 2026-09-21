@@ -1,0 +1,317 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Missing ChEBI Node Entries &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Missing ChEBI Node Entries</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/MISSING_CHEBI_ENTRIES.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="missing-chebi-node-entries">
+<h1>Missing ChEBI Node Entries<a class="headerlink" href="#missing-chebi-node-entries" title="Link to this heading"></a></h1>
+<p>This document tracks chemicals and ingredients that lack ChEBI mappings in KG-Microbe.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>KG-Microbe integrates chemical data from multiple sources. While many chemicals are mapped to ChEBI (Chemical Entities of Biological Interest) ontology identifiers, some remain unmapped due to:</p>
+<ol class="arabic simple">
+<li><p><strong>Complex mixtures</strong> (e.g., “meat extract”, “brain heart infusion”) that don’t have single ChEBI IDs</p></li>
+<li><p><strong>Proprietary formulations</strong> (e.g., “trypticase”, “bacto soytone”)</p></li>
+<li><p><strong>Chemicals with CAS Registry Numbers but no ChEBI mapping</strong></p></li>
+<li><p><strong>Food/biological materials</strong> (e.g., “tomato juice”, “horse serum”)</p></li>
+</ol>
+</section>
+<section id="current-status">
+<h2>Current Status<a class="headerlink" href="#current-status" title="Link to this heading"></a></h2>
+<section id="missing-chemical-entries">
+<h3>Missing Chemical Entries<a class="headerlink" href="#missing-chemical-entries" title="Link to this heading"></a></h3>
+<p>Two files track unmapped chemicals:</p>
+<ol class="arabic simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">missing_chem.txt</span></code></strong> (517 entries)</p>
+<ul class="simple">
+<li><p>Complex ingredients without ChEBI mappings</p></li>
+<li><p>Primarily growth media components</p></li>
+<li><p>Examples: meat extract, trypticase, beef extract, sea salt</p></li>
+</ul>
+</li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">missing_chem_casrn.txt</span></code></strong> (237 entries)</p>
+<ul class="simple">
+<li><p>Chemicals identified by CAS Registry Numbers</p></li>
+<li><p>Have chemical identifiers but lack ChEBI equivalents</p></li>
+<li><p>Require manual mapping or ChEBI submission</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="chebi-references-in-transforms">
+<h3>ChEBI References in Transforms<a class="headerlink" href="#chebi-references-in-transforms" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Transform</p></th>
+<th class="head"><p>ChEBI Edges</p></th>
+<th class="head"><p>ChEBI Nodes</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>BacDive</p></td>
+<td><p>1,575,321</p></td>
+<td><p>1,176</p></td>
+<td><p>ChEBI as subjects in assay edges</p></td>
+</tr>
+<tr class="row-odd"><td><p>MediaDive</p></td>
+<td><p>39,308</p></td>
+<td><p>572</p></td>
+<td><p>Chemical role and composition edges</p></td>
+</tr>
+<tr class="row-even"><td><p>Ontologies (ChEBI)</p></td>
+<td><p>-</p></td>
+<td><p>~200,000+</p></td>
+<td><p>Primary ChEBI node source</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="impact">
+<h2>Impact<a class="headerlink" href="#impact" title="Link to this heading"></a></h2>
+<section id="low-impact">
+<h3>Low Impact<a class="headerlink" href="#low-impact" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Most edges reference ChEBI IDs that <strong>do</strong> have corresponding nodes from the ChEBI ontology transform</p></li>
+<li><p>Missing entries are primarily:</p>
+<ul>
+<li><p>Complex mixtures that cannot be represented as single ChEBI entities</p></li>
+<li><p>Proprietary/commercial products without standardized chemical definitions</p></li>
+<li><p>Items that should use alternative namespaces (e.g., <code class="docutils literal notranslate"><span class="pre">ingredient:*</span></code> for unnamed mixtures)</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="where-it-matters">
+<h3>Where It Matters<a class="headerlink" href="#where-it-matters" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Growth media composition</strong>: Some media ingredients lack standardized chemical identities</p></li>
+<li><p><strong>BacDive metabolite tests</strong>: A few test substrates may lack ChEBI mappings</p></li>
+<li><p><strong>Cross-database integration</strong>: Cannot link to external databases requiring ChEBI IDs</p></li>
+</ul>
+</section>
+</section>
+<section id="resolution-strategies">
+<h2>Resolution Strategies<a class="headerlink" href="#resolution-strategies" title="Link to this heading"></a></h2>
+<section id="for-complex-mixtures">
+<h3>1. For Complex Mixtures<a class="headerlink" href="#for-complex-mixtures" title="Link to this heading"></a></h3>
+<p>Use custom CURIE prefixes rather than forcing ChEBI mappings:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>- ❌ Try to find ChEBI for &quot;meat extract&quot;
+- ✅ Use ingredient:2 with biolink:ChemicalMixture category
+</pre></div>
+</div>
+</section>
+<section id="for-chemicals-with-cas-rn">
+<h3>2. For Chemicals with CAS-RN<a class="headerlink" href="#for-chemicals-with-cas-rn" title="Link to this heading"></a></h3>
+<p>Priority mapping workflow:</p>
+<ol class="arabic simple">
+<li><p>Query ChEBI API/database for CAS-RN</p></li>
+<li><p>If found, add to mapping table</p></li>
+<li><p>If not found, consider submitting to ChEBI</p></li>
+<li><p>As fallback, use CAS-RN as identifier: <code class="docutils literal notranslate"><span class="pre">CAS:15548-61-5</span></code></p></li>
+</ol>
+</section>
+<section id="for-proprietary-products">
+<h3>3. For Proprietary Products<a class="headerlink" href="#for-proprietary-products" title="Link to this heading"></a></h3>
+<p>Document composition when possible:</p>
+<ul class="simple">
+<li><p>Link to manufacturer data sheets</p></li>
+<li><p>Create node with descriptive name</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">biolink:ChemicalMixture</span></code> category</p></li>
+<li><p>Add <code class="docutils literal notranslate"><span class="pre">description</span></code> field with composition details</p></li>
+</ul>
+</section>
+</section>
+<section id="files-reference">
+<h2>Files Reference<a class="headerlink" href="#files-reference" title="Link to this heading"></a></h2>
+<section id="missing-chemicals-files">
+<h3>Missing Chemicals Files<a class="headerlink" href="#missing-chemicals-files" title="Link to this heading"></a></h3>
+<p><strong><code class="docutils literal notranslate"><span class="pre">missing_chem.txt</span></code></strong>
+Format: <code class="docutils literal notranslate"><span class="pre">&lt;prefix&gt;:&lt;id&gt;\t&lt;category&gt;\t&lt;name&gt;\t...\t&lt;source&gt;</span></code></p>
+<p>Sample entries:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">ingredient</span><span class="p">:</span><span class="mi">2</span>	<span class="n">biolink</span><span class="p">:</span><span class="n">ChemicalEntity</span>	<span class="n">meat</span> <span class="n">extract</span>	<span class="n">Graph</span>
+<span class="n">ingredient</span><span class="p">:</span><span class="mi">74</span>	<span class="n">biolink</span><span class="p">:</span><span class="n">ChemicalEntity</span>	<span class="n">trypticase</span>	<span class="n">Graph</span>
+<span class="n">ingredient</span><span class="p">:</span><span class="mi">85</span>	<span class="n">biolink</span><span class="p">:</span><span class="n">ChemicalEntity</span>	<span class="n">beef</span> <span class="n">extract</span>	<span class="n">Graph</span>
+</pre></div>
+</div>
+<p><strong><code class="docutils literal notranslate"><span class="pre">missing_chem_casrn.txt</span></code></strong>
+Format: <code class="docutils literal notranslate"><span class="pre">CAS-RN:&lt;number&gt;</span></code></p>
+<p>Sample entries:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">CAS</span><span class="o">-</span><span class="n">RN</span><span class="p">:</span><span class="mi">15548</span><span class="o">-</span><span class="mi">61</span><span class="o">-</span><span class="mi">5</span>
+<span class="n">CAS</span><span class="o">-</span><span class="n">RN</span><span class="p">:</span><span class="mi">10025</span><span class="o">-</span><span class="mi">84</span><span class="o">-</span><span class="mi">0</span>
+<span class="n">CAS</span><span class="o">-</span><span class="n">RN</span><span class="p">:</span><span class="mi">10028</span><span class="o">-</span><span class="mi">22</span><span class="o">-</span><span class="mi">5</span>
+</pre></div>
+</div>
+</section>
+<section id="transform-code-references">
+<h3>Transform Code References<a class="headerlink" href="#transform-code-references" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>MediaDive ChEBI loading</strong>: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/mediadive/mediadive.py:126</span></code></p>
+<ul>
+<li><p>Method: <code class="docutils literal notranslate"><span class="pre">_load_chebi_roles()</span></code></p></li>
+<li><p>Silently skips if ChEBI role files missing</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="recommendations">
+<h2>Recommendations<a class="headerlink" href="#recommendations" title="Link to this heading"></a></h2>
+<section id="immediate-actions">
+<h3>Immediate Actions<a class="headerlink" href="#immediate-actions" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>No action required</strong> for complex mixtures - current <code class="docutils literal notranslate"><span class="pre">ingredient:*</span></code> approach is appropriate</p></li>
+<li><p><strong>Consider ChEBI API lookups</strong> for the 237 CAS-RN entries in <code class="docutils literal notranslate"><span class="pre">missing_chem_casrn.txt</span></code></p></li>
+<li><p><strong>Document in user guide</strong> that not all media ingredients have ChEBI mappings by design</p></li>
+</ol>
+</section>
+<section id="future-enhancements">
+<h3>Future Enhancements<a class="headerlink" href="#future-enhancements" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Automated CAS-RN to ChEBI mapping script</strong></p>
+<ul class="simple">
+<li><p>Query ChEBI API for each CAS-RN</p></li>
+<li><p>Generate mapping table</p></li>
+<li><p>Update transforms to use discovered ChEBI IDs</p></li>
+</ul>
+</li>
+<li><p><strong>Alternative ontologies</strong></p>
+<ul class="simple">
+<li><p>FooDB for food components (tomato juice, etc.)</p></li>
+<li><p>Consider FOODON (Food Ontology) for biological materials</p></li>
+<li><p>ENVO for environmental samples</p></li>
+</ul>
+</li>
+<li><p><strong>Contribution to ChEBI</strong></p>
+<ul class="simple">
+<li><p>Submit missing common chemicals to ChEBI</p></li>
+<li><p>Particularly those with established CAS-RNs</p></li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+<section id="notes-from-code-review">
+<h2>Notes from Code Review<a class="headerlink" href="#notes-from-code-review" title="Link to this heading"></a></h2>
+<p>From <code class="docutils literal notranslate"><span class="pre">notes/biolink-metpo-review.md</span></code>:</p>
+<ul class="simple">
+<li><p><strong>Issue</strong>: Some CHEBI:* objects not in nodes.tsv (BacDive)</p></li>
+<li><p><strong>Severity</strong>: Low</p></li>
+<li><p><strong>Recommendation</strong>: Ensure all ChEBI IDs have node entries</p></li>
+</ul>
+<p><strong>Status</strong>: Upon investigation, this is not a significant issue because:</p>
+<ul class="simple">
+<li><p>ChEBI nodes come from ontologies transform</p></li>
+<li><p>BacDive creates 1,176 specialized ChEBI nodes for metabolites</p></li>
+<li><p>Most ChEBI references resolve to nodes from the merged ChEBI ontology</p></li>
+<li><p>Unmapped items are predominantly complex mixtures that shouldn’t have ChEBI IDs</p></li>
+</ul>
+</section>
+<section id="related-documentation">
+<h2>Related Documentation<a class="headerlink" href="#related-documentation" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>ChEBI Ontology: https://www.ebi.ac.uk/chebi/</p></li>
+<li><p>ChEBI xrefs: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/ontologies/xrefs/chebi_xrefs.tsv</span></code></p></li>
+<li><p>Constants: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/constants.py</span></code> (ChEBI-related constants)</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

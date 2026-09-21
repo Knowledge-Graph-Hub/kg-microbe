@@ -1,0 +1,37 @@
+kg\_microbe.query\_utils package
+================================
+
+Submodules
+----------
+
+kg\_microbe.query\_utils.duckdb\_loader module
+----------------------------------------------
+
+.. automodule:: kg_microbe.query_utils.duckdb_loader
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.query\_utils.organism\_queries module
+-------------------------------------------------
+
+.. automodule:: kg_microbe.query_utils.organism_queries
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.query\_utils.utils module
+-------------------------------------
+
+.. automodule:: kg_microbe.query_utils.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.query_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

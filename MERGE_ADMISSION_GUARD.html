@@ -1,0 +1,145 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bind publication to the originally admitted inputs (#1100) &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Bind publication to the originally admitted inputs (#1100)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/MERGE_ADMISSION_GUARD.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bind-publication-to-the-originally-admitted-inputs-1100">
+<h1>Bind publication to the originally admitted inputs (#1100)<a class="headerlink" href="#bind-publication-to-the-originally-admitted-inputs-1100" title="Link to this heading"></a></h1>
+<p>Production <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">merge</span></code> retains a request-local admission snapshot from the
+exact reads used by its source-freshness verifier. It includes the original
+configuration, selected graph members, finalization records, producer
+markers, audit reports, consumed/declared inputs, recursively validated
+upstream evidence, producer/shared Python files, and repository schema files.
+Lexical source paths stay bound to their original resolved targets, so a
+symlink retarget cannot leave the old target unchanged and substitute another
+input during staging.
+The original source-resolution precedence is checked too: creating a new
+CWD-relative candidate cannot shadow an admitted configuration-relative file.</p>
+<p>Each file is SHA256-hashed with bounded-memory streaming. Metadata records
+are parsed from those same captured bytes; graph-scale input contents are not
+copied or retained in memory. Device/inode, size, mode, modification time and
+change time are recorded around each read. Package membership is captured to
+detect newly added Python helpers. Previously absent optional schema/shared
+files must remain absent.</p>
+<p>Admission finishes with a filesystem-identity comparison. After KGX, staged
+cleanup, validation and packaging, but before any staged output publication,
+the original identities are checked again, including full hashes and a final
+metadata comparison. Changed, missing or replaced evidence raises
+<code class="docutils literal notranslate"><span class="pre">SourceFinalizationRequired</span></code>; the previous published archive remains intact.
+Even a concurrently completed, independently valid transform run is not a
+substitute for the originally admitted source bundle. An identical-byte
+replacement also conservatively aborts if its inode or write metadata changed.</p>
+<p>This is a fail-closed observed-drift guard, not a filesystem transaction,
+exclusive producer lock, or proof against a malicious writer that can conceal
+changes to both bytes and filesystem metadata. There remains an unavoidable
+small observation-to-publication window without writer coordination. Source
+producers and merge should not deliberately run concurrently against the same
+output tree. Cross-file publication semantics remain unchanged. The explicit
+<code class="docutils literal notranslate"><span class="pre">allow_unfinalized_sources:</span> <span class="pre">true</span></code> diagnostic mode still opts out of production
+source-admission requirements and labels its artifact accordingly; its
+configuration identity is nevertheless bound so it cannot be relabelled as
+a finalized release after admission.</p>
+<p>The guard adds one full streamed recheck of admitted files before publication;
+it intentionally prefers explicit I/O cost over silently publishing a graph
+whose original admission evidence changed. It does not claim every raw input
+in the entire pipeline was captured: existing declared/recorded dependency
+scope remains the contract.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

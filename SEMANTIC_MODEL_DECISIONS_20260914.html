@@ -1,0 +1,145 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Semantic modeling decisions — 2026-09-14 &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Semantic modeling decisions — 2026-09-14</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/SEMANTIC_MODEL_DECISIONS_20260914.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="semantic-modeling-decisions-2026-09-14">
+<h1>Semantic modeling decisions — 2026-09-14<a class="headerlink" href="#semantic-modeling-decisions-2026-09-14" title="Link to this heading"></a></h1>
+<p>These decisions address #642–#645 and the ChEBI-role/FOODON findings in the September 14 review. They change producer semantics and narrowly documented validation conventions; they do not declare the archived graph corrected. Rebuild affected sources and merge before a release review.</p>
+<section id="assays-642">
+<h2>Assays (#642)<a class="headerlink" href="#assays-642" title="Link to this heading"></a></h2>
+<p>Assay-kit wells denote <strong>procedure classes</strong>, not molecular reaction events. Keep <code class="docutils literal notranslate"><span class="pre">biolink:Procedure</span></code> and their <code class="docutils literal notranslate"><span class="pre">subclass_of</span> <span class="pre">MICRO:0000903</span></code> hierarchy. Replace misleading assay <code class="docutils literal notranslate"><span class="pre">has_output</span></code> activity edges with <code class="docutils literal notranslate"><span class="pre">MICRO:0001206</span></code> (is an assay for the enzymatic activity of), and assay <code class="docutils literal notranslate"><span class="pre">has_input</span></code> chemical edges with <code class="docutils literal notranslate"><span class="pre">MICRO:0000065</span></code> (is an assay using the chemical reagent). Use the same native CURIE in <code class="docutils literal notranslate"><span class="pre">relation</span></code>.</p>
+<p>Primary local evidence: <code class="docutils literal notranslate"><span class="pre">data/raw/micro.owl</span></code> declares MICRO:0001206 with assay domain OBI:0000070 and molecular-function range GO:0003674; MICRO:0000065 has the same assay domain and chemical-entity range CHEBI:24431. <code class="docutils literal notranslate"><span class="pre">data/raw/biolink-model.yaml</span></code> 4.4.2 gives biological-process-or-activity domain to <code class="docutils literal notranslate"><span class="pre">has_input</span></code>/<code class="docutils literal notranslate"><span class="pre">has_output</span></code>; adding BiologicalProcess to a test procedure would misrepresent the node.</p>
+<p>The built-in reviewer uses explicit Procedure→MolecularActivity and Procedure→ChemicalEntity/MacromolecularComplex tables. KGXVal’s native-property failures remain visible as expected <strong>project extensions</strong>, not strict Biolink passes. Unknown MICRO predicates remain actionable.</p>
+</section>
+<section id="curated-rhea-cross-references-645">
+<h2>Curated Rhea cross-references (#645)<a class="headerlink" href="#curated-rhea-cross-references-645" title="Link to this heading"></a></h2>
+<p>Both <code class="docutils literal notranslate"><span class="pre">rhea2ec.tsv</span></code> and <code class="docutils literal notranslate"><span class="pre">rhea2go.tsv</span></code> explicitly map <code class="docutils literal notranslate"><span class="pre">RHEA_ID</span></code> to <code class="docutils literal notranslate"><span class="pre">ID</span></code>. Emit <code class="docutils literal notranslate"><span class="pre">biolink:close_match</span></code>, relation <code class="docutils literal notranslate"><span class="pre">oboInOwl:hasDbXref</span></code>, primary source <code class="docutils literal notranslate"><span class="pre">infores:rhea</span></code>, knowledge assertion/manual agent. Apply this to the TSV and PyOBO activity-cross-reference paths. Do not infer physical gene-product <code class="docutils literal notranslate"><span class="pre">enables</span></code>/<code class="docutils literal notranslate"><span class="pre">enabled_by</span></code>, strict equivalence, or a gene product’s identity from these curated classification mappings.</p>
+<p>Pinned Biolink 4.4.2 lists <code class="docutils literal notranslate"><span class="pre">oboInOwl:hasDbXref</span></code> as a narrow mapping of <code class="docutils literal notranslate"><span class="pre">close_match</span></code>. Existing EC→GO <code class="docutils literal notranslate"><span class="pre">enables</span></code> conventions elsewhere are unchanged, but reviewer allowance is now limited to EC-namespace Protein-typed enzyme classes and GO MolecularActivity objects; it cannot suppress unrelated Protein or RHEA subject errors.</p>
+</section>
+<section id="chebi-roles">
+<h2>ChEBI roles<a class="headerlink" href="#chebi-roles" title="Link to this heading"></a></h2>
+<p>Classify a term as ChemicalRole only through asserted <code class="docutils literal notranslate"><span class="pre">rdfs:subClassOf</span></code> ancestry under CHEBI:50906 (including the root). This includes indirect role descendants such as CHEBI:75767, animal metabolite. A chemical’s <code class="docutils literal notranslate"><span class="pre">has_role</span></code> relationship is <strong>not</strong> class ancestry; label suffixes such as “inhibitor” are insufficient evidence. Keep the existing asserted macromolecule-branch convention under CHEBI:33839.</p>
+<p>Map only <code class="docutils literal notranslate"><span class="pre">has_attribute</span></code> assertions whose retained source relation is RO:0000087 to <code class="docutils literal notranslate"><span class="pre">has_chemical_role</span></code>; preserve quality attributes such as RO:0000086 unchanged. The reviewer no longer excuses arbitrary OntologyClass role targets. A narrow counted convention covers CHEBI macromolecule-class→CHEBI ChemicalRole assertions where the repository’s MacromolecularComplex category is the only mismatch.</p>
+</section>
+<section id="foodon-organism-classes-and-source-defects">
+<h2>FOODON organism classes and source defects<a class="headerlink" href="#foodon-organism-classes-and-source-defects" title="Link to this heading"></a></h2>
+<p>The previous all-FOODON-is-Food rule was wrong for whole-organism classes. Use asserted subclass descendants of COB:0000022 (organism), PO:0000003 (whole plant), and NCBITaxon:1 as OrganismTaxon. Apply the same authoritative policy to imports and merge inputs, removing stale Food/anatomical fallbacks from these organism classes. Food materials remain Food; <code class="docutils literal notranslate"><span class="pre">in_taxon</span></code> range alone never determines a node’s category.</p>
+<p>In the pinned raw FOODON graph, this covers 2,221 of 2,227 distinct <code class="docutils literal notranslate"><span class="pre">in_taxon</span></code> target IDs. The six reviewed exceptions are maintained in <code class="docutils literal notranslate"><span class="pre">mappings/foodon_model_dispositions.tsv</span></code>, not inferred from an open-world absence of ancestry:</p>
+<ul class="simple">
+<li><p>FOODON:03411744, kelp, has raw synonym “laminariales”; pinned NCBITaxon:2886 is labeled Laminariales. Categorize this organism class without asserting a same-as or adding an NCBI mapping edge.</p></li>
+<li><p>FOODON:00003662 is explicitly a Chinese-cabbage <strong>rosette</strong>, FOODON:00003673 a watermelon <strong>pepo fruit</strong>, and FOODON:03309697 a <strong>raw fillet</strong> (whose in_taxon is self-referential).</p></li>
+<li><p>FOODON:03411632 and FOODON:03411645 explicitly denote <strong>fungal fruitbodies</strong>, despite the former’s misleading “genus” label. Their own raw in_taxon assertions point to NCBITaxon:5320 and NCBITaxon:28992 respectively; those valid assertions are retained.</p></li>
+</ul>
+<p>Only FOODON <code class="docutils literal notranslate"><span class="pre">biolink:in_taxon</span></code> / RO:0002162 assertions targeting those five affirmatively incompatible part/material classes are quarantined. Preserve all original KGX row columns, original provenance and evidence in atomic LF <code class="docutils literal notranslate"><span class="pre">foodon_model_quarantine.tsv</span></code>; raw ontology files are untouched. Uncertain/unclassified targets and other relations to these same nodes are retained. No replacement taxon is invented.</p>
+</section>
+<section id="explicit-class-level-conventions-643-644">
+<h2>Explicit class-level conventions (#643/#644)<a class="headerlink" href="#explicit-class-level-conventions-643-644" title="Link to this heading"></a></h2>
+<p>Biolink semantic categories describe what ontology classes are <em>about</em>; they are not a claim that the graph contains instances instead of classes. Preserve meaningful ontology <code class="docutils literal notranslate"><span class="pre">subclass_of</span></code> axioms, including chemical, anatomical, food, quality and procedure classes, without adding OntologyClass indiscriminately or weakening predicates to related_to.</p>
+<p>The counted INFO allowance requires <code class="docutils literal notranslate"><span class="pre">rdfs:subClassOf</span></code>, different endpoints, known ontology namespaces, and substantive class categories at both ends. Explicitly scoped assay-procedure and recipe-solution class hierarchies are also allowed. It excludes arbitrary instance namespaces, NamedThing fallbacks, wrong originating relations, and self-loops. The separate #834 OrganismTaxon strain/subclass convention is preserved.</p>
+<p>Taxon phenotype assertions may target METPO/PATO/OMP phenotype classes, including their PhenotypicQuality/OntologyClass representation. Arbitrary Attribute/chemical targets are not accepted merely because <code class="docutils literal notranslate"><span class="pre">has_phenotype</span></code> is involved. All house-only passes remain separately counted from strict model conformance; native MICRO properties remain separately typed project extensions.</p>
+</section>
+<section id="verification-and-freshness">
+<h2>Verification and freshness<a class="headerlink" href="#verification-and-freshness" title="Link to this heading"></a></h2>
+<p>Regression coverage is in <code class="docutils literal notranslate"><span class="pre">tests/test_semantic_model_decisions.py</span></code>, <code class="docutils literal notranslate"><span class="pre">tests/test_ontology_resolution.py</span></code>, <code class="docutils literal notranslate"><span class="pre">tests/test_assay_generation.py</span></code>, and <code class="docutils literal notranslate"><span class="pre">tests/test_kg_model_review_domain_range.py</span></code>. Negative controls cover non-class endpoints, relation mismatches, self-loops, unexpected assay ranges, chemical role-label false positives, uncertain FOODON targets, unrelated attributes/proteins, and unknown MICRO predicates.</p>
+<p>The FOODON disposition file is declared by the ontology transform and content-hashed as shared curation input for all transform freshness checks. In-process ontology/disposition lookup caches use path/size/mtime invalidation only, not cryptographic release fingerprints. Existing transformed and archived graph data have not been rewritten by this change.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,176 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Source and observation provenance (#1070, #1061) &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Source and observation provenance (#1070, #1061)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PROVENANCE_SERIALIZATION.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="source-and-observation-provenance-1070-1061">
+<h1>Source and observation provenance (#1070, #1061)<a class="headerlink" href="#source-and-observation-provenance-1070-1061" title="Link to this heading"></a></h1>
+<section id="model-decision">
+<h2>Model decision<a class="headerlink" href="#model-decision" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">primary_knowledge_source</span></code> contains one information-resource identifier, never
+a pipe list of providers or a mixture of providers and records. BacDive and
+MediaDive growth edges identify <code class="docutils literal notranslate"><span class="pre">infores:bacdive</span></code> as their primary resource.
+Their BacDive record attribution is retained in <code class="docutils literal notranslate"><span class="pre">publications</span></code>, for example
+<code class="docutils literal notranslate"><span class="pre">https://bacdive.dsmz.de/strain/160227</span></code>. Other supplied publications are retained.</p>
+<p>This uses the pinned Biolink 4.4.2 model directly: <code class="docutils literal notranslate"><span class="pre">publications</span></code> is a
+multivalued association slot whose definition explicitly includes public web
+pages. <code class="docutils literal notranslate"><span class="pre">supporting_documents</span></code> is deprecated, <code class="docutils literal notranslate"><span class="pre">supporting_data_source</span></code> identifies
+an InformationResource rather than an individual record, and <code class="docutils literal notranslate"><span class="pre">source_record_urls</span></code>
+belongs on a nested RetrievalSource rather than directly on an association.
+No new evidence slot or blanket primary provider is introduced.</p>
+<p>The finite migration table recognizes existing ontology filenames and
+MediaDive/BacDive producer aliases. It does not infer resources from arbitrary
+filenames. Legacy BacDive Python-list or pipe notation migrates into scalar
+resource plus publication evidence. A field containing multiple distinct
+primary providers fails with a rebuild instruction: separating an already
+pooled field cannot reconstruct which provider supported which observation.</p>
+</section>
+<section id="observation-identity-within-and-across-sources">
+<h2>Observation identity, within and across sources<a class="headerlink" href="#observation-identity-within-and-across-sources" title="Link to this heading"></a></h2>
+<p>Edge identity is the SHA-256 of the complete normalized assertion payload:
+subject, predicate, object, scalar relation, primary resource, measurement,
+unit, knowledge level, agent type, contextual metadata, and attached evidence.
+Declared multivalued properties normalize to sorted unique lists. Unknown
+extension properties stay scalar; literal pipes in free text remain literal.</p>
+<p>Two assertions collapse only when their complete normalized payloads match.
+Different primary sources, records, publications, measurements, contexts, or
+knowledge/agent classifications produce separate edges. A missing value is
+also distinct from an explicitly supplied value; later records do not fill or
+overwrite earlier observations. Evidence is never copied between these edges.
+Even two equal temperatures stay separate when they have different evidence.</p>
+<p>The cross-source merge preserves KGX’s existing node merge policy but uses
+the same exact-assertion edge identity. It no longer calls KGX’s scalar-pooling
+edge merge. Export does not inject <code class="docutils literal notranslate"><span class="pre">knowledge_source=Graph</span></code> or a filename.</p>
+<p>The edge <code class="docutils literal notranslate"><span class="pre">id</span></code>/internal <code class="docutils literal notranslate"><span class="pre">key</span></code> are deterministic transport hashes, not additional
+evidence. An explicit upstream edge ID is retained as <code class="docutils literal notranslate"><span class="pre">source_assertion_id</span></code>
+and participates in identity. Re-exporting and reading the generated edge ID
+does not manufacture a new upstream ID or change observation identity.</p>
+<p>This supersedes the temporary last-row scalar policy. All distinguishable
+observations survive; repeated source rows that are identical in every supplied
+field collapse. The pipeline cannot invent observation identifiers or recover
+distinctions that upstream never supplied. Queries must not assume one edge per
+subject/predicate/object triple, and should aggregate observations explicitly.</p>
+</section>
+<section id="rebuild-and-acceptance">
+<h2>Rebuild and acceptance<a class="headerlink" href="#rebuild-and-acceptance" title="Link to this heading"></a></h2>
+<p>Previously generated TSVs and archives are unchanged. Regenerate BacDive and
+MediaDive to emit the new schema directly, regenerate ontology outputs to
+replace filename source placeholders, then merge fresh source TSVs. The finite
+legacy migration supports older unmerged source files, not reconstruction of
+already pooled observations in an old merged graph. Preserve the old archive
+for comparison. Edge counts can increase substantially because observations
+previously overwritten or pooled are now retained.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>tests/test_bacdive_provenance.py<span class="w"> </span>tests/test_bacdive_lpsn_crossref.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>tests/test_provenance_serialization.py<span class="w"> </span>tests/test_kgx_relation_source.py
+</pre></div>
+</div>
+<p>The tests exercise both real producers, positive/negative growth, KGX source
+ingestion, cross-source merging, compressed export and re-ingestion. They
+preserve all seven PREGO-style rows and four temperature rows with their exact
+evidence and scalar metadata; a separate two-source fixture verifies exact
+duplicate collapse, same-provider conflicts, missing units, explicit upstream
+IDs, and literal pipe text. Thread, spawn and fork tests cover worker adapters.</p>
+<p>Production acceptance should verify scalar information-resource PKS values,
+record URLs in publications, stable repeated exports, and preservation of
+source observation/evidence bundles. Passing fixtures does not establish that
+an existing production archive has been rebuilt.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

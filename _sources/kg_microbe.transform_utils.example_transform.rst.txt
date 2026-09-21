@@ -1,0 +1,21 @@
+kg\_microbe.transform\_utils.example\_transform package
+=======================================================
+
+Submodules
+----------
+
+kg\_microbe.transform\_utils.example\_transform.example\_transform module
+-------------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.example_transform.example_transform
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.transform_utils.example_transform
+   :members:
+   :undoc-members:
+   :show-inheritance:

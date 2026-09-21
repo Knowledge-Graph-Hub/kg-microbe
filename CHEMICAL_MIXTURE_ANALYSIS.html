@@ -1,0 +1,340 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ChemicalMixture vs ChemicalEntity Analysis for Growth Media &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">ChemicalMixture vs ChemicalEntity Analysis for Growth Media</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/CHEMICAL_MIXTURE_ANALYSIS.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="chemicalmixture-vs-chemicalentity-analysis-for-growth-media">
+<h1>ChemicalMixture vs ChemicalEntity Analysis for Growth Media<a class="headerlink" href="#chemicalmixture-vs-chemicalentity-analysis-for-growth-media" title="Link to this heading"></a></h1>
+<section id="current-state">
+<h2>Current State<a class="headerlink" href="#current-state" title="Link to this heading"></a></h2>
+<section id="category-definitions-in-code">
+<h3>Category Definitions in Code<a class="headerlink" href="#category-definitions-in-code" title="Link to this heading"></a></h3>
+<p>From <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/constants.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">MEDIUM_CATEGORY</span> <span class="o">=</span> <span class="s2">&quot;biolink:ChemicalEntity&quot;</span>           <span class="c1"># Used for growth media</span>
+<span class="n">MEDIUM_TYPE_CATEGORY</span> <span class="o">=</span> <span class="s2">&quot;biolink:ChemicalMixture&quot;</span>     <span class="c1"># Used for medium type classification</span>
+</pre></div>
+</div>
+</section>
+<section id="current-usage-in-mediadive-transform">
+<h3>Current Usage in MediaDive Transform<a class="headerlink" href="#current-usage-in-mediadive-transform" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Node Type</p></th>
+<th class="head"><p>Count</p></th>
+<th class="head"><p>Current Category</p></th>
+<th class="head"><p>Example</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Growth media</p></td>
+<td><p>3,317</p></td>
+<td><p>biolink:ChemicalEntity</p></td>
+<td><p>mediadive.medium:1 “NUTRIENT AGAR”</p></td>
+</tr>
+<tr class="row-odd"><td><p>Solutions</p></td>
+<td><p>5,403</p></td>
+<td><p>biolink:ChemicalEntity</p></td>
+<td><p>mediadive.solution:1 “Main sol. 1”</p></td>
+</tr>
+<tr class="row-even"><td><p>Ingredients</p></td>
+<td><p>732</p></td>
+<td><p>biolink:ChemicalEntity</p></td>
+<td><p>mediadive.ingredient:4 “Distilled water”</p></td>
+</tr>
+<tr class="row-odd"><td><p>ChEBI chemicals</p></td>
+<td><p>392</p></td>
+<td><p>biolink:ChemicalEntity</p></td>
+<td><p>CHEBI:2509 “Agar”</p></td>
+</tr>
+<tr class="row-even"><td><p>Other chemicals</p></td>
+<td><p>74</p></td>
+<td><p>biolink:ChemicalEntity</p></td>
+<td><p>PubChem, CAS-RN, foodon, etc.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Medium types</p></td>
+<td><p>2</p></td>
+<td><p>biolink:ChemicalMixture</p></td>
+<td><p>mediadive.medium-type:complex, :defined</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="biolink-model-definitions">
+<h2>Biolink Model Definitions<a class="headerlink" href="#biolink-model-definitions" title="Link to this heading"></a></h2>
+<section id="biolink-chemicalentity">
+<h3>biolink:ChemicalEntity<a class="headerlink" href="#biolink-chemicalentity" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Definition</strong>: A chemical entity is a physical entity that pertains to chemistry or biochemistry</p></li>
+<li><p><strong>Usage</strong>: Individual chemical compounds, elements, ions</p></li>
+<li><p><strong>Examples</strong>: glucose, sodium chloride, water, agar</p></li>
+</ul>
+</section>
+<section id="biolink-chemicalmixture">
+<h3>biolink:ChemicalMixture<a class="headerlink" href="#biolink-chemicalmixture" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Definition</strong>: A chemical mixture is a chemical entity composed of two or more molecular entities</p></li>
+<li><p><strong>Usage</strong>: Formulations, solutions, mixtures of multiple chemicals</p></li>
+<li><p><strong>Examples</strong>: growth media, buffer solutions, cell culture media</p></li>
+</ul>
+</section>
+</section>
+<section id="analysis">
+<h2>Analysis<a class="headerlink" href="#analysis" title="Link to this heading"></a></h2>
+<section id="what-are-growth-media">
+<h3>What are Growth Media?<a class="headerlink" href="#what-are-growth-media" title="Link to this heading"></a></h3>
+<p>Growth media are <strong>formulated mixtures</strong> containing multiple ingredients:</p>
+<ul class="simple">
+<li><p><strong>NUTRIENT AGAR</strong> contains: peptone + meat extract + agar + water</p></li>
+<li><p><strong>LB MEDIUM</strong> contains: tryptone + yeast extract + NaCl + water</p></li>
+<li><p><strong>Brain Heart Infusion</strong> contains: brain infusion + heart infusion + peptone + glucose + NaCl + phosphate</p></li>
+</ul>
+</section>
+<section id="current-problem">
+<h3>Current Problem<a class="headerlink" href="#current-problem" title="Link to this heading"></a></h3>
+<p>Growth media are currently categorized as <code class="docutils literal notranslate"><span class="pre">biolink:ChemicalEntity</span></code>, but they are clearly mixtures, not single chemical entities.</p>
+</section>
+</section>
+<section id="recommendation">
+<h2>Recommendation<a class="headerlink" href="#recommendation" title="Link to this heading"></a></h2>
+<section id="implemented-change">
+<h3>Implemented Change<a class="headerlink" href="#implemented-change" title="Link to this heading"></a></h3>
+<p><strong>Changed <code class="docutils literal notranslate"><span class="pre">MEDIUM_CATEGORY</span></code> from <code class="docutils literal notranslate"><span class="pre">biolink:ChemicalEntity</span></code> to <code class="docutils literal notranslate"><span class="pre">METPO:1004005</span></code> (growth medium)</strong></p>
+<section id="rationale">
+<h4>Rationale:<a class="headerlink" href="#rationale" title="Link to this heading"></a></h4>
+<ol class="arabic simple">
+<li><p><strong>Domain-specific</strong>: METPO:1004005 is specifically defined for microbial growth media</p></li>
+<li><p><strong>Semantic accuracy</strong>: More precise than generic biolink:ChemicalMixture</p></li>
+<li><p><strong>Ontological grounding</strong>: METPO ontology provides formal definition</p></li>
+<li><p><strong>METPO definition</strong>: “A processed material that provides the nutrients and environmental conditions necessary for the cultivation of microorganisms in vitro”</p></li>
+</ol>
+</section>
+<section id="impact">
+<h4>Impact:<a class="headerlink" href="#impact" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>Low risk</strong>: ChemicalMixture is a subclass of ChemicalEntity in Biolink</p></li>
+<li><p><strong>Backward compatible</strong>: All predicates valid for ChemicalEntity remain valid</p></li>
+<li><p><strong>Improved semantics</strong>: Better represents the true nature of growth media</p></li>
+</ul>
+</section>
+</section>
+<section id="implementation">
+<h3>Implementation<a class="headerlink" href="#implementation" title="Link to this heading"></a></h3>
+<section id="step-1-update-constants-done">
+<h4>Step 1: Update Constants ✅ DONE<a class="headerlink" href="#step-1-update-constants-done" title="Link to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># kg_microbe/transform_utils/constants.py</span>
+<span class="o">-</span> <span class="n">MEDIUM_CATEGORY</span> <span class="o">=</span> <span class="s2">&quot;biolink:ChemicalEntity&quot;</span>
+<span class="o">+</span> <span class="n">MEDIUM_CATEGORY</span> <span class="o">=</span> <span class="s2">&quot;METPO:1004005&quot;</span>  <span class="c1"># growth medium</span>
+</pre></div>
+</div>
+</section>
+<section id="step-2-verify-transforms">
+<h4>Step 2: Verify Transforms<a class="headerlink" href="#step-2-verify-transforms" title="Link to this heading"></a></h4>
+<p>Update these files that use MEDIUM_CATEGORY:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/bacdive/bacdive.py</span></code> (lines 102, 1394)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/mediadive/mediadive.py</span></code> (lines 76, 725, 838)</p></li>
+</ul>
+</section>
+<section id="step-3-leave-ingredients-as-chemicalentity">
+<h4>Step 3: Leave Ingredients as ChemicalEntity<a class="headerlink" href="#step-3-leave-ingredients-as-chemicalentity" title="Link to this heading"></a></h4>
+<p>Individual ingredients (peptone, agar, water, salts) should remain ChemicalEntity:</p>
+<ul class="simple">
+<li><p>Single chemicals: CHEBI:2509 “Agar” → <code class="docutils literal notranslate"><span class="pre">biolink:ChemicalEntity</span></code></p></li>
+<li><p>Pure compounds: PubChem:167312541 “Peptone” → <code class="docutils literal notranslate"><span class="pre">biolink:ChemicalEntity</span></code> (or ChemicalMixture if complex)</p></li>
+<li><p>Media formulations: mediadive.medium:1 “NUTRIENT AGAR” → <code class="docutils literal notranslate"><span class="pre">biolink:ChemicalMixture</span></code></p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="exceptions-and-edge-cases">
+<h2>Exceptions and Edge Cases<a class="headerlink" href="#exceptions-and-edge-cases" title="Link to this heading"></a></h2>
+<section id="complex-ingredients">
+<h3>Complex Ingredients<a class="headerlink" href="#complex-ingredients" title="Link to this heading"></a></h3>
+<p>Some ingredients are themselves mixtures:</p>
+<ul class="simple">
+<li><p><strong>Peptone</strong>: Mixture of peptides → Could be ChemicalMixture</p></li>
+<li><p><strong>Meat extract</strong>: Complex mixture → Could be ChemicalMixture</p></li>
+<li><p><strong>Trypticase</strong>: Proprietary mixture → Could be ChemicalMixture</p></li>
+</ul>
+<p><strong>Decision</strong>: For simplicity, keep individual ingredients as ChemicalEntity unless they are explicitly formulated media. The key distinction:</p>
+<ul class="simple">
+<li><p><strong>Ingredient</strong>: Component added to media → ChemicalEntity (even if complex)</p></li>
+<li><p><strong>Medium</strong>: Formulated mixture for growing organisms → ChemicalMixture</p></li>
+</ul>
+</section>
+<section id="solutions-vs-media">
+<h3>Solutions vs Media<a class="headerlink" href="#solutions-vs-media" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Solutions</strong> (e.g., “Main sol. 1”): Currently ChemicalEntity</p>
+<ul>
+<li><p>If they are complete growth media solutions → ChemicalMixture</p></li>
+<li><p>If they are stock solutions to be diluted → Could remain ChemicalEntity</p></li>
+<li><p><strong>Recommendation</strong>: Treat the same as media → ChemicalMixture</p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<section id="alignment-with-other-systems">
+<h2>Alignment with Other Systems<a class="headerlink" href="#alignment-with-other-systems" title="Link to this heading"></a></h2>
+<section id="similar-ontologies">
+<h3>Similar Ontologies<a class="headerlink" href="#similar-ontologies" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>ENVO (Environment Ontology)</strong>: Distinguishes between chemical entities and mixtures</p></li>
+<li><p><strong>ChEBI</strong>: Has categories for mixtures (CHEBI:60004 “mixture”)</p></li>
+<li><p><strong>FOODON</strong>: Food components are often mixtures</p></li>
+</ul>
+</section>
+<section id="best-practices">
+<h3>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>NCBI BioSystems</strong>: Growth media cataloged as formulations</p></li>
+<li><p><strong>ATCC</strong>: Media descriptions include compositional formulas</p></li>
+<li><p><strong>DSMZ</strong>: MediaDive explicitly models media as composed entities</p></li>
+</ul>
+</section>
+</section>
+<section id="current-statistics">
+<h2>Current Statistics<a class="headerlink" href="#current-statistics" title="Link to this heading"></a></h2>
+<p>From MediaDive transform:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Total nodes: 32,468
+├── biolink:ChemicalEntity: 9,918 breakdown:
+│   ├── Solutions: 5,403 (mediadive.solution:)
+│   ├── Growth media: 3,317 (mediadive.medium:)
+│   ├── Ingredients: 732 (mediadive.ingredient:)
+│   └── Other chemicals: 466 (CHEBI, PubChem, CAS-RN, etc.)
+├── biolink:ChemicalMixture: 2 (medium types only)
+├── biolink:OrganismTaxon: 22,367
+└── biolink:ChemicalRole: 180
+</pre></div>
+</div>
+<p><strong>After implemented change</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Total nodes: 32,468
+├── biolink:ChemicalEntity: 6,601 (solutions + ingredients + chemicals)
+│   ├── Solutions: 5,403 (mediadive.solution:)
+│   ├── Ingredients: 732 (mediadive.ingredient:)
+│   └── Other chemicals: 466 (CHEBI, PubChem, CAS-RN, etc.)
+├── METPO:1004005: 3,317 (growth media)
+├── biolink:ChemicalMixture: 2 (medium types only)
+├── biolink:OrganismTaxon: 22,367
+└── biolink:ChemicalRole: 180
+</pre></div>
+</div>
+</section>
+<section id="related-documentation">
+<h2>Related Documentation<a class="headerlink" href="#related-documentation" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Biolink Model ChemicalEntity: https://biolink.github.io/biolink-model/ChemicalEntity</p></li>
+<li><p>Biolink Model ChemicalMixture: https://biolink.github.io/biolink-model/ChemicalMixture</p></li>
+<li><p>ChEBI mixtures: https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:60004</p></li>
+</ul>
+</section>
+<section id="priority-medium">
+<h2>Priority: Medium<a class="headerlink" href="#priority-medium" title="Link to this heading"></a></h2>
+<p>This change improves semantic accuracy but is not critical for functionality. Should be implemented when:</p>
+<ol class="arabic simple">
+<li><p>Making other category-related updates</p></li>
+<li><p>Before major data release</p></li>
+<li><p>When updating Biolink model compliance</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,550 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NamedThing Analysis - KG-Microbe Transformed Data &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">NamedThing Analysis - KG-Microbe Transformed Data</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/NAMEDTHING_ANALYSIS.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="namedthing-analysis-kg-microbe-transformed-data">
+<h1>NamedThing Analysis - KG-Microbe Transformed Data<a class="headerlink" href="#namedthing-analysis-kg-microbe-transformed-data" title="Link to this heading"></a></h1>
+<p><strong>Date</strong>: January 6, 2026
+<strong>Purpose</strong>: Identify biolink:NamedThing occurrences for proper category assignment</p>
+<hr class="docutils" />
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>✅ <strong>EXCELLENT NEWS</strong>: Only <strong>1 NamedThing node</strong> found across all transformed data (out of 1.1M+ total nodes)</p>
+<ul class="simple">
+<li><p><strong>Source</strong>: EC Ontology (data/transformed/ontologies/ec_nodes.tsv)</p></li>
+<li><p><strong>Node</strong>: <code class="docutils literal notranslate"><span class="pre">RO:0002333</span></code> (Relation Ontology term)</p></li>
+<li><p><strong>Percentage</strong>: 0.01% (1 out of 13,131 EC nodes)</p></li>
+</ul>
+<p>This indicates that KG-Microbe transforms are already doing an excellent job of assigning proper Biolink categories to nodes.</p>
+</section>
+<hr class="docutils" />
+<section id="detailed-findings">
+<h2>Detailed Findings<a class="headerlink" href="#detailed-findings" title="Link to this heading"></a></h2>
+<section id="namedthing-occurrence">
+<h3>NamedThing Occurrence<a class="headerlink" href="#namedthing-occurrence" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Source</p></th>
+<th class="head"><p>Node ID</p></th>
+<th class="head"><p>Name</p></th>
+<th class="head"><p>Category</p></th>
+<th class="head"><p>File</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ontologies/ec</p></td>
+<td><p>RO:0002333</p></td>
+<td><p>Graph</p></td>
+<td><p>biolink:NamedThing</p></td>
+<td><p>data/transformed/ontologies/ec_nodes.tsv</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Analysis</strong>: This is a Relation Ontology (RO) term that appears to have been incorrectly included in the EC ontology nodes file. RO terms are typically used for predicates/relations, not as nodes.</p>
+<p><strong>Recommendation</strong>:</p>
+<ul class="simple">
+<li><p>Filter out RO terms from EC ontology transform</p></li>
+<li><p>RO:0002333 should not be a node in the knowledge graph</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="category-distribution-by-source">
+<h2>Category Distribution by Source<a class="headerlink" href="#category-distribution-by-source" title="Link to this heading"></a></h2>
+<section id="data-sources-non-ontology">
+<h3>Data Sources (Non-Ontology)<a class="headerlink" href="#data-sources-non-ontology" title="Link to this heading"></a></h3>
+<section id="bacdive-275-132-nodes">
+<h4>BacDive (275,132 nodes)<a class="headerlink" href="#bacdive-275-132-nodes" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>Count</p></th>
+<th class="head"><p>Percentage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>biolink:OrganismTaxon</p></td>
+<td><p>271,803</p></td>
+<td><p>98.8%</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:1004005</p></td>
+<td><p>1,575</p></td>
+<td><p>0.6%</p></td>
+</tr>
+<tr class="row-even"><td><p>biolink:ChemicalEntity</p></td>
+<td><p>1,225</p></td>
+<td><p>0.4%</p></td>
+</tr>
+<tr class="row-odd"><td><p>biolink:EnvironmentalFeature</p></td>
+<td><p>353</p></td>
+<td><p>0.1%</p></td>
+</tr>
+<tr class="row-even"><td><p>biolink:MolecularActivity</p></td>
+<td><p>104</p></td>
+<td><p>0.0%</p></td>
+</tr>
+<tr class="row-odd"><td><p>biolink:PhenotypicQuality</p></td>
+<td><p>72</p></td>
+<td><p>0.0%</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong>: METPO:1004005 appears to be a custom METPO category. May need to map to standard Biolink category.</p>
+</section>
+<section id="bactotraits-10-026-nodes">
+<h4>BactoTraits (10,026 nodes)<a class="headerlink" href="#bactotraits-10-026-nodes" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>Count</p></th>
+<th class="head"><p>Percentage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>biolink:OrganismTaxon</p></td>
+<td><p>9,933</p></td>
+<td><p>99.1%</p></td>
+</tr>
+<tr class="row-odd"><td><p>biolink:PhenotypicQuality</p></td>
+<td><p>93</p></td>
+<td><p>0.9%</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Status</strong>: ✅ Well-categorized</p>
+</section>
+<section id="bakta-cmm-595-275-nodes">
+<h4>Bakta CMM (595,275 nodes)<a class="headerlink" href="#bakta-cmm-595-275-nodes" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>Count</p></th>
+<th class="head"><p>Percentage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>biolink:Gene</p></td>
+<td><p>311,660</p></td>
+<td><p>52.4%</p></td>
+</tr>
+<tr class="row-odd"><td><p>biolink:Protein</p></td>
+<td><p>271,695</p></td>
+<td><p>45.6%</p></td>
+</tr>
+<tr class="row-even"><td><p>biolink:GeneFamily</p></td>
+<td><p>6,781</p></td>
+<td><p>1.1%</p></td>
+</tr>
+<tr class="row-odd"><td><p>biolink:MolecularActivity</p></td>
+<td><p>5,081</p></td>
+<td><p>0.9%</p></td>
+</tr>
+<tr class="row-even"><td><p>biolink:OrganismTaxon</p></td>
+<td><p>58</p></td>
+<td><p>0.0%</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Status</strong>: ✅ Excellent genome annotation categorization</p>
+</section>
+<section id="cmm-ai-1-458-nodes">
+<h4>CMM-AI (1,458 nodes)<a class="headerlink" href="#cmm-ai-1-458-nodes" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>Count</p></th>
+<th class="head"><p>Percentage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>biolink:OrganismTaxon</p></td>
+<td><p>966</p></td>
+<td><p>66.3%</p></td>
+</tr>
+<tr class="row-odd"><td><p>biolink:Enzyme</p></td>
+<td><p>213</p></td>
+<td><p>14.6%</p></td>
+</tr>
+<tr class="row-even"><td><p>biolink:BiologicalProcess</p></td>
+<td><p>76</p></td>
+<td><p>5.2%</p></td>
+</tr>
+<tr class="row-odd"><td><p>biolink:Genome</p></td>
+<td><p>63</p></td>
+<td><p>4.3%</p></td>
+</tr>
+<tr class="row-even"><td><p>biolink:ChemicalSubstance</p></td>
+<td><p>62</p></td>
+<td><p>4.3%</p></td>
+</tr>
+<tr class="row-odd"><td><p>biolink:MolecularActivity</p></td>
+<td><p>37</p></td>
+<td><p>2.5%</p></td>
+</tr>
+<tr class="row-even"><td><p>biolink:ChemicalEntity</p></td>
+<td><p>30</p></td>
+<td><p>2.1%</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:1004005</p></td>
+<td><p>11</p></td>
+<td><p>0.8%</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong>: Uses METPO:1004005 custom category</p>
+</section>
+<section id="cog-5-090-nodes">
+<h4>COG (5,090 nodes)<a class="headerlink" href="#cog-5-090-nodes" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>Count</p></th>
+<th class="head"><p>Percentage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>biolink:GeneFamily</p></td>
+<td><p>5,061</p></td>
+<td><p>99.4%</p></td>
+</tr>
+<tr class="row-odd"><td><p>biolink:OntologyClass</p></td>
+<td><p>29</p></td>
+<td><p>0.6%</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Status</strong>: ✅ Well-categorized</p>
+</section>
+<section id="madin-et-al-122-454-nodes">
+<h4>Madin et al (122,454 nodes)<a class="headerlink" href="#madin-et-al-122-454-nodes" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>Count</p></th>
+<th class="head"><p>Percentage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>biolink:OrganismTaxon</p></td>
+<td><p>122,113</p></td>
+<td><p>99.7%</p></td>
+</tr>
+<tr class="row-odd"><td><p>biolink:ChemicalEntity</p></td>
+<td><p>102</p></td>
+<td><p>0.1%</p></td>
+</tr>
+<tr class="row-even"><td><p>biolink:ChemicalRole</p></td>
+<td><p>95</p></td>
+<td><p>0.1%</p></td>
+</tr>
+<tr class="row-odd"><td><p>biolink:BiologicalProcess</p></td>
+<td><p>84</p></td>
+<td><p>0.1%</p></td>
+</tr>
+<tr class="row-even"><td><p>biolink:EnvironmentalFeature</p></td>
+<td><p>60</p></td>
+<td><p>0.0%</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Status</strong>: ✅ Well-categorized</p>
+</section>
+<section id="mediadive-32-467-nodes">
+<h4>MediaDive (32,467 nodes)<a class="headerlink" href="#mediadive-32-467-nodes" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>Count</p></th>
+<th class="head"><p>Percentage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>biolink:OrganismTaxon</p></td>
+<td><p>22,367</p></td>
+<td><p>68.9%</p></td>
+</tr>
+<tr class="row-odd"><td><p>biolink:ChemicalEntity</p></td>
+<td><p>6,601</p></td>
+<td><p>20.3%</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:1004005</p></td>
+<td><p>3,317</p></td>
+<td><p>10.2%</p></td>
+</tr>
+<tr class="row-odd"><td><p>biolink:ChemicalRole</p></td>
+<td><p>180</p></td>
+<td><p>0.6%</p></td>
+</tr>
+<tr class="row-even"><td><p>biolink:ChemicalMixture</p></td>
+<td><p>2</p></td>
+<td><p>0.0%</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong>: Uses METPO:1004005 custom category extensively</p>
+</section>
+<section id="rhea-mappings-81-678-nodes">
+<h4>Rhea Mappings (81,678 nodes)<a class="headerlink" href="#rhea-mappings-81-678-nodes" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>Count</p></th>
+<th class="head"><p>Percentage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>biolink:MolecularActivity</p></td>
+<td><p>77,285</p></td>
+<td><p>94.6%</p></td>
+</tr>
+<tr class="row-odd"><td><p>biolink:BiologicalProcess</p></td>
+<td><p>4,393</p></td>
+<td><p>5.4%</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Status</strong>: ✅ Well-categorized</p>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="sources-analyzed">
+<h2>Sources Analyzed<a class="headerlink" href="#sources-analyzed" title="Link to this heading"></a></h2>
+<p><strong>Active Transformed Data</strong> (18 files):</p>
+<ul class="simple">
+<li><p>✅ data/transformed/bacdive/nodes.tsv</p></li>
+<li><p>✅ data/transformed/bactotraits/nodes.tsv</p></li>
+<li><p>✅ data/transformed/bakta/cmm_bakta/nodes.tsv</p></li>
+<li><p>✅ data/transformed/cmm-ai/cmm-ai_nodes.tsv</p></li>
+<li><p>✅ data/transformed/cog/nodes.tsv</p></li>
+<li><p>✅ data/transformed/madin_etal/nodes.tsv</p></li>
+<li><p>✅ data/transformed/mediadive/nodes.tsv</p></li>
+<li><p>✅ data/transformed/rhea_mappings/nodes.tsv</p></li>
+<li><p>✅ data/transformed/ontologies/chebi_nodes.tsv</p></li>
+<li><p>✅ data/transformed/ontologies/ec_nodes.tsv (⚠️ 1 NamedThing found)</p></li>
+<li><p>✅ data/transformed/ontologies/envo_nodes.tsv</p></li>
+<li><p>✅ data/transformed/ontologies/foodon_nodes.tsv</p></li>
+<li><p>✅ data/transformed/ontologies/go_nodes.tsv</p></li>
+<li><p>✅ data/transformed/ontologies/hp_nodes.tsv</p></li>
+<li><p>✅ data/transformed/ontologies/metpo_nodes.tsv</p></li>
+<li><p>✅ data/transformed/ontologies/ncbitaxon_nodes.tsv</p></li>
+<li><p>✅ data/transformed/ontologies/uberon_nodes.tsv</p></li>
+<li><p>✅ data/transformed/ontologies/upa_nodes.tsv</p></li>
+</ul>
+<p><strong>Note</strong>: Excluded ontologies_last/ (backup directory)</p>
+</section>
+<hr class="docutils" />
+<section id="issues-identified">
+<h2>Issues Identified<a class="headerlink" href="#issues-identified" title="Link to this heading"></a></h2>
+<section id="single-namedthing-node-low-priority">
+<h3>1. Single NamedThing Node (Low Priority)<a class="headerlink" href="#single-namedthing-node-low-priority" title="Link to this heading"></a></h3>
+<p><strong>Node</strong>: <code class="docutils literal notranslate"><span class="pre">RO:0002333</span></code> in EC ontology
+<strong>Issue</strong>: Relation Ontology term incorrectly included as a node
+<strong>Fix</strong>: Filter RO terms from EC ontology transform
+<strong>Priority</strong>: Low (only 1 occurrence)</p>
+</section>
+<section id="custom-metpo-category-medium-priority">
+<h3>2. Custom METPO Category (Medium Priority)<a class="headerlink" href="#custom-metpo-category-medium-priority" title="Link to this heading"></a></h3>
+<p><strong>Category</strong>: <code class="docutils literal notranslate"><span class="pre">METPO:1004005</span></code>
+<strong>Sources</strong>: BacDive (1,575 nodes), CMM-AI (11 nodes), MediaDive (3,317 nodes)
+<strong>Total</strong>: 4,903 nodes
+<strong>Issue</strong>: Custom category not part of standard Biolink model
+<strong>Recommendation</strong>: Map METPO:1004005 to appropriate Biolink category
+<strong>Likely mapping</strong>: Needs investigation - appears to be growth media or substrate related</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="recommendations">
+<h2>Recommendations<a class="headerlink" href="#recommendations" title="Link to this heading"></a></h2>
+<section id="immediate-actions">
+<h3>Immediate Actions<a class="headerlink" href="#immediate-actions" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Fix EC Ontology Transform</strong> ✅ (Low Priority)</p>
+<ul class="simple">
+<li><p>Filter out RO (Relation Ontology) terms from EC nodes</p></li>
+<li><p>File: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/ontologies/ontologies_transform.py</span></code></p></li>
+<li><p>Add RO prefix to exclusion list</p></li>
+</ul>
+</li>
+<li><p><strong>Investigate METPO:1004005</strong> 🔍 (Medium Priority)</p>
+<ul class="simple">
+<li><p>Determine what METPO:1004005 represents</p></li>
+<li><p>Map to appropriate Biolink category or categories</p></li>
+<li><p>Options:</p>
+<ul>
+<li><p>biolink:ChemicalEntity</p></li>
+<li><p>biolink:ChemicalMixture</p></li>
+<li><p>biolink:EnvironmentalFeature</p></li>
+<li><p>Custom mixin if justified</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="future-enhancements">
+<h3>Future Enhancements<a class="headerlink" href="#future-enhancements" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Add Category Validation</strong></p>
+<ul class="simple">
+<li><p>Implement pre-merge validation to catch NamedThing occurrences</p></li>
+<li><p>Alert on non-standard categories like METPO:1004005</p></li>
+</ul>
+</li>
+<li><p><strong>Category Consistency Check</strong></p>
+<ul class="simple">
+<li><p>Ensure ChemicalEntity vs ChemicalSubstance usage is consistent</p></li>
+<li><p>Review MolecularActivity vs Enzyme categorization</p></li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+<hr class="docutils" />
+<section id="statistics-summary">
+<h2>Statistics Summary<a class="headerlink" href="#statistics-summary" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Metric</p></th>
+<th class="head"><p>Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Total sources analyzed</p></td>
+<td><p>18</p></td>
+</tr>
+<tr class="row-odd"><td><p>Sources with NamedThing</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>Total NamedThing nodes</p></td>
+<td><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>Total nodes analyzed</p></td>
+<td><p>~1.1M+</p></td>
+</tr>
+<tr class="row-even"><td><p>NamedThing percentage</p></td>
+<td><p>&lt;0.0001%</p></td>
+</tr>
+<tr class="row-odd"><td><p>Sources with custom categories</p></td>
+<td><p>3 (BacDive, CMM-AI, MediaDive)</p></td>
+</tr>
+<tr class="row-even"><td><p>Custom category nodes</p></td>
+<td><p>4,903 (METPO:1004005)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading"></a></h2>
+<p>KG-Microbe transforms are <strong>exceptionally well-categorized</strong> with only 1 NamedThing occurrence (0.0001% of all nodes). This indicates:</p>
+<p>✅ Excellent use of Biolink model categories
+✅ Proper entity typing across all transforms
+✅ Minimal cleanup required</p>
+<p>The only action items are:</p>
+<ol class="arabic simple">
+<li><p>Filter RO:0002333 from EC ontology (trivial fix)</p></li>
+<li><p>Investigate and map METPO:1004005 to standard Biolink (requires domain knowledge)</p></li>
+</ol>
+<p><strong>Overall Assessment</strong>: Production-ready with minor improvements possible.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

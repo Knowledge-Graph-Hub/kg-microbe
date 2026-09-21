@@ -1,0 +1,1227 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PREGO score validation — findings &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">PREGO score validation — findings</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PREGO_SCORE_VALIDATION.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="prego-score-validation-findings">
+<h1>PREGO score validation — findings<a class="headerlink" href="#prego-score-validation-findings" title="Link to this heading"></a></h1>
+<p><strong>Date:</strong> 2026-08-06 · <strong>Branch:</strong> <code class="docutils literal notranslate"><span class="pre">feat/prego-confidence-calibration</span></code> · <strong>PR:</strong> #697
+<strong>Issues:</strong> #693 (merge RAM), #694 (<code class="docutils literal notranslate"><span class="pre">prego_channel</span></code>), #695 (edge metadata), #696 (calibration design), #698 (statistical review), #702 (validation coverage)</p>
+<p>Companion to <a class="reference internal" href="PREGO_INGEST_PLAN.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">PREGO_INGEST_PLAN.md</span></code></span></a>, which covers acquisition and schema. This document covers <strong>whether PREGO’s <code class="docutils literal notranslate"><span class="pre">prego_score</span></code> means anything</strong>, measured against four independent gold standards.</p>
+<hr class="docutils" />
+<section id="verdict">
+<h2>Verdict<a class="headerlink" href="#verdict" title="Link to this heading"></a></h2>
+<blockquote>
+<div><p><strong>Status: NOT ESTABLISHED.</strong> Under matched taxa <em>and</em> matched label policy the
+predicate contrast largely dissolves — interaction +0.281, clustered 95% CI
+[−0.237, +0.624], 82.5% one-sided. Both predicates show weak positive
+discrimination (1.40 vs 1.12) and the difference between them is not
+distinguishable from zero. See
+<a class="reference internal" href="#matched-taxa-interaction-test"><span class="xref myst">Matched-taxa interaction test</span></a>. The
+per-benchmark contrast reported below was driven substantially by differences
+in gold standard and label policy, not by the predicate.</p>
+</div></blockquote>
+<p><strong>Original hypothesis (now unsupported): the score discriminates on <code class="docutils literal notranslate"><span class="pre">location_of</span></code> edges and not on <code class="docutils literal notranslate"><span class="pre">capable_of</span></code> edges.</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>predicate</p></th>
+<th class="head"><p>edge types</p></th>
+<th class="head text-right"><p>count</p></th>
+<th class="head"><p>score works?</p></th>
+<th class="head"><p>within-term ratio (tie-safe)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">biolink:location_of</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ENVO→taxon</span></code>, <code class="docutils literal notranslate"><span class="pre">BTO→taxon</span></code></p></td>
+<td class="text-right"><p>452,051</p></td>
+<td><p>apparently yes</p></td>
+<td><p>1.49x (18/20 terms), 1.69x (6/8 terms)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">biolink:capable_of</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">taxon→GO</span></code></p></td>
+<td class="text-right"><p>44,258,939</p></td>
+<td><p>no</p></td>
+<td><p>0.84x — wrong direction, or flat</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">biolink:associated_with</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">taxon→MONDO</span></code></p></td>
+<td class="text-right"><p>5,171</p></td>
+<td><p>untested</p></td>
+<td><p>no in-graph reference exists</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Candidate mechanism (post-hoc, untested).</strong> PREGO’s environmental-samples score counts taxon–sample co-occurrence, which is <em>direct</em> evidence for “found in location X” and only <em>indirect</em> evidence for “can perform function Y”. This fits the observations but no analysis tests it or excludes alternatives such as taxon ascertainment or benchmark coverage. It should not be stated as established.</p>
+<p><a name="matched-taxa-interaction-test"></a></p>
+<section id="matched-taxa-interaction-test-the-confound-removing-analysis">
+<h3>Matched-taxa interaction test — the confound-removing analysis<a class="headerlink" href="#matched-taxa-interaction-test-the-confound-removing-analysis" title="Link to this heading"></a></h3>
+<p>External review named this the cheapest way to settle the verdict, so it was run
+(<a class="reference download internal" download="" href="_downloads/d37c181d16155e841f362f49ece61b5b/predicate_interaction.py"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">predicate_interaction.py</span></code></span></a>).
+It removes the benchmark confound rather than adjusting for it: <strong>only the 4,527 taxa
+carrying BOTH a BacDive isolation record and a BacDive assay result</strong>, with within-term
+comparison, taxon-degree decile stratification, tie-safe boundaries, and a two-way
+clustered bootstrap over taxa and terms.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>predicate</p></th>
+<th class="head text-right"><p>terms</p></th>
+<th class="head text-right"><p>in-stratum n</p></th>
+<th class="head text-right"><p>high/low ratio</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">location_of</span></code></p></td>
+<td class="text-right"><p>66</p></td>
+<td class="text-right"><p>9,682</p></td>
+<td class="text-right"><p><strong>1.502</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">capable_of</span></code></p></td>
+<td class="text-right"><p>31</p></td>
+<td class="text-right"><p>12,325</p></td>
+<td class="text-right"><p><strong>1.023</strong></p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Interaction (location − capable): +0.479, two-way clustered 95% CI [−0.015, +1.128].</strong>
+96.8% of resamples put <code class="docutils literal notranslate"><span class="pre">location_of</span></code> above <code class="docutils literal notranslate"><span class="pre">capable_of</span></code>.</p>
+<p>That still left one confound: the <strong>label policies differ.</strong> Location gold is
+positive-only — absence means unknown but is necessarily counted as a miss — while
+function gold carries explicit negatives and excludes unlabelled pairs. Matching taxa
+does not match that.</p>
+<section id="matching-the-label-policy-too-positive-only">
+<h4>Matching the label policy too (<code class="docutils literal notranslate"><span class="pre">--positive-only</span></code>)<a class="headerlink" href="#matching-the-label-policy-too-positive-only" title="Link to this heading"></a></h4>
+<p>Recasting function labels as positive-only, so both predicates use identical semantics:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>predicate</p></th>
+<th class="head text-right"><p>terms</p></th>
+<th class="head text-right"><p>in-stratum n</p></th>
+<th class="head text-right"><p>high/low ratio</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">location_of</span></code></p></td>
+<td class="text-right"><p>65</p></td>
+<td class="text-right"><p>8,805</p></td>
+<td class="text-right"><p><strong>1.396</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">capable_of</span></code></p></td>
+<td class="text-right"><p>31</p></td>
+<td class="text-right"><p>28,892</p></td>
+<td class="text-right"><p><strong>1.115</strong></p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Interaction +0.281, two-way clustered 95% CI [−0.237, +0.624].</strong> 82.5% of resamples
+positive — down from 96.8%.</p>
+<p><strong>Reading — this is the decisive run.</strong> Once taxa <em>and</em> label policy are matched, the
+contrast largely dissolves. The interaction nearly halves, the interval widens well
+across zero, and one-sided support falls to ~0.18 (not significant). Note especially
+that <code class="docutils literal notranslate"><span class="pre">capable_of</span></code> rises from 1.023 to <strong>1.115</strong> under matched semantics: the “no
+discrimination at all for function” result was <strong>partly an artifact of the label
+policy</strong>, not a property of the predicate.</p>
+<p>What survives: <strong>both</strong> predicates show weak positive discrimination (1.40 and 1.12),
+and the difference between them is not distinguishable from zero on matched data.</p>
+<p>Verdict after this test: <strong>not established.</strong> The dramatic per-benchmark contrast
+reported below was driven substantially by gold-standard and label-policy differences
+rather than by the predicate.</p>
+<p><a name="confounds-that-limit-the-verdict"></a></p>
+</section>
+</section>
+<section id="confounds-that-limit-the-verdict">
+<h3>Confounds that limit the verdict<a class="headerlink" href="#confounds-that-limit-the-verdict" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Predicate was inseparable from benchmark and label policy.</strong> Addressed by the matched-taxa test above, which controls both. The contrast did not survive: interaction +0.281, CI [−0.237, +0.624].</p></li>
+<li><p><strong>BTO is not an independent replication of ENVO.</strong> Both project the <em>same</em> BacDive isolation source. With tie-safe strata it is 6 of 8 terms (n=843 in-stratum), an unclustered one-sided sign test around p≈0.1 — a sensitivity check, not confirmation. <strong>Now partly addressed</strong> by an independent standard — see <a class="reference internal" href="#independent-replication"><span class="xref myst">Independent replication</span></a> — which reproduces the direction and the threshold peak at reduced strength.</p></li>
+<li><p><strong>Within-term stratification controls term identity, not taxon degree.</strong> In the BTO split the high-score half has mean BacDive gold degree 4.85 vs 3.56 and mean PREGO degree 23.10 vs 18.73; ENVO likewise 91.64 vs 70.67. Well-covered taxa remain an open path to apparent discrimination.</p></li>
+<li><p><strong>No clustered uncertainty anywhere.</strong> Edges reuse taxa, terms and resources; all intervals quoted are iid and therefore optimistic.</p></li>
+</ol>
+</section>
+</section>
+<hr class="docutils" />
+<section id="why-this-was-needed">
+<h2>Why this was needed<a class="headerlink" href="#why-this-was-needed" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">prego_score</span></code> is not one scale. Per PREGO’s authors (Zafeiropoulos et al. 2022, §2.3, verified against PMC8879827):</p>
+<blockquote>
+<div><p>“All associations extracted from these resources were assigned <strong>arbitrarily a confidence level of four out of five</strong>.”</p>
+</div></blockquote>
+<p>Appendix C.1: <em>“The Genome Annotation and Isolates channel has <strong>fixed values of scores</strong> depending on the resource.”</em> BioProject/PMID rows get 3/5. <strong>PREGO computes no cross-channel combined score</strong> — the shared (0,5] range is a display convention.</p>
+<p>Measured channel composition of emitted edges:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>channel</p></th>
+<th class="head text-right"><p>share</p></th>
+<th class="head"><p>scores</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">&lt;N</span> <span class="pre">of</span> <span class="pre">M</span> <span class="pre">samples&gt;</span></code> (Environmental Samples)</p></td>
+<td class="text-right"><p>53.00%</p></td>
+<td><p>continuous, mean 1.96</p></td>
+</tr>
+<tr class="row-odd"><td><p>Isolates</p></td>
+<td class="text-right"><p>28.66%</p></td>
+<td><p>flat, all 4.0</p></td>
+</tr>
+<tr class="row-even"><td><p>Genome annotation</p></td>
+<td class="text-right"><p>9.17%</p></td>
+<td><p>flat, all 4.0</p></td>
+</tr>
+<tr class="row-odd"><td><p>Metagenome-Assembled Genome</p></td>
+<td class="text-right"><p>7.27%</p></td>
+<td><p>flat, ~all 4.0</p></td>
+</tr>
+<tr class="row-even"><td><p>Single Amplified Genome</p></td>
+<td class="text-right"><p>1.79%</p></td>
+<td><p>flat</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PMID:*</span></code></p></td>
+<td class="text-right"><p>0.05%</p></td>
+<td><p>flat, all 3.0</p></td>
+</tr>
+</tbody>
+</table>
+<p>Range is 0 to <strong>4.00735</strong> (mean 2.92) — the shipped data exceeds the paper’s documented cap of 4.</p>
+</section>
+<hr class="docutils" />
+<section id="gold-standards-built">
+<h2>Gold standards built<a class="headerlink" href="#gold-standards-built" title="Link to this heading"></a></h2>
+<p>All four are <strong>in-graph</strong>; none required external data.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>#</p></th>
+<th class="head"><p>standard</p></th>
+<th class="head"><p>how built</p></th>
+<th class="head"><p>scale</p></th>
+<th class="head"><p>provenance</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>metatraits + metatraits_gtdb + madin_etal</p></td>
+<td><p>direct <code class="docutils literal notranslate"><span class="pre">NCBITaxon→GO</span></code> edges</p></td>
+<td><p>333,407 pairs, 78 GO terms</p></td>
+<td><p>trait curation</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>UniProt proteomes</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">protein</span> <span class="pre">-derives_from-&gt;</span> <span class="pre">NCBITaxon</span></code> × <code class="docutils literal notranslate"><span class="pre">protein</span> <span class="pre">-participates_in|located_in-&gt;</span> <span class="pre">GO</span></code> from <code class="docutils literal notranslate"><span class="pre">data/merged/20250222_function/</span></code></p></td>
+<td><p>14,411,869 pairs, 4,209 GO terms</p></td>
+<td><p>genome annotation</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p><strong>BacDive assays</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">strain</span> <span class="pre">-METPO:2000302|2000303-&gt;</span> <span class="pre">assay</span> <span class="pre">-has_output-&gt;</span> <span class="pre">GO</span></code>, strain lifted to taxon</p></td>
+<td><p>36,844 pos / 67,571 neg, 36 GO terms</p></td>
+<td><p><strong>wet-lab phenotype, with negatives</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>BacDive isolation</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ENVO</span> <span class="pre">-location_of-&gt;</span> <span class="pre">strain</span></code> and <code class="docutils literal notranslate"><span class="pre">UBERON|CL</span> <span class="pre">-location_of-&gt;</span> <span class="pre">strain</span></code> (BTO via <code class="docutils literal notranslate"><span class="pre">uberon_nodes.xref</span></code>)</p></td>
+<td><p>13,212 ENVO + 6,288 BTO pairs</p></td>
+<td><p>isolation records</p></td>
+</tr>
+</tbody>
+</table>
+<p>Standard 3 is the only one with <strong>labelled negatives</strong>, so it supports precision measurement with no null model.</p>
+<p><strong>But its negatives are strain-level and the claim is taxon-level.</strong> “Taxon capable_of GO” is existential — some strain having the capability makes it true — so strains testing negative do not refute it. Excluding the 12,916 mixed pairs does not repair that mismatch. The 0.3215 figure is agreement with strain-lifted labels, not a taxon-level false-positive rate.</p>
+</section>
+<hr class="docutils" />
+<section id="results">
+<h2>Results<a class="headerlink" href="#results" title="Link to this heading"></a></h2>
+<section id="ncbitaxon-capable-of-go-44-258-939-edges-98-98">
+<h3><code class="docutils literal notranslate"><span class="pre">NCBITaxon</span> <span class="pre">-capable_of-&gt;</span> <span class="pre">GO</span></code> — 44,258,939 edges (98.98%)<a class="headerlink" href="#ncbitaxon-capable-of-go-44-258-939-edges-98-98" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>gold standard</p></th>
+<th class="head"><p>coverage</p></th>
+<th class="head"><p>continuous</p></th>
+<th class="head"><p>flat</p></th>
+<th class="head"><p>trend with score</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>metatraits</p></td>
+<td><p>78 GO, 1.0%</p></td>
+<td><p>1.45x</p></td>
+<td><p>1.00x</p></td>
+<td><p><strong>falls</strong> 1.61→1.59→1.56; 30 of 47 terms wrong way</p></td>
+</tr>
+<tr class="row-odd"><td><p>UniProt</p></td>
+<td><p>4,209 GO, <strong>41.5%</strong></p></td>
+<td><p>1.07x</p></td>
+<td><p>2.19x</p></td>
+<td><p>rises weakly 0.94→0.96→1.04→1.19</p></td>
+</tr>
+<tr class="row-even"><td><p>BacDive assays</p></td>
+<td><p>36 GO, 0.1%</p></td>
+<td><p>precision <strong>0.3215</strong>, lift <strong>0.91</strong></p></td>
+<td><p><strong>0.4897</strong>, lift <strong>1.39</strong></p></td>
+<td><p><strong>flat</strong> 0.303/0.318/0.307/0.350/0.331</p></td>
+</tr>
+</tbody>
+</table>
+<p>Assay base rate: <strong>0.3529</strong> (measured).</p>
+<p>Two readings:</p>
+<ul class="simple">
+<li><p><strong>The score does not work here.</strong> No standard produces a usable monotone trend, and the assay test — the only one needing no null model — shows none.</p></li>
+<li><p><strong>The flat/genome channels are enriched</strong> under both non-trait standards (2.19x, 1.39x), including the provenance-disjoint one. Their reliability comes from <strong>provenance, not score</strong> (they carry a constant).</p></li>
+</ul>
+<p>The three standards disagree on the <em>continuous channel</em> (1.45x / 1.07x / 0.91x) in a pattern matching each standard’s provenance. That disagreement is itself a finding: <strong>no single gold standard is neutral here.</strong></p>
+</section>
+<section id="envo-location-of-ncbitaxon-416-229-edges-0-93">
+<h3><code class="docutils literal notranslate"><span class="pre">ENVO</span> <span class="pre">-location_of-&gt;</span> <span class="pre">NCBITaxon</span></code> — 416,229 edges (0.93%)<a class="headerlink" href="#envo-location-of-ncbitaxon-416-229-edges-0-93" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>window</p></th>
+<th class="head"><p>score range</p></th>
+<th class="head text-right"><p>n</p></th>
+<th class="head text-right"><p>hit rate</p></th>
+<th class="head text-right"><p>fold</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>0.001–0.327</p></td>
+<td class="text-right"><p>2,204</p></td>
+<td class="text-right"><p>0.122</p></td>
+<td class="text-right"><p>3.58x</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>0.327–0.862</p></td>
+<td class="text-right"><p>2,202</p></td>
+<td class="text-right"><p>0.103</p></td>
+<td class="text-right"><p>3.01x</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>0.862–2.102</p></td>
+<td class="text-right"><p>2,203</p></td>
+<td class="text-right"><p>0.111</p></td>
+<td class="text-right"><p>3.26x</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>2.103–3.951</p></td>
+<td class="text-right"><p>2,202</p></td>
+<td class="text-right"><p>0.429</p></td>
+<td class="text-right"><p><strong>12.58x</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>3.951–4.007</p></td>
+<td class="text-right"><p>2,197</p></td>
+<td class="text-right"><p>0.581</p></td>
+<td class="text-right"><p><strong>17.03x</strong></p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>7.89x overall.</strong> Stratified within ENVO term (tie-safe boundaries): <strong>18 of 20</strong> terms with ≥100 comparable edges have the higher-score half agreeing more; pooled 0.219 → 0.325 (<strong>1.49x</strong>).</p>
+</section>
+<section id="bto-location-of-ncbitaxon-35-822-edges-0-08">
+<h3><code class="docutils literal notranslate"><span class="pre">BTO</span> <span class="pre">-location_of-&gt;</span> <span class="pre">NCBITaxon</span></code> — 35,822 edges (0.08%)<a class="headerlink" href="#bto-location-of-ncbitaxon-35-822-edges-0-08" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>window</p></th>
+<th class="head"><p>score range</p></th>
+<th class="head text-right"><p>n</p></th>
+<th class="head text-right"><p>hit rate</p></th>
+<th class="head text-right"><p>fold</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>0.010–0.489</p></td>
+<td class="text-right"><p>222</p></td>
+<td class="text-right"><p>0.099</p></td>
+<td class="text-right"><p>1.66x</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>0.490–1.032</p></td>
+<td class="text-right"><p>221</p></td>
+<td class="text-right"><p>0.086</p></td>
+<td class="text-right"><p>1.44x</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>1.036–3.000</p></td>
+<td class="text-right"><p>427</p></td>
+<td class="text-right"><p>0.351</p></td>
+<td class="text-right"><p><strong>5.89x</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>4.000 (tied)</p></td>
+<td class="text-right"><p>232</p></td>
+<td class="text-right"><p>0.272</p></td>
+<td class="text-right"><p>4.55x</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>3.86x overall.</strong> Stratified (tie-safe): <strong>6 of 8</strong> BTO terms (≥30 edges) agree; pooled 0.158 → 0.266 (<strong>1.69x</strong>). The index-median split originally published gave 7 of 9 and 1.94x — the result is tie-sensitive.</p>
+</section>
+<section id="ncbitaxon-associated-with-mondo-5-171-edges-0-01">
+<h3><code class="docutils literal notranslate"><span class="pre">NCBITaxon</span> <span class="pre">-associated_with-&gt;</span> <span class="pre">MONDO</span></code> — 5,171 edges (0.01%)<a class="headerlink" href="#ncbitaxon-associated-with-mondo-5-171-edges-0-01" title="Link to this heading"></a></h3>
+<p>Untested. PREGO is the only source of MONDO edges in the graph. Emitting BacDive pathogenicity as <code class="docutils literal notranslate"><span class="pre">taxon→MONDO</span></code> would unlock it and has independent value.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="threshold-selection-for-location-of-edges">
+<h2>Threshold selection for <code class="docutils literal notranslate"><span class="pre">location_of</span></code> edges<a class="headerlink" href="#threshold-selection-for-location-of-edges" title="Link to this heading"></a></h2>
+<p>Measured on ENVO (the larger of the two).</p>
+<p><strong>Terminology.</strong> BacDive isolation is <strong>positive-only</strong>: an edge absent from it is <em>unknown</em>, not false. The column below is therefore an <strong>overlap rate</strong> among comparable edges, not precision. Only the assay standard supports true precision.</p>
+<p>Baseline 0.03411, over the entity space shared between PREGO and the gold standard (the TISSUES protocol).</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-right"><p>≥ T</p></th>
+<th class="head text-right"><p>overlap rate</p></th>
+<th class="head text-right"><p>fold</p></th>
+<th class="head text-right"><p>ENVO kept</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>0.00</p></td>
+<td class="text-right"><p>0.269</p></td>
+<td class="text-right"><p>7.89x</p></td>
+<td class="text-right"><p>416,229 (100%)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>0.50</p></td>
+<td class="text-right"><p>0.324</p></td>
+<td class="text-right"><p>9.51x</p></td>
+<td class="text-right"><p>301,988 (72.6%)</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>1.00</p></td>
+<td class="text-right"><p>0.395</p></td>
+<td class="text-right"><p>11.59x</p></td>
+<td class="text-right"><p>217,954 (52.4%)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>1.50</p></td>
+<td class="text-right"><p>0.450</p></td>
+<td class="text-right"><p>13.19x</p></td>
+<td class="text-right"><p>153,873 (37.0%)</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>2.00</p></td>
+<td class="text-right"><p>0.495</p></td>
+<td class="text-right"><p>14.51x</p></td>
+<td class="text-right"><p>109,921 (26.4%)</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>2.50</p></td>
+<td class="text-right"><p>0.583</p></td>
+<td class="text-right"><p>17.10x</p></td>
+<td class="text-right"><p>81,827 (19.7%)</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p><strong>3.00</strong></p></td>
+<td class="text-right"><p><strong>0.641</strong></p></td>
+<td class="text-right"><p><strong>18.79x</strong></p></td>
+<td class="text-right"><p><strong>70,558 (17.0%)</strong></p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>3.50</p></td>
+<td class="text-right"><p>0.570</p></td>
+<td class="text-right"><p>16.71x</p></td>
+<td class="text-right"><p>54,615 (13.1%)</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>4.00</p></td>
+<td class="text-right"><p>0.585</p></td>
+<td class="text-right"><p>17.14x</p></td>
+<td class="text-right"><p>52,379 (12.6%)</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Overlap peaks at 3.0 and then falls</strong> — on the same data used to select it, with no held-out validation. Calling 3.0 “strictly dominated above” is only true of observed overlap on this selection set.</p>
+<p>The 83% figure is <strong>retention</strong> loss, not measured recall loss — a positive-only standard cannot enumerate all true edges. Choosing between 3.0 (keeps 17%) and 1.0 (keeps 52%) requires a stated precision/utility target that does not yet exist, and for a recall-oriented KG <strong>unfiltered may well be preferable</strong>. No threshold curve was computed for BTO, so transferring 3.0 to it is unsupported.</p>
+<p>Note the floor: <strong>unfiltered ENVO edges are already 7.9x enriched.</strong> The threshold improves a signal that is present without it.</p>
+</section>
+<hr class="docutils" />
+<section id="recommendations-claude-s-for-review">
+<h2>Recommendations (Claude’s, for review)<a class="headerlink" href="#recommendations-claude-s-for-review" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>edge type</p></th>
+<th class="head text-right"><p>count</p></th>
+<th class="head"><p>recommendation</p></th>
+<th class="head"><p>basis</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ENVO</span> <span class="pre">-location_of-&gt;</span></code></p></td>
+<td class="text-right"><p>416,229</p></td>
+<td><p>keep; threshold <strong>only against a stated utility target</strong></p></td>
+<td><p>overlap rises with score; 3.0 is the in-sample optimum, not a validated operating point</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BTO</span> <span class="pre">-location_of-&gt;</span></code></p></td>
+<td class="text-right"><p>35,822</p></td>
+<td><p>keep; <strong>no</strong> threshold transfer</p></td>
+<td><p>1.69x tie-safe, 6/8 terms, same BacDive source as ENVO — not independent</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">taxon</span> <span class="pre">-capable_of-&gt;</span> <span class="pre">GO</span></code>, flat channels</p></td>
+<td class="text-right"><p>~20.9M</p></td>
+<td><p>keep, <strong>no</strong> threshold</p></td>
+<td><p>provenance: 1.39x disjoint, 2.19x UniProt</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">taxon</span> <span class="pre">-capable_of-&gt;</span> <span class="pre">GO</span></code>, continuous</p></td>
+<td class="text-right"><p>23,289,791</p></td>
+<td><p><strong>not yet — do not drop</strong></p></td>
+<td><p>no reliable score ranking, but that is not evidence of no value; the standards reach 0.1–41.5% and PREGO-only content is unmeasurable by construction</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">taxon</span> <span class="pre">-associated_with-&gt;</span> <span class="pre">MONDO</span></code></p></td>
+<td class="text-right"><p>5,171</p></td>
+<td><p>keep, flag unvalidated</p></td>
+<td><p>no reference exists</p></td>
+</tr>
+</tbody>
+</table>
+<p>Supporting arguments:</p>
+<ol class="arabic simple">
+<li><p><strong>Filter GO edges by channel, not by score.</strong> The evidence speaks to provenance, not to the score. A channel filter is expressible in <code class="docutils literal notranslate"><span class="pre">merge.yaml</span></code> via <code class="docutils literal notranslate"><span class="pre">edge_filters</span></code> today (exact-string matching), so it needs no numeric comparison.</p></li>
+<li><p><strong>Per-predicate thresholds, not one global knob.</strong> A single <code class="docutils literal notranslate"><span class="pre">min_confidence</span></code> is a validated quality filter on <code class="docutils literal notranslate"><span class="pre">location_of</span></code> and an arbitrary cut on <code class="docutils literal notranslate"><span class="pre">capable_of</span></code> simultaneously.</p></li>
+<li><p><strong>Dropping the continuous GO block removes 23,289,791 rows — 52.08% of rows but only 33.33% of bytes</strong>, since those rows are shorter. <code class="docutils literal notranslate"><span class="pre">edges.tsv</span></code> goes from 7.38 GiB to <strong>4.92 GiB</strong>, not the ~3.5 GB stated earlier. <strong>No merge benchmark was run</strong>, so the claim that this “largely dissolves” the 48 GB problem in #693 is unverified.</p></li>
+</ol>
+<section id="sizing-the-provenance-columns-cost-48">
+<h3>Sizing: the provenance columns cost 48%<a class="headerlink" href="#sizing-the-provenance-columns-cost-48" title="Link to this heading"></a></h3>
+<p>Measured 2026-08-07 over all 44,716,161 rows of the real
+<code class="docutils literal notranslate"><span class="pre">data/transformed/prego/edges.tsv</span></code>, not estimated from a sample.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head text-right"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>rows</p></td>
+<td class="text-right"><p>44,716,161</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">edges.tsv</span></code> before the #703 columns</p></td>
+<td class="text-right"><p><strong>7.38 GiB</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>bytes added</p></td>
+<td class="text-right"><p><strong>3.54 GiB</strong> (85.1 B/row)</p></td>
+</tr>
+<tr class="row-odd"><td><p>projected <code class="docutils literal notranslate"><span class="pre">edges.tsv</span></code></p></td>
+<td class="text-right"><p><strong>10.93 GiB</strong> (<strong>+48.0%</strong>)</p></td>
+</tr>
+</tbody>
+</table>
+<p>The added columns are <code class="docutils literal notranslate"><span class="pre">prego_source</span></code>, <code class="docutils literal notranslate"><span class="pre">prego_evidence_class</span></code>, <code class="docutils literal notranslate"><span class="pre">knowledge_level</span></code>
+and <code class="docutils literal notranslate"><span class="pre">agent_type</span></code>, plus <code class="docutils literal notranslate"><span class="pre">prego_channel</span></code> changing from PREGO’s verbatim column 6
+to a channel name. The raw column-6 string is not double-counted — it <em>moves</em>
+to <code class="docutils literal notranslate"><span class="pre">prego_evidence</span></code>, so it cancels.</p>
+<section id="what-that-does-to-the-merge-budget">
+<h4>What that does to the merge budget<a class="headerlink" href="#what-that-does-to-the-merge-budget" title="Link to this heading"></a></h4>
+<p>KGX holds every source graph in the parent simultaneously, so the number that
+matters for #693 is total merge input, not PREGO alone. Measured across the 20
+<code class="docutils literal notranslate"><span class="pre">merge.yaml</span></code> sources present on disk:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head text-right"><p>total input</p></th>
+<th class="head text-right"><p>prego</p></th>
+<th class="head text-right"><p>prego share</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>today</p></td>
+<td class="text-right"><p><strong>9.72 GiB</strong></p></td>
+<td class="text-right"><p>7.40 GiB</p></td>
+<td class="text-right"><p><strong>76.2%</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>after the #703 columns</p></td>
+<td class="text-right"><p><strong>13.26 GiB</strong></p></td>
+<td class="text-right"><p>10.94 GiB</p></td>
+<td class="text-right"><p><strong>82.5%</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">merge.noprego.yaml</span></code></p></td>
+<td class="text-right"><p><strong>2.32 GiB</strong></p></td>
+<td class="text-right"><p>—</p></td>
+<td class="text-right"><p>—</p></td>
+</tr>
+</tbody>
+</table>
+<p>Three things follow, and they are the actual budgeting answer:</p>
+<ol class="arabic simple">
+<li><p><strong>Merge input grows 36.4% overall</strong> (9.72 → 13.26 GiB) from a change that
+touches one source. PREGO’s own +48% dilutes to +36% at the merge level only
+because the other 19 sources together are 2.32 GiB.</p></li>
+<li><p><strong>PREGO’s share of bytes goes 76.2% → 82.5%</strong>, so it dominates input size
+more than before. But see the caveat below before treating that as a
+memory ranking — it is not one.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">merge.noprego.yaml</span></code> is a 4.2x reduction today and 5.7x after #703.</strong>
+Nothing else available comes close: even deleting every non-PREGO source
+would save less than PREGO’s growth alone.</p></li>
+</ol>
+</section>
+<section id="bytes-and-objects-rank-differently-do-not-read-the-table-as-memory">
+<h4>Bytes and objects rank differently — do not read the table as memory<a class="headerlink" href="#bytes-and-objects-rank-differently-do-not-read-the-table-as-memory" title="Link to this heading"></a></h4>
+<p>Peak RSS is not measured here. This is input bytes, and KGX’s in-memory
+representation is several times larger and not a fixed multiple. <strong>No merge
+benchmark has been run at the new size.</strong></p>
+<p>More than a magnitude gap, though: KGX peak RSS is dominated by per-object
+Python overhead, which scales with the <strong>number</strong> of nodes and edges, not their
+width. On that axis the picture shifts:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>source</p></th>
+<th class="head text-right"><p>rows</p></th>
+<th class="head text-right"><p>share of rows</p></th>
+<th class="head text-right"><p>share of bytes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>prego</p></td>
+<td class="text-right"><p>44,768,164</p></td>
+<td class="text-right"><p><strong>68.6%</strong></p></td>
+<td class="text-right"><p><strong>76.2%</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>metatraits</p></td>
+<td class="text-right"><p>4,651,069</p></td>
+<td class="text-right"><p>7.1%</p></td>
+<td class="text-right"><p></p></td>
+</tr>
+<tr class="row-even"><td><p>bacdive</p></td>
+<td class="text-right"><p>4,516,195</p></td>
+<td class="text-right"><p>6.9%</p></td>
+<td class="text-right"><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>metatraits_gtdb</p></td>
+<td class="text-right"><p>4,239,260</p></td>
+<td class="text-right"><p>6.5%</p></td>
+<td class="text-right"><p></p></td>
+</tr>
+<tr class="row-even"><td><p>gtdb</p></td>
+<td class="text-right"><p>2,619,745</p></td>
+<td class="text-right"><p>4.0%</p></td>
+<td class="text-right"><p></p></td>
+</tr>
+<tr class="row-odd"><td><p>ncbitaxon</p></td>
+<td class="text-right"><p>1,850,570</p></td>
+<td class="text-right"><p>2.8%</p></td>
+<td class="text-right"><p></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>total</strong></p></td>
+<td class="text-right"><p><strong>65,258,838</strong></p></td>
+<td class="text-right"><p></p></td>
+<td class="text-right"><p></p></td>
+</tr>
+</tbody>
+</table>
+<p>Two things follow that the bytes table hides:</p>
+<ul class="simple">
+<li><p><strong>Non-PREGO is ~31% of objects (20.5M), not ~24%</strong>, and it is concentrated in
+four sources. Halving metatraits + metatraits_gtdb + bacdive would be a real
+memory win, not a rounding error.</p></li>
+<li><p><strong>The #703 columns add zero rows.</strong> They widen existing rows by ~85 B. So in
+object terms PREGO stays at 68.6% before and after, and if RSS is
+object-dominated the merge’s peak grows by considerably less than the 36.4%
+the byte table implies.</p></li>
+</ul>
+<p>An earlier version of this section concluded “any future work on merge memory
+that is not about PREGO is rounding error.” That was a memory ranking argued
+from a byte measurement, and the row counts do not support it.</p>
+<p>The columns are still worth having — <code class="docutils literal notranslate"><span class="pre">knowledge_level</span></code> and <code class="docutils literal notranslate"><span class="pre">agent_type</span></code> were
+shipping empty, which made 44.7M text-mined and statistically-derived
+associations indistinguishable from curated assertions. But the cost should be
+budgeted rather than discovered mid-merge.</p>
+</section>
+</section>
+<section id="how-prego-min-confidence-relates-to-merge-noprego-yaml">
+<h3>How <code class="docutils literal notranslate"><span class="pre">PREGO_MIN_CONFIDENCE</span></code> relates to <code class="docutils literal notranslate"><span class="pre">merge.noprego.yaml</span></code><a class="headerlink" href="#how-prego-min-confidence-relates-to-merge-noprego-yaml" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">PREGO_MIN_CONFIDENCE</span></code> (#697) ships a single global threshold — precisely the
+knob recommendation 2 above argues against. That tension is real and is not
+resolved by this document, so it is worth stating plainly what the knob is for.</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">merge.noprego.yaml</span></code> (#691) is the primary size lever.</strong> It drops PREGO
+entirely — ~76% of merge input, 44.7 M edges, 7.38 GiB — and requires no
+calibration pass, no histogram, no per-resource cutoffs and no threshold
+semantics. If the goal is to make the merge fit in RAM, that is the mechanism
+to reach for, and nothing in this document weakens it.</p>
+<p><strong><code class="docutils literal notranslate"><span class="pre">PREGO_MIN_CONFIDENCE</span></code> is the finer-grained alternative to it</strong>, for the case
+where you want <em>some</em> PREGO rather than none. It is a size lever with a
+principled ordering inside one channel, not a validated quality filter:</p>
+<ul class="simple">
+<li><p>On <code class="docutils literal notranslate"><span class="pre">ENVO</span> <span class="pre">-location_of-&gt;</span></code> it is closest to a quality filter — overlap with
+BacDive rises monotonically with score — but 3.0 is an in-sample optimum, not
+a validated operating point.</p></li>
+<li><p>On <code class="docutils literal notranslate"><span class="pre">taxon</span> <span class="pre">-capable_of-&gt;</span> <span class="pre">GO</span></code> it is an arbitrary cut. No gold standard
+established a score ranking there.</p></li>
+<li><p>On the flat channels it is not a score filter at all, but provenance
+selection by another name: those rows carry an author-assigned constant, so
+the threshold either keeps the whole channel or deletes it.</p></li>
+</ul>
+<p>The knob defaults to <code class="docutils literal notranslate"><span class="pre">0</span></code> (no-op), so neither mechanism is on unless chosen.
+Documented with the full per-channel table in <code class="docutils literal notranslate"><span class="pre">CLAUDE.md</span></code>.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="ubiquity-the-score-tracks-how-common-a-go-term-is">
+<h2>Ubiquity: the score tracks how common a GO term is<a class="headerlink" href="#ubiquity-the-score-tracks-how-common-a-go-term-is" title="Link to this heading"></a></h2>
+<p>Measured 2026-08-07 on the full <code class="docutils literal notranslate"><span class="pre">data/transformed/prego/edges.tsv</span></code> (7.93 GB,
+pre-#703 layout) via <code class="docutils literal notranslate"><span class="pre">scripts/prego_validation/ubiquity_check.py</span></code>. 3,830 GO
+terms with &gt;=50 continuous-channel edges.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-right"><p>ubiquity decile</p></th>
+<th class="head"><p>degree range</p></th>
+<th class="head text-right"><p>terms</p></th>
+<th class="head text-right"><p>mean score</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>1</p></td>
+<td><p>54–3,036</p></td>
+<td class="text-right"><p>383</p></td>
+<td class="text-right"><p>0.666</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>2</p></td>
+<td><p>3,036–5,393</p></td>
+<td class="text-right"><p>383</p></td>
+<td class="text-right"><p>1.657</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>3</p></td>
+<td><p>5,406–6,322</p></td>
+<td class="text-right"><p>383</p></td>
+<td class="text-right"><p>1.977</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>4</p></td>
+<td><p>6,323–6,787</p></td>
+<td class="text-right"><p>383</p></td>
+<td class="text-right"><p>2.031</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>5</p></td>
+<td><p>6,793–6,839</p></td>
+<td class="text-right"><p>383</p></td>
+<td class="text-right"><p>2.099</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>6</p></td>
+<td><p>6,839–6,982</p></td>
+<td class="text-right"><p>383</p></td>
+<td class="text-right"><p>2.056</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>7</p></td>
+<td><p>6,982–7,106</p></td>
+<td class="text-right"><p>383</p></td>
+<td class="text-right"><p>2.025</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>8</p></td>
+<td><p>7,106–7,151</p></td>
+<td class="text-right"><p>383</p></td>
+<td class="text-right"><p>2.021</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>9</p></td>
+<td><p>7,151–7,184</p></td>
+<td class="text-right"><p>383</p></td>
+<td class="text-right"><p>2.013</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>10</p></td>
+<td><p>7,184–7,218</p></td>
+<td class="text-right"><p>383</p></td>
+<td class="text-right"><p>2.007</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Spearman rank correlation (GO degree vs mean score): +0.2592.</strong></p>
+<p>Read the shape, not just the coefficient. The relationship is <strong>not</strong> a smooth
+gradient: mean score climbs steeply from decile 1 to decile 3 (0.67 → 1.98) and
+then plateaus flat at ~2.0 for deciles 4–10. So the score separates <em>rare</em> terms
+from everything else, and carries almost no ordering among the common ones.</p>
+<p>Consequence for thresholding: raising <code class="docutils literal notranslate"><span class="pre">τ</span></code> strips the low-degree tail first —
+the rare, taxon-specific annotations — while barely discriminating within the
+bulk. That is the opposite of what a confidence filter should do if the goal is
+to keep specific, informative edges.</p>
+<section id="habitat-terms-do-not-repeat-the-go-pattern">
+<h3>Habitat terms do <strong>not</strong> repeat the GO pattern<a class="headerlink" href="#habitat-terms-do-not-repeat-the-go-pattern" title="Link to this heading"></a></h3>
+<p>Measured 2026-08-10 on the current <code class="docutils literal notranslate"><span class="pre">edges.tsv</span></code> (12.17 GB, post-#722) with
+<code class="docutils literal notranslate"><span class="pre">ubiquity_check.py</span> <span class="pre">--shape</span> <span class="pre">envo|bto</span></code>. Degree here is <strong>distinct taxa</strong>, not edge
+count: MG-RAST contributes both amplicon and metagenome studies, so one
+(term, taxon) pair can be reported twice (ENVO 1.063 edges per distinct taxon;
+BTO exactly 1.000). The published GO run used edge count, which was sound for
+that shape but would have overstated habitat degree by ~6%.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-right"><p>decile</p></th>
+<th class="head"><p>ENVO degree range</p></th>
+<th class="head text-right"><p>ENVO mean score</p></th>
+<th class="head"><p>BTO degree range</p></th>
+<th class="head text-right"><p>BTO mean score</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>1</p></td>
+<td><p>56–106</p></td>
+<td class="text-right"><p>1.050</p></td>
+<td><p>50–68</p></td>
+<td class="text-right"><p>0.559</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>2</p></td>
+<td><p>120–275</p></td>
+<td class="text-right"><p>1.017</p></td>
+<td><p>70–110</p></td>
+<td class="text-right"><p>0.747</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>3</p></td>
+<td><p>292–510</p></td>
+<td class="text-right"><p>1.093</p></td>
+<td><p>117–142</p></td>
+<td class="text-right"><p>0.511</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>4</p></td>
+<td><p>561–868</p></td>
+<td class="text-right"><p><strong>0.675</strong></p></td>
+<td><p>147–179</p></td>
+<td class="text-right"><p>0.561</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>5</p></td>
+<td><p>890–1,289</p></td>
+<td class="text-right"><p><strong>0.633</strong></p></td>
+<td><p>204–345</p></td>
+<td class="text-right"><p>0.775</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>6</p></td>
+<td><p>1,291–1,693</p></td>
+<td class="text-right"><p>0.727</p></td>
+<td><p>383–401</p></td>
+<td class="text-right"><p>1.277</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>7</p></td>
+<td><p>1,694–2,129</p></td>
+<td class="text-right"><p>1.010</p></td>
+<td><p>417–506</p></td>
+<td class="text-right"><p>1.202</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>8</p></td>
+<td><p>2,159–2,518</p></td>
+<td class="text-right"><p>1.060</p></td>
+<td><p>528–606</p></td>
+<td class="text-right"><p>1.349</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>9</p></td>
+<td><p>2,563–3,086</p></td>
+<td class="text-right"><p>1.330</p></td>
+<td><p>676–856</p></td>
+<td class="text-right"><p>1.664</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>10</p></td>
+<td><p>3,187–8,582</p></td>
+<td class="text-right"><p>1.586</p></td>
+<td><p>891–1,657</p></td>
+<td class="text-right"><p>1.550</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Spearman: ENVO +0.3016 (223 terms), BTO +0.5967 (70 terms).</strong></p>
+<p>Read the shape, not the coefficient — the same instruction as for GO, with the
+opposite conclusion. <strong>ENVO is U-shaped, not monotone.</strong> The rarest three
+deciles score ~1.0–1.09, <em>above</em> the mid-ubiquity deciles 4–6 (0.63–0.73), and
+only the top two deciles rise clearly (1.33, 1.59). So for ENVO the score does
+<strong>not</strong> systematically punish rare, specific habitats — the pathology that makes
+<code class="docutils literal notranslate"><span class="pre">τ</span></code> dangerous for GO does not transfer. The positive Spearman is carried by the
+rising top tail, not by a rare-terms-score-low gradient.</p>
+<p><strong>BTO is closer to monotone</strong> (+0.5967, rising 0.56 → 1.66) and does look like a
+ubiquity ranking. It is also only 70 terms and, per the caveats, not independent
+of ENVO.</p>
+</section>
+<section id="the-genome-channel-is-not-flat-for-habitat-edges">
+<h3>The genome channel is not flat for habitat edges<a class="headerlink" href="#the-genome-channel-is-not-flat-for-habitat-edges" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">CLAUDE.md</span></code> records that the <code class="docutils literal notranslate"><span class="pre">annotated_genomes_isolates</span></code> channel is
+“predominantly a flat 4.0” with “roughly 0.1% of rows” carrying a 3, worth “on
+the order of 20k edges” above <code class="docutils literal notranslate"><span class="pre">τ</span> <span class="pre">=</span> <span class="pre">3</span></code>. That is true of the channel <em>overall</em>,
+which is dominated by the 44.3M <code class="docutils literal notranslate"><span class="pre">capable_of</span></code> edges. It is badly wrong for the
+habitat subset:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>shape</p></th>
+<th class="head"><p>channel</p></th>
+<th class="head text-right"><p>score 3</p></th>
+<th class="head text-right"><p>score 4</p></th>
+<th class="head text-right"><p>share at 3</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ENVO</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">annotated_genomes_isolates</span></code></p></td>
+<td class="text-right"><p>12,562</p></td>
+<td class="text-right"><p>25,187</p></td>
+<td class="text-right"><p><strong>33.3%</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>BTO</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">annotated_genomes_isolates</span></code></p></td>
+<td class="text-right"><p>5,360</p></td>
+<td class="text-right"><p>1,301</p></td>
+<td class="text-right"><p><strong>80.5%</strong></p></td>
+</tr>
+</tbody>
+</table>
+<p>Genome-channel habitat scores are <em>exactly</em> 3 or 4 — no other value occurs.
+Those 17,922 rows at 3 are ~89% of the ~20k the docs attribute to the whole
+channel, so the “small incidental data-quality signal” is in fact almost
+entirely habitat. <strong>Any <code class="docutils literal notranslate"><span class="pre">τ</span> <span class="pre">&gt;</span> <span class="pre">3</span></code> deletes 4.0% of all habitat edges outright</strong>, on
+provenance rather than on quality.</p>
+<p>Note also that the BTO <em>continuous</em> channel is not continuous above 2.0: 23,565
+edges score &lt; 2.0 and 5,596 score exactly 4.0, with <strong>nothing in between</strong>. Every
+threshold from 2.0 to 4.0 is therefore the same filter.</p>
+<hr class="docutils" />
+<p><a name="independent-replication"></a></p>
+</section>
+</section>
+<section id="independent-replication-on-a-non-bacdive-habitat-standard">
+<h2>Independent replication on a non-BacDive habitat standard<a class="headerlink" href="#independent-replication-on-a-non-bacdive-habitat-standard" title="Link to this heading"></a></h2>
+<p>Measured 2026-08-10, <code class="docutils literal notranslate"><span class="pre">fold_enrichment_envo.py</span> <span class="pre">--gold</span> <span class="pre">madin</span></code>.</p>
+<p>Every habitat number above rests on <strong>one</strong> gold standard used twice — the
+confound named above. Madin et al.’s condensed traits carry 14,888
+<code class="docutils literal notranslate"><span class="pre">ENVO</span> <span class="pre">-location_of-&gt;</span> <span class="pre">NCBITaxon</span></code> pairs already at taxon level, and are effectively
+BacDive-free: counting distinct <code class="docutils literal notranslate"><span class="pre">(taxon,</span> <span class="pre">isolation_source)</span></code> pairs — the basis
+closest to what the transform emits — BacDive contributes 1,248 of 69,430,
+about <strong>1.8%</strong>. (The raw-row share is lower, 1,336 of 172,324 = 0.78%, because
+BacDive rows are less duplicated than the bulk GOLD rows; quote 1.8% as the
+gold-relevant bound.) Both are upper-bound estimates — the mapping from raw rows
+to emitted ENVO edges is many-to-many. The bulk comes from GOLD (52%), PATRIC
+(10%), engqvist (7%) and GenBank (7%).</p>
+<p><strong>One trap had to be closed first.</strong> PREGO’s genome-channel habitat edges are
+<em>all</em> <code class="docutils literal notranslate"><span class="pre">JGI</span> <span class="pre">IMG</span></code>, and GOLD is also JGI. Scored against each other that is
+circular, and those 37,749 edges are 53% of everything retained at <code class="docutils literal notranslate"><span class="pre">τ</span> <span class="pre">≥</span> <span class="pre">3</span></code>.
+Measured all-channel, Madin appears to show 3.85x rising to 11.29x — but the
+clean test restricted to the MG-RAST/MGnify continuous channel, which shares no
+provenance with GOLD, is materially weaker:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head text-right"><p>BacDive (all channels)</p></th>
+<th class="head text-right"><p>Madin (continuous only)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>comparable edges</p></td>
+<td class="text-right"><p>11,008</p></td>
+<td class="text-right"><p>27,803</p></td>
+</tr>
+<tr class="row-odd"><td><p>baseline</p></td>
+<td class="text-right"><p>0.03411</p></td>
+<td class="text-right"><p>0.03444</p></td>
+</tr>
+<tr class="row-even"><td><p>fold at τ=0</p></td>
+<td class="text-right"><p><strong>7.89x</strong></p></td>
+<td class="text-right"><p><strong>2.01x</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>fold at τ=1.0</p></td>
+<td class="text-right"><p>11.59x</p></td>
+<td class="text-right"><p>2.45x</p></td>
+</tr>
+<tr class="row-even"><td><p>fold at τ=3.0</p></td>
+<td class="text-right"><p><strong>18.79x</strong> (peak)</p></td>
+<td class="text-right"><p><strong>4.38x</strong> (peak)</p></td>
+</tr>
+<tr class="row-odd"><td><p>fold at τ=3.5</p></td>
+<td class="text-right"><p>16.71x (falls)</p></td>
+<td class="text-right"><p>4.17x (falls)</p></td>
+</tr>
+<tr class="row-even"><td><p>within-term, tie-safe</p></td>
+<td class="text-right"><p>18/20 terms, <strong>1.49x</strong></p></td>
+<td class="text-right"><p>15/22 terms, <strong>1.32x</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>one-sided sign test</p></td>
+<td class="text-right"><p>p=0.0002</p></td>
+<td class="text-right"><p>p=0.0669</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>What replicates.</strong> The direction (higher score agrees more), the monotone rise
+to <code class="docutils literal notranslate"><span class="pre">τ</span> <span class="pre">=</span> <span class="pre">3.0</span></code>, and the fall above it. The peak at 3.0 was previously an in-sample
+optimum with no held-out validation; it now lands in the same place on a standard
+that does not share BacDive’s provenance. That is the single most useful thing
+this test buys.</p>
+<p><strong>What weakens.</strong> Absolute enrichment drops roughly fourfold (7.89x → 2.01x) and
+the within-term ratio from 1.49x to 1.32x, with the sign test falling to
+p=0.0669 — suggestive, not significant at the conventional bar. Some of the gap
+is expected from coverage differences (Madin spans 43 ENVO terms and 13,209 taxa
+against BacDive’s 63 and 8,664), but the honest reading is that habitat
+discrimination is <strong>real and weaker than the BacDive-only numbers imply</strong>.</p>
+<p>The all-channel Madin figures are reported here only to document the circularity;
+<strong>do not quote 3.85x or 11.29x</strong> as independent evidence.</p>
+</section>
+<hr class="docutils" />
+<section id="threshold-recommendation-for-habitat-ingest">
+<h2>Threshold recommendation for habitat ingest<a class="headerlink" href="#threshold-recommendation-for-habitat-ingest" title="Link to this heading"></a></h2>
+<p><strong>Mind the denominator.</strong> The threshold table above is <strong>all-channel</strong> ENVO
+(416,229 edges); the coverage table below is <strong>continuous-channel only</strong>
+(378,480). They reconcile exactly — at every τ the difference is the genome
+contribution, 37,749 for τ ≤ 3 and 25,187 at τ = 4 — but the fold figures and
+the retention figures are not quoted against the same base, so do not divide one
+by the other. Policy-level retention is given after the table.</p>
+<p>Coverage cost per threshold, continuous channel only
+(<code class="docutils literal notranslate"><span class="pre">habitat_threshold_check.py</span></code>). Median term degree is the distinct-taxon degree
+of the term each <em>surviving edge</em> belongs to, computed once on the unfiltered
+set so the baseline does not move with the filter:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head text-right"><p>≥ τ</p></th>
+<th class="head text-right"><p>ENVO edges</p></th>
+<th class="head text-right"><p>kept</p></th>
+<th class="head text-right"><p>terms kept</p></th>
+<th class="head text-right"><p>taxa kept</p></th>
+<th class="head text-right"><p>median term degree</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td class="text-right"><p>0.0</p></td>
+<td class="text-right"><p>378,480</p></td>
+<td class="text-right"><p>100%</p></td>
+<td class="text-right"><p>100% (275)</p></td>
+<td class="text-right"><p>100% (13,316)</p></td>
+<td class="text-right"><p>2,585</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>0.5</p></td>
+<td class="text-right"><p>264,239</p></td>
+<td class="text-right"><p>69.8%</p></td>
+<td class="text-right"><p>82.2%</p></td>
+<td class="text-right"><p>72.2%</p></td>
+<td class="text-right"><p>2,691</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p><strong>1.0</strong></p></td>
+<td class="text-right"><p><strong>180,205</strong></p></td>
+<td class="text-right"><p><strong>47.6%</strong></p></td>
+<td class="text-right"><p><strong>70.9%</strong></p></td>
+<td class="text-right"><p><strong>60.6%</strong></p></td>
+<td class="text-right"><p><strong>2,958</strong></p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>1.5</p></td>
+<td class="text-right"><p>116,124</p></td>
+<td class="text-right"><p>30.7%</p></td>
+<td class="text-right"><p>61.8%</p></td>
+<td class="text-right"><p>51.1%</p></td>
+<td class="text-right"><p>3,187</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>2.0</p></td>
+<td class="text-right"><p>72,172</p></td>
+<td class="text-right"><p>19.1%</p></td>
+<td class="text-right"><p>55.3%</p></td>
+<td class="text-right"><p>44.6%</p></td>
+<td class="text-right"><p>3,582</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>2.5</p></td>
+<td class="text-right"><p>44,078</p></td>
+<td class="text-right"><p>11.6%</p></td>
+<td class="text-right"><p>49.5%</p></td>
+<td class="text-right"><p>41.1%</p></td>
+<td class="text-right"><p>4,198</p></td>
+</tr>
+<tr class="row-even"><td class="text-right"><p>3.0</p></td>
+<td class="text-right"><p>32,809</p></td>
+<td class="text-right"><p>8.7%</p></td>
+<td class="text-right"><p>47.3%</p></td>
+<td class="text-right"><p>37.3%</p></td>
+<td class="text-right"><p>4,140</p></td>
+</tr>
+<tr class="row-odd"><td class="text-right"><p>4.0</p></td>
+<td class="text-right"><p>27,192</p></td>
+<td class="text-right"><p>7.2%</p></td>
+<td class="text-right"><p>47.3%</p></td>
+<td class="text-right"><p>31.1%</p></td>
+<td class="text-right"><p>3,325</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation: <code class="docutils literal notranslate"><span class="pre">τ</span> <span class="pre">=</span> <span class="pre">1.0</span></code> on the continuous channel, genome channel kept
+whole.</strong> What that policy actually retains, counted over <em>all</em> habitat edges —
+not just the continuous ones, since 125 of the 400 ENVO terms appear only in the
+genome channel:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>shape</p></th>
+<th class="head"><p>edges</p></th>
+<th class="head"><p>terms</p></th>
+<th class="head"><p>taxa</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ENVO</p></td>
+<td><p>416,229 → 217,954 (52.4%)</p></td>
+<td><p>400 → 351 (<strong>87.8%</strong>)</p></td>
+<td><p>21,183 → 16,008 (<strong>75.6%</strong>)</p></td>
+</tr>
+<tr class="row-odd"><td><p>BTO</p></td>
+<td><p>35,822 → 19,791 (55.2%)</p></td>
+<td><p>382 → 368 (<strong>96.3%</strong>)</p></td>
+<td><p>7,248 → 6,629 (<strong>91.5%</strong>)</p></td>
+</tr>
+</tbody>
+</table>
+<p>The 52.4% is exactly the threshold table’s <code class="docutils literal notranslate"><span class="pre">τ</span> <span class="pre">=</span> <span class="pre">1.0</span></code> row (217,954), because every
+genome-channel habitat edge scores 3 or 4 and so survives <code class="docutils literal notranslate"><span class="pre">τ</span> <span class="pre">=</span> <span class="pre">1.0</span></code> regardless.
+<strong>11.59x therefore applies precisely to this set</strong> — the two tables agree once
+the denominator is made explicit.</p>
+<p>The reasoning, and its limits:</p>
+<ul class="simple">
+<li><p>It is the knee. Fold enrichment goes 7.89x → 11.59x (+47%) while retaining
+<strong>87.8% of distinct ENVO habitat terms and 75.6% of taxa</strong>. Every further step
+buys less: within the continuous channel, 1.0 → 2.0 costs 15.6 points of term
+coverage for +2.9x.</p></li>
+<li><p>Specificity damage is small here (median degree +14%, 2,585 → 2,958) and the
+U-shaped ubiquity curve says the rarest habitats are not the ones being cut.
+The damage peaks at τ = 2.5 (4,198, +62%) and then <em>eases</em>, so the mid-range
+thresholds are the worst of both worlds.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">τ</span> <span class="pre">=</span> <span class="pre">3.0</span></code> maximises measured overlap (18.79x) but keeps 8.7% of edges and 37%
+of taxa. Overlap is not precision — the standard is positive-only — so paying
+63% of taxa for it is not an obvious trade for a recall-oriented KG. Note the
+“selected in-sample, never validated” objection to 3.0 <strong>no longer holds</strong>: the
+independent Madin standard peaks at 3.0 too. What still argues against it is
+the coverage cost, which is a values judgement rather than a measurement.</p></li>
+<li><p>The genome channel must stay whole: at <code class="docutils literal notranslate"><span class="pre">τ</span> <span class="pre">&gt;</span> <span class="pre">3</span></code> it loses 17,922 habitat edges
+for provenance reasons that say nothing about quality.</p></li>
+</ul>
+<p><strong>This is a judgement, not a measurement.</strong> No precision/utility target exists
+for habitat edges, and one would change the answer: a precision-first consumer
+should prefer 3.0, and a pure-recall consumer 0.0. What the data settles is the
+<em>shape</em> of the trade, not the point on it.</p>
+<p><strong>For BTO, do not threshold</strong> beyond 1.0. Its ubiquity correlation is twice
+ENVO’s (+0.5967), so a threshold does preferentially keep ubiquitous anatomy
+terms, and its score gap makes every τ in [2.0, 4.0] identical anyway.</p>
+<p><code class="docutils literal notranslate"><span class="pre">PREGO_MIN_CONFIDENCE</span></code> <strong>cannot express this policy</strong> — it applies one star
+threshold globally, so it cannot keep the genome channel whole while filtering
+the continuous one, and at τ &gt; 3 it would also delete the literature channel.
+Ingest everything and filter downstream on <code class="docutils literal notranslate"><span class="pre">(prego_channel,</span> <span class="pre">prego_score)</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>awk<span class="w"> </span>-F<span class="s1">&#39;\t&#39;</span><span class="w"> </span><span class="s1">&#39;NR==1 || ($2==&quot;biolink:location_of&quot; &amp;&amp;</span>
+<span class="s1">  ($9!=&quot;environmental_samples&quot; || $8&gt;=1.0))&#39;</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>data/transformed/prego/edges.tsv<span class="w"> </span>&gt;<span class="w"> </span>habitat_tau1.tsv
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="caveats">
+<h2>Caveats<a class="headerlink" href="#caveats" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>Coverage is thin everywhere except UniProt.</strong> Comparable fractions: 41.5% (UniProt/GO), 2.64% (ENVO), 3.08% (BTO), 0.1% (assays/GO).</p></li>
+<li><p><strong>These tests can only reach where PREGO overlaps existing sources</strong> — precisely where it is least additive. PREGO’s stated value is ~2M taxa at species-and-above rank vs BacDive’s ~250K strains. That unique contribution is <strong>unmeasurable by construction</strong>. “Unreliable” here means <em>no positive evidence</em>, not <em>shown wrong</em>.</p></li>
+<li><p><strong>The fold-enrichment baseline is a uniform subject×object null</strong> (#698 finding 1). It controls for neither taxon annotation depth nor term ubiquity. The <strong>within-term stratified ratios</strong> are what address the degree confound; the raw fold numbers do not.</p></li>
+<li><p><strong>No clustered uncertainty</strong> (#698 finding 3). Edges reuse taxa, terms and resources, so intervals are wider than iid. Quoted CIs are iid and therefore optimistic.</p></li>
+<li><p><strong>Strain-level negatives do not cleanly refute species-level claims.</strong> 12,916 (taxon, GO) pairs had one strain positive and another negative; those are excluded, but the granularity mismatch inflates apparent error in the assay test.</p></li>
+<li><p><strong>Positive-only standards</strong> (1, 2, 4) cannot measure false positives; only the assay standard can.</p></li>
+<li><p><strong>Time sensitivity.</strong> PREGO archives are recomputed periodically by <code class="docutils literal notranslate"><span class="pre">lab42open-team/prego_daemons</span></code>; <code class="docutils literal notranslate"><span class="pre">data/merged/20250222_function/</span></code> is a February 2025 build.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="claims-corrected-during-this-work">
+<h2>Claims corrected during this work<a class="headerlink" href="#claims-corrected-during-this-work" title="Link to this heading"></a></h2>
+<p>Recorded because each was stated confidently before being overturned:</p>
+<ol class="arabic simple">
+<li><p><strong>“The score is anti-correlated with quality.”</strong> Held only against the trait-derived standard (78 GO terms, 1% coverage). Against UniProt (41.5%) it rises. Withdrawn.</p></li>
+<li><p><strong>“0.24% of PREGO’s GO space.”</strong> Wrong — used PREGO’s 32,440 distinct <em>objects</em>, which include ENVO and MONDO. The correct figure against 5,230 taxon→GO terms is 1.5%.</p></li>
+<li><p><strong>“BTO is untestable.”</strong> Wrong — 1,645 anatomy terms in <code class="docutils literal notranslate"><span class="pre">uberon_nodes.tsv</span></code> already carry BTO xrefs, the same reverse-lookup the transform uses for DOID→MONDO. No new mapping was needed.</p></li>
+<li><p><strong>A tie-splitting bug in the analysis</strong> sorted <code class="docutils literal notranslate"><span class="pre">(score,</span> <span class="pre">is_hit)</span></code> tuples, so the sort tiebreak pushed non-hits below the 4.0 block and hits above it, fabricating a 0.44x window adjacent to a 1.95x one. Fixed in <code class="docutils literal notranslate"><span class="pre">enrichment_by_window</span></code>; two regression tests.</p></li>
+<li><p><strong>“The calibration and emit passes can never disagree.”</strong> False — the emit pass applies further checks. The 1,200-row delta reported as reassuring was a symptom of this (#699).</p></li>
+<li><p><strong>The within-term stratification split ties.</strong> It used an index median, so sort order rather than the score decided which tied rows fell in which half — the same defect fixed in <code class="docutils literal notranslate"><span class="pre">enrichment_by_window</span></code> and then reintroduced in the very check meant to guard against confounding. Tie-safe boundaries move ENVO from 18/19 at 1.57x to 18/20 at 1.49x, and BTO from 7/9 at 1.94x to <strong>6/8 at 1.69x</strong>. Found by external review.</p></li>
+<li><p><strong>“Precision” applied to positive-only standards.</strong> ENVO/BTO agreement rates are <em>overlap</em> rates; absence from BacDive means unknown, not false. Renamed throughout.</p></li>
+<li><p><strong>“BTO independently replicates ENVO.”</strong> Both project the same BacDive isolation source, so it is a sensitivity check rather than independent replication.</p></li>
+<li><p><strong>Post-filter size “roughly 3.5 GB”.</strong> Wrong: the dropped rows are 52.08% of rows but 33.33% of bytes, leaving <strong>4.92 GiB</strong>. And no merge benchmark was run, so “largely dissolves the 48 GB problem” was unsupported.</p></li>
+<li><p><strong>Verdict stated as established.</strong> Downgraded to plausible-but-unproven: predicate is confounded with benchmark design.</p></li>
+<li><p><strong>Inconsistent fold baselines between two of my own ENVO runs.</strong> The window table used the shared entity space (baseline 0.03411) while the threshold table used the full gold space (0.02421), so the latter’s fold column was inflated — 11.11x rather than 7.89x at T=0. Caught by smoke-testing the extracted scripts against the published figures. Both now use the shared space; precision and the location of the optimum were unaffected, only the multipliers.</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="reproducing">
+<h2>Reproducing<a class="headerlink" href="#reproducing" title="Link to this heading"></a></h2>
+<p>Analysis scripts: <a class="reference internal" href="#../scripts/prego_validation/"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">scripts/prego_validation/</span></code></span></a>.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. gold standards</span>
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/prego_validation/build_uniprot_gold.py<span class="w">     </span><span class="c1"># ~25 min, reads 28.6 GB</span>
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/prego_validation/build_assay_gold.py<span class="w">       </span><span class="c1"># seconds</span>
+
+<span class="c1"># 2. tests</span>
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/prego_validation/fold_enrichment_go.py<span class="w">     </span><span class="c1"># vs UniProt</span>
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/prego_validation/precision_assay_go.py<span class="w">     </span><span class="c1"># vs assays (labelled +/-)</span>
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/prego_validation/fold_enrichment_envo.py<span class="w">   </span><span class="c1"># vs BacDive isolation</span>
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/prego_validation/fold_enrichment_bto.py<span class="w">    </span><span class="c1"># vs BacDive host anatomy</span>
+</pre></div>
+</div>
+<p>Reusable API: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/prego/quality.py</span></code> — <code class="docutils literal notranslate"><span class="pre">GoldStandard</span></code>, <code class="docutils literal notranslate"><span class="pre">LabelledEvidence</span></code>, <code class="docutils literal notranslate"><span class="pre">enrichment_by_window</span></code>, <code class="docutils literal notranslate"><span class="pre">precision_by_window</span></code>, <code class="docutils literal notranslate"><span class="pre">lift</span></code>, <code class="docutils literal notranslate"><span class="pre">is_monotone_increasing</span></code>. Tests in <code class="docutils literal notranslate"><span class="pre">tests/test_prego_quality.py</span></code>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

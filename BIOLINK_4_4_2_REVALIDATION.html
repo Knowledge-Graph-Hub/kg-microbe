@@ -1,0 +1,147 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biolink 4.4.2 modeling revalidation &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Biolink 4.4.2 modeling revalidation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/BIOLINK_4_4_2_REVALIDATION.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="biolink-4-4-2-modeling-revalidation">
+<h1>Biolink 4.4.2 modeling revalidation<a class="headerlink" href="#biolink-4-4-2-modeling-revalidation" title="Link to this heading"></a></h1>
+<p><strong>Checked:</strong> 2026-08-21<br />
+<strong>Source:</strong> the exact <code class="docutils literal notranslate"><span class="pre">v4.4.2</span></code> <code class="docutils literal notranslate"><span class="pre">biolink-model.yaml</span></code> pinned in <code class="docutils literal notranslate"><span class="pre">download.yaml</span></code></p>
+<p>This is the current-model follow-up to the dated Biolink 4.2.2 GOLD review. It
+checks only the assumptions called out during repository review; it does not
+reinterpret the historical measurements in those documents.</p>
+<section id="taxon-hierarchy-convention">
+<h2>Taxon hierarchy convention<a class="headerlink" href="#taxon-hierarchy-convention" title="Link to this heading"></a></h2>
+<p>In 4.4.2, <code class="docutils literal notranslate"><span class="pre">organism</span> <span class="pre">taxon</span></code> is directly a <code class="docutils literal notranslate"><span class="pre">named</span> <span class="pre">thing</span></code>; its definition explicitly
+says it can represent strains or subspecies. It is not a descendant of <code class="docutils literal notranslate"><span class="pre">ontology</span> <span class="pre">class</span></code>. The <code class="docutils literal notranslate"><span class="pre">subclass</span> <span class="pre">of</span></code> slot still has <code class="docutils literal notranslate"><span class="pre">ontology</span> <span class="pre">class</span></code> as both domain and
+range.</p>
+<p>Therefore KG-Microbe’s <code class="docutils literal notranslate"><span class="pre">OrganismTaxon</span> <span class="pre">-subclass_of-&gt;</span> <span class="pre">OrganismTaxon</span></code> strain
+hierarchy remains a deliberate project convention and a strict Biolink
+domain/range exception. It means “this named strain or isolate sits under this
+taxon,” preserves traversal of the taxonomic backbone, and is tracked in #834.
+Do not describe it as strict 4.4.2 conformance or remove it without a project
+modeling decision.</p>
+<p>GOLD ecosystem class hierarchies are different: their endpoints also carry
+<code class="docutils literal notranslate"><span class="pre">biolink:OntologyClass</span></code>, so their <code class="docutils literal notranslate"><span class="pre">subclass_of</span></code> edges satisfy the 4.4.2 domain
+and range.</p>
+</section>
+<section id="located-in-and-occurs-in">
+<h2><code class="docutils literal notranslate"><span class="pre">located_in</span></code> and <code class="docutils literal notranslate"><span class="pre">occurs_in</span></code><a class="headerlink" href="#located-in-and-occurs-in" title="Link to this heading"></a></h2>
+<p>Both slots remain children of <code class="docutils literal notranslate"><span class="pre">related</span> <span class="pre">to</span> <span class="pre">at</span> <span class="pre">instance</span> <span class="pre">level</span></code> and declare no
+additional machine-readable domain or range in 4.4.2.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">located</span> <span class="pre">in</span></code>: “holds between a material entity and a material entity or site
+within which it is located.” Use this for a material entity’s location.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">occurs</span> <span class="pre">in</span></code>: “holds between a process and a material entity or site within
+which the process occurs.” Use this for the site of a process.</p></li>
+</ul>
+<p>The semantic distinction in the existing GOLD review therefore remains valid:
+do not exchange these predicates merely because strict domain/range validation
+does not reject either one.</p>
+</section>
+<section id="reproduction">
+<h2>Reproduction<a class="headerlink" href="#reproduction" title="Link to this heading"></a></h2>
+<p>Inspect the pinned schema after <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-t</span> <span class="pre">schema</span></code>, or fetch the
+same immutable tag from
+<code class="docutils literal notranslate"><span class="pre">https://github.com/biolink/biolink-model/tree/v4.4.2</span></code>. The model-review skill
+now refuses BMT’s remote default and uses the two pinned files under <code class="docutils literal notranslate"><span class="pre">data/raw</span></code>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

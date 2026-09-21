@@ -1,0 +1,557 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>METPO Predicates Documentation &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">METPO Predicates Documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/METPO_PREDICATES.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="metpo-predicates-documentation">
+<h1>METPO Predicates Documentation<a class="headerlink" href="#metpo-predicates-documentation" title="Link to this heading"></a></h1>
+<p>This document describes the Microbial Ecophysiological Trait and Phenotype Ontology (METPO) predicates used in KG-Microbe.</p>
+<p><strong>Source</strong>: https://github.com/berkeleybop/metpo</p>
+<p><strong>Priority</strong>: When modeling microbial traits and interactions, METPO predicates should be prioritized over generic biolink predicates when a more specific METPO predicate is available.</p>
+<section id="categories-of-metpo-predicates">
+<h2>Categories of METPO Predicates<a class="headerlink" href="#categories-of-metpo-predicates" title="Link to this heading"></a></h2>
+<section id="chemical-interaction-predicates-positive">
+<h3>1. Chemical Interaction Predicates (Positive)<a class="headerlink" href="#chemical-interaction-predicates-positive" title="Link to this heading"></a></h3>
+<p>Range: METPO:2000001-2000020</p>
+<p>These predicates describe positive interactions between organisms and chemical entities.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Predicate ID</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Use Case</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>METPO:2000001</p></td>
+<td><p>organism interacts with chemical</p></td>
+<td><p>Generic organism-chemical interaction</p></td>
+<td><p>Use when specific interaction type unknown</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:2000002</p></td>
+<td><p>assimilates</p></td>
+<td><p>Organism assimilates chemical</p></td>
+<td><p>Nutrient uptake</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:2000003</p></td>
+<td><p>builds acid from</p></td>
+<td><p>Organism produces acid from chemical</p></td>
+<td><p>Acid production from substrate</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:2000004</p></td>
+<td><p>builds base from</p></td>
+<td><p>Organism produces base from chemical</p></td>
+<td><p>Base production from substrate</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:2000005</p></td>
+<td><p>builds gas from</p></td>
+<td><p>Organism produces gas from chemical</p></td>
+<td><p>Gas production from substrate</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:2000006</p></td>
+<td><p>uses as carbon source</p></td>
+<td><p>Organism uses chemical as carbon source</p></td>
+<td><p>Carbon metabolism</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:2000007</p></td>
+<td><p>degrades</p></td>
+<td><p>Organism degrades chemical</p></td>
+<td><p>Degradation pathways</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:2000008</p></td>
+<td><p>uses as electron acceptor</p></td>
+<td><p>Chemical serves as electron acceptor</p></td>
+<td><p>Respiration</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:2000009</p></td>
+<td><p>uses as electron donor</p></td>
+<td><p>Chemical serves as electron donor</p></td>
+<td><p>Energy metabolism</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:2000010</p></td>
+<td><p>uses as energy source</p></td>
+<td><p>Chemical used for energy</p></td>
+<td><p>Energy metabolism</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:2000011</p></td>
+<td><p>ferments</p></td>
+<td><p>Organism ferments chemical</p></td>
+<td><p>Fermentation</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:2000012</p></td>
+<td><p>uses for growth</p></td>
+<td><p>Chemical supports growth</p></td>
+<td><p>Growth requirements</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:2000013</p></td>
+<td><p>hydrolyzes</p></td>
+<td><p>Organism hydrolyzes chemical</p></td>
+<td><p>Hydrolysis reactions</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:2000014</p></td>
+<td><p>uses as nitrogen source</p></td>
+<td><p>Chemical provides nitrogen</p></td>
+<td><p>Nitrogen metabolism</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:2000015</p></td>
+<td><p>uses in other way</p></td>
+<td><p>Other chemical utilization</p></td>
+<td><p>Catch-all for other uses</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:2000016</p></td>
+<td><p>oxidizes</p></td>
+<td><p>Organism oxidizes chemical</p></td>
+<td><p>Oxidation reactions</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:2000017</p></td>
+<td><p>reduces</p></td>
+<td><p>Organism reduces chemical</p></td>
+<td><p>Reduction reactions</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:2000018</p></td>
+<td><p>requires for growth</p></td>
+<td><p>Chemical required for growth</p></td>
+<td><p>Essential growth factors</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:2000019</p></td>
+<td><p>uses for respiration</p></td>
+<td><p>Chemical used in respiration</p></td>
+<td><p>Respiratory processes</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:2000020</p></td>
+<td><p>uses as sulfur source</p></td>
+<td><p>Chemical provides sulfur</p></td>
+<td><p>Sulfur metabolism</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="chemical-interaction-predicates-negative">
+<h3>2. Chemical Interaction Predicates (Negative)<a class="headerlink" href="#chemical-interaction-predicates-negative" title="Link to this heading"></a></h3>
+<p>Range: METPO:2000021-2000051</p>
+<p>These predicates describe negative or absent interactions.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Predicate ID</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Use Case</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>METPO:2000027</p></td>
+<td><p>does not assimilate</p></td>
+<td><p>Organism does not assimilate chemical</p></td>
+<td><p>Negative assimilation result</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:2000028</p></td>
+<td><p>does not build acid from</p></td>
+<td><p>No acid production from chemical</p></td>
+<td><p>Negative acid test</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:2000031</p></td>
+<td><p>does not use as carbon source</p></td>
+<td><p>Chemical not used as carbon source</p></td>
+<td><p>Negative carbon utilization</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:2000037</p></td>
+<td><p>does not ferment</p></td>
+<td><p>Organism does not ferment chemical</p></td>
+<td><p>Negative fermentation test</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:2000038</p></td>
+<td><p>does not use for growth</p></td>
+<td><p>Chemical not used for growth</p></td>
+<td><p>Growth inhibition or lack of use</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:2000039</p></td>
+<td><p>does not hydrolyze</p></td>
+<td><p>No hydrolysis of chemical</p></td>
+<td><p>Negative hydrolysis test</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:2000044</p></td>
+<td><p>does not reduce</p></td>
+<td><p>Chemical not reduced</p></td>
+<td><p>Negative reduction test</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:2000046</p></td>
+<td><p>does not use for respiration</p></td>
+<td><p>Not used in respiration</p></td>
+<td><p>Negative respiration test</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="capability-and-phenotype-predicates">
+<h3>3. Capability and Phenotype Predicates<a class="headerlink" href="#capability-and-phenotype-predicates" title="Link to this heading"></a></h3>
+<p>Range: METPO:2000101-2000103</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Predicate ID</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Biolink Equivalent</p></th>
+<th class="head"><p>Priority</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>METPO:2000101</p></td>
+<td><p>has quality</p></td>
+<td><p>Organism has a quality</p></td>
+<td><p>biolink:has_attribute</p></td>
+<td><p>Use METPO for microbial traits</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:2000102</p></td>
+<td><p>has phenotype</p></td>
+<td><p>Organism has a phenotype</p></td>
+<td><p>biolink:has_phenotype</p></td>
+<td><p><strong>PREFER METPO over biolink</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:2000103</p></td>
+<td><p>capable of</p></td>
+<td><p>Organism capable of process/activity</p></td>
+<td><p>biolink:capable_of</p></td>
+<td><p><strong>PREFER METPO over biolink</strong></p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Important</strong>: For microbial phenotypes and capabilities, use METPO:2000102 (has phenotype) and METPO:2000103 (capable of) instead of their biolink equivalents.</p>
+</section>
+<section id="production-predicates">
+<h3>4. Production Predicates<a class="headerlink" href="#production-predicates" title="Link to this heading"></a></h3>
+<p>Range: METPO:2000202, METPO:2000222</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Predicate ID</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Use Case</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>METPO:2000202</p></td>
+<td><p>produces</p></td>
+<td><p>Organism produces chemical/substance</p></td>
+<td><p>Chemical production</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:2000222</p></td>
+<td><p>does not produce</p></td>
+<td><p>Organism does not produce chemical</p></td>
+<td><p>Negative production test</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="enzyme-activity-predicates">
+<h3>5. Enzyme Activity Predicates<a class="headerlink" href="#enzyme-activity-predicates" title="Link to this heading"></a></h3>
+<p>Range: METPO:2000302-2000303</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Predicate ID</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Use Case</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>METPO:2000302</p></td>
+<td><p>shows activity of</p></td>
+<td><p>Organism shows enzyme activity</p></td>
+<td><p>Positive enzyme activity test</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:2000303</p></td>
+<td><p>does not show activity of</p></td>
+<td><p>No enzyme activity detected</p></td>
+<td><p>Negative enzyme activity test</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="growth-medium-predicates">
+<h3>6. Growth Medium Predicates<a class="headerlink" href="#growth-medium-predicates" title="Link to this heading"></a></h3>
+<p>Range: METPO:2000517-2000518</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Predicate ID</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Use Case</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>METPO:2000517</p></td>
+<td><p>grows in</p></td>
+<td><p>Organism grows in medium</p></td>
+<td><p>Growth medium compatibility</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:2000518</p></td>
+<td><p>does not grow in</p></td>
+<td><p>Organism does not grow in medium</p></td>
+<td><p>Growth inhibition/incompatibility</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="usage-guidelines">
+<h2>Usage Guidelines<a class="headerlink" href="#usage-guidelines" title="Link to this heading"></a></h2>
+<section id="when-to-use-metpo-vs-biolink-predicates">
+<h3>When to Use METPO vs Biolink Predicates<a class="headerlink" href="#when-to-use-metpo-vs-biolink-predicates" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Organism-Chemical Interactions</strong>: Always use specific METPO predicates (METPO:2000001-2000051) instead of generic biolink predicates</p>
+<ul class="simple">
+<li><p>❌ <code class="docutils literal notranslate"><span class="pre">biolink:interacts_with</span></code></p></li>
+<li><p>✅ <code class="docutils literal notranslate"><span class="pre">METPO:2000001</span></code> (organism interacts with chemical) or more specific METPO predicate</p></li>
+</ul>
+</li>
+<li><p><strong>Phenotypes and Capabilities</strong>: Use METPO predicates for microbial traits</p>
+<ul class="simple">
+<li><p>❌ <code class="docutils literal notranslate"><span class="pre">biolink:has_phenotype</span></code></p></li>
+<li><p>✅ <code class="docutils literal notranslate"><span class="pre">METPO:2000102</span></code> (has phenotype)</p></li>
+<li><p>❌ <code class="docutils literal notranslate"><span class="pre">biolink:capable_of</span></code></p></li>
+<li><p>✅ <code class="docutils literal notranslate"><span class="pre">METPO:2000103</span></code> (capable of)</p></li>
+</ul>
+</li>
+<li><p><strong>Production</strong>: Use METPO production predicates</p>
+<ul class="simple">
+<li><p>❌ <code class="docutils literal notranslate"><span class="pre">biolink:produces</span></code> or other generic predicates</p></li>
+<li><p>✅ <code class="docutils literal notranslate"><span class="pre">METPO:2000202</span></code> (produces)</p></li>
+</ul>
+</li>
+<li><p><strong>Enzyme-Substrate Relationships</strong>: Currently use biolink (no METPO equivalent)</p>
+<ul class="simple">
+<li><p>✅ <code class="docutils literal notranslate"><span class="pre">biolink:has_input</span></code> (enzyme -&gt; substrate)</p></li>
+<li><p>Note: This may change if METPO adds equivalent predicates</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="constants-in-code">
+<h3>Constants in Code<a class="headerlink" href="#constants-in-code" title="Link to this heading"></a></h3>
+<p>All METPO predicates are defined in <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/constants.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Chemical interactions (positive)</span>
+<span class="n">METPO_ORGANISM_INTERACTS_WITH_CHEMICAL</span> <span class="o">=</span> <span class="s2">&quot;METPO:2000001&quot;</span>
+<span class="n">METPO_USES_AS_CARBON_SOURCE</span> <span class="o">=</span> <span class="s2">&quot;METPO:2000006&quot;</span>
+<span class="n">METPO_FERMENTS</span> <span class="o">=</span> <span class="s2">&quot;METPO:2000011&quot;</span>
+<span class="c1"># ... etc</span>
+
+<span class="c1"># Capability/phenotype</span>
+<span class="n">METPO_HAS_QUALITY</span> <span class="o">=</span> <span class="s2">&quot;METPO:2000101&quot;</span>
+<span class="n">METPO_HAS_PHENOTYPE</span> <span class="o">=</span> <span class="s2">&quot;METPO:2000102&quot;</span>
+<span class="n">METPO_CAPABLE_OF</span> <span class="o">=</span> <span class="s2">&quot;METPO:2000103&quot;</span>
+
+<span class="c1"># Production</span>
+<span class="n">METPO_PRODUCES</span> <span class="o">=</span> <span class="s2">&quot;METPO:2000202&quot;</span>
+<span class="n">METPO_DOES_NOT_PRODUCE</span> <span class="o">=</span> <span class="s2">&quot;METPO:2000222&quot;</span>
+
+<span class="c1"># Enzyme activity</span>
+<span class="n">METPO_SHOWS_ACTIVITY_OF</span> <span class="o">=</span> <span class="s2">&quot;METPO:2000302&quot;</span>
+<span class="n">METPO_DOES_NOT_SHOW_ACTIVITY_OF</span> <span class="o">=</span> <span class="s2">&quot;METPO:2000303&quot;</span>
+
+<span class="c1"># Growth medium</span>
+<span class="n">METPO_GROWS_IN</span> <span class="o">=</span> <span class="s2">&quot;METPO:2000517&quot;</span>
+<span class="n">METPO_DOES_NOT_GROW_IN</span> <span class="o">=</span> <span class="s2">&quot;METPO:2000518&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="transform-implementation">
+<h3>Transform Implementation<a class="headerlink" href="#transform-implementation" title="Link to this heading"></a></h3>
+<p>When implementing transforms, follow these patterns:</p>
+<section id="organism-chemical-interactions">
+<h4>1. Organism-Chemical Interactions<a class="headerlink" href="#organism-chemical-interactions" title="Link to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">kg_microbe.transform_utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">METPO_USES_AS_CARBON_SOURCE</span>
+
+<span class="n">edge</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="n">organism_id</span><span class="p">,</span>
+    <span class="s2">&quot;predicate&quot;</span><span class="p">:</span> <span class="n">METPO_USES_AS_CARBON_SOURCE</span><span class="p">,</span>  <span class="c1"># Not biolink:interacts_with</span>
+    <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="n">chemical_id</span><span class="p">,</span>
+    <span class="s2">&quot;relation&quot;</span><span class="p">:</span> <span class="n">METPO_USES_AS_CARBON_SOURCE</span><span class="p">,</span>
+    <span class="s2">&quot;primary_knowledge_source&quot;</span><span class="p">:</span> <span class="n">source</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="phenotypes">
+<h4>2. Phenotypes<a class="headerlink" href="#phenotypes" title="Link to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">kg_microbe.transform_utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">METPO_HAS_PHENOTYPE</span>
+
+<span class="n">edge</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="n">organism_id</span><span class="p">,</span>
+    <span class="s2">&quot;predicate&quot;</span><span class="p">:</span> <span class="n">METPO_HAS_PHENOTYPE</span><span class="p">,</span>  <span class="c1"># Not biolink:has_phenotype</span>
+    <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="n">phenotype_id</span><span class="p">,</span>
+    <span class="s2">&quot;relation&quot;</span><span class="p">:</span> <span class="n">METPO_HAS_PHENOTYPE</span><span class="p">,</span>
+    <span class="s2">&quot;primary_knowledge_source&quot;</span><span class="p">:</span> <span class="n">source</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="capabilities">
+<h4>3. Capabilities<a class="headerlink" href="#capabilities" title="Link to this heading"></a></h4>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">kg_microbe.transform_utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">METPO_CAPABLE_OF</span>
+
+<span class="n">edge</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="n">organism_id</span><span class="p">,</span>
+    <span class="s2">&quot;predicate&quot;</span><span class="p">:</span> <span class="n">METPO_CAPABLE_OF</span><span class="p">,</span>  <span class="c1"># Not biolink:capable_of</span>
+    <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="n">process_id</span><span class="p">,</span>
+    <span class="s2">&quot;relation&quot;</span><span class="p">:</span> <span class="n">METPO_CAPABLE_OF</span><span class="p">,</span>
+    <span class="s2">&quot;primary_knowledge_source&quot;</span><span class="p">:</span> <span class="n">source</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="current-transform-usage">
+<h2>Current Transform Usage<a class="headerlink" href="#current-transform-usage" title="Link to this heading"></a></h2>
+<section id="transforms-using-metpo-predicates">
+<h3>Transforms using METPO predicates:<a class="headerlink" href="#transforms-using-metpo-predicates" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>bacdive</strong>: Uses METPO for organism-chemical interactions, phenotypes, enzyme activities, and growth media</p></li>
+<li><p><strong>mediadive</strong>: Uses METPO for growth medium relationships</p></li>
+<li><p><strong>bactotraits</strong>: Uses METPO:2000103 for capabilities</p></li>
+<li><p><strong>madin_etal</strong>: Uses METPO:2000103 and METPO:2000006 as fallbacks</p></li>
+</ol>
+</section>
+<section id="areas-for-improvement">
+<h3>Areas for Improvement<a class="headerlink" href="#areas-for-improvement" title="Link to this heading"></a></h3>
+<p>The following transforms still use biolink predicates where METPO predicates would be more appropriate:</p>
+<ol class="arabic simple">
+<li><p><strong>madin_etal.py</strong>: Uses <code class="docutils literal notranslate"><span class="pre">biolink:has_phenotype</span></code> as fallback (lines 258-262, 499-503, 547-551, 585-589, 622-626, 656-660, 694-698)</p>
+<ul class="simple">
+<li><p>Should use <code class="docutils literal notranslate"><span class="pre">METPO:2000102</span></code> instead</p></li>
+</ul>
+</li>
+<li><p><strong>bactotraits.py</strong>: Uses <code class="docutils literal notranslate"><span class="pre">biolink:has_phenotype</span></code> as fallback (lines 240, 376)</p>
+<ul class="simple">
+<li><p>Should use <code class="docutils literal notranslate"><span class="pre">METPO:2000102</span></code> instead</p></li>
+</ul>
+</li>
+<li><p><strong>bacdive.py</strong>: Uses <code class="docutils literal notranslate"><span class="pre">biolink:has_phenotype</span></code> in several places (lines 387, 436-440, 484, 500)</p>
+<ul class="simple">
+<li><p>Should use <code class="docutils literal notranslate"><span class="pre">METPO:2000102</span></code> instead</p></li>
+</ul>
+</li>
+<li><p><strong>bacdive.py</strong>: Uses <code class="docutils literal notranslate"><span class="pre">biolink:interacts_with</span></code> (line 1897)</p>
+<ul class="simple">
+<li><p>Should use <code class="docutils literal notranslate"><span class="pre">METPO:2000001</span></code> or more specific METPO predicate</p></li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+<section id="statistics">
+<h2>Statistics<a class="headerlink" href="#statistics" title="Link to this heading"></a></h2>
+<p>From merged graph (merged_graph_stats.yaml):</p>
+<ul class="simple">
+<li><p>Total METPO predicates: 168</p></li>
+<li><p>METPO edges: 143</p></li>
+<li><p>METPO nodes: 25</p></li>
+</ul>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>METPO GitHub: https://github.com/berkeleybop/metpo</p></li>
+<li><p>Biolink Model: https://biolink.github.io/biolink-model/</p></li>
+<li><p>Constants definition: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/constants.py</span></code></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

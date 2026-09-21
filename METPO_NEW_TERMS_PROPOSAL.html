@@ -1,0 +1,1255 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>METPO New Terms Proposal &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">METPO New Terms Proposal</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/METPO_NEW_TERMS_PROPOSAL.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="metpo-new-terms-proposal">
+<h1>METPO New Terms Proposal<a class="headerlink" href="#metpo-new-terms-proposal" title="Link to this heading"></a></h1>
+<p><strong>Date</strong>: 2026-03-28
+<strong>Proposal Version</strong>: 1.0
+<strong>Target Release</strong>: METPO v2.1
+<strong>Addresses</strong>: 148 unmapped traits (183,810 total occurrences)</p>
+<hr class="docutils" />
+<section id="proposal-1-fermentation-capability-pattern-95-new-terms">
+<h2>Proposal 1: Fermentation Capability Pattern (95 new terms)<a class="headerlink" href="#proposal-1-fermentation-capability-pattern-95-new-terms" title="Link to this heading"></a></h2>
+<section id="rationale">
+<h3>Rationale<a class="headerlink" href="#rationale" title="Link to this heading"></a></h3>
+<p>Metatraits data contains 95 unique fermentation traits (3,896-25 occurrences each) that follow a consistent pattern: <code class="docutils literal notranslate"><span class="pre">fermentation:</span> <span class="pre">[substrate]</span></code>. Current METPO lacks systematic fermentation coverage.</p>
+</section>
+<section id="proposed-hierarchy">
+<h3>Proposed Hierarchy<a class="headerlink" href="#proposed-hierarchy" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>METPO:2000509 (metabolic process)
+  └─ METPO:XXXXXX (fermentation capability) [NEW]
+       ├─ METPO:XXXXXX (monosaccharide fermentation) [NEW]
+       │    ├─ METPO:XXXXXX (glucose fermentation) [NEW]
+       │    ├─ METPO:XXXXXX (ribose fermentation) [NEW]
+       │    ├─ METPO:XXXXXX (xylose fermentation) [NEW]
+       │    ├─ METPO:XXXXXX (mannose fermentation) [NEW]
+       │    ├─ METPO:XXXXXX (fructose fermentation) [NEW]
+       │    └─ ... (10 more monosaccharides)
+       ├─ METPO:XXXXXX (disaccharide fermentation) [NEW]
+       │    ├─ METPO:XXXXXX (lactose fermentation) [NEW]
+       │    ├─ METPO:XXXXXX (maltose fermentation) [NEW]
+       │    ├─ METPO:XXXXXX (cellobiose fermentation) [NEW]
+       │    ├─ METPO:XXXXXX (sucrose fermentation) [NEW]
+       │    └─ ... (8 more disaccharides)
+       ├─ METPO:XXXXXX (polysaccharide fermentation) [NEW]
+       │    ├─ METPO:XXXXXX (glycogen fermentation) [NEW]
+       │    ├─ METPO:XXXXXX (starch fermentation) [NEW]
+       │    └─ ... (3 more polysaccharides)
+       └─ METPO:XXXXXX (sugar alcohol fermentation) [NEW]
+            ├─ METPO:XXXXXX (mannitol fermentation) [NEW]
+            ├─ METPO:XXXXXX (sorbitol fermentation) [NEW]
+            └─ ... (12 more sugar alcohols)
+</pre></div>
+</div>
+</section>
+<section id="term-template">
+<h3>Term Template<a class="headerlink" href="#term-template" title="Link to this heading"></a></h3>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="c"># Parent Term</span>
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">3001000</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;fermentation capability&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The capability of an organism to carry out fermentation, an anaerobic metabolic process that converts organic compounds (typically carbohydrates) into simpler substances such as alcohols, acids, and gases.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000509</span> <span class="p">;</span>  <span class="c"># metabolic process</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">seeAlso</span> <span class="nn">GO</span><span class="p">:</span><span class="nt">0006112</span> <span class="p">;</span>  <span class="c"># energy reserve metabolic process</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasExactSynonym</span> <span class="s">&quot;ferments&quot;</span> <span class="p">;</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasRelatedSynonym</span> <span class="s">&quot;anaerobic fermentation&quot;</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000119</span> <span class="s">&quot;KG-Microbe metatraits analysis 2026-03-28&quot;</span> <span class="p">;</span>  <span class="c"># term tracker item</span>
+    <span class="p">.</span>
+
+<span class="c"># Example Child Term: Glucose Fermentation</span>
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">3001001</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;glucose fermentation capability&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The capability of an organism to ferment glucose (D-glucose or L-glucose), converting it anaerobically into products such as ethanol, lactate, or other metabolites.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3001010</span> <span class="p">;</span>  <span class="c"># monosaccharide fermentation</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">seeAlso</span> <span class="nn">GO</span><span class="p">:</span><span class="nt">0019660</span> <span class="p">;</span>  <span class="c"># glycolytic fermentation</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasExactSynonym</span> <span class="s">&quot;ferments glucose&quot;</span> <span class="p">;</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasExactSynonym</span> <span class="s">&quot;glucose fermentation&quot;</span> <span class="p">;</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasNarrowSynonym</span> <span class="s">&quot;D-glucose fermentation&quot;</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000119</span> <span class="s">&quot;KG-Microbe metatraits: 3,896 observations&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="c"># Object Property: Links to substrate</span>
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_fermentation_substrate</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">ObjectProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;has fermentation substrate&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;Links a fermentation capability to the chemical compound that serves as the substrate.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3001000</span> <span class="p">;</span>  <span class="c"># fermentation capability</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">CHEBI</span><span class="p">:</span><span class="nt">24431</span> <span class="p">;</span>  <span class="c"># chemical entity</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subPropertyOf</span> <span class="nn">RO</span><span class="p">:</span><span class="nt">0002233</span> <span class="p">;</span>  <span class="c"># has input</span>
+    <span class="p">.</span>
+</pre></div>
+</div>
+</section>
+<section id="complete-term-list-95-terms">
+<h3>Complete Term List (95 terms)<a class="headerlink" href="#complete-term-list-95-terms" title="Link to this heading"></a></h3>
+<section id="monosaccharides-15-terms">
+<h4>Monosaccharides (15 terms)<a class="headerlink" href="#monosaccharides-15-terms" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>METPO ID</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Substrate</p></th>
+<th class="head"><p>CHEBI</p></th>
+<th class="head"><p>Occurrences</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>METPO:3001001</p></td>
+<td><p>glucose fermentation</p></td>
+<td><p>D-glucose</p></td>
+<td><p>CHEBI:17234</p></td>
+<td><p>3,896</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001002</p></td>
+<td><p>ribose fermentation</p></td>
+<td><p>D-ribose</p></td>
+<td><p>CHEBI:47013</p></td>
+<td><p>1,546</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001003</p></td>
+<td><p>xylose fermentation</p></td>
+<td><p>D-xylose</p></td>
+<td><p>CHEBI:18222</p></td>
+<td><p>1,329</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001004</p></td>
+<td><p>mannose fermentation</p></td>
+<td><p>D-mannose</p></td>
+<td><p>CHEBI:4208</p></td>
+<td><p>1,057</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001005</p></td>
+<td><p>fructose fermentation</p></td>
+<td><p>D-fructose</p></td>
+<td><p>CHEBI:28757</p></td>
+<td><p>106</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001006</p></td>
+<td><p>arabinose fermentation</p></td>
+<td><p>L-arabinose</p></td>
+<td><p>CHEBI:17553</p></td>
+<td><p>143</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001007</p></td>
+<td><p>rhamnose fermentation</p></td>
+<td><p>L-rhamnose</p></td>
+<td><p>CHEBI:27907</p></td>
+<td><p>141</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001008</p></td>
+<td><p>galactose fermentation</p></td>
+<td><p>D-galactose</p></td>
+<td><p>CHEBI:28061</p></td>
+<td><p>85</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001009</p></td>
+<td><p>fucose fermentation</p></td>
+<td><p>L-fucose</p></td>
+<td><p>CHEBI:42548</p></td>
+<td><p>18</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001010</p></td>
+<td><p>sorbose fermentation</p></td>
+<td><p>L-sorbose</p></td>
+<td><p>CHEBI:17262</p></td>
+<td><p>14</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001011</p></td>
+<td><p>tagatose fermentation</p></td>
+<td><p>D-tagatose</p></td>
+<td><p>CHEBI:36291</p></td>
+<td><p>12</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001012</p></td>
+<td><p>lyxose fermentation</p></td>
+<td><p>D-lyxose</p></td>
+<td><p>CHEBI:33124</p></td>
+<td><p>8</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001013</p></td>
+<td><p>allose fermentation</p></td>
+<td><p>D-allose</p></td>
+<td><p>CHEBI:28980</p></td>
+<td><p>6</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001014</p></td>
+<td><p>threose fermentation</p></td>
+<td><p>D-threose</p></td>
+<td><p>CHEBI:26986</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001015</p></td>
+<td><p>erythrose fermentation</p></td>
+<td><p>D-erythrose</p></td>
+<td><p>CHEBI:42382</p></td>
+<td><p>3</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="disaccharides-12-terms">
+<h4>Disaccharides (12 terms)<a class="headerlink" href="#disaccharides-12-terms" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>METPO ID</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Substrate</p></th>
+<th class="head"><p>CHEBI</p></th>
+<th class="head"><p>Occurrences</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>METPO:3001020</p></td>
+<td><p>lactose fermentation</p></td>
+<td><p>lactose</p></td>
+<td><p>CHEBI:17716</p></td>
+<td><p>321</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001021</p></td>
+<td><p>maltose fermentation</p></td>
+<td><p>maltose</p></td>
+<td><p>CHEBI:17306</p></td>
+<td><p>208</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001022</p></td>
+<td><p>cellobiose fermentation</p></td>
+<td><p>cellobiose</p></td>
+<td><p>CHEBI:17057</p></td>
+<td><p>126</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001023</p></td>
+<td><p>sucrose fermentation</p></td>
+<td><p>sucrose</p></td>
+<td><p>CHEBI:17992</p></td>
+<td><p>50</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001024</p></td>
+<td><p>melibiose fermentation</p></td>
+<td><p>melibiose</p></td>
+<td><p>CHEBI:28053</p></td>
+<td><p>119</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001025</p></td>
+<td><p>raffinose fermentation</p></td>
+<td><p>raffinose</p></td>
+<td><p>CHEBI:16634</p></td>
+<td><p>247</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001026</p></td>
+<td><p>trehalose fermentation</p></td>
+<td><p>trehalose</p></td>
+<td><p>CHEBI:16551</p></td>
+<td><p>38</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001027</p></td>
+<td><p>gentiobiose fermentation</p></td>
+<td><p>gentiobiose</p></td>
+<td><p>CHEBI:18296</p></td>
+<td><p>15</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001028</p></td>
+<td><p>turanose fermentation</p></td>
+<td><p>turanose</p></td>
+<td><p>CHEBI:28816</p></td>
+<td><p>8</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001029</p></td>
+<td><p>lactulose fermentation</p></td>
+<td><p>lactulose</p></td>
+<td><p>CHEBI:6359</p></td>
+<td><p>6</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001030</p></td>
+<td><p>melezitose fermentation</p></td>
+<td><p>melezitose</p></td>
+<td><p>CHEBI:6704</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001031</p></td>
+<td><p>amygdalin fermentation</p></td>
+<td><p>amygdalin</p></td>
+<td><p>CHEBI:17019</p></td>
+<td><p>354</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="polysaccharides-5-terms">
+<h4>Polysaccharides (5 terms)<a class="headerlink" href="#polysaccharides-5-terms" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>METPO ID</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Substrate</p></th>
+<th class="head"><p>CHEBI</p></th>
+<th class="head"><p>Occurrences</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>METPO:3001040</p></td>
+<td><p>glycogen fermentation</p></td>
+<td><p>glycogen</p></td>
+<td><p>CHEBI:28087</p></td>
+<td><p>251</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001041</p></td>
+<td><p>starch fermentation</p></td>
+<td><p>starch</p></td>
+<td><p>CHEBI:28017</p></td>
+<td><p>42</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001042</p></td>
+<td><p>inulin fermentation</p></td>
+<td><p>inulin</p></td>
+<td><p>CHEBI:15443</p></td>
+<td><p>18</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001043</p></td>
+<td><p>dextrin fermentation</p></td>
+<td><p>dextrin</p></td>
+<td><p>CHEBI:23849</p></td>
+<td><p>12</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001044</p></td>
+<td><p>pullulan fermentation</p></td>
+<td><p>pullulan</p></td>
+<td><p>CHEBI:61266</p></td>
+<td><p>6</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="sugar-alcohols-14-terms">
+<h4>Sugar Alcohols (14 terms)<a class="headerlink" href="#sugar-alcohols-14-terms" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>METPO ID</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Substrate</p></th>
+<th class="head"><p>CHEBI</p></th>
+<th class="head"><p>Occurrences</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>METPO:3001050</p></td>
+<td><p>mannitol fermentation</p></td>
+<td><p>D-mannitol</p></td>
+<td><p>CHEBI:16899</p></td>
+<td><p>2,087</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001051</p></td>
+<td><p>sorbitol fermentation</p></td>
+<td><p>D-sorbitol</p></td>
+<td><p>CHEBI:17924</p></td>
+<td><p>156</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001052</p></td>
+<td><p>inositol fermentation</p></td>
+<td><p>myo-inositol</p></td>
+<td><p>CHEBI:17268</p></td>
+<td><p>25</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001053</p></td>
+<td><p>glycerol fermentation</p></td>
+<td><p>glycerol</p></td>
+<td><p>CHEBI:17754</p></td>
+<td><p>84</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001054</p></td>
+<td><p>xylitol fermentation</p></td>
+<td><p>xylitol</p></td>
+<td><p>CHEBI:17151</p></td>
+<td><p>32</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001055</p></td>
+<td><p>dulcitol fermentation</p></td>
+<td><p>dulcitol</p></td>
+<td><p>CHEBI:42976</p></td>
+<td><p>28</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001056</p></td>
+<td><p>adonitol fermentation</p></td>
+<td><p>adonitol</p></td>
+<td><p>CHEBI:15963</p></td>
+<td><p>22</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001057</p></td>
+<td><p>erythritol fermentation</p></td>
+<td><p>erythritol</p></td>
+<td><p>CHEBI:16219</p></td>
+<td><p>18</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001058</p></td>
+<td><p>arabitol fermentation</p></td>
+<td><p>D-arabitol</p></td>
+<td><p>CHEBI:22599</p></td>
+<td><p>14</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001059</p></td>
+<td><p>ribitol fermentation</p></td>
+<td><p>ribitol</p></td>
+<td><p>CHEBI:27476</p></td>
+<td><p>11</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001060</p></td>
+<td><p>lactitol fermentation</p></td>
+<td><p>lactitol</p></td>
+<td><p>CHEBI:6359</p></td>
+<td><p>8</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001061</p></td>
+<td><p>maltitol fermentation</p></td>
+<td><p>maltitol</p></td>
+<td><p>CHEBI:25140</p></td>
+<td><p>6</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001062</p></td>
+<td><p>isomalt fermentation</p></td>
+<td><p>isomalt</p></td>
+<td><p>CHEBI:63438</p></td>
+<td><p>4</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001063</p></td>
+<td><p>threitol fermentation</p></td>
+<td><p>threitol</p></td>
+<td><p>CHEBI:27454</p></td>
+<td><p>3</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="other-fermentable-compounds-49-terms">
+<h4>Other Fermentable Compounds (49 terms)<a class="headerlink" href="#other-fermentable-compounds-49-terms" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>METPO ID</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Substrate</p></th>
+<th class="head"><p>CHEBI</p></th>
+<th class="head"><p>Occurrences</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>METPO:3001070</p></td>
+<td><p>salicin fermentation</p></td>
+<td><p>salicin</p></td>
+<td><p>CHEBI:17814</p></td>
+<td><p>42</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001071</p></td>
+<td><p>esculin fermentation</p></td>
+<td><p>esculin</p></td>
+<td><p>CHEBI:4799</p></td>
+<td><p>38</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3001072</p></td>
+<td><p>arbutin fermentation</p></td>
+<td><p>arbutin</p></td>
+<td><p>CHEBI:2971</p></td>
+<td><p>28</p></td>
+</tr>
+<tr class="row-odd"><td><p>…</p></td>
+<td><p>…</p></td>
+<td><p>…</p></td>
+<td><p>…</p></td>
+<td><p>…</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total</strong>: 95 new fermentation capability terms</p>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="proposal-2-quantitative-measurement-properties-3-new-terms-9-properties">
+<h2>Proposal 2: Quantitative Measurement Properties (3 new terms + 9 properties)<a class="headerlink" href="#proposal-2-quantitative-measurement-properties-3-new-terms-9-properties" title="Link to this heading"></a></h2>
+<section id="id1">
+<h3>Rationale<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<p>Current METPO has qualitative terms (thermophile, halophile, acidophile) but lacks quantitative measurement support. High-frequency unmapped traits (85,311 occurrences each) require numerical values for temperature, salt concentration, and pH.</p>
+</section>
+<section id="proposed-architecture">
+<h3>Proposed Architecture<a class="headerlink" href="#proposed-architecture" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>METPO:1000000 (phenotypic trait)
+  └─ METPO:2000000 (environmental adaptation)
+       ├─ METPO:3002000 (quantitative temperature growth) [NEW]
+       ├─ METPO:3002001 (quantitative salt tolerance) [NEW]
+       └─ METPO:3002002 (quantitative pH tolerance) [NEW]
+</pre></div>
+</div>
+</section>
+<section id="temperature-growth-capability">
+<h3>2.1 Temperature Growth Capability<a class="headerlink" href="#temperature-growth-capability" title="Link to this heading"></a></h3>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="c"># Class Definition</span>
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">3002000</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;quantitative temperature growth capability&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The capability of an organism to grow at a specific temperature or within a temperature range, measured in degrees Celsius.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">1000604</span> <span class="p">;</span>  <span class="c"># thermophile (existing parent)</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">seeAlso</span> <span class="nn">ENVO</span><span class="p">:</span><span class="nt">01000479</span> <span class="p">;</span>  <span class="c"># temperature</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000119</span> <span class="s">&quot;KG-Microbe metatraits: 85,311 observations&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="c"># Data Properties</span>
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_growth_temperature_optimum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;has growth temperature optimum&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The optimal temperature at which an organism achieves maximum growth rate.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3002000</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasDbXref</span> <span class="s">&quot;UO:0000027&quot;</span> <span class="p">;</span>  <span class="c"># degree Celsius</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">comment</span> <span class="s">&quot;Value should be in degrees Celsius. Example: 42.0&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_growth_temperature_minimum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;has growth temperature minimum&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The minimum temperature at which an organism can grow.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3002000</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasDbXref</span> <span class="s">&quot;UO:0000027&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_growth_temperature_maximum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;has growth temperature maximum&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The maximum temperature at which an organism can grow.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3002000</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasDbXref</span> <span class="s">&quot;UO:0000027&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+</pre></div>
+</div>
+<p><strong>Example Usage</strong>:</p>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="nt">Organism_Thermus_aquaticus</span> <span class="kt">a</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">OrganismTaxon</span> <span class="p">;</span>
+    <span class="nn">biolink</span><span class="p">:</span><span class="nt">has_phenotype</span> <span class="p">[</span>
+        <span class="kt">a</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3002000</span> <span class="p">;</span>
+        <span class="nn">METPO</span><span class="p">:</span><span class="nt">has_growth_temperature_optimum</span> <span class="s">&quot;70.0&quot;</span><span class="p">^^</span><span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+        <span class="nn">METPO</span><span class="p">:</span><span class="nt">has_growth_temperature_minimum</span> <span class="s">&quot;50.0&quot;</span><span class="p">^^</span><span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+        <span class="nn">METPO</span><span class="p">:</span><span class="nt">has_growth_temperature_maximum</span> <span class="s">&quot;85.0&quot;</span><span class="p">^^</span><span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+        <span class="nn">biolink</span><span class="p">:</span><span class="nt">has_unit</span> <span class="nn">UO</span><span class="p">:</span><span class="nt">0000027</span> <span class="p">;</span>  <span class="c"># degree Celsius</span>
+    <span class="p">]</span> <span class="p">.</span>
+</pre></div>
+</div>
+<p><strong>Addresses</strong>: 85,311 unmapped <code class="docutils literal notranslate"><span class="pre">growth:</span> <span class="pre">[X]</span> <span class="pre">degrees</span> <span class="pre">Celsius</span></code> traits</p>
+</section>
+<hr class="docutils" />
+<section id="salt-tolerance-capability">
+<h3>2.2 Salt Tolerance Capability<a class="headerlink" href="#salt-tolerance-capability" title="Link to this heading"></a></h3>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="c"># Class Definition</span>
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">3002001</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;quantitative salt tolerance capability&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The capability of an organism to tolerate or require specific concentrations of salt (NaCl), measured as weight/volume percentage.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">1000846</span> <span class="p">;</span>  <span class="c"># halophile (existing parent)</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">seeAlso</span> <span class="nn">CHEBI</span><span class="p">:</span><span class="nt">26710</span> <span class="p">;</span>  <span class="c"># sodium chloride</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000119</span> <span class="s">&quot;KG-Microbe metatraits: 85,311 observations&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="c"># Data Properties</span>
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_NaCl_concentration_optimum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;has NaCl concentration optimum&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The optimal NaCl concentration for growth, expressed as weight/volume percentage.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3002001</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasDbXref</span> <span class="s">&quot;UO:0000187&quot;</span> <span class="p">;</span>  <span class="c"># percent</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">comment</span> <span class="s">&quot;Value should be w/v percentage. Example: 6.5 for 6.5% NaCl&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_NaCl_concentration_minimum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;has NaCl concentration minimum&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The minimum NaCl concentration tolerated for growth.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3002001</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasDbXref</span> <span class="s">&quot;UO:0000187&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_NaCl_concentration_maximum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;has NaCl concentration maximum&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The maximum NaCl concentration tolerated for growth.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3002001</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasDbXref</span> <span class="s">&quot;UO:0000187&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+</pre></div>
+</div>
+<p><strong>Example Usage</strong>:</p>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="nt">Organism_Halomonas_elongata</span> <span class="kt">a</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">OrganismTaxon</span> <span class="p">;</span>
+    <span class="nn">biolink</span><span class="p">:</span><span class="nt">has_phenotype</span> <span class="p">[</span>
+        <span class="kt">a</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3002001</span> <span class="p">;</span>
+        <span class="nn">METPO</span><span class="p">:</span><span class="nt">has_NaCl_concentration_optimum</span> <span class="s">&quot;6.5&quot;</span><span class="p">^^</span><span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+        <span class="nn">METPO</span><span class="p">:</span><span class="nt">has_NaCl_concentration_minimum</span> <span class="s">&quot;0.5&quot;</span><span class="p">^^</span><span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+        <span class="nn">METPO</span><span class="p">:</span><span class="nt">has_NaCl_concentration_maximum</span> <span class="s">&quot;20.0&quot;</span><span class="p">^^</span><span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+        <span class="nn">biolink</span><span class="p">:</span><span class="nt">has_unit</span> <span class="nn">UO</span><span class="p">:</span><span class="nt">0000187</span> <span class="p">;</span>  <span class="c"># percent</span>
+    <span class="p">]</span> <span class="p">.</span>
+</pre></div>
+</div>
+<p><strong>Addresses</strong>: 85,311 unmapped <code class="docutils literal notranslate"><span class="pre">growth:</span> <span class="pre">[X]%</span> <span class="pre">NaCl</span></code> traits</p>
+</section>
+<hr class="docutils" />
+<section id="ph-tolerance-capability">
+<h3>2.3 pH Tolerance Capability<a class="headerlink" href="#ph-tolerance-capability" title="Link to this heading"></a></h3>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="c"># Class Definition</span>
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">3002002</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;quantitative pH tolerance capability&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The capability of an organism to grow at specific pH values or within a pH range.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">1000834</span> <span class="p">;</span>  <span class="c"># acidophile (existing parent)</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">1000841</span> <span class="p">;</span>  <span class="c"># alkaliphile (existing parent)</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">seeAlso</span> <span class="nn">PATO</span><span class="p">:</span><span class="nt">0001842</span> <span class="p">;</span>  <span class="c"># acidity</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000119</span> <span class="s">&quot;KG-Microbe metatraits: 5,479 observations&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="c"># Data Properties</span>
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_pH_optimum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;has pH optimum&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The optimal pH for growth.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3002002</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">comment</span> <span class="s">&quot;Value should be on pH scale (0-14). Example: 7.0 for neutral&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_pH_minimum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;has pH minimum&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The minimum pH at which growth can occur.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3002002</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_pH_maximum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;has pH maximum&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The maximum pH at which growth can occur.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3002002</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="p">.</span>
+</pre></div>
+</div>
+<p><strong>Example Usage</strong>:</p>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="nt">Organism_Acidithiobacillus_ferrooxidans</span> <span class="kt">a</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">OrganismTaxon</span> <span class="p">;</span>
+    <span class="nn">biolink</span><span class="p">:</span><span class="nt">has_phenotype</span> <span class="p">[</span>
+        <span class="kt">a</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3002002</span> <span class="p">;</span>
+        <span class="nn">METPO</span><span class="p">:</span><span class="nt">has_pH_optimum</span> <span class="s">&quot;2.5&quot;</span><span class="p">^^</span><span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+        <span class="nn">METPO</span><span class="p">:</span><span class="nt">has_pH_minimum</span> <span class="s">&quot;1.3&quot;</span><span class="p">^^</span><span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+        <span class="nn">METPO</span><span class="p">:</span><span class="nt">has_pH_maximum</span> <span class="s">&quot;4.5&quot;</span><span class="p">^^</span><span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="p">]</span> <span class="p">.</span>
+</pre></div>
+</div>
+<p><strong>Addresses</strong>: 5,479 unmapped <code class="docutils literal notranslate"><span class="pre">pH</span> <span class="pre">preference</span></code> traits</p>
+</section>
+<hr class="docutils" />
+<section id="summary-of-quantitative-properties">
+<h3>Summary of Quantitative Properties<a class="headerlink" href="#summary-of-quantitative-properties" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Property Type</p></th>
+<th class="head"><p>New Classes</p></th>
+<th class="head"><p>New Data Properties</p></th>
+<th class="head"><p>Addresses Traits</p></th>
+<th class="head"><p>Occurrences</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Temperature</p></td>
+<td><p>1</p></td>
+<td><p>3 (optimum, min, max)</p></td>
+<td><p>1</p></td>
+<td><p>85,311</p></td>
+</tr>
+<tr class="row-odd"><td><p>Salt (NaCl)</p></td>
+<td><p>1</p></td>
+<td><p>3 (optimum, min, max)</p></td>
+<td><p>1</p></td>
+<td><p>85,311</p></td>
+</tr>
+<tr class="row-even"><td><p>pH</p></td>
+<td><p>1</p></td>
+<td><p>3 (optimum, min, max)</p></td>
+<td><p>1</p></td>
+<td><p>5,479</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Total</strong></p></td>
+<td><p><strong>3</strong></p></td>
+<td><p><strong>9</strong></p></td>
+<td><p><strong>3</strong></p></td>
+<td><p><strong>176,101</strong></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<hr class="docutils" />
+<section id="proposal-3-electron-acceptor-hierarchy-15-new-terms">
+<h2>Proposal 3: Electron Acceptor Hierarchy (15 new terms)<a class="headerlink" href="#proposal-3-electron-acceptor-hierarchy-15-new-terms" title="Link to this heading"></a></h2>
+<section id="id2">
+<h3>Rationale<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<p>Electron acceptor capabilities are critical for understanding microbial metabolism, especially in anaerobic conditions. Current METPO lacks electron transport chain trait coverage. High-frequency trait (99,543 occurrences) requires systematic modeling.</p>
+</section>
+<section id="id3">
+<h3>Proposed Hierarchy<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>METPO:2000509 (metabolic process)
+  └─ METPO:3003000 (electron acceptor capability) [NEW]
+       ├─ METPO:3003100 (inorganic electron acceptor capability) [NEW]
+       │    ├─ METPO:3003101 (sulfur compound electron acceptor) [NEW]
+       │    ├─ METPO:3003102 (iron oxide electron acceptor) [NEW]
+       │    ├─ METPO:3003103 (nitrate electron acceptor) [NEW]
+       │    ├─ METPO:3003104 (nitrite electron acceptor) [NEW]
+       │    ├─ METPO:3003105 (sulfate electron acceptor) [NEW]
+       │    ├─ METPO:3003106 (arsenate electron acceptor) [NEW]
+       │    ├─ METPO:3003107 (manganese oxide electron acceptor) [NEW]
+       │    └─ METPO:3003108 (selenate electron acceptor) [NEW]
+       └─ METPO:3003200 (organic electron acceptor capability) [NEW]
+            ├─ METPO:3003201 (fumarate electron acceptor) [NEW]
+            ├─ METPO:3003202 (DMSO electron acceptor) [NEW]
+            ├─ METPO:3003203 (TMAO electron acceptor) [NEW]
+            └─ ... (more organic acceptors)
+</pre></div>
+</div>
+</section>
+<section id="parent-term-definition">
+<h3>Parent Term Definition<a class="headerlink" href="#parent-term-definition" title="Link to this heading"></a></h3>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="nn">METPO</span><span class="p">:</span><span class="nt">3003000</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;electron acceptor capability&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The capability of an organism to use a specific chemical compound as a terminal electron acceptor in its electron transport chain during cellular respiration.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000509</span> <span class="p">;</span>  <span class="c"># metabolic process</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">seeAlso</span> <span class="nn">GO</span><span class="p">:</span><span class="nt">0009060</span> <span class="p">;</span>  <span class="c"># aerobic respiration</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">seeAlso</span> <span class="nn">GO</span><span class="p">:</span><span class="nt">0009061</span> <span class="p">;</span>  <span class="c"># anaerobic respiration</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasExactSynonym</span> <span class="s">&quot;terminal electron acceptor capability&quot;</span> <span class="p">;</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasRelatedSynonym</span> <span class="s">&quot;electron transport chain terminal acceptor&quot;</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000119</span> <span class="s">&quot;KG-Microbe metatraits analysis 2026-03-28&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="c"># Object Property</span>
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">accepts_electrons_from</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">ObjectProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;accepts electrons from&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;Links an electron acceptor capability to the electron donor compound or process.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3003000</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">CHEBI</span><span class="p">:</span><span class="nt">24431</span> <span class="p">;</span>  <span class="c"># chemical entity</span>
+    <span class="nn">owl</span><span class="p">:</span><span class="nt">inverseOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">donates_electrons_to</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_electron_acceptor_compound</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">ObjectProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;has electron acceptor compound&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;Links an electron acceptor capability to the specific chemical compound that accepts electrons.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3003000</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">CHEBI</span><span class="p">:</span><span class="nt">24431</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subPropertyOf</span> <span class="nn">RO</span><span class="p">:</span><span class="nt">0002233</span> <span class="p">;</span>  <span class="c"># has input</span>
+    <span class="p">.</span>
+</pre></div>
+</div>
+</section>
+<section id="inorganic-electron-acceptors">
+<h3>Inorganic Electron Acceptors<a class="headerlink" href="#inorganic-electron-acceptors" title="Link to this heading"></a></h3>
+<section id="sulfur-compound-electron-acceptor-priority-1">
+<h4>3.1 Sulfur Compound Electron Acceptor (Priority 1)<a class="headerlink" href="#sulfur-compound-electron-acceptor-priority-1" title="Link to this heading"></a></h4>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="nn">METPO</span><span class="p">:</span><span class="nt">3003101</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;sulfur compound electron acceptor capability&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The capability to use sulfur-containing compounds (such as elemental sulfur, sulfate, sulfite, or thiosulfate) as terminal electron acceptors in anaerobic respiration.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3003100</span> <span class="p">;</span>  <span class="c"># inorganic electron acceptor</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">seeAlso</span> <span class="nn">GO</span><span class="p">:</span><span class="nt">0019417</span> <span class="p">;</span>  <span class="c"># sulfur oxidation</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">seeAlso</span> <span class="nn">CHEBI</span><span class="p">:</span><span class="nt">26833</span> <span class="p">;</span>  <span class="c"># sulfur molecular entity</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasExactSynonym</span> <span class="s">&quot;uses sulfur compounds as electron acceptor&quot;</span> <span class="p">;</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasNarrowSynonym</span> <span class="s">&quot;sulfur respiration&quot;</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000119</span> <span class="s">&quot;KG-Microbe metatraits: 99,543 observations&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+</pre></div>
+</div>
+<p><strong>Example Usage</strong>:</p>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="nt">Organism_Desulfovibrio_vulgaris</span> <span class="kt">a</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">OrganismTaxon</span> <span class="p">;</span>
+    <span class="nn">biolink</span><span class="p">:</span><span class="nt">capable_of</span> <span class="p">[</span>
+        <span class="kt">a</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3003101</span> <span class="p">;</span>
+        <span class="nn">METPO</span><span class="p">:</span><span class="nt">has_electron_acceptor_compound</span> <span class="nn">CHEBI</span><span class="p">:</span><span class="nt">29919</span> <span class="p">;</span>  <span class="c"># sulfate</span>
+        <span class="nn">biolink</span><span class="p">:</span><span class="nt">related_to</span> <span class="nn">GO</span><span class="p">:</span><span class="nt">0000103</span> <span class="p">;</span>  <span class="c"># sulfate assimilation</span>
+    <span class="p">]</span> <span class="p">.</span>
+</pre></div>
+</div>
+<p><strong>Addresses</strong>: 99,543 occurrences of <code class="docutils literal notranslate"><span class="pre">electron</span> <span class="pre">acceptor:</span> <span class="pre">sulfur</span> <span class="pre">compounds</span></code></p>
+</section>
+<section id="iron-oxide-electron-acceptor">
+<h4>3.2 Iron Oxide Electron Acceptor<a class="headerlink" href="#iron-oxide-electron-acceptor" title="Link to this heading"></a></h4>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="nn">METPO</span><span class="p">:</span><span class="nt">3003102</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;iron oxide electron acceptor capability&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The capability to use iron(III) oxides or oxyhydroxides as terminal electron acceptors in anaerobic respiration.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3003100</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">seeAlso</span> <span class="nn">CHEBI</span><span class="p">:</span><span class="nt">82594</span> <span class="p">;</span>  <span class="c"># iron(III) oxide</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasExactSynonym</span> <span class="s">&quot;uses ferric iron as electron acceptor&quot;</span> <span class="p">;</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasNarrowSynonym</span> <span class="s">&quot;iron reduction&quot;</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000119</span> <span class="s">&quot;KG-Microbe metatraits: 8 observations&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+</pre></div>
+</div>
+<p><strong>Addresses</strong>: 8 occurrences of <code class="docutils literal notranslate"><span class="pre">electron</span> <span class="pre">acceptor:</span> <span class="pre">amorphous</span> <span class="pre">iron</span> <span class="pre">(iii)</span> <span class="pre">oxide</span></code></p>
+</section>
+<section id="nitrate-electron-acceptor">
+<h4>3.3 Nitrate Electron Acceptor<a class="headerlink" href="#nitrate-electron-acceptor" title="Link to this heading"></a></h4>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="nn">METPO</span><span class="p">:</span><span class="nt">3003103</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;nitrate electron acceptor capability&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The capability to use nitrate (NO3-) as a terminal electron acceptor in anaerobic respiration, typically reducing it to nitrite or gaseous nitrogen compounds.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3003100</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">seeAlso</span> <span class="nn">GO</span><span class="p">:</span><span class="nt">0009061</span> <span class="p">;</span>  <span class="c"># anaerobic respiration</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">seeAlso</span> <span class="nn">CHEBI</span><span class="p">:</span><span class="nt">17632</span> <span class="p">;</span>  <span class="c"># nitrate</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasExactSynonym</span> <span class="s">&quot;nitrate respiration&quot;</span> <span class="p">;</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasNarrowSynonym</span> <span class="s">&quot;denitrification capability&quot;</span> <span class="p">;</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasRelatedSynonym</span> <span class="s">&quot;uses nitrate as electron acceptor&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+</pre></div>
+</div>
+</section>
+<section id="additional-inorganic-acceptors">
+<h4>3.4 Additional Inorganic Acceptors<a class="headerlink" href="#additional-inorganic-acceptors" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>METPO ID</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>CHEBI Link</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>METPO:3003104</p></td>
+<td><p>nitrite electron acceptor</p></td>
+<td><p>CHEBI:16301</p></td>
+<td><p>Nitrite reduction</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3003105</p></td>
+<td><p>sulfate electron acceptor</p></td>
+<td><p>CHEBI:16189</p></td>
+<td><p>Sulfate reduction</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3003106</p></td>
+<td><p>arsenate electron acceptor</p></td>
+<td><p>CHEBI:29242</p></td>
+<td><p>Arsenate respiration</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3003107</p></td>
+<td><p>manganese oxide electron acceptor</p></td>
+<td><p>CHEBI:53448</p></td>
+<td><p>Mn(IV) reduction</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3003108</p></td>
+<td><p>selenate electron acceptor</p></td>
+<td><p>CHEBI:26649</p></td>
+<td><p>Selenate reduction</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="organic-electron-acceptors">
+<h3>Organic Electron Acceptors<a class="headerlink" href="#organic-electron-acceptors" title="Link to this heading"></a></h3>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="nn">METPO</span><span class="p">:</span><span class="nt">3003200</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;organic electron acceptor capability&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The capability to use organic compounds as terminal electron acceptors in anaerobic respiration.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3003000</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="c"># Example: Fumarate</span>
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">3003201</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;fumarate electron acceptor capability&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The capability to use fumarate as a terminal electron acceptor, reducing it to succinate.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3003200</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">seeAlso</span> <span class="nn">GO</span><span class="p">:</span><span class="nt">0009061</span> <span class="p">;</span>  <span class="c"># anaerobic respiration</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">seeAlso</span> <span class="nn">CHEBI</span><span class="p">:</span><span class="nt">29806</span> <span class="p">;</span>  <span class="c"># fumarate</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasExactSynonym</span> <span class="s">&quot;fumarate respiration&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+</pre></div>
+</div>
+</section>
+<section id="complete-electron-acceptor-terms">
+<h3>Complete Electron Acceptor Terms<a class="headerlink" href="#complete-electron-acceptor-terms" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>METPO ID Range</p></th>
+<th class="head"><p>Category</p></th>
+<th class="head"><p>Count</p></th>
+<th class="head"><p>High Priority</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>3003000-3003000</p></td>
+<td><p>Parent term</p></td>
+<td><p>1</p></td>
+<td><p>✓</p></td>
+</tr>
+<tr class="row-odd"><td><p>3003100-3003108</p></td>
+<td><p>Inorganic acceptors</p></td>
+<td><p>9</p></td>
+<td><p>✓ (3003101)</p></td>
+</tr>
+<tr class="row-even"><td><p>3003200-3003205</p></td>
+<td><p>Organic acceptors</p></td>
+<td><p>6</p></td>
+<td><p>-</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Total</strong></p></td>
+<td><p></p></td>
+<td><p><strong>16</strong></p></td>
+<td><p><strong>2</strong></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<hr class="docutils" />
+<section id="implementation-roadmap">
+<h2>Implementation Roadmap<a class="headerlink" href="#implementation-roadmap" title="Link to this heading"></a></h2>
+<section id="phase-1-core-structure-week-1">
+<h3>Phase 1: Core Structure (Week 1)<a class="headerlink" href="#phase-1-core-structure-week-1" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Create parent terms</strong> (3 terms):</p>
+<ul class="simple">
+<li><p>METPO:3001000 (fermentation capability)</p></li>
+<li><p>METPO:3003000 (electron acceptor capability)</p></li>
+<li><p>METPO:3003100 (inorganic electron acceptor)</p></li>
+</ul>
+</li>
+<li><p><strong>Define data properties</strong> (9 properties):</p>
+<ul class="simple">
+<li><p>Temperature: optimum, min, max</p></li>
+<li><p>NaCl: optimum, min, max</p></li>
+<li><p>pH: optimum, min, max</p></li>
+</ul>
+</li>
+<li><p><strong>Define object properties</strong> (3 properties):</p>
+<ul class="simple">
+<li><p>has_fermentation_substrate</p></li>
+<li><p>has_electron_acceptor_compound</p></li>
+<li><p>accepts_electrons_from</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="phase-2-high-priority-terms-week-2">
+<h3>Phase 2: High-Priority Terms (Week 2)<a class="headerlink" href="#phase-2-high-priority-terms-week-2" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Fermentation monosaccharides</strong> (15 terms):</p>
+<ul class="simple">
+<li><p>Glucose, ribose, xylose, mannose, fructose, etc.</p></li>
+</ul>
+</li>
+<li><p><strong>Quantitative capabilities</strong> (3 terms):</p>
+<ul class="simple">
+<li><p>METPO:3002000 (temperature)</p></li>
+<li><p>METPO:3002001 (NaCl)</p></li>
+<li><p>METPO:3002002 (pH)</p></li>
+</ul>
+</li>
+<li><p><strong>Priority electron acceptor</strong> (1 term):</p>
+<ul class="simple">
+<li><p>METPO:3003101 (sulfur compounds)</p></li>
+</ul>
+</li>
+</ol>
+<p><strong>Addresses</strong>: 183,751 unmapped trait occurrences (15.8% of total)</p>
+</section>
+<section id="phase-3-extended-coverage-month-1">
+<h3>Phase 3: Extended Coverage (Month 1)<a class="headerlink" href="#phase-3-extended-coverage-month-1" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Remaining fermentation terms</strong> (80 terms):</p>
+<ul class="simple">
+<li><p>Disaccharides (12)</p></li>
+<li><p>Polysaccharides (5)</p></li>
+<li><p>Sugar alcohols (14)</p></li>
+<li><p>Other compounds (49)</p></li>
+</ul>
+</li>
+<li><p><strong>All electron acceptors</strong> (15 terms):</p>
+<ul class="simple">
+<li><p>Remaining inorganic (8)</p></li>
+<li><p>Organic acceptors (6)</p></li>
+</ul>
+</li>
+</ol>
+<p><strong>Total New Terms</strong>: 114 classes + 12 properties = <strong>126 new METPO entities</strong></p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="integration-with-transform-code">
+<h2>Integration with Transform Code<a class="headerlink" href="#integration-with-transform-code" title="Link to this heading"></a></h2>
+<section id="current-mapping-files">
+<h3>Current Mapping Files<a class="headerlink" href="#current-mapping-files" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># kg_microbe/transform_utils/metatraits/mappings/phenotype_mappings.tsv</span>
+<span class="c1"># Add new mappings:</span>
+
+<span class="c1"># Fermentation</span>
+<span class="n">fermentation</span><span class="p">:</span> <span class="n">D</span><span class="o">-</span><span class="n">glucose</span>    <span class="n">METPO</span><span class="p">:</span><span class="mi">3001001</span>    <span class="n">glucose</span> <span class="n">fermentation</span> <span class="n">capability</span>
+<span class="n">fermentation</span><span class="p">:</span> <span class="n">D</span><span class="o">-</span><span class="n">ribose</span>     <span class="n">METPO</span><span class="p">:</span><span class="mi">3001002</span>    <span class="n">ribose</span> <span class="n">fermentation</span> <span class="n">capability</span>
+<span class="n">fermentation</span><span class="p">:</span> <span class="n">D</span><span class="o">-</span><span class="n">mannitol</span>   <span class="n">METPO</span><span class="p">:</span><span class="mi">3001050</span>    <span class="n">mannitol</span> <span class="n">fermentation</span> <span class="n">capability</span>
+<span class="o">...</span>
+
+<span class="c1"># Quantitative properties</span>
+<span class="n">growth</span><span class="p">:</span> <span class="mi">42</span> <span class="n">degrees</span> <span class="n">Celsius</span>    <span class="n">METPO</span><span class="p">:</span><span class="mi">3002000</span>    <span class="n">quantitative</span> <span class="n">temperature</span> <span class="n">growth</span> <span class="n">capability</span>    <span class="mf">42.0</span><span class="o">^^</span><span class="n">xsd</span><span class="p">:</span><span class="n">decimal</span>
+<span class="n">growth</span><span class="p">:</span> <span class="mf">6.5</span><span class="o">%</span> <span class="n">NaCl</span>            <span class="n">METPO</span><span class="p">:</span><span class="mi">3002001</span>    <span class="n">quantitative</span> <span class="n">salt</span> <span class="n">tolerance</span> <span class="n">capability</span>        <span class="mf">6.5</span><span class="o">^^</span><span class="n">xsd</span><span class="p">:</span><span class="n">decimal</span>
+<span class="n">pH</span> <span class="n">preference</span>                <span class="n">METPO</span><span class="p">:</span><span class="mi">3002002</span>    <span class="n">quantitative</span> <span class="n">pH</span> <span class="n">tolerance</span> <span class="n">capability</span>          <span class="p">[</span><span class="n">value_from_majority_label</span><span class="p">]</span>
+
+<span class="c1"># Electron acceptors</span>
+<span class="n">electron</span> <span class="n">acceptor</span><span class="p">:</span> <span class="n">sulfur</span> <span class="n">compounds</span>           <span class="n">METPO</span><span class="p">:</span><span class="mi">3003101</span>    <span class="n">sulfur</span> <span class="n">compound</span> <span class="n">electron</span> <span class="n">acceptor</span> <span class="n">capability</span>
+<span class="n">electron</span> <span class="n">acceptor</span><span class="p">:</span> <span class="n">amorphous</span> <span class="n">iron</span> <span class="p">(</span><span class="n">iii</span><span class="p">)</span> <span class="n">oxide</span> <span class="n">METPO</span><span class="p">:</span><span class="mi">3003102</span>    <span class="n">iron</span> <span class="n">oxide</span> <span class="n">electron</span> <span class="n">acceptor</span> <span class="n">capability</span>
+</pre></div>
+</div>
+</section>
+<section id="code-changes-required">
+<h3>Code Changes Required<a class="headerlink" href="#code-changes-required" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># kg_microbe/transform_utils/metatraits/metatraits.py</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_parse_quantitative_trait</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trait_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">majority_label</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Parse quantitative traits with numerical values.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    - &quot;growth: 42 degrees Celsius&quot; → METPO:3002000 + has_growth_temperature_optimum: 42.0</span>
+<span class="sd">    - &quot;growth: 6.5% NaCl&quot; → METPO:3002001 + has_NaCl_concentration_optimum: 6.5</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+
+    <span class="c1"># Temperature pattern</span>
+    <span class="n">temp_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\d+(?:\.\d+)?)\s*degrees?\s*celsius&#39;</span><span class="p">,</span> <span class="n">trait_name</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">temp_match</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">temp_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;curie&#39;</span><span class="p">:</span> <span class="s1">&#39;METPO:3002000&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;property&#39;</span><span class="p">:</span> <span class="s1">&#39;has_growth_temperature_optimum&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span>
+            <span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="s1">&#39;UO:0000027&#39;</span>  <span class="c1"># degree Celsius</span>
+        <span class="p">}</span>
+
+    <span class="c1"># NaCl pattern</span>
+    <span class="n">nacl_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\d+(?:\.\d+)?)\s*%\s*NaCl&#39;</span><span class="p">,</span> <span class="n">trait_name</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">I</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nacl_match</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nacl_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s1">&#39;curie&#39;</span><span class="p">:</span> <span class="s1">&#39;METPO:3002001&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;property&#39;</span><span class="p">:</span> <span class="s1">&#39;has_NaCl_concentration_optimum&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span>
+            <span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="s1">&#39;UO:0000187&#39;</span>  <span class="c1"># percent</span>
+        <span class="p">}</span>
+
+    <span class="c1"># pH pattern (extract from majority_label)</span>
+    <span class="k">if</span> <span class="s1">&#39;pH preference&#39;</span> <span class="ow">in</span> <span class="n">trait_name</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+        <span class="c1"># majority_label format: &quot;6.5: (100%)&quot; or &quot;6.5-7.0: (100%)&quot;</span>
+        <span class="n">ph_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\d+(?:\.\d+)?)&#39;</span><span class="p">,</span> <span class="n">majority_label</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ph_match</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ph_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">return</span> <span class="p">{</span>
+                <span class="s1">&#39;curie&#39;</span><span class="p">:</span> <span class="s1">&#39;METPO:3002002&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;property&#39;</span><span class="p">:</span> <span class="s1">&#39;has_pH_optimum&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;value&#39;</span><span class="p">:</span> <span class="n">value</span><span class="p">,</span>
+                <span class="s1">&#39;unit&#39;</span><span class="p">:</span> <span class="kc">None</span>  <span class="c1"># pH is unitless</span>
+            <span class="p">}</span>
+
+    <span class="k">return</span> <span class="kc">None</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="validation-criteria">
+<h2>Validation Criteria<a class="headerlink" href="#validation-criteria" title="Link to this heading"></a></h2>
+<section id="term-quality-checks">
+<h3>Term Quality Checks<a class="headerlink" href="#term-quality-checks" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>[ ] All terms have <code class="docutils literal notranslate"><span class="pre">rdfs:label</span></code> in English</p></li>
+<li><p>[ ] All terms have <code class="docutils literal notranslate"><span class="pre">obo:IAO_0000115</span></code> (definition)</p></li>
+<li><p>[ ] All terms have appropriate parent classes</p></li>
+<li><p>[ ] All cross-references (GO, CHEBI, ENVO) verified</p></li>
+<li><p>[ ] All synonyms follow OBO conventions</p></li>
+<li><p>[ ] All data properties have <code class="docutils literal notranslate"><span class="pre">rdfs:range</span></code> specified</p></li>
+<li><p>[ ] Unit ontology (UO) references correct</p></li>
+</ul>
+</section>
+<section id="coverage-validation">
+<h3>Coverage Validation<a class="headerlink" href="#coverage-validation" title="Link to this heading"></a></h3>
+<p><strong>Before Implementation</strong>:</p>
+<ul class="simple">
+<li><p>Unmapped fermentation traits: 95 (13,039 occurrences)</p></li>
+<li><p>Unmapped quantitative growth: 3 (176,101 occurrences)</p></li>
+<li><p>Unmapped electron acceptor: 5 (99,543 occurrences)</p></li>
+<li><p><strong>Total</strong>: 103 traits (288,683 occurrences)</p></li>
+</ul>
+<p><strong>After Implementation</strong>:</p>
+<ul class="simple">
+<li><p>Expected unmapped: 0</p></li>
+<li><p><strong>Coverage gain</strong>: 100% for these categories</p></li>
+<li><p><strong>Overall impact</strong>: 24.8% of all unmapped traits resolved</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="appendix-a-full-owl-ontology-fragment">
+<h2>Appendix A: Full OWL Ontology Fragment<a class="headerlink" href="#appendix-a-full-owl-ontology-fragment" title="Link to this heading"></a></h2>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="k">@prefix</span><span class="w"> </span><span class="nn">METPO:</span><span class="w"> </span><span class="nv">&lt;http://purl.obolibrary.org/obo/METPO_&gt;</span><span class="w"> </span><span class="p">.</span>
+<span class="k">@prefix</span><span class="w"> </span><span class="nn">obo:</span><span class="w"> </span><span class="nv">&lt;http://purl.obolibrary.org/obo/&gt;</span><span class="w"> </span><span class="p">.</span>
+<span class="k">@prefix</span><span class="w"> </span><span class="nn">rdf:</span><span class="w"> </span><span class="nv">&lt;http://www.w3.org/1999/02/22-rdf-syntax-ns#&gt;</span><span class="w"> </span><span class="p">.</span>
+<span class="k">@prefix</span><span class="w"> </span><span class="nn">rdfs:</span><span class="w"> </span><span class="nv">&lt;http://www.w3.org/2000/01/rdf-schema#&gt;</span><span class="w"> </span><span class="p">.</span>
+<span class="k">@prefix</span><span class="w"> </span><span class="nn">owl:</span><span class="w"> </span><span class="nv">&lt;http://www.w3.org/2002/07/owl#&gt;</span><span class="w"> </span><span class="p">.</span>
+<span class="k">@prefix</span><span class="w"> </span><span class="nn">xsd:</span><span class="w"> </span><span class="nv">&lt;http://www.w3.org/2001/XMLSchema#&gt;</span><span class="w"> </span><span class="p">.</span>
+
+<span class="c"># Fermentation Hierarchy</span>
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">3001000</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;fermentation capability&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000509</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The capability of an organism to carry out fermentation.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">.</span>
+
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">3001010</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;monosaccharide fermentation capability&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3001000</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The capability to ferment monosaccharides.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">.</span>
+
+<span class="c"># [... additional 93 fermentation terms ...]</span>
+
+<span class="c"># Quantitative Properties</span>
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">3002000</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;quantitative temperature growth capability&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">1000604</span> <span class="p">.</span>
+
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_growth_temperature_optimum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3002000</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">.</span>
+
+<span class="c"># [... additional quantitative properties ...]</span>
+
+<span class="c"># Electron Acceptors</span>
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">3003000</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;electron acceptor capability&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000509</span> <span class="p">.</span>
+
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">3003101</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;sulfur compound electron acceptor capability&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">3003100</span> <span class="p">.</span>
+
+<span class="c"># [... additional 14 electron acceptor terms ...]</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="appendix-b-cross-reference-mappings">
+<h2>Appendix B: Cross-Reference Mappings<a class="headerlink" href="#appendix-b-cross-reference-mappings" title="Link to this heading"></a></h2>
+<section id="go-mappings">
+<h3>GO Mappings<a class="headerlink" href="#go-mappings" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>METPO Term</p></th>
+<th class="head"><p>GO Term</p></th>
+<th class="head"><p>Relationship</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>METPO:3001001 (glucose fermentation)</p></td>
+<td><p>GO:0019660</p></td>
+<td><p>rdfs:seeAlso</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3001020 (lactose fermentation)</p></td>
+<td><p>GO:0005989</p></td>
+<td><p>rdfs:seeAlso</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO:3003101 (sulfur electron acceptor)</p></td>
+<td><p>GO:0019417</p></td>
+<td><p>rdfs:seeAlso</p></td>
+</tr>
+<tr class="row-odd"><td><p>METPO:3003103 (nitrate electron acceptor)</p></td>
+<td><p>GO:0009061</p></td>
+<td><p>rdfs:seeAlso</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="chebi-mappings">
+<h3>CHEBI Mappings<a class="headerlink" href="#chebi-mappings" title="Link to this heading"></a></h3>
+<p>All fermentation and electron acceptor terms should link to substrate CHEBI IDs via <code class="docutils literal notranslate"><span class="pre">METPO:has_fermentation_substrate</span></code> or <code class="docutils literal notranslate"><span class="pre">METPO:has_electron_acceptor_compound</span></code>.</p>
+<hr class="docutils" />
+<p><strong>End of Proposal</strong>
+<strong>Contact</strong>: KG-Microbe Development Team
+<strong>Review Due</strong>: 2026-04-15</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

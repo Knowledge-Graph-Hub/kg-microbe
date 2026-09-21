@@ -1,0 +1,29 @@
+kg\_microbe.transform\_utils.microbedecoder package
+===================================================
+
+Submodules
+----------
+
+kg\_microbe.transform\_utils.microbedecoder.microbedecoder module
+-----------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.microbedecoder.microbedecoder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.microbedecoder.utils module
+--------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.microbedecoder.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.transform_utils.microbedecoder
+   :members:
+   :undoc-members:
+   :show-inheritance:

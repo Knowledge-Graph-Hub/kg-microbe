@@ -1,0 +1,21 @@
+kg\_microbe.transform\_utils.metatraits\_gtdb package
+=====================================================
+
+Submodules
+----------
+
+kg\_microbe.transform\_utils.metatraits\_gtdb.metatraits\_gtdb module
+---------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.metatraits_gtdb.metatraits_gtdb
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.transform_utils.metatraits_gtdb
+   :members:
+   :undoc-members:
+   :show-inheritance:

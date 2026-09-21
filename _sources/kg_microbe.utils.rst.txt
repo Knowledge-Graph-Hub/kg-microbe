@@ -4,10 +4,58 @@ kg\_microbe.utils package
 Submodules
 ----------
 
-kg\_microbe.utils.biohub\_converter module
+kg\_microbe.utils.atomic\_io module
+-----------------------------------
+
+.. automodule:: kg_microbe.utils.atomic_io
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.biolink\_hierarchy module
+-------------------------------------------
+
+.. automodule:: kg_microbe.utils.biolink_hierarchy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.biolink\_model module
+---------------------------------------
+
+.. automodule:: kg_microbe.utils.biolink_model
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.chemical\_mapping\_utils module
+-------------------------------------------------
+
+.. automodule:: kg_microbe.utils.chemical_mapping_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.consolidate\_categories module
+------------------------------------------------
+
+.. automodule:: kg_microbe.utils.consolidate_categories
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.download\_bacdive module
 ------------------------------------------
 
-.. automodule:: kg_microbe.utils.biohub_converter
+.. automodule:: kg_microbe.utils.download_bacdive
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.download\_manifest module
+-------------------------------------------
+
+.. automodule:: kg_microbe.utils.download_manifest
    :members:
    :undoc-members:
    :show-inheritance:
@@ -20,10 +68,186 @@ kg\_microbe.utils.download\_utils module
    :undoc-members:
    :show-inheritance:
 
-kg\_microbe.utils.nlp\_utils module
+kg\_microbe.utils.dummy\_tqdm module
+------------------------------------
+
+.. automodule:: kg_microbe.utils.dummy_tqdm
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.external\_identifiers module
+----------------------------------------------
+
+.. automodule:: kg_microbe.utils.external_identifiers
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.fix\_list\_representations module
+---------------------------------------------------
+
+.. automodule:: kg_microbe.utils.fix_list_representations
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.foodon\_classification module
+-----------------------------------------------
+
+.. automodule:: kg_microbe.utils.foodon_classification
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.go\_authority module
+--------------------------------------
+
+.. automodule:: kg_microbe.utils.go_authority
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.graph\_canonicalization module
+------------------------------------------------
+
+.. automodule:: kg_microbe.utils.graph_canonicalization
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.graph\_schema module
+--------------------------------------
+
+.. automodule:: kg_microbe.utils.graph_schema
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.ingredient\_identity module
+---------------------------------------------
+
+.. automodule:: kg_microbe.utils.ingredient_identity
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.isolation\_source\_mapping\_utils module
+----------------------------------------------------------
+
+.. automodule:: kg_microbe.utils.isolation_source_mapping_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.lpsn\_utils module
+------------------------------------
+
+.. automodule:: kg_microbe.utils.lpsn_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.mapping\_file\_utils module
+---------------------------------------------
+
+.. automodule:: kg_microbe.utils.mapping_file_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.mediadive\_bulk\_download module
+--------------------------------------------------
+
+.. automodule:: kg_microbe.utils.mediadive_bulk_download
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.metpo\_liveness module
+----------------------------------------
+
+.. automodule:: kg_microbe.utils.metpo_liveness
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.metpo\_predicates module
+------------------------------------------
+
+.. automodule:: kg_microbe.utils.metpo_predicates
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.microbial\_trait\_mappings module
+---------------------------------------------------
+
+.. automodule:: kg_microbe.utils.microbial_trait_mappings
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.ner\_utils module
 -----------------------------------
 
-.. automodule:: kg_microbe.utils.nlp_utils
+.. automodule:: kg_microbe.utils.ner_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.oak\_utils module
+-----------------------------------
+
+.. automodule:: kg_microbe.utils.oak_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.ontology\_resolution module
+---------------------------------------------
+
+.. automodule:: kg_microbe.utils.ontology_resolution
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.ontology\_utils module
+----------------------------------------
+
+.. automodule:: kg_microbe.utils.ontology_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.pandas\_utils module
+--------------------------------------
+
+.. automodule:: kg_microbe.utils.pandas_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.parse\_taxon\_rank module
+-------------------------------------------
+
+.. automodule:: kg_microbe.utils.parse_taxon_rank
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.postprocess\_artifacts module
+-----------------------------------------------
+
+.. automodule:: kg_microbe.utils.postprocess_artifacts
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.provenance module
+-----------------------------------
+
+.. automodule:: kg_microbe.utils.provenance
    :members:
    :undoc-members:
    :show-inheritance:
@@ -36,10 +260,82 @@ kg\_microbe.utils.robot\_utils module
    :undoc-members:
    :show-inheritance:
 
-kg\_microbe.utils.transform\_utils module
+kg\_microbe.utils.sanitize\_curies module
 -----------------------------------------
 
-.. automodule:: kg_microbe.utils.transform_utils
+.. automodule:: kg_microbe.utils.sanitize_curies
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.source\_finalization module
+---------------------------------------------
+
+.. automodule:: kg_microbe.utils.source_finalization
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.string\_coding module
+---------------------------------------
+
+.. automodule:: kg_microbe.utils.string_coding
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.stub\_curie\_collection module
+------------------------------------------------
+
+.. automodule:: kg_microbe.utils.stub_curie_collection
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.transform\_fingerprint module
+-----------------------------------------------
+
+.. automodule:: kg_microbe.utils.transform_fingerprint
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.trembl\_utils module
+--------------------------------------
+
+.. automodule:: kg_microbe.utils.trembl_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.tsv\_io module
+--------------------------------
+
+.. automodule:: kg_microbe.utils.tsv_io
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.unipathways\_utils module
+-------------------------------------------
+
+.. automodule:: kg_microbe.utils.unipathways_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.uniprot\_utils module
+---------------------------------------
+
+.. automodule:: kg_microbe.utils.uniprot_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.validation\_utils module
+------------------------------------------
+
+.. automodule:: kg_microbe.utils.validation_utils
    :members:
    :undoc-members:
    :show-inheritance:

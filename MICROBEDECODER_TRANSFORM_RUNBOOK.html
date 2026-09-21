@@ -1,0 +1,352 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MicrobeDecoder Transform: Runbook &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">MicrobeDecoder Transform: Runbook</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/MICROBEDECODER_TRANSFORM_RUNBOOK.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="microbedecoder-transform-runbook">
+<h1>MicrobeDecoder Transform: Runbook<a class="headerlink" href="#microbedecoder-transform-runbook" title="Link to this heading"></a></h1>
+<p>The MicrobeDecoder transform ingests the wide per-LPSN-strain CSV that
+<a class="reference external" href="https://www.science.org/doi/10.1126/sciadv.adg8687">Hackmann &amp; Zhang (Sci Adv 2023)</a>
+publish on GitHub and turns it into KGX-format nodes and edges. The
+database is the actively-maintained successor to FermentationExplorer
+(CC BY 4.0) and pre-joins four curated fermentation-metabolism sources
+KG-Microbe does not otherwise cover:</p>
+<ul class="simple">
+<li><p><strong>Bergey’s Manual of Systematics of Archaea and Bacteria</strong> — expert
+curation of <code class="docutils literal notranslate"><span class="pre">Type_of_metabolism</span></code> / <code class="docutils literal notranslate"><span class="pre">Major_end_products</span></code> /
+<code class="docutils literal notranslate"><span class="pre">Minor_end_products</span></code> / <code class="docutils literal notranslate"><span class="pre">Substrates_for_end_products</span></code></p></li>
+<li><p><strong>VPI Anaerobe Laboratory Manual</strong> — independent second-opinion
+fermentation profiles for anaerobes</p></li>
+<li><p><strong>Primary literature</strong> — hand-curated end-products with DOI/PMID
+citations</p></li>
+<li><p><strong>FAPROTAX</strong> — functional labels joined at strain granularity</p></li>
+</ul>
+<p>Plus a <strong>pre-joined LPSN ↔ NCBITaxon ↔ GTDB ↔ GOLD ↔ IMG ↔ BacDive
+identity crosswalk</strong> — ~80 K <code class="docutils literal notranslate"><span class="pre">biolink:close_match</span></code> edges the transform
+emits without further mapping work.</p>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h2>
+<section id="environment">
+<h3>Environment<a class="headerlink" href="#environment" title="Link to this heading"></a></h3>
+<p>Follows the standard repo setup — see the top-level <code class="docutils literal notranslate"><span class="pre">README</span></code> /
+<code class="docutils literal notranslate"><span class="pre">CLAUDE.md</span></code>. No credentials or authentication required (CC BY 4.0
+source, plain HTTPS download).</p>
+</section>
+<section id="input-file">
+<h3>Input file<a class="headerlink" href="#input-file" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </span>download<span class="w"> </span>-t<span class="w"> </span>microbedecoder
+</pre></div>
+</div>
+<p>Fetches <code class="docutils literal notranslate"><span class="pre">https://github.com/thackmann/MicrobeDecoder/raw/main/Shiny/MicrobeDecoder/data/database/database.zip</span></code>
+into <code class="docutils literal notranslate"><span class="pre">data/raw/microbedecoder_database.zip</span></code>. On first <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">transform</span></code>
+run the transform extracts the archive into
+<code class="docutils literal notranslate"><span class="pre">data/raw/microbedecoder/database.csv</span></code> (~57 MB, ~27 K rows).</p>
+</section>
+<section id="lpsn-dependency">
+<h3>LPSN dependency<a class="headerlink" href="#lpsn-dependency" title="Link to this heading"></a></h3>
+<p>Every emitted edge is keyed on <code class="docutils literal notranslate"><span class="pre">lpsn:&lt;LPSN_ID&gt;</span></code> — the MicrobeDecoder
+transform <strong>does not stub LPSN taxon nodes</strong> (the <code class="docutils literal notranslate"><span class="pre">lpsn</span></code> transform is
+their authoritative source, per the add-transform skill’s
+“don’t stub cross-refs” rule). Run <code class="docutils literal notranslate"><span class="pre">-s</span> <span class="pre">lpsn</span></code> alongside for a coherent
+merged KG.</p>
+</section>
+</section>
+<section id="running-the-transform">
+<h2>Running the transform<a class="headerlink" href="#running-the-transform" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </span>transform<span class="w"> </span>-s<span class="w"> </span>microbedecoder
+</pre></div>
+</div>
+<p>Wall-clock: ~20–30 seconds on a MacBook (single-CSV parse, no ontology
+adapter loads). Default paths:</p>
+<ul class="simple">
+<li><p><strong>Input:</strong> <code class="docutils literal notranslate"><span class="pre">data/raw/microbedecoder_database.zip</span></code> (auto-extracted)</p></li>
+<li><p><strong>Output:</strong> <code class="docutils literal notranslate"><span class="pre">data/transformed/microbedecoder/</span></code></p></li>
+</ul>
+</section>
+<section id="output-files">
+<h2>Output files<a class="headerlink" href="#output-files" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">nodes.tsv</span></code></p></td>
+<td><p>Terminal-node stubs for <strong>placeholder</strong> CURIEs only — resolved cross-ref targets (NCBITaxon, GTDB, bacdive, GOLD, IMG, CHEBI) come from their owner transforms. Typical size: ~5 K nodes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">edges.tsv</span></code></p></td>
+<td><p>All emitted edges: crosswalk (<code class="docutils literal notranslate"><span class="pre">biolink:close_match</span></code>), metabolism (<code class="docutils literal notranslate"><span class="pre">biolink:capable_of</span></code> / <code class="docutils literal notranslate"><span class="pre">biolink:produces</span></code> / <code class="docutils literal notranslate"><span class="pre">biolink:consumes</span></code>), BacDive-snapshot replay (<code class="docutils literal notranslate"><span class="pre">biolink:has_phenotype</span></code>). Typical size: ~510 K edges.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">unmapped_labels.tsv</span></code></p></td>
+<td><p>Per-run curation queue — every raw label that fell through the mapping chain and landed as a <code class="docutils literal notranslate"><span class="pre">kgmicrobe.{pathway,compound,trait}:&lt;slug&gt;</span></code> placeholder, sorted by occurrence descending. See “Curation loop” below.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The transform prints a one-line summary at end of run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">microbedecoder</span><span class="p">]</span> <span class="n">rows</span><span class="o">=</span><span class="mi">27010</span><span class="p">,</span> <span class="n">crosswalk_edges</span><span class="o">=</span><span class="mi">80971</span><span class="p">,</span> <span class="n">metabolism_edges</span><span class="o">=</span><span class="mi">69962</span><span class="p">,</span>
+                 <span class="n">bacdive_snapshot_edges</span><span class="o">=</span><span class="mi">366298</span><span class="p">,</span> <span class="n">unmatched_labels</span><span class="o">=</span><span class="mi">428305</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">unmatched_labels</span></code> is the count of <em>edge</em> placeholder attempts, not
+distinct labels — the report dedupes them into <code class="docutils literal notranslate"><span class="pre">unmapped_labels.tsv</span></code>
+rows.</p>
+</section>
+<section id="mapping-resolution">
+<h2>Mapping resolution<a class="headerlink" href="#mapping-resolution" title="Link to this heading"></a></h2>
+<p>Labels are resolved through the same canonical mapping infrastructure
+the add-transform skill mandates for every transform:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Facet</p></th>
+<th class="head"><p>Resolver</p></th>
+<th class="head"><p>Placeholder prefix on miss</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Chemical (end-products, substrates)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ChemicalMappingLoader.find_chebi_by_name()</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">kgmicrobe.compound:&lt;slug&gt;</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Pathway (<code class="docutils literal notranslate"><span class="pre">Type_of_metabolism</span></code> from Bergey/VPI/Literature/FAPROTAX)</p></td>
+<td><p>(not yet integrated — see follow-up below)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">kgmicrobe.pathway:&lt;slug&gt;</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>BacDive trait snapshot</p></td>
+<td><p>(v1: always placeholder — fresher <code class="docutils literal notranslate"><span class="pre">bacdive</span></code> transform is authoritative)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">kgmicrobe.trait:&lt;slug&gt;</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>The <code class="docutils literal notranslate"><span class="pre">unmapped_labels.tsv</span></code> report shows where each facet is landing. On
+a fresh run against the live database, mapping rate is ~54 % (~511 K
+mapped edges vs ~428 K unmapped occurrences); see
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/650">issue #650</a>
+for the curation gap.</p>
+</section>
+<section id="curation-loop">
+<h2>Curation loop<a class="headerlink" href="#curation-loop" title="Link to this heading"></a></h2>
+<p>The <strong>per-run <code class="docutils literal notranslate"><span class="pre">unmapped_labels.tsv</span></code> → tracked curation TSV → target
+tool → next run</strong> loop:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. Refresh the tracked curation TSV from the latest run (defaults to</span>
+<span class="c1">#    labels with 10+ occurrences — filters per-strain literal tail).</span>
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/dump_unmapped_microbedecoder_labels.py
+
+<span class="c1"># 2. Or split by facet so each batch hands to the right target tool:</span>
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/dump_unmapped_microbedecoder_labels.py<span class="w"> </span>--prefix<span class="w"> </span>pathway
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/dump_unmapped_microbedecoder_labels.py<span class="w"> </span>--prefix<span class="w"> </span>compound
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/dump_unmapped_microbedecoder_labels.py<span class="w"> </span>--prefix<span class="w"> </span>trait
+</pre></div>
+</div>
+<p>Output lands at <code class="docutils literal notranslate"><span class="pre">mappings/microbedecoder_unmapped_labels_to_curate.tsv</span></code>
+(tracked in git — mirrors the <code class="docutils literal notranslate"><span class="pre">mappings/mediadive_unmapped_ingredients_to_curate.tsv</span></code>
+pattern). Columns:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Column</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">placeholder_curie</span></code></p></td>
+<td><p>The <code class="docutils literal notranslate"><span class="pre">kgmicrobe.{pathway,compound,trait}:&lt;slug&gt;</span></code> from the last run</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">category</span></code></p></td>
+<td><p>Biolink category the placeholder carried</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">label</span></code></p></td>
+<td><p>Raw source label</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">source_columns</span></code></p></td>
+<td><p>Pipe-set of source columns this label appeared under</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">occurrences</span></code></p></td>
+<td><p>Edges this placeholder anchored last run</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">target_curie</span></code></p></td>
+<td><p><em>(empty, curator fills)</em> — CHEBI / METPO / GO / EC</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">target_label</span></code></p></td>
+<td><p><em>(empty)</em> — human-readable target name</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mapping_status</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">UNMAPPED</span></code> at emit; curator sets <code class="docutils literal notranslate"><span class="pre">MAPPED</span></code> / <code class="docutils literal notranslate"><span class="pre">PROPOSED</span></code> / <code class="docutils literal notranslate"><span class="pre">SKIP</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">curator_notes</span></code></p></td>
+<td><p>Free-text</p></td>
+</tr>
+</tbody>
+</table>
+<p>Curator workflow by facet:</p>
+<ul class="simple">
+<li><p><strong>pathway</strong> — file a METPO PR adding a <code class="docutils literal notranslate"><span class="pre">&quot;microbedecoder</span> <span class="pre">synonym&quot;</span></code>
+column to <code class="docutils literal notranslate"><span class="pre">berkeleybop/metpo</span></code>’s <code class="docutils literal notranslate"><span class="pre">src/templates/metpo_sheet.tsv</span></code> and
+pre-populate the top labels. Once merged, the transform’s
+METPO-alias hookup (currently marked as a v2 follow-up in
+<code class="docutils literal notranslate"><span class="pre">_resolve_metabolism_curie</span></code>) will promote these placeholders.</p></li>
+<li><p><strong>compound</strong> — add rows to <code class="docutils literal notranslate"><span class="pre">mappings/canonical/chemical_mappings.tsv</span></code>
+or <code class="docutils literal notranslate"><span class="pre">mappings/canonical/special_chemical_mappings.tsv</span></code> targeting the
+right CHEBI CURIE. Next run promotes them automatically via
+<code class="docutils literal notranslate"><span class="pre">ChemicalMappingLoader.find_chebi_by_name()</span></code>.</p></li>
+<li><p><strong>trait</strong> — the BacDive-snapshot column values (24 columns × per-strain
+literals). Most belong in <code class="docutils literal notranslate"><span class="pre">kgmicrobe.trait</span></code> yaml under
+<code class="docutils literal notranslate"><span class="pre">custom_curies.yaml</span></code> if they’re stable phenotype tokens; the
+long tail (numeric temperatures, free-text) is genuinely per-strain
+data and stays as placeholders.</p></li>
+</ul>
+</section>
+<section id="verification">
+<h2>Verification<a class="headerlink" href="#verification" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Quick shape check</span>
+wc<span class="w"> </span>-l<span class="w"> </span>data/transformed/microbedecoder/nodes.tsv<span class="w"> </span><span class="se">\</span>
+<span class="w">      </span>data/transformed/microbedecoder/edges.tsv<span class="w"> </span><span class="se">\</span>
+<span class="w">      </span>data/transformed/microbedecoder/unmapped_labels.tsv
+
+<span class="c1"># Coverage report (parametrized script; add `-s microbedecoder`)</span>
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/generate_coverage_report.py<span class="w"> </span>-s<span class="w"> </span>microbedecoder
+
+<span class="c1"># Category / predicate / prefix validation</span>
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>.claude/skills/kg-model-review/kg_model_review.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--transform<span class="w"> </span>microbedecoder
+</pre></div>
+</div>
+</section>
+<section id="merge">
+<h2>Merge<a class="headerlink" href="#merge" title="Link to this heading"></a></h2>
+<p>Included in <code class="docutils literal notranslate"><span class="pre">merge.yaml</span></code> by default. To rebuild the merged KG:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </span>merge<span class="w"> </span>-y<span class="w"> </span>merge.yaml
+</pre></div>
+</div>
+<p>The MicrobeDecoder edges attach to <code class="docutils literal notranslate"><span class="pre">lpsn:&lt;LPSN_ID&gt;</span></code> subjects, which are
+provided by the <code class="docutils literal notranslate"><span class="pre">lpsn</span></code> transform’s <code class="docutils literal notranslate"><span class="pre">nodes.tsv</span></code>. Merge-time dedup on
+<code class="docutils literal notranslate"><span class="pre">id</span></code> collapses any incidental overlap.</p>
+</section>
+<section id="follow-ups-out-of-scope-for-the-initial-ingest">
+<h2>Follow-ups (out of scope for the initial ingest)<a class="headerlink" href="#follow-ups-out-of-scope-for-the-initial-ingest" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">gene_functions_database.rds</span></code> (R-serialized KEGG-KO gene→function)
+— its own transform if KEGG is re-activated in <code class="docutils literal notranslate"><span class="pre">merge.yaml</span></code>.</p></li>
+<li><p>16S rRNA sequences (<code class="docutils literal notranslate"><span class="pre">LPSN_16S_Ribosomal_sequence</span></code>) — sequence-oriented
+transform (BLAST-able) can pull them later.</p></li>
+<li><p>FAPROTAX as its own full transform — this ingest only carries the
+joined <code class="docutils literal notranslate"><span class="pre">FAPROTAX_Type_of_metabolism</span></code> label per strain.</p></li>
+<li><p>Bergey as its own full ingest — this ingest only carries the
+Bergey-derived edges MicrobeDecoder pre-joins.</p></li>
+<li><p>METPO alias hookup — see <code class="docutils literal notranslate"><span class="pre">_resolve_metabolism_curie</span></code>; blocked on the
+METPO ROBOT template getting a <code class="docutils literal notranslate"><span class="pre">&quot;microbedecoder</span> <span class="pre">synonym&quot;</span></code> column.</p></li>
+<li><p>Smarter multi-value splitter (currently over-splits chemical names
+containing embedded commas like <code class="docutils literal notranslate"><span class="pre">2,3-butanediol</span></code>; same limitation as
+<code class="docutils literal notranslate"><span class="pre">madin_etal</span></code>).</p></li>
+</ul>
+</section>
+<section id="related">
+<h2>Related<a class="headerlink" href="#related" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Add-transform skill: <code class="docutils literal notranslate"><span class="pre">.claude/skills/add-transform/SKILL.md</span></code></p></li>
+<li><p>Postprocess-report skill: <code class="docutils literal notranslate"><span class="pre">.claude/skills/kg-postprocess-report/</span></code></p></li>
+<li><p>Original PR: <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/pull/648">#648</a></p></li>
+<li><p>Encoding fix: <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/pull/649">#649</a></p></li>
+<li><p>Unmapped-labels report: <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/pull/652">#652</a></p></li>
+<li><p>Curation-gap tracking: <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/650">#650</a></p></li>
+<li><p>Row-grain confirmation: <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/651">#651</a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

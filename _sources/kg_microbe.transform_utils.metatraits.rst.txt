@@ -1,0 +1,29 @@
+kg\_microbe.transform\_utils.metatraits package
+===============================================
+
+Submodules
+----------
+
+kg\_microbe.transform\_utils.metatraits.io module
+-------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.metatraits.io
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.metatraits.metatraits module
+---------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.metatraits.metatraits
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.transform_utils.metatraits
+   :members:
+   :undoc-members:
+   :show-inheritance:

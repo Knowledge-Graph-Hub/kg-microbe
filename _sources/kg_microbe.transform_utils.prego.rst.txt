@@ -1,0 +1,45 @@
+kg\_microbe.transform\_utils.prego package
+==========================================
+
+Submodules
+----------
+
+kg\_microbe.transform\_utils.prego.calibration module
+-----------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.prego.calibration
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.prego.prego module
+-----------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.prego.prego
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.prego.quality module
+-------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.prego.quality
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.prego.utils module
+-----------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.prego.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.transform_utils.prego
+   :members:
+   :undoc-members:
+   :show-inheritance:

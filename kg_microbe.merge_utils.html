@@ -1,0 +1,681 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kg_microbe.merge_utils package &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="kg_microbe.query_utils package" href="kg_microbe.query_utils.html" />
+    <link rel="prev" title="kg_microbe package" href="kg_microbe.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">kg_microbe</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="kg_microbe.html">kg_microbe package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="kg_microbe.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">kg_microbe.merge_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.query_utils.html">kg_microbe.query_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html">kg_microbe.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.bactotraits_to_mongo">kg_microbe.bactotraits_to_mongo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.download">kg_microbe.download module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.query">kg_microbe.query module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.run">kg_microbe.run module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.transform">kg_microbe.transform module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">kg_microbe</a></li>
+          <li class="breadcrumb-item"><a href="kg_microbe.html">kg_microbe package</a></li>
+      <li class="breadcrumb-item active">kg_microbe.merge_utils package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/kg_microbe.merge_utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kg-microbe-merge-utils-package">
+<h1>kg_microbe.merge_utils package<a class="headerlink" href="#kg-microbe-merge-utils-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-kg_microbe.merge_utils.artifact_manifest">
+<span id="kg-microbe-merge-utils-artifact-manifest-module"></span><h2>kg_microbe.merge_utils.artifact_manifest module<a class="headerlink" href="#module-kg_microbe.merge_utils.artifact_manifest" title="Link to this heading"></a></h2>
+<p>Portable manifests for the exact cleaned KGX TSV bytes shipped by a merge.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.artifact_manifest.build_provenance">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.artifact_manifest.</span></span><span class="sig-name descname"><span class="pre">build_provenance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.artifact_manifest.build_provenance" title="Link to this definition"></a></dt>
+<dd><p>Record config identity and repository inputs without depending on external stats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.artifact_manifest.write_graph_archive">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.artifact_manifest.</span></span><span class="sig-name descname"><span class="pre">write_graph_archive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">archive</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">provenance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.artifact_manifest.write_graph_archive" title="Link to this definition"></a></dt>
+<dd><p>Atomically ship TSVs and their byte-accurate manifest; retain the old archive on failure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.artifact_manifest.write_loose_manifest">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.artifact_manifest.</span></span><span class="sig-name descname"><span class="pre">write_loose_manifest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">destination</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">provenance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.artifact_manifest.write_loose_manifest" title="Link to this definition"></a></dt>
+<dd><p>Describe the matching uncompressed TSV pair using paths relative to the manifest.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.merge_utils.external_node_closure">
+<span id="kg-microbe-merge-utils-external-node-closure-module"></span><h2>kg_microbe.merge_utils.external_node_closure module<a class="headerlink" href="#module-kg_microbe.merge_utils.external_node_closure" title="Link to this heading"></a></h2>
+<p>Evidence-backed closure for referenced external nodes missing from source declarations.</p>
+<p>Only anonymous endpoints are considered. Retired identifiers use explicit
+authority replacements; unsupported obsolete assertions follow the ontology
+transform’s exclusion policy and are retained verbatim in a disposition TSV.
+No name matching, accession-prefix substitution, or taxonomy inference occurs.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.external_node_closure.resolve_external_reference_bundle">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.external_node_closure.</span></span><span class="sig-name descname"><span class="pre">resolve_external_reference_bundle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">discover_references</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_go</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quoting</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">known_declarations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">frozenset({})</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">consumed_authorities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.external_node_closure.resolve_external_reference_bundle" title="Link to this definition"></a></dt>
+<dd><p>Resolve one staged source bundle, preserving file membership and every original assertion.</p>
+<p>The single-pair compatibility API retains its existing anonymous-node
+behavior. Source finalization additionally discovers referenced external
+IDs not declared locally: KGX must no longer invent those nodes before
+authority normalization can see them. GO is handled by its all-ID source
+authority normalizer when <code class="docutils literal notranslate"><span class="pre">include_go</span></code> is false. No adapters are created
+in pool workers; callers invoke this after producer workers have completed.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.external_node_closure.resolve_external_references">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.external_node_closure.</span></span><span class="sig-name descname"><span class="pre">resolve_external_references</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.external_node_closure.resolve_external_references" title="Link to this definition"></a></dt>
+<dd><p>Normalize anonymous external references using exact local proof and retain full evidence.</p>
+<p>Return disposition counts. Files are replaced atomically only after all
+authority reads and output writes succeed; failures propagate to prevent
+publishing an apparently successful, partially repaired archive. The
+compatibility caller supplies unpublished staging files. The production
+pipeline invokes the bundle API during source finalization, not merge.</p>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.merge_utils.invariants">
+<span id="kg-microbe-merge-utils-invariants-module"></span><h2>kg_microbe.merge_utils.invariants module<a class="headerlink" href="#module-kg_microbe.merge_utils.invariants" title="Link to this heading"></a></h2>
+<p>Invariants checked against the merged graph, where sources actually meet.</p>
+<p>Each transform can only police the edges it writes itself. <code class="docutils literal notranslate"><span class="pre">kgmicrobe.strain:*</span></code>
+is a deliberately shared namespace – LPSN mints the same CURIEs BacDive does so
+the merge reconciles them – so a rule about those nodes is only really enforced
+after the merge. #892 fixed multi-parent strains inside the BacDive transform;
+this module is the check that notices if another source reintroduces them (#896).</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.invariants.EXPECTED_STUB_PATTERNS">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">EXPECTED_STUB_PATTERNS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">((re.compile('GTDB:[dpcofgs]__.+'),</span> <span class="pre">'GTDB</span> <span class="pre">taxon</span> <span class="pre">strings,</span> <span class="pre">referenced</span> <span class="pre">as</span> <span class="pre">cross-references'),</span> <span class="pre">(re.compile('gold:G[spb]\\d+'),</span> <span class="pre">'GOLD</span> <span class="pre">study,</span> <span class="pre">project</span> <span class="pre">and</span> <span class="pre">biosample</span> <span class="pre">identifiers'))</span></em><a class="headerlink" href="#kg_microbe.merge_utils.invariants.EXPECTED_STUB_PATTERNS" title="Link to this definition"></a></dt>
+<dd><p>Narrow exceptions for identifiers we deliberately do not declare. Keep the
+namespace canonical: uppercase GOLD is always a legacy-namespace defect.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.invariants.EXPECTED_STUB_PREFIXES">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">EXPECTED_STUB_PREFIXES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'IMG':</span> <span class="pre">'IMG</span> <span class="pre">genome</span> <span class="pre">and</span> <span class="pre">taxon</span> <span class="pre">identifiers,</span> <span class="pre">referenced</span> <span class="pre">from</span> <span class="pre">GOLD'}</span></em><a class="headerlink" href="#kg_microbe.merge_utils.invariants.EXPECTED_STUB_PREFIXES" title="Link to this definition"></a></dt>
+<dd><p>Only prefixes whose <em>every</em> identifier is an external cross-reference belong
+here. GOLD organisms and GTDB assemblies have owner transforms, so exempting
+their entire prefixes hid namespace defects affecting 31 K nodes (#1050/1051).</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.invariants.NAMED_THING_CATEGORY">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">NAMED_THING_CATEGORY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'biolink:NamedThing'</span></em><a class="headerlink" href="#kg_microbe.merge_utils.invariants.NAMED_THING_CATEGORY" title="Link to this definition"></a></dt>
+<dd><p>What KGX types a node it invented for an undeclared endpoint.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.invariants.STRAIN_PARENT_REPORT">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">STRAIN_PARENT_REPORT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'merged_strain_parent_violations.tsv'</span></em><a class="headerlink" href="#kg_microbe.merge_utils.invariants.STRAIN_PARENT_REPORT" title="Link to this definition"></a></dt>
+<dd><p>Written beside merged-kg_nodes.tsv / merged-kg_edges.tsv.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.invariants.STUB_NODE_REPORT">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">STUB_NODE_REPORT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'merged_stub_nodes.tsv'</span></em><a class="headerlink" href="#kg_microbe.merge_utils.invariants.STUB_NODE_REPORT" title="Link to this definition"></a></dt>
+<dd><p>Written beside the merged TSVs, alongside the strain-parent report.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.invariants.check_merged_invariants">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">check_merged_invariants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.invariants.check_merged_invariants" title="Link to this definition"></a></dt>
+<dd><p>Run the merged-graph invariants and write their report.</p>
+<p>The report is written whether or not anything was found: an absent file would
+be indistinguishable from a clean run, and a clean run is the thing worth
+being able to demonstrate.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>edges_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Path to <code class="docutils literal notranslate"><span class="pre">merged-kg_edges.tsv</span></code>.</p></li>
+<li><p><strong>output_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Where to write the report; defaults to the edge file’s directory.</p></li>
+<li><p><strong>nodes_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Path to the matching nodes TSV. Defaults to deriving it from
+the edge file’s name, for callers pointing at a bare edge dump – but the
+merge hands over the path it already built, because a derivation that fails
+looks exactly like a graph with no stubs (#936).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Number of violating strain nodes.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.invariants.expected_stub_reason">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">expected_stub_reason</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curie</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.invariants.expected_stub_reason" title="Link to this definition"></a></dt>
+<dd><p>Return the justification for an intentionally undeclared CURIE, if any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.invariants.find_multi_parent_strains">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">find_multi_parent_strains</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.invariants.find_multi_parent_strains" title="Link to this definition"></a></dt>
+<dd><p>Return strain nodes carrying more than one NCBITaxon parent in the merged graph.</p>
+<p>Streams the edge file rather than loading it: the merged graph is tens of
+millions of rows, and only the strain rows are retained.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>edges_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Path to <code class="docutils literal notranslate"><span class="pre">merged-kg_edges.tsv</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">{strain</span> <span class="pre">CURIE:</span> <span class="pre">(parent</span> <span class="pre">CURIEs,</span> <span class="pre">knowledge</span> <span class="pre">sources)}</span></code> for every strain
+with more than one distinct parent. Empty when the invariant holds.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.invariants.find_stub_nodes">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">find_stub_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.invariants.find_stub_nodes" title="Link to this definition"></a></dt>
+<dd><p>Return nodes KGX synthesized because an edge referenced something undeclared.</p>
+<p>The merge leaves no endpoint without a node row – KGX invents one – so the
+question worth asking after a merge is not “what is missing” but “what arrived
+as an invention”. Those rows are typed <code class="docutils literal notranslate"><span class="pre">biolink:NamedThing</span></code> and carry no
+name, which is the shape #892 objected to.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>nodes_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Path to <code class="docutils literal notranslate"><span class="pre">merged-kg_nodes.tsv</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">{CURIE</span> <span class="pre">prefix:</span> <span class="pre">[CURIEs]}</span></code>, sorted, empty when none.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.invariants.strain_parent_rows">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">strain_parent_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">violations</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.invariants.strain_parent_rows" title="Link to this definition"></a></dt>
+<dd><p>Render violations as report rows, sorted so a diff between runs is readable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>violations</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]]</span>) – Result of <a class="reference internal" href="#kg_microbe.merge_utils.invariants.find_multi_parent_strains" title="kg_microbe.merge_utils.invariants.find_multi_parent_strains"><code class="xref py py-func docutils literal notranslate"><span class="pre">find_multi_parent_strains()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Rows matching <code class="xref py py-data docutils literal notranslate"><span class="pre">STRAIN_PARENT_REPORT_HEADER</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.invariants.stub_incident_rows">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">stub_incident_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stubs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.invariants.stub_incident_rows" title="Link to this definition"></a></dt>
+<dd><p>Attribute every anonymous node to its incident assertions, not just prefix samples.</p>
+<p>Only stub IDs, counts and distinct predicate/source strings are retained in
+memory. Source cells are recorded verbatim: malformed legacy serialization
+must remain inspectable, not be silently interpreted as Python (#1070).
+A self-loop counts once for its one incident node. Duplicate headers use
+the first occurrence, consistent with the other merge invariants (#915).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.invariants.stub_node_rows">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">stub_node_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stubs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.invariants.stub_node_rows" title="Link to this definition"></a></dt>
+<dd><p>Render stub counts per prefix and expectation, flagging unintended ones.</p>
+<p>A mixed prefix produces separate yes/no rows: 25 taxon references must not
+cause 15,584 mis-prefixed assembly references to be called expected (#1050).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>stubs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Result of <a class="reference internal" href="#kg_microbe.merge_utils.invariants.find_stub_nodes" title="kg_microbe.merge_utils.invariants.find_stub_nodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">find_stub_nodes()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Rows matching <code class="xref py py-data docutils literal notranslate"><span class="pre">STUB_NODE_REPORT_HEADER</span></code>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="kg-microbe-merge-utils-kgx-source-module">
+<h2>kg_microbe.merge_utils.kgx_source module<a class="headerlink" href="#kg-microbe-merge-utils-kgx-source-module" title="Link to this heading"></a></h2>
+</section>
+<section id="module-kg_microbe.merge_utils.local_context">
+<span id="kg-microbe-merge-utils-local-context-module"></span><h2>kg_microbe.merge_utils.local_context module<a class="headerlink" href="#module-kg_microbe.merge_utils.local_context" title="Link to this heading"></a></h2>
+<p>Scope KGX conversion/merge prefix contexts to the pinned local model, including spawned workers.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.local_context.local_prefix_context">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.local_context.</span></span><span class="sig-name descname"><span class="pre">local_prefix_context</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.local_context.local_prefix_context" title="Link to this definition"></a></dt>
+<dd><p>Seed all real KGX prefix readers, restoring exact prior entries after nested users finish.</p>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.merge_utils.merge_kg">
+<span id="kg-microbe-merge-utils-merge-kg-module"></span><h2>kg_microbe.merge_utils.merge_kg module<a class="headerlink" href="#module-kg_microbe.merge_utils.merge_kg" title="Link to this heading"></a></h2>
+<p>Merging module.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.merge_kg.load_and_merge">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.merge_kg.</span></span><span class="sig-name descname"><span class="pre">load_and_merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sources</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.merge_kg.load_and_merge" title="Link to this definition"></a></dt>
+<dd><p>Load and merge sources defined in the config YAML.</p>
+<p><code class="docutils literal notranslate"><span class="pre">sources</span></code> restricts the merge to a subset of the config’s sources.
+KGX holds every source’s graph in the parent process at once —
+<code class="docutils literal notranslate"><span class="pre">kgx.cli.cli_utils.merge</span></code> collects them all before calling
+<code class="docutils literal notranslate"><span class="pre">merge_all_graphs</span></code> — so peak memory scales with the whole set, not
+with the largest member. Merging in stages is the only way to keep a
+very large source (PREGO: 44.7M edges) from coexisting with all the
+others.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>yaml_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – A string pointing to a KGX compatible config YAML.</p></li>
+<li><p><strong>processes</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Number of processes to use. Each concurrent process
+holds its own source graph, so raising this raises peak memory.</p></li>
+<li><p><strong>sources</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Optional subset of source keys to merge. None merges all.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiDiGraph</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The pre-serialization KGX in-memory graph. Serialization projection
+affects the published TSV/archive, not this returned object; use its
+manifest for final byte identity and row counts. No post-merge semantic
+repairs are permitted. Sources must be explicitly finalized first.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>KeyError</strong> – If a requested source is absent from the config.</p></li>
+<li><p><strong>ValueError</strong> – If any release destination is unsupported, malformed, or colliding.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.merge_kg.merge">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.merge_kg.</span></span><span class="sig-name descname"><span class="pre">merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.merge_kg.merge" title="Link to this definition"></a></dt>
+<dd><p>Invoke KGX with local schema and provenance-preserving graph export (#1049).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.merge_kg.parse_load_config">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.merge_kg.</span></span><span class="sig-name descname"><span class="pre">parse_load_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.merge_kg.parse_load_config" title="Link to this definition"></a></dt>
+<dd><p>Parse load config YAML.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>yaml_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – A string pointing to a KGX compatible config YAML.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict: The config as a dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.merge_utils.source_admission">
+<span id="kg-microbe-merge-utils-source-admission-module"></span><h2>kg_microbe.merge_utils.source_admission module<a class="headerlink" href="#module-kg_microbe.merge_utils.source_admission" title="Link to this heading"></a></h2>
+<p>Bind one merge to unchanged admitted files without copying graph-scale inputs (#1100).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.source_admission.SourceAdmission">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.source_admission.</span></span><span class="sig-name descname"><span class="pre">SourceAdmission</span></span><a class="headerlink" href="#kg_microbe.merge_utils.source_admission.SourceAdmission" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Retain exact checked byte identities plus conservative filesystem change observations.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.source_admission.SourceAdmission.bind_path">
+<span class="sig-name descname"><span class="pre">bind_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.source_admission.SourceAdmission.bind_path" title="Link to this definition"></a></dt>
+<dd><p>Keep a lexical input locator tied to its original resolved target, including symlinks.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.source_admission.SourceAdmission.capture">
+<span class="sig-name descname"><span class="pre">capture</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optional</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.source_admission.SourceAdmission.capture" title="Link to this definition"></a></dt>
+<dd><p>Observe bytes before the caller validates them, caching graph hashes but not whole graphs.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.source_admission.SourceAdmission.capture_resolution">
+<span class="sig-name descname"><span class="pre">capture_resolution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resolver</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.source_admission.SourceAdmission.capture_resolution" title="Link to this definition"></a></dt>
+<dd><p>Bind precedence-sensitive input resolution, not just the originally chosen lexical path.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.source_admission.SourceAdmission.capture_tree">
+<span class="sig-name descname"><span class="pre">capture_tree</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.source_admission.SourceAdmission.capture_tree" title="Link to this definition"></a></dt>
+<dd><p>Bind Python package membership too, so newly added producer helpers cannot evade checks.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.source_admission.SourceAdmission.read_json">
+<span class="sig-name descname"><span class="pre">read_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.source_admission.SourceAdmission.read_json" title="Link to this definition"></a></dt>
+<dd><p>Parse exactly the metadata bytes whose hash is retained in the admission set.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.source_admission.SourceAdmission.verify">
+<span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.source_admission.SourceAdmission.verify" title="Link to this definition"></a></dt>
+<dd><p>Reject drift from original admission; this is not a substitute-current-record freshness check.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.merge_utils.source_freshness">
+<span id="kg-microbe-merge-utils-source-freshness-module"></span><h2>kg_microbe.merge_utils.source_freshness module<a class="headerlink" href="#module-kg_microbe.merge_utils.source_freshness" title="Link to this heading"></a></h2>
+<p>Enforce recorded producer/dependency freshness before KGX without changing transform contracts.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.source_freshness.verify_source_freshness">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.source_freshness.</span></span><span class="sig-name descname"><span class="pre">verify_source_freshness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paths</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.source_freshness.verify_source_freshness" title="Link to this definition"></a></dt>
+<dd><p>Reject stale selected sources and declared dependencies before staging or running KGX.</p>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.merge_utils.stats_provenance">
+<span id="kg-microbe-merge-utils-stats-provenance-module"></span><h2>kg_microbe.merge_utils.stats_provenance module<a class="headerlink" href="#module-kg_microbe.merge_utils.stats_provenance" title="Link to this heading"></a></h2>
+<p>Make <code class="docutils literal notranslate"><span class="pre">merged_graph_stats.yaml</span></code> say what produced it, and count every predicate.</p>
+<p>KGX’s <code class="docutils literal notranslate"><span class="pre">generate_graph_stats</span></code> writes only what it computes, and it resolves
+predicates through the Biolink toolkit: anything it cannot resolve is recorded
+as <code class="docutils literal notranslate"><span class="pre">None</span></code>. METPO predicates are deliberately not Biolink, so two thirds of
+the graph’s edges were invisible in the stats file the README points readers
+at (#993). The file also carried no merge date, commit, config or input
+digests, so a stale copy could not be told from a current one except by
+diffing counts against a graph one already trusted (#1013).</p>
+<p>After the merge writes the stats, <a class="reference internal" href="#kg_microbe.merge_utils.stats_provenance.annotate_graph_stats" title="kg_microbe.merge_utils.stats_provenance.annotate_graph_stats"><code class="xref py py-func docutils literal notranslate"><span class="pre">annotate_graph_stats()</span></code></a> adds two
+blocks the merge step already knows how to fill:</p>
+<dl class="simple">
+<dt><code class="docutils literal notranslate"><span class="pre">provenance</span></code></dt><dd><p>when, from which commit (short HEAD, <code class="docutils literal notranslate"><span class="pre">-dirty</span></code> if tracked files other than
+the stats file differ), which merge
+config, which edges artifact (archive and member, or loose file), and each source’s <code class="docutils literal notranslate"><span class="pre">source_fingerprint.json</span></code>
+digest or <code class="docutils literal notranslate"><span class="pre">no</span> <span class="pre">marker</span></code>.</p>
+</dd>
+<dt><code class="docutils literal notranslate"><span class="pre">edge_stats.count_by_raw_predicate</span></code></dt><dd><p>the predicate column counted directly from the merged edges TSV, no
+resolution, so <code class="docutils literal notranslate"><span class="pre">METPO:*</span></code> predicates appear next to <code class="docutils literal notranslate"><span class="pre">biolink:*</span></code> and
+the counts sum to the edge total.</p>
+</dd>
+</dl>
+<p>Idempotent: both blocks are replaced, never appended, so re-annotating a
+file yields the same shape.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.stats_provenance.annotate_graph_stats">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.stats_provenance.</span></span><span class="sig-name descname"><span class="pre">annotate_graph_stats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stats_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yaml_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">now</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges_archive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">published_edges_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finalized_nodes_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.stats_provenance.annotate_graph_stats" title="Link to this definition"></a></dt>
+<dd><p>Add <code class="docutils literal notranslate"><span class="pre">provenance</span></code> and <code class="docutils literal notranslate"><span class="pre">edge_stats.count_by_raw_predicate</span></code> to a stats file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>stats_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – The YAML KGX wrote.</p></li>
+<li><p><strong>edges_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – The merged edges TSV (loose, not the archive).</p></li>
+<li><p><strong>yaml_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – The merge config that produced both.</p></li>
+<li><p><strong>repo_root</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Checkout root, for <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">describe</span></code> and the markers.</p></li>
+<li><p><strong>now</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code>]</span>) – Timestamp to record; defaults to UTC now.</p></li>
+<li><p><strong>edges_archive</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Published archive containing the edges; when supplied,
+record it and its member instead of the temporary loose TSV (#1055).</p></li>
+<li><p><strong>published_edges_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Final loose locator, while counts read <code class="docutils literal notranslate"><span class="pre">edges_file</span></code> in staging.</p></li>
+<li><p><strong>finalized_nodes_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Opt into a full streaming recount of the finalized TSV pair;
+preserve the entire original KGX summary only under <code class="docutils literal notranslate"><span class="pre">pre_normalization_stats</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The annotated stats dict, as written.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the raw predicate total disagrees with KGX’s
+<code class="docutils literal notranslate"><span class="pre">total_edges</span></code> – the two counted different files.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.stats_provenance.count_raw_predicates">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.stats_provenance.</span></span><span class="sig-name descname"><span class="pre">count_raw_predicates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.stats_provenance.count_raw_predicates" title="Link to this definition"></a></dt>
+<dd><p>Count the <code class="docutils literal notranslate"><span class="pre">predicate</span></code> column of a KGX edges TSV as written, no resolution.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Counter</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.stats_provenance.git_commit">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.stats_provenance.</span></span><span class="sig-name descname"><span class="pre">git_commit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repo_root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.stats_provenance.git_commit" title="Link to this definition"></a></dt>
+<dd><p>Return the short HEAD commit, with <code class="docutils literal notranslate"><span class="pre">-dirty</span></code> when tracked files differ.</p>
+<p><code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">describe</span> <span class="pre">--dirty</span></code> cannot be used as-is: at annotation time KGX has
+just rewritten the stats file, so the tree is always dirty by exactly
+that file. Paths in <code class="docutils literal notranslate"><span class="pre">ignore</span></code> (the stats file) are excluded from the
+dirtiness check; untracked files never count. <code class="docutils literal notranslate"><span class="pre">unknown</span></code> when git or
+the checkout is unavailable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.stats_provenance.source_markers">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.stats_provenance.</span></span><span class="sig-name descname"><span class="pre">source_markers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_root</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.stats_provenance.source_markers" title="Link to this definition"></a></dt>
+<dd><p>Map each merge source to its transform’s fingerprint digest.</p>
+<p>The source’s input files name the transform directory
+(<code class="docutils literal notranslate"><span class="pre">data/transformed/&lt;source&gt;/...</span></code>); its <code class="docutils literal notranslate"><span class="pre">source_fingerprint.json</span></code> is
+the marker the freshness check reads. <code class="docutils literal notranslate"><span class="pre">no</span> <span class="pre">marker</span></code> is recorded rather
+than omitted, so an unfingerprinted input is visible in the artifact.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.stats_provenance.stats_filename_from_config">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.stats_provenance.</span></span><span class="sig-name descname"><span class="pre">stats_filename_from_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.stats_provenance.stats_filename_from_config" title="Link to this definition"></a></dt>
+<dd><p>Return the stats filename the merge config asks KGX to write, if any.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.merge_utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-kg_microbe.merge_utils" title="Link to this heading"></a></h2>
+<p>Merge module.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.load_and_merge">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.</span></span><span class="sig-name descname"><span class="pre">load_and_merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sources</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.load_and_merge" title="Link to this definition"></a></dt>
+<dd><p>Load and merge sources defined in the config YAML.</p>
+<p><code class="docutils literal notranslate"><span class="pre">sources</span></code> restricts the merge to a subset of the config’s sources.
+KGX holds every source’s graph in the parent process at once —
+<code class="docutils literal notranslate"><span class="pre">kgx.cli.cli_utils.merge</span></code> collects them all before calling
+<code class="docutils literal notranslate"><span class="pre">merge_all_graphs</span></code> — so peak memory scales with the whole set, not
+with the largest member. Merging in stages is the only way to keep a
+very large source (PREGO: 44.7M edges) from coexisting with all the
+others.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>yaml_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – A string pointing to a KGX compatible config YAML.</p></li>
+<li><p><strong>processes</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Number of processes to use. Each concurrent process
+holds its own source graph, so raising this raises peak memory.</p></li>
+<li><p><strong>sources</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Optional subset of source keys to merge. None merges all.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiDiGraph</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The pre-serialization KGX in-memory graph. Serialization projection
+affects the published TSV/archive, not this returned object; use its
+manifest for final byte identity and row counts. No post-merge semantic
+repairs are permitted. Sources must be explicitly finalized first.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>KeyError</strong> – If a requested source is absent from the config.</p></li>
+<li><p><strong>ValueError</strong> – If any release destination is unsupported, malformed, or colliding.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.parse_load_config">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.</span></span><span class="sig-name descname"><span class="pre">parse_load_config</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.parse_load_config" title="Link to this definition"></a></dt>
+<dd><p>Parse load config YAML.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>yaml_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – A string pointing to a KGX compatible config YAML.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict: The config as a dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="kg_microbe.html" class="btn btn-neutral float-left" title="kg_microbe package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="kg_microbe.query_utils.html" class="btn btn-neutral float-right" title="kg_microbe.query_utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

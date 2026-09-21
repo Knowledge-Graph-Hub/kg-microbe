@@ -1,0 +1,218 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MicrobeDecoder source assertion context &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">MicrobeDecoder source assertion context</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/MICROBEDECODER_SOURCE_CONTEXT.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="microbedecoder-source-assertion-context">
+<h1>MicrobeDecoder source assertion context<a class="headerlink" href="#microbedecoder-source-assertion-context" title="Link to this heading"></a></h1>
+<p>Issues #1076 and #1083 repair evidence loss in the <strong>producer</strong>. A merge cannot
+reconstruct source columns or qualifiers from the old value-only trait nodes.
+Rebuild the MicrobeDecoder transform before merging; do not edit a historical
+merged graph to guess the lost distinctions.</p>
+<section id="identity-and-evidence">
+<h2>Identity and evidence<a class="headerlink" href="#identity-and-evidence" title="Link to this heading"></a></h2>
+<p>Snapshot trait placeholder IDs use the <code class="docutils literal notranslate"><span class="pre">kgmicrobe.trait:</span></code> namespace, a readable
+column slug, and the full SHA-256 of the UTF-8 JSON pair <code class="docutils literal notranslate"><span class="pre">[source_column,</span> <span class="pre">token]</span></code>
+(no extra JSON whitespace). Tokens are the source parser’s trimmed multivalue
+tokens, not interpreted phenotype codes. In particular:</p>
+<ul class="simple">
+<li><p>Motility <code class="docutils literal notranslate"><span class="pre">0</span></code> and spore formation <code class="docutils literal notranslate"><span class="pre">0</span></code> are distinct placeholders.</p></li>
+<li><p>Salt concentration <code class="docutils literal notranslate"><span class="pre">&lt;1</span></code>, <code class="docutils literal notranslate"><span class="pre">1</span></code>, and <code class="docutils literal notranslate"><span class="pre">&gt;1</span></code> are distinct placeholders.</p></li>
+<li><p>Identical column/token pairs share a placeholder across records.</p></li>
+<li><p>A value of <code class="docutils literal notranslate"><span class="pre">0</span></code> is <strong>not</strong> automatically interpreted as a negative phenotype.</p></li>
+</ul>
+<p>Names include the dimension and token, ending in <code class="docutils literal notranslate"><span class="pre">(source</span> <span class="pre">value)</span></code>. Curators can
+later map the coding convention to a phenotype ontology; these placeholder
+names do not establish that biological interpretation.</p>
+<p>Snapshot and metabolism assertions retain these scalar fields:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Field</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">source_column</span></code></p></td>
+<td><p>Exact source CSV column that produced the assertion.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">source_record</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">sha256:&lt;CSV</span> <span class="pre">byte</span> <span class="pre">digest&gt;#record=&lt;1-based</span> <span class="pre">data-record</span> <span class="pre">ordinal&gt;</span></code>. Quoted multiline CSV cells do not change record counting.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">value</span></code></p></td>
+<td><p>Source token, including numeric operators and leading zeros.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">value_encoding</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">backslash</span></code>, declaring reversible literal encoding below.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">description</span></code></p></td>
+<td><p>Snapshot dimension or metabolism <code class="docutils literal notranslate"><span class="pre">major</span></code>/<code class="docutils literal notranslate"><span class="pre">minor</span></code> qualifier.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">source_citation</span></code></p></td>
+<td><p>Complete literature citation text or Bergey article link, even when no identifier is recognized.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">source_citation_base64</span></code></p></td>
+<td><p>Exact original citation-cell bytes, base64 encoded, including rare malformed UTF-8 bytes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">publications</span></code></p></td>
+<td><p>Sorted distinct explicitly recognized DOI/PMID CURIEs, pipe-separated according to the Biolink multivalued slot.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Crosswalk assertions also retain <code class="docutils literal notranslate"><span class="pre">source_record</span></code>; their existing
+<code class="docutils literal notranslate"><span class="pre">original_object</span></code> evidence remains unchanged. Source records anchor the exact
+raw input version. They are not claims that two CSV rows are independent
+biological experiments, and a changed CSV digest intentionally identifies a
+new source snapshot.</p>
+</section>
+<section id="literal-tsv-contract">
+<h2>Literal TSV contract<a class="headerlink" href="#literal-tsv-contract" title="Link to this heading"></a></h2>
+<p>This producer declares <code class="docutils literal notranslate"><span class="pre">TSV_QUOTING</span> <span class="pre">=</span> <span class="pre">csv.QUOTE_NONE</span></code>, matching KGX TSV input.
+Literal quotes are not CSV-escaped. In <code class="docutils literal notranslate"><span class="pre">value</span></code>, <code class="docutils literal notranslate"><span class="pre">source_citation</span></code>, and display
+text, a literal backslash is encoded as <code class="docutils literal notranslate"><span class="pre">\\</span></code>, tab as <code class="docutils literal notranslate"><span class="pre">\t</span></code>, carriage return as
+<code class="docutils literal notranslate"><span class="pre">\r</span></code>, and newline as <code class="docutils literal notranslate"><span class="pre">\n</span></code>. Decode left to right, consuming each escape once;
+do not use repeated replacements or a general-purpose Unicode escape decoder.
+Ordinary codes and numeric operators are unchanged. The complete raw CSV bytes
+remain addressable by the source-record digest; the source’s existing UTF-8
+replacement-decoding policy for rare malformed name bytes is not a claim of
+byte-perfect display decoding. <code class="docutils literal notranslate"><span class="pre">source_citation_base64</span></code> preserves the exact
+citation bytes independently of that display policy.</p>
+<p>Source deduplication uses complete rows and literal string types. It must not
+coerce <code class="docutils literal notranslate"><span class="pre">0</span></code>/<code class="docutils literal notranslate"><span class="pre">00</span></code> to numbers, interpret text as NA, drop differing citations or
+qualifiers, or pool scalar fields into pipe lists. KGX preserves the resulting
+complete assertion/evidence bundles; only identical assertions deduplicate.</p>
+</section>
+<section id="regression-and-real-source-evidence">
+<h2>Regression and real-source evidence<a class="headerlink" href="#regression-and-real-source-evidence" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">tests/test_microbedecoder_context.py</span></code> exercises source generation, repeated
+runs, numeric/operator distinctions, literal encoding, citations and a real
+KGX archive round trip. Fixtures are immutable and require no live services.</p>
+<p>The first isolated real-source canary used CSV SHA-256
+<code class="docutils literal notranslate"><span class="pre">0c6ff730a108720a5d6972400f2bccf2eca8621713b62736abdf5df0fb188c95</span></code>.
+It retained all <strong>362,472 unique source-record/column/token snapshot assertions</strong>
+with zero missing or invented tokens, and recovered <strong>4,357</strong> subject/column/value
+distinctions previously collapsed into the old <code class="docutils literal notranslate"><span class="pre">trait:0</span></code> and <code class="docutils literal notranslate"><span class="pre">trait:1</span></code> buckets.
+Its 516,678 total edges reflect retained context, not fabricated observations.
+The audit is under <code class="docutils literal notranslate"><span class="pre">data/remediation-microbedecoder-20260914.afqqwh/</span></code>; it is a
+producer canary, not evidence that the final merged release has been rebuilt.</p>
+<p>Round-1 independent review found three related defects, tracked by #1083–#1085:
+50 identifier-free literature citation cells, 8,166 omitted Bergey article
+links, mapping infrastructure failures treated as successful no-matches, and
+148 numeric-locant cells whose chemical names were split at internal commas.
+The producer now retains citation text/bytes and all recognized identifiers,
+propagates mapping failures (while ordinary no-match remains <code class="docutils literal notranslate"><span class="pre">None</span></code>), and
+protects numeric locants followed by a name hyphen. It is not a general
+chemical-name parser: ambiguous nonnumeric commas still require curation.
+Identity crosswalk splitting is unchanged. Separate immutable literal-token
+tests cover <code class="docutils literal notranslate"><span class="pre">2,3-butanediol</span></code> and <code class="docutils literal notranslate"><span class="pre">endo-1,4-beta-xylanase</span></code>; the original canary’s
+expected set reused the then-current splitter and did not establish token
+semantic correctness. Its counts above are a round-1 baseline, not final
+post-tokenization counts.</p>
+<p>The round-2 producer rebuild on the same raw CSV retained <strong>362,361</strong> unique
+snapshot assertions and wrote <strong>516,528</strong> total edges after the numeric-locant
+repair. It recovers <strong>4,355</strong> zero/one dimension distinctions; the two-count
+change from round 1 removes fragments invented by the old chemical tokenizer.
+The exhaustive record/column/token comparison has zero missing or extra
+assertions under the current parser. Independently specified checks also match
+the raw <code class="docutils literal notranslate"><span class="pre">2,3-butanediol</span></code> and <code class="docutils literal notranslate"><span class="pre">endo-1,4-beta-xylanase</span></code> examples. Exact citation-cell
+bytes match the raw CSV on <strong>15,013 Bergey</strong> and <strong>463 literature</strong> assertions.
+These remain isolated producer acceptance results, not a rebuilt merged release.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

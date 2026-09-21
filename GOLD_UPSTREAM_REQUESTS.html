@@ -1,0 +1,251 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Requests to the author of the GOLD KGX export &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Requests to the author of the GOLD KGX export</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/GOLD_UPSTREAM_REQUESTS.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="requests-to-the-author-of-the-gold-kgx-export">
+<h1>Requests to the author of the GOLD KGX export<a class="headerlink" href="#requests-to-the-author-of-the-gold-kgx-export" title="Link to this heading"></a></h1>
+<p><strong>Re:</strong> <code class="docutils literal notranslate"><span class="pre">GOLD_nodes.tsv</span></code> (1,086,930 nodes) and <code class="docutils literal notranslate"><span class="pre">GOLD_edges.tsv</span></code> (1,314,901 edges)
+<strong>From:</strong> KG-Microbe · <strong>Date:</strong> 2026-08-10
+<strong>Full review:</strong> <a class="reference internal" href="GOLD_TRANSFORM_REVIEW.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">GOLD_TRANSFORM_REVIEW.md</span></code></span></a></p>
+<blockquote>
+<div><p>Version note: the observations below are a dated Biolink 4.2.2 review. The
+repository now pins 4.4.2; relevant predicate and category assumptions were
+rechecked in <a class="reference internal" href="BIOLINK_4_4_2_REVALIDATION.html"><span class="std std-doc">BIOLINK_4_4_2_REVALIDATION.md</span></a>.</p>
+</div></blockquote>
+<p>Thank you for the export — it is in better shape than most of what we ingest. Before
+listing requests, the things that are genuinely right, because they are not common:</p>
+<ul class="simple">
+<li><p><strong>Zero dangling endpoints.</strong> All 2,629,802 edge endpoints resolve to a row in
+<code class="docutils literal notranslate"><span class="pre">nodes.tsv</span></code>. Most sources we take leak some.</p></li>
+<li><p><strong>Zero duplicate node IDs, zero duplicate <code class="docutils literal notranslate"><span class="pre">(subject,</span> <span class="pre">predicate,</span> <span class="pre">object)</span></code> triples, zero
+self-loops.</strong></p></li>
+<li><p>Every category and predicate is a real Biolink 4.2.2 element, and <code class="docutils literal notranslate"><span class="pre">relation</span></code> correctly
+uses non-biolink CURIEs.</p></li>
+</ul>
+<p>We have written a transform that conforms the export to our internal conventions, so
+nothing below blocks us. But several items are things only you can fix properly, and
+fixing them at source is better than us patching them on every refresh.</p>
+<hr class="docutils" />
+<section id="materialsample-nodes-are-entirely-disconnected-our-biggest-ask">
+<h2>1. <code class="docutils literal notranslate"><span class="pre">MaterialSample</span></code> nodes are entirely disconnected — our biggest ask<a class="headerlink" href="#materialsample-nodes-are-entirely-disconnected-our-biggest-ask" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">biolink:MaterialSample</span></code> accounts for <strong>279,671 nodes, of which 279,618 (100.0%) have no
+incident edge.</strong> Only 243 <code class="docutils literal notranslate"><span class="pre">derives_from</span></code> edges touch the category at all — 0.09%.</p>
+<p>As shipped these are a quarter of the node count carrying no information, and any
+traversal that expects to reach a biosample finds nothing.</p>
+<p><strong>We think a join was intended and did not happen.</strong> GOLD has organism↔biosample and
+study↔biosample relationships in its own schema, so our guess is that the export builds
+sample nodes but not the edges to them.</p>
+<p><strong>Request:</strong> either emit the edges linking biosamples to their organisms and/or studies, or
+omit the sample nodes from the export. Either is fine; the current state is the one that
+misleads, because node counts imply coverage that the edges do not deliver.</p>
+</section>
+<section id="what-does-individualorganism-related-to-study-mean">
+<h2>2. What does <code class="docutils literal notranslate"><span class="pre">IndividualOrganism</span> <span class="pre">-related_to-&gt;</span> <span class="pre">Study</span></code> mean?<a class="headerlink" href="#what-does-individualorganism-related-to-study-mean" title="Link to this heading"></a></h2>
+<p>361,673 edges — <strong>27.5% of the whole export</strong>, the second-largest predicate — use
+<code class="docutils literal notranslate"><span class="pre">biolink:related_to</span></code>. It validates, because <code class="docutils literal notranslate"><span class="pre">related_to</span></code> is unconstrained, but it asserts
+nothing a consumer can act on, and at this volume it shapes how the export reads.</p>
+<p><strong>Request:</strong> replace it with the specific relation you mean. If the claim is “this organism
+was sequenced/reported in this study”, candidates include <code class="docutils literal notranslate"><span class="pre">biolink:contributes_to</span></code>, or a
+study-membership predicate. If you tell us the intended semantics we are happy to propose
+the Biolink mapping.</p>
+</section>
+<section id="please-version-the-hosted-files">
+<h2>3. Please version the hosted files<a class="headerlink" href="#please-version-the-hosted-files" title="Link to this heading"></a></h2>
+<p>The TSVs are currently a Drive folder. A Drive file can be replaced in place, so there is
+no version for us to pin, and a silent upstream change would reach our graph with nothing
+to detect it. We have been bitten by exactly this recently with another source, which
+thinned by 48% between refreshes and went unnoticed for ~20 months.</p>
+<p><strong>Request:</strong> a versioned URL, a dated filename, or a published checksum — any of the three
+is enough. If GOLD has a release cadence we can follow, better still.</p>
+</section>
+<section id="ncbi-hybrid-markers-are-being-stripped">
+<h2>4. NCBI hybrid markers are being stripped<a class="headerlink" href="#ncbi-hybrid-markers-are-being-stripped" title="Link to this heading"></a></h2>
+<p>Six <code class="docutils literal notranslate"><span class="pre">Saccharomyces</span></code> entries lose NCBI’s interspecific-hybrid marker:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>NCBITaxon</p></th>
+<th class="head"><p>NCBI</p></th>
+<th class="head"><p>your export</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1387703</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Saccharomyces</span> <span class="pre">x</span> <span class="pre">bayanus</span> <span class="pre">CBS</span> <span class="pre">424</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Saccharomyces</span> <span class="pre">bayanus</span> <span class="pre">CBS</span> <span class="pre">424</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>1387704–1387708</p></td>
+<td><p>same pattern</p></td>
+<td><p>CBS 1502, 1542, 2946, 3008, 5184</p></td>
+</tr>
+</tbody>
+</table>
+<p>The <code class="docutils literal notranslate"><span class="pre">x</span></code> marks a hybrid; without it the name denotes a different taxon. This looks like a
+normalisation step rather than a data entry choice.</p>
+<p><strong>Request:</strong> confirm whether something in the export pipeline strips <code class="docutils literal notranslate"><span class="pre">x</span></code>, and restore it if
+so. This is the only taxon-name difference we found that changes meaning — we compared all
+101,659 taxa we share with you, and the other 72 differences are either OBO formatting on
+our side (homonym suffixes like <code class="docutils literal notranslate"><span class="pre">Microcystis</span> <span class="pre">&lt;cyanobacteria&gt;</span></code>, which are ours, not a
+problem with yours) or NCBI merges you can pick up with a taxonomy refresh
+(<code class="docutils literal notranslate"><span class="pre">Jeongeupia</span> <span class="pre">sp.</span> <span class="pre">HS-3</span></code> is now <code class="docutils literal notranslate"><span class="pre">Jeongeupia</span> <span class="pre">sacculi</span></code>).</p>
+</section>
+<hr class="docutils" />
+<section id="two-things-we-checked-that-need-nothing-from-you">
+<h2>Two things we checked that need nothing from you<a class="headerlink" href="#two-things-we-checked-that-need-nothing-from-you" title="Link to this heading"></a></h2>
+<p>Recording these so they do not come back as questions later.</p>
+<p><strong>23,695 of your taxa are absent from our NCBITaxon build.</strong> This is our scope, not your
+error: KG-Microbe deliberately trims NCBITaxon to microbes, excluding Viruses,
+Viridiplantae and Metazoa among others. Your export covers all of life, so the difference
+is expected — a random sample of the 23,695 is phages, marine viruses, <code class="docutils literal notranslate"><span class="pre">Picea</span> <span class="pre">glauca</span></code> and a
+starling. We will drop those on our side.</p>
+<p><strong>Nine nodes with an empty <code class="docutils literal notranslate"><span class="pre">name</span></code>.</strong> All are in the branches above, so they never reach our
+graph. Not worth your time.</p>
+</section>
+<hr class="docutils" />
+<section id="smaller-conveniences-entirely-optional">
+<h2>Smaller conveniences, entirely optional<a class="headerlink" href="#smaller-conveniences-entirely-optional" title="Link to this heading"></a></h2>
+<p>These we already fill in ourselves; mentioning them only in case they are free at source.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>field</p></th>
+<th class="head"><p>note</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">knowledge_level</span></code>, <code class="docutils literal notranslate"><span class="pre">agent_type</span></code> on edges</p></td>
+<td><p>We default these to <code class="docutils literal notranslate"><span class="pre">knowledge_assertion</span></code> / <code class="docutils literal notranslate"><span class="pre">manual_agent</span></code> on the assumption GOLD entries are curated submissions. <strong>Please correct us if any subset is predicted or computed</strong> — that assumption is the kind that is invisible once it is wrong.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">description</span></code>, <code class="docutils literal notranslate"><span class="pre">synonym</span></code> on nodes</p></td>
+<td><p>Absent; we emit empty columns. Useful if GOLD holds them.</p></td>
+</tr>
+<tr class="row-even"><td><p>edge <code class="docutils literal notranslate"><span class="pre">id</span></code> column</p></td>
+<td><p>We drop it; our merge does not use it. No action needed.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">xref</span></code></p></td>
+<td><p>Populated on 55.7% of nodes — precisely the <code class="docutils literal notranslate"><span class="pre">IndividualOrganism</span></code> rows. We read this as by-design rather than partial loss, but confirmation is welcome.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="one-modelling-change-we-made-for-your-awareness">
+<h2>One modelling change we made, for your awareness<a class="headerlink" href="#one-modelling-change-we-made-for-your-awareness" title="Link to this heading"></a></h2>
+<p>The 4,220 <code class="docutils literal notranslate"><span class="pre">EnvironmentalFeature</span> <span class="pre">-subclass_of-&gt;</span> <span class="pre">EnvironmentalFeature</span></code> edges are a Biolink
+domain/range violation: <code class="docutils literal notranslate"><span class="pre">subclass_of</span></code> requires <code class="docutils literal notranslate"><span class="pre">biolink:OntologyClass</span></code> on both ends. Since
+the GOLD ecosystem hierarchy <em>is</em> a class hierarchy, we now emit those nodes as
+<code class="docutils literal notranslate"><span class="pre">biolink:EnvironmentalFeature|biolink:OntologyClass</span></code>, which satisfies the constraint
+without changing meaning.</p>
+<p><strong>If you would rather express this differently upstream, we will follow your lead</strong> — we
+would prefer to match your intent than to carry a local divergence.</p>
+</section>
+<hr class="docutils" />
+<section id="priority-if-you-only-have-time-for-some">
+<h2>Priority, if you only have time for some<a class="headerlink" href="#priority-if-you-only-have-time-for-some" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>§1 — the <code class="docutils literal notranslate"><span class="pre">MaterialSample</span></code> edges.</strong> By far the largest effect on usability.</p></li>
+<li><p><strong>§3 — versioned hosting.</strong> Cheapest to do, and it protects every future refresh.</p></li>
+<li><p><strong>§2 — the <code class="docutils literal notranslate"><span class="pre">related_to</span></code> semantics.</strong> Affects 27.5% of the export.</p></li>
+<li><p><strong>§4 — the hybrid marker.</strong> Six rows, but a name that means the wrong taxon.</p></li>
+</ol>
+<p>Happy to jump on a call, or to send the exact queries behind any number here. Everything
+in this document is reproducible from
+<a class="reference internal" href="GOLD_TRANSFORM_REVIEW.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">GOLD_TRANSFORM_REVIEW.md</span></code></span></a>, which includes the commands.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

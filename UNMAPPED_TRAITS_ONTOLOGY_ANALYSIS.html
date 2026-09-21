@@ -1,0 +1,837 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unmapped Traits Ontology Analysis &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Unmapped Traits Ontology Analysis</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/UNMAPPED_TRAITS_ONTOLOGY_ANALYSIS.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="unmapped-traits-ontology-analysis">
+<h1>Unmapped Traits Ontology Analysis<a class="headerlink" href="#unmapped-traits-ontology-analysis" title="Link to this heading"></a></h1>
+<p><strong>Date</strong>: 2026-03-28
+<strong>Total Unmapped Traits</strong>: 551 unique traits (1,164,765 occurrences)
+<strong>Sources</strong>: metatraits (470,352) + metatraits_gtdb (694,415)</p>
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>Analysis reveals <strong>8 major categories</strong> of unmapped traits that could be modeled using METPO, GO, ENVO, CHEBI, and other ontologies. High-frequency traits (60K-99K occurrences each) represent systematic gaps requiring immediate attention.</p>
+</section>
+<hr class="docutils" />
+<section id="priority-1-high-impact-metabolic-traits-99-543-occurrences-each">
+<h2>Priority 1: High-Impact Metabolic Traits (99,543 occurrences each)<a class="headerlink" href="#priority-1-high-impact-metabolic-traits-99-543-occurrences-each" title="Link to this heading"></a></h2>
+<section id="metabolic-degradation-pathways">
+<h3>1.1 Metabolic Degradation Pathways<a class="headerlink" href="#metabolic-degradation-pathways" title="Link to this heading"></a></h3>
+<p><strong>Current Gap</strong>: 8 degradation traits unmapped despite clear biological processes</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Trait</p></th>
+<th class="head"><p>Occurrences</p></th>
+<th class="head"><p>Proposed Ontology Term</p></th>
+<th class="head"><p>Parent Class</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">degradation:</span> <span class="pre">hydrocarbon</span></code></p></td>
+<td><p>99,543</p></td>
+<td><p>GO:0042537 (hydrocarbon catabolic process)</p></td>
+<td><p>GO:0044712 (catabolic process)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">degradation:</span> <span class="pre">aromatic</span> <span class="pre">hydrocarbon</span></code></p></td>
+<td><p>99,543</p></td>
+<td><p>GO:0018894 (aromatic hydrocarbon catabolic process)</p></td>
+<td><p>GO:0042537</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">degradation:</span> <span class="pre">aromatic</span> <span class="pre">compound</span></code></p></td>
+<td><p>99,543</p></td>
+<td><p>GO:0019439 (aromatic compound catabolic process)</p></td>
+<td><p>GO:0044712</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">degradation:</span> <span class="pre">plastic</span></code></p></td>
+<td><p>99,543</p></td>
+<td><p><strong>NEW METPO TERM</strong></p></td>
+<td><p>METPO:2000509 (metabolic process)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">oxidation</span> <span class="pre">in</span> <span class="pre">darkness:</span> <span class="pre">sulfur</span> <span class="pre">compounds</span></code></p></td>
+<td><p>99,543</p></td>
+<td><p>GO:0019417 (sulfur oxidation)</p></td>
+<td><p>GO:0044281 (oxidation-reduction process)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">reduction:</span> <span class="pre">arsenate</span> <span class="pre">detoxification</span></code></p></td>
+<td><p>99,543</p></td>
+<td><p>GO:0046685 (arsenate reductase activity) + GO:0050896 (detoxification)</p></td>
+<td><p>Combined term</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation</strong>:</p>
+<ul class="simple">
+<li><p>Map to existing GO terms where available</p></li>
+<li><p>Create new METPO term for plastic degradation: <code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">plastic</span> <span class="pre">degradation</span> <span class="pre">capability</span></code></p></li>
+<li><p>Use compound predicates for detoxification processes</p></li>
+</ul>
+</section>
+<section id="electron-transfer-processes">
+<h3>1.2 Electron Transfer Processes<a class="headerlink" href="#electron-transfer-processes" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Trait</p></th>
+<th class="head"><p>Occurrences</p></th>
+<th class="head"><p>Proposed Ontology Term</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">electron</span> <span class="pre">acceptor:</span> <span class="pre">sulfur</span> <span class="pre">compounds</span></code></p></td>
+<td><p>99,543</p></td>
+<td><p><strong>NEW METPO TERM</strong></p></td>
+<td><p>Create hierarchical electron acceptor terms</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">electron</span> <span class="pre">acceptor:</span> <span class="pre">amorphous</span> <span class="pre">iron</span> <span class="pre">(iii)</span> <span class="pre">oxide</span></code></p></td>
+<td><p>8</p></td>
+<td><p>CHEBI:82594 (iron(III) oxide)</p></td>
+<td><p>Link to chemical via biolink:capable_of</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation</strong>:</p>
+<ul class="simple">
+<li><p>Create METPO electron acceptor hierarchy:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">electron</span> <span class="pre">acceptor</span> <span class="pre">capability</span></code></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">sulfur</span> <span class="pre">compound</span> <span class="pre">electron</span> <span class="pre">acceptor</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">iron</span> <span class="pre">oxide</span> <span class="pre">electron</span> <span class="pre">acceptor</span></code></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Link to CHEBI terms for specific chemicals</p></li>
+</ul>
+</section>
+<section id="metabolite-production">
+<h3>1.3 Metabolite Production<a class="headerlink" href="#metabolite-production" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Trait</p></th>
+<th class="head"><p>Occurrences</p></th>
+<th class="head"><p>Proposed Ontology Term</p></th>
+<th class="head"><p>Parent Class</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">produces:</span> <span class="pre">methane</span> <span class="pre">from</span> <span class="pre">formate</span></code></p></td>
+<td><p>99,543</p></td>
+<td><p>GO:0015948 (methanogenesis) + CHEBI:15741 (formate)</p></td>
+<td><p>Compound relationship</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">builds</span> <span class="pre">gas</span> <span class="pre">from:</span> <span class="pre">sodium</span> <span class="pre">thiosulfate</span></code></p></td>
+<td><p>188</p></td>
+<td><p>GO:0015976 (carbon utilization)</p></td>
+<td><p>General gas production</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">builds</span> <span class="pre">gas</span> <span class="pre">from:</span> <span class="pre">nitrate</span></code></p></td>
+<td><p>115</p></td>
+<td><p>GO:0042128 (nitrate assimilation)</p></td>
+<td><p>Nitrogen metabolism</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation</strong>:</p>
+<ul class="simple">
+<li><p>Use compound edges: <code class="docutils literal notranslate"><span class="pre">organism</span> <span class="pre">--capable_of--&gt;</span> <span class="pre">GO:0015948</span> <span class="pre">--has_input--&gt;</span> <span class="pre">CHEBI:15741</span></code></p></li>
+<li><p>Create METPO terms for complex metabolic transformations</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="priority-2-growth-condition-traits-85-311-occurrences-each">
+<h2>Priority 2: Growth Condition Traits (85,311 occurrences each)<a class="headerlink" href="#priority-2-growth-condition-traits-85-311-occurrences-each" title="Link to this heading"></a></h2>
+<section id="salt-tolerance">
+<h3>2.1 Salt Tolerance<a class="headerlink" href="#salt-tolerance" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Trait</p></th>
+<th class="head"><p>Occurrences</p></th>
+<th class="head"><p>Proposed Ontology Term</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">growth:</span> <span class="pre">6.5%</span> <span class="pre">NaCl</span></code></p></td>
+<td><p>85,311</p></td>
+<td><p>METPO:1000846 (halophile) + data property</p></td>
+<td><p>Use PATO for concentration</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation</strong>:</p>
+<ul class="simple">
+<li><p>Create METPO salt tolerance terms with PATO qualifiers:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">halotolerant</span> <span class="pre">growth</span></code></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">has_measurement</span></code> → 6.5% NaCl (PATO:0000033 concentration)</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Use UO:0000187 (percent) for units</p></li>
+</ul>
+</section>
+<section id="temperature-tolerance">
+<h3>2.2 Temperature Tolerance<a class="headerlink" href="#temperature-tolerance" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Trait</p></th>
+<th class="head"><p>Occurrences</p></th>
+<th class="head"><p>Proposed Ontology Term</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">growth:</span> <span class="pre">42</span> <span class="pre">degrees</span> <span class="pre">Celsius</span></code></p></td>
+<td><p>85,311</p></td>
+<td><p>METPO:1000604 (thermophile) + data property</p></td>
+<td><p>Use UO for temperature</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation</strong>:</p>
+<ul class="simple">
+<li><p>Create temperature growth range terms:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">growth</span> <span class="pre">at</span> <span class="pre">temperature</span></code></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">has_measurement</span></code> → 42°C (UO:0000027 degree Celsius)</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="biochemical-hydrolysis">
+<h3>2.3 Biochemical Hydrolysis<a class="headerlink" href="#biochemical-hydrolysis" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Trait</p></th>
+<th class="head"><p>Occurrences</p></th>
+<th class="head"><p>Proposed Ontology Term</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">hydrolysis:</span> <span class="pre">4-nitrophenyl</span> <span class="pre">beta-D-galactopyranoside</span></code></p></td>
+<td><p>85,321</p></td>
+<td><p>GO:0004565 (beta-galactosidase activity)</p></td>
+<td><p>Enzyme activity</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation</strong>:</p>
+<ul class="simple">
+<li><p>Map to GO enzyme activity terms</p></li>
+<li><p>Link substrate via <code class="docutils literal notranslate"><span class="pre">has_substrate</span></code> → CHEBI:XXXXX</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="priority-3-fermentation-capabilities-95-traits-3-896-2-087-occurrences">
+<h2>Priority 3: Fermentation Capabilities (95 traits, 3,896-2,087 occurrences)<a class="headerlink" href="#priority-3-fermentation-capabilities-95-traits-3-896-2-087-occurrences" title="Link to this heading"></a></h2>
+<section id="sugar-fermentation">
+<h3>3.1 Sugar Fermentation<a class="headerlink" href="#sugar-fermentation" title="Link to this heading"></a></h3>
+<p><strong>Pattern</strong>: <code class="docutils literal notranslate"><span class="pre">fermentation:</span> <span class="pre">[sugar_name]</span></code></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Trait</p></th>
+<th class="head"><p>Occurrences</p></th>
+<th class="head"><p>Proposed Ontology Term</p></th>
+<th class="head"><p>Chemical</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fermentation:</span> <span class="pre">D-glucose</span></code></p></td>
+<td><p>3,896</p></td>
+<td><p>GO:0019660 (glycolytic fermentation)</p></td>
+<td><p>CHEBI:17234 (D-glucose)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fermentation:</span> <span class="pre">D-mannitol</span></code></p></td>
+<td><p>2,087</p></td>
+<td><p>GO:0019400 (mannitol metabolic process)</p></td>
+<td><p>CHEBI:16899 (D-mannitol)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fermentation:</span> <span class="pre">D-ribose</span></code></p></td>
+<td><p>1,546</p></td>
+<td><p>GO:0046390 (ribose phosphate metabolic process)</p></td>
+<td><p>CHEBI:47013 (D-ribose)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fermentation:</span> <span class="pre">D-xylose</span></code></p></td>
+<td><p>1,329</p></td>
+<td><p>GO:0042732 (D-xylose metabolic process)</p></td>
+<td><p>CHEBI:18222 (D-xylose)</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation</strong>:</p>
+<ul class="simple">
+<li><p>Create generalized METPO fermentation pattern:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">fermentation</span> <span class="pre">capability</span></code></p>
+<ul>
+<li><p>Subclasses: <code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">[sugar]</span> <span class="pre">fermentation</span></code></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Link to GO metabolic processes via <code class="docutils literal notranslate"><span class="pre">rdfs:seeAlso</span></code></p></li>
+<li><p>Link to CHEBI substrates via <code class="docutils literal notranslate"><span class="pre">has_substrate</span></code></p></li>
+</ul>
+</section>
+<section id="complex-carbohydrate-fermentation">
+<h3>3.2 Complex Carbohydrate Fermentation<a class="headerlink" href="#complex-carbohydrate-fermentation" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Trait</p></th>
+<th class="head"><p>Occurrences</p></th>
+<th class="head"><p>Proposed</p></th>
+<th class="head"><p>Chemical</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">fermentation:</span> <span class="pre">glycogen</span></code></p></td>
+<td><p>251</p></td>
+<td><p>GO:0005977 (glycogen metabolic process)</p></td>
+<td><p>CHEBI:28087 (glycogen)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">fermentation:</span> <span class="pre">cellobiose</span></code></p></td>
+<td><p>126</p></td>
+<td><p>GO:0019583 (cellobiose catabolic process)</p></td>
+<td><p>CHEBI:17057 (cellobiose)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<hr class="docutils" />
+<section id="priority-4-enzyme-activities-44-traits-843-304-occurrences">
+<h2>Priority 4: Enzyme Activities (44 traits, 843-304 occurrences)<a class="headerlink" href="#priority-4-enzyme-activities-44-traits-843-304-occurrences" title="Link to this heading"></a></h2>
+<section id="diagnostic-enzyme-tests">
+<h3>4.1 Diagnostic Enzyme Tests<a class="headerlink" href="#diagnostic-enzyme-tests" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Trait</p></th>
+<th class="head"><p>Occurrences</p></th>
+<th class="head"><p>Proposed Ontology Term</p></th>
+<th class="head"><p>EC Number</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">enzyme</span> <span class="pre">activity:</span> <span class="pre">beta-Galactosidase</span> <span class="pre">6-phosphate</span></code></p></td>
+<td><p>843</p></td>
+<td><p>GO:0004565 (beta-galactosidase activity)</p></td>
+<td><p>EC 3.2.1.23</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">enzyme</span> <span class="pre">activity:</span> <span class="pre">esterase</span> <span class="pre">(C</span> <span class="pre">4)</span></code></p></td>
+<td><p>451</p></td>
+<td><p>GO:0016788 (hydrolase activity, ester bonds)</p></td>
+<td><p>EC 3.1.1.-</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">enzyme</span> <span class="pre">activity:</span> <span class="pre">alpha-maltosidase</span></code></p></td>
+<td><p>304</p></td>
+<td><p>GO:0032450 (maltose alpha-glucosidase activity)</p></td>
+<td><p>EC 3.2.1.20</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation</strong>:</p>
+<ul class="simple">
+<li><p>Map to GO molecular function terms</p></li>
+<li><p>Add EC numbers as xrefs</p></li>
+<li><p>Create METPO “has_enzyme_activity” relation</p></li>
+</ul>
+</section>
+<section id="arylamidase-activities">
+<h3>4.2 Arylamidase Activities<a class="headerlink" href="#arylamidase-activities" title="Link to this heading"></a></h3>
+<p>Pattern: <code class="docutils literal notranslate"><span class="pre">enzyme</span> <span class="pre">activity:</span> <span class="pre">[amino</span> <span class="pre">acid]</span> <span class="pre">arylamidase</span></code></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Trait</p></th>
+<th class="head"><p>Occurrences</p></th>
+<th class="head"><p>GO Term</p></th>
+<th class="head"><p>EC Number</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">glycyl</span> <span class="pre">tryptophan</span> <span class="pre">arylamidase</span></code></p></td>
+<td><p>347</p></td>
+<td><p>GO:0070006 (metalloaminopeptidase activity)</p></td>
+<td><p>EC 3.4.11.-</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">L-arginine</span> <span class="pre">arylamidase</span></code></p></td>
+<td><p>94</p></td>
+<td><p>GO:0004177 (aminopeptidase activity)</p></td>
+<td><p>EC 3.4.11.6</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">valine</span> <span class="pre">arylamidase</span></code></p></td>
+<td><p>41</p></td>
+<td><p>GO:0004177 (aminopeptidase activity)</p></td>
+<td><p>EC 3.4.11.-</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<hr class="docutils" />
+<section id="priority-5-carbon-source-utilization-32-traits">
+<h2>Priority 5: Carbon Source Utilization (32 traits)<a class="headerlink" href="#priority-5-carbon-source-utilization-32-traits" title="Link to this heading"></a></h2>
+<section id="organic-acid-utilization">
+<h3>5.1 Organic Acid Utilization<a class="headerlink" href="#organic-acid-utilization" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Trait</p></th>
+<th class="head"><p>Occurrences</p></th>
+<th class="head"><p>Proposed Ontology Term</p></th>
+<th class="head"><p>Chemical</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">carbon</span> <span class="pre">source:</span> <span class="pre">bromosuccinate</span></code></p></td>
+<td><p>79</p></td>
+<td><p>GO:0015976 (carbon utilization)</p></td>
+<td><p>CHEBI:XXXXX</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">carbon</span> <span class="pre">source:</span> <span class="pre">beta-hydroxybutyrate</span></code></p></td>
+<td><p>69</p></td>
+<td><p>GO:0019752 (carboxylic acid metabolic process)</p></td>
+<td><p>CHEBI:20067</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">carbon</span> <span class="pre">source:</span> <span class="pre">galacturonate</span></code></p></td>
+<td><p>61</p></td>
+<td><p>GO:0046392 (galacturonate catabolic process)</p></td>
+<td><p>CHEBI:33198</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation</strong>:</p>
+<ul class="simple">
+<li><p>Create METPO carbon source pattern:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">carbon</span> <span class="pre">source</span> <span class="pre">utilization</span></code></p>
+<ul>
+<li><p>Link to specific CHEBI compounds</p></li>
+<li><p>Link to GO metabolic processes</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="priority-6-cell-properties-1-trait-85-311-occurrences">
+<h2>Priority 6: Cell Properties (1 trait, 85,311 occurrences)<a class="headerlink" href="#priority-6-cell-properties-1-trait-85-311-occurrences" title="Link to this heading"></a></h2>
+<section id="pigmentation">
+<h3>6.1 Pigmentation<a class="headerlink" href="#pigmentation" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Trait</p></th>
+<th class="head"><p>Occurrences</p></th>
+<th class="head"><p>Proposed Ontology Term</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cell</span> <span class="pre">color:</span> <span class="pre">yellow</span> <span class="pre">pigment</span></code></p></td>
+<td><p>85,311</p></td>
+<td><p>METPO:1000698 (pigmentation) + PATO:0000324 (yellow)</p></td>
+<td><p>Use PATO for color</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation</strong>:</p>
+<ul class="simple">
+<li><p>Extend METPO pigmentation terms:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">pigmented</span> <span class="pre">cell</span></code></p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">has_quality</span></code> → PATO:0000324 (yellow)</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Consider linking to specific pigment compounds (carotenoids, etc.)</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="priority-7-ph-preference-5-479-occurrences">
+<h2>Priority 7: pH Preference (5,479 occurrences)<a class="headerlink" href="#priority-7-ph-preference-5-479-occurrences" title="Link to this heading"></a></h2>
+<section id="growth-ph">
+<h3>7.1 Growth pH<a class="headerlink" href="#growth-ph" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Trait</p></th>
+<th class="head"><p>Occurrences</p></th>
+<th class="head"><p>Current METPO</p></th>
+<th class="head"><p>Recommendation</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pH</span> <span class="pre">preference</span></code></p></td>
+<td><p>5,479</p></td>
+<td><p>METPO:1000834 (acidophile), METPO:1000841 (alkaliphile)</p></td>
+<td><p>Add pH range data properties</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation</strong>:</p>
+<ul class="simple">
+<li><p>Enhance existing METPO pH terms with quantitative measurements:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">has_pH_optimum</span></code> → xsd:decimal</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">has_pH_range</span></code> → xsd:string (“4.5-6.5”)</p></li>
+</ul>
+</li>
+<li><p>Use PATO:0001842 (acidity)</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="priority-8-other-assimilation-patterns-123-traits">
+<h2>Priority 8: Other Assimilation Patterns (123 traits)<a class="headerlink" href="#priority-8-other-assimilation-patterns-123-traits" title="Link to this heading"></a></h2>
+<section id="metabolite-assimilation">
+<h3>8.1 Metabolite Assimilation<a class="headerlink" href="#metabolite-assimilation" title="Link to this heading"></a></h3>
+<p>Pattern: <code class="docutils literal notranslate"><span class="pre">assimilation:</span> <span class="pre">[compound]</span></code></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Trait</p></th>
+<th class="head"><p>Occurrences</p></th>
+<th class="head"><p>Proposed Approach</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">assimilation:</span> <span class="pre">bromosuccinate</span></code></p></td>
+<td><p>50</p></td>
+<td><p>GO:0015976 (carbon utilization) + CHEBI</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">assimilation:</span> <span class="pre">beta-hydroxybutyrate</span></code></p></td>
+<td><p>42</p></td>
+<td><p>GO:0006635 (fatty acid beta-oxidation) + CHEBI</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Recommendation</strong>:</p>
+<ul class="simple">
+<li><p>Treat similar to carbon source utilization</p></li>
+<li><p>Create <code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">assimilation</span> <span class="pre">capability</span></code> parent term</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="implementation-recommendations">
+<h2>Implementation Recommendations<a class="headerlink" href="#implementation-recommendations" title="Link to this heading"></a></h2>
+<section id="phase-1-map-to-existing-ontologies-quick-wins">
+<h3>Phase 1: Map to Existing Ontologies (Quick Wins)<a class="headerlink" href="#phase-1-map-to-existing-ontologies-quick-wins" title="Link to this heading"></a></h3>
+<p><strong>GO Terms</strong> (can map immediately):</p>
+<ul class="simple">
+<li><p>26 degradation/oxidation/reduction traits → GO metabolic processes</p></li>
+<li><p>44 enzyme activity traits → GO molecular functions</p></li>
+<li><p>95 fermentation traits → GO fermentation/metabolic processes</p></li>
+</ul>
+<p><strong>Estimated Coverage</strong>: ~40% of unmapped traits resolved</p>
+</section>
+<section id="phase-2-create-metpo-extensions-medium-term">
+<h3>Phase 2: Create METPO Extensions (Medium-term)<a class="headerlink" href="#phase-2-create-metpo-extensions-medium-term" title="Link to this heading"></a></h3>
+<p><strong>New METPO Terms Needed</strong>:</p>
+<ol class="arabic simple">
+<li><p><strong>Electron acceptor hierarchy</strong> (5 terms)</p>
+<ul class="simple">
+<li><p>Parent: <code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">electron</span> <span class="pre">acceptor</span> <span class="pre">capability</span></code></p></li>
+<li><p>Children for specific acceptor types</p></li>
+</ul>
+</li>
+<li><p><strong>Degradation capabilities</strong> (8 terms)</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">plastic</span> <span class="pre">degradation</span> <span class="pre">capability</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">hydrocarbon</span> <span class="pre">degradation</span> <span class="pre">capability</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Fermentation pattern</strong> (95+ terms)</p>
+<ul class="simple">
+<li><p>Parent: <code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">fermentation</span> <span class="pre">capability</span></code></p></li>
+<li><p>Specific sugar fermentation subclasses</p></li>
+</ul>
+</li>
+<li><p><strong>Carbon source pattern</strong> (32 terms)</p>
+<ul class="simple">
+<li><p>Parent: <code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">carbon</span> <span class="pre">source</span> <span class="pre">utilization</span></code></p></li>
+<li><p>Specific compound utilization subclasses</p></li>
+</ul>
+</li>
+<li><p><strong>Quantitative growth parameters</strong> (3 terms)</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">growth</span> <span class="pre">at</span> <span class="pre">temperature</span></code> (with UO)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">growth</span> <span class="pre">at</span> <span class="pre">salt</span> <span class="pre">concentration</span></code> (with PATO)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:XXXXXX</span> <span class="pre">growth</span> <span class="pre">at</span> <span class="pre">pH</span></code> (with PATO)</p></li>
+</ul>
+</li>
+</ol>
+<p><strong>Estimated Coverage</strong>: +50% resolved (90% total)</p>
+</section>
+<section id="phase-3-hybrid-modeling-long-term">
+<h3>Phase 3: Hybrid Modeling (Long-term)<a class="headerlink" href="#phase-3-hybrid-modeling-long-term" title="Link to this heading"></a></h3>
+<p><strong>Compound Relationships</strong>:</p>
+<ul class="simple">
+<li><p>Organism → <code class="docutils literal notranslate"><span class="pre">capable_of</span></code> → GO process → <code class="docutils literal notranslate"><span class="pre">has_substrate</span></code> → CHEBI compound</p></li>
+<li><p>Organism → <code class="docutils literal notranslate"><span class="pre">has_phenotype</span></code> → METPO trait → <code class="docutils literal notranslate"><span class="pre">has_measurement</span></code> → PATO quality</p></li>
+</ul>
+<p><strong>Example</strong>:</p>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="p">:</span><span class="nt">Organism_123</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">capable_of</span> <span class="nn">GO</span><span class="p">:</span><span class="nt">0019660</span> <span class="p">.</span>
+<span class="nn">GO</span><span class="p">:</span><span class="nt">0019660</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;glycolytic fermentation&quot;</span> <span class="p">.</span>
+<span class="nn">GO</span><span class="p">:</span><span class="nt">0019660</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">has_substrate</span> <span class="nn">CHEBI</span><span class="p">:</span><span class="nt">17234</span> <span class="p">.</span>
+<span class="nn">CHEBI</span><span class="p">:</span><span class="nt">17234</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;D-glucose&quot;</span> <span class="p">.</span>
+</pre></div>
+</div>
+<p><strong>Estimated Coverage</strong>: Remaining 10% edge cases</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="prioritization-matrix">
+<h2>Prioritization Matrix<a class="headerlink" href="#prioritization-matrix" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>Unique Traits</p></th>
+<th class="head"><p>Total Occurrences</p></th>
+<th class="head"><p>Ontology Complexity</p></th>
+<th class="head"><p>Priority</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Metabolic Degradation</p></td>
+<td><p>8</p></td>
+<td><p>99,543 each</p></td>
+<td><p>Medium (GO exists)</p></td>
+<td><p><strong>P1</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>Electron Processes</p></td>
+<td><p>5</p></td>
+<td><p>99,543 each</p></td>
+<td><p>High (new METPO)</p></td>
+<td><p><strong>P1</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>Growth Conditions</p></td>
+<td><p>49</p></td>
+<td><p>85,311 each</p></td>
+<td><p>Medium (METPO + PATO)</p></td>
+<td><p><strong>P1</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>Fermentation</p></td>
+<td><p>95</p></td>
+<td><p>3,896-1,057</p></td>
+<td><p>Low (GO exists)</p></td>
+<td><p><strong>P2</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>Enzyme Activity</p></td>
+<td><p>44</p></td>
+<td><p>843-304</p></td>
+<td><p>Low (GO + EC)</p></td>
+<td><p><strong>P2</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>Carbon Source</p></td>
+<td><p>32</p></td>
+<td><p>79-61</p></td>
+<td><p>Medium (GO + CHEBI)</p></td>
+<td><p><strong>P3</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>Cell Properties</p></td>
+<td><p>1</p></td>
+<td><p>85,311</p></td>
+<td><p>Low (METPO + PATO)</p></td>
+<td><p><strong>P3</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>pH Preference</p></td>
+<td><p>1</p></td>
+<td><p>5,479</p></td>
+<td><p>Low (enhance METPO)</p></td>
+<td><p><strong>P3</strong></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Immediate</strong> (Week 1):</p>
+<ul class="simple">
+<li><p>Map 165 traits to existing GO/ENVO/CHEBI terms</p></li>
+<li><p>Test hybrid modeling approach with top 10 traits</p></li>
+<li><p>Submit GO term requests for missing processes</p></li>
+</ul>
+</li>
+<li><p><strong>Short-term</strong> (Month 1):</p>
+<ul class="simple">
+<li><p>Create 50-100 new METPO terms for fermentation pattern</p></li>
+<li><p>Add quantitative data properties to METPO</p></li>
+<li><p>Implement compound relationship modeling</p></li>
+</ul>
+</li>
+<li><p><strong>Medium-term</strong> (Quarter 1):</p>
+<ul class="simple">
+<li><p>Complete METPO extension with all 200+ new terms</p></li>
+<li><p>Validate ontology mappings with domain experts</p></li>
+<li><p>Re-run transforms to measure improvement</p></li>
+</ul>
+</li>
+<li><p><strong>Success Metrics</strong>:</p>
+<ul class="simple">
+<li><p><strong>Target</strong>: Reduce unmapped traits from 551 to &lt;50 (90% coverage)</p></li>
+<li><p><strong>Current</strong>: 551 unmapped (1.16M occurrences)</p></li>
+<li><p><strong>Phase 1 Goal</strong>: 350 unmapped (40% resolved)</p></li>
+<li><p><strong>Phase 2 Goal</strong>: 55 unmapped (90% resolved)</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="appendix-sample-metpo-term-definitions">
+<h2>Appendix: Sample METPO Term Definitions<a class="headerlink" href="#appendix-sample-metpo-term-definitions" title="Link to this heading"></a></h2>
+<section id="example-1-plastic-degradation">
+<h3>Example 1: Plastic Degradation<a class="headerlink" href="#example-1-plastic-degradation" title="Link to this heading"></a></h3>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="nn">METPO</span><span class="p">:</span><span class="nt">XXXXXX</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;plastic degradation capability&quot;</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000509</span> <span class="p">;</span>  <span class="c"># metabolic process</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The ability of an organism to degrade plastic polymers&quot;</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">seeAlso</span> <span class="nn">GO</span><span class="p">:</span><span class="nt">0042537</span> <span class="p">;</span>  <span class="c"># hydrocarbon catabolic process</span>
+    <span class="p">.</span>
+</pre></div>
+</div>
+</section>
+<section id="example-2-sulfur-compound-electron-acceptor">
+<h3>Example 2: Sulfur Compound Electron Acceptor<a class="headerlink" href="#example-2-sulfur-compound-electron-acceptor" title="Link to this heading"></a></h3>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="nn">METPO</span><span class="p">:</span><span class="nt">XXXXXX</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;sulfur compound electron acceptor capability&quot;</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">XXXXXX</span> <span class="p">;</span>  <span class="c"># electron acceptor capability (new parent)</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The ability to use sulfur compounds as terminal electron acceptors&quot;</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">seeAlso</span> <span class="nn">GO</span><span class="p">:</span><span class="nt">0019417</span> <span class="p">;</span>  <span class="c"># sulfur oxidation</span>
+    <span class="p">.</span>
+</pre></div>
+</div>
+</section>
+<section id="example-3-quantitative-temperature-growth">
+<h3>Example 3: Quantitative Temperature Growth<a class="headerlink" href="#example-3-quantitative-temperature-growth" title="Link to this heading"></a></h3>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="nn">METPO</span><span class="p">:</span><span class="nt">XXXXXX</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">Class</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;growth at temperature&quot;</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">subClassOf</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">1000604</span> <span class="p">;</span>  <span class="c"># thermophile</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;Growth at a specific temperature&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="c"># Data property for measurements</span>
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_temperature_optimum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">XXXXXX</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000116</span> <span class="s">&quot;Temperature in degrees Celsius&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+</pre></div>
+</div>
+<hr class="docutils" />
+<p><strong>Report Generated</strong>: 2026-03-28
+<strong>Analysis Tool</strong>: Python 3.10 + custom trait categorization
+<strong>Data Sources</strong>: metatraits + metatraits_gtdb transforms</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

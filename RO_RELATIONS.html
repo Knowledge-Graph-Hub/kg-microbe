@@ -1,0 +1,637 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RO (Relations Ontology) Usage in kg-microbe &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">RO (Relations Ontology) Usage in kg-microbe</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/RO_RELATIONS.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ro-relations-ontology-usage-in-kg-microbe">
+<h1>RO (Relations Ontology) Usage in kg-microbe<a class="headerlink" href="#ro-relations-ontology-usage-in-kg-microbe" title="Link to this heading"></a></h1>
+<p><strong>Last Updated</strong>: January 10, 2026</p>
+<p>This document lists all Relations Ontology (RO) terms used in kg-microbe transforms.</p>
+<hr class="docutils" />
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>The Relations Ontology (RO) provides standardized relation terms for biological and biomedical relationships. kg-microbe uses RO terms extensively to express semantic relationships between entities in the knowledge graph.</p>
+<p><strong>RO Ontology</strong>:</p>
+<ul class="simple">
+<li><p><strong>Source</strong>: http://purl.obolibrary.org/obo/ro.owl</p></li>
+<li><p><strong>Download</strong>: Included in <code class="docutils literal notranslate"><span class="pre">download.yaml</span></code></p></li>
+<li><p><strong>Transform</strong>: Processed by ontologies transform</p></li>
+<li><p><strong>Documentation</strong>: https://www.obofoundry.org/ontology/ro.html</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="ro-relations-by-category">
+<h2>RO Relations by Category<a class="headerlink" href="#ro-relations-by-category" title="Link to this heading"></a></h2>
+<section id="organism-relations">
+<h3>Organism Relations<a class="headerlink" href="#organism-relations" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>RO Term</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>RO:0002215</p></td>
+<td><p>capable of / biological process</p></td>
+<td><p>Organism capability predicates</p></td>
+</tr>
+<tr class="row-odd"><td><p>RO:0002438</p></td>
+<td><p>trophically interacts with</p></td>
+<td><p>Organism to carbon substrate interaction</p></td>
+</tr>
+<tr class="row-even"><td><p>RO:0001015</p></td>
+<td><p>location of</p></td>
+<td><p>Organism to isolation source</p></td>
+</tr>
+<tr class="row-odd"><td><p>RO:0002200</p></td>
+<td><p>has phenotype</p></td>
+<td><p>Organism phenotype relationships</p></td>
+</tr>
+<tr class="row-even"><td><p>RO:0002551</p></td>
+<td><p>has gene</p></td>
+<td><p>Organism to gene relationship</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="molecular-relations">
+<h3>Molecular Relations<a class="headerlink" href="#molecular-relations" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>RO Term</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>RO:0002327</p></td>
+<td><p>enables</p></td>
+<td><p>Protein/gene enables molecular function</p></td>
+</tr>
+<tr class="row-odd"><td><p>RO:0002436</p></td>
+<td><p>molecularly interacts with</p></td>
+<td><p>Chemical-protein interactions</p></td>
+</tr>
+<tr class="row-even"><td><p>RO:0002233</p></td>
+<td><p>has input</p></td>
+<td><p>Reaction/process has chemical input</p></td>
+</tr>
+<tr class="row-odd"><td><p>RO:0002234</p></td>
+<td><p>has output</p></td>
+<td><p>Reaction/process has chemical output</p></td>
+</tr>
+<tr class="row-even"><td><p>RO:0002333</p></td>
+<td><p>enabled by</p></td>
+<td><p>Process enabled by enzyme</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="process-relations">
+<h3>Process Relations<a class="headerlink" href="#process-relations" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>RO Term</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>RO:0000056</p></td>
+<td><p>participates in</p></td>
+<td><p>Entity participates in process/assay</p></td>
+</tr>
+<tr class="row-odd"><td><p>RO:0000057</p></td>
+<td><p>has participant</p></td>
+<td><p>Process has entity as participant</p></td>
+</tr>
+<tr class="row-even"><td><p>RO:0002331</p></td>
+<td><p>involved in</p></td>
+<td><p>Gene/protein involved in biological process</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="structural-relations">
+<h3>Structural Relations<a class="headerlink" href="#structural-relations" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>RO Term</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>RO:0001025</p></td>
+<td><p>located in</p></td>
+<td><p>Protein/component located in cellular location</p></td>
+</tr>
+<tr class="row-odd"><td><p>RO:0001000</p></td>
+<td><p>derives from</p></td>
+<td><p>Protein derives from organism</p></td>
+</tr>
+<tr class="row-even"><td><p>RO:0000052</p></td>
+<td><p>related to</p></td>
+<td><p>General relatedness</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="functional-relations">
+<h3>Functional Relations<a class="headerlink" href="#functional-relations" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>RO Term</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>RO:0000087</p></td>
+<td><p>has role</p></td>
+<td><p>Chemical entity has functional role</p></td>
+</tr>
+<tr class="row-odd"><td><p>RO:0002205</p></td>
+<td><p>has gene product</p></td>
+<td><p>Gene has protein product</p></td>
+</tr>
+<tr class="row-even"><td><p>RO:0002326</p></td>
+<td><p>contributes to</p></td>
+<td><p>Protein contributes to disease</p></td>
+</tr>
+<tr class="row-odd"><td><p>RO:0002350</p></td>
+<td><p>member of</p></td>
+<td><p>Gene is member of ortholog group/COG</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="disease-microbe-relations">
+<h3>Disease-Microbe Relations<a class="headerlink" href="#disease-microbe-relations" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>RO Term</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>RO:0002610</p></td>
+<td><p>correlated with</p></td>
+<td><p>Disease-microbe abundance correlations (Disbiome, Wallen et al)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="homology-relations">
+<h3>Homology Relations<a class="headerlink" href="#homology-relations" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>RO Term</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>RO:HOM0000017</p></td>
+<td><p>orthologous to</p></td>
+<td><p>Gene orthology relationships (KEGG KO)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<hr class="docutils" />
+<section id="transform-usage">
+<h2>Transform Usage<a class="headerlink" href="#transform-usage" title="Link to this heading"></a></h2>
+<section id="bacdive-transform">
+<h3>BacDive Transform<a class="headerlink" href="#bacdive-transform" title="Link to this heading"></a></h3>
+<p><strong>File</strong>: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/bacdive/bacdive.py</span></code></p>
+<p><strong>Relations used</strong>:</p>
+<ul class="simple">
+<li><p><strong>RO:0002233</strong> (has input) - Enzyme to substrate relationships</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">EC:3.5.1.5</span> <span class="pre">→</span> <span class="pre">has_input</span> <span class="pre">→</span> <span class="pre">CHEBI:16199</span> <span class="pre">(urea)</span></code></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="bakta-transform">
+<h3>Bakta Transform<a class="headerlink" href="#bakta-transform" title="Link to this heading"></a></h3>
+<p><strong>File</strong>: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/bakta/bakta.py</span></code></p>
+<p><strong>Relations used</strong>:</p>
+<ul class="simple">
+<li><p><strong>RO:0002551</strong> (has gene) - Organism to gene relationships</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">NCBITaxon:12345</span> <span class="pre">→</span> <span class="pre">has_gene</span> <span class="pre">→</span> <span class="pre">gene:SAMN123_00001</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>RO:0002205</strong> (has gene product) - Gene to protein relationships</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">gene:SAMN123_00001</span> <span class="pre">→</span> <span class="pre">has_gene_product</span> <span class="pre">→</span> <span class="pre">UniProtKB:P12345</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>RO:0002327</strong> (enables) - Protein enables molecular function</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">UniProtKB:P12345</span> <span class="pre">→</span> <span class="pre">enables</span> <span class="pre">→</span> <span class="pre">GO:0005524</span> <span class="pre">(ATP</span> <span class="pre">binding)</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>RO:0002350</strong> (member of) - Gene membership in ortholog groups</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">gene:SAMN123_00001</span> <span class="pre">→</span> <span class="pre">member_of</span> <span class="pre">→</span> <span class="pre">COG:COG0001</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>RO:0002331</strong> (involved in) - Gene/protein involved in biological process</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">gene:SAMN123_00001</span> <span class="pre">→</span> <span class="pre">involved_in</span> <span class="pre">→</span> <span class="pre">GO:0006412</span> <span class="pre">(translation)</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>RO:HOM0000017</strong> (orthologous to) - Gene orthology to KEGG KO</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">gene:SAMN123_00001</span> <span class="pre">→</span> <span class="pre">orthologous_to</span> <span class="pre">→</span> <span class="pre">KEGG:K00001</span></code></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="mediadive-transform">
+<h3>MediaDive Transform<a class="headerlink" href="#mediadive-transform" title="Link to this heading"></a></h3>
+<p><strong>File</strong>: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/mediadive/mediadive.py</span></code></p>
+<p><strong>Relations used</strong>:</p>
+<ul class="simple">
+<li><p><strong>RO:0000087</strong> (has role) - Chemical entity to functional role</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">CHEBI:16199</span> <span class="pre">→</span> <span class="pre">has_role</span> <span class="pre">→</span> <span class="pre">CHEBI:78295</span> <span class="pre">(nitrogen</span> <span class="pre">source</span> <span class="pre">role)</span></code></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="madin-et-al-transform">
+<h3>Madin et al Transform<a class="headerlink" href="#madin-et-al-transform" title="Link to this heading"></a></h3>
+<p><strong>File</strong>: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/madin_etal/madin_etal.py</span></code></p>
+<p><strong>Relations used</strong>:</p>
+<ul class="simple">
+<li><p><strong>RO:0000087</strong> (has role) - Chemical entity to functional role</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">CHEBI:17234</span> <span class="pre">→</span> <span class="pre">has_role</span> <span class="pre">→</span> <span class="pre">CHEBI:78297</span> <span class="pre">(carbon</span> <span class="pre">source</span> <span class="pre">role)</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>RO:0001015</strong> (location of) - Organism to isolation source</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">NCBITaxon:12345</span> <span class="pre">→</span> <span class="pre">location_of</span> <span class="pre">→</span> <span class="pre">ENVO:00002030</span> <span class="pre">(aquatic</span> <span class="pre">environment)</span></code></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="bactotraits-transform">
+<h3>BactoTraits Transform<a class="headerlink" href="#bactotraits-transform" title="Link to this heading"></a></h3>
+<p><strong>File</strong>: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/bactotraits/bactotraits.py</span></code></p>
+<p><strong>Relations used</strong>:</p>
+<ul class="simple">
+<li><p><strong>RO:0002215</strong> (capable of / biological process) - Organism capability predicates</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">NCBITaxon:12345</span> <span class="pre">→</span> <span class="pre">capable_of</span> <span class="pre">→</span> <span class="pre">GO:0015976</span> <span class="pre">(carbon</span> <span class="pre">fixation)</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>RO:0002200</strong> (has phenotype) - Organism phenotype relationships</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">NCBITaxon:12345</span> <span class="pre">→</span> <span class="pre">has_phenotype</span> <span class="pre">→</span> <span class="pre">PATO:0001396</span> <span class="pre">(motile)</span></code></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="uniprot-transform">
+<h3>UniProt Transform<a class="headerlink" href="#uniprot-transform" title="Link to this heading"></a></h3>
+<p><strong>File</strong>: <code class="docutils literal notranslate"><span class="pre">kg_microbe/utils/uniprot_utils.py</span></code></p>
+<p><strong>Relations used</strong>:</p>
+<ul class="simple">
+<li><p><strong>RO:0001000</strong> (derives from) - Protein to organism</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">UniProtKB:P12345</span> <span class="pre">→</span> <span class="pre">derives_from</span> <span class="pre">→</span> <span class="pre">NCBITaxon:12345</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>RO:0002327</strong> (enables) - Protein to EC enzyme</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">UniProtKB:P12345</span> <span class="pre">→</span> <span class="pre">enables</span> <span class="pre">→</span> <span class="pre">EC:3.5.1.5</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>RO:0002436</strong> (molecularly interacts with) - Chemical to protein</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">CHEBI:16199</span> <span class="pre">→</span> <span class="pre">molecularly_interacts_with</span> <span class="pre">→</span> <span class="pre">UniProtKB:P12345</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>RO:0000056</strong> (participates in) - Protein participates in process</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">UniProtKB:P12345</span> <span class="pre">→</span> <span class="pre">participates_in</span> <span class="pre">→</span> <span class="pre">GO:0006412</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>RO:0001025</strong> (located in) - Protein cellular location</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">UniProtKB:P12345</span> <span class="pre">→</span> <span class="pre">located_in</span> <span class="pre">→</span> <span class="pre">GO:0005737</span> <span class="pre">(cytoplasm)</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>RO:0002326</strong> (contributes to) - Protein to disease</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">UniProtKB:P12345</span> <span class="pre">→</span> <span class="pre">contributes_to</span> <span class="pre">→</span> <span class="pre">MONDO:0005148</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>RO:0002205</strong> (has gene product) - Gene to protein</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">gene:SAMN123_00001</span> <span class="pre">→</span> <span class="pre">has_gene_product</span> <span class="pre">→</span> <span class="pre">UniProtKB:P12345</span></code></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="rhea-mappings-transform">
+<h3>Rhea Mappings Transform<a class="headerlink" href="#rhea-mappings-transform" title="Link to this heading"></a></h3>
+<p><strong>File</strong>: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/rhea_mappings/rhea_mappings.py</span></code></p>
+<p><strong>Relations used</strong>:</p>
+<ul class="simple">
+<li><p><strong>RO:0002233</strong> (has input) - Reaction to substrate</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">RHEA:10000</span> <span class="pre">→</span> <span class="pre">has_input</span> <span class="pre">→</span> <span class="pre">CHEBI:16199</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>RO:0002234</strong> (has output) - Reaction to product</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">RHEA:10000</span> <span class="pre">→</span> <span class="pre">has_output</span> <span class="pre">→</span> <span class="pre">CHEBI:16234</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>RO:0002333</strong> (enabled by) - Reaction enabled by enzyme</p>
+<ul>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">RHEA:10000</span> <span class="pre">→</span> <span class="pre">enabled_by</span> <span class="pre">→</span> <span class="pre">EC:3.5.1.5</span></code></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="disbiome-transform">
+<h3>Disbiome Transform<a class="headerlink" href="#disbiome-transform" title="Link to this heading"></a></h3>
+<p><strong>File</strong>: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/disbiome/disbiome.py</span></code></p>
+<p><strong>Edge Direction</strong>: Disease → Microbe (flipped from previous implementation)</p>
+<p><strong>Rationale</strong>: Represents observational correlation between disease state and microbial abundance. The direction Disease→Microbe better captures the clinical observation perspective: “Disease X is correlated with increased/decreased abundance of Microbe Y”</p>
+<p><strong>Relations used</strong>:</p>
+<ul class="simple">
+<li><p><strong>RO:0002610</strong> (correlated with) - Disease-microbe abundance correlations</p>
+<ul>
+<li><p>Elevated cases use <code class="docutils literal notranslate"><span class="pre">biolink:positively_correlated_with</span></code></p></li>
+<li><p>Reduced cases use <code class="docutils literal notranslate"><span class="pre">biolink:negatively_correlated_with</span></code></p></li>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">MONDO:0005180</span> <span class="pre">→</span> <span class="pre">positively_correlated_with</span> <span class="pre">→</span> <span class="pre">NCBITaxon:1678</span></code></p></li>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">MONDO:0005066</span> <span class="pre">→</span> <span class="pre">negatively_correlated_with</span> <span class="pre">→</span> <span class="pre">NCBITaxon:853</span></code></p></li>
+</ul>
+</li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="wallen-et-al-transform">
+<h3>Wallen et al Transform<a class="headerlink" href="#wallen-et-al-transform" title="Link to this heading"></a></h3>
+<p><strong>File</strong>: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/wallen_etal/wallen_etal.py</span></code></p>
+<p><strong>Edge Direction</strong>: Disease → Microbe (same as Disbiome for consistency)</p>
+<p><strong>Relations used</strong>:</p>
+<ul class="simple">
+<li><p><strong>RO:0002610</strong> (correlated with) - Parkinson’s disease to microbe abundance correlations</p>
+<ul>
+<li><p>Higher PD abundance: <code class="docutils literal notranslate"><span class="pre">biolink:positively_correlated_with</span></code></p></li>
+<li><p>Higher control abundance: <code class="docutils literal notranslate"><span class="pre">biolink:negatively_correlated_with</span></code></p></li>
+<li><p>Example: <code class="docutils literal notranslate"><span class="pre">MONDO:0005180</span> <span class="pre">→</span> <span class="pre">positively_correlated_with</span> <span class="pre">→</span> <span class="pre">NCBITaxon:239935</span></code></p></li>
+</ul>
+</li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="constants-reference">
+<h2>Constants Reference<a class="headerlink" href="#constants-reference" title="Link to this heading"></a></h2>
+<p>All RO relations are defined as constants in <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/constants.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Core RO relations</span>
+<span class="n">TROPHICALLY_INTERACTS_WITH</span> <span class="o">=</span> <span class="s2">&quot;RO:0002438&quot;</span>
+<span class="n">LOCATION_OF</span> <span class="o">=</span> <span class="s2">&quot;RO:0001015&quot;</span>
+<span class="n">BIOLOGICAL_PROCESS</span> <span class="o">=</span> <span class="s2">&quot;RO:0002215&quot;</span>
+<span class="n">HAS_ROLE</span> <span class="o">=</span> <span class="s2">&quot;RO:0000087&quot;</span>
+<span class="n">HAS_PARTICIPANT</span> <span class="o">=</span> <span class="s2">&quot;RO:0000057&quot;</span>
+<span class="n">PARTICIPATES_IN</span> <span class="o">=</span> <span class="s2">&quot;RO:0000056&quot;</span>
+<span class="n">HAS_PHENOTYPE</span> <span class="o">=</span> <span class="s2">&quot;RO:0002200&quot;</span>
+<span class="n">CAPABLE_OF</span> <span class="o">=</span> <span class="s2">&quot;RO:0002215&quot;</span>
+
+<span class="c1"># Molecular relations</span>
+<span class="n">DERIVES_FROM</span> <span class="o">=</span> <span class="s2">&quot;RO:0001000&quot;</span>
+<span class="n">ENABLES</span> <span class="o">=</span> <span class="s2">&quot;RO:0002327&quot;</span>
+<span class="n">MOLECULARLY_INTERACTS_WITH</span> <span class="o">=</span> <span class="s2">&quot;RO:0002436&quot;</span>
+<span class="n">LOCATED_IN</span> <span class="o">=</span> <span class="s2">&quot;RO:0001025&quot;</span>
+<span class="n">CONTRIBUTES_TO</span> <span class="o">=</span> <span class="s2">&quot;RO:0002326&quot;</span>
+<span class="n">HAS_GENE_PRODUCT</span> <span class="o">=</span> <span class="s2">&quot;RO:0002205&quot;</span>
+<span class="n">HAS_INPUT_RELATION</span> <span class="o">=</span> <span class="s2">&quot;RO:0002233&quot;</span>
+<span class="n">HAS_OUTPUT_RELATION</span> <span class="o">=</span> <span class="s2">&quot;RO:0002234&quot;</span>
+<span class="n">ENABLED_BY_RELATION</span> <span class="o">=</span> <span class="s2">&quot;RO:0002333&quot;</span>
+<span class="n">RELATED_TO_RELATION</span> <span class="o">=</span> <span class="s2">&quot;RO:0000052&quot;</span>
+
+<span class="c1"># Bakta-specific relations</span>
+<span class="n">HAS_GENE</span> <span class="o">=</span> <span class="s2">&quot;RO:0002551&quot;</span>
+<span class="n">MEMBER_OF</span> <span class="o">=</span> <span class="s2">&quot;RO:0002350&quot;</span>
+<span class="n">INVOLVED_IN</span> <span class="o">=</span> <span class="s2">&quot;RO:0002331&quot;</span>
+<span class="n">ORTHOLOGOUS_TO</span> <span class="o">=</span> <span class="s2">&quot;RO:HOM0000017&quot;</span>
+
+<span class="c1"># Disease-microbe relations</span>
+<span class="n">CORRELATED_WITH</span> <span class="o">=</span> <span class="s2">&quot;RO:0002610&quot;</span>
+<span class="n">POSITIVELY_CORRELATED_WITH</span> <span class="o">=</span> <span class="n">CORRELATED_WITH</span>
+<span class="n">NEGATIVELY_CORRELATED_WITH</span> <span class="o">=</span> <span class="n">CORRELATED_WITH</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="non-ro-relations">
+<h2>Non-RO Relations<a class="headerlink" href="#non-ro-relations" title="Link to this heading"></a></h2>
+<p>kg-microbe also uses relations from other ontologies:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Ontology</p></th>
+<th class="head"><p>Relations Used</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>BFO</strong> (Basic Formal Ontology)</p></td>
+<td><p>BFO:0000050 (part of), BFO:0000051 (has part)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>NCIT</strong> (NCI Thesaurus)</p></td>
+<td><p>NCIT:C153110 (assessed activity)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>PATO</strong> (Phenotype Ontology)</p></td>
+<td><p>PATO:0001668 (associated with)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>SKOS</strong></p></td>
+<td><p>skos:closeMatch, skos:exactMatch</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>RDFS</strong></p></td>
+<td><p>rdfs:subClassOf</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>UPA</strong> (UniPathways)</p></td>
+<td><p>OBO:upa#has_alternate_enzymatic_reaction</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="validation">
+<h2>Validation<a class="headerlink" href="#validation" title="Link to this heading"></a></h2>
+<p>To validate all RO relations against the downloaded ontology, use:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>scripts/validate_ro_relations.py
+</pre></div>
+</div>
+<p>This script:</p>
+<ol class="arabic simple">
+<li><p>Extracts all valid RO terms from <code class="docutils literal notranslate"><span class="pre">data/raw/ro.owl</span></code></p></li>
+<li><p>Checks all relation values in transformed edge files</p></li>
+<li><p>Reports numeric-only relations (missing <code class="docutils literal notranslate"><span class="pre">RO:</span></code> prefix)</p></li>
+<li><p>Reports invalid RO term IDs</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="best-practices">
+<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Always use constants</strong>: Never hardcode RO values like <code class="docutils literal notranslate"><span class="pre">&quot;RO:0002327&quot;</span></code></p>
+<ul class="simple">
+<li><p>✅ Good: <code class="docutils literal notranslate"><span class="pre">ENABLES</span></code></p></li>
+<li><p>❌ Bad: <code class="docutils literal notranslate"><span class="pre">&quot;RO:0002327&quot;</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Verify term validity</strong>: Check new RO terms against the ontology</p>
+<ul class="simple">
+<li><p>Use OLS Browser: https://www.ebi.ac.uk/ols/ontologies/ro</p></li>
+<li><p>Or download and search local ro.owl</p></li>
+</ul>
+</li>
+<li><p><strong>Document new constants</strong>: When adding new RO constants:</p>
+<ul class="simple">
+<li><p>Add to <code class="docutils literal notranslate"><span class="pre">constants.py</span></code> with descriptive name and comment</p></li>
+<li><p>Update this document with usage examples</p></li>
+<li><p>Run validation script</p></li>
+</ul>
+</li>
+<li><p><strong>Prefer specific over general</strong>: Use most specific applicable relation</p>
+<ul class="simple">
+<li><p>✅ Good: <code class="docutils literal notranslate"><span class="pre">enables</span></code> for protein→function</p></li>
+<li><p>❌ Bad: <code class="docutils literal notranslate"><span class="pre">related_to</span></code> for protein→function</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>RO OBO Foundry</strong>: https://www.obofoundry.org/ontology/ro.html</p></li>
+<li><p><strong>RO GitHub</strong>: https://github.com/oborel/obo-relations</p></li>
+<li><p><strong>RO Documentation</strong>: https://github.com/oborel/obo-relations/wiki</p></li>
+<li><p><strong>OLS Browser</strong>: https://www.ebi.ac.uk/ols/ontologies/ro</p></li>
+<li><p><strong>Biolink Model</strong>: https://biolink.github.io/biolink-model/</p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>Maintained by</strong>: kg-microbe team
+<strong>Repository</strong>: https://github.com/KG-Hub/KG-Microbe</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+kg\_microbe.transform\_utils.uniprot\_functional\_microbes package
+==================================================================
+
+Submodules
+----------
+
+kg\_microbe.transform\_utils.uniprot\_functional\_microbes.uniprot\_functional\_microbes module
+-----------------------------------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.uniprot_functional_microbes.uniprot_functional_microbes
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.transform_utils.uniprot_functional_microbes
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,37 @@
+kg\_microbe.transform\_utils.bakta package
+==========================================
+
+Submodules
+----------
+
+kg\_microbe.transform\_utils.bakta.bakta module
+-----------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bakta.bakta
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.bakta.create\_samn\_mapping module
+---------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bakta.create_samn_mapping
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.bakta.utils module
+-----------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bakta.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.transform_utils.bakta
+   :members:
+   :undoc-members:
+   :show-inheritance:

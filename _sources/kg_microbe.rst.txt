@@ -7,11 +7,21 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
+   kg_microbe.merge_utils
+   kg_microbe.query_utils
    kg_microbe.transform_utils
    kg_microbe.utils
 
 Submodules
 ----------
+
+kg\_microbe.bactotraits\_to\_mongo module
+-----------------------------------------
+
+.. automodule:: kg_microbe.bactotraits_to_mongo
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 kg\_microbe.download module
 ---------------------------
@@ -25,6 +35,14 @@ kg\_microbe.query module
 ------------------------
 
 .. automodule:: kg_microbe.query
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.run module
+----------------------
+
+.. automodule:: kg_microbe.run
    :members:
    :undoc-members:
    :show-inheritance:

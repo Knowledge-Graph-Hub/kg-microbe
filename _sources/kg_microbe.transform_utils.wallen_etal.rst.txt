@@ -1,0 +1,21 @@
+kg\_microbe.transform\_utils.wallen\_etal package
+=================================================
+
+Submodules
+----------
+
+kg\_microbe.transform\_utils.wallen\_etal.wallen\_etal module
+-------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.wallen_etal.wallen_etal
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.transform_utils.wallen_etal
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,21 @@
+kg\_microbe.transform\_utils.lpsn package
+=========================================
+
+Submodules
+----------
+
+kg\_microbe.transform\_utils.lpsn.lpsn module
+---------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.lpsn.lpsn
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.transform_utils.lpsn
+   :members:
+   :undoc-members:
+   :show-inheritance:

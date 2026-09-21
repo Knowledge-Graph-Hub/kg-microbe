@@ -1,0 +1,21 @@
+kg\_microbe.transform\_utils.ctd package
+========================================
+
+Submodules
+----------
+
+kg\_microbe.transform\_utils.ctd.ctd module
+-------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.ctd.ctd
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.transform_utils.ctd
+   :members:
+   :undoc-members:
+   :show-inheritance:

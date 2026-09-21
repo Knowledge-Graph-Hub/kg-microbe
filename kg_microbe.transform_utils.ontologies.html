@@ -1,0 +1,325 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kg_microbe.transform_utils.ontologies package &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="kg_microbe.transform_utils.ontologies_stubs package" href="kg_microbe.transform_utils.ontologies_stubs.html" />
+    <link rel="prev" title="kg_microbe.transform_utils.microbedecoder package" href="kg_microbe.transform_utils.microbedecoder.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">kg_microbe</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="kg_microbe.html">kg_microbe package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="kg_microbe.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.merge_utils.html">kg_microbe.merge_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.query_utils.html">kg_microbe.query_utils package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html">kg_microbe.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.bactotraits_to_mongo">kg_microbe.bactotraits_to_mongo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.download">kg_microbe.download module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.query">kg_microbe.query module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.run">kg_microbe.run module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.transform">kg_microbe.transform module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">kg_microbe</a></li>
+          <li class="breadcrumb-item"><a href="kg_microbe.html">kg_microbe package</a></li>
+          <li class="breadcrumb-item"><a href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a></li>
+      <li class="breadcrumb-item active">kg_microbe.transform_utils.ontologies package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/kg_microbe.transform_utils.ontologies.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kg-microbe-transform-utils-ontologies-package">
+<h1>kg_microbe.transform_utils.ontologies package<a class="headerlink" href="#kg-microbe-transform-utils-ontologies-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-kg_microbe.transform_utils.ontologies.ontologies_transform">
+<span id="kg-microbe-transform-utils-ontologies-ontologies-transform-module"></span><h2>kg_microbe.transform_utils.ontologies.ontologies_transform module<a class="headerlink" href="#module-kg_microbe.transform_utils.ontologies.ontologies_transform" title="Link to this heading"></a></h2>
+<p>Ontology transform module.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.ontologies_transform.METAMODEL_NODE_PREFIXES">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.ontologies.ontologies_transform.</span></span><span class="sig-name descname"><span class="pre">METAMODEL_NODE_PREFIXES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">frozenset({'dc',</span> <span class="pre">'dct',</span> <span class="pre">'dcterms',</span> <span class="pre">'doap',</span> <span class="pre">'foaf',</span> <span class="pre">'oio',</span> <span class="pre">'owl',</span> <span class="pre">'pav',</span> <span class="pre">'rdf',</span> <span class="pre">'rdfs',</span> <span class="pre">'skos',</span> <span class="pre">'terms'})</span></em><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.ontologies_transform.METAMODEL_NODE_PREFIXES" title="Link to this definition"></a></dt>
+<dd><p>Prefixes of the annotation and metadata vocabulary an OWL file annotates
+<em>with</em> – never anything it defines. KGX’s OBO-JSON loader emits a node for
+each one it encounters, so <cite>rdfs:label</cite>, <cite>owl:deprecated</cite>, <cite>dc:title</cite> and
+<cite>dcterms:license</cite> arrived as biolink:OntologyClass nodes connected to
+nothing: 55 distinct ids, 172 rows across ten ontologies, 0 edges, 36 of
+them in the shipped graph (#1023). Matching on the id column of a <em>nodes</em>
+file only – <cite>skos:closeMatch</cite> as a relation value is legitimate and lives
+in a different column of a different file.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.ontologies.ontologies_transform.</span></span><span class="sig-name descname"><span class="pre">OntologiesTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
+<p>OntologyTransform parses an Obograph JSON form of an Ontology into nodes nad edges.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.DATA_INPUTS">
+<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/foodon_model_dispositions.tsv',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Repo-relative curation files this transform reads, beyond its own
+<code class="docutils literal notranslate"><span class="pre">data/raw/</span></code> download.</p>
+<p>Declared so freshness tooling can tell that an output is stale against
+its <em>data</em> rather than only its code. Without it a mapping correction
+lands, every consumer keeps reporting FRESH, and a re-merge silently
+ships the old groundings: #778 corrected 16 isolation-source ids and
+#786 rewrote the unified chemical SSSOM, and the merged KG built
+afterwards still asserted 75 organisms isolated from a “Cell Line”,
+because nothing re-ran the transforms that read those files (#812).</p>
+<p>Paths are relative to the repo root. Keep them tracked in git — the
+freshness check uses commit time, not mtime, because <cite>git checkout</cite>
+rewrites mtimes without changing content (#797).</p>
+<p>List <strong>every</strong> curation file read, not a representative one. A partial
+declaration fails silently and looks identical to a complete one:
+ontologies_stubs declared 1 of the 11 files it read and was reported
+fresh after changes to the other ten (#839). Where the set comes from a
+constant, derive this from it rather than restating it.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.ONTOLOGY_KNOWLEDGE_SOURCES">
+<span class="sig-name descname"><span class="pre">ONTOLOGY_KNOWLEDGE_SOURCES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'chebi':</span> <span class="pre">'infores:chebi',</span> <span class="pre">'ec':</span> <span class="pre">'infores:ec',</span> <span class="pre">'envo':</span> <span class="pre">'infores:envo',</span> <span class="pre">'foodon':</span> <span class="pre">'infores:foodon',</span> <span class="pre">'go':</span> <span class="pre">'infores:go',</span> <span class="pre">'hp':</span> <span class="pre">'infores:hp',</span> <span class="pre">'metpo':</span> <span class="pre">'infores:metpo',</span> <span class="pre">'mondo':</span> <span class="pre">'infores:mondo',</span> <span class="pre">'ncbitaxon':</span> <span class="pre">'infores:ncbitaxon',</span> <span class="pre">'pato':</span> <span class="pre">'infores:pato',</span> <span class="pre">'ro':</span> <span class="pre">'infores:ro',</span> <span class="pre">'taxrank':</span> <span class="pre">'infores:taxrank',</span> <span class="pre">'uberon':</span> <span class="pre">'infores:uberon',</span> <span class="pre">'upa':</span> <span class="pre">'infores:upa'}</span></em><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.ONTOLOGY_KNOWLEDGE_SOURCES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.decompress">
+<span class="sig-name descname"><span class="pre">decompress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.decompress" title="Link to this definition"></a></dt>
+<dd><p>Unzip file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.parse" title="Link to this definition"></a></dt>
+<dd><p>Process the data_file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Name of the ontology.</p></li>
+<li><p><strong>data_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – data file to parse.</p></li>
+<li><p><strong>source</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Source name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.post_process">
+<span class="sig-name descname"><span class="pre">post_process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.post_process" title="Link to this definition"></a></dt>
+<dd><p>Post process specific nodes and edges files.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.run" title="Link to this definition"></a></dt>
+<dd><p>Transform an ontology.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – data file to parse</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.ontologies">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-kg_microbe.transform_utils.ontologies" title="Link to this heading"></a></h2>
+<p>Ontologies transform module.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.OntologiesTransform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.ontologies.</span></span><span class="sig-name descname"><span class="pre">OntologiesTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.OntologiesTransform" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
+<p>OntologyTransform parses an Obograph JSON form of an Ontology into nodes nad edges.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.OntologiesTransform.DATA_INPUTS">
+<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/foodon_model_dispositions.tsv',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.OntologiesTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Repo-relative curation files this transform reads, beyond its own
+<code class="docutils literal notranslate"><span class="pre">data/raw/</span></code> download.</p>
+<p>Declared so freshness tooling can tell that an output is stale against
+its <em>data</em> rather than only its code. Without it a mapping correction
+lands, every consumer keeps reporting FRESH, and a re-merge silently
+ships the old groundings: #778 corrected 16 isolation-source ids and
+#786 rewrote the unified chemical SSSOM, and the merged KG built
+afterwards still asserted 75 organisms isolated from a “Cell Line”,
+because nothing re-ran the transforms that read those files (#812).</p>
+<p>Paths are relative to the repo root. Keep them tracked in git — the
+freshness check uses commit time, not mtime, because <cite>git checkout</cite>
+rewrites mtimes without changing content (#797).</p>
+<p>List <strong>every</strong> curation file read, not a representative one. A partial
+declaration fails silently and looks identical to a complete one:
+ontologies_stubs declared 1 of the 11 files it read and was reported
+fresh after changes to the other ten (#839). Where the set comes from a
+constant, derive this from it rather than restating it.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.OntologiesTransform.ONTOLOGY_KNOWLEDGE_SOURCES">
+<span class="sig-name descname"><span class="pre">ONTOLOGY_KNOWLEDGE_SOURCES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'chebi':</span> <span class="pre">'infores:chebi',</span> <span class="pre">'ec':</span> <span class="pre">'infores:ec',</span> <span class="pre">'envo':</span> <span class="pre">'infores:envo',</span> <span class="pre">'foodon':</span> <span class="pre">'infores:foodon',</span> <span class="pre">'go':</span> <span class="pre">'infores:go',</span> <span class="pre">'hp':</span> <span class="pre">'infores:hp',</span> <span class="pre">'metpo':</span> <span class="pre">'infores:metpo',</span> <span class="pre">'mondo':</span> <span class="pre">'infores:mondo',</span> <span class="pre">'ncbitaxon':</span> <span class="pre">'infores:ncbitaxon',</span> <span class="pre">'pato':</span> <span class="pre">'infores:pato',</span> <span class="pre">'ro':</span> <span class="pre">'infores:ro',</span> <span class="pre">'taxrank':</span> <span class="pre">'infores:taxrank',</span> <span class="pre">'uberon':</span> <span class="pre">'infores:uberon',</span> <span class="pre">'upa':</span> <span class="pre">'infores:upa'}</span></em><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.OntologiesTransform.ONTOLOGY_KNOWLEDGE_SOURCES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.OntologiesTransform.decompress">
+<span class="sig-name descname"><span class="pre">decompress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.OntologiesTransform.decompress" title="Link to this definition"></a></dt>
+<dd><p>Unzip file.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.OntologiesTransform.parse">
+<span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.OntologiesTransform.parse" title="Link to this definition"></a></dt>
+<dd><p>Process the data_file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Name of the ontology.</p></li>
+<li><p><strong>data_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – data file to parse.</p></li>
+<li><p><strong>source</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Source name.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.OntologiesTransform.post_process">
+<span class="sig-name descname"><span class="pre">post_process</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.OntologiesTransform.post_process" title="Link to this definition"></a></dt>
+<dd><p>Post process specific nodes and edges files.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.OntologiesTransform.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.OntologiesTransform.run" title="Link to this definition"></a></dt>
+<dd><p>Transform an ontology.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – data file to parse</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="kg_microbe.transform_utils.microbedecoder.html" class="btn btn-neutral float-left" title="kg_microbe.transform_utils.microbedecoder package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="kg_microbe.transform_utils.ontologies_stubs.html" class="btn btn-neutral float-right" title="kg_microbe.transform_utils.ontologies_stubs package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

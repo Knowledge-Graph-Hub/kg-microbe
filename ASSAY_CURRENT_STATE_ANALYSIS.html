@@ -1,0 +1,571 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Current State Analysis: Assay Nodes and Deprecated Predicates &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Current State Analysis: Assay Nodes and Deprecated Predicates</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/ASSAY_CURRENT_STATE_ANALYSIS.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="current-state-analysis-assay-nodes-and-deprecated-predicates">
+<h1>Current State Analysis: Assay Nodes and Deprecated Predicates<a class="headerlink" href="#current-state-analysis-assay-nodes-and-deprecated-predicates" title="Link to this heading"></a></h1>
+<p><strong>Date</strong>: 2026-01-12
+<strong>Analyzed Release</strong>: <code class="docutils literal notranslate"><span class="pre">data/merged/20251217/</span></code>
+<strong>Status</strong>: FINDINGS</p>
+<hr class="docutils" />
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>The current KG-Microbe release (20251217) contains:</p>
+<ul class="simple">
+<li><p>✅ <strong>349 assay nodes</strong> already exist (as <code class="docutils literal notranslate"><span class="pre">biolink:NamedThing</span></code>)</p></li>
+<li><p>⚠️ <strong>112 edges</strong> using deprecated <code class="docutils literal notranslate"><span class="pre">biolink:is_assessed_by</span></code> predicate</p></li>
+<li><p>❌ <strong>0 organism→assay edges</strong> (organisms link directly to GO/EC/ChEBI)</p></li>
+<li><p>⚠️ <strong>237 orphaned assay nodes</strong> (not connected to any edges)</p></li>
+<li><p>❌ <strong>0 edges</strong> using <code class="docutils literal notranslate"><span class="pre">biolink:assesses</span></code> predicate</p></li>
+</ul>
+<p><strong>Conclusion</strong>: Assay nodes exist but are incomplete, outdated, and only used for EC→assay methodological references. Organisms are NOT currently linked through assay nodes.</p>
+</section>
+<hr class="docutils" />
+<section id="detailed-findings">
+<h2>Detailed Findings<a class="headerlink" href="#detailed-findings" title="Link to this heading"></a></h2>
+<section id="existing-assay-nodes">
+<h3>1. Existing Assay Nodes<a class="headerlink" href="#existing-assay-nodes" title="Link to this heading"></a></h3>
+<p><strong>Count</strong>: 349 nodes with <code class="docutils literal notranslate"><span class="pre">assay:</span></code> prefix</p>
+<p><strong>Structure</strong>:</p>
+<div class="highlight-tsv notranslate"><div class="highlight"><pre><span></span>id: assay:API_zym_Trypsin
+category: biolink:NamedThing
+name: (empty)
+description: (empty)
+provided_by: Graph
+</pre></div>
+</div>
+<p><strong>Issues</strong>:</p>
+<ul class="simple">
+<li><p>❌ Categorized as <code class="docutils literal notranslate"><span class="pre">biolink:NamedThing</span></code> (not <code class="docutils literal notranslate"><span class="pre">biolink:Procedure</span></code>)</p></li>
+<li><p>❌ No name or description</p></li>
+<li><p>❌ No metadata (kit_name, well_name, test_type)</p></li>
+<li><p>❌ Incomplete coverage (349 vs. 503 wells in new metadata)</p></li>
+<li><p>❌ Missing entire kits (e.g., API biotype100 with 99 growth tests)</p></li>
+</ul>
+<p><strong>Distribution by Kit</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>API 50CHas:    49 nodes
+API ID32E:     31 nodes
+API rID32STR:  29 nodes
+API rID32A:    27 nodes
+API ID32STA:   26 nodes
+API 20E:       24 nodes
+API 20NE:      21 nodes
+API 20A:       21 nodes
+API coryne:    20 nodes
+API STA:       20 nodes
+API CAM:       20 nodes
+API 20STR:     20 nodes
+API zym:       19 nodes  ⚠️ (Missing 1 well - should be 20)
+API NH:        13 nodes
+API LIST:       9 nodes
+---
+Total:        349 nodes
+
+MISSING KITS:
+- API 50CHac (49 wells) - Fermentation tests
+- API biotype100 (99 wells) - GROWTH TESTS ⚠️
+- API rID32A (additional wells?)
+</pre></div>
+</div>
+<p><strong>Discrepancy</strong>: Current release has “50CHas” but new metadata has “50CHac” (likely different versions)</p>
+</section>
+<section id="deprecated-predicate-usage">
+<h3>2. Deprecated Predicate Usage<a class="headerlink" href="#deprecated-predicate-usage" title="Link to this heading"></a></h3>
+<section id="biolink-is-assessed-by-deprecated-in-biolink-v4-3-3">
+<h4><code class="docutils literal notranslate"><span class="pre">biolink:is_assessed_by</span></code> (DEPRECATED in Biolink v4.3.3)<a class="headerlink" href="#biolink-is-assessed-by-deprecated-in-biolink-v4-3-3" title="Link to this heading"></a></h4>
+<p><strong>Count</strong>: 112 edges
+<strong>Pattern</strong>: EC enzyme → assay node
+<strong>Source</strong>: <code class="docutils literal notranslate"><span class="pre">bacdive_mappings.tsv</span></code></p>
+<p><strong>Example Edges</strong>:</p>
+<div class="highlight-tsv notranslate"><div class="highlight"><pre><span></span>subject: EC:4.1.99.1
+predicate: biolink:is_assessed_by
+object: assay:API_20A_IND
+relation: NCIT:C153110 (assessed_activity)
+knowledge_source: bacdive_mappings.tsv
+</pre></div>
+</div>
+<p><strong>Purpose</strong>: Methodological reference showing which API kit tests can detect which enzymes</p>
+<p><strong>Connected Assay Nodes</strong>: Only 112 out of 349 assay nodes are used in these edges</p>
+<p><strong>Orphaned Nodes</strong>: 237 assay nodes exist but have no incoming or outgoing edges</p>
+</section>
+<section id="biolink-assesses-deprecated-in-biolink-v4-3-3">
+<h4><code class="docutils literal notranslate"><span class="pre">biolink:assesses</span></code> (DEPRECATED in Biolink v4.3.3)<a class="headerlink" href="#biolink-assesses-deprecated-in-biolink-v4-3-3" title="Link to this heading"></a></h4>
+<p><strong>Count</strong>: 0 edges
+<strong>Status</strong>: Never used in this release</p>
+</section>
+</section>
+<section id="current-organism-relationships">
+<h3>3. Current Organism Relationships<a class="headerlink" href="#current-organism-relationships" title="Link to this heading"></a></h3>
+<p><strong>Pattern</strong>: Organisms link DIRECTLY to GO/EC/ChEBI entities (NOT through assay nodes)</p>
+<p><strong>Example Edges</strong>:</p>
+<div class="highlight-tsv notranslate"><div class="highlight"><pre><span></span># Organism → ChEBI (chemical metabolism)
+subject: NCBITaxon:693023
+predicate: METPO:2000006
+object: CHEBI:17992
+relation: RO:0002215 (capable of)
+
+# Organism → GO (enzyme activity)
+subject: NCBITaxon:28448
+predicate: METPO:2000103
+object: GO:0030245
+relation: RO:0002215 (capable of)
+</pre></div>
+</div>
+<p><strong>Top METPO Predicates Used</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">METPO</span><span class="p">:</span><span class="mi">2000006</span>  <span class="o">-</span>  <span class="mi">36</span><span class="p">,</span><span class="mi">817</span> <span class="n">edges</span>  <span class="p">(</span><span class="n">unknown</span> <span class="n">label</span> <span class="o">-</span> <span class="n">likely</span> <span class="n">metabolizes</span><span class="p">)</span>
+<span class="n">METPO</span><span class="p">:</span><span class="mi">2000517</span>  <span class="o">-</span>  <span class="mi">30</span><span class="p">,</span><span class="mi">031</span> <span class="n">edges</span>  <span class="p">(</span><span class="n">unknown</span> <span class="n">label</span><span class="p">)</span>
+<span class="n">METPO</span><span class="p">:</span><span class="mi">2000103</span>  <span class="o">-</span>   <span class="mi">7</span><span class="p">,</span><span class="mi">495</span> <span class="n">edges</span>  <span class="p">(</span><span class="n">capable</span> <span class="n">of</span> <span class="o">-</span> <span class="n">enzyme</span> <span class="n">activity</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Note</strong>: These are the predicates currently in use. Need to check if these include the API kit-specific predicates we identified:</p>
+<ul class="simple">
+<li><p>METPO:2000302 (shows activity of)</p></li>
+<li><p>METPO:2000303 (does not show activity of)</p></li>
+<li><p>METPO:2000011 (ferments)</p></li>
+<li><p>METPO:2000037 (does not ferment)</p></li>
+<li><p>METPO:2000008 (assimilates)</p></li>
+<li><p>METPO:2000034 (does not assimilate)</p></li>
+<li><p>METPO:2000012 (uses for growth)</p></li>
+<li><p>METPO:2000038 (does not use for growth)</p></li>
+</ul>
+</section>
+<section id="graph-statistics">
+<h3>4. Graph Statistics<a class="headerlink" href="#graph-statistics" title="Link to this heading"></a></h3>
+<p><strong>File</strong>: <code class="docutils literal notranslate"><span class="pre">data/merged/20251217/merged-kg_edges.tsv</span></code></p>
+<ul class="simple">
+<li><p>Size: 666 MB</p></li>
+<li><p>Total edges: ~10-15 million (estimated)</p></li>
+</ul>
+<p><strong>File</strong>: <code class="docutils literal notranslate"><span class="pre">data/merged/20251217/merged-kg_nodes.tsv</span></code></p>
+<ul class="simple">
+<li><p>Size: 258 MB</p></li>
+<li><p>Total nodes: ~2-3 million (estimated)</p></li>
+</ul>
+<p><strong>Organism Edges</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">biolink</span><span class="p">:</span><span class="n">subclass_of</span><span class="p">:</span>    <span class="mi">882</span><span class="p">,</span><span class="mi">486</span> <span class="n">edges</span>  <span class="p">(</span><span class="n">taxonomy</span> <span class="n">hierarchy</span><span class="p">)</span>
+<span class="n">biolink</span><span class="p">:</span><span class="n">has_phenotype</span><span class="p">:</span>  <span class="mi">193</span><span class="p">,</span><span class="mi">603</span> <span class="n">edges</span>  <span class="p">(</span><span class="n">phenotypic</span> <span class="n">traits</span><span class="p">)</span>
+<span class="n">METPO</span><span class="p">:</span><span class="mi">2000006</span><span class="p">:</span>           <span class="mi">36</span><span class="p">,</span><span class="mi">817</span> <span class="n">edges</span>  <span class="p">(</span><span class="n">metabolic</span> <span class="n">traits</span><span class="p">)</span>
+<span class="n">METPO</span><span class="p">:</span><span class="mi">2000517</span><span class="p">:</span>           <span class="mi">30</span><span class="p">,</span><span class="mi">031</span> <span class="n">edges</span>  <span class="p">(</span><span class="n">trait</span> <span class="nb">type</span> <span class="n">TBD</span><span class="p">)</span>
+<span class="n">METPO</span><span class="p">:</span><span class="mi">2000103</span><span class="p">:</span>            <span class="mi">7</span><span class="p">,</span><span class="mi">495</span> <span class="n">edges</span>  <span class="p">(</span><span class="n">enzyme</span> <span class="n">capabilities</span><span class="p">)</span>
+<span class="n">biolink</span><span class="p">:</span><span class="n">location_of</span><span class="p">:</span>        <span class="mi">624</span> <span class="n">edges</span>  <span class="p">(</span><span class="n">isolation</span> <span class="n">sources</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="comparison-current-vs-proposed">
+<h2>Comparison: Current vs. Proposed<a class="headerlink" href="#comparison-current-vs-proposed" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Aspect</p></th>
+<th class="head"><p>Current State (20251217)</p></th>
+<th class="head"><p>Proposed State</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Assay Nodes</strong></p></td>
+<td><p>349 nodes</p></td>
+<td><p>503 nodes</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Node Category</strong></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">biolink:NamedThing</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">biolink:Procedure</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Node Metadata</strong></p></td>
+<td><p>None (empty name/description)</p></td>
+<td><p>Rich (name, description, kit_name, well_name, test_type)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Organism→Assay</strong></p></td>
+<td><p>0 edges</p></td>
+<td><p>~50,000-100,000 edges (per organism)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Assay→Entity</strong></p></td>
+<td><p>0 edges</p></td>
+<td><p>~600-800 edges (methodological)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>EC→Assay</strong></p></td>
+<td><p>112 edges (<code class="docutils literal notranslate"><span class="pre">is_assessed_by</span></code>)</p></td>
+<td><p>0 edges (removed deprecated predicate)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Organism→Entity</strong></p></td>
+<td><p>Direct edges (~74,343 METPO edges)</p></td>
+<td><p>Indirect via assay (2-hop path)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Deprecated Predicates</strong></p></td>
+<td><p>⚠️ <code class="docutils literal notranslate"><span class="pre">is_assessed_by</span></code> used (112 edges)</p></td>
+<td><p>✅ None (replaced with <code class="docutils literal notranslate"><span class="pre">related_to_at_instance_level</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Kit Coverage</strong></p></td>
+<td><p>15 kits (missing biotype100, 50CHac)</p></td>
+<td><p>17 kits (complete)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Growth Tests</strong></p></td>
+<td><p>❌ Missing</p></td>
+<td><p>✅ Included (API biotype100)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="impact-analysis">
+<h2>Impact Analysis<a class="headerlink" href="#impact-analysis" title="Link to this heading"></a></h2>
+<section id="what-needs-to-change">
+<h3>What Needs to Change<a class="headerlink" href="#what-needs-to-change" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Replace 349 outdated assay nodes with 503 new nodes</strong></p>
+<ul class="simple">
+<li><p>Add missing kits (biotype100, updated 50CHac)</p></li>
+<li><p>Change category from <code class="docutils literal notranslate"><span class="pre">NamedThing</span></code> to <code class="docutils literal notranslate"><span class="pre">Procedure</span></code></p></li>
+<li><p>Add rich metadata (name, description, kit_name, well_name, test_type)</p></li>
+</ul>
+</li>
+<li><p><strong>Remove 112 EC→assay edges using deprecated <code class="docutils literal notranslate"><span class="pre">is_assessed_by</span></code></strong></p>
+<ul class="simple">
+<li><p>Already documented as replaced with <code class="docutils literal notranslate"><span class="pre">related_to_at_instance_level</span></code></p></li>
+<li><p>See: <code class="docutils literal notranslate"><span class="pre">BIOLINK_PREDICATE_CHANGES.md</span></code> (line 240-280)</p></li>
+</ul>
+</li>
+<li><p><strong>Add ~50,000-100,000 organism→assay edges</strong></p>
+<ul class="simple">
+<li><p>NEW: Organisms will link to assay nodes (not directly to GO/EC/ChEBI)</p></li>
+<li><p>Use METPO predicates from assay metadata</p></li>
+<li><p>Creates 2-hop path: Organism → Assay → Entity</p></li>
+</ul>
+</li>
+<li><p><strong>Add ~600-800 assay→entity edges</strong></p>
+<ul class="simple">
+<li><p>NEW: Methodological reference edges</p></li>
+<li><p>Enzyme assays → GO/EC (<code class="docutils literal notranslate"><span class="pre">has_output</span></code>)</p></li>
+<li><p>Chemical assays → ChEBI (<code class="docutils literal notranslate"><span class="pre">has_input</span></code>)</p></li>
+</ul>
+</li>
+<li><p><strong>Preserve ~74,343 existing direct organism→entity edges?</strong></p>
+<ul class="simple">
+<li><p>✅ <strong>DECISION: KEEP</strong> - Use dual-edge pattern (direct + 2-hop)</p></li>
+<li><p>Direct edges: Capture biological facts for simple queries</p></li>
+<li><p>2-hop via assay: Capture methodology and experimental provenance</p></li>
+<li><p>Benefits: Users can choose query complexity based on needs</p></li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+<hr class="docutils" />
+<section id="current-data-source-bacdive-mappings-tsv">
+<h2>Current Data Source: bacdive_mappings.tsv<a class="headerlink" href="#current-data-source-bacdive-mappings-tsv" title="Link to this heading"></a></h2>
+<p>The 349 existing assay nodes and 112 EC→assay edges come from:</p>
+<ul class="simple">
+<li><p><strong>File</strong>: <code class="docutils literal notranslate"><span class="pre">bacdive_mappings.tsv</span></code></p></li>
+<li><p><strong>Location</strong>: Referenced in edge metadata as knowledge source</p></li>
+<li><p><strong>Status</strong>: Appears to be outdated/incomplete compared to new assay metadata</p></li>
+<li><p><strong>Coverage</strong>: Only enzyme tests (EC→assay), no chemical/growth tests</p></li>
+</ul>
+<p><strong>New Data Source</strong>: <code class="docutils literal notranslate"><span class="pre">assay_kits_simple.json</span></code></p>
+<ul class="simple">
+<li><p><strong>URL</strong>: https://raw.githubusercontent.com/CultureBotAI/assay-metadata/refs/heads/main/data/assay_kits_simple.json</p></li>
+<li><p><strong>Coverage</strong>: Complete 503 wells across 17 kits</p></li>
+<li><p><strong>Metadata</strong>: Rich information (descriptions, GO terms, EC numbers, ChEBI IDs, METPO predicates)</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="backward-compatibility-considerations">
+<h2>Backward Compatibility Considerations<a class="headerlink" href="#backward-compatibility-considerations" title="Link to this heading"></a></h2>
+<section id="breaking-changes">
+<h3>Breaking Changes<a class="headerlink" href="#breaking-changes" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Assay node IDs may change</strong></p>
+<ul class="simple">
+<li><p>Old: <code class="docutils literal notranslate"><span class="pre">assay:API_zym_Trypsin</span></code></p></li>
+<li><p>New: <code class="docutils literal notranslate"><span class="pre">assay:API_zym_trypsin</span></code> (normalized?)</p></li>
+<li><p>Impact: External references to old IDs will break</p></li>
+</ul>
+</li>
+<li><p><strong>Assay node category changes</strong></p>
+<ul class="simple">
+<li><p>Old: <code class="docutils literal notranslate"><span class="pre">biolink:NamedThing</span></code></p></li>
+<li><p>New: <code class="docutils literal notranslate"><span class="pre">biolink:Procedure</span></code></p></li>
+<li><p>Impact: Queries filtering by category will need updates</p></li>
+</ul>
+</li>
+<li><p><strong>Removal of <code class="docutils literal notranslate"><span class="pre">is_assessed_by</span></code> edges</strong></p>
+<ul class="simple">
+<li><p>Old: 112 EC→assay edges with <code class="docutils literal notranslate"><span class="pre">is_assessed_by</span></code></p></li>
+<li><p>New: 0 edges (deprecated predicate removed)</p></li>
+<li><p>Impact: Any queries using this predicate will return no results</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="non-breaking-additions">
+<h3>Non-Breaking Additions<a class="headerlink" href="#non-breaking-additions" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>New organism→assay edges</strong></p>
+<ul class="simple">
+<li><p>No existing edges to replace</p></li>
+<li><p>Pure addition (~50,000-100,000 new edges)</p></li>
+</ul>
+</li>
+<li><p><strong>New assay→entity edges</strong></p>
+<ul class="simple">
+<li><p>No existing edges to replace</p></li>
+<li><p>Pure addition (~600-800 new edges)</p></li>
+</ul>
+</li>
+<li><p><strong>New assay nodes for missing kits</strong></p>
+<ul class="simple">
+<li><p>Adding biotype100 (99 nodes), 50CHac updates</p></li>
+<li><p>Pure addition (154 new nodes)</p></li>
+</ul>
+</li>
+</ol>
+</section>
+</section>
+<hr class="docutils" />
+<section id="migration-strategy">
+<h2>Migration Strategy<a class="headerlink" href="#migration-strategy" title="Link to this heading"></a></h2>
+<section id="option-a-clean-break-recommended">
+<h3>Option A: Clean Break (Recommended)<a class="headerlink" href="#option-a-clean-break-recommended" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Remove all 349 old assay nodes</p></li>
+<li><p>Remove all 112 <code class="docutils literal notranslate"><span class="pre">is_assessed_by</span></code> edges</p></li>
+<li><p>Add 503 new assay nodes with rich metadata</p></li>
+<li><p>Add organism→assay edges (new)</p></li>
+<li><p>Add assay→entity edges (new)</p></li>
+<li><p><strong>Decision</strong>: Remove or keep direct organism→entity edges?</p></li>
+</ol>
+<p><strong>Pros</strong>: Clean, compliant with Biolink v4.3.6, no deprecated predicates
+<strong>Cons</strong>: Breaking change for any external tools using old assay nodes</p>
+</section>
+<section id="option-b-gradual-migration">
+<h3>Option B: Gradual Migration<a class="headerlink" href="#option-b-gradual-migration" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Keep old 349 assay nodes</p></li>
+<li><p>Add 503 new assay nodes (with different IDs?)</p></li>
+<li><p>Mark old nodes as deprecated</p></li>
+<li><p>Add new edges alongside old edges</p></li>
+<li><p>Deprecation period (1-2 releases)</p></li>
+<li><p>Remove old nodes in future release</p></li>
+</ol>
+<p><strong>Pros</strong>: Backward compatible, gives users time to migrate
+<strong>Cons</strong>: Redundant data, confusion about which nodes to use</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="recommendations">
+<h2>Recommendations<a class="headerlink" href="#recommendations" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Use Clean Break for Assay Nodes</strong></p>
+<ul class="simple">
+<li><p>Biolink v4.3.6 deprecation is already 1+ year old</p></li>
+<li><p>Current assay nodes are incomplete/orphaned anyway</p></li>
+<li><p>Better to fix comprehensively now</p></li>
+</ul>
+</li>
+<li><p><strong>✅ APPROVED: Keep Direct Organism→Entity Edges (Dual-Edge Pattern)</strong></p>
+<ul class="simple">
+<li><p>Maintain all direct organism→entity edges</p></li>
+<li><p>Add organism→assay edges (NEW)</p></li>
+<li><p>Add assay→entity edges (NEW)</p></li>
+<li><p>Result: Both direct paths AND 2-hop paths via assay nodes</p></li>
+<li><p><strong>Benefits</strong>:</p>
+<ul>
+<li><p>Direct edges: Simple queries for biological facts</p></li>
+<li><p>Assay paths: Rich methodology and provenance information</p></li>
+<li><p>Users choose query complexity based on needs</p></li>
+<li><p>Backward compatible with existing queries</p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><strong>Document migration in release notes</strong></p>
+<ul class="simple">
+<li><p>List breaking changes</p></li>
+<li><p>Provide migration guide for common queries</p></li>
+<li><p>Include examples of old vs. new query patterns</p></li>
+</ul>
+</li>
+<li><p><strong>Add assay node validation tests</strong></p>
+<ul class="simple">
+<li><p>Ensure all 503 nodes created</p></li>
+<li><p>Ensure no deprecated predicates used</p></li>
+<li><p>Ensure category is <code class="docutils literal notranslate"><span class="pre">Procedure</span></code></p></li>
+<li><p>Ensure metadata is complete</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="example-migration-query-patterns">
+<h2>Example Migration: Query Patterns<a class="headerlink" href="#example-migration-query-patterns" title="Link to this heading"></a></h2>
+<section id="old-query-direct-edges">
+<h3>Old Query (Direct Edges)<a class="headerlink" href="#old-query-direct-edges" title="Link to this heading"></a></h3>
+<div class="highlight-sparql notranslate"><div class="highlight"><pre><span></span><span class="c"># Find organisms that can perform alkaline phosphatase activity</span>
+<span class="k">SELECT</span> <span class="nv">?organism</span> <span class="nv">?name</span>
+<span class="k">WHERE</span> <span class="p">{</span>
+  <span class="nv">?organism</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000103</span> <span class="nn">GO</span><span class="p">:</span><span class="nt">0004035</span> <span class="p">.</span>
+  <span class="nv">?organism</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="nv">?name</span> <span class="p">.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="new-query-2-hop-via-assay">
+<h3>New Query (2-Hop via Assay)<a class="headerlink" href="#new-query-2-hop-via-assay" title="Link to this heading"></a></h3>
+<div class="highlight-sparql notranslate"><div class="highlight"><pre><span></span><span class="c"># Find organisms that show alkaline phosphatase activity via assay</span>
+<span class="k">SELECT</span> <span class="nv">?organism</span> <span class="nv">?name</span> <span class="nv">?assay</span>
+<span class="k">WHERE</span> <span class="p">{</span>
+  <span class="nv">?organism</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000302</span> <span class="nv">?assay</span> <span class="p">.</span>  <span class="c"># shows activity of (via assay)</span>
+  <span class="nv">?assay</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">has_output</span> <span class="nn">GO</span><span class="p">:</span><span class="nt">0004035</span> <span class="p">.</span>  <span class="c"># assay detects this enzyme</span>
+  <span class="nv">?organism</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="nv">?name</span> <span class="p">.</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+<section id="alternative-if-keeping-direct-edges">
+<h3>Alternative: If Keeping Direct Edges<a class="headerlink" href="#alternative-if-keeping-direct-edges" title="Link to this heading"></a></h3>
+<div class="highlight-sparql notranslate"><div class="highlight"><pre><span></span><span class="c"># Find organisms with alkaline phosphatase (either direct or via assay)</span>
+<span class="k">SELECT</span> <span class="nv">?organism</span> <span class="nv">?name</span>
+<span class="k">WHERE</span> <span class="p">{</span>
+  <span class="nv">?organism</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="nv">?name</span> <span class="p">.</span>
+  <span class="p">{</span>
+    <span class="c"># Direct edge (old pattern)</span>
+    <span class="nv">?organism</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000103</span> <span class="nn">GO</span><span class="p">:</span><span class="nt">0004035</span> <span class="p">.</span>
+  <span class="p">}</span> <span class="k">UNION</span> <span class="p">{</span>
+    <span class="c"># Via assay (new pattern)</span>
+    <span class="nv">?organism</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000302</span> <span class="nv">?assay</span> <span class="p">.</span>
+    <span class="nv">?assay</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">has_output</span> <span class="nn">GO</span><span class="p">:</span><span class="nt">0004035</span> <span class="p">.</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>✅ <strong>APPROVED: Dual-edge pattern</strong> (direct + 2-hop via assay)</p></li>
+<li><p>✅ <strong>APPROVED: Keep direct organism→entity edges</strong></p></li>
+<li><p><strong>Implement assay node generation</strong> (as per implementation plan)</p></li>
+<li><p><strong>Update BacDive transform</strong> to ADD organism→assay edges (keep existing direct edges)</p></li>
+<li><p><strong>Add validation tests</strong></p></li>
+<li><p><strong>Run test transform</strong> on subset of data</p></li>
+<li><p><strong>Review sample output</strong> before full transform</p></li>
+<li><p><strong>Document migration</strong> for users</p></li>
+<li><p><strong>Run full transform</strong></p></li>
+<li><p><strong>Validate against Biolink v4.3.6 schema</strong></p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="files-to-reference">
+<h2>Files to Reference<a class="headerlink" href="#files-to-reference" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Current release: <code class="docutils literal notranslate"><span class="pre">data/merged/20251217/merged-kg_*.tsv</span></code></p></li>
+<li><p>Proposal: <code class="docutils literal notranslate"><span class="pre">docs/ASSAY_NODE_MODELING.md</span></code></p></li>
+<li><p>Implementation: <code class="docutils literal notranslate"><span class="pre">docs/ASSAY_IMPLEMENTATION_SUMMARY.md</span></code></p></li>
+<li><p>Biolink changes: <code class="docutils literal notranslate"><span class="pre">BIOLINK_PREDICATE_CHANGES.md</span></code></p></li>
+<li><p>Code: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/bacdive/bacdive.py</span></code> (lines 2315-2435)</p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>Analysis Date</strong>: 2026-01-12
+<strong>Analyst</strong>: Claude Code</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

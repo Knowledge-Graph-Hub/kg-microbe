@@ -1,0 +1,85 @@
+kg\_microbe.merge\_utils package
+================================
+
+Submodules
+----------
+
+kg\_microbe.merge\_utils.artifact\_manifest module
+--------------------------------------------------
+
+.. automodule:: kg_microbe.merge_utils.artifact_manifest
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.merge\_utils.external\_node\_closure module
+-------------------------------------------------------
+
+.. automodule:: kg_microbe.merge_utils.external_node_closure
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.merge\_utils.invariants module
+------------------------------------------
+
+.. automodule:: kg_microbe.merge_utils.invariants
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.merge\_utils.kgx\_source module
+-------------------------------------------
+
+.. automodule:: kg_microbe.merge_utils.kgx_source
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.merge\_utils.local\_context module
+----------------------------------------------
+
+.. automodule:: kg_microbe.merge_utils.local_context
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.merge\_utils.merge\_kg module
+-----------------------------------------
+
+.. automodule:: kg_microbe.merge_utils.merge_kg
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.merge\_utils.source\_admission module
+-------------------------------------------------
+
+.. automodule:: kg_microbe.merge_utils.source_admission
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.merge\_utils.source\_freshness module
+-------------------------------------------------
+
+.. automodule:: kg_microbe.merge_utils.source_freshness
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.merge\_utils.stats\_provenance module
+-------------------------------------------------
+
+.. automodule:: kg_microbe.merge_utils.stats_provenance
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.merge_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

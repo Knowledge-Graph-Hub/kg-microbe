@@ -1,0 +1,188 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MicrobeDecoder reported source attributes &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">MicrobeDecoder reported source attributes</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/MICROBEDECODER_SOURCE_ATTRIBUTES.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="microbedecoder-reported-source-attributes">
+<h1>MicrobeDecoder reported source attributes<a class="headerlink" href="#microbedecoder-reported-source-attributes" title="Link to this heading"></a></h1>
+<p>Decision for <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1104">#1104</a>,
+scoped to the 27 <code class="docutils literal notranslate"><span class="pre">BacDive_*</span></code> snapshot columns. This does not change the broader
+taxon/phenotype convention tracked in #643 or the taxonomic backbone in #834.</p>
+<section id="evidence-and-model">
+<h2>Evidence and model<a class="headerlink" href="#evidence-and-model" title="Link to this heading"></a></h2>
+<p>The reviewed transform emits 362,361 <code class="docutils literal notranslate"><span class="pre">has_phenotype</span></code> edges from these columns.
+Their objects are ungrounded raw field tokens, not a curated phenotype ontology:
+they include salt units (8,086), incubation periods (5,095), isolation-source
+categories (66,194), numeric ranges, assay signs and undecoded 0/1 codes.
+Attaching every token as a biological phenotype is therefore unjustified,
+independently of the strict validator’s category complaint.</p>
+<p>The source now records:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>lpsn:&lt;taxon&gt; --biolink:has_attribute / SIO:000008--&gt; kgmicrobe.source_attribute:&lt;id&gt;
+                                                   category: biolink:Attribute
+</pre></div>
+</div>
+<p>The attribute means <strong>MicrobeDecoder reports this source field value for this
+taxon record</strong>, not that every organism in that taxon has a decoded phenotype.
+Its node name explicitly says <code class="docutils literal notranslate"><span class="pre">reported</span> <span class="pre">&lt;dimension&gt;:</span> <span class="pre">&lt;token&gt;</span> <span class="pre">(source</span> <span class="pre">value)</span></code>;
+its description states that no phenotype was decoded. The asserting edge keeps
+<code class="docutils literal notranslate"><span class="pre">source_record</span></code> (source SHA256 plus CSV-record ordinal), <code class="docutils literal notranslate"><span class="pre">source_column</span></code>, <code class="docutils literal notranslate"><span class="pre">value</span></code>,
+<code class="docutils literal notranslate"><span class="pre">value_encoding</span></code>, and <code class="docutils literal notranslate"><span class="pre">primary_knowledge_source=infores:microbedecoder</span></code>.</p>
+<p>The new namespace deliberately distinguishes a reported field attribute from
+the old <code class="docutils literal notranslate"><span class="pre">kgmicrobe.trait:*</span></code> phenotype placeholder identity. IDs are deterministic:
+the readable source/column stem is followed by SHA256 of the JSON tuple
+<code class="docutils literal notranslate"><span class="pre">[microbedecoder,</span> <span class="pre">source_column,</span> <span class="pre">exact</span> <span class="pre">split</span> <span class="pre">token]</span></code>. Different source dimensions,
+inequalities and raw codes cannot collide. Identical field/value pairs can share
+an attribute node, while edge-level source records distinguish observations.
+No equivalence assertion is minted between old phenotype placeholders and new
+reported attributes.</p>
+</section>
+<section id="why-this-is-not-a-validator-workaround">
+<h2>Why this is not a validator workaround<a class="headerlink" href="#why-this-is-not-a-validator-workaround" title="Link to this heading"></a></h2>
+<p>Pinned Biolink 4.4.2 defines <code class="docutils literal notranslate"><span class="pre">has</span> <span class="pre">phenotype</span></code> as BiologicalEntity to
+PhenotypicFeature. OrganismTaxon is a NamedThing, not a BiologicalEntity;
+PhenotypicQuality descends from OrganismAttribute and Attribute, not
+PhenotypicFeature. <code class="docutils literal notranslate"><span class="pre">has</span> <span class="pre">attribute</span></code> is Entity to Attribute with exact mapping
+SIO:000008. The project explicitly kept this spec-faithful predicate in
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1000#issuecomment-5581362580">#1000</a>.</p>
+<p>The new categories describe the actual source objects rather than adding a
+second biological category to the taxon merely to pass validation. There is no
+allowlist relaxation and no post-merge semantic rewrite.</p>
+<p>Alternatives considered:</p>
+<ul class="simple">
+<li><p>Keep PhenotypicQuality and only change the predicate: still incorrectly calls
+raw unit/isolation/assay-code tokens biological qualities.</p></li>
+<li><p>Use METPO:2000102 (<code class="docutils literal notranslate"><span class="pre">has</span> <span class="pre">phenotype</span></code>): its domain is a material microbe and its
+range phenotype. It does not justify treating salt units or isolation fields
+as phenotypes. Its Biolink link is only <code class="docutils literal notranslate"><span class="pre">skos:closeMatch</span></code>, not equivalence.</p></li>
+<li><p>Retype LPSN taxa as OrganismalEntity/BiologicalEntity: changes taxon identity
+and does not fix the heterogeneous raw field semantics.</p></li>
+<li><p>Reify each source record/assay: useful if future work reconstructs experimental
+conditions and assay outcomes, but the current snapshot does not warrant
+inventing assays or material organism instances. Record-scoped provenance
+remains explicit on every attribute edge without those additional claims.</p></li>
+</ul>
+<p>Future curated interpretations may add separate biological assertions only
+with a documented field/code mapping, conditions and evidence. They must not
+replace the original source observation. No <code class="docutils literal notranslate"><span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">+</span></code>, <code class="docutils literal notranslate"><span class="pre">-</span></code>, Gram-negative
+or numeric bound is automatically converted to a positive/negative phenotype.</p>
+<p>The existing parser dropped a lone <code class="docutils literal notranslate"><span class="pre">-</span></code> as missing but retained it in a mixed
+<code class="docutils literal notranslate"><span class="pre">+,-</span></code> cell. The snapshot-specific splitter now retains a lone <code class="docutils literal notranslate"><span class="pre">-</span></code> in the two
+signed assay fields, <code class="docutils literal notranslate"><span class="pre">BacDive_Indole_test</span></code> and <code class="docutils literal notranslate"><span class="pre">BacDive_Voges_proskauer</span></code>, without
+decoding it. Other empty markers and all other field conventions are unchanged.
+The reviewed raw input contains 2,612 and 2,077 such cells respectively; their
+4,689 newly retained observations are expected only after a source rerun and
+are not a claim that the production merged artifact has already changed.</p>
+</section>
+<section id="validation-and-migration">
+<h2>Validation and migration<a class="headerlink" href="#validation-and-migration" title="Link to this heading"></a></h2>
+<p>Hermetic fixtures exercise all 27 field families, positive/negative and coded
+values, column-specific identities, numeric inequalities, repeat-run stability,
+source-record distinctions, provenance, and actual KGX archive round trips.
+A focused immutable excerpt of the pinned Biolink schema verifies both endpoints
+and the SIO mapping; the same signature was also checked with BMT against the
+complete local pinned model during the review.</p>
+<p>Rerun <code class="docutils literal notranslate"><span class="pre">microbedecoder</span></code>, then merge with the new source output. Consumers that
+previously read these raw snapshot observations through <code class="docutils literal notranslate"><span class="pre">has_phenotype</span></code> should
+query <code class="docutils literal notranslate"><span class="pre">has_attribute</span></code>, scoped by MicrobeDecoder provenance and <code class="docutils literal notranslate"><span class="pre">source_column</span></code>.
+The live BacDive transform, curated phenotype assertions from other sources,
+LPSN identities, and strain/taxon <code class="docutils literal notranslate"><span class="pre">subclass_of</span></code> edges are unchanged.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

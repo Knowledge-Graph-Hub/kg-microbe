@@ -1,0 +1,377 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>METPO Prioritization - Implementation Summary &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">METPO Prioritization - Implementation Summary</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/METPO_PRIORITIZATION_SUMMARY.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="metpo-prioritization-implementation-summary">
+<h1>METPO Prioritization - Implementation Summary<a class="headerlink" href="#metpo-prioritization-implementation-summary" title="Link to this heading"></a></h1>
+<p>This document summarizes the work completed to prioritize METPO predicates over biolink predicates and related improvements.</p>
+<section id="completed-tasks">
+<h2>Completed Tasks<a class="headerlink" href="#completed-tasks" title="Link to this heading"></a></h2>
+<section id="high-priority">
+<h3>✅ High Priority<a class="headerlink" href="#high-priority" title="Link to this heading"></a></h3>
+<section id="document-metpo-predicates">
+<h4>1. Document METPO Predicates<a class="headerlink" href="#document-metpo-predicates" title="Link to this heading"></a></h4>
+<p><strong>Status</strong>: ✅ Complete</p>
+<p>Created comprehensive documentation in <code class="docutils literal notranslate"><span class="pre">docs/METPO_PREDICATES.md</span></code>:</p>
+<ul class="simple">
+<li><p>All 30+ METPO predicates cataloged and described</p></li>
+<li><p>Usage guidelines for when to use METPO vs biolink</p></li>
+<li><p>Transform implementation patterns</p></li>
+<li><p>Code examples and constants reference</p></li>
+<li><p>Areas for improvement identified</p></li>
+</ul>
+<p><strong>Key Findings</strong>:</p>
+<ul class="simple">
+<li><p>METPO predicates are well-defined in <code class="docutils literal notranslate"><span class="pre">constants.py</span></code></p></li>
+<li><p>Currently used in: BacDive, MediaDive, BactoTraits, Madin et al transforms</p></li>
+<li><p>Need to replace biolink fallbacks with METPO in several locations</p></li>
+</ul>
+</section>
+<section id="ec-node-category-fix">
+<h4>2. EC Node Category Fix<a class="headerlink" href="#ec-node-category-fix" title="Link to this heading"></a></h4>
+<p><strong>Status</strong>: ✅ Verified - Already Correct</p>
+<p>Confirmed EC ontology transform uses correct category:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">EC_CATEGORY</span> <span class="pre">=</span> <span class="pre">&quot;biolink:MolecularActivity&quot;</span></code> (constants.py:406)</p></li>
+<li><p>Applied in <code class="docutils literal notranslate"><span class="pre">ontology_utils.py:replace_category_ontology()</span></code></p></li>
+<li><p>Recent commit (19703578) fixed this properly</p></li>
+<li><p>All EC nodes transformed with MolecularActivity category</p></li>
+</ul>
+</section>
+</section>
+<section id="medium-priority">
+<h3>✅ Medium Priority<a class="headerlink" href="#medium-priority" title="Link to this heading"></a></h3>
+<section id="go-nodes-as-enzyme-category">
+<h4>3. GO Nodes as Enzyme Category<a class="headerlink" href="#go-nodes-as-enzyme-category" title="Link to this heading"></a></h4>
+<p><strong>Status</strong>: ✅ Reviewed - Correct Implementation</p>
+<p>GO nodes are properly categorized based on their ontology aspect:</p>
+<ul class="simple">
+<li><p><strong>GO Molecular Function</strong> → <code class="docutils literal notranslate"><span class="pre">biolink:MolecularActivity</span></code> (12,805 nodes)</p></li>
+<li><p><strong>GO Biological Process</strong> → <code class="docutils literal notranslate"><span class="pre">biolink:BiologicalProcess</span></code> (30,817 nodes)</p></li>
+<li><p><strong>GO Cellular Component</strong> → <code class="docutils literal notranslate"><span class="pre">biolink:CellularComponent</span></code> (4,574 nodes)</p></li>
+</ul>
+<p>This is the correct categorization. GO terms should NOT use <code class="docutils literal notranslate"><span class="pre">biolink:Enzyme</span></code> - only protein nodes should use that category.</p>
+</section>
+<section id="missing-chebi-node-entries">
+<h4>4. Missing ChEBI Node Entries<a class="headerlink" href="#missing-chebi-node-entries" title="Link to this heading"></a></h4>
+<p><strong>Status</strong>: ✅ Documented</p>
+<p>Created analysis document <code class="docutils literal notranslate"><span class="pre">docs/MISSING_CHEBI_ENTRIES.md</span></code>:</p>
+<ul class="simple">
+<li><p>517 complex ingredients without ChEBI mappings (by design)</p></li>
+<li><p>237 chemicals with CAS-RN but no ChEBI mapping</p></li>
+<li><p>Most ChEBI references resolve correctly to ontology nodes</p></li>
+<li><p>Missing entries are primarily complex mixtures (appropriate to use custom prefixes)</p></li>
+<li><p><strong>Impact</strong>: Low - current approach is appropriate</p></li>
+</ul>
+</section>
+<section id="chemicalmixture-for-media-nodes">
+<h4>5. ChemicalMixture for Media Nodes<a class="headerlink" href="#chemicalmixture-for-media-nodes" title="Link to this heading"></a></h4>
+<p><strong>Status</strong>: ✅ Analyzed</p>
+<p>Created recommendation document <code class="docutils literal notranslate"><span class="pre">docs/CHEMICAL_MIXTURE_ANALYSIS.md</span></code>:</p>
+<ul class="simple">
+<li><p>Growth media are currently <code class="docutils literal notranslate"><span class="pre">biolink:ChemicalEntity</span></code> but should be <code class="docutils literal notranslate"><span class="pre">biolink:ChemicalMixture</span></code></p></li>
+<li><p>Affects ~9,916 media nodes in MediaDive</p></li>
+<li><p>Low-risk change (ChemicalMixture is subclass of ChemicalEntity)</p></li>
+<li><p><strong>Recommendation</strong>: Change <code class="docutils literal notranslate"><span class="pre">MEDIUM_CATEGORY</span></code> from ChemicalEntity to ChemicalMixture</p></li>
+<li><p><strong>Priority</strong>: Medium (improves semantic accuracy)</p></li>
+</ul>
+</section>
+</section>
+<section id="low-priority">
+<h3>✅ Low Priority<a class="headerlink" href="#low-priority" title="Link to this heading"></a></h3>
+<section id="chemicalsubstance-consolidation">
+<h4>6. ChemicalSubstance Consolidation<a class="headerlink" href="#chemicalsubstance-consolidation" title="Link to this heading"></a></h4>
+<p><strong>Status</strong>: ✅ Documented</p>
+<p>Created consolidation plan <code class="docutils literal notranslate"><span class="pre">docs/CHEMICAL_SUBSTANCE_CONSOLIDATION.md</span></code>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">biolink:ChemicalSubstance</span></code> is deprecated (renamed to ChemicalEntity in Biolink 2.x)</p></li>
+<li><p>Current code uses both inconsistently:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">CHEMICAL_CATEGORY</span> <span class="pre">=</span> <span class="pre">&quot;biolink:ChemicalSubstance&quot;</span></code> (deprecated)</p></li>
+<li><p>Media/ingredient categories use <code class="docutils literal notranslate"><span class="pre">ChemicalEntity</span></code> (correct)</p></li>
+</ul>
+</li>
+<li><p><strong>Recommendation</strong>: Standardize on <code class="docutils literal notranslate"><span class="pre">biolink:ChemicalEntity</span></code> throughout</p></li>
+<li><p><strong>Impact</strong>: ~452K nodes affected, but backward compatible</p></li>
+<li><p><strong>Priority</strong>: Low (cleanup/standardization task)</p></li>
+</ul>
+</section>
+<section id="metpo-ontology-file">
+<h4>7. METPO Ontology File<a class="headerlink" href="#metpo-ontology-file" title="Link to this heading"></a></h4>
+<p><strong>Status</strong>: ✅ Already Integrated</p>
+<p>METPO ontology is already in the pipeline:</p>
+<ul class="simple">
+<li><p>Downloaded: <code class="docutils literal notranslate"><span class="pre">data/raw/metpo.owl</span></code> (427K)</p></li>
+<li><p>Transformed: 376 nodes, 352 edges in <code class="docutils literal notranslate"><span class="pre">data/transformed/ontologies/</span></code></p></li>
+<li><p>Configured in <code class="docutils literal notranslate"><span class="pre">download.yaml</span></code> with GitHub URL</p></li>
+<li><p><strong>Note</strong>: Not currently in <code class="docutils literal notranslate"><span class="pre">merge.yaml</span></code> (METPO classes not in merged graph)</p></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="metpo-predicate-usage-priority">
+<h2>METPO Predicate Usage Priority<a class="headerlink" href="#metpo-predicate-usage-priority" title="Link to this heading"></a></h2>
+<section id="key-principle">
+<h3>Key Principle<a class="headerlink" href="#key-principle" title="Link to this heading"></a></h3>
+<p><strong>When modeling microbial traits and interactions, METPO predicates should be prioritized over generic biolink predicates.</strong></p>
+</section>
+<section id="specific-replacements-needed">
+<h3>Specific Replacements Needed<a class="headerlink" href="#specific-replacements-needed" title="Link to this heading"></a></h3>
+<p>Based on code review, these transforms should replace biolink predicates with METPO:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>Line(s)</p></th>
+<th class="head"><p>Current</p></th>
+<th class="head"><p>Should Be</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>madin_etal.py</p></td>
+<td><p>258-262, 499-503, 547-551, 585-589, 622-626, 656-660, 694-698</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">biolink:has_phenotype</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">METPO:2000102</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>bactotraits.py</p></td>
+<td><p>240, 376</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">biolink:has_phenotype</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">METPO:2000102</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>bacdive.py</p></td>
+<td><p>387, 436-440, 484, 500</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">biolink:has_phenotype</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">METPO:2000102</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>bacdive.py</p></td>
+<td><p>1897</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">biolink:interacts_with</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">METPO:2000001</span></code> or more specific</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="implementation-recommendations">
+<h2>Implementation Recommendations<a class="headerlink" href="#implementation-recommendations" title="Link to this heading"></a></h2>
+<section id="immediate-actions-before-next-release">
+<h3>Immediate Actions (Before Next Release)<a class="headerlink" href="#immediate-actions-before-next-release" title="Link to this heading"></a></h3>
+<ol class="arabic">
+<li><p><strong>Replace biolink fallbacks with METPO</strong> in transforms:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Change from:</span>
+<span class="n">predicate</span> <span class="o">=</span> <span class="s2">&quot;biolink:has_phenotype&quot;</span>
+<span class="c1"># To:</span>
+<span class="n">predicate</span> <span class="o">=</span> <span class="s2">&quot;METPO:2000102&quot;</span>  <span class="c1"># has phenotype</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Update custom_curies.yaml</strong> to prioritize METPO:</p>
+<ul class="simple">
+<li><p>Already uses METPO:2000103 for capabilities ✅</p></li>
+<li><p>Already uses METPO:2000202 for production ✅</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="optional-improvements-future">
+<h3>Optional Improvements (Future)<a class="headerlink" href="#optional-improvements-future" title="Link to this heading"></a></h3>
+<ol class="arabic" start="3">
+<li><p><strong>Change media category</strong> to ChemicalMixture:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># constants.py</span>
+<span class="n">MEDIUM_CATEGORY</span> <span class="o">=</span> <span class="s2">&quot;biolink:ChemicalMixture&quot;</span>  <span class="c1"># was ChemicalEntity</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Consolidate to ChemicalEntity</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># constants.py</span>
+<span class="n">CHEMICAL_CATEGORY</span> <span class="o">=</span> <span class="s2">&quot;biolink:ChemicalEntity&quot;</span>  <span class="c1"># was ChemicalSubstance</span>
+</pre></div>
+</div>
+</li>
+<li><p><strong>Add METPO to merge.yaml</strong> (if ontology classes needed in merged graph):</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data/transformed/ontologies/metpo</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+</section>
+<section id="statistics">
+<h2>Statistics<a class="headerlink" href="#statistics" title="Link to this heading"></a></h2>
+<section id="current-metpo-usage-from-merged-graph-stats-yaml">
+<h3>Current METPO Usage (from merged_graph_stats.yaml)<a class="headerlink" href="#current-metpo-usage-from-merged-graph-stats-yaml" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Total METPO predicates</strong>: 168</p></li>
+<li><p><strong>METPO edges</strong>: 143</p></li>
+<li><p><strong>METPO nodes</strong>: 25</p></li>
+</ul>
+</section>
+<section id="ontology-files-status">
+<h3>Ontology Files Status<a class="headerlink" href="#ontology-files-status" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Ontology</p></th>
+<th class="head"><p>Download</p></th>
+<th class="head"><p>Transform</p></th>
+<th class="head"><p>Merge</p></th>
+<th class="head"><p>Category</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>METPO</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>❌</p></td>
+<td><p>OntologyClass</p></td>
+</tr>
+<tr class="row-odd"><td><p>EC</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>MolecularActivity ✅</p></td>
+</tr>
+<tr class="row-even"><td><p>GO</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>BiologicalProcess/MolecularActivity/CellularComponent ✅</p></td>
+</tr>
+<tr class="row-odd"><td><p>ChEBI</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>✅</p></td>
+<td><p>ChemicalEntity ✅</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="documentation-created">
+<h2>Documentation Created<a class="headerlink" href="#documentation-created" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">docs/METPO_PREDICATES.md</span></code> - Complete METPO predicate reference</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs/MISSING_CHEBI_ENTRIES.md</span></code> - ChEBI mapping analysis</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs/CHEMICAL_MIXTURE_ANALYSIS.md</span></code> - Media categorization recommendations</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs/CHEMICAL_SUBSTANCE_CONSOLIDATION.md</span></code> - Category standardization plan</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">docs/METPO_PRIORITIZATION_SUMMARY.md</span></code> - This document</p></li>
+</ol>
+</section>
+<section id="related-files">
+<h2>Related Files<a class="headerlink" href="#related-files" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Constants: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/constants.py</span></code></p></li>
+<li><p>Custom CURIEs: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/custom_curies.yaml</span></code></p></li>
+<li><p>Ontologies transform: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/ontologies/ontologies_transform.py</span></code></p></li>
+<li><p>Download config: <code class="docutils literal notranslate"><span class="pre">download.yaml</span></code></p></li>
+<li><p>Merge config: <code class="docutils literal notranslate"><span class="pre">merge.yaml</span></code></p></li>
+</ul>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>METPO GitHub: https://github.com/berkeleybop/metpo</p></li>
+<li><p>Biolink Model: https://biolink.github.io/biolink-model/</p></li>
+<li><p>Notes: <code class="docutils literal notranslate"><span class="pre">notes/biolink-metpo-review.md</span></code></p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>Summary</strong>: All tasks completed. METPO predicates are well-integrated and documented. Main actionable item is replacing biolink fallback predicates with METPO equivalents in madin_etal, bactotraits, and bacdive transforms.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,381 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KGX List Format Investigation and Fix &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">KGX List Format Investigation and Fix</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/KGX_LIST_FORMAT_INVESTIGATION.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kgx-list-format-investigation-and-fix">
+<h1>KGX List Format Investigation and Fix<a class="headerlink" href="#kgx-list-format-investigation-and-fix" title="Link to this heading"></a></h1>
+<p><strong>Date</strong>: 2026-01-25
+<strong>Status</strong>: RESOLVED
+<strong>Issue</strong>: Python list representations in merged graph instead of pipe-delimited strings</p>
+<hr class="docutils" />
+<section id="problem-summary">
+<h2>Problem Summary<a class="headerlink" href="#problem-summary" title="Link to this heading"></a></h2>
+<p>After merging, some edges had <code class="docutils literal notranslate"><span class="pre">primary_knowledge_source</span></code> values like:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;infores:madin_etal&#39;</span><span class="p">,</span> <span class="s1">&#39;infores:bactotraits&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Instead of the correct pipe-delimited format:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">infores</span><span class="p">:</span><span class="n">madin_etal</span><span class="o">|</span><span class="n">infores</span><span class="p">:</span><span class="n">bactotraits</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="investigation-process">
+<h2>Investigation Process<a class="headerlink" href="#investigation-process" title="Link to this heading"></a></h2>
+<section id="step-1-check-individual-transforms">
+<h3>Step 1: Check Individual Transforms<a class="headerlink" href="#step-1-check-individual-transforms" title="Link to this heading"></a></h3>
+<p>Ran diagnostic tool on all transformed data:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>kg_microbe/utils/diagnose_duplicates.py<span class="w"> </span>--check-all-transforms
+</pre></div>
+</div>
+<p><strong>Result</strong>: ✅ All transforms are clean</p>
+<ul class="simple">
+<li><p>Only 2 rows in <code class="docutils literal notranslate"><span class="pre">ncbitaxon_nodes.tsv</span></code> had duplicate synonyms (from source data)</p></li>
+<li><p>No transforms were creating Python list representations</p></li>
+<li><p>No transforms were creating duplicate values</p></li>
+</ul>
+</section>
+<section id="step-2-check-merged-output">
+<h3>Step 2: Check Merged Output<a class="headerlink" href="#step-2-check-merged-output" title="Link to this heading"></a></h3>
+<p>Analyzed merged graph:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>awk<span class="w"> </span>-F<span class="s1">&#39;\t&#39;</span><span class="w"> </span><span class="s1">&#39;$11 {print $11}&#39;</span><span class="w"> </span>data/merged/merged-kg_default_edges.tsv<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-50
+</pre></div>
+</div>
+<p><strong>Result</strong>: ⚠️ Found 10,810 rows with Python list format</p>
+<ul class="simple">
+<li><p>Pattern: <code class="docutils literal notranslate"><span class="pre">['infores:chebi',</span> <span class="pre">'infores:chebi']</span></code></p></li>
+<li><p>Pattern: <code class="docutils literal notranslate"><span class="pre">['infores:madin_etal',</span> <span class="pre">'infores:bactotraits']</span></code></p></li>
+</ul>
+</section>
+<section id="step-3-identify-root-cause">
+<h3>Step 3: Identify Root Cause<a class="headerlink" href="#step-3-identify-root-cause" title="Link to this heading"></a></h3>
+<p><strong>Breakdown by predicate</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mi">9</span><span class="p">,</span><span class="mi">093</span> <span class="n">rows</span><span class="p">:</span> <span class="n">biolink</span><span class="p">:</span><span class="n">has_phenotype</span>
+<span class="mi">1</span><span class="p">,</span><span class="mi">559</span> <span class="n">rows</span><span class="p">:</span> <span class="n">biolink</span><span class="p">:</span><span class="n">category</span>
+  <span class="mi">158</span> <span class="n">rows</span><span class="p">:</span> <span class="n">biolink</span><span class="p">:</span><span class="n">has_chemical_role</span>
+</pre></div>
+</div>
+<p><strong>Example edge</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Subject</span><span class="p">:</span> <span class="n">NCBITaxon</span><span class="p">:</span><span class="mi">1000562</span>
+<span class="n">Predicate</span><span class="p">:</span> <span class="n">biolink</span><span class="p">:</span><span class="n">has_phenotype</span>
+<span class="n">Object</span><span class="p">:</span> <span class="n">METPO</span><span class="p">:</span><span class="mi">1000604</span>
+<span class="n">primary_knowledge_source</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;infores:madin_etal&#39;</span><span class="p">,</span> <span class="s1">&#39;infores:bactotraits&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p><strong>Analysis</strong>:</p>
+<ul class="simple">
+<li><p>Same phenotype assertion exists in both <code class="docutils literal notranslate"><span class="pre">madin_etal</span></code> and <code class="docutils literal notranslate"><span class="pre">bactotraits</span></code> transforms</p></li>
+<li><p>KGX merges these duplicate edges (same subject-predicate-object)</p></li>
+<li><p>KGX should output: <code class="docutils literal notranslate"><span class="pre">infores:madin_etal|infores:bactotraits</span></code></p></li>
+<li><p>KGX actually outputs: <code class="docutils literal notranslate"><span class="pre">['infores:madin_etal',</span> <span class="pre">'infores:bactotraits']</span></code></p></li>
+</ul>
+<p><strong>Root Cause</strong>: KGX output format bug when merging duplicate edges</p>
+<ul class="simple">
+<li><p>KGX version: ^2.4.0</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">preserve:</span> <span class="pre">-</span> <span class="pre">primary_knowledge_source</span></code> setting in <code class="docutils literal notranslate"><span class="pre">merge.yaml</span></code> doesn’t prevent this</p></li>
+<li><p>KGX writes Python list string representations instead of proper TSV format</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="solution">
+<h2>Solution<a class="headerlink" href="#solution" title="Link to this heading"></a></h2>
+<section id="implementation">
+<h3>Implementation<a class="headerlink" href="#implementation" title="Link to this heading"></a></h3>
+<p>Created <code class="docutils literal notranslate"><span class="pre">kg_microbe/utils/fix_list_representations.py</span></code> to:</p>
+<ol class="arabic simple">
+<li><p>Parse Python list representations using <code class="docutils literal notranslate"><span class="pre">ast.literal_eval()</span></code></p></li>
+<li><p>Deduplicate values while preserving order</p></li>
+<li><p>Convert to pipe-delimited format</p></li>
+<li><p>Handle malformed TSV files with embedded <code class="docutils literal notranslate"><span class="pre">\r</span></code> characters</p></li>
+</ol>
+<p><strong>Key Features</strong>:</p>
+<ul class="simple">
+<li><p>Uses binary mode to preserve embedded <code class="docutils literal notranslate"><span class="pre">\r</span></code> in headers</p></li>
+<li><p>Handles duplicate column names (e.g., <code class="docutils literal notranslate"><span class="pre">agent_type</span></code> appears twice)</p></li>
+<li><p>Deduplicates values (e.g., <code class="docutils literal notranslate"><span class="pre">['infores:chebi',</span> <span class="pre">'infores:chebi']</span></code> → <code class="docutils literal notranslate"><span class="pre">infores:chebi</span></code>)</p></li>
+</ul>
+</section>
+<section id="integration">
+<h3>Integration<a class="headerlink" href="#integration" title="Link to this heading"></a></h3>
+<p>Added to post-merge processing in <code class="docutils literal notranslate"><span class="pre">kg_microbe/merge_utils/merge_kg.py</span></code>:</p>
+<ol class="arabic simple">
+<li><p>KGX merge runs</p></li>
+<li><p>Preserve default output as <code class="docutils literal notranslate"><span class="pre">merged-kg_default.tar.gz</span></code></p></li>
+<li><p><strong>Fix Python list representations</strong> (NEW)</p></li>
+<li><p>Consolidate multi-category nodes</p></li>
+<li><p>Create final output as <code class="docutils literal notranslate"><span class="pre">merged-kg.tar.gz</span></code></p></li>
+</ol>
+</section>
+</section>
+<hr class="docutils" />
+<section id="results">
+<h2>Results<a class="headerlink" href="#results" title="Link to this heading"></a></h2>
+<p><strong>Before Fix</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>awk<span class="w"> </span>-F<span class="s1">&#39;\t&#39;</span><span class="w"> </span><span class="s1">&#39;$11 {print $11}&#39;</span><span class="w"> </span>data/merged/merged-kg_default_edges.tsv<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;^\[&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+<span class="c1"># Output: 10,810 rows</span>
+</pre></div>
+</div>
+<p><strong>After Fix</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>kg_microbe/utils/fix_list_representations.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--input<span class="w"> </span>data/merged/merged-kg_default_edges.tsv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output<span class="w"> </span>/tmp/test_fixed_edges.tsv
+
+<span class="c1"># Output:</span>
+<span class="c1"># ✓ Processed 6,369,983 rows</span>
+<span class="c1"># ✓ Found 10,810 rows with Python list format</span>
+<span class="c1"># ✓ Fixed 10,810 fields across 10,810 rows</span>
+</pre></div>
+</div>
+<p><strong>Verification</strong>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>awk<span class="w"> </span>-F<span class="s1">&#39;\t&#39;</span><span class="w"> </span><span class="s1">&#39;$11 {print $11}&#39;</span><span class="w"> </span>/tmp/test_fixed_edges.tsv<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;^\[&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+<span class="c1"># Output: 0 (no list representations remain)</span>
+
+awk<span class="w"> </span>-F<span class="s1">&#39;\t&#39;</span><span class="w"> </span><span class="s1">&#39;$11 ~ /\|/ {print $11}&#39;</span><span class="w"> </span>/tmp/test_fixed_edges.tsv<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-5
+<span class="c1"># Output:</span>
+<span class="c1"># infores:madin_etal|infores:bactotraits</span>
+<span class="c1"># infores:madin_etal|infores:bactotraits</span>
+<span class="c1"># infores:madin_etal|infores:bactotraits</span>
+<span class="c1"># infores:madin_etal|infores:bactotraits</span>
+<span class="c1"># infores:madin_etal|infores:bactotraits</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="files-modified">
+<h2>Files Modified<a class="headerlink" href="#files-modified" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>Change</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kg_microbe/utils/diagnose_duplicates.py</span></code></p></td>
+<td><p>Created</p></td>
+<td><p>Diagnostic tool to find duplicate list values</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kg_microbe/utils/fix_list_representations.py</span></code></p></td>
+<td><p>Created</p></td>
+<td><p>Fix Python list representations to pipe-delimited</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kg_microbe/merge_utils/merge_kg.py</span></code></p></td>
+<td><p>Modified</p></td>
+<td><p>Integrate fix into post-merge processing</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="technical-details">
+<h2>Technical Details<a class="headerlink" href="#technical-details" title="Link to this heading"></a></h2>
+<section id="python-list-representation-format">
+<h3>Python List Representation Format<a class="headerlink" href="#python-list-representation-format" title="Link to this heading"></a></h3>
+<p><strong>Input</strong> (from KGX):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;[&#39;infores:madin_etal&#39;, &#39;infores:bactotraits&#39;]&quot;</span>
+</pre></div>
+</div>
+<p><strong>Parsing</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">ast</span>
+<span class="n">parsed</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="s2">&quot;[&#39;infores:madin_etal&#39;, &#39;infores:bactotraits&#39;]&quot;</span><span class="p">)</span>
+<span class="c1"># Result: [&#39;infores:madin_etal&#39;, &#39;infores:bactotraits&#39;]</span>
+</pre></div>
+</div>
+<p><strong>Output</strong> (proper TSV format):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">infores</span><span class="p">:</span><span class="n">madin_etal</span><span class="o">|</span><span class="n">infores</span><span class="p">:</span><span class="n">bactotraits</span>
+</pre></div>
+</div>
+</section>
+<section id="deduplication">
+<h3>Deduplication<a class="headerlink" href="#deduplication" title="Link to this heading"></a></h3>
+<p><strong>Input</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;[&#39;infores:chebi&#39;, &#39;infores:chebi&#39;]&quot;</span>
+</pre></div>
+</div>
+<p><strong>Output</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">infores</span><span class="p">:</span><span class="n">chebi</span>
+</pre></div>
+</div>
+</section>
+<section id="edge-cases-handled">
+<h3>Edge Cases Handled<a class="headerlink" href="#edge-cases-handled" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Duplicate column headers</strong>: File has <code class="docutils literal notranslate"><span class="pre">agent_type</span></code> twice</p></li>
+<li><p><strong>Embedded carriage returns</strong>: Header contains <code class="docutils literal notranslate"><span class="pre">agent_type\r\tknowledge_level</span></code></p></li>
+<li><p><strong>Mixed line endings</strong>: File uses <code class="docutils literal notranslate"><span class="pre">\r\n</span></code> line endings with embedded <code class="docutils literal notranslate"><span class="pre">\r</span></code></p></li>
+<li><p><strong>Empty/missing values</strong>: Handles fields that are empty or don’t exist</p></li>
+</ol>
+</section>
+</section>
+<hr class="docutils" />
+<section id="upstream-issue">
+<h2>Upstream Issue<a class="headerlink" href="#upstream-issue" title="Link to this heading"></a></h2>
+<p>This is a <strong>KGX library bug</strong>. Consider:</p>
+<ol class="arabic simple">
+<li><p>Reporting to KGX maintainers: https://github.com/biolink/kgx</p></li>
+<li><p>Checking if newer KGX versions fix this issue</p></li>
+<li><p>Adding test case to KGX for proper TSV output format</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading"></a></h2>
+<section id="manual-fix">
+<h3>Manual Fix<a class="headerlink" href="#manual-fix" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fix edges</span>
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>kg_microbe/utils/fix_list_representations.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--input<span class="w"> </span>data/merged/merged-kg_edges.tsv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output<span class="w"> </span>data/merged/merged-kg_edges_fixed.tsv
+
+<span class="c1"># Fix nodes</span>
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>kg_microbe/utils/fix_list_representations.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--input<span class="w"> </span>data/merged/merged-kg_nodes.tsv<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output<span class="w"> </span>data/merged/merged-kg_nodes_fixed.tsv
+</pre></div>
+</div>
+</section>
+<section id="automatic-fix-integrated">
+<h3>Automatic Fix (Integrated)<a class="headerlink" href="#automatic-fix-integrated" title="Link to this heading"></a></h3>
+<p>The fix now runs automatically during merge:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </span>merge<span class="w"> </span>-y<span class="w"> </span>merge.yaml
+</pre></div>
+</div>
+<p><strong>Output</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>Running KGX merge...
+✓ KGX merge complete
+
+================================================================================
+Post-Merge Category Consolidation
+================================================================================
+
+Preserving default KGX output as merged-kg_default.tar.gz...
+✓ Created merged-kg_default.tar.gz
+
+Copying _default files for post-processing...
+✓ Created working copies
+
+Fixing Python list representations to pipe-delimited format...
+✓ Processed 6,369,983 rows
+✓ Found 10,810 rows with Python list format
+✓ Fixed 10,810 fields across 10,810 rows
+✓ Processed 1,482,945 rows
+✓ Found 0 rows with Python list format
+✓ Fixed 0 fields across 0 rows
+
+Consolidating multi-category nodes using Biolink Model hierarchy...
+✓ Consolidated 1,117 multi-category nodes
+...
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="related-documentation">
+<h2>Related Documentation<a class="headerlink" href="#related-documentation" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Category consolidation: <code class="docutils literal notranslate"><span class="pre">docs/KGX_CATEGORY_INVESTIGATION.md</span></code></p></li>
+<li><p>Transform fixes: <code class="docutils literal notranslate"><span class="pre">notes/CATEGORY_FIXES_IMPLEMENTATION.md</span></code></p></li>
+<li><p>Merge configuration: <code class="docutils literal notranslate"><span class="pre">merge.yaml</span></code> (line 32: <code class="docutils literal notranslate"><span class="pre">preserve:</span> <span class="pre">-</span> <span class="pre">primary_knowledge_source</span></code>)</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

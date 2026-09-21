@@ -1,0 +1,369 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Synonym vs Same_As in KGX/Biolink Model &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Synonym vs Same_As in KGX/Biolink Model</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/SYNONYM_VS_SAMEAS.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="synonym-vs-same-as-in-kgx-biolink-model">
+<h1>Synonym vs Same_As in KGX/Biolink Model<a class="headerlink" href="#synonym-vs-same-as-in-kgx-biolink-model" title="Link to this heading"></a></h1>
+<section id="quick-answer">
+<h2>Quick Answer<a class="headerlink" href="#quick-answer" title="Link to this heading"></a></h2>
+<p><strong>Neither <code class="docutils literal notranslate"><span class="pre">synonym</span></code> nor <code class="docutils literal notranslate"><span class="pre">same_as</span></code> are required by KGX/Biolink</strong> - only <code class="docutils literal notranslate"><span class="pre">id</span></code> and <code class="docutils literal notranslate"><span class="pre">category</span></code> are required fields.</p>
+<p>However, both are valuable for data integration and should be populated when available.</p>
+</section>
+<section id="detailed-comparison">
+<h2>Detailed Comparison<a class="headerlink" href="#detailed-comparison" title="Link to this heading"></a></h2>
+<section id="synonym-node-property">
+<h3>1. <code class="docutils literal notranslate"><span class="pre">synonym</span></code> - Node Property<a class="headerlink" href="#synonym-node-property" title="Link to this heading"></a></h3>
+<p><strong>Type</strong>: Node property (attribute)
+<strong>Purpose</strong>: Alternative human-readable names for the same entity
+<strong>Biolink Definition</strong>: “Alternate human-readable names for a thing”
+<strong>Multivalued</strong>: Yes (pipe-separated in TSV: <code class="docutils literal notranslate"><span class="pre">name1</span> <span class="pre">|</span> <span class="pre">name2</span> <span class="pre">|</span> <span class="pre">name3</span></code>)</p>
+<p><strong>Example</strong>:</p>
+<div class="highlight-tsv notranslate"><div class="highlight"><pre><span></span>id: CHEBI:15377
+name: water
+synonym: H2O | dihydrogen oxide | aqua
+</pre></div>
+</div>
+<p><strong>Mappings</strong>:</p>
+<ul class="simple">
+<li><p>skos:altLabel</p></li>
+<li><p>oboInOwl:hasExactSynonym</p></li>
+<li><p>oboInOwl:hasBroadSynonym</p></li>
+<li><p>oboInOwl:hasNarrowSynonym</p></li>
+</ul>
+<p><strong>Use Case</strong>:</p>
+<ul class="simple">
+<li><p>Different names for the same concept in different contexts</p></li>
+<li><p>Common names vs scientific names</p></li>
+<li><p>Abbreviations and acronyms</p></li>
+<li><p>Historical names</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="same-as-identity-mapping">
+<h3>2. <code class="docutils literal notranslate"><span class="pre">same_as</span></code> - Identity Mapping<a class="headerlink" href="#same-as-identity-mapping" title="Link to this heading"></a></h3>
+<p><strong>Type</strong>: Predicate (in Biolink model), but stored as node property in KGX TSV
+<strong>Purpose</strong>: Equivalent identifiers for the same real-world entity
+<strong>Biolink Definition</strong>: “Holds between two entities that are considered equivalent to each other”
+<strong>Multivalued</strong>: Yes (pipe-separated in TSV)</p>
+<p><strong>Example</strong>:</p>
+<div class="highlight-tsv notranslate"><div class="highlight"><pre><span></span>id: CHEBI:15377
+same_as: KEGG.COMPOUND:C00001 | PUBCHEM.COMPOUND:962 | HMDB:HMDB0002111
+</pre></div>
+</div>
+<p><strong>Mappings</strong>:</p>
+<ul class="simple">
+<li><p>owl:sameAs</p></li>
+<li><p>skos:exactMatch</p></li>
+<li><p>WIKIDATA_PROPERTY:P2888</p></li>
+</ul>
+<p><strong>Use Case</strong>:</p>
+<ul class="simple">
+<li><p>Linking identifiers from different databases</p></li>
+<li><p>Cross-referencing equivalent concepts</p></li>
+<li><p>Merging knowledge from multiple sources</p></li>
+<li><p>Enabling federated queries</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="semantic-difference">
+<h2>Semantic Difference<a class="headerlink" href="#semantic-difference" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Aspect</p></th>
+<th class="head"><p>synonym</p></th>
+<th class="head"><p>same_as</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>What it represents</strong></p></td>
+<td><p>Alternative labels/names</p></td>
+<td><p>Equivalent identifiers</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Applies to</strong></p></td>
+<td><p>Single entity’s names</p></td>
+<td><p>Multiple entities (cross-database)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Value type</strong></p></td>
+<td><p>Human-readable strings</p></td>
+<td><p>CURIEs/identifiers</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Biolink type</strong></p></td>
+<td><p>Node property</p></td>
+<td><p>Predicate (stored as node property in TSV)</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Symmetry</strong></p></td>
+<td><p>N/A</p></td>
+<td><p>Symmetric (A same_as B ⟺ B same_as A)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Purpose</strong></p></td>
+<td><p>Improve human readability</p></td>
+<td><p>Enable data integration</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="kg-microbe-usage">
+<h2>KG-Microbe Usage<a class="headerlink" href="#kg-microbe-usage" title="Link to this heading"></a></h2>
+<section id="current-node-header-8-columns">
+<h3>Current Node Header (8 columns)<a class="headerlink" href="#current-node-header-8-columns" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="nb">id</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">xref</span><span class="p">,</span> <span class="n">provided_by</span><span class="p">,</span> <span class="n">synonym</span><span class="p">,</span> <span class="n">same_as</span><span class="p">]</span>
+</pre></div>
+</div>
+</section>
+<section id="required-vs-optional">
+<h3>Required vs Optional<a class="headerlink" href="#required-vs-optional" title="Link to this heading"></a></h3>
+<p><strong>Required (by Biolink/KGX)</strong>:</p>
+<ul class="simple">
+<li><p>✅ <code class="docutils literal notranslate"><span class="pre">id</span></code> - Unique identifier (CURIE format)</p></li>
+<li><p>✅ <code class="docutils literal notranslate"><span class="pre">category</span></code> - Biolink category (e.g., biolink:ChemicalEntity)</p></li>
+</ul>
+<p><strong>Recommended (for data quality)</strong>:</p>
+<ul class="simple">
+<li><p>⭐ <code class="docutils literal notranslate"><span class="pre">name</span></code> - Primary label</p></li>
+<li><p>⭐ <code class="docutils literal notranslate"><span class="pre">provided_by</span></code> - Knowledge source (infores:*)</p></li>
+</ul>
+<p><strong>Optional (but valuable)</strong>:</p>
+<ul class="simple">
+<li><p>📝 <code class="docutils literal notranslate"><span class="pre">synonym</span></code> - Alternative names</p></li>
+<li><p>🔗 <code class="docutils literal notranslate"><span class="pre">same_as</span></code> - Equivalent identifiers</p></li>
+<li><p>📄 <code class="docutils literal notranslate"><span class="pre">description</span></code> - Longer description</p></li>
+<li><p>🔍 <code class="docutils literal notranslate"><span class="pre">xref</span></code> - External cross-references</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="examples-from-kg-microbe">
+<h2>Examples from KG-Microbe<a class="headerlink" href="#examples-from-kg-microbe" title="Link to this heading"></a></h2>
+<section id="bacdive-organism-node">
+<h3>BacDive Organism Node<a class="headerlink" href="#bacdive-organism-node" title="Link to this heading"></a></h3>
+<div class="highlight-tsv notranslate"><div class="highlight"><pre><span></span>id: NCBITaxon:562
+category: biolink:OrganismTaxon
+name: Escherichia coli
+synonym: E. coli | ATCC 11775
+same_as:
+provided_by: infores:bacdive
+</pre></div>
+</div>
+</section>
+<section id="chebi-chemical-node-from-ontologies">
+<h3>ChEBI Chemical Node (from ontologies)<a class="headerlink" href="#chebi-chemical-node-from-ontologies" title="Link to this heading"></a></h3>
+<div class="highlight-tsv notranslate"><div class="highlight"><pre><span></span>id: CHEBI:16236
+category: biolink:ChemicalEntity
+name: ethanol
+synonym: ethyl alcohol | EtOH | grain alcohol | C2H5OH
+same_as: KEGG.COMPOUND:C00469 | HMDB:HMDB0000108
+provided_by: infores:chebi
+</pre></div>
+</div>
+</section>
+<section id="mediadive-medium-component">
+<h3>MediaDive Medium Component<a class="headerlink" href="#mediadive-medium-component" title="Link to this heading"></a></h3>
+<div class="highlight-tsv notranslate"><div class="highlight"><pre><span></span>id: CHEBI:17234
+category: biolink:ChemicalEntity
+name: glucose
+synonym: dextrose | D-glucose | grape sugar
+same_as: KEGG.COMPOUND:C00293
+provided_by: infores:mediadive
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="when-to-use-each">
+<h2>When to Use Each<a class="headerlink" href="#when-to-use-each" title="Link to this heading"></a></h2>
+<section id="use-synonym-when-you-have">
+<h3>Use <code class="docutils literal notranslate"><span class="pre">synonym</span></code> when you have:<a class="headerlink" href="#use-synonym-when-you-have" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Common names vs scientific names</p></li>
+<li><p>Abbreviations</p></li>
+<li><p>Historical/deprecated names</p></li>
+<li><p>Names in different languages</p></li>
+<li><p>Different naming conventions</p></li>
+</ul>
+</section>
+<section id="use-same-as-when-you-have">
+<h3>Use <code class="docutils literal notranslate"><span class="pre">same_as</span></code> when you have:<a class="headerlink" href="#use-same-as-when-you-have" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Identifiers from other databases</p></li>
+<li><p>Multiple CURIEs for the same concept</p></li>
+<li><p>Owl:sameAs assertions</p></li>
+<li><p>SKOS exact matches</p></li>
+<li><p>Cross-reference mappings</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="implementation-notes">
+<h2>Implementation Notes<a class="headerlink" href="#implementation-notes" title="Link to this heading"></a></h2>
+<section id="in-create-node-row-helper">
+<h3>In <code class="docutils literal notranslate"><span class="pre">_create_node_row()</span></code> Helper<a class="headerlink" href="#in-create-node-row-helper" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_create_node_row</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">node_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">category</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">xref</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">synonym</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>      <span class="c1"># Pipe-separated alternative names</span>
+    <span class="n">same_as</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>      <span class="c1"># Pipe-separated equivalent CURIEs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a properly formatted node row with all columns.&quot;&quot;&quot;</span>
+    <span class="n">node_row</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">node_header</span><span class="p">)</span>
+    <span class="n">node_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">node_id</span>           <span class="c1"># REQUIRED</span>
+    <span class="n">node_row</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">category</span>          <span class="c1"># REQUIRED</span>
+    <span class="n">node_row</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">name</span>              <span class="c1"># Recommended</span>
+    <span class="n">node_row</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">description</span>       <span class="c1"># Optional</span>
+    <span class="n">node_row</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="n">xref</span>              <span class="c1"># Optional</span>
+    <span class="n">node_row</span><span class="p">[</span><span class="mi">5</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">knowledge_source</span>  <span class="c1"># Recommended</span>
+    <span class="n">node_row</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">=</span> <span class="n">synonym</span>           <span class="c1"># Optional</span>
+    <span class="n">node_row</span><span class="p">[</span><span class="mi">7</span><span class="p">]</span> <span class="o">=</span> <span class="n">same_as</span>           <span class="c1"># Optional</span>
+    <span class="k">return</span> <span class="n">node_row</span>
+</pre></div>
+</div>
+</section>
+<section id="populating-values">
+<h3>Populating Values<a class="headerlink" href="#populating-values" title="Link to this heading"></a></h3>
+<p><strong>For synonym</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># From BacDive LPSN data</span>
+<span class="n">synonyms</span> <span class="o">=</span> <span class="n">lpsn</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">SYNONYMS</span><span class="p">,</span> <span class="p">{})</span>
+<span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">synonyms</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+    <span class="n">synonym_parsed</span> <span class="o">=</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">synonym</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">SYNONYM</span><span class="p">,</span> <span class="p">{})</span> <span class="k">for</span> <span class="n">synonym</span> <span class="ow">in</span> <span class="n">synonyms</span>
+    <span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>For same_as</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># From cross-reference mappings</span>
+<span class="n">equivalent_ids</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="sa">f</span><span class="s2">&quot;KEGG.COMPOUND:</span><span class="si">{</span><span class="n">kegg_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+    <span class="sa">f</span><span class="s2">&quot;PUBCHEM.COMPOUND:</span><span class="si">{</span><span class="n">pubchem_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">same_as</span> <span class="o">=</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">equivalent_ids</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="best-practices">
+<h2>Best Practices<a class="headerlink" href="#best-practices" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Always populate if available</strong> - Both fields enhance data integration</p></li>
+<li><p><strong>Use pipe separator</strong> - <code class="docutils literal notranslate"><span class="pre">|</span></code> with spaces: <code class="docutils literal notranslate"><span class="pre">&quot;name1</span> <span class="pre">|</span> <span class="pre">name2</span> <span class="pre">|</span> <span class="pre">name3&quot;</span></code></p></li>
+<li><p><strong>Use CURIEs in same_as</strong> - Not human-readable names</p></li>
+<li><p><strong>Don’t duplicate in synonym</strong> - If it’s in <code class="docutils literal notranslate"><span class="pre">name</span></code>, don’t repeat in <code class="docutils literal notranslate"><span class="pre">synonym</span></code></p></li>
+<li><p><strong>Be consistent</strong> - Use same format across all transforms</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://kgx.readthedocs.io/">KGX Documentation</a></p></li>
+<li><p><a class="reference external" href="https://biolink.github.io/biolink-model/">Biolink Model Documentation</a></p></li>
+<li><p><a class="reference external" href="https://biolink.github.io/biolink-model/synonym/">Biolink Model: synonym slot</a></p></li>
+<li><p><a class="reference external" href="https://biolink.github.io/biolink-model/same_as/">Biolink Model: same as predicate</a></p></li>
+<li><p><a class="reference external" href="https://academic.oup.com/bioinformatics/article/39/7/btad418/7211646">KG-Hub paper</a></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,21 @@
+kg\_microbe.transform\_utils.bactotraits package
+================================================
+
+Submodules
+----------
+
+kg\_microbe.transform\_utils.bactotraits.bactotraits module
+-----------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bactotraits.bactotraits
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.transform_utils.bactotraits
+   :members:
+   :undoc-members:
+   :show-inheritance:

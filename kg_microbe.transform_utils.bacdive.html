@@ -1,0 +1,476 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kg_microbe.transform_utils.bacdive package &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="kg_microbe.transform_utils.bactotraits package" href="kg_microbe.transform_utils.bactotraits.html" />
+    <link rel="prev" title="kg_microbe.transform_utils package" href="kg_microbe.transform_utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">kg_microbe</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="kg_microbe.html">kg_microbe package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="kg_microbe.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.merge_utils.html">kg_microbe.merge_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.query_utils.html">kg_microbe.query_utils package</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html">kg_microbe.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.bactotraits_to_mongo">kg_microbe.bactotraits_to_mongo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.download">kg_microbe.download module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.query">kg_microbe.query module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.run">kg_microbe.run module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.transform">kg_microbe.transform module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">kg_microbe</a></li>
+          <li class="breadcrumb-item"><a href="kg_microbe.html">kg_microbe package</a></li>
+          <li class="breadcrumb-item"><a href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a></li>
+      <li class="breadcrumb-item active">kg_microbe.transform_utils.bacdive package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/kg_microbe.transform_utils.bacdive.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kg-microbe-transform-utils-bacdive-package">
+<h1>kg_microbe.transform_utils.bacdive package<a class="headerlink" href="#kg-microbe-transform-utils-bacdive-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-kg_microbe.transform_utils.bacdive.bacdive">
+<span id="kg-microbe-transform-utils-bacdive-bacdive-module"></span><h2>kg_microbe.transform_utils.bacdive.bacdive module<a class="headerlink" href="#module-kg_microbe.transform_utils.bacdive.bacdive" title="Link to this heading"></a></h2>
+<p>BacDive KG transform.</p>
+<p>Input: any file in data/raw/ (that was downloaded by placing a URL in incoming.txt/yaml
+and running <cite>run.py download</cite>.</p>
+<p>Output: transformed data in data/raw/bacdive_strains.json:</p>
+<p>Output these two files:
+- nodes.tsv
+- edges.tsv</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.bacdive.</span></span><span class="sig-name descname"><span class="pre">BacDiveTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
+<p>Template for how the transform class would be designed.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.DATA_INPUTS">
+<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/isolation_source_to_ontology.tsv',</span> <span class="pre">'mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Repo-relative curation files this transform reads, beyond its own
+<code class="docutils literal notranslate"><span class="pre">data/raw/</span></code> download.</p>
+<p>Declared so freshness tooling can tell that an output is stale against
+its <em>data</em> rather than only its code. Without it a mapping correction
+lands, every consumer keeps reporting FRESH, and a re-merge silently
+ships the old groundings: #778 corrected 16 isolation-source ids and
+#786 rewrote the unified chemical SSSOM, and the merged KG built
+afterwards still asserted 75 organisms isolated from a “Cell Line”,
+because nothing re-ran the transforms that read those files (#812).</p>
+<p>Paths are relative to the repo root. Keep them tracked in git — the
+freshness check uses commit time, not mtime, because <cite>git checkout</cite>
+rewrites mtimes without changing content (#797).</p>
+<p>List <strong>every</strong> curation file read, not a representative one. A partial
+declaration fails silently and looks identical to a complete one:
+ontologies_stubs declared 1 of the 11 files it read and was reported
+fresh after changes to the other ten (#839). Where the set comes from a
+constant, derive this from it rather than restating it.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.TRANSFORM_INPUTS">
+<span class="sig-name descname"><span class="pre">TRANSFORM_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ontologies',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.TRANSFORM_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Reads <code class="docutils literal notranslate"><span class="pre">ontologies/ncbitaxon_nodes.tsv</span></code> and <code class="docutils literal notranslate"><span class="pre">ontologies/chebi_nodes.tsv</span></code>
+via NCBITAXON_NODES_FILE / CHEBI_NODES_FILE. Undeclared until #1035: the
+path lives in constants.py, so the cross-transform guard never saw it.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.run" title="Link to this definition"></a></dt>
+<dd><p>Run the transformation.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.bacdive.emission">
+<span id="kg-microbe-transform-utils-bacdive-emission-module"></span><h2>kg_microbe.transform_utils.bacdive.emission module<a class="headerlink" href="#module-kg_microbe.transform_utils.bacdive.emission" title="Link to this heading"></a></h2>
+<p>KGX row-emission helpers for the BacDive transform.</p>
+<dl class="py data">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.DEPOSIT_CONFLICT_HEADER">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">DEPOSIT_CONFLICT_HEADER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['strain_id',</span> <span class="pre">'parent_count',</span> <span class="pre">'parents',</span> <span class="pre">'bacdive_ids',</span> <span class="pre">'resolution',</span> <span class="pre">'asserted_parent']</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.DEPOSIT_CONFLICT_HEADER" title="Link to this definition"></a></dt>
+<dd><p>Header of the deposit-claim report written alongside nodes.tsv / edges.tsv.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.RESOLUTION_COLLAPSED">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">RESOLUTION_COLLAPSED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'collapsed'</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.RESOLUTION_COLLAPSED" title="Link to this definition"></a></dt>
+<dd><p>The claims sat on one lineage; the shared ancestor was asserted (#898).</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.RESOLUTION_SUPPRESSED">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">RESOLUTION_SUPPRESSED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'suppressed'</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.RESOLUTION_SUPPRESSED" title="Link to this definition"></a></dt>
+<dd><p>The claims were disjoint; no parent was asserted.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.RESOLUTION_SUPPRESSED_NO_ANCESTRY">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">RESOLUTION_SUPPRESSED_NO_ANCESTRY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'suppressed_ancestry_unavailable'</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.RESOLUTION_SUPPRESSED_NO_ANCESTRY" title="Link to this definition"></a></dt>
+<dd><p>Ancestry for at least one claim could not be read, so the claims could not be
+compared and the deposit was suppressed as a precaution rather than a verdict.
+Distinguishing this matters – a degraded NCBITaxon adapter otherwise looks
+exactly like a data problem in BacDive (#897).</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.StrainProvenanceWriter">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">StrainProvenanceWriter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inner_writer</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knowledge_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ks_column_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">publications_column_index</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.StrainProvenanceWriter" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Keep PKS scalar and attach a BacDive record page to strain-derived evidence.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.StrainProvenanceWriter.writerow">
+<span class="sig-name descname"><span class="pre">writerow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.StrainProvenanceWriter.writerow" title="Link to this definition"></a></dt>
+<dd><p>Write one row, augmenting bare source provenance when applicable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.StrainProvenanceWriter.writerows">
+<span class="sig-name descname"><span class="pre">writerows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rows</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.StrainProvenanceWriter.writerows" title="Link to this definition"></a></dt>
+<dd><p>Apply provenance augmentation to a sequence of rows.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.contested_deposit_description">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">contested_deposit_description</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parents</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.contested_deposit_description" title="Link to this definition"></a></dt>
+<dd><p>Explain, on the node itself, why a contested deposit has no edges (#907).</p>
+<p>A deposit whose claimants disagreed gets neither a parent nor a link to the
+records that cited it, which leaves an organism-typed node with a culture
+number for a label and nothing else – indistinguishable from an ingest gap.
+The description says which taxa were claimed so the emptiness reads as a
+decision.</p>
+<p>Scoped to BacDive on purpose: 55 of these deposits are the object of an LPSN
+<code class="docutils literal notranslate"><span class="pre">close_match</span></code> edge, so a sentence claiming nothing links to the node would
+be false in the merged graph (#908). This transform cannot see LPSN’s output
+and should not try to – it states only what it did itself.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>parents</strong> – <code class="docutils literal notranslate"><span class="pre">{NCBITaxon</span> <span class="pre">CURIE:</span> <span class="pre">[BacDive</span> <span class="pre">record</span> <span class="pre">key,</span> <span class="pre">...]}</span></code> for the deposit.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>One-sentence description naming the conflicting claims.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.deposit_conflict_rows">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">deposit_conflict_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contested</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.deposit_conflict_rows" title="Link to this definition"></a></dt>
+<dd><p>Render contested deposit claims as report rows.</p>
+<p>The report is the record that a claim existed and what became of it, so a
+consumer can recover the taxonomy that was suppressed, and see which deposits
+had theirs coarsened to a shared ancestor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contested</strong> – <code class="docutils literal notranslate"><span class="pre">contested</span></code> as returned by <a class="reference internal" href="#kg_microbe.transform_utils.bacdive.emission.resolve_deposit_parents" title="kg_microbe.transform_utils.bacdive.emission.resolve_deposit_parents"><code class="xref py py-func docutils literal notranslate"><span class="pre">resolve_deposit_parents()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>List of rows matching <a class="reference internal" href="#kg_microbe.transform_utils.bacdive.emission.DEPOSIT_CONFLICT_HEADER" title="kg_microbe.transform_utils.bacdive.emission.DEPOSIT_CONFLICT_HEADER"><code class="xref py py-data docutils literal notranslate"><span class="pre">DEPOSIT_CONFLICT_HEADER</span></code></a>.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.entailed_by_every_claim">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">entailed_by_every_claim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ancestors_of</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.entailed_by_every_claim" title="Link to this definition"></a></dt>
+<dd><p>Return the one claimed taxon that every other claim entails, or None.</p>
+<p>Claims can differ without contradicting each other: one record records the
+species (<code class="docutils literal notranslate"><span class="pre">Brevundimonas</span> <span class="pre">vesicularis</span></code>) and another the strain beneath it
+(<code class="docutils literal notranslate"><span class="pre">Brevundimonas</span> <span class="pre">vesicularis</span> <span class="pre">NBRC</span> <span class="pre">12165</span></code>). The species claim is true either
+way, so it is the strongest statement all claimants support, and asserting it
+privileges neither record. Only a claim that was actually made is eligible –
+falling back to a computed common ancestor would put a taxon nobody claimed
+(often just <code class="docutils literal notranslate"><span class="pre">Bacteria</span></code>) on the node.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parents</strong> – Iterable of claimed NCBITaxon CURIEs.</p></li>
+<li><p><strong>ancestors_of</strong> – Callable mapping a CURIE to its proper <code class="docutils literal notranslate"><span class="pre">is_a</span></code>
+ancestors, or None when no ontology is available.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The entailed CURIE, or None when the claims are disjoint.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.resolution_asserts_a_parent">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">resolution_asserts_a_parent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resolution</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.resolution_asserts_a_parent" title="Link to this definition"></a></dt>
+<dd><p>Report whether a resolution left the deposit with a parent taxon.</p>
+<p>Used to decide whether a record may be linked to the deposit at all. A
+deposit that got a parent is one identifier its claimants agree about, so
+linking to it is sound. One that got none is a designation two unrelated
+organisms happen to share, and <code class="docutils literal notranslate"><span class="pre">biolink:close_match</span></code> – symmetric, and
+mapped to <code class="docutils literal notranslate"><span class="pre">SEMMEDDB:same_as</span></code> – would put those organisms two hops apart
+(#899).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>resolution</strong> – One of the <code class="docutils literal notranslate"><span class="pre">RESOLUTION_*</span></code> values.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True when a parent was asserted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.resolve_deposit_parents">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">resolve_deposit_parents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">claims</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ancestors_of</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ancestry_failed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.resolve_deposit_parents" title="Link to this definition"></a></dt>
+<dd><p>Decide which culture-collection deposits may assert a parent taxon (#892).</p>
+<p>A deposit number such as <code class="docutils literal notranslate"><span class="pre">ATCC</span> <span class="pre">13722</span></code> identifies a physical deposit, not a
+BacDive record, so several records can cite the same one. When they disagree
+about the taxon, emitting one <code class="docutils literal notranslate"><span class="pre">subclass_of</span></code> edge per claiming record leaves
+the deposit node with several parents and nothing to tell them apart, so a
+consumer that takes “the” parent gets whichever one file order put first.</p>
+<p>A parent is asserted when the claimants agree outright, and when they differ
+only in depth along one lineage – there the shared ancestor is asserted, per
+<a class="reference internal" href="#kg_microbe.transform_utils.bacdive.emission.entailed_by_every_claim" title="kg_microbe.transform_utils.bacdive.emission.entailed_by_every_claim"><code class="xref py py-func docutils literal notranslate"><span class="pre">entailed_by_every_claim()</span></code></a>. Genuinely disjoint claims get no edge.</p>
+<p>Every deposit with more than one claim is reported, whichever way it went, so
+the report answers “what happened here and why” rather than listing only the
+half that lost its edge (#898).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>claims</strong> – <code class="docutils literal notranslate"><span class="pre">{strain</span> <span class="pre">CURIE:</span> <span class="pre">{NCBITaxon</span> <span class="pre">CURIE:</span> <span class="pre">[BacDive</span> <span class="pre">record</span> <span class="pre">key,</span> <span class="pre">...]}}</span></code>.</p></li>
+<li><p><strong>ancestors_of</strong> – Callable mapping an NCBITaxon CURIE to its proper <code class="docutils literal notranslate"><span class="pre">is_a</span></code>
+ancestors. When None, any disagreement is treated as a conflict.</p></li>
+<li><p><strong>ancestry_failed</strong> – Callable reporting whether a CURIE’s ancestry could not
+be read, used to mark a suppression that is a precaution rather than a
+verdict (#897). When None, no suppression is marked that way.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(resolved,</span> <span class="pre">contested)</span></code>. <code class="docutils literal notranslate"><span class="pre">resolved</span></code> is a sorted list of
+<code class="docutils literal notranslate"><span class="pre">(strain</span> <span class="pre">CURIE,</span> <span class="pre">NCBITaxon</span> <span class="pre">CURIE)</span></code> pairs to emit. <code class="docutils literal notranslate"><span class="pre">contested</span></code> is a sorted
+list of <code class="docutils literal notranslate"><span class="pre">(strain</span> <span class="pre">CURIE,</span> <span class="pre">claims,</span> <span class="pre">resolution,</span> <span class="pre">asserted</span> <span class="pre">parent)</span></code> for every
+deposit with more than one claim; <code class="docutils literal notranslate"><span class="pre">asserted</span> <span class="pre">parent</span></code> is empty when none was.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.bacdive">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-kg_microbe.transform_utils.bacdive" title="Link to this heading"></a></h2>
+<p>BacDive transform.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.</span></span><span class="sig-name descname"><span class="pre">BacDiveTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
+<p>Template for how the transform class would be designed.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.DATA_INPUTS">
+<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/isolation_source_to_ontology.tsv',</span> <span class="pre">'mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Repo-relative curation files this transform reads, beyond its own
+<code class="docutils literal notranslate"><span class="pre">data/raw/</span></code> download.</p>
+<p>Declared so freshness tooling can tell that an output is stale against
+its <em>data</em> rather than only its code. Without it a mapping correction
+lands, every consumer keeps reporting FRESH, and a re-merge silently
+ships the old groundings: #778 corrected 16 isolation-source ids and
+#786 rewrote the unified chemical SSSOM, and the merged KG built
+afterwards still asserted 75 organisms isolated from a “Cell Line”,
+because nothing re-ran the transforms that read those files (#812).</p>
+<p>Paths are relative to the repo root. Keep them tracked in git — the
+freshness check uses commit time, not mtime, because <cite>git checkout</cite>
+rewrites mtimes without changing content (#797).</p>
+<p>List <strong>every</strong> curation file read, not a representative one. A partial
+declaration fails silently and looks identical to a complete one:
+ontologies_stubs declared 1 of the 11 files it read and was reported
+fresh after changes to the other ten (#839). Where the set comes from a
+constant, derive this from it rather than restating it.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.TRANSFORM_INPUTS">
+<span class="sig-name descname"><span class="pre">TRANSFORM_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ontologies',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.TRANSFORM_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Reads <code class="docutils literal notranslate"><span class="pre">ontologies/ncbitaxon_nodes.tsv</span></code> and <code class="docutils literal notranslate"><span class="pre">ontologies/chebi_nodes.tsv</span></code>
+via NCBITAXON_NODES_FILE / CHEBI_NODES_FILE. Undeclared until #1035: the
+path lives in constants.py, so the cross-transform guard never saw it.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.assay_edges_generated">
+<span class="sig-name descname"><span class="pre">assay_edges_generated</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.assay_edges_generated" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.assay_nodes_generated">
+<span class="sig-name descname"><span class="pre">assay_nodes_generated</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.assay_nodes_generated" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.assay_raw_data">
+<span class="sig-name descname"><span class="pre">assay_raw_data</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.assay_raw_data" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.assay_target_nodes_generated">
+<span class="sig-name descname"><span class="pre">assay_target_nodes_generated</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.assay_target_nodes_generated" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.chebi_categories">
+<span class="sig-name descname"><span class="pre">chebi_categories</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.chebi_categories" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.isolation_source_mappings">
+<span class="sig-name descname"><span class="pre">isolation_source_mappings</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><span class="pre">]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.isolation_source_mappings" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.ncbitaxon_fallback_cache">
+<span class="sig-name descname"><span class="pre">ncbitaxon_fallback_cache</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.ncbitaxon_fallback_cache" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.ncbitaxon_labels">
+<span class="sig-name descname"><span class="pre">ncbitaxon_labels</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.ncbitaxon_labels" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.ncbitaxon_name_to_id">
+<span class="sig-name descname"><span class="pre">ncbitaxon_name_to_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.ncbitaxon_name_to_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.ncbitaxon_synonyms">
+<span class="sig-name descname"><span class="pre">ncbitaxon_synonyms</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">frozenset</span></code><span class="pre">]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.ncbitaxon_synonyms" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.pathogenicity_mappings">
+<span class="sig-name descname"><span class="pre">pathogenicity_mappings</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><span class="pre">]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.pathogenicity_mappings" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.phenotype_routing">
+<span class="sig-name descname"><span class="pre">phenotype_routing</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.phenotype_routing" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.run" title="Link to this definition"></a></dt>
+<dd><p>Run the transformation.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="kg_microbe.transform_utils.html" class="btn btn-neutral float-left" title="kg_microbe.transform_utils package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="kg_microbe.transform_utils.bactotraits.html" class="btn btn-neutral float-right" title="kg_microbe.transform_utils.bactotraits package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

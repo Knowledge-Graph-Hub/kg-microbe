@@ -1,0 +1,21 @@
+kg\_microbe.transform\_utils.madin\_etal package
+================================================
+
+Submodules
+----------
+
+kg\_microbe.transform\_utils.madin\_etal.madin\_etal module
+-----------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.madin_etal.madin_etal
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.transform_utils.madin_etal
+   :members:
+   :undoc-members:
+   :show-inheritance:

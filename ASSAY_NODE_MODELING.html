@@ -1,0 +1,658 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>API Kit Assay Node Modeling &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">API Kit Assay Node Modeling</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/ASSAY_NODE_MODELING.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="api-kit-assay-node-modeling">
+<h1>API Kit Assay Node Modeling<a class="headerlink" href="#api-kit-assay-node-modeling" title="Link to this heading"></a></h1>
+<p><strong>Date</strong>: 2026-01-12
+<strong>Status</strong>: PROPOSAL
+<strong>Metadata Source</strong>: https://raw.githubusercontent.com/CultureBotAI/assay-metadata/refs/heads/main/data/assay_kits_simple.json</p>
+<hr class="docutils" />
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>This document proposes modeling API (Analytical Profile Index) kit assays as explicit nodes in the knowledge graph at the individual test component level. Currently, organism-to-enzyme/chemical relationships are represented directly; this proposal introduces intermediate assay nodes to capture methodological information.</p>
+</section>
+<hr class="docutils" />
+<section id="current-implementation">
+<h2>Current Implementation<a class="headerlink" href="#current-implementation" title="Link to this heading"></a></h2>
+<section id="direct-relationships-no-assay-nodes">
+<h3>Direct Relationships (No Assay Nodes)<a class="headerlink" href="#direct-relationships-no-assay-nodes" title="Link to this heading"></a></h3>
+<p><strong>Enzyme Tests:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">NCBITaxon</span><span class="p">:</span><span class="mi">1234</span> <span class="o">--</span><span class="n">METPO</span><span class="p">:</span><span class="mi">2000302</span> <span class="p">(</span><span class="n">shows_activity_of</span><span class="p">)</span><span class="o">--&gt;</span> <span class="n">GO</span><span class="p">:</span><span class="mi">0004035</span> <span class="p">(</span><span class="n">alkaline</span> <span class="n">phosphatase</span><span class="p">)</span>
+<span class="n">NCBITaxon</span><span class="p">:</span><span class="mi">1234</span> <span class="o">--</span><span class="n">METPO</span><span class="p">:</span><span class="mi">2000303</span> <span class="p">(</span><span class="n">does_not_show_activity_of</span><span class="p">)</span><span class="o">--&gt;</span> <span class="n">GO</span><span class="p">:</span><span class="mi">0016788</span> <span class="p">(</span><span class="n">esterase</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Chemical Tests:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">NCBITaxon</span><span class="p">:</span><span class="mi">1234</span> <span class="o">--</span><span class="n">METPO</span><span class="p">:</span><span class="mi">2000011</span> <span class="p">(</span><span class="n">ferments</span><span class="p">)</span><span class="o">--&gt;</span> <span class="n">CHEBI</span><span class="p">:</span><span class="mi">17113</span> <span class="p">(</span><span class="n">erythritol</span><span class="p">)</span>
+<span class="n">NCBITaxon</span><span class="p">:</span><span class="mi">1234</span> <span class="o">--</span><span class="n">METPO</span><span class="p">:</span><span class="mi">2000037</span> <span class="p">(</span><span class="n">does_not_ferment</span><span class="p">)</span><span class="o">--&gt;</span> <span class="n">CHEBI</span><span class="p">:</span><span class="mi">16731</span> <span class="p">(</span><span class="n">D</span><span class="o">-</span><span class="n">arabinose</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Implementation:</strong></p>
+<ul class="simple">
+<li><p>File: <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/bacdive/bacdive.py</span></code> (lines 2315-2434)</p></li>
+<li><p>Mappings loaded from remote JSON via <code class="docutils literal notranslate"><span class="pre">load_assay_kit_mappings()</span></code> in <code class="docutils literal notranslate"><span class="pre">mapping_file_utils.py</span></code></p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="proposed-implementation">
+<h2>Proposed Implementation<a class="headerlink" href="#proposed-implementation" title="Link to this heading"></a></h2>
+<section id="with-assay-nodes-three-part-relationship">
+<h3>With Assay Nodes (Three-Part Relationship)<a class="headerlink" href="#with-assay-nodes-three-part-relationship" title="Link to this heading"></a></h3>
+<p>Create intermediate assay nodes representing individual test components:</p>
+<p><strong>Enzyme Tests:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">NCBITaxon</span><span class="p">:</span><span class="mi">1234</span> <span class="o">--</span><span class="p">[</span><span class="n">outcome</span> <span class="n">predicate</span><span class="p">]</span><span class="o">--&gt;</span> <span class="n">assay</span><span class="p">:</span><span class="n">API_zym_alkaline_phosphatase</span>
+<span class="n">assay</span><span class="p">:</span><span class="n">API_zym_alkaline_phosphatase</span> <span class="o">--</span><span class="n">biolink</span><span class="p">:</span><span class="n">has_output</span><span class="o">--&gt;</span> <span class="n">GO</span><span class="p">:</span><span class="mi">0004035</span>
+</pre></div>
+</div>
+<p><strong>Chemical Tests:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">NCBITaxon</span><span class="p">:</span><span class="mi">1234</span> <span class="o">--</span><span class="p">[</span><span class="n">outcome</span> <span class="n">predicate</span><span class="p">]</span><span class="o">--&gt;</span> <span class="n">assay</span><span class="p">:</span><span class="n">API_50CHac_ERY</span>
+<span class="n">assay</span><span class="p">:</span><span class="n">API_50CHac_ERY</span> <span class="o">--</span><span class="n">biolink</span><span class="p">:</span><span class="n">has_input</span><span class="o">--&gt;</span> <span class="n">CHEBI</span><span class="p">:</span><span class="mi">17113</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="assay-node-structure">
+<h2>Assay Node Structure<a class="headerlink" href="#assay-node-structure" title="Link to this heading"></a></h2>
+<section id="node-format">
+<h3>Node Format<a class="headerlink" href="#node-format" title="Link to this heading"></a></h3>
+<p>Each well/test component becomes a node:</p>
+<div class="highlight-tsv notranslate"><div class="highlight"><pre><span></span>id: assay:API_zym_alkaline_phosphatase
+category: biolink:Procedure
+name: API zym - Alkaline phosphatase test
+description: Tests for Alkaline phosphatase activity using chromogenic substrate
+</pre></div>
+</div>
+</section>
+<section id="node-id-pattern">
+<h3>Node ID Pattern<a class="headerlink" href="#node-id-pattern" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">assay</span><span class="p">:{</span><span class="n">KIT_NAME</span><span class="p">}</span><span class="n">_</span><span class="p">{</span><span class="n">TEST_NAME</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Examples:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">assay:API_zym_alkaline_phosphatase</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">assay:API_50CHac_ERY</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">assay:API_20NE_nitrate_reduction</span></code></p></li>
+</ul>
+</section>
+<section id="node-category">
+<h3>Node Category<a class="headerlink" href="#node-category" title="Link to this heading"></a></h3>
+<p><strong>Recommended</strong>: <code class="docutils literal notranslate"><span class="pre">biolink:Procedure</span></code></p>
+<p><strong>Rationale:</strong></p>
+<ul class="simple">
+<li><p>Assays are methodological procedures, not biological processes</p></li>
+<li><p>Biolink defines Procedure as “A series of actions conducted in a certain order or manner”</p></li>
+<li><p>Alternative considered: <code class="docutils literal notranslate"><span class="pre">biolink:InformationContentEntity</span></code> (less semantically appropriate)</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="predicate-recommendations">
+<h2>Predicate Recommendations<a class="headerlink" href="#predicate-recommendations" title="Link to this heading"></a></h2>
+<section id="organism-assay-test-outcome">
+<h3>1. Organism → Assay (Test Outcome)<a class="headerlink" href="#organism-assay-test-outcome" title="Link to this heading"></a></h3>
+<p>The predicate depends on <strong>test type</strong> and <strong>test result</strong>.</p>
+<section id="option-a-use-biolink-standard-predicates">
+<h4>Option A: Use Biolink Standard Predicates<a class="headerlink" href="#option-a-use-biolink-standard-predicates" title="Link to this heading"></a></h4>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Test Type</p></th>
+<th class="head"><p>Result</p></th>
+<th class="head"><p>Biolink Predicate</p></th>
+<th class="head"><p>Relation (RO/NCIT)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>enzyme</p></td>
+<td><p>positive</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">biolink:capable_of</span></code></p></td>
+<td><p>RO:0002215 (capable of)</p></td>
+</tr>
+<tr class="row-odd"><td><p>enzyme</p></td>
+<td><p>negative</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">biolink:lacks_part</span></code></p></td>
+<td><p>RO:0002220 (lacks part)</p></td>
+</tr>
+<tr class="row-even"><td><p>chemical</p></td>
+<td><p>positive</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">biolink:metabolizes</span></code></p></td>
+<td><p>RO:0002160 (metabolizes)</p></td>
+</tr>
+<tr class="row-odd"><td><p>chemical</p></td>
+<td><p>negative</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">biolink:lacks_part</span></code></p></td>
+<td><p>RO:0002220 (lacks part)</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Positive enzyme test</span>
+<span class="n">NCBITaxon</span><span class="p">:</span><span class="mi">1234</span> <span class="o">--</span><span class="n">biolink</span><span class="p">:</span><span class="n">capable_of</span><span class="o">--&gt;</span> <span class="n">assay</span><span class="p">:</span><span class="n">API_zym_alkaline_phosphatase</span>
+
+<span class="c1"># Negative chemical test</span>
+<span class="n">NCBITaxon</span><span class="p">:</span><span class="mi">1234</span> <span class="o">--</span><span class="n">biolink</span><span class="p">:</span><span class="n">lacks_part</span><span class="o">--&gt;</span> <span class="n">assay</span><span class="p">:</span><span class="n">API_50CHac_ERY</span>
+</pre></div>
+</div>
+</section>
+<section id="option-b-use-metpo-predicates-outcome-specific">
+<h4>Option B: Use METPO Predicates (Outcome-Specific)<a class="headerlink" href="#option-b-use-metpo-predicates-outcome-specific" title="Link to this heading"></a></h4>
+<p>Keep using METPO predicates for biological meaning, but target assay nodes:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Test Type</p></th>
+<th class="head"><p>Result</p></th>
+<th class="head"><p>METPO Predicate</p></th>
+<th class="head"><p>Label</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>enzyme</p></td>
+<td><p>positive</p></td>
+<td><p>METPO:2000302</p></td>
+<td><p>shows activity of</p></td>
+</tr>
+<tr class="row-odd"><td><p>enzyme</p></td>
+<td><p>negative</p></td>
+<td><p>METPO:2000303</p></td>
+<td><p>does not show activity of</p></td>
+</tr>
+<tr class="row-even"><td><p>chemical</p></td>
+<td><p>positive</p></td>
+<td><p>METPO:2000011</p></td>
+<td><p>ferments</p></td>
+</tr>
+<tr class="row-odd"><td><p>chemical</p></td>
+<td><p>negative</p></td>
+<td><p>METPO:2000037</p></td>
+<td><p>does not ferment</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Positive enzyme test</span>
+<span class="n">NCBITaxon</span><span class="p">:</span><span class="mi">1234</span> <span class="o">--</span><span class="n">METPO</span><span class="p">:</span><span class="mi">2000302</span><span class="o">--&gt;</span> <span class="n">assay</span><span class="p">:</span><span class="n">API_zym_alkaline_phosphatase</span>
+
+<span class="c1"># Negative chemical test</span>
+<span class="n">NCBITaxon</span><span class="p">:</span><span class="mi">1234</span> <span class="o">--</span><span class="n">METPO</span><span class="p">:</span><span class="mi">2000037</span><span class="o">--&gt;</span> <span class="n">assay</span><span class="p">:</span><span class="n">API_50CHac_ERY</span>
+</pre></div>
+</div>
+<p><strong>Trade-off:</strong></p>
+<ul class="simple">
+<li><p>✅ Preserves rich METPO semantics (ferments vs. utilizes vs. produces)</p></li>
+<li><p>❌ METPO predicates designed for organism→entity, not organism→procedure</p></li>
+<li><p>⚠️ Semantic mismatch: organism “ferments” a procedure?</p></li>
+</ul>
+</section>
+<section id="option-c-generic-participation-predicate">
+<h4>Option C: Generic Participation Predicate<a class="headerlink" href="#option-c-generic-participation-predicate" title="Link to this heading"></a></h4>
+<p>Use a neutral predicate for test participation, encode outcome as edge attribute:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Subject → Predicate → Object → Qualifiers</span>
+<span class="n">NCBITaxon</span><span class="p">:</span><span class="mi">1234</span> <span class="o">--</span><span class="n">biolink</span><span class="p">:</span><span class="n">participates_in</span><span class="o">--&gt;</span> <span class="n">assay</span><span class="p">:</span><span class="n">API_zym_alkaline_phosphatase</span>
+  <span class="n">qualifiers</span><span class="p">:</span>
+    <span class="o">-</span> <span class="n">test_outcome</span><span class="p">:</span> <span class="n">positive</span>
+    <span class="o">-</span> <span class="n">assay_result</span><span class="p">:</span> <span class="s2">&quot;+&quot;</span>
+</pre></div>
+</div>
+<p><strong>Trade-off:</strong></p>
+<ul class="simple">
+<li><p>✅ Semantically accurate (organism participates in procedure)</p></li>
+<li><p>✅ Outcome captured as structured qualifier</p></li>
+<li><p>❌ Requires qualifier support in downstream tools</p></li>
+<li><p>❌ Harder to query (need to filter on qualifiers)</p></li>
+</ul>
+</section>
+</section>
+<section id="assay-target-entity-what-the-assay-tests">
+<h3>2. Assay → Target Entity (What the Assay Tests)<a class="headerlink" href="#assay-target-entity-what-the-assay-tests" title="Link to this heading"></a></h3>
+<p>This edge describes what the assay measures or tests for.</p>
+<section id="for-enzyme-tests-assay-go-term-ec-number">
+<h4>For Enzyme Tests (Assay → GO term / EC number)<a class="headerlink" href="#for-enzyme-tests-assay-go-term-ec-number" title="Link to this heading"></a></h4>
+<p><strong>Recommended</strong>: <code class="docutils literal notranslate"><span class="pre">biolink:has_output</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">assay</span><span class="p">:</span><span class="n">API_zym_alkaline_phosphatase</span> <span class="o">--</span><span class="n">biolink</span><span class="p">:</span><span class="n">has_output</span><span class="o">--&gt;</span> <span class="n">GO</span><span class="p">:</span><span class="mi">0004035</span>
+<span class="n">assay</span><span class="p">:</span><span class="n">API_zym_esterase</span> <span class="o">--</span><span class="n">biolink</span><span class="p">:</span><span class="n">has_output</span><span class="o">--&gt;</span> <span class="n">EC</span><span class="p">:</span><span class="mf">3.1.1.1</span>
+</pre></div>
+</div>
+<p><strong>Relation</strong>: NCIT:C25284 (output) or OBI:0000299 (has_specified_output)</p>
+<p><strong>Rationale:</strong></p>
+<ul class="simple">
+<li><p>The assay produces/detects evidence of enzyme activity</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">has_output</span></code> is standard Biolink predicate for procedure outputs</p></li>
+</ul>
+</section>
+<section id="for-chemical-tests-assay-chebi">
+<h4>For Chemical Tests (Assay → ChEBI)<a class="headerlink" href="#for-chemical-tests-assay-chebi" title="Link to this heading"></a></h4>
+<p><strong>Recommended</strong>: <code class="docutils literal notranslate"><span class="pre">biolink:has_input</span></code></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">assay</span><span class="p">:</span><span class="n">API_50CHac_ERY</span> <span class="o">--</span><span class="n">biolink</span><span class="p">:</span><span class="n">has_input</span><span class="o">--&gt;</span> <span class="n">CHEBI</span><span class="p">:</span><span class="mi">17113</span>
+<span class="n">assay</span><span class="p">:</span><span class="n">API_50CHac_DARA</span> <span class="o">--</span><span class="n">biolink</span><span class="p">:</span><span class="n">has_input</span><span class="o">--&gt;</span> <span class="n">CHEBI</span><span class="p">:</span><span class="mi">16731</span>
+</pre></div>
+</div>
+<p><strong>Relation</strong>: RO:0002233 (has input)</p>
+<p><strong>Rationale:</strong></p>
+<ul class="simple">
+<li><p>The chemical substrate is the input to the fermentation/utilization test</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">has_input</span></code> is standard Biolink predicate for procedure inputs</p></li>
+</ul>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="recommendation-summary">
+<h2>Recommendation Summary<a class="headerlink" href="#recommendation-summary" title="Link to this heading"></a></h2>
+<section id="approved-approach-metpo-predicates-has-output-has-input">
+<h3>✅ APPROVED Approach: METPO Predicates + has_output/has_input<a class="headerlink" href="#approved-approach-metpo-predicates-has-output-has-input" title="Link to this heading"></a></h3>
+<p><strong>Organism → Assay (Use METPO Predicates):</strong></p>
+<ul class="simple">
+<li><p>Enzyme positive: <code class="docutils literal notranslate"><span class="pre">METPO:2000302</span></code> (shows activity of)</p></li>
+<li><p>Enzyme negative: <code class="docutils literal notranslate"><span class="pre">METPO:2000303</span></code> (does not show activity of)</p></li>
+<li><p>Chemical fermentation positive: <code class="docutils literal notranslate"><span class="pre">METPO:2000011</span></code> (ferments)</p></li>
+<li><p>Chemical fermentation negative: <code class="docutils literal notranslate"><span class="pre">METPO:2000037</span></code> (does not ferment)</p></li>
+<li><p>Chemical assimilation positive: <code class="docutils literal notranslate"><span class="pre">METPO:2000008</span></code> (assimilates)</p></li>
+<li><p>Chemical assimilation negative: <code class="docutils literal notranslate"><span class="pre">METPO:2000034</span></code> (does not assimilate)</p></li>
+<li><p>Chemical growth positive: <code class="docutils literal notranslate"><span class="pre">METPO:2000012</span></code> (uses for growth)</p></li>
+<li><p>Chemical growth negative: <code class="docutils literal notranslate"><span class="pre">METPO:2000038</span></code> (does not use for growth)</p></li>
+</ul>
+<p><strong>Assay → Entity (Create all methodological edges upfront - Option A):</strong></p>
+<ul class="simple">
+<li><p>Enzyme tests: <code class="docutils literal notranslate"><span class="pre">biolink:has_output</span></code> → GO/EC</p></li>
+<li><p>Chemical tests: <code class="docutils literal notranslate"><span class="pre">biolink:has_input</span></code> → ChEBI</p></li>
+</ul>
+<p><strong>Rationale:</strong></p>
+<ol class="arabic simple">
+<li><p>Preserves rich METPO domain-specific semantics</p></li>
+<li><p>Consistent with current implementation (already using these predicates)</p></li>
+<li><p>Clear biological meaning (ferments vs. assimilates vs. uses for growth)</p></li>
+<li><p>Assay→entity edges provide methodological reference for all tests</p></li>
+<li><p>METPO predicates loaded dynamically from assay metadata</p></li>
+</ol>
+</section>
+</section>
+<hr class="docutils" />
+<section id="example-graph-structure">
+<h2>Example Graph Structure<a class="headerlink" href="#example-graph-structure" title="Link to this heading"></a></h2>
+<section id="complete-example-positive-enzyme-test">
+<h3>Complete Example: Positive Enzyme Test<a class="headerlink" href="#complete-example-positive-enzyme-test" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Organism shows enzyme activity (via assay)</span>
+<span class="n">NCBITaxon</span><span class="p">:</span><span class="mi">562</span> <span class="p">(</span><span class="n">E</span><span class="o">.</span> <span class="n">coli</span><span class="p">)</span>
+  <span class="o">--</span><span class="n">predicate</span><span class="p">:</span> <span class="n">METPO</span><span class="p">:</span><span class="mi">2000302</span> <span class="p">(</span><span class="n">shows</span> <span class="n">activity</span> <span class="n">of</span><span class="p">)</span>
+  <span class="o">--</span><span class="n">relation</span><span class="p">:</span> <span class="n">RO</span><span class="p">:</span><span class="mi">0002215</span> <span class="p">(</span><span class="n">capable</span> <span class="n">of</span><span class="p">)</span>
+  <span class="o">--&gt;</span> <span class="n">assay</span><span class="p">:</span><span class="n">API_zym_alkaline_phosphatase</span>
+
+<span class="c1"># Assay node</span>
+<span class="nb">id</span><span class="p">:</span> <span class="n">assay</span><span class="p">:</span><span class="n">API_zym_alkaline_phosphatase</span>
+<span class="n">category</span><span class="p">:</span> <span class="n">biolink</span><span class="p">:</span><span class="n">Procedure</span>
+<span class="n">name</span><span class="p">:</span> <span class="n">API</span> <span class="n">zym</span> <span class="o">-</span> <span class="n">Alkaline</span> <span class="n">phosphatase</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">Tests</span> <span class="k">for</span> <span class="n">Alkaline</span> <span class="n">phosphatase</span> <span class="n">activity</span> <span class="n">using</span> <span class="n">chromogenic</span> <span class="n">substrate</span>
+<span class="n">kit_name</span><span class="p">:</span> <span class="n">API</span> <span class="n">zym</span>
+<span class="n">well_name</span><span class="p">:</span> <span class="n">Alkaline</span> <span class="n">phosphatase</span>
+<span class="n">test_type</span><span class="p">:</span> <span class="n">enzyme</span>
+
+<span class="c1"># Assay detects enzyme activity</span>
+<span class="n">assay</span><span class="p">:</span><span class="n">API_zym_alkaline_phosphatase</span>
+  <span class="o">--</span><span class="n">predicate</span><span class="p">:</span> <span class="n">biolink</span><span class="p">:</span><span class="n">has_output</span>
+  <span class="o">--</span><span class="n">relation</span><span class="p">:</span> <span class="n">NCIT</span><span class="p">:</span><span class="n">C25284</span> <span class="p">(</span><span class="n">output</span><span class="p">)</span>
+  <span class="o">--&gt;</span> <span class="n">GO</span><span class="p">:</span><span class="mi">0004035</span> <span class="p">(</span><span class="n">alkaline</span> <span class="n">phosphatase</span> <span class="n">activity</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="complete-example-negative-chemical-fermentation-test">
+<h3>Complete Example: Negative Chemical Fermentation Test<a class="headerlink" href="#complete-example-negative-chemical-fermentation-test" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Organism does not ferment substrate (via assay)</span>
+<span class="n">NCBITaxon</span><span class="p">:</span><span class="mi">1234</span>
+  <span class="o">--</span><span class="n">predicate</span><span class="p">:</span> <span class="n">METPO</span><span class="p">:</span><span class="mi">2000037</span> <span class="p">(</span><span class="n">does</span> <span class="ow">not</span> <span class="n">ferment</span><span class="p">)</span>
+  <span class="o">--</span><span class="n">relation</span><span class="p">:</span> <span class="n">RO</span><span class="p">:</span><span class="mi">0002220</span> <span class="p">(</span><span class="n">lacks</span> <span class="n">part</span><span class="p">)</span>
+  <span class="o">--&gt;</span> <span class="n">assay</span><span class="p">:</span><span class="n">API_50CHac_ERY</span>
+
+<span class="c1"># Assay node</span>
+<span class="nb">id</span><span class="p">:</span> <span class="n">assay</span><span class="p">:</span><span class="n">API_50CHac_ERY</span>
+<span class="n">category</span><span class="p">:</span> <span class="n">biolink</span><span class="p">:</span><span class="n">Procedure</span>
+<span class="n">name</span><span class="p">:</span> <span class="n">API</span> <span class="mi">50</span><span class="n">CHac</span> <span class="o">-</span> <span class="n">Erythritol</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">Tests</span> <span class="k">for</span> <span class="n">utilization</span><span class="o">/</span><span class="n">fermentation</span> <span class="n">of</span> <span class="n">Erythritol</span>
+<span class="n">kit_name</span><span class="p">:</span> <span class="n">API</span> <span class="mi">50</span><span class="n">CHac</span>
+<span class="n">well_name</span><span class="p">:</span> <span class="n">ERY</span>
+<span class="n">test_type</span><span class="p">:</span> <span class="n">chemical</span>
+
+<span class="c1"># Assay tests substrate</span>
+<span class="n">assay</span><span class="p">:</span><span class="n">API_50CHac_ERY</span>
+  <span class="o">--</span><span class="n">predicate</span><span class="p">:</span> <span class="n">biolink</span><span class="p">:</span><span class="n">has_input</span>
+  <span class="o">--</span><span class="n">relation</span><span class="p">:</span> <span class="n">RO</span><span class="p">:</span><span class="mi">0002233</span> <span class="p">(</span><span class="n">has</span> <span class="nb">input</span><span class="p">)</span>
+  <span class="o">--&gt;</span> <span class="n">CHEBI</span><span class="p">:</span><span class="mi">17113</span> <span class="p">(</span><span class="n">erythritol</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="complete-example-positive-chemical-growth-test">
+<h3>Complete Example: Positive Chemical Growth Test<a class="headerlink" href="#complete-example-positive-chemical-growth-test" title="Link to this heading"></a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># Organism uses substrate for growth (via assay)</span>
+<span class="n">NCBITaxon</span><span class="p">:</span><span class="mi">562</span> <span class="p">(</span><span class="n">E</span><span class="o">.</span> <span class="n">coli</span><span class="p">)</span>
+  <span class="o">--</span><span class="n">predicate</span><span class="p">:</span> <span class="n">METPO</span><span class="p">:</span><span class="mi">2000012</span> <span class="p">(</span><span class="n">uses</span> <span class="k">for</span> <span class="n">growth</span><span class="p">)</span>
+  <span class="o">--</span><span class="n">relation</span><span class="p">:</span> <span class="n">biolink</span><span class="p">:</span><span class="n">interacts_with</span>
+  <span class="o">--&gt;</span> <span class="n">assay</span><span class="p">:</span><span class="n">API_biotype100_GLU</span>
+
+<span class="c1"># Assay node</span>
+<span class="nb">id</span><span class="p">:</span> <span class="n">assay</span><span class="p">:</span><span class="n">API_biotype100_GLU</span>
+<span class="n">category</span><span class="p">:</span> <span class="n">biolink</span><span class="p">:</span><span class="n">Procedure</span>
+<span class="n">name</span><span class="p">:</span> <span class="n">API</span> <span class="n">biotype100</span> <span class="o">-</span> <span class="n">Glucose</span>
+<span class="n">description</span><span class="p">:</span> <span class="n">Tests</span> <span class="k">for</span> <span class="n">growth</span> <span class="n">using</span> <span class="n">Glucose</span> <span class="k">as</span> <span class="n">sole</span> <span class="n">carbon</span> <span class="n">source</span>
+<span class="n">kit_name</span><span class="p">:</span> <span class="n">API</span> <span class="n">biotype100</span>
+<span class="n">well_name</span><span class="p">:</span> <span class="n">GLU</span>
+<span class="n">test_type</span><span class="p">:</span> <span class="n">chemical</span>
+
+<span class="c1"># Assay tests substrate</span>
+<span class="n">assay</span><span class="p">:</span><span class="n">API_biotype100_GLU</span>
+  <span class="o">--</span><span class="n">predicate</span><span class="p">:</span> <span class="n">biolink</span><span class="p">:</span><span class="n">has_input</span>
+  <span class="o">--</span><span class="n">relation</span><span class="p">:</span> <span class="n">RO</span><span class="p">:</span><span class="mi">0002233</span> <span class="p">(</span><span class="n">has</span> <span class="nb">input</span><span class="p">)</span>
+  <span class="o">--&gt;</span> <span class="n">CHEBI</span><span class="p">:</span><span class="mi">17234</span> <span class="p">(</span><span class="n">glucose</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="implementation-plan">
+<h2>Implementation Plan<a class="headerlink" href="#implementation-plan" title="Link to this heading"></a></h2>
+<section id="step-1-create-assay-nodes">
+<h3>Step 1: Create Assay Nodes<a class="headerlink" href="#step-1-create-assay-nodes" title="Link to this heading"></a></h3>
+<p>Modify <code class="docutils literal notranslate"><span class="pre">load_assay_kit_mappings()</span></code> to generate assay node data:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">generate_assay_nodes</span><span class="p">(</span><span class="n">assay_data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate assay nodes from assay_kits_simple.json.&quot;&quot;&quot;</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">kit</span> <span class="ow">in</span> <span class="n">assay_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;api_kits&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+        <span class="n">kit_name</span> <span class="o">=</span> <span class="n">kit</span><span class="p">[</span><span class="s2">&quot;kit_name&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">well</span> <span class="ow">in</span> <span class="n">kit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;wells&quot;</span><span class="p">,</span> <span class="p">[]):</span>
+            <span class="n">well_name</span> <span class="o">=</span> <span class="n">well</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="n">node_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;assay:</span><span class="si">{</span><span class="n">kit_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">well_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;_&quot;</span><span class="p">)</span>
+            <span class="n">nodes</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="n">node_id</span><span class="p">,</span>
+                <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="s2">&quot;biolink:Procedure&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">kit_name</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">well</span><span class="p">[</span><span class="s1">&#39;label&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">well</span><span class="p">[</span><span class="s2">&quot;description&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                <span class="s2">&quot;kit_name&quot;</span><span class="p">:</span> <span class="n">kit_name</span><span class="p">,</span>
+                <span class="s2">&quot;well_name&quot;</span><span class="p">:</span> <span class="n">well_name</span><span class="p">,</span>
+                <span class="s2">&quot;test_type&quot;</span><span class="p">:</span> <span class="n">well</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="p">})</span>
+    <span class="k">return</span> <span class="n">nodes</span>
+</pre></div>
+</div>
+</section>
+<section id="step-2-update-edge-creation-logic">
+<h3>Step 2: Update Edge Creation Logic<a class="headerlink" href="#step-2-update-edge-creation-logic" title="Link to this heading"></a></h3>
+<p>Modify <code class="docutils literal notranslate"><span class="pre">bacdive.py</span></code> (lines 2315-2434) to create two-hop edges:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Current (organism → entity):</span>
+<span class="n">organism_id</span> <span class="o">--</span><span class="n">METPO</span><span class="p">:</span><span class="mi">2000302</span><span class="o">--&gt;</span> <span class="n">GO</span><span class="p">:</span><span class="mi">0004035</span>
+
+<span class="c1"># New (organism → assay → entity):</span>
+<span class="n">organism_id</span> <span class="o">--</span><span class="n">biolink</span><span class="p">:</span><span class="n">capable_of</span><span class="o">--&gt;</span> <span class="n">assay</span><span class="p">:</span><span class="n">API_zym_alkaline_phosphatase</span>
+<span class="n">assay</span><span class="p">:</span><span class="n">API_zym_alkaline_phosphatase</span> <span class="o">--</span><span class="n">biolink</span><span class="p">:</span><span class="n">has_output</span><span class="o">--&gt;</span> <span class="n">GO</span><span class="p">:</span><span class="mi">0004035</span>
+</pre></div>
+</div>
+</section>
+<section id="step-3-add-predicate-mapping">
+<h3>Step 3: Add Predicate Mapping<a class="headerlink" href="#step-3-add-predicate-mapping" title="Link to this heading"></a></h3>
+<p>Add constants to <code class="docutils literal notranslate"><span class="pre">constants.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Organism → Assay predicates (outcome)</span>
+<span class="n">ORGANISM_CAPABLE_OF_ASSAY</span> <span class="o">=</span> <span class="s2">&quot;biolink:capable_of&quot;</span>
+<span class="n">ORGANISM_LACKS_ASSAY</span> <span class="o">=</span> <span class="s2">&quot;biolink:lacks_part&quot;</span>
+<span class="n">ORGANISM_METABOLIZES_ASSAY</span> <span class="o">=</span> <span class="s2">&quot;biolink:metabolizes&quot;</span>
+
+<span class="c1"># Assay → Entity predicates (methodology)</span>
+<span class="n">ASSAY_HAS_OUTPUT</span> <span class="o">=</span> <span class="s2">&quot;biolink:has_output&quot;</span>
+<span class="n">ASSAY_HAS_INPUT</span> <span class="o">=</span> <span class="s2">&quot;biolink:has_input&quot;</span>
+
+<span class="c1"># Relations</span>
+<span class="n">CAPABLE_OF_RELATION</span> <span class="o">=</span> <span class="s2">&quot;RO:0002215&quot;</span>
+<span class="n">LACKS_PART_RELATION</span> <span class="o">=</span> <span class="s2">&quot;RO:0002220&quot;</span>
+<span class="n">METABOLIZES_RELATION</span> <span class="o">=</span> <span class="s2">&quot;RO:0002160&quot;</span>
+<span class="n">HAS_INPUT_RELATION</span> <span class="o">=</span> <span class="s2">&quot;RO:0002233&quot;</span>
+<span class="n">HAS_OUTPUT_RELATION</span> <span class="o">=</span> <span class="s2">&quot;NCIT:C25284&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="step-4-write-assay-nodes-once">
+<h3>Step 4: Write Assay Nodes Once<a class="headerlink" href="#step-4-write-assay-nodes-once" title="Link to this heading"></a></h3>
+<p>Generate assay nodes during transform initialization (not per-organism):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="c1"># Generate assay nodes once at start</span>
+    <span class="n">assay_nodes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_assay_nodes</span><span class="p">()</span>
+    <span class="n">node_writer</span><span class="o">.</span><span class="n">writerows</span><span class="p">(</span><span class="n">assay_nodes</span><span class="p">)</span>
+
+    <span class="c1"># Then process organism data as usual</span>
+    <span class="k">for</span> <span class="n">organism_record</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_process_organism_assays</span><span class="p">(</span><span class="n">organism_record</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="test-types-summary">
+<h2>Test Types Summary<a class="headerlink" href="#test-types-summary" title="Link to this heading"></a></h2>
+<p>From assay metadata analysis:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Test Type</p></th>
+<th class="head"><p>Count</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>enzyme</p></td>
+<td><p>~200</p></td>
+<td><p>Detects enzyme activity (GO terms, EC numbers)</p></td>
+</tr>
+<tr class="row-odd"><td><p>chemical</p></td>
+<td><p>~300</p></td>
+<td><p>Tests substrate fermentation/utilization/growth (ChEBI)</p></td>
+</tr>
+</tbody>
+</table>
+<section id="metpo-predicate-types">
+<h3>METPO Predicate Types<a class="headerlink" href="#metpo-predicate-types" title="Link to this heading"></a></h3>
+<p>Chemical tests use different METPO predicates depending on the biological process:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Process</p></th>
+<th class="head"><p>Kit Example</p></th>
+<th class="head"><p>Positive Predicate</p></th>
+<th class="head"><p>Negative Predicate</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Enzyme activity</p></td>
+<td><p>API zym</p></td>
+<td><p>METPO:2000302 (shows activity of)</p></td>
+<td><p>METPO:2000303 (does not show activity of)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Fermentation</p></td>
+<td><p>API 50CHac</p></td>
+<td><p>METPO:2000011 (ferments)</p></td>
+<td><p>METPO:2000037 (does not ferment)</p></td>
+</tr>
+<tr class="row-even"><td><p>Assimilation</p></td>
+<td><p>API 20NE</p></td>
+<td><p>METPO:2000008 (assimilates)</p></td>
+<td><p>METPO:2000034 (does not assimilate)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Growth</p></td>
+<td><p>API biotype100</p></td>
+<td><p>METPO:2000012 (uses for growth)</p></td>
+<td><p>METPO:2000038 (does not use for growth)</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong>: All chemical tests (fermentation, assimilation, growth) have type “chemical” in the metadata. The distinction is at the predicate level, not the test type level.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="deprecated-predicates-do-not-use">
+<h2>Deprecated Predicates (Do Not Use)<a class="headerlink" href="#deprecated-predicates-do-not-use" title="Link to this heading"></a></h2>
+<p>These were removed in Biolink Model v4.3.3:</p>
+<ul class="simple">
+<li><p>❌ <code class="docutils literal notranslate"><span class="pre">biolink:assesses</span></code></p></li>
+<li><p>❌ <code class="docutils literal notranslate"><span class="pre">biolink:is_assessed_by</span></code></p></li>
+<li><p>❌ <code class="docutils literal notranslate"><span class="pre">biolink:was_tested_for_effect_on</span></code></p></li>
+</ul>
+<p>See <code class="docutils literal notranslate"><span class="pre">BIOLINK_PREDICATE_CHANGES.md</span></code> for migration details.</p>
+</section>
+<hr class="docutils" />
+<section id="decisions-made">
+<h2>Decisions Made<a class="headerlink" href="#decisions-made" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>✅ METPO predicates for organism→assay edges</strong></p>
+<ul class="simple">
+<li><p><strong>Decision</strong>: YES, preserve METPO predicates</p></li>
+<li><p><strong>Rationale</strong>: Rich domain-specific semantics are valuable for biological queries</p></li>
+</ul>
+</li>
+<li><p><strong>✅ Assay→entity edges created upfront</strong></p>
+<ul class="simple">
+<li><p><strong>Decision</strong>: YES, create all methodological reference edges (Option A)</p></li>
+<li><p><strong>Rationale</strong>: Complete reference allows users to understand what each assay tests, independent of organism results</p></li>
+</ul>
+</li>
+<li><p><strong>Growth tests verified</strong></p>
+<ul class="simple">
+<li><p><strong>Finding</strong>: API biotype100 kit uses “uses for growth” / “does not use for growth” predicates</p></li>
+<li><p><strong>Test type</strong>: “chemical” (same as fermentation/assimilation tests)</p></li>
+<li><p><strong>Distinction</strong>: At predicate level, not test type level</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="remaining-questions">
+<h2>Remaining Questions<a class="headerlink" href="#remaining-questions" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Node ID format: Should we sanitize/standardize well names?</strong></p>
+<ul class="simple">
+<li><p>Current proposal: <code class="docutils literal notranslate"><span class="pre">assay:API_zym_alkaline_phosphatase</span></code> (full name, spaces → underscores)</p></li>
+<li><p>Alternative: Use original well codes (<code class="docutils literal notranslate"><span class="pre">assay:API_zym_PHOS</span></code>)</p></li>
+<li><p><strong>Consideration</strong>: Full names are more human-readable, codes are more compact</p></li>
+</ul>
+</li>
+<li><p><strong>Relation selection for organism→assay edges</strong></p>
+<ul class="simple">
+<li><p>Current: Using RO:0002215 (capable of) for positive, RO:0002220 (lacks part) for negative</p></li>
+<li><p><strong>Question</strong>: Are these the most appropriate RO terms for assay relationships?</p></li>
+<li><p><strong>Alternative</strong>: Use more generic relations like biolink:related_to or biolink:interacts_with</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Assay metadata: https://github.com/CultureBotAI/assay-metadata</p></li>
+<li><p>Biolink Model v4.3.6: https://biolink.github.io/biolink-model/</p></li>
+<li><p>BacDive API: https://bacdive.dsmz.de/api/bacdive/</p></li>
+<li><p>Relation Ontology: http://www.obofoundry.org/ontology/ro.html</p></li>
+</ul>
+<hr class="docutils" />
+<p><strong>Next Steps:</strong></p>
+<ol class="arabic simple">
+<li><p>Review and approve predicate choices</p></li>
+<li><p>Implement assay node generation</p></li>
+<li><p>Update edge creation logic</p></li>
+<li><p>Add tests for new structure</p></li>
+<li><p>Validate against Biolink schema</p></li>
+<li><p>Generate example subgraph for review</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

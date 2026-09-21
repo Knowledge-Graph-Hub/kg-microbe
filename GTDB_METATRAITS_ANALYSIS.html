@@ -1,0 +1,432 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GTDB MetaTraits Overlap Analysis &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">GTDB MetaTraits Overlap Analysis</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/GTDB_METATRAITS_ANALYSIS.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="gtdb-metatraits-overlap-analysis">
+<h1>GTDB MetaTraits Overlap Analysis<a class="headerlink" href="#gtdb-metatraits-overlap-analysis" title="Link to this heading"></a></h1>
+<p><strong>Date:</strong> 2026-03-22
+<strong>Status:</strong> ✅ INTEGRATE recommended
+<strong>Decision:</strong> Add GTDB metatraits transform to KG-Microbe pipeline</p>
+<hr class="docutils" />
+<section id="executive-summary">
+<h2>Executive Summary<a class="headerlink" href="#executive-summary" title="Link to this heading"></a></h2>
+<p>GTDB metatraits data provides <strong>significant new coverage</strong> compared to existing NCBITaxon metatraits:</p>
+<ul class="simple">
+<li><p><strong>56.4%</strong> of GTDB taxa map to NCBITaxon IDs that <strong>don’t have trait data yet</strong> (48,235 taxa, 83.7M observations)</p></li>
+<li><p><strong>28.6%</strong> of GTDB taxa have <strong>no NCBITaxon mapping</strong> (24,481 taxa, 418M observations)</p></li>
+<li><p>Only <strong>15.0%</strong> redundant overlap with existing NCBITaxon metatraits (12,831 taxa, 97.4M observations)</p></li>
+</ul>
+<p><strong>Recommendation:</strong> INTEGRATE GTDB metatraits into the transform pipeline.</p>
+</section>
+<hr class="docutils" />
+<section id="analysis-details">
+<h2>Analysis Details<a class="headerlink" href="#analysis-details" title="Link to this heading"></a></h2>
+<section id="current-state">
+<h3>Current State<a class="headerlink" href="#current-state" title="Link to this heading"></a></h3>
+<p><strong>Existing NCBITaxon metatraits coverage:</strong></p>
+<ul class="simple">
+<li><p>8,320 unique NCBITaxon taxa with trait data</p></li>
+<li><p>1,048,641 trait edges in transformed data</p></li>
+<li><p>~291K trait observations</p></li>
+</ul>
+<p><strong>Available GTDB metatraits data:</strong></p>
+<ul class="simple">
+<li><p>85,547 unique GTDB taxa with trait data</p></li>
+<li><p>599,090,288 total trait observations across all taxa</p></li>
+<li><p>3 files: gtdb_species_summary.jsonl.gz (46MB), gtdb_genus_summary.jsonl.gz (16MB), gtdb_family_summary.jsonl.gz (4.4MB)</p></li>
+</ul>
+</section>
+<section id="overlap-breakdown">
+<h3>Overlap Breakdown<a class="headerlink" href="#overlap-breakdown" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>Taxa Count</p></th>
+<th class="head"><p>Taxa %</p></th>
+<th class="head"><p>Observations</p></th>
+<th class="head"><p>Obs %</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Redundant</strong></p></td>
+<td><p>12,831</p></td>
+<td><p>15.0%</p></td>
+<td><p>97,416,071</p></td>
+<td><p>16.3%</p></td>
+<td><p>GTDB taxa map to NCBITaxon IDs that already have traits</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>New Coverage</strong></p></td>
+<td><p>48,235</p></td>
+<td><p>56.4%</p></td>
+<td><p>83,659,503</p></td>
+<td><p>14.0%</p></td>
+<td><p>GTDB taxa map to NCBITaxon IDs without traits</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>GTDB-only</strong></p></td>
+<td><p>24,481</p></td>
+<td><p>28.6%</p></td>
+<td><p>418,014,714</p></td>
+<td><p>69.8%</p></td>
+<td><p>GTDB taxa have no NCBITaxon mapping</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Total</strong></p></td>
+<td><p>85,547</p></td>
+<td><p>100%</p></td>
+<td><p>599,090,288</p></td>
+<td><p>100%</p></td>
+<td><p>All GTDB metatraits data</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="key-insights">
+<h3>Key Insights<a class="headerlink" href="#key-insights" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>High New Coverage (56.4%)</strong>: More than half of GTDB taxa would add trait data to NCBITaxon organisms that currently lack it.</p></li>
+<li><p><strong>Substantial GTDB-only Coverage (28.6%)</strong>: Nearly one-third of GTDB taxa don’t map to any NCBITaxon ID. These are likely:</p>
+<ul class="simple">
+<li><p>MAGs (Metagenome-Assembled Genomes)</p></li>
+<li><p>SAGs (Single-cell Amplified Genomes)</p></li>
+<li><p>Uncultured organisms</p></li>
+<li><p>Recently discovered species not yet in NCBI Taxonomy</p></li>
+</ul>
+</li>
+<li><p><strong>Observation Density</strong>: GTDB-only taxa have the highest observation density (17,077 obs/taxon) compared to New Coverage (1,734 obs/taxon) and Redundant (7,592 obs/taxon). This suggests GTDB-only taxa are well-characterized despite lacking NCBI mappings.</p></li>
+<li><p><strong>Low Redundancy (15.0%)</strong>: Only 15% overlap means adding GTDB metatraits would mostly complement (not duplicate) existing NCBITaxon metatraits.</p></li>
+</ol>
+</section>
+</section>
+<hr class="docutils" />
+<section id="data-sources">
+<h2>Data Sources<a class="headerlink" href="#data-sources" title="Link to this heading"></a></h2>
+<section id="files-downloaded">
+<h3>Files Downloaded<a class="headerlink" href="#files-downloaded" title="Link to this heading"></a></h3>
+<p>All files downloaded from https://metatraits.embl.de/:</p>
+<ol class="arabic simple">
+<li><p><strong>gtdb_species_summary.jsonl.gz</strong> (46 MB)</p>
+<ul class="simple">
+<li><p>Species-level GTDB trait annotations</p></li>
+<li><p>Format: <code class="docutils literal notranslate"><span class="pre">{&quot;tax_name&quot;:</span> <span class="pre">&quot;Species_name</span> <span class="pre">spXXXXX&quot;,</span> <span class="pre">&quot;summaries&quot;:</span> <span class="pre">[...]}</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>gtdb_genus_summary.jsonl.gz</strong> (16 MB)</p>
+<ul class="simple">
+<li><p>Genus-level GTDB trait annotations</p></li>
+</ul>
+</li>
+<li><p><strong>gtdb_family_summary.jsonl.gz</strong> (4.4 MB)</p>
+<ul class="simple">
+<li><p>Family-level GTDB trait annotations</p></li>
+</ul>
+</li>
+<li><p><strong>GTDB2NCBI.tsv.gz</strong> (2.8 MB)</p>
+<ul class="simple">
+<li><p>GTDB R220 → NCBITaxon mapping (species-level only)</p></li>
+<li><p>Note: Not used in final analysis due to granularity mismatch</p></li>
+</ul>
+</li>
+<li><p><strong>NCBI2GTDB.tsv.gz</strong> (2.8 MB)</p>
+<ul class="simple">
+<li><p>NCBITaxon → GTDB R220 mapping</p></li>
+<li><p>Note: Not used in final analysis</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="mapping-approach">
+<h3>Mapping Approach<a class="headerlink" href="#mapping-approach" title="Link to this heading"></a></h3>
+<p><strong>Final approach used GTDB metadata files</strong> (already in KG-Microbe):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">data/raw/gtdb/bac120_metadata.tsv.gz</span></code> (bacterial metadata)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data/raw/gtdb/ar53_metadata.tsv.gz</span></code> (archaeal metadata)</p></li>
+</ul>
+<p>These files contain:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">accession</span></code>: Genome assembly ID (e.g., “GB_GCA_002774085.1”)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gtdb_taxonomy</span></code>: Full GTDB lineage ending in species (e.g., “s__Species_name spXXXXX”)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ncbi_taxid</span></code>: Corresponding NCBITaxon ID (715,231 of 715,230 genomes have mappings)</p></li>
+</ul>
+<p><strong>Mapping logic:</strong></p>
+<ol class="arabic simple">
+<li><p>Extract GTDB species name from <code class="docutils literal notranslate"><span class="pre">gtdb_taxonomy</span></code> (e.g., “0-14-0-10-38-17 sp002774085”)</p></li>
+<li><p>Map to <code class="docutils literal notranslate"><span class="pre">ncbi_taxid</span></code> (e.g., “1974884”)</p></li>
+<li><p>Compare against NCBITaxon IDs that already have trait data in transformed edges</p></li>
+</ol>
+</section>
+</section>
+<hr class="docutils" />
+<section id="sample-taxa-by-category">
+<h2>Sample Taxa by Category<a class="headerlink" href="#sample-taxa-by-category" title="Link to this heading"></a></h2>
+<section id="redundant-ncbitaxon-already-has-traits">
+<h3>Redundant (NCBITaxon already has traits)<a class="headerlink" href="#redundant-ncbitaxon-already-has-traits" title="Link to this heading"></a></h3>
+<p>Examples:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">1-14-0-10-45-34</span> <span class="pre">sp002778785</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1-14-0-20-39-49</span> <span class="pre">sp002787635</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1109</span> <span class="pre">sp001028815</span></code></p></li>
+</ul>
+<p>These GTDB taxa map to NCBITaxon organisms that already have trait data from the existing NCBITaxon metatraits.</p>
+</section>
+<section id="new-coverage-ncbitaxon-exists-no-traits">
+<h3>New Coverage (NCBITaxon exists, no traits)<a class="headerlink" href="#new-coverage-ncbitaxon-exists-no-traits" title="Link to this heading"></a></h3>
+<p>Examples:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0-14-0-10-38-17</span> <span class="pre">sp002774085</span></code> → NCBITaxon:1974884</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0-14-0-20-30-16</span> <span class="pre">sp002779075</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0-14-0-20-34-12</span> <span class="pre">sp002779065</span></code></p></li>
+</ul>
+<p>These GTDB taxa map to valid NCBITaxon IDs, but those organisms don’t have trait data yet. <strong>This is the primary value proposition for GTDB metatraits.</strong></p>
+</section>
+<section id="gtdb-only-no-ncbitaxon-mapping">
+<h3>GTDB-only (no NCBITaxon mapping)<a class="headerlink" href="#gtdb-only-no-ncbitaxon-mapping" title="Link to this heading"></a></h3>
+<p>Examples (genus/family level):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0-14-0-10-38-17</span></code> (genus)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0-14-0-20-30-16</span></code> (genus)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0-14-0-20-34-12</span></code> (genus)</p></li>
+</ul>
+<p>These GTDB taxa have no NCBITaxon mapping at all. They represent:</p>
+<ul class="simple">
+<li><p>Uncultured organisms</p></li>
+<li><p>Metagenome-derived genomes</p></li>
+<li><p>Genomes not yet integrated into NCBI Taxonomy</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="recommendation-integrate">
+<h2>Recommendation: INTEGRATE<a class="headerlink" href="#recommendation-integrate" title="Link to this heading"></a></h2>
+<section id="rationale">
+<h3>Rationale<a class="headerlink" href="#rationale" title="Link to this heading"></a></h3>
+<p>✅ <strong>New coverage threshold met:</strong> 56.4% &gt;&gt; 20% threshold
+✅ <strong>GTDB-only threshold met:</strong> 28.6% &gt;&gt; 10% threshold
+✅ <strong>Low redundancy:</strong> Only 15% overlap with existing data
+✅ <strong>High observation count:</strong> 83.7M new observations for mapped taxa + 418M for GTDB-only taxa
+✅ <strong>Complementary coverage:</strong> GTDB focuses on genomes while NCBI focuses on cultured organisms</p>
+</section>
+<section id="benefits">
+<h3>Benefits<a class="headerlink" href="#benefits" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Expand trait coverage</strong> for 48,235 NCBITaxon organisms that currently lack trait data</p></li>
+<li><p><strong>Add genome-level resolution</strong> by linking traits to specific genome assemblies</p></li>
+<li><p><strong>Include uncultured organisms</strong> (28.6% GTDB-only taxa) that are important for environmental/microbiome studies</p></li>
+<li><p><strong>Increase observation density</strong> from 291K to 599M trait observations</p></li>
+</ol>
+</section>
+<section id="implementation-complexity">
+<h3>Implementation Complexity<a class="headerlink" href="#implementation-complexity" title="Link to this heading"></a></h3>
+<p><strong>Medium complexity:</strong></p>
+<ul class="simple">
+<li><p>Can reuse existing <code class="docutils literal notranslate"><span class="pre">MetaTraitsTransform</span></code> class as base</p></li>
+<li><p>Requires mapping GTDB species names to NCBITaxon IDs via GTDB metadata</p></li>
+<li><p>Need to decide how to handle GTDB-only taxa (create custom GTDB: prefix nodes?)</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Link to this heading"></a></h2>
+<section id="phase-1-create-gtdb-metatraits-transform">
+<h3>Phase 1: Create GTDB MetaTraits Transform<a class="headerlink" href="#phase-1-create-gtdb-metatraits-transform" title="Link to this heading"></a></h3>
+<p><strong>File:</strong> <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/metatraits_gtdb/metatraits_gtdb.py</span></code></p>
+<p><strong>Approach:</strong></p>
+<ol class="arabic simple">
+<li><p>Inherit from existing <code class="docutils literal notranslate"><span class="pre">MetaTraitsTransform</span></code> class</p></li>
+<li><p>Override <code class="docutils literal notranslate"><span class="pre">_search_ncbitaxon_by_label()</span></code> to use GTDB → NCBITaxon mapping from metadata files</p></li>
+<li><p>For GTDB-only taxa (no NCBITaxon mapping):</p>
+<ul class="simple">
+<li><p><strong>Option A:</strong> Skip these taxa (lose 28.6% but cleaner)</p></li>
+<li><p><strong>Option B:</strong> Create <code class="docutils literal notranslate"><span class="pre">GTDB:</span></code> namespace nodes (keeps all data but adds new namespace)</p></li>
+<li><p><strong>Recommended:</strong> Option B - preserve all data</p></li>
+</ul>
+</li>
+<li><p>Input files: <code class="docutils literal notranslate"><span class="pre">gtdb_*_summary.jsonl.gz</span></code></p></li>
+<li><p>Output: <code class="docutils literal notranslate"><span class="pre">data/transformed/metatraits_gtdb/nodes.tsv</span></code> and <code class="docutils literal notranslate"><span class="pre">edges.tsv</span></code></p></li>
+</ol>
+</section>
+<section id="phase-2-register-transform">
+<h3>Phase 2: Register Transform<a class="headerlink" href="#phase-2-register-transform" title="Link to this heading"></a></h3>
+<p><strong>File:</strong> <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform.py</span></code></p>
+<ol class="arabic">
+<li><p>Add constant: <code class="docutils literal notranslate"><span class="pre">METATRAITS_GTDB</span> <span class="pre">=</span> <span class="pre">&quot;metatraits_gtdb&quot;</span></code></p></li>
+<li><p>Add to <code class="docutils literal notranslate"><span class="pre">DATA_SOURCES</span></code> dict:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">METATRAITS_GTDB</span><span class="p">:</span> <span class="n">MetaTraitsGTDBTransform</span><span class="p">,</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</section>
+<section id="phase-3-add-to-merge-configuration">
+<h3>Phase 3: Add to Merge Configuration<a class="headerlink" href="#phase-3-add-to-merge-configuration" title="Link to this heading"></a></h3>
+<p><strong>File:</strong> <code class="docutils literal notranslate"><span class="pre">merge.yaml</span></code></p>
+<p>Add <code class="docutils literal notranslate"><span class="pre">metatraits_gtdb</span></code> to the merge priority list (after <code class="docutils literal notranslate"><span class="pre">metatraits</span></code>).</p>
+</section>
+<section id="phase-4-testing">
+<h3>Phase 4: Testing<a class="headerlink" href="#phase-4-testing" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Transform GTDB metatraits</span>
+poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </span>transform<span class="w"> </span>-s<span class="w"> </span>metatraits_gtdb
+
+<span class="c1"># Verify outputs</span>
+wc<span class="w"> </span>-l<span class="w"> </span>data/transformed/metatraits_gtdb/<span class="o">{</span>nodes,edges<span class="o">}</span>.tsv
+
+<span class="c1"># Check for duplicates with NCBITaxon metatraits</span>
+comm<span class="w"> </span>-12<span class="w"> </span>&lt;<span class="o">(</span>cut<span class="w"> </span>-f1,2,3<span class="w"> </span>data/transformed/metatraits/edges.tsv<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="o">)</span><span class="w"> </span><span class="se">\</span>
+<span class="w">         </span>&lt;<span class="o">(</span>cut<span class="w"> </span>-f1,2,3<span class="w"> </span>data/transformed/metatraits_gtdb/edges.tsv<span class="w"> </span><span class="p">|</span><span class="w"> </span>sort<span class="o">)</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l
+
+<span class="c1"># Run full merge</span>
+poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </span>merge<span class="w"> </span>-y<span class="w"> </span>merge.yaml
+
+<span class="c1"># Verify final edge counts</span>
+wc<span class="w"> </span>-l<span class="w"> </span>data/merged/merged-kg_edges.tsv
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="open-questions">
+<h2>Open Questions<a class="headerlink" href="#open-questions" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>GTDB-only namespace:</strong> Should we create GTDB: prefix nodes for taxa without NCBITaxon mappings?</p>
+<ul class="simple">
+<li><p><strong>Pro:</strong> Preserves all data (28.6% of taxa, 69.8% of observations)</p></li>
+<li><p><strong>Con:</strong> Introduces new namespace, complicates downstream queries</p></li>
+<li><p><strong>Decision:</strong> TBD based on use case requirements</p></li>
+</ul>
+</li>
+<li><p><strong>Observation density:</strong> Why do GTDB-only taxa have 10x more observations per taxon?</p>
+<ul class="simple">
+<li><p>Hypothesis: These are well-studied MAGs/SAGs with extensive trait characterization</p></li>
+<li><p>May indicate high-quality genome-derived trait predictions</p></li>
+</ul>
+</li>
+<li><p><strong>Redundancy handling:</strong> Should we skip redundant 15% or merge them (averaging trait values)?</p>
+<ul class="simple">
+<li><p><strong>Recommendation:</strong> Skip to avoid duplicate edges (KGX merge will deduplicate anyway)</p></li>
+</ul>
+</li>
+<li><p><strong>Priority:</strong> Should GTDB metatraits be prioritized over NCBITaxon metatraits in merge.yaml?</p>
+<ul class="simple">
+<li><p><strong>Recommendation:</strong> NCBITaxon first (more authoritative for cultured organisms)</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>MetaTraits database: https://metatraits.embl.de/</p></li>
+<li><p>GTDB R220: https://gtdb.ecogenomic.org/</p></li>
+<li><p>Overlap analysis script: <code class="docutils literal notranslate"><span class="pre">scripts/analyze_gtdb_metatraits_overlap.py</span></code></p></li>
+<li><p>Full analysis output: <code class="docutils literal notranslate"><span class="pre">gtdb_overlap_report.txt</span></code></p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="change-log">
+<h2>Change Log<a class="headerlink" href="#change-log" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>2026-03-22:</strong> Initial analysis completed. Recommendation: INTEGRATE.</p></li>
+<li><p><strong>2026-03-22:</strong> Updated mapping approach to use GTDB metadata files instead of GTDB2NCBI.tsv.gz (better granularity).</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

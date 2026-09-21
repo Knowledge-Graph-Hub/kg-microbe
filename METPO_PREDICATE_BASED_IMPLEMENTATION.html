@@ -1,0 +1,588 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>METPO Predicate-Based Implementation for Unmapped Traits &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">METPO Predicate-Based Implementation for Unmapped Traits</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/METPO_PREDICATE_BASED_IMPLEMENTATION.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="metpo-predicate-based-implementation-for-unmapped-traits">
+<h1>METPO Predicate-Based Implementation for Unmapped Traits<a class="headerlink" href="#metpo-predicate-based-implementation-for-unmapped-traits" title="Link to this heading"></a></h1>
+<p><strong>Date</strong>: 2026-03-28
+<strong>Approach</strong>: Use existing METPO predicates + minimal new data properties
+<strong>Addresses</strong>: 148 unmapped traits (183,810 occurrences)</p>
+<hr class="docutils" />
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>METPO supports <strong>predicate-based patterns</strong> where organisms link directly to chemical entities via specific predicates, rather than creating separate capability classes for each substrate. This approach is more scalable and aligned with METPO’s design philosophy.</p>
+<section id="core-pattern">
+<h3>Core Pattern<a class="headerlink" href="#core-pattern" title="Link to this heading"></a></h3>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="c"># Instead of creating METPO:glucose_fermentation_capability</span>
+<span class="c"># Use existing predicates:</span>
+<span class="nn">NCBITaxon</span><span class="p">:</span><span class="nt">562</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000011</span> <span class="nn">CHEBI</span><span class="p">:</span><span class="nt">17234</span> <span class="p">.</span>  <span class="c"># ferments glucose</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="solution-1-fermentation-traits-use-existing-predicate">
+<h2>Solution 1: Fermentation Traits → Use Existing Predicate<a class="headerlink" href="#solution-1-fermentation-traits-use-existing-predicate" title="Link to this heading"></a></h2>
+<section id="current-state">
+<h3>Current State<a class="headerlink" href="#current-state" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Unmapped traits</strong>: 95 fermentation patterns (e.g., <code class="docutils literal notranslate"><span class="pre">fermentation:</span> <span class="pre">D-glucose</span></code>)</p></li>
+<li><p><strong>Total occurrences</strong>: ~7,500 across metatraits data</p></li>
+</ul>
+</section>
+<section id="metpo-predicates-already-available">
+<h3>METPO Predicates Already Available<a class="headerlink" href="#metpo-predicates-already-available" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Predicate</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">METPO:2000011</span></code></p></td>
+<td><p>ferments</p></td>
+<td><p>Organism ferments chemical (POSITIVE)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">METPO:2000037</span></code></p></td>
+<td><p>does not ferment</p></td>
+<td><p>Organism does not ferment chemical (NEGATIVE)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="implementation-pattern">
+<h3>Implementation Pattern<a class="headerlink" href="#implementation-pattern" title="Link to this heading"></a></h3>
+<p><strong>Edge Format</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="s2">&quot;NCBITaxon:562&quot;</span><span class="p">,</span>          <span class="c1"># E. coli</span>
+    <span class="s2">&quot;predicate&quot;</span><span class="p">:</span> <span class="s2">&quot;METPO:2000011&quot;</span><span class="p">,</span>        <span class="c1"># ferments</span>
+    <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="s2">&quot;CHEBI:17234&quot;</span><span class="p">,</span>             <span class="c1"># D-glucose</span>
+    <span class="s2">&quot;relation&quot;</span><span class="p">:</span> <span class="s2">&quot;METPO:2000011&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;primary_knowledge_source&quot;</span><span class="p">:</span> <span class="s2">&quot;infores:metatraits&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>RDF/Turtle</strong>:</p>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="nn">NCBITaxon</span><span class="p">:</span><span class="nt">562</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000011</span> <span class="nn">CHEBI</span><span class="p">:</span><span class="nt">17234</span> <span class="p">.</span>
+<span class="nn">CHEBI</span><span class="p">:</span><span class="nt">17234</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;D-glucose&quot;</span> <span class="p">.</span>
+</pre></div>
+</div>
+</section>
+<section id="mapping-table-for-transform">
+<h3>Mapping Table for Transform<a class="headerlink" href="#mapping-table-for-transform" title="Link to this heading"></a></h3>
+<p>Create mapping from unmapped trait labels to CHEBI IDs:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Unmapped Trait</p></th>
+<th class="head"><p>CHEBI ID</p></th>
+<th class="head"><p>CHEBI Label</p></th>
+<th class="head"><p>Occurrences</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>fermentation: D-glucose</p></td>
+<td><p>CHEBI:17234</p></td>
+<td><p>D-glucose</p></td>
+<td><p>3,896</p></td>
+</tr>
+<tr class="row-odd"><td><p>fermentation: D-mannitol</p></td>
+<td><p>CHEBI:16899</p></td>
+<td><p>D-mannitol</p></td>
+<td><p>2,087</p></td>
+</tr>
+<tr class="row-even"><td><p>fermentation: D-ribose</p></td>
+<td><p>CHEBI:47013</p></td>
+<td><p>D-ribose</p></td>
+<td><p>1,546</p></td>
+</tr>
+<tr class="row-odd"><td><p>fermentation: D-xylose</p></td>
+<td><p>CHEBI:18222</p></td>
+<td><p>D-xylose</p></td>
+<td><p>1,329</p></td>
+</tr>
+<tr class="row-even"><td><p>fermentation: lactose</p></td>
+<td><p>CHEBI:17716</p></td>
+<td><p>lactose</p></td>
+<td><p>321</p></td>
+</tr>
+<tr class="row-odd"><td><p>…</p></td>
+<td><p>…</p></td>
+<td><p>…</p></td>
+<td><p>…</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>File</strong>: <code class="docutils literal notranslate"><span class="pre">mappings/fermentation_trait_to_chebi.tsv</span></code> (see separate file)</p>
+</section>
+<section id="transform-code-pattern">
+<h3>Transform Code Pattern<a class="headerlink" href="#transform-code-pattern" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">kg_microbe.transform_utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">METPO_FERMENTS</span>
+
+<span class="c1"># Load fermentation → CHEBI mapping</span>
+<span class="n">fermentation_map</span> <span class="o">=</span> <span class="n">load_fermentation_mapping</span><span class="p">()</span>
+
+<span class="c1"># Parse trait</span>
+<span class="k">if</span> <span class="n">trait</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;fermentation: &quot;</span><span class="p">):</span>
+    <span class="n">substrate</span> <span class="o">=</span> <span class="n">trait</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;fermentation: &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+    <span class="n">chebi_id</span> <span class="o">=</span> <span class="n">fermentation_map</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">substrate</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">chebi_id</span><span class="p">:</span>
+        <span class="n">edge</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="n">organism_id</span><span class="p">,</span>
+            <span class="s2">&quot;predicate&quot;</span><span class="p">:</span> <span class="n">METPO_FERMENTS</span><span class="p">,</span>  <span class="c1"># METPO:2000011</span>
+            <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="n">chebi_id</span><span class="p">,</span>
+            <span class="s2">&quot;relation&quot;</span><span class="p">:</span> <span class="n">METPO_FERMENTS</span><span class="p">,</span>
+            <span class="s2">&quot;primary_knowledge_source&quot;</span><span class="p">:</span> <span class="s2">&quot;infores:metatraits&quot;</span>
+        <span class="p">}</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Log unmapped substrate for manual review</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No CHEBI mapping for fermentation substrate: </span><span class="si">{</span><span class="n">substrate</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="solution-2-electron-acceptor-traits-use-existing-predicate">
+<h2>Solution 2: Electron Acceptor Traits → Use Existing Predicate<a class="headerlink" href="#solution-2-electron-acceptor-traits-use-existing-predicate" title="Link to this heading"></a></h2>
+<section id="id1">
+<h3>Current State<a class="headerlink" href="#id1" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Unmapped trait</strong>: <code class="docutils literal notranslate"><span class="pre">electron</span> <span class="pre">acceptor:</span> <span class="pre">sulfur</span> <span class="pre">compounds</span></code> (99,543 occurrences)</p></li>
+<li><p><strong>Other traits</strong>: <code class="docutils literal notranslate"><span class="pre">electron</span> <span class="pre">acceptor:</span> <span class="pre">amorphous</span> <span class="pre">iron</span> <span class="pre">(iii)</span> <span class="pre">oxide</span></code> (8 occurrences)</p></li>
+</ul>
+</section>
+<section id="metpo-predicate-already-available">
+<h3>METPO Predicate Already Available<a class="headerlink" href="#metpo-predicate-already-available" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Predicate</p></th>
+<th class="head"><p>Label</p></th>
+<th class="head"><p>Usage</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">METPO:2000008</span></code></p></td>
+<td><p>uses as electron acceptor</p></td>
+<td><p>Chemical serves as electron acceptor</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="id2">
+<h3>Implementation Pattern<a class="headerlink" href="#id2" title="Link to this heading"></a></h3>
+<p><strong>Edge Format</strong>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="s2">&quot;NCBITaxon:872&quot;</span><span class="p">,</span>          <span class="c1"># Desulfovibrio vulgaris</span>
+    <span class="s2">&quot;predicate&quot;</span><span class="p">:</span> <span class="s2">&quot;METPO:2000008&quot;</span><span class="p">,</span>        <span class="c1"># uses as electron acceptor</span>
+    <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="s2">&quot;CHEBI:16189&quot;</span><span class="p">,</span>             <span class="c1"># sulfate</span>
+    <span class="s2">&quot;relation&quot;</span><span class="p">:</span> <span class="s2">&quot;METPO:2000008&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;primary_knowledge_source&quot;</span><span class="p">:</span> <span class="s2">&quot;infores:metatraits&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>RDF/Turtle</strong>:</p>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="nn">NCBITaxon</span><span class="p">:</span><span class="nt">872</span> <span class="nn">METPO</span><span class="p">:</span><span class="nt">2000008</span> <span class="nn">CHEBI</span><span class="p">:</span><span class="nt">16189</span> <span class="p">.</span>  <span class="c"># uses sulfate as electron acceptor</span>
+<span class="nn">CHEBI</span><span class="p">:</span><span class="nt">16189</span> <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;sulfate&quot;</span> <span class="p">.</span>
+</pre></div>
+</div>
+</section>
+<section id="mapping-strategy">
+<h3>Mapping Strategy<a class="headerlink" href="#mapping-strategy" title="Link to this heading"></a></h3>
+<p>For compound terms like “sulfur compounds”:</p>
+<ol class="arabic simple">
+<li><p><strong>Option A</strong>: Map to parent CHEBI class (e.g., CHEBI:26833 “sulfur molecular entity”)</p></li>
+<li><p><strong>Option B</strong>: Map to specific compound if context suggests (e.g., CHEBI:16189 “sulfate”)</p></li>
+<li><p><strong>Option C</strong>: Create multiple edges for known sulfur acceptors (sulfate, sulfite, thiosulfate)</p></li>
+</ol>
+<p><strong>Recommended</strong>: Option A (parent class) for broad terms, Option B for specific compounds</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Unmapped Trait</p></th>
+<th class="head"><p>CHEBI ID</p></th>
+<th class="head"><p>CHEBI Label</p></th>
+<th class="head"><p>Approach</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>electron acceptor: sulfur compounds</p></td>
+<td><p>CHEBI:26833</p></td>
+<td><p>sulfur molecular entity</p></td>
+<td><p>Parent class</p></td>
+</tr>
+<tr class="row-odd"><td><p>electron acceptor: amorphous iron (iii) oxide</p></td>
+<td><p>CHEBI:82594</p></td>
+<td><p>iron(III) oxide</p></td>
+<td><p>Specific</p></td>
+</tr>
+<tr class="row-even"><td><p>electron acceptor: nitrate</p></td>
+<td><p>CHEBI:17632</p></td>
+<td><p>nitrate</p></td>
+<td><p>Specific</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>File</strong>: <code class="docutils literal notranslate"><span class="pre">mappings/electron_acceptor_trait_to_chebi.tsv</span></code></p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="solution-3-quantitative-properties-new-data-properties">
+<h2>Solution 3: Quantitative Properties → NEW Data Properties<a class="headerlink" href="#solution-3-quantitative-properties-new-data-properties" title="Link to this heading"></a></h2>
+<section id="id3">
+<h3>Current State<a class="headerlink" href="#id3" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong>Temperature traits</strong>: <code class="docutils literal notranslate"><span class="pre">growth:</span> <span class="pre">[X]</span> <span class="pre">degrees</span> <span class="pre">Celsius</span></code> (85,311 occurrences)</p></li>
+<li><p><strong>Salt traits</strong>: <code class="docutils literal notranslate"><span class="pre">growth:</span> <span class="pre">[X]%</span> <span class="pre">NaCl</span></code> (85,311 occurrences)</p></li>
+<li><p><strong>pH traits</strong>: <code class="docutils literal notranslate"><span class="pre">pH</span> <span class="pre">preference</span></code> (5,479 occurrences)</p></li>
+</ul>
+</section>
+<section id="problem">
+<h3>Problem<a class="headerlink" href="#problem" title="Link to this heading"></a></h3>
+<p>Existing METPO predicates don’t support quantitative measurements directly. We need <strong>data properties</strong> to attach numerical values to organisms.</p>
+</section>
+<section id="proposed-data-properties-9-new">
+<h3>Proposed Data Properties (9 NEW)<a class="headerlink" href="#proposed-data-properties-9-new" title="Link to this heading"></a></h3>
+<section id="temperature-properties">
+<h4>Temperature Properties<a class="headerlink" href="#temperature-properties" title="Link to this heading"></a></h4>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="nn">METPO</span><span class="p">:</span><span class="nt">has_growth_temperature_optimum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;has growth temperature optimum&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The optimal temperature at which an organism achieves maximum growth rate (in degrees Celsius).&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">OrganismTaxon</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasDbXref</span> <span class="s">&quot;UO:0000027&quot;</span> <span class="p">;</span>  <span class="c"># degree Celsius</span>
+    <span class="p">.</span>
+
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_growth_temperature_minimum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;has growth temperature minimum&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">OrganismTaxon</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_growth_temperature_maximum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;has growth temperature maximum&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">OrganismTaxon</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="p">.</span>
+</pre></div>
+</div>
+</section>
+<section id="salt-tolerance-properties">
+<h4>Salt Tolerance Properties<a class="headerlink" href="#salt-tolerance-properties" title="Link to this heading"></a></h4>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="nn">METPO</span><span class="p">:</span><span class="nt">has_NaCl_concentration_optimum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;has NaCl concentration optimum&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The optimal NaCl concentration for growth expressed as weight/volume percentage.&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">OrganismTaxon</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="nn">oboInOwl</span><span class="p">:</span><span class="nt">hasDbXref</span> <span class="s">&quot;UO:0000187&quot;</span> <span class="p">;</span>  <span class="c"># percent</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">comment</span> <span class="s">&quot;Value should be w/v percentage. Example: 6.5 for 6.5% NaCl&quot;</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_NaCl_concentration_minimum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">OrganismTaxon</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_NaCl_concentration_maximum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">OrganismTaxon</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="p">.</span>
+</pre></div>
+</div>
+</section>
+<section id="ph-properties">
+<h4>pH Properties<a class="headerlink" href="#ph-properties" title="Link to this heading"></a></h4>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="nn">METPO</span><span class="p">:</span><span class="nt">has_pH_optimum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;has pH optimum&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">obo</span><span class="p">:</span><span class="nt">IAO_0000115</span> <span class="s">&quot;The optimal pH for growth on the pH scale (0-14).&quot;</span><span class="o">@</span><span class="ge">en</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">OrganismTaxon</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_pH_minimum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">OrganismTaxon</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="p">.</span>
+
+<span class="nn">METPO</span><span class="p">:</span><span class="nt">has_pH_maximum</span> <span class="kt">a</span> <span class="nn">owl</span><span class="p">:</span><span class="nt">DatatypeProperty</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">domain</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">OrganismTaxon</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">range</span> <span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="p">.</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="usage-pattern">
+<h3>Usage Pattern<a class="headerlink" href="#usage-pattern" title="Link to this heading"></a></h3>
+<p><strong>Direct attachment to organism node</strong>:</p>
+<div class="highlight-turtle notranslate"><div class="highlight"><pre><span></span><span class="nn">NCBITaxon</span><span class="p">:</span><span class="nt">1392</span> <span class="kt">a</span> <span class="nn">biolink</span><span class="p">:</span><span class="nt">OrganismTaxon</span> <span class="p">;</span>
+    <span class="nn">rdfs</span><span class="p">:</span><span class="nt">label</span> <span class="s">&quot;Bacillus anthracis&quot;</span> <span class="p">;</span>
+    <span class="nn">METPO</span><span class="p">:</span><span class="nt">has_growth_temperature_optimum</span> <span class="s">&quot;35.0&quot;</span><span class="p">^^</span><span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="nn">METPO</span><span class="p">:</span><span class="nt">has_growth_temperature_minimum</span> <span class="s">&quot;15.0&quot;</span><span class="p">^^</span><span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="nn">METPO</span><span class="p">:</span><span class="nt">has_growth_temperature_maximum</span> <span class="s">&quot;45.0&quot;</span><span class="p">^^</span><span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="nn">METPO</span><span class="p">:</span><span class="nt">has_NaCl_concentration_optimum</span> <span class="s">&quot;0.5&quot;</span><span class="p">^^</span><span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="nn">METPO</span><span class="p">:</span><span class="nt">has_pH_optimum</span> <span class="s">&quot;7.0&quot;</span><span class="p">^^</span><span class="nn">xsd</span><span class="p">:</span><span class="nt">decimal</span> <span class="p">;</span>
+    <span class="p">.</span>
+</pre></div>
+</div>
+<p><strong>In KGX TSV format</strong> (nodes.tsv):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nb">id</span>	<span class="n">category</span>	<span class="n">name</span>	<span class="n">has_growth_temperature_optimum</span>	<span class="n">has_NaCl_concentration_optimum</span>	<span class="n">has_pH_optimum</span>
+<span class="n">NCBITaxon</span><span class="p">:</span><span class="mi">1392</span>	<span class="n">biolink</span><span class="p">:</span><span class="n">OrganismTaxon</span>	<span class="n">Bacillus</span> <span class="n">anthracis</span>	<span class="mf">35.0</span>	<span class="mf">0.5</span>	<span class="mf">7.0</span>
+</pre></div>
+</div>
+</section>
+<section id="transform-implementation">
+<h3>Transform Implementation<a class="headerlink" href="#transform-implementation" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Parse quantitative trait</span>
+<span class="k">if</span> <span class="n">trait</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;growth: &quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;degrees Celsius&quot;</span> <span class="ow">in</span> <span class="n">trait</span><span class="p">:</span>
+    <span class="c1"># Extract temperature value</span>
+    <span class="n">temp_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\d+(?:\.\d+)?)&#39;</span><span class="p">,</span> <span class="n">trait</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">temp_match</span><span class="p">:</span>
+        <span class="n">temp_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">temp_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+        <span class="c1"># Add as node property</span>
+        <span class="n">organism_node</span><span class="p">[</span><span class="s2">&quot;has_growth_temperature_optimum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">temp_value</span>
+
+<span class="k">elif</span> <span class="n">trait</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;growth: &quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;% NaCl&quot;</span> <span class="ow">in</span> <span class="n">trait</span><span class="p">:</span>
+    <span class="c1"># Extract NaCl concentration</span>
+    <span class="n">nacl_match</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;(\d+(?:\.\d+)?)&#39;</span><span class="p">,</span> <span class="n">trait</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nacl_match</span><span class="p">:</span>
+        <span class="n">nacl_value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">nacl_match</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">organism_node</span><span class="p">[</span><span class="s2">&quot;has_NaCl_concentration_optimum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nacl_value</span>
+
+<span class="k">elif</span> <span class="n">trait</span> <span class="o">==</span> <span class="s2">&quot;pH preference&quot;</span><span class="p">:</span>
+    <span class="c1"># Parse pH value from context (may need additional data)</span>
+    <span class="n">organism_node</span><span class="p">[</span><span class="s2">&quot;has_pH_optimum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ph_value</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="summary-of-changes-needed">
+<h2>Summary of Changes Needed<a class="headerlink" href="#summary-of-changes-needed" title="Link to this heading"></a></h2>
+<section id="no-new-classes-required">
+<h3>No New Classes Required<a class="headerlink" href="#no-new-classes-required" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>✅ Fermentation: Use existing <code class="docutils literal notranslate"><span class="pre">METPO:2000011</span></code> (ferments)</p></li>
+<li><p>✅ Electron acceptors: Use existing <code class="docutils literal notranslate"><span class="pre">METPO:2000008</span></code> (uses as electron acceptor)</p></li>
+</ul>
+</section>
+<section id="new-data-properties-required">
+<h3>9 New Data Properties Required<a class="headerlink" href="#new-data-properties-required" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:has_growth_temperature_optimum</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:has_growth_temperature_minimum</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:has_growth_temperature_maximum</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:has_NaCl_concentration_optimum</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:has_NaCl_concentration_minimum</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:has_NaCl_concentration_maximum</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:has_pH_optimum</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:has_pH_minimum</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">METPO:has_pH_maximum</span></code></p></li>
+</ol>
+</section>
+<section id="new-mapping-files-required">
+<h3>2 New Mapping Files Required<a class="headerlink" href="#new-mapping-files-required" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">mappings/fermentation_trait_to_chebi.tsv</span></code> - Map 95 fermentation substrates to CHEBI IDs</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mappings/electron_acceptor_trait_to_chebi.tsv</span></code> - Map electron acceptor compounds to CHEBI IDs</p></li>
+</ol>
+</section>
+</section>
+<hr class="docutils" />
+<section id="coverage-impact">
+<h2>Coverage Impact<a class="headerlink" href="#coverage-impact" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Solution</p></th>
+<th class="head"><p>Traits Addressed</p></th>
+<th class="head"><p>Occurrences</p></th>
+<th class="head"><p>Implementation Complexity</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Fermentation predicate</p></td>
+<td><p>95</p></td>
+<td><p>~7,500</p></td>
+<td><p>LOW (mapping file only)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Electron acceptor predicate</p></td>
+<td><p>2-5</p></td>
+<td><p>99,551</p></td>
+<td><p>LOW (mapping file only)</p></td>
+</tr>
+<tr class="row-even"><td><p>Quantitative data properties</p></td>
+<td><p>3</p></td>
+<td><p>176,101</p></td>
+<td><p>MEDIUM (9 new properties)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Total</strong></p></td>
+<td><p><strong>~100</strong></p></td>
+<td><p><strong>~283,000</strong></p></td>
+<td><p><strong>LOW-MEDIUM</strong></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<hr class="docutils" />
+<section id="implementation-roadmap">
+<h2>Implementation Roadmap<a class="headerlink" href="#implementation-roadmap" title="Link to this heading"></a></h2>
+<section id="phase-1-mapping-files-week-1">
+<h3>Phase 1: Mapping Files (Week 1)<a class="headerlink" href="#phase-1-mapping-files-week-1" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Create <code class="docutils literal notranslate"><span class="pre">fermentation_trait_to_chebi.tsv</span></code> with all 95 substrates → CHEBI mappings</p></li>
+<li><p>Create <code class="docutils literal notranslate"><span class="pre">electron_acceptor_trait_to_chebi.tsv</span></code> with acceptor compounds → CHEBI mappings</p></li>
+<li><p>Validate CHEBI IDs exist in current ChEBI release</p></li>
+</ol>
+</section>
+<section id="phase-2-metpo-data-properties-week-2">
+<h3>Phase 2: METPO Data Properties (Week 2)<a class="headerlink" href="#phase-2-metpo-data-properties-week-2" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Submit 9 data property definitions to METPO GitHub as issue/PR</p></li>
+<li><p>Wait for METPO maintainer review and ID assignment</p></li>
+<li><p>Update METPO ontology locally for testing</p></li>
+</ol>
+</section>
+<section id="phase-3-transform-implementation-week-3">
+<h3>Phase 3: Transform Implementation (Week 3)<a class="headerlink" href="#phase-3-transform-implementation-week-3" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Update metatraits/metatraits_gtdb transforms to:</p>
+<ul class="simple">
+<li><p>Load fermentation and electron acceptor mapping files</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">METPO:2000011</span></code> for fermentation traits</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">METPO:2000008</span></code> for electron acceptor traits</p></li>
+<li><p>Attach quantitative data properties to organism nodes</p></li>
+</ul>
+</li>
+<li><p>Test with sample data</p></li>
+<li><p>Run full transforms</p></li>
+</ol>
+</section>
+<section id="phase-4-validation-week-4">
+<h3>Phase 4: Validation (Week 4)<a class="headerlink" href="#phase-4-validation-week-4" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p>Verify edge counts: expect 95 × occurrence_count new fermentation edges</p></li>
+<li><p>Verify node properties populated with temperature/NaCl/pH values</p></li>
+<li><p>Compare coverage: should reduce unmapped traits by ~18%</p></li>
+</ol>
+</section>
+</section>
+<hr class="docutils" />
+<section id="files-generated">
+<h2>Files Generated<a class="headerlink" href="#files-generated" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">mappings/metpo_predicate_based_proposal.tsv</span></code></strong> - 9 data property definitions</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">docs/METPO_PREDICATE_BASED_IMPLEMENTATION.md</span></code></strong> - This document</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">mappings/fermentation_trait_to_chebi.tsv</span></code></strong> - (To be created) 95 fermentation mappings</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">mappings/electron_acceptor_trait_to_chebi.tsv</span></code></strong> - (To be created) Electron acceptor mappings</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>METPO Predicates: <code class="docutils literal notranslate"><span class="pre">docs/METPO_PREDICATES.md</span></code></p></li>
+<li><p>METPO GitHub: https://github.com/berkeleybop/metpo</p></li>
+<li><p>Unmapped Traits Analysis: <code class="docutils literal notranslate"><span class="pre">docs/UNMAPPED_TRAITS_ONTOLOGY_ANALYSIS.md</span></code></p></li>
+<li><p>ChEBI: https://www.ebi.ac.uk/chebi/</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

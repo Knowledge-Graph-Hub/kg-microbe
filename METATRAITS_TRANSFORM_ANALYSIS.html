@@ -1,0 +1,173 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Metatraits Transform: Step-by-Step Analysis &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Metatraits Transform: Step-by-Step Analysis</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/METATRAITS_TRANSFORM_ANALYSIS.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="metatraits-transform-step-by-step-analysis">
+<h1>Metatraits Transform: Step-by-Step Analysis<a class="headerlink" href="#metatraits-transform-step-by-step-analysis" title="Link to this heading"></a></h1>
+<section id="why-ncbitaxon-db-gz-2gb-was-downloaded">
+<h2>Why <code class="docutils literal notranslate"><span class="pre">ncbitaxon.db.gz</span></code> (2GB) Was Downloaded<a class="headerlink" href="#why-ncbitaxon-db-gz-2gb-was-downloaded" title="Link to this heading"></a></h2>
+<p>The metatraits transform resolves taxon names (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;Euryarchaeota</span> <span class="pre">archaeon&quot;</span></code>) to NCBITaxon IDs. It uses the <a class="reference external" href="https://github.com/INCATools/ontology-access-kit">OAK</a> library for ontology lookups.</p>
+<p><strong>Lazy adapter creation:</strong> The OAK adapter is now created only on the first cache miss. If <code class="docutils literal notranslate"><span class="pre">ncbitaxon_nodes.tsv</span></code> provides full coverage for your input taxa, the adapter is never created and no download occurs.</p>
+<p><strong>When a download does occur (first cache miss):</strong></p>
+<ol class="arabic simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">_get_ncbitaxon_adapter()</span></code></strong> tries the local source first: <code class="docutils literal notranslate"><span class="pre">sqlite:data/raw/ncbitaxon.owl</span></code></p></li>
+<li><p>The local file is missing or invalid, so the adapter fails</p></li>
+<li><p>On exception, it falls back to <strong><code class="docutils literal notranslate"><span class="pre">sqlite:obo:ncbitaxon</span></code></strong></p></li>
+<li><p>OAK’s <code class="docutils literal notranslate"><span class="pre">sqlite:obo:ncbitaxon</span></code> downloads a pre-built NCBITaxon SQLite database (~2GB compressed) from a central repository and caches it locally</p></li>
+<li><p>That download is what you saw as <code class="docutils literal notranslate"><span class="pre">ncbitaxon.db.gz</span></code></p></li>
+</ol>
+<p><strong>To avoid the download:</strong> Provide NCBITaxon labels via one of:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">data/transformed/ontologies/ncbitaxon_nodes.tsv</span></code> (from <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">kg</span> <span class="pre">transform</span> <span class="pre">-s</span> <span class="pre">ontologies</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">data/raw/ncbitaxon_nodes.tsv</span></code> (manually placed; same format: id, category, name, …)</p></li>
+</ul>
+<p>The metatraits transform checks both paths and loads the first existing file. With ~70k+ labels preloaded, taxon resolution is fast (dict lookup) and OAK is only used for taxa not in the file.</p>
+</section>
+<hr class="docutils" />
+<section id="why-it-appears-stuck-at-processing-files-0-0-3">
+<h2>Why It Appears Stuck at “Processing files: 0%| 0/3”<a class="headerlink" href="#why-it-appears-stuck-at-processing-files-0-0-3" title="Link to this heading"></a></h2>
+<p>The progress bar shows <strong>file-level</strong> progress (0/3 = first of three files). The bottleneck is <strong>inside</strong> the first file.</p>
+<section id="step-by-step-flow">
+<h3>Step-by-step flow<a class="headerlink" href="#step-by-step-flow" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Step</p></th>
+<th class="head"><p>Location</p></th>
+<th class="head"><p>What happens</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">run()</span></code> line 241</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tqdm(input_files,</span> <span class="pre">desc=&quot;Processing</span> <span class="pre">files&quot;)</span></code> – progress bar over 3 files</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Line 243–244</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">input_path</span> <span class="pre">in</span> <span class="pre">iterable</span></code> → opens first file (e.g. <code class="docutils literal notranslate"><span class="pre">ncbi_species_summary.jsonl.gz</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>Line 245</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">for</span> <span class="pre">line</span> <span class="pre">in</span> <span class="pre">f</span></code> – iterates over <strong>each line</strong> (54,654+ lines in species file)</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>Line 257</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">tax_id</span> <span class="pre">=</span> <span class="pre">self._search_ncbitaxon_by_label(tax_name)</span></code> – <strong>OAK lookup per line</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_search_ncbitaxon_by_label</span></code></p></td>
+<td><p>Cache miss → <code class="docutils literal notranslate"><span class="pre">_get_ncbitaxon_impl()</span></code> creates adapter → <code class="docutils literal notranslate"><span class="pre">search_by_label(...)</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="root-cause-when-cache-is-empty">
+<h3>Root cause (when cache is empty)<a class="headerlink" href="#root-cause-when-cache-is-empty" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ncbitaxon_name_to_id</span></code> is filled from <code class="docutils literal notranslate"><span class="pre">NCBITAXON_NODES_FILE</span></code> (ontologies output) or <code class="docutils literal notranslate"><span class="pre">data/raw/ncbitaxon_nodes.tsv</span></code></p></li>
+<li><p>If that file is missing, the cache is empty</p></li>
+<li><p>Each <code class="docutils literal notranslate"><span class="pre">_search_ncbitaxon_by_label</span></code> call that misses the cache triggers an OAK <code class="docutils literal notranslate"><span class="pre">basic_search</span></code> on the 2GB SQLite DB</p></li>
+</ul>
+<p><strong>Update:</strong> OAK lookup results are now cached in <code class="docutils literal notranslate"><span class="pre">ncbitaxon_name_to_id</span></code> (see <code class="docutils literal notranslate"><span class="pre">_search_ncbitaxon_by_label</span></code>). The first occurrence of each taxon triggers an OAK lookup; subsequent occurrences reuse the cached ID. This reduces repeated lookups when the same taxon appears many times across lines.</p>
+<p>The bar still advances only when the entire first file is finished, so with many unique taxa and no preloaded NCBITaxon labels, the first file can remain slow until all unique taxa have been resolved and cached.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

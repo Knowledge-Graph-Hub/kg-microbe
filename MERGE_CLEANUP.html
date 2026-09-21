@@ -1,0 +1,286 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Post-Merge TSV Cleanup &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Post-Merge TSV Cleanup</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/MERGE_CLEANUP.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="post-merge-tsv-cleanup">
+<h1>Post-Merge TSV Cleanup<a class="headerlink" href="#post-merge-tsv-cleanup" title="Link to this heading"></a></h1>
+<p>This document describes what happens when you see this line during
+<code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">kg</span> <span class="pre">merge</span> <span class="pre">-y</span> <span class="pre">merge.yaml</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">merge</span><span class="o">-</span><span class="n">cleanup</span><span class="p">]</span> <span class="n">extracting</span> <span class="n">merged</span><span class="o">-</span><span class="n">kg</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span> <span class="n">to</span> <span class="n">normalize</span> <span class="n">TSVs</span> <span class="ow">in</span> <span class="n">place</span>
+</pre></div>
+</div>
+<section id="where-it-runs">
+<h2>Where it runs<a class="headerlink" href="#where-it-runs" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">kg_microbe/merge_utils/merge_kg.py::_cleanup_merged_outputs()</span></code>, invoked from
+<code class="docutils literal notranslate"><span class="pre">load_and_merge()</span></code> immediately after <code class="docutils literal notranslate"><span class="pre">kgx.cli.cli_utils.merge</span></code> finishes. The
+public command first validates finalized source bundles and current producer
+dependencies, then runs KGX in a private staging directory. Required
+serialization, graph-validation and manifest failures propagate and prevent
+publication; they do not leave a partially cleaned replacement archive.
+Optional invariant reports and statistics have separate failure handling.
+See <a class="reference internal" href="PREMERGE_SOURCE_FINALIZATION.html"><span class="std std-doc">source finalization responsibilities</span></a>.</p>
+</section>
+<section id="why-it-exists">
+<h2>Why it exists<a class="headerlink" href="#why-it-exists" title="Link to this heading"></a></h2>
+<p>KGX’s <code class="docutils literal notranslate"><span class="pre">TsvSink</span></code> produces three classes of artifacts we see in practice, and
+the cleanup provides serialization compatibility for each:</p>
+<ol class="arabic simple">
+<li><p><strong>Duplicate header columns</strong> (e.g. <code class="docutils literal notranslate"><span class="pre">provided_by</span></code> x2, <code class="docutils literal notranslate"><span class="pre">agent_type</span></code> x2) when
+source files are headerless subsets of each other and column order is
+reconstructed from per-record property sets.</p></li>
+<li><p><strong>Auxiliary columns</strong> that leak through from obograph ingestion —
+<code class="docutils literal notranslate"><span class="pre">subsets</span></code>, <code class="docutils literal notranslate"><span class="pre">meta</span></code>, and an edge <code class="docutils literal notranslate"><span class="pre">id</span></code> column — plus the deprecated
+<code class="docutils literal notranslate"><span class="pre">knowledge_source</span></code> sitting alongside its biolink 3.x replacement
+<code class="docutils literal notranslate"><span class="pre">primary_knowledge_source</span></code>.</p></li>
+<li><p><strong>Stray <code class="docutils literal notranslate"><span class="pre">\r</span></code> characters</strong> emitted mid-header by <code class="docutils literal notranslate"><span class="pre">TsvSink</span></code> when a source
+description contained an embedded CR (seen in ChEBI descriptions). This
+corrupts CSV-reader parsing of the merged file downstream — it was the
+exact cause of the “subject=<code class="docutils literal notranslate"><span class="pre">knowledge_level</span></code>, object=<code class="docutils literal notranslate"><span class="pre">meta</span></code>” false
+positive that <code class="docutils literal notranslate"><span class="pre">kg-model-review</span></code> used to report when it read the stale
+<code class="docutils literal notranslate"><span class="pre">merged-kg_default_edges.tsv</span></code>.</p></li>
+</ol>
+<p>Transform-level schema normalization (each transform writes a canonical
+header) removes most causes of (1) and (2). This post-merge step is
+idempotent at the TSV-content level and becomes a schema no-op when sources
+are already uniform. It normalizes transport CRLF only; an embedded <code class="docutils literal notranslate"><span class="pre">\r</span></code>
+is an error requiring a source-level correction, not a byte to erase.
+Category, identifier and ontology-reference decisions occur during source
+finalization, not after graph union.</p>
+</section>
+<section id="step-by-step">
+<h2>Step-by-step<a class="headerlink" href="#step-by-step" title="Link to this heading"></a></h2>
+<p>For each destination in <code class="docutils literal notranslate"><span class="pre">merged_graph.destination</span></code> in <code class="docutils literal notranslate"><span class="pre">merge.yaml</span></code> whose
+<code class="docutils literal notranslate"><span class="pre">format:</span> <span class="pre">tsv</span></code>:</p>
+<ol class="arabic">
+<li><p><strong>Resolve paths</strong> from the destination’s <code class="docutils literal notranslate"><span class="pre">filename</span></code> (e.g. <code class="docutils literal notranslate"><span class="pre">merged-kg</span></code>):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">nodes_file</span> <span class="pre">=</span> <span class="pre">output_dir/merged-kg_nodes.tsv</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">edges_file</span> <span class="pre">=</span> <span class="pre">output_dir/merged-kg_edges.tsv</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">archive</span>&#160;&#160; <span class="pre">=</span> <span class="pre">output_dir/merged-kg.tar.gz</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>Extract if compressed.</strong> When <code class="docutils literal notranslate"><span class="pre">compression:</span> <span class="pre">tar.gz</span></code> is set and the
+archive exists but the loose TSVs do not, copy only its two regular TSV
+members into the private staging <code class="docutils literal notranslate"><span class="pre">output_dir</span></code>. Arbitrary archive members,
+links and paths are not extracted. This is the
+step that prints:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">merge</span><span class="o">-</span><span class="n">cleanup</span><span class="p">]</span> <span class="n">extracting</span> <span class="n">merged</span><span class="o">-</span><span class="n">kg</span><span class="o">.</span><span class="n">tar</span><span class="o">.</span><span class="n">gz</span> <span class="n">to</span> <span class="n">normalize</span> <span class="n">TSVs</span> <span class="ow">in</span> <span class="n">place</span>
+</pre></div>
+</div>
+<p>A flag (<code class="docutils literal notranslate"><span class="pre">extracted_from_archive</span></code>) is remembered so the loose TSVs can be
+deleted again after re-archiving (KGX’s sink didn’t leave them behind, so
+neither do we).</p>
+</li>
+<li><p><strong>Normalize nodes</strong> (<code class="docutils literal notranslate"><span class="pre">_normalize_nodes_tsv</span></code>):</p>
+<ul class="simple">
+<li><p>Read the literal TSV header; normalize CRLF line endings via
+<code class="docutils literal notranslate"><span class="pre">_iter_clean_lines</span></code>, rejecting embedded carriage returns.</p></li>
+<li><p>Plan output columns: canonical order (<code class="docutils literal notranslate"><span class="pre">id,</span> <span class="pre">category,</span> <span class="pre">name,</span> <span class="pre">description,</span> <span class="pre">xref,</span> <span class="pre">provided_by,</span> <span class="pre">synonym,</span> <span class="pre">deprecated,</span> <span class="pre">same_as</span></code>), then any unknown
+forward-compat columns; drop <code class="docutils literal notranslate"><span class="pre">subsets,</span> <span class="pre">meta,</span> <span class="pre">iri</span></code>; dedup any repeated
+column names by coalescing identical nonempty values. Conflicting
+nonempty duplicate-column values fail; no value silently wins.</p></li>
+<li><p>Log the schema diff: <code class="docutils literal notranslate"><span class="pre">dropped=[…]</span> <span class="pre">added=[…]</span> <span class="pre">deduped=[…]</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">schema</span> <span class="pre">already</span> <span class="pre">canonical</span> <span class="pre">(no-op)</span></code> when nothing changed.</p></li>
+<li><p>Rewrite the file atomically via a tempfile <code class="docutils literal notranslate"><span class="pre">replace</span></code>.</p></li>
+</ul>
+</li>
+<li><p><strong>Normalize edges</strong> (<code class="docutils literal notranslate"><span class="pre">_normalize_edges_tsv</span></code>):</p>
+<ul class="simple">
+<li><p>Same header cleaning and canonical reordering
+(<code class="docutils literal notranslate"><span class="pre">subject,</span> <span class="pre">predicate,</span> <span class="pre">object,</span> <span class="pre">relation,</span> <span class="pre">primary_knowledge_source,</span> <span class="pre">knowledge_level,</span> <span class="pre">agent_type</span></code>).</p></li>
+<li><p>Append the <code class="docutils literal notranslate"><span class="pre">has_percentage</span></code> extension column if present (metatraits).</p></li>
+<li><p>Drop internal <code class="docutils literal notranslate"><span class="pre">id,</span> <span class="pre">key,</span> <span class="pre">meta</span></code> and legacy <code class="docutils literal notranslate"><span class="pre">knowledge_source</span></code> columns.</p></li>
+<li><p>Merge legacy <code class="docutils literal notranslate"><span class="pre">knowledge_source</span></code> into <code class="docutils literal notranslate"><span class="pre">primary_knowledge_source</span></code>: when
+<code class="docutils literal notranslate"><span class="pre">primary_knowledge_source</span></code> is empty, fall back to <code class="docutils literal notranslate"><span class="pre">knowledge_source</span></code> on
+the same row before dropping the latter.</p></li>
+<li><p>Same schema diff log line for edges.</p></li>
+</ul>
+</li>
+<li><p><strong>Validate and report.</strong> Required canonical representation and endpoint
+validation writes <code class="docutils literal notranslate"><span class="pre">merged-kg_reference_resolution.tsv</span></code>, explicitly
+recording no semantic rewrites. It does not consult live ontology
+authorities or retarget/drop biological assertions. Optional invariant
+diagnostics and final TSV statistics follow. A failed stats annotation
+withholds that stats output rather than publishing misleading counts.</p></li>
+<li><p><strong>Package the destination.</strong> For <code class="docutils literal notranslate"><span class="pre">compression:</span> <span class="pre">tar.gz</span></code>, <code class="docutils literal notranslate"><span class="pre">_rewrite_tarball</span></code>
+atomically writes the TSV pair and
+validation report into the staged archive, plus <code class="docutils literal notranslate"><span class="pre">manifest.json</span></code> with each
+member’s exact SHA256, byte size and row count. Members are flat, with no
+nested directory. The manifest also identifies configuration, schema and
+source-marker evidence. Uncompressed TSV destinations instead retain
+their loose pair/report and receive <code class="docutils literal notranslate"><span class="pre">&lt;base&gt;_manifest.json</span></code> beside them.</p></li>
+<li><p><strong>Publish and remove temporary loose files.</strong> If step 2 extracted the
+pair, remove those staging copies after packaging. The public command
+publishes completed staged artifacts only after required work succeeds.
+Existing unrelated older artifacts are warned about, not deleted.</p></li>
+</ol>
+</section>
+<section id="configuration-prerequisites">
+<h2>Configuration prerequisites<a class="headerlink" href="#configuration-prerequisites" title="Link to this heading"></a></h2>
+<p>The cleanup only runs for destinations that are <code class="docutils literal notranslate"><span class="pre">format:</span> <span class="pre">tsv</span></code>. The archive
+path is <code class="docutils literal notranslate"><span class="pre">&lt;output_directory&gt;/&lt;filename&gt;.tar.gz</span></code>, where both fields come from
+<code class="docutils literal notranslate"><span class="pre">merge.yaml</span></code>:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">configuration</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">output_directory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data/merged</span>
+<span class="nt">merged_graph</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">destination</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">merged-kg-tsv</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">format</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tsv</span>
+<span class="w">      </span><span class="nt">compression</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tar.gz</span>
+<span class="w">      </span><span class="nt">filename</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">merged-kg</span>
+</pre></div>
+</div>
+<p>Given that config, the cleanup will target <code class="docutils literal notranslate"><span class="pre">data/merged/merged-kg.tar.gz</span></code>.</p>
+</section>
+<section id="how-to-read-the-log-output">
+<h2>How to read the log output<a class="headerlink" href="#how-to-read-the-log-output" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Log line</p></th>
+<th class="head"><p>What it means</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">[merge-cleanup]</span> <span class="pre">extracting</span> <span class="pre">merged-kg.tar.gz</span> <span class="pre">to</span> <span class="pre">normalize</span> <span class="pre">TSVs</span> <span class="pre">in</span> <span class="pre">place</span></code></p></td>
+<td><p>Loose TSVs were missing; archive was untarred so normalizer could edit them.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">[merge-cleanup]</span> <span class="pre">nodes</span> <span class="pre">merged-kg_nodes.tsv:</span> <span class="pre">schema</span> <span class="pre">already</span> <span class="pre">canonical</span> <span class="pre">(no-op)</span></code></p></td>
+<td><p>Transform-level normalization did its job; nothing to fix here.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">[merge-cleanup]</span> <span class="pre">edges</span> <span class="pre">merged-kg_edges.tsv:</span> <span class="pre">dropped=['meta']</span> <span class="pre">added=[]</span> <span class="pre">deduped=['agent_type']</span></code></p></td>
+<td><p>Dropped <code class="docutils literal notranslate"><span class="pre">meta</span></code> column, collapsed duplicate <code class="docutils literal notranslate"><span class="pre">agent_type</span></code> into one.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">[merge-validation]</span> <span class="pre">...;</span> <span class="pre">no</span> <span class="pre">semantic</span> <span class="pre">rewrites</span></code></p></td>
+<td><p>Required validation completed; ontology and identity decisions were made upstream.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">[merge-invariants]</span> <span class="pre">check</span> <span class="pre">skipped:</span> <span class="pre">&lt;error&gt;</span></code></p></td>
+<td><p>Optional diagnostic failed; investigate, but this is separate from required graph validation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">[merge-stats]</span> <span class="pre">annotation</span> <span class="pre">skipped:</span> <span class="pre">&lt;error&gt;</span></code></p></td>
+<td><p>Optional stats annotation failed; the failed stats file is withheld.</p></td>
+</tr>
+</tbody>
+</table>
+<p>A traceback from required normalization, validation or packaging aborts the
+public command before replacing the previous archive. It is not a successful
+but merely unnormalized merge.</p>
+</section>
+<section id="idempotency">
+<h2>Idempotency<a class="headerlink" href="#idempotency" title="Link to this heading"></a></h2>
+<p>Already-normalized TSVs yield two schema no-op log lines. Validation,
+statistics and packaging still run. TSV bytes can remain identical while
+the archive hash changes because manifests and archive metadata record the
+new build. Use the public command and its source gates, not direct cleanup,
+to produce a new accepted merged artifact.</p>
+</section>
+<section id="related">
+<h2>Related<a class="headerlink" href="#related" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Source: <code class="docutils literal notranslate"><span class="pre">kg_microbe/merge_utils/merge_kg.py</span></code></p></li>
+<li><p>Constants: <code class="docutils literal notranslate"><span class="pre">CANONICAL_NODE_HEADER</span></code>, <code class="docutils literal notranslate"><span class="pre">CANONICAL_EDGE_HEADER</span></code>,
+<code class="docutils literal notranslate"><span class="pre">EDGE_COLUMNS_TO_DROP</span></code>, <code class="docutils literal notranslate"><span class="pre">NODE_COLUMNS_TO_DROP</span></code>, <code class="docutils literal notranslate"><span class="pre">EDGE_EXTENSION_COLUMNS</span></code>
+at the top of the same file.</p></li>
+<li><p>Downstream: <code class="docutils literal notranslate"><span class="pre">.claude/skills/kg-model-review/kg_model_review.py</span></code> reads the
+normalized <code class="docutils literal notranslate"><span class="pre">merged-kg.tar.gz</span></code> via <code class="docutils literal notranslate"><span class="pre">iter_tsv_from_tar</span></code>.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

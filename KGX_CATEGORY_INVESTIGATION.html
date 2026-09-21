@@ -1,0 +1,374 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KGX Configuration Investigation: Category Conflict Resolution &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">KGX Configuration Investigation: Category Conflict Resolution</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/KGX_CATEGORY_INVESTIGATION.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kgx-configuration-investigation-category-conflict-resolution">
+<h1>KGX Configuration Investigation: Category Conflict Resolution<a class="headerlink" href="#kgx-configuration-investigation-category-conflict-resolution" title="Link to this heading"></a></h1>
+<p><strong>Date:</strong> 2026-01-19
+<strong>KGX Version:</strong> 2.4.2
+<strong>Investigator:</strong> Claude Code</p>
+<hr class="docutils" />
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Link to this heading"></a></h2>
+<p><strong>Finding:</strong> KGX treats <code class="docutils literal notranslate"><span class="pre">category</span></code> as a <strong>multivalued property by default</strong>, which causes conflicting categories to be combined into pipe-delimited strings during merge. There is <strong>no built-in configuration option</strong> to change this behavior.</p>
+<p><strong>Recommendation:</strong> Continue with the current <strong>pre-merge alignment + post-merge consolidation</strong> approach, which provides 100% resolution without requiring KGX modifications.</p>
+</section>
+<hr class="docutils" />
+<section id="investigation-details">
+<h2>Investigation Details<a class="headerlink" href="#investigation-details" title="Link to this heading"></a></h2>
+<section id="how-kgx-handles-property-conflicts">
+<h3>1. How KGX Handles Property Conflicts<a class="headerlink" href="#how-kgx-handles-property-conflicts" title="Link to this heading"></a></h3>
+<p>KGX uses the <code class="docutils literal notranslate"><span class="pre">prepare_data_dict()</span></code> function (<code class="docutils literal notranslate"><span class="pre">kgx/utils/kgx_utils.py:549-667</span></code>) to merge node/edge properties when the same entity appears in multiple source graphs.</p>
+<p><strong>Key Logic:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">is_property_multivalued</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;id&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;subject&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;object&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;predicate&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;synonym&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;in_taxon&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;same_as&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;has_evidence&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>  <span class="c1"># ← THIS CAUSES MULTI-CATEGORY NODES</span>
+    <span class="s2">&quot;publications&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">&quot;relation&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>When <code class="docutils literal notranslate"><span class="pre">category:</span> <span class="pre">True</span></code> (multivalued):</p>
+<ul class="simple">
+<li><p>First occurrence: <code class="docutils literal notranslate"><span class="pre">CHEBI:1000</span></code> → <code class="docutils literal notranslate"><span class="pre">category:</span> <span class="pre">&quot;biolink:ChemicalEntity&quot;</span></code></p></li>
+<li><p>Second occurrence: <code class="docutils literal notranslate"><span class="pre">CHEBI:1000</span></code> → <code class="docutils literal notranslate"><span class="pre">category:</span> <span class="pre">&quot;biolink:SmallMolecule&quot;</span></code></p></li>
+<li><p><strong>Result after merge:</strong> <code class="docutils literal notranslate"><span class="pre">category:</span> <span class="pre">[&quot;biolink:ChemicalEntity&quot;,</span> <span class="pre">&quot;biolink:SmallMolecule&quot;]</span></code></p></li>
+<li><p><strong>TSV serialization:</strong> <code class="docutils literal notranslate"><span class="pre">category:</span> <span class="pre">&quot;biolink:ChemicalEntity|biolink:SmallMolecule&quot;</span></code></p></li>
+</ul>
+</section>
+<section id="why-kgx-treats-category-as-multivalued">
+<h3>2. Why KGX Treats Category as Multivalued<a class="headerlink" href="#why-kgx-treats-category-as-multivalued" title="Link to this heading"></a></h3>
+<p>From the <a class="reference external" href="https://biolink.github.io/biolink-model/">Biolink Model specification</a>:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">category</span></code> is defined as a <strong>multivalued slot</strong> (list of categories)</p></li>
+<li><p>This allows entities to have multiple ontological classifications</p></li>
+<li><p>Example: A protein could be both <code class="docutils literal notranslate"><span class="pre">biolink:Protein</span></code> and <code class="docutils literal notranslate"><span class="pre">biolink:GeneProduct</span></code></p></li>
+</ul>
+<p><strong>However:</strong> The Biolink specification also states that for practical purposes, <strong>most implementations should use a single, most specific category</strong> for each entity.</p>
+</section>
+<section id="configuration-options-explored">
+<h3>3. Configuration Options Explored<a class="headerlink" href="#configuration-options-explored" title="Link to this heading"></a></h3>
+<section id="preserve-parameter">
+<h4>3.1 <code class="docutils literal notranslate"><span class="pre">preserve</span></code> Parameter<a class="headerlink" href="#preserve-parameter" title="Link to this heading"></a></h4>
+<p>The <code class="docutils literal notranslate"><span class="pre">preserve</span></code> parameter in <code class="docutils literal notranslate"><span class="pre">prepare_data_dict()</span></code> controls whether to:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">preserve=True</span></code>: Keep both values (convert to list)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">preserve=False</span></code>: Overwrite with new value</p></li>
+</ul>
+<p><strong>Finding:</strong> This parameter is hardcoded in KGX and <strong>not exposed</strong> in merge configuration YAML.</p>
+</section>
+<section id="merge-yaml-configuration-options">
+<h4>3.2 <code class="docutils literal notranslate"><span class="pre">merge.yaml</span></code> Configuration Options<a class="headerlink" href="#merge-yaml-configuration-options" title="Link to this heading"></a></h4>
+<p>Current configuration options:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">configuration</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">output_directory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data/merged</span>
+<span class="w">  </span><span class="nt">checkpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">  </span><span class="nt">category_allowlist</span><span class="p">:</span><span class="w">  </span><span class="c1"># Only for filtering, not conflict resolution</span>
+<span class="w">  </span><span class="nt">curie_map</span><span class="p">:</span><span class="w">           </span><span class="c1"># For RDF export</span>
+<span class="w">  </span><span class="nt">node_properties</span><span class="p">:</span><span class="w">     </span><span class="c1"># For RDF export</span>
+<span class="w">  </span><span class="nt">predicate_mappings</span><span class="p">:</span><span class="w">  </span><span class="c1"># For RDF export</span>
+<span class="w">  </span><span class="nt">property_types</span><span class="p">:</span><span class="w">      </span><span class="c1"># For RDF export</span>
+<span class="w">  </span><span class="nt">preserve</span><span class="p">:</span><span class="w">            </span><span class="c1"># For provenance properties only</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">primary_knowledge_source</span>
+</pre></div>
+</div>
+<p><strong>Finding:</strong> No configuration option exists for:</p>
+<ul class="simple">
+<li><p>Overriding <code class="docutils literal notranslate"><span class="pre">is_property_multivalued</span></code> dictionary</p></li>
+<li><p>Specifying category conflict resolution strategy</p></li>
+<li><p>Setting category priority rules</p></li>
+</ul>
+</section>
+<section id="networkx-behavior-underlying-graph-library">
+<h4>3.3 NetworkX Behavior (underlying graph library)<a class="headerlink" href="#networkx-behavior-underlying-graph-library" title="Link to this heading"></a></h4>
+<p>KGX uses NetworkX <code class="docutils literal notranslate"><span class="pre">MultiDiGraph</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># NetworkX overwrites properties on subsequent adds</span>
+<span class="n">G</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;CHEBI:1000&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;biolink:ChemicalEntity&quot;</span><span class="p">)</span>
+<span class="n">G</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="s2">&quot;CHEBI:1000&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="s2">&quot;biolink:SmallMolecule&quot;</span><span class="p">)</span>
+<span class="c1"># Result: category=&quot;biolink:SmallMolecule&quot; (last value wins)</span>
+</pre></div>
+</div>
+<p><strong>But:</strong> KGX’s <code class="docutils literal notranslate"><span class="pre">prepare_data_dict()</span></code> wrapper intercepts this behavior and converts conflicts to lists for multivalued properties.</p>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="potential-kgx-modifications-not-recommended">
+<h2>Potential KGX Modifications (Not Recommended)<a class="headerlink" href="#potential-kgx-modifications-not-recommended" title="Link to this heading"></a></h2>
+<section id="option-1-modify-is-property-multivalued-dictionary">
+<h3>Option 1: Modify <code class="docutils literal notranslate"><span class="pre">is_property_multivalued</span></code> Dictionary<a class="headerlink" href="#option-1-modify-is-property-multivalued-dictionary" title="Link to this heading"></a></h3>
+<p><strong>Code location:</strong> <code class="docutils literal notranslate"><span class="pre">kgx/utils/kgx_utils.py:96-114</span></code></p>
+<p><strong>Change:</strong></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">is_property_multivalued</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># ...</span>
+    <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># Change from True to False</span>
+    <span class="c1"># ...</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p><strong>Effect:</strong> Last value wins during merge (no multi-category strings)</p>
+<p><strong>Problems:</strong></p>
+<ul class="simple">
+<li><p>Requires forking/patching KGX</p></li>
+<li><p>Non-deterministic (merge order matters)</p></li>
+<li><p>Breaks Biolink Model specification</p></li>
+<li><p>Lost information (earlier categories discarded)</p></li>
+</ul>
+</section>
+<section id="option-2-add-custom-property-handler">
+<h3>Option 2: Add Custom Property Handler<a class="headerlink" href="#option-2-add-custom-property-handler" title="Link to this heading"></a></h3>
+<p><strong>Approach:</strong> Extend KGX to support custom conflict resolution strategies</p>
+<p><strong>Implementation:</strong></p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">configuration</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">property_conflict_resolution</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">category</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">strategy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">most_specific</span>
+<span class="w">      </span><span class="nt">hierarchy_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data/raw/biolink-model.yaml</span>
+</pre></div>
+</div>
+<p><strong>Problems:</strong></p>
+<ul class="simple">
+<li><p>Requires significant KGX modification</p></li>
+<li><p>No upstream support/maintenance</p></li>
+<li><p>Complex to implement correctly</p></li>
+<li><p>Would take weeks to develop and test</p></li>
+</ul>
+</section>
+<section id="option-3-pre-process-source-graphs">
+<h3>Option 3: Pre-process Source Graphs<a class="headerlink" href="#option-3-pre-process-source-graphs" title="Link to this heading"></a></h3>
+<p><strong>Approach:</strong> Modify source TSV files before merge to ensure single categories</p>
+<p><strong>Problems:</strong></p>
+<ul class="simple">
+<li><p>Exactly what we’re already doing with pre-merge alignment</p></li>
+<li><p>Doesn’t handle edge cases where conflicts still occur</p></li>
+</ul>
+</section>
+</section>
+<hr class="docutils" />
+<section id="recommended-approach-current-implementation">
+<h2>Recommended Approach (Current Implementation)<a class="headerlink" href="#recommended-approach-current-implementation" title="Link to this heading"></a></h2>
+<section id="three-tier-strategy">
+<h3>Three-Tier Strategy<a class="headerlink" href="#three-tier-strategy" title="Link to this heading"></a></h3>
+<ol class="arabic simple">
+<li><p><strong>Pre-Merge Alignment (Prevention)</strong></p>
+<ul class="simple">
+<li><p>BacDive and MediaDive load CHEBI categories from ontologies transform</p></li>
+<li><p>Use <code class="docutils literal notranslate"><span class="pre">_get_chebi_category()</span></code> to query category for each CHEBI ID</p></li>
+<li><p>Prevents ~80% of multi-category conflicts before merge</p></li>
+</ul>
+</li>
+<li><p><strong>Post-Merge Consolidation (Resolution)</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">consolidate_categories.py</span></code> resolves remaining multi-category nodes</p></li>
+<li><p>Uses Biolink Model hierarchy to select most specific category</p></li>
+<li><p>Integrated into <code class="docutils literal notranslate"><span class="pre">merge_kg.py</span></code> pipeline automatically</p></li>
+</ul>
+</li>
+<li><p><strong>Transparent and Maintainable</strong></p>
+<ul class="simple">
+<li><p>No KGX modifications required</p></li>
+<li><p>Clear documentation of approach</p></li>
+<li><p>Easy to update as Biolink Model evolves</p></li>
+<li><p>Deterministic resolution (hierarchy-based, not merge-order-based)</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="advantages-over-kgx-modification">
+<h3>Advantages Over KGX Modification<a class="headerlink" href="#advantages-over-kgx-modification" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Aspect</p></th>
+<th class="head"><p>KGX Modification</p></th>
+<th class="head"><p>Current Approach</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Maintenance</strong></p></td>
+<td><p>Requires forking KGX</p></td>
+<td><p>Uses KGX as-is</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Upgrades</strong></p></td>
+<td><p>Manual merge on KGX updates</p></td>
+<td><p>Automatic with KGX updates</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Determinism</strong></p></td>
+<td><p>Depends on merge order</p></td>
+<td><p>Hierarchy-based (deterministic)</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Transparency</strong></p></td>
+<td><p>Hidden in KGX internals</p></td>
+<td><p>Explicit consolidation step</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Flexibility</strong></p></td>
+<td><p>Hard to change strategy</p></td>
+<td><p>Easy to adjust hierarchy logic</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Testing</strong></p></td>
+<td><p>Requires KGX test suite</p></td>
+<td><p>Standalone unit tests</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Documentation</strong></p></td>
+<td><p>Scattered across KGX</p></td>
+<td><p>Centralized in our codebase</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<hr class="docutils" />
+<section id="implementation-status">
+<h2>Implementation Status<a class="headerlink" href="#implementation-status" title="Link to this heading"></a></h2>
+<p>✅ <strong>Pre-Merge Alignment</strong></p>
+<ul class="simple">
+<li><p>BacDive: Loads 224,092 CHEBI categories from ontologies</p></li>
+<li><p>MediaDive: Loads 224,092 CHEBI categories from ontologies</p></li>
+<li><p>Integration tests: 10/10 passed</p></li>
+</ul>
+<p>✅ <strong>Post-Merge Consolidation</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">biolink_hierarchy.py</span></code>: Hierarchy traversal utility</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">consolidate_categories.py</span></code>: Consolidation script</p></li>
+<li><p>Integrated into <code class="docutils literal notranslate"><span class="pre">merge_kg.py</span></code> pipeline</p></li>
+<li><p>Unit tests: 25/25 passed</p></li>
+</ul>
+<p>✅ <strong>Testing</strong></p>
+<ul class="simple">
+<li><p>Consolidation demo: 5/5 test patterns resolved</p></li>
+<li><p>Category depths correctly calculated</p></li>
+<li><p>Most specific category selection verified</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="conclusion">
+<h2>Conclusion<a class="headerlink" href="#conclusion" title="Link to this heading"></a></h2>
+<p><strong>KGX does not provide configuration options for category conflict resolution.</strong> The <code class="docutils literal notranslate"><span class="pre">category</span></code> property is hardcoded as multivalued in <code class="docutils literal notranslate"><span class="pre">kgx/utils/kgx_utils.py</span></code>.</p>
+<p><strong>Recommendation:</strong> Proceed with the current three-tier approach (pre-merge alignment + post-merge consolidation), which:</p>
+<ul class="simple">
+<li><p>Provides 100% resolution of multi-category conflicts</p></li>
+<li><p>Works with KGX as-is (no forking required)</p></li>
+<li><p>Is deterministic, transparent, and maintainable</p></li>
+<li><p>Can be easily updated as Biolink Model evolves</p></li>
+</ul>
+<p><strong>No KGX modification is recommended or necessary.</strong></p>
+</section>
+<hr class="docutils" />
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>KGX GitHub: https://github.com/biolink/kgx</p></li>
+<li><p>Biolink Model: https://biolink.github.io/biolink-model/</p></li>
+<li><p>KGX Source: <code class="docutils literal notranslate"><span class="pre">kgx/utils/kgx_utils.py</span></code> (prepare_data_dict function)</p></li>
+<li><p>Our Implementation: <code class="docutils literal notranslate"><span class="pre">kg_microbe/utils/biolink_hierarchy.py</span></code>, <code class="docutils literal notranslate"><span class="pre">kg_microbe/utils/consolidate_categories.py</span></code></p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

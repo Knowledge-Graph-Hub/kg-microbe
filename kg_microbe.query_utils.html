@@ -1,0 +1,389 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kg_microbe.query_utils package &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="kg_microbe.transform_utils package" href="kg_microbe.transform_utils.html" />
+    <link rel="prev" title="kg_microbe.merge_utils package" href="kg_microbe.merge_utils.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="modules.html">kg_microbe</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="kg_microbe.html">kg_microbe package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="kg_microbe.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.merge_utils.html">kg_microbe.merge_utils package</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">kg_microbe.query_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html">kg_microbe.transform_utils package</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html">kg_microbe.utils package</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#submodules">Submodules</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.bactotraits_to_mongo">kg_microbe.bactotraits_to_mongo module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.download">kg_microbe.download module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.query">kg_microbe.query module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.run">kg_microbe.run module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe.transform">kg_microbe.transform module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.html#module-kg_microbe">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="modules.html">kg_microbe</a></li>
+          <li class="breadcrumb-item"><a href="kg_microbe.html">kg_microbe package</a></li>
+      <li class="breadcrumb-item active">kg_microbe.query_utils package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/kg_microbe.query_utils.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kg-microbe-query-utils-package">
+<h1>kg_microbe.query_utils package<a class="headerlink" href="#kg-microbe-query-utils-package" title="Link to this heading"></a></h1>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-kg_microbe.query_utils.duckdb_loader">
+<span id="kg-microbe-query-utils-duckdb-loader-module"></span><h2>kg_microbe.query_utils.duckdb_loader module<a class="headerlink" href="#module-kg_microbe.query_utils.duckdb_loader" title="Link to this heading"></a></h2>
+<p>DuckDB database loader for KG-Microbe knowledge graph.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.query_utils.duckdb_loader.get_or_create_database">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.query_utils.duckdb_loader.</span></span><span class="sig-name descname"><span class="pre">get_or_create_database</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data/merged/merged-kg_nodes.tsv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data/merged/merged-kg_edges.tsv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data/merged/kg-microbe.duckdb'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_reload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.query_utils.duckdb_loader.get_or_create_database" title="Link to this definition"></a></dt>
+<dd><p>Load or connect to a DuckDB database built from KGX TSV files.</p>
+<p>Existing databases are reused only when their recorded source paths and
+content-sensitive fingerprints match both input files. Rebuilds happen at
+a temporary sibling path and replace the advertised database atomically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nodes_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Path to nodes TSV file.</p></li>
+<li><p><strong>edges_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Path to edges TSV file.</p></li>
+<li><p><strong>db_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Path to DuckDB database file.</p></li>
+<li><p><strong>force_reload</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Force rebuild from TSV files.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBPyConnection</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Open DuckDB connection.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.query_utils.organism_queries">
+<span id="kg-microbe-query-utils-organism-queries-module"></span><h2>kg_microbe.query_utils.organism_queries module<a class="headerlink" href="#module-kg_microbe.query_utils.organism_queries" title="Link to this heading"></a></h2>
+<p>Organism-specific query functions for KG-Microbe.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.query_utils.organism_queries.get_media_composition">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.query_utils.organism_queries.</span></span><span class="sig-name descname"><span class="pre">get_media_composition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">medium_ids</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.query_utils.organism_queries.get_media_composition" title="Link to this definition"></a></dt>
+<dd><p>Get chemical composition of growth media (2-hop: medium → solution → chemical).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conn</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBPyConnection</span></code></span>) – DuckDB connection</p></li>
+<li><p><strong>medium_ids</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – List of medium IDs (e.g., [‘mediadive.medium:693’])</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with medium_id, chemical_count, chemicals columns</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.query_utils.organism_queries.get_media_preferences">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.query_utils.organism_queries.</span></span><span class="sig-name descname"><span class="pre">get_media_preferences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taxon_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.query_utils.organism_queries.get_media_preferences" title="Link to this definition"></a></dt>
+<dd><p>Get growth media preferences (grows in / doesn’t grow in).</p>
+<p>BacDive and MediaDive emit growth-media edges with the METPO term in the
+<code class="docutils literal notranslate"><span class="pre">predicate</span></code> column <em>and</em> the <code class="docutils literal notranslate"><span class="pre">relation</span></code> column: <code class="docutils literal notranslate"><span class="pre">METPO:2000517</span></code>
+(grows in) / <code class="docutils literal notranslate"><span class="pre">METPO:2000518</span></code> (does not grow in). Measured on the
+2026-09-10 outputs: 36,596 + 55,251 edges, every one <code class="docutils literal notranslate"><span class="pre">predicate</span> <span class="pre">==</span>
+<span class="pre">relation</span></code>; none carry <code class="docutils literal notranslate"><span class="pre">biolink:located_in</span></code> (the docs here and in the
+kg-query skill said otherwise, #539). The predicate is matched first;
+<code class="docutils literal notranslate"><span class="pre">relation</span></code> is a fallback for a graph built before the METPO predicate
+replaced <code class="docutils literal notranslate"><span class="pre">biolink:located_in</span></code>, so an older release still answers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conn</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBPyConnection</span></code></span>) – DuckDB connection</p></li>
+<li><p><strong>taxon_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – NCBITaxon ID</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict with ‘grows_in’ and ‘no_growth’ lists</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.query_utils.organism_queries.get_organism_traits">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.query_utils.organism_queries.</span></span><span class="sig-name descname"><span class="pre">get_organism_traits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taxon_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.query_utils.organism_queries.get_organism_traits" title="Link to this definition"></a></dt>
+<dd><p>Get all direct trait edges from organism (1-hop).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conn</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBPyConnection</span></code></span>) – DuckDB connection</p></li>
+<li><p><strong>taxon_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – NCBITaxon ID (e.g., ‘NCBITaxon:84112’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with predicate, object, object_name, category, source columns</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.query_utils.organism_queries.get_strain_info">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.query_utils.organism_queries.</span></span><span class="sig-name descname"><span class="pre">get_strain_info</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taxon_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.query_utils.organism_queries.get_strain_info" title="Link to this definition"></a></dt>
+<dd><p>Get strain nodes linked to species via subclass_of.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conn</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBPyConnection</span></code></span>) – DuckDB connection</p></li>
+<li><p><strong>taxon_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – NCBITaxon ID</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>DataFrame with strain IDs and names</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.query_utils.organism_queries.query_organism_full">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.query_utils.organism_queries.</span></span><span class="sig-name descname"><span class="pre">query_organism_full</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organism_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.query_utils.organism_queries.query_organism_full" title="Link to this definition"></a></dt>
+<dd><p>Execute comprehensive organism query and return all information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conn</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBPyConnection</span></code></span>) – DuckDB connection</p></li>
+<li><p><strong>organism_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Organism name to search</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict with all query results</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.query_utils.organism_queries.resolve_organism_name">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.query_utils.organism_queries.</span></span><span class="sig-name descname"><span class="pre">resolve_organism_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.query_utils.organism_queries.resolve_organism_name" title="Link to this definition"></a></dt>
+<dd><p>Resolve organism name to NCBITaxon ID using fuzzy matching.</p>
+<p>When multiple organisms match, the best-ranked candidate (exact name match,
+then synonym match, then substring match) is returned; remaining candidates
+are logged as a warning so callers can refine the search term.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conn</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBPyConnection</span></code></span>) – DuckDB connection</p></li>
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Organism name to search</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict with ‘id’, ‘name’, ‘synonym’ keys</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If no organism is found</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.query_utils.utils">
+<span id="kg-microbe-query-utils-utils-module"></span><h2>kg_microbe.query_utils.utils module<a class="headerlink" href="#module-kg_microbe.query_utils.utils" title="Link to this heading"></a></h2>
+<p>Utility functions for formatting and displaying query results.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.query_utils.utils.format_organism_report">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.query_utils.utils.</span></span><span class="sig-name descname"><span class="pre">format_organism_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.query_utils.utils.format_organism_report" title="Link to this definition"></a></dt>
+<dd><p>Generate markdown report from organism query results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>query_result</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span>) – Dict from query_organism_full()</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Markdown formatted report string</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.query_utils">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-kg_microbe.query_utils" title="Link to this heading"></a></h2>
+<p>KG-Microbe query utilities for DuckDB-based knowledge graph queries.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.query_utils.format_organism_report">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.query_utils.</span></span><span class="sig-name descname"><span class="pre">format_organism_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query_result</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.query_utils.format_organism_report" title="Link to this definition"></a></dt>
+<dd><p>Generate markdown report from organism query results.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>query_result</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span>) – Dict from query_organism_full()</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Markdown formatted report string</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.query_utils.get_or_create_database">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.query_utils.</span></span><span class="sig-name descname"><span class="pre">get_or_create_database</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data/merged/merged-kg_nodes.tsv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edges_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data/merged/merged-kg_edges.tsv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'data/merged/kg-microbe.duckdb'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force_reload</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.query_utils.get_or_create_database" title="Link to this definition"></a></dt>
+<dd><p>Load or connect to a DuckDB database built from KGX TSV files.</p>
+<p>Existing databases are reused only when their recorded source paths and
+content-sensitive fingerprints match both input files. Rebuilds happen at
+a temporary sibling path and replace the advertised database atomically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nodes_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Path to nodes TSV file.</p></li>
+<li><p><strong>edges_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Path to edges TSV file.</p></li>
+<li><p><strong>db_path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Path to DuckDB database file.</p></li>
+<li><p><strong>force_reload</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Force rebuild from TSV files.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBPyConnection</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Open DuckDB connection.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.query_utils.query_organism_full">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.query_utils.</span></span><span class="sig-name descname"><span class="pre">query_organism_full</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organism_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.query_utils.query_organism_full" title="Link to this definition"></a></dt>
+<dd><p>Execute comprehensive organism query and return all information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>conn</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DuckDBPyConnection</span></code></span>) – DuckDB connection</p></li>
+<li><p><strong>organism_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Organism name to search</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dict with all query results</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="kg_microbe.merge_utils.html" class="btn btn-neutral float-left" title="kg_microbe.merge_utils package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="kg_microbe.transform_utils.html" class="btn btn-neutral float-right" title="kg_microbe.transform_utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

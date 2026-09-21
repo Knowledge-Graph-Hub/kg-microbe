@@ -1,0 +1,609 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KG-Microbe mapping audit + curation plan &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">KG-Microbe mapping audit + curation plan</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/MAPPING_AUDIT.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kg-microbe-mapping-audit-curation-plan">
+<h1>KG-Microbe mapping audit + curation plan<a class="headerlink" href="#kg-microbe-mapping-audit-curation-plan" title="Link to this heading"></a></h1>
+<p>Date: 2026-05-03</p>
+<section id="tl-dr">
+<h2>TL;DR<a class="headerlink" href="#tl-dr" title="Link to this heading"></a></h2>
+<p>The repo has 19 curation TSV/SSSOM files split across two directories with
+five distinct schema shapes, plus 11 inline hardcoded METPO/RO CURIEs in
+<code class="docutils literal notranslate"><span class="pre">bacdive.py</span></code> and a 504-line dead YAML (<code class="docutils literal notranslate"><span class="pre">translation_table.yaml</span></code>). The
+auto-audit script reports “100% data-driven” but misses everything that
+isn’t a top-level dict literal.</p>
+<p>A consolidation pass would:</p>
+<ol class="arabic simple">
+<li><p>Move 11 inline <code class="docutils literal notranslate"><span class="pre">bacdive.py</span></code> mappings into a new <code class="docutils literal notranslate"><span class="pre">bacdive_field_to_metpo.tsv</span></code>.</p></li>
+<li><p>Delete <code class="docutils literal notranslate"><span class="pre">translation_table.yaml</span></code> and the 4 stray/archive files.</p></li>
+<li><p>Standardise non-canonical-schema curation files onto the 12-column SSSOM-shape header.</p></li>
+<li><p>Promote <code class="docutils literal notranslate"><span class="pre">mappings/</span></code> (repo root) as the only canonical curation hub; deprecate the per-transform <code class="docutils literal notranslate"><span class="pre">metatraits/mappings/</span></code> location.</p></li>
+</ol>
+</section>
+<section id="current-inventory">
+<h2>Current inventory<a class="headerlink" href="#current-inventory" title="Link to this heading"></a></h2>
+<section id="repo-root-mappings-the-canonical-curation-hub">
+<h3>Repo-root <code class="docutils literal notranslate"><span class="pre">mappings/</span></code> (the canonical curation hub)<a class="headerlink" href="#repo-root-mappings-the-canonical-curation-hub" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>Schema</p></th>
+<th class="head"><p>Entries</p></th>
+<th class="head"><p>Role</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kgmicrobe_unified_entity_mappings.sssom.tsv.gz</span></code></p></td>
+<td><p>true SSSOM (13-col + extensions)</p></td>
+<td><p><strong>595,043</strong></p></td>
+<td><p>Single source of truth for chemicals/foods/anatomy/environments — built by <code class="docutils literal notranslate"><span class="pre">scripts/consolidate_chemical_mappings.py</span></code> from MIM + CultureBotAI + per-transform sources</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ingredient_mappings.sssom.tsv</span></code></p></td>
+<td><p>true SSSOM (13-col)</p></td>
+<td><p>2,052</p></td>
+<td><p>Vendored cache of MIM (<code class="docutils literal notranslate"><span class="pre">MediaIngredientMech</span></code>) sibling repo. Auto-refreshed on every consolidator run; never edit directly</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">culturebotai_reviewed_ingredients.tsv</span></code></p></td>
+<td><p>bespoke 9-col</p></td>
+<td><p>3,853</p></td>
+<td><p>Authoritative reviewed-ingredient mappings from CultureBotAI</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">isolation_source_to_ontology.tsv</span></code></p></td>
+<td><p>canonical 12-col SSSOM-shape</p></td>
+<td><p>358</p></td>
+<td><p>BacDive isolation-source label → ontology CURIE; consumed by <code class="docutils literal notranslate"><span class="pre">isolation_source_mapping_utils.load_isolation_source_mappings()</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">manual_mapping_audit_report.tsv</span></code></p></td>
+<td><p>bespoke 8-col</p></td>
+<td><p>299</p></td>
+<td><p><strong>Generated artifact</strong> by <code class="docutils literal notranslate"><span class="pre">validate_manual_mappings.py</span></code> — should not be edited</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mediadive_unmapped_ingredients_to_curate.tsv</span></code></p></td>
+<td><p>bespoke 4-col</p></td>
+<td><p>308</p></td>
+<td><p><strong>Curation queue</strong> for MediaDive ingredients still unmapped after consolidator run</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kgmicrobe_proposal_placeholders.tsv</span></code></p></td>
+<td><p>bespoke 5-col</p></td>
+<td><p>27</p></td>
+<td><p>Registry of <code class="docutils literal notranslate"><span class="pre">kgmicrobe.*:*</span></code> placeholders for proposed-but-unminted METPO terms</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">metpo_proposal_categorical.tsv</span></code></p></td>
+<td><p>bespoke 8-col</p></td>
+<td><p>37</p></td>
+<td><p>New METPO term proposals (categorical) — written by <code class="docutils literal notranslate"><span class="pre">scripts/extract_metpo_proposals.py</span></code>, submitted upstream</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">metpo_proposal_quantitative.tsv</span></code></p></td>
+<td><p>bespoke 8-col</p></td>
+<td><p>9</p></td>
+<td><p>Same, quantitative properties</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">metpo_proposal_classes_robot.tsv</span></code></p></td>
+<td><p>ROBOT 2-row template</p></td>
+<td><p>44</p></td>
+<td><p>ROBOT-shaped class proposal for upstream submission</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">metpo_proposal_properties_robot.tsv</span></code></p></td>
+<td><p>ROBOT 2-row template</p></td>
+<td><p>4</p></td>
+<td><p>ROBOT-shaped property proposal</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">metpo_existing_aliases.tsv</span></code></p></td>
+<td><p>bespoke 7-col</p></td>
+<td><p>45</p></td>
+<td><p>Audit table: proposed labels that already exist in METPO (use the existing ID)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">complex_ingredients.tsv.gz</span></code></p></td>
+<td><p>bespoke 4-col</p></td>
+<td><p>9</p></td>
+<td><p>Complex-ingredient → component-list (peptone composition, etc.)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">validate_*.py</span></code></p></td>
+<td><p>python</p></td>
+<td><p>—</p></td>
+<td><p>3 schema/content validators (not data)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="per-transform-kg-microbe-transform-utils-metatraits-mappings-legacy-split">
+<h3>Per-transform <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/metatraits/mappings/</span></code> (legacy split)<a class="headerlink" href="#per-transform-kg-microbe-transform-utils-metatraits-mappings-legacy-split" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>Schema</p></th>
+<th class="head"><p>Entries</p></th>
+<th class="head"><p>Role</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">metpo_alias_mappings.tsv</span></code></p></td>
+<td><p>canonical 12-col SSSOM-shape</p></td>
+<td><p>66</p></td>
+<td><p>Tier-2 alias overrides for <code class="docutils literal notranslate"><span class="pre">load_metpo_mappings</span></code> (consumed via the new overlay layer added in commit <code class="docutils literal notranslate"><span class="pre">b7a099bc</span></code>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">chemical_mappings.tsv</span></code></p></td>
+<td><p>canonical 12-col SSSOM-shape</p></td>
+<td><p>9</p></td>
+<td><p>Chemical name → ChEBI overrides (priority-5 in consolidator)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">phenotype_mappings.tsv</span></code></p></td>
+<td><p>canonical 12-col SSSOM-shape</p></td>
+<td><p>12</p></td>
+<td><p>Phenotype synonym → METPO</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">enzyme_mappings.tsv</span></code></p></td>
+<td><p>canonical 12-col SSSOM-shape</p></td>
+<td><p>14</p></td>
+<td><p>Enzyme name → EC + GO</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">pathway_mappings.tsv</span></code></p></td>
+<td><p>canonical 12-col SSSOM-shape</p></td>
+<td><p>4</p></td>
+<td><p>Pathway name → GO/UPA</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">enzyme_name_to_go.tsv</span></code></p></td>
+<td><p>bespoke 2-col</p></td>
+<td><p>44</p></td>
+<td><p>Enzyme name → GO id (legacy format)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">special_chemical_mappings.tsv</span></code></p></td>
+<td><p>bespoke 7-col</p></td>
+<td><p>194</p></td>
+<td><p>Trait-pattern + chemical-name → ontology id (different shape — used by <code class="docutils literal notranslate"><span class="pre">metatraits.py</span></code> for trait-pattern routing)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="per-transform-json-archive-housekeeping-candidates">
+<h3>Per-transform JSON / archive (housekeeping candidates)<a class="headerlink" href="#per-transform-json-archive-housekeeping-candidates" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Path</p></th>
+<th class="head"><p>Status</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/bacdive/metabolite_mapping.json</span></code></p></td>
+<td><p>193 entries — consumed by consolidator (priority-1)</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/bacdive/archive/metabolite_mapping.json</span></code></p></td>
+<td><p>duplicate — should be deleted</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/bacdive/tmp/bacdive_mappings.tsv*</span></code></p></td>
+<td><p>build artifacts — <code class="docutils literal notranslate"><span class="pre">.gitignore</span></code> candidates</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/bactotraits/tmp/BactoTraits_mapping.tsv</span></code></p></td>
+<td><p>build artifact</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/rhea_mappings/tmp/rhea_id_label_mapping.tsv</span></code></p></td>
+<td><p>build artifact</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/translation_table.yaml</span></code></p></td>
+<td><p><strong>DEAD</strong> — 504 lines, no consumer in codebase</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/custom_curies.yaml</span></code></p></td>
+<td><p>214 entries — actively consumed; defines <code class="docutils literal notranslate"><span class="pre">kgmicrobe.*</span></code> placeholders</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="schemas-dir-separate">
+<h3>Schemas dir (separate)<a class="headerlink" href="#schemas-dir-separate" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Path</p></th>
+<th class="head"><p>Status</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">schemas/chemicals.sssom.tsv</span></code></p></td>
+<td><p>Last touched 2023-10-30 — predates the unified SSSOM. Likely superseded</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">schemas/pathways.sssom.tsv</span></code></p></td>
+<td><p>Same</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="stray-scratchpad-files-at-repo-root">
+<h3>Stray / scratchpad files at repo root<a class="headerlink" href="#stray-scratchpad-files-at-repo-root" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Path</p></th>
+<th class="head"><p>Status</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">new_chemical_mappings.tsv</span></code></p></td>
+<td><p>341 bytes, March 21 — looks like working notes, never integrated</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">new_METPO_mapping.tsv</span></code></p></td>
+<td><p>1,686 bytes, March 21 — same</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="real-hardcoded-mappings-audit-script-missed-these">
+<h2>Real hardcoded mappings (audit script missed these)<a class="headerlink" href="#real-hardcoded-mappings-audit-script-missed-these" title="Link to this heading"></a></h2>
+<section id="kg-microbe-transform-utils-bacdive-bacdive-py">
+<h3><code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/bacdive/bacdive.py</span></code><a class="headerlink" href="#kg-microbe-transform-utils-bacdive-bacdive-py" title="Link to this heading"></a></h3>
+<p>11 inline METPO/RO CURIE references that should be in a TSV:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Line</p></th>
+<th class="head"><p>Code</p></th>
+<th class="head"><p>Should be</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1336–1338</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{&quot;pathogenicity</span> <span class="pre">human&quot;:</span> <span class="pre">(&quot;METPO:1004004&quot;,</span> <span class="pre">&quot;human</span> <span class="pre">pathogen&quot;),</span> <span class="pre">...}</span></code> (3 entries)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bacdive_pathogenicity_to_metpo.tsv</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>2283</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">value,</span> <span class="pre">&quot;METPO:1001101&quot;,</span> <span class="pre">organism_id,</span> <span class="pre">key,</span> <span class="pre">...</span></code> (BacDive risk assessment)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bacdive_field_to_metpo.tsv</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>2320</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">&quot;METPO:1004005&quot;</span></code> (object: growth medium ontology class)</p></td>
+<td><p>constant, OK</p></td>
+</tr>
+<tr class="row-odd"><td><p>2688</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">value,</span> <span class="pre">&quot;METPO:1000601&quot;,</span> <span class="pre">...</span></code> (oxygen tolerance parent)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bacdive_field_to_metpo.tsv</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>2695</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">value,</span> <span class="pre">&quot;METPO:1000870&quot;,</span> <span class="pre">...</span></code> (motility parent)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bacdive_field_to_metpo.tsv</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>2702</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">value,</span> <span class="pre">&quot;METPO:1000631&quot;,</span> <span class="pre">...</span></code> (cell shape parent)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bacdive_field_to_metpo.tsv</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>2709</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">value,</span> <span class="pre">&quot;METPO:1000666&quot;,</span> <span class="pre">...</span></code> (gram stain parent)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bacdive_field_to_metpo.tsv</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>2716</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">value,</span> <span class="pre">&quot;METPO:1000697&quot;,</span> <span class="pre">...</span></code> (spore-forming parent)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bacdive_field_to_metpo.tsv</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>2723</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">value,</span> <span class="pre">&quot;METPO:1000701&quot;,</span> <span class="pre">...</span></code> (cell shape, again?)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bacdive_field_to_metpo.tsv</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>2730</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">value,</span> <span class="pre">&quot;METPO:1000629&quot;,</span> <span class="pre">...</span></code> (other parent)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bacdive_field_to_metpo.tsv</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>2890</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">assay_predicate</span> <span class="pre">=</span> <span class="pre">&quot;METPO:2000511&quot;</span></code></p></td>
+<td><p>constant, OK (already in <code class="docutils literal notranslate"><span class="pre">constants.py:NCBI_TO_ASSAY_EDGE</span></code>-style)</p></td>
+</tr>
+</tbody>
+</table>
+<p>Pattern: 7 <code class="docutils literal notranslate"><span class="pre">value,</span> <span class="pre">&quot;METPO:...&quot;</span></code> calls all pass a different METPO parent CURIE to the same helper that processes a BacDive field. This is a classic “data masquerading as code” pattern — should become a <code class="docutils literal notranslate"><span class="pre">(bacdive_field_name,</span> <span class="pre">parent_metpo_id,</span> <span class="pre">parent_label)</span></code> table.</p>
+</section>
+<section id="kg-microbe-transform-utils-constants-py">
+<h3><code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/constants.py</span></code><a class="headerlink" href="#kg-microbe-transform-utils-constants-py" title="Link to this heading"></a></h3>
+<p>50 CURIE-bearing constants. Most are architectural (predicate routing, category constants) and OK as constants, but a few are pure data:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">ASSOCIATED_WITH</span> <span class="pre">=</span> <span class="pre">&quot;PATO:0001668&quot;</span></code> — used once, could be inline</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ASSAY_OUTPUT_RELATION</span> <span class="pre">=</span> <span class="pre">&quot;NCIT:C25284&quot;</span></code> — semantic, OK</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">MEDIUM_*_CATEGORY</span></code>, <code class="docutils literal notranslate"><span class="pre">NCBI_TO_*_EDGE</span></code> etc. constants are routing decisions — leave them in code</p></li>
+</ul>
+</section>
+</section>
+<section id="dead-stale-files-to-delete">
+<h2>Dead / stale files to delete<a class="headerlink" href="#dead-stale-files-to-delete" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/translation_table.yaml</span></code> — 504 lines, NO consumer (verified by <code class="docutils literal notranslate"><span class="pre">grep</span> <span class="pre">-rn</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/bacdive/archive/metabolite_mapping.json</span></code> — duplicate of the live file</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">new_chemical_mappings.tsv</span></code> and <code class="docutils literal notranslate"><span class="pre">new_METPO_mapping.tsv</span></code> at repo root — March-21 scratchpad never integrated</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">mappings/CONSOLIDATION_SUMMARY.md</span></code> — historical doc, replace with <code class="docutils literal notranslate"><span class="pre">mappings/README.md</span></code> (already up-to-date)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">schemas/*.sssom.tsv</span></code> — pre-unified-SSSOM artifacts; verify no consumer, then delete</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">tmp/</span></code> build artifacts — add to <code class="docutils literal notranslate"><span class="pre">.gitignore</span></code> if not already</p></li>
+</ol>
+</section>
+<section id="schema-fragmentation">
+<h2>Schema fragmentation<a class="headerlink" href="#schema-fragmentation" title="Link to this heading"></a></h2>
+<p>The “canonical 12-col SSSOM-shape” header is shared by 6 files (good) but
+there are 5 other one-off shapes:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Schema</p></th>
+<th class="head"><p>Files</p></th>
+<th class="head"><p>Cols</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Canonical 12-col</strong></p></td>
+<td><p>chemical_mappings, phenotype_mappings, enzyme_mappings, pathway_mappings, metpo_alias_mappings, isolation_source_to_ontology</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">subject_label,</span> <span class="pre">subject_label_normalized,</span> <span class="pre">object_id,</span> <span class="pre">object_label,</span> <span class="pre">object_source,</span> <span class="pre">predicate_id,</span> <span class="pre">confidence,</span> <span class="pre">mapping_justification,</span> <span class="pre">curator,</span> <span class="pre">source_dataset,</span> <span class="pre">notes,</span> <span class="pre">verified_date</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>True SSSOM</strong></p></td>
+<td><p>ingredient_mappings, kgmicrobe_unified_entity_mappings</p></td>
+<td><p>13-col SSSOM standard</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Bespoke special_chemical</strong></p></td>
+<td><p>special_chemical_mappings</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">trait_pattern,</span> <span class="pre">chemical_name,</span> <span class="pre">ontology_id,</span> <span class="pre">ontology_name,</span> <span class="pre">predicate,</span> <span class="pre">category,</span> <span class="pre">notes</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Bespoke CultureBotAI</strong></p></td>
+<td><p>culturebotai_reviewed_ingredients</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ingredient_name,</span> <span class="pre">occurrence_count,</span> <span class="pre">chebi_id,</span> <span class="pre">cas_rn,</span> <span class="pre">kg_microbe_node_id,</span> <span class="pre">mim_id,</span> <span class="pre">culturemech_term_id,</span> <span class="pre">mapping_status,</span> <span class="pre">example_media</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Bespoke 2-col</strong></p></td>
+<td><p>enzyme_name_to_go</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">enzyme_name,</span> <span class="pre">go_id</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>ROBOT template</strong></p></td>
+<td><p>metpo_proposal_classes_robot, metpo_proposal_properties_robot</p></td>
+<td><p>2 header rows (column name + ROBOT directive)</p></td>
+</tr>
+</tbody>
+</table>
+<p>The 12-column canonical schema is well-designed and widely adopted.
+<code class="docutils literal notranslate"><span class="pre">special_chemical_mappings.tsv</span></code> and <code class="docutils literal notranslate"><span class="pre">enzyme_name_to_go.tsv</span></code> could be
+migrated to it without losing information.</p>
+</section>
+<section id="proposed-organization">
+<h2>Proposed organization<a class="headerlink" href="#proposed-organization" title="Link to this heading"></a></h2>
+<p><strong>Single curation hub at <code class="docutils literal notranslate"><span class="pre">mappings/</span></code> with topical subdirectories:</strong></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>mappings/
+├── README.md                                 # current — stays
+│
+├── canonical/                                # 12-col SSSOM-shape, hand-curated
+│   ├── chemical_mappings.tsv                 # moved from metatraits/mappings/
+│   ├── phenotype_mappings.tsv                # moved
+│   ├── enzyme_mappings.tsv                   # moved
+│   ├── pathway_mappings.tsv                  # moved
+│   ├── metpo_alias_mappings.tsv              # moved
+│   ├── isolation_source_to_ontology.tsv      # already here
+│   ├── bacdive_field_to_metpo.tsv            # NEW — extracted from bacdive.py
+│   └── special_chemical_mappings.tsv         # migrated to 12-col schema
+│
+├── consolidated/                             # generated by scripts, not hand-edited
+│   ├── kgmicrobe_unified_entity_mappings.sssom.tsv.gz   # consolidator output
+│   ├── ingredient_mappings.sssom.tsv         # vendored MIM cache
+│   └── complex_ingredients.tsv.gz            # complex ingredient composition
+│
+├── upstream-curation/                        # external authoritative inputs
+│   └── culturebotai_reviewed_ingredients.tsv
+│
+├── proposals/                                # METPO term proposals (upstream submissions)
+│   ├── metpo_proposal_categorical.tsv
+│   ├── metpo_proposal_quantitative.tsv
+│   ├── metpo_proposal_classes_robot.tsv
+│   ├── metpo_proposal_properties_robot.tsv
+│   ├── metpo_existing_aliases.tsv
+│   └── kgmicrobe_proposal_placeholders.tsv
+│
+├── queues/                                   # curation backlogs (auto-generated, edited by curators)
+│   └── mediadive_unmapped_ingredients_to_curate.tsv
+│
+├── audit/                                    # generated audit artifacts (.gitignore?)
+│   └── manual_mapping_audit_report.tsv
+│
+└── validators/
+    ├── validate_isolation_source_mappings.py
+    ├── validate_manual_mappings.py
+    └── validate_mapping_schema.py
+</pre></div>
+</div>
+<p><strong>Per-transform <code class="docutils literal notranslate"><span class="pre">metatraits/mappings/</span></code> becomes empty</strong> (or removed entirely)
+once its contents move to <code class="docutils literal notranslate"><span class="pre">mappings/canonical/</span></code>. Loaders updated to read
+from the new path.</p>
+</section>
+<section id="concrete-action-items-prioritised">
+<h2>Concrete action items (prioritised)<a class="headerlink" href="#concrete-action-items-prioritised" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>#</p></th>
+<th class="head"><p>Action</p></th>
+<th class="head"><p>Risk</p></th>
+<th class="head"><p>Effort</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Delete <code class="docutils literal notranslate"><span class="pre">translation_table.yaml</span></code> (verified zero consumers)</p></td>
+<td><p>None</p></td>
+<td><p>1 min</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Delete <code class="docutils literal notranslate"><span class="pre">bacdive/archive/metabolite_mapping.json</span></code> and <code class="docutils literal notranslate"><span class="pre">new_*.tsv</span></code> at root</p></td>
+<td><p>None</p></td>
+<td><p>1 min</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>Add <code class="docutils literal notranslate"><span class="pre">tmp/</span></code> to <code class="docutils literal notranslate"><span class="pre">.gitignore</span></code> (or move existing tmp/ files outside the source tree)</p></td>
+<td><p>None</p></td>
+<td><p>2 min</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>Extract <code class="docutils literal notranslate"><span class="pre">bacdive.py</span></code> lines 2688–2730 into <code class="docutils literal notranslate"><span class="pre">bacdive_field_to_metpo.tsv</span></code> (8 rows) + loader</p></td>
+<td><p>Low — must rerun bacdive transform after</p></td>
+<td><p>30 min</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>Extract <code class="docutils literal notranslate"><span class="pre">bacdive.py</span></code> lines 1336–1338 into the same TSV (3 rows: pathogenicity human/animal/plant)</p></td>
+<td><p>Low — same</p></td>
+<td><p>5 min</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>Migrate <code class="docutils literal notranslate"><span class="pre">special_chemical_mappings.tsv</span></code> (194 rows) to the 12-column canonical schema</p></td>
+<td><p>Medium — rewrite the metatraits Tier-3 reader</p></td>
+<td><p>1 h</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>Migrate <code class="docutils literal notranslate"><span class="pre">enzyme_name_to_go.tsv</span></code> (44 rows) to the canonical schema</p></td>
+<td><p>Low — rewrite reader</p></td>
+<td><p>30 min</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>Move all canonical-schema files from <code class="docutils literal notranslate"><span class="pre">metatraits/mappings/</span></code> to <code class="docutils literal notranslate"><span class="pre">mappings/canonical/</span></code>; update loaders</p></td>
+<td><p>Low — single import-path change per file</p></td>
+<td><p>30 min</p></td>
+</tr>
+<tr class="row-even"><td><p>9</p></td>
+<td><p>Add <code class="docutils literal notranslate"><span class="pre">mappings/canonical/</span></code> schema enforcer to CI: <code class="docutils literal notranslate"><span class="pre">validate_mapping_schema.py</span> <span class="pre">--strict</span></code> runs on every PR</p></td>
+<td><p>Low — already exists</p></td>
+<td><p>10 min</p></td>
+</tr>
+<tr class="row-odd"><td><p>10</p></td>
+<td><p>Verify <code class="docutils literal notranslate"><span class="pre">schemas/*.sssom.tsv</span></code> has no consumer; delete if so</p></td>
+<td><p>Low</p></td>
+<td><p>5 min</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Total</strong>: ~3–4 hours of work for a clean, single-hub layout that’s
+trivially curatable and CI-validatable.</p>
+</section>
+<section id="what-stays-as-is">
+<h2>What stays as-is<a class="headerlink" href="#what-stays-as-is" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">custom_curies.yaml</span></code> (214 entries) — actively consumed, defines placeholder CURIEs. Don’t touch.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">constants.py</span></code> predicate/category constants — these are architectural routing decisions, not data. Don’t touch.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">kgmicrobe_unified_entity_mappings.sssom.tsv.gz</span></code> — already canonical and authoritative.</p></li>
+</ul>
+</section>
+<section id="ci-curator-ux-wins-after-consolidation">
+<h2>CI / curator UX wins after consolidation<a class="headerlink" href="#ci-curator-ux-wins-after-consolidation" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p><strong>Single grep target</strong>: <code class="docutils literal notranslate"><span class="pre">grep</span> <span class="pre">-rn</span> <span class="pre">&quot;&lt;label&gt;&quot;</span> <span class="pre">mappings/canonical/</span></code> finds every curation row in seconds.</p></li>
+<li><p><strong>Schema validator</strong>: <code class="docutils literal notranslate"><span class="pre">validate_mapping_schema.py</span> <span class="pre">--strict</span> <span class="pre">mappings/canonical/</span></code> enforces the 12-column shape on every PR.</p></li>
+<li><p><strong>Cross-file conflict detector</strong>: extend the same validator with a label↔object_id conflict pass (currently 0 conflicts among the 6 canonical files — keep it that way).</p></li>
+<li><p><strong>Curation queue tracker</strong>: <code class="docutils literal notranslate"><span class="pre">mappings/queues/</span></code> becomes the canonical place for “labels still needing curator attention” — surfaced in the model-review skill’s curation upgrade report.</p></li>
+</ol>
+</section>
+<section id="inline-curie-triage-from-audit-mappings-v2-2026-05-03">
+<h2>Inline-CURIE triage from audit-mappings v2 (2026-05-03)<a class="headerlink" href="#inline-curie-triage-from-audit-mappings-v2-2026-05-03" title="Link to this heading"></a></h2>
+<p>Running <code class="docutils literal notranslate"><span class="pre">audit-mappings</span></code> v2 against the post-cleanup repo surfaced <strong>149 inline CURIE literals across 13 transforms</strong> plus <strong>1 repeated-callsite cluster</strong>. Triaged here so the cleanup doesn’t drag on indefinitely.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Status</p></th>
+<th class="head"><p>Count</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>✅ Lifted</p></td>
+<td><p>5 inline literals + 1 cluster</p></td>
+<td><p>bakta <code class="docutils literal notranslate"><span class="pre">add_edge()</span></code> callsite cluster: 6 calls each passing a different <code class="docutils literal notranslate"><span class="pre">(biolink_predicate,</span> <span class="pre">ro_relation)</span></code> pair. Promoted both halves to named constants in <code class="docutils literal notranslate"><span class="pre">constants.py</span></code> (<code class="docutils literal notranslate"><span class="pre">BIOLINK_HAS_GENE</span></code>, <code class="docutils literal notranslate"><span class="pre">BIOLINK_HAS_GENE_PRODUCT</span></code>, <code class="docutils literal notranslate"><span class="pre">BIOLINK_ENABLES</span></code>, <code class="docutils literal notranslate"><span class="pre">BIOLINK_MEMBER_OF</span></code>, <code class="docutils literal notranslate"><span class="pre">BIOLINK_ORTHOLOGOUS_TO</span></code>) and updated bakta to use them. The cluster is now gone; bakta inline-literal count dropped 32 → 24.</p></td>
+</tr>
+<tr class="row-odd"><td><p>📋 Future incremental</p></td>
+<td><p>~140 inline literals</p></td>
+<td><p>Mostly <code class="docutils literal notranslate"><span class="pre">infores:*</span></code> knowledge-source strings, repeated <code class="docutils literal notranslate"><span class="pre">biolink:*</span></code> category literals at node-creation sites, and one-off <code class="docutils literal notranslate"><span class="pre">RO:*</span></code> relations in single call sites. Each transform owner can lift its own as a small follow-up — they’re not data masquerading as code, just constants candidates. The audit doc’s <code class="docutils literal notranslate"><span class="pre">mappings/canonical/</span></code> work was higher leverage.</p></td>
+</tr>
+<tr class="row-even"><td><p>🟢 Leave as-is</p></td>
+<td><p>4 dicts</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bakta/utils.py:217-221</span> <span class="pre">aspect_map</span></code> (3 entries), <code class="docutils literal notranslate"><span class="pre">bakta/utils.py:233-237</span> <span class="pre">predicate_map</span></code> (3 entries), <code class="docutils literal notranslate"><span class="pre">ontologies_transform.py:98-115</span> <span class="pre">ONTOLOGY_KNOWLEDGE_SOURCES</span></code> (16 entries), and one ontologies dict are all cohesive routing tables that benefit from being inline (close to the function that consumes them). Lifting them would scatter the routing logic without simplifying anything.</p></td>
+</tr>
+</tbody>
+</table>
+<p>The repeated-callsite detector was the highest-signal v2 addition; it caught the bakta pattern that the v1 scanner couldn’t see. The remaining 140 inline literals are visible in <code class="docutils literal notranslate"><span class="pre">audit-mappings</span> <span class="pre">--verbose</span></code> whenever a curator wants to nibble at them; not blocking.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

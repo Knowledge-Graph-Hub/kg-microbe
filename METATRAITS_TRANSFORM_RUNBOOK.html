@@ -1,0 +1,331 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Metatraits Transform: Runbook for New Dataset &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Metatraits Transform: Runbook for New Dataset</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/METATRAITS_TRANSFORM_RUNBOOK.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="metatraits-transform-runbook-for-new-dataset">
+<h1>Metatraits Transform: Runbook for New Dataset<a class="headerlink" href="#metatraits-transform-runbook-for-new-dataset" title="Link to this heading"></a></h1>
+<p>This document describes how to run the metatraits transform on new metatraits summary data.</p>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Link to this heading"></a></h2>
+<p>The metatraits transform reads JSONL summary files (species, genus, family level), resolves taxon names to NCBITaxon IDs, maps trait names to ontology terms (CHEBI, EC, GO, METPO), and outputs KGX-format <code class="docutils literal notranslate"><span class="pre">nodes.tsv</span></code> and <code class="docutils literal notranslate"><span class="pre">edges.tsv</span></code>.</p>
+<p><strong>Edge predicate resolution:</strong> The transform emits distinct Biolink predicates based on trait type—no longer collapsing all traits to <code class="docutils literal notranslate"><span class="pre">has_phenotype</span></code>. For example, <code class="docutils literal notranslate"><span class="pre">produces:</span> <span class="pre">ethanol</span></code> → <code class="docutils literal notranslate"><span class="pre">biolink:produces</span></code> with CHEBI object; <code class="docutils literal notranslate"><span class="pre">carbon</span> <span class="pre">source:</span> <span class="pre">acetate</span></code> → <code class="docutils literal notranslate"><span class="pre">biolink:capable_of</span></code>; <code class="docutils literal notranslate"><span class="pre">gram</span> <span class="pre">positive</span></code> → <code class="docutils literal notranslate"><span class="pre">biolink:has_phenotype</span></code>.</p>
+</section>
+<section id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h2>
+<section id="environment-setup">
+<h3>1. Environment Setup<a class="headerlink" href="#environment-setup" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Use Python 3.11 (Python 3.14 has compatibility issues with some dependencies)</span>
+poetry<span class="w"> </span>env<span class="w"> </span>use<span class="w"> </span>python3.11
+
+<span class="c1"># Install dependencies</span>
+poetry<span class="w"> </span>install
+
+<span class="c1"># If you see &quot;No module named &#39;pkg_resources&#39;&quot;, downgrade setuptools:</span>
+poetry<span class="w"> </span>run<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;setuptools&lt;82&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="input-files">
+<h3>2. Input Files<a class="headerlink" href="#input-files" title="Link to this heading"></a></h3>
+<p>Place one or more metatraits JSONL files in <code class="docutils literal notranslate"><span class="pre">data/raw/metatraits/</span></code>. Supported filenames:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Convention</p></th>
+<th class="head"><p>Species</p></th>
+<th class="head"><p>Genus</p></th>
+<th class="head"><p>Family</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ncbi_*</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ncbi_species_summary.jsonl</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ncbi_genus_summary.jsonl</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ncbi_family_summary.jsonl</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">metatraits_*</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">metatraits_species_summary.jsonl</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">metatraits_genus_summary.jsonl</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">metatraits_family_summary.jsonl</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>Files may be gzipped (<code class="docutils literal notranslate"><span class="pre">.jsonl.gz</span></code>) or plain (<code class="docutils literal notranslate"><span class="pre">.jsonl</span></code>).</p>
+<p><strong>Expected JSONL format</strong> (one JSON object per line):</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;tax_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Escherichia coli&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;summaries&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;antibiotic_resistance&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;is_discrete&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;num_observations&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;majority_label&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true: (100%)&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;percentages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;true&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">100.0</span><span class="p">}}]}</span>
+</pre></div>
+</div>
+</section>
+<section id="taxon-resolution-optional-but-recommended">
+<h3>3. Taxon Resolution (Optional but Recommended)<a class="headerlink" href="#taxon-resolution-optional-but-recommended" title="Link to this heading"></a></h3>
+<p>To avoid slow OAK lookups or a ~2GB NCBITaxon download, provide NCBITaxon labels:</p>
+<p><strong>Option A:</strong> Run ontologies transform first (produces <code class="docutils literal notranslate"><span class="pre">data/transformed/ontologies/ncbitaxon_nodes.tsv</span></code>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </span>transform<span class="w"> </span>-s<span class="w"> </span>ontologies
+</pre></div>
+</div>
+<p><strong>Option B:</strong> Manually place <code class="docutils literal notranslate"><span class="pre">ncbitaxon_nodes.tsv</span></code> in <code class="docutils literal notranslate"><span class="pre">data/raw/</span></code> (TSV format: <code class="docutils literal notranslate"><span class="pre">id</span></code>, <code class="docutils literal notranslate"><span class="pre">category</span></code>, <code class="docutils literal notranslate"><span class="pre">name</span></code>, …).</p>
+<p>With <code class="docutils literal notranslate"><span class="pre">ncbitaxon_nodes.tsv</span></code> in place, the transform uses only the cache for taxon resolution—no OAK adapter is created and no download occurs. The OAK adapter (and potential ~2GB download) is created only when a taxon is not found in the cache (first cache miss).</p>
+</section>
+</section>
+<section id="running-the-transform">
+<h2>Running the Transform<a class="headerlink" href="#running-the-transform" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </span>transform<span class="w"> </span>-s<span class="w"> </span>metatraits
+</pre></div>
+</div>
+<p>Default paths:</p>
+<ul class="simple">
+<li><p><strong>Input:</strong> <code class="docutils literal notranslate"><span class="pre">data/raw/</span></code></p></li>
+<li><p><strong>Output:</strong> <code class="docutils literal notranslate"><span class="pre">data/transformed/metatraits/</span></code></p></li>
+</ul>
+</section>
+<section id="trait-mapping-lookup">
+<h2>Trait Mapping Lookup<a class="headerlink" href="#trait-mapping-lookup" title="Link to this heading"></a></h2>
+<p>Trait names are resolved in this order:</p>
+<ol class="arabic simple">
+<li><p><strong>Curated microbial-trait-mappings</strong> (<code class="docutils literal notranslate"><span class="pre">mappings/metatraits/*.tsv</span></code>) — authoritative lookup from <a class="reference external" href="https://github.com/turbomam/microbial-trait-mappings">turbomam/microbial-trait-mappings</a>. TSVs by entity type:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">chemical_mappings.tsv</span></code> — produces compounds (CHEBI)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">enzyme_mappings.tsv</span></code> — enzyme activities (EC, GO)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pathway_mappings.tsv</span></code> — pathways (GO)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">phenotype_mappings.tsv</span></code> — phenotypes (METPO)</p></li>
+</ul>
+</li>
+<li><p><strong>METPO + custom_curies</strong> — fallback for traits not in the curated TSVs.</p></li>
+</ol>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Trait pattern</p></th>
+<th class="head"><p>Example</p></th>
+<th class="head"><p>Biolink predicate</p></th>
+<th class="head"><p>Object ontology</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Produces compound</p></td>
+<td><p>produces: ethanol</p></td>
+<td><p>biolink:produces</p></td>
+<td><p>CHEBI</p></td>
+</tr>
+<tr class="row-odd"><td><p>Carbon/nitrogen source</p></td>
+<td><p>carbon source: acetate</p></td>
+<td><p>biolink:capable_of</p></td>
+<td><p>CHEBI, GO</p></td>
+</tr>
+<tr class="row-even"><td><p>Enzyme activity</p></td>
+<td><p>enzyme activity: catalase (EC1.11.1.6)</p></td>
+<td><p>biolink:capable_of</p></td>
+<td><p>EC, GO</p></td>
+</tr>
+<tr class="row-odd"><td><p>Pathway</p></td>
+<td><p>fermentation, nitrogen fixation</p></td>
+<td><p>biolink:capable_of</p></td>
+<td><p>GO</p></td>
+</tr>
+<tr class="row-even"><td><p>Phenotype</p></td>
+<td><p>gram positive, thermophilic</p></td>
+<td><p>biolink:has_phenotype</p></td>
+<td><p>METPO</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="output-files">
+<h2>Output Files<a class="headerlink" href="#output-files" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>File</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">nodes.tsv</span></code></p></td>
+<td><p>Taxon and trait nodes in KGX format</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">edges.tsv</span></code></p></td>
+<td><p>Taxon–trait edges with Biolink predicates (<code class="docutils literal notranslate"><span class="pre">biolink:produces</span></code>, <code class="docutils literal notranslate"><span class="pre">biolink:capable_of</span></code>, <code class="docutils literal notranslate"><span class="pre">biolink:has_phenotype</span></code>)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">unmapped_traits.tsv</span></code></p></td>
+<td><p>Traits that could not be mapped to ontology terms</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">unresolved_taxa.tsv</span></code></p></td>
+<td><p>Taxon names that could not be resolved to NCBITaxon IDs</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="verification">
+<h2>Verification<a class="headerlink" href="#verification" title="Link to this heading"></a></h2>
+<p>After a successful run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Check output</span>
+head<span class="w"> </span>data/transformed/metatraits/nodes.tsv
+head<span class="w"> </span>data/transformed/metatraits/edges.tsv
+
+<span class="c1"># Review unmapped/unresolved (if any)</span>
+cat<span class="w"> </span>data/transformed/metatraits/unmapped_traits.tsv
+cat<span class="w"> </span>data/transformed/metatraits/unresolved_taxa.tsv
+</pre></div>
+</div>
+</section>
+<section id="quick-test-with-fixture">
+<h2>Quick Test with Fixture<a class="headerlink" href="#quick-test-with-fixture" title="Link to this heading"></a></h2>
+<p>To verify the transform without full production data:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span>tests/resources/metatraits_fixture.jsonl<span class="w"> </span>data/raw/metatraits/ncbi_species_summary.jsonl
+poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </span>transform<span class="w"> </span>-s<span class="w"> </span>metatraits
+</pre></div>
+</div>
+<p>This produces a small graph (2 taxa, 2 traits, 3 edges).</p>
+</section>
+<section id="merge-into-full-kg">
+<h2>Merge into Full KG<a class="headerlink" href="#merge-into-full-kg" title="Link to this heading"></a></h2>
+<p>To include metatraits in the merged knowledge graph, ensure <code class="docutils literal notranslate"><span class="pre">merge.yaml</span></code> (or <code class="docutils literal notranslate"><span class="pre">merge.minimal.yaml</span></code>) includes the metatraits source. The default config already references:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="nt">metatraits</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;metatraits&quot;</span>
+<span class="w">  </span><span class="c1"># ...</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data/transformed/metatraits/nodes.tsv</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">data/transformed/metatraits/edges.tsv</span>
+</pre></div>
+</div>
+<p>Then run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </span>merge<span class="w"> </span>-y<span class="w"> </span>merge.yaml
+</pre></div>
+</div>
+</section>
+<section id="adding-new-trait-mappings">
+<h2>Adding New Trait Mappings<a class="headerlink" href="#adding-new-trait-mappings" title="Link to this heading"></a></h2>
+<p>To map a new trait that appears in <code class="docutils literal notranslate"><span class="pre">unmapped_traits.tsv</span></code>:</p>
+<ol class="arabic simple">
+<li><p><strong>Preferred:</strong> Contribute to <a class="reference external" href="https://github.com/turbomam/microbial-trait-mappings">turbomam/microbial-trait-mappings</a> (PR with new rows in the appropriate TSV). Once merged, copy the updated TSV into <code class="docutils literal notranslate"><span class="pre">mappings/metatraits/</span></code>.</p></li>
+<li><p><strong>Local override:</strong> Add a row to the appropriate TSV in <code class="docutils literal notranslate"><span class="pre">mappings/metatraits/</span></code>. Required columns:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">subject_label</span></code> — trait name (e.g. <code class="docutils literal notranslate"><span class="pre">produces:</span> <span class="pre">ethanol</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">subject_label_normalized</span></code> — lowercase variant for case-insensitive lookup</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">object_id</span></code> — CURIE (e.g. <code class="docutils literal notranslate"><span class="pre">CHEBI:16236</span></code>, <code class="docutils literal notranslate"><span class="pre">EC:1.11.1.6</span></code>, <code class="docutils literal notranslate"><span class="pre">GO:0008150</span></code>)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">object_label</span></code> — human-readable label</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">object_source</span></code> — CHEBI, EC, GO, or METPO</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">notes</span></code> — include <code class="docutils literal notranslate"><span class="pre">biolink:produces</span></code>, <code class="docutils literal notranslate"><span class="pre">biolink:capable_of</span></code>, or <code class="docutils literal notranslate"><span class="pre">biolink:has_phenotype</span></code> to specify the predicate</p></li>
+</ul>
+</li>
+<li><p><strong>Fallback:</strong> Add to <code class="docutils literal notranslate"><span class="pre">custom_curies.yaml</span></code> or METPO synonym mappings (used when trait is not in curated TSVs).</p></li>
+</ol>
+</section>
+<section id="troubleshooting">
+<h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>
+<p>See <a class="reference internal" href="METATRAITS_TRANSFORM_ANALYSIS.html"><span class="std std-doc">METATRAITS_TRANSFORM_ANALYSIS.md</span></a> for:</p>
+<ul class="simple">
+<li><p>Why NCBITaxon may download (~2GB)</p></li>
+<li><p>Why the progress bar may appear stuck</p></li>
+<li><p>How taxon resolution and caching work</p></li>
+</ul>
+</section>
+<section id="summary-of-changes-registration">
+<h2>Summary of Changes (Registration)<a class="headerlink" href="#summary-of-changes-registration" title="Link to this heading"></a></h2>
+<p>The metatraits transform is registered in <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform.py</span></code> under <code class="docutils literal notranslate"><span class="pre">DATA_SOURCES</span></code>. If you cloned before this was added, ensure your <code class="docutils literal notranslate"><span class="pre">transform.py</span></code> includes:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">METATRAITS</span><span class="p">:</span> <span class="n">MetaTraitsTransform</span><span class="p">,</span>
+</pre></div>
+</div>
+<p><strong>Recent updates (predicate resolution):</strong></p>
+<ul class="simple">
+<li><p>Curated mappings from <code class="docutils literal notranslate"><span class="pre">mappings/metatraits/</span></code> (turbomam/microbial-trait-mappings) are the primary lookup.</p></li>
+<li><p>Edges now emit distinct predicates: <code class="docutils literal notranslate"><span class="pre">biolink:produces</span></code>, <code class="docutils literal notranslate"><span class="pre">biolink:capable_of</span></code>, <code class="docutils literal notranslate"><span class="pre">biolink:has_phenotype</span></code> instead of collapsing to <code class="docutils literal notranslate"><span class="pre">has_phenotype</span></code>.</p></li>
+<li><p>Loader: <code class="docutils literal notranslate"><span class="pre">kg_microbe/utils/microbial_trait_mappings.py</span></code>.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

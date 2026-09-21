@@ -1,0 +1,327 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Source finalization and merge responsibilities (#1082) &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Source finalization and merge responsibilities (#1082)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PREMERGE_SOURCE_FINALIZATION.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="source-finalization-and-merge-responsibilities-1082">
+<h1>Source finalization and merge responsibilities (#1082)<a class="headerlink" href="#source-finalization-and-merge-responsibilities-1082" title="Link to this heading"></a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">transform</span></code> now runs each producer, explicitly finalizes its TSV bundle,
+and only then writes <code class="docutils literal notranslate"><span class="pre">source_fingerprint.json</span></code>. A previous success marker is
+invalidated before the producer starts. Failure leaves no success marker
+claiming that the attempted build completed.</p>
+<p>Finalization stages its own changes and reports beside the source outputs,
+validates all of them, then publishes them. Existing producer output writes
+are unchanged. This is <strong>not</strong> a whole-source transaction: producer output
+may already be visible, and publishing several files is not one atomic
+filesystem operation. Exact member hashes in <code class="docutils literal notranslate"><span class="pre">source_finalization.json</span></code>
+prevent partially replaced or subsequently edited bundles from passing the
+public merge gate.</p>
+<section id="semantic-decisions-occur-upstream">
+<h2>Semantic decisions occur upstream<a class="headerlink" href="#semantic-decisions-occur-upstream" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Known IRI/CURIE aliases and FOODON/PATO imported categories are normalized
+in source files. FOODON ancestry is read from the effective raw directory,
+not a hidden default checkout. Original changed rows are retained in
+<code class="docutils literal notranslate"><span class="pre">source_canonicalization.tsv</span></code>.</p></li>
+<li><p>Every referenced or declared GO identifier is checked against the selected
+local GO authority, including named but incorrectly categorized importer
+declarations. Exact replacements retain original endpoints; historical
+terms without a unique replacement remain historical evidence, not guessed
+identities. <code class="docutils literal notranslate"><span class="pre">go_reference_resolution.tsv</span></code> retains source evidence.</p></li>
+<li><p>External reference resolution is a source-bundle operation, with explicit
+local authority and lossless original-node/edge evidence in
+<code class="docutils literal notranslate"><span class="pre">source_reference_resolution.tsv</span></code>. A reference missing from one transform
+is not presumed missing from the graph: named dependency ontology
+declarations are recognized and fingerprinted. Unsupported references are
+reported, never guessed from labels or accession versions.</p></li>
+<li><p>Exact consumed authority/dependency bytes are recorded. The normal source
+fingerprint additionally records these dynamic inputs; freshness checking
+detects missing or changed inputs alongside static code/data dependencies.</p></li>
+</ul>
+<section id="replaced-go-identifiers-do-not-transfer-every-imported-axiom">
+<h3>Replaced GO identifiers do not transfer every imported axiom<a class="headerlink" href="#replaced-go-identifiers-do-not-transfer-every-imported-axiom" title="Link to this heading"></a></h3>
+<p>An obsolete GO term’s unique replacement remains usable for external
+organism/assay annotations, with the original endpoint and source context
+retained. It does not alone justify transferring an imported GO hierarchy:
+an old narrower class can be replaced by a broader current class, turning
+its former parent assertion into a reverse edge or self-loop.</p>
+<p>The safeguard is intentionally narrow. Only GO-to-GO rows affected by a GO
+replacement, including already-normalized rows with <code class="docutils literal notranslate"><span class="pre">go_reference_context</span></code>,
+are checked when their relation/predicate identifies <code class="docutils literal notranslate"><span class="pre">rdfs:subClassOf</span></code>,
+<code class="docutils literal notranslate"><span class="pre">BFO:0000050</span></code> (part of), or <code class="docutils literal notranslate"><span class="pre">BFO:0000051</span></code> (has part). A mismatched Biolink
+predicate/relation fails in either direction. Pure IRI/CURIE spelling
+changes do not activate this policy. Unchanged imported structure,
+cross-ontology assertions, and external observations are outside this gate.</p>
+<p>The candidate triple must occur in the selected <code class="docutils literal notranslate"><span class="pre">go.db</span></code> <strong>asserted <code class="docutils literal notranslate"><span class="pre">edge</span></code>
+view</strong>, which projects named subclass and existential restrictions. The
+normalizer never uses <code class="docutils literal notranslate"><span class="pre">entailed_edge</span></code>, reflexive closure, labels, or
+<code class="docutils literal notranslate"><span class="pre">consider</span></code> suggestions to manufacture structural support. Supported rows
+retain source attribution and all observation/context fields. Unsupported
+rows are omitted from the active source graph and retained losslessly in
+<code class="docutils literal notranslate"><span class="pre">go_reference_resolution.tsv</span></code>, with an explicit unsupported-structural-axiom
+disposition, full <code class="docutils literal notranslate"><span class="pre">original_record_json</span></code>, full <code class="docutils literal notranslate"><span class="pre">candidate_record_json</span></code>, and
+the exact authority hash. This is a source disposition, not a merge repair
+or a claim that every excluded historical statement was false in its
+original ontology release.</p>
+<p>The asserted index is immutable and travels with prepared GO metadata into
+workers; its digest and the structural policy version are part of the
+normalization checkpoint. Matching older bundle audits are retained but
+rechecked under the new policy, rather than bypassing it or discarding
+their earlier original records. The production loader requires the
+asserted view and fails on missing or broken ontology infrastructure.
+Deliberately metadata-only in-memory fixture authorities can omit the
+index, but cannot authorize a replacement-affected structural row.</p>
+<p>No new raw dependency is introduced: the existing selected GO database and
+OWL inputs are already fingerprinted. Changes to the shared GO normalizer
+invalidate all source-finalization fingerprints under the current shared
+code policy; regenerate sources rather than re-stamping existing outputs.
+This safeguard does not certify unchanged imported GO axioms or the
+entire graph as acyclic. Those are separate review scopes.</p>
+</section>
+</section>
+<section id="generated-lookup-consumption">
+<h2>Generated lookup consumption<a class="headerlink" href="#generated-lookup-consumption" title="Link to this heading"></a></h2>
+<p>MediaDive and BactoTraits declare <code class="docutils literal notranslate"><span class="pre">bacdive_taxon_lookup</span></code> as a required
+producer-time input. At each real run they reset prior consumption claims and
+parse an owned immutable snapshot of BacDive’s generated <code class="docutils literal notranslate"><span class="pre">bacdive.tsv</span></code>, copied
+and SHA256-hashed with bounded memory. The source path is checked against those
+exact bytes after copying and parsing, before finalization, and before its
+record is published. A missing input, an unperformed required read, or changed
+bytes fail rather than being certified as current. Repeated finalization
+retains the original snapshots and audit evidence; it does not invent a read.</p>
+<p>Named snapshots are recorded in <code class="docutils literal notranslate"><span class="pre">source_finalization.json.consumed_inputs</span></code>
+and in its existing input list. The source fingerprint binds those paths too.
+Producer verification runs before fingerprint hashing and again inside atomic
+marker writing, before publication. A bookkeeping failure withholds the success
+marker. Public merge and repeat-finalization verification require the recorded
+snapshots to satisfy the registered producer’s current required-input contract.</p>
+<p>BactoTraits rebuilds its small derived mapping from that lookup each run;
+a complete but stale local mapping cache is no longer an authoritative input.
+Generated lookups are intentionally not unconditional <code class="docutils literal notranslate"><span class="pre">DATA_INPUTS</span></code> entries:
+batch preflight runs before BacDive can create them in a clean checkout.
+<code class="docutils literal notranslate"><span class="pre">TRANSFORM_INPUTS</span></code> still declares the producer dependency.</p>
+<p>This is an exact-byte contract for these tracked reads, not a claim that every
+raw file consumed anywhere in the pipeline is now snapshotted. Multiple source
+files are not a filesystem transaction; later changes are rejected when the
+recorded inputs and graph members are verified again.</p>
+</section>
+<section id="tsv-representation-is-explicit">
+<h2>TSV representation is explicit<a class="headerlink" href="#tsv-representation-is-explicit" title="Link to this heading"></a></h2>
+<p>Legacy producers default to CSV-quoted TSV. A producer writing native KGX
+TSV declares <code class="docutils literal notranslate"><span class="pre">TSV_QUOTING</span> <span class="pre">=</span> <span class="pre">csv.QUOTE_NONE</span></code>. Finalized files always use
+literal unquoted KGX TSV, with LF terminators and no interpretation of
+literal quotation marks. Downstream readers of finalized TSVs must use
+<code class="docutils literal notranslate"><span class="pre">quoting=csv.QUOTE_NONE</span></code>.</p>
+<p>Only free-text <code class="docutils literal notranslate"><span class="pre">name</span></code> and <code class="docutils literal notranslate"><span class="pre">description</span></code> controls are flattened, with the
+original row retained in the canonicalization audit. Scalar assertion or
+context controls require explicit producer encoding; finalization refuses
+to silently flatten them. MicrobeDecoder uses <code class="docutils literal notranslate"><span class="pre">value_encoding=backslash</span></code>
+for reversible observation-value encoding.</p>
+</section>
+<section id="merge-validates-it-does-not-repair-semantics">
+<h2>Merge validates; it does not repair semantics<a class="headerlink" href="#merge-validates-it-does-not-repair-semantics" title="Link to this heading"></a></h2>
+<p>The public <code class="docutils literal notranslate"><span class="pre">load_and_merge</span></code>/<code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">merge</span></code> entry requires versioned source
+finalization records, exact configured graph member sizes and SHA256 hashes,
+mandatory audit-report hashes, current producer/finalizer code, and unchanged
+consumed authorities/declared inputs. There is no path-based fixture exemption.
+The merge-only dependency gate also requires a current producer success marker
+and recursively validates every declared <code class="docutils literal notranslate"><span class="pre">TRANSFORM_INPUTS</span></code> upstream. It checks
+producer/shared code, currently declared curation/raw inputs, recorded dynamic
+inputs, schema identity, and the recorded upstream digest. Re-recording a
+consumer marker cannot legitimize a missing, unsupported, or stale upstream
+marker. Producer identity follows the registered code in finalization metadata,
+not a merge-config label or an output-directory alias such as <code class="docutils literal notranslate"><span class="pre">prego_habitat</span></code>.
+Unknown producer metadata is rejected with an actionable diagnostic option.</p>
+<p>An explicitly scoped, registered ontology record (for example
+<code class="docutils literal notranslate"><span class="pre">pato_source_finalization.json</span></code>) covers only its matching node/edge pair. It
+can authorize that directly selected pair, including when an older full graph
+record is stale, <strong>only alongside a current whole producer fingerprint</strong>
+proving declared-input and pinned-schema freshness. The scoped record alone
+does not record schema identity; missing evidence must not be inferred. Without
+that producer fingerprint, run <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">kg</span> <span class="pre">transform</span> <span class="pre">-s</span> <span class="pre">ontologies</span></code> before
+production merge, or deliberately select the diagnostic opt-out below. A scoped
+record cannot establish currency of the whole <code class="docutils literal notranslate"><span class="pre">ontologies</span></code> dependency. Bakta
+dataset records use their parent producer marker, following the explicit
+selected-dataset protocol below.</p>
+<p>This enforces <strong>recorded and declared evidence</strong>, not complete raw-snapshot
+currency. An upstream marker does not necessarily hash every intermediate
+lookup or raw download. If an unrecorded lookup changes without changing any
+recorded metadata, marker comparison cannot discover that change; exact
+consumed-input declarations must be added by the producing/consuming workflow.
+The #1092 smoke reproduction deliberately fingerprints its temporary BacDive
+lookup to isolate changed-marker enforcement; this does not claim production
+BacDive already fingerprints every generated lookup byte.</p>
+<p><code class="docutils literal notranslate"><span class="pre">configuration.allow_unfinalized_sources:</span> <span class="pre">true</span></code> is an explicit <strong>diagnostic
+opt-out</strong>, printed prominently and recorded as
+<code class="docutils literal notranslate"><span class="pre">provenance.source_finalization.diagnostic_opt_out</span></code> in the resulting manifest.
+Such an output is not a finalized release. The lower-level <code class="docutils literal notranslate"><span class="pre">merge</span></code> function
+is a prepared-input KGX API; its caller owns preflight and publication.</p>
+<p>For ontology OBOJSON-to-TSV conversion and TSV/CSV merge, including the parent
+and spawned merge parsers, KGX’s prefix readers use the selected local Biolink
+schema and its installed default namespace maps. The schema’s explicit namespace overrides take
+precedence. This avoids KGX’s independent hard-coded remote JSON-LD context;
+it is a prefix map for identifier conversion and tabular merge, not a general
+replacement JSON-LD serialization context. All three KGX context keys
+(<code class="docutils literal notranslate"><span class="pre">biolink</span></code>, <code class="docutils literal notranslate"><span class="pre">monarch_context</span></code>, <code class="docutils literal notranslate"><span class="pre">obo_context</span></code>) use that same nonempty map:
+KGX’s IRI contraction/expansion eagerly loads both fallback contexts even
+when its explicit map resolves the identifier. Each exact previous cache
+entry, or its absence, is restored when scoped users finish, including on
+failure. The shared prefix helper is included in source code fingerprints,
+so changes invalidate source builds. As with the existing
+KGX compatibility overrides, this process-global scope does not isolate
+unrelated simultaneous KGX callers. No source output or success marker is
+modified by prefix initialization.</p>
+<p>Ontology OBOJSON conversion uses KGX’s native streaming transformer directly,
+not the CLI’s intermediate graph keyed only by subject/predicate/object. Thus
+distinct source relations that map to one Biolink predicate remain separate
+rows in either input order. The intermediate TSV explicitly retains all
+reader-emitted node properties and reviewed edge properties, including raw
+<code class="docutils literal notranslate"><span class="pre">meta</span></code> and <code class="docutils literal notranslate"><span class="pre">key</span></code>; existing ontology postprocessing still owns canonical column
+selection, while exact assertion deduplication remains downstream. A bounded raw-edge-key preflight declares
+optional provenance columns only when present, preserving the existing
+absent-versus-blank metadata behavior. Unknown raw edge or emitted properties
+abort instead of being silently discarded. A converter-local sink factory
+closes opened handles even after partial initialization or parser failure;
+it does not replace global KGX factories. Streaming does not invent undeclared
+endpoint nodes: reference resolution and required authority checks remain at
+the source-finalization boundary.</p>
+<p>EC preserves the actual intermediate edge header through its prefix/filter
+rewrite. UPA projects edge fields by name before its existing positional
+path helpers, with modern source provenance taking precedence by column
+presence rather than truthiness. These compatibility steps retain existing
+EC/UPA modeling and metadata policies while avoiding shifted or oversized rows.</p>
+<p>KGX ingestion rejects noncanonical source identifiers, imported fallback
+categories, and nonscalar relations rather than repairing them. After graph
+union, required validation checks canonical representation and endpoint
+closure, including unresolved authoritative anonymous endpoints. It does
+not open ontology databases or retarget/drop biological assertions. The
+legacy <code class="docutils literal notranslate"><span class="pre">*_reference_resolution.tsv</span></code> archive member now explicitly records
+<strong>validation with no semantic rewrites</strong>; source disposition reports live
+with the sources that made those decisions.</p>
+<p>Residual merge operations are serialization and publication: union node
+provenance, preserve independently keyed observation/context/evidence rows,
+deduplicate exact normalized assertions, order/project KGX columns, remove
+internal edge keys and known auxiliary columns, normalize transport CRLF,
+recount final TSV statistics, and build a byte-accurate archive manifest.
+Identical duplicate columns can coalesce; conflicting values and embedded
+carriage returns now fail rather than being erased. Legacy
+<code class="docutils literal notranslate"><span class="pre">knowledge_source</span></code> filling and finite known provenance aliases remain
+explicit compatibility handling; neither licenses a category or identity
+decision. Graph/statistics publication remains staged: required validation
+failure preserves the previous release; optional stats failure withholds
+only the failed stats output.</p>
+</section>
+<section id="direct-python-callers">
+<h2>Direct Python callers<a class="headerlink" href="#direct-python-callers" title="Link to this heading"></a></h2>
+<p>Call <code class="docutils literal notranslate"><span class="pre">producer.run(...)</span></code> followed by <code class="docutils literal notranslate"><span class="pre">producer.finalize(fresh_run=True)</span></code>.
+An exact repeat <code class="docutils literal notranslate"><span class="pre">producer.finalize()</span></code> validates prepared bytes/authorities
+and returns without erasing earlier audit evidence. A single
+ontology uses <code class="docutils literal notranslate"><span class="pre">producer.finalize(file_prefix=&quot;go_&quot;,</span> <span class="pre">fresh_run=True)</span></code>, matching the CLI’s
+scoped branch; it does not certify other ontology files. Use <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">transform</span></code>
+for the complete success-marker/freshness workflow. Do not merge raw
+producer files and rely on merge to make the semantic decisions later.</p>
+<p>Bakta declares <code class="docutils literal notranslate"><span class="pre">finalization_output_dirs</span></code> for only the datasets produced in
+the selected run. The base finalizer stages and validates every selected
+dataset before publishing its own changes, without recursively discovering
+stale dataset directories. Each selected dataset receives its own exact-byte
+record; the parent transform success fingerprint follows all of them.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

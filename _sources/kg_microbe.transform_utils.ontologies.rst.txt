@@ -1,0 +1,21 @@
+kg\_microbe.transform\_utils.ontologies package
+===============================================
+
+Submodules
+----------
+
+kg\_microbe.transform\_utils.ontologies.ontologies\_transform module
+--------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.ontologies.ontologies_transform
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.transform_utils.ontologies
+   :members:
+   :undoc-members:
+   :show-inheritance:

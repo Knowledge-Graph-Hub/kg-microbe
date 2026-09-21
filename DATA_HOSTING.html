@@ -1,0 +1,360 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hosting vendored data files &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Hosting vendored data files</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/DATA_HOSTING.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hosting-vendored-data-files">
+<h1>Hosting vendored data files<a class="headerlink" href="#hosting-vendored-data-files" title="Link to this heading"></a></h1>
+<p>Some KG-Microbe inputs cannot be fetched by <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">kg</span> <span class="pre">download</span></code>: their
+upstream URL is dead, TLS-broken, or permission-gated. They are <strong>not
+regenerable</strong> — we hold none of the upstream observations they summarize — so
+the only options are to host a copy or to copy one by hand from a reference
+<code class="docutils literal notranslate"><span class="pre">data/raw_*</span></code> directory.</p>
+<p>This file is the manifest for hosting those copies on the public LBNL Google
+Drive, plus the interim copy-by-hand procedure.</p>
+<section id="hosted-files">
+<h2>Hosted files<a class="headerlink" href="#hosted-files" title="Link to this heading"></a></h2>
+<p>Six files, ~81 MB total, in the shared Drive folder
+<a class="reference external" href="https://drive.google.com/drive/folders/1vCKoGREJk45BzImfnPVtGhXAb_DyndLq">https://drive.google.com/drive/folders/1vCKoGREJk45BzImfnPVtGhXAb_DyndLq</a>
+(General access: <em>Anyone with the link</em>, Viewer — <code class="docutils literal notranslate"><span class="pre">gdown</span></code> runs
+unauthenticated, so an org-restricted folder returns a sign-in page and
+fails with HTTP 401). Uploaded and verified end to end 2026-07-25.</p>
+<p>Each md5 below is also recorded inline in <code class="docutils literal notranslate"><span class="pre">download.yaml</span></code> beside its URL, so the
+pinned artifact is identifiable from the config alone. They were confirmed by
+moving all six out of <code class="docutils literal notranslate"><span class="pre">data/raw</span></code>, running
+<code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-t</span> <span class="pre">metatraits_gtdb</span> <span class="pre">-t</span> <span class="pre">bactotraits</span></code>, and re-checksumming what
+arrived.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>file</p></th>
+<th class="head"><p>size</p></th>
+<th class="head"><p>md5</p></th>
+<th class="head"><p>Drive file ID</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gtdb_species_summary.jsonl.gz</span></code></p></td>
+<td><p>46 MB</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">aca98ae9c978f238ae7844beaccec63b</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1xfZiMly-lJgcPL5ihR6QK1zxlv_JwC6J</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">gtdb_genus_summary.jsonl.gz</span></code></p></td>
+<td><p>16 MB</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">159828de09d22a7c85e2116e8a97944a</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1Kotk8g5Ky_Cc9MNiywO_Tjz6JLEG0y7Y</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gtdb_family_summary.jsonl.gz</span></code></p></td>
+<td><p>4.4 MB</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1443132d2aa0f3d8743b23096ce23a13</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1HpkfGAtZI1uRwyPzbTJFtI6avWlkEAlE</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">NCBI2GTDB.tsv.gz</span></code></p></td>
+<td><p>2.8 MB</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">eca29d35869dd9035730caa12de12598</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1npQ1z2Yc0NRPHpBkKjsKIBy2_evDAyCV</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">GTDB2NCBI.tsv.gz</span></code></p></td>
+<td><p>2.8 MB</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">a313f89ac32b7137c7225c789f724f63</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1ip7ualwruocq9MvcaoNAcH0YtLtAEASP</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BactoTraits_databaseV2_Jun2022.csv</span></code></p></td>
+<td><p>8.6 MB</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">e6bca5b947c1aa692d45ac24aa9025f3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1u7snG4VxbH6sh6M03dS1GumoYgLgbZrr</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>All five MetaTraits files are hosted together so the KG builds against one fixed
+MetaTraits release, matching the three <code class="docutils literal notranslate"><span class="pre">ncbi_*_summary.jsonl.gz</span></code> inputs that are
+already Drive-hosted under the <code class="docutils literal notranslate"><span class="pre">metatraits</span></code> tag.</p>
+<section id="why-pin-the-crosswalks-rather-than-fetch-them-live">
+<h3>Why pin the crosswalks rather than fetch them live<a class="headerlink" href="#why-pin-the-crosswalks-rather-than-fetch-them-live" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">NCBI2GTDB.tsv.gz</span></code> and <code class="docutils literal notranslate"><span class="pre">GTDB2NCBI.tsv.gz</span></code> <em>are</em> still published upstream — they
+moved off the dead <code class="docutils literal notranslate"><span class="pre">metatraits.embl.de/static/downloads/</span></code> path to the Bork
+group’s web space, linked from <a class="reference external" href="https://metatraits.embl.de/documentation">https://metatraits.embl.de/documentation</a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">bork</span><span class="o">.</span><span class="n">embl</span><span class="o">.</span><span class="n">de</span><span class="o">/~</span><span class="n">robbani</span><span class="o">/</span><span class="n">metatraits</span><span class="o">/</span><span class="n">NCBI2GTDB</span><span class="o">.</span><span class="n">tsv</span><span class="o">.</span><span class="n">gz</span>
+<span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">bork</span><span class="o">.</span><span class="n">embl</span><span class="o">.</span><span class="n">de</span><span class="o">/~</span><span class="n">robbani</span><span class="o">/</span><span class="n">metatraits</span><span class="o">/</span><span class="n">GTDB2NCBI</span><span class="o">.</span><span class="n">tsv</span><span class="o">.</span><span class="n">gz</span>
+</pre></div>
+</div>
+<p>Verified 2026-07-25: both are <strong>byte-identical</strong> to the copies in <code class="docutils literal notranslate"><span class="pre">data/raw</span></code>.</p>
+<p>We deliberately do not point <code class="docutils literal notranslate"><span class="pre">download.yaml</span></code> at them. That is an unversioned
+personal directory whose files are regenerated in place — the current build is
+dated 2025-08-14 and the name carries no release identifier — so two KG builds
+months apart would silently use different crosswalks with no way to tell from
+the config. The Drive copy fixes the release. <strong>Those URLs are the refresh
+source</strong>: when you want a newer crosswalk, download from there, re-upload, and
+update the md5 in <code class="docutils literal notranslate"><span class="pre">download.yaml</span></code> and in the table above as a deliberate act.</p>
+</section>
+<section id="why-each-one-needs-hosting">
+<h3>Why each one needs hosting<a class="headerlink" href="#why-each-one-needs-hosting" title="Link to this heading"></a></h3>
+<ul>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">gtdb_*_summary.jsonl.gz</span></code></strong> — MetaTraits (EMBL) products, keyed by GTDB
+r220 taxon name (so independent of which NCBITaxon release we build against).
+The JSONL serialization has been <strong>discontinued upstream</strong>: the Bork directory
+now publishes only <code class="docutils literal notranslate"><span class="pre">.tsv.gz</span></code>, in two variants per rank (<code class="docutils literal notranslate"><span class="pre">_all</span></code> and
+<code class="docutils literal notranslate"><span class="pre">_no_predictions</span></code>). Our vendored JSONL corresponds to <strong><code class="docutils literal notranslate"><span class="pre">_all</span></code></strong> — verified by
+comparing per-taxon trait sets at family rank: 73.9% of taxa match <code class="docutils literal notranslate"><span class="pre">_all</span></code>
+exactly (the rest differ only because <code class="docutils literal notranslate"><span class="pre">_all</span></code> is a newer build adding traits
+like <code class="docutils literal notranslate"><span class="pre">generalism</span> <span class="pre">score</span></code>, <code class="docutils literal notranslate"><span class="pre">generalist</span></code>, <code class="docutils literal notranslate"><span class="pre">habitat</span> <span class="pre">count</span></code>), versus 0.4% against
+<code class="docutils literal notranslate"><span class="pre">_no_predictions</span></code>, which carries far fewer traits per taxon (6 vs 130 for
+<code class="docutils literal notranslate"><span class="pre">0-14-0-10-38-17</span></code>). Note the taxa <em>counts</em> coincide (4,511 in both our JSONL
+and <code class="docutils literal notranslate"><span class="pre">_no_predictions</span></code>) — that resemblance is misleading, so compare trait sets
+rather than record counts if you revisit this.
+Consumer: <code class="docutils literal notranslate"><span class="pre">metatraits_gtdb</span></code> reads the species summary
+(<code class="docutils literal notranslate"><span class="pre">METATRAITS_GTDB_INPUT_FILES</span></code>); genus and family are declared for
+completeness but currently commented out in the transform.</p>
+<p><strong>Switching to the TSV form would require a transform change</strong> — the JSONL is
+one object per taxon with a nested <code class="docutils literal notranslate"><span class="pre">summaries</span></code> list, while the TSV is one row
+per taxon-trait pair with richer columns (<code class="docutils literal notranslate"><span class="pre">ontology_ids</span></code> carrying OMP terms,
+<code class="docutils literal notranslate"><span class="pre">group_1</span></code>/<code class="docutils literal notranslate"><span class="pre">group_2</span></code> trait categories, min/median/mean/max, <code class="docutils literal notranslate"><span class="pre">taxon_lineage</span></code>).
+It is also much larger: <code class="docutils literal notranslate"><span class="pre">gtdb_species_summary_all.tsv.gz</span></code> is 135 MB versus
+46 MB for the JSONL. Until that work happens, hosting the vendored JSONL keeps
+the transform running unchanged.</p>
+</li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">BactoTraits_databaseV2_Jun2022.csv</span></code></strong> — the host
+(<code class="docutils literal notranslate"><span class="pre">ordar.otelo.univ-lorraine.fr</span></code>) serves an incomplete TLS intermediate chain
+that no CA bundle can verify, so the download aborts the whole run. Static
+Jun-2022 dataset; it will not change.</p></li>
+</ul>
+</section>
+<section id="deliberately-not-hosted">
+<h3>Deliberately NOT hosted<a class="headerlink" href="#deliberately-not-hosted" title="Link to this heading"></a></h3>
+<ul>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">lpsn_gss.csv</span></code></strong> — the LPSN GSS export is account-gated, and LPSN’s
+copyright terms (see <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/lpsn/README.md</span></code>) require
+attribution and restrict redistribution. Publishing it to a public Drive link
+<em>is</em> redistribution. Keep the manual procedure documented in <code class="docutils literal notranslate"><span class="pre">download.yaml</span></code>:
+register free at <a class="reference external" href="https://lpsn.dsmz.de/register">https://lpsn.dsmz.de/register</a>, download the GSS CSV, place
+it at <code class="docutils literal notranslate"><span class="pre">data/raw/lpsn_gss.csv</span></code>.</p></li>
+<li><p><strong>Anything the transforms derive locally</strong> — <code class="docutils literal notranslate"><span class="pre">ncbitaxon_removed_subset.json</span></code>,
+<code class="docutils literal notranslate"><span class="pre">chebi.json</span></code>, <code class="docutils literal notranslate"><span class="pre">go.json</span></code>, <code class="docutils literal notranslate"><span class="pre">*-relation-graph.tsv.gz</span></code>, and the ROBOT-derived
+<code class="docutils literal notranslate"><span class="pre">pato/ro/taxrank/uberon/upa/foodon.json</span></code>. Hosting or copying these silently
+pins the KG to an older ontology release, because the transforms skip
+regeneration when the derived file already exists.</p>
+<p>The SemSQL <code class="docutils literal notranslate"><span class="pre">.db</span></code> files: <code class="docutils literal notranslate"><span class="pre">go.db</span></code>, <code class="docutils literal notranslate"><span class="pre">ncbitaxon.db</span></code> and <code class="docutils literal notranslate"><span class="pre">chebi.db</span></code> are all built
+locally from the OWLs we ship (<code class="docutils literal notranslate"><span class="pre">semsql</span> <span class="pre">make</span></code>, via <code class="docutils literal notranslate"><span class="pre">_ensure_go_db</span></code> /
+<code class="docutils literal notranslate"><span class="pre">_ensure_ncbitaxon_db</span></code> / <code class="docutils literal notranslate"><span class="pre">_ensure_chebi_db</span></code>), so copying them pins the KG to
+whatever release the copy holds — the version gates will warn, and a drifted DB
+is rebuilt on the next run anyway. <code class="docutils literal notranslate"><span class="pre">bto.db</span></code> and <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> are the exception:
+they are downloaded as <code class="docutils literal notranslate"><span class="pre">.db.gz</span></code> with no OWL declared, so there is nothing to
+build them from and copying is fine.</p>
+<p>Set <code class="docutils literal notranslate"><span class="pre">KG_SEMSQL_BUILD=off</span></code> to decline those builds — they run for tens of
+minutes (ChEBI, GO) to hours (NCBITaxon, ~13 GB, plus ~2 GB for the
+decompressed OWL and a relation-graph intermediate). With the opt-out set the
+pipeline uses whatever DB is already on disk; supplying a prebuilt one, or a
+symlink to it, is supported.</p>
+<p>Every transform that looks something up in an ontology now resolves its adapter
+through <code class="docutils literal notranslate"><span class="pre">ontology_utils.get_*_adapter()</span></code>, so any of them can trigger a build —
+<code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">transform</span> <span class="pre">-s</span> <span class="pre">bacdive</span></code> or <code class="docutils literal notranslate"><span class="pre">-s</span> <span class="pre">bactotraits</span></code> can start the NCBITaxon one, and
+rhea/bakta/uniprot/madin can start GO, ChEBI or EC. Resolution is lazy, so the
+cost lands on first lookup rather than at construction.</p>
+<p>The metatraits pre-flight now runs on both MP and sequential paths, so a
+drifted <code class="docutils literal notranslate"><span class="pre">ncbitaxon.db</span></code> is realigned regardless of mode (issue #614 is closed
+on the sequential path too). Other transforms will still build the DB if it
+is missing.</p>
+</li>
+</ul>
+</section>
+</section>
+<section id="upload-procedure-for-refreshing-a-file-or-adding-a-new-one">
+<h2>Upload procedure (for refreshing a file, or adding a new one)<a class="headerlink" href="#upload-procedure-for-refreshing-a-file-or-adding-a-new-one" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p>Upload the file to the Drive folder <strong>as binary</strong>. Do not let Drive or the
+browser recompress or rename anything. Before the first upload, turn off
+Drive → Settings → <strong>“Convert uploaded files to Google Docs editor format”</strong>,
+or a <code class="docutils literal notranslate"><span class="pre">.csv</span></code> becomes a Google Sheet and <code class="docutils literal notranslate"><span class="pre">uc?id=</span></code> returns an export instead of
+the file.</p></li>
+<li><p>Set sharing to <strong>anyone with the link can view</strong> — <code class="docutils literal notranslate"><span class="pre">kghub-downloader</span></code>’s
+<code class="docutils literal notranslate"><span class="pre">gdrive:</span></code> handler is unauthenticated.</p></li>
+<li><p><strong>Verify the round trip before trusting it.</strong> Download your own upload and
+check the md5 against the table above:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>-sL<span class="w"> </span><span class="s2">&quot;https://drive.google.com/uc?export=download&amp;id=&lt;id&gt;&quot;</span><span class="w"> </span>-o<span class="w"> </span>/tmp/check
+md5<span class="w"> </span>-q<span class="w"> </span>/tmp/check
+</pre></div>
+</div>
+<p>This step is not optional. Drive has silently served <code class="docutils literal notranslate"><span class="pre">.gz</span></code> uploads
+decompressed — that is exactly how the already-hosted
+<code class="docutils literal notranslate"><span class="pre">ncbi_*_summary.jsonl.gz</span></code> ended up as plain JSON under a <code class="docutils literal notranslate"><span class="pre">.gz</span></code> name in
+<code class="docutils literal notranslate"><span class="pre">data/raw</span></code>, and the hosted files above go up the same way.</p>
+<p>Every MetaTraits read path now tolerates a decompressed <code class="docutils literal notranslate"><span class="pre">.gz</span></code> via
+<code class="docutils literal notranslate"><span class="pre">_open_maybe_gzipped</span></code> (<code class="docutils literal notranslate"><span class="pre">transform_utils/metatraits/metatraits.py</span></code>), so this
+no longer breaks a build. It used to matter most for the crosswalk:
+<code class="docutils literal notranslate"><span class="pre">_load_ncbi_gtdb_mappings</span></code> wraps its read in <code class="docutils literal notranslate"><span class="pre">except</span> <span class="pre">Exception</span></code>, so a
+<code class="docutils literal notranslate"><span class="pre">BadGzipFile</span></code> there never crashed — it silently produced <strong>zero</strong> mappings
+and the NCBI→GTDB fallback quietly stopped working. Verifying the checksum
+still matters, because a decompressed upload has a different md5 than the
+table above and is no longer the pinned artifact.</p>
+</li>
+<li><p>Take the file ID from the sharing link’s <code class="docutils literal notranslate"><span class="pre">/d/&lt;id&gt;/</span></code> segment and put it in
+<code class="docutils literal notranslate"><span class="pre">download.yaml</span></code>, updating the recorded md5 in the same edit:</p>
+<div class="highlight-yaml notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span>
+<span class="w">  </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gdrive:1AbCdEfGhIjKlMnOpQrStUvWxYz</span><span class="w">   </span><span class="c1"># md5 &lt;new checksum&gt;</span>
+<span class="w">  </span><span class="nt">local_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gtdb_species_summary.jsonl.gz</span>
+<span class="w">  </span><span class="nt">tag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">metatraits_gtdb</span>
+</pre></div>
+</div>
+<p>To list every ID in the folder at once, without clicking through six share
+dialogs:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import gdown; \</span>
+<span class="s2">  [print(f.id, f.path) for f in gdown.download_folder(</span>
+<span class="s2">     url=&#39;&lt;folder url&gt;&#39;, skip_download=True, quiet=True)]&quot;</span>
+</pre></div>
+</div>
+</li>
+<li><p>Confirm the entry works in isolation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mv<span class="w"> </span>data/raw/gtdb_species_summary.jsonl.gz<span class="w"> </span>/tmp/backup.gz<span class="w">   </span><span class="c1"># keep a copy first</span>
+poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </span>download<span class="w"> </span>-t<span class="w"> </span>metatraits_gtdb
+md5<span class="w"> </span>-q<span class="w"> </span>data/raw/gtdb_species_summary.jsonl.gz<span class="w">              </span><span class="c1"># must match the table</span>
+</pre></div>
+</div>
+<p>Move the file aside rather than relying on <code class="docutils literal notranslate"><span class="pre">-i</span></code>: <code class="docutils literal notranslate"><span class="pre">-i</span></code> deletes the local copy
+<em>before</em> fetching, so a failed download leaves you with nothing.</p>
+</li>
+</ol>
+</section>
+<section id="copying-from-a-reference-directory">
+<h2>Copying from a reference directory<a class="headerlink" href="#copying-from-a-reference-directory" title="Link to this heading"></a></h2>
+<p>All six are hosted, so <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span></code> fetches them normally. This section covers
+the two remaining cases: a source that is still unhosted (<code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span></code> skips it
+with a message naming it — see <code class="docutils literal notranslate"><span class="pre">PENDING_HOSTING_MARKER</span></code> in
+<code class="docutils literal notranslate"><span class="pre">kg_microbe/download.py</span></code>), and restoring a <code class="docutils literal notranslate"><span class="pre">data/raw</span></code> you rotated away without
+re-downloading:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">REF</span><span class="o">=</span>data/raw_202607_andOLD_mixed
+cp<span class="w"> </span>-n<span class="w"> </span><span class="nv">$REF</span>/gtdb_species_summary.jsonl.gz<span class="w"> </span><span class="nv">$REF</span>/gtdb_genus_summary.jsonl.gz<span class="w"> </span><span class="se">\</span>
+<span class="w">      </span><span class="nv">$REF</span>/gtdb_family_summary.jsonl.gz<span class="w"> </span><span class="nv">$REF</span>/NCBI2GTDB.tsv.gz<span class="w"> </span><span class="se">\</span>
+<span class="w">      </span><span class="nv">$REF</span>/GTDB2NCBI.tsv.gz<span class="w"> </span><span class="nv">$REF</span>/BactoTraits_databaseV2_Jun2022.csv<span class="w"> </span>data/raw/
+</pre></div>
+</div>
+<section id="these-are-not-gtdb-downloads">
+<h3>These are NOT GTDB downloads<a class="headerlink" href="#these-are-not-gtdb-downloads" title="Link to this heading"></a></h3>
+<p>Worth stating plainly, because the names suggest otherwise: none of these files
+come from GTDB. The GTDB release directory
+(<a class="reference external" href="https://data.gtdb.ecogenomic.org/releases/latest/">https://data.gtdb.ecogenomic.org/releases/latest/</a>) publishes only
+<code class="docutils literal notranslate"><span class="pre">{bac120,ar53}_taxonomy.tsv[.gz]</span></code>, <code class="docutils literal notranslate"><span class="pre">{bac120,ar53}_metadata.tsv.gz</span></code>, trees, MSA
+masks and genomic files — no phenotypic trait summaries and no NCBI crosswalk.
+All of <code class="docutils literal notranslate"><span class="pre">gtdb_*_summary.*</span></code>, <code class="docutils literal notranslate"><span class="pre">NCBI2GTDB.tsv.gz</span></code> and <code class="docutils literal notranslate"><span class="pre">GTDB2NCBI.tsv.gz</span></code> are
+MetaTraits (EMBL, Bork group) products that are merely <em>keyed by</em> GTDB taxonomy.
+The four GTDB files we do fetch from GTDB proper are tagged <code class="docutils literal notranslate"><span class="pre">gtdb</span></code>, not
+<code class="docutils literal notranslate"><span class="pre">metatraits_gtdb</span></code>.</p>
+<p>Two related caches worth restoring the same way, both of which cost hours to
+rebuild and neither of which is a <code class="docutils literal notranslate"><span class="pre">download.yaml</span></code> entry:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp<span class="w"> </span>-Rn<span class="w"> </span><span class="nv">$REF</span>/mediadive<span class="w"> </span>data/raw/<span class="w">     </span><span class="c1"># 4 bulk JSONs + the HTTP cache; skips a ~1h crawl</span>
+cp<span class="w"> </span>-Rn<span class="w"> </span><span class="nv">$REF</span>/lpsn<span class="w"> </span>data/raw/<span class="w">          </span><span class="c1"># 34,301 per-record LPSN API responses</span>
+cp<span class="w"> </span>-n<span class="w">  </span><span class="nv">$REF</span>/lpsn_gss.csv<span class="w"> </span>data/raw/
+</pre></div>
+</div>
+<p>Note both caches live <em>inside</em> <code class="docutils literal notranslate"><span class="pre">data/raw</span></code>, so rotating or replacing that
+directory loses them — which is what caused a full 34,300-record LPSN re-fetch.
+With the six files hosted, only the LPSN artifacts and these caches still need
+this treatment.</p>
+<p>Two inputs cannot be restored from any reference directory:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">kegg/ko_minimal.json</span></code> (~30 MB) — run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">scripts/download_kegg_minimal.py</span></code>
+(~50 min). The <code class="docutils literal notranslate"><span class="pre">kegg</span></code> transform errors without it. A 894 MB <code class="docutils literal notranslate"><span class="pre">ko_details.json</span></code>
+fallback exists in <code class="docutils literal notranslate"><span class="pre">data/raw_last5/kegg/</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">bakta/&lt;dataset&gt;/</span></code> — <code class="docutils literal notranslate"><span class="pre">BAKTA</span></code> is active in <code class="docutils literal notranslate"><span class="pre">DATA_SOURCES</span></code> but no copy exists in
+<code class="docutils literal notranslate"><span class="pre">data/raw</span></code> or in the reference directory; <code class="docutils literal notranslate"><span class="pre">data/raw_last5/bakta/</span></code> holds a
+170 MB <code class="docutils literal notranslate"><span class="pre">cmm_bakta_test1</span></code> only.</p></li>
+</ul>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

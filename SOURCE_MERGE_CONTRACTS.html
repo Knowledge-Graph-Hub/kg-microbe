@@ -1,0 +1,184 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Source finalization and canonical merge serialization &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Source finalization and canonical merge serialization</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/SOURCE_MERGE_CONTRACTS.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="source-finalization-and-canonical-merge-serialization">
+<h1>Source finalization and canonical merge serialization<a class="headerlink" href="#source-finalization-and-canonical-merge-serialization" title="Link to this heading"></a></h1>
+<p>The September 20 review identified two ingredient identity defects and transport
+work that belonged before merge. The boundary is now:</p>
+<p><code class="docutils literal notranslate"><span class="pre">raw</span> <span class="pre">inputs</span> <span class="pre">→</span> <span class="pre">transform</span> <span class="pre">→</span> <span class="pre">audited</span> <span class="pre">source</span> <span class="pre">finalization</span> <span class="pre">→</span> <span class="pre">KGX</span> <span class="pre">aggregation</span> <span class="pre">→</span> <span class="pre">canonical</span> <span class="pre">TSV</span> <span class="pre">serialization</span> <span class="pre">→</span> <span class="pre">cross-source</span> <span class="pre">validation</span> <span class="pre">→</span> <span class="pre">statistics/manifest</span> <span class="pre">→</span> <span class="pre">one</span> <span class="pre">archive</span> <span class="pre">→</span> <span class="pre">guarded</span> <span class="pre">publication</span></code></p>
+<section id="chemical-identity-belongs-upstream">
+<h2>Chemical identity belongs upstream<a class="headerlink" href="#chemical-identity-belongs-upstream" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">mappings/ingredient_identity_exclusions.tsv</span></code> rejects specific ingredient-name
+groundings and false cross-reference pairs. It does not blacklist ontology IDs:
+<code class="docutils literal notranslate"><span class="pre">CHEBI:78018</span></code> still means dodecylphosphocholine, and <code class="docutils literal notranslate"><span class="pre">FOODON:03302071</span></code> still means
+green kidney bean. Neither is a replacement for a casein digest or peptone broth.
+Legitimate ontology declarations and chemical-role edges remain intact.
+The audit also covers the erroneous Casamino-acid fallback to <code class="docutils literal notranslate"><span class="pre">CHEBI:78020</span></code>
+(heptacosanoate), and names that had leaked from that entity onto <code class="docutils literal notranslate"><span class="pre">CHEBI:78018</span></code>.
+Correct heptacosanoate/carbocerate identities remain available on <code class="docutils literal notranslate"><span class="pre">CHEBI:78020</span></code>.
+Further checks of the actual next-choice mappings rejected Tryptone on
+<code class="docutils literal notranslate"><span class="pre">CHEBI:84843</span></code> ((R)-2,6-dimethylheptanoylcarnitine) and proteose peptone on
+<code class="docutils literal notranslate"><span class="pre">FOODON:00002992</span></code> (fresh bratwurst). These exclusions are likewise scoped to
+incorrect ingredient groundings; the legitimate authority entities are retained.</p>
+<p>The shared policy applies to unified mapping lookup and consolidation, and to
+MediaDive’s legacy/embedded fallback paths. Unsupported groundings retain an
+ingredient-specific unresolved identity; no replacement chemical is invented.
+The policy is a shared content dependency in transform fingerprints and the
+source-finalization input ledger.</p>
+<p>Vendored MediaIngredientMech mapping inputs are not hand-edited. A bounded
+candidate refresh is available without sibling synchronization or OAK enrichment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/consolidate_chemical_mappings.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--identity-policy-only<span class="w"> </span>--output<span class="w"> </span>data/identity-policy-candidate.sssom.tsv.gz
+</pre></div>
+</div>
+<p>Review that candidate before replacing the unified artifact. This mode retains
+unrelated rows, including asymmetric and hydrate relationships, records the policy
+fingerprint, and validates SSSOM before publishing its candidate. The ordinary full
+consolidation also enforces the policy so reseeding cannot restore rejected mappings.</p>
+</section>
+<section id="source-finalization-contract">
+<h2>Source-finalization contract<a class="headerlink" href="#source-finalization-contract" title="Link to this heading"></a></h2>
+<p>Source finalization version 2 emits deterministic canonical headers and literal LF
+TSVs. Every edge has <code class="docutils literal notranslate"><span class="pre">subject</span></code>, <code class="docutils literal notranslate"><span class="pre">predicate</span></code>, <code class="docutils literal notranslate"><span class="pre">object</span></code>, <code class="docutils literal notranslate"><span class="pre">relation</span></code>,
+<code class="docutils literal notranslate"><span class="pre">primary_knowledge_source</span></code>, <code class="docutils literal notranslate"><span class="pre">knowledge_level</span></code>, and <code class="docutils literal notranslate"><span class="pre">agent_type</span></code> columns. Missing
+knowledge-level/agent-type values remain explicitly empty rather than fabricated.
+Extensions and meaningful source metadata are retained.</p>
+<p>Legacy provider aliases and <code class="docutils literal notranslate"><span class="pre">knowledge_source</span></code> migrate here, with the original and
+normalized row retained in <code class="docutils literal notranslate"><span class="pre">source_canonicalization.tsv</span></code>. BacDive record IDs become
+publication evidence under the BacDive provider. Supplied edge IDs become
+<code class="docutils literal notranslate"><span class="pre">source_assertion_id</span></code>; conflicting provider/ID cells, multiple providers, and missing
+providers fail before the finalization success record is published. Node provider
+collections can be unioned at merge; blank provenance is not invented for stubs.</p>
+<p>Source finalization continues to own ontology identity/category/reference decisions.
+It may rewrite its staged source outputs. Merge must not repair these semantics.</p>
+</section>
+<section id="merge-responsibilities">
+<h2>Merge responsibilities<a class="headerlink" href="#merge-responsibilities" title="Link to this heading"></a></h2>
+<p>The KGX sink emits the canonical schema directly, excluding its private <code class="docutils literal notranslate"><span class="pre">id</span></code>/<code class="docutils literal notranslate"><span class="pre">key</span></code>
+and legacy <code class="docutils literal notranslate"><span class="pre">knowledge_source</span></code> edge columns. Literal quotes, backslashes, scalar
+extension values, original assertion IDs, and evidence pairings survive export.
+Identical complete observations can aggregate; shared triples alone do not make
+independent observations identical.</p>
+<p>For a configured <code class="docutils literal notranslate"><span class="pre">tar.gz</span></code> destination, only the private staging configuration asks
+KGX for loose TSVs. The user’s merge configuration remains unchanged. Merge then
+validates canonical representation and cross-source endpoint closure, computes
+final statistics and manifests, and builds the archive once. The production path
+does not compress, extract, normalize, and recompress the graph.</p>
+<p>Source admission/freshness is checked before processing and rechecked before
+publication. Required serializer, validation, or manifest failures preserve the prior
+published archive. Optional diagnostic/statistics failures remain isolated; failed
+statistics are withheld. Publication is staged, with completion artifacts last, not
+claimed to be an atomic transaction across every output file. Stale sibling artifacts
+are warned about, not deleted.</p>
+<p>Compatibility helpers for explicit legacy callers remain available, but the public
+merge workflow does not use post-merge TSV normalizers to fix current source rows.</p>
+</section>
+<section id="rebuilding-existing-data">
+<h2>Rebuilding existing data<a class="headerlink" href="#rebuilding-existing-data" title="Link to this heading"></a></h2>
+<p>These code changes do not modify the existing merged archive or certify old source
+outputs under version 2. Shared finalization/schema and mapping code changes make
+old producer fingerprints stale. Rerun all sources selected by the intended merge
+configuration, then merge and review the new artifact. Do not bypass the freshness
+gate or merely restamp markers. A new raw download is not inherently required.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

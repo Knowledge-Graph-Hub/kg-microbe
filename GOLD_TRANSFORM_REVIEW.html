@@ -1,0 +1,480 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GOLD pre-transformed data — modeling review &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">GOLD pre-transformed data — modeling review</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/GOLD_TRANSFORM_REVIEW.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="gold-pre-transformed-data-modeling-review">
+<h1>GOLD pre-transformed data — modeling review<a class="headerlink" href="#gold-pre-transformed-data-modeling-review" title="Link to this heading"></a></h1>
+<p><strong>Date:</strong> 2026-08-10 · <strong>Branch:</strong> <code class="docutils literal notranslate"><span class="pre">feat/gold-transform</span></code>
+<strong>Input:</strong> <code class="docutils literal notranslate"><span class="pre">GOLD_nodes.tsv</span></code> (121.8 MB, 1,086,930 nodes), <code class="docutils literal notranslate"><span class="pre">GOLD_edges.tsv</span></code> (184.2 MB, 1,314,901 edges)
+<strong>Method:</strong> <code class="docutils literal notranslate"><span class="pre">.claude/skills/kg-model-review</span></code> (<code class="docutils literal notranslate"><span class="pre">--transform</span> <span class="pre">gold</span> <span class="pre">--max-rows</span> <span class="pre">0</span></code>, Biolink Model 4.2.2
+via <code class="docutils literal notranslate"><span class="pre">bmt</span></code>), plus the merged-KG integrity checks that skill does not cover — dangling
+endpoints, orphan nodes, duplicate edges, self-loops, cross-transform ID collisions and
+Biolink domain/range per edge signature.</p>
+<blockquote>
+<div><p>Historical model note: this report records the 4.2.2 review performed on
+2026-08-10. KG-Microbe now pins Biolink 4.4.2. The assumptions relevant to
+GOLD were checked again against that exact schema; see
+<a class="reference internal" href="BIOLINK_4_4_2_REVALIDATION.html"><span class="std std-doc">BIOLINK_4_4_2_REVALIDATION.md</span></a>.</p>
+</div></blockquote>
+<p>GOLD arrives already in KGX shape rather than as a source to parse, so this review treats
+the TSVs as a transform’s <em>output</em> and asks the question we would ask of any transform
+before it enters a merge.</p>
+<hr class="docutils" />
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Blocking errors</p></td>
+<td><p><strong>0</strong> — nothing here prevents a merge</p></td>
+</tr>
+<tr class="row-odd"><td><p>Schema conformance</p></td>
+<td><p><strong>2 issues</strong> — missing KG-Microbe standard columns</p></td>
+</tr>
+<tr class="row-even"><td><p>Modeling</p></td>
+<td><p><strong>2 issues</strong> — one Biolink domain/range violation, one vacuous predicate</p></td>
+</tr>
+<tr class="row-odd"><td><p>Content</p></td>
+<td><p><strong>2 issues</strong> — 26.5% orphan nodes, 10 unnamed nodes</p></td>
+</tr>
+<tr class="row-even"><td><p>Integration</p></td>
+<td><p><strong>3 issues</strong> — unregistered prefixes, taxon name conflicts, new taxa</p></td>
+</tr>
+</tbody>
+</table>
+<p>The data is <strong>structurally sound</strong>. What needs attention is conformance, one real Biolink
+violation, and the fact that a quarter of the nodes carry no information.</p>
+</section>
+<hr class="docutils" />
+<section id="what-is-clean">
+<h2>What is clean<a class="headerlink" href="#what-is-clean" title="Link to this heading"></a></h2>
+<p>Genuinely better than several shipping transforms, and worth stating so the issues below
+are read in proportion:</p>
+<ul class="simple">
+<li><p><strong>Zero dangling endpoints.</strong> Every one of the 2,629,802 edge endpoints resolves to a row
+in <code class="docutils literal notranslate"><span class="pre">nodes.tsv</span></code>. Most transforms leak some.</p></li>
+<li><p><strong>Zero duplicate node IDs</strong>, <strong>zero duplicate <code class="docutils literal notranslate"><span class="pre">(subject,</span> <span class="pre">predicate,</span> <span class="pre">object)</span></code> triples</strong>,
+<strong>zero self-loops</strong>.</p></li>
+<li><p><strong>All 5 categories and all 5 predicates are real Biolink 4.2.2 elements.</strong></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">relation</span></code> uses non-biolink CURIEs, as the convention requires.</p></li>
+</ul>
+</section>
+<hr class="docutils" />
+<section id="issues">
+<h2>Issues<a class="headerlink" href="#issues" title="Link to this heading"></a></h2>
+<section id="schema-does-not-match-the-kg-microbe-standard-conformance">
+<h3>1. Schema does not match the KG-Microbe standard — <em>conformance</em><a class="headerlink" href="#schema-does-not-match-the-kg-microbe-standard-conformance" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p>standard</p></th>
+<th class="head"><p>GOLD</p></th>
+<th class="head"><p>missing</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>nodes</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">id,</span> <span class="pre">category,</span> <span class="pre">name,</span> <span class="pre">description,</span> <span class="pre">xref,</span> <span class="pre">provided_by,</span> <span class="pre">synonym,</span> <span class="pre">deprecated,</span> <span class="pre">same_as</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">id,</span> <span class="pre">category,</span> <span class="pre">name,</span> <span class="pre">provided_by,</span> <span class="pre">xref</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">description</span></code>, <code class="docutils literal notranslate"><span class="pre">synonym</span></code>, <code class="docutils literal notranslate"><span class="pre">deprecated</span></code>, <code class="docutils literal notranslate"><span class="pre">same_as</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>edges</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">subject,</span> <span class="pre">predicate,</span> <span class="pre">object,</span> <span class="pre">relation,</span> <span class="pre">primary_knowledge_source,</span> <span class="pre">knowledge_level,</span> <span class="pre">agent_type</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">id,</span> <span class="pre">subject,</span> <span class="pre">predicate,</span> <span class="pre">object,</span> <span class="pre">relation,</span> <span class="pre">primary_knowledge_source</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">knowledge_level</span></code>, <code class="docutils literal notranslate"><span class="pre">agent_type</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">knowledge_level</span></code> and <code class="docutils literal notranslate"><span class="pre">agent_type</span></code> matter most: every other transform emits them, and they
+are how a consumer distinguishes an assertion from a prediction. GOLD entries are curated
+submissions, so <code class="docutils literal notranslate"><span class="pre">knowledge_assertion</span></code> / <code class="docutils literal notranslate"><span class="pre">manual_agent</span></code> is the likely fill.</p>
+<p>The extra edge <code class="docutils literal notranslate"><span class="pre">id</span></code> column is harmless — the post-merge cleanup drops it (<code class="docutils literal notranslate"><span class="pre">dropped=['id',</span> <span class="pre">'knowledge_source']</span></code>) — but it should not be emitted.</p>
+</section>
+<section id="biolink-subclass-of-violates-biolink-domain-range-modeling-real-violation">
+<h3>2. <code class="docutils literal notranslate"><span class="pre">biolink:subclass_of</span></code> violates Biolink domain/range — <em>modeling, real violation</em><a class="headerlink" href="#biolink-subclass-of-violates-biolink-domain-range-modeling-real-violation" title="Link to this heading"></a></h3>
+<p>4,220 edges assert <code class="docutils literal notranslate"><span class="pre">biolink:EnvironmentalFeature</span> <span class="pre">-subclass_of-&gt;</span> <span class="pre">biolink:EnvironmentalFeature</span></code>.
+<code class="docutils literal notranslate"><span class="pre">subclass_of</span></code> requires <strong><code class="docutils literal notranslate"><span class="pre">biolink:OntologyClass</span></code></strong> on both domain and range. Checked against
+<code class="docutils literal notranslate"><span class="pre">bmt</span></code>:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>signature</p></th>
+<th class="head text-right"><p>n</p></th>
+<th class="head"><p>domain</p></th>
+<th class="head"><p>range</p></th>
+<th class="head"><p>verdict</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">IndividualOrganism</span> <span class="pre">-in_taxon-&gt;</span> <span class="pre">OrganismTaxon</span></code></p></td>
+<td class="text-right"><p>605,885</p></td>
+<td><p>thing with taxon</p></td>
+<td><p>organism taxon</p></td>
+<td><p>OK</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">IndividualOrganism</span> <span class="pre">-related_to-&gt;</span> <span class="pre">Study</span></code></p></td>
+<td class="text-right"><p>361,673</p></td>
+<td><p>named thing</p></td>
+<td><p>named thing</p></td>
+<td><p>OK</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">IndividualOrganism</span> <span class="pre">-occurs_in-&gt;</span> <span class="pre">EnvironmentalFeature</span></code></p></td>
+<td class="text-right"><p>342,880</p></td>
+<td><p>unconstrained</p></td>
+<td><p>unconstrained</p></td>
+<td><p>OK</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">EnvironmentalFeature</span> <span class="pre">-subclass_of-&gt;</span> <span class="pre">EnvironmentalFeature</span></code></p></td>
+<td class="text-right"><p>4,220</p></td>
+<td><p>ontology class</p></td>
+<td><p>ontology class</p></td>
+<td><p><strong>VIOLATION</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">IndividualOrganism</span> <span class="pre">-derives_from-&gt;</span> <span class="pre">MaterialSample</span></code></p></td>
+<td class="text-right"><p>243</p></td>
+<td><p>unconstrained</p></td>
+<td><p>unconstrained</p></td>
+<td><p>OK</p></td>
+</tr>
+</tbody>
+</table>
+<p>This is the GOLD ecosystem hierarchy (<code class="docutils literal notranslate"><span class="pre">gold.ecosystem:*</span></code>). Two fixes: add
+<code class="docutils literal notranslate"><span class="pre">biolink:OntologyClass</span></code> as a second pipe-delimited category on those 4,226 nodes — which
+KG-Microbe already does elsewhere (<code class="docutils literal notranslate"><span class="pre">METPO:1001000|biolink:Procedure</span></code>) — or use a
+non-ontological containment predicate. The former is closer to what the data means.</p>
+</section>
+<section id="biolink-related-to-on-27-5-of-edges-modeling-semantics">
+<h3>3. <code class="docutils literal notranslate"><span class="pre">biolink:related_to</span></code> on 27.5% of edges — <em>modeling, semantics</em><a class="headerlink" href="#biolink-related-to-on-27-5-of-edges-modeling-semantics" title="Link to this heading"></a></h3>
+<p>361,673 edges say <code class="docutils literal notranslate"><span class="pre">IndividualOrganism</span> <span class="pre">-related_to-&gt;</span> <span class="pre">Study</span></code>. It passes validation because
+<code class="docutils literal notranslate"><span class="pre">related_to</span></code> is unconstrained, but it asserts nothing a consumer can use, and it is the
+second-largest predicate in the file. The real relation is presumably “was sequenced/
+reported in”, for which <code class="docutils literal notranslate"><span class="pre">biolink:contributes_to</span></code>, or a study-membership predicate, would
+carry meaning. Worth resolving before this lands in a merged product, because it is
+indistinguishable from a modeling placeholder.</p>
+</section>
+<section id="a-quarter-of-the-nodes-are-orphans-content-biggest-issue-by-volume">
+<h3>4. A quarter of the nodes are orphans — <em>content, biggest issue by volume</em><a class="headerlink" href="#a-quarter-of-the-nodes-are-orphans-content-biggest-issue-by-volume" title="Link to this heading"></a></h3>
+<p>288,516 nodes (26.5%) have no incident edge:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>category</p></th>
+<th class="head text-right"><p>orphaned</p></th>
+<th class="head text-right"><p>of total</p></th>
+<th class="head text-right"><p>share</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">biolink:MaterialSample</span></code></p></td>
+<td class="text-right"><p>279,618</p></td>
+<td class="text-right"><p>279,671</p></td>
+<td class="text-right"><p><strong>100.0%</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">biolink:Study</span></code></p></td>
+<td class="text-right"><p>8,893</p></td>
+<td class="text-right"><p>71,794</p></td>
+<td class="text-right"><p>12.4%</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">biolink:EnvironmentalFeature</span></code></p></td>
+<td class="text-right"><p>5</p></td>
+<td class="text-right"><p>4,226</p></td>
+<td class="text-right"><p>0.1%</p></td>
+</tr>
+</tbody>
+</table>
+<p><strong><code class="docutils literal notranslate"><span class="pre">MaterialSample</span></code> is entirely disconnected.</strong> 279,671 nodes exist and only 243
+<code class="docutils literal notranslate"><span class="pre">derives_from</span></code> edges touch any of them — 0.09%. Whatever join was meant to link organisms
+or studies to their biosamples did not happen. As shipped, these are 279k nodes of pure
+weight: they inflate the node count by 25.7%, and any traversal that expects to reach a
+sample will find nothing.</p>
+<p>This is the one finding I would treat as blocking for a <em>standard</em> merge, not because it
+breaks anything, but because shipping 279k unreachable nodes misrepresents coverage.</p>
+</section>
+<section id="unregistered-curie-prefixes-integration">
+<h3>5. Unregistered CURIE prefixes — <em>integration</em><a class="headerlink" href="#unregistered-curie-prefixes-integration" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">gold</span></code> (957,350 nodes) and <code class="docutils literal notranslate"><span class="pre">gold.ecosystem</span></code> (4,226) appear in no prefix map. They need
+entries in <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/custom_curies.yaml</span></code> with expansion URIs, or every
+downstream RDF/SPARQL consumer will fail to expand them. This is the only issue the
+built-in review flagged on its own.</p>
+</section>
+<section id="substantive-ncbitaxon-name-differences-integration">
+<h3>6. 26 substantive NCBITaxon name differences — <em>integration</em><a class="headerlink" href="#substantive-ncbitaxon-name-differences-integration" title="Link to this heading"></a></h3>
+<p>GOLD carries 125,354 <code class="docutils literal notranslate"><span class="pre">NCBITaxon:</span></code> nodes; 101,659 also exist in
+<code class="docutils literal notranslate"><span class="pre">data/transformed/ontologies/ncbitaxon_nodes.tsv</span></code>. Of those, 78 disagree on <code class="docutils literal notranslate"><span class="pre">name</span></code> (0 on
+<code class="docutils literal notranslate"><span class="pre">category</span></code>). <strong>KG-Microbe does not curate taxon labels</strong> — ours are the NCBITaxon OBO
+labels — so this is an OBO-vs-GOLD comparison, not a conflict with anything we maintain.</p>
+<ul class="simple">
+<li><p><strong>52 are OBO artifacts only</strong>: homonym suffixes (<code class="docutils literal notranslate"><span class="pre">Microcystis</span> <span class="pre">&lt;cyanobacteria&gt;</span></code>) and
+nomenclatural qualifiers (<code class="docutils literal notranslate"><span class="pre">(nom.</span> <span class="pre">inval.)</span></code>). Strip those and the names match. No action.</p></li>
+<li><p><strong>26 are substantive</strong>, in two groups: NCBI hybrid markers dropped by GOLD
+(<code class="docutils literal notranslate"><span class="pre">Saccharomyces</span> <span class="pre">x</span> <span class="pre">bayanus</span> <span class="pre">CBS</span> <span class="pre">424</span></code> → <code class="docutils literal notranslate"><span class="pre">Saccharomyces</span> <span class="pre">bayanus</span> <span class="pre">CBS</span> <span class="pre">424</span></code>, and five more CBS
+strains), and taxonomy version skew (<code class="docutils literal notranslate"><span class="pre">Jeongeupia</span> <span class="pre">sp.</span> <span class="pre">HS-3</span></code> vs <code class="docutils literal notranslate"><span class="pre">Jeongeupia</span> <span class="pre">sacculi</span></code>).</p></li>
+</ul>
+<p>The hybrid-marker loss is the only one that changes meaning — without the <code class="docutils literal notranslate"><span class="pre">x</span></code> the name
+denotes a different taxon. KGX merge resolves by write order, so neither side should be
+allowed to overwrite the other’s <code class="docutils literal notranslate"><span class="pre">name</span></code> on <code class="docutils literal notranslate"><span class="pre">NCBITaxon:</span></code> nodes.</p>
+</section>
+<section id="gold-would-silently-undo-the-ncbitaxon-trim-ours-to-fix-not-gold-s">
+<h3>7. GOLD would silently undo the NCBITaxon trim — <em>ours to fix, not GOLD’s</em><a class="headerlink" href="#gold-would-silently-undo-the-ncbitaxon-trim-ours-to-fix-not-gold-s" title="Link to this heading"></a></h3>
+<p>23,695 of GOLD’s <code class="docutils literal notranslate"><span class="pre">NCBITaxon:</span></code> nodes are absent from our build. The first reading was that
+GOLD used a different NCBI release. <strong>That is wrong</strong>, and the correction matters because
+it moves the work to our side.</p>
+<p>Checked against NCBI directly: of a random sample of 40, <strong>39 are current taxids</strong>, not
+retired. What they are is out of scope for us — a random sample is <code class="docutils literal notranslate"><span class="pre">Wuhan</span> <span class="pre">Mosquito</span> <span class="pre">Virus</span> <span class="pre">4</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Serratia</span> <span class="pre">phage</span> <span class="pre">phiMAM1</span></code>, <code class="docutils literal notranslate"><span class="pre">Picea</span> <span class="pre">glauca</span></code>, <code class="docutils literal notranslate"><span class="pre">Eudorina</span> <span class="pre">sp.</span></code>, <code class="docutils literal notranslate"><span class="pre">Spodiopsar</span> <span class="pre">sericeus</span></code> (a
+starling). KG-Microbe deliberately trims NCBITaxon via <code class="docutils literal notranslate"><span class="pre">exclusion_branches.tsv</span></code>, which
+excludes <strong>Viruses (10239), Viridiplantae (33090) and Metazoa (33208)</strong> among others. GOLD
+is a genome database covering all of life; the difference is scope, and both sides are
+behaving correctly.</p>
+<p>The problem is what happens on merge:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head"><p></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>GOLD taxa in excluded branches</p></td>
+<td><p><strong>23,695</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>GOLD edges touching them</p></td>
+<td><p><strong>76,034 (5.8% of the export)</strong></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">IndividualOrganism</span></code> nodes typed to an excluded taxon</p></td>
+<td><p><strong>76,034</strong></p></td>
+</tr>
+</tbody>
+</table>
+<p>Ingesting GOLD as-is reintroduces 23,695 viral, plant and animal taxa that the ontologies
+transform went to the trouble of removing, plus 76k organism nodes hanging off them.</p>
+<p><strong>Implemented.</strong> The transform now drops taxa outside the trimmed set, the organisms typed
+to them, and the study nodes left holding nothing else — the last being orphaning <em>we</em>
+cause, so we clean it, while upstream orphans stay reported. Measured on the real payload:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p></p></th>
+<th class="head text-right"><p>before</p></th>
+<th class="head text-right"><p>after</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>nodes</p></td>
+<td class="text-right"><p>1,086,930</p></td>
+<td class="text-right"><p><strong>975,839</strong> (−111,091)</p></td>
+</tr>
+<tr class="row-odd"><td><p>edges</p></td>
+<td class="text-right"><p>1,314,901</p></td>
+<td class="text-right"><p><strong>1,110,984</strong> (−203,917, 15.5%)</p></td>
+</tr>
+<tr class="row-even"><td><p>excluded-branch taxa</p></td>
+<td class="text-right"><p>23,695</p></td>
+<td class="text-right"><p><strong>0</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>organisms with no taxon</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p><strong>0</strong></p></td>
+</tr>
+<tr class="row-even"><td><p>dangling endpoints</p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p><strong>0</strong></p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">GOLD_APPLY_TAXON_TRIM=false</span></code> ingests unfiltered for debugging. A missing ontologies output
+is fatal rather than a silent skip, since skipping would reintroduce every excluded branch
+with nothing to show it happened.</p>
+<p>An earlier spot check suggested these were <em>merged</em> taxids, because sorting by ascending
+taxid surfaced the oldest IDs, which are the ones most likely to have been merged
+(<code class="docutils literal notranslate"><span class="pre">NCBITaxon:1172</span></code> → 264691 <code class="docutils literal notranslate"><span class="pre">Trichormus</span> <span class="pre">variabilis</span></code>). Random sampling corrected that: merges
+are ~2% of the gap, not the explanation.</p>
+</section>
+<section id="ten-nodes-with-an-empty-name-content-trivial">
+<h3>8. Ten nodes with an empty <code class="docutils literal notranslate"><span class="pre">name</span></code> — <em>content, trivial</em><a class="headerlink" href="#ten-nodes-with-an-empty-name-content-trivial" title="Link to this heading"></a></h3>
+<p>Nine of the ten are among the excluded-branch taxa in issue 7, so they never reach our
+graph once that is handled. The tenth is cosmetic.</p>
+</section>
+<section id="xref-populated-on-55-7-of-nodes-informational">
+<h3>9. <code class="docutils literal notranslate"><span class="pre">xref</span></code> populated on 55.7% of nodes — <em>informational</em><a class="headerlink" href="#xref-populated-on-55-7-of-nodes-informational" title="Link to this heading"></a></h3>
+<p>605,885 of 1,086,930 — exactly the <code class="docutils literal notranslate"><span class="pre">IndividualOrganism</span></code> count, so xrefs are present for
+organisms and absent for everything else. Expected rather than wrong; noted so it is not
+mistaken for partial loss.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="status-after-the-transform-in-this-branch">
+<h2>Status after the transform in this branch<a class="headerlink" href="#status-after-the-transform-in-this-branch" title="Link to this heading"></a></h2>
+<p>The passthrough transform repairs the mechanical issues; the review above
+describes the <strong>upstream payload</strong>, which is what a future refresh will look
+like again.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>issue</p></th>
+<th class="head"><p>status</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1 — schema columns</p></td>
+<td><p><strong>fixed</strong> — standard node/edge headers, <code class="docutils literal notranslate"><span class="pre">knowledge_assertion</span></code> / <code class="docutils literal notranslate"><span class="pre">manual_agent</span></code>, upstream edge <code class="docutils literal notranslate"><span class="pre">id</span></code> dropped</p></td>
+</tr>
+<tr class="row-odd"><td><p>2 — <code class="docutils literal notranslate"><span class="pre">subclass_of</span></code> violation</p></td>
+<td><p><strong>fixed</strong> — ecosystem nodes emit <code class="docutils literal notranslate"><span class="pre">biolink:EnvironmentalFeature|biolink:OntologyClass</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>5 — unregistered prefixes</p></td>
+<td><p><strong>fixed</strong> — <code class="docutils literal notranslate"><span class="pre">gold</span></code> / <code class="docutils literal notranslate"><span class="pre">gold.ecosystem</span></code> in <code class="docutils literal notranslate"><span class="pre">custom_curies.yaml</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>8 — 10 unnamed nodes</p></td>
+<td><p>carried through; upstream data issue</p></td>
+</tr>
+<tr class="row-even"><td><p>3 — <code class="docutils literal notranslate"><span class="pre">related_to</span></code></p></td>
+<td><p><strong>open</strong> — needs a modelling decision</p></td>
+</tr>
+<tr class="row-odd"><td><p>4 — orphan <code class="docutils literal notranslate"><span class="pre">MaterialSample</span></code></p></td>
+<td><p><strong>open</strong> — warned at transform time, not dropped</p></td>
+</tr>
+<tr class="row-even"><td><p>6 — taxon name differences</p></td>
+<td><p><strong>open</strong> — 26 substantive; hybrid markers raised upstream</p></td>
+</tr>
+<tr class="row-odd"><td><p>7 — excluded-branch taxa</p></td>
+<td><p><strong>fixed</strong> — transform applies the NCBITaxon trim (−23,695 taxa, −203,917 edges)</p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">kg-model-review</span> <span class="pre">--transform</span> <span class="pre">gold</span></code> now reports <strong>0 errors, 0 warnings</strong> on the
+conformed output.</p>
+</section>
+<section id="recommended-order">
+<h2>Recommended order<a class="headerlink" href="#recommended-order" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Add <code class="docutils literal notranslate"><span class="pre">gold</span></code> / <code class="docutils literal notranslate"><span class="pre">gold.ecosystem</span></code> to <code class="docutils literal notranslate"><span class="pre">custom_curies.yaml</span></code> (issue 5) — mechanical, unblocks RDF.</p></li>
+<li><p>Emit <code class="docutils literal notranslate"><span class="pre">knowledge_level</span></code> / <code class="docutils literal notranslate"><span class="pre">agent_type</span></code>, drop edge <code class="docutils literal notranslate"><span class="pre">id</span></code>, add the missing node columns (1).</p></li>
+<li><p>Decide what <code class="docutils literal notranslate"><span class="pre">MaterialSample</span></code> is for (4) — populate the join, or don’t emit the nodes.</p></li>
+<li><p>Fix <code class="docutils literal notranslate"><span class="pre">subclass_of</span></code> by adding <code class="docutils literal notranslate"><span class="pre">biolink:OntologyClass</span></code> to the ecosystem nodes (2).</p></li>
+<li><p>Replace <code class="docutils literal notranslate"><span class="pre">related_to</span></code> with a meaningful predicate (3).</p></li>
+<li><p>Reconcile the 78 taxon name conflicts and sample the 23,695 GOLD-only taxa (6, 7).</p></li>
+</ol>
+<p>Issues 1, 2, 5 and 8 are mechanical. Issues 3, 4 and 7 need a decision about what the data
+is meant to assert, which is a modeling question rather than a defect to patch.</p>
+</section>
+<hr class="docutils" />
+<section id="requests-to-the-upstream-author">
+<h2>Requests to the upstream author<a class="headerlink" href="#requests-to-the-upstream-author" title="Link to this heading"></a></h2>
+<p>The items needing a decision by whoever produces the export are collected as a
+standalone request in <a class="reference internal" href="GOLD_UPSTREAM_REQUESTS.html"><span class="std std-doc"><code class="docutils literal notranslate"><span class="pre">GOLD_UPSTREAM_REQUESTS.md</span></code></span></a>,
+written to be sent as-is.</p>
+</section>
+<section id="reproducing">
+<h2>Reproducing<a class="headerlink" href="#reproducing" title="Link to this heading"></a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>data/transformed/gold
+cp<span class="w"> </span>GOLD_nodes.tsv<span class="w"> </span>data/transformed/gold/nodes.tsv
+cp<span class="w"> </span>GOLD_edges.tsv<span class="w"> </span>data/transformed/gold/edges.tsv
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>.claude/skills/kg-model-review/kg_model_review.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--transform<span class="w"> </span>gold<span class="w"> </span>--verbose<span class="w"> </span>--max-rows<span class="w"> </span><span class="m">0</span>
+</pre></div>
+</div>
+<p>The built-in review alone reports <strong>0 errors, 2 warnings</strong> — the prefix registration. Every
+other finding above comes from the merged-KG-level checks layered on top, which is the gap
+worth knowing about: a transform can pass the standard review and still ship 279k
+unreachable nodes.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

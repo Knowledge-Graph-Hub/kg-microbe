@@ -22,6 +22,19 @@ def _pair(tmp_path):
     return nodes, edges
 
 
+def _canonical_pair(tmp_path):
+    """Use release-valid observations when exercising merge rather than raw packaging."""
+    nodes, edges = _pair(tmp_path)
+    nodes.write_text(
+        "id\tcategory\tname\tdescription\tprovided_by\nNCBITaxon:1\tbiolink:OrganismTaxon\tone\t\tinfores:fixture\n"
+    )
+    edges.write_text(
+        "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\n"
+        "NCBITaxon:1\tbiolink:related_to\tNCBITaxon:1\t\tinfores:fixture\t\t\n"
+    )
+    return nodes, edges
+
+
 def test_relocated_archive_validates_without_loose_files_or_root_stats(tmp_path):
     """All member locators, hashes and counts resolve using only the moved archive."""
     files = _pair(tmp_path)
@@ -78,7 +91,7 @@ def test_cleanup_bundles_manifest_without_external_stats(tmp_path, monkeypatch, 
     """Real cleanup hooks work for both output modes and legacy two-member archives."""
     from kg_microbe.merge_utils import merge_kg
 
-    files = _pair(tmp_path)
+    files = _canonical_pair(tmp_path)
     archive = tmp_path / "merged-kg.tar.gz"
     if compression:
         with tarfile.open(archive, "w:gz") as tar:
@@ -158,7 +171,7 @@ def test_merge_does_not_report_success_when_required_publication_fails(tmp_path,
         """Model KGX writing only to the temporary configured destination."""
         del kwargs
         staged = Path(merge_kg.parse_load_config(config_file)["configuration"]["output_directory"])
-        _pair(staged)
+        _canonical_pair(staged)
 
     monkeypatch.setattr(merge_kg, "merge", emit_staged_pair)
     monkeypatch.setattr(merge_kg, "_repo_root", lambda: tmp_path)
@@ -376,6 +389,7 @@ def test_staged_config_preserves_kgx_cwd_precedence_and_relative_stats(tmp_path,
                 "configuration": {"output_directory": "out"},
                 "merged_graph": {
                     "source": {"a": {"input": {"filename": ["same.tsv"], "format": "tsv"}}},
+                    "destination": {"tsv": {"format": "tsv", "filename": "graph"}},
                     "operations": [{"name": STATS_OPERATION, "args": {"filename": "stats.yaml"}}],
                 },
             }

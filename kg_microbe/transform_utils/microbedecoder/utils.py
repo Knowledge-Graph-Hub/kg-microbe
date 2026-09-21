@@ -146,6 +146,9 @@ METABOLISM_GROUPS: Tuple[Dict[str, object], ...] = (
 # ran on stays reproducible. Fresher `bacdive` transform is authoritative;
 # merge-time dedup keeps both edges around, distinguishable via
 # `primary_knowledge_source`.
+# These 27 columns are heterogeneous reported source attributes, not a
+# phenotype vocabulary. In particular units, isolation categories and coded
+# 0/1 values must not acquire phenotype meaning merely by being nonempty.
 BACDIVE_SNAPSHOT_COLUMNS: Tuple[str, ...] = (
     "BacDive_Antibiotic_resistance",
     "BacDive_Antibiotic_sensitivity",
@@ -241,6 +244,20 @@ def split_multivalue_comma_only(cell: object) -> List[str]:
     rather than a value separator.
     """
     return _split(cell, _COMMA_ONLY_SEPARATORS)
+
+
+def split_snapshot_values(column: str, cell: object) -> List[str]:
+    """
+    Preserve a lone assay sign without decoding its biological interpretation.
+
+    The generic parser treats '-' as missing, but these two source columns
+    report '+' and '-' assay tokens. A mixed '+,-' already preserved both;
+    the lone '-' must also survive. Other columns retain their existing
+    missing-value and multivalue conventions.
+    """
+    if column in {"BacDive_Indole_test", "BacDive_Voges_proskauer"} and str(cell).strip() == "-":
+        return ["-"]
+    return split_multivalue(cell)
 
 
 def _split(cell: object, separators: str, preserve_locants: bool = False) -> List[str]:

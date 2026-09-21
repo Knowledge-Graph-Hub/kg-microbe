@@ -1,6 +1,5 @@
 """Merging module."""
 
-import csv
 import os
 import shutil
 import tarfile
@@ -17,61 +16,9 @@ import yaml
 from kg_microbe.merge_utils.artifact_manifest import build_provenance, write_graph_archive, write_loose_manifest
 from kg_microbe.merge_utils.invariants import check_merged_invariants
 from kg_microbe.merge_utils.stats_provenance import STATS_OPERATION, annotate_graph_stats, stats_filename_from_config
-from kg_microbe.transform_utils.constants import (
-    AGENT_TYPE_COLUMN,
-    CATEGORY_COLUMN,
-    DEPRECATED_COLUMN,
-    DESCRIPTION_COLUMN,
-    ID_COLUMN,
-    KNOWLEDGE_LEVEL_COLUMN,
-    NAME_COLUMN,
-    OBJECT_COLUMN,
-    PREDICATE_COLUMN,
-    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
-    PROVIDED_BY_COLUMN,
-    RELATION_COLUMN,
-    SAME_AS_COLUMN,
-    SUBJECT_COLUMN,
-    SYNONYM_COLUMN,
-    XREF_COLUMN,
-)
 from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.graph_schema import validate_canonical_tsv
 from kg_microbe.utils.source_finalization import verify_finalized_source_files, write_merge_validation_report
-from kg_microbe.utils.tsv_io import tsv_writer
-
-CANONICAL_NODE_HEADER = [
-    ID_COLUMN,
-    CATEGORY_COLUMN,
-    NAME_COLUMN,
-    DESCRIPTION_COLUMN,
-    XREF_COLUMN,
-    PROVIDED_BY_COLUMN,
-    SYNONYM_COLUMN,
-    DEPRECATED_COLUMN,
-    SAME_AS_COLUMN,
-]
-
-# Canonical edge header; metatraits extension `has_percentage` preserved if present.
-CANONICAL_EDGE_HEADER = [
-    SUBJECT_COLUMN,
-    PREDICATE_COLUMN,
-    OBJECT_COLUMN,
-    RELATION_COLUMN,
-    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
-    KNOWLEDGE_LEVEL_COLUMN,
-    AGENT_TYPE_COLUMN,
-]
-
-EDGE_COLUMNS_TO_DROP = {ID_COLUMN, "meta", "key"}
-NODE_COLUMNS_TO_DROP = {"subsets", "meta", "iri"}
-#: Known non-canonical edge columns. Membership is not what keeps a column:
-#: ``_resolve_column_plan`` appends any unrecognised header anyway, so an
-#: omission here loses no data — it only moves the column after the other
-#: unknowns. Listing them keeps "which sources add what" answerable without
-#: re-deriving it from every transform. ``original_object`` is Biolink's slot
-#: for the pre-transformation target, used by gold when it resolves an
-#: uninformative ecosystem upward.
-EDGE_EXTENSION_COLUMNS = {"has_percentage", "original_object"}
 
 
 def merge(*args, **kwargs):
@@ -149,6 +96,51 @@ def _assert_sources_exist(yaml_file: str, sources: List[str]) -> None:
         raise KeyError(f"Source(s) {sorted(unknown)} not in {yaml_file}. Available: {sorted(available)}")
 
 
+def _validate_release_destinations(config: Dict) -> Dict:
+    """Reject unsupported or colliding release outputs before admission, loading, or staging."""
+    graph = config.get("merged_graph") if isinstance(config, dict) else None
+    destinations = graph.get("destination") if isinstance(graph, dict) else None
+    if not isinstance(destinations, dict) or not destinations:
+        raise ValueError("merged_graph.destination must be a nonempty mapping of named TSV release destinations")
+    claimed = {}
+    for name, destination in destinations.items():
+        prefix = f"Merge destination {name!r}"
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError(f"{prefix}: destination name must be a nonempty string")
+        if not isinstance(destination, dict):
+            raise ValueError(f"{prefix}: expected a mapping with format, filename, and optional compression")
+        if destination.get("format") != "tsv":
+            raise ValueError(f"{prefix}: unsupported format {destination.get('format')!r}; releases require 'tsv'")
+        compression = destination.get("compression")
+        if compression is not None and compression != "tar.gz":
+            raise ValueError(f"{prefix}: unsupported compression {compression!r}; use null/omitted or 'tar.gz'")
+        filename = destination.get("filename")
+        if (
+            not isinstance(filename, str)
+            or not filename.strip()
+            # Path removes terminal dots, unlike raw basename-plus-suffix
+            # construction. Require an actual basename at every boundary.
+            or filename.rsplit("/", 1)[-1] in {"", "."}
+            or any(control in filename for control in "\x00\t\r\n")
+        ):
+            raise ValueError(f"{prefix}: filename must be a nonempty relative graph basename, not {filename!r}")
+        base = Path(filename)
+        if base.is_absolute() or ".." in base.parts or not base.name:
+            raise ValueError(f"{prefix}: filename must stay inside output_directory: {filename!r}")
+        # Include private loose transport paths even for compressed releases.
+        # An output file must never also be another destination's directory.
+        # Case-folded comparison makes the contract safe on default macOS and
+        # other case-insensitive filesystems, not just on Linux CI.
+        suffixes = ("_nodes.tsv", "_edges.tsv", "_reference_resolution.tsv", "_manifest.json", ".tar.gz")
+        for suffix in suffixes:
+            artifact = Path(f"{base}{suffix}".casefold())
+            for previous, owner in claimed.items():
+                if artifact == previous or artifact in previous.parents or previous in artifact.parents:
+                    raise ValueError(f"{prefix}: output path {artifact} conflicts with destination {owner!r}")
+            claimed[artifact] = name
+    return destinations
+
+
 def load_and_merge(
     yaml_file: str,
     processes: int = 1,
@@ -174,7 +166,9 @@ def load_and_merge(
         manifest for final byte identity and row counts. No post-merge semantic
         repairs are permitted. Sources must be explicitly finalized first.
     :raises KeyError: If a requested source is absent from the config.
+    :raises ValueError: If any release destination is unsupported, malformed, or colliding.
     """
+    _validate_release_destinations(parse_load_config(yaml_file))
     if sources:
         _assert_sources_exist(yaml_file, sources)
     admission = _assert_sources_finalized(yaml_file, sources)
@@ -243,6 +237,7 @@ def _staged_merge_configuration(yaml_file: str):
     """Redirect file publication into a unique same-filesystem workspace without editing user YAML."""
     config_file = Path(yaml_file).absolute()
     config = deepcopy(parse_load_config(str(config_file)))
+    _validate_release_destinations(config)
     configured = config.get("configuration", {}).get("output_directory")
     configured_output = Path(configured or "output")
     final_output = (
@@ -273,6 +268,11 @@ def _staged_merge_configuration(yaml_file: str):
             if base.is_absolute() or ".." in base.parts:
                 raise ValueError(f"Merge destination filename must stay inside output_directory: {filename}")
             (staged_output / base).parent.mkdir(parents=True, exist_ok=True)
+            # Only the release packager creates the archive, after graph-wide
+            # validation, stats and provenance preparation. The public config
+            # remains unchanged and supplies its requested packaging below.
+            if destination.get("format") == "tsv" and destination.get("compression") == "tar.gz":
+                destination["compression"] = None
 
         # KGX graph-operation filenames are interpreted relative to the process
         # cwd, not the config directory. Preserve that location on publication.
@@ -334,13 +334,11 @@ def _cleanup_merged_outputs(
     yaml_file: str, original_yaml_file: Optional[str] = None, published_output_dir: Optional[Path] = None
 ) -> set:
     r"""
-    Project KGX serialization, validate immutable semantics, and package the result.
+    Validate canonical KGX serialization and package the result without rewriting it.
 
-    This boundary orders columns, removes documented auxiliary/internal
-    columns, coalesces only nonconflicting duplicate fields, and normalizes
-    transport CRLF. It preserves literal quote text. Conflicting values and
-    embedded carriage returns fail instead of silently losing observations.
-    Legacy knowledge_source filling remains explicit format compatibility.
+    The serializer emits canonical columns and literal LF text on its first
+    write. Schema/provenance drift fails here instead of being migrated after
+    merge. Source finalization owns audited legacy compatibility.
 
     Identity, category and ontology-reference decisions happen in source
     finalization, before KGX. This function never consults live raw ontology
@@ -353,40 +351,36 @@ def _cleanup_merged_outputs(
     those files without suppressing a valid graph publication.
     """
     config = parse_load_config(yaml_file)
+    destinations = _validate_release_destinations(config)
     provenance_config = Path(original_yaml_file or yaml_file)
     output_dir = Path(config.get("configuration", {}).get("output_directory", "data/merged"))
-    destinations = config.get("merged_graph", {}).get("destination", {})
+    requested_destinations = (
+        _validate_release_destinations(parse_load_config(original_yaml_file)) if original_yaml_file else destinations
+    )
 
-    # Accumulated across every destination, TSV or not: "did this run write it"
+    # Accumulated across every supported destination: "did this run write it"
     # is a property of the whole run. Warning per-destination made each one
     # report the others' fresh output as stale (#848).
     written: set = set()
     failed_stats: set = set()
 
-    for dest in destinations.values():
+    for destination_name, dest in destinations.items():
+        compression = requested_destinations.get(destination_name, dest).get("compression")
         base = dest.get("filename")
         if not base:
-            continue
-        if dest.get("format") != "tsv":
-            # Not normalised here, but still ours — record it so it is never
-            # reported as a leftover.
-            written.add(output_dir / base)
             continue
         nodes_file = output_dir / f"{base}_nodes.tsv"
         edges_file = output_dir / f"{base}_edges.tsv"
         reference_report = output_dir / f"{base}_reference_resolution.tsv"
         archive = output_dir / f"{base}.tar.gz"
 
-        # KGX's TsvSink with compression: tar.gz writes the TSVs into the
-        # archive and removes the loose files. Extract them first so we can
-        # normalize in place, then re-tar.
-        extracted_from_archive = False
-        if (
-            dest.get("compression") == "tar.gz"
-            and archive.is_file()
-            and not (nodes_file.is_file() and edges_file.is_file())
-        ):
-            print(f"[merge-cleanup] extracting {archive.name} to normalize TSVs in place")
+        # Compatibility for callers passing an already archived graph. Public
+        # load_and_merge always requests loose private TSVs and never enters
+        # this branch. Even compatibility callers must pass all validators.
+        if compression == "tar.gz" and archive.is_file() and not (nodes_file.is_file() and edges_file.is_file()):
+            if original_yaml_file:
+                raise ValueError("Canonical staged TSVs missing; unexpected pre-validation archive")
+            print(f"[merge-validation] reading existing {archive.name}; no TSV rewrites")
             with tarfile.open(archive, "r:gz") as tar:
                 # Read only the requested graph pair. In particular do not
                 # unpack a generic manifest.json over another destination's
@@ -397,17 +391,15 @@ def _cleanup_merged_outputs(
                         raise ValueError(f"Graph member must be a regular file: {member.name}")
                     with tar.extractfile(member) as source, atomic_write(graph_file, "wb") as target:
                         shutil.copyfileobj(source, target)
-            extracted_from_archive = True
 
         if not nodes_file.is_file() or not edges_file.is_file():
             raise FileNotFoundError(f"Merge destination is missing its TSV pair: {nodes_file}, {edges_file}")
-        if nodes_file.is_file():
-            _normalize_nodes_tsv(nodes_file)
         if edges_file.is_file():
-            _normalize_edges_tsv(edges_file)
             # Semantic decisions belong to source finalization (#1082).
             # Merge checks the result without consulting live raw authorities
             # or remapping categories, identities or original assertions.
+            # The required report includes schema/provenance validation; do
+            # not add a second redundant full-file contract scan here.
             validation_counts = write_merge_validation_report(nodes_file, edges_file, reference_report)
             print(f"[merge-validation] {base}: {validation_counts}; no semantic rewrites")
             # Checked here rather than in each transform: a transform can only
@@ -434,7 +426,7 @@ def _cleanup_merged_outputs(
                         provenance_config,
                         _repo_root(),
                         edges_archive=(published_output_dir or output_dir) / archive.relative_to(output_dir)
-                        if dest.get("compression") == "tar.gz"
+                        if compression == "tar.gz"
                         else None,
                         published_edges_file=(published_output_dir or output_dir) / edges_file.relative_to(output_dir),
                         finalized_nodes_file=nodes_file,
@@ -453,12 +445,12 @@ def _cleanup_merged_outputs(
             )
             diagnostic = config.get("configuration", {}).get("allow_unfinalized_sources", False)
             provenance["source_finalization"] = {"required": not diagnostic, "diagnostic_opt_out": diagnostic}
-            if dest.get("compression") == "tar.gz":
+            if compression == "tar.gz":
                 _rewrite_tarball(archive, [nodes_file, edges_file, reference_report], provenance=provenance)
-                if extracted_from_archive:
-                    # KGX didn't leave loose TSVs before, so don't leave them now.
-                    nodes_file.unlink(missing_ok=True)
-                    edges_file.unlink(missing_ok=True)
+                # Private transport files are not independent published
+                # artifacts for an archive-only destination.
+                nodes_file.unlink(missing_ok=True)
+                edges_file.unlink(missing_ok=True)
             else:
                 manifest_file = output_dir / f"{base}_manifest.json"
                 write_loose_manifest(manifest_file, [nodes_file, edges_file, reference_report], provenance)
@@ -506,145 +498,16 @@ def _warn_about_stale_siblings(output_dir: Path, written: set) -> None:
     print("[merge-cleanup] Remove them once you are sure nothing depends on them.")
 
 
-def _iter_clean_lines(path: Path):
-    r"""Normalize transport CRLF only; embedded controls are source errors, never erased."""
-    with open(path, "r", newline="\n") as src:
-        for line in src:
-            if line.endswith("\r\n"):
-                line = line[:-2] + "\n"
-            if "\r" in line:
-                raise ValueError(f"{path}: embedded carriage return requires source finalization")
-            yield line
-
-
-def _log_schema_diff(kind: str, path: Path, in_header: List[str], out_header: List[str]) -> None:
-    """Log the before/after schema so reviewers can see when this step is a no-op."""
-    dropped = [c for c in in_header if c not in out_header]
-    added = [c for c in out_header if c not in in_header]
-    duplicates = [c for c in set(in_header) if in_header.count(c) > 1]
-    if not (dropped or added or duplicates) and in_header == out_header:
-        print(f"[merge-cleanup] {kind} {path.name}: schema already canonical (no-op)")
-        return
-    print(f"[merge-cleanup] {kind} {path.name}: dropped={dropped} added={added} deduped={duplicates}")
-
-
 def _normalize_nodes_tsv(path: Path) -> None:
-    """Dedup node columns, drop auxiliary KGX columns, order by canonical header."""
-    with tempfile.NamedTemporaryFile("w", delete=False, dir=path.parent, newline="") as tmp:
-        tmp_path = Path(tmp.name)
-        reader = csv.reader(_iter_clean_lines(path), delimiter="\t", quoting=csv.QUOTE_NONE)
-        try:
-            header = next(reader)
-        except StopIteration:
-            tmp_path.unlink(missing_ok=True)
-            return
-        keep_indices, out_header = _resolve_column_plan(
-            header, CANONICAL_NODE_HEADER, NODE_COLUMNS_TO_DROP, extension_columns=set()
-        )
-        _log_schema_diff("nodes", path, header, out_header)
-        writer = tsv_writer(tmp, quoting=csv.QUOTE_NONE, quotechar=None)
-        writer.writerow(out_header)
-        for row in reader:
-            writer.writerow(_project_row(row, keep_indices))
-    tmp_path.replace(path)
+    """Compatibility name: validate only; source finalization owns normalization."""
+    validate_canonical_tsv(path, is_node=True)
 
 
 def _normalize_edges_tsv(path: Path) -> None:
-    """Dedup edge columns, drop `id`/`meta`, merge `knowledge_source` into primary."""
-    with tempfile.NamedTemporaryFile("w", delete=False, dir=path.parent, newline="") as tmp:
-        tmp_path = Path(tmp.name)
-        reader = csv.reader(_iter_clean_lines(path), delimiter="\t", quoting=csv.QUOTE_NONE)
-        try:
-            header = next(reader)
-        except StopIteration:
-            tmp_path.unlink(missing_ok=True)
-            return
-
-        # Merge knowledge_source into primary_knowledge_source (fill if primary empty)
-        ks_idx = _first_index(header, "knowledge_source")
-        pks_idx = _first_index(header, PRIMARY_KNOWLEDGE_SOURCE_COLUMN)
-
-        keep_indices, out_header = _resolve_column_plan(
-            header,
-            CANONICAL_EDGE_HEADER,
-            EDGE_COLUMNS_TO_DROP | {"knowledge_source"},
-            extension_columns=EDGE_EXTENSION_COLUMNS,
-        )
-        _log_schema_diff("edges", path, header, out_header)
-        writer = tsv_writer(tmp, quoting=csv.QUOTE_NONE, quotechar=None)
-        writer.writerow(out_header)
-        for row in reader:
-            if ks_idx is not None and pks_idx is not None and pks_idx < len(row):
-                if not row[pks_idx] and ks_idx < len(row):
-                    row[pks_idx] = row[ks_idx]
-            writer.writerow(_project_row(row, keep_indices))
-    tmp_path.replace(path)
-
-
-def _first_index(header: List[str], name: str) -> Optional[int]:
-    """Return first index of `name` in header, or None if absent."""
-    try:
-        return header.index(name)
-    except ValueError:
-        return None
-
-
-def _resolve_column_plan(
-    header: List[str],
-    canonical: List[str],
-    drop: set,
-    extension_columns: set,
-):
-    """
-    Build (keep_indices, out_header) enforcing canonical order + dedup.
-
-    - Canonical columns are emitted in canonical order.
-    - Extension columns (e.g. has_percentage) are appended if present.
-    - Any other unknown columns are appended (preserves forward-compat data).
-    - Duplicate occurrences keep the first non-empty value is handled at row time.
-    """
-    keep_indices: List[List[int]] = []  # each entry = list of source indices to coalesce
-    out_header: List[str] = []
-    used = set()
-
-    def add_column(name: str):
-        """Append column ``name`` (with all source indices) to the output plan."""
-        indices = [i for i, h in enumerate(header) if h == name]
-        if not indices:
-            return
-        keep_indices.append(indices)
-        out_header.append(name)
-        used.update(indices)
-
-    for col in canonical:
-        if col in drop:
-            continue
-        add_column(col)
-
-    for col in extension_columns:
-        if col in drop:
-            continue
-        add_column(col)
-
-    for i, col in enumerate(header):
-        if i in used or col in drop or col in out_header:
-            continue
-        add_column(col)
-
-    return keep_indices, out_header
-
-
-def _project_row(row: List[str], keep_indices: List[List[int]]) -> List[str]:
-    """Project a row onto the resolved column plan, coalescing duplicates."""
-    out = []
-    for group in keep_indices:
-        values = {row[idx] for idx in group if idx < len(row) and row[idx]}
-        if len(values) > 1:
-            raise ValueError("Conflicting duplicate KGX columns cannot be silently coalesced")
-        out.append(next(iter(values), ""))
-    return out
+    """Compatibility name: reject legacy fields instead of silently promoting provenance."""
+    validate_canonical_tsv(path, is_node=False)
 
 
 def _rewrite_tarball(archive: Path, files: List[Path], provenance: Optional[Dict] = None) -> None:
-    """Atomically re-archive cleaned TSVs with a portable manifest (#1075)."""
+    """Atomically archive validated TSVs once with a portable manifest (#1075)."""
     write_graph_archive(archive, files, provenance)

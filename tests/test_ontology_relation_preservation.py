@@ -351,7 +351,11 @@ def test_undeclared_endpoint_is_not_minted_and_missing_authority_aborts_finalize
     transform = Transform("fixture", tmp_path / "raw", tmp_path / "transformed")
     transform.TSV_QUOTING = csv.QUOTE_NONE
     transform.output_node_file.write_bytes((tmp_path / "out_nodes.tsv").read_bytes())
-    transform.output_edge_file.write_bytes((tmp_path / "out_edges.tsv").read_bytes())
+    # The synthetic converter filename is not a registered information resource.
+    # Supply explicit fixture provenance so this test reaches the missing authority.
+    transform.output_edge_file.write_text(
+        (tmp_path / "out_edges.tsv").read_text().replace("relations.json", "infores:test")
+    )
     before = transform.output_node_file.read_bytes(), transform.output_edge_file.read_bytes()
     with pytest.raises(FileNotFoundError, match="Required CHEBI authority"):
         transform.finalize(fresh_run=True)

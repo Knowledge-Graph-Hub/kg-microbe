@@ -1,0 +1,19 @@
+subject_id	subject_label	predicate_id	object_id	object_label	comment	object_formula	object_category	source
+kgm.name:tryptone	Tryptone	skos:closeMatch	CHEBI:84843	(R)-2,6-dimethylheptanoylcarnitine	synonym		biolink:ChemicalEntity	primary
+kgm.name:acylcarnitine	(R)-2,6-dimethylheptanoylcarnitine	skos:exactMatch	CHEBI:84843	(R)-2,6-dimethylheptanoylcarnitine	canonical_name		biolink:ChemicalEntity	chebi_xrefs
+kgm.name:proteose_peptone	Proteose peptone	skos:closeMatch	FOODON:00002992	fresh bratwurst	synonym		biolink:Food	primary
+kgm.name:fresh_bratwurst	fresh bratwurst	skos:exactMatch	FOODON:00002992	fresh bratwurst	canonical_name		biolink:Food	foodon
+kgm.name:trypt.one	Trypt.one	skos:closeMatch	CHEBI:78018	Bacto-tryptone	synonym	C17H38NO4P	biolink:ChemicalEntity	primary
+micro:0000182		skos:exactMatch	CHEBI:78018	Bacto-tryptone		C17H38NO4P	biolink:ChemicalEntity	primary
+kgm.name:bacto-tryptone	Bacto-tryptone	skos:exactMatch	CHEBI:78018	Bacto-tryptone	canonical_name	C17H38NO4P	biolink:ChemicalEntity	culturebotai_reviewed
+kgm.name:tryptone	Tryptone	skos:closeMatch	CHEBI:78018	Bacto-tryptone	synonym	C17H38NO4P	biolink:ChemicalEntity	culturebotai_reviewed
+kgm.name:dodecylphosphocholine	dodecylphosphocholine	skos:closeMatch	CHEBI:78018	Bacto-tryptone	synonym	C17H38NO4P	biolink:ChemicalEntity	chebi_xrefs
+MICRO:0000182		skos:exactMatch	CHEBI:78018	Bacto-tryptone		C17H38NO4P	biolink:ChemicalEntity	culturebotai_reviewed
+kgm.name:soyton	Soyton	skos:exactMatch	FOODON:03302071	Soyton	canonical_name		biolink:Food	primary
+kgm.name:tsb	Trypticase soy broth	skos:closeMatch	FOODON:03302071	Soyton	synonym		biolink:Food	primary
+kgm.name:bean	green kidney bean	skos:closeMatch	FOODON:03302071	Soyton	synonym		biolink:Food	primary
+kgm.name:heptacosanoate	heptacosanoate	skos:closeMatch	CHEBI:78018	Bacto-tryptone	synonym	C17H38NO4P	biolink:ChemicalEntity	primary
+kgm.name:carbocerate	carbocerate	skos:closeMatch	CHEBI:78018	Bacto-tryptone	synonym	C17H38NO4P	biolink:ChemicalEntity	primary
+kgm.name:casamino_acids	Casamino acids	skos:exactMatch	CHEBI:78020	Casamino acids	canonical_name	C27H53O2	biolink:ChemicalEntity	primary
+kgm.name:heptacosanoate	heptacosanoate	skos:closeMatch	CHEBI:78020	Casamino acids	synonym	C27H53O2	biolink:ChemicalEntity	chebi_xrefs
+kgm.name:carbocerate	carbocerate	skos:closeMatch	CHEBI:78020	heptacosanoate	synonym	C27H53O2	biolink:ChemicalEntity	chebi_xrefs

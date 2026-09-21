@@ -19,12 +19,16 @@ from kg_microbe.transform_utils.constants import (
     NAME_COLUMN,
     OBJECT_COLUMN,
     PREDICATE_COLUMN,
-    PROVIDED_BY_COLUMN,
+    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+    PUBLICATIONS_COLUMN,
     RELATION_COLUMN,
+    SOURCE_ASSERTION_ID_COLUMN,
     SUBJECT_COLUMN,
 )
 from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.graph_canonicalization import canonical_node_category, compact_identifier
+from kg_microbe.utils.graph_schema import canonical_header, validate_canonical_tsv
+from kg_microbe.utils.provenance import primary_source_and_publications, serialize_knowledge_sources
 from kg_microbe.utils.transform_fingerprint import (
     SHARED_DATA_INPUTS,
     code_fingerprint,
@@ -34,7 +38,7 @@ from kg_microbe.utils.transform_fingerprint import (
 from kg_microbe.utils.tsv_io import tsv_dict_writer
 
 FINALIZATION_FILE = "source_finalization.json"
-FINALIZATION_VERSION = 1
+FINALIZATION_VERSION = 2
 _TEXT_COLUMNS = {NAME_COLUMN, DESCRIPTION_COLUMN}
 _AUDIT_COLUMNS = ["file", "line", "original_row_json", "normalized_row_json"]
 
@@ -178,9 +182,16 @@ def validate_node_representation(identifier, category):
         raise SourceFinalizationRequired(f"Unfinalized imported category for {identifier}: {category}")
 
 
-def validate_graph_bundle(node_paths, edge_paths, *, require_closure=False):
+def validate_graph_bundle(node_paths, edge_paths, *, require_closure=False, require_contract=False):
     """Check already finalized records; never remap identities, categories or assertions."""
     nodes, counts = set(), Counter()
+    if require_contract:
+        for paths, is_node in ((node_paths, True), (edge_paths, False)):
+            for path in paths:
+                try:
+                    validate_canonical_tsv(path, is_node=is_node)
+                except ValueError as error:
+                    raise SourceFinalizationRequired(str(error)) from error
     for path in node_paths:
         for row in graph_rows(path):
             validate_node_representation(row[ID_COLUMN], row.get(CATEGORY_COLUMN, ""))
@@ -207,17 +218,89 @@ def validate_graph_bundle(node_paths, edge_paths, *, require_closure=False):
     return dict(counts)
 
 
+def _producer_lines(stream, source):
+    """Reject NUL before CSV parsing, consistently across Python versions and source dialects."""
+    for line in stream:
+        if "\x00" in line:
+            raise SourceFinalizationRequired(f"{source}: forbidden NUL byte in producer TSV")
+        yield line
+
+
+def _producer_rows(source, quoting):
+    """Coalesce only nonconflicting duplicate fields while preserving positional audit evidence."""
+    with source.open(encoding="utf-8", newline="") as stream:
+        reader = csv.reader(_producer_lines(stream, source), delimiter="\t", quoting=quoting)
+        header = next(reader, [])
+        if not header or any(not column for column in header):
+            raise SourceFinalizationRequired(f"{source}: missing TSV header")
+        duplicates = len(header) != len(set(header))
+        for line, values in enumerate(reader, 2):
+            if len(values) != len(header):
+                raise SourceFinalizationRequired(f"{source}:{line}: malformed TSV field count")
+            row = {}
+            for column, value in zip(header, values, strict=True):
+                if row.get(column) and value and row[column] != value:
+                    raise SourceFinalizationRequired(f"{source}:{line}: Conflicting duplicate column {column}")
+                row[column] = row.get(column) or value
+            evidence = {"original_header": header, "original_values": values} if duplicates else row
+            yield line, row, evidence
+
+
+def _normalize_source_provenance(row):
+    """Migrate only explicit unambiguous attribution before a source can be finalized."""
+    primary, publications = primary_source_and_publications(
+        row.get(PRIMARY_KNOWLEDGE_SOURCE_COLUMN), row.get(PUBLICATIONS_COLUMN)
+    )
+    legacy, legacy_evidence = primary_source_and_publications(row.get("knowledge_source"))
+    if primary and legacy and primary != legacy:
+        raise SourceFinalizationRequired("Conflicting primary_knowledge_source and knowledge_source providers")
+    row[PRIMARY_KNOWLEDGE_SOURCE_COLUMN] = primary or legacy
+    if not row[PRIMARY_KNOWLEDGE_SOURCE_COLUMN]:
+        raise SourceFinalizationRequired("Missing primary knowledge source; producer must declare its provider")
+    if PUBLICATIONS_COLUMN in row or publications or legacy_evidence:
+        row[PUBLICATIONS_COLUMN] = serialize_knowledge_sources(publications, legacy_evidence)
+    row.pop("knowledge_source", None)
+    if row.get("key"):
+        raise SourceFinalizationRequired("Unexpected nonempty source key; explicitly name its assertion extension")
+    row.pop("key", None)
+    if row.get(ID_COLUMN):
+        if row.get(SOURCE_ASSERTION_ID_COLUMN) and row[SOURCE_ASSERTION_ID_COLUMN] != row[ID_COLUMN]:
+            raise SourceFinalizationRequired("Conflicting id and source_assertion_id")
+        row[SOURCE_ASSERTION_ID_COLUMN] = row[ID_COLUMN]
+    row.pop(ID_COLUMN, None)
+
+
 def _stage_representation(source, destination, is_node, quoting, foodon_path, audit, used_inputs):
     """Normalize producer syntax explicitly, retaining every changed source row in an audit."""
     with source.open(encoding="utf-8", newline="") as stream:
-        header = next(csv.reader(stream, delimiter="\t", quoting=quoting))
-    if is_node:
-        header = list(dict.fromkeys([*header, NAME_COLUMN, CATEGORY_COLUMN, PROVIDED_BY_COLUMN, DESCRIPTION_COLUMN]))
+        original_header = next(csv.reader(_producer_lines(stream, source), delimiter="\t", quoting=quoting), [])
+    header = original_header
+    if not is_node:
+        header = [column for column in header if column not in {ID_COLUMN, "key", "knowledge_source"}]
+        if ID_COLUMN in original_header:
+            header.append(SOURCE_ASSERTION_ID_COLUMN)
+        # Legacy provider cells can carry evidence; declare its destination in advance.
+        if PRIMARY_KNOWLEDGE_SOURCE_COLUMN in original_header or "knowledge_source" in original_header:
+            header.append(PUBLICATIONS_COLUMN)
+    header = canonical_header(header, is_node)
     with destination.open("w", encoding="utf-8", newline="") as stream:
         writer = _writer(stream, header)
         writer.writeheader()
-        for line, original in enumerate(graph_rows(source, quoting=quoting), 2):
-            row = {column: original.get(column, "") for column in header}
+        for line, original, original_evidence in _producer_rows(source, quoting):
+            # Validate before provider tokenization can strip a control-bearing
+            # legacy value. Text descriptions retain their existing audited policy.
+            for column, value in original.items():
+                if "\x00" in value:
+                    raise SourceFinalizationRequired(f"{source}:{line}: {column} contains a forbidden NUL byte")
+                if column not in _TEXT_COLUMNS and any(control in value for control in "\t\r\n"):
+                    raise SourceFinalizationRequired(f"{source}:{line}: {column} has unencoded control characters")
+            row = dict(original)
+            if not is_node:
+                try:
+                    _normalize_source_provenance(row)
+                except ValueError as error:
+                    raise SourceFinalizationRequired(f"{source}:{line}: {error}") from error
+            row = {column: row.get(column, "") for column in header}
             columns = (ID_COLUMN,) if is_node else (SUBJECT_COLUMN, PREDICATE_COLUMN, OBJECT_COLUMN)
             for column in columns:
                 row[column] = compact_identifier(row[column])
@@ -242,15 +325,31 @@ def _stage_representation(source, destination, is_node, quoting, foodon_path, au
                     if column not in _TEXT_COLUMNS:
                         raise SourceFinalizationRequired(f"{source}:{line}: {column} has unencoded control characters")
                     row[column] = " ".join(value.split())
-            if any(row.get(column, "") != value for column, value in original.items()):
+            if original_evidence is not original or any(
+                row.get(column, "") != value for column, value in original.items()
+            ):
                 audit.writerow(
                     {
                         "file": source.name,
                         "line": line,
-                        "original_row_json": json.dumps(original, sort_keys=True),
+                        "original_row_json": json.dumps(original_evidence, sort_keys=True),
                         "normalized_row_json": json.dumps(row, sort_keys=True),
                     }
                 )
+            writer.writerow(row)
+
+
+def _order_finalized_schema(path, is_node):
+    """Order extension headers after shared authority steps add their evidence columns."""
+    with path.open(encoding="utf-8", newline="") as stream:
+        header = next(csv.reader(stream, delimiter="\t", quoting=csv.QUOTE_NONE))
+    ordered = canonical_header(header, is_node)
+    if header == ordered:
+        return
+    with atomic_write(path, encoding="utf-8", newline="") as stream:
+        writer = _writer(stream, ordered)
+        writer.writeheader()
+        for row in graph_rows(path):
             writer.writerow(row)
 
 
@@ -278,7 +377,9 @@ def _repeat_finalization(transform, file_prefix):
     with report_path.open(encoding="utf-8") as stream:
         report = json.load(stream)
     if report.get("version") != FINALIZATION_VERSION:
-        return None
+        raise SourceFinalizationRequired(
+            "Source-finalization contract changed; rerun the producer and finalize(fresh_run=True)"
+        )
     if report.get("raw_input_directory") != str(Path(transform.input_base_dir).resolve()):
         raise SourceFinalizationRequired(
             "Selected raw input directory changed; rerun the producer and finalize(fresh_run=True)"
@@ -429,7 +530,10 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
         # GO's audit checkpoints describe the final bundle, not intermediate
         # bytes which external declaration/enrichment subsequently changes.
         summaries["go"] = normalize_go_bundle(staged_nodes, staged_edges, authority, go_report)
-        summaries["rows"] = validate_graph_bundle(staged_nodes, staged_edges)
+        for paths, is_node in ((staged_nodes, True), (staged_edges, False)):
+            for path in paths:
+                _order_finalized_schema(path, is_node)
+        summaries["rows"] = validate_graph_bundle(staged_nodes, staged_edges, require_contract=True)
         verify_consumed_inputs(transform)
         consumed_hashes = {snapshot["path"]: snapshot["sha256"] for snapshot in consumed.values()}
         report = {
@@ -479,6 +583,74 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
         yield staging, report_path, used_inputs, report
 
 
+def _valid_digest(value):
+    """Recognize persisted SHA-256 identities without reading any referenced file."""
+    return isinstance(value, str) and len(value) == 64 and all(char in "0123456789abcdef" for char in value)
+
+
+def _valid_member_identities(value):
+    """Require local member names with explicit byte-count and digest identities."""
+    return (
+        isinstance(value, dict)
+        and bool(value)
+        and all(
+            isinstance(name, str)
+            and bool(name)
+            and Path(name).name == name
+            and name not in {".", ".."}
+            and isinstance(identity, dict)
+            and set(identity) == {"bytes", "sha256"}
+            and type(identity["bytes"]) is int
+            and identity["bytes"] >= 0
+            and _valid_digest(identity["sha256"])
+            for name, identity in value.items()
+        )
+    )
+
+
+def _valid_input_identity(value):
+    """Require an explicit input path and immutable digest before candidate selection."""
+    return (
+        isinstance(value, dict)
+        and set(value) == {"path", "sha256"}
+        and isinstance(value["path"], str)
+        and bool(value["path"])
+        and _valid_digest(value["sha256"])
+    )
+
+
+def _validate_finalization_record_shape(report, report_path):
+    """Fail closed on malformed old or current records; staleness is assessed per candidate later."""
+    valid = (
+        isinstance(report, dict)
+        and type(report.get("version")) is int
+        and isinstance(report.get("source"), str)
+        and bool(report["source"])
+        and isinstance(report.get("raw_input_directory"), str)
+        and bool(report["raw_input_directory"])
+        and _valid_digest(report.get("finalizer_code"))
+        and _valid_member_identities(report.get("members"))
+        and _valid_member_identities(report.get("audit_members"))
+        and isinstance(report.get("inputs"), list)
+        and all(_valid_input_identity(item) for item in report["inputs"])
+        and isinstance(report.get("consumed_inputs", {}), dict)
+        and all(
+            isinstance(name, str) and bool(name) and _valid_input_identity(item)
+            for name, item in report.get("consumed_inputs", {}).items()
+        )
+    )
+    producer = report.get("producer_code") if isinstance(report, dict) else None
+    if producer is not None:
+        valid = valid and (
+            isinstance(producer, dict)
+            and isinstance(producer.get("directory"), str)
+            and bool(producer["directory"])
+            and _valid_digest(producer.get("fingerprint"))
+        )
+    if not valid:
+        raise SourceFinalizationRequired(f"Malformed source finalization record: {report_path}; rerun kg transform")
+
+
 def verify_finalized_source_files(paths):
     """Require exact prepared graph bytes and unchanged authority inputs before public merge."""
     records, authority_hashes, record_errors = {}, {}, {}
@@ -497,6 +669,14 @@ def verify_finalized_source_files(paths):
                         report = json.load(stream)
                 except (OSError, ValueError) as exc:
                     raise SourceFinalizationRequired(f"Unreadable source finalization record: {report_path}") from exc
+                _validate_finalization_record_shape(report, report_path)
+                # A full v2 producer rerun does not delete older scoped v1
+                # receipts. Retain those files as evidence, but never use
+                # them to admit a graph under the current source contract.
+                # Malformed records above and unfamiliar versions below
+                # remain hard failures, not silently ignored candidates.
+                if report["version"] == 1:
+                    continue
                 if report.get("version") != FINALIZATION_VERSION:
                     raise SourceFinalizationRequired(f"Unsupported source finalization record: {report_path}")
                 records[directory].append((report_path, report))
@@ -545,7 +725,7 @@ def verify_finalized_source_files(paths):
 
 def write_merge_validation_report(node_path, edge_path, report_path):
     """Validate a merged pair without semantic edits; keep the legacy audit member name explicit."""
-    counts = validate_graph_bundle([node_path], [edge_path], require_closure=True)
+    counts = validate_graph_bundle([node_path], [edge_path], require_closure=True, require_contract=True)
     with atomic_write(report_path, encoding="utf-8", newline="") as stream:
         writer = tsv_dict_writer(stream, fieldnames=["check", "status", "nodes", "edges"])
         writer.writeheader()

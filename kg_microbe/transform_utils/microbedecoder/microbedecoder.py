@@ -51,6 +51,7 @@ import pandas as pd
 
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
+    ATTRIBUTE_CATEGORY,
     BERGEY_KNOWLEDGE_SOURCE,
     CAPABLE_OF,
     CAPABLE_OF_PREDICATE,
@@ -64,9 +65,9 @@ from kg_microbe.transform_utils.constants import (
     GOLD_ORGANISM_FOLD_FILE,
     GOLD_ORGANISM_FOLD_HEADER,
     GOLD_PREFIX,
+    HAS_ATTRIBUTE_PREDICATE,
+    HAS_ATTRIBUTE_RELATION,
     HAS_OUTPUT_RELATION,
-    HAS_PHENOTYPE,
-    HAS_PHENOTYPE_PREDICATE,
     ID_COLUMN,
     INGREDIENT_PREFIX,
     KNOWLEDGE_ASSERTION,
@@ -86,7 +87,6 @@ from kg_microbe.transform_utils.constants import (
     OBJECT_COLUMN,
     ORIGINAL_OBJECT_COLUMN,
     PATHWAY_PREFIX,
-    PHENOTYPIC_CATEGORY,
     PREDICATE_COLUMN,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PRODUCES_PREDICATE,
@@ -95,13 +95,13 @@ from kg_microbe.transform_utils.constants import (
     RDFS_SUBCLASS_OF,
     RELATION_COLUMN,
     SMALL_MOLECULE_CATEGORY,
+    SOURCE_ATTRIBUTE_PREFIX,
     SOURCE_CITATION_BYTES_COLUMN,
     SOURCE_CITATION_COLUMN,
     SOURCE_COLUMN,
     SOURCE_RECORD_COLUMN,
     SUBCLASS_PREDICATE,
     SUBJECT_COLUMN,
-    TRAIT_PREFIX,
     TROPHICALLY_INTERACTS_WITH,
     VALUE_COLUMN,
     VALUE_ENCODING_COLUMN,
@@ -123,6 +123,7 @@ from kg_microbe.transform_utils.microbedecoder.utils import (
     slugify_label,
     split_multivalue,
     split_multivalue_comma_only,
+    split_snapshot_values,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.atomic_io import atomic_write
@@ -742,25 +743,25 @@ class MicrobeDecoderTransform(Transform):
         edge_writer: "csv._writer",
     ) -> None:
         """
-        Emit one has_phenotype edge per non-empty BacDive_* cell.
+        Attach reported source attributes, without interpreting them as phenotypes.
 
         Every edge carries ``primary_knowledge_source =
         infores:microbedecoder`` so the paper's exact snapshot stays
         distinguishable from the live bacdive transform's output at
         merge time.
+        Units, incubation periods, isolation categories and undecoded source
+        codes remain field values, not biological phenotype assertions.
         """
         for column in BACDIVE_SNAPSHOT_COLUMNS:
             raw = row.get(column)
-            if is_empty_cell(raw):
-                continue
-            for label in split_multivalue(raw):
-                obj = self._resolve_phenotype_curie(label, column, node_writer)
+            for label in split_snapshot_values(column, raw):
+                obj = self._resolve_source_attribute_curie(label, column, node_writer)
                 edge_writer.writerow(
                     self._make_edge_row(
                         subject,
-                        HAS_PHENOTYPE_PREDICATE,
+                        HAS_ATTRIBUTE_PREDICATE,
                         obj,
-                        HAS_PHENOTYPE,
+                        HAS_ATTRIBUTE_RELATION,
                         self.knowledge_source,
                         description=column.replace("BacDive_", "").replace("_", " "),
                         source_column=column,
@@ -833,24 +834,26 @@ class MicrobeDecoderTransform(Transform):
             source_column=source_column,
         )
 
-    def _resolve_phenotype_curie(
+    def _resolve_source_attribute_curie(
         self,
         label: str,
         source_column: str,
         node_writer: "csv._writer",
     ) -> str:
         """
-        Preserve the source dimension and exact token, without interpreting codes.
+        Preserve a reported source field and exact token, without interpreting codes.
 
         A source value of zero is not evidence for a named negative phenotype
         until its coding scheme is mapped. Column-scoped IDs keep motility,
         spores, temperature and inequalities distinct in the graph itself.
+        The generic Attribute type also covers non-phenotypic snapshot fields
+        such as isolation categories, incubation periods and salt units.
         """
         return self._mint_placeholder(
             label,
             node_writer,
-            prefix=TRAIT_PREFIX,
-            category=PHENOTYPIC_CATEGORY,
+            prefix=SOURCE_ATTRIBUTE_PREFIX,
+            category=ATTRIBUTE_CATEGORY,
             source_column=source_column,
         )
 
@@ -866,7 +869,7 @@ class MicrobeDecoderTransform(Transform):
         Return a stable ``<prefix><slug>`` CURIE and emit the terminal stub.
 
         Placeholder CURIEs land in the caller-supplied ``kgmicrobe.*``
-        prefix (``pathway``, ``compound``, or ``trait`` — each already
+        prefix (``pathway``, ``compound``, or ``source_attribute`` — each already
         registered as a section of ``custom_curies.yaml``). The stub node
         carries the raw source label so the merged KG surfaces something
         human-readable even before the label gets a proper METPO / CHEBI
@@ -876,13 +879,19 @@ class MicrobeDecoderTransform(Transform):
         """
         curie = f"{prefix}{slugify_label(label)}"
         name = label
-        if prefix == TRAIT_PREFIX:
-            identity = json.dumps([source_column, label], ensure_ascii=False, separators=(",", ":"))
+        description = None
+        if prefix == SOURCE_ATTRIBUTE_PREFIX:
+            identity = json.dumps([MICROBEDECODER, source_column, label], ensure_ascii=False, separators=(",", ":"))
             digest = hashlib.sha256(identity.encode("utf-8", errors="surrogateescape")).hexdigest()
-            curie = f"{prefix}{slugify_label(source_column)}_{digest}"
+            curie = f"{prefix}{MICROBEDECODER}_{slugify_label(source_column)}_{digest}"
             dimension = source_column.removeprefix("BacDive_").replace("_", " ")
-            name = f"{dimension}: {label} (source value)"
-        self._ensure_terminal_node(curie, category, name, node_writer)
+            name = f"reported {dimension}: {label} (source value)"
+            description = (
+                f"Reported MicrobeDecoder {source_column} field value; not a decoded phenotype "
+                "or a claim that every member of the taxon has a trait. "
+                "Source record, field and literal token are retained on the asserting edge."
+            )
+        self._ensure_terminal_node(curie, category, name, node_writer, description=description)
         self._stats["unmatched_labels"] += 1
         # Aggregate per placeholder CURIE. Same CURIE from multiple
         # columns keeps them all in the ``source_columns`` set so the
@@ -907,7 +916,7 @@ class MicrobeDecoderTransform(Transform):
 
         Columns:
 
-        - ``placeholder_curie`` — the ``kgmicrobe.{pathway,compound,trait}:<slug>``
+        - ``placeholder_curie`` — the ``kgmicrobe.{pathway,compound,source_attribute}:<slug>``
           CURIE this run minted for the label
         - ``category`` — the placeholder's biolink category
         - ``label`` — the raw source label
@@ -946,6 +955,7 @@ class MicrobeDecoderTransform(Transform):
         category: str,
         name: str,
         node_writer: "csv._writer",
+        description: Optional[str] = None,
     ) -> None:
         """
         Emit a placeholder terminal node once per run (dedup via _seen_nodes).
@@ -959,7 +969,7 @@ class MicrobeDecoderTransform(Transform):
         if curie in self._seen_nodes:
             return
         self._seen_nodes.add(curie)
-        node_writer.writerow(self._make_node_row(curie, category, name))
+        node_writer.writerow(self._make_node_row(curie, category, name, description=description))
 
     # ------------------------------------------------------------------
     # Row builders

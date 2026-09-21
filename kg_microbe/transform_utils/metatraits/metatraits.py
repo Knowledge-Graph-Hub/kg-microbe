@@ -47,6 +47,7 @@ from kg_microbe.transform_utils.metatraits.io import open_jsonl as _open_jsonl  
 from kg_microbe.transform_utils.metatraits.io import open_maybe_gzipped as _open_maybe_gzipped  # noqa: E402
 from kg_microbe.transform_utils.transform import Transform  # noqa: E402
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader  # noqa: E402
+from kg_microbe.utils.ingredient_identity import ingredient_mapping_allowed  # noqa: E402
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie  # noqa: E402
 from kg_microbe.utils.metpo_predicates import (  # noqa: E402
     PREDICATE_TO_RELATION,
@@ -587,6 +588,17 @@ class MetaTraitsTransform(Transform):
 
         return special_mappings
 
+    def _reviewed_special_chemical(self, trait_key: str) -> Optional[dict]:
+        """Return a curated override only when its ingredient identity is allowed."""
+        special = self.special_chemical_mappings.get(trait_key)
+        if (
+            special
+            and ingredient_mapping_allowed(trait_key, special["curie"])
+            and ingredient_mapping_allowed(special.get("name", ""), special["curie"])
+        ):
+            return special.copy()
+        return None
+
     # DEPRECATED: _load_chemical_name_synonyms() removed in Phase 2 migration (2026-04-07)
     # Chemical synonyms are now loaded from unified_chemical_mappings.tsv.gz
     # via ChemicalMappingLoader.find_chebi_by_name() which includes synonym search
@@ -983,8 +995,9 @@ class MetaTraitsTransform(Transform):
         """
         # Check special mappings first (parent classes, materials, etc.)
         trait_key = trait_name.strip().lower()
-        if trait_key in self.special_chemical_mappings:
-            return self.special_chemical_mappings[trait_key].copy()
+        special = self._reviewed_special_chemical(trait_key)
+        if special:
+            return special
 
         if not self.chemical_loader:
             return None
@@ -1062,8 +1075,9 @@ class MetaTraitsTransform(Transform):
         """
         # Check special mappings first (parent classes, materials, etc.)
         trait_key = trait_name.strip().lower()
-        if trait_key in self.special_chemical_mappings:
-            return self.special_chemical_mappings[trait_key].copy()
+        special = self._reviewed_special_chemical(trait_key)
+        if special:
+            return special
 
         if not self.chemical_loader:
             return None
@@ -1146,8 +1160,9 @@ class MetaTraitsTransform(Transform):
         """
         # Check special mappings first (parent classes, materials, etc.)
         trait_key = trait_name.strip().lower()
-        if trait_key in self.special_chemical_mappings:
-            return self.special_chemical_mappings[trait_key].copy()
+        special = self._reviewed_special_chemical(trait_key)
+        if special:
+            return special
 
         if not self.chemical_loader:
             return None
@@ -1413,8 +1428,8 @@ class MetaTraitsTransform(Transform):
             # Chemical synonyms now handled by self.chemical_loader.find_chebi_by_name()
 
             # Fallback to special chemical mappings
-            if not chebi_id and substance in self.special_chemical_mappings:
-                special_mapping = self.special_chemical_mappings[substance]
+            special_mapping = self._reviewed_special_chemical(substance)
+            if not chebi_id and special_mapping:
                 chebi_id = special_mapping["curie"]
                 canonical_name = special_mapping["name"]
 

@@ -3,6 +3,7 @@
 import base64
 import csv
 import io
+import json
 import shutil
 import tarfile
 from multiprocessing.pool import ThreadPool
@@ -33,6 +34,16 @@ def read_tsv(path):
 
 def run_fixture(tmp_path, fixture="snapshot_context.csv"):
     """Execute the actual producer including its final source deduplication."""
+    input_path = FIXTURES / fixture
+    if input_path.suffix == ".json":
+        from kg_microbe.transform_utils.microbedecoder.utils import BACDIVE_SNAPSHOT_COLUMNS
+
+        source_rows = json.loads(input_path.read_text())
+        input_path = tmp_path / input_path.with_suffix(".csv").name
+        with input_path.open("w", newline="") as stream:
+            writer = csv.DictWriter(stream, fieldnames=["LPSN_ID", *BACDIVE_SNAPSHOT_COLUMNS])
+            writer.writeheader()
+            writer.writerows(source_rows)
     for source, dependency_fixture, target in (
         ("gold", GOLD_ORGANISM_FOLD_FILE, GOLD_ORGANISM_FOLD_FILE),
         ("gtdb", "gtdb_nodes.tsv", "nodes.tsv"),
@@ -41,14 +52,14 @@ def run_fixture(tmp_path, fixture="snapshot_context.csv"):
         destination.mkdir(exist_ok=True)
         shutil.copyfile(FIXTURES / dependency_fixture, destination / target)
     transform = MicrobeDecoderTransform(FIXTURES, tmp_path, chemical_loader=NoChemicals())
-    transform.run(data_file=FIXTURES / fixture, show_status=False)
+    transform.run(data_file=input_path, show_status=False)
     return transform, read_tsv(transform.output_node_file), read_tsv(transform.output_edge_file)
 
 
 def test_snapshot_preserves_dimensions_operators_and_record_context(tmp_path):
     """Motility/spores/temperature and inequalities must not become one generic number."""
     _, nodes, edges = run_fixture(tmp_path)
-    snapshots = [edge for edge in edges if edge["predicate"] == "biolink:has_phenotype"]
+    snapshots = [edge for edge in edges if edge["predicate"] == "biolink:has_attribute"]
     assert len(snapshots) == 11
     assert all(edge["source_column"] and edge["source_record"] and edge["value"] for edge in snapshots)
     salt = [
@@ -66,6 +77,95 @@ def test_snapshot_preserves_dimensions_operators_and_record_context(tmp_path):
     assert not any(node["id"] in {"kgmicrobe.trait:0", "kgmicrobe.trait:1"} for node in nodes)
     labels = {node["id"]: node["name"] for node in nodes}
     assert all(edge["value"] in labels[edge["object"]] for edge in salt)
+
+
+def test_all_snapshot_families_are_reported_source_attributes(tmp_path):
+    """Replay every source field without promoting codes, units or contexts to phenotypes."""
+    from kg_microbe.transform_utils.microbedecoder.utils import BACDIVE_SNAPSHOT_COLUMNS
+
+    source_rows = json.loads((FIXTURES / "source_attributes.json").read_text())
+    _, nodes, edges = run_fixture(tmp_path, "source_attributes.json")
+    attributes = [edge for edge in edges if edge["source_column"].startswith("BacDive_")]
+    by_id = {node["id"]: node for node in nodes}
+    expected = {
+        (f"lpsn:{row['LPSN_ID']}", column, value)
+        for row in source_rows
+        for column, value in row.items()
+        if column != "LPSN_ID"
+    }
+    assert {(edge["subject"], edge["source_column"], edge["value"]) for edge in attributes} == expected
+    assert {edge["source_column"] for edge in attributes} == set(BACDIVE_SNAPSHOT_COLUMNS)
+    assert all(edge["predicate"] == "biolink:has_attribute" for edge in attributes)
+    assert all(edge["relation"] == "SIO:000008" for edge in attributes)
+    assert all(edge["primary_knowledge_source"] == "infores:microbedecoder" for edge in attributes)
+    assert all(edge["source_record"] and edge["value_encoding"] == "backslash" for edge in attributes)
+    assert all(edge["object"].startswith("kgmicrobe.source_attribute:microbedecoder_") for edge in attributes)
+    assert all(by_id[edge["object"]]["category"] == "biolink:Attribute" for edge in attributes)
+    assert all("reported" in by_id[edge["object"]]["name"] for edge in attributes)
+    assert all("not a decoded phenotype" in by_id[edge["object"]]["description"] for edge in attributes)
+    assert not any(node["id"].startswith("kgmicrobe.trait:") for node in nodes)
+    assert not any(edge["predicate"] == "biolink:has_phenotype" for edge in edges)
+    # Gram-negative is a reported stain value, not a negated generic attribute;
+    # 0/1 and +/- are also retained literally rather than decoded into biology.
+    signed = {(edge["source_column"], edge["value"]) for edge in attributes}
+    for field, values in {
+        "BacDive_Gram_stain": {"positive", "negative"},
+        "BacDive_Motility": {"0", "1"},
+        "BacDive_Spore_formation": {"0", "1"},
+        "BacDive_Indole_test": {"+", "-"},
+        "BacDive_Voges_proskauer": {"+", "-"},
+    }.items():
+        assert all((field, value) in signed for value in values)
+
+
+def test_source_attribute_signature_satisfies_pinned_biolink():
+    """The explicit reported-attribute model fits both endpoints without retyping taxa."""
+    from kg_microbe.utils.biolink_model import prepare_kgx
+
+    prepare_kgx()
+    from bmt import Toolkit
+
+    # Immutable excerpt of the pinned 4.4.2 definitions, independent of raw downloads.
+    toolkit = Toolkit(schema=str(FIXTURES / "biolink-4.4.2-attributes.yaml"))
+    attribute = toolkit.get_element("has attribute")
+    assert "biolink:OrganismTaxon" in toolkit.get_descendants(attribute.domain, formatted=True)
+    assert "biolink:Attribute" in toolkit.get_descendants(attribute.range, formatted=True)
+    assert "SIO:000008" in attribute.exact_mappings
+    phenotype = toolkit.get_element("has phenotype")
+    assert "biolink:OrganismTaxon" not in toolkit.get_descendants(phenotype.domain, formatted=True)
+    assert "biolink:PhenotypicQuality" not in toolkit.get_descendants(phenotype.range, formatted=True)
+
+
+@pytest.mark.parametrize(
+    "column,value,expected",
+    [
+        ("BacDive_Indole_test", "+", ["+"]),
+        ("BacDive_Indole_test", " - ", ["-"]),
+        ("BacDive_Voges_proskauer", "-", ["-"]),
+        ("BacDive_Voges_proskauer", "+,-", ["+", "-"]),
+        ("BacDive_Indole_test", "NA", []),
+        ("BacDive_Voges_proskauer", None, []),
+        ("BacDive_Motility", "-", []),
+        ("BacDive_Indole_test", "", []),
+        ("BacDive_Motility", "0", ["0"]),
+        ("BacDive_Metabolite_utilization", "2,3-butanediol, glucose", ["2,3-butanediol", "glucose"]),
+    ],
+)
+def test_snapshot_signed_field_tokens_do_not_change_generic_missingness(column, value, expected):
+    """Lone '-' survives only in the two signed assay fields, with no biological decoding."""
+    from kg_microbe.transform_utils.microbedecoder.utils import split_snapshot_values
+
+    assert split_snapshot_values(column, value) == expected
+
+
+def test_source_attribute_namespace_and_relation_are_registered():
+    """The explicit dynamic namespace and pinned SIO IRI are registered for graph consumers."""
+    root = Path(__file__).resolve().parents[1]
+    registry = yaml.safe_load((root / "kg_microbe/transform_utils/custom_curies.yaml").read_text())
+    prefixmap = json.loads((root / "kg_microbe/transform_utils/prefixmap.json").read_text())
+    assert "kgmicrobe.source_attribute" in registry
+    assert "kgmicrobe.source_attribute" in prefixmap
+    assert prefixmap["SIO"] == "http://semanticscience.org/resource/SIO_"
 
 
 def test_metabolism_citations_and_major_minor_qualifiers_survive_source_dedup(tmp_path):
@@ -132,7 +232,7 @@ def test_required_mapping_initialization_failure_preserves_outputs(tmp_path, mon
     assert (transform.output_node_file.read_bytes(), transform.output_edge_file.read_bytes()) == before
 
 
-@pytest.mark.parametrize("fixture", ["snapshot_context.csv", "citation_context.csv"])
+@pytest.mark.parametrize("fixture", ["snapshot_context.csv", "citation_context.csv", "source_attributes.json"])
 def test_actual_kgx_archive_retains_source_context(tmp_path, monkeypatch, fixture):
     """Source dimensions and major/minor citations survive the real KGX pipeline."""
     from kg_microbe.merge_utils.merge_kg import merge

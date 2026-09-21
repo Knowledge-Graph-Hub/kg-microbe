@@ -129,7 +129,8 @@ def test_dependency_declared_cross_source_target_is_not_an_anonymous_stub(tmp_pa
     transform = _transform(tmp_path)
     _pair(transform)
     transform.output_edge_file.write_text(
-        "subject\tpredicate\tobject\trelation\nfixture:1\tbiolink:related_to\tNCBITaxon:20\tskos:related\n"
+        "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\n"
+        "fixture:1\tbiolink:related_to\tNCBITaxon:20\tskos:related\tinfores:test\n"
     )
     ontology_dir = transform.output_base_dir / "ontologies"
     ontology_dir.mkdir()
@@ -208,7 +209,7 @@ def test_merge_projection_rejects_conflicting_duplicate_fields(tmp_path):
     path = tmp_path / "edges.tsv"
     path.write_text("subject\tpredicate\tobject\tvalue\tvalue\nfixture:1\tbiolink:related_to\tfixture:2\t1\t2\n")
     original = path.read_bytes()
-    with pytest.raises(ValueError, match="Conflicting duplicate"):
+    with pytest.raises(ValueError, match="duplicate"):
         _normalize_edges_tsv(path)
     assert path.read_bytes() == original
 
@@ -239,7 +240,8 @@ def test_public_merge_gate_requires_exact_prepared_inputs(tmp_path, monkeypatch)
                                 "filename": [str(transform.output_node_file), str(transform.output_edge_file)],
                             }
                         }
-                    }
+                    },
+                    "destination": {"tsv": {"format": "tsv", "filename": "fixture"}},
                 }
             }
         )
@@ -297,6 +299,8 @@ def test_diagnostic_opt_out_is_conspicuous_and_written_in_manifest(tmp_path, mon
     )
     merge_kg._assert_sources_finalized(str(config))
     assert "DIAGNOSTIC OPT-OUT" in capsys.readouterr().out
+    # Diagnostic admission can bypass freshness, never the published TSV contract.
+    transform.finalize(fresh_run=True)
     shutil.copyfile(transform.output_node_file, transform.output_dir / "fixture_nodes.tsv")
     shutil.copyfile(transform.output_edge_file, transform.output_dir / "fixture_edges.tsv")
     monkeypatch.setattr(merge_kg, "_repo_root", lambda: tmp_path)

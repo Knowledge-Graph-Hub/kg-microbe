@@ -127,11 +127,11 @@ def test_assertion_identity_preserves_scalar_context_and_multivalued_evidence_pa
     }
     key = assertion_key(original)
     assert (
-        assertion_key(
-            {**original, "id": "transport-id", "key": "transport-key", "publications": "PMID:2|PMID:1|PMID:1"}
-        )
+        assertion_key({**original, "id": "transport-id", "key": "transport-key", "publications": "PMID:2|PMID:1"})
         == key
     )
+    with pytest.raises(ValueError, match="Duplicate publication"):
+        assertion_key({**original, "publications": "PMID:2|PMID:1|PMID:1"})
     for column, value in (
         ("value", "38.1"),
         ("unit", "Kelvin"),

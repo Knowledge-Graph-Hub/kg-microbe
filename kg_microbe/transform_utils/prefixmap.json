@@ -6,6 +6,8 @@
     "mediadive.ingredient": "https://mediadive.dsmz.de/ingredient/",
     "mediadive.medium-type": "https://mediadive.dsmz.de/medium-type/",
     "kgmicrobe.strain": "https://example.org/kgmicrobe/strain/",
+    "kgmicrobe.source_attribute": "https://example.org/kgmicrobe/source_attribute/",
+    "SIO": "http://semanticscience.org/resource/SIO_",
     "GTDB": "https://gtdb.ecogenomic.org/tree?r=",
     "lpsn": "https://lpsn.dsmz.de/",
     "INSDC": "https://www.ncbi.nlm.nih.gov/nuccore/",

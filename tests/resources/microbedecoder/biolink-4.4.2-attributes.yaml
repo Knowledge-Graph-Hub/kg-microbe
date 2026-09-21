@@ -1,0 +1,45 @@
+# Relevant is_a, domain/range, description and mapping fields copied from
+# Biolink 4.4.2, https://github.com/biolink/biolink-model/blob/v4.4.2/biolink-model.yaml.
+# Kept as an immutable focused fixture so unit tests need no downloaded schema.
+id: https://w3id.org/biolink/biolink-model
+name: Biolink-Model
+version: 4.4.2
+prefixes:
+  biolink: https://w3id.org/biolink/vocab/
+  SIO: http://semanticscience.org/resource/SIO_
+  RO: http://purl.obolibrary.org/obo/RO_
+default_prefix: biolink
+classes:
+  entity:
+    abstract: true
+  named thing:
+    is_a: entity
+  organism taxon:
+    is_a: named thing
+    description: A classification of a set of organisms.
+  biological entity:
+    is_a: named thing
+    abstract: true
+  attribute:
+    is_a: named thing
+    description: A property or characteristic of an entity.
+  organism attribute:
+    is_a: attribute
+  phenotypic quality:
+    is_a: organism attribute
+  disease or phenotypic feature:
+    is_a: biological entity
+  phenotypic feature:
+    is_a: disease or phenotypic feature
+slots:
+  has attribute:
+    description: connects any entity to an attribute
+    domain: entity
+    range: attribute
+    exact_mappings:
+      - SIO:000008
+  has phenotype:
+    domain: biological entity
+    range: phenotypic feature
+    exact_mappings:
+      - RO:0002200

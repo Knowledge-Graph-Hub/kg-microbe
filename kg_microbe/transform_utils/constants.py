@@ -212,6 +212,8 @@ CARBON_SUBSTRATE_PREFIX = "kgmicrobe.carbon_substrate:"
 COMPOUND_PREFIX = "kgmicrobe.compound:"
 INGREDIENT_PREFIX = "kgmicrobe.ingredient:"
 TRAIT_PREFIX = "kgmicrobe.trait:"
+# Reported source-field values, not decoded phenotypes or ontology qualities.
+SOURCE_ATTRIBUTE_PREFIX = "kgmicrobe.source_attribute:"
 ISOLATION_SOURCE_PREFIX = "bacdive.isolation_source:"
 RHEA_OLD_PREFIX = "OBO:rhea_"
 RHEA_NEW_PREFIX = "RHEA:"
@@ -413,6 +415,9 @@ LOCATION_OF = "RO:0001015"  # [org -> location_of -> source]
 # qualities ended up as organism locations.
 HAS_QUALITY_RELATION = "RO:0000086"
 HAS_QUALITY_PREDICATE = "biolink:has_attribute"
+# Generic reported attributes need not be biological qualities (e.g. a source unit).
+HAS_ATTRIBUTE_PREDICATE = "biolink:has_attribute"
+HAS_ATTRIBUTE_RELATION = "SIO:000008"
 # RO:0002434 — generic "interacts with" relation. Used by BacDive's assay
 # emission to link the metpo_predicate edge to the chemical/assay being
 # tested (organism --has_observation--> assay --interacts_with--> chebi).

@@ -3,6 +3,7 @@
 # kgmicrobe.* sub-prefixes:
 #   kgmicrobe.activity:*   — molecular activities not yet in GO/EC/METPO
 #   kgmicrobe.trait:*      — phenotypic qualities not yet in METPO
+#   kgmicrobe.source_attribute:* — reported source-field tokens, not decoded phenotypes
 #   kgmicrobe.compound:*   — chemical entities not yet in CHEBI
 #   kgmicrobe.pathway:*    — biological processes not yet in GO/METPO
 #   kgmicrobe.medium:*     — growth media not present in MediaDive's catalog
@@ -404,6 +405,10 @@ other:
 # empty: entries are generated at transform time (slug of the ingredient label),
 # not curated here. Listed so the prefix is registered for validators.
 "kgmicrobe.ingredient": {}
+
+# Dynamic source + column + exact-token identities. Evidence is on each edge;
+# these are biolink:Attribute nodes, not proposed METPO terms or phenotype classes.
+"kgmicrobe.source_attribute": {}
 
 
 "kgmicrobe.compound":

@@ -90,6 +90,14 @@ Further checks of the actual next-choice mappings rejected Tryptone on
 <code class="docutils literal notranslate"><span class="pre">CHEBI:84843</span></code> ((R)-2,6-dimethylheptanoylcarnitine) and proteose peptone on
 <code class="docutils literal notranslate"><span class="pre">FOODON:00002992</span></code> (fresh bratwurst). These exclusions are likewise scoped to
 incorrect ingredient groundings; the legitimate authority entities are retained.</p>
+<p>The rebuilt recipe check also exposed a broader-class collision: stale
+<code class="docutils literal notranslate"><span class="pre">FOODON:03315719</span></code> synonyms outranked MIM’s reviewed <code class="docutils literal notranslate"><span class="pre">MICRO:0000182</span></code> Tryptone
+and <code class="docutils literal notranslate"><span class="pre">MICRO:0000175</span></code> Trypticase identities. Six solutions containing equal
+amounts of Tryptone and Casamino acids consequently lost one ingredient edge.
+The policy now excludes those specific peptone names and equivalences from the
+broader milk-protein identity while retaining Casamino acids and the native
+FoodOn class. Identity exclusions do not discard <code class="docutils literal notranslate"><span class="pre">skos:broadMatch</span></code> or
+<code class="docutils literal notranslate"><span class="pre">skos:narrowMatch</span></code> parent assertions, in either the reader or bounded refresh.</p>
 <p>The shared policy applies to unified mapping lookup and consolidation, and to
 MediaDive’s legacy/embedded fallback paths. Unsupported groundings retain an
 ingredient-specific unresolved identity; no replacement chemical is invented.

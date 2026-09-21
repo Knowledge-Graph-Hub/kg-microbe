@@ -19,6 +19,8 @@ from kg_microbe.transform_utils.constants import (
     DESCRIPTION_COLUMN,
     EXCLUSION_TERMS_FILE,
     GO_PREFIX,
+    HAS_PART,
+    HAS_PART_PREDICATE,
     ID_COLUMN,
     IRI_COLUMN,
     KNOWLEDGE_ASSERTION,
@@ -34,6 +36,7 @@ from kg_microbe.transform_utils.constants import (
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PROVIDED_BY_COLUMN,
     PUBLICATIONS_COLUMN,
+    RDFS_SUBCLASS_OF,
     RELATED_TO_PREDICATE,
     RELATED_TO_RELATION,
     RELATION_COLUMN,
@@ -41,6 +44,7 @@ from kg_microbe.transform_utils.constants import (
     ROBOT_REMOVED_SUFFIX,
     SAME_AS_COLUMN,
     SPECIAL_PREFIXES,
+    SUBCLASS_PREDICATE,
     SUBJECT_COLUMN,
     SUBSETS_COLUMN,
     TREMBL_PREFIX,
@@ -155,6 +159,31 @@ _CONTRIBUTOR_ANNOTATIONS = frozenset(
 )
 _RAW_TYPE_PREDICATES = frozenset({"type", "rdf:type", "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"})
 
+# Reviewed query-graph exclusions, not a blanket assertion that class-level
+# partonomy or every reflexive ontology relation is biologically invalid.
+SELF_LOOP_EXCLUSIONS_FILE = Path(__file__).resolve().parents[3] / "mappings/ontology_self_loop_exclusions.tsv"
+
+
+def _self_loop_exclusions() -> dict:
+    """Read exact, evidence-bearing exclusions; fail rather than silently ignore invalid policy."""
+    columns = [SUBJECT_COLUMN, PREDICATE_COLUMN, OBJECT_COLUMN, RELATION_COLUMN, "reason"]
+    supported = {(HAS_PART_PREDICATE, HAS_PART), (SUBCLASS_PREDICATE, RDFS_SUBCLASS_OF)}
+    exclusions = {}
+    with SELF_LOOP_EXCLUSIONS_FILE.open(encoding="utf-8", newline="") as stream:
+        reader = csv.DictReader(stream, delimiter="\t")
+        if reader.fieldnames != columns:
+            raise ValueError(f"Invalid self-loop exclusion header: {SELF_LOOP_EXCLUSIONS_FILE}")
+        for row in reader:
+            if None in row or any(not (row.get(column) or "").strip() for column in columns):
+                raise ValueError(f"Incomplete self-loop exclusion at line {reader.line_num}")
+            key = tuple(row[column] for column in columns[:-1])
+            if any(value != value.strip() for value in key):
+                raise ValueError(f"Invalid self-loop exclusion whitespace at line {reader.line_num}: {key}")
+            if key[0] != key[2] or (key[1], key[3]) not in supported or key in exclusions:
+                raise ValueError(f"Invalid or duplicate self-loop exclusion at line {reader.line_num}: {key}")
+            exclusions[key] = row["reason"]
+    return exclusions
+
 
 def _run_kgx_transform(*, inputs, input_format, output, output_format) -> None:
     """Stream one OBOJSON to TSV without the CLI's relation-losing SPO graph store."""
@@ -249,7 +278,7 @@ def _run_kgx_transform(*, inputs, input_format, output, output_format) -> None:
 class OntologiesTransform(Transform):
     """OntologyTransform parses an Obograph JSON form of an Ontology into nodes nad edges."""
 
-    DATA_INPUTS = ("mappings/foodon_model_dispositions.tsv",)
+    DATA_INPUTS = ("mappings/foodon_model_dispositions.tsv", "mappings/ontology_self_loop_exclusions.tsv")
 
     # Mapping of ontology names to InforES standard knowledge sources
     # (po and micro removed — now emitted as per-CURIE stubs via
@@ -1374,6 +1403,7 @@ class OntologiesTransform(Transform):
                 ]
                 dropped_metamodel += before - len(df)
 
+            df = self._quarantine_reviewed_self_loops(df, original_edges, edges_file)
             df.to_csv(edges_file, sep="\t", index=False)
             if dropped_metamodel:
                 print(
@@ -1387,6 +1417,40 @@ class OntologiesTransform(Transform):
                     f"  [_normalize_schema] {edges_file.name}: "
                     f"dropped={dropped_edge_cols} added={added_edge_cols}{rename_note}"
                 )
+
+    def _quarantine_reviewed_self_loops(
+        self, edges: pd.DataFrame, original_edges: pd.DataFrame, edges_file: Path
+    ) -> pd.DataFrame:
+        """Exclude only reviewed signatures and retain every original pre-projection row in an audit."""
+        columns = [SUBJECT_COLUMN, PREDICATE_COLUMN, OBJECT_COLUMN, RELATION_COLUMN]
+        reasons = pd.Series("", index=edges.index, dtype=str)
+        for signature, reason in _self_loop_exclusions().items():
+            matched = edges[columns].eq(signature).all(axis=1)
+            reasons.loc[matched] = reason
+        excluded = reasons.ne("")
+        report = edges_file.with_name(edges_file.stem.removesuffix("_edges") + "_self_loop_exclusions.tsv")
+        fields = ["source_file", *columns, PRIMARY_KNOWLEDGE_SOURCE_COLUMN, "reason", "original_record_json"]
+        # A clean rebuild must replace any earlier report with a header-only
+        # file. Auditing precedes the graph write so audit failures abort the
+        # exclusion. Nodes, raw ontologies and other relations stay untouched.
+        with atomic_write(report, encoding="utf-8", newline="") as stream:
+            writer = csv.DictWriter(stream, fieldnames=fields, delimiter="\t", lineterminator="\n")
+            writer.writeheader()
+            for index, row in edges.loc[excluded].iterrows():
+                writer.writerow(
+                    {
+                        "source_file": edges_file.name,
+                        **{column: row[column] for column in [*columns, PRIMARY_KNOWLEDGE_SOURCE_COLUMN]},
+                        "reason": reasons.loc[index],
+                        "original_record_json": json.dumps(original_edges.loc[index].to_dict(), ensure_ascii=False),
+                    }
+                )
+        if excluded.any():
+            print(
+                f"  [_normalize_schema] {edges_file.name}: quarantined {int(excluded.sum())} "
+                f"reviewed self-loop edge(s); see {report.name}"
+            )
+        return edges.loc[~excluded]
 
     def _convert_urls_to_curies(self, nodes_file: Path, edges_file: Path) -> None:
         """Compact URLs and verified CURIE aliases consistently in node and edge files."""

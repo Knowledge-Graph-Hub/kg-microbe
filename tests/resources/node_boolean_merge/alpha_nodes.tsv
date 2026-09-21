@@ -1,0 +1,5 @@
+id	category	name	deprecated	provided_by
+fixture:current	biolink:NamedThing	current fixture		infores:alpha
+fixture:historical	biolink:NamedThing	historical fixture	true	infores:alpha
+fixture:repeated	biolink:NamedThing	repeated fixture	true	infores:alpha
+fixture:explicit_false	biolink:NamedThing	explicit false fixture	false	infores:alpha

@@ -17,6 +17,7 @@ from threading import RLock
 from kg_microbe.merge_utils.local_context import local_prefix_context
 from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
+    DEPRECATED_COLUMN,
     ID_COLUMN,
     OBJECT_COLUMN,
     PREDICATE_COLUMN,
@@ -70,6 +71,11 @@ _MULTIVALUED_EDGE_PROPERTIES = (
     | {column for column, value_type in column_types.items() if value_type is list}
 ) - {PRIMARY_KNOWLEDGE_SOURCE_COLUMN}
 _MULTIVALUED_NODE_PROPERTIES = _MULTIVALUED_EDGE_PROPERTIES | {PRIMARY_KNOWLEDGE_SOURCE_COLUMN}
+# The canonical node contract includes deprecated, which KGX omits from its
+# Boolean column table. Empty source declarations are not Boolean assertions.
+_BOOLEAN_NODE_PROPERTIES = {DEPRECATED_COLUMN} | {
+    column for column, value_type in column_types.items() if value_type is bool
+}
 
 # Independent multiprocessing workers never share this lock. It also makes
 # scoped overrides safe for callers that use a ThreadPool for tiny merges.
@@ -287,6 +293,26 @@ class RelationAwareGraphSource(GraphSource):
                 yield subject, obj, key, edge
 
 
+def _canonical_node_boolean(column, value):
+    """Collapse identical flags and absent declarations without resolving disagreements."""
+    values = value if isinstance(value, (list, tuple, set)) else [value]
+    flags = set()
+    for item in values:
+        if item is None or item == "":
+            continue
+        if isinstance(item, bool):
+            flags.add(item)
+        elif isinstance(item, str) and item.lower() in {"true", "false", "1", "0"}:
+            flags.add(item.lower() in {"true", "1"})
+        elif type(item) is int and item in {0, 1}:
+            flags.add(bool(item))
+        else:
+            raise ValueError(f"Invalid Boolean node field {column}={value!r}")
+    if len(flags) > 1:
+        raise ValueError(f"Conflicting Boolean node field {column}={value!r}; reconcile source declarations")
+    return next(iter(flags), "")
+
+
 class RelationAwareTsvSink(TsvSink):
     """Write the canonical schema once, preserving literal finalized text and extensions."""
 
@@ -347,8 +373,12 @@ class RelationAwareTsvSink(TsvSink):
         writer.writerow(values)
 
     def write_node(self, record):
-        """Preserve node provider unions and meaningful extension columns verbatim."""
-        self._write_record(record, self.ordered_node_columns, self._node_writer)
+        """Preserve provenance and literal text while keeping Boolean flags scalar."""
+        data = {
+            column: _canonical_node_boolean(column, value) if column in _BOOLEAN_NODE_PROPERTIES else value
+            for column, value in record.items()
+        }
+        self._write_record(data, self.ordered_node_columns, self._node_writer)
 
     def write_edge(self, record):
         """Publish observation fields, never KGX's private transport keys."""

@@ -13,12 +13,10 @@ from kg_microbe.transform_utils.constants import (
     COMPOUND_PREFIX,
     FAPROTAX_KNOWLEDGE_SOURCE,
     GOLD_ORGANISM_FOLD_FILE,
-    HAS_PHENOTYPE_PREDICATE,
     LITERATURE_KNOWLEDGE_SOURCE,
     LPSN_PREFIX,
     MICROBEDECODER_KNOWLEDGE_SOURCE,
     PRODUCES_PREDICATE,
-    TRAIT_PREFIX,
     VPI_KNOWLEDGE_SOURCE,
 )
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
@@ -493,14 +491,14 @@ def test_bacdive_snapshot_edges_carry_microbedecoder_provenance(microbedecoder_t
     bacdive_snapshot = [
         e
         for e in edges
-        if e["predicate"] == HAS_PHENOTYPE_PREDICATE
+        if e["predicate"] == "biolink:has_attribute"
         and e["primary_knowledge_source"] == MICROBEDECODER_KNOWLEDGE_SOURCE
     ]
-    assert bacdive_snapshot, "BacDive_* columns must produce has_phenotype edges"
+    assert bacdive_snapshot, "BacDive_* columns must produce reported-source-attribute edges"
     # LPSN_ID=101 has BacDive_Oxygen_tolerance='facultative anaerobe'
     e_101 = [e for e in bacdive_snapshot if e["subject"] == f"{LPSN_PREFIX}101"]
     assert any(
-        e["object"].startswith(TRAIT_PREFIX)
+        e["object"].startswith("kgmicrobe.source_attribute:")
         and e["source_column"] == "BacDive_Oxygen_tolerance"
         and e["value"] == "facultative anaerobe"
         for e in e_101
@@ -515,7 +513,7 @@ def test_bacdive_only_row_still_emits_snapshot(microbedecoder_transform):
     # At minimum an oxygen tolerance edge + the BacDive crosswalk, which is now
     # subsumption from the strain rather than a close_match to it (#687).
     predicates = {e["predicate"] for e in e_505}
-    assert HAS_PHENOTYPE_PREDICATE in predicates
+    assert "biolink:has_attribute" in predicates
     assert "biolink:subclass_of" in predicates, predicates
 
 

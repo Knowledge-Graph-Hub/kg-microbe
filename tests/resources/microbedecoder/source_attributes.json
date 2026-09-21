@@ -1,0 +1,42 @@
+[
+  {
+    "LPSN_ID": "701",
+    "BacDive_Antibiotic_resistance": "tetracycline",
+    "BacDive_Antibiotic_sensitivity": "ofloxacin",
+    "BacDive_Cell_length": "1-2",
+    "BacDive_Cell_shape": "rod-shaped",
+    "BacDive_Cell_width": "0.5-0.8",
+    "BacDive_Colony_size": "1",
+    "BacDive_Enzyme_activity": "esterase (C 4)",
+    "BacDive_Flagellum_arrangement": "peritrichous",
+    "BacDive_Gram_stain": "negative",
+    "BacDive_Incubation_period": "2-3 days",
+    "BacDive_Indole_test": "+",
+    "BacDive_Metabolite_production": "hydrogen sulfide",
+    "BacDive_Metabolite_utilization": "mannose",
+    "BacDive_Motility": "0",
+    "BacDive_Oxygen_tolerance": "facultative anaerobe",
+    "BacDive_pH_for_growth": "7.5-10.5",
+    "BacDive_Pathogenicity_animal": "1",
+    "BacDive_Pathogenicity_human": "1",
+    "BacDive_Pathogenicity_plant": "1",
+    "BacDive_Salt_concentration": "<1",
+    "BacDive_Salt_concentration_unit": "%",
+    "BacDive_Spore_formation": "0",
+    "BacDive_Temperature_for_growth": "0",
+    "BacDive_Voges_proskauer": "+",
+    "BacDive_Isolation_category_1": "#Environmental",
+    "BacDive_Isolation_category_2": "#Aquatic",
+    "BacDive_Isolation_category_3": "#Sediment"
+  },
+  {
+    "LPSN_ID": "702",
+    "BacDive_Gram_stain": "positive",
+    "BacDive_Motility": "1",
+    "BacDive_Spore_formation": "1",
+    "BacDive_Indole_test": "-",
+    "BacDive_Voges_proskauer": "-",
+    "BacDive_Salt_concentration": ">1",
+    "BacDive_Salt_concentration_unit": "M"
+  }
+]

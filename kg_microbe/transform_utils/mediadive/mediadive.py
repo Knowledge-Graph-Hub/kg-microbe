@@ -131,6 +131,7 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
+from kg_microbe.utils.ingredient_identity import ingredient_mapping_allowed
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
 )
@@ -458,6 +459,14 @@ class MediaDiveTransform(Transform):
             mask = ~df["mapped"].str.startswith(unwanted_prefixes)
             df = df[mask].copy()  # Single copy after filtering
 
+            # Reject reviewed false identities before deduplication so a later
+            # valid grounding for the same ingredient remains available.
+            df = df[
+                [
+                    ingredient_mapping_allowed(name, target)
+                    for name, target in zip(df["original"], df["mapped"], strict=True)
+                ]
+            ]
             # Drop duplicates to keep first occurrence (earlier mappings take precedence)
             df = df.drop_duplicates(subset="original_normalized", keep="first")
             mappings = df.set_index("original_normalized")["mapped"].to_dict()
@@ -643,10 +652,17 @@ class MediaDiveTransform(Transform):
                 solution_name_normalized = solution_name.lower()
 
                 # Check if solution name can be mapped to ontology via unified or legacy mappings
-                solution_id = (
-                    self.chemical_loader.find_chebi_by_name(solution_name)
-                    or self.compound_mappings.get(solution_name_normalized)
-                    or MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY])
+                candidates = [
+                    self.chemical_loader.find_chebi_by_name(solution_name),
+                    self.compound_mappings.get(solution_name_normalized),
+                ]
+                solution_id = next(
+                    (
+                        candidate
+                        for candidate in candidates
+                        if candidate and ingredient_mapping_allowed(solution_name, candidate)
+                    ),
+                    MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY]),
                 )
 
                 ingredients_dict[solution_name] = {
@@ -683,13 +699,14 @@ class MediaDiveTransform(Transform):
             # trailing hydrate specifiers (e.g. "MgCl2 x 6 H2O") resolve to
             # the anhydrous entry when no exact hydrate-form entry exists.
             mapped_id = self.chemical_loader.find_chebi_by_name(compound_name, fuzzy_hydrate=True)
-            if mapped_id:
+            if mapped_id and ingredient_mapping_allowed(compound_name, mapped_id):
                 return mapped_id
 
             # Fallback: check legacy MicroMediaParam mappings by compound name
             normalized_name = compound_name.lower().strip()
-            if normalized_name in self.compound_mappings:
-                return self.compound_mappings[normalized_name]
+            mapped_id = self.compound_mappings.get(normalized_name)
+            if mapped_id and ingredient_mapping_allowed(compound_name, mapped_id):
+                return mapped_id
 
         # Check bulk downloaded data for embedded compound mappings
         # Note: MediaDive compound API endpoint does not exist (returns 400 "not supported")
@@ -703,7 +720,11 @@ class MediaDiveTransform(Transform):
             data = self.compounds_data[id]
             # Try compound mappings from embedded data
             if data.get(CHEBI_KEY) is not None:
-                return CHEBI_PREFIX + str(data[CHEBI_KEY])
+                mapped_id = CHEBI_PREFIX + str(data[CHEBI_KEY])
+                if ingredient_mapping_allowed(
+                    compound_name or data.get(COMPOUND_KEY) or data.get("name", ""), mapped_id
+                ):
+                    return mapped_id
             elif data.get(KEGG_KEY) is not None:
                 return KEGG_PREFIX + str(data[KEGG_KEY])
             elif data.get(PUBCHEM_KEY) is not None:

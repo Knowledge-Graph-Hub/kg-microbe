@@ -53,6 +53,7 @@ SHARED_CODE = (
 # Curation changes affect output even when no Python code has changed.
 SHARED_DATA_INPUTS = (
     "mappings/foodon_model_dispositions.tsv",
+    "mappings/ingredient_identity_exclusions.tsv",
     "kg_microbe/transform_utils/prefixmap.json",
 )
 

@@ -1,0 +1,14 @@
+target_id	authority_label	kind	value	reason
+FOODON:00002992	fresh bratwurst	xref	FOODON:03315718	Hydrolyzed animal protein is not identical to fresh bratwurst sausage.
+FOODON:00002992	fresh bratwurst	xref	cas:91079-38-8	The imported protein digest cross-reference does not identify fresh bratwurst sausage.
+CHEBI:84843	(R)-2,6-dimethylheptanoylcarnitine	name_pattern	(?i)(?:trypton|trypticase|tripticase|casein|casitone|casamino|casmino|milk protein|vitamin assay)	Raw ChEBI identifies an acylcarnitine, not a casein digest; reject the false alternative returned after removing CHEBI:78018.
+FOODON:00002992	fresh bratwurst	name_pattern	(?i)(?:peptone|soyton|soy broth|proteose|animal protein)	Raw FoodOn identifies fresh bratwurst sausage, not proteose peptone; reject this false unified and special-mapping fallback.
+CHEBI:78020	heptacosanoate	name_pattern	(?i)(?:trypton|trypticase|tripticase|casein|casitone|casamino|casmino|milk protein|vitamin assay)	Raw ChEBI identifies a C27H53O2 fatty-acid anion, not casamino acids or a casein digest; block fallback from the rejected detergent mapping.
+CHEBI:78018	dodecylphosphocholine	name_pattern	(?i)^(?:heptacosanoate|carbocerate)$	Raw ChEBI assigns these names to CHEBI:78020 (C27H53O2), not CHEBI:78018 (C17H38NO4P).
+CHEBI:78018	dodecylphosphocholine	name_pattern	(?i)(?:trypton|trypticase|tripticase|casein|casitone|casamino|casmino|milk protein|cas:84843-69-6|vitamin assay)	Reviewed casein digest and peptone ingredient names do not identify the ChEBI detergent; preserve unresolved ingredient identity instead.
+FOODON:03302071	green kidney bean	name_pattern	(?i)(?:peptone|soyton|soy broth|proteose|animal protein)	Reviewed broth and hydrolyzed protein ingredient names do not identify the FoodOn vegetable; preserve unresolved ingredient identity instead.
+CHEBI:78018	dodecylphosphocholine	xref	FOODON:03315719	Hydrolyzed mammalian milk protein is not dodecylphosphocholine.
+CHEBI:78018	dodecylphosphocholine	xref	MICRO:0000175	Trypticase peptone is not dodecylphosphocholine.
+CHEBI:78018	dodecylphosphocholine	xref	MICRO:0000182	Tryptone is not dodecylphosphocholine.
+FOODON:03302071	green kidney bean	xref	FOODON:03315718	Hydrolyzed animal protein is not green kidney bean.
+FOODON:03302071	green kidney bean	xref	cas:91079-38-8	The imported protein digest cross-reference does not identify green kidney bean.

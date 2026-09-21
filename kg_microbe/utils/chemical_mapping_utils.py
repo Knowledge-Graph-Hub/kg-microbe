@@ -18,6 +18,12 @@ from typing import Dict, List, Optional
 
 import pandas as pd
 
+from kg_microbe.utils.ingredient_identity import (
+    ingredient_authority_label,
+    ingredient_mapping_allowed,
+    ingredient_xref_allowed,
+)
+
 # Module-level cache (loaded once per process). We no longer store a
 # DataFrame — the SSSOM is parsed row-streamed and aggregated into the
 # per-entity indices below. ``_ENTITY_COUNT`` is exposed for diagnostics
@@ -310,6 +316,8 @@ def _build_indices(mappings_path: Path):
         synonym hits. Lower rank wins on collision; equal rank keeps the
         first-seen CURIE for determinism.
         """
+        if not ingredient_mapping_allowed(name, curie):
+            return ""
         norm = normalize_name(name)
         if not norm:
             return ""
@@ -347,6 +355,8 @@ def _build_indices(mappings_path: Path):
         # the same string (see _index_name docstring).
         if curie not in _PRIMARY_NAME_INDEX:
             obj_label = (row.get("object_label") or "").strip()
+            if not ingredient_mapping_allowed(obj_label, curie):
+                obj_label = ingredient_authority_label(curie)
             if obj_label:
                 _PRIMARY_NAME_INDEX[curie] = obj_label
                 norm = _index_name(curie, obj_label, rank=0)
@@ -355,6 +365,10 @@ def _build_indices(mappings_path: Path):
 
         subject = (row.get("subject_id") or "").strip()
         if not subject:
+            continue
+        if not ingredient_xref_allowed(subject, curie):
+            continue
+        if subject.startswith("kgm.name:") and not ingredient_mapping_allowed(row.get("subject_label", ""), curie):
             continue
 
         predicate = (row.get("predicate_id") or "").strip()

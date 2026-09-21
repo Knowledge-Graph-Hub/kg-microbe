@@ -168,6 +168,51 @@ Prefer the Python reader API (`kg_microbe.utils.chemical_mapping_utils.find_cheb
 - **MIM schema** carries no CAS RN column, so CAS coverage for MIM-only ChEBI IDs comes from the ChEBI xref table (priority=2), not MIM itself.
 - **Priority inference on baseline reseed**: when `load_existing_unified` re-ingests the current `.tsv.gz`, the priority field is reconstructed from source-label prefixes. A brand-new priority tier also requires updating `priority_for` inside that loader.
 
+### Reviewed ingredient identity exclusions
+
+`ingredient_identity_exclusions.tsv` rejects specific ingredient-name/target
+groundings and symmetric false cross-reference pairs. It does not ban or remap
+the ontology identifiers: `CHEBI:78018` remains dodecylphosphocholine and
+`FOODON:03302071` remains green kidney bean, and `CHEBI:78020` remains
+heptacosanoate, with their native ontology assertions untouched. The latter target
+also rejects casamino-acid names, preventing a fallback from one false chemical
+identity to another. Casein digests, peptones, and broths must not resolve to
+these unrelated targets.
+Further false fallbacks to the acylcarnitine `CHEBI:84843` and the sausage
+`FOODON:00002992` are excluded under the same scoped policy. A mapping record
+containing only rejected rows is removed from the unified mapping artifact;
+this never removes its legitimate native ontology node or assertions.
+The policy is enforced by the unified reader, consolidation (including reseeding,
+propagation, and export), MediaDive legacy/embedded/solution fallbacks, and
+MetaTraits special overrides. Other supported groundings can still resolve;
+otherwise MediaDive preserves an ingredient/solution ID and MicrobeDecoder its
+normal unresolved compound placeholder. MetaTraits leaves the observation
+unmapped rather than asserting an unrelated chemical identity.
+
+The MediaIngredientMech vendored inputs are not edited. They can be corrected in
+their owning repository; until then this local reviewed policy also guards
+against future synchronization reintroducing the wrong mappings.
+
+For a bounded refresh that does not synchronize siblings or invoke OAK:
+
+```bash
+poetry run python scripts/consolidate_chemical_mappings.py \
+  --identity-policy-only --output data/identity-candidate.sssom.tsv.gz
+```
+
+Review the candidate before replacing the published mapping artifact. This mode
+streams the existing unified artifact, retains unrelated serialized rows and
+asymmetric/hydrate assertions, and changes only reviewed lexical/xref groundings
+and poisoned labels. Output is atomically published only after SSSOM validation;
+rejected canonical-name assertions are removed, not rewritten into new triples
+carrying historical dates. Surviving native aliases/xrefs carry the corrected
+`object_label`, which also feeds the runtime canonical-name index. All retained
+triple dates remain unchanged; a later full export dates new canonical assertions.
+input and output cannot be the same path. The mapping-set description records a
+SHA-256 of the policy and shared implementation. Reapplying
+`refresh_identity_policy(candidate, second_candidate)` is byte-idempotent with
+unchanged exporter/policy code. The full consolidator enforces the same policy.
+
 ### Validation
 
 ```bash

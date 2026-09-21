@@ -81,6 +81,12 @@ from kg_microbe.utils.chemical_mapping_utils import (
     PREDICATE_SEMANTICS_KEY,
     read_predicate_semantics,
 )
+from kg_microbe.utils.ingredient_identity import (
+    IDENTITY_POLICY,
+    ingredient_authority_label,
+    ingredient_mapping_allowed,
+    ingredient_xref_allowed,
+)
 from kg_microbe.utils.ontology_utils import FatalOntologyError, get_chebi_adapter
 
 # Environment override for the MediaIngredientMech checkout. Filesystem adjacency
@@ -1040,6 +1046,11 @@ class ChemicalMappingConsolidator:
         """
         if not is_accepted_primary(id):
             return
+
+        if canonical_name and not pd.isna(canonical_name) and not ingredient_mapping_allowed(canonical_name, id):
+            canonical_name = ingredient_authority_label(id)
+        synonyms = [name for name in (synonyms or []) if ingredient_mapping_allowed(name, id)]
+        xrefs = [xref for xref in (xrefs or []) if ingredient_xref_allowed(xref, id)]
 
         if id not in self.chemicals:
             self.chemicals[id] = {
@@ -2385,6 +2396,21 @@ class ChemicalMappingConsolidator:
             f"(across {len(name_retractions)} object(s))"
         )
 
+    def enforce_ingredient_identity(self):
+        """Prune rejected groundings after direct enrichment and before export."""
+        removed = 0
+        for curie, record in self.chemicals.items():
+            if not ingredient_mapping_allowed(record["canonical_name"], curie):
+                record["canonical_name"] = ingredient_authority_label(curie)
+                removed += 1
+            allowed_names = {name for name in record["synonyms"] if ingredient_mapping_allowed(name, curie)}
+            allowed_xrefs = {xref for xref in record["xrefs"] if ingredient_xref_allowed(xref, curie)}
+            removed += len(record["synonyms"] - allowed_names) + len(record["xrefs"] - allowed_xrefs)
+            record["synonyms"] = allowed_names
+            record["xrefs"] = allowed_xrefs
+        self.name_index = {name: curie for name, curie in self.name_index.items() if ingredient_mapping_allowed(name, curie)}
+        return removed
+
     def propagate_synonyms_via_xrefs(self):
         """
         Pull names across equivalent-CURIE records into each primary's synonyms.
@@ -2405,6 +2431,7 @@ class ChemicalMappingConsolidator:
         the synonym set accumulates. No records are merged or deleted.
         """
         print("\nPropagating synonyms across equivalent-CURIE records via xrefs...")
+        self.enforce_ingredient_identity()
         # Snapshot names by primary CURIE before mutation so propagation
         # uses a fixed input set (no feedback).
         name_snapshot: Dict[str, Set[str]] = {}
@@ -2430,6 +2457,7 @@ class ChemicalMappingConsolidator:
                 # set — otherwise it would show up in synonyms.
                 incoming = other_names - {chem["canonical_name"]}
                 new_syns = incoming - chem["synonyms"]
+                new_syns = {name for name in new_syns if ingredient_mapping_allowed(name, curie)}
                 if retracted:
                     kept = {s for s in new_syns if normalize_name(s) not in retracted}
                     blocked += len(new_syns) - len(kept)
@@ -2485,6 +2513,8 @@ class ChemicalMappingConsolidator:
         this file without a separate TSV index.
         """
         from datetime import date
+
+        self.enforce_ingredient_identity()
 
         # Prefixes emitted as exactMatch equivalences. Everything else is
         # treated as bibliographic / descriptive and skipped.
@@ -2852,6 +2882,8 @@ class ChemicalMappingConsolidator:
         ]
         if self.predicate_semantics:
             header_lines.append(f'# {PREDICATE_SEMANTICS_KEY}: "{self.predicate_semantics}"')
+        policy_hash = ingredient_policy_fingerprint()
+        header_lines = [line.removesuffix('"') + f' Ingredient identity policy sha256:{policy_hash}."' if line.startswith("# mapping_set_description:") else line for line in header_lines]
         header_lines += [
             # `mapping_tool` names the tool and `mapping_tool_version` its version:
             # both are MappingSet slots, and packing the second into the first
@@ -2914,8 +2946,88 @@ class ChemicalMappingConsolidator:
         self._validate_sssom_file(sssom_output_path)
 
 
+def ingredient_policy_fingerprint() -> str:
+    """Fingerprint both the curated policy and its shared implementation."""
+    helper = Path(__file__).resolve().parents[1] / "kg_microbe/utils/ingredient_identity.py"
+    digest = hashlib.sha256()
+    for path in (IDENTITY_POLICY, helper):
+        digest.update(path.name.encode())
+        digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+
+def refresh_identity_policy(source: Path, output: Path) -> dict:
+    """
+    Apply only reviewed identity exclusions without reload/enrichment.
+
+    Preserve non-identity rows and all unrelated columns/ordering. A full
+    reseed/export is deliberately not used: reseed drops hydrate and parent
+    rows in expectation that the full source pipeline will recreate them.
+    """
+    if source.resolve() == output.resolve():
+        raise ValueError("Identity-only refresh requires a separate candidate output")
+    policy_hash = ingredient_policy_fingerprint()
+    stats = {"rows_read": 0, "rows_removed": 0, "rows_relabelled": 0}
+    open_source = gzip.open if source.suffix == ".gz" else open
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=".identity-refresh-", dir=output.parent) as scratch:
+        candidate = Path(scratch) / output.name
+        output_open = open_deterministic_gzip if output.suffix == ".gz" else lambda p: p.open("w", encoding="utf-8", newline="")
+        with open_source(source, "rt", encoding="utf-8", newline="") as incoming, output_open(candidate) as outgoing:
+            for line in incoming:
+                if not line.startswith("#"):
+                    fields = next(csv.reader([line], delimiter="\t"))
+                    break
+                if line.startswith("# mapping_tool_version:"):
+                    line = f'# mapping_tool_version: "{script_fingerprint()}"\n'
+                elif line.startswith("# mapping_set_description:"):
+                    line = re.sub(r" Ingredient identity policy sha256:[0-9a-f]{64}\.", "", line)
+                    line = line.rstrip("\r\n").removesuffix('"') + f' Ingredient identity policy sha256:{policy_hash}."\n'
+                outgoing.write(line)
+            else:
+                raise ValueError("SSSOM input has no column header")
+            required = {"subject_id", "subject_label", "object_id", "object_label", "comment"}
+            if not required.issubset(fields):
+                raise ValueError(f"Missing SSSOM identity columns: {required - set(fields)}")
+            outgoing.write(line)
+            # This artifact's exporter emits literal, sanitized TSV, not CSV
+            # quoting. Preserve every unrelated serialized row byte-for-byte.
+            for line in incoming:
+                values = line.rstrip("\r\n").split("\t")
+                if len(values) != len(fields):
+                    raise ValueError("Malformed SSSOM row width")
+                row = dict(zip(fields, values, strict=True))
+                changed = False
+                stats["rows_read"] += 1
+                target, subject = row["object_id"], row["subject_id"]
+                if not ingredient_xref_allowed(subject, target):
+                    stats["rows_removed"] += 1
+                    continue
+                if subject.startswith("kgm.name:") and not ingredient_mapping_allowed(row["subject_label"], target):
+                    # Remove the false assertion, including canonical rows.
+                    # Do not mint a replacement exactMatch with a historical
+                    # date. Surviving native aliases/xrefs carry the corrected
+                    # object_label, which also feeds the reader's canonical
+                    # index. A future full export dates any new exactMatch.
+                    stats["rows_removed"] += 1
+                    continue
+                if not ingredient_mapping_allowed(row["object_label"], target):
+                    row["object_label"] = ingredient_authority_label(target)
+                    stats["rows_relabelled"] += 1
+                    changed = True
+                outgoing.write("\t".join(row[field] for field in fields) + "\n" if changed else line)
+        ChemicalMappingConsolidator._validate_sssom_file(candidate)
+        os.replace(candidate, output)
+    return stats
+
+
 def _parse_args(argv=None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__.strip().splitlines()[0])
+    parser.add_argument(
+        "--identity-policy-only", action="store_true",
+        help="Apply only reviewed ingredient identity exclusions to the current unified artifact; no OAK, source sync, or propagation.",
+    )
+    parser.add_argument("--output", type=Path, help="Separate candidate path required by --identity-policy-only.")
     parser.add_argument(
         "--dry-run",
         action="store_true",
@@ -2940,6 +3052,14 @@ def main(argv=None):
     """Main consolidation workflow."""
     args = _parse_args(argv)
     base_dir = Path(__file__).parent.parent
+    if args.identity_policy_only:
+        if args.output is None or args.dry_run:
+            raise ValueError("--identity-policy-only requires --output and does not accept --dry-run")
+        source = base_dir / "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+        print(refresh_identity_policy(source, args.output))
+        return
+    if args.output is not None:
+        raise ValueError("--output is only supported with --identity-policy-only")
     consolidator = ChemicalMappingConsolidator()
 
     sssom_output_path = base_dir / "mappings" / "kgmicrobe_unified_entity_mappings.sssom.tsv.gz"

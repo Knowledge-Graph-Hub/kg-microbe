@@ -1,0 +1,4 @@
+[
+  {"subject":"fixture:1","predicate":"biolink:related_to","object":"fixture:2","relation":"skos:related","primary_knowledge_source":"","knowledge_source":"bacdive:12","publications":"PMID:7","id":"assertion:12","custom_context":"literal \"quoted\" \\path|not-a-list"},
+  {"subject":"fixture:1","predicate":"biolink:related_to","object":"fixture:2","relation":"skos:related","primary_knowledge_source":"","knowledge_source":"['bacdive', 'bacdive:13']","publications":"PMID:8","id":"assertion:13","custom_context":"literal \"quoted\" \\path|not-a-list"}
+]

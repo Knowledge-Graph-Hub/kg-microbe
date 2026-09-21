@@ -69,6 +69,38 @@ def primary_source_and_publications(value, publications=None):
     return (resources[0] if resources else ""), evidence
 
 
+def validate_primary_source_and_publications(value, publications=None):
+    """Validate canonical provider/evidence identity; permit only KGX collection representation."""
+    if isinstance(value, (list, tuple)):
+        if len(value) != 1:
+            raise ValueError("Canonical primary knowledge source requires exactly one provider")
+        value = value[0]
+    if (
+        not isinstance(value, str)
+        or not value
+        or value != value.strip()
+        or "|" in value
+        or not value.startswith(("infores:", "http://", "https://"))
+        or any(control in value for control in "\t\r\n\x00")
+        or value in {"infores:", "http://", "https://"}
+    ):
+        raise ValueError(f"Noncanonical primary knowledge source {value!r}; rerun source finalization")
+    if publications is None or publications == "" or publications == []:
+        return value, []
+    evidence = publications.split("|") if isinstance(publications, str) else publications
+    if not isinstance(evidence, (list, tuple)) or any(
+        not isinstance(item, str)
+        or not item
+        or item != item.strip()
+        or any(control in item for control in "|\t\r\n\x00")
+        for item in evidence
+    ):
+        raise ValueError("Noncanonical publication evidence; rerun source finalization")
+    if len(evidence) != len(set(evidence)):
+        raise ValueError("Duplicate publication evidence requires source finalization")
+    return value, list(evidence)
+
+
 def knowledge_source_tokens(value, delimiter: str = "|") -> list[str]:
     """Flatten collections and pipe tokens, keeping first occurrence order."""
     values = value if isinstance(value, (list, tuple, set)) else [value]

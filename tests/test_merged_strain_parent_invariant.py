@@ -160,16 +160,20 @@ def test_a_failing_check_cannot_stop_the_tarball_being_rewritten(monkeypatch, tm
     monkeypatch.setattr(merge_kg, "_normalize_edges_tsv", lambda _p: None)
     monkeypatch.setattr(merge_kg, "_warn_about_stale_siblings", lambda *_a: None)
 
-    (tmp_path / "merged-kg_nodes.tsv").write_text("id\n", encoding="utf-8")
-    (tmp_path / "merged-kg_edges.tsv").write_text("subject\n", encoding="utf-8")
+    (tmp_path / "merged-kg_nodes.tsv").write_text("id\tcategory\tname\tdescription\tprovided_by\n", encoding="utf-8")
+    (tmp_path / "merged-kg_edges.tsv").write_text(
+        "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\n",
+        encoding="utf-8",
+    )
     config = tmp_path / "merge.yaml"
     config.write_text(
+        f"configuration:\n  output_directory: {tmp_path}\n"
         "merged_graph:\n"
         "  destination:\n"
         "    merged-kg-tsv:\n"
         "      format: tsv\n"
         "      compression: tar.gz\n"
-        f"      filename: {tmp_path / 'merged-kg'}\n",
+        "      filename: merged-kg\n",
         encoding="utf-8",
     )
 

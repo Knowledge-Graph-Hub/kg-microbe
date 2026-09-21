@@ -8,8 +8,10 @@ parser before the caller temporarily replaces ``cli_utils.parse_source``.
 """
 
 import copy
+import csv
 import hashlib
 import json
+from pathlib import Path
 from threading import RLock
 
 from kg_microbe.merge_utils.local_context import local_prefix_context
@@ -27,16 +29,18 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.utils.biolink_model import prepare_kgx
 from kg_microbe.utils.graph_canonicalization import compact_identifier
+from kg_microbe.utils.graph_schema import CANONICAL_EDGE_HEADER, CANONICAL_NODE_HEADER, canonical_header
 from kg_microbe.utils.provenance import (
     knowledge_source_tokens,
-    primary_source_and_publications,
     serialize_knowledge_sources,
+    validate_primary_source_and_publications,
 )
 from kg_microbe.utils.source_finalization import (
     SourceFinalizationRequired,
     validate_identifier,
     validate_node_representation,
 )
+from kg_microbe.utils.tsv_io import tsv_writer
 
 prepare_kgx()
 
@@ -46,6 +50,7 @@ from kgx.cli import cli_utils as cli_utils_module  # noqa: E402
 from kgx.cli.cli_utils import parse_source as _kgx_parse_source  # noqa: E402
 from kgx.graph_operations.graph_merge import add_all_nodes  # noqa: E402
 from kgx.sink.graph_sink import GraphSink  # noqa: E402
+from kgx.sink.sink import Sink  # noqa: E402
 from kgx.sink.tsv_sink import TsvSink  # noqa: E402
 from kgx.source.graph_source import GraphSource  # noqa: E402
 from kgx.source.tsv_source import TsvSource  # noqa: E402
@@ -64,6 +69,7 @@ _MULTIVALUED_EDGE_PROPERTIES = (
     {sentencecase_to_snakecase(slot) for slot in Toolkit().get_all_multivalued_slots()}
     | {column for column, value_type in column_types.items() if value_type is list}
 ) - {PRIMARY_KNOWLEDGE_SOURCE_COLUMN}
+_MULTIVALUED_NODE_PROPERTIES = _MULTIVALUED_EDGE_PROPERTIES | {PRIMARY_KNOWLEDGE_SOURCE_COLUMN}
 
 # Independent multiprocessing workers never share this lock. It also makes
 # scoped overrides safe for callers that use a ThreadPool for tiny merges.
@@ -105,11 +111,13 @@ def relation_aware_key(subject: str, predicate: str, obj: str, relation: str) ->
 def canonical_assertion(record):
     """Normalize one observation without pooling its scalars or changing evidence pairing."""
     result = {}
-    source, publications = primary_source_and_publications(
+    if record.get("knowledge_source"):
+        raise SourceFinalizationRequired("Legacy knowledge_source requires audited source finalization")
+    source, publications = validate_primary_source_and_publications(
         record.get(PRIMARY_KNOWLEDGE_SOURCE_COLUMN), record.get(PUBLICATIONS_COLUMN)
     )
     for column, value in record.items():
-        if column in {"key", ID_COLUMN, PRIMARY_KNOWLEDGE_SOURCE_COLUMN, PUBLICATIONS_COLUMN}:
+        if column in {"key", ID_COLUMN, "knowledge_source", PRIMARY_KNOWLEDGE_SOURCE_COLUMN, PUBLICATIONS_COLUMN}:
             continue
         if value is None or value == "" or (isinstance(value, (list, tuple, set)) and not value):
             continue
@@ -186,7 +194,20 @@ class RelationAwareTsvSource(TsvSource):
         normalized = dict(node)
         if normalized.get(ID_COLUMN):
             validate_node_representation(normalized[ID_COLUMN], normalized.get(CATEGORY_COLUMN, ""))
-        return super().read_node(normalized)
+        result = super().read_node(normalized)
+        if result is None:
+            return None
+        identifier, data = result
+        # KGX assumes unknown properties are lists and splits literal pipes.
+        # Only model-declared list fields have that representation contract.
+        for column, value in normalized.items():
+            if column not in _MULTIVALUED_NODE_PROPERTIES:
+                data[column] = value
+        # An explicitly blank finalized provider is not permission to invent
+        # the input filename as provenance (notably for anonymous stubs).
+        if PROVIDED_BY_COLUMN in normalized:
+            data[PROVIDED_BY_COLUMN] = knowledge_source_tokens(normalized[PROVIDED_BY_COLUMN])
+        return identifier, data
 
     def read_edge(self, edge):
         """Keep one canonical provider/context/evidence bundle per observation."""
@@ -242,6 +263,15 @@ class RelationAwareGraphSink(GraphSink):
 class RelationAwareGraphSource(GraphSource):
     """Retain provenance collections when reading merged graph edges for export."""
 
+    def read_nodes(self):
+        """Keep literal scalar node text through KGX's intermediate graph export."""
+        for identifier, data in super().read_nodes():
+            original = self.graph.nodes()[identifier]
+            for column, value in original.items():
+                if column not in _MULTIVALUED_NODE_PROPERTIES:
+                    data[column] = value
+            yield identifier, data
+
     def read_edges(self):
         """Restore canonical scalar metadata after KGX's generic graph sanitization."""
         for subject, obj, key, data in self.graph.edges(keys=True, data=True):
@@ -258,19 +288,78 @@ class RelationAwareGraphSource(GraphSource):
 
 
 class RelationAwareTsvSink(TsvSink):
-    """Serialize merged provenance collections as KGX lists, never Python repr strings."""
+    """Write the canonical schema once, preserving literal finalized text and extensions."""
+
+    def __init__(self, owner, filename, format, compression=None, **kwargs):
+        """Bypass KGX's generated-column header and content-altering export sanitizer."""
+        Sink.__init__(self, owner)
+        if format not in {"tsv", "csv"}:
+            raise ValueError(f"Unsupported canonical tabular format: {format}")
+        modes = {None: None, "tar": "w", "tar.gz": "w:gz"}
+        if compression not in modes:
+            raise ValueError(f"Unsupported canonical tabular compression: {compression}")
+        self.mode = modes[compression]
+        self.delimiter = "\t" if format == "tsv" else ","
+        self.list_delimiter = kwargs.get("list_delimiter", "|")
+        self.extension = format
+        base = Path(filename).absolute()
+        base.parent.mkdir(parents=True, exist_ok=True)
+        self.dirname, self.basename = str(base.parent), base.name
+        self.nodes_file_basename = f"{base.name}_nodes.{format}"
+        self.edges_file_basename = f"{base.name}_edges.{format}"
+        self.nodes_file_name = str(base.parent / self.nodes_file_basename)
+        self.edges_file_name = str(base.parent / self.edges_file_basename)
+        self.node_properties.update(kwargs.get("node_properties", CANONICAL_NODE_HEADER))
+        self.edge_properties.update(kwargs.get("edge_properties", CANONICAL_EDGE_HEADER))
+        self.edge_properties.difference_update({ID_COLUMN, "key", "knowledge_source"})
+        self.ordered_node_columns = canonical_header(self.node_properties, is_node=True)
+        self.ordered_edge_columns = canonical_header(self.edge_properties, is_node=False)
+        self.NFH = open(self.nodes_file_name, "w", encoding="utf-8", newline="")
+        try:
+            self.EFH = open(self.edges_file_name, "w", encoding="utf-8", newline="")
+        except BaseException:
+            self.NFH.close()
+            raise
+        quoting = csv.QUOTE_NONE if format == "tsv" else csv.QUOTE_MINIMAL
+        dialect = {"delimiter": self.delimiter, "quoting": quoting, "quotechar": None if format == "tsv" else '"'}
+        self._node_writer = tsv_writer(self.NFH, **dialect)
+        self._edge_writer = tsv_writer(self.EFH, **dialect)
+        self._node_writer.writerow(self.ordered_node_columns)
+        self._edge_writer.writerow(self.ordered_edge_columns)
+
+    def _write_record(self, record, columns, writer):
+        """Serialize collections without stripping quotes or silently editing text controls."""
+        unexpected = {key for key, value in record.items() if key not in columns and value not in (None, "", [])}
+        if unexpected:
+            raise ValueError(f"Unannounced KGX serialization properties: {sorted(unexpected)}")
+        values = []
+        for column in columns:
+            value = record.get(column)
+            if isinstance(value, (list, tuple, set)):
+                value = self.list_delimiter.join(str(item) for item in sorted(value, key=str))
+            elif isinstance(value, bool):
+                value = "true" if value else "false"
+            else:
+                value = "" if value is None else str(value)
+            if any(control in value for control in ("\t", "\r", "\n", "\x00")):
+                raise ValueError(f"Embedded control in canonical {column}; rerun source finalization")
+            values.append(value)
+        writer.writerow(values)
+
+    def write_node(self, record):
+        """Preserve node provider unions and meaningful extension columns verbatim."""
+        self._write_record(record, self.ordered_node_columns, self._node_writer)
 
     def write_edge(self, record):
-        """Override only merged knowledge-source collections before normal TSV export."""
+        """Publish observation fields, never KGX's private transport keys."""
         data = canonical_assertion(record)
-        data[ID_COLUMN] = _hash_assertion(data)
         for column in _MULTIVALUED_EDGE_PROPERTIES:
             values = data.get(column)
             if isinstance(values, (list, tuple, set)):
                 data[column] = serialize_knowledge_sources(
                     sorted(knowledge_source_tokens(values, self.list_delimiter)), delimiter=self.list_delimiter
                 )
-        super().write_edge(data)
+        self._write_record(data, self.ordered_edge_columns, self._edge_writer)
 
 
 def _preserve_node_sources(values=None):

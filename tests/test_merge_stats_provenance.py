@@ -101,12 +101,19 @@ def test_compressed_merge_provenance_names_a_surviving_artifact(tmp_path):
     stats, edges, config = _write_fixture(tmp_path)
     nodes = tmp_path / "merged-kg_nodes.tsv"
     nodes.write_text(
-        "id\tcategory\tname\n"
-        "NCBITaxon:1\tbiolink:OrganismTaxon\tone\n"
-        "NCBITaxon:2\tbiolink:OrganismTaxon\ttwo\n"
-        "medium:1\tbiolink:ChemicalMixture\tmedium one\n"
-        "medium:2\tbiolink:ChemicalMixture\tmedium two\n",
+        "id\tcategory\tname\tdescription\tprovided_by\n"
+        "NCBITaxon:1\tbiolink:OrganismTaxon\tone\t\tinfores:fixture\n"
+        "NCBITaxon:2\tbiolink:OrganismTaxon\ttwo\t\tinfores:fixture\n"
+        "medium:1\tbiolink:ChemicalMixture\tmedium one\t\tinfores:fixture\n"
+        "medium:2\tbiolink:ChemicalMixture\tmedium two\t\tinfores:fixture\n",
         encoding="utf-8",
+    )
+    edges.write_text(
+        "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\n"
+        + "".join(
+            "\t".join((subject, predicate or "biolink:related_to", obj)) + "\t\tinfores:fixture\t\t\n"
+            for subject, predicate, obj in EDGES
+        )
     )
     archive_path = tmp_path / "merged-kg.tar.gz"
     with tarfile.open(archive_path, "w:gz") as archive:

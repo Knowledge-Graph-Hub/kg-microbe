@@ -27,7 +27,11 @@ import yaml
 from kg_microbe.utils import chemical_mapping_utils as runtime
 from kg_microbe.utils.ingredient_identity import (
     IDENTITY_POLICY,
+    NAME_SCOPE_POLICY,
+    accepted_name_scope,
     ingredient_mapping_allowed,
+    ingredient_name_scopes,
+    ingredient_name_target,
     ingredient_xref_allowed,
 )
 from scripts import consolidate_chemical_mappings as consolidator
@@ -495,6 +499,7 @@ def build_conservative_candidate(
         Path(runtime.__file__).resolve(),
         Path(__file__).with_name("mim_reviewed_release.py").resolve(),
         IDENTITY_POLICY.resolve(),
+        NAME_SCOPE_POLICY.resolve(),
         IDENTITY_POLICY.parent.parent / "kg_microbe/utils/ingredient_identity.py",
     )
     inputs = [baseline, *ontology_paths, *(source.path for source in independent_sources), *code_paths]
@@ -651,7 +656,7 @@ def build_conservative_candidate(
                 insert(row)
                 stats["rebuilt_rows"] += 1
         database.commit()
-        names, ranks, mim_xrefs = {}, {}, {}
+        names, ranks, mim_xrefs, named_entities = {}, {}, {}, set()
         with consolidator.open_deterministic_gzip(candidate) as handle:
             _write_header(handle, candidate_metadata, fields)
             for (line,) in database.execute(
@@ -659,14 +664,22 @@ def build_conservative_candidate(
             ):
                 handle.write(line + "\n")
                 row = dict(zip(fields, line.split("\t"), strict=True))
+                if row["object_label"]:
+                    named_entities.add(row["object_id"])
                 for label, rank in ((row["object_label"], 0), (row["subject_label"], 1)):
                     if rank and not (row["subject_id"].startswith("kgm.name:") and row["comment"] == "synonym"):
                         continue
                     normalized = runtime.normalize_name(label)
+                    scoped_target = ingredient_name_target(label)
+                    if scoped_target is not None and scoped_target != row["object_id"]:
+                        continue
                     if normalized and (normalized not in names or rank < ranks[normalized]):
                         names[normalized], ranks[normalized] = row["object_id"], rank
                 if row["subject_id"].startswith("MIM:"):
                     mim_xrefs.setdefault(row["subject_id"], row["object_id"])
+        for query, target in ingredient_name_scopes()[0].items():
+            if target in named_entities:
+                names[runtime.normalize_name(query)] = target
         unreconstructed_lexicals = sorted(
             curie for curie in affected if not evidence.records.get(curie, _Entity()).label
         )
@@ -684,12 +697,22 @@ def build_conservative_candidate(
         conflicts = [
             {
                 "name": row["subject_label"],
+                "subject_id": row["subject_id"],
                 "expected": row["object_id"],
                 "resolved": names.get(runtime.normalize_name(row["subject_label"])),
             }
             for row in bundle.supported_rows
             if names.get(runtime.normalize_name(row["subject_label"])) != row["object_id"]
         ]
+        accepted_scopes = [
+            dict(conflict, explicit_resolved=mim_xrefs.get(conflict["subject_id"]),
+                 reason="Reviewed generic trait versus 9H ingredient scope; native subclass relation retained.")
+            for conflict in conflicts
+            if accepted_name_scope(conflict["subject_id"], conflict["expected"], conflict["resolved"],
+                                   mim_xrefs.get(conflict["subject_id"]))
+        ]
+        conflicts = [conflict for conflict in conflicts if not accepted_name_scope(
+            conflict["subject_id"], conflict["expected"], conflict["resolved"], mim_xrefs.get(conflict["subject_id"]))]
         supported_targets = defaultdict(set)
         for row in bundle.supported_rows:
             supported_targets[row["subject_id"]].add(row["object_id"])
@@ -714,6 +737,7 @@ def build_conservative_candidate(
             "unreconstructed_entities": sorted(affected - evidence.records.keys()),
             "unreconstructed_lexical_entities": unreconstructed_lexicals,
             "supported_name_lookup_conflicts": conflicts,
+            "accepted_name_scope_distinctions": accepted_scopes,
             "supported_xref_lookup_conflicts": xref_conflicts,
             "supported_multitarget_subjects": {
                 subject: sorted(targets) for subject, targets in sorted(supported_targets.items()) if len(targets) > 1

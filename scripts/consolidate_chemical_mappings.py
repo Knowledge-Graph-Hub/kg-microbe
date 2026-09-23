@@ -86,6 +86,7 @@ from kg_microbe.utils.ingredient_identity import (
     IDENTITY_POLICY,
     ingredient_authority_label,
     ingredient_mapping_allowed,
+    ingredient_name_target,
     ingredient_xref_allowed,
 )
 from kg_microbe.utils.ontology_utils import FatalOntologyError, get_chebi_adapter
@@ -1115,6 +1116,9 @@ class ChemicalMappingConsolidator:
         #      synonym added at priority=1 from clobbering an already-indexed
         #      CHEBI entry at priority=1.
         def _set_name_index(name: str) -> None:
+            scoped_target = ingredient_name_target(name)
+            if scoped_target is not None and scoped_target != id:
+                return
             norm_name = normalize_name(name)
             if not norm_name:
                 return
@@ -1797,7 +1801,7 @@ class ChemicalMappingConsolidator:
                 # even if a prior priority-11 baseline set a different
                 # value (add_chemical's first-seed tiebreaker can't see
                 # "MIM-this-run is fresher than MIM-last-run").
-                if subject_label:
+                if subject_label and ingredient_mapping_allowed(subject_label, object_id):
                     self.chemicals[object_id]["canonical_name"] = subject_label
                 if extra_sources:
                     self.chemicals[object_id]["sources"].update(extra_sources)

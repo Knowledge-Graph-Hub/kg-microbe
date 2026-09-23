@@ -1,0 +1,12 @@
+kind	query	target_id	reason
+name	Polymyxin B	NCIT:C61894	Unqualified antibiotic is the NCI B1/B2 mixture; B1 and sulfate remain separate. See reviews/chemical-scopes-20260923.md.
+name	Polymyxin B1	CHEBI:8309	Explicit B1 component, not the B1/B2 mixture.
+name	Rifamycin	CHEBI:26580	Three original unqualified MicrobeDecoder observations do not specify SV; index at family scope without member-wide inference.
+name	Rifamycin SV	CHEBI:29673	Explicit SV retains the specific chemical identity.
+name	Xanthine	CHEBI:15318	Bare name has generic scope; an explicit MIM subject, 9H label or reviewed CAS selects CHEBI:17712.
+name	9H-xanthine	CHEBI:17712	Explicit 9H representation; preserve its native subclass relationship to CHEBI:15318.
+name	Sorbitan Monooleate	kgmicrobe.ingredient:sorbitan_monooleate	Unspecified recipe material; exact molecular identity and CAS remain withheld pending product evidence.
+cas	cas:1404-26-8	NCIT:C61894	Verified NCIT P210 annotation for the B1/B2 mixture; no equivalence to B1 or sulfate.
+cas	cas:4135-11-9	CHEBI:8309	Verified ChEBI CAS annotation for B1 only.
+cas	cas:6998-60-3	CHEBI:29673	Verified ChEBI CAS annotation for SV only; the rifamycin family has no single CAS.
+cas	cas:69-89-6	CHEBI:17712	Reviewed MIM ingredient representation and ChEBI CAS annotation; no parent-child equivalence or tautomer-purity claim.

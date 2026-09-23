@@ -23,3 +23,38 @@ FOODON:03302071	green kidney bean	xref	cas:91079-38-8	The imported protein diges
 FOODON:03315719	mammalian milk protein (hydrolyzed)	name_pattern	(?i)(?:trypton|trypticase|tripticase|pancreatic digest of casein)	MIM:Tryptone and MIM:Bacto-tryptone are exactMatch MICRO:0000182; MIM:Trypticase is exactMatch MICRO:0000175. Broad milk-protein synonyms collapse distinct Tryptone and Casamino-acid recipe entries.
 FOODON:03315719	mammalian milk protein (hydrolyzed)	xref	MICRO:0000175	Trypticase peptone has a specific reviewed MIM identity; the broader milk-protein class is not an equivalent identifier.
 FOODON:03315719	mammalian milk protein (hydrolyzed)	xref	MICRO:0000182	Tryptone has a specific reviewed MIM identity; the broader milk-protein class is not an equivalent identifier.
+CHEBI:8309	polymyxin B1	name_pattern	(?i)^polymyxin[ _-]+b$	Generic Polymyxin B denotes the B1/B2 mixture NCIT:C61894; preserve B1 separately (chemical scope review).
+CHEBI:29673	rifamycin SV	name_pattern	(?i)^rifamycin$	Unqualified source observations select family CHEBI:26580, not SV.
+NCIT:C29406	Rifamycin SV	name_pattern	(?i)^rifamycin$	This NCIT record carries SV/CAS scope; unqualified source observations select CHEBI:26580.
+CHEBI:53426	polysorbate 80	name_pattern	(?i)^sorbitan[ _-]+monooleate$	FoodOn imported alias conflates unethoxylated sorbitan material with polysorbate 80; retain native term without this grounding.
+CHEBI:8309	polymyxin B1	xref	NCIT:C61894	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+CHEBI:8309	polymyxin B1	xref	MIM:Polymyxin_B	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+CHEBI:8309	polymyxin B1	xref	cas:1404-26-8	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+NCIT:C61894	Polymyxin B	xref	cas:4135-11-9	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+CHEBI:26580	rifamycins	xref	CHEBI:29673	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+CHEBI:26580	rifamycins	xref	NCIT:C29406	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+CHEBI:26580	rifamycins	xref	cas:6998-60-3	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+CHEBI:26580	rifamycins	xref	MIM:Rifamycin_Sv	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+CHEBI:29673	rifamycin SV	xref	MIM:Rifamycin	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+NCIT:C29406	Rifamycin SV	xref	MIM:Rifamycin	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+CHEBI:15318	xanthine	xref	CHEBI:17712	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+CHEBI:15318	xanthine	xref	cas:69-89-6	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+CHEBI:15318	xanthine	xref	MIM:Xanthine	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+kgmicrobe.ingredient:sorbitan_monooleate	Sorbitan Monooleate	xref	NCIT:C75654	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+kgmicrobe.ingredient:sorbitan_monooleate	Sorbitan Monooleate	xref	CHEBI:183688	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+kgmicrobe.ingredient:sorbitan_monooleate	Sorbitan Monooleate	xref	CHEBI:53426	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+kgmicrobe.ingredient:sorbitan_monooleate	Sorbitan Monooleate	xref	cas:1338-43-8	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+kgmicrobe.ingredient:sorbitan_monooleate	Sorbitan Monooleate	xref	cas:9005-65-6	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+CHEBI:53426	polysorbate 80	xref	MIM:Sorbitan_Monooleate	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+CHEBI:53426	polysorbate 80	xref	cas:1338-43-8	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+CHEBI:53426	polysorbate 80	xref	CHEBI:183688	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+CHEBI:183688	sorbitan monooleate	xref	MIM:Sorbitan_Monooleate	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+NCIT:C75654	Sorbitan Monooleate	xref	MIM:Sorbitan_Monooleate	Reviewed scope distinction: do not merge mixture/component, family/member, generic/9H, or unresolved recipe material identities. See reviews/chemical-scopes-20260923.md.
+NCIT:C61895	Polymyxin B Sulfate	xref	NCIT:C61894	Polymyxin B sulfate is a separate material, not the unsulfated mixture or B1.
+NCIT:C61895	Polymyxin B Sulfate	xref	CHEBI:8309	Polymyxin B sulfate is a separate material, not the unsulfated mixture or B1.
+NCIT:C61895	Polymyxin B Sulfate	xref	cas:1404-26-8	Polymyxin B sulfate is a separate material, not the unsulfated mixture or B1.
+NCIT:C61895	Polymyxin B Sulfate	xref	cas:4135-11-9	Polymyxin B sulfate is a separate material, not the unsulfated mixture or B1.
+CHEBI:26580	rifamycins	name_pattern	(?i)^(?:cas:)?6998-60-3$	CAS is scoped to a different reviewed chemical identity; do not propagate it as an alias.
+CHEBI:15318	xanthine	name_pattern	(?i)^(?:cas:)?69-89-6$	CAS is scoped to a different reviewed chemical identity; do not propagate it as an alias.
+NCIT:C61894	Polymyxin B	name_pattern	(?i)^(?:cas:)?4135-11-9$	CAS is scoped to a different reviewed chemical identity; do not propagate it as an alias.
+CHEBI:8309	polymyxin B1	name_pattern	(?i)^(?:cas:)?1404-26-8$	CAS is scoped to a different reviewed chemical identity; do not propagate it as an alias.

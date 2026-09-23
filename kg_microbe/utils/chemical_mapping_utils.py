@@ -20,7 +20,10 @@ import pandas as pd
 
 from kg_microbe.utils.ingredient_identity import (
     ingredient_authority_label,
+    ingredient_cas_annotations,
     ingredient_mapping_allowed,
+    ingredient_name_scopes,
+    ingredient_name_target,
     ingredient_xref_allowed,
 )
 
@@ -326,6 +329,9 @@ def _build_indices(mappings_path: Path):
         """
         if not ingredient_mapping_allowed(name, curie):
             return ""
+        target = ingredient_name_target(name)
+        if target is not None and target != curie:
+            return ""
         norm = normalize_name(name)
         if not norm:
             return ""
@@ -426,6 +432,11 @@ def _build_indices(mappings_path: Path):
             norm_xref = subject.lower()
             _XREF_INDEX.setdefault(norm_xref, curie)
 
+    # Query scope is reviewed independently of lexical rank. A missing target
+    # stays unresolved; a stale specific synonym must not stand in for it.
+    for query, target in ingredient_name_scopes()[0].items():
+        if target in _PRIMARY_NAME_INDEX:
+            _NAME_INDEX[normalize_name(query)] = target
     # Freeze accumulated sets into deterministic lists.
     for curie, syns in primary_synonyms_sets.items():
         _PRIMARY_SYNONYMS_INDEX[curie] = sorted(syns)
@@ -481,6 +492,9 @@ def find_chebi_by_name(
         load_unified_mappings()
 
     # Try exact match first
+    scoped_target = ingredient_name_target(name)
+    if scoped_target is not None:
+        return scoped_target if scoped_target in _PRIMARY_NAME_INDEX else None
     norm_name = normalize_name(name)
     if not norm_name:
         return None
@@ -563,6 +577,9 @@ def find_chebi_by_xref(xref: str) -> Optional[str]:
 
     # Normalize xref format
     norm_xref = xref.lower().strip()
+    target = ingredient_name_scopes()[1].get(norm_xref)
+    if target is not None:
+        return target if target in _PRIMARY_NAME_INDEX else None
 
     if _XREF_INDEX:
         return _XREF_INDEX.get(norm_xref)
@@ -720,8 +737,8 @@ def get_node_enrichment(curie: str) -> Dict[str, str]:
     populating the corresponding KGX node columns. Values are pipe-joined
     strings (KGX multivalued convention) or empty strings when absent.
 
-    - ``xref``: equivalent CURIEs from the unified mapping's ``xrefs`` column.
-      Under KGX semantics these are cross-references (CURIE-shaped), not names.
+    - ``xref``: unified cross-references plus independently reviewed CAS
+      annotations. CAS annotations do not create SSSOM exactMatch or same_as.
     - ``synonym``: alternative free-text names from the ``synonyms`` column.
     - ``name``: canonical name for the CURIE, or empty string when unknown.
 
@@ -731,7 +748,7 @@ def get_node_enrichment(curie: str) -> Dict[str, str]:
     empty = {"xref": "", "synonym": "", "name": ""}
     if not curie:
         return empty
-    xrefs = get_xrefs(curie)
+    xrefs = sorted(set(get_xrefs(curie)) | set(ingredient_cas_annotations(curie)))
     synonyms = get_synonyms(curie)
     name = get_canonical_name(curie) or ""
     return {

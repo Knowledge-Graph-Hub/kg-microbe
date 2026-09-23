@@ -894,6 +894,17 @@ class OntologiesStubsTransform(Transform):
             for value in metadata.get(predicate_key, []) or []:
                 if value:
                     xrefs.add(str(value))
+        # NCIT records CAS Registry Numbers in P210 rather than hasDbXref.
+        # Preserve these direct source annotations in the output xref column;
+        # they do not assert same_as or upgrade any MIM broadMatch relationship.
+        for predicate_key in (
+            "NCIT:P210",
+            "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#P210",
+        ):
+            for value in metadata.get(predicate_key, []) or []:
+                cas_xref = _cas_xref(value)
+                if cas_xref:
+                    xrefs.add(cas_xref)
         return (
             _sanitize(label),
             sorted({_sanitize(s) for s in synonyms} - {""}),
@@ -917,6 +928,20 @@ class OntologiesStubsTransform(Transform):
             writer.writerow(self.edge_header)
             for row in rows:
                 writer.writerow(["" if cell is None else cell for cell in row])
+
+
+def _cas_xref(value: Any) -> Optional[str]:
+    """Convert a CAS annotation with valid syntax and check digit to a CURIE."""
+    if not isinstance(value, str):
+        return None
+    registry_number = value.strip()
+    if not re.fullmatch(r"[1-9][0-9]{1,6}-[0-9]{2}-[0-9]", registry_number):
+        return None
+    body, check_digit = registry_number.rsplit("-", 1)
+    checksum = sum(position * int(digit) for position, digit in enumerate(reversed(body.replace("-", "")), 1))
+    if checksum % 10 != int(check_digit):
+        return None
+    return f"cas:{registry_number}"
 
 
 def _sanitize(value: Optional[str]) -> str:

@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "release_tag": "mim-sssom-2026-09-21",
+  "release_url": "https://github.com/CultureBotAI/MediaIngredientMech/releases/tag/mim-sssom-2026-09-21",
+  "source_commit": "484082707b2a175cffebad3cbf46f3b39f66ca3d",
+  "manifest_sha256": "cf883804354b5d4e9796e7e952a023b240ff951ed95372fb212c7afd47c65dcd",
+  "mode": "candidate_only"
+}

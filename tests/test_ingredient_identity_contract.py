@@ -10,6 +10,7 @@ import pytest
 
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
 from kg_microbe.transform_utils.metatraits.metatraits import MetaTraitsTransform
+from kg_microbe.transform_utils.metatraits_gtdb.metatraits_gtdb import MetaTraitsGTDBTransform
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
 from kg_microbe.utils import chemical_mapping_utils as mapping
 from kg_microbe.utils.ingredient_identity import ingredient_mapping_allowed
@@ -218,6 +219,48 @@ def test_reader_normalization_does_not_bypass_reviewed_policy(identity_sssom):
     assert mapping.find_chebi_by_name("Trypt.one") is None
     assert mapping.find_chebi_by_xref("MICRO:0000182") is None
     assert mapping.find_chebi_by_name("dodecylphosphocholine") == "CHEBI:78018"
+
+
+def test_deprecated_amino_acid_association_cannot_override_current_identity(tmp_path, monkeypatch):
+    """Reject the stale acid/anion names without redirecting to an unrelated replacement."""
+    source = Path(__file__).parent / "resources/deprecated_amino_acid.sssom.tsv"
+    monkeypatch.setattr(mapping, "_LOADED", False)
+    mapping.load_unified_mappings(source)
+    assert mapping.find_chebi_by_name("3-aminobutyric acid") == "CHEBI:37081"
+    assert mapping.find_chebi_by_name("3-aminobutyrate") is None
+    assert mapping.find_chebi_by_xref("MIM:3-aminobutyric_Acid") == "CHEBI:37081"
+    assert mapping.find_chebi_by_name("replacement control") == "CHEBI:17261"
+    module = _load_module()
+    monkeypatch.setattr(module.ChemicalMappingConsolidator, "_validate_sssom_file", lambda path: None)
+    output = tmp_path / "corrected.tsv"
+    result = module.refresh_identity_policy(source, output)
+    assert result["rows_removed"] == 2
+    assert "CHEBI:18309" not in output.read_text()
+    assert "CHEBI:17261" in output.read_text()
+    monkeypatch.setattr(mapping, "_LOADED", False)
+    monkeypatch.setattr(mapping, "_CACHED_PATH", None)
+
+
+@pytest.mark.parametrize("transform_type", [MetaTraitsTransform, MetaTraitsGTDBTransform])
+@pytest.mark.parametrize(
+    "name,slug,parent",
+    [
+        ("rhodomycin A", "rhodomycin_a", "mesh:C004977"),
+        ("pluramycin A", "pluramycin_a", "mesh:C003169"),
+        ("racemomycin E", "racemomycin_e", "mesh:C019594"),
+    ],
+)
+def test_specific_metabolite_overrides_preserve_supported_registry(transform_type, name, slug, parent):
+    """Both real trait routes retain the specific compound even with a stale family lookup."""
+    transform = transform_type.__new__(transform_type)
+    transform.special_chemical_mappings = transform._load_special_chemical_mappings()
+    transform.chemical_loader = SimpleNamespace(find_chebi_by_name=lambda *args, **kwargs: parent)
+    result = transform._resolve_chemical_trait("produces: " + name)
+    assert result["curie"] == "kgmicrobe.compound:" + slug
+    assert result["name"].casefold() == name.casefold()
+    assert result["predicate"] == "METPO:2000202"
+    assert not ingredient_mapping_allowed(name, parent)
+    assert ingredient_mapping_allowed(name.rsplit(" ", 1)[0], parent)
 
 
 def test_embedded_id_uses_raw_compound_name_when_caller_omits_name():

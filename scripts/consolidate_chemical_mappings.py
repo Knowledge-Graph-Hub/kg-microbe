@@ -79,6 +79,7 @@ import pandas as pd
 
 from kg_microbe.utils.chemical_mapping_utils import (
     PREDICATE_SEMANTICS_KEY,
+    normalize_chemical_primes,
     read_predicate_semantics,
 )
 from kg_microbe.utils.ingredient_identity import (
@@ -595,8 +596,8 @@ def normalize_name(name: str) -> str:
     if pd.isna(name) or not name:
         return ""
     # Convert to lowercase, remove extra spaces, punctuation
-    normalized = str(name).lower().strip()
-    normalized = re.sub(r"[^\w\s-]", "", normalized)
+    normalized = normalize_chemical_primes(str(name).lower().strip())
+    normalized = re.sub(r"[^\w\s'-]", "", normalized)
     normalized = re.sub(r"\s+", " ", normalized)
     return normalized
 
@@ -2620,7 +2621,7 @@ class ChemicalMappingConsolidator:
             if not norm:
                 return ""
             folded = unicodedata.normalize("NFKD", norm).encode("ascii", "ignore").decode("ascii")
-            folded = folded.replace(" ", "_")
+            folded = folded.replace(" ", "_").replace("'", "_prime")
             # Keep only CURIE-safe chars (pchar-ish: alnum, underscore, hyphen,
             # dot). Everything else collapses away.
             folded = re.sub(r"[^A-Za-z0-9_.\-]", "", folded)

@@ -1,4 +1,12 @@
 target_id	authority_label	kind	value	reason
+mesh:C004977	rhodomycin	name_pattern	(?i)^(?:produces:\s*)?rhodomycin[ _-]+a$	The supported MIM release preserves the specific registry identity; the MeSH family is only a withheld parent claim, not an exact identity (#1129).
+mesh:C004977	rhodomycin	xref	kgmicrobe.compound:rhodomycin_a	Preserve the reviewed specific registry identity without strengthening its family/parent anchor to exact equivalence (#1129).
+mesh:C003169	pluramycin	name_pattern	(?i)^(?:produces:\s*)?pluramycin[ _-]+a$	The supported MIM release preserves the specific registry identity; the MeSH family is only a withheld parent claim, not an exact identity (#1129).
+mesh:C003169	pluramycin	xref	kgmicrobe.compound:pluramycin_a	Preserve the reviewed specific registry identity without strengthening its family/parent anchor to exact equivalence (#1129).
+mesh:C019594	racemomycin	name_pattern	(?i)^(?:produces:\s*)?racemomycin[ _-]+e$	The supported MIM release preserves the specific registry identity; the MeSH family is only a withheld parent claim, not an exact identity (#1129).
+mesh:C019594	racemomycin	xref	kgmicrobe.compound:racemomycin_e	Preserve the reviewed specific registry identity without strengthening its family/parent anchor to exact equivalence (#1129).
+CHEBI:18309	CHEBI:18309 (obsolete)	name_pattern	(?i)^(?:3[- ]amino(?:butyric|butanoic) acid|3[- ]aminobutyrate)$	ChEBI marks this ID obsolete; its replacement CHEBI:17261 is a glycosyl-asparagine, not this amino acid. CHEBI:37081 supports the acid name; the anion requires its own grounding (#1128).
+CHEBI:18309	CHEBI:18309 (obsolete)	xref	CHEBI:37081	The deprecated record and current 3-aminobutanoic acid are not an evidenced identity pair; do not propagate the historical bad name through an xref (#1128).
 FOODON:00002992	fresh bratwurst	xref	FOODON:03315718	Hydrolyzed animal protein is not identical to fresh bratwurst sausage.
 FOODON:00002992	fresh bratwurst	xref	cas:91079-38-8	The imported protein digest cross-reference does not identify fresh bratwurst sausage.
 CHEBI:84843	(R)-2,6-dimethylheptanoylcarnitine	name_pattern	(?i)(?:trypton|trypticase|tripticase|casein|casitone|casamino|casmino|milk protein|vitamin assay)	Raw ChEBI identifies an acylcarnitine, not a casein digest; reject the false alternative returned after removing CHEBI:78018.

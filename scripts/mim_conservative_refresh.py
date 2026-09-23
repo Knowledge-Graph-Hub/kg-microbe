@@ -361,7 +361,7 @@ def _slug(name):
     """Use the existing exporter's lexical identifier convention."""
     normalized = consolidator.normalize_name(name)
     folded = unicodedata.normalize("NFKD", normalized).encode("ascii", "ignore").decode("ascii")
-    return re.sub(r"[^a-z0-9_.-]", "", folded.replace(" ", "_"))
+    return re.sub(r"[^a-z0-9_.-]", "", folded.replace(" ", "_").replace("'", "_prime"))
 
 
 def _serialize(row, fields):

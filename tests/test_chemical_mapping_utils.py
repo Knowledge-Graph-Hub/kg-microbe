@@ -283,6 +283,28 @@ class TestFindChebiByName:
         assert find_chebi_by_name("water") == "CHEBI:15377"
         assert find_chebi_by_name("glucose") == "CHEBI:17234"
 
+    @pytest.mark.parametrize("reverse", [False, True])
+    @pytest.mark.parametrize("as_synonyms", [False, True])
+    def test_prime_isomers_resolve_independently(self, tmp_path, reverse, as_synonyms):
+        """Keep positional isomers distinct, regardless of row order or label rank."""
+        entries = [
+            {"id": "CHEBI:34360", "canonical_name": "4'-hydroxychalcone"},
+            {"id": "CHEBI:34423", "canonical_name": "4-hydroxychalcone"},
+        ]
+        if as_synonyms:
+            for entry in entries:
+                entry["synonyms"] = entry["canonical_name"]
+                entry["canonical_name"] = "structure " + entry["id"]
+        if reverse:
+            entries.reverse()
+        path = tmp_path / "isomers.tsv.gz"
+        _write_mock_sssom(entries, path)
+        chemical_mapping_utils.load_unified_mappings(path)
+        assert find_chebi_by_name("4-hydroxychalcone") == "CHEBI:34423"
+        for prime in ("'", "′", "’", "ʹ"):
+            assert find_chebi_by_name(f"4{prime}-hydroxychalcone") == "CHEBI:34360"
+        assert find_chebi_by_name("4″-hydroxychalcone") is None
+
     def test_find_by_synonym(self, mock_mappings_file):
         """Test lookup by synonym."""
         chemical_mapping_utils.load_unified_mappings(mock_mappings_file)

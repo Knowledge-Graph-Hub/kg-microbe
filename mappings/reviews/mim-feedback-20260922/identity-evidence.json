@@ -1,0 +1,240 @@
+{
+  "scope": "Bounded identity evidence for #1127, #1128, #1129; no role approval or production promotion",
+  "source_kind": "ChEBI SemanticSQL snapshot and independently pinned MIM supported release",
+  "ontology_term_statements": {
+    "CHEBI:18309": [
+      {
+        "predicate": "IAO:0100001",
+        "object": "CHEBI:17261",
+        "value": null
+      },
+      {
+        "predicate": "owl:deprecated",
+        "object": null,
+        "value": "true"
+      }
+    ],
+    "CHEBI:17261": [
+      {
+        "predicate": "IAO:0000115",
+        "object": null,
+        "value": "An <em>N</em><small><sup>4</small></sup>-glycosyl-<small>L</small>-asparagine having (\u03b2-<em>N</em>-acetyl-<small>D</small>-glucosaminyl as the glycosyl component."
+      },
+      {
+        "predicate": "chemrof:inchi_key_string",
+        "object": null,
+        "value": "YTTRPBWEMMPYSW-HRRFRDKFSA-N"
+      },
+      {
+        "predicate": "oio:hasExactSynonym",
+        "object": null,
+        "value": "N(4)-(2-acetamido-2-deoxy-beta-D-glucopyranosyl)-L-asparagine"
+      },
+      {
+        "predicate": "oio:hasRelatedSynonym",
+        "object": null,
+        "value": "1-beta-Aspartyl-N-acetyl-D-glucosaminylamine"
+      },
+      {
+        "predicate": "oio:hasRelatedSynonym",
+        "object": null,
+        "value": "2-Acetamido-1-(beta-L-aspartamido)-1,2-dideoxy-beta-D-glucose"
+      },
+      {
+        "predicate": "oio:hasRelatedSynonym",
+        "object": null,
+        "value": "2-Acetamido-1-N-(4'-L-aspartyl)-2-deoxy-beta-D-glucopyranosylamine"
+      },
+      {
+        "predicate": "oio:hasRelatedSynonym",
+        "object": null,
+        "value": "2-acetamido-N(1)-L-beta-aspartyl-2-deoxy-beta-D-glucopyranosylamine"
+      },
+      {
+        "predicate": "oio:hasRelatedSynonym",
+        "object": null,
+        "value": "2-acetamido-N-L-beta-aspartyl-2-deoxy-beta-D-glucopyranosylamine"
+      },
+      {
+        "predicate": "oio:hasRelatedSynonym",
+        "object": null,
+        "value": "AADG"
+      },
+      {
+        "predicate": "oio:hasRelatedSynonym",
+        "object": null,
+        "value": "N(4)-(2-acetamido-2-deoxy-beta-D-glucopyranosyl)-L-asparagine"
+      },
+      {
+        "predicate": "oio:hasRelatedSynonym",
+        "object": null,
+        "value": "N-Acetylglucosaminylasparagine"
+      },
+      {
+        "predicate": "oio:hasRelatedSynonym",
+        "object": null,
+        "value": "N4-(Acetyl-beta-D-glucosaminyl)asparagine"
+      },
+      {
+        "predicate": "oio:hasRelatedSynonym",
+        "object": null,
+        "value": "N4-(beta-N-Acetyl-D-glucosaminyl)-L-asparagine"
+      },
+      {
+        "predicate": "oio:hasRelatedSynonym",
+        "object": null,
+        "value": "beta-N-acetylglucosaminyl-L-asparagine"
+      },
+      {
+        "predicate": "rdfs:label",
+        "object": null,
+        "value": "N(4)-(beta-N-acetyl-D-glucosaminyl)-L-asparagine"
+      }
+    ],
+    "CHEBI:37081": [
+      {
+        "predicate": "IAO:0000115",
+        "object": null,
+        "value": "A \u03b2-amino acid that is butyric acid which is substituted by an amino group at position 3."
+      },
+      {
+        "predicate": "chemrof:inchi_key_string",
+        "object": null,
+        "value": "OQEBBZSWEGYTPG-UHFFFAOYSA-N"
+      },
+      {
+        "predicate": "oio:hasExactSynonym",
+        "object": null,
+        "value": "3-aminobutanoic acid"
+      },
+      {
+        "predicate": "oio:hasRelatedSynonym",
+        "object": null,
+        "value": "3-Aminobutyric acid"
+      },
+      {
+        "predicate": "oio:hasRelatedSynonym",
+        "object": null,
+        "value": "3-aminobutanoic acid"
+      },
+      {
+        "predicate": "oio:hasRelatedSynonym",
+        "object": null,
+        "value": "3-methyl-beta-alanine"
+      },
+      {
+        "predicate": "oio:hasRelatedSynonym",
+        "object": null,
+        "value": "beta-Aminobutyric acid"
+      },
+      {
+        "predicate": "rdfs:label",
+        "object": null,
+        "value": "3-aminobutanoic acid"
+      }
+    ],
+    "CHEBI:34360": [
+      {
+        "predicate": "IAO:0000115",
+        "object": null,
+        "value": "A member of the class of  chalcones that is <i>trans</i>-chalcone substituted by a hydroxy group at position 4'."
+      },
+      {
+        "predicate": "chemrof:inchi_key_string",
+        "object": null,
+        "value": "UAHGNXFYLAJDIN-IZZDOVSWSA-N"
+      },
+      {
+        "predicate": "oio:hasExactSynonym",
+        "object": null,
+        "value": "(2E)-1-(4-hydroxyphenyl)-3-phenylprop-2-en-1-one"
+      },
+      {
+        "predicate": "oio:hasRelatedSynonym",
+        "object": null,
+        "value": "(2E)-1-(4-hydroxyphenyl)-3-phenylprop-2-en-1-one"
+      },
+      {
+        "predicate": "rdfs:label",
+        "object": null,
+        "value": "4'-hydroxychalcone"
+      }
+    ],
+    "CHEBI:34423": [
+      {
+        "predicate": "IAO:0000115",
+        "object": null,
+        "value": "A member of the class of chalcones that is <i>trans</i>-chalcone substituted by a hydroxy group at position 4."
+      },
+      {
+        "predicate": "chemrof:inchi_key_string",
+        "object": null,
+        "value": "PWWCDTYUYPOAIU-DHZHZOJOSA-N"
+      },
+      {
+        "predicate": "oio:hasExactSynonym",
+        "object": null,
+        "value": "(2E)-3-(4-hydroxyphenyl)-1-phenylprop-2-en-1-one"
+      },
+      {
+        "predicate": "oio:hasRelatedSynonym",
+        "object": null,
+        "value": "(2E)-3-(4-hydroxyphenyl)-1-phenylprop-2-en-1-one"
+      },
+      {
+        "predicate": "rdfs:label",
+        "object": null,
+        "value": "4-hydroxychalcone"
+      }
+    ]
+  },
+  "supported_release_tag": "mim-sssom-2026-09-21",
+  "supported_sha256": "39d81bd6b03f2a8d3883ab26ec96b781df3b0b850113ec4851ae92e6838d4d15",
+  "supported_registry_claims": [
+    {
+      "subject_id": "MIM:Pluramycin_A",
+      "subject_label": "Pluramycin A",
+      "predicate_id": "skos:exactMatch",
+      "object_id": "kgmicrobe.compound:pluramycin_a",
+      "object_label": "Pluramycin A",
+      "object_source": "kgm:compound",
+      "mapping_justification": "semapv:ManualMappingCuration",
+      "source": "MIM:kg-microbe metatraits unmapped_compounds.tsv|MIM:MESH via OLS (label-exact)|MIM:curator=migrate_media_roles_to_facets",
+      "mapping_date": "2026-07-20",
+      "confidence": "0.99",
+      "comment": "Registry/identity row preserving kgmicrobe.compound:pluramycin_a alongside parent mesh:C003169.",
+      "other": "",
+      "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+    },
+    {
+      "subject_id": "MIM:Racemomycin_E",
+      "subject_label": "Racemomycin E",
+      "predicate_id": "skos:exactMatch",
+      "object_id": "kgmicrobe.compound:racemomycin_e",
+      "object_label": "Racemomycin E",
+      "object_source": "kgm:compound",
+      "mapping_justification": "semapv:ManualMappingCuration",
+      "source": "MIM:kg-microbe metatraits unmapped_compounds.tsv|MIM:MESH via OLS (label-exact)|MIM:curator=migrate_media_roles_to_facets",
+      "mapping_date": "2026-07-20",
+      "confidence": "0.99",
+      "comment": "Registry/identity row preserving kgmicrobe.compound:racemomycin_e alongside parent mesh:C019594.",
+      "other": "",
+      "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+    },
+    {
+      "subject_id": "MIM:Rhodomycin_A",
+      "subject_label": "Rhodomycin A",
+      "predicate_id": "skos:exactMatch",
+      "object_id": "kgmicrobe.compound:rhodomycin_a",
+      "object_label": "Rhodomycin A",
+      "object_source": "kgm:compound",
+      "mapping_justification": "semapv:ManualMappingCuration",
+      "source": "MIM:kg-microbe metatraits unmapped_compounds.tsv|MIM:MESH via OLS (label-exact)|MIM:curator=migrate_media_roles_to_facets",
+      "mapping_date": "2026-07-20",
+      "confidence": "0.99",
+      "comment": "Registry/identity row preserving kgmicrobe.compound:rhodomycin_a alongside parent mesh:C004977.",
+      "other": "",
+      "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+    }
+  ]
+}

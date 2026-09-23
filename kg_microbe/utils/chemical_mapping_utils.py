@@ -79,6 +79,14 @@ _NEGATIVE_LOOKUP_CACHE: "OrderedDict[tuple, None]" = OrderedDict()
 # module-scope so it is allocated once, not rebuilt on every call (hot path).
 _GREEK_MAP = {"α": "alpha", "β": "beta", "γ": "gamma", "δ": "delta", "μ": "mu"}
 
+# Prime locants distinguish positions on different rings/subunits (#1127).
+_PRIME_TRANSLATION = str.maketrans({"′": "'", "’": "'", "‘": "'", "ʹ": "'", "″": "''", "‴": "'''"})
+
+
+def normalize_chemical_primes(name: str) -> str:
+    """Canonicalize typographic prime marks without losing chemical locants."""
+    return name.translate(_PRIME_TRANSLATION)
+
 
 def _negative_cache_add(key: tuple) -> None:
     """Add a miss to the bounded negative cache, evicting oldest if full."""
@@ -101,12 +109,12 @@ def normalize_name(
     :param name: Chemical name to normalize
     :param strip_stereochemistry: If True, remove stereochemistry prefixes like (R)-, (S)-, D-, L-, (+)-, (-)-
     :param strip_hydrate: If True, strip trailing hydrate suffixes like " x n H2O", " · 6 H2O", " . 2H2O"
-    :return: Normalized name (lowercase, no punctuation)
+    :return: Normalized name retaining hyphens and chemical prime locants
     """
     if pd.isna(name) or not name:
         return ""
     # Convert to lowercase first
-    normalized = str(name).lower().strip()
+    normalized = normalize_chemical_primes(str(name).lower().strip())
 
     # Normalize Greek letters to their spelled-out ASCII equivalents so that
     # e.g. "4-nitrophenyl β-D-glucopyranoside" (ChEBI label form) matches
@@ -132,7 +140,7 @@ def normalize_name(
         normalized = _HYDRATE_SUFFIX_RE.sub("", normalized).strip()
 
     # Remove extra punctuation and normalize spaces
-    normalized = re.sub(r"[^\w\s-]", "", normalized)
+    normalized = re.sub(r"[^\w\s'-]", "", normalized)
     normalized = re.sub(r"\s+", " ", normalized)
     return normalized
 

@@ -3065,6 +3065,15 @@ def main(argv=None):
         return
     if args.output is not None:
         raise ValueError("--output is only supported with --identity-policy-only")
+    if (base_dir / "mappings/mim_reviewed_release.json").exists():
+        raise ValueError(
+            "A reviewed MIM release is pinned. Legacy additive consolidation could "
+            "reintroduce withheld or stale MIM claims through the seed and companion exports. "
+            "Build a separate candidate with `poetry run python -m scripts.refresh_reviewed_mim "
+            "--release-directory <bundle> --output-directory <new-directory>` and review its report. "
+            "Neither --allow-stale-vendored nor --dry-run bypasses this migration safeguard. "
+            "See docs/MIM_REVIEWED_RELEASE.md."
+        )
     consolidator = ChemicalMappingConsolidator()
 
     sssom_output_path = base_dir / "mappings" / "kgmicrobe_unified_entity_mappings.sssom.tsv.gz"

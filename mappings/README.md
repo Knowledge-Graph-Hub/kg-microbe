@@ -2,6 +2,14 @@
 
 This directory contains unified chemical mapping resources for KG-Microbe.
 
+**MIM migration:** the published supported-only release is now pinned for
+conservative candidate generation. It has not automatically replaced the runtime
+mapping artifact. The legacy additive regeneration commands below are blocked
+while this pin is present because they can reintroduce withheld historical claims.
+Use the [reviewed-release workflow](../docs/MIM_REVIEWED_RELEASE.md) instead.
+The priority/source descriptions below document the legacy artifact and exporter,
+not new scientific approval of every historical alias.
+
 ## Unified Chemical Mappings
 
 `mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz` is the **single source of truth** for chemical mappings. It is the standards-compliant SSSOM mapping product and the file read by transforms via `kg_microbe.utils.chemical_mapping_utils`. Row types:
@@ -70,7 +78,7 @@ Normalized-name collisions do not merge records by name; instead, the name looku
 
 Missing-legacy handling: when a priority-1/2/5 source file is absent (items 1 & 5 above), the consolidator silently skips its loader because the corresponding rows are already present in the existing `kgmicrobe_unified_entity_mappings.sssom.tsv.gz`. The `load_existing_unified()` step re-ingests that baseline with priority inferred from the `source` column.
 
-### Regenerating
+### Legacy regeneration (blocked during the reviewed-release migration)
 
 ```bash
 # Preview: runs the full consolidation, reports what would change, writes nothing.

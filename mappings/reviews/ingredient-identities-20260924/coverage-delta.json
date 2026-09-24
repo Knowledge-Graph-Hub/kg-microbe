@@ -1,0 +1,13 @@
+{
+  "candidate_sha256": "c4942b92a7e7af42cc63dbfa6f59f81eae192ef706f687c9613b113b23e9ad0e",
+  "previous_candidate_sha256": "cb2b6f4f0e6bcc60f0ee76f76c1c8c4bf0030d529ea4d5452d28a29ba5767078",
+  "previous_unreconstructed": 485,
+  "current_unreconstructed": 507,
+  "newly_retired": 22,
+  "newly_retired_with_current_producer_references": 0,
+  "unchanged_referenced_identifiers": 63,
+  "unchanged_affected_edge_rows": 504,
+  "producer_tables": 31,
+  "rows_scanned": 18784312,
+  "scope": "Existing transformed producer tables, including gitignored files. No post-promotion rebuild or closure is asserted."
+}

@@ -1,0 +1,23 @@
+retired_identifier	stable_subject	reviewed_ingredient	disposition	existing_producer_edge_rows
+cas:10018-19-6	MIM:Cotarnine_Chloride	NCIT:C79997	Retained as verified node annotation/query; no standalone ingredient or new exact equivalence	0
+cas:168828-58-8	MIM:Sutezolid	NCIT:C152482	Retained as verified node annotation/query; no standalone ingredient or new exact equivalence	0
+cas:187235-37-6	MIM:Pretomanid	NCIT:C166606	Retained as verified node annotation/query; no standalone ingredient or new exact equivalence	0
+cas:39300-88-4	MIM:Tara_Gum	FOODON:03413299	Retained as verified node annotation/query; no standalone ingredient or new exact equivalence	0
+cas:53912-89-3	MIM:Anabasine_Hydrochloride	NCIT:C216370	Retained as verified node annotation/query; no standalone ingredient or new exact equivalence	0
+cas:7486-38-6	MIM:Sodium_Adipate	FOODON:03413240	Retained as verified node annotation/query; no standalone ingredient or new exact equivalence	0
+cas:8001-21-6	MIM:Sunflower_Oil	NCIT:C1241	Retained as verified node annotation/query; no standalone ingredient or new exact equivalence	0
+cas:8048-52-0	MIM:Acriflavine	NCIT:C76253	FDA GSRS SUPERSEDED history only; current annotation cas:65589-70-0	0
+cas:9000-40-2	MIM:Locust_Bean_Gum	FOODON:03413132	Retained as verified node annotation/query; no standalone ingredient or new exact equivalence	0
+cas:9010-72-4	MIM:Zymosan	NCIT:C183132	Retained as verified node annotation/query; no standalone ingredient or new exact equivalence	0
+cas:9048-46-8	MIM:Bovine_Serum_Albumin	NCIT:C85253	Retained as verified node annotation/query; no standalone ingredient or new exact equivalence	0
+kgmicrobe.compound:acriflavine	MIM:Acriflavine	NCIT:C76253	Retire redundant local identity; retain stable MIM subject and reviewed ontology ingredient	0
+kgmicrobe.compound:anabasine_hydrochloride	MIM:Anabasine_Hydrochloride	NCIT:C216370	Retire redundant local identity; retain stable MIM subject and reviewed ontology ingredient	0
+kgmicrobe.compound:bovine_serum_albumin	MIM:Bovine_Serum_Albumin	NCIT:C85253	Retire redundant local identity; retain stable MIM subject and reviewed ontology ingredient	0
+kgmicrobe.compound:cotarnine_chloride	MIM:Cotarnine_Chloride	NCIT:C79997	Retire redundant local identity; retain stable MIM subject and reviewed ontology ingredient	0
+kgmicrobe.compound:pretomanid	MIM:Pretomanid	NCIT:C166606	Retire redundant local identity; retain stable MIM subject and reviewed ontology ingredient	0
+kgmicrobe.compound:sunflower_oil	MIM:Sunflower_Oil	NCIT:C1241	Retire redundant local identity; retain stable MIM subject and reviewed ontology ingredient	0
+kgmicrobe.compound:sutezolid	MIM:Sutezolid	NCIT:C152482	Retire redundant local identity; retain stable MIM subject and reviewed ontology ingredient	0
+kgmicrobe.compound:zymosan	MIM:Zymosan	NCIT:C183132	Retire redundant local identity; retain stable MIM subject and reviewed ontology ingredient	0
+kgmicrobe.ingredient:locust_bean_gum	MIM:Locust_Bean_Gum	FOODON:03413132	Retire redundant local identity; retain stable MIM subject and reviewed ontology ingredient	0
+kgmicrobe.ingredient:sodium_adipate	MIM:Sodium_Adipate	FOODON:03413240	Retire redundant local identity; retain stable MIM subject and reviewed ontology ingredient	0
+kgmicrobe.ingredient:tara_gum	MIM:Tara_Gum	FOODON:03413299	Retire redundant local identity; retain stable MIM subject and reviewed ontology ingredient	0

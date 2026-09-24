@@ -1,0 +1,12 @@
+{
+  "candidate": "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/candidate-ingredient-identities/candidate.sssom.tsv.gz",
+  "active_fields_scanned": [
+    "object_id",
+    "object_label",
+    "subject_id",
+    "subject_label"
+  ],
+  "invalid_lysozyme_cas_occurrences": [],
+  "scope": "All rows in final candidate; excludes historical commentary. Ignored candidate file read explicitly.",
+  "candidate_sha256": "c4942b92a7e7af42cc63dbfa6f59f81eae192ef706f687c9613b113b23e9ad0e"
+}

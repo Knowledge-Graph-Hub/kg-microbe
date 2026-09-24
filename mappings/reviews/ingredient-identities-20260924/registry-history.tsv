@@ -1,0 +1,6 @@
+subject_id	identifier	source_status	source	current_export	note
+MIM:Acriflavine	cas:8048-52-0	ORIGINAL_SOURCE	CultureBotHT compounds_to_cas.csv	history_only	Original imported CAS; source row preserved in MIM review evidence.
+NCIT:C76253	cas:8048-52-0	SUPERSEDED	https://precision.fda.gov/ginas/app/api/v1/substances/1T3A50395T?view=full	history_only	Status applies to this FDA record; no global withdrawal claim or current exact equivalence.
+NCIT:C76253	cas:65589-70-0	PRIMARY	https://precision.fda.gov/ginas/app/api/v1/substances/1T3A50395T?view=full	xref	Current verified mixture annotation; not a component CAS.
+MIM:Lysozyme	cas:2650-88-3	REJECTED_INVALID_CHECK_DIGIT	CultureBotHT compounds_to_cas.csv	history_only	No guessed replacement; original material preparation remains unresolved in MIM #753.
+NCIT:C85253	cas:9048-46-8	GENERIC (FAMILY)	https://precision.fda.gov/ginas/app/api/v1/substances/27432CM55Q?view=full	xref	Generic bovine albumin annotation; supplier and preparation details are separate.

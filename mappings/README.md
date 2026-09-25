@@ -10,6 +10,22 @@ Use the [reviewed-release workflow](../docs/MIM_REVIEWED_RELEASE.md) instead.
 The priority/source descriptions below document the legacy artifact and exporter,
 not new scientific approval of every historical alias.
 
+To check the committed artifact's exporter provenance without regenerating it:
+
+```bash
+make mapping-provenance
+# Include the current code/config and installed-library inventory:
+poetry run python -m scripts.mapping_provenance --context
+```
+
+`MATCH`, `DRIFT`, and `UNRECOGNIZED_EXPORTER` are nonblocking observations, not
+scientific mapping validation. Malformed or missing inputs still fail. Do not
+rebuild through the legacy additive route merely to silence drift (#973).
+New conservative candidate reports also record a portable code/config hash set,
+the dependency lock and actual installed library versions, and reject changes
+during generation. This is an explicit conservative superset, not a claim to
+capture every operating-system dependency (#974).
+
 ## Unified Chemical Mappings
 
 `mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz` is the **single source of truth** for chemical mappings. It is the standards-compliant SSSOM mapping product and the file read by transforms via `kg_microbe.utils.chemical_mapping_utils`. Row types:

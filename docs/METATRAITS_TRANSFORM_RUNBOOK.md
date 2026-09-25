@@ -68,7 +68,7 @@ Default paths:
 
 Trait names are resolved in this order:
 
-1. **Curated microbial-trait-mappings** (`mappings/metatraits/*.tsv`) — authoritative lookup from [turbomam/microbial-trait-mappings](https://github.com/turbomam/microbial-trait-mappings). TSVs by entity type:
+1. **Curated microbial-trait-mappings** (`mappings/canonical/*.tsv`) — the shared KGM curation directory, including mappings originally contributed through [turbomam/microbial-trait-mappings](https://github.com/turbomam/microbial-trait-mappings). TSVs by entity type:
    - `chemical_mappings.tsv` — produces compounds (CHEBI)
    - `enzyme_mappings.tsv` — enzyme activities (EC, GO)
    - `pathway_mappings.tsv` — pathways (GO)
@@ -140,9 +140,9 @@ poetry run kg merge -y merge.yaml
 
 To map a new trait that appears in `unmapped_traits.tsv`:
 
-1. **Preferred:** Contribute to [turbomam/microbial-trait-mappings](https://github.com/turbomam/microbial-trait-mappings) (PR with new rows in the appropriate TSV). Once merged, copy the updated TSV into `mappings/metatraits/`.
+1. **Preferred:** Contribute to [turbomam/microbial-trait-mappings](https://github.com/turbomam/microbial-trait-mappings) (PR with new rows in the appropriate TSV). Once merged, review and incorporate the relevant rows into `mappings/canonical/`, preserving KGM's existing curation and schema extensions rather than overwriting the directory.
 
-2. **Local override:** Add a row to the appropriate TSV in `mappings/metatraits/`. Required columns:
+2. **Local override:** Add a row to the appropriate TSV in `mappings/canonical/`. Required columns:
    - `subject_label` — trait name (e.g. `produces: ethanol`)
    - `subject_label_normalized` — lowercase variant for case-insensitive lookup
    - `object_id` — CURIE (e.g. `CHEBI:16236`, `EC:1.11.1.6`, `GO:0008150`)
@@ -151,6 +151,14 @@ To map a new trait that appears in `unmapped_traits.tsv`:
    - `notes` — include `biolink:produces`, `biolink:capable_of`, or `biolink:has_phenotype` to specify the predicate
 
 3. **Fallback:** Add to `custom_curies.yaml` or METPO synonym mappings (used when trait is not in curated TSVs).
+
+Chemical-name identity lookup also uses the unified SSSOM and the guarded
+`special_chemical_mappings.tsv` fallback. A canonical-table edit does not by itself
+refresh the unified artifact. Follow [the reviewed MIM workflow](MIM_REVIEWED_RELEASE.md)
+for chemical consolidation; do not run the blocked legacy additive exporter.
+Review `unmapped_traits.tsv` for missing trait groundings and `unresolved_taxa.tsv`
+for organism-name resolution separately. A taxonomic correction is not a chemical
+mapping fix. Keep existing source labels and attach evidence to each new mapping.
 
 ## Troubleshooting
 

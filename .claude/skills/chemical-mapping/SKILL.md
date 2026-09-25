@@ -5,6 +5,22 @@ description: Work with KG-Microbe's unified chemical mapping system (`mappings/k
 
 # KG-Microbe Chemical Mapping
 
+## Current workflow takes precedence
+
+While `mappings/mim_reviewed_release.json` is present, use
+`docs/MIM_REVIEWED_RELEASE.md` and `scripts/refresh_reviewed_mim.py` for an
+isolated supported-only candidate. Read that runbook before building one. The
+legacy additive CLI refuses to run, including dry-run and stale-vendored modes.
+Do not sync a floating sibling checkout, replay historical companion exports,
+or edit the vendored mappings to bypass the pin. The remaining source-priority
+and sibling-sync sections describe the historical exporter only; they do not
+authorize the current migration workflow.
+
+`make mapping-provenance` reports exporter drift without regeneration. Candidate
+CI and the opt-in ingredient bundle cohort do not authorize production promotion;
+retain the coverage, provenance, transform-freshness and merged-graph gates in
+the reviewed-release runbook.
+
 ## What this is
 
 KG-Microbe resolves free-text chemical names from many source transforms

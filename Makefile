@@ -1,9 +1,12 @@
-.PHONY: run-summary process-metatraits-unmapped \
+.PHONY: run-summary mapping-provenance process-metatraits-unmapped \
         validate-isolation-source-schema validate-ingredient-schema
 .SILENT:
 
 run-summary:
 	poetry run python scripts/graph_summary.py data/merged
+
+mapping-provenance:
+	poetry run python -m scripts.mapping_provenance
 
 
 neo4j-upload:

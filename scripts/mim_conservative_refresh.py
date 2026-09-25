@@ -35,6 +35,7 @@ from kg_microbe.utils.ingredient_identity import (
     ingredient_xref_allowed,
 )
 from scripts import consolidate_chemical_mappings as consolidator
+from scripts.mapping_provenance import context_paths, reproducibility_context
 from scripts.mim_reviewed_release import validate_reviewed_bundle
 
 INDEPENDENT_SOURCE_KINDS = frozenset(
@@ -493,6 +494,8 @@ def build_conservative_candidate(
     if any(source.kind not in INDEPENDENT_SOURCE_KINDS for source in independent_sources):
         raise ValueError("Unknown independent source kind")
     bundle = validate_reviewed_bundle(release_directory, expected_manifest_sha256=expected_manifest_sha256)
+    repo_root = Path(__file__).resolve().parents[1]
+    build_context = reproducibility_context(repo_root)
     code_paths = (
         Path(__file__).resolve(),
         Path(consolidator.__file__).resolve(),
@@ -502,7 +505,8 @@ def build_conservative_candidate(
         NAME_SCOPE_POLICY.resolve(),
         IDENTITY_POLICY.parent.parent / "kg_microbe/utils/ingredient_identity.py",
     )
-    inputs = [baseline, *ontology_paths, *(source.path for source in independent_sources), *code_paths]
+    inputs = [baseline, *ontology_paths, *(source.path for source in independent_sources), *code_paths,
+              *context_paths(repo_root)]
     inputs.extend(bundle.directory / name for name in ("manifest.json", *bundle.manifest["files"]))
     fingerprints = {str(path): _hash(path) for path in inputs}
     verified_release_hashes = {"manifest.json": bundle.manifest_sha256, **bundle.manifest["files"]}
@@ -694,6 +698,8 @@ def build_conservative_candidate(
         for path, fingerprint in fingerprints.items():
             if _hash(Path(path)) != fingerprint:
                 raise ValueError(f"Input changed during conservative refresh: {path}")
+        if reproducibility_context(repo_root) != build_context:
+            raise ValueError("Code or environment changed during conservative refresh")
         conflicts = [
             {
                 "name": row["subject_label"],
@@ -728,6 +734,7 @@ def build_conservative_candidate(
             "source_sha256": bundle.source_sha256,
             "review_sha256": bundle.review_sha256,
             "input_sha256": fingerprints,
+            "reproducibility_context": build_context,
             "candidate_sha256": _hash(candidate),
             "quarantine_sha256": _hash(quarantine),
             "counts": stats,

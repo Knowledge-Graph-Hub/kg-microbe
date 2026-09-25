@@ -29,12 +29,14 @@ from kg_microbe.utils.ingredient_identity import (
     IDENTITY_POLICY,
     NAME_SCOPE_POLICY,
     accepted_name_scope,
+    ingredient_case_sensitive_name_scope,
     ingredient_mapping_allowed,
     ingredient_name_scopes,
     ingredient_name_target,
     ingredient_xref_allowed,
 )
 from scripts import consolidate_chemical_mappings as consolidator
+from scripts.mapping_provenance import context_paths, reproducibility_context
 from scripts.mim_reviewed_release import validate_reviewed_bundle
 
 INDEPENDENT_SOURCE_KINDS = frozenset(
@@ -173,6 +175,34 @@ def _mim_source(source):
 def _mim_row(row):
     """Identify MIM-origin assertions, including translated historical parents."""
     return row["subject_id"].startswith(("MIM:", "MediaIngredientMech:")) or _mim_source(row.get("source", ""))
+
+
+def _historical_policy_rejection(row):
+    """Reject reviewed lexical/exact claims without banning targets or weaker relations."""
+    subject, target = row["subject_id"], row["object_id"]
+    if subject.startswith("kgm.name:") and row["predicate_id"] in {"skos:exactMatch", "skos:closeMatch"}:
+        if not ingredient_mapping_allowed(row.get("subject_label", ""), target):
+            return "reviewed_identity_policy_name"
+    elif row["predicate_id"] == "skos:exactMatch" and not ingredient_xref_allowed(subject, target):
+        return "reviewed_identity_policy_xref"
+    return ""
+
+
+def _candidate_name_lookup(name, names, declared):
+    """Mirror finite runtime query scopes without putting case-sensitive aliases in a shared key."""
+    recognized, target = ingredient_case_sensitive_name_scope(name)
+    if recognized:
+        return target if target in declared and ingredient_mapping_allowed(name, target) else None
+    normalized = runtime.normalize_name(name)
+    if ingredient_case_sensitive_name_scope(normalized)[0]:
+        return None
+    return names.get(normalized)
+
+
+def _historical_object_label_rejected(row):
+    """Detect unsafe descriptive metadata separately from an otherwise admissible claim."""
+    label = row.get("object_label", "")
+    return bool(label and not ingredient_mapping_allowed(label, row["object_id"]))
 
 
 class _Components:
@@ -493,6 +523,8 @@ def build_conservative_candidate(
     if any(source.kind not in INDEPENDENT_SOURCE_KINDS for source in independent_sources):
         raise ValueError("Unknown independent source kind")
     bundle = validate_reviewed_bundle(release_directory, expected_manifest_sha256=expected_manifest_sha256)
+    repo_root = Path(__file__).resolve().parents[1]
+    build_context = reproducibility_context(repo_root)
     code_paths = (
         Path(__file__).resolve(),
         Path(consolidator.__file__).resolve(),
@@ -502,7 +534,13 @@ def build_conservative_candidate(
         NAME_SCOPE_POLICY.resolve(),
         IDENTITY_POLICY.parent.parent / "kg_microbe/utils/ingredient_identity.py",
     )
-    inputs = [baseline, *ontology_paths, *(source.path for source in independent_sources), *code_paths]
+    inputs = [
+        baseline,
+        *ontology_paths,
+        *(source.path for source in independent_sources),
+        *code_paths,
+        *context_paths(repo_root),
+    ]
     inputs.extend(bundle.directory / name for name in ("manifest.json", *bundle.manifest["files"]))
     fingerprints = {str(path): _hash(path) for path in inputs}
     verified_release_hashes = {"manifest.json": bundle.manifest_sha256, **bundle.manifest["files"]}
@@ -519,12 +557,18 @@ def build_conservative_candidate(
         prefixes.setdefault(prefix, upstream_uri)
     evidence = _Evidence(set(prefixes))
     components, initial, baseline_entities = _Components(), set(), set()
+    policy_pruned_targets = set()
+    policy_metadata_targets = set()
     baseline_count = 0
     for row in _rows(baseline):
         baseline_count += 1
         target, subject = row["object_id"], row["subject_id"]
         baseline_entities.add(target)
         components.root(target)
+        if _historical_policy_rejection(row):
+            policy_pruned_targets.add(target)
+        if _historical_object_label_rejected(row):
+            policy_metadata_targets.add(target)
         if _mim_row(row):
             initial.add(target)
         if row["predicate_id"] == "skos:exactMatch" and not subject.startswith("kgm.name:"):
@@ -545,12 +589,18 @@ def build_conservative_candidate(
         components.join(curie, row["subject_id"])
     tainted_roots = {components.root(curie) for curie in initial}
     affected = {curie for curie in baseline_entities | initial if components.root(curie) in tainted_roots}
-    evidence.records = {curie: record for curie, record in evidence.records.items() if curie in affected}
+    # A rejected lexical claim may be a target's only historical declaration.
+    # Restore current direct authority without quarantining its unrelated valid rows.
+    reconstruction_targets = affected | policy_pruned_targets | policy_metadata_targets
+    evidence.records = {curie: record for curie, record in evidence.records.items() if curie in reconstruction_targets}
     native_found = set()
+    native_object_labels = {}
     for namespace, row in _native_rows(ontology_paths):
         curie = row["id"]
-        if curie in affected:
+        if curie in reconstruction_targets:
             native_found.add(curie)
+            if row["name"] and ingredient_mapping_allowed(row["name"], curie):
+                native_object_labels[curie] = {"label": row["name"], "source": f"native_ontology:{namespace}"}
             evidence.add(
                 curie,
                 row["name"],
@@ -604,6 +654,8 @@ def build_conservative_candidate(
         "quarantined_rows": 0,
         "rebuilt_rows": 0,
         "removed_mim_nonidentity_rows": 0,
+        "identity_policy_quarantined_rows": 0,
+        "identity_policy_relabelled_rows": 0,
     }
     output_directory.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=".mim-candidate-", dir=output_directory.parent) as temporary:
@@ -623,7 +675,21 @@ def build_conservative_candidate(
             _write_header(handle, quarantine_metadata, [*fields, "quarantine_reason"])
             for row in _rows(baseline):
                 curie = row["object_id"]
+                policy_reason = _historical_policy_rejection(row)
+                if policy_reason:
+                    handle.write(_serialize(row, fields) + "\t" + policy_reason + "\n")
+                    stats["quarantined_rows"] += 1
+                    stats["identity_policy_quarantined_rows"] += 1
+                    continue
                 nonidentity = row["predicate_id"] in _NONIDENTITY and not row["subject_id"].startswith("kgm.name:")
+                retained_claim = not _mim_row(row) and (curie not in affected or nonidentity)
+                if retained_claim and _historical_object_label_rejected(row):
+                    # Preserve a valid historical xref/alias while retiring its unsafe
+                    # descriptive label. The full original remains auditable (#1154).
+                    handle.write(_serialize(row, fields) + "\treviewed_identity_policy_object_label\n")
+                    stats["quarantined_rows"] += 1
+                    stats["identity_policy_relabelled_rows"] += 1
+                    row = dict(row, object_label=native_object_labels.get(curie, {}).get("label", ""))
                 if nonidentity and not _mim_row(row):
                     adjusted = dict(row)
                     if curie in affected:
@@ -681,7 +747,7 @@ def build_conservative_candidate(
             if target in named_entities:
                 names[runtime.normalize_name(query)] = target
         unreconstructed_lexicals = sorted(
-            curie for curie in affected if not evidence.records.get(curie, _Entity()).label
+            curie for curie in reconstruction_targets if not evidence.records.get(curie, _Entity()).label
         )
         stats.update(
             candidate_rows=stats["preserved_rows"] + stats["rebuilt_rows"],
@@ -694,25 +760,42 @@ def build_conservative_candidate(
         for path, fingerprint in fingerprints.items():
             if _hash(Path(path)) != fingerprint:
                 raise ValueError(f"Input changed during conservative refresh: {path}")
+        if reproducibility_context(repo_root) != build_context:
+            raise ValueError("Code or environment changed during conservative refresh")
         conflicts = [
             {
                 "name": row["subject_label"],
                 "subject_id": row["subject_id"],
                 "expected": row["object_id"],
-                "resolved": names.get(runtime.normalize_name(row["subject_label"])),
+                "resolved": _candidate_name_lookup(row["subject_label"], names, named_entities),
             }
             for row in bundle.supported_rows
-            if names.get(runtime.normalize_name(row["subject_label"])) != row["object_id"]
+            if _candidate_name_lookup(row["subject_label"], names, named_entities) != row["object_id"]
         ]
         accepted_scopes = [
-            dict(conflict, explicit_resolved=mim_xrefs.get(conflict["subject_id"]),
-                 reason="Reviewed generic trait versus 9H ingredient scope; native subclass relation retained.")
+            dict(
+                conflict,
+                explicit_resolved=mim_xrefs.get(conflict["subject_id"]),
+                reason="Reviewed generic trait versus 9H ingredient scope; native subclass relation retained.",
+            )
             for conflict in conflicts
-            if accepted_name_scope(conflict["subject_id"], conflict["expected"], conflict["resolved"],
-                                   mim_xrefs.get(conflict["subject_id"]))
+            if accepted_name_scope(
+                conflict["subject_id"],
+                conflict["expected"],
+                conflict["resolved"],
+                mim_xrefs.get(conflict["subject_id"]),
+            )
         ]
-        conflicts = [conflict for conflict in conflicts if not accepted_name_scope(
-            conflict["subject_id"], conflict["expected"], conflict["resolved"], mim_xrefs.get(conflict["subject_id"]))]
+        conflicts = [
+            conflict
+            for conflict in conflicts
+            if not accepted_name_scope(
+                conflict["subject_id"],
+                conflict["expected"],
+                conflict["resolved"],
+                mim_xrefs.get(conflict["subject_id"]),
+            )
+        ]
         supported_targets = defaultdict(set)
         for row in bundle.supported_rows:
             supported_targets[row["subject_id"]].add(row["object_id"])
@@ -728,13 +811,22 @@ def build_conservative_candidate(
             "source_sha256": bundle.source_sha256,
             "review_sha256": bundle.review_sha256,
             "input_sha256": fingerprints,
+            "reproducibility_context": build_context,
             "candidate_sha256": _hash(candidate),
             "quarantine_sha256": _hash(quarantine),
             "counts": stats,
             "initial_affected_entities": sorted(initial),
             "affected_entities": sorted(affected),
+            "policy_pruned_targets": sorted(policy_pruned_targets),
+            "policy_metadata_targets": sorted(policy_metadata_targets),
+            "native_object_label_repairs": {
+                curie: native_object_labels[curie]
+                for curie in sorted(policy_metadata_targets & native_object_labels.keys())
+            },
+            "unreconstructed_object_labels": sorted(policy_metadata_targets - native_object_labels.keys()),
+            "reconstruction_targets": sorted(reconstruction_targets),
             "native_authority_entities": sorted(native_found),
-            "unreconstructed_entities": sorted(affected - evidence.records.keys()),
+            "unreconstructed_entities": sorted(reconstruction_targets - evidence.records.keys()),
             "unreconstructed_lexical_entities": unreconstructed_lexicals,
             "supported_name_lookup_conflicts": conflicts,
             "accepted_name_scope_distinctions": accepted_scopes,
@@ -751,6 +843,8 @@ def build_conservative_candidate(
                 "Source/review hashes are publisher claims; original scientific evidence is outside this bundle.",
                 "The caller must establish independent input lineage; a manual/legacy filename does not prove it.",
                 "Native xref annotations inform quarantine scope only; new identity claims require explicit same_as.",
+                "preserved_rows counts retained assertions including metadata-repaired copies, not unchanged bytes; "
+                "their originals also count in quarantined_rows. identity_policy_relabelled_rows reports the overlap.",
             ],
         }
         (stage / "report.json").write_text(json.dumps(report, sort_keys=True, indent=2) + "\n", encoding="utf-8")

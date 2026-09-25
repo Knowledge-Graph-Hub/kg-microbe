@@ -1,0 +1,354 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://w3id.org/mediaingredientmech/ingredient-bundle/v1/schema",
+  "title": "Ingredient identifier and source-occurrence claims, v1",
+  "$defs": {
+    "identifier": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "annotation_id": {
+          "type": "string",
+          "pattern": "^MIM\\.annotation:[a-f0-9]{64}$"
+        },
+        "owner_id": {
+          "type": "string",
+          "pattern": "^\\S+:\\S+$"
+        },
+        "identifier": {
+          "type": "string"
+        },
+        "raw_identifier": {
+          "type": "string"
+        },
+        "identifier_scope": {
+          "enum": [
+            "chemical_family",
+            "defined_substance",
+            "material",
+            "preparation",
+            "catalog_product",
+            "unknown"
+          ]
+        },
+        "source_status": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_currentness": {
+          "enum": [
+            "CURRENT",
+            "HISTORICAL",
+            "UNKNOWN"
+          ]
+        },
+        "source_id": {
+          "type": "string",
+          "pattern": "^\\S+:\\S+$"
+        },
+        "source_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retrieved_at": {
+          "type": "string",
+          "pattern": "^\\d{4}-\\d{2}-\\d{2}$"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "document_id": {
+                "type": "string",
+                "pattern": "^urn:sha256:[a-f0-9]{64}$"
+              },
+              "locator": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "document_id",
+              "locator"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "review_status": {
+          "enum": [
+            "SUPPORTED",
+            "WITHHOLD",
+            "UNREVIEWED"
+          ]
+        },
+        "xref_eligible": {
+          "type": "boolean"
+        },
+        "identifier_validity": {
+          "enum": [
+            "VALID",
+            "INVALID",
+            "UNKNOWN"
+          ]
+        }
+      },
+      "required": [
+        "annotation_id",
+        "owner_id",
+        "identifier",
+        "raw_identifier",
+        "identifier_scope",
+        "source_status",
+        "source_currentness",
+        "source_id",
+        "source_version",
+        "retrieved_at",
+        "evidence",
+        "review_status",
+        "xref_eligible",
+        "identifier_validity"
+      ]
+    },
+    "product": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "product_id": {
+          "type": "string",
+          "pattern": "^MIM\\.product:[a-f0-9]{64}$"
+        },
+        "ingredient_id": {
+          "type": "string",
+          "pattern": "^\\S+:\\S+$"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "supplier": {
+          "type": "string",
+          "minLength": 1
+        },
+        "catalog_number": {
+          "type": "string",
+          "minLength": 1
+        },
+        "preparation": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "source_id": {
+          "type": "string",
+          "pattern": "^\\S+:\\S+$"
+        },
+        "source_payload": {
+          "type": "object"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "document_id": {
+                "type": "string",
+                "pattern": "^urn:sha256:[a-f0-9]{64}$"
+              },
+              "locator": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "document_id",
+              "locator"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "review_status": {
+          "enum": [
+            "SUPPORTED",
+            "WITHHOLD",
+            "UNREVIEWED"
+          ]
+        }
+      },
+      "required": [
+        "product_id",
+        "ingredient_id",
+        "label",
+        "supplier",
+        "catalog_number",
+        "preparation",
+        "source_id",
+        "source_payload",
+        "evidence",
+        "review_status"
+      ]
+    },
+    "occurrence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "occurrence_id": {
+          "type": "string",
+          "pattern": "^MIM\\.occurrence:[a-f0-9]{64}$"
+        },
+        "ingredient_id": {
+          "type": "string",
+          "pattern": "^\\S+:\\S+$"
+        },
+        "source_id": {
+          "type": "string",
+          "pattern": "^\\S+:\\S+$"
+        },
+        "source_occurrence_key": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_kind": {
+          "enum": [
+            "recipe",
+            "observation"
+          ]
+        },
+        "original_label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "quantity": {
+          "type": [
+            "object",
+            "null"
+          ]
+        },
+        "preparation": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "product_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^MIM\\.product:[a-f0-9]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "alternative_group_id": {
+                "type": "string",
+                "pattern": "^MIM\\.alternative:[a-f0-9]{64}$"
+              },
+              "group_key": {
+                "type": "string",
+                "minLength": 1
+              },
+              "operator": {
+                "const": "one_of"
+              },
+              "members": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "product_id": {
+                      "type": "string",
+                      "pattern": "^MIM\\.product:[a-f0-9]{64}$"
+                    },
+                    "reported_details": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "product_id",
+                    "reported_details"
+                  ]
+                },
+                "minItems": 2
+              },
+              "selection_status": {
+                "const": "UNSPECIFIED"
+              }
+            },
+            "required": [
+              "alternative_group_id",
+              "group_key",
+              "operator",
+              "members",
+              "selection_status"
+            ]
+          }
+        },
+        "source_payload": {
+          "type": "object"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "document_id": {
+                "type": "string",
+                "pattern": "^urn:sha256:[a-f0-9]{64}$"
+              },
+              "locator": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "required": [
+              "document_id",
+              "locator"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        },
+        "review_status": {
+          "enum": [
+            "SUPPORTED",
+            "WITHHOLD",
+            "UNREVIEWED"
+          ]
+        }
+      },
+      "required": [
+        "occurrence_id",
+        "ingredient_id",
+        "source_id",
+        "source_occurrence_key",
+        "source_kind",
+        "original_label",
+        "quantity",
+        "preparation",
+        "product_id",
+        "alternatives",
+        "source_payload",
+        "evidence",
+        "review_status"
+      ]
+    }
+  }
+}

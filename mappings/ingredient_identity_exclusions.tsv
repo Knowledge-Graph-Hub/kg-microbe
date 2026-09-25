@@ -1,4 +1,43 @@
 target_id	authority_label	kind	value	reason
+CHEBI:8612	psicofuranin	name_pattern	(?i)^(?:produces:\s*)?angustmycin$	The unqualified source name does not select native Angustmycin C over A/C; preserve the reported local compound without rejecting explicit psicofuranin or Angustmycin C names (#1153).
+CHEBI:223718	Rubradirin B	name_pattern	(?i)^(?:produces:\s*)?rubradirin$	The unqualified source name does not select the specific native Rubradirin B; preserve the reported local compound without rejecting explicit Rubradirin B (#1153).
+CHEBI:31271	Berberine chloride (TN)	name_pattern	(?i)^berberine$	Native ChEBI distinguishes berberine CHEBI:16118 from its chloride salt; the unqualified name must not silently select the chloride (#788).
+CHEBI:5862	idazoxan	name_pattern	(?i)^(?:cystein-hcl|cysteine-hcl|cysteine hcl|l-cystein hcl|l-cysteine-hcl|l-cysteine hcl|l-cysteine x hcl)$	Seven historical MediaDive aliases confuse PubChem CID 5862 with native CHEBI:5862 idazoxan; reject only these demonstrated cysteine-HCl names, retaining native drug identity (#788).
+CHEBI:32150	sodium thiosulfate pentahydrate	name_pattern	(?i)^na2s2o3$	The unqualified source formula does not specify five waters; prevent legacy fallback from strengthening it to pentahydrate, while retaining explicit pentahydrate names and registry identity (#788).
+CHEBI:29365	phosgene	name_pattern	^CoCl2 x 2 H2O$	The observed MediaDive hydrated cobalt chloride string is not phosgene; keep native uppercase COCl2 and do not infer hydrate identity from a case-folded formula collision (#1151).
+CHEBI:35696	cobalt dichloride	name_pattern	^CoCl2 x 2 H2O$	The observed source explicitly specifies a dihydrate; the native anhydrous cobalt chloride target is not an exact ingredient identity (#1151).
+CHEBI:30812	iron dichloride	name_pattern	^FeCl2 x 6 H2O$	The observed source explicitly specifies a hexahydrate; do not replace it by native anhydrous iron dichloride (#1151).
+CHEBI:34683	disodium hydrogenphosphate	name_pattern	^Na2HPO4 x 6 H2O$	The observed source explicitly specifies a hexahydrate; retain source identity rather than strengthening to the native anhydrous phosphate (#1151).
+CHEBI:34887	nickel dichloride	name_pattern	^NiCl2 x 2 H2O$	The observed source explicitly specifies a dihydrate; native anhydrous nickel dichloride does not establish exact hydrate identity (#1151).
+CHEBI:17659	UDP	name_pattern	(?i)^potassium[ _-]+5-dehydro-d-gluconate$	The demonstrated historical potassium gluconate alias is not native UDP; quarantine that alias without promoting a parent anion to exact salt identity (#1151).
+CHEBI:8150	CHEBI:8150 (obsolete)	name_pattern	(?i)^(?:bacto[ _-]*)?soytone$	Historical Soytone/Bacto Soytone ingredient rows name a soy digest, not the obsolete identifier whose native replacement is phospholipid CHEBI:16247; retain source ingredient identity (#1151).
+CHEBI:14258	CHEBI:14258 (obsolete)	name_pattern	(?i)^sulfur[ _-]*\(?powder\)?$	Historical Sulfur (powder) is not the obsolete identifier whose native replacement is ferroleghemoglobin CHEBI:17373; never follow that unrelated replacement for the recipe ingredient (#1151).
+CHEBI:19708	CHEBI:19708 (obsolete)	name_pattern	(?i)^hepes[ _-]*buffer$	Historical HEPES buffer is not the obsolete identifier whose native replacement is 2-methylpropanal oxime CHEBI:17502; preserve unresolved source buffer identity (#1151).
+CHEBI:52891	QSY9 succinimidyl ester(1+)	name_pattern	(?i)cystein(?:e|ium).*?(?:hcl|chloride)	Native ChEBI identifies this target as a QSY9 dye, not cysteine hydrochloride; reject the salt aliases without inferring stereochemistry or hydration (#788).
+CHEBI:52891	QSY9 succinimidyl ester(1+)	xref	CHEBI:91247	Native ChEBI distinguishes the QSY9 dye from L-cysteine hydrochloride; reject the historical false identity in either direction (#788).
+CHEBI:17020	glucomannan	name_pattern	(?i)^autoclaved glucomannan konjac$	Reviewed full recipe string, not an unqualified chemical synonym; retain preparation text in source occurrences (#1009).
+CHEBI:201433	Hyaluronic acid sodium	name_pattern	(?i)^not filter sterilized$	Reviewed preparation instruction, not a chemical name; preserve the original recipe annotation (#1009).
+CHEBI:2509	agar	name_pattern	(?i)^for solid medium(?: alternative)?$	Reviewed recipe-use instruction, not a chemical name; do not delete legitimate parenthesized chemical names (#1009).
+CHEBI:2511	agarose	name_pattern	(?i)^for solid medium alternative$	Reviewed recipe-use instruction, not a chemical name; preserve the ingredient identity separately (#1009).
+CHEBI:26710	sodium chloride	name_pattern	(?i)^(?:adjust if required in range 100-150|for agar medium autoclave separately)$	Reviewed recipe adjustment and sterilization instructions, not sodium chloride synonyms (#1009).
+CHEBI:26833	sulfur atom	name_pattern	(?i)^sterilized by steaming for 3 hours on 3 consecutive days$	Reviewed sterilization instruction, not a sulfur name; preserve source recipe evidence (#1009).
+CHEBI:28087	glycogen	name_pattern	(?i)^autoclaved glycogen$	Reviewed full preparation-qualified recipe string, not an unqualified synonym; retain occurrence text (#1009).
+CHEBI:29377	sodium carbonate	name_pattern	(?i)^adjust if required$	Reviewed recipe adjustment instruction, not a chemical name (#1009).
+CHEBI:32145	sodium hydroxide	name_pattern	(?i)^adjust if required$	Reviewed recipe adjustment instruction, not a chemical name (#1009).
+CHEBI:3311	calcium carbonate	name_pattern	(?i)^if required$	Reviewed recipe instruction, not a chemical name (#1009).
+CHEBI:34545	Azimilide	name_pattern	(?i)^(?:nano|nano3(?:cas 7631-99-4|fisher bp360-500|autoclave before addingfisher bp360-500)?)$	Reviewed finite NaNO/NaNO3 recipe aliases are not Azimilide names; no replacement chemical identity is inferred (#1009).
+CHEBI:34545	Azimilide	xref	NCIT:C54713	Native ChEBI Azimilide and NCIT Nano are different concepts; reject the false identity underlying propagated recipe aliases (#1009).
+CHEBI:62969	polygalacturonic acid	name_pattern	(?i)^autoclaved(?: polygalacturonic acid)?$	Reviewed preparation state or full recipe string, not an unqualified chemical synonym (#1009).
+FOODON:03302492	rye flour	name_pattern	(?i)^autoclaved$	Reviewed preparation state propagated to this target, not an ingredient name (#1009).
+FOODON:03413132	locust bean gum	name_pattern	(?i)^autoclaved$	Reviewed preparation state propagated to this target, not an ingredient name (#1009).
+NCIT:C14271	Saccharomyces cerevisiae	name_pattern	(?i)^autoclaved$	Reviewed preparation state propagated to this target, not a taxon or ingredient name (#1009).
+NCIT:C54713	Nano	name_pattern	(?i)^nano3(?:cas 7631-99-4|fisher bp360-500|autoclave before addingfisher bp360-500)?$	Reviewed finite NaNO3 recipe aliases are not the NCIT Nano concept; preserve native Nano and do not infer a replacement chemical identity (#1009).
+cas:11078-31-2	Glucomannan (konjac)	name_pattern	(?i)^autoclaved glucomannan konjac$	Reviewed full preparation-qualified recipe string, not an unqualified registry synonym (#1009).
+cas:39280-21-2	Rhamnogalacturonan I from potato pectic fiber	name_pattern	(?i)^autoclaved$	Reviewed preparation state propagated to this registry target, not a chemical name (#1009).
+cas:84082-64-4	Mucin from porcine stomach type III	name_pattern	(?i)^autoclaved$	Reviewed preparation state propagated to this registry target, not a chemical name (#1009).
+cas:9000-40-2	Locust bean gum	name_pattern	(?i)^autoclaved$	Reviewed preparation state propagated to this registry target, not a chemical name (#1009).
+cas:9036-88-8	Mannan from Saccharomyces cerevisiae	name_pattern	(?i)^autoclaved$	Reviewed preparation state propagated to this registry target, not a chemical name (#1009).
+cas:9067-32-7	Hyaluronic acid sodium salt from Streptococcus equi	name_pattern	(?i)^not filter sterilized$	Reviewed preparation instruction propagated to this registry target, not a chemical name (#1009).
 mesh:C004977	rhodomycin	name_pattern	(?i)^(?:produces:\s*)?rhodomycin[ _-]+a$	The supported MIM release preserves the specific registry identity; the MeSH family is only a withheld parent claim, not an exact identity (#1129).
 mesh:C004977	rhodomycin	xref	kgmicrobe.compound:rhodomycin_a	Preserve the reviewed specific registry identity without strengthening its family/parent anchor to exact equivalence (#1129).
 mesh:C003169	pluramycin	name_pattern	(?i)^(?:produces:\s*)?pluramycin[ _-]+a$	The supported MIM release preserves the specific registry identity; the MeSH family is only a withheld parent claim, not an exact identity (#1129).

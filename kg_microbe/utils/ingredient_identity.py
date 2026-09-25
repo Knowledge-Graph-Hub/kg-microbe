@@ -20,9 +20,9 @@ def _scope_key(value):
 
 
 @lru_cache(maxsize=1)
-def ingredient_name_scopes():
-    """Load reviewed query routes, separately from assertions of equivalence."""
-    routes, cas = {}, {}
+def _ingredient_scope_policy():
+    """Keep finite case-sensitive aliases out of the ordinary case-folded routes."""
+    routes, cas, case_sensitive, normal_keys = {}, {}, {}, set()
     with NAME_SCOPE_POLICY.open(encoding="utf-8", newline="") as handle:
         reader = csv.DictReader(handle, delimiter="\t")
         if reader.fieldnames != ["kind", "query", "target_id", "reason"]:
@@ -30,12 +30,18 @@ def ingredient_name_scopes():
         for row in reader:
             if None in row or any(not str(value or "").strip() for value in row.values()):
                 raise ValueError("Incomplete ingredient name scope")
-            if row["kind"] not in {"name", "cas"}:
+            if row["kind"] not in {"name", "cas", "case_sensitive_name"}:
                 raise ValueError("Invalid ingredient name scope kind")
-            query, target = row["query"], row["target_id"]
-            if _scope_key(query) in {_scope_key(name) for name in routes}:
+            query, target = row["query"].strip(), row["target_id"]
+            if row["kind"] == "case_sensitive_name":
+                if query in case_sensitive or _scope_key(query) in normal_keys:
+                    raise ValueError("Duplicate or case-folded ingredient name scope")
+                case_sensitive[query] = target
+                continue
+            if _scope_key(query) in normal_keys or query.casefold() in {key.casefold() for key in case_sensitive}:
                 raise ValueError("Duplicate ingredient name scope")
             routes[query] = target
+            normal_keys.add(_scope_key(query))
             if row["kind"] == "cas":
                 match = re.fullmatch(r"cas:(\d{2,7})-(\d{2})-(\d)", query)
                 if not match or sum(i * int(n) for i, n in enumerate((match[1] + match[2])[::-1], 1)) % 10 != int(
@@ -44,17 +50,45 @@ def ingredient_name_scopes():
                     raise ValueError("Invalid reviewed CAS annotation")
                 cas[query] = target
                 routes[query.removeprefix("cas:")] = target
+                normal_keys.add(_scope_key(query.removeprefix("cas:")))
+    return (
+        routes,
+        cas,
+        case_sensitive,
+        {query.casefold() for query in case_sensitive},
+        {_scope_key(query): target for query, target in routes.items()},
+    )
+
+
+def ingredient_name_scopes():
+    """Return existing (ordinary query routes, CAS annotations), excluding exact-case aliases."""
+    routes, cas, _, _, _ = _ingredient_scope_policy()
     return routes, cas
 
 
-@lru_cache(maxsize=1)
+ingredient_name_scopes.cache_clear = _ingredient_scope_policy.cache_clear
+
+
+def ingredient_case_sensitive_name_scope(name):
+    """Return (recognized family, exact-case target); unknown spelling in a family fails closed."""
+    _, _, routes, families, _ = _ingredient_scope_policy()
+    query = str(name or "").strip()
+    # Punctuation erased by the shared name index must not permit a legacy
+    # fallback for an otherwise unreviewed spelling of this finite family.
+    family = re.sub(r"[^\w\s'-]", "", query.casefold())
+    return family in families, routes.get(query)
+
+
 def _normalized_scope_routes():
     """Index the small, immutable policy once for graph-scale name imports."""
-    return {_scope_key(query): target for query, target in ingredient_name_scopes()[0].items()}
+    return _ingredient_scope_policy()[4]
 
 
 def ingredient_name_target(name):
     """Return the reviewed target for an explicitly scoped query, if any."""
+    recognized, target = ingredient_case_sensitive_name_scope(name)
+    if recognized:
+        return target
     return _normalized_scope_routes().get(_scope_key(str(name or "")))
 
 
@@ -98,8 +132,11 @@ def ingredient_identity_policy():
 
 def ingredient_mapping_allowed(name: str, target: str) -> bool:
     """Reject reviewed ingredient-name/target pairs without banning targets."""
+    recognized, scoped_target = ingredient_case_sensitive_name_scope(name)
+    if recognized and (scoped_target is None or scoped_target.casefold() != str(target or "").casefold()):
+        return False
     patterns = ingredient_identity_policy()[0].get(str(target or "").casefold(), ())
-    original = str(name or "")
+    original = str(name or "").strip()
     # Producers normalize labels differently. In particular MetaTraits keys
     # and legacy ingredient names may use underscores or hyphens for spaces.
     # Match the lookup reader's punctuation removal as well: a source label

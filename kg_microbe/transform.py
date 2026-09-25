@@ -22,6 +22,7 @@ from kg_microbe.transform_utils.constants import (
     METATRAITS,
     METATRAITS_GTDB,
     MICROBEDECODER,
+    MIM_INGREDIENTS,
     ONTOLOGIES,
     ONTOLOGIES_STUBS,
     PREGO,
@@ -64,6 +65,9 @@ class LazyTransform:
 
 
 DATA_SOURCES = {
+    MIM_INGREDIENTS: LazyTransform(
+        "kg_microbe.transform_utils.mim_ingredients.mim_ingredients.MIMIngredientsTransform"
+    ),
     # "DrugCentralTransform": DrugCentralTransform,
     # "OrphanetTransform": OrphanetTransform,
     # "OMIMTransform": OMIMTransform,
@@ -106,6 +110,11 @@ DATA_SOURCES = {
     # WALLEN_ETAL: WallenEtAlTransform,
     # UNIPROT_FUNCTIONAL_MICROBES: UniprotFunctionalMicrobesTransform,
 }
+
+# Candidate sources require an explicit source selection and reviewed input pin.
+# Registering their producer for merge freshness must not activate them in the
+# default production batch.
+EXPLICIT_ONLY_SOURCES = frozenset({MIM_INGREDIENTS})
 
 
 class TransformBatchError(RuntimeError):
@@ -228,7 +237,7 @@ def transform(
     """
     if not sources:
         # run all sources
-        sources = list(DATA_SOURCES.keys())
+        sources = [source for source in DATA_SOURCES if source not in EXPLICIT_ONLY_SOURCES]
 
     # Refuse an unknown source instead of skipping it. The old loop guarded with
     # `if source in DATA_SOURCES:` and had no else, so a typo produced exit 0 and

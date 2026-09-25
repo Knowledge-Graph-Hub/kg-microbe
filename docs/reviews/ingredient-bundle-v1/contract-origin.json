@@ -1,0 +1,23 @@
+{
+  "producer_repository": "https://github.com/CultureBotAI/MediaIngredientMech",
+  "producer_commit": "73f14f4a930249836b4c3eee9bae635c731d6c5e",
+  "bundle_manifest_sha256": "e97ede39b0d3f25aa664cfa7d6b3afae950a5052e6b70092942dd70853eeeb6e",
+  "files": {
+    "kg_microbe/utils/ingredient_bundle_contract.py": {
+      "producer_path": "src/mediaingredientmech/ingredient_bundle_contract.py",
+      "producer_sha256": "9285d9d2423d108e0b1e3a960ddcbdd5e9b94eb44e099632042fc7e1e95e51b2",
+      "consumer_sha256": "3ddea36a1f1f365ac56287f09d2c75c9b6875a37bff78741afd412a6e5c15d16"
+    },
+    "kg_microbe/utils/review_claims.py": {
+      "producer_path": "src/mediaingredientmech/review_claims.py",
+      "producer_sha256": "bf214f5791223ed318b017db7206bc4ba8cf48bc9ce30d80fba5728cc5ca62fd",
+      "consumer_sha256": "3c28b47454c4d7d556100df79711d6f689fccd4e2f76cd066a0e7c3a4fbe8db0"
+    },
+    "kg_microbe/profiles/ingredient_bundle_v1.schema.json": {
+      "producer_path": "src/mediaingredientmech/profiles/ingredient_bundle_v1.schema.json",
+      "producer_sha256": "c0faabc0870bdcb3f03847f5e6597bbe4e245ccc775fc398f536c7c3f0ea4ab2",
+      "consumer_sha256": "c0faabc0870bdcb3f03847f5e6597bbe4e245ccc775fc398f536c7c3f0ea4ab2"
+    }
+  },
+  "adaptations": "Relative scope module import, formatter and docstring style only; Python ASTs match after normalizing those changes; schema bytes identical."
+}

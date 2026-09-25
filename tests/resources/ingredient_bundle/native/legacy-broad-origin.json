@@ -1,0 +1,12 @@
+{
+  "fixture_sha256": "ab562eb4e5d0ab238e099809fde426fd1dc5b205e0cf8a59a491214ee4667694",
+  "notes": "Original legacy semantics retained in metadata/rows. This extraction does not approve a production refresh.",
+  "rows": 19,
+  "selected_endpoints": [
+    "CHEBI:16763",
+    "kgmicrobe.compound:2-oxobutyric_acid_sodium_salt"
+  ],
+  "source": "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
+  "source_bytes": 13724954,
+  "source_sha256": "0f8c148fb6f8386daee19b8e3a5af4725d4841b02b9125e64f39497e51ea00c3"
+}

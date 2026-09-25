@@ -478,3 +478,20 @@ def test_preserved_nonidentity_category_uses_same_fresh_fallback_as_rebuilt_rows
     monkeypatch.setattr(runtime, "_CACHED_PATH", None)
     runtime.load_unified_mappings(result.candidate_path)
     assert runtime.get_category("CHEBI:1") == "biolink:ChemicalEntity"
+
+
+def test_environment_change_during_build_prevents_publication(inputs, monkeypatch):
+    """A changed execution context cannot receive a successful candidate report (#974)."""
+    generation = [0]
+    original_validate = refresh._validate_output
+    monkeypatch.setattr(refresh, "reproducibility_context", lambda _root: {"generation": generation[0]})
+
+    def change_environment(*args):
+        """Simulate a changed dependency inventory after output validation."""
+        original_validate(*args)
+        generation[0] += 1
+
+    monkeypatch.setattr(refresh, "_validate_output", change_environment)
+    with pytest.raises(ValueError, match="Code or environment changed"):
+        refresh.build_conservative_candidate(**inputs)
+    assert not inputs["output_directory"].exists()

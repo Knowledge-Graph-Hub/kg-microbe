@@ -1,0 +1,4 @@
+id	deprecated	replacement	replacement_label
+CHEBI:8150	true	CHEBI:16247	phospholipid
+CHEBI:14258	true	CHEBI:17373	ferroleghemoglobin
+CHEBI:19708	true	CHEBI:17502	2-methylpropanal oxime

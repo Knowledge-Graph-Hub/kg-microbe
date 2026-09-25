@@ -22,6 +22,7 @@ from kg_microbe.transform_utils.constants import (
     SYNONYM_COLUMN,
     XREF_COLUMN,
 )
+from kg_microbe.utils.ingredient_kgx import validate_ingredient_fields
 from kg_microbe.utils.provenance import validate_primary_source_and_publications
 
 CANONICAL_NODE_HEADER = [
@@ -81,10 +82,13 @@ def validate_canonical_tsv(path, *, is_node):
             raise ValueError(f"{path}: missing, duplicate, or noncanonical TSV header")
         if not is_node and FORBIDDEN_EDGE_COLUMNS.intersection(header):
             raise ValueError(f"{path}: legacy/internal edge columns require source finalization")
+        ingredient_fields = any(column.startswith("ingredient_") for column in header)
         for line, values in enumerate(reader, 2):
             if len(values) != len(header):
                 raise ValueError(f"{path}:{line}: malformed TSV field count")
             row = dict(zip(header, values, strict=True))
+            if ingredient_fields:
+                validate_ingredient_fields(row, is_node=is_node)
             identity = (ID_COLUMN,) if is_node else (SUBJECT_COLUMN, PREDICATE_COLUMN, OBJECT_COLUMN)
             if any(not row[column] for column in identity):
                 raise ValueError(f"{path}:{line}: empty graph identity")

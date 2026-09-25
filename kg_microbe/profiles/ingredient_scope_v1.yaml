@@ -1,0 +1,46 @@
+profile_id: https://w3id.org/mediaingredientmech/sssom/ingredient-scope/v1
+profile_version: 1
+curie_map:
+  mimscope: https://w3id.org/mediaingredientmech/scope/
+  mimprofile: https://w3id.org/mediaingredientmech/sssom/
+  xsd: http://www.w3.org/2001/XMLSchema#
+  linkml: https://w3id.org/linkml/
+scope_values:
+  chemical_family: A family or broader grouping of chemical entities.
+  defined_substance: A substance with a reviewed specific chemical identity.
+  material: A generic ingredient material, including compositionally variable material.
+  preparation: A specified preparation, grade, form or formulation of a material.
+  catalog_product: A supplier's commercial product specification, not an individual lot.
+  unknown: The entity scope has not been established.
+composition_values:
+  single_component: A reviewed single chemical component.
+  mixture: Multiple chemical components, whether defined or variable.
+  unknown: Composition has not been established.
+review_status_values: [SUPPORTED, WITHHOLD, UNREVIEWED]
+identity_predicates: [skos:exactMatch]
+nonidentity_predicates: [skos:broadMatch, skos:narrowMatch, skos:closeMatch, skos:relatedMatch]
+extension_definitions:
+  - slot_name: ext_scope_profile
+    property: mimprofile:scopeProfile
+    type_hint: linkml:Uriorcurie
+  - slot_name: ext_subject_scope
+    property: mimprofile:subjectScope
+    type_hint: linkml:Uriorcurie
+  - slot_name: ext_object_scope
+    property: mimprofile:objectScope
+    type_hint: linkml:Uriorcurie
+  - slot_name: ext_subject_composition
+    property: mimprofile:subjectComposition
+    type_hint: linkml:Uriorcurie
+  - slot_name: ext_object_composition
+    property: mimprofile:objectComposition
+    type_hint: linkml:Uriorcurie
+  - slot_name: ext_scope_review_status
+    property: mimprofile:scopeReviewStatus
+    type_hint: xsd:string
+  - slot_name: ext_scope_evidence
+    property: mimprofile:scopeEvidence
+    type_hint: linkml:Uriorcurie
+  - slot_name: ext_identity_authorized
+    property: mimprofile:identityAuthorized
+    type_hint: xsd:boolean

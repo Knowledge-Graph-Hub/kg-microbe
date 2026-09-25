@@ -1069,9 +1069,9 @@ class MediaDiveTransform(Transform):
                     node_writer.writerow(self._create_node_row(medium_id, medium_category, dictionary[NAME_COLUMN]))
 
                     # Medium-Strains KG
+                    medium_strain_nodes = []
                     if json_obj_medium_strain:
                         medium_strain_edge = []
-                        medium_strain_nodes = []
                         for strain in json_obj_medium_strain:
                             if strain.get(BACDIVE_ID_COLUMN):
                                 strain_id = BACDIVE_PREFIX + str(strain[BACDIVE_ID_COLUMN])

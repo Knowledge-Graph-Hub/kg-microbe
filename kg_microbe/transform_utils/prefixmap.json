@@ -21,5 +21,14 @@
     "GOREL": "http://purl.obolibrary.org/obo/GOREL_",
     "UBERON_CORE": "http://purl.obolibrary.org/obo/uberon/core#",
     "WIKIDATA": "https://www.wikidata.org/entity/",
-    "time": "http://www.w3.org/2006/time#"
+    "time": "http://www.w3.org/2006/time#",
+    "MIM.ingredient": "https://github.com/CultureBotAI/MediaIngredientMech/blob/main/data/ingredients/mapped/",
+    "MIM.product": "https://w3id.org/mediaingredientmech/product/",
+    "MIM.occurrence": "https://w3id.org/mediaingredientmech/occurrence/",
+    "MIM.alternative": "https://w3id.org/mediaingredientmech/alternative/",
+    "MIM.annotation": "https://w3id.org/mediaingredientmech/annotation/",
+    "MIM.mapping": "https://w3id.org/mediaingredientmech/mapping/",
+    "MIM.source": "https://w3id.org/mediaingredientmech/source/",
+    "mimprofile": "https://w3id.org/mediaingredientmech/sssom/",
+    "kgmicrobe.ingredient": "https://w3id.org/kg-microbe/ingredient/"
 }

@@ -1,0 +1,94 @@
+# curie_map:
+#   BTO: "https://bioregistry.io/BTO:"
+#   CHEBI: "http://purl.obolibrary.org/obo/CHEBI_"
+#   ENVO: "http://purl.obolibrary.org/obo/ENVO_"
+#   FOODON: "http://purl.obolibrary.org/obo/FOODON_"
+#   MICRO: "https://bioregistry.io/MICRO:"
+#   MIM: "https://github.com/CultureBotAI/MediaIngredientMech/blob/main/data/ingredients/mapped/"
+#   MediaIngredientMech: "https://github.com/CultureBotAI/MediaIngredientMech/blob/main/data/ingredients/records/"
+#   NCIT: "http://purl.obolibrary.org/obo/NCIT_"
+#   UBERON: "http://purl.obolibrary.org/obo/UBERON_"
+#   agr: "https://bioregistry.io/agr:"
+#   beilstein: "https://bioregistry.io/beilstein:"
+#   bpdb: "https://bioregistry.io/bpdb:"
+#   cas: "https://bioregistry.io/cas:"
+#   cba: "https://bioregistry.io/cba:"
+#   chemidplus: "https://bioregistry.io/chemidplus:"
+#   chemspider: "https://bioregistry.io/chemspider:"
+#   drugbank: "https://bioregistry.io/drugbank:"
+#   drugbank.metabolite: "https://bioregistry.io/drugbank.metabolite:"
+#   drugcentral: "https://bioregistry.io/drugcentral:"
+#   ecmdb: "https://bioregistry.io/ecmdb:"
+#   fao_who_standards: "https://bioregistry.io/fao_who_standards:"
+#   foodb.food: "https://bioregistry.io/foodb.food:"
+#   glygen: "https://bioregistry.io/glygen:"
+#   glytoucan: "https://bioregistry.io/glytoucan:"
+#   gmelin: "https://bioregistry.io/gmelin:"
+#   hmdb: "https://bioregistry.io/hmdb:"
+#   kegg.compound: "https://bioregistry.io/kegg.compound:"
+#   kegg.drug: "https://bioregistry.io/kegg.drug:"
+#   kegg.glycan: "https://bioregistry.io/kegg.glycan:"
+#   kgm.name: "https://w3id.org/kg-microbe/name/"
+#   kgmicrobe.compound: "https://w3id.org/kg-microbe/compound/"
+#   kgmicrobe.ingredient: "https://bioregistry.io/kgmicrobe.ingredient:"
+#   knapsack: "https://bioregistry.io/knapsack:"
+#   lincs.smallmolecule: "https://bioregistry.io/lincs.smallmolecule:"
+#   lipidmaps: "https://bioregistry.io/lipidmaps:"
+#   lipidmaps_class: "https://bioregistry.io/lipidmaps_class:"
+#   mediadive.ingredient: "https://w3id.org/kg-microbe/mediadive/ingredient/"
+#   mesh: "https://bioregistry.io/mesh:"
+#   metacyc.compound: "https://bioregistry.io/metacyc.compound:"
+#   molbase: "https://bioregistry.io/molbase:"
+#   obo: "http://purl.obolibrary.org/obo/"
+#   orcid: "https://orcid.org/"
+#   pdb: "https://bioregistry.io/pdb:"
+#   pdb-ccd: "https://bioregistry.io/pdb-ccd:"
+#   pesticides: "https://bioregistry.io/pesticides:"
+#   ppdb: "https://bioregistry.io/ppdb:"
+#   pubchem.compound: "https://bioregistry.io/pubchem.compound:"
+#   reaxys: "https://bioregistry.io/reaxys:"
+#   resid: "https://bioregistry.io/resid:"
+#   semapv: "https://w3id.org/semapv/vocab/"
+#   skos: "http://www.w3.org/2004/02/skos/core#"
+#   smid: "https://bioregistry.io/smid:"
+#   umbbd.compound: "https://bioregistry.io/umbbd.compound:"
+#   vsdb: "https://bioregistry.io/vsdb:"
+#   webelements: "https://bioregistry.io/webelements:"
+#   ymdb: "https://bioregistry.io/ymdb:"
+# license: "https://creativecommons.org/publicdomain/zero/1.0/"
+# mapping_set_id: "https://w3id.org/sssom/mappings/kg_microbe_unified_ingredients"
+# mapping_set_version: "2026-09-06"
+# mapping_set_description: "kg-microbe unified ingredient mappings (CHEBI + FOODON + UBERON + ENVO + NCIT + kgmicrobe.compound). Emitted from scripts/consolidate_chemical_mappings.py. Row types: (1) xref-CURIE → primary-CURIE as skos:exactMatch; (2) canonical-name via kgm.name:<slug> → primary-CURIE as skos:exactMatch / semapv:LexicalMatching; (3) free-text synonym via kgm.name:<slug> → primary-CURIE as skos:closeMatch / semapv:LexicalMatching; (4) anhydrous-CHEBI → hydrated-CHEBI as skos:closeMatch with comment=recipe_equivalent_hydrate (NOT chemically identical, but media-recipe interchangeable). Per-row `comment` is empty for xrefs, `canonical_name` for name rows, `synonym` for synonym rows, `recipe_equivalent_hydrate` for hydrate pairs. Ingredient identity policy sha256:5a02b1d455c7e15227347cbf78ea8b1e155c98bdd5c77c2d7aa611017896e910."
+# mapping_date: "2026-09-06"
+# mapping_tool: "kg-microbe/scripts/consolidate_chemical_mappings.py"
+# mapping_tool_version: "sha256:dc791e0133eb945c3a73f009ccf2c366b1a706d1dfedd9eed042ad32fce99f79"
+# extension_definitions:
+#   - slot_name: source
+#     property: "https://w3id.org/kg-microbe/source"
+#     type_hint: "xsd:string"
+#   - slot_name: object_formula
+#     property: "https://w3id.org/kg-microbe/object_formula"
+#     type_hint: "xsd:string"
+#   - slot_name: object_category
+#     property: "https://w3id.org/kg-microbe/object_category"
+#     type_hint: "xsd:string"
+subject_id	subject_label	predicate_id	object_id	object_label	object_source	mapping_justification	source	mapping_date	confidence	comment	object_formula	object_category
+MIM:2-oxobutanoate		skos:exactMatch	CHEBI:16763	2-oxobutanoate	obo:chebi.owl	semapv:UnspecifiedMatching	chebi_xrefs|mediaingredientmech_reviewed|mediaingredientmech_reviewed[curator=classify_ingredient_type]|mediaingredientmech_reviewed[curator=review-ingredients]|primary_mappings[kegg_compound]	2026-09-04				biolink:ChemicalEntity
+gmelin:899148		skos:exactMatch	CHEBI:16763	2-oxobutanoate	obo:chebi.owl	semapv:UnspecifiedMatching	chebi_xrefs|mediaingredientmech_reviewed|mediaingredientmech_reviewed[curator=classify_ingredient_type]|mediaingredientmech_reviewed[curator=review-ingredients]|primary_mappings[kegg_compound]	2026-09-04				biolink:ChemicalEntity
+hmdb:HMDB0000005		skos:exactMatch	CHEBI:16763	2-oxobutanoate	obo:chebi.owl	semapv:UnspecifiedMatching	chebi_xrefs|mediaingredientmech_reviewed|mediaingredientmech_reviewed[curator=classify_ingredient_type]|mediaingredientmech_reviewed[curator=review-ingredients]|primary_mappings[kegg_compound]	2026-09-04				biolink:ChemicalEntity
+kegg.compound:C00109		skos:exactMatch	CHEBI:16763	2-oxobutanoate	obo:chebi.owl	semapv:UnspecifiedMatching	chebi_xrefs|mediaingredientmech_reviewed|mediaingredientmech_reviewed[curator=classify_ingredient_type]|mediaingredientmech_reviewed[curator=review-ingredients]|primary_mappings[kegg_compound]	2026-09-04				biolink:ChemicalEntity
+kegg.compound:cpd:C00109		skos:exactMatch	CHEBI:16763	2-oxobutanoate	obo:chebi.owl	semapv:UnspecifiedMatching	chebi_xrefs|mediaingredientmech_reviewed|mediaingredientmech_reviewed[curator=classify_ingredient_type]|mediaingredientmech_reviewed[curator=review-ingredients]|primary_mappings[kegg_compound]	2026-09-04				biolink:ChemicalEntity
+metacyc.compound:2-OXOBUTANOATE		skos:exactMatch	CHEBI:16763	2-oxobutanoate	obo:chebi.owl	semapv:UnspecifiedMatching	chebi_xrefs|mediaingredientmech_reviewed|mediaingredientmech_reviewed[curator=classify_ingredient_type]|mediaingredientmech_reviewed[curator=review-ingredients]|primary_mappings[kegg_compound]	2026-09-04				biolink:ChemicalEntity
+reaxys:3601760		skos:exactMatch	CHEBI:16763	2-oxobutanoate	obo:chebi.owl	semapv:UnspecifiedMatching	chebi_xrefs|mediaingredientmech_reviewed|mediaingredientmech_reviewed[curator=classify_ingredient_type]|mediaingredientmech_reviewed[curator=review-ingredients]|primary_mappings[kegg_compound]	2026-09-04				biolink:ChemicalEntity
+umbbd.compound:c0360		skos:exactMatch	CHEBI:16763	2-oxobutanoate	obo:chebi.owl	semapv:UnspecifiedMatching	chebi_xrefs|mediaingredientmech_reviewed|mediaingredientmech_reviewed[curator=classify_ingredient_type]|mediaingredientmech_reviewed[curator=review-ingredients]|primary_mappings[kegg_compound]	2026-09-04				biolink:ChemicalEntity
+kgm.name:2-oxobutanoate	2-oxobutanoate	skos:exactMatch	CHEBI:16763	2-oxobutanoate	obo:chebi.owl	semapv:LexicalMatching	chebi_xrefs|mediaingredientmech_reviewed|mediaingredientmech_reviewed[curator=classify_ingredient_type]|mediaingredientmech_reviewed[curator=review-ingredients]|primary_mappings[kegg_compound]	2026-09-04		canonical_name		biolink:ChemicalEntity
+kgm.name:2-ketobutanoate	2-Ketobutanoate	skos:closeMatch	CHEBI:16763	2-oxobutanoate	obo:chebi.owl	semapv:LexicalMatching	chebi_xrefs|mediaingredientmech_reviewed|mediaingredientmech_reviewed[curator=classify_ingredient_type]|mediaingredientmech_reviewed[curator=review-ingredients]|primary_mappings[kegg_compound]	2026-09-04		synonym		biolink:ChemicalEntity
+kgm.name:2-oxobutyrate	2-Oxobutyrate	skos:closeMatch	CHEBI:16763	2-oxobutanoate	obo:chebi.owl	semapv:LexicalMatching	chebi_xrefs|mediaingredientmech_reviewed|mediaingredientmech_reviewed[curator=classify_ingredient_type]|mediaingredientmech_reviewed[curator=review-ingredients]|primary_mappings[kegg_compound]	2026-09-04		synonym		biolink:ChemicalEntity
+kgm.name:2-ketobutyrate	2-ketobutyrate	skos:closeMatch	CHEBI:16763	2-oxobutanoate	obo:chebi.owl	semapv:LexicalMatching	chebi_xrefs|mediaingredientmech_reviewed|mediaingredientmech_reviewed[curator=classify_ingredient_type]|mediaingredientmech_reviewed[curator=review-ingredients]|primary_mappings[kegg_compound]	2026-09-04		synonym		biolink:ChemicalEntity
+kgm.name:2-oxobutyric_acid_sodium_salt	2-oxobutyric acid sodium salt	skos:closeMatch	CHEBI:16763	2-oxobutanoate	obo:chebi.owl	semapv:LexicalMatching	chebi_xrefs|mediaingredientmech_reviewed|mediaingredientmech_reviewed[curator=classify_ingredient_type]|mediaingredientmech_reviewed[curator=review-ingredients]|primary_mappings[kegg_compound]	2026-09-04		synonym		biolink:ChemicalEntity
+kgm.name:alpha-ketobutyrate	alpha-ketobutyrate	skos:closeMatch	CHEBI:16763	2-oxobutanoate	obo:chebi.owl	semapv:LexicalMatching	chebi_xrefs|mediaingredientmech_reviewed|mediaingredientmech_reviewed[curator=classify_ingredient_type]|mediaingredientmech_reviewed[curator=review-ingredients]|primary_mappings[kegg_compound]	2026-09-04		synonym		biolink:ChemicalEntity
+kgm.name:alpha-oxobutyrate	alpha-oxobutyrate	skos:closeMatch	CHEBI:16763	2-oxobutanoate	obo:chebi.owl	semapv:LexicalMatching	chebi_xrefs|mediaingredientmech_reviewed|mediaingredientmech_reviewed[curator=classify_ingredient_type]|mediaingredientmech_reviewed[curator=review-ingredients]|primary_mappings[kegg_compound]	2026-09-04		synonym		biolink:ChemicalEntity
+kgmicrobe.compound:2-oxobutyric_acid_sodium_salt		skos:exactMatch	CHEBI:26714	Propionate (sodium salt)	obo:chebi.owl	semapv:UnspecifiedMatching	mediaingredientmech_reviewed|mediaingredientmech_reviewed[curator=backfill_parent_terms]|mediaingredientmech_reviewed[curator=resolve_unmapped_v2]	2026-09-04				biolink:ChemicalEntity
+MIM:2-oxobutyric_Acid_Sodium_Salt		skos:exactMatch	kgmicrobe.compound:2-oxobutyric_acid_sodium_salt	2-oxobutyric acid sodium salt	obo:kgmicrobe.compound.owl	semapv:UnspecifiedMatching	mediaingredientmech_reviewed|mediaingredientmech_reviewed[curator=backfill_parent_terms]	2026-09-04				biolink:ChemicalEntity
+kgm.name:2-oxobutyric_acid_sodium_salt	2-oxobutyric acid sodium salt	skos:exactMatch	kgmicrobe.compound:2-oxobutyric_acid_sodium_salt	2-oxobutyric acid sodium salt	obo:kgmicrobe.compound.owl	semapv:LexicalMatching	mediaingredientmech_reviewed|mediaingredientmech_reviewed[curator=backfill_parent_terms]	2026-09-04		canonical_name		biolink:ChemicalEntity
+kgmicrobe.compound:2-oxobutyric_acid_sodium_salt	2-oxobutyric acid sodium salt	skos:narrowMatch	CHEBI:16763	2-oxobutanoate	obo:chebi.owl	semapv:ManualMappingCuration	mediaingredientmech_reviewed	2026-09-04		asymmetric MIM mapping (parent relation)		

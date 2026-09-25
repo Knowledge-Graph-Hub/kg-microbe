@@ -54,6 +54,10 @@ SHARED_CODE = (
 SHARED_DATA_INPUTS = (
     "mappings/foodon_model_dispositions.tsv",
     "mappings/ingredient_identity_exclusions.tsv",
+    "mappings/ingredient_name_scopes.tsv",
+    "kg_microbe/profiles/ingredient_scope_v1.yaml",
+    "kg_microbe/profiles/ingredient_bundle_v1.schema.json",
+    "kg_microbe/profiles/ingredient_kgx_v1.yaml",
     "kg_microbe/transform_utils/prefixmap.json",
 )
 

@@ -1,0 +1,14 @@
+{
+  "producer_repository": "https://github.com/CultureBotAI/MediaIngredientMech",
+  "producer_commit": "73f14f4a930249836b4c3eee9bae635c731d6c5e",
+  "bundle_manifest_sha256": "e97ede39b0d3f25aa664cfa7d6b3afae950a5052e6b70092942dd70853eeeb6e",
+  "archive_sha256": "43ce4d66322868cf917e0b4ddb0010868ac3724deba795c502170d9c61bb2ca3",
+  "archive_bytes": 1212403,
+  "export_command": "python -m mediaingredientmech.export.ingredient_bundle export --review reports/ingredient_bundle_20260924/review.json --output <new-directory>",
+  "case_counts": {
+    "mappings": 20,
+    "identifiers": 18,
+    "products": 3,
+    "occurrences": 10
+  }
+}

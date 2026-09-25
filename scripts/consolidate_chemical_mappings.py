@@ -72,6 +72,7 @@ import re
 import shutil
 import tempfile
 from collections import defaultdict
+from itertools import dropwhile
 from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
@@ -388,6 +389,48 @@ def published_mapping_dates(path: Path) -> Dict[tuple, str]:
         print(f"Warning: could not read prior mapping dates from {path} ({exc}); using today for every row")
         return {}
     return dates
+
+
+def published_synonym_labels(path: Path) -> Dict[tuple, str]:
+    """
+    Read unambiguous published synonym surfaces as presentation hints only.
+
+    The exporter must independently confirm that an exact surface is still in
+    the accepted current synonym set for the same triple. Historical labels
+    cannot supply scientific evidence, restore removed names, or override a
+    current canonical label. Conflicting duplicate labels have no preferred
+    historical surface; the normal deterministic current-label choice applies.
+    """
+    if not path.exists():
+        return {}
+    labels: Dict[tuple, str] = {}
+    conflicts = set()
+    opener = gzip.open if str(path).endswith(".gz") else open
+    try:
+        with opener(path, "rt", encoding="utf-8", newline="") as stream:
+            reader = csv.DictReader(dropwhile(lambda line: line.startswith("#"), stream), delimiter="\t", strict=True)
+            required = {"subject_id", "predicate_id", "object_id", "subject_label", "comment"}
+            if not required.issubset(reader.fieldnames or []) or len(reader.fieldnames) != len(set(reader.fieldnames)):
+                return {}
+            for row in reader:
+                if None in row or any(value is None for value in row.values()):
+                    raise csv.Error("Malformed published synonym row")
+                subject = row["subject_id"]
+                label = row["subject_label"]
+                if (
+                    not subject.startswith("kgm.name:") or not row["object_id"] or not label
+                    or row["predicate_id"] != "skos:closeMatch" or row["comment"] != "synonym"
+                    or row.get("predicate_modifier", "").strip()
+                ):
+                    continue
+                triple = (subject, row["predicate_id"], row["object_id"])
+                if triple in labels and labels[triple] != label:
+                    conflicts.add(triple)
+                labels[triple] = label
+    except (OSError, EOFError, UnicodeDecodeError, csv.Error) as exc:
+        print(f"Warning: could not read prior synonym labels from {path} ({exc}); using current labels")
+        return {}
+    return {triple: label for triple, label in labels.items() if triple not in conflicts}
 
 
 def _sssom_triples(path: Path) -> set:
@@ -1699,6 +1742,17 @@ class ChemicalMappingConsolidator:
         Rows whose ``object_id`` prefix is not in the consolidator's accepted
         set are skipped.
         """
+        from kg_microbe.utils.chemical_mapping_utils import _scope_metadata
+
+        metadata = _scope_metadata(filepath)
+        if metadata.get("ext_scope_profile") or any(
+            definition.get("slot_name") == "ext_scope_profile"
+            for definition in metadata.get("extension_definitions", [])
+        ):
+            raise ValueError(
+                "Profiled MIM requires a verified ingredient bundle; use build_ingredient_lookup_bundle "
+                "to preserve scoped source resolution separately from legacy name mappings"
+            )
         # Carry the set's declared predicate semantics through to the unified
         # header. The asymmetric rows below are passed through verbatim, so the
         # declaration describes the rows the unified file ships and must travel
@@ -2673,6 +2727,9 @@ class ChemicalMappingConsolidator:
         prior_dates = published_mapping_dates(
             published_path if published_path is not None else sssom_output_path
         )
+        prior_synonym_labels = published_synonym_labels(
+            published_path if published_path is not None else sssom_output_path
+        )
 
         for curie in sorted(self.chemicals.keys()):
             if curie in KNOWN_BAD_PRIMARY_IDS:
@@ -2760,6 +2817,16 @@ class ChemicalMappingConsolidator:
                 if slug in seen_synonym_slugs:
                     continue
                 seen_synonym_slugs.add(slug)
+                # Case/punctuation variants can share one lexical subject. Keep
+                # its published surface only while that exact surface remains
+                # accepted today; history never adds a synonym or changes the
+                # canonical scientific label (#979).
+                prior_label = prior_synonym_labels.get((f"kgm.name:{slug}", "skos:closeMatch", object_id))
+                if (
+                    prior_label in chem["synonyms"] and _slugify_name(prior_label) == slug
+                    and ingredient_mapping_allowed(prior_label, object_id)
+                ):
+                    syn = prior_label
                 mapping_rows.append(_row(
                     f"kgm.name:{slug}",
                     _sanitize_tsv(syn),

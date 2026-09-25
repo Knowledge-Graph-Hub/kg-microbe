@@ -14,6 +14,16 @@ IDENTITY_POLICY = Path(__file__).resolve().parents[2] / "mappings" / "ingredient
 NAME_SCOPE_POLICY = IDENTITY_POLICY.with_name("ingredient_name_scopes.tsv")
 
 
+def _policy_target_key(value):
+    """Recognize finite legacy namespace spellings, without inferring chemical identity."""
+    value = str(value or "").strip().casefold()
+    prefix, separator, local = value.partition(":")
+    # MediaDive still returns these historical prefixes before source
+    # finalization. They must not bypass canonical policy keys (#1155).
+    prefix = {"pubchem": "pubchem.compound", "cas-rn": "cas"}.get(prefix, prefix)
+    return prefix + separator + local
+
+
 def _scope_key(value):
     """Normalize separators without removing chemical locants or suffixes."""
     return re.sub(r"[\s_-]+", " ", value.strip().casefold())
@@ -113,7 +123,7 @@ def ingredient_identity_policy():
         for row in reader:
             if None in row or any(not str(value or "").strip() for value in row.values()):
                 raise ValueError(f"Incomplete ingredient identity policy: {row!r}")
-            target = row["target_id"].casefold()
+            target = _policy_target_key(row["target_id"])
             label = row["authority_label"]
             if target in labels and labels[target] != label:
                 raise ValueError(f"Conflicting authority label for {target}")
@@ -123,8 +133,8 @@ def ingredient_identity_policy():
                 if pattern.search(label):
                     raise ValueError(f"Identity policy rejects its authority label: {target}")
                 names.setdefault(target, []).append(pattern)
-            elif row["kind"] == "xref" and row["value"] != target:
-                xrefs.add(frozenset((target, row["value"].casefold())))
+            elif row["kind"] == "xref" and _policy_target_key(row["value"]) != target:
+                xrefs.add(frozenset((target, _policy_target_key(row["value"]))))
             else:
                 raise ValueError(f"Invalid ingredient identity policy kind/value: {row!r}")
     return names, xrefs, labels
@@ -133,9 +143,9 @@ def ingredient_identity_policy():
 def ingredient_mapping_allowed(name: str, target: str) -> bool:
     """Reject reviewed ingredient-name/target pairs without banning targets."""
     recognized, scoped_target = ingredient_case_sensitive_name_scope(name)
-    if recognized and (scoped_target is None or scoped_target.casefold() != str(target or "").casefold()):
+    if recognized and (scoped_target is None or _policy_target_key(scoped_target) != _policy_target_key(target)):
         return False
-    patterns = ingredient_identity_policy()[0].get(str(target or "").casefold(), ())
+    patterns = ingredient_identity_policy()[0].get(_policy_target_key(target), ())
     original = str(name or "").strip()
     # Producers normalize labels differently. In particular MetaTraits keys
     # and legacy ingredient names may use underscores or hyphens for spaces.
@@ -148,11 +158,9 @@ def ingredient_mapping_allowed(name: str, target: str) -> bool:
 
 def ingredient_xref_allowed(subject: str, target: str) -> bool:
     """Reject reviewed false equivalences in either serialization direction."""
-    return (
-        frozenset((str(subject or "").casefold(), str(target or "").casefold())) not in ingredient_identity_policy()[1]
-    )
+    return frozenset((_policy_target_key(subject), _policy_target_key(target))) not in ingredient_identity_policy()[1]
 
 
 def ingredient_authority_label(target: str) -> str:
     """Return the authority label recorded with a reviewed exclusion."""
-    return ingredient_identity_policy()[2].get(str(target or "").casefold(), "")
+    return ingredient_identity_policy()[2].get(_policy_target_key(target), "")

@@ -720,19 +720,19 @@ class MediaDiveTransform(Transform):
             if self.using_bulk_data:
                 self.api_calls_avoided += 1
             data = self.compounds_data[id]
-            # Try compound mappings from embedded data
-            if data.get(CHEBI_KEY) is not None:
-                mapped_id = CHEBI_PREFIX + str(data[CHEBI_KEY])
-                if ingredient_mapping_allowed(
-                    compound_name or data.get(COMPOUND_KEY) or data.get("name", ""), mapped_id
-                ):
-                    return mapped_id
-            elif data.get(KEGG_KEY) is not None:
-                return KEGG_PREFIX + str(data[KEGG_KEY])
-            elif data.get(PUBCHEM_KEY) is not None:
-                return PUBCHEM_PREFIX + str(data[PUBCHEM_KEY])
-            elif data.get(CAS_RN_KEY) is not None:
-                return CAS_RN_PREFIX + str(data[CAS_RN_KEY])
+            # Every embedded namespace must pass the same identity contract;
+            # a rejected ChEBI entry cannot escape through PubChem/CAS (#1155).
+            name = compound_name or data.get(COMPOUND_KEY) or data.get("name", "")
+            for key, prefix in (
+                (CHEBI_KEY, CHEBI_PREFIX),
+                (KEGG_KEY, KEGG_PREFIX),
+                (PUBCHEM_KEY, PUBCHEM_PREFIX),
+                (CAS_RN_KEY, CAS_RN_PREFIX),
+            ):
+                if data.get(key) is not None:
+                    mapped_id = prefix + str(data[key])
+                    if ingredient_mapping_allowed(name, mapped_id):
+                        return mapped_id
 
         # Fall back to custom ingredient prefix
         return MEDIADIVE_INGREDIENT_PREFIX + id

@@ -79,3 +79,27 @@ independently withholds both generic-to-specific assertions in its
 These withheld records do not prove a universal scientific inequality. The
 consumer preserves the original generic observations using their historical
 `kgmicrobe.compound:` IDs rather than asserting either external identity.
+
+The complete original #788 fallback review (#1155) additionally reproduced
+generic `D-Glucose` mapped to CHEBI:42758 (`aldehydo-D-glucose`, specifically
+the open-chain form); `Sodium citrate` / `Sodiumcitrate` mapped to CHEBI:32142
+(`sodium citrate dihydrate`); and `0.2% Thiamine pyrophosphate` mapped to
+CHEBI:9532 (`thiamine(1+) diphosphate`, a pure chemical rather than a preparation).
+Their native labels are projected from the same fingerprinted ChEBI TSV above.
+The finite exclusions leave explicit linear glucose, citrate dihydrate, and
+charged diphosphate names usable. No replacement chemical is inferred.
+
+The same native ChEBI table also lists `D-Glucose` as an alias of CHEBI:4167,
+`D-glucopyranose`. For the context-free ingredient query the consumer admits
+neither that ring form nor open-chain CHEBI:42758 merely by alias order; native
+generic CHEBI:17634 remains usable when independently declared.
+
+The exact context-free ingredient query `thiamine pyrophosphate` occurs as a
+native alias of three distinct current records: CHEBI:18290
+`thiamine(1+) diphosphate chloride` (CAS 154-87-0), CHEBI:45931
+`thiamine(1+) diphosphate(1-)` (CAS 136-09-4), and CHEBI:9532
+`thiamine(1+) diphosphate` (CAS 136-08-3). Its finite admission hold covers all
+three to prevent order-dependent salt/charge selection. This does not declare
+the native synonyms scientifically false, and explicit native names still
+resolve. The unrelated native peptide abbreviation `TPP` and literal unmatched
+`Co-carboxylase` are outside this hold. No supported MIM assertion was changed.

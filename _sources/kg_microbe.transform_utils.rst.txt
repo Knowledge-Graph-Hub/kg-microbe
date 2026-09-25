@@ -24,6 +24,7 @@ Subpackages
    kg_microbe.transform_utils.metatraits
    kg_microbe.transform_utils.metatraits_gtdb
    kg_microbe.transform_utils.microbedecoder
+   kg_microbe.transform_utils.mim_ingredients
    kg_microbe.transform_utils.ontologies
    kg_microbe.transform_utils.ontologies_stubs
    kg_microbe.transform_utils.prego

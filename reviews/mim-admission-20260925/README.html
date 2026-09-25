@@ -1,0 +1,292 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MIM consumer integration and conservative candidate review &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=7026087e"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">MIM consumer integration and conservative candidate review</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reviews/mim-admission-20260925/README.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mim-consumer-integration-and-conservative-candidate-review">
+<h1>MIM consumer integration and conservative candidate review<a class="headerlink" href="#mim-consumer-integration-and-conservative-candidate-review" title="Link to this heading"></a></h1>
+<p>This is an agent-assisted, independently adversarially reviewed engineering and
+mapping-admission review. It is <strong>not human curator signoff</strong>, a production
+artifact promotion, or evidence that a new merged KG has been built.</p>
+<section id="integrated-work">
+<h2>Integrated work<a class="headerlink" href="#integrated-work" title="Link to this heading"></a></h2>
+<p>Prerequisites #1120, #1130 and #1131 were merged first. PR #1152 consolidates
+the remaining #1139 / #1141 / #1144 / #1149 consumer stack, together with:</p>
+<ul class="simple">
+<li><p>Original-query admission after normalized/fuzzy lookup; case-sensitive
+negative-cache keys; finite reviewed COCl2/CoCl2 query scopes.</p></li>
+<li><p>Target-scoped recipe, salt/dye, hydrate and fallback exclusions. Rejected
+mappings preserve MediaDive ingredient IDs rather than guessing chemistry.</p></li>
+<li><p>Native authority restoration when a sole bad historical assertion is
+quarantined; explicit reporting when no independent declaration is available.</p></li>
+<li><p>Nine exact source-trait patterns preserving three local compound IDs, with
+worker tests for both MetaTraits producers, both polarities, percentages and
+provenance. No external chemical equivalences are added for these compounds.</p></li>
+<li><p>Nonblocking exporter-provenance diagnostics, portable candidate code/config
+fingerprints and actual package-version inventories, stable synonym spelling,
+main-level dry-run write-suppression tests, and corrected mapping documentation.</p></li>
+</ul>
+<p>Newly reproduced defects are tracked in #1150 (native authority loss) and #1151
+(false fallback identities). The original overly broad Berberine source-ID
+exclusion was removed during review: an upstream WITHHOLD is not proof that a
+chloride-specific source record is globally false. The unqualified-name guard
+against assigning generic berberine to its chloride remains target-scoped.</p>
+</section>
+<section id="independent-engineering-review">
+<h2>Independent engineering review<a class="headerlink" href="#independent-engineering-review" title="Link to this heading"></a></h2>
+<p>The first fully tested code/policy revision is
+<code class="docutils literal notranslate"><span class="pre">f2a938ee090c205104090c2feb8f649a1e518e1a</span></code>. A separate adversarial reviewer
+reproduced the authority-loss and punctuation/fallback bypasses, then approved
+the fixes at that revision. Its final focused suite passed 159 tests; a separate
+expanded chemical-mapping regression run passed 293 tests. The source-local
+worker tests were also independently rerun (four passing tests).</p>
+<p>Formatting, Ruff lint, spell checking and docstring coverage passed without
+modifying that frozen source tree. Both standalone pytest and full tox passed
+2,573 tests, with 55 deliberate skips. Subsequent artifact audits exposed #1153
+and #1154, described below; the final revision must pass those checks again.
+Final revision/test/candidate hashes are recorded in PR #1152’s validation
+record. Engineering approval is not chemical curator signoff or production
+artifact approval.</p>
+<p>The #1153/#1154 follow-up is committed as <code class="docutils literal notranslate"><span class="pre">6f52fa2ad</span></code>. Its expanded focused
+suite passed 175 tests; the independent reviewer passed 128 tests and found no
+remaining blocking code findings. This includes stale-loader exact/fuzzy
+lookups, both real producer workers, and native-label repair for retained
+identity and nonidentity assertions, with full original-row quarantine.</p>
+</section>
+<section id="candidate-input-not-a-new-published-release">
+<h2>Candidate input, not a new published release<a class="headerlink" href="#candidate-input-not-a-new-published-release" title="Link to this heading"></a></h2>
+<p>The diagnostic export was reproduced from immutable upstream commit
+<code class="docutils literal notranslate"><span class="pre">a8b26f007cdf5bdc7529ab13888d611f359e6aad</span></code>, not a floating sibling checkout.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Input</p></th>
+<th class="head"><p>SHA-256</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Upstream commit archive</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">48d18e4f02bfdcfb3982b5ed43625dba2f76b89470ae0e99f5986c66149973dc</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Reviewed export manifest</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">c37e075743b52f614a78c2ddd7ec47e1e8ea35b53e0a66c5886007947105a64b</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Supported SSSOM</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">6b52b30e018b369aa322d41dfd4e81fcfae0e895e34d7fe48900abf5835815fb</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Withheld SSSOM</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">c37491ed4191889d375b02510137a178ee9b44a341131e42afec07d7953e8405</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Dispositions</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">87b4a72969681e4b808c526552c84c36daa17c6697970735a4e0ba0270523154</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>The source partition is 1,747 supported and 1,252 withheld rows, totaling 2,999.
+Upstream review assembly, export validation and SSSOM structural validation
+passed locally. This reproduction used KGM’s Python 3.10 environment, not the
+upstream project’s locked Python 3.13 environment. Do not describe the generated
+manifest as a newly published upstream GitHub release.</p>
+<p>The diagnostic candidates exposed additional fallback defects. Their old
+counts/hashes are not acceptance evidence for subsequent fixes. Rebuild and
+audit the final candidate under the frozen code/policy context, including a
+second generation to check convergence.</p>
+</section>
+<section id="coverage-decisions">
+<h2>Coverage decisions<a class="headerlink" href="#coverage-decisions" title="Link to this heading"></a></h2>
+<p>The initial audit traced all 63 exposed historical IDs and 504 existing producer
+edge rows. Those are exposure counts, not measured edge losses in a rebuilt KG.
+At the first fully tested revision the absent-entity cohort was 508; a separate
+lexical reconstruction counter was 509 because NCIT:C29406 retained scoped
+native aliases without a canonical display name. CHEBI:18309 was the additional
+absent entity relative to the earlier 507-ID audit. Neither ID had producer
+exposure in the four audited sources. All 349 distinct tested resolver routes
+in the exposed cohort had evidence-backed or explicit local dispositions;
+none had unresolved trait lookup or rejected-identity reintroduction.</p>
+<p>Conservative dispositions include:</p>
+<ul class="simple">
+<li><p>Preserve unknown recipe/preparation/hydrate occurrences as source-specific
+ingredients; do not strengthen them to a molecular identity.</p></li>
+<li><p>Preserve 3-O-methyl alpha-D-glucopyranoside, L-alanine 4-nitroanilide and
+potassium 5-dehydro-D-gluconate trait observations as local compounds. The old
+exposed producer rows total 38, six and six respectively. Actual final counts
+still require producer runs.</p></li>
+<li><p>Use the selected supported SSSOM’s explicit aliases for sulfur powder,
+iso-valeric acid, butyl vinyl ether and the local Na-phosphate buffer record.</p></li>
+<li><p>Prefer native canonical L-xylose (CHEBI:65328) over the same string occurring
+as an alias of ring-opened aldehydo-L-xylose (CHEBI:17979).</p></li>
+<li><p>The betaine hydrochloride route to pubchem.compound:11545 has independent
+support in the <a class="reference external" href="https://pubchem.ncbi.nlm.nih.gov/compound/11545">primary PubChem record</a>,
+which supplies that name and CAS 590-46-5. It is not approval of the withheld
+MIM parent mapping to generic glycine betaine.</p></li>
+</ul>
+<p>These finite decisions are not a general chemical-formula parser, comprehensive
+scientific recuration of all legacy mappings, or activation of the separate
+20-case ingredient occurrence/product profile.</p>
+</section>
+<section id="additional-complete-cohort-findings">
+<h2>Additional complete-cohort findings<a class="headerlink" href="#additional-complete-cohort-findings" title="Link to this heading"></a></h2>
+<p>The missing-ID audit covered none of the 55 historically MIM-derived special
+override targets. A separate ledger reconstructed all 55 original target-changing
+rows from commits <code class="docutils literal notranslate"><span class="pre">4617f84b6</span></code> and <code class="docutils literal notranslate"><span class="pre">0444faf1e</span></code>, then checked current mappings,
+supported/withheld dispositions, native records, raw observations and both
+actual transform classes (220 special-resolver probes plus 55 manual entries).
+Fifty-three routes had finite support. Two generic-to-specific routes did not:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">produces:</span> <span class="pre">angustmycin</span></code> now retains <code class="docutils literal notranslate"><span class="pre">kgmicrobe.compound:angustmycin</span></code>, not the
+specific psicofuranin / Angustmycin C target CHEBI:8612.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">produces:</span> <span class="pre">rubradirin</span></code> now retains <code class="docutils literal notranslate"><span class="pre">kgmicrobe.compound:rubradirin</span></code>, not the
+specific Rubradirin B target CHEBI:223718.</p></li>
+</ul>
+<p>These #1153 dispositions reuse historical local IDs. Target-scoped guards protect
+stale unified/fallback routes while retaining explicit native member names.
+The raw sources contain four positive records total across the two producers;
+these are not counts from a newly built KG.</p>
+<p>The full identity audit also found six otherwise-admissible CHEBI:8309 rows
+carrying the rejected generic object label <code class="docutils literal notranslate"><span class="pre">polymyxin</span> <span class="pre">b</span></code>. #1154 quarantines the
+complete original rows and repairs descriptive metadata from admitted native
+labels, without falsely attributing their retained identities to that authority.
+When no safe native label exists, the unsafe label is cleared and reported, not
+replaced by a guessed identity. Case-only preferred-label differences for
+CHEBI:29673 and FOODON:03413132 were audit false positives; NCIT:C29406’s
+scope-blocked preferred label is a disclosed exception, not an erased identifier.</p>
+</section>
+<section id="original-38-issue-queue">
+<h2>Original 38-issue queue<a class="headerlink" href="#original-38-issue-queue" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Disposition</p></th>
+<th class="head"><p>Issues</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Prerequisite fixes merged</p></td>
+<td><p>#1127, #1128, #1129, #1132</p></td>
+</tr>
+<tr class="row-odd"><td><p>Original observations verified resolved and closed</p></td>
+<td><p>#506, #514, #381, #952, #297, #299, #822</p></td>
+</tr>
+<tr class="row-even"><td><p>Implemented by consolidated PR #1152, subject to its final tests/CI</p></td>
+<td><p>#1133, #1134, #1135, #1136, #1137, #1138, #1140, #1142, #1143, #1145, #1146, #1147, #1148, #973, #974, #979, #515, #954</p></td>
+</tr>
+<tr class="row-odd"><td><p>Keep production/artifact gates open</p></td>
+<td><p>#1123, #788, #1009</p></td>
+</tr>
+<tr class="row-even"><td><p>Separate narrower curation or feature scope; not automatic MIM promotion gates</p></td>
+<td><p>#837, #650, #385, #386, #536, #905</p></td>
+</tr>
+</tbody>
+</table>
+<p>In particular, ingredient-occurrence support is not general CultureMech KGX
+adoption (#905); recipe amount/unit support is not a proof of normalized
+concentration computation (#536); and obsolete MicrobeDecoder label counts are
+not permission to import a historical MIM label index indiscriminately.</p>
+</section>
+<section id="remaining-production-gate">
+<h2>Remaining production gate<a class="headerlink" href="#remaining-production-gate" title="Link to this heading"></a></h2>
+<p>Keep #1123 open until immutable production-input selection and coordinated
+promotion of both mapping artifacts are reviewed, the final candidate and its
+coverage dispositions pass, and the actual producer closure is rebuilt and
+merged. Recompute freshness on the final checkout: the shared utility changes
+can invalidate all 15 canonical producers, not just the older nine-source
+mapping-only closure. Then review the new archive’s model, paths and manifest.</p>
+<p>No existing transform receipt or merged artifact is made fresh by this PR.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,143 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Producer-to-merge integration review &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=7026087e"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Producer-to-merge integration review</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reviews/ingredient-integration-v1/README.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="producer-to-merge-integration-review">
+<h1>Producer-to-merge integration review<a class="headerlink" href="#producer-to-merge-integration-review" title="Link to this heading"></a></h1>
+<p>Tracking #1136. Producer: MIM #775 at
+<code class="docutils literal notranslate"><span class="pre">73f14f4a930249836b4c3eee9bae635c731d6c5e</span></code>. Consumer dependencies: #1139,
+#1141, #1144 and the #1120 broader-mapping implementation.</p>
+<p>The actual producer’s 20-case export is combined with independent native KGX
+excerpts and complete Biolink 4.4.2. All 51 original source claims survive the
+finalized public KGX archive, with the native xanthine and rifamycin subclass
+edges. A second actual producer export adds clearly synthetic same-CAS products
+and two occurrences from one source; all 57 claims retain their identities and
+payloads. Reversing native input order leaves graph semantics unchanged.</p>
+<p>Review found and fixed:</p>
+<ul class="simple">
+<li><p>#1145: a broader mapping could reference an undeclared original MIM endpoint
+after an authorized identity replacement. Both directions now use the reviewed
+canonical endpoint while preserving the original row.</p></li>
+<li><p>#1146: the complete pinned model already owns <code class="docutils literal notranslate"><span class="pre">MIM</span></code>. Local ingredient graph
+endpoints use <code class="docutils literal notranslate"><span class="pre">MIM.ingredient</span></code>; original producer IDs remain in payloads.
+These two projection fixes are carried by parent PR #1144.</p></li>
+<li><p>#1147: valid hashes could admit an internally contradictory legacy companion.
+Candidate construction/reload now reject same-pair exact/nonidentity clashes
+independently of row order. The old production artifact is unchanged.</p></li>
+<li><p>#1148: MediaDive’s recipe writer failed without strain observations. Resetting
+the per-medium strain list preserves ingredient output in that case.</p></li>
+</ul>
+<p>The focused combined gate passed 78 tests. Native fixture generation was
+reproduced byte for byte from the recorded source hashes. Regenerating the
+synthetic fixture through the pinned MIM exporter reproduces manifest
+<code class="docutils literal notranslate"><span class="pre">4dfbfd1927fd6899a04b50efa3049dc2e35ceda817020f5bf007a936b45edb33</span></code> and archive
+<code class="docutils literal notranslate"><span class="pre">21a1510e8c88b29ab8eeeac3baf50406540ac7d2759e0829534eb599542e359c</span></code>.</p>
+<p>The initial legacy test lacked the actual ChEBI closure authority required by
+source finalization. It now reconstructs a small SemSQL database from 429 exact
+original statement rows for the two required terms and their asserted ancestry;
+the strict authority checks remain enabled. Source versions/hashes are independent
+of the main native JSON excerpt and are explicitly recorded as such.</p>
+<p>Full repository checks and current-head CI are required before merge. Production
+activation remains refused; the #1123 source-closure/promotion decision is not
+replaced by a passing fixture report. Lysozyme/sorbitan evidence holds remain
+separate scientific review tasks.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

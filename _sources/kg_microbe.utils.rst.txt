@@ -124,10 +124,42 @@ kg\_microbe.utils.graph\_schema module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.utils.ingredient\_bundle module
+-------------------------------------------
+
+.. automodule:: kg_microbe.utils.ingredient_bundle
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.ingredient\_bundle\_contract module
+-----------------------------------------------------
+
+.. automodule:: kg_microbe.utils.ingredient_bundle_contract
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.utils.ingredient\_identity module
 ---------------------------------------------
 
 .. automodule:: kg_microbe.utils.ingredient_identity
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.ingredient\_kgx module
+----------------------------------------
+
+.. automodule:: kg_microbe.utils.ingredient_kgx
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.ingredient\_scope module
+------------------------------------------
+
+.. automodule:: kg_microbe.utils.ingredient_scope
    :members:
    :undoc-members:
    :show-inheritance:
@@ -252,6 +284,14 @@ kg\_microbe.utils.provenance module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.utils.review\_claims module
+---------------------------------------
+
+.. automodule:: kg_microbe.utils.review_claims
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.utils.robot\_utils module
 -------------------------------------
 
@@ -272,6 +312,14 @@ kg\_microbe.utils.source\_finalization module
 ---------------------------------------------
 
 .. automodule:: kg_microbe.utils.source_finalization
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.sssom\_identity\_policy module
+------------------------------------------------
+
+.. automodule:: kg_microbe.utils.sssom_identity_policy
    :members:
    :undoc-members:
    :show-inheritance:

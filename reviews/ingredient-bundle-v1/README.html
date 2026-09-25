@@ -1,0 +1,134 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ingredient bundle consumption review &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=7026087e"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Ingredient bundle consumption review</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reviews/ingredient-bundle-v1/README.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ingredient-bundle-consumption-review">
+<h1>Ingredient bundle consumption review<a class="headerlink" href="#ingredient-bundle-consumption-review" title="Link to this heading"></a></h1>
+<p>Tracking: #1134; review findings #1140 and #1143. Producer: MIM #775, implementing MIM #769
+and #770. Identity predicate guard: #1139.</p>
+<p>The consumer reads the actual 20-case producer bundle pinned in
+<code class="docutils literal notranslate"><span class="pre">contract-origin.json</span></code> and <code class="docutils literal notranslate"><span class="pre">tests/resources/ingredient_bundle/origin.json</span></code>.
+Source-scoped resolution, current xrefs, complete registry history and original
+occurrences remain separate. All 20 canonical owners match the current curated
+CAS policy; that policy is retained until the combined integration gate passes.</p>
+<p>Round 1 passed 50 focused checks. Round 2 reproduced a missing-target hole after
+serialization: a rehashed legacy input could omit CHEBI:29673 while retaining its
+reviewed SV mapping. The reload path now streams usable declarations and requires
+every authorized target. Nonidentity/quarantined rows do not provide an identity
+endpoint. The regression and existing checks pass: 51 tests.</p>
+<p>The tests use actual producer bytes; the small legacy/native declarations passed
+to the consolidator are controlled test inputs. They establish software behavior,
+not independent validation of the entire production ontology closure. The full
+producer-to-transform-to-merge acceptance fixture and activation gate remain #1136.</p>
+<p>The vendored schema is byte-identical to the producer’s. Portable validator ASTs
+match after the documented relative import, formatting and docstring adaptations.
+No scientific review disposition or production release pin changes in this PR.</p>
+<p>Round 3 reproduced cache drift: loading another legacy table replaced a pinned
+loader’s global name index. Profiled accessors now reselect and verify their
+explicit input when the cache context changes. Hot calls with the same selection
+do not rehash the table; binding/finalization still enforce input freshness.</p>
+<p>Full local pytest passed (2343 passed, 56 skipped), and the full tox test run
+passed (2344 passed, 55 skipped). Tox identified one missing docstring in the
+vendored verifier; that documentation-only adaptation was fixed and the portable
+AST audit still passes. Format, lint, codespell and 100% docstring checks now pass.
+The cache fix is followed by its focused regressions and a fresh full test run.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

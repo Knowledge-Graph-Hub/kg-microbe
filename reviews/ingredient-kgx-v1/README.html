@@ -1,0 +1,133 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ingredient KGX review &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=7026087e"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Ingredient KGX review</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reviews/ingredient-kgx-v1/README.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ingredient-kgx-review">
+<h1>Ingredient KGX review<a class="headerlink" href="#ingredient-kgx-review" title="Link to this heading"></a></h1>
+<p>Tracking: #1135; review findings #1142, #1145 and #1146. Dependencies: #1141 and #1120.</p>
+<p>The real MIM #775 export is projected to 71 nodes and 51 source-qualified claims.
+Round 1 verified all structured claims through public loose/archive merge and
+reload, including seven BSA recipe contexts, source-specific A7030, the unselected
+A9647-or-A7409 group, and current/historical/rejected registry annotations.</p>
+<p>Round 2 reproduced certification of prior output after an injected projection
+failure. The public run boundary now latches failures until an explicit new run.
+Ten focused projection/transport checks passed. Registration is explicit-only,
+with its own required consumed SSSOM input; it does not require or activate the
+production unified mapping file. Dispatch/input-contract checks cover that route.
+The integrated #1120 broad-match prerequisite and #1133/#1134 lookup checks passed
+127 focused tests before the subsequent #1143 cache-isolation fix.</p>
+<p>General activation remains disabled. #1136 owns the complete scientific-case
+matrix, independent native ontology excerpts, two synthetic products sharing one
+CAS, candidate receipt and production activation refusal. No production download
+pin or general CultureMech ingestion is changed here.</p>
+<p>Round 3 used the complete pinned Biolink 4.4.2 model and reproduced a namespace
+collision: Biolink already defines <code class="docutils literal notranslate"><span class="pre">MIM</span></code>. The application now uses
+<code class="docutils literal notranslate"><span class="pre">MIM.ingredient</span></code> for local graph endpoints, retaining original producer IDs in
+the structured claim payload. This also fixes the 34 full-suite failures caused
+by that collision. Existing collision rejection remains enabled. A separate
+multi-mapping probe reproduced a dangling broader endpoint when the source also
+had an authorized identity; both broad/narrow directions now use that reviewed
+canonical owner. Five focused regression cases cover namespace and row order.
+The combined projection, offline merge and ontology conversion suite passes:
+56 tests, including the affected full-model context paths. Full tox/pytest is
+rerun on this corrected version before merge.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

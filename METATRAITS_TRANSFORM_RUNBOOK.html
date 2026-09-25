@@ -150,7 +150,7 @@ poetry<span class="w"> </span>run<span class="w"> </span>pip<span class="w"> </s
 <h2>Trait Mapping Lookup<a class="headerlink" href="#trait-mapping-lookup" title="Link to this heading"></a></h2>
 <p>Trait names are resolved in this order:</p>
 <ol class="arabic simple">
-<li><p><strong>Curated microbial-trait-mappings</strong> (<code class="docutils literal notranslate"><span class="pre">mappings/metatraits/*.tsv</span></code>) — authoritative lookup from <a class="reference external" href="https://github.com/turbomam/microbial-trait-mappings">turbomam/microbial-trait-mappings</a>. TSVs by entity type:</p>
+<li><p><strong>Curated microbial-trait-mappings</strong> (<code class="docutils literal notranslate"><span class="pre">mappings/canonical/*.tsv</span></code>) — the shared KGM curation directory, including mappings originally contributed through <a class="reference external" href="https://github.com/turbomam/microbial-trait-mappings">turbomam/microbial-trait-mappings</a>. TSVs by entity type:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">chemical_mappings.tsv</span></code> — produces compounds (CHEBI)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">enzyme_mappings.tsv</span></code> — enzyme activities (EC, GO)</p></li>
@@ -262,8 +262,8 @@ poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </sp
 <h2>Adding New Trait Mappings<a class="headerlink" href="#adding-new-trait-mappings" title="Link to this heading"></a></h2>
 <p>To map a new trait that appears in <code class="docutils literal notranslate"><span class="pre">unmapped_traits.tsv</span></code>:</p>
 <ol class="arabic simple">
-<li><p><strong>Preferred:</strong> Contribute to <a class="reference external" href="https://github.com/turbomam/microbial-trait-mappings">turbomam/microbial-trait-mappings</a> (PR with new rows in the appropriate TSV). Once merged, copy the updated TSV into <code class="docutils literal notranslate"><span class="pre">mappings/metatraits/</span></code>.</p></li>
-<li><p><strong>Local override:</strong> Add a row to the appropriate TSV in <code class="docutils literal notranslate"><span class="pre">mappings/metatraits/</span></code>. Required columns:</p>
+<li><p><strong>Preferred:</strong> Contribute to <a class="reference external" href="https://github.com/turbomam/microbial-trait-mappings">turbomam/microbial-trait-mappings</a> (PR with new rows in the appropriate TSV). Once merged, review and incorporate the relevant rows into <code class="docutils literal notranslate"><span class="pre">mappings/canonical/</span></code>, preserving KGM’s existing curation and schema extensions rather than overwriting the directory.</p></li>
+<li><p><strong>Local override:</strong> Add a row to the appropriate TSV in <code class="docutils literal notranslate"><span class="pre">mappings/canonical/</span></code>. Required columns:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">subject_label</span></code> — trait name (e.g. <code class="docutils literal notranslate"><span class="pre">produces:</span> <span class="pre">ethanol</span></code>)</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">subject_label_normalized</span></code> — lowercase variant for case-insensitive lookup</p></li>
@@ -275,6 +275,13 @@ poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </sp
 </li>
 <li><p><strong>Fallback:</strong> Add to <code class="docutils literal notranslate"><span class="pre">custom_curies.yaml</span></code> or METPO synonym mappings (used when trait is not in curated TSVs).</p></li>
 </ol>
+<p>Chemical-name identity lookup also uses the unified SSSOM and the guarded
+<code class="docutils literal notranslate"><span class="pre">special_chemical_mappings.tsv</span></code> fallback. A canonical-table edit does not by itself
+refresh the unified artifact. Follow <a class="reference internal" href="MIM_REVIEWED_RELEASE.html"><span class="std std-doc">the reviewed MIM workflow</span></a>
+for chemical consolidation; do not run the blocked legacy additive exporter.
+Review <code class="docutils literal notranslate"><span class="pre">unmapped_traits.tsv</span></code> for missing trait groundings and <code class="docutils literal notranslate"><span class="pre">unresolved_taxa.tsv</span></code>
+for organism-name resolution separately. A taxonomic correction is not a chemical
+mapping fix. Keep existing source labels and attach evidence to each new mapping.</p>
 </section>
 <section id="troubleshooting">
 <h2>Troubleshooting<a class="headerlink" href="#troubleshooting" title="Link to this heading"></a></h2>

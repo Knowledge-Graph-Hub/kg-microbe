@@ -1,0 +1,21 @@
+kg\_microbe.transform\_utils.mim\_ingredients package
+=====================================================
+
+Submodules
+----------
+
+kg\_microbe.transform\_utils.mim\_ingredients.mim\_ingredients module
+---------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.mim_ingredients.mim_ingredients
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: kg_microbe.transform_utils.mim_ingredients
+   :members:
+   :undoc-members:
+   :show-inheritance:

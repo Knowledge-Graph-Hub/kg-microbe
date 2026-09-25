@@ -1,0 +1,144 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Explicit identity routing (#1133) &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=7026087e"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Explicit identity routing (#1133)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reviews/ingredient-scope-v1/README.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="explicit-identity-routing-1133">
+<h1>Explicit identity routing (#1133)<a class="headerlink" href="#explicit-identity-routing-1133" title="Link to this heading"></a></h1>
+<p>The unified SSSOM reader classifies rows before indexing any identity-bearing
+attributes. Legacy files retain the two explicit <code class="docutils literal notranslate"><span class="pre">kgm.name:</span></code> lexical shapes
+(<code class="docutils literal notranslate"><span class="pre">canonical_name</span></code> exactMatch and <code class="docutils literal notranslate"><span class="pre">synonym</span></code> exact/closeMatch) and the separately
+reviewed <code class="docutils literal notranslate"><span class="pre">recipe_equivalent_hydrate</span></code> route. Ordinary identity rows require
+exactMatch. Other close/related matches and annotation predicates do not enter
+name, synonym, formula or equivalent-xref lookup. Unknown predicates and any
+predicate modifier, including negation, are quarantined.</p>
+<p>The versioned MIM scope profile additionally requires SUPPORTED review,
+compatible established scope/composition and explicit identity authorization.
+Missing declarations, unknown profiles, incompatible scope and unsupported
+review status cannot fall back to legacy identity behavior. The general
+release bundle and independent proof verification remain gated by #1134/#1136.
+The new profile is not a production pin change.</p>
+<p>Broader/narrower direction continues to follow the declared SKOS/legacy
+semantics. These relations retain separate parent indexes. Their unambiguous
+object category is an endpoint annotation fallback, behind independent entity
+metadata; it does not resolve a name or identifier. Conflicting fallback
+categories are omitted. Parent-edge projection is owned by PR #1120.</p>
+<p><code class="docutils literal notranslate"><span class="pre">get_mapping_load_audit()</span></code> returns complete status, counts by route, explicit
+policy-exclusion counts and up to 20 diagnostic source positions/triples.
+Failed reloads invalidate cache success before rebuilding. The reader validates
+column shape and preserves quoted multiline values containing <code class="docutils literal notranslate"><span class="pre">#</span></code>.</p>
+<section id="legacy-snapshot-audit">
+<h2>Legacy snapshot audit<a class="headerlink" href="#legacy-snapshot-audit" title="Link to this heading"></a></h2>
+<p>Compared the twelve serialized lookup indexes against PR #1130 at
+<code class="docutils literal notranslate"><span class="pre">c4df95e3d17fcd36a27c59b67cf2b96c9467df89</span></code> using the same source bytes.
+<a class="reference download internal" download="" href="../../_downloads/119238c91ca05cf364f1ac5150514ea6/index-audit.json"><span class="xref download myst">index-audit.json</span></a> records the source SHA256, index key counts
+and SHA256 digests of <code class="docutils literal notranslate"><span class="pre">json.dumps(index,</span> <span class="pre">sort_keys=True,</span> <span class="pre">separators=(&quot;,&quot;,</span> <span class="pre">&quot;:&quot;))</span></code>.
+All twelve indexes match the baseline exactly: 120,669 entities and 610,059
+rows, with no quarantined rows in this legacy artifact. The 10 identity and
+14 lexical exclusions are the existing reviewed case policy. This verifies
+compatibility, not the scientific validity of every legacy assertion.</p>
+<p>Review findings #1137 and #1138 have negative regression coverage for predicate
+modifiers and category-only broader endpoints, including row-order reversal.
+Scope validation is vendored from MIM with its exact origin and digests in
+<a class="reference download internal" download="" href="../../_downloads/021cb653a63f554f2b96616a1c76e0df/contract-origin.json"><span class="xref download myst">contract-origin.json</span></a>. Compare module ASTs after removing
+string docstrings (formatter conventions differ); the packaged YAML is identical.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

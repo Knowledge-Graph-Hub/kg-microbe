@@ -1,0 +1,215 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ingredient occurrence and registry context in KGX &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Ingredient occurrence and registry context in KGX</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/INGREDIENT_KGX.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ingredient-occurrence-and-registry-context-in-kgx">
+<h1>Ingredient occurrence and registry context in KGX<a class="headerlink" href="#ingredient-occurrence-and-registry-context-in-kgx" title="Link to this heading"></a></h1>
+<p>Local ingredient concepts use <code class="docutils literal notranslate"><span class="pre">MIM.ingredient:</span></code> in graph endpoints. Biolink’s
+existing <code class="docutils literal notranslate"><span class="pre">MIM</span></code> namespace keeps its original meaning. Structured SSSOM/claim
+payloads retain their original <code class="docutils literal notranslate"><span class="pre">MIM:</span></code> identifiers and producer namespace.
+Reviewed canonical NCIT, ChEBI, MICRO and KG-Microbe IDs are unchanged.</p>
+<p>The explicit <code class="docutils literal notranslate"><span class="pre">mim_ingredients</span></code> transform consumes the reviewed lookup candidate
+from <code class="docutils literal notranslate"><span class="pre">INGREDIENT_BUNDLE.md</span></code>. It does not ingest all CultureMech graphs (#905) or
+change the production ingredient download pin (#1123). Its source selection is
+<code class="docutils literal notranslate"><span class="pre">&lt;raw&gt;/mim_ingredients/selection.json</span></code>:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;mode&quot;</span><span class="p">:</span><span class="s2">&quot;candidate_only&quot;</span><span class="p">,</span><span class="nt">&quot;lookup_directory&quot;</span><span class="p">:</span><span class="s2">&quot;/path/to/lookup-candidate&quot;</span><span class="p">,</span><span class="nt">&quot;lookup_manifest_sha256&quot;</span><span class="p">:</span><span class="s2">&quot;&lt;reviewed SHA-256&gt;&quot;</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>Run <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">kg</span> <span class="pre">transform</span> <span class="pre">-s</span> <span class="pre">mim_ingredients</span> <span class="pre">--help</span></code> for the standard transform
+options. Direct Python callers can instantiate <code class="docutils literal notranslate"><span class="pre">MIMIngredientsTransform(raw,</span> <span class="pre">output)</span></code>, call <code class="docutils literal notranslate"><span class="pre">run()</span></code>, then <code class="docutils literal notranslate"><span class="pre">finalize(fresh_run=True)</span></code>. Standard CLI dispatch also
+writes the source fingerprint used by public merge admission. The actual run
+records the selection, every lookup/bundle member, and original review evidence
+as consumed inputs. A failed run remains ineligible for finalization until an
+explicit new run begins. Source finalization also requires local FoodOn data when
+FoodOn nodes are present.</p>
+<section id="what-the-nodes-and-assertions-mean">
+<h2>What the nodes and assertions mean<a class="headerlink" href="#what-the-nodes-and-assertions-mean" title="Link to this heading"></a></h2>
+<p>Generic ingredient nodes retain the reviewed canonical identity and current CAS
+xref set. No product preparation, catalog number or supplier is added to their
+names, synonyms or universal properties. A catalog record is a supplier’s product
+specification; it is not a physical lot, an ingredient ontology subclass or an
+assertion of molecular identity. Distinct product IDs remain distinct even when
+they have the same CAS xref.</p>
+<p><code class="docutils literal notranslate"><span class="pre">MIM.product</span></code>, <code class="docutils literal notranslate"><span class="pre">MIM.annotation</span></code>, <code class="docutils literal notranslate"><span class="pre">MIM.mapping</span></code>, and <code class="docutils literal notranslate"><span class="pre">MIM.source</span></code> nodes are typed
+<code class="docutils literal notranslate"><span class="pre">biolink:InformationContentEntity</span></code>. Their edges use <code class="docutils literal notranslate"><span class="pre">biolink:related_to</span></code> with
+<code class="docutils literal notranslate"><span class="pre">relation=IAO:0000136</span></code> (is about). Biolink 4.4.2 explicitly lists that IAO relation
+under the narrower mappings of <code class="docutils literal notranslate"><span class="pre">related</span> <span class="pre">to</span></code>. These edges describe what a source
+record or reviewed claim is about; they do not assert every reported claim is
+accepted as active chemical knowledge.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Record</p></th>
+<th class="head"><p>Assertion payload</p></th>
+<th class="head"><p>Meaning</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Catalog record → ingredient</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ingredient_product_json</span></code></p></td>
+<td><p>Original supplier, catalog number, preparation, source payload, evidence and review state</p></td>
+</tr>
+<tr class="row-odd"><td><p>Identifier annotation → owning entity</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ingredient_annotation_json</span></code></p></td>
+<td><p>Full original identifier/source/status/version/evidence tuple, including rejected or historical claims</p></td>
+</tr>
+<tr class="row-even"><td><p>Mapping review record → resolved source concept</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ingredient_mapping_json</span></code></p></td>
+<td><p>Original SSSOM row, scope and explicit identity authorization</p></td>
+</tr>
+<tr class="row-odd"><td><p>Source record → ingredient</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ingredient_occurrence_json</span></code></p></td>
+<td><p>Original recipe/observation occurrence, quantity, preparation, selected product or alternatives</p></td>
+</tr>
+</tbody>
+</table>
+<p>This is the linked registry-annotation table in graph form. Filtering edges with
+<code class="docutils literal notranslate"><span class="pre">ingredient_annotation_json</span></code> yields one intact claim per row; the subject names
+the stable annotation, and the object names its projected canonical owner. It
+survives an ordinary graph-only archive because it is part of the graph. Evidence
+URNs and JSON pointers identify bytes in the separately retained pinned producer
+bundle; they are not replaced by invented web citations. Every context assertion
+also carries <code class="docutils literal notranslate"><span class="pre">ingredient_bundle_sha256</span></code>.</p>
+<p>A source record uses <code class="docutils literal notranslate"><span class="pre">MIM.source:SHA256(canonical_JSON(source_id))</span></code>, distinguishing
+a recipe’s information record from a growth-medium material using the original
+CultureMech ID. The original source ID is its xref and remains in the assertion’s
+<code class="docutils literal notranslate"><span class="pre">publications</span></code> and structured payload. The primary information resource is
+<code class="docutils literal notranslate"><span class="pre">infores:mediaingredientmech</span></code>, which publishes the reviewed interpretation.</p>
+<p>The seven BSA recipe occurrences remain separate assertions. Only the original
+CultureBotHT record selects A7030. CultureMech:015191 retains one explicit
+<code class="docutils literal notranslate"><span class="pre">one_of</span></code>/<code class="docutils literal notranslate"><span class="pre">UNSPECIFIED</span></code> group containing A9647 and A7409. No selected-product or
+confirmed-use edge is emitted for either unselected alternative. Both product
+records remain independently queryable. Missing concentrations and CAS values are
+not inferred.</p>
+</section>
+<section id="typed-extension-transport">
+<h2>Typed extension transport<a class="headerlink" href="#typed-extension-transport" title="Link to this heading"></a></h2>
+<p>The application contract is <code class="docutils literal notranslate"><span class="pre">kg_microbe/profiles/ingredient_kgx_v1.yaml</span></code>.
+<code class="docutils literal notranslate"><span class="pre">ingredient_profile</span></code> is one CURIE; <code class="docutils literal notranslate"><span class="pre">ingredient_record_kind</span></code> is one node enum;
+<code class="docutils literal notranslate"><span class="pre">ingredient_bundle_sha256</span></code> is one edge digest. The four <code class="docutils literal notranslate"><span class="pre">*_json</span></code> fields each hold
+one canonical JSON object as a <strong>scalar</strong> TSV field. Their nested field types and
+cardinalities come from the producer’s <code class="docutils literal notranslate"><span class="pre">ingredient_bundle_v1.schema.json</span></code>:
+quantities are object-or-null, preparation is string-or-null, evidence is an array
+of document/pointer objects, and alternatives are arrays of explicit option
+groups. Tabs/newlines are JSON-escaped; quotes and literal pipes retain their
+meaning. A pipe inside JSON is never an array delimiter.</p>
+<p><code class="docutils literal notranslate"><span class="pre">ingredient_occurrence_id</span></code> is one stable occurrence CURIE. Optional
+<code class="docutils literal notranslate"><span class="pre">ingredient_product_id</span></code> is populated only when the original occurrence explicitly
+selects a product. Both must agree with the full structured occurrence. Canonical
+TSV validation rejects unknown profiles, pooled scalars, duplicate JSON keys,
+non-finite values, malformed claim types and inconsistent selected products. Merge
+uses its existing complete-assertion key, so different preparation or evidence
+stays on a different assertion even if its endpoints are identical.</p>
+<p>Supported broad/narrow mappings retain explicit broad-match semantics; narrower
+rows reverse to a normalized <code class="docutils literal notranslate"><span class="pre">biolink:broad_match</span></code> edge while the original row
+remains in its payload. An unreviewed or withheld mapping remains a review record.
+No exact, close or broad mapping creates <code class="docutils literal notranslate"><span class="pre">same_as</span></code> or an inferred subclass. Native
+ontology classification is supplied independently by its ontology transform.</p>
+<p>Namespaces are registered in the application profile, project prefix map and
+pinned KGX context. The existing MIM source namespace is preserved. These are
+application extensions, not new standard SSSOM or Biolink slots.</p>
+<p>Validation: <code class="docutils literal notranslate"><span class="pre">tests/test_ingredient_kgx.py</span></code> runs the actual producer export through
+consolidation, lookup, this transform, source finalization, public KGX merge,
+archive/loose serialization and reload. The general activation matrix is #1136.
+References: <a class="reference external" href="https://biolink.github.io/kgx/kgx_format.html">KGX format</a> and
+<a class="reference external" href="https://github.com/biolink/biolink-model/blob/v4.4.2/biolink-model.yaml">Biolink 4.4.2</a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

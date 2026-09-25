@@ -82,6 +82,7 @@
  | <a href="#G"><strong>G</strong></a>
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
+ | <a href="#J"><strong>J</strong></a>
  | <a href="#K"><strong>K</strong></a>
  | <a href="#L"><strong>L</strong></a>
  | <a href="#M"><strong>M</strong></a>
@@ -105,6 +106,8 @@
       <li><a href="kg_microbe.transform_utils.metatraits_gtdb.html#kg_microbe.transform_utils.metatraits_gtdb.MetaTraitsGTDBTransform.accession_to_gtdb_species">accession_to_gtdb_species (kg_microbe.transform_utils.metatraits_gtdb.MetaTraitsGTDBTransform attribute)</a>
 </li>
       <li><a href="kg_microbe.transform_utils.metatraits_gtdb.html#kg_microbe.transform_utils.metatraits_gtdb.MetaTraitsGTDBTransform.accession_to_ncbi">accession_to_ncbi (kg_microbe.transform_utils.metatraits_gtdb.MetaTraitsGTDBTransform attribute)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle.active_xrefs">active_xrefs() (kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle method)</a>
 </li>
       <li><a href="kg_microbe.transform_utils.prego.html#kg_microbe.transform_utils.prego.calibration.ScoreHistogram.add">add() (kg_microbe.transform_utils.prego.calibration.ScoreHistogram method)</a>
 </li>
@@ -178,14 +181,14 @@
         <li><a href="kg_microbe.transform_utils.bakta.html#kg_microbe.transform_utils.bakta.BaktaTransform.add_kegg_annotation">(kg_microbe.transform_utils.bakta.BaktaTransform method)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kg_microbe.transform_utils.kegg.html#kg_microbe.transform_utils.kegg.kegg.KEGGTransform.add_ko_node">add_ko_node() (kg_microbe.transform_utils.kegg.kegg.KEGGTransform method)</a>
 
       <ul>
         <li><a href="kg_microbe.transform_utils.kegg.html#kg_microbe.transform_utils.kegg.KEGGTransform.add_ko_node">(kg_microbe.transform_utils.kegg.KEGGTransform method)</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kg_microbe.transform_utils.kegg.html#kg_microbe.transform_utils.kegg.kegg.KEGGTransform.add_module_node">add_module_node() (kg_microbe.transform_utils.kegg.kegg.KEGGTransform method)</a>
 
       <ul>
@@ -212,11 +215,19 @@
       </ul></li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.go_authority.GoTerm.alternate_ids">alternate_ids (kg_microbe.utils.go_authority.GoTerm attribute)</a>
 </li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle_contract.alternative_id">alternative_id() (in module kg_microbe.utils.ingredient_bundle_contract)</a>
+</li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.ontology_resolution.CategoryAdapter.ancestors">ancestors() (kg_microbe.utils.ontology_resolution.CategoryAdapter method)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.ner_utils.annotate">annotate() (in module kg_microbe.utils.ner_utils)</a>
 </li>
       <li><a href="kg_microbe.merge_utils.html#kg_microbe.merge_utils.stats_provenance.annotate_graph_stats">annotate_graph_stats() (in module kg_microbe.merge_utils.stats_provenance)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle.annotation_document">annotation_document() (kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle method)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle_contract.annotation_id">annotation_id() (in module kg_microbe.utils.ingredient_bundle_contract)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle_contract.annotation_table">annotation_table() (in module kg_microbe.utils.ingredient_bundle_contract)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.postprocess_artifacts.ArtifactStatus.archive_sha256">archive_sha256 (kg_microbe.utils.postprocess_artifacts.ArtifactStatus attribute)</a>
 </li>
@@ -243,6 +254,8 @@
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.ontology_utils.assert_ncbitaxon_version_alignment">assert_ncbitaxon_version_alignment() (in module kg_microbe.utils.ontology_utils)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.atomic_io.atomic_write">atomic_write() (in module kg_microbe.utils.atomic_io)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle.audit">audit() (kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle method)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.foodon_classification.authoritative_foodon_category">authoritative_foodon_category() (in module kg_microbe.utils.foodon_classification)</a>
 </li>
@@ -278,19 +291,23 @@
       </ul></li>
       <li><a href="kg_microbe.transform_utils.prego.html#kg_microbe.transform_utils.prego.quality.LabelledEvidence.base_rate">base_rate() (kg_microbe.transform_utils.prego.quality.LabelledEvidence method)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kg_microbe.transform_utils.prego.html#kg_microbe.transform_utils.prego.quality.GoldStandard.baseline">baseline() (kg_microbe.transform_utils.prego.quality.GoldStandard method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.begin_consumed_inputs">begin_consumed_inputs() (kg_microbe.transform_utils.transform.Transform method)</a>
 </li>
       <li><a href="kg_microbe.merge_utils.html#kg_microbe.merge_utils.source_admission.SourceAdmission.bind_path">bind_path() (kg_microbe.merge_utils.source_admission.SourceAdmission method)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle.bind_to_transform">bind_to_transform() (kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle method)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.biolink_hierarchy.BiolinkHierarchy">BiolinkHierarchy (class in kg_microbe.utils.biolink_hierarchy)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.transform_fingerprint.bounded_file_fingerprint">bounded_file_fingerprint() (in module kg_microbe.utils.transform_fingerprint)</a>
 </li>
       <li><a href="kg_microbe.transform_utils.prego.html#kg_microbe.transform_utils.prego.calibration.build_cutoffs">build_cutoffs() (in module kg_microbe.transform_utils.prego.calibration)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle.build_ingredient_lookup_bundle">build_ingredient_lookup_bundle() (in module kg_microbe.utils.ingredient_bundle)</a>
 </li>
       <li><a href="kg_microbe.html#kg_microbe.bactotraits_to_mongo.build_nested_dict">build_nested_dict() (in module kg_microbe.bactotraits_to_mongo)</a>
 </li>
@@ -310,7 +327,11 @@
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.go_authority.GoResolution.canonical_id">canonical_id (kg_microbe.utils.go_authority.GoResolution attribute)</a>
 </li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle_contract.canonical_json">canonical_json() (in module kg_microbe.utils.ingredient_bundle_contract)</a>
+</li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.graph_canonicalization.canonical_node_category">canonical_node_category() (in module kg_microbe.utils.graph_canonicalization)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle.canonical_owner">canonical_owner() (kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle method)</a>
 </li>
       <li><a href="kg_microbe.merge_utils.html#kg_microbe.merge_utils.source_admission.SourceAdmission.capture">capture() (kg_microbe.merge_utils.source_admission.SourceAdmission method)</a>
 </li>
@@ -352,14 +373,16 @@
 </li>
       <li><a href="kg_microbe.transform_utils.prego.html#kg_microbe.transform_utils.prego.utils.classify_evidence">classify_evidence() (in module kg_microbe.transform_utils.prego.utils)</a>
 </li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.sssom_identity_policy.classify_mapping_row">classify_mapping_row() (in module kg_microbe.utils.sssom_identity_policy)</a>
+</li>
       <li><a href="kg_microbe.transform_utils.prego.html#kg_microbe.transform_utils.prego.utils.classify_row">classify_row() (in module kg_microbe.transform_utils.prego.utils)</a>
 </li>
       <li><a href="kg_microbe.html#kg_microbe.bactotraits_to_mongo.clean_field_name">clean_field_name() (in module kg_microbe.bactotraits_to_mongo)</a>
 </li>
-      <li><a href="kg_microbe.transform_utils.gtdb.html#kg_microbe.transform_utils.gtdb.utils.clean_taxon_name">clean_taxon_name() (in module kg_microbe.transform_utils.gtdb.utils)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="kg_microbe.transform_utils.gtdb.html#kg_microbe.transform_utils.gtdb.utils.clean_taxon_name">clean_taxon_name() (in module kg_microbe.transform_utils.gtdb.utils)</a>
+</li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.transform_fingerprint.code_fingerprint">code_fingerprint() (in module kg_microbe.utils.transform_fingerprint)</a>
 </li>
       <li><a href="kg_microbe.transform_utils.cog.html#kg_microbe.transform_utils.cog.COGTransform">COGTransform (class in kg_microbe.transform_utils.cog)</a>
@@ -386,7 +409,11 @@
 </li>
       <li><a href="kg_microbe.transform_utils.prego.html#kg_microbe.transform_utils.prego.quality.GoldStandard.contains">contains() (kg_microbe.transform_utils.prego.quality.GoldStandard method)</a>
 </li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle_contract.content_sha256">content_sha256() (in module kg_microbe.utils.ingredient_bundle_contract)</a>
+</li>
       <li><a href="kg_microbe.transform_utils.bacdive.html#kg_microbe.transform_utils.bacdive.emission.contested_deposit_description">contested_deposit_description() (in module kg_microbe.transform_utils.bacdive.emission)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle_contract.contract_resource">contract_resource() (in module kg_microbe.utils.ingredient_bundle_contract)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.uniprot_utils.convert_omim_diseases">convert_omim_diseases() (in module kg_microbe.utils.uniprot_utils)</a>
 </li>
@@ -556,6 +583,8 @@
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.download_utils.elastic_search_query">elastic_search_query() (in module kg_microbe.utils.download_utils)</a>
 </li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle.enrich_node">enrich_node() (kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle method)</a>
+</li>
       <li><a href="kg_microbe.transform_utils.prego.html#kg_microbe.transform_utils.prego.quality.enrichment_by_window">enrichment_by_window() (in module kg_microbe.transform_utils.prego.quality)</a>
 </li>
       <li><a href="kg_microbe.transform_utils.bacdive.html#kg_microbe.transform_utils.bacdive.emission.entailed_by_every_claim">entailed_by_every_claim() (in module kg_microbe.transform_utils.bacdive.emission)</a>
@@ -568,10 +597,10 @@
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.pandas_utils.establish_transitive_relationship_multiple">establish_transitive_relationship_multiple() (in module kg_microbe.utils.pandas_utils)</a>
 </li>
-      <li><a href="kg_microbe.transform_utils.prego.html#kg_microbe.transform_utils.prego.calibration.estimate_retention">estimate_retention() (in module kg_microbe.transform_utils.prego.calibration)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="kg_microbe.transform_utils.prego.html#kg_microbe.transform_utils.prego.calibration.estimate_retention">estimate_retention() (in module kg_microbe.transform_utils.prego.calibration)</a>
+</li>
       <li><a href="kg_microbe.merge_utils.html#kg_microbe.merge_utils.invariants.EXPECTED_STUB_PATTERNS">EXPECTED_STUB_PATTERNS (in module kg_microbe.merge_utils.invariants)</a>
 </li>
       <li><a href="kg_microbe.merge_utils.html#kg_microbe.merge_utils.invariants.EXPECTED_STUB_PREFIXES">EXPECTED_STUB_PREFIXES (in module kg_microbe.merge_utils.invariants)</a>
@@ -632,10 +661,10 @@
       </ul></li>
       <li><a href="kg_microbe.merge_utils.html#kg_microbe.merge_utils.invariants.find_multi_parent_strains">find_multi_parent_strains() (in module kg_microbe.merge_utils.invariants)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kg_microbe.merge_utils.html#kg_microbe.merge_utils.invariants.find_stub_nodes">find_stub_nodes() (in module kg_microbe.merge_utils.invariants)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.mapping_file_utils.MetpoTreeNode.find_synonym_node">find_synonym_node() (kg_microbe.utils.mapping_file_utils.MetpoTreeNode method)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.transform_fingerprint.FINGERPRINT_FILE">FINGERPRINT_FILE (in module kg_microbe.utils.transform_fingerprint)</a>
@@ -665,6 +694,8 @@
 </li>
       </ul></li>
       <li><a href="kg_microbe.html#kg_microbe.bactotraits_to_mongo.forward_fill_headers">forward_fill_headers() (in module kg_microbe.bactotraits_to_mongo)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.chemical_mapping_utils.ChemicalMappingLoader.from_ingredient_lookup_bundle">from_ingredient_lookup_bundle() (kg_microbe.utils.chemical_mapping_utils.ChemicalMappingLoader class method)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.go_authority.GoAuthority.from_statements">from_statements() (kg_microbe.utils.go_authority.GoAuthority class method)</a>
 </li>
@@ -752,6 +783,8 @@
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.chemical_mapping_utils.get_hydrate_equivalents">get_hydrate_equivalents() (in module kg_microbe.utils.chemical_mapping_utils)</a>
 </li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.chemical_mapping_utils.ChemicalMappingLoader.get_identifier_annotation_owners">get_identifier_annotation_owners() (kg_microbe.utils.chemical_mapping_utils.ChemicalMappingLoader method)</a>
+</li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.pandas_utils.get_ingredients_overlap">get_ingredients_overlap() (in module kg_microbe.utils.pandas_utils)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.download_utils.get_jobs">get_jobs() (in module kg_microbe.utils.download_utils)</a>
@@ -772,12 +805,14 @@
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.oak_utils.get_label">get_label() (in module kg_microbe.utils.oak_utils)</a>
 </li>
-      <li><a href="kg_microbe.query_utils.html#kg_microbe.query_utils.organism_queries.get_media_composition">get_media_composition() (in module kg_microbe.query_utils.organism_queries)</a>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.chemical_mapping_utils.get_mapping_load_audit">get_mapping_load_audit() (in module kg_microbe.utils.chemical_mapping_utils)</a>
 </li>
-      <li><a href="kg_microbe.query_utils.html#kg_microbe.query_utils.organism_queries.get_media_preferences">get_media_preferences() (in module kg_microbe.query_utils.organism_queries)</a>
+      <li><a href="kg_microbe.query_utils.html#kg_microbe.query_utils.organism_queries.get_media_composition">get_media_composition() (in module kg_microbe.query_utils.organism_queries)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="kg_microbe.query_utils.html#kg_microbe.query_utils.organism_queries.get_media_preferences">get_media_preferences() (in module kg_microbe.query_utils.organism_queries)</a>
+</li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.biolink_hierarchy.BiolinkHierarchy.get_most_specific_category">get_most_specific_category() (kg_microbe.utils.biolink_hierarchy.BiolinkHierarchy method)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.ontology_utils.get_ncbitaxon_adapter">get_ncbitaxon_adapter() (in module kg_microbe.utils.ontology_utils)</a>
@@ -904,11 +939,21 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.go_authority.GoTerm.identifier">identifier (kg_microbe.utils.go_authority.GoTerm attribute)</a>
 </li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle.identifier_claims">identifier_claims() (kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle method)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle.identifier_owners">identifier_owners() (kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle method)</a>
+</li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_identity.ingredient_authority_label">ingredient_authority_label() (in module kg_microbe.utils.ingredient_identity)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_identity.ingredient_cas_annotations">ingredient_cas_annotations() (in module kg_microbe.utils.ingredient_identity)</a>
 </li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_identity.ingredient_case_sensitive_name_scope">ingredient_case_sensitive_name_scope() (in module kg_microbe.utils.ingredient_identity)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_kgx.ingredient_graph_id">ingredient_graph_id() (in module kg_microbe.utils.ingredient_kgx)</a>
+</li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_identity.ingredient_identity_policy">ingredient_identity_policy() (in module kg_microbe.utils.ingredient_identity)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_kgx.ingredient_kgx_profile">ingredient_kgx_profile() (in module kg_microbe.utils.ingredient_kgx)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_identity.ingredient_mapping_allowed">ingredient_mapping_allowed() (in module kg_microbe.utils.ingredient_identity)</a>
 </li>
@@ -918,12 +963,12 @@
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_identity.ingredient_xref_allowed">ingredient_xref_allowed() (in module kg_microbe.utils.ingredient_identity)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.robot_utils.initialize_robot">initialize_robot() (in module kg_microbe.utils.robot_utils)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.postprocess_artifacts.inspect_artifact">inspect_artifact() (in module kg_microbe.utils.postprocess_artifacts)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kg_microbe.transform_utils.prego.html#kg_microbe.transform_utils.prego.calibration.is_continuous_channel">is_continuous_channel() (in module kg_microbe.transform_utils.prego.calibration)</a>
 </li>
       <li><a href="kg_microbe.transform_utils.microbedecoder.html#kg_microbe.transform_utils.microbedecoder.utils.is_empty_cell">is_empty_cell() (in module kg_microbe.transform_utils.microbedecoder.utils)</a>
@@ -945,6 +990,14 @@
       <li><a href="kg_microbe.transform_utils.prego.html#kg_microbe.transform_utils.prego.utils.iter_dictionary_names">iter_dictionary_names() (in module kg_microbe.transform_utils.prego.utils)</a>
 </li>
       <li><a href="kg_microbe.transform_utils.microbedecoder.html#kg_microbe.transform_utils.microbedecoder.utils.iter_metabolism_columns">iter_metabolism_columns() (in module kg_microbe.transform_utils.microbedecoder.utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="J">J</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_kgx.json_scalar">json_scalar() (in module kg_microbe.utils.ingredient_kgx)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -1382,8 +1435,6 @@
         <li><a href="kg_microbe.transform_utils.microbedecoder.html#module-kg_microbe.transform_utils.microbedecoder">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     kg_microbe.transform_utils.microbedecoder.microbedecoder
 
@@ -1398,6 +1449,22 @@
         <li><a href="kg_microbe.transform_utils.microbedecoder.html#module-kg_microbe.transform_utils.microbedecoder.utils">module</a>
 </li>
       </ul></li>
+      <li>
+    kg_microbe.transform_utils.mim_ingredients
+
+      <ul>
+        <li><a href="kg_microbe.transform_utils.mim_ingredients.html#module-kg_microbe.transform_utils.mim_ingredients">module</a>
+</li>
+      </ul></li>
+      <li>
+    kg_microbe.transform_utils.mim_ingredients.mim_ingredients
+
+      <ul>
+        <li><a href="kg_microbe.transform_utils.mim_ingredients.html#module-kg_microbe.transform_utils.mim_ingredients.mim_ingredients">module</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     kg_microbe.transform_utils.ontologies
 
@@ -1630,10 +1697,38 @@
 </li>
       </ul></li>
       <li>
+    kg_microbe.utils.ingredient_bundle
+
+      <ul>
+        <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.ingredient_bundle">module</a>
+</li>
+      </ul></li>
+      <li>
+    kg_microbe.utils.ingredient_bundle_contract
+
+      <ul>
+        <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.ingredient_bundle_contract">module</a>
+</li>
+      </ul></li>
+      <li>
     kg_microbe.utils.ingredient_identity
 
       <ul>
         <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.ingredient_identity">module</a>
+</li>
+      </ul></li>
+      <li>
+    kg_microbe.utils.ingredient_kgx
+
+      <ul>
+        <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.ingredient_kgx">module</a>
+</li>
+      </ul></li>
+      <li>
+    kg_microbe.utils.ingredient_scope
+
+      <ul>
+        <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.ingredient_scope">module</a>
 </li>
       </ul></li>
       <li>
@@ -1735,6 +1830,13 @@
 </li>
       </ul></li>
       <li>
+    kg_microbe.utils.review_claims
+
+      <ul>
+        <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.review_claims">module</a>
+</li>
+      </ul></li>
+      <li>
     kg_microbe.utils.robot_utils
 
       <ul>
@@ -1753,6 +1855,13 @@
 
       <ul>
         <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.source_finalization">module</a>
+</li>
+      </ul></li>
+      <li>
+    kg_microbe.utils.sssom_identity_policy
+
+      <ul>
+        <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.sssom_identity_policy">module</a>
 </li>
       </ul></li>
       <li>
@@ -1856,6 +1965,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle.load_ingredient_lookup_bundle">load_ingredient_lookup_bundle() (in module kg_microbe.utils.ingredient_bundle)</a>
+</li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.isolation_source_mapping_utils.load_isolation_source_mappings">load_isolation_source_mappings() (in module kg_microbe.utils.isolation_source_mapping_utils)</a>
 </li>
       <li><a href="kg_microbe.transform_utils.kegg.html#kg_microbe.transform_utils.kegg.utils.load_kegg_ko_details_from_cache">load_kegg_ko_details_from_cache() (in module kg_microbe.transform_utils.kegg.utils)</a>
@@ -1916,6 +2027,8 @@
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.download_manifest.manifest_path">manifest_path() (in module kg_microbe.utils.download_manifest)</a>
 </li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle.mappings">mappings() (kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle method)</a>
+</li>
       <li><a href="kg_microbe.transform_utils.metatraits.html#kg_microbe.transform_utils.metatraits.metatraits.MetaTraitsTransform.MEASUREMENT_TRAITS">MEASUREMENT_TRAITS (kg_microbe.transform_utils.metatraits.metatraits.MetaTraitsTransform attribute)</a>
 
       <ul>
@@ -1955,6 +2068,8 @@
       <li><a href="kg_microbe.transform_utils.microbedecoder.html#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform">MicrobeDecoderTransform (class in kg_microbe.transform_utils.microbedecoder.microbedecoder)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.transform_fingerprint.migrate_markers">migrate_markers() (in module kg_microbe.utils.transform_fingerprint)</a>
+</li>
+      <li><a href="kg_microbe.transform_utils.mim_ingredients.html#kg_microbe.transform_utils.mim_ingredients.mim_ingredients.MIMIngredientsTransform">MIMIngredientsTransform (class in kg_microbe.transform_utils.mim_ingredients.mim_ingredients)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.download_utils.mirror_to_bucket">mirror_to_bucket() (in module kg_microbe.utils.download_utils)</a>
 </li>
@@ -2086,6 +2201,10 @@
 </li>
         <li><a href="kg_microbe.transform_utils.microbedecoder.html#module-kg_microbe.transform_utils.microbedecoder.utils">kg_microbe.transform_utils.microbedecoder.utils</a>
 </li>
+        <li><a href="kg_microbe.transform_utils.mim_ingredients.html#module-kg_microbe.transform_utils.mim_ingredients">kg_microbe.transform_utils.mim_ingredients</a>
+</li>
+        <li><a href="kg_microbe.transform_utils.mim_ingredients.html#module-kg_microbe.transform_utils.mim_ingredients.mim_ingredients">kg_microbe.transform_utils.mim_ingredients.mim_ingredients</a>
+</li>
         <li><a href="kg_microbe.transform_utils.ontologies.html#module-kg_microbe.transform_utils.ontologies">kg_microbe.transform_utils.ontologies</a>
 </li>
         <li><a href="kg_microbe.transform_utils.ontologies.html#module-kg_microbe.transform_utils.ontologies.ontologies_transform">kg_microbe.transform_utils.ontologies.ontologies_transform</a>
@@ -2152,7 +2271,15 @@
 </li>
         <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.graph_schema">kg_microbe.utils.graph_schema</a>
 </li>
+        <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.ingredient_bundle">kg_microbe.utils.ingredient_bundle</a>
+</li>
+        <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.ingredient_bundle_contract">kg_microbe.utils.ingredient_bundle_contract</a>
+</li>
         <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.ingredient_identity">kg_microbe.utils.ingredient_identity</a>
+</li>
+        <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.ingredient_kgx">kg_microbe.utils.ingredient_kgx</a>
+</li>
+        <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.ingredient_scope">kg_microbe.utils.ingredient_scope</a>
 </li>
         <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.isolation_source_mapping_utils">kg_microbe.utils.isolation_source_mapping_utils</a>
 </li>
@@ -2182,11 +2309,15 @@
 </li>
         <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.provenance">kg_microbe.utils.provenance</a>
 </li>
+        <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.review_claims">kg_microbe.utils.review_claims</a>
+</li>
         <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.robot_utils">kg_microbe.utils.robot_utils</a>
 </li>
         <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.sanitize_curies">kg_microbe.utils.sanitize_curies</a>
 </li>
         <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.source_finalization">kg_microbe.utils.source_finalization</a>
+</li>
+        <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.sssom_identity_policy">kg_microbe.utils.sssom_identity_policy</a>
 </li>
         <li><a href="kg_microbe.utils.html#module-kg_microbe.utils.string_coding">kg_microbe.utils.string_coding</a>
 </li>
@@ -2261,6 +2392,10 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle_contract.occurrence_id">occurrence_id() (in module kg_microbe.utils.ingredient_bundle_contract)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle.occurrences">occurrences() (kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle method)</a>
+</li>
       <li><a href="kg_microbe.transform_utils.ontologies_stubs.html#kg_microbe.transform_utils.ontologies_stubs.OntologiesStubsTransform">OntologiesStubsTransform (class in kg_microbe.transform_utils.ontologies_stubs)</a>
 
       <ul>
@@ -2275,14 +2410,14 @@
       </ul></li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.ontology_utils.ontology_db_path">ontology_db_path() (in module kg_microbe.utils.ontology_utils)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kg_microbe.transform_utils.ontologies.html#kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.ONTOLOGY_KNOWLEDGE_SOURCES">ONTOLOGY_KNOWLEDGE_SOURCES (kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform attribute)</a>
 
       <ul>
         <li><a href="kg_microbe.transform_utils.ontologies.html#kg_microbe.transform_utils.ontologies.OntologiesTransform.ONTOLOGY_KNOWLEDGE_SOURCES">(kg_microbe.transform_utils.ontologies.OntologiesTransform attribute)</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.ontology_utils.OntologyDbUnavailableError">OntologyDbUnavailableError</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.ontology_utils.OntologyVersionMismatchError">OntologyVersionMismatchError</a>
@@ -2351,21 +2486,25 @@
 </li>
       <li><a href="kg_microbe.transform_utils.gtdb.html#kg_microbe.transform_utils.gtdb.utils.parse_taxonomy_string">parse_taxonomy_string() (in module kg_microbe.transform_utils.gtdb.utils)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.download_utils.parse_url">parse_url() (in module kg_microbe.utils.download_utils)</a>
 </li>
       <li><a href="kg_microbe.html#kg_microbe.bactotraits_to_mongo.parse_value">parse_value() (in module kg_microbe.bactotraits_to_mongo)</a>
 </li>
       <li><a href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.pass_through">pass_through() (kg_microbe.transform_utils.transform.Transform method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.postprocess_artifacts.ArtifactStatus.path">path (kg_microbe.utils.postprocess_artifacts.ArtifactStatus attribute)</a>
 </li>
       <li><a href="kg_microbe.transform_utils.bacdive.html#kg_microbe.transform_utils.bacdive.BacDiveTransform.pathogenicity_mappings">pathogenicity_mappings (kg_microbe.transform_utils.bacdive.BacDiveTransform attribute)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.ontology_resolution.pato_category">pato_category() (in module kg_microbe.utils.ontology_resolution)</a>
 </li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.review_claims.payload_sha256">payload_sha256() (in module kg_microbe.utils.review_claims)</a>
+</li>
       <li><a href="kg_microbe.transform_utils.bacdive.html#kg_microbe.transform_utils.bacdive.BacDiveTransform.phenotype_routing">phenotype_routing (kg_microbe.transform_utils.bacdive.BacDiveTransform attribute)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle.policy_parity">policy_parity() (kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle method)</a>
 </li>
       <li><a href="kg_microbe.transform_utils.ontologies.html#kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.post_process">post_process() (kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform method)</a>
 
@@ -2404,6 +2543,14 @@
 </li>
       </ul></li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.uniprot_utils.process_lines">process_lines() (in module kg_microbe.utils.uniprot_utils)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle_contract.product_id">product_id() (in module kg_microbe.utils.ingredient_bundle_contract)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle.products">products() (kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle method)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_scope.profile_metadata">profile_metadata() (in module kg_microbe.utils.ingredient_scope)</a>
+</li>
+      <li><a href="kg_microbe.transform_utils.mim_ingredients.html#kg_microbe.transform_utils.mim_ingredients.mim_ingredients.project_ingredient_context">project_ingredient_context() (in module kg_microbe.transform_utils.mim_ingredients.mim_ingredients)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.unipathways_utils.project_onto_header">project_onto_header() (in module kg_microbe.utils.unipathways_utils)</a>
 </li>
@@ -2445,13 +2592,23 @@
 <h2 id="R">R</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle_contract.read_annotation_table">read_annotation_table() (in module kg_microbe.utils.ingredient_bundle_contract)</a>
+</li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.transform_fingerprint.read_fingerprint">read_fingerprint() (in module kg_microbe.utils.transform_fingerprint)</a>
 </li>
-      <li><a href="kg_microbe.merge_utils.html#kg_microbe.merge_utils.source_admission.SourceAdmission.read_json">read_json() (kg_microbe.merge_utils.source_admission.SourceAdmission method)</a>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle_contract.read_json">read_json() (in module kg_microbe.utils.ingredient_bundle_contract)</a>
+
+      <ul>
+        <li><a href="kg_microbe.merge_utils.html#kg_microbe.merge_utils.source_admission.SourceAdmission.read_json">(kg_microbe.merge_utils.source_admission.SourceAdmission method)</a>
 </li>
+      </ul></li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.download_manifest.read_manifest">read_manifest() (in module kg_microbe.utils.download_manifest)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.chemical_mapping_utils.read_predicate_semantics">read_predicate_semantics() (in module kg_microbe.utils.chemical_mapping_utils)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_scope.read_profile_table">read_profile_table() (in module kg_microbe.utils.ingredient_scope)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_scope.read_scope_metadata">read_scope_metadata() (in module kg_microbe.utils.ingredient_scope)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.download_manifest.record">record() (in module kg_microbe.utils.download_manifest)</a>
 </li>
@@ -2494,6 +2651,8 @@
 </li>
         <li><a href="kg_microbe.transform_utils.mediadive.html#kg_microbe.transform_utils.mediadive.MediaDiveTransform.REQUIRED_CONSUMED_INPUTS">(kg_microbe.transform_utils.mediadive.MediaDiveTransform attribute)</a>
 </li>
+        <li><a href="kg_microbe.transform_utils.mim_ingredients.html#kg_microbe.transform_utils.mim_ingredients.mim_ingredients.MIMIngredientsTransform.REQUIRED_CONSUMED_INPUTS">(kg_microbe.transform_utils.mim_ingredients.mim_ingredients.MIMIngredientsTransform attribute)</a>
+</li>
         <li><a href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.REQUIRED_CONSUMED_INPUTS">(kg_microbe.transform_utils.transform.Transform attribute)</a>
 </li>
       </ul></li>
@@ -2519,13 +2678,23 @@
 </li>
       <li><a href="kg_microbe.merge_utils.html#kg_microbe.merge_utils.external_node_closure.resolve_external_references">resolve_external_references() (in module kg_microbe.merge_utils.external_node_closure)</a>
 </li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.chemical_mapping_utils.ChemicalMappingLoader.resolve_ingredient_source">resolve_ingredient_source() (kg_microbe.utils.chemical_mapping_utils.ChemicalMappingLoader method)</a>
+</li>
       <li><a href="kg_microbe.query_utils.html#kg_microbe.query_utils.organism_queries.resolve_organism_name">resolve_organism_name() (in module kg_microbe.query_utils.organism_queries)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.external_identifiers.resolve_replacement">resolve_replacement() (in module kg_microbe.utils.external_identifiers)</a>
 </li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle.resolve_source">resolve_source() (kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle method)</a>
+</li>
       <li><a href="kg_microbe.html#kg_microbe.query.result_dict_to_tsv">result_dict_to_tsv() (in module kg_microbe.query)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.postprocess_artifacts.review_status">review_status() (in module kg_microbe.utils.postprocess_artifacts)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle_contract.reviewed_products">reviewed_products() (in module kg_microbe.utils.ingredient_bundle_contract)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle">ReviewedIngredientBundle (class in kg_microbe.utils.ingredient_bundle)</a>
 </li>
       <li><a href="kg_microbe.transform_utils.rhea_mappings.html#kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform">RheaMappingsTransform (class in kg_microbe.transform_utils.rhea_mappings)</a>
 
@@ -2535,8 +2704,6 @@
       </ul></li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.sanitize_curies.robust_fix_uri">robust_fix_uri() (in module kg_microbe.utils.sanitize_curies)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="kg_microbe.transform_utils.bacdive.html#kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.run">run() (kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform method)</a>
 
       <ul>
@@ -2596,6 +2763,8 @@
 </li>
         <li><a href="kg_microbe.transform_utils.microbedecoder.html#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.run">(kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform method)</a>
 </li>
+        <li><a href="kg_microbe.transform_utils.mim_ingredients.html#kg_microbe.transform_utils.mim_ingredients.mim_ingredients.MIMIngredientsTransform.run">(kg_microbe.transform_utils.mim_ingredients.mim_ingredients.MIMIngredientsTransform method)</a>
+</li>
         <li><a href="kg_microbe.transform_utils.ontologies.html#kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.run">(kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform method)</a>
 </li>
         <li><a href="kg_microbe.transform_utils.ontologies.html#kg_microbe.transform_utils.ontologies.OntologiesTransform.run">(kg_microbe.transform_utils.ontologies.OntologiesTransform method)</a>
@@ -2633,6 +2802,8 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle_contract.safe_member">safe_member() (in module kg_microbe.utils.ingredient_bundle_contract)</a>
+</li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.sanitize_curies.sanitize_id_or_uri">sanitize_id_or_uri() (in module kg_microbe.utils.sanitize_curies)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.sanitize_curies.sanitize_row">sanitize_row() (in module kg_microbe.utils.sanitize_curies)</a>
@@ -2644,6 +2815,8 @@
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.transform_fingerprint.SCHEMA_FILES">SCHEMA_FILES (in module kg_microbe.utils.transform_fingerprint)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.transform_fingerprint.schema_fingerprint">schema_fingerprint() (in module kg_microbe.utils.transform_fingerprint)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_scope.scope_profile">scope_profile() (in module kg_microbe.utils.ingredient_scope)</a>
 </li>
       <li><a href="kg_microbe.transform_utils.prego.html#kg_microbe.transform_utils.prego.calibration.ScoreHistogram">ScoreHistogram (class in kg_microbe.transform_utils.prego.calibration)</a>
 </li>
@@ -2690,6 +2863,10 @@
       <li><a href="kg_microbe.transform_utils.microbedecoder.html#kg_microbe.transform_utils.microbedecoder.utils.split_multivalue_comma_only">split_multivalue_comma_only() (in module kg_microbe.transform_utils.microbedecoder.utils)</a>
 </li>
       <li><a href="kg_microbe.transform_utils.microbedecoder.html#kg_microbe.transform_utils.microbedecoder.utils.split_snapshot_values">split_snapshot_values() (in module kg_microbe.transform_utils.microbedecoder.utils)</a>
+</li>
+      <li><a href="kg_microbe.transform_utils.mim_ingredients.html#kg_microbe.transform_utils.mim_ingredients.mim_ingredients.MIMIngredientsTransform.SSSOM_CONSUMED_INPUT">SSSOM_CONSUMED_INPUT (kg_microbe.transform_utils.mim_ingredients.mim_ingredients.MIMIngredientsTransform attribute)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle_contract.stable_id">stable_id() (in module kg_microbe.utils.ingredient_bundle_contract)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.download_manifest.stale_by_url">stale_by_url() (in module kg_microbe.utils.download_manifest)</a>
 </li>
@@ -2747,41 +2924,43 @@
 </li>
       <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes">test_transform_child_classes (tests.test_transform_class.TestTransform attribute)</a>
 </li>
-      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_00_ontologies">test_transform_child_classes_00_ontologies() (tests.test_transform_class.TestTransform method)</a>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_00_mim_ingredients">test_transform_child_classes_00_mim_ingredients() (tests.test_transform_class.TestTransform method)</a>
 </li>
-      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_01_ontologies_stubs">test_transform_child_classes_01_ontologies_stubs() (tests.test_transform_class.TestTransform method)</a>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_01_ontologies">test_transform_child_classes_01_ontologies() (tests.test_transform_class.TestTransform method)</a>
 </li>
-      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_02_bacdive">test_transform_child_classes_02_bacdive() (tests.test_transform_class.TestTransform method)</a>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_02_ontologies_stubs">test_transform_child_classes_02_ontologies_stubs() (tests.test_transform_class.TestTransform method)</a>
 </li>
-      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_03_bakta">test_transform_child_classes_03_bakta() (tests.test_transform_class.TestTransform method)</a>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_03_bacdive">test_transform_child_classes_03_bacdive() (tests.test_transform_class.TestTransform method)</a>
 </li>
-      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_04_cog">test_transform_child_classes_04_cog() (tests.test_transform_class.TestTransform method)</a>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_04_bakta">test_transform_child_classes_04_bakta() (tests.test_transform_class.TestTransform method)</a>
 </li>
-      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_05_gtdb">test_transform_child_classes_05_gtdb() (tests.test_transform_class.TestTransform method)</a>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_05_cog">test_transform_child_classes_05_cog() (tests.test_transform_class.TestTransform method)</a>
 </li>
-      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_06_kegg">test_transform_child_classes_06_kegg() (tests.test_transform_class.TestTransform method)</a>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_06_gtdb">test_transform_child_classes_06_gtdb() (tests.test_transform_class.TestTransform method)</a>
 </li>
-      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_07_lpsn">test_transform_child_classes_07_lpsn() (tests.test_transform_class.TestTransform method)</a>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_07_kegg">test_transform_child_classes_07_kegg() (tests.test_transform_class.TestTransform method)</a>
 </li>
-      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_08_lpsn_api">test_transform_child_classes_08_lpsn_api() (tests.test_transform_class.TestTransform method)</a>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_08_lpsn">test_transform_child_classes_08_lpsn() (tests.test_transform_class.TestTransform method)</a>
 </li>
-      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_09_mediadive">test_transform_child_classes_09_mediadive() (tests.test_transform_class.TestTransform method)</a>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_09_lpsn_api">test_transform_child_classes_09_lpsn_api() (tests.test_transform_class.TestTransform method)</a>
 </li>
-      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_10_madin_etal">test_transform_child_classes_10_madin_etal() (tests.test_transform_class.TestTransform method)</a>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_10_mediadive">test_transform_child_classes_10_mediadive() (tests.test_transform_class.TestTransform method)</a>
 </li>
-      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_11_metatraits">test_transform_child_classes_11_metatraits() (tests.test_transform_class.TestTransform method)</a>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_11_madin_etal">test_transform_child_classes_11_madin_etal() (tests.test_transform_class.TestTransform method)</a>
 </li>
-      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_12_metatraits_gtdb">test_transform_child_classes_12_metatraits_gtdb() (tests.test_transform_class.TestTransform method)</a>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_12_metatraits">test_transform_child_classes_12_metatraits() (tests.test_transform_class.TestTransform method)</a>
 </li>
-      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_13_rhea_mappings">test_transform_child_classes_13_rhea_mappings() (tests.test_transform_class.TestTransform method)</a>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_13_metatraits_gtdb">test_transform_child_classes_13_metatraits_gtdb() (tests.test_transform_class.TestTransform method)</a>
 </li>
-      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_14_bactotraits">test_transform_child_classes_14_bactotraits() (tests.test_transform_class.TestTransform method)</a>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_14_rhea_mappings">test_transform_child_classes_14_rhea_mappings() (tests.test_transform_class.TestTransform method)</a>
 </li>
-      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_15_gold">test_transform_child_classes_15_gold() (tests.test_transform_class.TestTransform method)</a>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_15_bactotraits">test_transform_child_classes_15_bactotraits() (tests.test_transform_class.TestTransform method)</a>
 </li>
-      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_16_microbedecoder">test_transform_child_classes_16_microbedecoder() (tests.test_transform_class.TestTransform method)</a>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_16_gold">test_transform_child_classes_16_gold() (tests.test_transform_class.TestTransform method)</a>
 </li>
-      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_17_prego">test_transform_child_classes_17_prego() (tests.test_transform_class.TestTransform method)</a>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_17_microbedecoder">test_transform_child_classes_17_microbedecoder() (tests.test_transform_class.TestTransform method)</a>
+</li>
+      <li><a href="tests.html#tests.test_transform_class.TestTransform.test_transform_child_classes_18_prego">test_transform_child_classes_18_prego() (tests.test_transform_class.TestTransform method)</a>
 </li>
       <li>
     tests
@@ -2858,7 +3037,11 @@
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.tsv_io.tsv_dict_writer">tsv_dict_writer() (in module kg_microbe.utils.tsv_io)</a>
 </li>
       <li><a href="kg_microbe.transform_utils.microbedecoder.html#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.TSV_QUOTING">TSV_QUOTING (kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform attribute)</a>
+
+      <ul>
+        <li><a href="kg_microbe.transform_utils.mim_ingredients.html#kg_microbe.transform_utils.mim_ingredients.mim_ingredients.MIMIngredientsTransform.TSV_QUOTING">(kg_microbe.transform_utils.mim_ingredients.mim_ingredients.MIMIngredientsTransform attribute)</a>
 </li>
+      </ul></li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.tsv_io.tsv_writer">tsv_writer() (in module kg_microbe.utils.tsv_io)</a>
 </li>
   </ul></td>
@@ -2895,6 +3078,10 @@
 <h2 id="V">V</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle_contract.valid_cas">valid_cas() (in module kg_microbe.utils.ingredient_bundle_contract)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle_contract.validate_bundle">validate_bundle() (in module kg_microbe.utils.ingredient_bundle_contract)</a>
+</li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.graph_schema.validate_canonical_tsv">validate_canonical_tsv() (in module kg_microbe.utils.graph_schema)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.validation_utils.validate_curie">validate_curie() (in module kg_microbe.utils.validation_utils)</a>
@@ -2905,13 +3092,23 @@
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.source_finalization.validate_identifier">validate_identifier() (in module kg_microbe.utils.source_finalization)</a>
 </li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_kgx.validate_ingredient_fields">validate_ingredient_fields() (in module kg_microbe.utils.ingredient_kgx)</a>
+</li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.validation_utils.validate_kgm_term">validate_kgm_term() (in module kg_microbe.utils.validation_utils)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle_contract.validate_member_hashes">validate_member_hashes() (in module kg_microbe.utils.ingredient_bundle_contract)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.source_finalization.validate_node_representation">validate_node_representation() (in module kg_microbe.utils.source_finalization)</a>
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle_contract.validate_payload">validate_payload() (in module kg_microbe.utils.ingredient_bundle_contract)</a>
+</li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.provenance.validate_primary_source_and_publications">validate_primary_source_and_publications() (in module kg_microbe.utils.provenance)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.review_claims.validate_review_decision">validate_review_decision() (in module kg_microbe.utils.review_claims)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_scope.validate_scope_row">validate_scope_row() (in module kg_microbe.utils.ingredient_scope)</a>
 </li>
       <li><a href="kg_microbe.transform_utils.prego.html#kg_microbe.transform_utils.prego.calibration.validate_tau">validate_tau() (in module kg_microbe.transform_utils.prego.calibration)</a>
 </li>
@@ -2923,6 +3120,8 @@
         <li><a href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.verify_consumed_inputs">(kg_microbe.transform_utils.transform.Transform method)</a>
 </li>
       </ul></li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle.verify_current">verify_current() (kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle method)</a>
+</li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.source_finalization.verify_finalized_source_files">verify_finalized_source_files() (in module kg_microbe.utils.source_finalization)</a>
 </li>
       <li><a href="kg_microbe.merge_utils.html#kg_microbe.merge_utils.source_freshness.verify_source_freshness">verify_source_freshness() (in module kg_microbe.merge_utils.source_freshness)</a>
@@ -2940,6 +3139,8 @@
 </li>
       </ul></li>
       <li><a href="kg_microbe.transform_utils.lpsn_api.html#kg_microbe.transform_utils.lpsn_api.lpsn_api.WEB_RECORD_SOURCE_KEY">WEB_RECORD_SOURCE_KEY (in module kg_microbe.transform_utils.lpsn_api.lpsn_api)</a>
+</li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle.write_annotations">write_annotations() (kg_microbe.utils.ingredient_bundle.ReviewedIngredientBundle method)</a>
 </li>
       <li><a href="kg_microbe.utils.html#kg_microbe.utils.go_authority.write_empty_go_report">write_empty_go_report() (in module kg_microbe.utils.go_authority)</a>
 </li>
@@ -2969,6 +3170,8 @@
         <li><a href="kg_microbe.transform_utils.kegg.html#kg_microbe.transform_utils.kegg.KEGGTransform.write_output">(kg_microbe.transform_utils.kegg.KEGGTransform method)</a>
 </li>
       </ul></li>
+      <li><a href="kg_microbe.utils.html#kg_microbe.utils.ingredient_scope.write_profile_table">write_profile_table() (in module kg_microbe.utils.ingredient_scope)</a>
+</li>
       <li><a href="kg_microbe.transform_utils.metatraits.html#kg_microbe.transform_utils.metatraits.io.StreamingRowWriter.write_row">write_row() (kg_microbe.transform_utils.metatraits.io.StreamingRowWriter method)</a>
 </li>
       <li><a href="kg_microbe.transform_utils.bacdive.html#kg_microbe.transform_utils.bacdive.emission.StrainProvenanceWriter.writerow">writerow() (kg_microbe.transform_utils.bacdive.emission.StrainProvenanceWriter method)</a>

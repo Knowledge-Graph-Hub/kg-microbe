@@ -1,0 +1,200 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reviewed ingredient bundle consumer &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Reviewed ingredient bundle consumer</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/INGREDIENT_BUNDLE.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="reviewed-ingredient-bundle-consumer">
+<h1>Reviewed ingredient bundle consumer<a class="headerlink" href="#reviewed-ingredient-bundle-consumer" title="Link to this heading"></a></h1>
+<p>The opt-in consumer validates the complete MIM scope/registry/occurrence bundle
+before using its mappings. Supply the independently reviewed SHA-256 of
+<code class="docutils literal notranslate"><span class="pre">manifest.json</span></code>; a hash read from an untrusted manifest does not establish trust.
+The current fixture comes from MIM commit
+<code class="docutils literal notranslate"><span class="pre">73f14f4a930249836b4c3eee9bae635c731d6c5e</span></code>, exported by its actual producer CLI.
+It is a reviewed cohort, not a replacement for the full legacy ingredient release.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">kg_microbe.utils.ingredient_bundle</span><span class="w"> </span><span class="kn">import</span> <span class="n">ReviewedIngredientBundle</span>
+
+<span class="n">bundle</span> <span class="o">=</span> <span class="n">ReviewedIngredientBundle</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;candidate/ingredient_bundle&quot;</span><span class="p">),</span>
+                                  <span class="n">manifest_sha256</span><span class="o">=</span><span class="s2">&quot;&lt;reviewed 64-hex digest&gt;&quot;</span><span class="p">)</span>
+<span class="n">bundle</span><span class="o">.</span><span class="n">resolve_source</span><span class="p">(</span><span class="s2">&quot;MIM:Xanthine&quot;</span><span class="p">)</span>  <span class="c1"># CHEBI:17712</span>
+<span class="n">bundle</span><span class="o">.</span><span class="n">active_xrefs</span><span class="p">(</span><span class="s2">&quot;CHEBI:17712&quot;</span><span class="p">)</span>     <span class="c1"># [&quot;cas:69-89-6&quot;]</span>
+<span class="n">bundle</span><span class="o">.</span><span class="n">active_xrefs</span><span class="p">(</span><span class="s2">&quot;CHEBI:15318&quot;</span><span class="p">)</span>     <span class="c1"># []</span>
+</pre></div>
+</div>
+<p>Source concepts and occurrences resolve before label or namespace preference.
+<code class="docutils literal notranslate"><span class="pre">resolve_source</span></code> accepts a known scoped source ID and, optionally, its verified
+occurrence ID. Native generic trait IDs are not reinterpreted as MIM ingredients.
+A matching review can authorize canonical replacement; <code class="docutils literal notranslate"><span class="pre">xref</span></code> alone cannot.
+Nonidentity mappings retain the source concept. Broader targets never inherit
+specific-subject CAS claims through this API.</p>
+<p><code class="docutils literal notranslate"><span class="pre">identifier_owners</span></code> returns every annotation owner, rather than one identity
+representative. BSA and its specifically reviewed A7030 material both refer to
+CAS 9048-46-8. They remain distinct identifiers. <code class="docutils literal notranslate"><span class="pre">identifier_claims</span></code> preserves
+complete owner/identifier/source/status/evidence tuples, including FDA SUPERSEDED
+and original CultureBotHT claims for Acriflavine. Historical/unknown-currentness
+and withheld/invalid claims are not active xrefs. No replacement CAS is inferred.</p>
+<section id="consolidation-and-lookup">
+<h2>Consolidation and lookup<a class="headerlink" href="#consolidation-and-lookup" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">build_ingredient_lookup_bundle(consolidator,</span> <span class="pre">bundle,</span> <span class="pre">output_directory)</span></code> uses the
+existing consolidator for explicitly selected native/legacy inputs and keeps the
+reviewed scoped cohort as a separate required input. It requires a new output
+directory and checks every authorized scoped target before export and again
+against usable declarations in the serialized lookup. Annotation, broader-only,
+and quarantined rows cannot satisfy that endpoint inventory.</p>
+<p>The candidate includes the legacy SSSOM, unchanged producer bundle and evidence,
+a graph-associated annotation JSON, an audit, and a common <code class="docutils literal notranslate"><span class="pre">lookup_manifest.json</span></code>
+that binds them by content digest. Its mode is <code class="docutils literal notranslate"><span class="pre">candidate_only</span></code>. Reload with:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">kg_microbe.utils.chemical_mapping_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChemicalMappingLoader</span>
+
+<span class="n">loader</span> <span class="o">=</span> <span class="n">ChemicalMappingLoader</span><span class="o">.</span><span class="n">from_ingredient_lookup_bundle</span><span class="p">(</span>
+    <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;candidate&quot;</span><span class="p">),</span> <span class="n">manifest_sha256</span><span class="o">=</span><span class="s2">&quot;&lt;reviewed lookup-manifest digest&gt;&quot;</span><span class="p">)</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">resolve_ingredient_source</span><span class="p">(</span><span class="s2">&quot;MIM:Xanthine&quot;</span><span class="p">)</span>  <span class="c1"># CHEBI:17712</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">find_chebi_by_name</span><span class="p">(</span><span class="s2">&quot;Xanthine&quot;</span><span class="p">)</span>              <span class="c1"># generic CHEBI:15318</span>
+<span class="n">loader</span><span class="o">.</span><span class="n">get_identifier_annotation_owners</span><span class="p">(</span><span class="s2">&quot;cas:9048-46-8&quot;</span><span class="p">)</span>  <span class="c1"># multiple owners</span>
+</pre></div>
+</div>
+<p>Neither the standalone TSV loader nor additive MIM consolidator accepts a bare
+profiled TSV. This prevents loss of scope or review fields from becoming a silent
+legacy fallback. The source-specific mappings are not flattened into global name
+aliases. Existing legacy-only calls retain their established behavior. The
+existing case policy remains in place; <code class="docutils literal notranslate"><span class="pre">policy_parity()</span></code> currently reports zero
+differences across all 20 covered canonical targets. Removing that policy requires
+separate migration evidence, especially for cases outside this cohort.</p>
+<p>For a covered node, <code class="docutils literal notranslate"><span class="pre">get_node_enrichment</span></code> uses the bundle’s reviewed active CAS
+set. Other legacy CAS values are outside the selected bundle’s active evidence;
+this does not reject an independent source’s claim globally. Original history
+remains queryable. Supplier/catalog/preparation attributes are never added to a
+generic ingredient’s synonyms. Annotation xrefs never populate the legacy
+identity-xref index. CAS query routes explicitly present in the older case policy
+remain separate from this new annotation transport.</p>
+</section>
+<section id="provenance-freshness-and-occurrence-handoff">
+<h2>Provenance, freshness and occurrence handoff<a class="headerlink" href="#provenance-freshness-and-occurrence-handoff" title="Link to this heading"></a></h2>
+<p>The portable schema/validator verifies member hashes, capability and profile
+versions, complete owner-bound reviews and exact artifact reconstruction. Its
+origin and hashes are recorded under <code class="docutils literal notranslate"><span class="pre">docs/reviews/ingredient-bundle-v1/</span></code>.
+Rehashing a modified output cannot override its scientific proof or orphan a
+required target.</p>
+<p><code class="docutils literal notranslate"><span class="pre">write_annotations</span></code> produces <code class="docutils literal notranslate"><span class="pre">ingredient_identifier_annotations.json</span></code> with each
+original claim alongside its projected canonical owner, the source bundle pin,
+and an evidence-URN-to-member map. Keep it with the unchanged <code class="docutils literal notranslate"><span class="pre">ingredient_bundle</span></code>
+directory; the lookup exporter does this automatically. Flat node xrefs cannot
+substitute for this graph-associated history artifact.</p>
+<p><code class="docutils literal notranslate"><span class="pre">bind_to_transform(transform)</span></code> records every validated bundle member in the
+producer’s consumed-input snapshots. Call it after <code class="docutils literal notranslate"><span class="pre">begin_consumed_inputs</span></code> and
+before using the bundle. Changed or missing bytes then prevent source finalization;
+failed binding latches a consumed-input error. A bundle instance is an immutable
+in-process snapshot. Reconstruct or call <code class="docutils literal notranslate"><span class="pre">verify_current</span></code> at reuse boundaries;
+there is no repeated filesystem scan in hot per-node lookup calls. Pinned legacy
+lookup loads compare content digests before reusing a cached path. Profiled
+loader accessors reselect their explicit lookup when another legacy caller
+replaces the process cache; a different caller cannot silently replace their
+name/category/xref results. The scope
+profile, companion schema and case annotation policy also participate in shared
+transform data fingerprints.</p>
+<p><code class="docutils literal notranslate"><span class="pre">products()</span></code> and <code class="docutils literal notranslate"><span class="pre">occurrences()</span></code> expose their full reviewed records and explicit
+one-of groups. The audit counts retained records and all claim dispositions.
+Their KGX ingestion/finalization/merge route is implemented under #1135; general
+profile activation and the combined producer-to-merge acceptance gate are #1136.
+This consumer does not change production download pins or bypass the existing
+release-promotion gate in #1123.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

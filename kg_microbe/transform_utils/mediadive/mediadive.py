@@ -39,6 +39,8 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE_ID_COLUMN,
     BACDIVE_PREFIX,
     BACDIVE_TMP_DIR,
+    BROAD_MATCH_PREDICATE,
+    BROAD_MATCH_RELATION,
     CAS_RN_KEY,
     CAS_RN_PREFIX,
     CATEGORY_COLUMN,
@@ -1193,19 +1195,23 @@ class MediaDiveTransform(Transform):
                                 synonym=enrichment["synonym"] or None,
                             )
                         )
-                        # If MIM curators have asserted a parent for this ingredient
-                        # via skos:narrowMatch (e.g. MIM:Vermont_Soil narrowMatch
-                        # ENVO:00001998), the unified mappings file now carries
-                        # those rows and the loader exposes them via get_parents().
-                        # Emit one biolink:subclass_of edge per parent so the
-                        # ingredient sits inside the canonical OBO hierarchy.
+                        # If MIM curators have anchored this ingredient to a
+                        # parent via skos:broadMatch (e.g. MIM:Vermont_Soil
+                        # broadMatch ENVO:00001998), the unified mappings file
+                        # carries those rows and the loader exposes them via
+                        # get_parents(). MIM's contract (MAPPING_SEMANTICS.md
+                        # Section 1, #245) is that the parent is the *closest
+                        # broader term* -- the ingredient may be a salt, hydrate,
+                        # solution or racemate of it, which ChEBI models with
+                        # has-part, not is_a -- so emit biolink:broad_match,
+                        # never biolink:subclass_of, one edge per parent.
                         for parent_id in self.chemical_loader.get_parents(ingredient_id):
                             ingredient_subclass_edges.append(
                                 [
                                     ingredient_id,
-                                    "biolink:subclass_of",
+                                    BROAD_MATCH_PREDICATE,
                                     parent_id,
-                                    "rdfs:subClassOf",
+                                    BROAD_MATCH_RELATION,
                                     self.knowledge_source,
                                     "knowledge_assertion",
                                     "manual_agent",

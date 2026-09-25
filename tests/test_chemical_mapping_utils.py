@@ -744,7 +744,7 @@ class TestNarrowMatchChildResolution:
 
       1. Resolve to the kg-microbe-minted child primary, not the parent.
       2. Carry their parent in ``get_parents()`` so MediaDive can emit
-         ``biolink:subclass_of`` edges on the next merge.
+         ``biolink:broad_match`` edges on the next merge.
 
     If a future consolidator regression re-pollutes parents with child
     labels, the assertions for resolution-to-child will start returning

@@ -44,7 +44,8 @@ _HYDRATE_FREE_NAME_INDEX: Optional[Dict[str, str]] = None
 # Parent-of relationships imported from skos:narrowMatch / skos:broadMatch
 # rows in the unified SSSOM. ``_PARENT_INDEX[child_curie]`` is the sorted
 # list of broader (parent) CURIEs the child is narrower than. Used by
-# transforms to emit ``biolink:subclass_of`` edges.
+# transforms to emit ``biolink:broad_match`` edges: MIM's parent anchor
+# means "closest broader term / form of", not subsumption (MIM #245).
 _PARENT_INDEX: Optional[Dict[str, list]] = None
 # Recipe-equivalent hydrate pairs imported from rows whose
 # ``predicate_id == 'skos:closeMatch'`` and ``comment ==
@@ -171,8 +172,8 @@ def read_predicate_semantics(path: Path) -> str:
     **Absence means legacy, and so does anything unrecognised.** MIM writes
     ``skos:narrowMatch`` to mean "the object is the parent", which is the
     inverse of the SKOS spec; this repo has always read it that way, so the two
-    agree and every asymmetric row yields a correct ``biolink:subclass_of``
-    edge (#822).
+    agree and every asymmetric row yields a correctly directed parent edge
+    (#822).
 
     Failing closed is the whole point. It makes the two halves of the fix
     order-independent: an old file, or a *rebuild of old content*, carries no
@@ -725,9 +726,12 @@ def get_parents(curie: str) -> List[str]:
     ``kgmicrobe.ingredient:vermont_soil`` having parent ``ENVO:00001998``).
 
     Transforms call this when emitting an ingredient / solution / sample edge
-    to also write a ``biolink:subclass_of`` edge to the broader OBO term, so
-    OBO-aware reasoners can navigate from kg-microbe-minted CURIEs back to
-    the canonical hierarchy.
+    to also write a ``biolink:broad_match`` edge to the broader OBO term, so
+    consumers can navigate from kg-microbe-minted CURIEs back to the
+    canonical hierarchy. It is not ``biolink:subclass_of``: MIM's parent
+    anchor means "closest broader term" and covers salts, hydrates and
+    solutions of the parent, which ChEBI relates by has-part, not is_a
+    (MIM MAPPING_SEMANTICS.md Section 1, #245).
 
     :param curie: child CURIE
     :return: sorted list of parent CURIEs (empty if no narrowMatch row exists)

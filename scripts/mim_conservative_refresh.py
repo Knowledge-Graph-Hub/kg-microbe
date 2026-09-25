@@ -176,6 +176,17 @@ def _mim_row(row):
     return row["subject_id"].startswith(("MIM:", "MediaIngredientMech:")) or _mim_source(row.get("source", ""))
 
 
+def _historical_policy_rejection(row):
+    """Reject reviewed lexical/exact claims without banning targets or weaker relations."""
+    subject, target = row["subject_id"], row["object_id"]
+    if subject.startswith("kgm.name:") and row["predicate_id"] in {"skos:exactMatch", "skos:closeMatch"}:
+        if not ingredient_mapping_allowed(row.get("subject_label", ""), target):
+            return "reviewed_identity_policy_name"
+    elif row["predicate_id"] == "skos:exactMatch" and not ingredient_xref_allowed(subject, target):
+        return "reviewed_identity_policy_xref"
+    return ""
+
+
 class _Components:
     """Track undirected identity connectivity, including shared external xrefs."""
 
@@ -505,8 +516,13 @@ def build_conservative_candidate(
         NAME_SCOPE_POLICY.resolve(),
         IDENTITY_POLICY.parent.parent / "kg_microbe/utils/ingredient_identity.py",
     )
-    inputs = [baseline, *ontology_paths, *(source.path for source in independent_sources), *code_paths,
-              *context_paths(repo_root)]
+    inputs = [
+        baseline,
+        *ontology_paths,
+        *(source.path for source in independent_sources),
+        *code_paths,
+        *context_paths(repo_root),
+    ]
     inputs.extend(bundle.directory / name for name in ("manifest.json", *bundle.manifest["files"]))
     fingerprints = {str(path): _hash(path) for path in inputs}
     verified_release_hashes = {"manifest.json": bundle.manifest_sha256, **bundle.manifest["files"]}
@@ -523,12 +539,15 @@ def build_conservative_candidate(
         prefixes.setdefault(prefix, upstream_uri)
     evidence = _Evidence(set(prefixes))
     components, initial, baseline_entities = _Components(), set(), set()
+    policy_pruned_targets = set()
     baseline_count = 0
     for row in _rows(baseline):
         baseline_count += 1
         target, subject = row["object_id"], row["subject_id"]
         baseline_entities.add(target)
         components.root(target)
+        if _historical_policy_rejection(row):
+            policy_pruned_targets.add(target)
         if _mim_row(row):
             initial.add(target)
         if row["predicate_id"] == "skos:exactMatch" and not subject.startswith("kgm.name:"):
@@ -549,11 +568,14 @@ def build_conservative_candidate(
         components.join(curie, row["subject_id"])
     tainted_roots = {components.root(curie) for curie in initial}
     affected = {curie for curie in baseline_entities | initial if components.root(curie) in tainted_roots}
-    evidence.records = {curie: record for curie, record in evidence.records.items() if curie in affected}
+    # A rejected lexical claim may be a target's only historical declaration.
+    # Restore current direct authority without quarantining its unrelated valid rows.
+    reconstruction_targets = affected | policy_pruned_targets
+    evidence.records = {curie: record for curie, record in evidence.records.items() if curie in reconstruction_targets}
     native_found = set()
     for namespace, row in _native_rows(ontology_paths):
         curie = row["id"]
-        if curie in affected:
+        if curie in reconstruction_targets:
             native_found.add(curie)
             evidence.add(
                 curie,
@@ -608,6 +630,7 @@ def build_conservative_candidate(
         "quarantined_rows": 0,
         "rebuilt_rows": 0,
         "removed_mim_nonidentity_rows": 0,
+        "identity_policy_quarantined_rows": 0,
     }
     output_directory.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=".mim-candidate-", dir=output_directory.parent) as temporary:
@@ -627,6 +650,12 @@ def build_conservative_candidate(
             _write_header(handle, quarantine_metadata, [*fields, "quarantine_reason"])
             for row in _rows(baseline):
                 curie = row["object_id"]
+                policy_reason = _historical_policy_rejection(row)
+                if policy_reason:
+                    handle.write(_serialize(row, fields) + "\t" + policy_reason + "\n")
+                    stats["quarantined_rows"] += 1
+                    stats["identity_policy_quarantined_rows"] += 1
+                    continue
                 nonidentity = row["predicate_id"] in _NONIDENTITY and not row["subject_id"].startswith("kgm.name:")
                 if nonidentity and not _mim_row(row):
                     adjusted = dict(row)
@@ -685,7 +714,7 @@ def build_conservative_candidate(
             if target in named_entities:
                 names[runtime.normalize_name(query)] = target
         unreconstructed_lexicals = sorted(
-            curie for curie in affected if not evidence.records.get(curie, _Entity()).label
+            curie for curie in reconstruction_targets if not evidence.records.get(curie, _Entity()).label
         )
         stats.update(
             candidate_rows=stats["preserved_rows"] + stats["rebuilt_rows"],
@@ -711,14 +740,29 @@ def build_conservative_candidate(
             if names.get(runtime.normalize_name(row["subject_label"])) != row["object_id"]
         ]
         accepted_scopes = [
-            dict(conflict, explicit_resolved=mim_xrefs.get(conflict["subject_id"]),
-                 reason="Reviewed generic trait versus 9H ingredient scope; native subclass relation retained.")
+            dict(
+                conflict,
+                explicit_resolved=mim_xrefs.get(conflict["subject_id"]),
+                reason="Reviewed generic trait versus 9H ingredient scope; native subclass relation retained.",
+            )
             for conflict in conflicts
-            if accepted_name_scope(conflict["subject_id"], conflict["expected"], conflict["resolved"],
-                                   mim_xrefs.get(conflict["subject_id"]))
+            if accepted_name_scope(
+                conflict["subject_id"],
+                conflict["expected"],
+                conflict["resolved"],
+                mim_xrefs.get(conflict["subject_id"]),
+            )
         ]
-        conflicts = [conflict for conflict in conflicts if not accepted_name_scope(
-            conflict["subject_id"], conflict["expected"], conflict["resolved"], mim_xrefs.get(conflict["subject_id"]))]
+        conflicts = [
+            conflict
+            for conflict in conflicts
+            if not accepted_name_scope(
+                conflict["subject_id"],
+                conflict["expected"],
+                conflict["resolved"],
+                mim_xrefs.get(conflict["subject_id"]),
+            )
+        ]
         supported_targets = defaultdict(set)
         for row in bundle.supported_rows:
             supported_targets[row["subject_id"]].add(row["object_id"])
@@ -740,8 +784,10 @@ def build_conservative_candidate(
             "counts": stats,
             "initial_affected_entities": sorted(initial),
             "affected_entities": sorted(affected),
+            "policy_pruned_targets": sorted(policy_pruned_targets),
+            "reconstruction_targets": sorted(reconstruction_targets),
             "native_authority_entities": sorted(native_found),
-            "unreconstructed_entities": sorted(affected - evidence.records.keys()),
+            "unreconstructed_entities": sorted(reconstruction_targets - evidence.records.keys()),
             "unreconstructed_lexical_entities": unreconstructed_lexicals,
             "supported_name_lookup_conflicts": conflicts,
             "accepted_name_scope_distinctions": accepted_scopes,

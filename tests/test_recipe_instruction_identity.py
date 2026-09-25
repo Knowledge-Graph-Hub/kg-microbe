@@ -80,7 +80,8 @@ def test_historical_salt_and_dye_regressions_remain_distinct():
     assert not ingredient_mapping_allowed("Berberine", "CHEBI:31271")
     assert ingredient_mapping_allowed("Berberine chloride", "CHEBI:31271")
     assert ingredient_mapping_allowed("Berberine", "CHEBI:16118")
-    assert not ingredient_xref_allowed("MIM:Berberine", "CHEBI:31271")
+    # The source record carries a chloride-specific CAS; WITHHOLD is not false.
+    assert ingredient_xref_allowed("MIM:Berberine", "CHEBI:31271")
     assert not ingredient_xref_allowed("CHEBI:91247", "CHEBI:52891")
     assert not ingredient_xref_allowed("CHEBI:52891", "CHEBI:91247")
     for name in ["Cysteine-HCl", "L-cysteine hydrochloride", "L-Cysteine x HCl x H2O solution", "Cysteine.HCl"]:

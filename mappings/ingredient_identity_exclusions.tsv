@@ -1,6 +1,7 @@
 target_id	authority_label	kind	value	reason
 CHEBI:31271	Berberine chloride (TN)	name_pattern	(?i)^berberine$	Native ChEBI distinguishes berberine CHEBI:16118 from its chloride salt; the unqualified name must not silently select the chloride (#788).
-CHEBI:31271	Berberine chloride (TN)	xref	MIM:Berberine	The generic MIM ingredient is not independently supported as the chloride; retain explicit chloride names and native salt identity (#788).
+CHEBI:5862	idazoxan	name_pattern	(?i)^(?:cystein-hcl|cysteine-hcl|cysteine hcl|l-cystein hcl|l-cysteine-hcl|l-cysteine hcl|l-cysteine x hcl)$	Seven historical MediaDive aliases confuse PubChem CID 5862 with native CHEBI:5862 idazoxan; reject only these demonstrated cysteine-HCl names, retaining native drug identity (#788).
+CHEBI:32150	sodium thiosulfate pentahydrate	name_pattern	(?i)^na2s2o3$	The unqualified source formula does not specify five waters; prevent legacy fallback from strengthening it to pentahydrate, while retaining explicit pentahydrate names and registry identity (#788).
 CHEBI:52891	QSY9 succinimidyl ester(1+)	name_pattern	(?i)cystein(?:e|ium).*?(?:hcl|chloride)	Native ChEBI identifies this target as a QSY9 dye, not cysteine hydrochloride; reject the salt aliases without inferring stereochemistry or hydration (#788).
 CHEBI:52891	QSY9 succinimidyl ester(1+)	xref	CHEBI:91247	Native ChEBI distinguishes the QSY9 dye from L-cysteine hydrochloride; reject the historical false identity in either direction (#788).
 CHEBI:17020	glucomannan	name_pattern	(?i)^autoclaved glucomannan konjac$	Reviewed full recipe string, not an unqualified chemical synonym; retain preparation text in source occurrences (#1009).

@@ -731,8 +731,8 @@ emitted by the consolidator’s hydrate logic.</p>
 populating the corresponding KGX node columns. Values are pipe-joined
 strings (KGX multivalued convention) or empty strings when absent.</p>
 <ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">xref</span></code>: equivalent CURIEs from the unified mapping’s <code class="docutils literal notranslate"><span class="pre">xrefs</span></code> column.
-Under KGX semantics these are cross-references (CURIE-shaped), not names.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">xref</span></code>: unified cross-references plus independently reviewed CAS
+annotations. CAS annotations do not create SSSOM exactMatch or same_as.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">synonym</span></code>: alternative free-text names from the <code class="docutils literal notranslate"><span class="pre">synonyms</span></code> column.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: canonical name for the CURIE, or empty string when unknown.</p></li>
 </ul>
@@ -850,6 +850,17 @@ default path relative to this file.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.chemical_mapping_utils.normalize_chemical_primes">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.chemical_mapping_utils.</span></span><span class="sig-name descname"><span class="pre">normalize_chemical_primes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.chemical_mapping_utils.normalize_chemical_primes" title="Link to this definition"></a></dt>
+<dd><p>Canonicalize typographic prime marks without losing chemical locants.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.chemical_mapping_utils.normalize_name">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.chemical_mapping_utils.</span></span><span class="sig-name descname"><span class="pre">normalize_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strip_stereochemistry</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strip_hydrate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.chemical_mapping_utils.normalize_name" title="Link to this definition"></a></dt>
 <dd><p>Normalize chemical name for comparison.</p>
@@ -865,7 +876,7 @@ default path relative to this file.</p>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Normalized name (lowercase, no punctuation)</p>
+<dd class="field-odd"><p>Normalized name retaining hyphens and chemical prime locants</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1752,6 +1763,12 @@ audit rather than transferred into a current hierarchy.</p>
 <p>These policies reject specific lexical groundings and equivalence pairs, never
 an ontology identifier itself. Native ontology declarations/edges remain valid.</p>
 <dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.ingredient_identity.accepted_name_scope">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.ingredient_identity.</span></span><span class="sig-name descname"><span class="pre">accepted_name_scope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolved</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">explicit_target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ingredient_identity.accepted_name_scope" title="Link to this definition"></a></dt>
+<dd><p>Accept only the reviewed generic/specific Xanthine distinction with both routes intact.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.ingredient_identity.ingredient_authority_label">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.ingredient_identity.</span></span><span class="sig-name descname"><span class="pre">ingredient_authority_label</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ingredient_identity.ingredient_authority_label" title="Link to this definition"></a></dt>
 <dd><p>Return the authority label recorded with a reviewed exclusion.</p>
@@ -1760,6 +1777,12 @@ an ontology identifier itself. Native ontology declarations/edges remain valid.<
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.ingredient_identity.ingredient_cas_annotations">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.ingredient_identity.</span></span><span class="sig-name descname"><span class="pre">ingredient_cas_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ingredient_identity.ingredient_cas_annotations" title="Link to this definition"></a></dt>
+<dd><p>Return verified CAS node annotations; these are not same_as claims.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -1777,6 +1800,18 @@ an ontology identifier itself. Native ontology declarations/edges remain valid.<
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.ingredient_identity.ingredient_name_scopes">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.ingredient_identity.</span></span><span class="sig-name descname"><span class="pre">ingredient_name_scopes</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ingredient_identity.ingredient_name_scopes" title="Link to this definition"></a></dt>
+<dd><p>Load reviewed query routes, separately from assertions of equivalence.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.ingredient_identity.ingredient_name_target">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.ingredient_identity.</span></span><span class="sig-name descname"><span class="pre">ingredient_name_target</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ingredient_identity.ingredient_name_target" title="Link to this definition"></a></dt>
+<dd><p>Return the reviewed target for an explicitly scoped query, if any.</p>
 </dd></dl>
 
 <dl class="py function">

@@ -758,9 +758,12 @@ Populated from MIM <code class="docutils literal notranslate"><span class="pre">
 e.g. <code class="docutils literal notranslate"><span class="pre">MIM:Vermont_Soil</span> <span class="pre">→</span> <span class="pre">ENVO:00001998</span> <span class="pre">narrowMatch</span></code> translates to
 <code class="docutils literal notranslate"><span class="pre">kgmicrobe.ingredient:vermont_soil</span></code> having parent <code class="docutils literal notranslate"><span class="pre">ENVO:00001998</span></code>).</p>
 <p>Transforms call this when emitting an ingredient / solution / sample edge
-to also write a <code class="docutils literal notranslate"><span class="pre">biolink:subclass_of</span></code> edge to the broader OBO term, so
-OBO-aware reasoners can navigate from kg-microbe-minted CURIEs back to
-the canonical hierarchy.</p>
+to also write a <code class="docutils literal notranslate"><span class="pre">biolink:broad_match</span></code> edge to the broader OBO term, so
+consumers can navigate from kg-microbe-minted CURIEs back to the
+canonical hierarchy. It is not <code class="docutils literal notranslate"><span class="pre">biolink:subclass_of</span></code>: MIM’s parent
+anchor means “closest broader term” and covers salts, hydrates and
+solutions of the parent, which ChEBI relates by has-part, not is_a
+(MIM MAPPING_SEMANTICS.md Section 1, #245).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>curie</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – child CURIE</p>
@@ -874,8 +877,8 @@ default path relative to this file.</p>
 <p><strong>Absence means legacy, and so does anything unrecognised.</strong> MIM writes
 <code class="docutils literal notranslate"><span class="pre">skos:narrowMatch</span></code> to mean “the object is the parent”, which is the
 inverse of the SKOS spec; this repo has always read it that way, so the two
-agree and every asymmetric row yields a correct <code class="docutils literal notranslate"><span class="pre">biolink:subclass_of</span></code>
-edge (#822).</p>
+agree and every asymmetric row yields a correctly directed parent edge
+(#822).</p>
 <p>Failing closed is the whole point. It makes the two halves of the fix
 order-independent: an old file, or a <em>rebuild of old content</em>, carries no
 declaration and is read as legacy however new the reader is. A date

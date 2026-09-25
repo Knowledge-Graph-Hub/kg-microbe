@@ -1,5 +1,10 @@
 # Ingredient occurrence and registry context in KGX
 
+Local ingredient concepts use `MIM.ingredient:` in graph endpoints. Biolink's
+existing `MIM` namespace keeps its original meaning. Structured SSSOM/claim
+payloads retain their original `MIM:` identifiers and producer namespace.
+Reviewed canonical NCIT, ChEBI, MICRO and KG-Microbe IDs are unchanged.
+
 The explicit `mim_ingredients` transform consumes the reviewed lookup candidate
 from `INGREDIENT_BUNDLE.md`. It does not ingest all CultureMech graphs (#905) or
 change the production ingredient download pin (#1123). Its source selection is

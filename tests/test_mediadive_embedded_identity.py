@@ -57,6 +57,7 @@ def test_each_embedded_namespace_checks_original_ingredient_name(monkeypatch, ke
     calls = []
 
     def reject(name, target):
+        """Record the attempted embedded mapping and reject it for this routing test."""
         calls.append((name, target))
         return False
 

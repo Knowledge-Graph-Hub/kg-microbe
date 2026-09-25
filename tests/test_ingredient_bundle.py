@@ -257,3 +257,27 @@ def test_rehashed_lookup_cannot_remove_a_required_scoped_target(lookup_bundle, t
     (directory / "lookup_manifest.json").write_bytes(content)
     with pytest.raises(ValueError, match="targets are missing"):
         load_ingredient_lookup_bundle(directory, manifest_sha256=content_sha256(content))
+
+
+@pytest.mark.parametrize("changed_pin", [False, True])
+def test_scoped_loader_cannot_reuse_another_global_lookup(lookup_bundle, tmp_path, changed_pin):
+    """An unrelated legacy caller cannot replace the pinned loader's selected name index."""
+    selected = tmp_path / "selected"
+    shutil.copytree(lookup_bundle[0], selected)
+    loader = cmu.ChemicalMappingLoader.from_ingredient_lookup_bundle(
+        selected, manifest_sha256=lookup_bundle[1]["manifest_sha256"]
+    )
+    other = tmp_path / "other.tsv"
+    other.write_text(
+        "subject_id\tpredicate_id\tobject_id\tobject_label\n"
+        "kgm.name:other\tskos:exactMatch\tCHEBI:999\tOther chemical\n"
+    )
+    cmu.load_unified_mappings(other)
+    if changed_pin:
+        with (selected / "legacy.sssom.tsv.gz").open("ab") as stream:
+            stream.write(b"changed")
+        with pytest.raises(ValueError, match="do not match"):
+            loader.find_chebi_by_name("xanthine")
+        return
+    assert loader.find_chebi_by_name("xanthine") == "CHEBI:15318"
+    assert loader.get_canonical_name("CHEBI:15318") == "xanthine"

@@ -1,6 +1,6 @@
 # Ingredient bundle consumption review
 
-Tracking: #1134; review finding #1140. Producer: MIM #775, implementing MIM #769
+Tracking: #1134; review findings #1140 and #1143. Producer: MIM #775, implementing MIM #769
 and #770. Identity predicate guard: #1139.
 
 The consumer reads the actual 20-case producer bundle pinned in
@@ -23,3 +23,14 @@ producer-to-transform-to-merge acceptance fixture and activation gate remain #11
 The vendored schema is byte-identical to the producer's. Portable validator ASTs
 match after the documented relative import, formatting and docstring adaptations.
 No scientific review disposition or production release pin changes in this PR.
+
+Round 3 reproduced cache drift: loading another legacy table replaced a pinned
+loader's global name index. Profiled accessors now reselect and verify their
+explicit input when the cache context changes. Hot calls with the same selection
+do not rehash the table; binding/finalization still enforce input freshness.
+
+Full local pytest passed (2343 passed, 56 skipped), and the full tox test run
+passed (2344 passed, 55 skipped). Tox identified one missing docstring in the
+vendored verifier; that documentation-only adaptation was fixed and the portable
+AST audit still passes. Format, lint, codespell and 100% docstring checks now pass.
+The cache fix is followed by its focused regressions and a fresh full test run.

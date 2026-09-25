@@ -91,7 +91,10 @@ before using the bundle. Changed or missing bytes then prevent source finalizati
 failed binding latches a consumed-input error. A bundle instance is an immutable
 in-process snapshot. Reconstruct or call `verify_current` at reuse boundaries;
 there is no repeated filesystem scan in hot per-node lookup calls. Pinned legacy
-lookup loads compare content digests before reusing a cached path. The scope
+lookup loads compare content digests before reusing a cached path. Profiled
+loader accessors reselect their explicit lookup when another legacy caller
+replaces the process cache; a different caller cannot silently replace their
+name/category/xref results. The scope
 profile, companion schema and case annotation policy also participate in shared
 transform data fingerprints.
 

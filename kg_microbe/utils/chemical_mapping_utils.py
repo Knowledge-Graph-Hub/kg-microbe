@@ -865,6 +865,15 @@ class ChemicalMappingLoader:
             ingredient_bundle.verify_current()
         # Load mappings on initialization
         load_unified_mappings(self.mappings_path, expected_sha256=mappings_sha256)
+        self._selected_mappings_path = _CACHED_PATH
+        self._mappings_sha256 = mappings_sha256
+
+    def _select_mappings(self):
+        """Reselect an explicit profile's input after another caller replaces the legacy cache."""
+        if self.ingredient_bundle is not None and (
+            not _LOADED or (_CACHED_PATH, _CACHED_DIGEST) != (self._selected_mappings_path, self._mappings_sha256)
+        ):
+            load_unified_mappings(self._selected_mappings_path, expected_sha256=self._mappings_sha256)
 
     @classmethod
     def from_ingredient_lookup_bundle(cls, directory: Path, *, manifest_sha256: str):
@@ -902,6 +911,7 @@ class ChemicalMappingLoader:
         :param fuzzy_hydrate: If True, retry with trailing hydrate suffixes stripped
         :return: ChEBI ID or None if not found
         """
+        self._select_mappings()
         return find_chebi_by_name(name, synonyms, fuzzy_stereochemistry, fuzzy_hydrate)
 
     def find_chebi_by_formula(self, formula: str) -> List[str]:
@@ -911,6 +921,7 @@ class ChemicalMappingLoader:
         :param formula: Molecular formula
         :return: List of ChEBI IDs
         """
+        self._select_mappings()
         return find_chebi_by_formula(formula)
 
     def find_chebi_by_xref(self, xref: str) -> Optional[str]:
@@ -920,6 +931,7 @@ class ChemicalMappingLoader:
         :param xref: Cross-reference identifier
         :return: ChEBI ID or None if not found
         """
+        self._select_mappings()
         scoped = self.resolve_ingredient_source(xref)
         return scoped if scoped is not None else find_chebi_by_xref(xref)
 
@@ -930,6 +942,7 @@ class ChemicalMappingLoader:
         :param chebi_id: ChEBI ID
         :return: Canonical name or None if not found
         """
+        self._select_mappings()
         return get_canonical_name(chebi_id)
 
     def get_synonyms(self, chebi_id: str) -> List[str]:
@@ -939,6 +952,7 @@ class ChemicalMappingLoader:
         :param chebi_id: ChEBI ID
         :return: List of synonyms
         """
+        self._select_mappings()
         return get_synonyms(chebi_id)
 
     def get_xrefs(self, chebi_id: str) -> List[str]:
@@ -948,6 +962,7 @@ class ChemicalMappingLoader:
         :param chebi_id: ChEBI ID
         :return: List of xrefs
         """
+        self._select_mappings()
         return get_xrefs(chebi_id)
 
     def get_parents(self, curie: str) -> List[str]:
@@ -957,6 +972,7 @@ class ChemicalMappingLoader:
         :param curie: child CURIE
         :return: List of parent CURIEs (empty if none recorded)
         """
+        self._select_mappings()
         return get_parents(curie)
 
     def get_formula(self, chebi_id: str) -> Optional[str]:
@@ -966,6 +982,7 @@ class ChemicalMappingLoader:
         :param chebi_id: ChEBI ID
         :return: Molecular formula or None if not found
         """
+        self._select_mappings()
         return get_formula(chebi_id)
 
     def get_category(self, curie: str) -> Optional[str]:
@@ -975,6 +992,7 @@ class ChemicalMappingLoader:
         :param curie: Primary CURIE.
         :return: Biolink category string or None.
         """
+        self._select_mappings()
         return get_category(curie)
 
     def get_node_enrichment(self, curie: str) -> Dict[str, str]:
@@ -984,4 +1002,5 @@ class ChemicalMappingLoader:
         :param curie: Primary CURIE.
         :return: Dict with ``xref``, ``synonym``, ``name`` keys.
         """
+        self._select_mappings()
         return get_node_enrichment(curie, ingredient_bundle=self.ingredient_bundle)

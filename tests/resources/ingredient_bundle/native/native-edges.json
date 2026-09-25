@@ -1,0 +1,28 @@
+[
+  {
+    "agent_type": "manual_agent",
+    "go_reference_context": "",
+    "knowledge_level": "knowledge_assertion",
+    "object": "CHEBI:15318",
+    "original_object": "",
+    "original_subject": "",
+    "predicate": "biolink:subclass_of",
+    "primary_knowledge_source": "infores:chebi",
+    "publications": "",
+    "relation": "rdfs:subClassOf",
+    "subject": "CHEBI:17712"
+  },
+  {
+    "agent_type": "manual_agent",
+    "go_reference_context": "",
+    "knowledge_level": "knowledge_assertion",
+    "object": "CHEBI:26580",
+    "original_object": "",
+    "original_subject": "",
+    "predicate": "biolink:subclass_of",
+    "primary_knowledge_source": "infores:chebi",
+    "publications": "",
+    "relation": "rdfs:subClassOf",
+    "subject": "CHEBI:29673"
+  }
+]

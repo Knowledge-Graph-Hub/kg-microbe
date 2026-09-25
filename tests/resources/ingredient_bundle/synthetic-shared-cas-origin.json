@@ -1,0 +1,16 @@
+{
+  "archive_bytes": 1214450,
+  "archive_sha256": "21a1510e8c88b29ab8eeeac3baf50406540ac7d2759e0829534eb599542e359c",
+  "bundle_manifest_sha256": "4dfbfd1927fd6899a04b50efa3049dc2e35ceda817020f5bf007a936b45edb33",
+  "counts": {
+    "identifiers": 20,
+    "manifest_sha256": "4dfbfd1927fd6899a04b50efa3049dc2e35ceda817020f5bf007a936b45edb33",
+    "mappings": 20,
+    "occurrences": 12,
+    "products": 5
+  },
+  "generator_sha256": "d1d2cfa0ad4c2f012d93457a99b67ea9a2aaee8a16661a9ec411142c892385a7",
+  "producer_commit": "73f14f4a930249836b4c3eee9bae635c731d6c5e",
+  "producer_repository": "https://github.com/CultureBotAI/MediaIngredientMech",
+  "synthetic_software_fixture": true
+}

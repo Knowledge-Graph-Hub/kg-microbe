@@ -1,0 +1,12 @@
+{
+  "fixture_sha256": "9bb9c1339c7299e0a34fde620d4a453e804928663eb58fea2fba4b47c606a623",
+  "notes": "Original legacy semantics retained in metadata/rows. This extraction does not approve a production refresh.",
+  "rows": 15,
+  "selected_endpoints": [
+    "CHEBI:61326",
+    "kgmicrobe.compound:1-ethyl-3-methylimidazolium_acetate"
+  ],
+  "source": "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
+  "source_bytes": 13724954,
+  "source_sha256": "0f8c148fb6f8386daee19b8e3a5af4725d4841b02b9125e64f39497e51ea00c3"
+}

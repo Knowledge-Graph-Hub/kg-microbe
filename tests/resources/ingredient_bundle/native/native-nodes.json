@@ -1,0 +1,230 @@
+{
+  "ontologies/chebi_nodes.tsv": [
+    {
+      "category": "biolink:ChemicalEntity",
+      "deprecated": "",
+      "description": "A purine nucleobase found in humans and other organisms.",
+      "id": "CHEBI:15318",
+      "name": "xanthine",
+      "provided_by": "chebi.json",
+      "same_as": "",
+      "synonym": "2,6-dioxopurine|2,6-dioxopurines|xanthine|xanthines",
+      "xref": "ecmdb:ECMDB00292|knapsack:C00019660|pubmed:1557408|pubmed:24629268|pubmed:9007687|ymdb:YMDB00263"
+    },
+    {
+      "category": "biolink:ChemicalEntity",
+      "deprecated": "",
+      "description": "An oxopurine in which the purine ring is substituted by oxo groups at positions 2 and 6 and N-9 is protonated.",
+      "id": "CHEBI:17712",
+      "name": "9H-xanthine",
+      "provided_by": "chebi.json",
+      "same_as": "",
+      "synonym": "2,6-dihydroxypurine|2,6-dioxo-1,2,3,6-tetrahydropurine|3,9-dihydro-1H-purine-2,6-dione|9H-purine-2,6-(1H,3H)-dione|XANTHINE|Xan|Xanthine|purine-2(3H),6(1H)-dione|xanthine",
+      "xref": "bpdb:2153|cas:69-89-6|gmelin:913730|hmdb:HMDB0000292|kegg.compound:C00385|pdb-ccd:XAN|pubmed:22770225|reaxys:609330"
+    },
+    {
+      "category": "biolink:ChemicalEntity",
+      "deprecated": "",
+      "description": "",
+      "id": "CHEBI:26580",
+      "name": "rifamycins",
+      "provided_by": "chebi.json",
+      "same_as": "",
+      "synonym": "rifamycin",
+      "xref": "wikipedia.en:Rifamycin"
+    },
+    {
+      "category": "biolink:ChemicalEntity",
+      "deprecated": "",
+      "description": "A member of the class of rifamycins that exhibits antibiotic and antitubercular properties.",
+      "id": "CHEBI:29673",
+      "name": "rifamycin SV",
+      "provided_by": "chebi.json",
+      "same_as": "",
+      "synonym": "(2S,12Z,14E,16S,17S,18R,19R,20R,21S,22R,23S,24E)-5,6,9,17,19-pentahydroxy-23-methoxy-2,4,12,16,18,20,22-heptamethyl-1,11-dioxo-1,2-dihydro-2,7-(epoxypentadeca[1,11,13]trienoimino)naphtho[2,1-b]furan-21-yl acetate|Rifamycin|Rifamycin SV|Rifocin|Rifocyn|rifamicina|rifamycin|rifamycine|rifamycinum",
+      "xref": "cas:6998-60-3|drugcentral:4817|kegg.compound:C12044|kegg.drug:D02549|lipidmaps:LMPK05000005|metacyc.compound:CPD-10236|pubmed:25256628|reaxys:5401012"
+    },
+    {
+      "category": "biolink:ChemicalEntity",
+      "deprecated": "",
+      "description": "",
+      "id": "CHEBI:8309",
+      "name": "polymyxin B1",
+      "provided_by": "chebi.json",
+      "same_as": "",
+      "synonym": "4,10-anhydro{N-[(6R)-6-methyloctanoyl]-L-2,4-diaminobutanoyl-L-threonyl-L-2,4-diaminobutanoyl-L-2,4-diaminobutanoyl-L-2,4-diaminobutanoyl-D-phenylalanyl-L-leucyl-L-2,4-diaminobutanoyl-L-2,4-diaminobutanoyl-L-threonine}|Polymyxin B(1)|polymycin B|polymyxin B1",
+      "xref": "beilstein:8609638|cas:4135-11-9|pubmed:13058849|pubmed:14212410|pubmed:1650428|pubmed:26803416|reaxys:9838039"
+    }
+  ],
+  "ontologies/foodon_nodes.tsv": [
+    {
+      "category": "biolink:Food",
+      "deprecated": "",
+      "description": "",
+      "id": "FOODON:03413132",
+      "name": "locust bean gum",
+      "provided_by": "foodon.json",
+      "same_as": "",
+      "synonym": "",
+      "xref": "Codex::410|Europe::410"
+    },
+    {
+      "category": "biolink:Food",
+      "deprecated": "",
+      "description": "",
+      "id": "FOODON:03413240",
+      "name": "sodium adipate",
+      "provided_by": "foodon.json",
+      "same_as": "",
+      "synonym": "",
+      "xref": "Codex::356|Europe::356"
+    },
+    {
+      "category": "biolink:Food",
+      "deprecated": "",
+      "description": "",
+      "id": "FOODON:03413299",
+      "name": "tara gum",
+      "provided_by": "foodon.json",
+      "same_as": "",
+      "synonym": "",
+      "xref": "Codex::417|Europe::417"
+    }
+  ],
+  "ontologies_stubs/micro_nodes.tsv": [
+    {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "MICRO:0002250",
+      "name": "V-8 juice",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "",
+      "xref": ""
+    },
+    {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "MICRO:0002392",
+      "name": "rabbit serum",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "",
+      "xref": ""
+    },
+    {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "MICRO:0002393",
+      "name": "Proteose Peptone No. 2",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "",
+      "xref": ""
+    }
+  ],
+  "ontologies_stubs/ncit_nodes.tsv": [
+    {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C1241",
+      "name": "Sunflower Oil",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "Oil, Sunflower|SUNFLOWER OIL|Sunflower Seed Oil",
+      "xref": ""
+    },
+    {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C152482",
+      "name": "Sutezolid",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "SUTEZOLID",
+      "xref": ""
+    },
+    {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C166606",
+      "name": "Pretomanid",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "PRETOMANID",
+      "xref": ""
+    },
+    {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C183132",
+      "name": "Zymosan",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "ZM",
+      "xref": ""
+    },
+    {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C216370",
+      "name": "Anabasine Hydrochloride",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "ANABASINE HYDROCHLORIDE",
+      "xref": ""
+    },
+    {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C61894",
+      "name": "Polymyxin B",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "POLYMYXIN B",
+      "xref": ""
+    },
+    {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C76253",
+      "name": "Acriflavine",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "2,8-Diamino-10-methylacridinium chloride mixture with 2,8-diaminoacridine|3,6-Diamino-10-methylacridinium chloride mixture with 3,6-acridinediamine|ACRIFLAVINE|Choliflavin|Diacrid|Flavacridinum Hydrochloricum|Vetaflavin|Xanthacridinum|Zoriflavin",
+      "xref": ""
+    },
+    {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C79997",
+      "name": "Cotarnine Chloride",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "7,8-Dihydro-4-methoxy-6-methyl-1,3-dioxolo(4,5-g)isoquinolinium Chloride|COTARNINE CHLORIDE",
+      "xref": ""
+    },
+    {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C85253",
+      "name": "Bovine Serum Albumin",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "ALBUMIN BOVINE|Albumin Bovine|BSA",
+      "xref": ""
+    }
+  ]
+}

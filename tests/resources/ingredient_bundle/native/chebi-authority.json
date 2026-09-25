@@ -1,0 +1,597 @@
+{
+  "graphs": [
+    {
+      "edges": [
+        {
+          "obj": "http://purl.obolibrary.org/obo/CHEBI_15318",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/CHEBI_17712"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/CHEBI_26580",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/CHEBI_29673"
+        }
+      ],
+      "id": "http://purl.obolibrary.org/obo/chebi.owl",
+      "meta": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.org/dc/terms/description",
+            "val": "Chemical Entities of Biological Interest, also known as ChEBI, is a chemical database and ontology of molecular entities focused on 'small' chemical compounds, that is part of the Open Biomedical Ontologies (OBO) effort at the European Bioinformatics Institute (EBI)."
+          },
+          {
+            "pred": "http://purl.org/dc/terms/license",
+            "val": "https://creativecommons.org/licenses/by/4.0/"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/title",
+            "val": "ChEBI Ontology"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#date",
+            "val": "07:07:2026 17:53"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#default-namespace",
+            "val": "chebi_ontology"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBOFormatVersion",
+            "val": "1.2"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#saved-by",
+            "val": "chebi"
+          },
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+            "val": "ChEBI subsumes and replaces the Chemical Ontology first. This ontology was developed by Michael Ashburner and Pankaj Jaiswal. Data was cuarated by The ChEBI Curation Team. For any queries contact chebi-help@ebi.ac.uk"
+          },
+          {
+            "pred": "http://www.w3.org/2002/07/owl#versionInfo",
+            "val": "253"
+          },
+          {
+            "pred": "http://xmlns.com/foaf/0.1/homepage",
+            "val": "https://www.ebi.ac.uk/chebi"
+          }
+        ],
+        "version": "http://purl.obolibrary.org/obo/chebi/253/chebi.owl"
+      },
+      "nodes": [
+        {
+          "id": "http://purl.obolibrary.org/obo/CHEBI_15318",
+          "lbl": "xanthine",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "chebi_ontology"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/charge",
+                "val": "0"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/generalized_empirical_formula",
+                "val": "C5H4N4O2"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/mass",
+                "val": "152.111"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/monoisotopic_mass",
+                "val": "152.03343"
+              }
+            ],
+            "definition": {
+              "val": "A purine nucleobase found in humans and other organisms."
+            },
+            "subsets": [
+              "http://purl.obolibrary.org/obo/chebi/3_STAR"
+            ],
+            "synonyms": [
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "2,6-dioxopurine",
+                "xrefs": [
+                  "chebi"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "2,6-dioxopurines",
+                "xrefs": [
+                  "chebi"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "xanthine",
+                "xrefs": [
+                  "chebi"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "xanthines",
+                "xrefs": [
+                  "chebi"
+                ]
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "ecmdb:ECMDB00292"
+              },
+              {
+                "val": "knapsack:C00019660"
+              },
+              {
+                "val": "pubmed:1557408"
+              },
+              {
+                "val": "pubmed:24629268"
+              },
+              {
+                "val": "pubmed:9007687"
+              },
+              {
+                "val": "ymdb:YMDB00263"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/CHEBI_17712",
+          "lbl": "9H-xanthine",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+                "val": "CHEBI:10059"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+                "val": "CHEBI:27317"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+                "val": "CHEBI:46377"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "chebi_ontology"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/charge",
+                "val": "0"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/generalized_empirical_formula",
+                "val": "C5H4N4O2"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/inchi_key_string",
+                "val": "LRFVTYWOQMYALW-UHFFFAOYSA-N"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/inchi_string",
+                "val": "InChI=1S/C5H4N4O2/c10-4-2-3(7-1-6-2)8-5(11)9-4/h1H,(H3,6,7,8,9,10,11)"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/mass",
+                "val": "152.113"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/monoisotopic_mass",
+                "val": "152.03343"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/smiles_string",
+                "val": "O=c1nc(=O)c2ncnc2n1"
+              }
+            ],
+            "definition": {
+              "val": "An oxopurine in which the purine ring is substituted by oxo groups at positions 2 and 6 and N-9 is protonated."
+            },
+            "subsets": [
+              "http://purl.obolibrary.org/obo/chebi/3_STAR"
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "synonymType": "http://purl.obolibrary.org/obo/chebi/IUPAC_NAME",
+                "val": "3,9-dihydro-1H-purine-2,6-dione",
+                "xrefs": [
+                  "IUPAC"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "2,6-dihydroxypurine",
+                "xrefs": [
+                  "nist"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "2,6-dioxo-1,2,3,6-tetrahydropurine",
+                "xrefs": [
+                  "chemidplus"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "synonymType": "http://purl.obolibrary.org/obo/chebi/IUPAC_NAME",
+                "val": "3,9-dihydro-1H-purine-2,6-dione",
+                "xrefs": [
+                  "iupac"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "9H-purine-2,6-(1H,3H)-dione",
+                "xrefs": [
+                  "chemidplus"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "XANTHINE",
+                "xrefs": [
+                  "pdb-ccd"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "Xan",
+                "xrefs": [
+                  "iubmb"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "Xanthine",
+                "xrefs": [
+                  "kegg.compound"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "purine-2(3H),6(1H)-dione",
+                "xrefs": [
+                  "chemidplus"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "xanthine",
+                "xrefs": [
+                  "uniprot_ft"
+                ]
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "bpdb:2153"
+              },
+              {
+                "val": "cas:69-89-6"
+              },
+              {
+                "val": "gmelin:913730"
+              },
+              {
+                "val": "hmdb:HMDB0000292"
+              },
+              {
+                "val": "kegg.compound:C00385"
+              },
+              {
+                "val": "pdb-ccd:XAN"
+              },
+              {
+                "val": "pubmed:22770225"
+              },
+              {
+                "val": "reaxys:609330"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/CHEBI_26580",
+          "lbl": "rifamycins",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "chebi_ontology"
+              }
+            ],
+            "subsets": [
+              "http://purl.obolibrary.org/obo/chebi/3_STAR"
+            ],
+            "synonyms": [
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "rifamycin",
+                "xrefs": [
+                  "chebi"
+                ]
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "wikipedia.en:Rifamycin"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/CHEBI_29673",
+          "lbl": "rifamycin SV",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "chebi_ontology"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/charge",
+                "val": "0"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/generalized_empirical_formula",
+                "val": "C37H47NO12"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/inchi_key_string",
+                "val": "HJYYPODYNSCCOU-ODRIEIDWSA-N"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/inchi_string",
+                "val": "InChI=1S/C37H47NO12/c1-16-11-10-12-17(2)36(46)38-23-15-24(40)26-27(32(23)44)31(43)21(6)34-28(26)35(45)37(8,50-34)48-14-13-25(47-9)18(3)33(49-22(7)39)20(5)30(42)19(4)29(16)41/h10-16,18-20,25,29-30,33,40-44H,1-9H3,(H,38,46)/b11-10+,14-13+,17-12-/t16-,18+,19+,20+,25-,29-,30+,33+,37-/m0/s1"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/mass",
+                "val": "697.778"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/monoisotopic_mass",
+                "val": "697.30983"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/smiles_string",
+                "val": "CO[C@H]1/C=C/O[C@@]2(C)Oc3c(C)c(O)c4c(O)c(cc(O)c4c3C2=O)NC(=O)/C(C)=CC=C[C@H](C)[C@H](O)[C@@H](C)[C@@H](O)[C@@H](C)[C@H](OC(C)=O)[C@@H]1C"
+              }
+            ],
+            "definition": {
+              "val": "A member of the class of rifamycins that exhibits antibiotic and antitubercular properties."
+            },
+            "subsets": [
+              "http://purl.obolibrary.org/obo/chebi/3_STAR"
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "synonymType": "http://purl.obolibrary.org/obo/chebi/IUPAC_NAME",
+                "val": "(2S,12Z,14E,16S,17S,18R,19R,20R,21S,22R,23S,24E)-5,6,9,17,19-pentahydroxy-23-methoxy-2,4,12,16,18,20,22-heptamethyl-1,11-dioxo-1,2-dihydro-2,7-(epoxypentadeca[1,11,13]trienoimino)naphtho[2,1-b]furan-21-yl acetate",
+                "xrefs": [
+                  "IUPAC"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "synonymType": "http://purl.obolibrary.org/obo/chebi/IUPAC_NAME",
+                "val": "(2S,12Z,14E,16S,17S,18R,19R,20R,21S,22R,23S,24E)-5,6,9,17,19-pentahydroxy-23-methoxy-2,4,12,16,18,20,22-heptamethyl-1,11-dioxo-1,2-dihydro-2,7-(epoxypentadeca[1,11,13]trienoimino)naphtho[2,1-b]furan-21-yl acetate",
+                "xrefs": [
+                  "iupac"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "Rifamycin",
+                "xrefs": [
+                  "kegg.compound"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "Rifamycin SV",
+                "xrefs": [
+                  "kegg.compound"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "Rifocin",
+                "xrefs": [
+                  "chemidplus"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "Rifocyn",
+                "xrefs": [
+                  "chemidplus"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "synonymType": "http://purl.obolibrary.org/obo/chebi/INN",
+                "val": "rifamicina",
+                "xrefs": [
+                  "chemidplus"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "synonymType": "http://purl.obolibrary.org/obo/chebi/INN",
+                "val": "rifamycin",
+                "xrefs": [
+                  "kegg.drug"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "synonymType": "http://purl.obolibrary.org/obo/chebi/INN",
+                "val": "rifamycine",
+                "xrefs": [
+                  "chemidplus"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "synonymType": "http://purl.obolibrary.org/obo/chebi/INN",
+                "val": "rifamycinum",
+                "xrefs": [
+                  "chemidplus"
+                ]
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "cas:6998-60-3"
+              },
+              {
+                "val": "drugcentral:4817"
+              },
+              {
+                "val": "kegg.compound:C12044"
+              },
+              {
+                "val": "kegg.drug:D02549"
+              },
+              {
+                "val": "lipidmaps:LMPK05000005"
+              },
+              {
+                "val": "metacyc.compound:CPD-10236"
+              },
+              {
+                "val": "pubmed:25256628"
+              },
+              {
+                "val": "reaxys:5401012"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/CHEBI_8309",
+          "lbl": "polymyxin B1",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "chebi_ontology"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/charge",
+                "val": "0"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/generalized_empirical_formula",
+                "val": "C56H98N16O13"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/inchi_key_string",
+                "val": "WQVJHHACXVLGBL-GOVYWFKWSA-N"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/inchi_string",
+                "val": "InChI=1S/C56H98N16O13/c1-7-32(4)13-11-12-16-44(75)63-36(17-23-57)51(80)72-46(34(6)74)56(85)68-39(20-26-60)48(77)67-41-22-28-62-55(84)45(33(5)73)71-52(81)40(21-27-61)65-47(76)37(18-24-58)66-53(82)42(29-31(2)3)69-54(83)43(30-35-14-9-8-10-15-35)70-49(78)38(19-25-59)64-50(41)79/h8-10,14-15,31-34,36-43,45-46,73-74H,7,11-13,16-30,57-61H2,1-6H3,(H,62,84)(H,63,75)(H,64,79)(H,65,76)(H,66,82)(H,67,77)(H,68,85)(H,69,83)(H,70,78)(H,71,81)(H,72,80)/t32-,33-,34-,36+,37+,38+,39+,40+,41+,42+,43-,45+,46+/m1/s1"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/mass",
+                "val": "1203.499"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/monoisotopic_mass",
+                "val": "1202.74993"
+              },
+              {
+                "pred": "https://w3id.org/chemrof/smiles_string",
+                "val": "CC[C@@H](C)CCCCC(=O)N[C@@H](CCN)C(=O)N[C@H](C(=O)N[C@@H](CCN)C(=O)N[C@H]1CCNC(=O)[C@H]([C@@H](C)O)NC(=O)[C@H](CCN)NC(=O)[C@H](CCN)NC(=O)[C@H](CC(C)C)NC(=O)[C@@H](Cc2ccccc2)NC(=O)[C@H](CCN)NC1=O)[C@@H](C)O"
+              }
+            ],
+            "subsets": [
+              "http://purl.obolibrary.org/obo/chebi/3_STAR"
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "synonymType": "http://purl.obolibrary.org/obo/chebi/IUPAC_NAME",
+                "val": "4,10-anhydro{N-[(6R)-6-methyloctanoyl]-L-2,4-diaminobutanoyl-L-threonyl-L-2,4-diaminobutanoyl-L-2,4-diaminobutanoyl-L-2,4-diaminobutanoyl-D-phenylalanyl-L-leucyl-L-2,4-diaminobutanoyl-L-2,4-diaminobutanoyl-L-threonine}",
+                "xrefs": [
+                  "IUPAC"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "synonymType": "http://purl.obolibrary.org/obo/chebi/IUPAC_NAME",
+                "val": "4,10-anhydro{N-[(6R)-6-methyloctanoyl]-L-2,4-diaminobutanoyl-L-threonyl-L-2,4-diaminobutanoyl-L-2,4-diaminobutanoyl-L-2,4-diaminobutanoyl-D-phenylalanyl-L-leucyl-L-2,4-diaminobutanoyl-L-2,4-diaminobutanoyl-L-threonine}",
+                "xrefs": [
+                  "iupac"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "Polymyxin B(1)",
+                "xrefs": [
+                  "chebi"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "polymycin B",
+                "xrefs": [
+                  "chebi"
+                ]
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "polymyxin B1",
+                "xrefs": [
+                  "chebi"
+                ]
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "beilstein:8609638"
+              },
+              {
+                "val": "cas:4135-11-9"
+              },
+              {
+                "val": "pubmed:13058849"
+              },
+              {
+                "val": "pubmed:14212410"
+              },
+              {
+                "val": "pubmed:1650428"
+              },
+              {
+                "val": "pubmed:26803416"
+              },
+              {
+                "val": "reaxys:9838039"
+              }
+            ]
+          },
+          "type": "CLASS"
+        }
+      ]
+    }
+  ]
+}

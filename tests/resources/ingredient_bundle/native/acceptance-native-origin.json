@@ -1,0 +1,107 @@
+{
+  "members": {
+    "attributes.yaml": {
+      "bytes": 15000,
+      "sha256": "7bc9e8a415341f940537d0f0c42d2b9aef2005bdddfac5bac5cbaa4fa981fba2"
+    },
+    "biolink-model.yaml": {
+      "bytes": 512070,
+      "sha256": "b6a1320772a92d69e84b8c700cd6386dffe45ed635c8197d61e22b6a6fa3b35e"
+    },
+    "chebi-authority.json": {
+      "bytes": 20276,
+      "sha256": "6cac0742e5a9d9f36dc4fb82b4d996a3efe4f3b904c90ef28c8da9aa02c55c34"
+    },
+    "native-edges.json": {
+      "bytes": 767,
+      "sha256": "5adb19b1a22d89c92c841bb790e1e9357b1435cabdc465c0b88f9db82948e495"
+    },
+    "native-nodes.json": {
+      "bytes": 7443,
+      "sha256": "f3c74a87efef26738bd1db9c05d19c47861d7b66185ff27aae016e5cce587280"
+    },
+    "predicate_mapping.yaml": {
+      "bytes": 17706,
+      "sha256": "b532220b1d33f0e51794566fa33a736905b5a41ed1fe38839f9e949cb58c796c"
+    }
+  },
+  "notes": "Native KGX rows are exact excerpts of local prepared files; raw source versions are recorded independently and are not a certification of the full production closure.",
+  "sources": {
+    "data/raw/attributes.yaml": {
+      "bytes": 15000,
+      "release": "4.4.2",
+      "sha256": "7bc9e8a415341f940537d0f0c42d2b9aef2005bdddfac5bac5cbaa4fa981fba2"
+    },
+    "data/raw/biolink-model.yaml": {
+      "bytes": 512070,
+      "release": "4.4.2",
+      "sha256": "b6a1320772a92d69e84b8c700cd6386dffe45ed635c8197d61e22b6a6fa3b35e"
+    },
+    "data/raw/chebi.json": {
+      "bytes": 405710316,
+      "graph_id": "http://purl.obolibrary.org/obo/chebi.owl",
+      "selected_ids": [
+        "http://purl.obolibrary.org/obo/CHEBI_15318",
+        "http://purl.obolibrary.org/obo/CHEBI_17712",
+        "http://purl.obolibrary.org/obo/CHEBI_26580",
+        "http://purl.obolibrary.org/obo/CHEBI_29673",
+        "http://purl.obolibrary.org/obo/CHEBI_8309"
+      ],
+      "sha256": "a5d40380ab78bde0e8b5a704dbee3cba2bcaa7608be46eebc2f4a92932516c9b",
+      "version": "http://purl.obolibrary.org/obo/chebi/253/chebi.owl"
+    },
+    "data/raw/predicate_mapping.yaml": {
+      "bytes": 17706,
+      "release": "4.4.2",
+      "sha256": "b532220b1d33f0e51794566fa33a736905b5a41ed1fe38839f9e949cb58c796c"
+    },
+    "data/transformed/ontologies/chebi_edges.tsv": {
+      "bytes": 46268462,
+      "sha256": "9a74dd1a3d92a5f82fd7361c58d1ba971abde1f8ebb5c8f2ed0c77990544e1e1"
+    },
+    "data/transformed/ontologies/chebi_nodes.tsv": {
+      "bytes": 66297495,
+      "selected_ids": [
+        "CHEBI:15318",
+        "CHEBI:17712",
+        "CHEBI:26580",
+        "CHEBI:29673",
+        "CHEBI:8309"
+      ],
+      "sha256": "c161f8aea7ffeb1a2557f24100b3b3b67bfd62196d484b33c675921154c8b152"
+    },
+    "data/transformed/ontologies/foodon_nodes.tsv": {
+      "bytes": 7057732,
+      "selected_ids": [
+        "FOODON:03413132",
+        "FOODON:03413240",
+        "FOODON:03413299"
+      ],
+      "sha256": "8d2a8b11c3c2b499895acd4a319a42cbd587258237944c48caf954c73957bd2e"
+    },
+    "data/transformed/ontologies_stubs/micro_nodes.tsv": {
+      "bytes": 8455,
+      "selected_ids": [
+        "MICRO:0002250",
+        "MICRO:0002392",
+        "MICRO:0002393"
+      ],
+      "sha256": "a2ac455b4c4a6b94b7d3f2846ccdbf72779069ed2c09a052c391e2ee9fb6d282"
+    },
+    "data/transformed/ontologies_stubs/ncit_nodes.tsv": {
+      "bytes": 27206,
+      "selected_ids": [
+        "NCIT:C1241",
+        "NCIT:C152482",
+        "NCIT:C166606",
+        "NCIT:C183132",
+        "NCIT:C216370",
+        "NCIT:C61894",
+        "NCIT:C76253",
+        "NCIT:C79997",
+        "NCIT:C85253"
+      ],
+      "sha256": "8f288cf5f8b4a91c933de1c7741edede359919162963487c0c8ac6d7e331060c"
+    }
+  }
+}

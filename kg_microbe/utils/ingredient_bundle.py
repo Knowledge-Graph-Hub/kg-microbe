@@ -312,10 +312,25 @@ def _verify_serialized_targets(path: Path, bundle: ReviewedIngredientBundle) -> 
     if metadata:
         raise ValueError("Legacy lookup member cannot substitute another profiled mapping set")
     present = set()
+    nonidentity_pairs = set()
     for row in _iter_sssom_rows(path):
         route, _ = classify_mapping_row(row)
-        if route in {"attribute", "identity", "canonical_name", "synonym"} and row["object_id"] in required:
-            present.add(row["object_id"])
+        if route == "broader" or (route == "nonidentity" and row["predicate_id"].strip() == "skos:relatedMatch"):
+            nonidentity_pairs.add(tuple(sorted(row[key].strip() for key in ("subject_id", "object_id"))))
+        target = row["object_id"].strip()
+        if route in {"attribute", "identity", "canonical_name", "synonym"} and target in required:
+            present.add(target)
+    # Keep only nonidentity pairs in memory; a second streaming pass makes the
+    # decision independent of row order without retaining every identity row.
+    if nonidentity_pairs:
+        for row in _iter_sssom_rows(path):
+            if (
+                classify_mapping_row(row)[0] == "identity"
+                and tuple(sorted(row[key].strip() for key in ("subject_id", "object_id"))) in nonidentity_pairs
+            ):
+                raise ValueError(
+                    f"Conflicting exact/nonidentity mappings require review: {row['subject_id']} / {row['object_id']}"
+                )
     missing = sorted(required - present)
     if missing:
         raise ValueError(f"Scoped ingredient targets are missing from serialized lookup inputs: {missing}")

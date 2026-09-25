@@ -23,6 +23,7 @@
     "WIKIDATA": "https://www.wikidata.org/entity/",
     "time": "http://www.w3.org/2006/time#",
     "MIM": "https://github.com/CultureBotAI/MediaIngredientMech/blob/main/data/ingredients/mapped/",
+    "MIM.ingredient": "https://github.com/CultureBotAI/MediaIngredientMech/blob/main/data/ingredients/mapped/",
     "MIM.product": "https://w3id.org/mediaingredientmech/product/",
     "MIM.occurrence": "https://w3id.org/mediaingredientmech/occurrence/",
     "MIM.alternative": "https://w3id.org/mediaingredientmech/alternative/",

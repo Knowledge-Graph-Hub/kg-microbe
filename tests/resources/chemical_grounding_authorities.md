@@ -54,3 +54,28 @@ exclusions preserve source ingredients without guessing hydrate replacements.
 Native UDP CHEBI:17659 does not justify the historical
 `potassium 5-dehydro-D-gluconate` alias; rejecting it does not infer a replacement
 salt identity from a generic anion.
+
+For #1153 the same immutable native ChEBI TSV declares CHEBI:8612 as
+`psicofuranin`, with synonyms `6-amino-9-D-psicofuranosylpurine`,
+`Angustmycin C`, `Psicofuranin`, and `psicofuranine`. CHEBI:223718 is
+`Rubradirin B`; its native aliases do not include the generic `rubradirin`.
+These declarations are copied as labels in `chemical_grounding_authorities.tsv`.
+The specific names remain valid: the finite policy rejects only unqualified
+`angustmycin` / `rubradirin` and their observed `produces:` source phrases.
+
+Upstream reviewed export at immutable commit
+`a8b26f007cdf5bdc7529ab13888d611f359e6aad`, manifest SHA-256
+`c37e075743b52f614a78c2ddd7ec47e1e8ea35b53e0a66c5886007947105a64b`,
+independently withholds both generic-to-specific assertions in its
+`mapping-dispositions.tsv`:
+
+- Source position 386: `MIM:Angustmycin` exact CHEBI:8612, row SHA-256
+  `e7aaa856c1ae738835d158e22fc5b104fd9664c9210a6fb0dc2a1bcafff8a371`.
+  Generic Angustmycin does not distinguish A/decoyinine from C/psicofuranin.
+- Source position 2471: `MIM:Rubradirin` exact CHEBI:223718, row SHA-256
+  `3ae670058aefdf10ec85cae6705cfbd6bfc20d3bffddbddd9b16a07363a42ded`.
+  The source record does not justify selecting Rubradirin B.
+
+These withheld records do not prove a universal scientific inequality. The
+consumer preserves the original generic observations using their historical
+`kgmicrobe.compound:` IDs rather than asserting either external identity.

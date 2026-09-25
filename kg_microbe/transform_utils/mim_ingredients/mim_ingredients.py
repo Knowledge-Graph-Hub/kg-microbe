@@ -45,7 +45,7 @@ from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.graph_schema import canonical_header, validate_canonical_tsv
 from kg_microbe.utils.ingredient_bundle import load_ingredient_lookup_bundle
 from kg_microbe.utils.ingredient_bundle_contract import content_sha256, read_json, stable_id
-from kg_microbe.utils.ingredient_kgx import ingredient_kgx_profile, json_scalar
+from kg_microbe.utils.ingredient_kgx import ingredient_graph_id, ingredient_kgx_profile, json_scalar
 from kg_microbe.utils.tsv_io import tsv_dict_writer
 
 
@@ -132,10 +132,11 @@ def project_ingredient_context(bundle, loader):
 
     def node(identifier, label, kind=None):
         """Declare one ID without moving source qualifications onto its ingredient."""
-        if identifier in nodes:
+        graph_id = ingredient_graph_id(identifier)
+        if graph_id in nodes:
             return
         row = {
-            ID_COLUMN: identifier,
+            ID_COLUMN: graph_id,
             NAME_COLUMN: " ".join(label.split()),
             CATEGORY_COLUMN: INFORMATION_CONTENT_ENTITY_CATEGORY if kind else INGREDIENT_CATEGORY,
             DESCRIPTION_COLUMN: "",
@@ -147,14 +148,14 @@ def project_ingredient_context(bundle, loader):
                 row[XREF_COLUMN] = "|".join(bundle.active_xrefs(identifier))
         else:
             row.update({key: value for key, value in loader.get_node_enrichment(identifier).items() if value})
-        nodes[identifier] = row
+        nodes[graph_id] = row
 
     def assertion(subject, obj, column, payload, *, predicate=RELATED_TO_PREDICATE, relation=IS_ABOUT_RELATION):
         """Retain source-specific evidence and data together in one merge assertion."""
         edge = {
-            SUBJECT_COLUMN: subject,
+            SUBJECT_COLUMN: ingredient_graph_id(subject),
             PREDICATE_COLUMN: predicate,
-            OBJECT_COLUMN: obj,
+            OBJECT_COLUMN: ingredient_graph_id(obj),
             RELATION_COLUMN: relation,
             PRIMARY_KNOWLEDGE_SOURCE_COLUMN: MIM_KNOWLEDGE_SOURCE,
             KNOWLEDGE_LEVEL_COLUMN: KNOWLEDGE_ASSERTION,
@@ -185,7 +186,7 @@ def project_ingredient_context(bundle, loader):
             continue
         if row["predicate_id"] in {"skos:broadMatch", "skos:narrowMatch"}:
             node(row["object_id"], row["object_label"])
-            subject, obj = row["subject_id"], row["object_id"]
+            subject, obj = owner, row["object_id"]
             if row["predicate_id"] == "skos:narrowMatch":
                 subject, obj = obj, subject
             assertion(

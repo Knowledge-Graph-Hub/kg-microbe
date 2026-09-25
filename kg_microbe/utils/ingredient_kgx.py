@@ -31,6 +31,11 @@ def json_scalar(value):
     return canonical_json(value).decode("utf-8")
 
 
+def ingredient_graph_id(identifier):
+    """Disambiguate a local ingredient from Biolink's existing MIM namespace."""
+    return "MIM.ingredient:" + identifier[4:] if identifier.startswith("MIM:") else identifier
+
+
 def validate_ingredient_fields(row, *, is_node):
     """Reject malformed, pooled or unversioned extension values at graph boundaries."""
     present = {key for key, value in row.items() if key.startswith("ingredient_") and value not in (None, "")}

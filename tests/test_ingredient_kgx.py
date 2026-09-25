@@ -210,3 +210,55 @@ def test_ingredient_candidate_is_explicit_only(tmp_path, monkeypatch):
     assert "mim_ingredients" not in selected
     dispatcher.transform(sources=["mim_ingredients"], input_dir=tmp_path, output_dir=tmp_path)
     assert selected[-1] == "mim_ingredients"
+
+
+@pytest.mark.parametrize("predicate", ["skos:broadMatch", "skos:narrowMatch"])
+@pytest.mark.parametrize("reverse_rows", [False, True])
+def test_broad_mapping_uses_declared_canonical_endpoint(producer_bundle, lookup_bundle, predicate, reverse_rows):
+    """An authorized identity and a separate broader mapping cannot leave a dangling MIM node."""
+    bundle = deepcopy(producer_bundle)
+    broad = next(row for row in bundle.mappings() if row["subject_id"] == "MIM:Xanthine")
+    broad.update(
+        predicate_id=predicate,
+        object_id="CHEBI:15318",
+        object_label="xanthine",
+        ext_identity_authorized="false",
+    )
+    # Software-only policy probe: this extra row is not exported as new scientific evidence.
+    bundle._loaded["mappings"].append(broad)
+    if reverse_rows:
+        bundle._loaded["mappings"].reverse()
+    loader = ChemicalMappingLoader.from_ingredient_lookup_bundle(
+        lookup_bundle[0], manifest_sha256=lookup_bundle[1]["manifest_sha256"]
+    )
+    nodes, edges = project_ingredient_context(bundle, loader)
+    declared = {node["id"] for node in nodes}
+    broader = [edge for edge in edges if edge["predicate"] == "biolink:broad_match"]
+    assert len(broader) == 1
+    expected = ("CHEBI:17712", "CHEBI:15318")
+    if predicate == "skos:narrowMatch":
+        expected = expected[::-1]
+    assert (broader[0]["subject"], broader[0]["object"]) == expected
+    assert all(edge[end] in declared for edge in edges for end in ("subject", "object"))
+
+
+def test_nonidentity_source_has_unambiguous_graph_namespace(producer_bundle, lookup_bundle):
+    """Retain original MIM IDs in payloads while separating graph IDs from Biolink's MIM."""
+    bundle = deepcopy(producer_bundle)
+    bundle._identities.pop("MIM:Xanthine")
+    row = next(row for row in bundle._loaded["mappings"] if row["subject_id"] == "MIM:Xanthine")
+    row["ext_identity_authorized"] = "false"
+    loader = ChemicalMappingLoader.from_ingredient_lookup_bundle(
+        lookup_bundle[0], manifest_sha256=lookup_bundle[1]["manifest_sha256"]
+    )
+    nodes, edges = project_ingredient_context(bundle, loader)
+    declared = {row["id"] for row in nodes}
+    assert "MIM.ingredient:Xanthine" in declared
+    assert "MIM:Xanthine" not in declared
+    assert all(edge[end] in declared for edge in edges for end in ("subject", "object"))
+    mapping = next(
+        json.loads(edge["ingredient_mapping_json"])
+        for edge in edges
+        if edge.get("ingredient_mapping_json") and edge["object"] == "MIM.ingredient:Xanthine"
+    )
+    assert mapping["subject_id"] == "MIM:Xanthine"

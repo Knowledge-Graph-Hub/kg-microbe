@@ -1,0 +1,10 @@
+{
+  "repository": "https://github.com/CultureBotAI/MediaIngredientMech",
+  "commit": "1704bf74fbf60885c20f31a6372081eedd6723f7",
+  "source_module": "src/mediaingredientmech/mapping_scope.py",
+  "source_module_sha256": "fefb95d4a1fb96acc3fbdcd1a6948256df27d0df11e694bae90d4709e26a6400",
+  "consumer_module_sha256": "f87281c84af5569a1211a14bbe2e4dcf8476df1a56035c0b3a176c829d44bf62",
+  "profile_sha256": "dd2f78e6b6fcbdf8a715bebcec14e0f86c1e431bf28e5b9d7f3524a62e5bce3a",
+  "module_ast_equal_ignoring_docstrings": true,
+  "profile_bytes_equal": true
+}

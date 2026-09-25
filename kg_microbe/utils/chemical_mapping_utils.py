@@ -12,7 +12,9 @@ themselves (xrefs, canonical-name rows, synonym rows).
 import csv
 import gzip
 import re
-from collections import OrderedDict
+from collections import Counter, OrderedDict
+from copy import deepcopy
+from itertools import dropwhile
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -26,6 +28,8 @@ from kg_microbe.utils.ingredient_identity import (
     ingredient_name_target,
     ingredient_xref_allowed,
 )
+from kg_microbe.utils.ingredient_scope import read_scope_metadata
+from kg_microbe.utils.sssom_identity_policy import classify_mapping_row
 
 # Module-level cache (loaded once per process). We no longer store a
 # DataFrame — the SSSOM is parsed row-streamed and aggregated into the
@@ -61,6 +65,7 @@ _PRIMARY_SYNONYMS_INDEX: Optional[Dict[str, List[str]]] = None
 _PRIMARY_XREFS_INDEX: Optional[Dict[str, List[str]]] = None
 _PRIMARY_FORMULA_INDEX: Optional[Dict[str, str]] = None
 _CACHED_PATH: Optional[Path] = None
+_MAPPING_LOAD_AUDIT: dict = {}
 
 # Matches a trailing hydrate specifier:
 #   " x n H2O", " · 6 H2O", " . 2H2O", " x 12H2O", etc.
@@ -216,9 +221,31 @@ def _iter_sssom_rows(path: Path):
         else (lambda p: open(p, "r", encoding="utf-8", newline=""))
     )
     with open_fn(path) as fh:
-        data_lines = (line for line in fh if not line.startswith("#"))
+        data_lines = dropwhile(lambda line: line.startswith("#"), fh)
         reader = csv.DictReader(data_lines, delimiter="\t")
-        yield from reader
+        fields = reader.fieldnames or []
+        if len(fields) != len(set(fields)) or not {"subject_id", "predicate_id", "object_id"}.issubset(fields):
+            raise ValueError(f"Invalid SSSOM identity columns: {path}")
+        for position, row in enumerate(reader, 1):
+            if None in row or any(value is None for value in row.values()):
+                raise ValueError(f"Malformed SSSOM row {position}: {path}")
+            yield row
+
+
+def get_mapping_load_audit() -> dict:
+    """Return counts and bounded row diagnostics from the last mapping load."""
+    return deepcopy(_MAPPING_LOAD_AUDIT)
+
+
+def _scope_metadata(path: Path) -> dict:
+    opener = gzip.open if str(path).endswith(".gz") else open
+    with opener(path, "rt", encoding="utf-8", newline="") as stream:
+        header = []
+        for line in stream:
+            if not line.startswith("#"):
+                break
+            header.append(line[1:].removeprefix(" "))
+    return read_scope_metadata("".join(header))
 
 
 def load_unified_mappings(mappings_path: Optional[Path] = None) -> int:
@@ -238,7 +265,7 @@ def load_unified_mappings(mappings_path: Optional[Path] = None) -> int:
         ``object_label``.
       - ``kgm.name:`` subject + ``comment == "synonym"`` → ``subject_label``
         is added as an entity synonym.
-      - other CURIE subject (not equal to object) → xref.
+      - other CURIE subject (not equal to object) with exactMatch → identity xref.
       - subject == object (attribute_carrier) → no-op mapping; used only
         to carry extension columns for entities with no other rows.
 
@@ -260,12 +287,16 @@ def load_unified_mappings(mappings_path: Optional[Path] = None) -> int:
     if not mappings_path.exists():
         raise FileNotFoundError(f"Unified mappings file not found: {mappings_path}")
 
-    _CACHED_PATH = mappings_path
+    # A failed reload must never expose partially rebuilt indices as a cached
+    # successful load, including when another mapping file was already loaded.
+    _LOADED = False
+    _CACHED_PATH = None
 
     # Clear negative cache on reload so stale misses cannot survive a mappings update.
     _NEGATIVE_LOOKUP_CACHE.clear()
 
     _build_indices(mappings_path)
+    _CACHED_PATH = mappings_path
     _LOADED = True
     return _ENTITY_COUNT
 
@@ -279,6 +310,18 @@ def _build_indices(mappings_path: Path):
     global _PARENT_INDEX
     global _HYDRATE_EQUIV_INDEX
     global _ENTITY_COUNT
+    global _MAPPING_LOAD_AUDIT
+
+    counts: Counter = Counter()
+    exclusions: Counter = Counter()
+    diagnostics: list = []
+    _MAPPING_LOAD_AUDIT = {
+        "path": str(mappings_path),
+        "complete": False,
+        "counts": counts,
+        "exclusions": exclusions,
+        "diagnostics": diagnostics,
+    }
 
     _NAME_INDEX = {}
     _CANONICAL_NAME_INDEX = {}
@@ -297,6 +340,8 @@ def _build_indices(mappings_path: Path):
     primary_xrefs_sets: Dict[str, set] = {}
     parent_sets: Dict[str, set] = {}
     hydrate_sets: Dict[str, set] = {}
+    broader_categories: Dict[str, set] = {}
+    scope_metadata = _scope_metadata(mappings_path)
 
     # Which way round the asymmetric predicates read. Absence means legacy, so
     # this repo's behaviour cannot change until MIM declares the flip (#822).
@@ -347,9 +392,40 @@ def _build_indices(mappings_path: Path):
                 _HYDRATE_FREE_NAME_INDEX_RANK[norm_hf] = rank
         return norm
 
-    for row in _iter_sssom_rows(mappings_path):
+    for position, row in enumerate(_iter_sssom_rows(mappings_path), 1):
+        route, reason = classify_mapping_row(row, scope_metadata)
+        counts[route] += 1
+        if route in {"quarantined", "annotation", "nonidentity"}:
+            if len(diagnostics) < 20:
+                diagnostics.append(
+                    {
+                        "source_position": position,
+                        "subject_id": row.get("subject_id", ""),
+                        "predicate_id": row.get("predicate_id", ""),
+                        "object_id": row.get("object_id", ""),
+                        "route": route,
+                        "reason": reason,
+                    }
+                )
+            continue
         curie = (row.get("object_id") or "").strip()
-        if not curie:
+        subject = (row.get("subject_id") or "").strip()
+        predicate = (row.get("predicate_id") or "").strip()
+
+        # Nonidentity relations do not declare names, formulas or xrefs.
+        # Category metadata can describe an endpoint without resolving it.
+        if route == "broader":
+            object_is_parent = (predicate == "skos:broadMatch") == skos_semantics
+            child, parent = (subject, curie) if object_is_parent else (curie, subject)
+            parent_sets.setdefault(child, set()).add(parent)
+            category = (row.get("object_category") or "").strip()
+            if category:
+                broader_categories.setdefault(curie, set()).add(category)
+            continue
+        if route == "hydrate":
+            if ingredient_xref_allowed(subject, curie):
+                hydrate_sets.setdefault(subject, set()).add(curie)
+                hydrate_sets.setdefault(curie, set()).add(subject)
             continue
 
         # First non-empty extension attributes win per object.
@@ -377,44 +453,13 @@ def _build_indices(mappings_path: Path):
                 if norm:
                     _CANONICAL_NAME_INDEX.setdefault(norm, curie)
 
-        subject = (row.get("subject_id") or "").strip()
-        if not subject:
-            continue
-        predicate = (row.get("predicate_id") or "").strip()
-        # skos:narrowMatch / skos:broadMatch carry parent-of (asymmetric)
-        # relationships that the entity-centric indices above can't express.
-        # Index them as ``child → [parents]`` so transforms can emit
-        # biolink:subclass_of edges from them. Which side is the parent
-        # depends on the set's declared semantics — see
-        # ``read_predicate_semantics`` and #822.
-        if predicate == "skos:narrowMatch":
-            # SKOS: ``A narrowMatch B`` means B is narrower, so A is the parent.
-            # Legacy MIM: the object is the parent. Same row, opposite reading.
-            if skos_semantics:
-                parent_sets.setdefault(curie, set()).add(subject)
-            else:
-                parent_sets.setdefault(subject, set()).add(curie)
-            continue  # don't also treat the row as an xref/synonym
-        if predicate == "skos:broadMatch":
-            if skos_semantics:
-                parent_sets.setdefault(subject, set()).add(curie)
-            else:
-                parent_sets.setdefault(curie, set()).add(subject)
-            continue
-        # Identity exclusions do not reject asymmetric parent assertions.
+        # The existing source/target exclusions deny the identity or lexical
+        # link, not independent object metadata on a recognized row shape.
         if not ingredient_xref_allowed(subject, curie):
+            exclusions["identity"] += 1
             continue
         if subject.startswith("kgm.name:") and not ingredient_mapping_allowed(row.get("subject_label", ""), curie):
-            continue
-
-        # Recipe-equivalent hydrate pairs (anhydrous CHEBI ↔ hydrated
-        # CHEBI). Tagged at consolidator export time with
-        # ``predicate_id == 'skos:closeMatch'`` and
-        # ``comment == 'recipe_equivalent_hydrate'``. Index symmetrically
-        # so a lookup on either form returns the other.
-        if predicate == "skos:closeMatch" and (row.get("comment") or "").strip() == "recipe_equivalent_hydrate":
-            hydrate_sets.setdefault(subject, set()).add(curie)
-            hydrate_sets.setdefault(curie, set()).add(subject)
+            exclusions["lexical"] += 1
             continue
 
         if subject.startswith("kgm.name:"):
@@ -432,6 +477,12 @@ def _build_indices(mappings_path: Path):
             norm_xref = subject.lower()
             _XREF_INDEX.setdefault(norm_xref, curie)
 
+    # Prefer independent declarations; ambiguous broader-row categories do not
+    # choose a winner by row order. This does not populate any identity lookup.
+    for curie, categories in broader_categories.items():
+        if len(categories) == 1:
+            _CATEGORY_INDEX.setdefault(curie, next(iter(categories)))
+
     # Query scope is reviewed independently of lexical rank. A missing target
     # stays unresolved; a stale specific synonym must not stand in for it.
     for query, target in ingredient_name_scopes()[0].items():
@@ -446,6 +497,11 @@ def _build_indices(mappings_path: Path):
         _PARENT_INDEX[curie] = sorted(parents)
     for curie, equivs in hydrate_sets.items():
         _HYDRATE_EQUIV_INDEX[curie] = sorted(equivs)
+    if counts["quarantined"]:
+        print(
+            f"[chemical-mappings] quarantined {counts['quarantined']} unsupported rows; "
+            "see get_mapping_load_audit() for counts and source row diagnostics"
+        )
 
     # Count of distinct entities: any object_id that appears in at least
     # one index. Use the union of keys to avoid double-counting.
@@ -456,6 +512,7 @@ def _build_indices(mappings_path: Path):
         | set(_PRIMARY_FORMULA_INDEX)
         | set(_CATEGORY_INDEX)
     )
+    _MAPPING_LOAD_AUDIT["complete"] = True
 
 
 def find_chebi_by_name(

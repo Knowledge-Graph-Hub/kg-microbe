@@ -1,0 +1,70 @@
+{
+  "source_sha256": "0f8c148fb6f8386daee19b8e3a5af4725d4841b02b9125e64f39497e51ea00c3",
+  "entity_count": 120669,
+  "indices": {
+    "_NAME_INDEX": {
+      "keys": 371725,
+      "sha256": "ebc254ef0df413301ebe7dec4648a3fa9986492fb7b29deceb49507ed81dfcd6"
+    },
+    "_CANONICAL_NAME_INDEX": {
+      "keys": 120132,
+      "sha256": "b303a485a982eb354abd152a8d08219e915ee6313c3e8e2123c17e9214df4926"
+    },
+    "_HYDRATE_FREE_NAME_INDEX": {
+      "keys": 126,
+      "sha256": "77f11af13c29916d4dea10a1b4faf29e48c1c1be597b9f9c3b0b73e75acb0434"
+    },
+    "_FORMULA_INDEX": {
+      "keys": 276,
+      "sha256": "adfb97bcb1c1a65cb9112d762b3d0cb0fe00ba19d926dce9f97b9ab87b39b680"
+    },
+    "_XREF_INDEX": {
+      "keys": 223729,
+      "sha256": "165e4bea3ce2baafeba420175a56377ab418f8e94579e1b3919bbee36c2819eb"
+    },
+    "_CATEGORY_INDEX": {
+      "keys": 120669,
+      "sha256": "70a2508ffc848e3f93cca9c2e8b0ff45889d563b648829961ba41bd812108b6b"
+    },
+    "_PRIMARY_NAME_INDEX": {
+      "keys": 120611,
+      "sha256": "ce2074f1f8d010c6551fc88a29e556aa28c0bfe652ec10e60c81ffde87b3d58d"
+    },
+    "_PRIMARY_SYNONYMS_INDEX": {
+      "keys": 107166,
+      "sha256": "2fe558ce39bf01b826752093c33bbd1018d36a40b71231183c6b96c9cb8e35f1"
+    },
+    "_PRIMARY_XREFS_INDEX": {
+      "keys": 109327,
+      "sha256": "5e92c9c6eefd43b2e3c79318e26d43f914aa7ac40e815609421684bcfddaefa6"
+    },
+    "_PRIMARY_FORMULA_INDEX": {
+      "keys": 309,
+      "sha256": "d340d23fe8e048bcdaf2f5d70f2abf5b984ce495c34f7075b0741ed8e7329ba7"
+    },
+    "_PARENT_INDEX": {
+      "keys": 143,
+      "sha256": "3d8c8db82fb42c88f52fecca077413bbb3035b1fd2060c08bf5cf2378b0ca4f9"
+    },
+    "_HYDRATE_EQUIV_INDEX": {
+      "keys": 23,
+      "sha256": "b93635dc8a4a4537a70650202f34c4c8795c440544d6a53c8b834a2558cd1955"
+    }
+  },
+  "row_audit": {
+    "path": "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
+    "complete": true,
+    "counts": {
+      "identity": 229241,
+      "canonical_name": 120608,
+      "synonym": 260053,
+      "broader": 143,
+      "hydrate": 14
+    },
+    "exclusions": {
+      "identity": 10,
+      "lexical": 14
+    },
+    "diagnostics": []
+  }
+}

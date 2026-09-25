@@ -1,6 +1,7 @@
 """Reviewed occurrences and registry claims survive the real finalized KGX merge."""
 
 import csv
+import hashlib
 import io
 import json
 import shutil
@@ -35,9 +36,10 @@ def prepared_ingredients(tmp_path, lookup_bundle):
     raw = tmp_path / "raw"
     selection_dir = raw / "mim_ingredients"
     selection_dir.mkdir(parents=True)
-    shutil.copyfile(
-        Path(__file__).parent / "resources/ingredient_bundle/native/foodon-authority.json", raw / "foodon.json"
-    )
+    authority = Path(__file__).parent / "resources/ingredient_bundle/native/foodon-authority.json"
+    origin = json.loads(authority.with_name("foodon-origin.json").read_text())
+    assert hashlib.sha256(authority.read_bytes()).hexdigest() == origin["fixture_sha256"]
+    shutil.copyfile(authority, raw / "foodon.json")
     selection = {
         "mode": "candidate_only",
         "lookup_directory": str(lookup_bundle[0]),

@@ -615,9 +615,8 @@ class TestNegativeCache:
         """Failed lookup is stored in the negative cache."""
         chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
         assert find_chebi_by_name("not_a_real_chemical") is None
-        norm = chemical_mapping_utils.normalize_name("not_a_real_chemical")
-        # Cache key is (normalized_name, synonyms, fuzzy_stereochemistry, fuzzy_hydrate).
-        assert (norm, True, False, False) in chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE
+        # Preserve original spelling because reviewed policies can be case-sensitive.
+        assert ("not_a_real_chemical", True, False, False) in chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE
 
     def test_cache_cleared_on_reload(self, mock_mappings_file, tmp_path):
         """Reloading from a new mappings path clears the negative cache."""

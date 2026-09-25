@@ -99,7 +99,7 @@ def ingredient_identity_policy():
 def ingredient_mapping_allowed(name: str, target: str) -> bool:
     """Reject reviewed ingredient-name/target pairs without banning targets."""
     patterns = ingredient_identity_policy()[0].get(str(target or "").casefold(), ())
-    original = str(name or "")
+    original = str(name or "").strip()
     # Producers normalize labels differently. In particular MetaTraits keys
     # and legacy ingredient names may use underscores or hyphens for spaces.
     # Match the lookup reader's punctuation removal as well: a source label

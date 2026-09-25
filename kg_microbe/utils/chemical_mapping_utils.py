@@ -574,13 +574,20 @@ def find_chebi_by_name(
     # Try exact match first
     scoped_target = ingredient_name_target(name)
     if scoped_target is not None:
-        return scoped_target if scoped_target in _PRIMARY_NAME_INDEX else None
+        return (
+            scoped_target
+            if scoped_target in _PRIMARY_NAME_INDEX and ingredient_mapping_allowed(name, scoped_target)
+            else None
+        )
     norm_name = normalize_name(name)
     if not norm_name:
         return None
 
     # Check negative lookup cache - skip if we've already failed to find this name
-    cache_key = (norm_name, synonyms, fuzzy_stereochemistry, fuzzy_hydrate)
+    # A policy can distinguish case-sensitive formula spellings or punctuation
+    # that the index normalizes away. A rejected query must not poison another
+    # spelling's lookup (e.g. CoCl2 versus COCl2).
+    cache_key = (str(name).strip(), synonyms, fuzzy_stereochemistry, fuzzy_hydrate)
     if cache_key in _NEGATIVE_LOOKUP_CACHE:
         _NEGATIVE_LOOKUP_CACHE.move_to_end(cache_key)  # LRU touch
         return None
@@ -611,6 +618,12 @@ def find_chebi_by_name(
             result = primary_index.get(norm_name_no_hydrate)
         if result is None and _HYDRATE_FREE_NAME_INDEX:
             result = _HYDRATE_FREE_NAME_INDEX.get(norm_name)
+
+    # Index-time admission checked the indexed alias, not this original query.
+    # In particular hydrate/stereochemistry fallback must not erase a reviewed
+    # source-name restriction. Reject the result without guessing a replacement.
+    if result is not None and not ingredient_mapping_allowed(name, result):
+        result = None
 
     # If lookup failed, add to bounded negative cache to avoid retrying
     if result is None:

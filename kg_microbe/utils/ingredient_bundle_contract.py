@@ -126,6 +126,7 @@ def read_json(content: bytes):
     """Read JSON without silently choosing between duplicate keys or NaN values."""
 
     def invalid_number(value):
+        """Reject JSON's nonstandard NaN and infinity tokens."""
         raise ValueError(f"Non-finite bundle JSON number: {value}")
 
     return json.loads(content, object_pairs_hook=_unique_object, parse_constant=invalid_number)

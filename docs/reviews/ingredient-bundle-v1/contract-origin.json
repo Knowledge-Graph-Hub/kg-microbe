@@ -6,7 +6,7 @@
     "kg_microbe/utils/ingredient_bundle_contract.py": {
       "producer_path": "src/mediaingredientmech/ingredient_bundle_contract.py",
       "producer_sha256": "9285d9d2423d108e0b1e3a960ddcbdd5e9b94eb44e099632042fc7e1e95e51b2",
-      "consumer_sha256": "f7545d4d681975d9df0eb21556db59caaecbb6ebf57b67d3893f20736b2da9cb"
+      "consumer_sha256": "3ddea36a1f1f365ac56287f09d2c75c9b6875a37bff78741afd412a6e5c15d16"
     },
     "kg_microbe/utils/review_claims.py": {
       "producer_path": "src/mediaingredientmech/review_claims.py",

@@ -29,6 +29,7 @@ from kg_microbe.utils.ingredient_identity import (
     IDENTITY_POLICY,
     NAME_SCOPE_POLICY,
     accepted_name_scope,
+    ingredient_case_sensitive_name_scope,
     ingredient_mapping_allowed,
     ingredient_name_scopes,
     ingredient_name_target,
@@ -185,6 +186,17 @@ def _historical_policy_rejection(row):
     elif row["predicate_id"] == "skos:exactMatch" and not ingredient_xref_allowed(subject, target):
         return "reviewed_identity_policy_xref"
     return ""
+
+
+def _candidate_name_lookup(name, names, declared):
+    """Mirror finite runtime query scopes without putting case-sensitive aliases in a shared key."""
+    recognized, target = ingredient_case_sensitive_name_scope(name)
+    if recognized:
+        return target if target in declared and ingredient_mapping_allowed(name, target) else None
+    normalized = runtime.normalize_name(name)
+    if ingredient_case_sensitive_name_scope(normalized)[0]:
+        return None
+    return names.get(normalized)
 
 
 class _Components:
@@ -734,10 +746,10 @@ def build_conservative_candidate(
                 "name": row["subject_label"],
                 "subject_id": row["subject_id"],
                 "expected": row["object_id"],
-                "resolved": names.get(runtime.normalize_name(row["subject_label"])),
+                "resolved": _candidate_name_lookup(row["subject_label"], names, named_entities),
             }
             for row in bundle.supported_rows
-            if names.get(runtime.normalize_name(row["subject_label"])) != row["object_id"]
+            if _candidate_name_lookup(row["subject_label"], names, named_entities) != row["object_id"]
         ]
         accepted_scopes = [
             dict(

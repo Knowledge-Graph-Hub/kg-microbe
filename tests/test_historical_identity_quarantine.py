@@ -159,6 +159,10 @@ def test_raw_thiosulfate_guard_is_applied_before_legacy_deduplication(tmp_path):
     "name,target",
     [
         ("CoCl2 x 2 H2O", "CHEBI:29365"),
+        ("CoCl2 x 2 H2O", "CHEBI:35696"),
+        ("FeCl2 x 6 H2O", "CHEBI:30812"),
+        ("Na2HPO4 x 6 H2O", "CHEBI:34683"),
+        ("NiCl2 x 2 H2O", "CHEBI:34887"),
         ("potassium 5-dehydro-D-gluconate", "CHEBI:17659"),
         ("Soytone", "CHEBI:8150"),
         ("Bacto Soytone", "CHEBI:8150"),

@@ -44,7 +44,13 @@ ontology replacement for an unrelated recipe chemical.
 The current native phosgene record CHEBI:29365 contains `COCl2`, whereas cobalt
 dichloride CHEBI:35696 contains `CoCl2`. The finite #1151 guard rejects only the
 observed hydrated-cobalt query `CoCl2 x 2 H2O` against phosgene and preserves its
-native uppercase-O formula. It does not solve general case-folded formula
-index collisions. Native UDP CHEBI:17659 does not justify the historical
+native uppercase-O formula. `chemical_formula_aliases.tsv` records these two
+native exact-case aliases from the same fingerprinted ChEBI TSV. Their finite
+`case_sensitive_name` query scopes distinguish COCl2 from CoCl2 and reject an
+unreviewed spelling such as cocl2; they do not implement general formula parsing.
+Observed CoCl2 x 2 H2O, FeCl2 x 6 H2O, Na2HPO4 x 6 H2O, and NiCl2 x 2 H2O
+source labels are separately guarded against their anhydrous targets. These
+exclusions preserve source ingredients without guessing hydrate replacements.
+Native UDP CHEBI:17659 does not justify the historical
 `potassium 5-dehydro-D-gluconate` alias; rejecting it does not infer a replacement
 salt identity from a generic anion.

@@ -23,6 +23,7 @@ def test_original_query_is_checked_after_all_lookup_routes(monkeypatch, query, n
     monkeypatch.setattr(runtime, "_HYDRATE_FREE_NAME_INDEX", {})
     monkeypatch.setattr(runtime, "_NEGATIVE_LOOKUP_CACHE", OrderedDict())
     monkeypatch.setattr(runtime, "ingredient_name_target", lambda name: None)
+    monkeypatch.setattr(runtime, "ingredient_case_sensitive_name_scope", lambda name: (False, None))
     monkeypatch.setattr(runtime, "ingredient_mapping_allowed", lambda name, target: name != query)
     assert runtime.find_chebi_by_name(query, **flags) is None
     assert runtime.find_chebi_by_name(normalized) == "CHEBI:29365"
@@ -34,6 +35,7 @@ def test_case_sensitive_rejection_does_not_poison_valid_formula(monkeypatch):
     monkeypatch.setattr(runtime, "_NAME_INDEX", {"cocl2": "CHEBI:29365"})
     monkeypatch.setattr(runtime, "_NEGATIVE_LOOKUP_CACHE", OrderedDict())
     monkeypatch.setattr(runtime, "ingredient_name_target", lambda name: None)
+    monkeypatch.setattr(runtime, "ingredient_case_sensitive_name_scope", lambda name: (False, None))
     monkeypatch.setattr(runtime, "ingredient_mapping_allowed", lambda name, target: name != "CoCl2")
     assert runtime.find_chebi_by_name("CoCl2") is None
     assert runtime.find_chebi_by_name("COCl2") == "CHEBI:29365"

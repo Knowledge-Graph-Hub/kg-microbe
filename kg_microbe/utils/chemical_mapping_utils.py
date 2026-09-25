@@ -24,6 +24,7 @@ import pandas as pd
 from kg_microbe.utils.ingredient_identity import (
     ingredient_authority_label,
     ingredient_cas_annotations,
+    ingredient_case_sensitive_name_scope,
     ingredient_mapping_allowed,
     ingredient_name_scopes,
     ingredient_name_target,
@@ -397,6 +398,8 @@ def _build_indices(mappings_path: Path):
         """
         if not ingredient_mapping_allowed(name, curie):
             return ""
+        if ingredient_case_sensitive_name_scope(name)[0]:
+            return ""  # Exact-case scopes must never share a case-folded index key.
         target = ingredient_name_target(name)
         if target is not None and target != curie:
             return ""
@@ -571,6 +574,14 @@ def find_chebi_by_name(
     if not _LOADED:
         load_unified_mappings()
 
+    recognized_case, case_target = ingredient_case_sensitive_name_scope(name)
+    if recognized_case:
+        return (
+            case_target
+            if case_target in _PRIMARY_NAME_INDEX and ingredient_mapping_allowed(name, case_target)
+            else None
+        )
+
     # Try exact match first
     scoped_target = ingredient_name_target(name)
     if scoped_target is not None:
@@ -582,6 +593,8 @@ def find_chebi_by_name(
     norm_name = normalize_name(name)
     if not norm_name:
         return None
+    if ingredient_case_sensitive_name_scope(norm_name)[0]:
+        return None  # Normalization cannot authorize an unreviewed formula spelling.
 
     # Check negative lookup cache - skip if we've already failed to find this name
     # A policy can distinguish case-sensitive formula spellings or punctuation
@@ -604,7 +617,12 @@ def find_chebi_by_name(
     # Only retry if the stripped form actually differs from the exact form.
     if result is None and fuzzy_stereochemistry:
         norm_name_fuzzy = normalize_name(name, strip_stereochemistry=True)
-        if norm_name_fuzzy and norm_name_fuzzy != norm_name and primary_index:
+        if (
+            norm_name_fuzzy
+            and norm_name_fuzzy != norm_name
+            and primary_index
+            and not ingredient_case_sensitive_name_scope(norm_name_fuzzy)[0]
+        ):
             result = primary_index.get(norm_name_fuzzy)
 
     # Hydrate fallback:
@@ -614,9 +632,10 @@ def find_chebi_by_name(
     #      reverse: query "calcium chloride" → canonical "calcium chloride x n H2O").
     if result is None and fuzzy_hydrate:
         norm_name_no_hydrate = normalize_name(name, strip_hydrate=True)
-        if norm_name_no_hydrate and norm_name_no_hydrate != norm_name and primary_index:
+        protected_formula = ingredient_case_sensitive_name_scope(norm_name_no_hydrate)[0]
+        if norm_name_no_hydrate and norm_name_no_hydrate != norm_name and primary_index and not protected_formula:
             result = primary_index.get(norm_name_no_hydrate)
-        if result is None and _HYDRATE_FREE_NAME_INDEX:
+        if result is None and _HYDRATE_FREE_NAME_INDEX and not protected_formula:
             result = _HYDRATE_FREE_NAME_INDEX.get(norm_name)
 
     # Index-time admission checked the indexed alias, not this original query.

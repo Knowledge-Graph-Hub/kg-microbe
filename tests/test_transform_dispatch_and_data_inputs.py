@@ -113,8 +113,8 @@ class DataInputsTest(TestCase):
         """
         Guard against the next consumer forgetting.
 
-        Anything importing `chemical_mapping_utils` reads the unified SSSOM, so
-        the two sets must agree or the freshness check under-reports.
+        Consumers must declare either the repository unified SSSOM or their
+        explicitly selected generated SSSOM as a required consumed input.
         """
         transform_root = REPO_ROOT / "kg_microbe" / "transform_utils"
         consumers = set()
@@ -126,6 +126,10 @@ class DataInputsTest(TestCase):
             cls = DATA_SOURCES.get(source)
             if cls is None:
                 continue  # not a registered transform (helper package)
+            selected = getattr(cls, "SSSOM_CONSUMED_INPUT", None)
+            if selected:
+                self.assertIn(selected, getattr(cls, "REQUIRED_CONSUMED_INPUTS", ()))
+                continue
             self.assertIn(
                 SSSOM,
                 getattr(cls, "DATA_INPUTS", ()),

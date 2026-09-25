@@ -1,0 +1,28 @@
+profile_id: mimprofile:ingredient-kgx/v1
+profile_version: 1
+biolink_version: 4.4.2
+prefixes:
+  MIM: https://github.com/CultureBotAI/MediaIngredientMech/blob/main/data/ingredients/mapped/
+  MIM.product: https://w3id.org/mediaingredientmech/product/
+  MIM.occurrence: https://w3id.org/mediaingredientmech/occurrence/
+  MIM.alternative: https://w3id.org/mediaingredientmech/alternative/
+  MIM.annotation: https://w3id.org/mediaingredientmech/annotation/
+  MIM.mapping: https://w3id.org/mediaingredientmech/mapping/
+  MIM.source: https://w3id.org/mediaingredientmech/source/
+  mimprofile: https://w3id.org/mediaingredientmech/sssom/
+  kgmicrobe.ingredient: https://w3id.org/kg-microbe/ingredient/
+columns:
+  ingredient_profile: {type: curie, cardinality: one}
+  ingredient_record_kind: {type: string, cardinality: one, record: node}
+  ingredient_bundle_sha256: {type: sha256, cardinality: one, record: edge}
+  ingredient_mapping_json: {type: json_object, cardinality: one, record: edge}
+  ingredient_product_json: {type: json_object, cardinality: one, record: edge}
+  ingredient_occurrence_json: {type: json_object, cardinality: one, record: edge}
+  ingredient_annotation_json: {type: json_object, cardinality: one, record: edge}
+  ingredient_occurrence_id: {type: curie, cardinality: one, record: edge}
+  ingredient_product_id: {type: curie, cardinality: zero_or_one, record: edge}
+record_kinds: [source_record, catalog_record, identifier_annotation, mapping_record]
+structured_transport: >-
+  One canonical JSON object per scalar TSV field. JSON escaping preserves tabs,
+  newlines and quotes; literal pipes are not list separators in these fields.
+  Arrays, nulls and nested source payloads keep their producer schema types.

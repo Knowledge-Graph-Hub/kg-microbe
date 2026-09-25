@@ -26,6 +26,12 @@ def _pinned_prefix_map():
     context = {str(prefix): str(uri) for prefix, uri in view.namespaces().items() if prefix and uri}
     if not context.get("biolink"):
         raise ValueError("Pinned Biolink model has no usable biolink namespace")
+    from kg_microbe.utils.ingredient_kgx import ingredient_kgx_profile
+
+    for prefix, uri in ingredient_kgx_profile()["prefixes"].items():
+        if prefix in context and context[prefix] != uri:
+            raise ValueError(f"Conflicting ingredient namespace: {prefix}")
+        context[prefix] = uri
     return context
 
 

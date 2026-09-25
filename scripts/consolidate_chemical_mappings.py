@@ -1699,6 +1699,17 @@ class ChemicalMappingConsolidator:
         Rows whose ``object_id`` prefix is not in the consolidator's accepted
         set are skipped.
         """
+        from kg_microbe.utils.chemical_mapping_utils import _scope_metadata
+
+        metadata = _scope_metadata(filepath)
+        if metadata.get("ext_scope_profile") or any(
+            definition.get("slot_name") == "ext_scope_profile"
+            for definition in metadata.get("extension_definitions", [])
+        ):
+            raise ValueError(
+                "Profiled MIM requires a verified ingredient bundle; use build_ingredient_lookup_bundle "
+                "to preserve scoped source resolution separately from legacy name mappings"
+            )
         # Carry the set's declared predicate semantics through to the unified
         # header. The asymmetric rows below are passed through verbatim, so the
         # declaration describes the rows the unified file ships and must travel

@@ -11,6 +11,7 @@ themselves (xrefs, canonical-name rows, synonym rows).
 
 import csv
 import gzip
+import hashlib
 import re
 from collections import Counter, OrderedDict
 from copy import deepcopy
@@ -65,6 +66,7 @@ _PRIMARY_SYNONYMS_INDEX: Optional[Dict[str, List[str]]] = None
 _PRIMARY_XREFS_INDEX: Optional[Dict[str, List[str]]] = None
 _PRIMARY_FORMULA_INDEX: Optional[Dict[str, str]] = None
 _CACHED_PATH: Optional[Path] = None
+_CACHED_DIGEST: Optional[str] = None
 _MAPPING_LOAD_AUDIT: dict = {}
 
 # Matches a trailing hydrate specifier:
@@ -248,7 +250,7 @@ def _scope_metadata(path: Path) -> dict:
     return read_scope_metadata("".join(header))
 
 
-def load_unified_mappings(mappings_path: Optional[Path] = None) -> int:
+def load_unified_mappings(mappings_path: Optional[Path] = None, *, expected_sha256: Optional[str] = None) -> int:
     """
     Load the unified ingredient SSSOM mapping set.
 
@@ -275,13 +277,25 @@ def load_unified_mappings(mappings_path: Optional[Path] = None) -> int:
         default path relative to this file.
     :return: Number of distinct entities loaded (zero before first load).
     """
-    global _LOADED, _ENTITY_COUNT, _CACHED_PATH
+    global _LOADED, _ENTITY_COUNT, _CACHED_PATH, _CACHED_DIGEST
 
     if mappings_path is None:
         base_dir = Path(__file__).parent.parent.parent
         mappings_path = base_dir / "mappings" / "kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
 
-    if _LOADED and _CACHED_PATH == mappings_path:
+    if expected_sha256 is not None:
+        digest = hashlib.sha256()
+        try:
+            with mappings_path.open("rb") as stream:
+                for block in iter(lambda: stream.read(1024 * 1024), b""):
+                    digest.update(block)
+            if not re.fullmatch(r"[a-f0-9]{64}", expected_sha256) or digest.hexdigest() != expected_sha256:
+                raise ValueError("Unified mappings do not match the selected lookup bundle")
+        except (OSError, ValueError):
+            _LOADED, _CACHED_PATH, _CACHED_DIGEST = False, None, None
+            raise
+
+    if _LOADED and _CACHED_PATH == mappings_path and _CACHED_DIGEST == expected_sha256:
         return _ENTITY_COUNT
 
     if not mappings_path.exists():
@@ -291,12 +305,20 @@ def load_unified_mappings(mappings_path: Optional[Path] = None) -> int:
     # successful load, including when another mapping file was already loaded.
     _LOADED = False
     _CACHED_PATH = None
+    _CACHED_DIGEST = None
+
+    metadata = _scope_metadata(mappings_path)
+    if metadata.get("ext_scope_profile") or any(
+        definition.get("slot_name") == "ext_scope_profile" for definition in metadata.get("extension_definitions", [])
+    ):
+        raise ValueError("Profiled ingredient mappings require a verified complete ingredient bundle")
 
     # Clear negative cache on reload so stale misses cannot survive a mappings update.
     _NEGATIVE_LOOKUP_CACHE.clear()
 
     _build_indices(mappings_path)
     _CACHED_PATH = mappings_path
+    _CACHED_DIGEST = expected_sha256
     _LOADED = True
     return _ENTITY_COUNT
 
@@ -786,7 +808,7 @@ def get_category(curie: str) -> Optional[str]:
     return None
 
 
-def get_node_enrichment(curie: str) -> Dict[str, str]:
+def get_node_enrichment(curie: str, *, ingredient_bundle=None) -> Dict[str, str]:
     """
     Return KGX enrichment fields for a chemical/ingredient CURIE.
 
@@ -808,11 +830,12 @@ def get_node_enrichment(curie: str) -> Dict[str, str]:
     xrefs = sorted(set(get_xrefs(curie)) | set(ingredient_cas_annotations(curie)))
     synonyms = get_synonyms(curie)
     name = get_canonical_name(curie) or ""
-    return {
+    result = {
         "xref": "|".join(xrefs) if xrefs else "",
         "synonym": "|".join(synonyms) if synonyms else "",
         "name": name,
     }
+    return ingredient_bundle.enrich_node(curie, result) if ingredient_bundle is not None else result
 
 
 class ChemicalMappingLoader:
@@ -823,7 +846,9 @@ class ChemicalMappingLoader:
     Uses module-level caching internally.
     """
 
-    def __init__(self, mappings_path: Optional[Path] = None):
+    def __init__(
+        self, mappings_path: Optional[Path] = None, *, ingredient_bundle=None, mappings_sha256: Optional[str] = None
+    ):
         """
         Initialize loader.
 
@@ -831,8 +856,31 @@ class ChemicalMappingLoader:
                               If None, uses default path
         """
         self.mappings_path = mappings_path
+        self.ingredient_bundle = ingredient_bundle
+        if ingredient_bundle is not None:
+            ingredient_bundle.verify_current()
         # Load mappings on initialization
-        load_unified_mappings(self.mappings_path)
+        load_unified_mappings(self.mappings_path, expected_sha256=mappings_sha256)
+
+    @classmethod
+    def from_ingredient_lookup_bundle(cls, directory: Path, *, manifest_sha256: str):
+        """Load a pinned candidate with separate legacy and reviewed scoped inputs."""
+        from kg_microbe.utils.ingredient_bundle import load_ingredient_lookup_bundle
+
+        path, bundle, digest = load_ingredient_lookup_bundle(directory, manifest_sha256=manifest_sha256)
+        return cls(path, ingredient_bundle=bundle, mappings_sha256=digest)
+
+    def resolve_ingredient_source(self, source_id: str, *, occurrence_id: str | None = None) -> Optional[str]:
+        """Apply the explicit scoped source concept before a context-free name lookup."""
+        if self.ingredient_bundle is None:
+            return None
+        return self.ingredient_bundle.resolve_source(source_id, occurrence_id=occurrence_id)
+
+    def get_identifier_annotation_owners(self, identifier: str, *, include_history: bool = False) -> List[str]:
+        """Query all owners of registry annotations without adding identity aliases."""
+        if self.ingredient_bundle is None:
+            return []
+        return self.ingredient_bundle.identifier_owners(identifier, include_history=include_history)
 
     def find_chebi_by_name(
         self,
@@ -868,7 +916,8 @@ class ChemicalMappingLoader:
         :param xref: Cross-reference identifier
         :return: ChEBI ID or None if not found
         """
-        return find_chebi_by_xref(xref)
+        scoped = self.resolve_ingredient_source(xref)
+        return scoped if scoped is not None else find_chebi_by_xref(xref)
 
     def get_canonical_name(self, chebi_id: str) -> Optional[str]:
         """
@@ -931,4 +980,4 @@ class ChemicalMappingLoader:
         :param curie: Primary CURIE.
         :return: Dict with ``xref``, ``synonym``, ``name`` keys.
         """
-        return get_node_enrichment(curie)
+        return get_node_enrichment(curie, ingredient_bundle=self.ingredient_bundle)

@@ -160,7 +160,7 @@ def test_failed_reload_does_not_cache_partial_indices(tmp_path):
         ({"ext_scope_profile": "mimprofile:ingredient-scope/v2"}, None),
     ],
 )
-def test_profile_authorization_is_enforced_by_actual_lookup(tmp_path, overrides, expected):
+def test_profile_authorization_is_enforced_by_actual_lookup(tmp_path, overrides, expected, monkeypatch):
     """Unsupported or conflicting scope cannot enter a legacy identity path."""
     metadata = profile_metadata({})
     row = {
@@ -178,7 +178,12 @@ def test_profile_authorization_is_enforced_by_actual_lookup(tmp_path, overrides,
     }
     row.update(overrides)
     header = "".join("# " + line + "\n" for line in yaml.safe_dump(metadata).splitlines())
-    cmu.load_unified_mappings(write_rows(tmp_path / "profile.tsv", [row], metadata=header))
+    path = write_rows(tmp_path / "profile.tsv", [row], metadata=header)
+    with pytest.raises(ValueError, match="verified complete ingredient bundle"):
+        cmu.load_unified_mappings(path)
+    # Exercise row/index guards below the public bundle-verification boundary.
+    cmu._build_indices(path)
+    monkeypatch.setattr(cmu, "_LOADED", True)
     assert cmu.find_chebi_by_xref("source:scoped") == expected
     assert cmu.find_chebi_by_name("scoped chemical") == expected
     assert cmu.get_mapping_load_audit()["complete"]

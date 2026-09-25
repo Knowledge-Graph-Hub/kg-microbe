@@ -20,7 +20,10 @@ import pandas as pd
 
 from kg_microbe.utils.ingredient_identity import (
     ingredient_authority_label,
+    ingredient_cas_annotations,
     ingredient_mapping_allowed,
+    ingredient_name_scopes,
+    ingredient_name_target,
     ingredient_xref_allowed,
 )
 
@@ -80,6 +83,14 @@ _NEGATIVE_LOOKUP_CACHE: "OrderedDict[tuple, None]" = OrderedDict()
 # module-scope so it is allocated once, not rebuilt on every call (hot path).
 _GREEK_MAP = {"α": "alpha", "β": "beta", "γ": "gamma", "δ": "delta", "μ": "mu"}
 
+# Prime locants distinguish positions on different rings/subunits (#1127).
+_PRIME_TRANSLATION = str.maketrans({"′": "'", "’": "'", "‘": "'", "ʹ": "'", "″": "''", "‴": "'''"})
+
+
+def normalize_chemical_primes(name: str) -> str:
+    """Canonicalize typographic prime marks without losing chemical locants."""
+    return name.translate(_PRIME_TRANSLATION)
+
 
 def _negative_cache_add(key: tuple) -> None:
     """Add a miss to the bounded negative cache, evicting oldest if full."""
@@ -102,12 +113,12 @@ def normalize_name(
     :param name: Chemical name to normalize
     :param strip_stereochemistry: If True, remove stereochemistry prefixes like (R)-, (S)-, D-, L-, (+)-, (-)-
     :param strip_hydrate: If True, strip trailing hydrate suffixes like " x n H2O", " · 6 H2O", " . 2H2O"
-    :return: Normalized name (lowercase, no punctuation)
+    :return: Normalized name retaining hyphens and chemical prime locants
     """
     if pd.isna(name) or not name:
         return ""
     # Convert to lowercase first
-    normalized = str(name).lower().strip()
+    normalized = normalize_chemical_primes(str(name).lower().strip())
 
     # Normalize Greek letters to their spelled-out ASCII equivalents so that
     # e.g. "4-nitrophenyl β-D-glucopyranoside" (ChEBI label form) matches
@@ -133,7 +144,7 @@ def normalize_name(
         normalized = _HYDRATE_SUFFIX_RE.sub("", normalized).strip()
 
     # Remove extra punctuation and normalize spaces
-    normalized = re.sub(r"[^\w\s-]", "", normalized)
+    normalized = re.sub(r"[^\w\s'-]", "", normalized)
     normalized = re.sub(r"\s+", " ", normalized)
     return normalized
 
@@ -319,6 +330,9 @@ def _build_indices(mappings_path: Path):
         """
         if not ingredient_mapping_allowed(name, curie):
             return ""
+        target = ingredient_name_target(name)
+        if target is not None and target != curie:
+            return ""
         norm = normalize_name(name)
         if not norm:
             return ""
@@ -419,6 +433,11 @@ def _build_indices(mappings_path: Path):
             norm_xref = subject.lower()
             _XREF_INDEX.setdefault(norm_xref, curie)
 
+    # Query scope is reviewed independently of lexical rank. A missing target
+    # stays unresolved; a stale specific synonym must not stand in for it.
+    for query, target in ingredient_name_scopes()[0].items():
+        if target in _PRIMARY_NAME_INDEX:
+            _NAME_INDEX[normalize_name(query)] = target
     # Freeze accumulated sets into deterministic lists.
     for curie, syns in primary_synonyms_sets.items():
         _PRIMARY_SYNONYMS_INDEX[curie] = sorted(syns)
@@ -474,6 +493,9 @@ def find_chebi_by_name(
         load_unified_mappings()
 
     # Try exact match first
+    scoped_target = ingredient_name_target(name)
+    if scoped_target is not None:
+        return scoped_target if scoped_target in _PRIMARY_NAME_INDEX else None
     norm_name = normalize_name(name)
     if not norm_name:
         return None
@@ -556,6 +578,9 @@ def find_chebi_by_xref(xref: str) -> Optional[str]:
 
     # Normalize xref format
     norm_xref = xref.lower().strip()
+    target = ingredient_name_scopes()[1].get(norm_xref)
+    if target is not None:
+        return target if target in _PRIMARY_NAME_INDEX else None
 
     if _XREF_INDEX:
         return _XREF_INDEX.get(norm_xref)
@@ -716,8 +741,8 @@ def get_node_enrichment(curie: str) -> Dict[str, str]:
     populating the corresponding KGX node columns. Values are pipe-joined
     strings (KGX multivalued convention) or empty strings when absent.
 
-    - ``xref``: equivalent CURIEs from the unified mapping's ``xrefs`` column.
-      Under KGX semantics these are cross-references (CURIE-shaped), not names.
+    - ``xref``: unified cross-references plus independently reviewed CAS
+      annotations. CAS annotations do not create SSSOM exactMatch or same_as.
     - ``synonym``: alternative free-text names from the ``synonyms`` column.
     - ``name``: canonical name for the CURIE, or empty string when unknown.
 
@@ -727,7 +752,7 @@ def get_node_enrichment(curie: str) -> Dict[str, str]:
     empty = {"xref": "", "synonym": "", "name": ""}
     if not curie:
         return empty
-    xrefs = get_xrefs(curie)
+    xrefs = sorted(set(get_xrefs(curie)) | set(ingredient_cas_annotations(curie)))
     synonyms = get_synonyms(curie)
     name = get_canonical_name(curie) or ""
     return {

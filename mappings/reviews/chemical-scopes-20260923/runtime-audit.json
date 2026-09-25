@@ -1,0 +1,164 @@
+{
+  "scope": "Actual runtime audit of the full conservative candidate and newly reviewed local MIM bundle; no production promotion.",
+  "input_sha256": {
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/candidate-chemical-scopes/candidate.sssom.tsv.gz": "cb2b6f4f0e6bcc60f0ee76f76c1c8c4bf0030d529ea4d5452d28a29ba5767078",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/mim-micro-source/output/mim-reviewed-sssom/ingredient_mappings.sssom.tsv": "c957e61b8890f55e1bee2a314b0f816ebe9c143a96015cdc7ab634070eb52541",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/transformed/ontologies/chebi_edges.tsv": "9a74dd1a3d92a5f82fd7361c58d1ba971abde1f8ebb5c8f2ed0c77990544e1e1"
+  },
+  "supported_assertions": 1758,
+  "subject_groups": 1696,
+  "name_groups": 1696,
+  "unresolved_name_disagreements": 12,
+  "accepted_scope_distinctions": [
+    {
+      "name": "Xanthine",
+      "runtime_id": "CHEBI:15318",
+      "release_targets": [
+        "CHEBI:17712"
+      ]
+    }
+  ],
+  "remaining_name_disagreements": [
+    {
+      "name": "Acriflavine",
+      "runtime_id": "NCIT:C76253",
+      "release_targets": [
+        "cas:8048-52-0",
+        "kgmicrobe.compound:acriflavine"
+      ]
+    },
+    {
+      "name": "Anabasine Hydrochloride",
+      "runtime_id": "NCIT:C216370",
+      "release_targets": [
+        "cas:53912-89-3",
+        "kgmicrobe.compound:anabasine_hydrochloride"
+      ]
+    },
+    {
+      "name": "Cotarnine Chloride",
+      "runtime_id": "NCIT:C79997",
+      "release_targets": [
+        "cas:10018-19-6",
+        "kgmicrobe.compound:cotarnine_chloride"
+      ]
+    },
+    {
+      "name": "Locust bean gum",
+      "runtime_id": "FOODON:03413132",
+      "release_targets": [
+        "cas:9000-40-2",
+        "kgmicrobe.ingredient:locust_bean_gum"
+      ]
+    },
+    {
+      "name": "Lysozyme",
+      "runtime_id": "FOODON:03413135",
+      "release_targets": [
+        "kgmicrobe.ingredient:lysozyme"
+      ]
+    },
+    {
+      "name": "Pretomanid",
+      "runtime_id": "NCIT:C166606",
+      "release_targets": [
+        "cas:187235-37-6",
+        "kgmicrobe.compound:pretomanid"
+      ]
+    },
+    {
+      "name": "Sodium adipate",
+      "runtime_id": "FOODON:03413240",
+      "release_targets": [
+        "cas:7486-38-6",
+        "kgmicrobe.ingredient:sodium_adipate"
+      ]
+    },
+    {
+      "name": "Sunflower oil",
+      "runtime_id": "NCIT:C1241",
+      "release_targets": [
+        "cas:8001-21-6",
+        "kgmicrobe.compound:sunflower_oil"
+      ]
+    },
+    {
+      "name": "Sutezolid",
+      "runtime_id": "NCIT:C152482",
+      "release_targets": [
+        "cas:168828-58-8",
+        "kgmicrobe.compound:sutezolid"
+      ]
+    },
+    {
+      "name": "Tara gum",
+      "runtime_id": "FOODON:03413299",
+      "release_targets": [
+        "cas:39300-88-4",
+        "kgmicrobe.ingredient:tara_gum"
+      ]
+    },
+    {
+      "name": "Zymosan",
+      "runtime_id": "NCIT:C183132",
+      "release_targets": [
+        "cas:9010-72-4",
+        "kgmicrobe.compound:zymosan"
+      ]
+    },
+    {
+      "name": "bovine serum albumin",
+      "runtime_id": "NCIT:C85253",
+      "release_targets": [
+        "cas:9048-46-8",
+        "kgmicrobe.compound:bovine_serum_albumin"
+      ]
+    }
+  ],
+  "subject_disagreements": [],
+  "verified_routes": {
+    "Polymyxin B": "NCIT:C61894",
+    "Polymyxin B1": "CHEBI:8309",
+    "Rifamycin": "CHEBI:26580",
+    "Rifamycin SV": "CHEBI:29673",
+    "Xanthine": "CHEBI:15318",
+    "9H-xanthine": "CHEBI:17712",
+    "Sorbitan Monooleate": "kgmicrobe.ingredient:sorbitan_monooleate",
+    "Tween 80": "CHEBI:53426",
+    "Polymyxin B sulfate": "CHEBI:8310"
+  },
+  "verified_cas_node_annotations": {
+    "NCIT:C61894": [
+      "MIM:Polymyxin_B",
+      "cas:1404-26-8"
+    ],
+    "CHEBI:8309": [
+      "beilstein:8609638",
+      "cas:4135-11-9",
+      "reaxys:9838039"
+    ],
+    "CHEBI:29673": [
+      "MIM:Rifamycin_Sv",
+      "cas:6998-60-3"
+    ],
+    "CHEBI:17712": [
+      "MIM:Xanthine",
+      "cas:69-89-6"
+    ]
+  },
+  "native_xanthine_parent_edges": [
+    {
+      "subject": "CHEBI:17712",
+      "predicate": "biolink:subclass_of",
+      "object": "CHEBI:15318",
+      "relation": "rdfs:subClassOf",
+      "primary_knowledge_source": "infores:chebi",
+      "knowledge_level": "knowledge_assertion",
+      "agent_type": "manual_agent",
+      "go_reference_context": "",
+      "original_object": "",
+      "original_subject": "",
+      "publications": ""
+    }
+  ]
+}

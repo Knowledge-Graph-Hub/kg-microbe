@@ -1,0 +1,68 @@
+{
+  "scope": "Actual runtime audit of the full conservative candidate and newly reviewed local MIM bundle; no production promotion.",
+  "input_sha256": {
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/candidate-ingredient-identities/candidate.sssom.tsv.gz": "c4942b92a7e7af42cc63dbfa6f59f81eae192ef706f687c9613b113b23e9ad0e",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/mim-micro-source/output/mim-reviewed-sssom/ingredient_mappings.sssom.tsv": "6b52b30e018b369aa322d41dfd4e81fcfae0e895e34d7fe48900abf5835815fb",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/transformed/ontologies/chebi_edges.tsv": "9a74dd1a3d92a5f82fd7361c58d1ba971abde1f8ebb5c8f2ed0c77990544e1e1"
+  },
+  "supported_assertions": 1747,
+  "subject_groups": 1696,
+  "name_groups": 1696,
+  "unresolved_name_disagreements": 0,
+  "accepted_scope_distinctions": [
+    {
+      "name": "Xanthine",
+      "runtime_id": "CHEBI:15318",
+      "release_targets": [
+        "CHEBI:17712"
+      ]
+    }
+  ],
+  "remaining_name_disagreements": [],
+  "subject_disagreements": [],
+  "verified_routes": {
+    "Polymyxin B": "NCIT:C61894",
+    "Polymyxin B1": "CHEBI:8309",
+    "Rifamycin": "CHEBI:26580",
+    "Rifamycin SV": "CHEBI:29673",
+    "Xanthine": "CHEBI:15318",
+    "9H-xanthine": "CHEBI:17712",
+    "Sorbitan Monooleate": "kgmicrobe.ingredient:sorbitan_monooleate",
+    "Tween 80": "CHEBI:53426",
+    "Polymyxin B sulfate": "CHEBI:8310"
+  },
+  "verified_cas_node_annotations": {
+    "NCIT:C61894": [
+      "MIM:Polymyxin_B",
+      "cas:1404-26-8"
+    ],
+    "CHEBI:8309": [
+      "beilstein:8609638",
+      "cas:4135-11-9",
+      "reaxys:9838039"
+    ],
+    "CHEBI:29673": [
+      "MIM:Rifamycin_Sv",
+      "cas:6998-60-3"
+    ],
+    "CHEBI:17712": [
+      "MIM:Xanthine",
+      "cas:69-89-6"
+    ]
+  },
+  "native_xanthine_parent_edges": [
+    {
+      "subject": "CHEBI:17712",
+      "predicate": "biolink:subclass_of",
+      "object": "CHEBI:15318",
+      "relation": "rdfs:subClassOf",
+      "primary_knowledge_source": "infores:chebi",
+      "knowledge_level": "knowledge_assertion",
+      "agent_type": "manual_agent",
+      "go_reference_context": "",
+      "original_object": "",
+      "original_subject": "",
+      "publications": ""
+    }
+  ]
+}

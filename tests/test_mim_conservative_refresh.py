@@ -32,6 +32,14 @@ FIELDS = (
 NODE_FIELDS = ("id", "category", "name", "synonym", "xref", "deprecated", "same_as")
 
 
+def test_lexical_identifiers_preserve_prime_locants():
+    """Different ring positions must not publish the same lexical subject."""
+    assert refresh._slug("4-hydroxychalcone") == "4-hydroxychalcone"
+    assert refresh._slug("4'-hydroxychalcone") == "4_prime-hydroxychalcone"
+    assert refresh._slug("4′-hydroxychalcone") == "4_prime-hydroxychalcone"
+    assert refresh._slug("4″-hydroxychalcone") == "4_prime_prime-hydroxychalcone"
+
+
 def _row(subject, target, label, source="independent_prior", predicate="skos:exactMatch", name="", comment=""):
     """Describe one immutable historical assertion using the unified schema."""
     result = dict.fromkeys(FIELDS, "")

@@ -1,0 +1,41 @@
+{
+  "pytest": {
+    "passed": 2293,
+    "skipped": 55,
+    "failed": 0
+  },
+  "tox": {
+    "status": "passed",
+    "pytest_passed": 2293,
+    "pytest_skipped": 55,
+    "environments": [
+      "coverage-clean",
+      "format",
+      "lint",
+      "codespell-write",
+      "docstr-coverage",
+      "py"
+    ]
+  },
+  "poetry_check_lock": {
+    "exit_code": 0
+  },
+  "generated_merge_configs": {
+    "exit_code": 0
+  },
+  "full_candidate_runtime": {
+    "name_groups": 1696,
+    "subject_groups": 1696,
+    "unresolved_name_disagreements": 0,
+    "subject_disagreements": 0,
+    "accepted_contextual_distinctions": [
+      "Xanthine"
+    ]
+  },
+  "new_identity_cases": {
+    "ontology": 11,
+    "local_material": 1,
+    "all_passed": true
+  },
+  "production_promoted": false
+}

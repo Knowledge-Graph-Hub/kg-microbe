@@ -79,12 +79,14 @@ import pandas as pd
 
 from kg_microbe.utils.chemical_mapping_utils import (
     PREDICATE_SEMANTICS_KEY,
+    normalize_chemical_primes,
     read_predicate_semantics,
 )
 from kg_microbe.utils.ingredient_identity import (
     IDENTITY_POLICY,
     ingredient_authority_label,
     ingredient_mapping_allowed,
+    ingredient_name_target,
     ingredient_xref_allowed,
 )
 from kg_microbe.utils.ontology_utils import FatalOntologyError, get_chebi_adapter
@@ -595,8 +597,8 @@ def normalize_name(name: str) -> str:
     if pd.isna(name) or not name:
         return ""
     # Convert to lowercase, remove extra spaces, punctuation
-    normalized = str(name).lower().strip()
-    normalized = re.sub(r"[^\w\s-]", "", normalized)
+    normalized = normalize_chemical_primes(str(name).lower().strip())
+    normalized = re.sub(r"[^\w\s'-]", "", normalized)
     normalized = re.sub(r"\s+", " ", normalized)
     return normalized
 
@@ -1114,6 +1116,9 @@ class ChemicalMappingConsolidator:
         #      synonym added at priority=1 from clobbering an already-indexed
         #      CHEBI entry at priority=1.
         def _set_name_index(name: str) -> None:
+            scoped_target = ingredient_name_target(name)
+            if scoped_target is not None and scoped_target != id:
+                return
             norm_name = normalize_name(name)
             if not norm_name:
                 return
@@ -1796,7 +1801,7 @@ class ChemicalMappingConsolidator:
                 # even if a prior priority-11 baseline set a different
                 # value (add_chemical's first-seed tiebreaker can't see
                 # "MIM-this-run is fresher than MIM-last-run").
-                if subject_label:
+                if subject_label and ingredient_mapping_allowed(subject_label, object_id):
                     self.chemicals[object_id]["canonical_name"] = subject_label
                 if extra_sources:
                     self.chemicals[object_id]["sources"].update(extra_sources)
@@ -2620,7 +2625,7 @@ class ChemicalMappingConsolidator:
             if not norm:
                 return ""
             folded = unicodedata.normalize("NFKD", norm).encode("ascii", "ignore").decode("ascii")
-            folded = folded.replace(" ", "_")
+            folded = folded.replace(" ", "_").replace("'", "_prime")
             # Keep only CURIE-safe chars (pchar-ish: alnum, underscore, hyphen,
             # dot). Everything else collapses away.
             folded = re.sub(r"[^A-Za-z0-9_.\-]", "", folded)

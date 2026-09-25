@@ -1,0 +1,187 @@
+{
+  "scope": "Eleven reviewed ontology identities and one unresolved local material in the full candidate; native identifiers in other supported contexts remain available.",
+  "input_sha256": {
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/candidate-ingredient-identities/candidate.sssom.tsv.gz": "c4942b92a7e7af42cc63dbfa6f59f81eae192ef706f687c9613b113b23e9ad0e",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/kgm/mappings/ingredient_name_scopes.tsv": "b138fb2b6020fbdc8a76871bede5045d67b8c9d87f08346caa7aee75b33da6f1",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/kgm/mappings/ingredient_identity_exclusions.tsv": "9cafd6fc7b16b50007eef11866294b55fd650c9bfde16df7da9b9b3086583fc4",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/kgm/kg_microbe/utils/chemical_mapping_utils.py": "25a2082d596aa1cb5bbb288e80da7530e365516d2105b24d9b3c0d0317788210",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/kgm/kg_microbe/utils/ingredient_identity.py": "776a2a5aa424ab1f9e6f5406f7b56a46689c0ac94a5b3460fde69f77845281fd"
+  },
+  "ontology_cases": [
+    {
+      "name": "Anabasine Hydrochloride",
+      "target": "NCIT:C216370",
+      "current_cas": "53912-89-3",
+      "lookups": {
+        "name": "NCIT:C216370",
+        "subject": "NCIT:C216370",
+        "cas": "NCIT:C216370"
+      },
+      "node_xrefs": [
+        "MIM:Anabasine_Hydrochloride",
+        "cas:53912-89-3"
+      ]
+    },
+    {
+      "name": "Cotarnine Chloride",
+      "target": "NCIT:C79997",
+      "current_cas": "10018-19-6",
+      "lookups": {
+        "name": "NCIT:C79997",
+        "subject": "NCIT:C79997",
+        "cas": "NCIT:C79997"
+      },
+      "node_xrefs": [
+        "MIM:Cotarnine_Chloride",
+        "cas:10018-19-6"
+      ]
+    },
+    {
+      "name": "Pretomanid",
+      "target": "NCIT:C166606",
+      "current_cas": "187235-37-6",
+      "lookups": {
+        "name": "NCIT:C166606",
+        "subject": "NCIT:C166606",
+        "cas": "NCIT:C166606"
+      },
+      "node_xrefs": [
+        "MIM:Pretomanid",
+        "cas:187235-37-6"
+      ]
+    },
+    {
+      "name": "Sutezolid",
+      "target": "NCIT:C152482",
+      "current_cas": "168828-58-8",
+      "lookups": {
+        "name": "NCIT:C152482",
+        "subject": "NCIT:C152482",
+        "cas": "NCIT:C152482"
+      },
+      "node_xrefs": [
+        "MIM:Sutezolid",
+        "cas:168828-58-8"
+      ]
+    },
+    {
+      "name": "Bovine Serum Albumin",
+      "target": "NCIT:C85253",
+      "current_cas": "9048-46-8",
+      "lookups": {
+        "name": "NCIT:C85253",
+        "subject": "NCIT:C85253",
+        "cas": "NCIT:C85253"
+      },
+      "node_xrefs": [
+        "MIM:Bovine_Serum_Albumin",
+        "cas:9048-46-8"
+      ]
+    },
+    {
+      "name": "Sunflower Oil",
+      "target": "NCIT:C1241",
+      "current_cas": "8001-21-6",
+      "lookups": {
+        "name": "NCIT:C1241",
+        "subject": "NCIT:C1241",
+        "cas": "NCIT:C1241"
+      },
+      "node_xrefs": [
+        "MIM:Sunflower_Oil",
+        "cas:8001-21-6"
+      ]
+    },
+    {
+      "name": "Zymosan",
+      "target": "NCIT:C183132",
+      "current_cas": "9010-72-4",
+      "lookups": {
+        "name": "NCIT:C183132",
+        "subject": "NCIT:C183132",
+        "cas": "NCIT:C183132"
+      },
+      "node_xrefs": [
+        "MIM:Zymosan",
+        "cas:9010-72-4"
+      ]
+    },
+    {
+      "name": "Locust Bean Gum",
+      "target": "FOODON:03413132",
+      "current_cas": "9000-40-2",
+      "lookups": {
+        "name": "FOODON:03413132",
+        "subject": "FOODON:03413132",
+        "cas": "FOODON:03413132"
+      },
+      "node_xrefs": [
+        "MIM:Locust_Bean_Gum",
+        "cas:9000-40-2"
+      ]
+    },
+    {
+      "name": "Tara Gum",
+      "target": "FOODON:03413299",
+      "current_cas": "39300-88-4",
+      "lookups": {
+        "name": "FOODON:03413299",
+        "subject": "FOODON:03413299",
+        "cas": "FOODON:03413299"
+      },
+      "node_xrefs": [
+        "MIM:Tara_Gum",
+        "cas:39300-88-4"
+      ]
+    },
+    {
+      "name": "Sodium Adipate",
+      "target": "FOODON:03413240",
+      "current_cas": "7486-38-6",
+      "lookups": {
+        "name": "FOODON:03413240",
+        "subject": "FOODON:03413240",
+        "cas": "FOODON:03413240"
+      },
+      "node_xrefs": [
+        "MIM:Sodium_Adipate",
+        "cas:7486-38-6"
+      ]
+    },
+    {
+      "name": "Acriflavine",
+      "target": "NCIT:C76253",
+      "current_cas": "65589-70-0",
+      "lookups": {
+        "name": "NCIT:C76253",
+        "subject": "NCIT:C76253",
+        "cas": "NCIT:C76253"
+      },
+      "node_xrefs": [
+        "MIM:Acriflavine",
+        "cas:65589-70-0"
+      ]
+    }
+  ],
+  "lysozyme": {
+    "target": "kgmicrobe.ingredient:lysozyme",
+    "node_xrefs": [
+      "MIM:Lysozyme"
+    ],
+    "cas_assigned": false
+  },
+  "rejected_cas_equivalence": {
+    "2650-88-3": {
+      "prohibited_target": "kgmicrobe.ingredient:lysozyme",
+      "actual_lookup": null
+    },
+    "12650-88-3": {
+      "prohibited_target": "kgmicrobe.ingredient:lysozyme",
+      "actual_lookup": null
+    },
+    "8048-52-0": {
+      "prohibited_target": "NCIT:C76253",
+      "actual_lookup": null
+    }
+  }
+}

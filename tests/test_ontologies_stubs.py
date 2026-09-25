@@ -46,9 +46,16 @@ class _FakeAdapter:
         return list(self._store.get(curie, {}).get("aliases", []))
 
     def entity_metadata_map(self, curie: str):
-        """Return an OAK-shaped metadata dict carrying only ``oio:hasDbXref``."""
+        """Return OAK-shaped xrefs and any additional annotation properties."""
         xrefs = list(self._store.get(curie, {}).get("xrefs", []))
-        return {"oio:hasDbXref": xrefs} if xrefs else {}
+        metadata = dict(self._store.get(curie, {}).get("metadata", {}))
+        if xrefs:
+            metadata["oio:hasDbXref"] = xrefs
+        return metadata
+
+    def outgoing_relationships(self, curie: str, predicates=None):
+        """Return explicitly stored parents for the hierarchy export tests."""
+        return [("rdfs:subClassOf", parent) for parent in self._store.get(curie, {}).get("parents", [])]
 
 
 class _StubbedTransform(OntologiesStubsTransform):
@@ -194,6 +201,56 @@ def test_transform_writes_label_synonyms_xrefs(tmp_path):
     assert row["name"] == "wound fluid"
     assert "wound exudate" in row["synonym"].split("|")
     assert "MESH:D015159" in row["xref"].split("|")
+
+
+@pytest.mark.parametrize(
+    "predicate",
+    ["NCIT:P210", "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#P210"],
+)
+def test_ncit_cas_annotations_reach_node_xrefs_without_identity_edges(tmp_path, monkeypatch, predicate):
+    """Keep source CAS annotations on the original nodes, separate from equivalence."""
+    fixtures = _read_tsv(REPO_ROOT / "tests/resources/ontologies_stubs/ncit_cas_annotations.tsv")
+    parent = "NCIT:C1908"
+    records = {
+        row["id"]: {
+            "label": row["name"],
+            "metadata": {predicate: [row["cas_rn"]]},
+            "parents": [parent],
+        }
+        for row in fixtures
+    }
+    records[parent] = {"label": "Drug, Food, Chemical or Biomedical Material"}
+    adapter = _FakeAdapter(records)
+    transform = OntologiesStubsTransform(input_dir=tmp_path / "in", output_dir=tmp_path / "out")
+    monkeypatch.setattr(transform, "_open_adapter", lambda prefix, path: adapter)
+    transform._write_stub_module_from_semsql_walk(
+        prefix="NCIT",
+        curies=[row["id"] for row in fixtures],
+        db_path=tmp_path / "unused.db",
+        upper_terms=[parent],
+        knowledge_source="infores:ncit",
+    )
+    nodes = {row["id"]: row for row in _read_tsv(transform.output_dir / "ncit_nodes.tsv")}
+    assert set(nodes) == set(records)
+    for row in fixtures:
+        node = nodes[row["id"]]
+        assert node["xref"] == f"cas:{row['cas_rn']}"
+        assert node["name"] == row["name"]
+        assert node["same_as"] == ""
+    assert nodes[parent]["xref"] == ""
+    assert "cas:8048-52-0" not in nodes["NCIT:C76253"]["xref"].split("|")
+    edges = _read_tsv(transform.output_dir / "ncit_edges.tsv")
+    assert len(edges) == len(fixtures)
+    assert {row["predicate"] for row in edges} == {"biolink:subclass_of"}
+    assert {row["object"] for row in edges} == {parent}
+
+
+@pytest.mark.parametrize("value", ["2650-88-3", "00123-45-6", "187235376", "cas:187235-37-6", "", None, 123])
+def test_invalid_cas_annotation_does_not_become_xref(tmp_path, value):
+    """Malformed or checksum-invalid registry values stay out of exported CAS xrefs."""
+    adapter = _FakeAdapter({"NCIT:example": {"metadata": {"NCIT:P210": [value]}}})
+    transform = OntologiesStubsTransform(input_dir=tmp_path / "in", output_dir=tmp_path / "out")
+    assert transform._fetch_metadata(adapter, "NCIT:example")[2] == []
 
 
 def test_transform_falls_back_to_curie_when_label_missing(tmp_path):

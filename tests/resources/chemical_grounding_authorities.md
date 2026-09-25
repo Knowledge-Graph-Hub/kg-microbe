@@ -30,3 +30,21 @@ Native ChEBI pages independently inspected for #788:
 - https://www.ebi.ac.uk/chebi/CHEBI:91247 — L-cysteine hydrochloride.
 - https://www.ebi.ac.uk/chebi/CHEBI:52259 — QSY9 succinimidyl ester, with
   `has_part` CHEBI:52891 (the cation).
+
+`chemical_grounding_retirements.tsv` separately records obsolete native records,
+not labels fabricated for absent current primary nodes. On 2026-09-25 the
+read-only `data/raw/chebi.db` (SHA-256
+`081d065c12487e567fac48ab8c5ee87cc533b2ac89e22f47c119be4ee37ff0b7`)
+supplied their `owl:deprecated`, `IAO:0100001`, and replacement `rdfs:label`
+statements. The historical KGM names Soytone, Sulfur (powder), and HEPES buffer
+do not describe those replacements. The finite exclusions prevent restoration
+of these bad ingredient/identifier pairs; they do not endorse substituting an
+ontology replacement for an unrelated recipe chemical.
+
+The current native phosgene record CHEBI:29365 contains `COCl2`, whereas cobalt
+dichloride CHEBI:35696 contains `CoCl2`. The finite #1151 guard rejects only the
+observed hydrated-cobalt query `CoCl2 x 2 H2O` against phosgene and preserves its
+native uppercase-O formula. It does not solve general case-folded formula
+index collisions. Native UDP CHEBI:17659 does not justify the historical
+`potassium 5-dehydro-D-gluconate` alias; rejecting it does not infer a replacement
+salt identity from a generic anion.

@@ -1,10 +1,13 @@
 """Protect candidate and fallback paths from independently retained historical mistakes."""
 
+import csv
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
 
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
+from kg_microbe.utils import chemical_mapping_utils as runtime
 from kg_microbe.utils.ingredient_identity import ingredient_mapping_allowed
 from scripts import mim_conservative_refresh as refresh
 from tests.test_mim_conservative_refresh import FIELDS, NODE_FIELDS, _metadata, _node, _read, _row, _table
@@ -148,3 +151,63 @@ def test_raw_thiosulfate_guard_is_applied_before_legacy_deduplication(tmp_path):
     rows = transform._load_mapping_file(path, "test")
     assert rows["na2s2o3"] == "CHEBI:132112"
     assert rows["na2s2o3.5h2o"] == "CHEBI:32150"
+
+
+@pytest.mark.parametrize("route", ["unified", "legacy", "embedded"])
+@pytest.mark.parametrize("padding", ["", "  "])
+@pytest.mark.parametrize(
+    "name,target",
+    [
+        ("CoCl2 x 2 H2O", "CHEBI:29365"),
+        ("potassium 5-dehydro-D-gluconate", "CHEBI:17659"),
+        ("Soytone", "CHEBI:8150"),
+        ("Bacto Soytone", "CHEBI:8150"),
+        ("Sulfur (powder)", "CHEBI:14258"),
+        ("Sulfur powder", "CHEBI:14258"),
+        ("HEPES buffer", "CHEBI:19708"),
+    ],
+)
+def test_demonstrated_false_source_identities_preserve_ingredient(route, name, target, padding):
+    """A failed unified correction cannot fall back to the same unrelated chemical (#1151)."""
+    transform = MediaDiveTransform.__new__(MediaDiveTransform)
+    transform.chemical_loader = SimpleNamespace(
+        find_chebi_by_name=lambda *args, **kwargs: target if route == "unified" else None
+    )
+    transform.compound_mappings = {name.lower().strip(): target} if route == "legacy" else {}
+    transform.compounds_data = {"99": {"ChEBI": target.split(":")[1]}} if route == "embedded" else {}
+    transform.using_bulk_data = True
+    transform.api_calls_avoided = 0
+    assert transform.standardize_compound_id("99", padding + name + padding) == "mediadive.ingredient:99"
+
+
+def test_hydrated_cobalt_guard_preserves_native_phosgene_formula(tmp_path, monkeypatch):
+    """Reject a demonstrated hydrate collision without erasing case-sensitive native COCl2."""
+    assert ingredient_mapping_allowed("COCl2", "CHEBI:29365")
+    assert ingredient_mapping_allowed("phosgene", "CHEBI:29365")
+    path = tmp_path / "native-formula.tsv"
+    _table(
+        path,
+        FIELDS,
+        [
+            _row("kgm.name:phosgene", "CHEBI:29365", "phosgene", name="phosgene", comment="canonical_name"),
+            _row("kgm.name:cocl2", "CHEBI:29365", "phosgene", name="COCl2", comment="synonym"),
+        ],
+        _metadata(),
+    )
+    monkeypatch.setattr(runtime, "_LOADED", False)
+    monkeypatch.setattr(runtime, "_CACHED_PATH", None)
+    runtime.load_unified_mappings(path)
+    assert runtime.find_chebi_by_name("COCl2") == "CHEBI:29365"
+    assert runtime.find_chebi_by_name("CoCl2 x 2 H2O", fuzzy_hydrate=True) is None
+    assert runtime.find_chebi_by_name("  CoCl2 x 2 H2O  ", fuzzy_hydrate=True) is None
+    assert runtime.find_chebi_by_name("COCl2") == "CHEBI:29365"
+
+
+def test_obsolete_false_ingredient_targets_do_not_ban_native_replacements():
+    """The native retirement fixture supports exclusion, not guessed chemical substitutions."""
+    path = Path(__file__).parent / "resources/chemical_grounding_retirements.tsv"
+    with path.open() as handle:
+        for row in csv.DictReader(handle, delimiter="\t"):
+            assert row["deprecated"] == "true"
+            assert ingredient_mapping_allowed(row["replacement_label"], row["replacement"])
+            assert ingredient_mapping_allowed(row["replacement_label"], row["id"])

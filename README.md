@@ -50,11 +50,18 @@ distinct names such as `merged-kg-minimal.tar.gz`,
 variant cannot masquerade as the canonical graph. The source differences are
 defined in `config/merge_variants.yaml`.
 
-The release workflow publishes the checksum-verified Jenkins artifact as
-`kg-microbe-YYYYMMDD.tar.gz`. It contains the canonical
-`merged-kg_nodes.tsv`, `merged-kg_edges.tsv`, and dated graph statistics. The
-release also includes `artifact-provenance.txt` with the build URL, checksum,
-and workflow revision.
+Published releases use their own asset names. For example, the 2025-03-07
+release provides `kg-microbe-core.tar.gz` and `kg-microbe-biomedical.tar.gz`;
+the 2024-08-26 release provides `20240826.tar.gz`. These historical assets
+do not include the proposed `artifact-provenance.txt` sidecar. Inspect each
+release's actual asset list and archive contents rather than assuming that
+current build statistics or manifests are included.
+
+The `release.yml` workflow is configured to publish
+`kg-microbe-YYYYMMDD.tar.gz` plus `artifact-provenance.txt`, but its download
+step still depends on the retired kg-hub endpoint
+([#887](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/887)).
+This describes the workflow contract, not a successfully published artifact.
 
 Download builds from GitHub releases:
 

@@ -75,13 +75,20 @@
 <h1>Reviewed MIM releases in KGM<a class="headerlink" href="#reviewed-mim-releases-in-kgm" title="Link to this heading"></a></h1>
 <section id="status-and-scope">
 <h2>Status and scope<a class="headerlink" href="#status-and-scope" title="Link to this heading"></a></h2>
-<p>The selected upstream release is
-<a class="reference external" href="https://github.com/CultureBotAI/MediaIngredientMech/releases/tag/mim-sssom-2026-09-21"><code class="docutils literal notranslate"><span class="pre">mim-sssom-2026-09-21</span></code></a>,
-source commit <code class="docutils literal notranslate"><span class="pre">484082707b2a175cffebad3cbf46f3b39f66ca3d</span></code>.
-<code class="docutils literal notranslate"><span class="pre">mappings/mim_reviewed_release.json</span></code> pins its manifest independently of the
-downloaded files. It authorizes <strong>candidate generation only</strong>, not publication.
-The committed runtime mappings are not replaced merely by adding this pin.</p>
-<p>The release contains 1,763 supported exact mappings and 1,255 withheld rows.
+<p>The selected upstream input is the validated immutable export of
+<a class="reference external" href="https://github.com/CultureBotAI/MediaIngredientMech/commit/1848b0fe521bc2462f165912fcf92d09ad9a8cec">commit <code class="docutils literal notranslate"><span class="pre">1848b0fe521bc2462f165912fcf92d09ad9a8cec</span></code></a>,
+not a newly published release tag. Its <a class="reference external" href="https://github.com/CultureBotAI/MediaIngredientMech/actions/runs/36109949250">locked-runtime validation run</a>
+passed review reproduction, complete export validation and SSSOM schema checks.
+The user explicitly selected immutable-commit/export consumption; the schema-v2
+<code class="docutils literal notranslate"><span class="pre">mappings/mim_reviewed_release.json</span></code> records that origin without relabeling the
+old September 21 release. Its <code class="docutils literal notranslate"><span class="pre">candidate_only</span></code> mode controls candidate generation,
+not permission to publish or silently replace production mappings. Paired
+production promotion remains the separate reviewed step below.</p>
+<p>The complete export contains 1,747 supported exact mappings and 1,252 withheld
+rows (2,999 source assertions). Its three product files are byte-identical to the
+previously reviewed <code class="docutils literal notranslate"><span class="pre">a8b26f007cdf5bdc7529ab13888d611f359e6aad</span></code> export; the manifest’s
+review hash changed with later upstream verifier provenance. Do not confuse this
+full table with the separate opt-in 20-case ingredient-scope/history bundle.
 The supported table is the only approved MIM mapping input. The withheld table
 is a review backlog, <strong>not a set of globally false assertions</strong>. An independent
 ontology/source can still support a claim absent from the supported table.
@@ -90,16 +97,21 @@ Its review is agent-assisted/adversarial; do not label it human curator signoff.
 </section>
 <section id="build-a-candidate">
 <h2>Build a candidate<a class="headerlink" href="#build-a-candidate" title="Link to this heading"></a></h2>
-<p>From the repository root, download the complete pinned bundle to a new directory:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gh<span class="w"> </span>release<span class="w"> </span>download<span class="w"> </span>mim-sssom-2026-09-21<span class="w"> </span><span class="se">\</span>
+<p>From the repository root, download the exact source archive and complete validated
+bundle to new evidence locations under <code class="docutils literal notranslate"><span class="pre">data/</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>curl<span class="w"> </span>--fail<span class="w"> </span>--location<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>data/mim-source-1848b0fe.tar.gz<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>https://codeload.github.com/CultureBotAI/MediaIngredientMech/tar.gz/1848b0fe521bc2462f165912fcf92d09ad9a8cec
+
+gh<span class="w"> </span>run<span class="w"> </span>download<span class="w"> </span><span class="m">36109949250</span><span class="w"> </span><span class="se">\</span>
 <span class="w">  </span>--repo<span class="w"> </span>CultureBotAI/MediaIngredientMech<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--dir<span class="w"> </span>data/mim-supported-2026-09-21<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--pattern<span class="w"> </span>manifest.json<span class="w"> </span>--pattern<span class="w"> </span>ingredient_mappings.sssom.tsv<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--pattern<span class="w"> </span>withheld_mappings.sssom.tsv<span class="w"> </span>--pattern<span class="w"> </span>mapping-dispositions.tsv
+<span class="w">  </span>--name<span class="w"> </span>mim-reviewed-sssom<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--dir<span class="w"> </span>data/mim-reviewed-1848b0fe
 
 poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>scripts.refresh_reviewed_mim<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--release-directory<span class="w"> </span>data/mim-supported-2026-09-21<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--output-directory<span class="w"> </span>data/mim-candidate-2026-09-21
+<span class="w">  </span>--source-archive<span class="w"> </span>data/mim-source-1848b0fe.tar.gz<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--release-directory<span class="w"> </span>data/mim-reviewed-1848b0fe<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output-directory<span class="w"> </span>data/mim-candidate-1848b0fe
 </pre></div>
 </div>
 <p>The output directory must not exist. No sibling checkout or live ontology service
@@ -110,8 +122,53 @@ falling back to historical MIM exports.</p>
 <p>Validation checks manifest/product hashes, SSSOM structure and CURIE prefixes,
 supported-only predicate scope, counts, and the lossless supported/withheld
 partition against complete-row hashes in <code class="docutils literal notranslate"><span class="pre">mapping-dispositions.tsv</span></code>.
-Source/review hashes in the manifest remain publisher provenance claims: those
-original evidence files are not part of this bundle and are not re-reviewed here.</p>
+For schema-v2 pins, validation additionally checks the entire source archive hash,
+commit-named archive root, safe unique regular-file/directory members, the original
+source SSSOM and review bytes against the manifest, and the pinned lock/workflow
+bytes. The source archive is streamed without extracting or executing its code.
+Malformed, missing, unsafe, floating or mismatched provenance aborts before
+candidate output. Pin, source archive and CLI-code hashes are added to the atomic
+candidate report’s before/after input checks; verified provenance is retained in
+<code class="docutils literal notranslate"><span class="pre">report.json</span></code> under <code class="docutils literal notranslate"><span class="pre">upstream_provenance</span></code>. This verifies source binding, not a new
+scientific review or an online assertion that CI remains current.</p>
+</section>
+<section id="immutable-origin-and-reproducible-export-recipe">
+<h2>Immutable origin and reproducible export recipe<a class="headerlink" href="#immutable-origin-and-reproducible-export-recipe" title="Link to this heading"></a></h2>
+<p>The versioned pin keeps strict legacy schema-v1 tagged-release support unchanged.
+Schema v2 requires <code class="docutils literal notranslate"><span class="pre">origin=immutable_commit_export</span></code>, an exact 40-hex commit,
+commit-addressed archive URL/SHA256, manifest and all three product SHA256 values,
+the <code class="docutils literal notranslate"><span class="pre">reviewed_sssom_v1</span></code> recipe, Python 3.13, pinned <code class="docutils literal notranslate"><span class="pre">uv.lock</span></code> and workflow hashes,
+and the upstream validation-run URL. Unknown fields, duplicate JSON keys,
+unrecognized recipes and publication modes fail closed. Schema v1 does not accept
+<code class="docutils literal notranslate"><span class="pre">--source-archive</span></code>; schema v2 requires it. The legacy additive consolidator remains
+disabled while either version of the pin exists.</p>
+<p>Pinned archive SHA256:
+<code class="docutils literal notranslate"><span class="pre">33ff549d7a2bf34e943156e800e00149736a30dfc0a974f3ca9a9884358bfef2</span></code>.
+Pinned complete manifest SHA256:
+<code class="docutils literal notranslate"><span class="pre">9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af</span></code>.</p>
+<p>The CI artifact is a convenient copy, not the sole durable origin: it expires.
+If unavailable, retrieve the same commit-addressed source archive, verify its
+SHA256 against the independently committed pin <strong>before extraction/execution</strong>,
+and extract into a new directory beneath <code class="docutils literal notranslate"><span class="pre">data/</span></code>. Do not accept a different
+archive hash, floating main checkout or silently regenerated review. Within the
+verified source root, <code class="docutils literal notranslate"><span class="pre">reviewed_sssom_v1</span></code> means the following exact workflow:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>env<span class="w"> </span><span class="nv">UV_PYTHON</span><span class="o">=</span><span class="m">3</span>.13<span class="w"> </span>uv<span class="w"> </span>sync<span class="w"> </span>--frozen
+uv<span class="w"> </span>run<span class="w"> </span>--frozen<span class="w"> </span>python<span class="w"> </span>reports/sssom_completion_20260921/assemble_review.py<span class="w"> </span>--check
+uv<span class="w"> </span>run<span class="w"> </span>--frozen<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>mediaingredientmech.export.reviewed_sssom<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--review<span class="w"> </span>reports/sssom_completion_20260921/review.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>output/mim-reviewed-sssom
+uv<span class="w"> </span>run<span class="w"> </span>--frozen<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>mediaingredientmech.export.reviewed_sssom<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--review<span class="w"> </span>reports/sssom_completion_20260921/review.json<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>output/mim-reviewed-sssom<span class="w"> </span>--validate-only
+uv<span class="w"> </span>run<span class="w"> </span>--frozen<span class="w"> </span>python<span class="w"> </span>scripts/validate_reviewed_sssom_schema.py<span class="w"> </span>output/mim-reviewed-sssom
+</pre></div>
+</div>
+<p>Pass that complete output directory and the original archive to the KGM candidate
+CLI. Its independently committed hashes must still match; the exporter does not
+get permission to rewrite a pin based on newly generated bytes. Source and review
+files are present in this exact immutable archive, so their binding is checked
+locally rather than assumed from CI metadata. Do not reuse the September 21
+release URL or swap the separate scoped ingredient bundle into this workflow.</p>
 </section>
 <section id="why-a-simple-file-replacement-is-unsafe">
 <h2>Why a simple file replacement is unsafe<a class="headerlink" href="#why-a-simple-file-replacement-is-unsafe" title="Link to this heading"></a></h2>

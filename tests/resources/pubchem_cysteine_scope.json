@@ -1,0 +1,18 @@
+{
+  "PropertyTable": {
+    "Properties": [
+      {
+        "CID": 5862,
+        "MolecularFormula": "C3H7NO2S",
+        "IUPACName": "(2R)-2-amino-3-sulfanylpropanoic acid",
+        "Title": "L-(+)-Cysteine"
+      },
+      {
+        "CID": 60960,
+        "MolecularFormula": "C3H8ClNO2S",
+        "IUPACName": "(2R)-2-amino-3-sulfanylpropanoic acid;hydrochloride",
+        "Title": "Cysteine Hydrochloride"
+      }
+    ]
+  }
+}

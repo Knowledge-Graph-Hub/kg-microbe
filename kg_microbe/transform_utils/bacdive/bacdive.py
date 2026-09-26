@@ -2103,9 +2103,12 @@ class BacDiveTransform(Transform):
 
             progress_class = tqdm if show_status else DummyTqdm
             with progress_class(total=len(input_json) + 1, desc="Processing files") as progress:
-                for index, value in enumerate(input_json):
+                for index, record in enumerate(input_json):
+                    # Keep record evidence independent of keyword/enzyme field
+                    # values; those locals must not replace the record (#1173).
+                    record_reference_dois = reference_dois(record)
                     # Build keyword_map for this specific record using JSON paths
-                    keyword_map = self._build_keyword_map_from_record(value, custom_curie_data)
+                    keyword_map = self._build_keyword_map_from_record(record, custom_curie_data)
                     # * Uncomment this block ONLY if you want to view the split *******
                     # * contents of the JSON file source into YAML files.
                     # import yaml
@@ -2113,11 +2116,11 @@ class BacDiveTransform(Transform):
                     # fn: Path = Path(str(BACDIVE_YAML_DIR / key) + ".yaml")
                     # if not fn.is_file():
                     #     with open(str(fn), "w") as outfile:
-                    #         yaml.dump(value, outfile)
+                    #         yaml.dump(record, outfile)
                     # *******************************************************************
 
                     # Get "General" information
-                    general_info = value.get(GENERAL, {})
+                    general_info = record.get(GENERAL, {})
 
                     # Extract BacDive-ID from the new format, fallback to index if not found
                     bacdive_id = general_info.get("BacDive-ID", index)
@@ -2126,12 +2129,12 @@ class BacDiveTransform(Transform):
                     dsm_number = general_info.get(DSM_NUMBER)
 
                     # Extract parent dictionaries ONCE to avoid repeated .get() calls
-                    external_links = value.get(EXTERNAL_LINKS, {})
-                    isolation_dict = value.get(ISOLATION_SAMPLING_ENV_INFO, {})
-                    morphology_dict = value.get(MORPHOLOGY, {})
-                    physiology_dict = value.get(PHYSIOLOGY_AND_METABOLISM, {})
-                    safety_dict = value.get(SAFETY_INFO, {})
-                    name_tax_classification = value.get(NAME_TAX_CLASSIFICATION, {})
+                    external_links = record.get(EXTERNAL_LINKS, {})
+                    isolation_dict = record.get(ISOLATION_SAMPLING_ENV_INFO, {})
+                    morphology_dict = record.get(MORPHOLOGY, {})
+                    physiology_dict = record.get(PHYSIOLOGY_AND_METABOLISM, {})
+                    safety_dict = record.get(SAFETY_INFO, {})
+                    name_tax_classification = record.get(NAME_TAX_CLASSIFICATION, {})
 
                     culture_number_from_external_links = None
                     isolation = isolation_dict.get(ISOLATION)
@@ -2580,12 +2583,12 @@ class BacDiveTransform(Transform):
                     mediadive_urls = []
                     growth_values = []
 
-                    if CULTURE_AND_GROWTH_CONDITIONS in value and value[CULTURE_AND_GROWTH_CONDITIONS]:
+                    if CULTURE_AND_GROWTH_CONDITIONS in record and record[CULTURE_AND_GROWTH_CONDITIONS]:
                         if (
-                            CULTURE_MEDIUM in value[CULTURE_AND_GROWTH_CONDITIONS]
-                            and value[CULTURE_AND_GROWTH_CONDITIONS][CULTURE_MEDIUM]
+                            CULTURE_MEDIUM in record[CULTURE_AND_GROWTH_CONDITIONS]
+                            and record[CULTURE_AND_GROWTH_CONDITIONS][CULTURE_MEDIUM]
                         ):
-                            media = value[CULTURE_AND_GROWTH_CONDITIONS][CULTURE_MEDIUM]
+                            media = record[CULTURE_AND_GROWTH_CONDITIONS][CULTURE_MEDIUM]
 
                             if not isinstance(media, list):
                                 media = [media]
@@ -2770,7 +2773,7 @@ class BacDiveTransform(Transform):
                     # sheet. In the future we will be moving away from this behavior and making
                     # sure we appropriately use mappings from a decided sheet called
                     # "source_mappings" sheet
-                    self._process_pathogenicity(value, organism_id, key, node_writer, edge_writer)
+                    self._process_pathogenicity(record, organism_id, key, node_writer, edge_writer)
 
                     if not all(item is None for item in name_tax_classification_data[2:]):
                         writer_3.writerow(name_tax_classification_data)
@@ -2935,7 +2938,7 @@ class BacDiveTransform(Transform):
 
                             activity = enzyme.get(ACTIVITY_KEY)
                             ec_number = enzyme.get(EC_KEY)
-                            value = enzyme.get("value")
+                            enzyme_label = enzyme.get("value")
 
                             # Only process if we have an EC number and activity mapping
                             if not ec_number or activity not in self.metpo_enzyme_mappings:
@@ -2947,7 +2950,7 @@ class BacDiveTransform(Transform):
                             enzyme_data.append(
                                 {
                                     "ec_id": f"{EC_PREFIX}{ec_number}",
-                                    "label": value,
+                                    "label": enzyme_label,
                                     "predicate": metpo_predicate,
                                 }
                             )
@@ -2982,7 +2985,7 @@ class BacDiveTransform(Transform):
                             organism_id,
                             node_writer,
                             edge_writer,
-                            reference_dois(value),
+                            record_reference_dois,
                         )
 
                     if phys_and_metabolism_metabolite_production:
@@ -3088,7 +3091,7 @@ class BacDiveTransform(Transform):
                     # phenotype routing rule.
                     for routing in self.phenotype_routing:
                         self._process_phenotype_by_metpo_parent(
-                            value,
+                            record,
                             routing["metpo_parent_id"],
                             organism_id,
                             key,

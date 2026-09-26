@@ -2951,7 +2951,7 @@ to avoid repeated API calls during transforms.</p>
 max_workers: Number of parallel download threads
 retry_count: Number of retries on request failure
 retry_delay: Seconds between retries (overridden by Retry-After on 429)
-requests_per_second: Maximum sustained request rate (smooths bursts)</p>
+requests_per_second: Reserved for caller compatibility; concurrency is limited by max_workers</p>
 </div></blockquote>
 </section>
 <section id="id18">
@@ -3000,7 +3000,7 @@ reproduce the old data byte for byte.</p>
 max_workers: Number of parallel download threads
 retry_count: Number of retries on request failure
 retry_delay: Seconds between retries (overridden by Retry-After on 429)
-requests_per_second: Maximum sustained request rate (smooths bursts)</p>
+requests_per_second: Reserved for caller compatibility; concurrency is limited by max_workers</p>
 </div></blockquote>
 </section>
 <section id="id21">
@@ -3063,7 +3063,9 @@ requests_per_second: Maximum sustained request rate (smooths bursts)</p>
 <dt class="sig sig-object py" id="kg_microbe.utils.mediadive_bulk_download.get_json_from_api">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.mediadive_bulk_download.</span></span><span class="sig-name descname"><span class="pre">get_json_from_api</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retry_count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">retry_delay</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">session</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.mediadive_bulk_download.get_json_from_api" title="Link to this definition"></a></dt>
 <dd><p>Get JSON data from MediaDive API with retry logic.</p>
-<p>Respects Retry-After headers on 429 responses.</p>
+<p>Respects Retry-After headers on 429 responses. A requested delay over five
+minutes ends the request without retrying early; malformed headers use
+retry_delay instead.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></span></p>

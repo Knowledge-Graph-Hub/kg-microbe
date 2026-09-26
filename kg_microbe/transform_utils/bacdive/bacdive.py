@@ -17,6 +17,7 @@ import logging
 import os
 import re
 from collections import Counter
+from functools import cached_property
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
@@ -1331,6 +1332,47 @@ class BacDiveTransform(Transform):
         else:
             return []
 
+    @cached_property
+    def _ambiguous_metpo_aliases(self):
+        """Identify bare aliases whose contextual mappings name different terms."""
+        parent_labels = {node.label for node in self.bacdive_metpo_tree.values()}
+        targets = {}
+        for alias, mapping in self.bacdive_metpo_mappings.items():
+            targets.setdefault(alias, set()).add(mapping["curie"])
+            parent, separator, value = alias.partition(".")
+            if separator and parent in parent_labels:
+                targets.setdefault(value, set()).add(mapping["curie"])
+        return {alias for alias, curies in targets.items() if len(curies) > 1}
+
+    def _phenotype_mapping(self, value, parent_node, json_path):
+        """Resolve field values in their native trait context, never by last-wins alias."""
+        if json_path == f"{GENERAL}.{KEYWORDS}":
+            # This shared tag path happens to be listed under sporulation in
+            # METPO. Its unambiguous tags can describe any phenotype branch.
+            if value in self._ambiguous_metpo_aliases:
+                return None
+            return self.bacdive_metpo_mappings.get(value)
+
+        mapping = self.bacdive_metpo_mappings.get(f"{parent_node.label}.{value}")
+        if mapping is None:
+            mapping = self.bacdive_metpo_mappings.get(value)
+        if mapping is None:
+            return None
+        target = self.bacdive_metpo_tree.get(mapping["curie"])
+        if target is None:
+            raise ValueError(f"BacDive phenotype mapping target is absent from METPO: {mapping['curie']}")
+        seen = set()
+        while target is not None:
+            if target.iri == parent_node.iri:
+                return mapping
+            if target.iri in seen:
+                raise ValueError(f"Cycle in BacDive METPO phenotype ancestry: {target.iri}")
+            seen.add(target.iri)
+            target = target.parent
+        # A missing contextual alias must not fall back to another trait's
+        # identically spelled value (e.g. motility.no -> non-spore forming).
+        return None
+
     def _process_phenotype_by_metpo_parent(
         self, record: dict, parent_iri: str, organism_id: str, key: str, node_writer, edge_writer
     ):
@@ -1355,8 +1397,7 @@ class BacDiveTransform(Transform):
                 if not extracted_value:
                     continue
 
-                # Try to find a mapping for this value
-                metpo_mapping = self.bacdive_metpo_mappings.get(extracted_value.strip(), None)
+                metpo_mapping = self._phenotype_mapping(extracted_value.strip(), parent_node, json_path)
                 if metpo_mapping:
                     # Use METPO term
                     node_id = metpo_mapping["curie"]
@@ -1410,6 +1451,8 @@ class BacDiveTransform(Transform):
 
         # Add METPO mappings from bacdive_metpo_mappings
         for bacdive_label, mapping in self.bacdive_metpo_mappings.items():
+            if bacdive_label in self._ambiguous_metpo_aliases:
+                continue
             # use biolink_equivalent URL from METPO tree traversal or fallback to default
             category_url = mapping.get("inferred_category", "")
             predicate_biolink = mapping.get("predicate_biolink_equivalent", "")
@@ -1442,6 +1485,8 @@ class BacDiveTransform(Transform):
 
                     # For each extracted value, find matching child nodes with that synonym
                     for value in extracted_values:
+                        if value in self._ambiguous_metpo_aliases:
+                            continue
                         # Normalize the value for lookup
                         normalized_value = value.lower().replace(" ", "_").replace("-", "_")
 

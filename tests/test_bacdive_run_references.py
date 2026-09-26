@@ -2,7 +2,6 @@
 
 import json
 from pathlib import Path
-from types import SimpleNamespace
 
 import pytest
 
@@ -10,12 +9,13 @@ from kg_microbe.transform_utils.bacdive import bacdive as module
 from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
 from kg_microbe.transform_utils.constants import ORIGINAL_OBJECT_COLUMN, PUBLICATIONS_COLUMN
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.mapping_file_utils import MetpoTreeNode
 from kg_microbe.utils.source_finalization import graph_rows
 
 FIXTURE = Path(__file__).parent / "resources/bacdive_publications/run_records.json"
 
 
-def _run_fixture(tmp_path, monkeypatch, records):
+def _run_fixture(tmp_path, monkeypatch, records, native_context=False):
     """Run the producer itself with tiny local mappings and no external ontology or assay setup."""
     raw = tmp_path / "raw"
     raw.mkdir()
@@ -46,10 +46,20 @@ def _run_fixture(tmp_path, monkeypatch, records):
         "fixture_keyword": {"curie": "METPO:1000001", "label": "fixture keyword"},
         "fixture phenotype": {"curie": "METPO:1000002", "label": "fixture phenotype"},
     }
-    transform.bacdive_metpo_tree = {
-        "METPO:1000000": SimpleNamespace(bacdive_json_paths=["Physiology and metabolism.oxygen tolerance"], children=[])
-    }
+    parent = MetpoTreeNode(
+        "METPO:1000000", "fixture parent", bacdive_json_paths=["Physiology and metabolism.oxygen tolerance"]
+    )
+    child = MetpoTreeNode("METPO:1000002", "fixture phenotype")
+    parent.add_child(child)
+    transform.bacdive_metpo_tree = {parent.iri: parent, child.iri: child}
     transform.phenotype_routing = [{"metpo_parent_id": "METPO:1000000"}]
+    if native_context:
+        transform.bacdive_metpo_mappings = module.load_metpo_mappings("bacdive keyword synonym")
+        transform.bacdive_metpo_tree = module._build_metpo_tree()
+        transform.phenotype_routing = transform._load_phenotype_routing(
+            Path(__file__).resolve().parents[1] / "mappings/bacdive_phenotype_routing.tsv"
+        )
+        transform.metpo_iri_to_mapping = transform._build_metpo_iri_index()
     transform.metpo_enzyme_mappings = {"+": {"curie": "METPO:2000300"}}
     transform.metpo_metabolite_utilization_mappings = {
         "carbon source": {"+": {"curie": "METPO:2000006"}, "-": {"curie": "METPO:2000031"}}
@@ -119,3 +129,50 @@ def test_run_preserves_record_and_item_references(tmp_path, monkeypatch, keyword
     }
     enzyme_nodes = [row for row in nodes if row["id"] == "EC:1.1.1.1"]
     assert [row["name"] for row in enzyme_nodes] == (["fixture enzyme"] if enzyme in {"dict", "list"} else [])
+
+
+@pytest.mark.parametrize("motility", ["yes", "no", None])
+@pytest.mark.parametrize("sporulation", ["yes", "no", None])
+@pytest.mark.parametrize("list_fields", [False, True], ids=["dict-fields", "list-fields"])
+def test_run_keeps_native_phenotype_contexts_separate(tmp_path, monkeypatch, motility, sporulation, list_fields):
+    """Run all eight routes through native mappings, including opposing/absent yes/no fields."""
+    monkeypatch.setenv("KG_MICROBE_METPO_TEMPLATE_DIR", str(FIXTURE.parent.parent / "bacdive_phenotype_context"))
+    record = json.loads(FIXTURE.read_text())[0]
+    # Unscoped yes/no tags provide no trait context. A genuine shared keyword
+    # still resolves, even though General.keywords lives under sporulation.
+    record["General"]["keywords"] = ["aerobe", "yes", "no"]
+    physiology = {
+        "oxygen tolerance": {"oxygen tolerance": "aerobe"},
+        "nutrition type": {"type": "autotroph"},
+        "halophily": {"halophily level": "halophilic"},
+    }
+    if sporulation is not None:
+        physiology["spore formation"] = {"spore formation": sporulation}
+    record["Physiology and metabolism"] = physiology
+    cell = {"cell shape": "rod-shaped", "gram stain": "positive"}
+    if motility is not None:
+        cell["motility"] = motility
+    record["Morphology"] = {"cell morphology": cell}
+    record["Safety information"] = {"risk assessment": {"biosafety level": "1"}}
+    if list_fields:
+        for section in (physiology, record["Morphology"], record["Safety information"]):
+            for key, value in section.items():
+                section[key] = [value]
+
+    edges, nodes = _run_fixture(tmp_path, monkeypatch, [record], native_context=True)
+    expected = {
+        ("biolink:has_phenotype", curie)
+        for curie in ("METPO:1000602", "METPO:1000632", "METPO:1000620", "METPO:1000681", "METPO:1000698")
+    }
+    expected.add(("biolink:has_attribute", "METPO:1001102"))
+    if motility is not None:
+        expected.add(("biolink:has_phenotype", {"yes": "METPO:1000702", "no": "METPO:1000703"}[motility]))
+    if sporulation is not None:
+        expected.add(("biolink:has_phenotype", {"yes": "METPO:1000871", "no": "METPO:1000872"}[sporulation]))
+    assert {(row["predicate"], row["object"]) for row in edges} == expected
+    assert all(row["subject"] == "kgmicrobe.strain:bacdive_1" for row in edges)
+    assert all(row["primary_knowledge_source"] == "infores:bacdive" for row in edges)
+    assert all(row[PUBLICATIONS_COLUMN] == "https://bacdive.dsmz.de/strain/1" for row in edges)
+    phenotype_nodes = [row for row in nodes if row["id"].startswith("METPO:")]
+    assert {row["id"] for row in phenotype_nodes} == {curie for _, curie in expected}
+    assert all(row["category"] == "biolink:PhenotypicQuality" for row in phenotype_nodes)

@@ -1,0 +1,4 @@
+ID	label	RANGE	parent property	biolink equivalent
+ID	LABEL	RANGE	SP %	AI skos:closeMatch
+METPO:2000101	has quality	quality		
+METPO:2000102	has phenotype	phenotype	has quality	https://biolink.github.io/biolink-model/has_phenotype

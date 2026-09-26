@@ -20,6 +20,14 @@ kg\_microbe.transform\_utils.bacdive.emission module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.transform\_utils.bacdive.references module
+------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bacdive.references
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

@@ -1,0 +1,111 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BacDive item-level publication evidence &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">BacDive item-level publication evidence</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/BACDIVE_PUBLICATION_EVIDENCE.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="bacdive-item-level-publication-evidence">
+<h1>BacDive item-level publication evidence<a class="headerlink" href="#bacdive-item-level-publication-evidence" title="Link to this heading"></a></h1>
+<p>The metabolite-utilization emitter resolves each item’s <code class="docutils literal notranslate"><span class="pre">&#64;ref</span></code> against that record’s <code class="docutils literal notranslate"><span class="pre">Reference</span></code> entries. The reference and utilization blocks both accept dictionary or list shapes; reference keys may be numeric strings or integers. Explicit multiple-reference lists are supported. Unresolved pointers do not borrow another item’s citation.</p>
+<p><code class="docutils literal notranslate"><span class="pre">primary_knowledge_source</span></code> remains the scalar <code class="docutils literal notranslate"><span class="pre">infores:bacdive</span></code>. The <code class="docutils literal notranslate"><span class="pre">publications</span></code> field contains the existing BacDive record-page URL and the referenced publication DOI. Plain DOI, <code class="docutils literal notranslate"><span class="pre">doi:</span></code> CURIE, and DOI resolver-URL spellings normalize to one lower-case DOI token. Repeated equivalent evidence is deduplicated; different papers supporting the same predicate/object remain separate observations through source finalization and KGX serialization.</p>
+<p>Catalogue URLs, malformed DOI fields, and BacDive’s own record DOI are not treated as scientific publication citations. Conflicting publication DOIs for the same reference key are left unresolved rather than selected by input order. This performs identifier validation, not live DOI registration verification.</p>
+<p>Scope is <strong>metabolite utilization only</strong>, replacing the unsafe provenance approach proposed in PR #776. Other BacDive sections retain their existing record evidence and do not gain record-wide DOI lists. Issue #770’s broader statement-level citation coverage therefore remains follow-up work.</p>
+<p>Offline regression fixtures are explicitly synthetic. Tests exercise the production utilization emitter and record writer, actual source finalization, and a public KGX archive roundtrip; they do not run the complete BacDive transform or require local ontology databases.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

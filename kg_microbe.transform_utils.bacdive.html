@@ -190,8 +190,8 @@ exactly like a data problem in BacDive (#897).</p>
 <p>Keep PKS scalar and attach a BacDive record page to strain-derived evidence.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.StrainProvenanceWriter.writerow">
-<span class="sig-name descname"><span class="pre">writerow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.StrainProvenanceWriter.writerow" title="Link to this definition"></a></dt>
-<dd><p>Write one row, augmenting bare source provenance when applicable.</p>
+<span class="sig-name descname"><span class="pre">writerow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">publications</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.StrainProvenanceWriter.writerow" title="Link to this definition"></a></dt>
+<dd><p>Attach explicit item citations and record evidence without changing the primary resource.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
@@ -330,6 +330,28 @@ list of <code class="docutils literal notranslate"><span class="pre">(strain</sp
 deposit with more than one claim; <code class="docutils literal notranslate"><span class="pre">asserted</span> <span class="pre">parent</span></code> is empty when none was.</p>
 </dd>
 </dl>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.bacdive.references">
+<span id="kg-microbe-transform-utils-bacdive-references-module"></span><h2>kg_microbe.transform_utils.bacdive.references module<a class="headerlink" href="#module-kg_microbe.transform_utils.bacdive.references" title="Link to this heading"></a></h2>
+<p>Resolve explicit BacDive item references without spreading record-wide citations.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.references.item_publications">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.references.</span></span><span class="sig-name descname"><span class="pre">item_publications</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">item</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">references</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.references.item_publications" title="Link to this definition"></a></dt>
+<dd><p>Return only the publications named by this item’s explicit reference pointer(s).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.references.publication_doi">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.references.</span></span><span class="sig-name descname"><span class="pre">publication_doi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.references.publication_doi" title="Link to this definition"></a></dt>
+<dd><p>Normalize a complete DOI field, excluding catalogue and BacDive record identifiers.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.references.reference_dois">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.references.</span></span><span class="sig-name descname"><span class="pre">reference_dois</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.references.reference_dois" title="Link to this definition"></a></dt>
+<dd><p>Index unambiguous publication DOI references; contradictory duplicate IDs stay unresolved.</p>
 </dd></dl>
 
 </section>

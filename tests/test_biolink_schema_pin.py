@@ -5,6 +5,11 @@ from pathlib import Path
 
 import yaml
 
+try:
+    import tomllib
+except ModuleNotFoundError:  # Python 3.10
+    import tomli as tomllib
+
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DOWNLOAD_YAML = REPO_ROOT / "download.yaml"
 
@@ -53,6 +58,17 @@ def test_every_biolink_artifact_is_pinned_to_a_tag():
     """An unpinned fetch changes what the pipeline validates against with no record."""
     unpinned = [e["url"] for e in _biolink_entries() if not re.search(r"/biolink-model/v[^/]+/", e["url"])]
     assert not unpinned, f"Biolink artifacts must be fetched from a tag: {unpinned}"
+
+
+def test_package_pin_matches_downloaded_schema():
+    """Dependency-only updates must not silently split package and local schema."""
+    project = tomllib.loads((REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    package_pin = project["tool"]["poetry"]["dependencies"]["biolink-model"]
+    versions = {re.search(r"/biolink-model/v([^/]+)/", entry["url"]).group(1) for entry in _biolink_entries()}
+    assert versions == {package_pin}, (
+        f"Biolink package {package_pin} differs from pinned local schema {sorted(versions)}; "
+        "review and update the model, predicate map, attributes, lock and fixtures together"
+    )
 
 
 def _write_model(tmp_path, imports):

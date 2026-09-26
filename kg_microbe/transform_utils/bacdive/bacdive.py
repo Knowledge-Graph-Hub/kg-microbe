@@ -12,6 +12,7 @@ Output these two files:
 """
 
 import csv
+import hashlib
 import json
 import logging
 import os
@@ -72,6 +73,7 @@ from kg_microbe.transform_utils.constants import (
     CLOSE_MATCH_PREDICATE,
     CLOSE_MATCH_RELATION,
     COLONY_MORPHOLOGY,
+    COMPOUND_PREFIX,
     COMPOUND_PRODUCTION,
     CULTURE_AND_GROWTH_CONDITIONS,
     CULTURE_GROWTH,
@@ -208,6 +210,7 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
+from kg_microbe.utils.ingredient_identity import ingredient_mapping_allowed
 from kg_microbe.utils.isolation_source_mapping_utils import (
     STUB_ONTOLOGY_CATEGORY,
     STUB_ONTOLOGY_PREFIXES,
@@ -244,6 +247,13 @@ else:
 
 # Initialize logger
 logger = logging.getLogger(__name__)
+
+CHEMICAL_IDENTITY_CONFLICTS_FILE = "chemical_identity_conflicts.jsonl"
+POLYMYXIN_CONFLICT_DESCRIPTION = (
+    "Source-local BacDive material: the supplied CHEBI:8309 identifier denotes polymyxin B1, "
+    "but the source calls it polymyxin b. External identity is unresolved; neither B1 nor "
+    "the B1/B2 mixture is inferred. Original source context is retained in chemical_identity_conflicts.jsonl."
+)
 
 
 class BacDiveTransform(Transform):
@@ -492,12 +502,12 @@ class BacDiveTransform(Transform):
         # Try unified chemical mappings first
         if self.chemical_loader is not None:
             result = self.chemical_loader.find_chebi_by_name(name)
-            if result:
+            if result and ingredient_mapping_allowed(name, result):
                 return result
 
         # Fall back to legacy METABOLITE_MAP reverse lookup
         for key, value in METABOLITE_MAP.items():
-            if value == name:
+            if value == name and ingredient_mapping_allowed(name, key):
                 return key
         return None
 
@@ -1617,11 +1627,68 @@ class BacDiveTransform(Transform):
 
         return edge_pairs
 
-    def _process_antibiotic_resistance(self, item, organism_id: str, key):
+    def _explicit_chemical_identity(
+        self, item, supplied_id, organism_id, predicate, references, source_path, conflict_context
+    ):
+        """Preserve the finite explicit Polymyxin B/B1 conflict without choosing an external identity (#1185)."""
+        name = item.get(METABOLITE_KEY)
+        if (
+            supplied_id != "CHEBI:8309"
+            or not isinstance(name, str)
+            or not re.fullmatch(r"polymyxin[ _-]+b", name.strip(), re.IGNORECASE)
+        ):
+            return supplied_id, False
+        if not conflict_context or conflict_context.get("diagnostics") is None:
+            raise ValueError("BacDive chemical identity conflict requires source context and diagnostics")
+        position = conflict_context.get("record_position")
+        if type(position) is not int or position < 1 or "record_id" not in conflict_context:
+            raise ValueError("BacDive chemical identity conflict requires a raw record position and identifier")
+        if (
+            not isinstance(source_path, list)
+            or len(source_path) not in {2, 3}
+            or source_path[0] != PHYSIOLOGY_AND_METABOLISM
+            or source_path[1] not in {ANTIBIOTIC_RESISTANCE, METABOLITE_UTILIZATION}
+            or (len(source_path) == 3 and (type(source_path[2]) is not int or source_path[2] < 0))
+        ):
+            raise ValueError("BacDive chemical identity conflict requires the exact source item path")
+        identity = {
+            "record_id": conflict_context["record_id"],
+            "record_position": position,
+            "source_path": source_path,
+        }
+        encoded = json.dumps(identity, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
+        local_id = COMPOUND_PREFIX + "bacdive_conflict_" + hashlib.sha256(encoded.encode("utf-8")).hexdigest()
+        diagnostic = {
+            **identity,
+            "organism_id": organism_id,
+            "local_id": local_id,
+            ORIGINAL_OBJECT_COLUMN: supplied_id,
+            PRIMARY_KNOWLEDGE_SOURCE_COLUMN: self.knowledge_source,
+            "reason": "explicit_polymyxin_b_name_b1_identifier_conflict",
+            "source_record": item,
+            "item_publications": item_publications(item, references),
+            PREDICATE_COLUMN: predicate,
+            "emitted": bool(predicate),
+        }
+        # Serialize one complete typed item before writing so invalid nested
+        # values cannot leave a partial JSONL record. Repeated items are retained.
+        payload = json.dumps(diagnostic, sort_keys=True, ensure_ascii=False, allow_nan=False)
+        conflict_context["diagnostics"].write(payload + "\n")
+        return local_id, True
+
+    def _conflict_edge_row(self, row):
+        """Retain the supplied identifier as evidence, never an equivalence xref."""
+        if ORIGINAL_OBJECT_COLUMN not in self.edge_header:
+            raise ValueError("BacDive chemical identity conflict requires original_object in edge_header")
+        row = list(row)
+        row.extend([""] * (len(self.edge_header) - len(row)))
+        row[self.edge_header.index(ORIGINAL_OBJECT_COLUMN)] = "CHEBI:8309"
+        return row
+
+    def _process_antibiotic_resistance(
+        self, item, organism_id: str, key, *, references=None, source_path=None, conflict_context=None
+    ):
         chebi_key = CHEBI_PREFIX + str(item[CHEBI_KEY])
-        METABOLITE_MAP[chebi_key] = (
-            item[METABOLITE_KEY] if not METABOLITE_MAP.get(chebi_key) else METABOLITE_MAP[chebi_key]
-        )
 
         if item.get(RESISTANCE_KEY) == "yes":
             antibiotic_predicate = NCBI_TO_METABOLITE_RESISTANCE_EDGE
@@ -1630,33 +1697,44 @@ class BacDiveTransform(Transform):
         else:
             antibiotic_predicate = None
 
+        chebi_key, conflict = self._explicit_chemical_identity(
+            item, chebi_key, organism_id, antibiotic_predicate, references or {}, source_path, conflict_context
+        )
+        if not conflict:
+            METABOLITE_MAP[chebi_key] = (
+                item[METABOLITE_KEY] if not METABOLITE_MAP.get(chebi_key) else METABOLITE_MAP[chebi_key]
+            )
         if antibiotic_predicate:
             ar_enrich = (
                 self.chemical_loader.get_node_enrichment(chebi_key)
-                if self.chemical_loader is not None
+                if self.chemical_loader is not None and not conflict
                 else {"xref": "", "synonym": ""}
             )
             self.ar_nodes_data_to_write.append(
                 self._create_node_row(
                     chebi_key,
-                    self._get_chebi_category(chebi_key),
+                    METABOLITE_CATEGORY if conflict else self._get_chebi_category(chebi_key),
                     item[METABOLITE_KEY],
+                    description=POLYMYXIN_CONFLICT_DESCRIPTION if conflict else None,
                     xref=ar_enrich["xref"] or None,
                     synonym=ar_enrich["synonym"] or None,
                 )
             )
             # Create edge from organism to metabolite
-            self.ar_edges_data_to_write.append(
-                [
-                    organism_id,
-                    antibiotic_predicate,
-                    chebi_key,
-                    ASSOCIATED_WITH,
-                    self.knowledge_source,  # Use infores:bacdive
-                    OBSERVATION,
-                    MANUAL_AGENT,
-                ]
-            )
+            row = [
+                organism_id,
+                antibiotic_predicate,
+                chebi_key,
+                ASSOCIATED_WITH,
+                self.knowledge_source,  # Use infores:bacdive
+                OBSERVATION,
+                MANUAL_AGENT,
+            ]
+            if conflict:
+                row = self._conflict_edge_row(row)
+                # Only this item's explicit reference, never record-wide DOI spray.
+                row[self.edge_header.index(PUBLICATIONS_COLUMN)] = item_publications(item, references or {})
+            self.ar_edges_data_to_write.append(row)
 
     def _process_metabolites(self, dictionary, organism_id: str, key, node_writer, edge_writer):
         """
@@ -1881,47 +1959,58 @@ class BacDiveTransform(Transform):
                         ]
                     )
 
-    def _emit_metabolite_utilization(self, block, organism_id, node_writer, edge_writer, references):
+    def _emit_metabolite_utilization(
+        self, block, organism_id, node_writer, edge_writer, references, *, conflict_context=None
+    ):
         """Emit signed utilization with only each item's own publication references."""
         items = [block] if isinstance(block, dict) else block
         if not isinstance(items, list):
             print(f"{block} data not recorded.")
             return
-        for item in items:
+        for item_index, item in enumerate(items):
             if not isinstance(item, dict) or not item.get(METABOLITE_CHEBI_KEY):
                 continue
             activity = item.get(UTILIZATION_ACTIVITY)
             utilization_type = item.get(UTILIZATION_TYPE_TESTED)
             mapping = self.metpo_metabolite_utilization_mappings.get(utilization_type, {})
             matched = mapping.get(activity) if utilization_type and activity else None
-            if not matched or not matched.get("curie"):
-                continue
+            predicate = matched.get("curie") if matched else None
             chebi_id = f"{CHEBI_PREFIX}{item[METABOLITE_CHEBI_KEY]}"
+            source_path = [PHYSIOLOGY_AND_METABOLISM, METABOLITE_UTILIZATION]
+            if isinstance(block, list):
+                source_path.append(item_index)
+            chebi_id, conflict = self._explicit_chemical_identity(
+                item, chebi_id, organism_id, predicate, references, source_path, conflict_context
+            )
+            if not predicate:
+                continue
             enrichment = (
                 self.chemical_loader.get_node_enrichment(chebi_id)
-                if self.chemical_loader is not None
+                if self.chemical_loader is not None and not conflict
                 else {"xref": "", "synonym": ""}
             )
             node_writer.writerow(
                 self._create_node_row(
                     chebi_id,
-                    self._get_chebi_category(chebi_id),
+                    METABOLITE_CATEGORY if conflict else self._get_chebi_category(chebi_id),
                     item.get(METABOLITE_KEY),
+                    description=POLYMYXIN_CONFLICT_DESCRIPTION if conflict else None,
                     xref=enrichment["xref"] or None,
                     synonym=enrichment["synonym"] or None,
                 )
             )
-            knowledge_level, agent_type = self._add_edge_metadata(matched["curie"], HAS_PARTICIPANT, chebi_id)
+            knowledge_level, agent_type = self._add_edge_metadata(predicate, HAS_PARTICIPANT, chebi_id)
+            row = [
+                organism_id,
+                predicate,
+                chebi_id,
+                HAS_PARTICIPANT,
+                self.knowledge_source,
+                knowledge_level,
+                agent_type,
+            ]
             edge_writer.writerow(
-                [
-                    organism_id,
-                    matched["curie"],
-                    chebi_id,
-                    HAS_PARTICIPANT,
-                    self.knowledge_source,
-                    knowledge_level,
-                    agent_type,
-                ],
+                self._conflict_edge_row(row) if conflict else row,
                 publications=item_publications(item, references),
             )
 
@@ -2044,6 +2133,9 @@ class BacDiveTransform(Transform):
             # before it. Same rule as lpsn (#820) and lpsn_api (#985).
             atomic_write(self.output_node_file, newline="") as node,
             atomic_write(self.output_edge_file, newline="") as edge,
+            # This source-local diagnostic is not covered by the ordinary graph
+            # receipt: postbuild acceptance must hash/admit it explicitly (#1185).
+            atomic_write(Path(self.output_dir) / CHEMICAL_IDENTITY_CONFLICTS_FILE) as chemical_conflicts,
             open(CUSTOM_CURIES_YAML_FILE, "r") as cc_file,
         ):
             writer = tsv_writer(tsvfile_1)
@@ -2190,6 +2282,11 @@ class BacDiveTransform(Transform):
                     # Extract BacDive-ID from the new format, fallback to index if not found
                     bacdive_id = general_info.get("BacDive-ID", index)
                     key = str(bacdive_id)
+                    chemical_conflict_context = {
+                        "record_id": bacdive_id,
+                        "record_position": index + 1,
+                        "diagnostics": chemical_conflicts,
+                    }
 
                     dsm_number = general_info.get(DSM_NUMBER)
 
@@ -3051,6 +3148,7 @@ class BacDiveTransform(Transform):
                             node_writer,
                             edge_writer,
                             record_reference_dois,
+                            conflict_context=chemical_conflict_context,
                         )
 
                     if phys_and_metabolism_metabolite_production:
@@ -3504,13 +3602,25 @@ class BacDiveTransform(Transform):
                         self.ar_edges_data_to_write = []
 
                         if isinstance(phys_and_metabolism_antibiotic_resistance, list):
-                            for item in phys_and_metabolism_antibiotic_resistance:
+                            for item_index, item in enumerate(phys_and_metabolism_antibiotic_resistance):
                                 if item.get(CHEBI_KEY):
-                                    self._process_antibiotic_resistance(item, organism_id, key)
+                                    self._process_antibiotic_resistance(
+                                        item,
+                                        organism_id,
+                                        key,
+                                        references=record_reference_dois,
+                                        source_path=[PHYSIOLOGY_AND_METABOLISM, ANTIBIOTIC_RESISTANCE, item_index],
+                                        conflict_context=chemical_conflict_context,
+                                    )
                         elif isinstance(phys_and_metabolism_antibiotic_resistance, dict):
                             if phys_and_metabolism_antibiotic_resistance.get(CHEBI_KEY):
                                 self._process_antibiotic_resistance(
-                                    phys_and_metabolism_antibiotic_resistance, organism_id, key
+                                    phys_and_metabolism_antibiotic_resistance,
+                                    organism_id,
+                                    key,
+                                    references=record_reference_dois,
+                                    source_path=[PHYSIOLOGY_AND_METABOLISM, ANTIBIOTIC_RESISTANCE],
+                                    conflict_context=chemical_conflict_context,
                                 )
 
                         if self.ar_edges_data_to_write and self.ar_nodes_data_to_write:

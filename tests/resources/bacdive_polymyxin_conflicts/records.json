@@ -1,0 +1,24 @@
+[
+  {
+    "General": {"BacDive-ID": 76},
+    "Physiology and metabolism": {
+      "antibiotic resistance": [
+        {"@ref": 22961, "ChEBI": 8309, "metabolite": "polymyxin b", "is antibiotic": "yes", "is resistant": "yes", "resistance conc.": "300 Unit"}
+      ]
+    },
+    "Reference": [
+      {"@id": 22961, "authors": "Seung-Hee Yoo,Hang-Yeon Weon,Hyung-Jun Noh,Seung-Beom Hong,Chang-Muk Lee,Byung-Yong Kim,Soon-Wo Kwon,Seung-Joo Go", "title": "Roseomonas aerilata sp. nov., isolated from an air sample", "journal": "IJSEM 58: 1482-1485 2008", "doi/url": "10.1099/ijs.0.65385-0", "pubmed": 18523199}
+    ]
+  },
+  {
+    "General": {"BacDive-ID": 167665},
+    "Physiology and metabolism": {
+      "metabolite utilization": [
+        {"@ref": 69534, "Chebi-ID": 8309, "metabolite": "polymyxin b", "utilization activity": "-", "kind of utilization tested": "assimilation"}
+      ]
+    },
+    "Reference": [
+      {"@id": 69534, "authors": "Lingping Zhuang, Lianzhong Luo", "title": "Roseovarius spongiae sp. nov., a bacterium isolated from marine sponge", "doi/url": "10.1099/ijsem.0.003750"}
+    ]
+  }
+]

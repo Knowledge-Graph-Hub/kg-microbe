@@ -1,0 +1,39 @@
+[
+  {
+    "General": {"BacDive-ID": 1, "keywords": ["fixture keyword"]},
+    "Reference": [
+      {"@id": 7, "doi/url": "10.1234/POSITIVE"},
+      {"@id": "8", "doi/url": "https://doi.org/10.1234/negative"},
+      {"@id": 9, "doi/url": "doi:10.1234/positive-second"},
+      {"@id": 99, "doi/url": "10.1234/unrelated"}
+    ],
+    "Physiology and metabolism": {
+      "enzymes": {"@ref": 99, "ec": "1.1.1.1", "activity": "+", "value": "fixture enzyme"},
+      "oxygen tolerance": "fixture phenotype",
+      "metabolite utilization": [
+        {"@ref": "7", "Chebi-ID": 17234, "metabolite": "glucose", "kind of utilization tested": "carbon source", "utilization activity": "+"},
+        {"@ref": 8, "Chebi-ID": 17234, "metabolite": "glucose", "kind of utilization tested": "carbon source", "utilization activity": "-"},
+        {"@ref": 9, "Chebi-ID": 17234, "metabolite": "glucose", "kind of utilization tested": "carbon source", "utilization activity": "+"},
+        {"@ref": 404, "Chebi-ID": 17234, "metabolite": "glucose", "kind of utilization tested": "carbon source", "utilization activity": "+"},
+        {"Chebi-ID": 15377, "metabolite": "water", "kind of utilization tested": "carbon source", "utilization activity": "-"}
+      ]
+    }
+  },
+  {
+    "General": {"BacDive-ID": 2, "keywords": ["fixture keyword"]},
+    "Reference": {"@id": "7", "doi/url": "http://dx.doi.org/10.1234/second-record"},
+    "Physiology and metabolism": {
+      "enzymes": {"ec": "1.1.1.1", "activity": "+", "value": "fixture enzyme"},
+      "oxygen tolerance": "fixture phenotype",
+      "metabolite utilization": {"@ref": 7, "Chebi-ID": 17234, "metabolite": "glucose", "kind of utilization tested": "carbon source", "utilization activity": "+"}
+    }
+  },
+  {
+    "General": {"BacDive-ID": 3, "keywords": ["fixture keyword"]},
+    "Physiology and metabolism": {
+      "enzymes": {"ec": "1.1.1.1", "activity": "+", "value": "fixture enzyme"},
+      "oxygen tolerance": "fixture phenotype",
+      "metabolite utilization": {"@ref": 7, "Chebi-ID": 17234, "metabolite": "glucose", "kind of utilization tested": "carbon source", "utilization activity": "-"}
+    }
+  }
+]

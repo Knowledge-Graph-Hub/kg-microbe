@@ -2,14 +2,21 @@
 
 ## Status and scope
 
-The selected upstream release is
-[`mim-sssom-2026-09-21`](https://github.com/CultureBotAI/MediaIngredientMech/releases/tag/mim-sssom-2026-09-21),
-source commit `484082707b2a175cffebad3cbf46f3b39f66ca3d`.
-`mappings/mim_reviewed_release.json` pins its manifest independently of the
-downloaded files. It authorizes **candidate generation only**, not publication.
-The committed runtime mappings are not replaced merely by adding this pin.
+The selected upstream input is the validated immutable export of
+[commit `1848b0fe521bc2462f165912fcf92d09ad9a8cec`](https://github.com/CultureBotAI/MediaIngredientMech/commit/1848b0fe521bc2462f165912fcf92d09ad9a8cec),
+not a newly published release tag. Its [locked-runtime validation run](https://github.com/CultureBotAI/MediaIngredientMech/actions/runs/36109949250)
+passed review reproduction, complete export validation and SSSOM schema checks.
+The user explicitly selected immutable-commit/export consumption; the schema-v2
+`mappings/mim_reviewed_release.json` records that origin without relabeling the
+old September 21 release. Its `candidate_only` mode controls candidate generation,
+not permission to publish or silently replace production mappings. Paired
+production promotion remains the separate reviewed step below.
 
-The release contains 1,763 supported exact mappings and 1,255 withheld rows.
+The complete export contains 1,747 supported exact mappings and 1,252 withheld
+rows (2,999 source assertions). Its three product files are byte-identical to the
+previously reviewed `a8b26f007cdf5bdc7529ab13888d611f359e6aad` export; the manifest's
+review hash changed with later upstream verifier provenance. Do not confuse this
+full table with the separate opt-in 20-case ingredient-scope/history bundle.
 The supported table is the only approved MIM mapping input. The withheld table
 is a review backlog, **not a set of globally false assertions**. An independent
 ontology/source can still support a claim absent from the supported table.
@@ -18,18 +25,23 @@ Its review is agent-assisted/adversarial; do not label it human curator signoff.
 
 ## Build a candidate
 
-From the repository root, download the complete pinned bundle to a new directory:
+From the repository root, download the exact source archive and complete validated
+bundle to new evidence locations under `data/`:
 
 ```bash
-gh release download mim-sssom-2026-09-21 \
+curl --fail --location \
+  --output data/mim-source-1848b0fe.tar.gz \
+  https://codeload.github.com/CultureBotAI/MediaIngredientMech/tar.gz/1848b0fe521bc2462f165912fcf92d09ad9a8cec
+
+gh run download 36109949250 \
   --repo CultureBotAI/MediaIngredientMech \
-  --dir data/mim-supported-2026-09-21 \
-  --pattern manifest.json --pattern ingredient_mappings.sssom.tsv \
-  --pattern withheld_mappings.sssom.tsv --pattern mapping-dispositions.tsv
+  --name mim-reviewed-sssom \
+  --dir data/mim-reviewed-1848b0fe
 
 poetry run python -m scripts.refresh_reviewed_mim \
-  --release-directory data/mim-supported-2026-09-21 \
-  --output-directory data/mim-candidate-2026-09-21
+  --source-archive data/mim-source-1848b0fe.tar.gz \
+  --release-directory data/mim-reviewed-1848b0fe \
+  --output-directory data/mim-candidate-1848b0fe
 ```
 
 The output directory must not exist. No sibling checkout or live ontology service
@@ -41,8 +53,57 @@ falling back to historical MIM exports.
 Validation checks manifest/product hashes, SSSOM structure and CURIE prefixes,
 supported-only predicate scope, counts, and the lossless supported/withheld
 partition against complete-row hashes in `mapping-dispositions.tsv`.
-Source/review hashes in the manifest remain publisher provenance claims: those
-original evidence files are not part of this bundle and are not re-reviewed here.
+For schema-v2 pins, validation additionally checks the entire source archive hash,
+commit-named archive root, safe unique regular-file/directory members, the original
+source SSSOM and review bytes against the manifest, and the pinned lock/workflow
+bytes. The source archive is streamed without extracting or executing its code.
+Malformed, missing, unsafe, floating or mismatched provenance aborts before
+candidate output. Pin, source archive and CLI-code hashes are added to the atomic
+candidate report's before/after input checks; verified provenance is retained in
+`report.json` under `upstream_provenance`. This verifies source binding, not a new
+scientific review or an online assertion that CI remains current.
+
+## Immutable origin and reproducible export recipe
+
+The versioned pin keeps strict legacy schema-v1 tagged-release support unchanged.
+Schema v2 requires `origin=immutable_commit_export`, an exact 40-hex commit,
+commit-addressed archive URL/SHA256, manifest and all three product SHA256 values,
+the `reviewed_sssom_v1` recipe, Python 3.13, pinned `uv.lock` and workflow hashes,
+and the upstream validation-run URL. Unknown fields, duplicate JSON keys,
+unrecognized recipes and publication modes fail closed. Schema v1 does not accept
+`--source-archive`; schema v2 requires it. The legacy additive consolidator remains
+disabled while either version of the pin exists.
+
+Pinned archive SHA256:
+`33ff549d7a2bf34e943156e800e00149736a30dfc0a974f3ca9a9884358bfef2`.
+Pinned complete manifest SHA256:
+`9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af`.
+
+The CI artifact is a convenient copy, not the sole durable origin: it expires.
+If unavailable, retrieve the same commit-addressed source archive, verify its
+SHA256 against the independently committed pin **before extraction/execution**,
+and extract into a new directory beneath `data/`. Do not accept a different
+archive hash, floating main checkout or silently regenerated review. Within the
+verified source root, `reviewed_sssom_v1` means the following exact workflow:
+
+```bash
+env UV_PYTHON=3.13 uv sync --frozen
+uv run --frozen python reports/sssom_completion_20260921/assemble_review.py --check
+uv run --frozen python -m mediaingredientmech.export.reviewed_sssom \
+  --review reports/sssom_completion_20260921/review.json \
+  --output output/mim-reviewed-sssom
+uv run --frozen python -m mediaingredientmech.export.reviewed_sssom \
+  --review reports/sssom_completion_20260921/review.json \
+  --output output/mim-reviewed-sssom --validate-only
+uv run --frozen python scripts/validate_reviewed_sssom_schema.py output/mim-reviewed-sssom
+```
+
+Pass that complete output directory and the original archive to the KGM candidate
+CLI. Its independently committed hashes must still match; the exporter does not
+get permission to rewrite a pin based on newly generated bytes. Source and review
+files are present in this exact immutable archive, so their binding is checked
+locally rather than assumed from CI metadata. Do not reuse the September 21
+release URL or swap the separate scoped ingredient bundle into this workflow.
 
 ## Why a simple file replacement is unsafe
 

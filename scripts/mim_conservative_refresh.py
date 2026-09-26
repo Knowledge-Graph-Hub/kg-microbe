@@ -520,6 +520,8 @@ def build_conservative_candidate(
     ontology_paths: tuple[Path, ...],
     independent_sources: tuple[IndependentSource, ...],
     output_directory: Path,
+    provenance_inputs: dict[Path, str] | None = None,
+    upstream_provenance: dict | None = None,
 ) -> CandidateResult:
     """
     Atomically create a separate candidate, historical quarantine, and audit report.
@@ -540,6 +542,19 @@ def build_conservative_candidate(
         raise ValueError("At least one current ontology authority file is required")
     if any(source.kind not in INDEPENDENT_SOURCE_KINDS for source in independent_sources):
         raise ValueError("Unknown independent source kind")
+    if bool(provenance_inputs) != bool(upstream_provenance):
+        raise ValueError("Upstream provenance requires paired pinned input fingerprints")
+    pinned_provenance = {}
+    for path, digest in (provenance_inputs or {}).items():
+        path = Path(path)
+        if (
+            path.is_symlink()
+            or not path.is_file()
+            or not isinstance(digest, str)
+            or not re.fullmatch(r"[0-9a-f]{64}", digest)
+        ):
+            raise ValueError("Invalid pinned provenance input")
+        pinned_provenance[str(path.resolve())] = digest
     bundle = validate_reviewed_bundle(release_directory, expected_manifest_sha256=expected_manifest_sha256)
     repo_root = Path(__file__).resolve().parents[1]
     build_context = reproducibility_context(repo_root)
@@ -560,7 +575,10 @@ def build_conservative_candidate(
         *context_paths(repo_root),
     ]
     inputs.extend(bundle.directory / name for name in ("manifest.json", *bundle.manifest["files"]))
+    inputs.extend(Path(path) for path in pinned_provenance)
     fingerprints = {str(path): _hash(path) for path in inputs}
+    if any(fingerprints[path] != digest for path, digest in pinned_provenance.items()):
+        raise ValueError("Upstream provenance input changed after pin verification")
     verified_release_hashes = {"manifest.json": bundle.manifest_sha256, **bundle.manifest["files"]}
     if any(fingerprints[str(bundle.directory / name)] != value for name, value in verified_release_hashes.items()):
         raise ValueError("Reviewed release changed after validation")
@@ -848,6 +866,7 @@ def build_conservative_candidate(
             "review_sha256": bundle.review_sha256,
             "input_sha256": fingerprints,
             "reproducibility_context": build_context,
+            "upstream_provenance": upstream_provenance,
             "candidate_sha256": _hash(candidate),
             "quarantine_sha256": _hash(quarantine),
             "counts": stats,
@@ -876,7 +895,13 @@ def build_conservative_candidate(
                 "Historical quarantine covers entities and undirected exact-identity closure, including shared xrefs.",
                 "Absent historical provenance cannot be recovered; current direct evidence replaces affected claims.",
                 "No synonym propagation, roles, components, or scientific approval of withheld mappings is performed.",
-                "Source/review hashes are publisher claims; original scientific evidence is outside this bundle.",
+                (
+                    "Source/review bytes were bound to the pinned source archive; scientific review is not repeated."
+                    if upstream_provenance
+                    and upstream_provenance.get("verification") == "verified_archived_source_and_manifest_binding"
+                    else "Source/review hashes are publisher claims; "
+                    "original scientific evidence is outside this bundle."
+                ),
                 "The caller must establish independent input lineage; a manual/legacy filename does not prove it.",
                 "Native xref annotations inform quarantine scope only; new identity claims require explicit same_as.",
                 "preserved_rows counts retained assertions including metadata-repaired copies, not unchanged bytes; "

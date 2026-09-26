@@ -144,10 +144,10 @@ adapter loads). Default paths:</p>
 <td><p>Terminal-node stubs for <strong>placeholder</strong> CURIEs only — resolved cross-ref targets (NCBITaxon, GTDB, bacdive, GOLD, IMG, CHEBI) come from their owner transforms. Typical size: ~5 K nodes.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">edges.tsv</span></code></p></td>
-<td><p>All emitted edges: crosswalk (<code class="docutils literal notranslate"><span class="pre">biolink:close_match</span></code>), metabolism (<code class="docutils literal notranslate"><span class="pre">biolink:capable_of</span></code> / <code class="docutils literal notranslate"><span class="pre">biolink:produces</span></code> / <code class="docutils literal notranslate"><span class="pre">biolink:consumes</span></code>), BacDive-snapshot replay (<code class="docutils literal notranslate"><span class="pre">biolink:has_phenotype</span></code>). Typical size: ~510 K edges.</p></td>
+<td><p>Crosswalk, metabolism and column-scoped BacDive source-attribute assertions. Snapshot tokens are not automatically interpreted as phenotypes. Counts depend on the source build.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">unmapped_labels.tsv</span></code></p></td>
-<td><p>Per-run curation queue — every raw label that fell through the mapping chain and landed as a <code class="docutils literal notranslate"><span class="pre">kgmicrobe.{pathway,compound,trait}:&lt;slug&gt;</span></code> placeholder, sorted by occurrence descending. See “Curation loop” below.</p></td>
+<td><p>Per-run curation queue — unresolved pathways/compounds and preserved source attributes, with <code class="docutils literal notranslate"><span class="pre">kgmicrobe.{pathway,compound,source_attribute}:</span></code> IDs, sorted by occurrence descending. See “Curation loop” below.</p></td>
 </tr>
 </tbody>
 </table>
@@ -180,15 +180,15 @@ the add-transform skill mandates for every transform:</p>
 <td><p>(not yet integrated — see follow-up below)</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">kgmicrobe.pathway:&lt;slug&gt;</span></code></p></td>
 </tr>
-<tr class="row-even"><td><p>BacDive trait snapshot</p></td>
-<td><p>(v1: always placeholder — fresher <code class="docutils literal notranslate"><span class="pre">bacdive</span></code> transform is authoritative)</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">kgmicrobe.trait:&lt;slug&gt;</span></code></p></td>
+<tr class="row-even"><td><p>BacDive snapshot</p></td>
+<td><p>Column-scoped source field and token, typed <code class="docutils literal notranslate"><span class="pre">biolink:Attribute</span></code>; interpretation requires the field’s coding scheme</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">kgmicrobe.source_attribute:&lt;column-and-token-slug&gt;</span></code></p></td>
 </tr>
 </tbody>
 </table>
-<p>The <code class="docutils literal notranslate"><span class="pre">unmapped_labels.tsv</span></code> report shows where each facet is landing. On
-a fresh run against the live database, mapping rate is ~54 % (~511 K
-mapped edges vs ~428 K unmapped occurrences); see
+<p>The <code class="docutils literal notranslate"><span class="pre">unmapped_labels.tsv</span></code> report shows where each facet is landing. Recompute
+coverage from a fresh build; historical mapping rates predate the current
+source-attribute model and must not be used as current acceptance evidence. See
 <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/650">issue #650</a>
 for the curation gap.</p>
 </section>
@@ -203,7 +203,7 @@ poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> 
 <span class="c1"># 2. Or split by facet so each batch hands to the right target tool:</span>
 poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/dump_unmapped_microbedecoder_labels.py<span class="w"> </span>--prefix<span class="w"> </span>pathway
 poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/dump_unmapped_microbedecoder_labels.py<span class="w"> </span>--prefix<span class="w"> </span>compound
-poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/dump_unmapped_microbedecoder_labels.py<span class="w"> </span>--prefix<span class="w"> </span>trait
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/dump_unmapped_microbedecoder_labels.py<span class="w"> </span>--prefix<span class="w"> </span>source_attribute
 </pre></div>
 </div>
 <p>Output lands at <code class="docutils literal notranslate"><span class="pre">mappings/microbedecoder_unmapped_labels_to_curate.tsv</span></code>
@@ -217,7 +217,7 @@ pattern). Columns:</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">placeholder_curie</span></code></p></td>
-<td><p>The <code class="docutils literal notranslate"><span class="pre">kgmicrobe.{pathway,compound,trait}:&lt;slug&gt;</span></code> from the last run</p></td>
+<td><p>The unchanged pathway, compound or column-scoped source-attribute ID from the last run</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">category</span></code></p></td>
 <td><p>Biolink category the placeholder carried</p></td>
@@ -252,15 +252,16 @@ column to <code class="docutils literal notranslate"><span class="pre">berkeleyb
 pre-populate the top labels. Once merged, the transform’s
 METPO-alias hookup (currently marked as a v2 follow-up in
 <code class="docutils literal notranslate"><span class="pre">_resolve_metabolism_curie</span></code>) will promote these placeholders.</p></li>
-<li><p><strong>compound</strong> — add rows to <code class="docutils literal notranslate"><span class="pre">mappings/canonical/chemical_mappings.tsv</span></code>
-or <code class="docutils literal notranslate"><span class="pre">mappings/canonical/special_chemical_mappings.tsv</span></code> targeting the
-right CHEBI CURIE. Next run promotes them automatically via
-<code class="docutils literal notranslate"><span class="pre">ChemicalMappingLoader.find_chebi_by_name()</span></code>.</p></li>
-<li><p><strong>trait</strong> — the BacDive-snapshot column values (24 columns × per-strain
-literals). Most belong in <code class="docutils literal notranslate"><span class="pre">kgmicrobe.trait</span></code> yaml under
-<code class="docutils literal notranslate"><span class="pre">custom_curies.yaml</span></code> if they’re stable phenotype tokens; the
-long tail (numeric temperatures, free-text) is genuinely per-strain
-data and stays as placeholders.</p></li>
+<li><p><strong>compound</strong> — review identity evidence through
+<a class="reference internal" href="MIM_REVIEWED_RELEASE.html"><span class="std std-doc">the supported MIM / unified mapping workflow</span></a>.
+A curation queue row is not by itself an active resolver mapping.</p></li>
+<li><p><strong>source_attribute</strong> — review the BacDive-snapshot field together with its
+exact token and coding scheme. Preserve column context and do not interpret
+a numeric code, zero, assay token or preparation as a generic phenotype or
+chemical identity merely because its label matches an ontology synonym.
+The legacy <code class="docutils literal notranslate"><span class="pre">--prefix</span> <span class="pre">trait</span></code> filter remains compatible with both old
+<code class="docutils literal notranslate"><span class="pre">kgmicrobe.trait:</span></code> reports and current source-attribute reports; it does
+not rewrite IDs or categories.</p></li>
 </ul>
 </section>
 <section id="verification">

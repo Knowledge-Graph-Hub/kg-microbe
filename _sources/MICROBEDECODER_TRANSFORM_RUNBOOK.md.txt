@@ -64,8 +64,8 @@ adapter loads). Default paths:
 | File | Description |
 |------|-------------|
 | `nodes.tsv` | Terminal-node stubs for **placeholder** CURIEs only — resolved cross-ref targets (NCBITaxon, GTDB, bacdive, GOLD, IMG, CHEBI) come from their owner transforms. Typical size: ~5 K nodes. |
-| `edges.tsv` | All emitted edges: crosswalk (`biolink:close_match`), metabolism (`biolink:capable_of` / `biolink:produces` / `biolink:consumes`), BacDive-snapshot replay (`biolink:has_phenotype`). Typical size: ~510 K edges. |
-| `unmapped_labels.tsv` | Per-run curation queue — every raw label that fell through the mapping chain and landed as a `kgmicrobe.{pathway,compound,trait}:<slug>` placeholder, sorted by occurrence descending. See "Curation loop" below. |
+| `edges.tsv` | Crosswalk, metabolism and column-scoped BacDive source-attribute assertions. Snapshot tokens are not automatically interpreted as phenotypes. Counts depend on the source build. |
+| `unmapped_labels.tsv` | Per-run curation queue — unresolved pathways/compounds and preserved source attributes, with `kgmicrobe.{pathway,compound,source_attribute}:` IDs, sorted by occurrence descending. See "Curation loop" below. |
 
 The transform prints a one-line summary at end of run:
 
@@ -87,11 +87,11 @@ the add-transform skill mandates for every transform:
 |---|---|---|
 | Chemical (end-products, substrates) | `ChemicalMappingLoader.find_chebi_by_name()` | `kgmicrobe.compound:<slug>` |
 | Pathway (`Type_of_metabolism` from Bergey/VPI/Literature/FAPROTAX) | (not yet integrated — see follow-up below) | `kgmicrobe.pathway:<slug>` |
-| BacDive trait snapshot | (v1: always placeholder — fresher `bacdive` transform is authoritative) | `kgmicrobe.trait:<slug>` |
+| BacDive snapshot | Column-scoped source field and token, typed `biolink:Attribute`; interpretation requires the field's coding scheme | `kgmicrobe.source_attribute:<column-and-token-slug>` |
 
-The `unmapped_labels.tsv` report shows where each facet is landing. On
-a fresh run against the live database, mapping rate is ~54 % (~511 K
-mapped edges vs ~428 K unmapped occurrences); see
+The `unmapped_labels.tsv` report shows where each facet is landing. Recompute
+coverage from a fresh build; historical mapping rates predate the current
+source-attribute model and must not be used as current acceptance evidence. See
 [issue #650](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/650)
 for the curation gap.
 
@@ -108,7 +108,7 @@ poetry run python scripts/dump_unmapped_microbedecoder_labels.py
 # 2. Or split by facet so each batch hands to the right target tool:
 poetry run python scripts/dump_unmapped_microbedecoder_labels.py --prefix pathway
 poetry run python scripts/dump_unmapped_microbedecoder_labels.py --prefix compound
-poetry run python scripts/dump_unmapped_microbedecoder_labels.py --prefix trait
+poetry run python scripts/dump_unmapped_microbedecoder_labels.py --prefix source_attribute
 ```
 
 Output lands at `mappings/microbedecoder_unmapped_labels_to_curate.tsv`
@@ -117,7 +117,7 @@ pattern). Columns:
 
 | Column | Meaning |
 |---|---|
-| `placeholder_curie` | The `kgmicrobe.{pathway,compound,trait}:<slug>` from the last run |
+| `placeholder_curie` | The unchanged pathway, compound or column-scoped source-attribute ID from the last run |
 | `category` | Biolink category the placeholder carried |
 | `label` | Raw source label |
 | `source_columns` | Pipe-set of source columns this label appeared under |
@@ -134,15 +134,16 @@ Curator workflow by facet:
   pre-populate the top labels. Once merged, the transform's
   METPO-alias hookup (currently marked as a v2 follow-up in
   `_resolve_metabolism_curie`) will promote these placeholders.
-- **compound** — add rows to `mappings/canonical/chemical_mappings.tsv`
-  or `mappings/canonical/special_chemical_mappings.tsv` targeting the
-  right CHEBI CURIE. Next run promotes them automatically via
-  `ChemicalMappingLoader.find_chebi_by_name()`.
-- **trait** — the BacDive-snapshot column values (24 columns × per-strain
-  literals). Most belong in `kgmicrobe.trait` yaml under
-  `custom_curies.yaml` if they're stable phenotype tokens; the
-  long tail (numeric temperatures, free-text) is genuinely per-strain
-  data and stays as placeholders.
+- **compound** — review identity evidence through
+  [the supported MIM / unified mapping workflow](MIM_REVIEWED_RELEASE.md).
+  A curation queue row is not by itself an active resolver mapping.
+- **source_attribute** — review the BacDive-snapshot field together with its
+  exact token and coding scheme. Preserve column context and do not interpret
+  a numeric code, zero, assay token or preparation as a generic phenotype or
+  chemical identity merely because its label matches an ontology synonym.
+  The legacy `--prefix trait` filter remains compatible with both old
+  `kgmicrobe.trait:` reports and current source-attribute reports; it does
+  not rewrite IDs or categories.
 
 ## Verification
 

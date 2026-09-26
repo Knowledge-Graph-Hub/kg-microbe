@@ -1,0 +1,18 @@
+{
+  "id": 5787,
+  "name": "Trace elements solution",
+  "volume": 1000,
+  "recipe": [
+    {"recipe_order": 1, "compound": "Fe(NH4)2(SO4)2 x 6 H2O", "compound_id": 247, "amount": 784, "unit": "mg", "g_l": 0.784, "optional": 0},
+    {"recipe_order": 2, "compound": "NiCl2 x 2 H2O", "compound_id": 981, "amount": 284, "unit": "mg", "g_l": 0.284, "mmol_l": 2.19138, "optional": 0},
+    {"recipe_order": 3, "compound": "CoCl2 x 6 H2O", "compound_id": 38, "amount": 28, "unit": "mg", "g_l": 0.028, "mmol_l": 0.215652, "optional": 0},
+    {"recipe_order": 4, "compound": "NiCl2 x 2 H2O", "compound_id": 981, "amount": 166, "unit": "mg", "g_l": 0.166, "mmol_l": 1.28087, "optional": 0},
+    {"recipe_order": 5, "compound": "MnCl2 x 4 H2O", "compound_id": 36, "amount": 99, "unit": "mg", "g_l": 0.099, "mmol_l": 0.50024, "optional": 0},
+    {"recipe_order": 6, "compound": "ZnSO4 x 7 H2O", "compound_id": 35, "amount": 144, "unit": "mg", "g_l": 0.144, "mmol_l": 0.500763, "optional": 0},
+    {"recipe_order": 7, "compound": "Na2SeO4", "compound_id": 375, "amount": 95, "unit": "mg", "g_l": 0.095, "mmol_l": 0.502779, "optional": 0},
+    {"recipe_order": 8, "compound": "Na2WO4 x 2 H2O", "compound_id": 249, "amount": 33, "unit": "mg", "g_l": 0.033, "mmol_l": 0.100045, "optional": 0},
+    {"recipe_order": 9, "compound": "Na2MoO4 x 2 H2O", "compound_id": 9, "amount": 24, "unit": "mg", "g_l": 0.024, "mmol_l": 0.099194, "optional": 0},
+    {"recipe_order": 10, "compound": "H3BO3", "compound_id": 37, "amount": 6, "unit": "mg", "g_l": 0.006, "mmol_l": 0.0970246, "optional": 0},
+    {"recipe_order": 11, "compound": "CuCl2 x 2 H2O", "compound_id": 39, "amount": 2, "unit": "mg", "g_l": 0.002, "mmol_l": 0.0117314, "optional": 0}
+  ]
+}

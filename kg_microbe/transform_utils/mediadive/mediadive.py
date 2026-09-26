@@ -121,6 +121,8 @@ from kg_microbe.transform_utils.constants import (
     SOLUTION_KEY,
     SOLUTIONS_COLUMN,
     SOLUTIONS_KEY,
+    SOURCE_ASSERTION_ID_COLUMN,
+    SOURCE_RECORD_COLUMN,
     SPECIES,
     STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
@@ -168,7 +170,15 @@ class MediaDiveTransform(Transform):
         # Extend edge schema with `value`/`unit` so solution→ingredient edges
         # can carry the recipe's amount + unit (g/l, mmol/l, ml/l, ...).
         # Other edge sites in this transform leave both columns empty.
-        self.edge_header = self.edge_header + ["value", "unit", PUBLICATIONS_COLUMN]
+        self.edge_header = self.edge_header + [
+            "value",
+            "unit",
+            PUBLICATIONS_COLUMN,
+            SOURCE_ASSERTION_ID_COLUMN,
+            SOURCE_RECORD_COLUMN,
+            GRAMS_PER_LITER_COLUMN,
+            MMOL_PER_LITER_COLUMN,
+        ]
         # No `requests_cache.install_cache()` here: that monkeypatched
         # `requests.Session` for the whole process from a constructor, so every
         # HTTP client in the run became a CachedSession and a test that merely
@@ -686,12 +696,40 @@ class MediaDiveTransform(Transform):
 
     def get_compounds_of_solution(self, id: str):
         """
-        Get ingredients of solutions via bulk data or MediaDive API.
+        Return the historical unique-display-name view, refusing lossy collisions.
 
-        First checks bulk downloaded data, then makes API call if needed.
+        Production emission uses ``get_solution_recipe_occurrences`` instead.
+        This compatibility view is safe only when every display name is unique.
 
         :param id: ID of solution.
-        :return: Dictionary of {compound_name: compound_id}.
+        :return: Dictionary of display names to resolved identities and quantities.
+        :raises ValueError: Two recipe occurrences have the same display name.
+        """
+        ingredients = {}
+        for occurrence in self.get_solution_recipe_occurrences(id):
+            name = occurrence[NAME_COLUMN]
+            if name in ingredients:
+                raise ValueError(
+                    f"Solution {id} has duplicate recipe display name {name!r}; "
+                    "use get_solution_recipe_occurrences() to preserve every occurrence"
+                )
+            ingredients[name] = {
+                column: occurrence[column]
+                for column in (ID_COLUMN, AMOUNT_COLUMN, UNIT_COLUMN, GRAMS_PER_LITER_COLUMN, MMOL_PER_LITER_COLUMN)
+            }
+        return ingredients
+
+    def get_solution_recipe_occurrences(self, id: str):
+        """
+        Resolve every recipe occurrence in source-list order without name deduplication.
+
+        Assertion IDs use the owning solution and one-based raw list position,
+        not the optional/nonunique source recipe_order. The exact source item is
+        retained as canonical JSON evidence, including original name, source ID,
+        source order, optional flag and all supplied quantity fields.
+
+        :param id: ID of solution.
+        :return: Ordered occurrence dictionaries with resolved IDs and source evidence.
         """
         # Check bulk downloaded data first
         if self.using_bulk_data and id in self.solutions_data:
@@ -702,10 +740,10 @@ class MediaDiveTransform(Transform):
             url = MEDIADIVE_REST_API_BASE_URL + SOLUTION + id
             data = self._get_mediadive_json(url)
 
-        ingredients_dict = {}
+        occurrences = []
         if RECIPE_KEY not in data or not isinstance(data[RECIPE_KEY], list):
-            return ingredients_dict
-        for item in data[RECIPE_KEY]:
+            return occurrences
+        for position, item in enumerate(data[RECIPE_KEY], 1):
             if COMPOUND_ID_KEY in item and item[COMPOUND_ID_KEY] is not None:
                 # Display cleanup must not erase chemical formula/scope before
                 # lookup, or mutate the cached source for later calls (#1167).
@@ -715,13 +753,7 @@ class MediaDiveTransform(Transform):
                     if isinstance(item[COMPOUND_KEY], str)
                     else item[COMPOUND_KEY]
                 )
-                ingredients_dict[display_name] = {
-                    ID_COLUMN: self.standardize_compound_id(str(item[COMPOUND_ID_KEY]), source_name),
-                    AMOUNT_COLUMN: item.get(AMOUNT_COLUMN),
-                    UNIT_COLUMN: item.get(UNIT_COLUMN),
-                    GRAMS_PER_LITER_COLUMN: item.get(GRAMS_PER_LITER_COLUMN),
-                    MMOL_PER_LITER_COLUMN: item.get(MMOL_PER_LITER_COLUMN),
-                }
+                ingredient_id = self.standardize_compound_id(str(item[COMPOUND_ID_KEY]), source_name)
             elif SOLUTION_ID_KEY in item and item[SOLUTION_ID_KEY] is not None:
                 # Resolve the original scope; normalize only the display key.
                 if isinstance(item[SOLUTION_KEY], str):
@@ -748,16 +780,25 @@ class MediaDiveTransform(Transform):
                     MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY]),
                 )
 
-                ingredients_dict[solution_name] = {
-                    ID_COLUMN: solution_id,
+                display_name = solution_name
+                ingredient_id = solution_id
+            else:
+                continue
+            occurrences.append(
+                {
+                    NAME_COLUMN: display_name,
+                    ID_COLUMN: ingredient_id,
                     AMOUNT_COLUMN: item.get(AMOUNT_COLUMN),
                     UNIT_COLUMN: item.get(UNIT_COLUMN),
                     GRAMS_PER_LITER_COLUMN: item.get(GRAMS_PER_LITER_COLUMN),
                     MMOL_PER_LITER_COLUMN: item.get(MMOL_PER_LITER_COLUMN),
+                    SOURCE_ASSERTION_ID_COLUMN: f"{MEDIADIVE_SOLUTION_PREFIX}{id}#recipe/{position}",
+                    SOURCE_RECORD_COLUMN: json.dumps(
+                        item, ensure_ascii=False, allow_nan=False, sort_keys=True, separators=(",", ":")
+                    ),
                 }
-            else:
-                continue
-        return ingredients_dict
+            )
+        return occurrences
 
     def _ingredient_identity_allowed(self, name: str, target: str) -> bool:
         """Check every fallback against explicit hydration scope and curated identity policy."""
@@ -1230,19 +1271,20 @@ class MediaDiveTransform(Transform):
                         solution[ID_COLUMN]: solution[NAME_COLUMN].strip().translate(self.translation_table)
                         for solution in json_obj[SOLUTIONS_KEY]
                     }
-                    ingredients_dict = {}
+                    ingredient_occurrences = []
+                    ingredient_declarations = {}
                     solution_ingredient_edges = []
 
                     for solution_id in solutions_dict.keys():
                         solution_curie = MEDIADIVE_SOLUTION_PREFIX + str(solution_id)
-                        # Per-solution ingredients drive edge emission so a solution
-                        # only links to its own recipe items. ingredients_dict still
-                        # accumulates across the medium for downstream node creation
-                        # and CHEBI role enrichment; using it for edges produced
-                        # cross-solution leakage (e.g. medium 92a's solution:161
-                        # inherited solution:5629's vitamins).
-                        solution_ingredients = self.get_compounds_of_solution(str(solution_id))
-                        ingredients_dict.update(solution_ingredients)
+                        # Every source occurrence drives its own assertion, even
+                        # equal-name/equal-quantity repeats. Node declarations are
+                        # accumulated separately by identity and display label;
+                        # another solution cannot overwrite a same-named target.
+                        solution_ingredients = self.get_solution_recipe_occurrences(str(solution_id))
+                        ingredient_occurrences.extend(solution_ingredients)
+                        for occurrence in solution_ingredients:
+                            ingredient_declarations[(occurrence[ID_COLUMN], occurrence[NAME_COLUMN])] = occurrence
                         solution_ingredient_edges.extend(
                             [
                                 [
@@ -1255,8 +1297,13 @@ class MediaDiveTransform(Transform):
                                     MANUAL_AGENT,
                                     v.get(AMOUNT_COLUMN) if v.get(AMOUNT_COLUMN) is not None else "",
                                     v.get(UNIT_COLUMN) if v.get(UNIT_COLUMN) is not None else "",
+                                    "",
+                                    v[SOURCE_ASSERTION_ID_COLUMN],
+                                    v[SOURCE_RECORD_COLUMN],
+                                    v.get(GRAMS_PER_LITER_COLUMN) if v.get(GRAMS_PER_LITER_COLUMN) is not None else "",
+                                    v.get(MMOL_PER_LITER_COLUMN) if v.get(MMOL_PER_LITER_COLUMN) is not None else "",
                                 ]
-                                for _, v in solution_ingredients.items()
+                                for v in solution_ingredients
                             ]
                         )
                         solution_ingredient_edges.append(
@@ -1274,7 +1321,7 @@ class MediaDiveTransform(Transform):
 
                     ingredient_nodes = []
                     ingredient_subclass_edges = []
-                    for k, v in ingredients_dict.items():
+                    for (_, k), v in ingredient_declarations.items():
                         ingredient_id = v[ID_COLUMN]
                         enrichment = self.chemical_loader.get_node_enrichment(ingredient_id)
                         ingredient_nodes.append(
@@ -1335,7 +1382,9 @@ class MediaDiveTransform(Transform):
 
                     # Get ChEBI role relationships using fast TSV lookup
                     chebi_list = [
-                        v[ID_COLUMN] for _, v in ingredients_dict.items() if str(v[ID_COLUMN]).startswith(CHEBI_PREFIX)
+                        v[ID_COLUMN]
+                        for v in ingredient_declarations.values()
+                        if str(v[ID_COLUMN]).startswith(CHEBI_PREFIX)
                     ]
                     if len(chebi_list) > 0 and self.chebi_roles:
                         # Collect all role relationships for these compounds
@@ -1372,7 +1421,7 @@ class MediaDiveTransform(Transform):
                         dictionary[MEDIADIVE_REF_COLUMN],
                         dictionary[MEDIADIVE_DESC_COLUMN],
                         str(solutions_dict),
-                        str(ingredients_dict),
+                        str(ingredient_occurrences),
                     ]
 
                     writer.writerow(data)  # writing the data

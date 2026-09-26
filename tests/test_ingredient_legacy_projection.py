@@ -75,11 +75,9 @@ def test_original_legacy_broad_mapping_survives_mediadive_and_merge(tmp_path, mo
         return {} if endpoint.startswith(mod.MEDIUM_STRAINS) else {"solutions": [{"id": 1, "name": "Test solution"}]}
 
     monkeypatch.setattr(source, "get_json_object", fixture_response)
-    monkeypatch.setattr(
-        source,
-        "get_compounds_of_solution",
-        lambda value: {"2-oxobutyric acid sodium salt": {"id": CHILD, "amount": 1, "unit": "g/l"}},
-    )
+    source.solutions_data = {
+        "1": {"recipe": [{"compound": "2-oxobutyric acid sodium salt", "compound_id": 1, "amount": 1, "unit": "g/l"}]}
+    }
     source.run(show_status=False)
     before = [row for row in graph_rows(source.output_edge_file) if row["subject"] == CHILD and row["object"] == PARENT]
     assert len(before) == 1 and before[0]["predicate"] == "biolink:broad_match"

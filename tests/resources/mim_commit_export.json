@@ -1,0 +1,9 @@
+{
+  "source_sssom": "subject_id\tpredicate_id\tobject_id\nMIM:Fixture\tskos:exactMatch\tCHEBI:15377\n",
+  "review": "{\"fixture\": true}\n",
+  "lock": "version = 1\nrequires-python = \">=3.13\"\n",
+  "workflow": "name: Reviewed SSSOM fixture\npermissions:\n  contents: read\n",
+  "supported": "subject_id\tpredicate_id\tobject_id\nMIM:Fixture\tskos:exactMatch\tCHEBI:15377\n",
+  "withheld": "subject_id\tpredicate_id\tobject_id\n",
+  "dispositions": "source_position\tdisposition\n1\tSUPPORTED\n"
+}

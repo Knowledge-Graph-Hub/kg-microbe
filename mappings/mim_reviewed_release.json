@@ -1,8 +1,23 @@
 {
-  "schema_version": 1,
-  "release_tag": "mim-sssom-2026-09-21",
-  "release_url": "https://github.com/CultureBotAI/MediaIngredientMech/releases/tag/mim-sssom-2026-09-21",
-  "source_commit": "484082707b2a175cffebad3cbf46f3b39f66ca3d",
-  "manifest_sha256": "cf883804354b5d4e9796e7e952a023b240ff951ed95372fb212c7afd47c65dcd",
+  "schema_version": 2,
+  "origin": "immutable_commit_export",
+  "source_commit": "1848b0fe521bc2462f165912fcf92d09ad9a8cec",
+  "source_archive": {
+    "url": "https://codeload.github.com/CultureBotAI/MediaIngredientMech/tar.gz/1848b0fe521bc2462f165912fcf92d09ad9a8cec",
+    "sha256": "33ff549d7a2bf34e943156e800e00149736a30dfc0a974f3ca9a9884358bfef2"
+  },
+  "export_recipe": {
+    "id": "reviewed_sssom_v1",
+    "python_version": "3.13",
+    "lock_sha256": "f5ce4325376797ada321c0ffba1e6050355e3185c0a079d2c731d17480aeca1a",
+    "workflow_sha256": "474246379fb470807e53330469a0ed0724c1edbd6f94f306105c78ddf3d21c4e"
+  },
+  "validation_run_url": "https://github.com/CultureBotAI/MediaIngredientMech/actions/runs/36109949250",
+  "manifest_sha256": "9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af",
+  "files": {
+    "ingredient_mappings.sssom.tsv": "6b52b30e018b369aa322d41dfd4e81fcfae0e895e34d7fe48900abf5835815fb",
+    "withheld_mappings.sssom.tsv": "c37491ed4191889d375b02510137a178ee9b44a341131e42afec07d7953e8405",
+    "mapping-dispositions.tsv": "87b4a72969681e4b808c526552c84c36daa17c6697970735a4e0ba0270523154"
+  },
   "mode": "candidate_only"
 }

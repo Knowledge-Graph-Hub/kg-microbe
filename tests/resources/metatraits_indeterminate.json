@@ -1,0 +1,13 @@
+{
+  "tax_name": "Geobacillus kaustophilus",
+  "summaries": [
+    {
+      "is_discrete": true,
+      "majority_label": "No robust majority",
+      "name": "reduction: arsenate detoxification",
+      "num_observations": 5,
+      "percentages": {"false": 20.0, "true": 80.0},
+      "unique_databases": 1
+    }
+  ]
+}

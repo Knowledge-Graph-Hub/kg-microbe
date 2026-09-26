@@ -178,14 +178,18 @@ via constants.py (#1035), plus BacDive’s intermediate strain-taxid TSV (#1091)
 <dl class="py method">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.get_compounds_of_solution">
 <span class="sig-name descname"><span class="pre">get_compounds_of_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.get_compounds_of_solution" title="Link to this definition"></a></dt>
-<dd><p>Get ingredients of solutions via bulk data or MediaDive API.</p>
-<p>First checks bulk downloaded data, then makes API call if needed.</p>
+<dd><p>Return the historical unique-display-name view, refusing lossy collisions.</p>
+<p>Production emission uses <code class="docutils literal notranslate"><span class="pre">get_solution_recipe_occurrences</span></code> instead.
+This compatibility view is safe only when every display name is unique.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – ID of solution.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Dictionary of {compound_name: compound_id}.</p>
+<dd class="field-even"><p>Dictionary of display names to resolved identities and quantities.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – Two recipe occurrences have the same display name.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -208,6 +212,24 @@ via constants.py (#1035), plus BacDive’s intermediate strain-taxid TSV (#1091)
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.get_solution_recipe_occurrences">
+<span class="sig-name descname"><span class="pre">get_solution_recipe_occurrences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.get_solution_recipe_occurrences" title="Link to this definition"></a></dt>
+<dd><p>Resolve every recipe occurrence in source-list order without name deduplication.</p>
+<p>Assertion IDs use the owning solution and one-based raw list position,
+not the optional/nonunique source recipe_order. The exact source item is
+retained as canonical JSON evidence, including original name, source ID,
+source order, optional flag and all supplied quantity fields.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – ID of solution.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Ordered occurrence dictionaries with resolved IDs and source evidence.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -324,14 +346,18 @@ via constants.py (#1035), plus BacDive’s intermediate strain-taxid TSV (#1091)
 <dl class="py method">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.MediaDiveTransform.get_compounds_of_solution">
 <span class="sig-name descname"><span class="pre">get_compounds_of_solution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.MediaDiveTransform.get_compounds_of_solution" title="Link to this definition"></a></dt>
-<dd><p>Get ingredients of solutions via bulk data or MediaDive API.</p>
-<p>First checks bulk downloaded data, then makes API call if needed.</p>
+<dd><p>Return the historical unique-display-name view, refusing lossy collisions.</p>
+<p>Production emission uses <code class="docutils literal notranslate"><span class="pre">get_solution_recipe_occurrences</span></code> instead.
+This compatibility view is safe only when every display name is unique.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – ID of solution.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>Dictionary of {compound_name: compound_id}.</p>
+<dd class="field-even"><p>Dictionary of display names to resolved identities and quantities.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – Two recipe occurrences have the same display name.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -354,6 +380,24 @@ via constants.py (#1035), plus BacDive’s intermediate strain-taxid TSV (#1091)
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dictionary.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.MediaDiveTransform.get_solution_recipe_occurrences">
+<span class="sig-name descname"><span class="pre">get_solution_recipe_occurrences</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.MediaDiveTransform.get_solution_recipe_occurrences" title="Link to this definition"></a></dt>
+<dd><p>Resolve every recipe occurrence in source-list order without name deduplication.</p>
+<p>Assertion IDs use the owning solution and one-based raw list position,
+not the optional/nonunique source recipe_order. The exact source item is
+retained as canonical JSON evidence, including original name, source ID,
+source order, optional flag and all supplied quantity fields.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – ID of solution.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Ordered occurrence dictionaries with resolved IDs and source evidence.</p>
 </dd>
 </dl>
 </dd></dl>

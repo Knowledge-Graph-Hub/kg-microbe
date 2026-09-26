@@ -84,6 +84,13 @@ The user explicitly selected immutable-commit/export consumption; the schema-v2
 old September 21 release. Its <code class="docutils literal notranslate"><span class="pre">candidate_only</span></code> mode controls candidate generation,
 not permission to publish or silently replace production mappings. Paired
 production promotion remains the separate reviewed step below.</p>
+<p>The <a class="reference internal" href="reviews/mim-admission-20260925/PROMOTION.html"><span class="std std-doc">2026-09-25 acceptance record</span></a>
+separates candidate evidence, consumer checks, paired installation, and the new
+KG build. Its pending gates must not be inferred complete from the existence of
+this pin, a candidate file, or earlier passing reports. The first hydration
+candidate exposed three further legacy scope defects (#1169) during full
+MediaDive replay; its previous passing audits are retained as diagnostic history,
+not relabeled as final promotion approval.</p>
 <p>The complete export contains 1,747 supported exact mappings and 1,252 withheld
 rows (2,999 source assertions). Its three product files are byte-identical to the
 previously reviewed <code class="docutils literal notranslate"><span class="pre">a8b26f007cdf5bdc7529ab13888d611f359e6aad</span></code> export; the manifest’s
@@ -215,39 +222,53 @@ including with <code class="docutils literal notranslate"><span class="pre">--dr
 companion paths would undo the migration. Its narrowly scoped
 <code class="docutils literal notranslate"><span class="pre">--identity-policy-only</span> <span class="pre">--output</span> <span class="pre">...</span></code> operation remains available; it does not
 constitute a MIM refresh.</p>
-<p>The input schema check also repairs two short rows in the canonical chemical
-table by explicitly including the empty final <code class="docutils literal notranslate"><span class="pre">verified_date</span></code> cell. This changes
-file bytes, not mapping content. Fingerprint-based consumers may nevertheless
-require a rerun; do not overwrite their receipts to suppress that signal.
-For this formatting-only change, the direct consumer is <code class="docutils literal notranslate"><span class="pre">ontologies_stubs</span></code>,
-followed by its dependent GOLD transform. If rebuilding the current, still
-pre-migration graph after this PR, run the following. This does <strong>not</strong> install
-the new MIM release.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </span>transform<span class="w"> </span>-s<span class="w"> </span>ontologies_stubs<span class="w"> </span>-s<span class="w"> </span>gold
-poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </span>merge<span class="w"> </span>-y<span class="w"> </span>merge.yaml
-</pre></div>
-</div>
+<p>The earlier input-schema repair added explicit empty <code class="docutils literal notranslate"><span class="pre">verified_date</span></code> cells to
+two canonical chemical rows. That formatting-only repair did not install the
+reviewed MIM input and its old two-source rerun advice is not the closure for
+the subsequent shared-runtime/policy changes. Never overwrite transform
+receipts to hide input or code drift.</p>
 </section>
 <section id="promotion-transforms-and-merge">
 <h2>Promotion, transforms, and merge<a class="headerlink" href="#promotion-transforms-and-merge" title="Link to this heading"></a></h2>
 <p>Candidate generation does not publish files or run production transforms. Once
-the delta is accepted, promote <strong>both</strong> the reviewed unified candidate and the
-supported MIM table to their canonical mapping paths in a reviewed change:</p>
+the final delta and consumer behavior are accepted, promote <strong>both</strong> the reviewed
+unified candidate and the byte-exact supported MIM table to their canonical
+mapping paths in one reviewed change:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">mappings/ingredient_mappings.sssom.tsv</span></code></p></li>
 </ul>
-<p>Keep release hashes, input fingerprints, quarantine disposition, and runtime
-regression evidence with that review. Update the vendored-set shape test to
+<p>The supported file must match the committed pin’s supported-product hash; the
+unified file must match the final accepted candidate hash. Do not install the
+upstream source SSSOM, the withheld product, a floating sibling checkout, or
+only one member of the pair. <code class="docutils literal notranslate"><span class="pre">mode=candidate_only</span></code> remains the CLI’s publication
+boundary: paired installation is an explicit reviewed repository operation,
+not permission for future automatic refreshes.</p>
+<p>Keep release hashes, input fingerprints, quarantine disposition, second-cycle
+stability, full fallback/whole-MediaDive review, and runtime regression evidence
+with that change. Record final code/test/CI results and installation status in
+the acceptance record. Update the vendored-set shape test to
 expect the intentionally exact-only supported release; preserve the separate
 legacy asymmetric-semantics mechanism tests. Do not stamp freshness receipts to
 make existing outputs appear current.</p>
-<p><strong>Fallback gate:</strong> 55 of the 194 special-chemical overrides have explicit MIM
+<p><strong>Direct fallback coverage:</strong> 55 of the 194 historical special-chemical overrides have explicit MIM
 lineage (17 from commit <code class="docutils literal notranslate"><span class="pre">4617f84b6</span></code>, 38 from <code class="docutils literal notranslate"><span class="pre">0444faf1e</span></code>). MetaTraits and its GTDB
 variant read this table directly, independently of the unified artifact. Excluding
-it from candidate generation does not remove those runtime routes. Review the
-exact assertions and fallback behavior before claiming supported-only production
-integration; appearing in a withheld target list alone is not grounds for removal.</p>
+it from candidate generation does not remove those runtime routes. The complete
+55-row lineage ledger was reviewed and replayed, including source-local
+angustmycin/rubradirin fixes. This is not an unresolved generic 55-row curation
+gate, nor approval of all future overrides: repeat the exact cohort and runtime
+probes against the final candidate/code and retain their fingerprints. Appearing
+in a withheld target list alone is not grounds for removal.</p>
+<p>MediaDive still reads independent runtime strict/hydrate/embedded inputs.
+Hydrated ingredient identity is not the water-free parent. A separately supplied
+<code class="docutils literal notranslate"><span class="pre">hydrated_chebi_id</span></code> may be admitted only with native target-label/scope evidence,
+the correctly directed native hydrate-to-supplied-base part assertion, and all
+identity policies; this does not turn that part relation into exact equivalence.
+Lookups use original source names; punctuation normalization is display-only.
+Ambiguous salts, malformed formulas and wrong derivative matches stay local
+unless an independently supported identity is supplied. Whole-source replay is
+required because a lookup fix can expose an older bad fallback (#1167–#1169).</p>
 <p>If only these mapping artifacts change and other inputs/code remain fresh, the
 canonical transform closure is nine producers:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </span>transform<span class="w"> </span><span class="se">\</span>

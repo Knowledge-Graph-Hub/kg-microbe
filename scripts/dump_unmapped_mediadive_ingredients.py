@@ -4,8 +4,7 @@ Dump unmapped MediaDive ingredients for manual / MediaIngredientMech curation.
 MediaDive ingredients that cannot be resolved to ChEBI / KEGG / PubChem / CAS
 fall back to the `mediadive.ingredient:N` CURIE in the transformed output.
 This script collects those rows from `data/transformed/mediadive/nodes.tsv`,
-retries the lookup with `fuzzy_hydrate=True` (recovering anhydrous matches for
-`MgCl2 x 6 H2O`-style names), and writes the remaining still-unmapped rows to
+retries the identity lookup without dropping hydration scope, and writes still-unmapped rows to
 a TSV of curation-candidate rows so curators can fill the `ontology_id` /
 `mapping_status` columns and feed the result into MediaIngredientMech; the
 resulting mappings return to kg-microbe via
@@ -65,7 +64,7 @@ def iter_unmapped_rows(nodes_path: Path):
 
 
 def main():
-    """Compute and write still-unmapped MediaDive ingredients after fuzzy retry."""
+    """Compute and write still-unmapped MediaDive ingredients after identity retry."""
     parser = argparse.ArgumentParser(description=__doc__)
     repo_root = Path(__file__).resolve().parent.parent
     parser.add_argument(
@@ -88,17 +87,16 @@ def main():
     loader = ChemicalMappingLoader()
 
     total = 0
-    recovered_by_fuzzy = 0
+    recovered_by_identity = 0
     still_unmapped_rows = []
     for node_id, name in iter_unmapped_rows(args.nodes):
         total += 1
         if not name:
             continue
-        # Retry with fuzzy_hydrate=True — this is the same widening mediadive.py
-        # now applies at transform time. If it resolves here, treat as recoverable
-        # on the next transform run and skip the curation dump.
-        if loader.find_chebi_by_name(name, fuzzy_hydrate=True):
-            recovered_by_fuzzy += 1
+        # Only a supported ingredient identity is recoverable automatically.
+        # Hydrate/anhydrous recipe equivalence must remain in the curation queue.
+        if loader.find_chebi_by_name(name):
+            recovered_by_identity += 1
             continue
         still_unmapped_rows.append((node_id, name))
 
@@ -110,9 +108,7 @@ def main():
             writer.writerow([node_id, name, "", "UNMAPPED", "", "", "", 1, "", ""])
 
     print(f"Scanned {total} mediadive.ingredient:* nodes in {args.nodes}")
-    print(
-        f"  Recoverable via fuzzy_hydrate (will self-heal on next transform): {recovered_by_fuzzy}"
-    )
+    print(f"  Recoverable via identity lookup: {recovered_by_identity}")
     print(f"  Still unmapped (written to {args.output}): {len(still_unmapped_rows)}")
 
 

@@ -133,7 +133,11 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
-from kg_microbe.utils.ingredient_identity import ingredient_mapping_allowed
+from kg_microbe.utils.ingredient_identity import (
+    ingredient_authority_label,
+    ingredient_hydration_compatible,
+    ingredient_mapping_allowed,
+)
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
 )
@@ -318,7 +322,7 @@ class MediaDiveTransform(Transform):
             KNOWLEDGE_LEVEL_COLUMN,
             AGENT_TYPE_COLUMN,
         }
-        roles, role_edges, labels = {}, {}, {}
+        roles, role_edges, labels, hydrate_names = {}, {}, {}, {}
         seen = set()
         print("Loading ChEBI roles from ontologies transform output...")
         for path, required in (
@@ -344,6 +348,8 @@ class MediaDiveTransform(Transform):
                     if path == CHEBI_NODES_FILE:
                         if row[ID_COLUMN].startswith(CHEBI_PREFIX) and row[NAME_COLUMN]:
                             labels[row[ID_COLUMN]] = row[NAME_COLUMN]
+                            if "hydrate" in row[NAME_COLUMN].casefold():
+                                hydrate_names[row[ID_COLUMN]] = tuple(row.get(SYNONYM_COLUMN, "").split("|"))
                         continue
                     subject, obj = row[SUBJECT_COLUMN], row[OBJECT_COLUMN]
                     if row[RELATION_COLUMN] != HAS_ROLE or not subject.startswith(CHEBI_PREFIX):
@@ -361,6 +367,7 @@ class MediaDiveTransform(Transform):
                         roles[subject].append(obj)
         # Publish the in-memory index only after both tables validate successfully.
         self.chebi_roles, self.chebi_role_edges, self.chebi_labels = roles, role_edges, labels
+        self.chebi_hydrate_names = hydrate_names
         print(f"  Loaded {len(roles)} ChEBI compounds with roles")
         print(f"  Loaded {len(labels)} ChEBI labels")
 
@@ -465,7 +472,7 @@ class MediaDiveTransform(Transform):
             # valid grounding for the same ingredient remains available.
             df = df[
                 [
-                    ingredient_mapping_allowed(name, target)
+                    self._ingredient_identity_allowed(name, target)
                     for name, target in zip(df["original"], df["mapped"], strict=True)
                 ]
             ]
@@ -662,7 +669,7 @@ class MediaDiveTransform(Transform):
                     (
                         candidate
                         for candidate in candidates
-                        if candidate and ingredient_mapping_allowed(solution_name, candidate)
+                        if candidate and self._ingredient_identity_allowed(solution_name, candidate)
                     ),
                     MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY]),
                 )
@@ -677,6 +684,17 @@ class MediaDiveTransform(Transform):
             else:
                 continue
         return ingredients_dict
+
+    def _ingredient_identity_allowed(self, name: str, target: str) -> bool:
+        """Check every fallback against explicit hydration scope and curated identity policy."""
+        if not ingredient_mapping_allowed(name, target):
+            return False
+        # Prefer native ChEBI names over possibly stale source-derived labels.
+        label = getattr(self, "chebi_labels", {}).get(target, "") or ingredient_authority_label(target)
+        if not label:
+            getter = getattr(getattr(self, "chemical_loader", None), "get_canonical_name", None)
+            label = getter(target) if getter else ""
+        return ingredient_hydration_compatible(name, label, getattr(self, "chebi_hydrate_names", {}).get(target, ()))
 
     def standardize_compound_id(self, id: str, compound_name: str = None):
         """
@@ -697,17 +715,16 @@ class MediaDiveTransform(Transform):
             # mapping is not restricted to CHEBI — it also holds FOODON
             # foods, UBERON anatomy, and ENVO environments for ingredients
             # like "Yeast extract", "Defibrinated sheep blood", "Natural
-            # seawater". fuzzy_hydrate=True lets MediaDive names carrying
-            # trailing hydrate specifiers (e.g. "MgCl2 x 6 H2O") resolve to
-            # the anhydrous entry when no exact hydrate-form entry exists.
-            mapped_id = self.chemical_loader.find_chebi_by_name(compound_name, fuzzy_hydrate=True)
-            if mapped_id and ingredient_mapping_allowed(compound_name, mapped_id):
+            # seawater". A missing hydrate identity stays local; recipe-level
+            # interchangeability cannot substitute the anhydrous chemical.
+            mapped_id = self.chemical_loader.find_chebi_by_name(compound_name)
+            if mapped_id and self._ingredient_identity_allowed(compound_name, mapped_id):
                 return mapped_id
 
             # Fallback: check legacy MicroMediaParam mappings by compound name
             normalized_name = compound_name.lower().strip()
             mapped_id = self.compound_mappings.get(normalized_name)
-            if mapped_id and ingredient_mapping_allowed(compound_name, mapped_id):
+            if mapped_id and self._ingredient_identity_allowed(compound_name, mapped_id):
                 return mapped_id
 
         # Check bulk downloaded data for embedded compound mappings
@@ -731,7 +748,7 @@ class MediaDiveTransform(Transform):
             ):
                 if data.get(key) is not None:
                     mapped_id = prefix + str(data[key])
-                    if ingredient_mapping_allowed(name, mapped_id):
+                    if self._ingredient_identity_allowed(name, mapped_id):
                         return mapped_id
 
         # Fall back to custom ingredient prefix

@@ -177,18 +177,22 @@ def _mim_row(row):
     return row["subject_id"].startswith(("MIM:", "MediaIngredientMech:")) or _mim_source(row.get("source", ""))
 
 
-def _historical_policy_rejection(row):
+def _historical_policy_rejection(row, native_hydrate_names=None):
     """Reject reviewed lexical/exact claims without banning targets or weaker relations."""
     subject, target = row["subject_id"], row["object_id"]
     if subject.startswith("kgm.name:") and row["predicate_id"] in {"skos:exactMatch", "skos:closeMatch"}:
         if not ingredient_mapping_allowed(row.get("subject_label", ""), target):
             return "reviewed_identity_policy_name"
+        if not runtime.ingredient_hydration_compatible(
+            row.get("subject_label", ""), row.get("object_label", ""), (native_hydrate_names or {}).get(target, ())
+        ):
+            return "hydration_scope_name"
     elif row["predicate_id"] == "skos:exactMatch" and not ingredient_xref_allowed(subject, target):
         return "reviewed_identity_policy_xref"
     return ""
 
 
-def _candidate_name_lookup(name, names, declared):
+def _candidate_name_lookup(name, names, declared, labels=None, native_hydrate_names=None):
     """Mirror finite runtime query scopes without putting case-sensitive aliases in a shared key."""
     recognized, target = ingredient_case_sensitive_name_scope(name)
     if recognized:
@@ -196,7 +200,16 @@ def _candidate_name_lookup(name, names, declared):
     normalized = runtime.normalize_name(name)
     if ingredient_case_sensitive_name_scope(normalized)[0]:
         return None
-    return names.get(normalized)
+    target = names.get(normalized)
+    if (
+        target is not None
+        and labels is not None
+        and not runtime.ingredient_hydration_compatible(
+            name, labels.get(target, ""), (native_hydrate_names or {}).get(target, ())
+        )
+    ):
+        return None
+    return target
 
 
 def _historical_object_label_rejected(row):
@@ -453,7 +466,12 @@ def _fresh_rows(curie, entity, fields, date):
         mapping_date=date,
     )
     names = {}
+    native_names = [
+        name for name, sources in entity.names.items() if any(s.startswith("native_ontology:") for s in sources)
+    ]
     for name in sorted(entity.names):
+        if not runtime.ingredient_hydration_compatible(name, entity.label, native_names):
+            continue
         slug = _slug(name)
         if not slug:
             continue
@@ -575,6 +593,13 @@ def build_conservative_candidate(
         prefixes.setdefault(prefix, upstream_uri)
     evidence = _Evidence(set(prefixes))
     components, initial, baseline_entities = _Components(), set(), set()
+    native_hydrate_names = {}
+    for _, row in _native_rows(ontology_paths):
+        if "hydrate" in row["name"].casefold():
+            native_hydrate_names[row["id"]] = tuple(row["synonym"].split("|"))
+        for xref in (row["xref"] + "|" + row.get("same_as", "")).split("|"):
+            if evidence.allowed_xref(row["id"], xref):
+                components.join(row["id"], xref)
     policy_pruned_targets = set()
     policy_metadata_targets = set()
     baseline_count = 0
@@ -583,7 +608,7 @@ def build_conservative_candidate(
         target, subject = row["object_id"], row["subject_id"]
         baseline_entities.add(target)
         components.root(target)
-        if _historical_policy_rejection(row):
+        if _historical_policy_rejection(row, native_hydrate_names):
             policy_pruned_targets.add(target)
         if _historical_object_label_rejected(row):
             policy_metadata_targets.add(target)
@@ -595,10 +620,6 @@ def build_conservative_candidate(
     for curie, entity in evidence.records.items():
         for xref in entity.xrefs:
             components.join(curie, xref)
-    for _, row in _native_rows(ontology_paths):
-        for xref in (row["xref"] + "|" + row.get("same_as", "")).split("|"):
-            if evidence.allowed_xref(row["id"], xref):
-                components.join(row["id"], xref)
     for row in bundle.supported_rows:
         curie = row["object_id"]
         if not consolidator.is_accepted_primary(curie):
@@ -635,6 +656,11 @@ def build_conservative_candidate(
             row["subject_id"], curie
         ):
             raise ValueError(f"Supported MIM assertion conflicts with current identity policy: {row['subject_id']}")
+        declared_label = evidence.records.get(curie, _Entity()).label or row["object_label"]
+        if not runtime.ingredient_hydration_compatible(
+            row["subject_label"], declared_label, native_hydrate_names.get(curie, ())
+        ):
+            raise ValueError(f"Supported MIM assertion changes declared hydration scope: {row['subject_id']}")
         evidence.add(
             curie,
             row["subject_label"],
@@ -693,7 +719,7 @@ def build_conservative_candidate(
             _write_header(handle, quarantine_metadata, [*fields, "quarantine_reason"])
             for row in _rows(baseline):
                 curie = row["object_id"]
-                policy_reason = _historical_policy_rejection(row)
+                policy_reason = _historical_policy_rejection(row, native_hydrate_names)
                 if policy_reason:
                     handle.write(_serialize(row, fields) + "\t" + policy_reason + "\n")
                     stats["quarantined_rows"] += 1
@@ -740,7 +766,7 @@ def build_conservative_candidate(
                 insert(row)
                 stats["rebuilt_rows"] += 1
         database.commit()
-        names, ranks, mim_xrefs, named_entities = {}, {}, {}, set()
+        names, ranks, mim_xrefs, named_entities, declared_labels = {}, {}, {}, set(), {}
         with consolidator.open_deterministic_gzip(candidate) as handle:
             _write_header(handle, candidate_metadata, fields)
             for (line,) in database.execute(
@@ -750,8 +776,13 @@ def build_conservative_candidate(
                 row = dict(zip(fields, line.split("\t"), strict=True))
                 if row["object_label"]:
                     named_entities.add(row["object_id"])
+                    declared_labels.setdefault(row["object_id"], row["object_label"])
                 for label, rank in ((row["object_label"], 0), (row["subject_label"], 1)):
                     if rank and not (row["subject_id"].startswith("kgm.name:") and row["comment"] == "synonym"):
+                        continue
+                    if not runtime.ingredient_hydration_compatible(
+                        label, declared_labels.get(row["object_id"], ""), native_hydrate_names.get(row["object_id"], ())
+                    ):
                         continue
                     normalized = runtime.normalize_name(label)
                     scoped_target = ingredient_name_target(label)
@@ -785,10 +816,15 @@ def build_conservative_candidate(
                 "name": row["subject_label"],
                 "subject_id": row["subject_id"],
                 "expected": row["object_id"],
-                "resolved": _candidate_name_lookup(row["subject_label"], names, named_entities),
+                "resolved": _candidate_name_lookup(
+                    row["subject_label"], names, named_entities, declared_labels, native_hydrate_names
+                ),
             }
             for row in bundle.supported_rows
-            if _candidate_name_lookup(row["subject_label"], names, named_entities) != row["object_id"]
+            if _candidate_name_lookup(
+                row["subject_label"], names, named_entities, declared_labels, native_hydrate_names
+            )
+            != row["object_id"]
         ]
         accepted_scopes = [
             dict(

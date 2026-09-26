@@ -43,7 +43,7 @@ win tie-breaks during duplicate-name merging.
 | Path | Role |
 |---|---|
 | `mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz` | **Single source of truth.** Standards-compliant SSSOM mapping set covering xrefs (`skos:exactMatch`) + canonical names + free-text synonyms via synthetic `kgm.name:<slug>` subjects (`skos:exactMatch` / `skos:closeMatch`, justification `semapv:LexicalMatching`). Holds CHEBI chemicals **and** non-CHEBI ingredients (FOODON foods, UBERON anatomy, ENVO environments). Validated with the `sssom` Python package on every write. |
-| `scripts/dump_unmapped_mediadive_ingredients.py` | Emits a MIM-compatible TSV of MediaDive ingredients still unmapped after the current mappings + `fuzzy_hydrate` retry, for curator review. |
+| `scripts/dump_unmapped_mediadive_ingredients.py` | Emits a MIM-compatible TSV of MediaDive ingredients still unmapped after identity lookup, for curator review. Hydrate stripping never establishes identity. |
 | `mappings/culturebotai_reviewed_ingredients.tsv` | Authoritative reviewed source from CultureBotAI (priority=10). |
 | `mappings/ingredient_mappings.sssom.tsv` | **Vendored copy** of the MediaIngredientMech SSSOM (priority=11). Auto-refreshed from the sibling repo on every consolidator run — never edit this file directly; edit upstream in MIM and let `sync_mim_sssom` overwrite it. |
 | `../MediaIngredientMech/mappings/ingredient_mappings.sssom.tsv` | **Source of truth** for MIM mappings. The MediaIngredientMech repo (https://github.com/CultureBotAI/MediaIngredientMech) is expected to be checked out as a sibling of `kg-microbe`. The consolidator wins-from-sibling on content divergence. |
@@ -122,7 +122,7 @@ find_chebi_by_name("NaCl")                       # → "CHEBI:26710"
 find_chebi_by_name("Yeast extract")              # → "FOODON:00002441"
 find_chebi_by_name("Defibrinated sheep blood")   # → "UBERON:0000178"
 find_chebi_by_name("(R)-lactate", fuzzy_stereochemistry=True)
-find_chebi_by_name("MgCl2 x 6 H2O", fuzzy_hydrate=True)  # strips trailing hydrate suffix
+find_chebi_by_name("MgCl2 x 6 H2O")  # requires a matching hydrate identity; never substitutes anhydrous
 find_chebi_by_name("glucose", synonyms=False)    # canonical-only index (O(1))
 find_chebi_by_formula("H2O")                     # → ["CHEBI:15377", ...]
 find_chebi_by_xref("cas:7647-14-5")              # → "CHEBI:26710"
@@ -220,6 +220,8 @@ If a name should map but doesn't:
 4. If the name is legitimate but absent everywhere, add it to `mappings/culturebotai_reviewed_ingredients.tsv` (or another priority-5+ source) and regenerate.
 
 ## Known limitations
+
+- **Hydration is identity scope**: `fuzzy_hydrate` is retained only for call compatibility and does not strip water counts. Native/declared target labels must support the same explicit hydration scope; unknown scope stays unresolved. `get_hydrate_equivalents` retains separately asserted weak recipe relations, never an identity fallback.
 
 - **Not ChEBI-only anymore**: the unified SSSOM and the consolidator support non-ChEBI primary IDs, including FOODON, UBERON, ENVO, NCIT, `pubchem.compound`, `cas`, `mediadive.ingredient`, and `kgmicrobe.compound`. Some downstream helpers and workflows are still ChEBI-oriented (for example `find_chebi_*` utilities), so callers that assume every row resolves to a ChEBI ID should handle non-ChEBI primary IDs explicitly.
 - **CAS RN format**: stored as `cas:<dash-separated>` xrefs (e.g. `cas:7647-14-5`). Consumers must include the `cas:` prefix when calling `find_chebi_by_xref`.

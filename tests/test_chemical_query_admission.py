@@ -20,7 +20,6 @@ def test_original_query_is_checked_after_all_lookup_routes(monkeypatch, query, n
     """An allowed indexed alias cannot authorize a separately rejected query/target."""
     monkeypatch.setattr(runtime, "_LOADED", True)
     monkeypatch.setattr(runtime, "_NAME_INDEX", {normalized: "CHEBI:29365"})
-    monkeypatch.setattr(runtime, "_HYDRATE_FREE_NAME_INDEX", {})
     monkeypatch.setattr(runtime, "_NEGATIVE_LOOKUP_CACHE", OrderedDict())
     monkeypatch.setattr(runtime, "ingredient_name_target", lambda name: None)
     monkeypatch.setattr(runtime, "ingredient_case_sensitive_name_scope", lambda name: (False, None))

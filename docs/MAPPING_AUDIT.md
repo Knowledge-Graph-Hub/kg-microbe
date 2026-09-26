@@ -2,6 +2,17 @@
 
 Date: 2026-05-03
 
+> **Historical scope — read before using this audit (2026-09-25):** This document
+> preserves the May 2026 inventory and curation plan. Its counts, paths, statuses,
+> sibling auto-sync descriptions, deletion proposals, and estimates are not a
+> current production runbook or evidence that a listed task remains open. MIM
+> consumption now uses the immutable, supported-only input and explicit paired
+> promotion described in [MIM_REVIEWED_RELEASE.md](MIM_REVIEWED_RELEASE.md).
+> Follow the [dated acceptance record](reviews/mim-admission-20260925/PROMOTION.md)
+> for candidate/consumer/promotion status; do not regenerate via the historical
+> additive consolidator or infer that the current merged KG has been rebuilt.
+> Any new absence/deletion check must include gitignored files.
+
 ## TL;DR
 
 The repo has 19 curation TSV/SSSOM files split across two directories with

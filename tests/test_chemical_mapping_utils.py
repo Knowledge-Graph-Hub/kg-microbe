@@ -716,57 +716,57 @@ class TestFuzzyHydrate:
 
 class TestNarrowMatchChildResolution:
     """
-    Regression tests for the asymmetric-MIM child-CURIE resolution path.
+    Preserve child/parent reader mechanics without restoring withheld claims.
 
-    Codex adversarial review #558 round 3 found that prior versions of
-    ``scripts/consolidate_chemical_mappings.load_mediaingredientmech_sssom``
-    fed asymmetric (skos:narrowMatch / broadMatch) rows through
-    ``add_chemical(id=object_id, ...)``, polluting the broader parent's
-    synonym/xref table with the child's labels. Name lookup then returned
-    the parent CURIE, the new ``_PARENT_INDEX`` was keyed under the child
-    CURIE that the lookup never landed on, and the MediaDive subclass-edge
-    emission was effectively unreachable.
-
-    These tests exercise the committed unified mapping file (not a mock)
-    and check end-to-end that representative MIM-curated child terms now:
-
-      1. Resolve to the kg-microbe-minted child primary, not the parent.
-      2. Carry their parent in ``get_parents()`` so MediaDive can emit
-         ``biolink:broad_match`` edges on the next merge.
-
-    If a future consolidator regression re-pollutes parents with child
-    labels, the assertions for resolution-to-child will start returning
-    the parent CURIE again and these tests will fail loudly.
+    The explicit historical fixture exercises the #558 regression: a child's
+    name must resolve to the local child, never pollute the external parent's
+    identity, and retain its separately asserted broad-match parent. These are
+    mechanism tests, not scientific approval to publish their fixture rows.
+    Legacy versus declared-SKOS direction is additionally covered in
+    ``test_sssom_predicate_semantics.py``.
     """
 
-    def test_vermont_soil_resolves_to_child(self):
-        """Vermont Soil should resolve to its kgmicrobe child, not ENVO:00001998 (soil)."""
-        # Use the committed mappings (not a mock) so we exercise the real
-        # consolidator output rather than reproducing its logic in the test.
-        chemical_mapping_utils._LOADED = False
-        cid = chemical_mapping_utils.find_chebi_by_name("Vermont Soil")
-        assert cid == "kgmicrobe.ingredient:vermont_soil", (
-            f"expected kgmicrobe.ingredient:vermont_soil, got {cid!r} "
-            "(asymmetric-MIM pollution likely re-introduced — upstream MIM "
-            "PRs #2/#3/#4 enforce the invariants that prevent it)"
-        )
-        assert chemical_mapping_utils.get_parents(cid) == ["ENVO:00001998"]
+    @pytest.mark.parametrize(
+        ("name", "child", "parent"),
+        [
+            ("Vermont Soil", "kgmicrobe.ingredient:vermont_soil", "ENVO:00001998"),
+            ("Beef brain powder", "kgmicrobe.ingredient:beef_brain_powder", "FOODON:02020911"),
+            ("Actinomycin A", "kgmicrobe.compound:actinomycin_a", "CHEBI:15369"),
+        ],
+    )
+    def test_explicit_historical_child_resolves_without_parent_identity_pollution(self, name, child, parent):
+        """A fixture's broad match supplies ancestry, not synonym/exact identity."""
+        fixture = Path(__file__).parent / "resources" / "historical_mim_children.sssom.tsv"
+        chemical_mapping_utils.load_unified_mappings(fixture)
+        assert chemical_mapping_utils.find_chebi_by_name(name) == child
+        assert chemical_mapping_utils.get_parents(child) == [parent]
+        assert parent not in chemical_mapping_utils.get_xrefs(child)
+        assert name not in chemical_mapping_utils.get_synonyms(parent)
 
-    def test_beef_brain_powder_resolves_to_child(self):
-        """Beef brain powder should resolve to the kgmicrobe ingredient, not the FOODON parent."""
-        chemical_mapping_utils._LOADED = False
-        cid = chemical_mapping_utils.find_chebi_by_name("Beef brain powder")
-        assert cid == "kgmicrobe.ingredient:beef_brain_powder", (
-            f"expected kgmicrobe.ingredient:beef_brain_powder, got {cid!r}"
-        )
-        assert chemical_mapping_utils.get_parents(cid) == ["FOODON:02020911"]
 
-    def test_actinomycin_a_resolves_to_child(self):
-        """Actinomycin A should resolve to the kgmicrobe.compound, not CHEBI:15369."""
+class TestSupportedOnlyMimArtifact:
+    """Check the real promoted artifact against the content-bound MIM decisions."""
+
+    @pytest.mark.parametrize(
+        ("name", "child", "parent"),
+        [
+            ("Vermont Soil", "kgmicrobe.ingredient:vermont_soil", "ENVO:00001998"),
+            ("Beef brain powder", "kgmicrobe.ingredient:beef_brain_powder", "FOODON:02020911"),
+        ],
+    )
+    def test_supported_local_reference_does_not_resurrect_withheld_parent(self, name, child, parent):
+        """Supported registry identities do not also admit their withheld relations."""
         chemical_mapping_utils._LOADED = False
-        cid = chemical_mapping_utils.find_chebi_by_name("Actinomycin A")
-        assert cid == "kgmicrobe.compound:actinomycin_a", f"expected kgmicrobe.compound:actinomycin_a, got {cid!r}"
-        assert chemical_mapping_utils.get_parents(cid) == ["CHEBI:15369"]
+        assert chemical_mapping_utils.find_chebi_by_name(name) == child
+        assert chemical_mapping_utils.get_parents(child) == []
+        assert parent not in chemical_mapping_utils.get_xrefs(child)
+
+    def test_actinomycin_a_withheld_owner_is_not_an_admitted_unified_identity(self):
+        """Both its exact registry row and broad parent row await upstream review."""
+        chemical_mapping_utils._LOADED = False
+        assert chemical_mapping_utils.find_chebi_by_name("Actinomycin A") is None
+        assert chemical_mapping_utils.get_canonical_name("kgmicrobe.compound:actinomycin_a") is None
+        assert chemical_mapping_utils.get_parents("kgmicrobe.compound:actinomycin_a") == []
 
 
 class TestHydrateEquivalents:

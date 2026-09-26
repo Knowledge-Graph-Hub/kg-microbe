@@ -12,6 +12,14 @@ old September 21 release. Its `candidate_only` mode controls candidate generatio
 not permission to publish or silently replace production mappings. Paired
 production promotion remains the separate reviewed step below.
 
+The [2026-09-25 acceptance record](reviews/mim-admission-20260925/PROMOTION.md)
+separates candidate evidence, consumer checks, paired installation, and the new
+KG build. Its pending gates must not be inferred complete from the existence of
+this pin, a candidate file, or earlier passing reports. The first hydration
+candidate exposed three further legacy scope defects (#1169) during full
+MediaDive replay; its previous passing audits are retained as diagnostic history,
+not relabeled as final promotion approval.
+
 The complete export contains 1,747 supported exact mappings and 1,252 withheld
 rows (2,999 source assertions). Its three product files are byte-identical to the
 previously reviewed `a8b26f007cdf5bdc7529ab13888d611f359e6aad` export; the manifest's
@@ -156,41 +164,56 @@ companion paths would undo the migration. Its narrowly scoped
 `--identity-policy-only --output ...` operation remains available; it does not
 constitute a MIM refresh.
 
-The input schema check also repairs two short rows in the canonical chemical
-table by explicitly including the empty final `verified_date` cell. This changes
-file bytes, not mapping content. Fingerprint-based consumers may nevertheless
-require a rerun; do not overwrite their receipts to suppress that signal.
-For this formatting-only change, the direct consumer is `ontologies_stubs`,
-followed by its dependent GOLD transform. If rebuilding the current, still
-pre-migration graph after this PR, run the following. This does **not** install
-the new MIM release.
-
-```bash
-poetry run kg transform -s ontologies_stubs -s gold
-poetry run kg merge -y merge.yaml
-```
+The earlier input-schema repair added explicit empty `verified_date` cells to
+two canonical chemical rows. That formatting-only repair did not install the
+reviewed MIM input and its old two-source rerun advice is not the closure for
+the subsequent shared-runtime/policy changes. Never overwrite transform
+receipts to hide input or code drift.
 
 ## Promotion, transforms, and merge
 
 Candidate generation does not publish files or run production transforms. Once
-the delta is accepted, promote **both** the reviewed unified candidate and the
-supported MIM table to their canonical mapping paths in a reviewed change:
+the final delta and consumer behavior are accepted, promote **both** the reviewed
+unified candidate and the byte-exact supported MIM table to their canonical
+mapping paths in one reviewed change:
 
 - `mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz`
 - `mappings/ingredient_mappings.sssom.tsv`
 
-Keep release hashes, input fingerprints, quarantine disposition, and runtime
-regression evidence with that review. Update the vendored-set shape test to
+The supported file must match the committed pin's supported-product hash; the
+unified file must match the final accepted candidate hash. Do not install the
+upstream source SSSOM, the withheld product, a floating sibling checkout, or
+only one member of the pair. `mode=candidate_only` remains the CLI's publication
+boundary: paired installation is an explicit reviewed repository operation,
+not permission for future automatic refreshes.
+
+Keep release hashes, input fingerprints, quarantine disposition, second-cycle
+stability, full fallback/whole-MediaDive review, and runtime regression evidence
+with that change. Record final code/test/CI results and installation status in
+the acceptance record. Update the vendored-set shape test to
 expect the intentionally exact-only supported release; preserve the separate
 legacy asymmetric-semantics mechanism tests. Do not stamp freshness receipts to
 make existing outputs appear current.
 
-**Fallback gate:** 55 of the 194 special-chemical overrides have explicit MIM
+**Direct fallback coverage:** 55 of the 194 historical special-chemical overrides have explicit MIM
 lineage (17 from commit `4617f84b6`, 38 from `0444faf1e`). MetaTraits and its GTDB
 variant read this table directly, independently of the unified artifact. Excluding
-it from candidate generation does not remove those runtime routes. Review the
-exact assertions and fallback behavior before claiming supported-only production
-integration; appearing in a withheld target list alone is not grounds for removal.
+it from candidate generation does not remove those runtime routes. The complete
+55-row lineage ledger was reviewed and replayed, including source-local
+angustmycin/rubradirin fixes. This is not an unresolved generic 55-row curation
+gate, nor approval of all future overrides: repeat the exact cohort and runtime
+probes against the final candidate/code and retain their fingerprints. Appearing
+in a withheld target list alone is not grounds for removal.
+
+MediaDive still reads independent runtime strict/hydrate/embedded inputs.
+Hydrated ingredient identity is not the water-free parent. A separately supplied
+`hydrated_chebi_id` may be admitted only with native target-label/scope evidence,
+the correctly directed native hydrate-to-supplied-base part assertion, and all
+identity policies; this does not turn that part relation into exact equivalence.
+Lookups use original source names; punctuation normalization is display-only.
+Ambiguous salts, malformed formulas and wrong derivative matches stay local
+unless an independently supported identity is supplied. Whole-source replay is
+required because a lookup fix can expose an older bad fallback (#1167–#1169).
 
 If only these mapping artifacts change and other inputs/code remain fresh, the
 canonical transform closure is nine producers:

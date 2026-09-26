@@ -20,13 +20,15 @@ work them in one sitting. Rows with fewer than ``--min-occurrences``
 observations are dropped (default 10 — filters the long tail of
 per-strain literal values). Placeholder prefix filtering (``--prefix``)
 splits the workload: pathway labels belong in a METPO PR, compound
-labels in ``mappings/canonical/chemical_mappings.tsv``, trait labels in
-``kgmicrobe.trait`` yaml or a METPO proposal.
+labels in the reviewed chemical-mapping workflow, and source attributes in
+context-aware assay review. A source attribute is not automatically a phenotype
+or a chemical identity. The legacy ``trait`` filter includes both historical
+trait placeholders and current source attributes without changing their IDs.
 
 Output columns (a superset of the input, so a curator's edits are
 preservable in-place):
 
-    placeholder_curie   kgmicrobe.{pathway,compound,trait}:<slug> from the run
+    placeholder_curie   kgmicrobe.{pathway,compound,source_attribute}:<slug> from the run
     category            biolink category the placeholder carries
     label               raw source label
     source_columns      pipe-set of source columns the label appeared under
@@ -71,7 +73,8 @@ CURATION_COLUMNS: List[str] = [
 _PLACEHOLDER_FACETS = {
     "pathway": "kgmicrobe.pathway:",
     "compound": "kgmicrobe.compound:",
-    "trait": "kgmicrobe.trait:",
+    "source_attribute": "kgmicrobe.source_attribute:",
+    "trait": ("kgmicrobe.trait:", "kgmicrobe.source_attribute:"),
 }
 
 
@@ -151,8 +154,9 @@ def main() -> None:
         choices=sorted(_PLACEHOLDER_FACETS),
         default=None,
         help=(
-            "Restrict to one placeholder facet (pathway / compound / trait). "
-            "Default: emit all three."
+            "Restrict to pathway / compound / source_attribute. "
+            "Legacy trait includes historical traits and current source attributes. "
+            "Default: emit all facets."
         ),
     )
     parser.add_argument(

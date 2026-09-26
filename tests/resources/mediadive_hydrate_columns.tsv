@@ -1,0 +1,11 @@
+original	base_id	hydrated_id	native_label	native_node_line	native_edge_line	supplied_mapping_line
+Na2SeO3 x 5 H2O	CHEBI:48843	CHEBI:131361	disodium selenite pentahydrate	31680	45565	6876
+MnSO4 x 6 H2O	CHEBI:86360	CHEBI:131523	manganese(II) sulfate hexahydrate	31813	45995	1008
+MgSO4 x 7 H2O	CHEBI:32599	CHEBI:31795	magnesium sulfate heptahydrate	144851	231786	10420
+Trisodium citrate x 2 H2O	CHEBI:53258	CHEBI:32142	sodium citrate dihydrate	145207	233026	10375
+Na2SO4 x 10 H2O	CHEBI:32149	CHEBI:32586	sodium sulfate decahydrate	145642	234546	1447
+Na2WO4 x 2 H2O	CHEBI:63940	CHEBI:63939	sodium tungstate dihydrate	167897	293420	17655
+MgCl2 x 6 H2O	CHEBI:6636	CHEBI:86345	magnesium dichloride hexahydrate	204126	389601	10419
+MnSO4 x 2 H2O	CHEBI:86360	CHEBI:86356	manganese(II) sulfate dihydrate	204136	389637	4536
+CoSO4 x 7 H2O	CHEBI:53470	CHEBI:91244	cobalt(2+) sulfate heptahydrate	209078	402442	6506
+Na2HPO4 x 2 H2O	CHEBI:34683	CHEBI:91258	disodium hydrogenphosphate dihydrate	209092	402495	10012

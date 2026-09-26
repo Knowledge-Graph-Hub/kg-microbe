@@ -1,0 +1,13 @@
+{
+  "source_sha256": "9ab0fbf72c2e5ac25ecab3ada268dfe524db971daa86d67532dea6a5412a5c44",
+  "excerpts": {
+    "815": [
+      {"recipe_order": 7, "compound": "Distilled water", "compound_id": 4, "attribute": "for liquid medium", "amount": 1000, "unit": "ml", "optional": 0},
+      {"recipe_order": 8, "compound": "Distilled water", "compound_id": 4, "attribute": "for solid medium", "amount": 500, "unit": "ml", "optional": 0}
+    ],
+    "485": [
+      {"recipe_order": 2, "compound": "Yeast extract", "compound_id": 16, "amount": 3, "unit": "g", "g_l": 3, "optional": 0},
+      {"recipe_order": 3, "compound": "Yeast extract", "compound_id": 16, "attribute": "fresh", "amount": 15, "unit": "ml", "optional": 0}
+    ]
+  }
+}

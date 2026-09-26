@@ -1,0 +1,52 @@
+{
+  "captured": "2026-09-25",
+  "input_sha256": {
+    "data/raw/mediadive/compounds.json": "ccc1130355354a55729d31618b152d1c340d75379dfea49352e9075f3419cea1",
+    "data/raw/mediadive/solutions.json": "9ab0fbf72c2e5ac25ecab3ada268dfe524db971daa86d67532dea6a5412a5c44",
+    "data/raw/compound_mappings_strict.tsv": "7e100314f1a62f675154aef7537be5b72ed2db9fbb8e8b1785198103aff31c71",
+    "data/raw/compound_mappings_strict_hydrate.tsv": "d2bc349ae31990cf54ef308a14826c756be0e0ee874d35a0a6068d75ef04b3a3",
+    "data/transformed/ontologies/chebi_nodes.tsv": "c161f8aea7ffeb1a2557f24100b3b3b67bfd62196d484b33c675921154c8b152"
+  },
+  "cases": [
+    {
+      "compound_id": 331,
+      "source_name": "Tris(hydroxymethyl)methylamine",
+      "source": {"recipe_order": 4, "compound": "Tris(hydroxymethyl)methylamine", "compound_id": 331, "amount": 6, "unit": "g", "g_l": 6, "mmol_l": 49.5295, "optional": 0},
+      "solution_ids": ["500"],
+      "legacy_mapping_lines": [5715],
+      "target_id": "CHEBI:44356",
+      "native_line": 153797,
+      "native_label": "N-tris(hydroxymethyl)methyl-2-aminoethanesulfonic acid",
+      "native_synonyms": ["TES", "TES buffer", "N-Tris[hydroxymethyl]methyl-2-aminoethanesulfonic acid"],
+      "native_cas": "7365-44-8"
+    },
+    {
+      "compound_id": 104,
+      "source_name": "(NH4) citrate",
+      "source": {"recipe_order": 7, "compound": "(NH4) citrate", "compound_id": 104, "amount": 3.5, "unit": "g", "g_l": 3.4965, "optional": 0},
+      "solution_ids": ["81", "486"],
+      "legacy_mapping_lines": [5654, 7630],
+      "target_id": "CHEBI:63037",
+      "native_line": 166996,
+      "native_label": "triammonium citrate",
+      "native_synonyms": ["Ammonium citrate (3:1)", "ammonium citrate tribasic", "citric acid triammonium salt"],
+      "native_cas": "3458-72-8"
+    },
+    {
+      "compound_id": 1902,
+      "source_name": "(NH4)2S4",
+      "source": {"recipe_order": 1, "compound": "(NH4)2S4", "compound_id": 1902, "amount": 1.3, "unit": "g", "g_l": 1.29741, "optional": 0},
+      "solution_ids": ["4785"],
+      "legacy_mapping_lines": [16680],
+      "target_id": "CHEBI:62946",
+      "native_line": 166913,
+      "native_label": "ammonium sulfate",
+      "native_synonyms": ["(NH4)2SO4", "ammonium sulfate (2:1)", "ammonium sulphate"],
+      "native_cas": "7783-20-2"
+    }
+  ],
+  "independent_comparisons": [
+    {"id": "CHEBI:9754", "name": "tris", "native_line": 215694, "cas": "77-86-1", "synonyms": ["tris(hydroxymethyl)aminomethane", "aminotris(hydroxymethyl)methane"]},
+    {"id": "CHEBI:63076", "name": "diammonium citrate", "native_line": 167036, "cas": "3012-65-5", "synonyms": ["ammonium citrate dibasic", "diammonium hydrogen citrate"]}
+  ]
+}

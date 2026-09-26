@@ -1,0 +1,10 @@
+# mapping_set_id: https://example.org/tests/historical-mim-children
+# predicate_semantics: skos
+# mapping_set_description: Historical reader-mechanism fixture; not approved production assertions.
+subject_id	subject_label	predicate_id	object_id	object_label	comment	source
+kgm.name:vermont_soil	Vermont Soil	skos:exactMatch	kgmicrobe.ingredient:vermont_soil	Vermont Soil	canonical_name	test_fixture
+kgmicrobe.ingredient:vermont_soil	Vermont Soil	skos:broadMatch	ENVO:00001998	soil	parent	test_fixture
+kgm.name:beef_brain_powder	Beef brain powder	skos:exactMatch	kgmicrobe.ingredient:beef_brain_powder	Beef brain powder	canonical_name	test_fixture
+kgmicrobe.ingredient:beef_brain_powder	Beef brain powder	skos:broadMatch	FOODON:02020911	beef brain	parent	test_fixture
+kgm.name:actinomycin_a	Actinomycin A	skos:exactMatch	kgmicrobe.compound:actinomycin_a	Actinomycin A	canonical_name	test_fixture
+kgmicrobe.compound:actinomycin_a	Actinomycin A	skos:broadMatch	CHEBI:15369	actinomycin	parent	test_fixture

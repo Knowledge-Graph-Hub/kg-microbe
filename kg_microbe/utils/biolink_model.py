@@ -12,6 +12,46 @@ DEFAULT_SCHEMA_PATH = REPO_ROOT / "data" / "raw" / "biolink-model.yaml"
 DEFAULT_PREDICATE_MAP_PATH = REPO_ROOT / "data" / "raw" / "predicate_mapping.yaml"
 
 
+def sibling_imports(schema_path: Path) -> list[Path]:
+    """
+    Return the files ``schema_path`` imports from its own directory.
+
+    ``biolink-model.yaml`` declares ``imports: [linkml:types, attributes]``.
+    A prefixed name such as ``linkml:types`` is resolved from the installed
+    linkml runtime, but a bare one is a sibling file that must be downloaded
+    alongside the model -- and ``attributes.yaml`` never was, so the pinned
+    model raised ``FileNotFoundError`` from deep inside linkml on every load
+    (#939). Reporting it here names the missing file and the fix instead.
+
+    The list is read with a real YAML parser rather than a regex over the
+    ``imports:`` block. A regex handles today's block style and silently returns
+    nothing for the equally valid flow style, which would restore the #939
+    failure with no signal that the guard had stopped working -- a silent
+    degradation in the guard against silent degradation (#942). The parse costs
+    about 50 ms with ``CSafeLoader`` against the 264 ms BMT already spends
+    building a ``SchemaView`` from the same file, and runs once per pipeline
+    invocation, not once per record.
+
+    :param schema_path: Path to the local Biolink model YAML.
+    :return: Paths the model expects beside itself, whether or not they exist.
+    """
+    if not schema_path.is_file():
+        return []
+    import yaml
+
+    # CSafeLoader is the libyaml-backed equivalent of SafeLoader and constructs
+    # no arbitrary objects; ruff's S506 cannot see that through getattr.
+    loader = getattr(yaml, "CSafeLoader", yaml.SafeLoader)
+    model = yaml.load(schema_path.read_text(encoding="utf-8"), Loader=loader)  # noqa: S506
+    if not isinstance(model, Mapping):
+        return []
+    declared = model.get("imports") or []
+    if isinstance(declared, str):
+        declared = [declared]
+    names = [str(name) for name in declared if isinstance(name, str)]
+    return [schema_path.parent / f"{name}.yaml" for name in names if name and ":" not in name]
+
+
 def _configured_path(env_name: str, default: Path) -> Path:
     """Return an environment override or a repository-relative default."""
     return Path(os.environ.get(env_name, default)).expanduser().resolve()
@@ -29,7 +69,8 @@ def prepare_kgx() -> None:
     """
     schema_path = _configured_path("KG_MICROBE_BIOLINK_MODEL", DEFAULT_SCHEMA_PATH)
     predicate_map_path = _configured_path("KG_MICROBE_BIOLINK_PREDICATE_MAP", DEFAULT_PREDICATE_MAP_PATH)
-    missing = [path for path in (schema_path, predicate_map_path) if not path.is_file()]
+    required = [schema_path, predicate_map_path, *sibling_imports(schema_path)]
+    missing = [path for path in required if not path.is_file()]
     if missing:
         formatted = ", ".join(str(path) for path in missing)
         raise FileNotFoundError(

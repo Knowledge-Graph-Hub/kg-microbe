@@ -5,6 +5,7 @@ from pathlib import Path
 from unittest import TestCase
 
 from kg_microbe.transform import DATA_SOURCES
+from kg_microbe.utils.transform_fingerprint import upstream_fingerprint, write_fingerprint
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 TRANSFORM_ROOT = REPO_ROOT / "kg_microbe" / "transform_utils"
@@ -19,6 +20,59 @@ _UPSTREAM_PATTERNS = re.compile(
     r'|output_dir\.parent\s*/\s*["\']([a-z_]+)["\']'
 )
 
+#: `constants.py` defines module-level paths into another transform's output
+#: directory, e.g.
+#:
+#:     ONTOLOGIES_TRANSFORMED_DIR = TRANSFORMED_DATA_DIR / ONTOLOGIES
+#:     NCBITAXON_NODES_FILE = ONTOLOGIES_TRANSFORMED_DIR / "ncbitaxon_nodes.tsv"
+#:
+#: A transform that imports `NCBITAXON_NODES_FILE` writes no path of its own, so
+#: the scan above cannot see the dependency: bacdive, mediadive and metatraits
+#: each read `ontologies/` this way and the guard passed for months (#1035).
+#: Resolve the constants first, then look for their *names* in each transform.
+_CONSTANTS_FILE = TRANSFORM_ROOT / "constants.py"
+_DIR_CONSTANT = re.compile(
+    r"^([A-Z][A-Z0-9_]*) *= *TRANSFORMED_DATA_DIR *(?:/ *([A-Z][A-Z0-9_]*)|/ *[\"\']([a-z_]+)[\"\'])", re.M
+)
+_FILE_CONSTANT = re.compile(r"^([A-Z][A-Z0-9_]*) *= *([A-Z][A-Z0-9_]*) *//? *[\"\']", re.M)
+_PACKAGE_DIR_CONSTANT = re.compile(
+    r"^([A-Z][A-Z0-9_]*)(?: *: *Path)? *= *TRANSFORM_UTILS_DIR *(?:/ *([A-Z][A-Z0-9_]*)|/ *[\"\']([a-z_]+)[\"\'])",
+    re.M,
+)
+_TMP_DIR_CONSTANT = re.compile(r"^([A-Z][A-Z0-9_]*) *= *([A-Z][A-Z0-9_]*) */ *[\"\']tmp[\"\']", re.M)
+
+
+def _constants_naming_a_transform_output():
+    """
+    Map every constant in ``constants.py`` that points into a transform's output.
+
+    :return: ``{constant name: source name}``.
+    """
+    text = _CONSTANTS_FILE.read_text(encoding="utf-8")
+    # Which source each *directory* constant names. The source may be spelled as
+    # a literal or as the SOURCE-name constant (ONTOLOGIES = "ontologies").
+    literals = dict(re.findall(r"^([A-Z][A-Z0-9_]*) *= *[\"\']([a-z_]+)[\"\'] *(?:#.*)?$", text, re.M))
+    dirs = {}
+    for name, via_constant, via_literal in _DIR_CONSTANT.findall(text):
+        source = via_literal or literals.get(via_constant)
+        if source in DATA_SOURCES:
+            dirs[name] = source
+    # Legacy producers also publish intermediate TSVs under their package's
+    # tmp/ directory. Do not classify curated package assets as produced data.
+    packages = {
+        name: via_literal or literals.get(via_constant)
+        for name, via_constant, via_literal in _PACKAGE_DIR_CONSTANT.findall(text)
+    }
+    for name, parent in _TMP_DIR_CONSTANT.findall(text):
+        if packages.get(parent) in DATA_SOURCES:
+            dirs[name] = packages[parent]
+    # Then every file constant built on one of those directories.
+    resolved = dict(dirs)
+    for name, parent in _FILE_CONSTANT.findall(text):
+        if parent in resolved:
+            resolved[name] = resolved[parent]
+    return resolved
+
 
 def _observed_dependencies():
     """
@@ -26,6 +80,7 @@ def _observed_dependencies():
 
     :return: ``{source: {upstream, ...}}`` for sources with any dependency.
     """
+    constants = _constants_naming_a_transform_output()
     observed = {}
     for source in DATA_SOURCES:
         code_dir = TRANSFORM_ROOT / source
@@ -33,10 +88,14 @@ def _observed_dependencies():
             continue
         found = set()
         for path in code_dir.rglob("*.py"):
-            for match in _UPSTREAM_PATTERNS.finditer(path.read_text(encoding="utf-8")):
+            text = path.read_text(encoding="utf-8")
+            for match in _UPSTREAM_PATTERNS.finditer(text):
                 name = next(group for group in match.groups() if group)
                 if name != source and name in DATA_SOURCES:
                     found.add(name)
+            for constant, upstream in constants.items():
+                if upstream != source and re.search(rf"\b{constant}\b", text):
+                    found.add(upstream)
         if found:
             observed[source] = found
     return observed
@@ -76,6 +135,23 @@ class CrossTransformDeclarationTest(TestCase):
         self.assertIn("ontologies", observed.get("gold", set()))
         self.assertIn("gtdb", observed.get("lpsn", set()))
         self.assertIn("lpsn", observed.get("microbedecoder", set()))
+        self.assertIn("gold", observed.get("microbedecoder", set()))
+        # Reached only through a constants.py path; see _constants_naming_a_transform_output (#1035).
+        self.assertIn("ontologies", observed.get("bacdive", set()))
+        self.assertIn("ontologies", observed.get("mediadive", set()))
+        self.assertIn("ontologies", observed.get("metatraits", set()))
+        self.assertIn("bacdive", observed.get("mediadive", set()))
+        self.assertIn("bacdive", observed.get("bactotraits", set()))
+
+    def test_a_constant_pointing_into_a_transform_output_is_resolved(self):
+        """The premise of the constants scan, pinned so a refactor cannot quietly empty it."""
+        resolved = _constants_naming_a_transform_output()
+        self.assertEqual(resolved.get("NCBITAXON_NODES_FILE"), "ontologies")
+        self.assertEqual(resolved.get("CHEBI_NODES_FILE"), "ontologies")
+        self.assertEqual(resolved.get("ONTOLOGIES_TRANSFORMED_DIR"), "ontologies")
+        self.assertEqual(resolved.get("BACDIVE_TMP_DIR"), "bacdive")
+        self.assertEqual(resolved.get("BACDIVE_YAML_DIR"), "bacdive")
+        self.assertNotIn("METABOLITE_MAPPING_FILE", resolved)
 
     def test_no_transform_declares_an_unregistered_upstream(self):
         """A typo would fold an always-absent marker in and never clear."""
@@ -104,3 +180,35 @@ class CrossTransformDeclarationTest(TestCase):
                     order.index(source),
                     f"{upstream} must be registered before {source} in DATA_SOURCES",
                 )
+
+
+def test_bacdive_marker_changes_invalidate_both_tmp_consumers(tmp_path):
+    """Changing the producing marker makes MediaDive and BactoTraits stale, not unrelated sources."""
+    transformed = tmp_path / "transformed"
+    producer_code = tmp_path / "bacdive_code"
+    producer_code.mkdir()
+    producer_module = producer_code / "producer.py"
+    producer_module.write_text("revision = 1\n", encoding="utf-8")
+    producer_output = transformed / "bacdive"
+    producer_output.mkdir(parents=True)
+    write_fingerprint(producer_output, producer_code, tmp_path, data_inputs=())
+    recorded = {}
+    for source in ("mediadive", "bactotraits"):
+        consumer_code = tmp_path / f"{source}_code"
+        consumer_code.mkdir()
+        (consumer_code / "consumer.py").write_text("revision = 1\n", encoding="utf-8")
+        consumer_output = transformed / source
+        consumer_output.mkdir()
+        declarations = DATA_SOURCES[source].TRANSFORM_INPUTS
+        marker = write_fingerprint(
+            consumer_output, consumer_code, tmp_path, data_inputs=(), transform_inputs=declarations
+        )
+        recorded[source] = marker["upstream"]
+        assert recorded[source] == upstream_fingerprint(transformed, declarations)
+
+    unrelated_before = upstream_fingerprint(transformed, ("ontologies",))
+    producer_module.write_text("revision = 2\n", encoding="utf-8")
+    write_fingerprint(producer_output, producer_code, tmp_path, data_inputs=())
+    for source, original in recorded.items():
+        assert original != upstream_fingerprint(transformed, DATA_SOURCES[source].TRANSFORM_INPUTS)
+    assert unrelated_before == upstream_fingerprint(transformed, ("ontologies",))

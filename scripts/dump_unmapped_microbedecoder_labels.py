@@ -1,4 +1,5 @@
-r"""Dump MicrobeDecoder unmapped labels as a tracked curation queue.
+r"""
+Dump MicrobeDecoder unmapped labels as a tracked curation queue.
 
 Reads the per-run ``data/transformed/microbedecoder/unmapped_labels.tsv``
 that ``MicrobeDecoderTransform`` emits and writes a *tracked* curation

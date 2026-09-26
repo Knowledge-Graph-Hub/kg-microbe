@@ -1,0 +1,3 @@
+id	category	name	description	xref	provided_by	synonym	deprecated	same_as
+fixture:1	biolink:NamedThing	"Open label			infores:first			
+fixture:2	biolink:OrganismTaxon	Closed label"			infores:second			

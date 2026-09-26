@@ -24,6 +24,8 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Dict, Optional
 
+from kg_microbe.utils.tsv_io import tsv_writer
+
 try:
     from Bio import Entrez
 except ImportError:
@@ -116,7 +118,7 @@ def create_mapping_file(samn_ids: list, output_file: Path, email: str, delay: fl
 
     # Create output file with header
     with open(output_file, "w", newline="") as f:
-        writer = csv.writer(f, delimiter="\t")
+        writer = tsv_writer(f)
         writer.writerow(["samn_id", "ncbitaxon_id"])
 
         # Query each SAMN ID

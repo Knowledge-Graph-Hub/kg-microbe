@@ -1,0 +1,2 @@
+id	category	name	deprecated	provided_by
+fixture:historical	biolink:NamedThing	historical fixture	false	infores:beta

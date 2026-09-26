@@ -1,0 +1,7 @@
+id	disposition	evidence
+FOODON:03411744	organism_class	data/raw/foodon.json: kelp has synonym laminariales; pinned NCBITaxon:2886 preferred label Laminariales. Category evidence only; no identity assertion.
+FOODON:00003662	invalid_in_taxon_target	data/raw/foodon.json definition: A rosette of two cultivar groups (Brassica rapa, subspecies pekinensis and chinensis) of a chinese cabbage plant.
+FOODON:00003673	invalid_in_taxon_target	data/raw/foodon.json definition: A pepo fruit of a watermelon plant (Citrullus lanatus). The fruit itself has in_taxon NCBITaxon:3654.
+FOODON:03309697	invalid_in_taxon_target	data/raw/foodon.json label: south african porgy fillet (raw); source annotation: skeletal meat part, without bone or shell; in_taxon edge is self-referential.
+FOODON:03411632	invalid_in_taxon_target	data/raw/foodon.json definition: A fruitbody of Pleurotus genus fungus. The fruitbody class itself has in_taxon NCBITaxon:5320.
+FOODON:03411645	invalid_in_taxon_target	data/raw/foodon.json definition: A fruitbody of a Pleurotus cystidiosus fungus. The fruitbody class itself has in_taxon NCBITaxon:28992.

@@ -1,0 +1,3 @@
+subject	predicate	object	relation	primary_knowledge_source	publications	has_percentage
+time:Instant	biolink:related_to	FOODON:1	RO:0000056	infores:beta-same-relation	PMID:4	0.4
+time:Instant	biolink:related_to	FOODON:1	RO:0000058	infores:beta-other-relation	PMID:5	0.8

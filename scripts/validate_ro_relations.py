@@ -16,6 +16,7 @@ def extract_ro_terms_from_owl(owl_path: Path) -> Set[str]:
 
     Returns:
         Set of valid RO term IDs (e.g., "RO:0000052", "RO:HOM0000017")
+
     """
     ro_terms = set()
 
@@ -43,6 +44,7 @@ def validate_edge_files(transformed_dir: Path, valid_ro_terms: Set[str]) -> dict
 
     Returns:
         Dictionary mapping source names to lists of issues found
+
     """
     results = {}
 

@@ -46,9 +46,16 @@ class _FakeAdapter:
         return list(self._store.get(curie, {}).get("aliases", []))
 
     def entity_metadata_map(self, curie: str):
-        """Return an OAK-shaped metadata dict carrying only ``oio:hasDbXref``."""
+        """Return OAK-shaped xrefs and any additional annotation properties."""
         xrefs = list(self._store.get(curie, {}).get("xrefs", []))
-        return {"oio:hasDbXref": xrefs} if xrefs else {}
+        metadata = dict(self._store.get(curie, {}).get("metadata", {}))
+        if xrefs:
+            metadata["oio:hasDbXref"] = xrefs
+        return metadata
+
+    def outgoing_relationships(self, curie: str, predicates=None):
+        """Return explicitly stored parents for the hierarchy export tests."""
+        return [("rdfs:subClassOf", parent) for parent in self._store.get(curie, {}).get("parents", [])]
 
 
 class _StubbedTransform(OntologiesStubsTransform):
@@ -196,6 +203,56 @@ def test_transform_writes_label_synonyms_xrefs(tmp_path):
     assert "MESH:D015159" in row["xref"].split("|")
 
 
+@pytest.mark.parametrize(
+    "predicate",
+    ["NCIT:P210", "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#P210"],
+)
+def test_ncit_cas_annotations_reach_node_xrefs_without_identity_edges(tmp_path, monkeypatch, predicate):
+    """Keep source CAS annotations on the original nodes, separate from equivalence."""
+    fixtures = _read_tsv(REPO_ROOT / "tests/resources/ontologies_stubs/ncit_cas_annotations.tsv")
+    parent = "NCIT:C1908"
+    records = {
+        row["id"]: {
+            "label": row["name"],
+            "metadata": {predicate: [row["cas_rn"]]},
+            "parents": [parent],
+        }
+        for row in fixtures
+    }
+    records[parent] = {"label": "Drug, Food, Chemical or Biomedical Material"}
+    adapter = _FakeAdapter(records)
+    transform = OntologiesStubsTransform(input_dir=tmp_path / "in", output_dir=tmp_path / "out")
+    monkeypatch.setattr(transform, "_open_adapter", lambda prefix, path: adapter)
+    transform._write_stub_module_from_semsql_walk(
+        prefix="NCIT",
+        curies=[row["id"] for row in fixtures],
+        db_path=tmp_path / "unused.db",
+        upper_terms=[parent],
+        knowledge_source="infores:ncit",
+    )
+    nodes = {row["id"]: row for row in _read_tsv(transform.output_dir / "ncit_nodes.tsv")}
+    assert set(nodes) == set(records)
+    for row in fixtures:
+        node = nodes[row["id"]]
+        assert node["xref"] == f"cas:{row['cas_rn']}"
+        assert node["name"] == row["name"]
+        assert node["same_as"] == ""
+    assert nodes[parent]["xref"] == ""
+    assert "cas:8048-52-0" not in nodes["NCIT:C76253"]["xref"].split("|")
+    edges = _read_tsv(transform.output_dir / "ncit_edges.tsv")
+    assert len(edges) == len(fixtures)
+    assert {row["predicate"] for row in edges} == {"biolink:subclass_of"}
+    assert {row["object"] for row in edges} == {parent}
+
+
+@pytest.mark.parametrize("value", ["2650-88-3", "00123-45-6", "187235376", "cas:187235-37-6", "", None, 123])
+def test_invalid_cas_annotation_does_not_become_xref(tmp_path, value):
+    """Malformed or checksum-invalid registry values stay out of exported CAS xrefs."""
+    adapter = _FakeAdapter({"NCIT:example": {"metadata": {"NCIT:P210": [value]}}})
+    transform = OntologiesStubsTransform(input_dir=tmp_path / "in", output_dir=tmp_path / "out")
+    assert transform._fetch_metadata(adapter, "NCIT:example")[2] == []
+
+
 def test_transform_falls_back_to_curie_when_label_missing(tmp_path):
     """Missing label must NOT produce an empty `name` cell — fall back to the CURIE."""
     adapters = {"BTO": _FakeAdapter({})}  # adapter knows nothing
@@ -274,6 +331,50 @@ def test_transform_raises_when_mireot_owl_missing(tmp_path):
             upper_term="MICRO:0000031",
             knowledge_source="infores:micro",
         )
+
+
+def test_mireot_intermediate_is_rdfxml_not_functional_syntax(tmp_path, monkeypatch):
+    """
+    ROBOT cannot re-read the `.ofn` it writes for this content (#986).
+
+    Once the MICRO module carried literals with embedded newlines and a
+    trademark sign, every OWLAPI parser rejected ROBOT's own functional-syntax
+    output and the convert step died with INVALID ONTOLOGY FILE ERROR. RDF/XML
+    round-trips the same module, so the extract must be written as `.owl` and
+    the convert must read that same file.
+    """
+    import subprocess
+
+    calls = []
+
+    def fake_run(cmd, check):
+        """Capture the ROBOT command without launching it."""
+        calls.append(list(cmd))
+        return None
+
+    monkeypatch.setattr("shutil.which", lambda _name: "/fake/robot")
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    transform = OntologiesStubsTransform(input_dir=tmp_path / "raw", output_dir=tmp_path / "out")
+    transform.output_dir.mkdir(parents=True, exist_ok=True)
+    stale = transform.output_dir / "micro_mireot_module.ofn"
+    stale.write_text("Ontology()\n", encoding="utf-8")
+    module_json = transform._run_mireot_extract(
+        prefix="MICRO",
+        lower_curies=["MICRO:0000082"],
+        upper_curie="MICRO:0000031",
+        owl_path=tmp_path / "raw" / "micro.owl",
+    )
+    extract, convert = calls
+    assert extract[1] == "extract"
+    written = extract[extract.index("--output") + 1]
+    assert written.endswith("_mireot_module.owl"), written
+    assert not written.endswith(".ofn")
+    assert convert[1] == "convert"
+    assert convert[convert.index("--input") + 1] == written
+    assert convert[convert.index("--output") + 1] == str(module_json)
+    assert module_json.suffix == ".json"
+    # The superseded intermediate does not linger beside the new one (#988).
+    assert not stale.exists()
 
 
 # ---------------------------------------------------------------------------

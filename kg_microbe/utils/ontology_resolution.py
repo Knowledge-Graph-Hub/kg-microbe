@@ -15,6 +15,7 @@ from kg_microbe.transform_utils.constants import (
     MACROMOLECULE_CATEGORY,
     MOLECULAR_ACTIVITY_CATEGORY,
     NCBI_CATEGORY,
+    PHENOTYPIC_CATEGORY,
     PROTEIN_CATEGORY,
     RHEA_CATEGORY,
     RHEA_NEW_PREFIX,
@@ -27,8 +28,8 @@ from kg_microbe.transform_utils.constants import (
 class CategoryAdapter(Protocol):
     """Minimal adapter surface needed by ChEBI category policy."""
 
-    def ancestors(self, term_id: str):
-        """Return ancestor identifiers."""
+    def ancestors(self, term_id: str, predicates):
+        """Return ancestor identifiers along the supplied predicates only."""
 
     def label(self, term_id: str):
         """Return the preferred label, if present."""
@@ -63,54 +64,12 @@ def go_category_for_namespace(namespace: str | None) -> str:
 
 
 def chebi_category(term_id: str, adapter: CategoryAdapter) -> str:
-    """Classify a ChEBI term using injected ancestry, label, and parent data."""
-    ancestors = set(adapter.ancestors(term_id))
+    """Classify by asserted is-a ancestry, never by a chemical's has-role links."""
+    ancestors = {term_id, *adapter.ancestors(term_id, predicates=["rdfs:subClassOf"])}
+    if "CHEBI:50906" in ancestors:
+        return ROLE_CATEGORY
     if "CHEBI:33839" in ancestors:
         return MACROMOLECULE_CATEGORY
-
-    label = adapter.label(term_id)
-    if label:
-        label_lower = label.lower()
-        role_suffixes = (
-            "inhibitor",
-            "agonist",
-            "antagonist",
-            "activator",
-            "inducer",
-            "agent",
-            "cofactor",
-            "coenzyme",
-            "catalyst",
-            "ligand",
-            "substrate",
-            "product",
-            "intermediate",
-            "donor",
-            "acceptor",
-        )
-        standalone_roles = {
-            "antioxidant",
-            "drug",
-            "pharmaceutical",
-            "metabolite",
-            "nutrient",
-            "toxin",
-            "poison",
-            "mutagen",
-            "carcinogen",
-        }
-        if label_lower in standalone_roles:
-            return ROLE_CATEGORY
-        if any(label_lower.endswith(suffix) or f" {suffix}" in label_lower for suffix in role_suffixes):
-            return ROLE_CATEGORY
-        if " role" in label_lower or label_lower.endswith("role"):
-            return ROLE_CATEGORY
-
-        relationships = adapter.relationships(term_id, predicates=["rdfs:subClassOf"])
-        parent_ids = {str(relationship[2]) for relationship in relationships}
-        if parent_ids & {"CHEBI:50906", "CHEBI:23888", "CHEBI:64047", "CHEBI:52217"}:
-            return ROLE_CATEGORY
-
     return SMALL_MOLECULE_CATEGORY
 
 
@@ -122,6 +81,18 @@ def uberon_category(_term_id: str) -> str:
 def ncbitaxon_category(_term_id: str) -> str:
     """Return the invariant category for an NCBITaxon term."""
     return NCBI_CATEGORY
+
+
+def foodon_category(term_id: str) -> str:
+    """Apply FOODON's asserted organism-versus-food boundary consistently across sources."""
+    from kg_microbe.utils.foodon_classification import authoritative_foodon_category
+
+    return authoritative_foodon_category(term_id)
+
+
+def pato_category(_term_id: str) -> str:
+    """Return the invariant category for a PATO term (madin_etal's choice, #1015)."""
+    return PHENOTYPIC_CATEGORY
 
 
 def replace_deprecated_category_names(category: str) -> str:

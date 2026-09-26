@@ -1,0 +1,5 @@
+fixtures:
+  Trait:
+    curie: fixture:trait
+    category: biolink:PhenotypicQuality
+    name: fixture trait

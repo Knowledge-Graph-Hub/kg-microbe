@@ -11,12 +11,27 @@ themselves (xrefs, canonical-name rows, synonym rows).
 
 import csv
 import gzip
+import hashlib
 import re
-from collections import OrderedDict
+from collections import Counter, OrderedDict
+from copy import deepcopy
+from itertools import dropwhile
 from pathlib import Path
 from typing import Dict, List, Optional
 
 import pandas as pd
+
+from kg_microbe.utils.ingredient_identity import (
+    ingredient_authority_label,
+    ingredient_cas_annotations,
+    ingredient_case_sensitive_name_scope,
+    ingredient_mapping_allowed,
+    ingredient_name_scopes,
+    ingredient_name_target,
+    ingredient_xref_allowed,
+)
+from kg_microbe.utils.ingredient_scope import read_scope_metadata
+from kg_microbe.utils.sssom_identity_policy import classify_mapping_row
 
 # Module-level cache (loaded once per process). We no longer store a
 # DataFrame — the SSSOM is parsed row-streamed and aggregated into the
@@ -30,7 +45,8 @@ _HYDRATE_FREE_NAME_INDEX: Optional[Dict[str, str]] = None
 # Parent-of relationships imported from skos:narrowMatch / skos:broadMatch
 # rows in the unified SSSOM. ``_PARENT_INDEX[child_curie]`` is the sorted
 # list of broader (parent) CURIEs the child is narrower than. Used by
-# transforms to emit ``biolink:subclass_of`` edges.
+# transforms to emit ``biolink:broad_match`` edges: MIM's parent anchor
+# means "closest broader term / form of", not subsumption (MIM #245).
 _PARENT_INDEX: Optional[Dict[str, list]] = None
 # Recipe-equivalent hydrate pairs imported from rows whose
 # ``predicate_id == 'skos:closeMatch'`` and ``comment ==
@@ -52,6 +68,8 @@ _PRIMARY_SYNONYMS_INDEX: Optional[Dict[str, List[str]]] = None
 _PRIMARY_XREFS_INDEX: Optional[Dict[str, List[str]]] = None
 _PRIMARY_FORMULA_INDEX: Optional[Dict[str, str]] = None
 _CACHED_PATH: Optional[Path] = None
+_CACHED_DIGEST: Optional[str] = None
+_MAPPING_LOAD_AUDIT: dict = {}
 
 # Matches a trailing hydrate specifier:
 #   " x n H2O", " · 6 H2O", " . 2H2O", " x 12H2O", etc.
@@ -72,6 +90,14 @@ _NEGATIVE_LOOKUP_CACHE: "OrderedDict[tuple, None]" = OrderedDict()
 # Module-level Greek-letter → ASCII map used by ``normalize_name``. Kept
 # module-scope so it is allocated once, not rebuilt on every call (hot path).
 _GREEK_MAP = {"α": "alpha", "β": "beta", "γ": "gamma", "δ": "delta", "μ": "mu"}
+
+# Prime locants distinguish positions on different rings/subunits (#1127).
+_PRIME_TRANSLATION = str.maketrans({"′": "'", "’": "'", "‘": "'", "ʹ": "'", "″": "''", "‴": "'''"})
+
+
+def normalize_chemical_primes(name: str) -> str:
+    """Canonicalize typographic prime marks without losing chemical locants."""
+    return name.translate(_PRIME_TRANSLATION)
 
 
 def _negative_cache_add(key: tuple) -> None:
@@ -95,12 +121,12 @@ def normalize_name(
     :param name: Chemical name to normalize
     :param strip_stereochemistry: If True, remove stereochemistry prefixes like (R)-, (S)-, D-, L-, (+)-, (-)-
     :param strip_hydrate: If True, strip trailing hydrate suffixes like " x n H2O", " · 6 H2O", " . 2H2O"
-    :return: Normalized name (lowercase, no punctuation)
+    :return: Normalized name retaining hyphens and chemical prime locants
     """
     if pd.isna(name) or not name:
         return ""
     # Convert to lowercase first
-    normalized = str(name).lower().strip()
+    normalized = normalize_chemical_primes(str(name).lower().strip())
 
     # Normalize Greek letters to their spelled-out ASCII equivalents so that
     # e.g. "4-nitrophenyl β-D-glucopyranoside" (ChEBI label form) matches
@@ -126,7 +152,7 @@ def normalize_name(
         normalized = _HYDRATE_SUFFIX_RE.sub("", normalized).strip()
 
     # Remove extra punctuation and normalize spaces
-    normalized = re.sub(r"[^\w\s-]", "", normalized)
+    normalized = re.sub(r"[^\w\s'-]", "", normalized)
     normalized = re.sub(r"\s+", " ", normalized)
     return normalized
 
@@ -147,8 +173,8 @@ def read_predicate_semantics(path: Path) -> str:
     **Absence means legacy, and so does anything unrecognised.** MIM writes
     ``skos:narrowMatch`` to mean "the object is the parent", which is the
     inverse of the SKOS spec; this repo has always read it that way, so the two
-    agree and every asymmetric row yields a correct ``biolink:subclass_of``
-    edge (#822).
+    agree and every asymmetric row yields a correctly directed parent edge
+    (#822).
 
     Failing closed is the whole point. It makes the two halves of the fix
     order-independent: an old file, or a *rebuild of old content*, carries no
@@ -199,12 +225,34 @@ def _iter_sssom_rows(path: Path):
         else (lambda p: open(p, "r", encoding="utf-8", newline=""))
     )
     with open_fn(path) as fh:
-        data_lines = (line for line in fh if not line.startswith("#"))
+        data_lines = dropwhile(lambda line: line.startswith("#"), fh)
         reader = csv.DictReader(data_lines, delimiter="\t")
-        yield from reader
+        fields = reader.fieldnames or []
+        if len(fields) != len(set(fields)) or not {"subject_id", "predicate_id", "object_id"}.issubset(fields):
+            raise ValueError(f"Invalid SSSOM identity columns: {path}")
+        for position, row in enumerate(reader, 1):
+            if None in row or any(value is None for value in row.values()):
+                raise ValueError(f"Malformed SSSOM row {position}: {path}")
+            yield row
 
 
-def load_unified_mappings(mappings_path: Optional[Path] = None) -> int:
+def get_mapping_load_audit() -> dict:
+    """Return counts and bounded row diagnostics from the last mapping load."""
+    return deepcopy(_MAPPING_LOAD_AUDIT)
+
+
+def _scope_metadata(path: Path) -> dict:
+    opener = gzip.open if str(path).endswith(".gz") else open
+    with opener(path, "rt", encoding="utf-8", newline="") as stream:
+        header = []
+        for line in stream:
+            if not line.startswith("#"):
+                break
+            header.append(line[1:].removeprefix(" "))
+    return read_scope_metadata("".join(header))
+
+
+def load_unified_mappings(mappings_path: Optional[Path] = None, *, expected_sha256: Optional[str] = None) -> int:
     """
     Load the unified ingredient SSSOM mapping set.
 
@@ -221,7 +269,7 @@ def load_unified_mappings(mappings_path: Optional[Path] = None) -> int:
         ``object_label``.
       - ``kgm.name:`` subject + ``comment == "synonym"`` → ``subject_label``
         is added as an entity synonym.
-      - other CURIE subject (not equal to object) → xref.
+      - other CURIE subject (not equal to object) with exactMatch → identity xref.
       - subject == object (attribute_carrier) → no-op mapping; used only
         to carry extension columns for entities with no other rows.
 
@@ -231,24 +279,48 @@ def load_unified_mappings(mappings_path: Optional[Path] = None) -> int:
         default path relative to this file.
     :return: Number of distinct entities loaded (zero before first load).
     """
-    global _LOADED, _ENTITY_COUNT, _CACHED_PATH
+    global _LOADED, _ENTITY_COUNT, _CACHED_PATH, _CACHED_DIGEST
 
     if mappings_path is None:
         base_dir = Path(__file__).parent.parent.parent
         mappings_path = base_dir / "mappings" / "kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
 
-    if _LOADED and _CACHED_PATH == mappings_path:
+    if expected_sha256 is not None:
+        digest = hashlib.sha256()
+        try:
+            with mappings_path.open("rb") as stream:
+                for block in iter(lambda: stream.read(1024 * 1024), b""):
+                    digest.update(block)
+            if not re.fullmatch(r"[a-f0-9]{64}", expected_sha256) or digest.hexdigest() != expected_sha256:
+                raise ValueError("Unified mappings do not match the selected lookup bundle")
+        except (OSError, ValueError):
+            _LOADED, _CACHED_PATH, _CACHED_DIGEST = False, None, None
+            raise
+
+    if _LOADED and _CACHED_PATH == mappings_path and _CACHED_DIGEST == expected_sha256:
         return _ENTITY_COUNT
 
     if not mappings_path.exists():
         raise FileNotFoundError(f"Unified mappings file not found: {mappings_path}")
 
-    _CACHED_PATH = mappings_path
+    # A failed reload must never expose partially rebuilt indices as a cached
+    # successful load, including when another mapping file was already loaded.
+    _LOADED = False
+    _CACHED_PATH = None
+    _CACHED_DIGEST = None
+
+    metadata = _scope_metadata(mappings_path)
+    if metadata.get("ext_scope_profile") or any(
+        definition.get("slot_name") == "ext_scope_profile" for definition in metadata.get("extension_definitions", [])
+    ):
+        raise ValueError("Profiled ingredient mappings require a verified complete ingredient bundle")
 
     # Clear negative cache on reload so stale misses cannot survive a mappings update.
     _NEGATIVE_LOOKUP_CACHE.clear()
 
     _build_indices(mappings_path)
+    _CACHED_PATH = mappings_path
+    _CACHED_DIGEST = expected_sha256
     _LOADED = True
     return _ENTITY_COUNT
 
@@ -262,6 +334,18 @@ def _build_indices(mappings_path: Path):
     global _PARENT_INDEX
     global _HYDRATE_EQUIV_INDEX
     global _ENTITY_COUNT
+    global _MAPPING_LOAD_AUDIT
+
+    counts: Counter = Counter()
+    exclusions: Counter = Counter()
+    diagnostics: list = []
+    _MAPPING_LOAD_AUDIT = {
+        "path": str(mappings_path),
+        "complete": False,
+        "counts": counts,
+        "exclusions": exclusions,
+        "diagnostics": diagnostics,
+    }
 
     _NAME_INDEX = {}
     _CANONICAL_NAME_INDEX = {}
@@ -280,6 +364,8 @@ def _build_indices(mappings_path: Path):
     primary_xrefs_sets: Dict[str, set] = {}
     parent_sets: Dict[str, set] = {}
     hydrate_sets: Dict[str, set] = {}
+    broader_categories: Dict[str, set] = {}
+    scope_metadata = _scope_metadata(mappings_path)
 
     # Which way round the asymmetric predicates read. Absence means legacy, so
     # this repo's behaviour cannot change until MIM declares the flip (#822).
@@ -310,6 +396,13 @@ def _build_indices(mappings_path: Path):
         synonym hits. Lower rank wins on collision; equal rank keeps the
         first-seen CURIE for determinism.
         """
+        if not ingredient_mapping_allowed(name, curie):
+            return ""
+        if ingredient_case_sensitive_name_scope(name)[0]:
+            return ""  # Exact-case scopes must never share a case-folded index key.
+        target = ingredient_name_target(name)
+        if target is not None and target != curie:
+            return ""
         norm = normalize_name(name)
         if not norm:
             return ""
@@ -325,9 +418,40 @@ def _build_indices(mappings_path: Path):
                 _HYDRATE_FREE_NAME_INDEX_RANK[norm_hf] = rank
         return norm
 
-    for row in _iter_sssom_rows(mappings_path):
+    for position, row in enumerate(_iter_sssom_rows(mappings_path), 1):
+        route, reason = classify_mapping_row(row, scope_metadata)
+        counts[route] += 1
+        if route in {"quarantined", "annotation", "nonidentity"}:
+            if len(diagnostics) < 20:
+                diagnostics.append(
+                    {
+                        "source_position": position,
+                        "subject_id": row.get("subject_id", ""),
+                        "predicate_id": row.get("predicate_id", ""),
+                        "object_id": row.get("object_id", ""),
+                        "route": route,
+                        "reason": reason,
+                    }
+                )
+            continue
         curie = (row.get("object_id") or "").strip()
-        if not curie:
+        subject = (row.get("subject_id") or "").strip()
+        predicate = (row.get("predicate_id") or "").strip()
+
+        # Nonidentity relations do not declare names, formulas or xrefs.
+        # Category metadata can describe an endpoint without resolving it.
+        if route == "broader":
+            object_is_parent = (predicate == "skos:broadMatch") == skos_semantics
+            child, parent = (subject, curie) if object_is_parent else (curie, subject)
+            parent_sets.setdefault(child, set()).add(parent)
+            category = (row.get("object_category") or "").strip()
+            if category:
+                broader_categories.setdefault(curie, set()).add(category)
+            continue
+        if route == "hydrate":
+            if ingredient_xref_allowed(subject, curie):
+                hydrate_sets.setdefault(subject, set()).add(curie)
+                hydrate_sets.setdefault(curie, set()).add(subject)
             continue
 
         # First non-empty extension attributes win per object.
@@ -347,45 +471,21 @@ def _build_indices(mappings_path: Path):
         # the same string (see _index_name docstring).
         if curie not in _PRIMARY_NAME_INDEX:
             obj_label = (row.get("object_label") or "").strip()
+            if not ingredient_mapping_allowed(obj_label, curie):
+                obj_label = ingredient_authority_label(curie)
             if obj_label:
                 _PRIMARY_NAME_INDEX[curie] = obj_label
                 norm = _index_name(curie, obj_label, rank=0)
                 if norm:
                     _CANONICAL_NAME_INDEX.setdefault(norm, curie)
 
-        subject = (row.get("subject_id") or "").strip()
-        if not subject:
+        # The existing source/target exclusions deny the identity or lexical
+        # link, not independent object metadata on a recognized row shape.
+        if not ingredient_xref_allowed(subject, curie):
+            exclusions["identity"] += 1
             continue
-
-        predicate = (row.get("predicate_id") or "").strip()
-        # skos:narrowMatch / skos:broadMatch carry parent-of (asymmetric)
-        # relationships that the entity-centric indices above can't express.
-        # Index them as ``child → [parents]`` so transforms can emit
-        # biolink:subclass_of edges from them. Which side is the parent
-        # depends on the set's declared semantics — see
-        # ``read_predicate_semantics`` and #822.
-        if predicate == "skos:narrowMatch":
-            # SKOS: ``A narrowMatch B`` means B is narrower, so A is the parent.
-            # Legacy MIM: the object is the parent. Same row, opposite reading.
-            if skos_semantics:
-                parent_sets.setdefault(curie, set()).add(subject)
-            else:
-                parent_sets.setdefault(subject, set()).add(curie)
-            continue  # don't also treat the row as an xref/synonym
-        if predicate == "skos:broadMatch":
-            if skos_semantics:
-                parent_sets.setdefault(subject, set()).add(curie)
-            else:
-                parent_sets.setdefault(curie, set()).add(subject)
-            continue
-        # Recipe-equivalent hydrate pairs (anhydrous CHEBI ↔ hydrated
-        # CHEBI). Tagged at consolidator export time with
-        # ``predicate_id == 'skos:closeMatch'`` and
-        # ``comment == 'recipe_equivalent_hydrate'``. Index symmetrically
-        # so a lookup on either form returns the other.
-        if predicate == "skos:closeMatch" and (row.get("comment") or "").strip() == "recipe_equivalent_hydrate":
-            hydrate_sets.setdefault(subject, set()).add(curie)
-            hydrate_sets.setdefault(curie, set()).add(subject)
+        if subject.startswith("kgm.name:") and not ingredient_mapping_allowed(row.get("subject_label", ""), curie):
+            exclusions["lexical"] += 1
             continue
 
         if subject.startswith("kgm.name:"):
@@ -403,6 +503,17 @@ def _build_indices(mappings_path: Path):
             norm_xref = subject.lower()
             _XREF_INDEX.setdefault(norm_xref, curie)
 
+    # Prefer independent declarations; ambiguous broader-row categories do not
+    # choose a winner by row order. This does not populate any identity lookup.
+    for curie, categories in broader_categories.items():
+        if len(categories) == 1:
+            _CATEGORY_INDEX.setdefault(curie, next(iter(categories)))
+
+    # Query scope is reviewed independently of lexical rank. A missing target
+    # stays unresolved; a stale specific synonym must not stand in for it.
+    for query, target in ingredient_name_scopes()[0].items():
+        if target in _PRIMARY_NAME_INDEX:
+            _NAME_INDEX[normalize_name(query)] = target
     # Freeze accumulated sets into deterministic lists.
     for curie, syns in primary_synonyms_sets.items():
         _PRIMARY_SYNONYMS_INDEX[curie] = sorted(syns)
@@ -412,6 +523,11 @@ def _build_indices(mappings_path: Path):
         _PARENT_INDEX[curie] = sorted(parents)
     for curie, equivs in hydrate_sets.items():
         _HYDRATE_EQUIV_INDEX[curie] = sorted(equivs)
+    if counts["quarantined"]:
+        print(
+            f"[chemical-mappings] quarantined {counts['quarantined']} unsupported rows; "
+            "see get_mapping_load_audit() for counts and source row diagnostics"
+        )
 
     # Count of distinct entities: any object_id that appears in at least
     # one index. Use the union of keys to avoid double-counting.
@@ -422,6 +538,7 @@ def _build_indices(mappings_path: Path):
         | set(_PRIMARY_FORMULA_INDEX)
         | set(_CATEGORY_INDEX)
     )
+    _MAPPING_LOAD_AUDIT["complete"] = True
 
 
 def find_chebi_by_name(
@@ -457,13 +574,33 @@ def find_chebi_by_name(
     if not _LOADED:
         load_unified_mappings()
 
+    recognized_case, case_target = ingredient_case_sensitive_name_scope(name)
+    if recognized_case:
+        return (
+            case_target
+            if case_target in _PRIMARY_NAME_INDEX and ingredient_mapping_allowed(name, case_target)
+            else None
+        )
+
     # Try exact match first
+    scoped_target = ingredient_name_target(name)
+    if scoped_target is not None:
+        return (
+            scoped_target
+            if scoped_target in _PRIMARY_NAME_INDEX and ingredient_mapping_allowed(name, scoped_target)
+            else None
+        )
     norm_name = normalize_name(name)
     if not norm_name:
         return None
+    if ingredient_case_sensitive_name_scope(norm_name)[0]:
+        return None  # Normalization cannot authorize an unreviewed formula spelling.
 
     # Check negative lookup cache - skip if we've already failed to find this name
-    cache_key = (norm_name, synonyms, fuzzy_stereochemistry, fuzzy_hydrate)
+    # A policy can distinguish case-sensitive formula spellings or punctuation
+    # that the index normalizes away. A rejected query must not poison another
+    # spelling's lookup (e.g. CoCl2 versus COCl2).
+    cache_key = (str(name).strip(), synonyms, fuzzy_stereochemistry, fuzzy_hydrate)
     if cache_key in _NEGATIVE_LOOKUP_CACHE:
         _NEGATIVE_LOOKUP_CACHE.move_to_end(cache_key)  # LRU touch
         return None
@@ -480,7 +617,12 @@ def find_chebi_by_name(
     # Only retry if the stripped form actually differs from the exact form.
     if result is None and fuzzy_stereochemistry:
         norm_name_fuzzy = normalize_name(name, strip_stereochemistry=True)
-        if norm_name_fuzzy and norm_name_fuzzy != norm_name and primary_index:
+        if (
+            norm_name_fuzzy
+            and norm_name_fuzzy != norm_name
+            and primary_index
+            and not ingredient_case_sensitive_name_scope(norm_name_fuzzy)[0]
+        ):
             result = primary_index.get(norm_name_fuzzy)
 
     # Hydrate fallback:
@@ -490,10 +632,17 @@ def find_chebi_by_name(
     #      reverse: query "calcium chloride" → canonical "calcium chloride x n H2O").
     if result is None and fuzzy_hydrate:
         norm_name_no_hydrate = normalize_name(name, strip_hydrate=True)
-        if norm_name_no_hydrate and norm_name_no_hydrate != norm_name and primary_index:
+        protected_formula = ingredient_case_sensitive_name_scope(norm_name_no_hydrate)[0]
+        if norm_name_no_hydrate and norm_name_no_hydrate != norm_name and primary_index and not protected_formula:
             result = primary_index.get(norm_name_no_hydrate)
-        if result is None and _HYDRATE_FREE_NAME_INDEX:
+        if result is None and _HYDRATE_FREE_NAME_INDEX and not protected_formula:
             result = _HYDRATE_FREE_NAME_INDEX.get(norm_name)
+
+    # Index-time admission checked the indexed alias, not this original query.
+    # In particular hydrate/stereochemistry fallback must not erase a reviewed
+    # source-name restriction. Reject the result without guessing a replacement.
+    if result is not None and not ingredient_mapping_allowed(name, result):
+        result = None
 
     # If lookup failed, add to bounded negative cache to avoid retrying
     if result is None:
@@ -540,6 +689,9 @@ def find_chebi_by_xref(xref: str) -> Optional[str]:
 
     # Normalize xref format
     norm_xref = xref.lower().strip()
+    target = ingredient_name_scopes()[1].get(norm_xref)
+    if target is not None:
+        return target if target in _PRIMARY_NAME_INDEX else None
 
     if _XREF_INDEX:
         return _XREF_INDEX.get(norm_xref)
@@ -606,9 +758,12 @@ def get_parents(curie: str) -> List[str]:
     ``kgmicrobe.ingredient:vermont_soil`` having parent ``ENVO:00001998``).
 
     Transforms call this when emitting an ingredient / solution / sample edge
-    to also write a ``biolink:subclass_of`` edge to the broader OBO term, so
-    OBO-aware reasoners can navigate from kg-microbe-minted CURIEs back to
-    the canonical hierarchy.
+    to also write a ``biolink:broad_match`` edge to the broader OBO term, so
+    consumers can navigate from kg-microbe-minted CURIEs back to the
+    canonical hierarchy. It is not ``biolink:subclass_of``: MIM's parent
+    anchor means "closest broader term" and covers salts, hydrates and
+    solutions of the parent, which ChEBI relates by has-part, not is_a
+    (MIM MAPPING_SEMANTICS.md Section 1, #245).
 
     :param curie: child CURIE
     :return: sorted list of parent CURIEs (empty if no narrowMatch row exists)
@@ -689,7 +844,7 @@ def get_category(curie: str) -> Optional[str]:
     return None
 
 
-def get_node_enrichment(curie: str) -> Dict[str, str]:
+def get_node_enrichment(curie: str, *, ingredient_bundle=None) -> Dict[str, str]:
     """
     Return KGX enrichment fields for a chemical/ingredient CURIE.
 
@@ -697,8 +852,8 @@ def get_node_enrichment(curie: str) -> Dict[str, str]:
     populating the corresponding KGX node columns. Values are pipe-joined
     strings (KGX multivalued convention) or empty strings when absent.
 
-    - ``xref``: equivalent CURIEs from the unified mapping's ``xrefs`` column.
-      Under KGX semantics these are cross-references (CURIE-shaped), not names.
+    - ``xref``: unified cross-references plus independently reviewed CAS
+      annotations. CAS annotations do not create SSSOM exactMatch or same_as.
     - ``synonym``: alternative free-text names from the ``synonyms`` column.
     - ``name``: canonical name for the CURIE, or empty string when unknown.
 
@@ -708,14 +863,15 @@ def get_node_enrichment(curie: str) -> Dict[str, str]:
     empty = {"xref": "", "synonym": "", "name": ""}
     if not curie:
         return empty
-    xrefs = get_xrefs(curie)
+    xrefs = sorted(set(get_xrefs(curie)) | set(ingredient_cas_annotations(curie)))
     synonyms = get_synonyms(curie)
     name = get_canonical_name(curie) or ""
-    return {
+    result = {
         "xref": "|".join(xrefs) if xrefs else "",
         "synonym": "|".join(synonyms) if synonyms else "",
         "name": name,
     }
+    return ingredient_bundle.enrich_node(curie, result) if ingredient_bundle is not None else result
 
 
 class ChemicalMappingLoader:
@@ -726,7 +882,9 @@ class ChemicalMappingLoader:
     Uses module-level caching internally.
     """
 
-    def __init__(self, mappings_path: Optional[Path] = None):
+    def __init__(
+        self, mappings_path: Optional[Path] = None, *, ingredient_bundle=None, mappings_sha256: Optional[str] = None
+    ):
         """
         Initialize loader.
 
@@ -734,8 +892,40 @@ class ChemicalMappingLoader:
                               If None, uses default path
         """
         self.mappings_path = mappings_path
+        self.ingredient_bundle = ingredient_bundle
+        if ingredient_bundle is not None:
+            ingredient_bundle.verify_current()
         # Load mappings on initialization
-        load_unified_mappings(self.mappings_path)
+        load_unified_mappings(self.mappings_path, expected_sha256=mappings_sha256)
+        self._selected_mappings_path = _CACHED_PATH
+        self._mappings_sha256 = mappings_sha256
+
+    def _select_mappings(self):
+        """Reselect an explicit profile's input after another caller replaces the legacy cache."""
+        if self.ingredient_bundle is not None and (
+            not _LOADED or (_CACHED_PATH, _CACHED_DIGEST) != (self._selected_mappings_path, self._mappings_sha256)
+        ):
+            load_unified_mappings(self._selected_mappings_path, expected_sha256=self._mappings_sha256)
+
+    @classmethod
+    def from_ingredient_lookup_bundle(cls, directory: Path, *, manifest_sha256: str):
+        """Load a pinned candidate with separate legacy and reviewed scoped inputs."""
+        from kg_microbe.utils.ingredient_bundle import load_ingredient_lookup_bundle
+
+        path, bundle, digest = load_ingredient_lookup_bundle(directory, manifest_sha256=manifest_sha256)
+        return cls(path, ingredient_bundle=bundle, mappings_sha256=digest)
+
+    def resolve_ingredient_source(self, source_id: str, *, occurrence_id: str | None = None) -> Optional[str]:
+        """Apply the explicit scoped source concept before a context-free name lookup."""
+        if self.ingredient_bundle is None:
+            return None
+        return self.ingredient_bundle.resolve_source(source_id, occurrence_id=occurrence_id)
+
+    def get_identifier_annotation_owners(self, identifier: str, *, include_history: bool = False) -> List[str]:
+        """Query all owners of registry annotations without adding identity aliases."""
+        if self.ingredient_bundle is None:
+            return []
+        return self.ingredient_bundle.identifier_owners(identifier, include_history=include_history)
 
     def find_chebi_by_name(
         self,
@@ -753,6 +943,7 @@ class ChemicalMappingLoader:
         :param fuzzy_hydrate: If True, retry with trailing hydrate suffixes stripped
         :return: ChEBI ID or None if not found
         """
+        self._select_mappings()
         return find_chebi_by_name(name, synonyms, fuzzy_stereochemistry, fuzzy_hydrate)
 
     def find_chebi_by_formula(self, formula: str) -> List[str]:
@@ -762,6 +953,7 @@ class ChemicalMappingLoader:
         :param formula: Molecular formula
         :return: List of ChEBI IDs
         """
+        self._select_mappings()
         return find_chebi_by_formula(formula)
 
     def find_chebi_by_xref(self, xref: str) -> Optional[str]:
@@ -771,7 +963,9 @@ class ChemicalMappingLoader:
         :param xref: Cross-reference identifier
         :return: ChEBI ID or None if not found
         """
-        return find_chebi_by_xref(xref)
+        self._select_mappings()
+        scoped = self.resolve_ingredient_source(xref)
+        return scoped if scoped is not None else find_chebi_by_xref(xref)
 
     def get_canonical_name(self, chebi_id: str) -> Optional[str]:
         """
@@ -780,6 +974,7 @@ class ChemicalMappingLoader:
         :param chebi_id: ChEBI ID
         :return: Canonical name or None if not found
         """
+        self._select_mappings()
         return get_canonical_name(chebi_id)
 
     def get_synonyms(self, chebi_id: str) -> List[str]:
@@ -789,6 +984,7 @@ class ChemicalMappingLoader:
         :param chebi_id: ChEBI ID
         :return: List of synonyms
         """
+        self._select_mappings()
         return get_synonyms(chebi_id)
 
     def get_xrefs(self, chebi_id: str) -> List[str]:
@@ -798,6 +994,7 @@ class ChemicalMappingLoader:
         :param chebi_id: ChEBI ID
         :return: List of xrefs
         """
+        self._select_mappings()
         return get_xrefs(chebi_id)
 
     def get_parents(self, curie: str) -> List[str]:
@@ -807,6 +1004,7 @@ class ChemicalMappingLoader:
         :param curie: child CURIE
         :return: List of parent CURIEs (empty if none recorded)
         """
+        self._select_mappings()
         return get_parents(curie)
 
     def get_formula(self, chebi_id: str) -> Optional[str]:
@@ -816,6 +1014,7 @@ class ChemicalMappingLoader:
         :param chebi_id: ChEBI ID
         :return: Molecular formula or None if not found
         """
+        self._select_mappings()
         return get_formula(chebi_id)
 
     def get_category(self, curie: str) -> Optional[str]:
@@ -825,6 +1024,7 @@ class ChemicalMappingLoader:
         :param curie: Primary CURIE.
         :return: Biolink category string or None.
         """
+        self._select_mappings()
         return get_category(curie)
 
     def get_node_enrichment(self, curie: str) -> Dict[str, str]:
@@ -834,4 +1034,5 @@ class ChemicalMappingLoader:
         :param curie: Primary CURIE.
         :return: Dict with ``xref``, ``synonym``, ``name`` keys.
         """
-        return get_node_enrichment(curie)
+        self._select_mappings()
+        return get_node_enrichment(curie, ingredient_bundle=self.ingredient_bundle)

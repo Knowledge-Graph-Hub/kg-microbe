@@ -1,4 +1,5 @@
-"""Does the score behave differently for location_of vs capable_of, on matched taxa?
+"""
+Does the score behave differently for location_of vs capable_of, on matched taxa?
 
 The headline verdict — score discriminates on `location_of`, not on `capable_of` —
 was measured with a different gold standard per predicate, so predicate was

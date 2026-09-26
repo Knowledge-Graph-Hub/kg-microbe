@@ -283,6 +283,28 @@ class TestFindChebiByName:
         assert find_chebi_by_name("water") == "CHEBI:15377"
         assert find_chebi_by_name("glucose") == "CHEBI:17234"
 
+    @pytest.mark.parametrize("reverse", [False, True])
+    @pytest.mark.parametrize("as_synonyms", [False, True])
+    def test_prime_isomers_resolve_independently(self, tmp_path, reverse, as_synonyms):
+        """Keep positional isomers distinct, regardless of row order or label rank."""
+        entries = [
+            {"id": "CHEBI:34360", "canonical_name": "4'-hydroxychalcone"},
+            {"id": "CHEBI:34423", "canonical_name": "4-hydroxychalcone"},
+        ]
+        if as_synonyms:
+            for entry in entries:
+                entry["synonyms"] = entry["canonical_name"]
+                entry["canonical_name"] = "structure " + entry["id"]
+        if reverse:
+            entries.reverse()
+        path = tmp_path / "isomers.tsv.gz"
+        _write_mock_sssom(entries, path)
+        chemical_mapping_utils.load_unified_mappings(path)
+        assert find_chebi_by_name("4-hydroxychalcone") == "CHEBI:34423"
+        for prime in ("'", "′", "’", "ʹ"):
+            assert find_chebi_by_name(f"4{prime}-hydroxychalcone") == "CHEBI:34360"
+        assert find_chebi_by_name("4″-hydroxychalcone") is None
+
     def test_find_by_synonym(self, mock_mappings_file):
         """Test lookup by synonym."""
         chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
@@ -593,9 +615,8 @@ class TestNegativeCache:
         """Failed lookup is stored in the negative cache."""
         chemical_mapping_utils.load_unified_mappings(mock_mappings_file)
         assert find_chebi_by_name("not_a_real_chemical") is None
-        norm = chemical_mapping_utils.normalize_name("not_a_real_chemical")
-        # Cache key is (normalized_name, synonyms, fuzzy_stereochemistry, fuzzy_hydrate).
-        assert (norm, True, False, False) in chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE
+        # Preserve original spelling because reviewed policies can be case-sensitive.
+        assert ("not_a_real_chemical", True, False, False) in chemical_mapping_utils._NEGATIVE_LOOKUP_CACHE
 
     def test_cache_cleared_on_reload(self, mock_mappings_file, tmp_path):
         """Reloading from a new mappings path clears the negative cache."""
@@ -722,7 +743,7 @@ class TestNarrowMatchChildResolution:
 
       1. Resolve to the kg-microbe-minted child primary, not the parent.
       2. Carry their parent in ``get_parents()`` so MediaDive can emit
-         ``biolink:subclass_of`` edges on the next merge.
+         ``biolink:broad_match`` edges on the next merge.
 
     If a future consolidator regression re-pollutes parents with child
     labels, the assertions for resolution-to-child will start returning

@@ -84,12 +84,17 @@ def transform(*args, **kwargs) -> None:
     :param sources: A list of sources to transform.
     :return: None
     """
+    from kg_microbe.transform import TransformBatchError
     from kg_microbe.transform import transform as kg_transform
 
     try:
         kg_transform(*args, **kwargs)
     except ValueError as e:
         raise click.BadParameter(str(e), param_hint="--sources") from e
+    except (FileNotFoundError, TransformBatchError) as e:
+        # Per-source tracebacks were already printed; end with the summary
+        # and a non-zero exit, not a second traceback (#685).
+        raise click.ClickException(str(e)) from e
 
     return None
 

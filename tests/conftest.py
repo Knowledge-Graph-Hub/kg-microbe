@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import ipaddress
 import os
+import shutil
 import socket
 from pathlib import Path
 from typing import Any
@@ -11,6 +12,32 @@ from typing import Any
 import pytest
 
 TEST_RESOURCES = Path(__file__).resolve().parent / "resources"
+
+
+@pytest.fixture
+def local_source_schema(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> tuple[Path, Path]:
+    """
+    Use real immutable schema inputs for tests that exercise strict source admission.
+
+    KGX's environment overrides alone do not select transform fingerprint inputs.
+    Point both readers at the same isolated copies without replacing fingerprint
+    or validation functions, so missing/changed-schema checks remain meaningful.
+    """
+    from kg_microbe.merge_utils import source_freshness
+    from kg_microbe.utils import transform_fingerprint
+
+    schema_dir = tmp_path / "schema"
+    schema_dir.mkdir()
+    model = schema_dir / "biolink-model.yaml"
+    predicate_map = schema_dir / "predicate_mapping.yaml"
+    shutil.copyfile(TEST_RESOURCES / "biolink-model-minimal.yaml", model)
+    shutil.copyfile(TEST_RESOURCES / "predicate_mapping_minimal.yaml", predicate_map)
+    schema_files = (model, predicate_map)
+    monkeypatch.setattr(transform_fingerprint, "SCHEMA_FILES", schema_files)
+    monkeypatch.setattr(source_freshness, "SCHEMA_FILES", schema_files)
+    monkeypatch.setenv("KG_MICROBE_BIOLINK_MODEL", str(model))
+    monkeypatch.setenv("KG_MICROBE_BIOLINK_PREDICATE_MAP", str(predicate_map))
+    return schema_files
 
 
 def pytest_configure() -> None:

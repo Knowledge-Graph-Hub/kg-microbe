@@ -77,6 +77,7 @@ from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curi
 from kg_microbe.utils.ner_utils import annotate
 from kg_microbe.utils.ontology_utils import get_chebi_adapter
 from kg_microbe.utils.pandas_utils import drop_duplicates
+from kg_microbe.utils.tsv_io import tsv_writer
 
 OUTPUT_FILE_SUFFIX = "_ner.tsv"
 STOPWORDS_FN = "stopwords.txt"
@@ -378,10 +379,10 @@ class MadinEtAlTransform(Transform):
             open(self.output_edge_file, "w") as edge,
         ):
             reader = csv.DictReader(f)
-            node_writer = csv.writer(node, delimiter="\t")
+            node_writer = tsv_writer(node)
             node_writer.writerow(self.node_header)
             node_writer.writerows(role_nodes)
-            edge_writer = csv.writer(edge, delimiter="\t")
+            edge_writer = tsv_writer(edge)
             edge_writer.writerow(self.edge_header)
             edge_writer.writerows(role_edges)
 

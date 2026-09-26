@@ -1,0 +1,4 @@
+id	category	name
+CHEBI:16828	biolink:ChemicalEntity	L-tryptophan
+CHEBI:50906	biolink:ChemicalRole	role
+CHEBI:60004	biolink:ChemicalEntity	mixture

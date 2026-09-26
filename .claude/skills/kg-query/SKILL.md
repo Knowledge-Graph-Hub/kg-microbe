@@ -31,13 +31,12 @@ poetry run kg query-organism "Corynebacterium glutamicum" -o report.md
 1. **Name Resolution**: Fuzzy matching on organism names and synonyms
 2. **Taxonomy**: Species classification hierarchy
 3. **Phenotypic Traits**: Oxygen preference, metabolism, morphology, Gram stain
-4. **Media Preferences**: Growth media edges use a Biolink predicate (e.g. `biolink:located_in`) and carry the METPO semantics in the `relation` column — `METPO:2000517` (grows in) and `METPO:2000518` (doesn't grow in). Filter on `relation` when querying.
+4. **Media Preferences**: Growth media edges carry the METPO term as the **predicate** — `METPO:2000517` (grows in) and `METPO:2000518` (does not grow in) — with the same term repeated in `relation`; there is no `biolink:located_in` on these edges (measured 2026-09-10: 36,596 BacDive + 55,251 MediaDive edges, all `predicate == relation`). Filter on `predicate`; `get_media_preferences()` also accepts the term in `relation` so a graph built before the METPO predicate still answers. See #539.
 5. **Media Composition**: 2-hop traversal (organism → media → solutions → chemicals)
 6. **Strain Information**: All strain records linked to species
 
 ## Data Sources
-- Nodes: 1.5M entries (883K organism taxa)
-- Edges: 6.1M relationships
+- Nodes: 3.38M entries; Edges: 15.39M relationships (canonical `merge.yaml`, 2026-09-10 — see `merged_graph_stats.yaml`, whose `provenance` block names the merge that produced it)
 - Primary sources: BacDive, MediaDive, MadinEtal, BactoTraits, GTDB, UniProt
 
 ## Example Organisms

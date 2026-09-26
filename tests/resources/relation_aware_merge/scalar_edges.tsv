@@ -1,0 +1,12 @@
+subject	predicate	object	relation	primary_knowledge_source	knowledge_level	agent_type	value	unit	has_percentage	prego_score	prego_channel	prego_evidence	prego_evidence_class	prego_direct_flag	prego_evidence_url	prego_source	publications
+BTO:0001481	biolink:location_of	NCBITaxon:294	RO:0001015	infores:prego	prediction	text_mining_agent			0.1	3	textmining	first	literature	0	https://example.org/first	first	PMID:1
+BTO:0001481	biolink:location_of	NCBITaxon:294	RO:0001015	infores:prego	prediction	text_mining_agent			0.2	2	textmining	second	literature	0	https://example.org/second	second	PMID:2
+BTO:0001481	biolink:location_of	NCBITaxon:294	RO:0001015	infores:prego	prediction	computational_model			0.3	1	continuous	third	habitat	0	https://example.org/third	third	PMID:3
+BTO:0001481	biolink:location_of	NCBITaxon:294	RO:0001015	infores:prego	prediction	text_mining_agent			0.4	3	textmining	fourth	literature	0	https://example.org/fourth	fourth	PMID:4
+BTO:0001481	biolink:location_of	NCBITaxon:294	RO:0001015	infores:prego	observation	automated_agent			0.5	4	genome	fifth	genome	1	https://example.org/fifth	fifth	PMID:5
+BTO:0001481	biolink:location_of	NCBITaxon:294	RO:0001015	infores:prego	prediction	computational_model			0.6	2	continuous	sixth	habitat	0	https://example.org/sixth	sixth	PMID:6
+BTO:0001481	biolink:location_of	NCBITaxon:294	RO:0001015	infores:prego	observation	automated_agent			0.7	4	genome	last	genome	1	https://example.org/last	last	PMID:7
+NCBITaxon:165190	biolink:has_phenotype	METPO:1000615	RO:0002200	infores:metatraits	observation	automated_agent	33.9	Celsius									PMID:11
+NCBITaxon:165190	biolink:has_phenotype	METPO:1000615	RO:0002200	infores:metatraits	observation	automated_agent	33.2	Celsius									PMID:12
+NCBITaxon:165190	biolink:has_phenotype	METPO:1000615	RO:0002200	infores:metatraits	observation	automated_agent	38.1	Celsius									PMID:13
+NCBITaxon:165190	biolink:has_phenotype	METPO:1000615	RO:0002200	infores:metatraits	observation	automated_agent	33.9	Celsius									PMID:14

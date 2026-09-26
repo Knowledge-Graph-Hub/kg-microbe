@@ -1,0 +1,18 @@
+{
+  "graphs": [{
+    "id": "https://example.org/upa-fixture.owl",
+    "nodes": [
+      {"id": "OBO:UPa_UCR00001", "lbl": "reaction", "type": "CLASS", "meta": {"xrefs": [{"val": "RHEA:12345"}]}},
+      {"id": "OBO:UPa_UER00001", "lbl": "enzyme step", "type": "CLASS", "meta": {"xrefs": [{"val": "GO:0003824"}]}},
+      {"id": "OBO:UPa_ULS00001", "lbl": "linear subpathway", "type": "CLASS"},
+      {"id": "OBO:UPa_UPA00001", "lbl": "child pathway", "type": "CLASS"},
+      {"id": "OBO:UPa_UPA00002", "lbl": "parent pathway", "type": "CLASS"}
+    ],
+    "edges": [
+      {"sub": "OBO:UPa_UCR00001", "pred": "BFO:0000050", "obj": "OBO:UPa_UER00001"},
+      {"sub": "OBO:UPa_UER00001", "pred": "BFO:0000050", "obj": "OBO:UPa_ULS00001"},
+      {"sub": "OBO:UPa_ULS00001", "pred": "BFO:0000050", "obj": "OBO:UPa_UPA00001"},
+      {"sub": "OBO:UPa_UPA00001", "pred": "BFO:0000050", "obj": "OBO:UPa_UPA00002"}
+    ]
+  }]
+}

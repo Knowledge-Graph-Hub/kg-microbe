@@ -7,6 +7,11 @@ import os
 import re
 import sys
 from datetime import date
+from pathlib import Path
+
+# The docs workflow installs dependencies with --no-root; import this checkout.
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 from kg_microbe import __version__
 
 # -- Project information -----------------------------------------------------

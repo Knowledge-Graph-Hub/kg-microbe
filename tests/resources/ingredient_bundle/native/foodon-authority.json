@@ -1,0 +1,380 @@
+{
+  "graphs": [
+    {
+      "edges": [
+        {
+          "obj": "http://purl.obolibrary.org/obo/BFO_0000040",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00002403"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00001714",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_03411041"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00002403",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00001714"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_03411041",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_03412972"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_03412972",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_03413132"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_03412972",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_03413240"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_03412972",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_03413299"
+        }
+      ],
+      "id": "http://purl.obolibrary.org/obo/foodon.owl",
+      "meta": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "https://orcid.org/0000-0002-3410-4655"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "https://orcid.org/0000-0002-8844-9165"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Adrien Barton"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Anoosha Sehar"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Diane Alexander"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Emma Griffiths"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Fumiaki Toyoshima"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Gurinder Gosal"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Hande K\u00fc\u00e7\u00fck McGinty"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Lauren Chen"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Magalie Weber"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Rhiannon Cameron"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/date",
+            "val": "2025-05-21"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/description",
+            "val": "FoodOn is a consortium-driven project to build a comprehensive and easily accessible global farm-to-fork ontology about food, that accurately and consistently describes foods commonly known in cultures from around the world. See https://foodon.org for more details."
+          },
+          {
+            "pred": "http://purl.org/dc/terms/license",
+            "val": "https://creativecommons.org/licenses/by/4.0/"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/title",
+            "val": "FoodOn Food Ontology"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#default-namespace",
+            "val": "FOODON"
+          },
+          {
+            "pred": "http://www.w3.org/2002/07/owl#versionInfo",
+            "val": "2025-12-30"
+          }
+        ],
+        "version": "http://purl.obolibrary.org/obo/foodon/releases/2025-12-30/foodon.owl"
+      },
+      "nodes": [
+        {
+          "id": "http://purl.obolibrary.org/obo/BFO_0000040",
+          "lbl": "material entity",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000111",
+                "val": "material entity"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/agro.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/cdno.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/cob.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/dron.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/envo.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/obi.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ons.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/po.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/uberon.owl"
+              }
+            ],
+            "definition": {
+              "val": "An independent continuant that is spatially extended whose identity is independent of that of other entities and can be maintained through time."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00001714",
+          "lbl": "food material component",
+          "meta": {
+            "comments": [
+              "On Feb 25th 2025 the definition was loosened to include the subclass \"chemical food component\"."
+            ],
+            "definition": {
+              "val": "Food material which normally exists as an ingredient to another food material, rather than eaten on its own.  This includes chemical food components."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00002403",
+          "lbl": "food material",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://en.wikipedia.org/wiki/Food"
+              }
+            ],
+            "comments": [
+              "This class is the top of FOODON's main food product hierarchy which is described in the https://www.foodon.org website, and can be searched in lookup services like https://www.ebi.ac.uk/ols/"
+            ],
+            "definition": {
+              "val": "Any substance that can be consumed by an organism to satisfy nutritional or other health needs, or to provide a social or organoleptic food experience"
+            },
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "food"
+              },
+              {
+                "pred": "hasExactSynonym",
+                "val": "foodstuff"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "nourishment"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "sustenance"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_03411041",
+          "lbl": "chemical food component",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000122"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=B1041"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=B2973"
+              }
+            ],
+            "comments": [
+              "LanguaL curation note: A chemical food component is a food substance derived from a nonliving source (e.g., salt, water or synthesized compounds).\n\nNote however that the LanguaL category includes additives which may be naturally derived, such as agar."
+            ],
+            "definition": {
+              "val": "A food material which is a chemical or chemical mixture that exists in a food material or was added to a food material."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_03412972",
+          "lbl": "food additive",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000428"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "This section and its narrover terms refer to the European Commission food additive regulation according to COMMISSION REGULATION (EU) No 1129/2011 of 11 November 2011 amending Annex II to Regulation (EC) No 1333/2008 of the European Parliament and of the Council by establishing a Union list of food additives [http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2011:295:0001:0177:EN:PDF] and its basis, the four Food Additive Directives: the EEC Framework Directive on Food Additives (89/107/EEC), the Directive on colours (94/36/EC), the Directive on sweeteners (94/35/EC) and the 'miscellaneous' Directive (95/2/EC) plus amendments [http://ec.europa.eu/food/fs/sfp/flav_index_en.html]\n and/or Codex Alimentarius Commission General Standard for Food Additives (CODEX STAN 192, revised 2011) [http://www.codexalimentarius.net/download/standards/4/CXS_192e.pdf].\n\nIf used for food supplement substances, thissection and its narrover terms refer to the European Commission regulation in general [http://ec.europa.eu/food/food/labellingnutrition/supplements/index_en.htm] and specifically to the EC Directive on the approximation of the laws of the Members States relating to food supplements (2002/46/EC) [http://eur-lex.europa.eu/LexUriServ/LexUriServ.do?uri=OJ:L:2002:183:0051:0057:EN:PDF]."
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=B2972"
+              },
+              {
+                "pred": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+                "val": "https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=celex:31995L0002"
+              },
+              {
+                "pred": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+                "val": "https://www.fda.gov/food/food-additives-petitions/food-additive-status-list"
+              },
+              {
+                "pred": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+                "val": "https://www.globalharmonization.net/wg-nomenclature"
+              }
+            ],
+            "comments": [
+              "Damion Dooley's note: manysubclasses here are currently originating from LanguaL additives that have not yet been matched to CHEBI ontology terms.  If matches are possible they will be implemented over time, at which point the corresponding FoodOn id's will be deprecated."
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_03413132",
+          "lbl": "locust bean gum",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000428"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=B3132"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasSynonym",
+                "val": "carob bean gum"
+              }
+            ],
+            "comments": [
+              "Food additive; technological purpose(s): emulsifier, stabilizer, thickener."
+            ],
+            "xrefs": [
+              {
+                "val": "Codex::410"
+              },
+              {
+                "val": "Europe::410"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_03413240",
+          "lbl": "sodium adipate",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000428"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=B3240"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasSynonym",
+                "val": "sodium adipates"
+              }
+            ],
+            "comments": [
+              "Food additive; technological purpose(s): acidity regulator."
+            ],
+            "xrefs": [
+              {
+                "val": "Codex::356"
+              },
+              {
+                "val": "Europe::356"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_03413299",
+          "lbl": "tara gum",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000428"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=B3299"
+              }
+            ],
+            "comments": [
+              "Food additive; technological purpose(s): gelling agent, stabilizer, thickener."
+            ],
+            "xrefs": [
+              {
+                "val": "Codex::417"
+              },
+              {
+                "val": "Europe::417"
+              }
+            ]
+          },
+          "type": "CLASS"
+        }
+      ]
+    }
+  ]
+}

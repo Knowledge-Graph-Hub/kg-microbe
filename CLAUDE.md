@@ -32,12 +32,18 @@ poetry run kg download -t ontologies -t gtdb
 poetry run kg download -i -t mediadive
 poetry run kg transform
 poetry run kg transform -s bacdive -s mediadive
+poetry run kg transform -s ec          # one ontology; leaves the ontologies fingerprint alone
 poetry run kg merge -y merge.yaml
 make run-summary
 ```
 
-`kg download` skips existing files; `-i` invalidates every selected entry, so
-always combine it with one or more `-t` tags. MediaDive invalidation also clears
+`kg transform` checks every selected source's declared `DATA_INPUTS` before
+running anything, isolates a failure to its source (later sources still run;
+those that declare the failed one in `TRANSFORM_INPUTS` are skipped rather
+than built on stale upstream output), and exits non-zero with a per-source
+summary. `FatalOntologyError` and Ctrl-C still abort at once. See #685, #690.
+
+`kg download` skips existing files, but a pin change now takes effect on its own: the URL behind each artifact is recorded in `data/raw/.download_manifest.json`, and a file whose declared URL has moved is re-fetched. A file with no record is left alone — unknown provenance is not wrong provenance (#911). `-i` still invalidates every selected entry, so always combine it with one or more `-t` tags. MediaDive invalidation also clears
 its response cache and can trigger an approximately one-hour crawl.
 
 The normal merge creates `data/merged/merged-kg.tar.gz` and removes the loose
@@ -51,6 +57,18 @@ download.yaml -> data/raw/
 transform classes -> data/transformed/<source>/{nodes,edges}.tsv
 merge.yaml -> data/merged/merged-kg.tar.gz + merged_graph_stats.yaml
 ```
+
+`merged_graph_stats.yaml` carries a `provenance` block (when, commit, merge
+config, each source's fingerprint digest, and a surviving artifact locator) and
+`edge_stats.count_by_raw_predicate`, the predicate column counted as
+written. KGX's own `count_by_predicates` resolves through Biolink and records
+every METPO predicate as `None`. In the merged graph reviewed in #1055,
+METPO predicates accounted for 50.09% of edges, not the roughly two-thirds
+share measured before merging. The fraction is build-dependent; compare
+predicates with the raw block. See #993, #1013 and #1055.
+Compressed outputs use `edges_archive` plus `edges_archive_member`; only
+uncompressed outputs use `edges_file`. The extracted working TSV is not a
+published artifact.
 
 - `download.yaml` owns upstream URLs and pinned versions.
 - `kg_microbe/transform_utils/<source>/` owns source parsing and normalization.
@@ -85,6 +103,35 @@ traversable; it is not a claim that the isolate is an ontology class. Biolink
 validators will report it; do not silently change the convention. See issue
 #834 and [the 4.4.2 revalidation](docs/BIOLINK_4_4_2_REVALIDATION.md).
 
+Cross-source organism joins use the **GTDB identifier**, not `ncbi_taxon_id`.
+NCBI carries coarse placeholder taxa (`bacterium`, `uncultured bacterium`,
+`Pseudomonadota bacterium`) that park unclassified sequence; GTDB names every
+genome, so the bridge is many-to-one and pathologically concentrated — 0.3% of
+NCBI taxa absorb 42.7% of the links, one of them 3,695 GTDB taxa. Joining
+through NCBI pools unrelated species and produces fan-out that looks like
+signal. A mapping edge onto a shared NCBI taxon is `biolink:broad_match`, not
+`close_match`, and every shared taxon is listed worst-first in
+`data/transformed/gtdb/gtdb_ncbi_pooling_report.tsv` — the deny-list to exclude
+them deliberately rather than discovering them in a result set. See #883.
+
+A `kgmicrobe.strain:<code>` node minted from a culture-collection deposit number
+is shared: several source records can cite the same deposit, and they do not
+always agree on the taxon. Such a node gets the one claimed parent that every
+claimant entails — the claim itself when they agree, the shared ancestor when
+they differ only in depth along one lineage. Never a computed common ancestor
+nobody claimed, and never one of two disjoint claims: those get no parent at all
+and go to the source's deposit-claim report, because picking one would make
+the answer depend on file order. That report carries every deposit whose
+claimants disagreed, whichever way it went, so a coarsened taxonomy and a
+suppressed one are both visible and neither is confused with an ontology
+lookup that failed. A record that cites a deposit links to it with
+`biolink:close_match`, so the deposit's provenance is in the graph — but only
+where the deposit kept a parent. `close_match` is symmetric and maps to
+`SEMMEDDB:same_as`, so on a deposit whose claimants proved to be unrelated
+organisms it would assert an equivalence between them; those citations stay in
+the claims report, and the node carries a description saying so. See issues
+#892, #894, #899 and #907.
+
 ## Operational traps
 
 - PREGO defaults to `PREGO_SHAPES=habitat` and `PREGO_MIN_CONFIDENCE=0`.
@@ -104,6 +151,32 @@ validators will report it; do not silently change the convention. See issue
 - Cache existence must imply completeness. Use `atomic_write` from
   `kg_microbe.utils.atomic_io`, including completion markers where the helper
   requires them; never publish a partially written cache path.
+- The merge checks invariants that no single transform can. A transform only
+  polices the edges it writes, and `kgmicrobe.strain:*` is minted by several
+  sources, so `merge_utils/invariants.py` re-checks after the merge and writes
+  `merged_strain_parent_violations.tsv` beside the merged TSVs — empty on a
+  clean run, because an absent report cannot be told from a check that never
+  ran. It also writes `merged_stub_nodes.tsv`: KGX invents a node for any
+  endpoint no source declared, so after a merge the question is not what is
+  missing but what arrived as an invention. Expected exceptions are checked
+  by identifier shape, not by a blanket GOLD/GTDB prefix exemption: a missing
+  assembly or GOLD organism is unexpected even if other references in the
+  same namespace are intentional. See #892, #896, #918, #1050 and #1051.
+- GOLD writes `organism_folds.tsv` from its explicit organism-to-taxon
+  collapse map. MicrobeDecoder consumes this report rather than inventing
+  undeclared nodes for folded organism IDs. Regenerate GOLD before
+  MicrobeDecoder; a missing report is an error, not permission to guess.
+- Merge assertion identity includes `relation` as well as subject, predicate,
+  and object. Different original relations must retain separate source
+  evidence; never split a merged relation list and copy its pooled provenance
+  onto every resulting assertion. See #1054 and
+  [merge integrity repairs](docs/MERGE_INTEGRITY_REPAIRS.md).
+- Never assert a METPO term the pinned release has deprecated. A hardcoded CURIE
+  keeps being emitted long after the ontology retires it — nothing errors, and
+  `METPO:2000511` reached 706,765 edges that way. `tests/test_no_deprecated_metpo_terms.py`
+  checks live code and transform output against the pinned `metpo.json`;
+  `KNOWN_DEPRECATED` in `utils/metpo_liveness.py` is for terms with no live
+  successor and every entry needs a tracking issue. See #909.
 - Ontology acquisition or adapter failures abort the run. Do not catch them as
   per-row lookup failures, and construct/resolve adapters in the parent process
   before creating a `Pool`; adapters are large and generally not picklable.
@@ -143,9 +216,38 @@ environment variables, defaults, and risk warnings. Do not duplicate that
 inventory here.
 
 KGX/BMT must use the pinned local Biolink files downloaded to
-`data/raw/biolink-model.yaml` and `data/raw/predicate_mapping.yaml`. Updating the
+`data/raw/biolink-model.yaml`, `data/raw/predicate_mapping.yaml`, and
+`data/raw/attributes.yaml`. The last of these is not optional: the model
+declares `imports: [linkml:types, attributes]` and linkml resolves `attributes`
+as a sibling file, so without it the pinned model cannot be loaded at all. All
+three move together — half a schema at one version is worse than either version
+alone — and `tests/test_biolink_schema_pin.py` checks that `download.yaml`
+fetches every file the shipped model imports, at one pinned tag. Updating the
 Biolink version requires changing `download.yaml`, the lock file, fixtures, and
-tests together.
+tests together. Each transform's `source_fingerprint.json` records the schema
+it was built against, and `kgm-freshness-check` reports `STALE_VS_SCHEMA` when
+the pinned model has moved since (#943). The marker also covers the shared
+code every transform runs through (`kg_microbe/utils/`, `constants.py`,
+`transform.py`), not only the transform's own package, and hashes by
+repo-relative name so a marker reads the same from any checkout (#1002,
+#983). When the fingerprint scheme changes, run
+`poetry run python scripts/migrate_fingerprints.py` before trusting the table:
+it rewrites markers that still hold and leaves stale ones for a real rerun.
+
+A pin bump alone does not refresh `data/raw`. The 4.4.2 bump landed in August
+2026 and the 4.3.6 file already on disk was never replaced, so every run since
+validated against a version nothing declared; the download manifest then
+recorded the 4.4.2 URL for it, which made the skew self-perpetuating. After
+changing a pin, confirm the file on disk actually moved. See issues #937, #939
+and #940.
+
+METPO is pinned the same way. `METPO_VERSION` in `transform_utils/constants.py`
+is the single source of truth, and the ontology (`metpo.owl`, `metpo.json`) and
+the two ROBOT templates built from it must all move to the same tag together.
+Never fetch METPO from `refs/heads/main`: an upstream obsoletion then arrives
+with a download and changes nothing observable, which is how a deprecated
+predicate reached 706,765 shipped edges. `tests/test_metpo_version_pin.py`
+enforces this against `download.yaml`. See issues #900 and #909.
 
 ## Operational references
 

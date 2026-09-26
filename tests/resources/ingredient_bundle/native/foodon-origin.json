@@ -1,0 +1,94 @@
+{
+  "edges": 7,
+  "fixture_sha256": "496c13ecad118ed22a84401b75a8caa3e8e86134105cda1c5da8fe519de69022",
+  "graph_id": "http://purl.obolibrary.org/obo/foodon.owl",
+  "graph_meta": {
+    "basicPropertyValues": [
+      {
+        "pred": "http://purl.org/dc/terms/contributor",
+        "val": "https://orcid.org/0000-0002-3410-4655"
+      },
+      {
+        "pred": "http://purl.org/dc/terms/contributor",
+        "val": "https://orcid.org/0000-0002-8844-9165"
+      },
+      {
+        "pred": "http://purl.org/dc/terms/contributor",
+        "val": "Adrien Barton"
+      },
+      {
+        "pred": "http://purl.org/dc/terms/contributor",
+        "val": "Anoosha Sehar"
+      },
+      {
+        "pred": "http://purl.org/dc/terms/contributor",
+        "val": "Diane Alexander"
+      },
+      {
+        "pred": "http://purl.org/dc/terms/contributor",
+        "val": "Emma Griffiths"
+      },
+      {
+        "pred": "http://purl.org/dc/terms/contributor",
+        "val": "Fumiaki Toyoshima"
+      },
+      {
+        "pred": "http://purl.org/dc/terms/contributor",
+        "val": "Gurinder Gosal"
+      },
+      {
+        "pred": "http://purl.org/dc/terms/contributor",
+        "val": "Hande K\u00fc\u00e7\u00fck McGinty"
+      },
+      {
+        "pred": "http://purl.org/dc/terms/contributor",
+        "val": "Lauren Chen"
+      },
+      {
+        "pred": "http://purl.org/dc/terms/contributor",
+        "val": "Magalie Weber"
+      },
+      {
+        "pred": "http://purl.org/dc/terms/contributor",
+        "val": "Rhiannon Cameron"
+      },
+      {
+        "pred": "http://purl.org/dc/terms/date",
+        "val": "2025-05-21"
+      },
+      {
+        "pred": "http://purl.org/dc/terms/description",
+        "val": "FoodOn is a consortium-driven project to build a comprehensive and easily accessible global farm-to-fork ontology about food, that accurately and consistently describes foods commonly known in cultures from around the world. See https://foodon.org for more details."
+      },
+      {
+        "pred": "http://purl.org/dc/terms/license",
+        "val": "https://creativecommons.org/licenses/by/4.0/"
+      },
+      {
+        "pred": "http://purl.org/dc/terms/title",
+        "val": "FoodOn Food Ontology"
+      },
+      {
+        "pred": "http://www.geneontology.org/formats/oboInOwl#default-namespace",
+        "val": "FOODON"
+      },
+      {
+        "pred": "http://www.w3.org/2002/07/owl#versionInfo",
+        "val": "2025-12-30"
+      }
+    ],
+    "version": "http://purl.obolibrary.org/obo/foodon/releases/2025-12-30/foodon.owl"
+  },
+  "nodes": 8,
+  "selection": {
+    "closure": "All asserted is_a/rdfs:subClassOf ancestors; no inferred edges",
+    "seed_ids": [
+      "http://purl.obolibrary.org/obo/FOODON_03413132",
+      "http://purl.obolibrary.org/obo/FOODON_03413240",
+      "http://purl.obolibrary.org/obo/FOODON_03413299"
+    ]
+  },
+  "source": "data/raw/foodon.json",
+  "source_bytes": 33925004,
+  "source_sha256": "8dfba179356a84d8ddad4087dc1fa89a76f6511456c298b9dd7b09df9eb6d853"
+}

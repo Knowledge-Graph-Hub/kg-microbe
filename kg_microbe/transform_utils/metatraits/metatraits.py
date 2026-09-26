@@ -47,6 +47,7 @@ from kg_microbe.transform_utils.metatraits.io import open_jsonl as _open_jsonl  
 from kg_microbe.transform_utils.metatraits.io import open_maybe_gzipped as _open_maybe_gzipped  # noqa: E402
 from kg_microbe.transform_utils.transform import Transform  # noqa: E402
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader  # noqa: E402
+from kg_microbe.utils.ingredient_identity import ingredient_mapping_allowed  # noqa: E402
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie  # noqa: E402
 from kg_microbe.utils.metpo_predicates import (  # noqa: E402
     PREDICATE_TO_RELATION,
@@ -62,6 +63,7 @@ from kg_microbe.utils.ontology_utils import (  # noqa: E402
     _db_is_for_ontology,
 )
 from kg_microbe.utils.pandas_utils import drop_duplicates  # noqa: E402
+from kg_microbe.utils.tsv_io import tsv_writer  # noqa: E402
 
 # Input file names (transform accepts either ncbi_* or metatraits_* convention)
 # NOTE: Only process species-level files, not genus or family summaries
@@ -252,6 +254,11 @@ def _process_file_worker(args: Tuple[Path, Path, Dict[str, Any], bool]) -> Dict[
 
 class MetaTraitsTransform(Transform):
     """Transform metatraits summary JSONL files into KGX nodes and edges."""
+
+    #: Reads ``ontologies/ncbitaxon_nodes.tsv`` via NCBITAXON_NODES_FILE in
+    #: _load_ncbitaxon_labels. metatraits_gtdb inherits this. Undeclared until
+    #: #1035, because the path lives in constants.py rather than here.
+    TRANSFORM_INPUTS = ("ontologies",)
 
     DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
 
@@ -580,6 +587,17 @@ class MetaTraitsTransform(Transform):
             print(f"  Warning: Could not load special chemical mappings: {e}")
 
         return special_mappings
+
+    def _reviewed_special_chemical(self, trait_key: str) -> Optional[dict]:
+        """Return a curated override only when its ingredient identity is allowed."""
+        special = self.special_chemical_mappings.get(trait_key)
+        if (
+            special
+            and ingredient_mapping_allowed(trait_key, special["curie"])
+            and ingredient_mapping_allowed(special.get("name", ""), special["curie"])
+        ):
+            return special.copy()
+        return None
 
     # DEPRECATED: _load_chemical_name_synonyms() removed in Phase 2 migration (2026-04-07)
     # Chemical synonyms are now loaded from unified_chemical_mappings.tsv.gz
@@ -977,8 +995,9 @@ class MetaTraitsTransform(Transform):
         """
         # Check special mappings first (parent classes, materials, etc.)
         trait_key = trait_name.strip().lower()
-        if trait_key in self.special_chemical_mappings:
-            return self.special_chemical_mappings[trait_key].copy()
+        special = self._reviewed_special_chemical(trait_key)
+        if special:
+            return special
 
         if not self.chemical_loader:
             return None
@@ -1056,8 +1075,9 @@ class MetaTraitsTransform(Transform):
         """
         # Check special mappings first (parent classes, materials, etc.)
         trait_key = trait_name.strip().lower()
-        if trait_key in self.special_chemical_mappings:
-            return self.special_chemical_mappings[trait_key].copy()
+        special = self._reviewed_special_chemical(trait_key)
+        if special:
+            return special
 
         if not self.chemical_loader:
             return None
@@ -1140,8 +1160,9 @@ class MetaTraitsTransform(Transform):
         """
         # Check special mappings first (parent classes, materials, etc.)
         trait_key = trait_name.strip().lower()
-        if trait_key in self.special_chemical_mappings:
-            return self.special_chemical_mappings[trait_key].copy()
+        special = self._reviewed_special_chemical(trait_key)
+        if special:
+            return special
 
         if not self.chemical_loader:
             return None
@@ -1407,8 +1428,8 @@ class MetaTraitsTransform(Transform):
             # Chemical synonyms now handled by self.chemical_loader.find_chebi_by_name()
 
             # Fallback to special chemical mappings
-            if not chebi_id and substance in self.special_chemical_mappings:
-                special_mapping = self.special_chemical_mappings[substance]
+            special_mapping = self._reviewed_special_chemical(substance)
+            if not chebi_id and special_mapping:
                 chebi_id = special_mapping["curie"]
                 canonical_name = special_mapping["name"]
 
@@ -3024,19 +3045,19 @@ class MetaTraitsTransform(Transform):
 
         # Write unmapped traits
         with open(self.unmapped_traits_file, "w", newline="") as uf:
-            uw = csv.writer(uf, delimiter="\t")
+            uw = tsv_writer(uf)
             uw.writerow(["trait_name", "tax_name", "majority_label", "num_observations"])
             uw.writerows(all_unmapped)
 
         # Write measurement traits
         with open(self.measurement_traits_file, "w", newline="") as mf:
-            mw = csv.writer(mf, delimiter="\t")
+            mw = tsv_writer(mf)
             mw.writerow(["trait_name", "tax_name", "majority_label", "num_observations"])
             mw.writerows(all_measurements)
 
         # Write unresolved taxa
         with open(self.unresolved_taxa_file, "w", newline="") as rf:
-            rw = csv.writer(rf, delimiter="\t")
+            rw = tsv_writer(rf)
             rw.writerow(["tax_name"])
             for t in sorted(all_unresolved):
                 rw.writerow([t])
@@ -3569,17 +3590,17 @@ class MetaTraitsTransform(Transform):
 
         # Write unmapped traits, measurement traits, and unresolved taxa
         with open(self.unmapped_traits_file, "w", newline="") as uf:
-            uw = csv.writer(uf, delimiter="\t")
+            uw = tsv_writer(uf)
             uw.writerow(["trait_name", "tax_name", "majority_label", "num_observations"])
             uw.writerows(unmapped_traits)
 
         with open(self.measurement_traits_file, "w", newline="") as mf:
-            mw = csv.writer(mf, delimiter="\t")
+            mw = tsv_writer(mf)
             mw.writerow(["trait_name", "tax_name", "majority_label", "num_observations"])
             mw.writerows(measurement_traits)
 
         with open(self.unresolved_taxa_file, "w", newline="") as rf:
-            rw = csv.writer(rf, delimiter="\t")
+            rw = tsv_writer(rf)
             rw.writerow(["tax_name"])
             for t in sorted(set(unresolved_taxa)):
                 rw.writerow([t])

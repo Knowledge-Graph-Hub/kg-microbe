@@ -1,0 +1,26 @@
+target_id	authority_label	name
+CHEBI:26710	sodium chloride	(adjust if required in range 100-150)
+CHEBI:26710	sodium chloride	(for Agar medium autoclave separately)
+CHEBI:2509	agar	(for solid medium)
+CHEBI:2509	agar	(for solid medium, alternative)
+CHEBI:2511	agarose	(for solid medium, alternative)
+CHEBI:26833	sulfur atom	(sterilized by steaming for 3 hours on 3 consecutive days)
+CHEBI:29377	sodium carbonate	(adjust if required)
+CHEBI:32145	sodium hydroxide	(adjust if required)
+CHEBI:3311	calcium carbonate	(if required)
+CHEBI:34545	Azimilide	NaNO3(autoclave before adding)(Fisher BP360-500)
+CHEBI:17020	glucomannan	autoclaved, Glucomannan (konjac)
+CHEBI:28087	glycogen	autoclaved, Glycogen
+CHEBI:62969	polygalacturonic acid	autoclaved
+CHEBI:62969	polygalacturonic acid	autoclaved, polygalacturonic acid
+CHEBI:201433	Hyaluronic acid sodium	not filter sterilized
+FOODON:03302492	rye flour	autoclaved
+FOODON:03413132	locust bean gum	autoclaved
+NCIT:C14271	Saccharomyces cerevisiae	autoclaved
+NCIT:C54713	Nano	NaNO3(autoclave before adding)(Fisher BP360-500)
+cas:11078-31-2	Glucomannan (konjac)	autoclaved, Glucomannan (konjac)
+cas:39280-21-2	Rhamnogalacturonan I from potato pectic fiber	autoclaved
+cas:84082-64-4	Mucin from porcine stomach type III	autoclaved
+cas:9000-40-2	Locust bean gum	autoclaved
+cas:9036-88-8	Mannan from Saccharomyces cerevisiae	autoclaved
+cas:9067-32-7	Hyaluronic acid sodium salt from Streptococcus equi	not filter sterilized

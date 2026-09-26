@@ -56,6 +56,27 @@ merged_graph:
         filename:
         - data/transformed/ontologies/metpo_nodes.tsv
         - data/transformed/ontologies/metpo_edges.tsv
+    uberon:
+      name: UBERON
+      input:
+        format: tsv
+        filename:
+        - data/transformed/ontologies/uberon_nodes.tsv
+        - data/transformed/ontologies/uberon_edges.tsv
+    foodon:
+      name: FOODON
+      input:
+        format: tsv
+        filename:
+        - data/transformed/ontologies/foodon_nodes.tsv
+        - data/transformed/ontologies/foodon_edges.tsv
+    pato:
+      name: PATO
+      input:
+        format: tsv
+        filename:
+        - data/transformed/ontologies/pato_nodes.tsv
+        - data/transformed/ontologies/pato_edges.tsv
     ontologies_stubs:
       name: ontologies_stubs
       input:

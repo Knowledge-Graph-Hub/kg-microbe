@@ -1,0 +1,5 @@
+id	subject	predicate	object	relation	primary_knowledge_source	knowledge_level	agent_type	value	unit	publications	context_note
+	NCBITaxon:1	biolink:has_phenotype	METPO:1	RO:0002200	infores:test	observation	automated_agent	33.9	Celsius	PMID:1	alpha|beta
+	NCBITaxon:1	biolink:has_phenotype	METPO:1	RO:0002200	infores:test	observation	automated_agent	33.9	Celsius	PMID:3	alpha|beta
+	NCBITaxon:1	biolink:has_phenotype	METPO:1	RO:0002200	infores:other	observation	automated_agent	33.9	Celsius	PMID:1	alpha|beta
+observation-42	NCBITaxon:1	biolink:has_phenotype	METPO:1	RO:0002200	infores:test	observation	automated_agent	33.9	Celsius	PMID:1	alpha|beta

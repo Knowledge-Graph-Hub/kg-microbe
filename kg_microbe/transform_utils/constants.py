@@ -210,7 +210,10 @@ CARBON_SUBSTRATE_PREFIX = "kgmicrobe.carbon_substrate:"
 # slugs without repeating the string. See the yaml header for guidance on
 # what belongs under each.
 COMPOUND_PREFIX = "kgmicrobe.compound:"
+INGREDIENT_PREFIX = "kgmicrobe.ingredient:"
 TRAIT_PREFIX = "kgmicrobe.trait:"
+# Reported source-field values, not decoded phenotypes or ontology qualities.
+SOURCE_ATTRIBUTE_PREFIX = "kgmicrobe.source_attribute:"
 ISOLATION_SOURCE_PREFIX = "bacdive.isolation_source:"
 RHEA_OLD_PREFIX = "OBO:rhea_"
 RHEA_NEW_PREFIX = "RHEA:"
@@ -225,6 +228,13 @@ BACDIVE_API_BASE_URL = "https://mediadive.dsmz.de/"
 BIOSAFETY_LEVEL_PREFIX = "BSL:"
 GTDB_PREFIX = "GTDB:"
 GENBANK_PREFIX = "GenBank:"
+# NCBI Assembly accessions (GCA_* from GenBank, GCF_* from RefSeq). One
+# registered prefix covers both archives, and the accession itself says which
+# one it came from; `GenBank:GCF_...` asserted the wrong archive for 447,137
+# nodes and resolved to the nucleotide endpoint rather than the assembly one
+# (#882). Bioregistry `ncbi.assembly` ->
+# https://www.ncbi.nlm.nih.gov/datasets/genome/$1
+NCBI_ASSEMBLY_PREFIX = "ncbi.assembly:"
 # LPSN nomenclature spine (used both by the standalone `lpsn` transform and,
 # for organism identity, by MicrobeDecoder — whose row primary key is LPSN_ID).
 LPSN_PREFIX = "lpsn:"
@@ -232,7 +242,9 @@ LPSN_PREFIX = "lpsn:"
 # LPSN ↔ GOLD ↔ IMG crosswalk. Registered here so cross_ref edges emit
 # well-formed CURIEs and validators (kg_model_review STANDARD_PREFIXES,
 # custom_curies.yaml loader) accept them.
-GOLD_PREFIX = "GOLD:"  # Genomes OnLine Database (organism/project IDs)
+GOLD_PREFIX = "gold:"  # Same namespace as the GOLD transform's organism/project IDs.
+GOLD_ORGANISM_FOLD_FILE = "organism_folds.tsv"
+GOLD_ORGANISM_FOLD_HEADER = ("original_id", "canonical_id")
 IMG_PREFIX = "IMG:"  # JGI Integrated Microbial Genomes
 
 # Knowledge-source infores identifiers for the four curated sources
@@ -296,25 +308,20 @@ ENZYME_TO_ASSAY_EDGE = "biolink:related_to_at_instance_level"  # [enzyme -> assa
 SUBSTRATE_TO_ASSAY_EDGE = "biolink:occurs_in"  # [substrate -> assay]
 ENZYME_TO_SUBSTRATE_EDGE = "biolink:has_input"  # [enzyme -> substrate]
 NCBI_TO_SUBSTRATE_EDGE = "biolink:consumes"
-# Rhea reactions → EC enzyme classes. Semantically "this reaction is enabled
-# by this enzyme class" — the historical and downstream-expected predicate is
-# biolink:enabled_by. Note: the kg-model-review domain/range checker flags
-# these edges because biolink:enabled_by has range=physical_entity and EC
-# nodes carry biolink:MolecularActivity in this graph. The mismatch is an
-# artifact of biolink's enabled_by being defined for gene-product → activity
-# (not activity-class → activity-class as Rhea↔EC is); changing the predicate
-# loses the directional reaction-to-enzyme semantics that the Rhea loader and
-# downstream consumers expect, so we accept the validator warning instead.
-RHEA_TO_EC_EDGE = "biolink:enabled_by"
+# Rhea's curated rhea2ec/rhea2go tables are cross-references between reaction
+# and activity classifications, not assertions about a physical gene product.
+RHEA_TO_EC_EDGE = "biolink:close_match"
+RHEA_TO_GO_EDGE = "biolink:close_match"
+RHEA_XREF_RELATION = "oboInOwl:hasDbXref"
 
 # Assay → Entity predicates (methodological reference edges)
-ASSAY_HAS_OUTPUT_PREDICATE = "biolink:has_output"  # [assay -> GO/EC]
-ASSAY_HAS_INPUT_PREDICATE = "biolink:has_input"  # [assay -> ChEBI]
+ASSAY_HAS_OUTPUT_PREDICATE = "MICRO:0001206"  # is an assay for the enzymatic activity of
+ASSAY_HAS_INPUT_PREDICATE = "MICRO:0000065"  # is an assay using the chemical reagent
+ASSAY_BIOLOGICAL_PROCESS_PREDICATE = "MICRO:0001215"  # assay for the biological process of
 
 # Assay → Entity relations
-ASSAY_OUTPUT_RELATION = "NCIT:C25284"  # output
-ASSAY_INPUT_RELATION = "RO:0002233"  # has input (already defined as HAS_INPUT_RELATION)
-RHEA_TO_GO_EDGE = "biolink:enables"
+ASSAY_OUTPUT_RELATION = ASSAY_HAS_OUTPUT_PREDICATE
+ASSAY_INPUT_RELATION = ASSAY_HAS_INPUT_PREDICATE
 NCBI_TO_METABOLITE_RESISTANCE_EDGE = "biolink:associated_with_resistance_to"
 NCBI_TO_METABOLITE_SENSITIVITY_EDGE = "biolink:associated_with_sensitivity_to"
 
@@ -367,6 +374,7 @@ PATHWAY_CATEGORY = "biolink:BiologicalProcess"
 
 # Anatomical and environmental categories
 ANATOMICAL_ENTITY_CATEGORY = "biolink:AnatomicalEntity"  # For UBERON anatomical terms
+FOOD_CATEGORY = "biolink:Food"  # FOODON terms (#1015)
 ENVIRONMENT_CATEGORY = "biolink:EnvironmentalFeature"  # "ENVO:01000254"
 
 # Phenotype and attribute categories
@@ -376,17 +384,23 @@ BIOSAFETY_CATEGORY = "biolink:Attribute"
 GENOME_CATEGORY = "biolink:Genome"
 
 # Procedure categories
-# Multi-cat: biolink:Procedure carries the biolink semantic for downstream
-# tooling (Procedure is biolink's closest match for a microbial test kit / well),
-# and METPO:1001000 (observation) makes the node a valid object for the
-# METPO:2000511 (has observation) predicate that BacDive uses on the
-# organism→assay edge — so no METPO range-modification is needed upstream.
-ASSAY_CATEGORY = "biolink:Procedure|METPO:1001000"  # API kit assay tests
+# biolink:Procedure is biolink's closest match for a microbial test kit / well.
+#
+# This used to be "biolink:Procedure|METPO:1001000". The METPO half was carried
+# solely so the assay node satisfied the range of METPO:2000511 "has observation",
+# on the reasoning that it avoided needing an upstream change. Upstream changed
+# anyway: METPO obsoleted both halves of that design — METPO:1001000 is now
+# "obsolete observation" and METPO:2000511 is "obsolete has observation". A range
+# that no longer exists cannot be satisfied, so the METPO half was asserting a
+# deprecated class on 503 nodes and buying nothing. See #909, and metpo#461 for
+# the upstream modelling of tests and their outcomes.
+ASSAY_CATEGORY = "biolink:Procedure"  # API kit assay tests
 
 # Deprecated categories - do not use
 # CHEMICAL_SUBSTANCE_CATEGORY = "biolink:ChemicalSubstance"  # removed from biolink; use CHEBI_CATEGORY
 
 HAS_PART = "BFO:0000051"
+HAS_PART_PREDICATE = "biolink:has_part"
 IS_GROWN_IN = "METPO:2000517"  # RO relation for grows in (organism -> growth medium), used in relation column
 DOES_NOT_GROW_IN = "METPO:2000518"  # RO relation for does not grow in, used in relation column
 USES_AS_CARBON_SOURCE = NCBI_TO_CARBON_SUBSTRATE_EDGE  # Alias for uses as carbon source
@@ -401,6 +415,9 @@ LOCATION_OF = "RO:0001015"  # [org -> location_of -> source]
 # qualities ended up as organism locations.
 HAS_QUALITY_RELATION = "RO:0000086"
 HAS_QUALITY_PREDICATE = "biolink:has_attribute"
+# Generic reported attributes need not be biological qualities (e.g. a source unit).
+HAS_ATTRIBUTE_PREDICATE = "biolink:has_attribute"
+HAS_ATTRIBUTE_RELATION = "SIO:000008"
 # RO:0002434 — generic "interacts with" relation. Used by BacDive's assay
 # emission to link the metpo_predicate edge to the chemical/assay being
 # tested (organism --has_observation--> assay --interacts_with--> chebi).
@@ -432,6 +449,9 @@ ASSESSED_ACTIVITY_RELATIONSHIP = "NCIT:C153110"
 CLOSE_MATCH = "skos:closeMatch"
 CLOSE_MATCH_PREDICATE = "biolink:close_match"
 CLOSE_MATCH_RELATION = "skos:closeMatch"
+BROAD_MATCH = "skos:broadMatch"
+BROAD_MATCH_PREDICATE = "biolink:broad_match"
+BROAD_MATCH_RELATION = "skos:broadMatch"
 EXACT_MATCH = "skos:exactMatch"
 EXACT_MATCH_PREDICATE = "biolink:exact_match"
 ASSOCIATED_WITH = "PATO:0001668"
@@ -445,6 +465,28 @@ OBJECT_COLUMN = "object"
 RELATION_COLUMN = "relation"
 PROVIDED_BY_COLUMN = "provided_by"
 PRIMARY_KNOWLEDGE_SOURCE_COLUMN = "primary_knowledge_source"
+PUBLICATIONS_COLUMN = "publications"
+SOURCE_ASSERTION_ID_COLUMN = "source_assertion_id"
+MIM_INGREDIENTS = "mim_ingredients"
+MIM_KNOWLEDGE_SOURCE = "infores:mediaingredientmech"
+INFORMATION_CONTENT_ENTITY_CATEGORY = "biolink:InformationContentEntity"
+IS_ABOUT_RELATION = "IAO:0000136"
+INGREDIENT_PROFILE_COLUMN = "ingredient_profile"
+INGREDIENT_RECORD_KIND = "ingredient_record_kind"
+INGREDIENT_BUNDLE_SHA256 = "ingredient_bundle_sha256"
+INGREDIENT_MAPPING_JSON = "ingredient_mapping_json"
+INGREDIENT_PRODUCT_JSON = "ingredient_product_json"
+INGREDIENT_OCCURRENCE_JSON = "ingredient_occurrence_json"
+INGREDIENT_ANNOTATION_JSON = "ingredient_annotation_json"
+INGREDIENT_OCCURRENCE_ID = "ingredient_occurrence_id"
+INGREDIENT_PRODUCT_ID = "ingredient_product_id"
+SOURCE_COLUMN = "source_column"
+SOURCE_RECORD_COLUMN = "source_record"
+SOURCE_CITATION_COLUMN = "source_citation"
+SOURCE_CITATION_BYTES_COLUMN = "source_citation_base64"
+ORIGINAL_OBJECT_COLUMN = "original_object"
+GO_REFERENCE_CONTEXT_COLUMN = "go_reference_context"
+VALUE_ENCODING_COLUMN = "value_encoding"
 KNOWLEDGE_LEVEL_COLUMN = "knowledge_level"
 AGENT_TYPE_COLUMN = "agent_type"
 
@@ -700,6 +742,9 @@ GTDB_RAW_DIR = RAW_DATA_DIR / GTDB
 GTDB_BAC120_TAXONOMY = "bac120_taxonomy.tsv"
 GTDB_AR53_TAXONOMY = "ar53_taxonomy.tsv"
 GTDB_BAC120_METADATA = "bac120_metadata.tsv.gz"
+#: Report of NCBI taxa that several GTDB taxa map onto (#883). Written on
+#: every gtdb run, empty or not.
+GTDB_NCBI_POOLING_REPORT = "gtdb_ncbi_pooling_report.tsv"
 GTDB_AR53_METADATA = "ar53_metadata.tsv.gz"
 
 # Metatraits-specific paths
@@ -776,6 +821,25 @@ UNIPROT_DATA_LIST = [
 ]
 
 BACDIVE_MAPPING_FILE = "bacdive_mappings.tsv"
+
+# The METPO release every METPO artifact in this repo is pinned to: the ontology
+# (metpo.owl / metpo.json) and the two ROBOT templates built from it. They must move
+# together — tracking the ontology from `main` while the templates sat on an older tag
+# is how an obsoleted predicate reached 706,765 shipped edges unnoticed (#900, #909).
+# `download.yaml` repeats these URLs and cannot import them; a test asserts they agree.
+METPO_VERSION = "2026-06-12"
+_METPO_RAW = f"https://raw.githubusercontent.com/berkeleybop/metpo/refs/tags/{METPO_VERSION}"
+METPO_OWL_URL = f"{_METPO_RAW}/metpo.owl"
+METPO_JSON_URL = f"{_METPO_RAW}/metpo.json"
+METPO_CLASSES_ROBOT_TEMPLATE_URL = f"{_METPO_RAW}/src/templates/metpo_sheet.tsv"
+METPO_PROPERTIES_ROBOT_TEMPLATE_URL = f"{_METPO_RAW}/src/templates/metpo-properties.tsv"
+
+# Report of every culture-collection deposit number claimed by more than one
+# BacDive record with a different parent taxon, and what became of it: `collapsed`
+# rows were given the ancestor every claimant entails, `suppressed` rows were given
+# no subclass_of edge at all. Named for the claims, not the conflicts, because a
+# resolved claim is in here too (#892, #898).
+BACDIVE_DEPOSIT_CLAIMS_FILE = "bacdive_strain_deposit_claims.tsv"
 MICROMEDIAPARAM_COMPOUND_MAPPINGS_FILE = "compound_mappings_strict.tsv"
 MICROMEDIAPARAM_HYDRATE_MAPPINGS_FILE = "compound_mappings_strict_hydrate.tsv"
 

@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Analyze overlap between GTDB and NCBITaxon metatraits data.
+"""
+Analyze overlap between GTDB and NCBITaxon metatraits data.
 
 This script determines how much new coverage GTDB metatraits would provide
 compared to existing NCBITaxon metatraits data in the knowledge graph.
@@ -13,13 +14,15 @@ from typing import Dict, Set
 
 
 def load_ncbi_taxa_with_traits(edges_file: Path) -> Set[str]:
-    """Load NCBITaxon IDs that already have trait data.
+    """
+    Load NCBITaxon IDs that already have trait data.
 
     Args:
         edges_file: Path to metatraits edges.tsv file
 
     Returns:
         Set of NCBITaxon IDs (e.g., 'NCBITaxon:562')
+
     """
     taxa_with_traits = set()
 
@@ -41,13 +44,15 @@ def load_ncbi_taxa_with_traits(edges_file: Path) -> Set[str]:
 
 
 def load_gtdb_taxa_with_traits(data_dir: Path) -> Dict[str, dict]:
-    """Load GTDB taxa that have trait data.
+    """
+    Load GTDB taxa that have trait data.
 
     Args:
         data_dir: Path to data/raw/ directory
 
     Returns:
         Dict mapping GTDB tax_name to trait summary stats
+
     """
     gtdb_taxa = {}
 
@@ -79,13 +84,15 @@ def load_gtdb_taxa_with_traits(data_dir: Path) -> Dict[str, dict]:
 
 
 def load_gtdb_to_ncbi_mapping(gtdb_dir: Path) -> Dict[str, Set[str]]:
-    """Load GTDB to NCBITaxon mapping from GTDB metadata files.
+    """
+    Load GTDB to NCBITaxon mapping from GTDB metadata files.
 
     Args:
         gtdb_dir: Path to directory containing GTDB metadata files
 
     Returns:
         Dict mapping GTDB species name to set of NCBITaxon IDs
+
     """
     mapping = defaultdict(set)
 
@@ -135,7 +142,8 @@ def analyze_overlap(
     gtdb_to_ncbi: Dict[str, Set[str]],
     ncbi_taxa_with_traits: Set[str]
 ) -> Dict:
-    """Analyze overlap between GTDB and NCBITaxon metatraits.
+    """
+    Analyze overlap between GTDB and NCBITaxon metatraits.
 
     Args:
         gtdb_taxa: GTDB taxa with trait data
@@ -144,6 +152,7 @@ def analyze_overlap(
 
     Returns:
         Dict with analysis results
+
     """
     redundant_taxa = set()
     new_coverage_taxa = set()
@@ -193,11 +202,13 @@ def analyze_overlap(
 
 
 def print_report(results: Dict, ncbi_taxa_count: int):
-    """Print overlap analysis report.
+    """
+    Print overlap analysis report.
 
     Args:
         results: Analysis results dict
         ncbi_taxa_count: Number of NCBITaxon taxa with existing traits
+
     """
     print("\n" + "="*70)
     print("GTDB MetaTraits Overlap Analysis")
@@ -213,15 +224,15 @@ def print_report(results: Dict, ncbi_taxa_count: int):
 
     total = results['total_taxa']
 
-    print(f"\n1. Redundant (NCBITaxon already has traits):")
+    print("\n1. Redundant (NCBITaxon already has traits):")
     print(f"   Taxa: {results['redundant_taxa']:,} ({results['redundant_taxa']/total*100:.1f}%)")
     print(f"   Observations: {results['redundant_obs']:,} ({results['redundant_obs']/results['total_observations']*100:.1f}%)")
 
-    print(f"\n2. New coverage (NCBITaxon exists, no traits):")
+    print("\n2. New coverage (NCBITaxon exists, no traits):")
     print(f"   Taxa: {results['new_coverage_taxa']:,} ({results['new_coverage_taxa']/total*100:.1f}%)")
     print(f"   Observations: {results['new_coverage_obs']:,} ({results['new_coverage_obs']/results['total_observations']*100:.1f}%)")
 
-    print(f"\n3. GTDB-only (no NCBITaxon mapping):")
+    print("\n3. GTDB-only (no NCBITaxon mapping):")
     print(f"   Taxa: {results['gtdb_only_taxa']:,} ({results['gtdb_only_taxa']/total*100:.1f}%)")
     print(f"   Observations: {results['gtdb_only_obs']:,} ({results['gtdb_only_obs']/results['total_observations']*100:.1f}%)")
 

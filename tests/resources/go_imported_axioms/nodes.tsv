@@ -1,0 +1,12 @@
+id	category	name	provided_by
+GO:0016053	biolink:BiologicalProcess	Historical imported organic acid biosynthesis	infores:pato
+GO:0006082	biolink:BiologicalProcess	Historical imported organic acid metabolism	infores:pato
+GO:0045026	biolink:BiologicalProcess	Historical imported plasma membrane fusion	infores:pato
+GO:0008152	biolink:BiologicalProcess	metabolic process	infores:go
+GO:0008150	biolink:BiologicalProcess	biological process	infores:go
+GO:0044281	biolink:BiologicalProcess	small molecule metabolic process	infores:go
+GO:0044283	biolink:BiologicalProcess	small molecule biosynthetic process	infores:go
+GO:0009058	biolink:BiologicalProcess	biosynthetic process	infores:go
+GO:0140253	biolink:BiologicalProcess	cell-cell fusion	infores:go
+NCBITaxon:1	biolink:OrganismTaxon	Fixture organism	infores:bacdive
+MICRO:0000903	biolink:Procedure	Fixture assay	infores:bacdive

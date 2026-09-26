@@ -1,0 +1,4 @@
+subject	predicate	object	relation	primary_knowledge_source	publications	has_percentage
+https://www.w3.org/TR/owl-time/#time:Instant	biolink:related_to	http://purl.obolibrary.org/obo/FOODON_1	RO:0000056	infores:alpha-first	PMID:1	0.1
+time:Instant	biolink:related_to	FOODON:1	RO:0000056	infores:alpha-repeat	PMID:2	0.2
+time:Instant	biolink:related_to	FOODON:1	RO:0000057	infores:alpha-other-relation	PMID:3	0.7

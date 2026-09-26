@@ -1,0 +1,13 @@
+id	category	name
+gold:Go1	biolink:IndividualOrganism	Species alpha
+gold:Go2	biolink:IndividualOrganism	Species alpha strain 2
+gold:Go3	biolink:IndividualOrganism	Excluded species
+gold:Go4	biolink:IndividualOrganism	Species alpha
+gold:Go5	biolink:IndividualOrganism	Species alpha
+gold:Go6	biolink:IndividualOrganism	
+gold:Go7	biolink:IndividualOrganism	Species alpha
+NCBITaxon:10	biolink:OrganismTaxon	Species alpha
+NCBITaxon:20	biolink:OrganismTaxon	Species alpha
+NCBITaxon:99	biolink:OrganismTaxon	Excluded species
+NCBITaxon:100	biolink:OrganismTaxon	Retired name
+gold.ecosystem:soil	biolink:EnvironmentalFeature	Soil

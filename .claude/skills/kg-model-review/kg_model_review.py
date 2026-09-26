@@ -43,6 +43,7 @@ REPO_ROOT = HERE.parent.parent.parent  # .claude/skills/kg-model-review → repo
 TRANSFORMS_DIR = REPO_ROOT / "data" / "transformed"
 MERGED_DIR = REPO_ROOT / "data" / "merged"
 CUSTOM_CURIES_FILE = REPO_ROOT / "kg_microbe" / "transform_utils" / "custom_curies.yaml"
+PREFIXMAP_FILE = REPO_ROOT / "kg_microbe" / "transform_utils" / "prefixmap.json"
 ONTOLOGIES_DIR = TRANSFORMS_DIR / "ontologies"
 
 # ── KGX spec ─────────────────────────────────────────────────────────────────
@@ -87,6 +88,9 @@ STRUCTURAL_PREDICATES = {
 KGMICROBE_EXTENSION_PREDICATES = {
     "biolink:positively_regulates",  # emitted by some transforms; not in current biolink
     "biolink:negatively_regulates",
+    "MICRO:0001206",  # assay for the enzymatic activity of (GO/EC), raw micro.owl
+    "MICRO:0001215",  # assay for the biological process of, raw micro.owl
+    "MICRO:0000065",  # assay using the chemical reagent, raw micro.owl
 }
 
 
@@ -150,38 +154,54 @@ try:
 except ImportError:
     pass
 
-# Predicate → (allowed_subject_categories, allowed_object_categories) constraint.
-# Each set lists biolink category CURIEs; an edge's subject/object is compliant if
-# its declared category is either in the set or (via bmt) a descendant of any
-# member. Violations surface as WARNING under the new "DomainRange" check bucket.
-# The map covers: (a) every biolink predicate KG-Microbe emits with a non-trivial
-# domain or range narrower than NamedThing, and (b) every METPO:2000xxx predicate
-# KG-Microbe emits — METPO domain/range is not machine-readable yet, so these are
-# hand-curated from metpo.json labels. Keys are intentionally narrow; predicates
-# absent here are skipped (no false positives from permissive biolink defaults).
-PREDICATE_DOMAIN_RANGE = {
-    # ── Biolink ─────────────────────────────────────────────────────────────
+# Domain/range comes from three places, and every reported violation says which:
+#
+#   [model]  — the pinned Biolink model, read through BMT for every biolink:*
+#              predicate an edge uses. Nothing is hand-copied: a hand-written
+#              row for located_in once contradicted the model and produced
+#              228,762 false violations in one review (#1011).
+#   [house]  — HOUSE_ALLOWANCES: deliberate, documented KG-Microbe conventions
+#              that are *looser* than the model. An edge that fails the model
+#              but passes a house rule is counted and reported under that rule
+#              as INFO, so the model's verdict stays visible instead of being
+#              silently absorbed.
+#   [table]  — HAND_DOMAIN_RANGE: predicates the model cannot describe (METPO
+#              properties have no machine-readable domain/range yet) or where
+#              KG-Microbe chooses to be *stricter* than the model.
+#: Looser-than-model allowances. ``(extra subject cats, extra object cats, why)``.
+HOUSE_ALLOWANCES = {
+    # METPO qualities are typed PhenotypicQuality, an Attribute, not a
+    # PhenotypicFeature; ~2.1M has_phenotype edges point at them. Whether they
+    # move to has_attribute at scale is #643/#1000's call, not the reviewer's.
+    # ...and OrganismTaxon is not a biological entity in 4.4.2, so taxa as
+    # phenotype bearers (2.1M edges) pass the model only by this rule too.
+    # METPO process classes without a Biolink category reach the graph as OntologyClass.
+    "biolink:capable_of": (set(), {"biolink:OntologyClass"}, "METPO process classes typed OntologyClass"),
+    # `enables` has domain physical entity in the pinned model, and Protein is
+    # not a physical entity in 4.4.2. EC nodes carry MolecularActivity|Protein
+    # (constants.EC_CATEGORY) so EC -> GO edges pass only by this convention (#645).
+    # Strains and isolates sit under NCBITaxon as biolink:subclass_of by house
+    # convention (CLAUDE.md, #834); Biolink gives subclass_of an OntologyClass
+    # domain and range, so the model reports every one of them.
+    "biolink:subclass_of": ({"biolink:OrganismTaxon"}, {"biolink:OrganismTaxon"}, "#834 house convention: strain subclass_of taxon"),
+    # KG-Microbe deliberately categorizes CHEBI:33839 (macromolecule) descendants
+    # -- polysaccharides, peptides, polynucleotides -- as MacromolecularComplex,
+    # which is not a ChemicalEntity in Biolink (see ontology_utils.get_chebi_category).
+    "biolink:associated_with_resistance_to": (set(), {"biolink:MacromolecularComplex"}, "CHEBI macromolecules as MacromolecularComplex"),
+    "biolink:associated_with_sensitivity_to": (set(), {"biolink:MacromolecularComplex"}, "CHEBI macromolecules as MacromolecularComplex"),
+}
+
+#: Hand-written rows: METPO properties (no model to read), plus stricter-than-
+#: model house rules. ``predicate -> (allowed subject cats, allowed object cats)``.
+HAND_DOMAIN_RANGE = {
+    # Native MICRO methodological references, explicitly not strict Biolink.
+    "MICRO:0001206": ({"biolink:Procedure"}, {"biolink:MolecularActivity"}),
+    "MICRO:0001215": ({"biolink:Procedure"}, {"biolink:BiologicalProcess"}),
+    "MICRO:0000065": ({"biolink:Procedure"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),
+    # Stricter than the model (which says named thing -> named thing / nothing):
+    # KG-Microbe asserts these only from an organism to a chemical.
     "biolink:consumes":       ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:ChemicalEntity"}),
     "biolink:produces":       ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:ChemicalEntity"}),
-    "biolink:located_in":     ({"biolink:BiologicalEntity", "biolink:Protein", "biolink:Gene"}, {"biolink:NamedThing"}),
-    "biolink:has_phenotype":  ({"biolink:BiologicalEntity", "biolink:OrganismTaxon"},  {"biolink:PhenotypicFeature", "biolink:Attribute", "biolink:OntologyClass"}),
-    "biolink:capable_of":     ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:BiologicalProcess", "biolink:MolecularActivity", "biolink:OntologyClass"}),
-    "biolink:has_chemical_role": ({"biolink:ChemicalEntity"}, {"biolink:ChemicalRole", "biolink:OntologyClass"}),
-    # MacromolecularComplex is included in the object set for chemical-targeting
-    # predicates because KG-Microbe deliberately categorizes CHEBI:33839
-    # (macromolecule) descendants — polysaccharides, peptides, polynucleotides —
-    # as biolink:MacromolecularComplex (see kg_microbe/utils/ontology_utils.py
-    # get_chebi_category and kg_microbe/utils/category_consolidation_rules.yaml).
-    # MacromolecularComplex is not a descendant of ChemicalEntity in biolink,
-    # so without this explicit addition the reviewer would flag legitimate
-    # organism→polysaccharide edges (e.g. ferments starch).
-    "biolink:associated_with_resistance_to":  ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),
-    "biolink:associated_with_sensitivity_to": ({"biolink:OrganismTaxon", "biolink:BiologicalEntity"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),
-    # EC nodes carry the multi-cat biolink:MolecularActivity|biolink:Protein
-    # per kg_microbe/transform_utils/constants.py:EC_CATEGORY, which satisfies
-    # the Protein clause of biolink's GeneProductOrComplex domain/range.
-    "biolink:enables":        ({"biolink:Protein", "biolink:Gene", "biolink:MacromolecularComplex"}, {"biolink:MolecularActivity", "biolink:BiologicalProcess", "biolink:OntologyClass"}),
-    "biolink:enabled_by":     ({"biolink:MolecularActivity", "biolink:BiologicalProcess", "biolink:OntologyClass"}, {"biolink:Protein", "biolink:Gene", "biolink:MacromolecularComplex"}),
     # ── METPO:2000xxx (organism → chemical / pathway / medium) ──────────────
     # Same MacromolecularComplex note as biolink:associated_with_resistance_to above.
     "METPO:2000002": ({"biolink:OrganismTaxon"}, {"biolink:ChemicalEntity", "biolink:MacromolecularComplex"}),  # assimilates
@@ -199,6 +219,49 @@ PREDICATE_DOMAIN_RANGE = {
     "METPO:2000517": ({"biolink:OrganismTaxon"}, {"biolink:GrowthMedium"}),  # grows in
     "METPO:2000518": ({"biolink:OrganismTaxon"}, {"biolink:GrowthMedium"}),  # does not grow in
 }
+
+
+def _class_level_house_reason(edge, side, subject_cats, object_cats):
+    """Accept documented class-level semantics only at explicit namespace/type boundaries."""
+    subject, obj = edge.get("subject", ""), edge.get("object", "")
+    pred, relation = edge.get("predicate", ""), edge.get("relation", "")
+    subject_cats, object_cats = set(subject_cats or ()), set(object_cats or ())
+    if pred == "biolink:has_phenotype":
+        # A quality class is an admissible taxon phenotype value, but an
+        # arbitrary Attribute, chemical, or NamedThing is not such a value.
+        if "biolink:OrganismTaxon" in subject_cats and obj.startswith(("METPO:", "PATO:", "OMP:")) and object_cats & {
+            "biolink:PhenotypicQuality", "biolink:PhenotypicFeature", "biolink:OntologyClass"
+        }:
+            return "#643/#1000: taxon phenotype assertion to a phenotype ontology class"
+    if pred == "biolink:enables" and side == "subject":
+        if subject.startswith("EC:") and obj.startswith("GO:") and "biolink:Protein" in subject_cats and "biolink:MolecularActivity" in object_cats:
+            return "#645: EC enzyme-class to GO activity convention (not physical gene-product identity)"
+    if pred == "biolink:has_chemical_role" and side == "subject" and relation == "RO:0000087":
+        if subject.startswith("CHEBI:") and obj.startswith("CHEBI:") and "biolink:MacromolecularComplex" in subject_cats and "biolink:ChemicalRole" in object_cats:
+            return "ChEBI macromolecule-class role; repository macromolecule category convention"
+    if pred == "biolink:in_taxon" and side == "subject" and relation == "RO:0002162":
+        if subject.startswith("FOODON:") and "biolink:Food" in subject_cats and "biolink:OrganismTaxon" in object_cats:
+            return "FOODON food-material class constrained to its source organism taxon"
+    if pred != "biolink:subclass_of" or relation != "rdfs:subClassOf" or subject == obj:
+        return None
+    class_prefixes = {"CHEBI", "FOODON", "PATO", "UBERON", "ENVO", "GO", "HP", "MONDO", "BFO", "CL", "IAO", "OBI", "MICRO", "PO", "FAO", "PR", "OBO", "COB", "METPO", "EC", "RHEA"}
+    semantic_categories = {
+        "biolink:ChemicalEntity", "biolink:ChemicalMixture", "biolink:SmallMolecule", "biolink:ChemicalRole",
+        "biolink:MacromolecularComplex", "biolink:Food", "biolink:PhenotypicQuality", "biolink:AnatomicalEntity",
+        "biolink:Cell", "biolink:CellularComponent", "biolink:EnvironmentalFeature", "biolink:EnvironmentalMaterial",
+        "biolink:BiologicalProcess", "biolink:MolecularActivity", "biolink:Protein", "biolink:Procedure",
+        "biolink:OntologyClass", "biolink:OrganismTaxon", "biolink:PhysicalEntity", "biolink:MaterialSample",
+    }
+    def _ontology_class(identifier, cats):
+        """Require ontology namespace and substantive category, not a fallback NamedThing."""
+        return identifier.partition(":")[0] in class_prefixes and bool(cats & semantic_categories)
+    if _ontology_class(subject, subject_cats) and _ontology_class(obj, object_cats):
+        return "#644: asserted ontology class subsumption with semantic Biolink categories"
+    if subject.startswith("kgmicrobe.assay:") and obj.startswith("MICRO:") and "biolink:Procedure" in subject_cats & object_cats:
+        return "#642/#644: named assay procedure class under MICRO assay class"
+    if subject.startswith("mediadive.solution:") and obj.startswith("CHEBI:") and "biolink:ChemicalMixture" in subject_cats and object_cats & {"biolink:ChemicalEntity", "biolink:ChemicalMixture"}:
+        return "#644: named recipe solution class under a ChEBI material class"
+    return None
 
 # ── Standard known CURIE prefixes ─────────────────────────────────────────────
 STANDARD_PREFIXES = {
@@ -225,9 +288,9 @@ STANDARD_PREFIXES = {
     "bacdive.isolation_source",
     # Genome-project crosswalk prefixes surfaced by MicrobeDecoder's
     # pre-joined LPSN ↔ GOLD ↔ IMG ↔ NCBI ↔ GTDB ↔ BacDive close_match edges
-    # (registered as GOLD_PREFIX / IMG_PREFIX in constants.py; the authoritative
-    # nodes come from external genome catalogues, so we don't emit stubs).
-    "GOLD",                   # Genomes OnLine Database
+    # (registered as GOLD_PREFIX / IMG_PREFIX in constants.py). GOLD organism
+    # nodes are supplied by the gold transform; uppercase GOLD: is obsolete (#1065).
+    "gold",                   # Genomes OnLine Database, canonical namespace
     "IMG",                    # JGI Integrated Microbial Genomes
     # mediadive prefixes
     "mediadive.medium", "mediadive.ingredient", "mediadive.solution", "mediadive.medium-type",
@@ -256,6 +319,9 @@ STANDARD_PREFIXES = {
     "PO",        # Plant Ontology (OBO; reachable via ENVO/FOODON closure)
     "TAXRANK",   # Taxonomic Rank vocabulary (OBO; from NCBITaxon)
     "GenBank",   # GenBank sequence accessions (from NCBITaxon xrefs)
+    # NCBI Assembly accessions (GCA_*/GCF_*) minted by the gtdb transform.
+    # One prefix for both archives; the accession says which one (#882).
+    "ncbi.assembly",
     "chemrof",   # chemical role framework (CHEBI-adjacent)
     "debio",     # domain entity for biology (Rhea-adjacent)
     "kgmicrobe", # KG-Microbe native prefix (bare form; dotted variants also registered)
@@ -286,22 +352,22 @@ class Finding:
     def __str__(self):
         icon = {"ERROR": "❌", "WARNING": "⚠️ ", "INFO": "ℹ️ "}.get(self.severity, "  ")
         s = f"    [{self.check:<8}] {icon} {self.severity}: {self.message}"
-        for ex in self.examples[:3]:
+        # Every example the check chose to return. A cap here hid three of
+        # six domain/range constraints from the #810 review; the checks decide
+        # how many examples are worth showing, the renderer does not.
+        for ex in self.examples:
             s += f"\n              e.g. {ex!r}"
         return s
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def load_registered_prefixes() -> set:
-    """Load all registered prefixes from ``custom_curies.yaml``.
+    """Union standard prefixes with both checked-in project registries (#1072).
 
     Top-level YAML keys are the CURIE prefixes the file registers (e.g.
-    ``"kgmicrobe.medium"`` on line 361). The prior loader walked sections but
-    only added the string ``"KGM"`` regardless of what it found, so a legitimate
-    registration in ``custom_curies.yaml`` still produced an unregistered-prefix
-    warning here. Now every top-level string key becomes a recognized prefix,
-    making ``custom_curies.yaml`` the actual source of truth for custom prefix
-    registration.
+    ``"kgmicrobe.medium"``). ``prefixmap.json`` supplies namespaces used by
+    identifier compaction, including OWL-Time. Neither registry requires a
+    network lookup; adding one registered prefix does not allow unknown ones.
     """
     prefixes = set(STANDARD_PREFIXES)
     if CUSTOM_CURIES_FILE.exists():
@@ -315,6 +381,12 @@ def load_registered_prefixes() -> set:
                 # map to the KGM: prefix that transforms mint.
                 if isinstance(section, dict) and section:
                     prefixes.add("KGM")
+    if PREFIXMAP_FILE.exists():
+        with open(PREFIXMAP_FILE, encoding="utf-8") as f:
+            prefix_map = json.load(f)
+        if not isinstance(prefix_map, dict):
+            raise ValueError(f"Prefix registry must be a JSON object: {PREFIXMAP_FILE}")
+        prefixes.update(prefix for prefix in prefix_map if isinstance(prefix, str) and prefix)
     return prefixes
 
 
@@ -405,8 +477,9 @@ def _expand_allowed(cats: set) -> set:
         return _DR_EXPANDED_CACHE[key]
     expanded = set(cats)
     try:
-        import bmt
-        t = bmt.Toolkit()
+        t = _toolkit()
+        if t is None:
+            raise RuntimeError("bmt unavailable")
         for cat in cats:
             slug = cat.replace("biolink:", "")
             # bmt expects human-readable names; convert CamelCase → "space-separated"
@@ -423,11 +496,64 @@ def _expand_allowed(cats: set) -> set:
     return expanded
 
 
+_MODEL_DR_CACHE: dict = {}
+_TOOLKIT = None
+
+
+def _toolkit():
+    """Return one BMT Toolkit over the pinned local model, or None if bmt is unavailable.
+
+    ``prepare_kgx`` must run first: without it ``bmt.Toolkit()`` reaches for
+    the bundled/remote schema, which the offline test environment refuses, and
+    the swallowed exception made every biolink predicate read as unconstrained.
+    """
+    global _TOOLKIT
+    if _TOOLKIT is None:
+        try:
+            from kg_microbe.utils.biolink_model import prepare_kgx
+            prepare_kgx()
+            import bmt
+            _TOOLKIT = bmt.Toolkit()
+        except Exception:
+            _TOOLKIT = False
+    return _TOOLKIT or None
+
+
+def _model_domain_range(pred: str):
+    """Return ``(domain cats, range cats)`` for a biolink predicate from the pinned model, or None.
+
+    A side whose model value is absent, ``named thing`` or ``entity`` is
+    unconstrained and returned as None for that side.
+    """
+    if pred in _MODEL_DR_CACHE:
+        return _MODEL_DR_CACHE[pred]
+    result = None
+    if pred.startswith("biolink:"):
+        try:
+            t = _toolkit()
+            element = None if t is None else t.get_element(pred.replace("biolink:", "").replace("_", " "))
+            if element is not None:
+                def _side(value):
+                    if not value or str(value) in ("named thing", "entity"):
+                        return None
+                    return {"biolink:" + "".join(w.capitalize() for w in str(value).split())}
+                result = (_side(getattr(element, "domain", None)), _side(getattr(element, "range", None)))
+                if result == (None, None):
+                    result = None
+        except Exception:
+            result = None
+    _MODEL_DR_CACHE[pred] = result
+    return result
+
+
 def check_domain_range(node_rows: list, edge_rows: list, verbose: bool) -> list:
     """Check that each edge's subject/object categories match the predicate's domain/range.
 
-    Violations are grouped by (predicate, side, observed-category); only
-    predicates present in ``PREDICATE_DOMAIN_RANGE`` are checked.
+    biolink:* predicates are judged against the pinned model; edges that fail
+    the model but pass a HOUSE_ALLOWANCES rule are counted separately and
+    reported as INFO under that rule. HAND_DOMAIN_RANGE rows are judged as
+    written and labelled [table]. Violations are grouped by
+    (predicate, side, observed category).
     """
     findings: list = []
     if not edge_rows:
@@ -441,54 +567,71 @@ def check_domain_range(node_rows: list, edge_rows: list, verbose: bool) -> list:
         if nid and cats:
             id_to_cats[nid] = cats
 
-    # group violations: (predicate, side, observed_cat) -> [example subject→object strings]
-    violations: dict = defaultdict(list)
+    violations: dict = defaultdict(list)   # (pred, side, cat, source) -> examples
+    house_saved: dict = defaultdict(int)   # (pred, side, cat, why) -> count
     checked_edges = 0
-    constrained_preds = set(PREDICATE_DOMAIN_RANGE.keys())
+
+    def _judge(pred, side, cats, allowed, source, ex, edge, subject_cats, object_cats):
+        """Record a violation unless a house allowance covers it."""
+        if any(c in allowed for c in cats):
+            return
+        reason = _class_level_house_reason(edge, side, subject_cats, object_cats)
+        if reason:
+            house_saved[(pred, side, cats[0], reason)] += 1
+            return
+        extra = HOUSE_ALLOWANCES.get(pred)
+        if extra is not None:
+            extra_cats, why = (extra[0], extra[2]) if side == "subject" else (extra[1], extra[2])
+            if extra_cats and any(c in _expand_allowed(extra_cats) for c in cats):
+                house_saved[(pred, side, cats[0], why)] += 1
+                return
+        violations[(pred, side, cats[0], source)].append(ex)
+
     for e in edge_rows:
         pred = (e.get("predicate") or "").strip()
-        if pred not in constrained_preds:
-            continue
+        if pred in HAND_DOMAIN_RANGE:
+            domain_allowed, range_allowed = HAND_DOMAIN_RANGE[pred]
+            source = "table"
+        else:
+            model = _model_domain_range(pred)
+            if model is None:
+                continue
+            domain_allowed, range_allowed = model
+            source = "model"
         checked_edges += 1
-        domain_allowed, range_allowed = PREDICATE_DOMAIN_RANGE[pred]
-        domain_ok = _expand_allowed(domain_allowed)
-        range_ok = _expand_allowed(range_allowed)
-
-        subj = e.get("subject", "")
-        obj = e.get("object", "")
-        subj_cats = id_to_cats.get(subj)
-        obj_cats = id_to_cats.get(obj)
-
-        # An edge is compliant if ANY of the node's categories is in the allowed
-        # set (categories are pipe-delimited; we expand each side via bmt
-        # descendants in _expand_allowed). Report against the primary (first)
-        # category for grouping purposes.
-        if subj_cats and not any(c in domain_ok for c in subj_cats):
-            violations[(pred, "subject", subj_cats[0])].append(f"{subj} → {obj}")
-        if obj_cats and not any(c in range_ok for c in obj_cats):
-            violations[(pred, "object", obj_cats[0])].append(f"{subj} → {obj}")
+        subj, obj = e.get("subject", ""), e.get("object", "")
+        ex = f"{subj} → {obj}"
+        subj_cats, obj_cats = id_to_cats.get(subj), id_to_cats.get(obj)
+        if subj_cats and domain_allowed is not None:
+            _judge(pred, "subject", subj_cats, _expand_allowed(domain_allowed), source, ex, e, subj_cats, obj_cats)
+        if obj_cats and range_allowed is not None:
+            _judge(pred, "object", obj_cats, _expand_allowed(range_allowed), source, ex, e, subj_cats, obj_cats)
 
     if not checked_edges:
         return findings  # nothing constrained in this batch
 
+    if house_saved:
+        total = sum(house_saved.values())
+        lines = [f"{pred} ({side}={cat}) [house: {why}]: {n:,} edges"
+                 for (pred, side, cat, why), n in sorted(house_saved.items(), key=lambda kv: -kv[1])]
+        findings.append(Finding(
+            "INFO", "DomainRange",
+            f"{total:,} edges conform only under a house allowance, not the model ({len(house_saved)} rules)",
+            lines if verbose else [],
+        ))
+
     if violations:
         total_bad = sum(len(v) for v in violations.values())
         ranked = sorted(violations.items(), key=lambda kv: -len(kv[1]))
-        examples = []
-        for (pred, side, cat), exs in ranked[:5]:
-            examples.append(f"{pred} ({side}={cat}): {len(exs)} edges, e.g. {exs[0]}")
-        findings.append(
-            Finding(
-                "WARNING",
-                "DomainRange",
-                f"{total_bad} edges violate predicate domain/range across {len(violations)} distinct constraints",
-                examples if verbose else [],
-            )
-        )
+        examples = [f"{pred} ({side}={cat}) [{source}]: {len(exs):,} edges, e.g. {exs[0]}"
+                    for (pred, side, cat, source), exs in ranked]
+        findings.append(Finding(
+            "WARNING", "DomainRange",
+            f"{total_bad:,} edges violate predicate domain/range across {len(violations)} distinct constraints",
+            examples if verbose else [],
+        ))
     else:
-        findings.append(
-            Finding("INFO", "DomainRange", f"Domain/range OK across {checked_edges:,} constrained edges")
-        )
+        findings.append(Finding("INFO", "DomainRange", f"Domain/range OK across {checked_edges:,} constrained edges"))
     return findings
 
 
@@ -1597,6 +1740,7 @@ def _summarize_kgxval_csv(out_csv: Path) -> str:
     """
     by_type: dict = defaultdict(int)
     bad_biolink_metpo: set = set()
+    bad_biolink_micro: set = set()
     bad_biolink_structural: set = set()
     bad_biolink_other: set = set()
     domain_range: dict = defaultdict(int)  # (predicate, error, actual_cats) -> count
@@ -1608,6 +1752,8 @@ def _summarize_kgxval_csv(out_csv: Path) -> str:
             if err == "BAD BIOLINK":
                 if pred.startswith("METPO:"):
                     bad_biolink_metpo.add(pred)
+                elif pred in {"MICRO:0001206", "MICRO:0001215", "MICRO:0000065"}:
+                    bad_biolink_micro.add(pred)
                 elif pred in STRUCTURAL_PREDICATES:
                     bad_biolink_structural.add(pred)
                 else:
@@ -1627,8 +1773,9 @@ def _summarize_kgxval_csv(out_csv: Path) -> str:
         lines.append(f"| {etype} | {by_type.get(etype, 0)} |")
     lines.append("")
     lines.append(f"**BAD BIOLINK predicates:** {len(bad_biolink_metpo)} METPO-native + "
+                 f"{len(bad_biolink_micro)} MICRO assay-native + "
                  f"{len(bad_biolink_structural)} structural "
-                 "(both expected — METPO mapped to biolink downstream; structural = ontology "
+                 "(expected project extensions, not strict Biolink passes; MICRO checked by typed assay rules; structural = ontology "
                  f"metamodel axioms accepted via STRUCTURAL_PREDICATES), "
                  f"**{len(bad_biolink_other)} actionable**.")
     if bad_biolink_structural:

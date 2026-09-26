@@ -193,7 +193,7 @@ LABEL_CORRECTION_HEADER = [
 ORG = "biolink:OrganismTaxon"
 
 METPO_SNAPSHOT = Path("data/transformed/ontologies/metpo_nodes.tsv")
-_PHENO_PARENT = "METPO:1000000"
+_PHENO_PARENT = "METPO:1000059"
 
 # BacDive raw data — used by `compute_bacdive_observations` to validate the hardcoded
 # `observations` counts on the categorical child Terms. The keys are child Term labels
@@ -653,15 +653,14 @@ QUANTITATIVE_TERMS: List[Term] = [
         term_type="ObjectProperty",
         label="isolated from environment with quality",
         definition=(
-            "A relation between a microbe and a quality of the environment from "
-            "which the microbe was isolated. Examples: a microbe isolated from an "
-            "acidic environment has the relation `<microbe> METPO:2000068 "
-            "PATO:0001429 'acidic'`; a microbe isolated from an anaerobic "
-            "environment has `<microbe> METPO:2000068 PATO:0001456 'anaerobic'`. "
-            "The relation does not by itself entail that the microbe is acidophilic, "
-            "anaerobic, etc. as a phenotype — it only records the environment's "
-            "quality at the time of isolation. Microbe phenotype assertions belong "
-            "on a separate edge (e.g. METPO:1000615 acidophilic via has_phenotype)."
+            "A relation between a microbe and a quality of the environment from which the microbe "
+            "was isolated. Examples: a microbe isolated from an acidic environment has the "
+            "relation `<microbe> METPO:2000068 PATO:0001429 'acidic'`; a microbe isolated from an "
+            "anaerobic environment has `<microbe> METPO:2000068 PATO:0001456 'anaerobic'`. The "
+            "relation does not by itself entail that the microbe is acidophilic, anaerobic, etc. "
+            "as a phenotype; it only records the environment's quality at the time of isolation. "
+            "Microbe phenotype assertions belong on a separate edge (e.g. METPO:1000615 "
+            "acidophilic via has_phenotype)."
         ),
         domain="METPO:1000525",
         range="PATO:0000001",
@@ -822,15 +821,21 @@ CATEGORICAL_TERMS: List[Term] = [
         term_type="Class",
         label="flagellar arrangement",
         definition=(
-            "A phenotypic quality describing the arrangement pattern of flagella on a "
-            "bacterial or archaeal cell. Parent class for METPO:1005031-1005037 "
-            "(peritrichous, polar, amphitrichous, lophotrichous, monotrichous, lateral, "
-            "subpolar)."
+            "A phenotype characterized by the arrangement pattern of flagella on a bacterial or "
+            "archaeal cell (e.g. peritrichous, polar, amphitrichous, lophotrichous, monotrichous, "
+            "lateral, subpolar)."
         ),
         parent_or_subproperty=_PHENO_PARENT,
         xrefs=["GO:0001539"],
         synonyms=["flagellation pattern"],
         priority="HIGH",
+        observations=(
+            "Proposed as the parent for METPO:1005031-1005037. Adopted in the "
+            "2026-06-12 release, but those seven still sit under METPO:1000704 "
+            "'flagellated', so the arrangement axis is split across two parents "
+            "(berkeleybop/metpo#616). The released definition turned that claim "
+            "into an illustrative list, so this note is the only record of it."
+        ),
     ),
     # Polytrichous is the only flagellation child not yet in METPO. BacDive
     # uses 'polytrichous, monopolar' (4 strains) — 'monopolar' is treated as a
@@ -840,7 +845,10 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="polytrichous flagellation",
-        definition="Multiple flagella per cell (typically a tuft); often combined with polar attachment.",
+        definition=(
+            "A flagellar arrangement in which multiple flagella (typically a tuft) are present "
+            "per cell, often combined with polar attachment."
+        ),
         parent_or_subproperty="METPO:1007005",
         synonyms=["polytrichous"],
         priority="MEDIUM",
@@ -891,8 +899,8 @@ CATEGORICAL_TERMS: List[Term] = [
         term_type="Class",
         label="colony morphology",
         definition=(
-            "A phenotypic quality describing macroscopic colony characteristics "
-            "(shape, margin, elevation, surface, color, size)."
+            "A phenotype characterized by macroscopic colony characteristics such as shape, "
+            "margin, elevation, surface, colour, and size."
         ),
         parent_or_subproperty=_PHENO_PARENT,
         xrefs=["PATO:0000052"],
@@ -904,8 +912,8 @@ CATEGORICAL_TERMS: List[Term] = [
         term_type="Class",
         label="colony shape",
         definition=(
-            "Subaspect of colony morphology describing the overall macroscopic colony "
-            "outline as observed on solid medium."
+            "A colony morphology characterized by the overall macroscopic colony outline as "
+            "observed on solid medium."
         ),
         parent_or_subproperty="METPO:1007062",
         xrefs=["PATO:0000052"],
@@ -916,7 +924,7 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="circular colony",
-        definition="Colony with a regular round outline.",
+        definition="A colony shape that has a regular round outline.",
         parent_or_subproperty="METPO:1007063",
         synonyms=["round colony"],
         priority="LOW",
@@ -927,7 +935,7 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="irregular colony",
-        definition="Colony with an irregular (non-round, non-rhizoid) outline.",
+        definition="A colony shape that has an irregular (non-round, non-rhizoid) outline.",
         parent_or_subproperty="METPO:1007063",
         priority="LOW",
         observations="148",
@@ -937,7 +945,7 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="filamentous colony",
-        definition="Colony with thread-like or filamentous outline.",
+        definition="A colony shape that has a thread-like or filamentous outline.",
         parent_or_subproperty="METPO:1007063",
         priority="LOW",
         observations="16",
@@ -947,7 +955,7 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="punctiform colony",
-        definition="Very small (pinpoint) colony, typically <1 mm diameter.",
+        definition="A colony shape that is very small (pinpoint), typically <1 mm in diameter.",
         parent_or_subproperty="METPO:1007063",
         priority="LOW",
         observations="11",
@@ -957,7 +965,7 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="rhizoid colony",
-        definition="Colony with branching, root-like outline.",
+        definition="A colony shape that has a branching, root-like outline.",
         parent_or_subproperty="METPO:1007063",
         priority="LOW",
         observations="8",
@@ -967,7 +975,10 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="fried-egg-shaped colony",
-        definition="Colony with raised opaque centre and translucent peripheral zone, resembling a fried egg.",
+        definition=(
+            "A colony shape that has a raised opaque centre and a translucent peripheral zone, "
+            "resembling a fried egg."
+        ),
         parent_or_subproperty="METPO:1007063",
         synonyms=["fried-egg colony"],
         priority="LOW",
@@ -980,7 +991,10 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="pressure tolerance",
-        definition="A phenotypic quality describing the ability to grow under elevated hydrostatic pressure.",
+        definition=(
+            "A phenotype characterized by the ability to grow under elevated hydrostatic "
+            "pressure."
+        ),
         parent_or_subproperty=_PHENO_PARENT,
         synonyms=["barophile", "piezophile"],
         priority="MEDIUM",
@@ -990,7 +1004,10 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="barophile phenotype",
-        definition="An organism that requires or tolerates elevated hydrostatic pressure for growth.",
+        definition=(
+            "A pressure tolerance in which an organism requires or tolerates elevated hydrostatic "
+            "pressure for growth."
+        ),
         parent_or_subproperty="METPO:1007070",
         priority="MEDIUM",
     ),
@@ -999,7 +1016,7 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="radiation tolerance",
-        definition="A phenotypic quality describing the ability to withstand ionizing or UV radiation.",
+        definition="A phenotype characterized by the ability to withstand ionizing or UV radiation.",
         parent_or_subproperty=_PHENO_PARENT,
         synonyms=["radioresistant"],
         priority="MEDIUM",
@@ -1009,7 +1026,10 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="osmotic tolerance",
-        definition="A phenotypic quality describing the ability to grow under high osmotic pressure (non-NaCl).",
+        definition=(
+            "A phenotype characterized by the ability to grow under high osmotic pressure "
+            "(non-NaCl)."
+        ),
         parent_or_subproperty=_PHENO_PARENT,
         synonyms=["osmophile"],
         priority="MEDIUM",
@@ -1020,8 +1040,8 @@ CATEGORICAL_TERMS: List[Term] = [
         term_type="Class",
         label="metal tolerance",
         definition=(
-            "A phenotypic quality describing the ability to grow in the presence of "
-            "elevated metal concentrations."
+            "A phenotype characterized by the ability to grow in the presence of elevated metal "
+            "concentrations."
         ),
         parent_or_subproperty=_PHENO_PARENT,
         synonyms=["metallophile"],
@@ -1032,7 +1052,10 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="capsule presence",
-        definition="A phenotypic quality describing the presence of an extracellular polysaccharide capsule.",
+        definition=(
+            "A phenotype characterized by the presence of an extracellular polysaccharide "
+            "capsule."
+        ),
         parent_or_subproperty=_PHENO_PARENT,
         xrefs=["GO:0042597"],
         priority="LOW",
@@ -1042,7 +1065,7 @@ CATEGORICAL_TERMS: List[Term] = [
         scope="categorical",
         term_type="Class",
         label="biofilm formation capability",
-        definition="A phenotypic capability describing the ability to form surface-attached biofilms.",
+        definition="A phenotype characterized by the ability to form surface-attached biofilms.",
         parent_or_subproperty=_PHENO_PARENT,
         xrefs=["GO:0042710"],
         priority="MEDIUM",
@@ -1218,8 +1241,8 @@ CATEGORICAL_TERMS: List[Term] = [
         term_type="Class",
         label="coagulase activity",
         definition=(
-            "A phenotypic quality describing coagulase enzyme activity (clotting of "
-            "blood plasma). Diagnostic marker, e.g. for Staphylococcus aureus."
+            "A phenotype characterized by coagulase enzyme activity (clotting of blood plasma); a "
+            "diagnostic marker, e.g. for Staphylococcus aureus."
         ),
         parent_or_subproperty=_PHENO_PARENT,
         synonyms=["coagulase test"],
@@ -1274,10 +1297,9 @@ CATEGORICAL_TERMS: List[Term] = [
         term_type="Class",
         label="xerophilic phenotype",
         definition=(
-            "A phenotypic quality describing a microbe that thrives in low water-activity "
-            "environments (typically aw < 0.85). Sibling concept of osmotic and metal "
-            "tolerance; distinct from halophily and from osmotic tolerance because the "
-            "limiting factor is water activity (aw) rather than solute concentration."
+            "A phenotype characterized by a microbe that thrives in low water-activity "
+            "environments (typically aw < 0.85), where the limiting factor is water activity (aw) "
+            "rather than solute concentration; distinct from halophily and osmotic tolerance."
         ),
         parent_or_subproperty=_PHENO_PARENT,
         synonyms=["xerophile", "xerotolerant"],
@@ -1289,9 +1311,9 @@ CATEGORICAL_TERMS: List[Term] = [
         term_type="Class",
         label="epibiont phenotype",
         definition=(
-            "A phenotypic quality describing a microbe that lives on the external surface "
-            "of a host organism or substrate, as distinct from endosymbionts (which live "
-            "inside the host). Captures host-association mode, not specific host taxonomy."
+            "A phenotype characterized by a microbe that lives on the external surface of a host "
+            "organism or substrate, as distinct from endosymbionts (which live inside the host); "
+            "captures host-association mode, not specific host taxonomy."
         ),
         parent_or_subproperty=_PHENO_PARENT,
         synonyms=["epibiont", "ectosymbiont"],

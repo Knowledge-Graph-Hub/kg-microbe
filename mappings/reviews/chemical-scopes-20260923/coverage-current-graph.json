@@ -1,0 +1,168 @@
+{
+  "scope": "Observed references in all existing data/transformed/**/*edges.tsv to identifiers missing from the chemical-scope candidate; includes gitignored files. This is exposure, not predicted deletion or a post-promotion graph validation. Producers have not been rebuilt.",
+  "candidate_sha256": "cb2b6f4f0e6bcc60f0ee76f76c1c8c4bf0030d529ea4d5452d28a29ba5767078",
+  "candidate_report_sha256": "9016218b9d615218e7d333990f6ecf39100c648b517e35cae7f14ca069f829b4",
+  "lost_entities": 485,
+  "lost_entities_referenced": 63,
+  "edge_rows_touching_lost_entity": 504,
+  "edge_rows_scanned": 18784312,
+  "input_sha256": {
+    "data/transformed/bacdive/edges.tsv": "e9309abe933291834b69bccf89af49eac68c97b28495a7abd51bc4714f588c84",
+    "data/transformed/bactotraits/edges.tsv": "4a794476d444592c67647594238b9e8b648b996218217c464ee8607462919040",
+    "data/transformed/gold/edges.tsv": "9bea76461e45761a44f6c24e3ac261d00dcd0baa3e1928f8c66f26c6a117cc14",
+    "data/transformed/gtdb/edges.tsv": "c1df2471e5482cbf42bba2b765610dc83c237f5756263b4e1372c732fd976dc1",
+    "data/transformed/lpsn/edges.tsv": "415976acfefd1f1d1d478e7e3bc5dd2c9f76d904a67c08134bcb9122545e4960",
+    "data/transformed/lpsn_api/edges.tsv": "a632b41cd360b31e2104496d249ba872426e27b406c79e528823a620f85ad339",
+    "data/transformed/madin_etal/edges.tsv": "e258cbb1bcda5aeca517b28219b8f413b969c580c5123c92e4383e1ca90594a4",
+    "data/transformed/mediadive/edges.tsv": "ebeb8134aca074332719d2a59cd8889143c6274bab56308ab6b386e1676594c7",
+    "data/transformed/metatraits/edges.tsv": "17f6f7d228455132fd8461ab62de882af9c56998d035721ce42a4fe3b7109da3",
+    "data/transformed/metatraits_gtdb/edges.tsv": "397871c2c4463bb4e600b1077ab55749bef6ee01da6091da341e6b242ae3ad3f",
+    "data/transformed/microbedecoder/edges.tsv": "b1bd3f3a4a0ba2445dec21f186881055f1fd31a0e6865dff7e9b3361c038b371",
+    "data/transformed/ontologies/chebi_edges.tsv": "9a74dd1a3d92a5f82fd7361c58d1ba971abde1f8ebb5c8f2ed0c77990544e1e1",
+    "data/transformed/ontologies/ec_edges.tsv": "4ab3599b142ef1757e58a3a87c2943e36ca8d219c41549172e7482f8c440a49e",
+    "data/transformed/ontologies/envo_edges.tsv": "745a8bdc022ff0f6dbcf7075e6f42a9ea6a253a150fa289f0edd3dc05072a1d1",
+    "data/transformed/ontologies/foodon_edges.tsv": "6cb370cca3b1a067068b0f5bbf1220b71658e930a7df62bbc037a1446041463e",
+    "data/transformed/ontologies/go_edges.tsv": "dfa175a58b2317e112b3d920aee93eab4046bb76af2a3b03b3e4f28b3a180125",
+    "data/transformed/ontologies/hp_edges.tsv": "0adb692f275158d3d1d35eff6b0239315dfb7f52d320ecc7fbf7a1eb8b4a4c88",
+    "data/transformed/ontologies/metpo_edges.tsv": "57dfb68fa09db5e7b9284470df4c717b9b3f9830e151a731cbed5a1c91abf8cb",
+    "data/transformed/ontologies/mondo_edges.tsv": "c4919b2289dfc92db3fa06d0d6474b6452f8678f564d5cc6d33d5befed029de8",
+    "data/transformed/ontologies/ncbitaxon_edges.tsv": "7bb20ea0c9718c17f47605417ea1b0482269c70ef54f6149df05289b82d3e9a1",
+    "data/transformed/ontologies/pato_edges.tsv": "6cd47a281bfc28842130838ae2d6567856417fef5119308ade57742c1cf1a1d3",
+    "data/transformed/ontologies/ro_edges.tsv": "d58d0974d75df88e76493b90d559cc52e207bfc161105ffc3046e3c6935aa850",
+    "data/transformed/ontologies/taxrank_edges.tsv": "0a6d62353510003c438a82d66eb4fafd5c0be9e034ae771686512334fa81ff11",
+    "data/transformed/ontologies/uberon_edges.tsv": "020a74f23b7aad01bd8bacd1b20b4ece2a6a461ef3b371b519e3db8d4eef92f7",
+    "data/transformed/ontologies/upa_edges.tsv": "e413cc69dea049574219e10dff2469bbbc68c3529cd3e5d3846f69cd0a555e20",
+    "data/transformed/ontologies_stubs/mesh_edges.tsv": "e476288075a19659868a83ec359e88720a32c77ec8d253962cb022b2d8da75a0",
+    "data/transformed/ontologies_stubs/micro_edges.tsv": "ebe1ab2d3f21eb9227597d1b409103a92096beb584ddd74a697c22446ac411cc",
+    "data/transformed/ontologies_stubs/ncit_edges.tsv": "3fd36632cddfa0f0c7a43676e54a238d81a06a62e9c4708101abb27203bd126f",
+    "data/transformed/ontologies_stubs/po_edges.tsv": "6ea816502d2687a0f2e64cfb41329eb5047bae22e8640bfe0f106baf17eb8569",
+    "data/transformed/prego_habitat/edges.tsv": "5facfa99257e5aa12ce5bc3810b8cfc4fa347d98f5256ad843fa887bda97aa24",
+    "data/transformed/rhea_mappings/edges.tsv": "98b035558877783702662ec8c0b87a0b406082bf3cd0db564b322b1a242ccab4"
+  },
+  "producer_tables": {
+    "data/transformed/bacdive/edges.tsv": {
+      "rows_scanned": 4392343,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/bactotraits/edges.tsv": {
+      "rows_scanned": 87856,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/gold/edges.tsv": {
+      "rows_scanned": 705750,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/gtdb/edges.tsv": {
+      "rows_scanned": 1471034,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/lpsn/edges.tsv": {
+      "rows_scanned": 156204,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/lpsn_api/edges.tsv": {
+      "rows_scanned": 165492,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/madin_etal/edges.tsv": {
+      "rows_scanned": 182853,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/mediadive/edges.tsv": {
+      "rows_scanned": 113914,
+      "rows_touching_lost_entity": 304
+    },
+    "data/transformed/metatraits/edges.tsv": {
+      "rows_scanned": 4626085,
+      "rows_touching_lost_entity": 48
+    },
+    "data/transformed/metatraits_gtdb/edges.tsv": {
+      "rows_scanned": 4166422,
+      "rows_touching_lost_entity": 30
+    },
+    "data/transformed/microbedecoder/edges.tsv": {
+      "rows_scanned": 521217,
+      "rows_touching_lost_entity": 122
+    },
+    "data/transformed/ontologies/chebi_edges.tsv": {
+      "rows_scanned": 417073,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/ontologies/ec_edges.tsv": {
+      "rows_scanned": 12021,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/ontologies/envo_edges.tsv": {
+      "rows_scanned": 10825,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/ontologies/foodon_edges.tsv": {
+      "rows_scanned": 55372,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/ontologies/go_edges.tsv": {
+      "rows_scanned": 74033,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/ontologies/hp_edges.tsv": {
+      "rows_scanned": 24378,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/ontologies/metpo_edges.tsv": {
+      "rows_scanned": 297,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/ontologies/mondo_edges.tsv": {
+      "rows_scanned": 113325,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/ontologies/ncbitaxon_edges.tsv": {
+      "rows_scanned": 925267,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/ontologies/pato_edges.tsv": {
+      "rows_scanned": 18910,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/ontologies/ro_edges.tsv": {
+      "rows_scanned": 85,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/ontologies/taxrank_edges.tsv": {
+      "rows_scanned": 75,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/ontologies/uberon_edges.tsv": {
+      "rows_scanned": 74852,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/ontologies/upa_edges.tsv": {
+      "rows_scanned": 2746,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/ontologies_stubs/mesh_edges.tsv": {
+      "rows_scanned": 477,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/ontologies_stubs/micro_edges.tsv": {
+      "rows_scanned": 89,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/ontologies_stubs/ncit_edges.tsv": {
+      "rows_scanned": 250,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/ontologies_stubs/po_edges.tsv": {
+      "rows_scanned": 25,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/prego_habitat/edges.tsv": {
+      "rows_scanned": 237745,
+      "rows_touching_lost_entity": 0
+    },
+    "data/transformed/rhea_mappings/edges.tsv": {
+      "rows_scanned": 227297,
+      "rows_touching_lost_entity": 0
+    }
+  }
+}

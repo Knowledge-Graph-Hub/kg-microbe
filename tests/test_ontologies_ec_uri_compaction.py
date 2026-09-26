@@ -115,6 +115,7 @@ def _build_transform(output_dir: Path) -> OntologiesTransform:
     """Instantiate an OntologiesTransform without running __init__ side effects."""
     transform = OntologiesTransform.__new__(OntologiesTransform)
     transform.output_dir = output_dir
+    transform.input_base_dir = output_dir / "fixture-raw"
     transform.node_header = list(_NODE_HEADER)
     transform.edge_header = list(_EDGE_HEADER)
     # post_process's ec branch reads the knowledge source table when writing

@@ -1,4 +1,5 @@
-"""Fold enrichment of PREGO BTO -location_of-> NCBITaxon vs BacDive host anatomy.
+"""
+Fold enrichment of PREGO BTO -location_of-> NCBITaxon vs BacDive host anatomy.
 
 BacDive records host/tissue isolation against UBERON and CL, not BTO. The
 crosswalk is already in-repo: 1,645 anatomy terms in the ontologies output carry

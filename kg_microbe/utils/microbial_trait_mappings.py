@@ -11,7 +11,7 @@ from typing import Dict, Optional
 
 from kg_microbe.transform_utils.constants import METATRAITS_MAPPINGS_DIR
 
-# Mappings dir: project_root/mappings/metatraits/
+# Mappings dir: project_root/mappings/canonical/
 _MAPPINGS_DIR = METATRAITS_MAPPINGS_DIR
 
 # Object source -> Biolink category. Keys are the literal values that appear in
@@ -125,7 +125,7 @@ def load_microbial_trait_mappings(
     mappings_dir: Optional[Path] = None,
 ) -> Dict[str, Dict[str, str]]:
     """
-    Load all positive mapping TSVs from mappings/metatraits/.
+    Load all positive mapping TSVs from mappings/canonical/.
 
     Excludes *_negative_mappings.tsv files.
 

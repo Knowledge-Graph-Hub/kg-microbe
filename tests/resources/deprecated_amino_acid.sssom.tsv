@@ -1,0 +1,6 @@
+subject_id	subject_label	predicate_id	object_id	object_label	comment
+kgm.name:3-aminobutyric_acid	3-aminobutyric acid	skos:exactMatch	CHEBI:18309	3-aminobutyric acid	canonical_name
+kgm.name:3-aminobutyrate	3-aminobutyrate	skos:closeMatch	CHEBI:18309	3-aminobutyric acid	synonym
+MIM:3-aminobutyric_Acid	3-aminobutyric acid	skos:exactMatch	CHEBI:37081	3-aminobutanoic acid	
+kgm.name:3-aminobutyric_acid	3-aminobutyric acid	skos:exactMatch	CHEBI:37081	3-aminobutanoic acid	synonym
+kgm.name:replacement_control	replacement control	skos:exactMatch	CHEBI:17261	replacement control	canonical_name

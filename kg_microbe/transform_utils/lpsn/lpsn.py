@@ -47,18 +47,26 @@ from pathlib import Path
 from typing import Any, Dict, Optional, Union
 
 from kg_microbe.transform_utils.constants import (
+    AGENT_TYPE_COLUMN,
+    AUTOMATED_AGENT,
     CLOSE_MATCH_PREDICATE,
     CLOSE_MATCH_RELATION,
     EXACT_MATCH,
     ID_COLUMN,
+    KNOWLEDGE_ASSERTION,
+    KNOWLEDGE_LEVEL_COLUMN,
     LPSN_SOURCE,
+    MANUAL_AGENT,
     NCBI_CATEGORY,
+    PREDICTION,
     RDFS_SUBCLASS_OF,
     SAME_AS_PREDICATE,
     STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.tsv_io import tsv_writer
 
 LPSN_PREFIX = "lpsn:"
 LPSN_KNOWLEDGE_SOURCE = "infores:lpsn"
@@ -425,12 +433,17 @@ class LPSNTransform(Transform):
         parent_lookup = self._build_parent_lookup(rows_by_id)
 
         # Emit nodes + edges.
+        # Atomic: lpsn_api, microbedecoder and bacdive read these files back,
+        # and their fail-safes key on absence. A plain open() that died
+        # mid-write left a truncated file that read as "lpsn has run" with a
+        # partial id set, which is worse than no file at all (#820).
+        deposits: Dict[str, str] = {}
         with (
-            open(self.output_node_file, "w", newline="") as node_fh,
-            open(self.output_edge_file, "w", newline="") as edge_fh,
+            atomic_write(self.output_node_file, newline="") as node_fh,
+            atomic_write(self.output_edge_file, newline="") as edge_fh,
         ):
-            node_writer = csv.writer(node_fh, delimiter="\t")
-            edge_writer = csv.writer(edge_fh, delimiter="\t")
+            node_writer = tsv_writer(node_fh)
+            edge_writer = tsv_writer(edge_fh)
 
             node_writer.writerow(self.node_header)
             edge_writer.writerow(self.edge_header)
@@ -454,8 +467,12 @@ class LPSNTransform(Transform):
                 # (a numeric link within the table, not a strain deposit) and
                 # is skipped.
                 if (row.get(COL_SP_EPITHET) or "").strip():
-                    for strain_curie in self._extract_strain_curies(row):
+                    for strain_curie, deposit_label in self._extract_strain_deposits(row):
                         edge_writer.writerow(self._make_close_match_edge(record_no, strain_curie))
+                        # Buffered, not written here: several records can cite
+                        # one deposit, and a node row belongs to the deposit,
+                        # not to the citation.
+                        deposits.setdefault(strain_curie, deposit_label)
                 # NCBITaxon cross-ref: every rank (genus / species /
                 # subspecies) is attempted because the index is filtered to
                 # the bacterial + archaeal subtree, so multi-kingdom
@@ -467,7 +484,7 @@ class LPSNTransform(Transform):
                 # Bacillus``).
                 ncbi_curie = self._lookup_ncbi(row)
                 if ncbi_curie:
-                    edge_writer.writerow(self._make_close_match_edge(record_no, ncbi_curie))
+                    edge_writer.writerow(self._make_close_match_edge(record_no, ncbi_curie, inferred=True))
                 # GTDB cross-ref: rank-aware name match against a
                 # pre-loaded (rank, name) index of data/transformed/gtdb/
                 # nodes.tsv. GTDB is bacteria+archaea only so no subtree
@@ -479,7 +496,15 @@ class LPSNTransform(Transform):
                 # hops.
                 gtdb_curie = self._lookup_gtdb(row)
                 if gtdb_curie:
-                    edge_writer.writerow(self._make_close_match_edge(record_no, gtdb_curie))
+                    edge_writer.writerow(self._make_close_match_edge(record_no, gtdb_curie, inferred=True))
+
+            # Every deposit this file references gets a node row. Without one,
+            # KGX invents a bare `biolink:NamedThing` with no label for each of
+            # them at merge time -- 4,233 in the 20260815 graph, all LPSN's
+            # (#932). Same shape BacDive emits for the deposits it cites, so
+            # the merge collapses the shared ones onto one node.
+            for strain_curie, deposit_label in sorted(deposits.items()):
+                node_writer.writerow(self._make_deposit_node_row(strain_curie, deposit_label))
 
         # End-of-run summary — useful diff signal when NCBI / GTDB
         # dumps are refreshed and match rates shift.
@@ -623,6 +648,9 @@ class LPSNTransform(Transform):
             "object": f"{LPSN_PREFIX}{parent_record_no}",
             "relation": RDFS_SUBCLASS_OF,
             "primary_knowledge_source": LPSN_KNOWLEDGE_SOURCE,
+            # Hierarchy and nomenclatural links restate LPSN curation (#1071).
+            KNOWLEDGE_LEVEL_COLUMN: KNOWLEDGE_ASSERTION,
+            AGENT_TYPE_COLUMN: MANUAL_AGENT,
         }.items():
             if col in headers:
                 row_out[headers.index(col)] = val
@@ -631,6 +659,15 @@ class LPSNTransform(Transform):
     def _extract_strain_curies(self, row: dict) -> list:
         """
         Turn ``row[nomenclatural_type]`` into a list of ``kgmicrobe.strain:*`` CURIEs.
+
+        :param row: One GSS row.
+        :return: The CURIEs from :meth:`_extract_strain_deposits`, in order.
+        """
+        return [curie for curie, _label in self._extract_strain_deposits(row)]
+
+    def _extract_strain_deposits(self, row: dict) -> list:
+        """
+        Turn ``row[nomenclatural_type]`` into ``(kgmicrobe.strain:* CURIE, label)`` pairs.
 
         LPSN's ``nomenclatural_type`` for a species / subspecies row is one or
         more culture-collection deposits separated by ``=`` / ``;`` / ``,``,
@@ -666,7 +703,9 @@ class LPSNTransform(Transform):
                 if curie in seen:
                     continue
                 seen.add(curie)
-                curies.append(curie)
+                # The label is the deposit code as written ("ATCC 11775"),
+                # the same choice BacDive makes for the node it emits.
+                curies.append((curie, token))
         return curies
 
     def _lookup_ncbi(self, row: dict) -> Optional[str]:
@@ -773,12 +812,34 @@ class LPSNTransform(Transform):
             "object": f"{LPSN_PREFIX}{correct_record_no}",
             "relation": EXACT_MATCH,
             "primary_knowledge_source": LPSN_KNOWLEDGE_SOURCE,
+            KNOWLEDGE_LEVEL_COLUMN: KNOWLEDGE_ASSERTION,
+            AGENT_TYPE_COLUMN: MANUAL_AGENT,
         }.items():
             if col in headers:
                 row_out[headers.index(col)] = val
         return row_out
 
-    def _make_close_match_edge(self, record_no: str, strain_curie: str) -> list:
+    def _make_deposit_node_row(self, strain_curie: str, label: str) -> list:
+        """
+        Build one nodes.tsv row for a culture-collection deposit this file cites.
+
+        :param strain_curie: ``kgmicrobe.strain:<code>``.
+        :param label: The deposit code as LPSN wrote it.
+        :return: A row aligned to ``node_header``.
+        """
+        headers = self.node_header
+        row_out = [""] * len(headers)
+        for col, val in {
+            "id": strain_curie,
+            "category": NCBI_CATEGORY,
+            "name": label,
+            "provided_by": LPSN_KNOWLEDGE_SOURCE,
+        }.items():
+            if col in headers:
+                row_out[headers.index(col)] = val
+        return row_out
+
+    def _make_close_match_edge(self, record_no: str, strain_curie: str, *, inferred: bool = False) -> list:
         """
         Build one edges.tsv row linking an LPSN taxon to a culture-collection strain.
 
@@ -787,6 +848,11 @@ class LPSNTransform(Transform):
         primary_knowledge_source=infores:lpsn``. BacDive's transform emits
         the same ``kgmicrobe.strain:*`` CURIE for every culture-collection
         deposit it sees, so the merge step reconciles both sides.
+
+        Declared type deposits restate expert-curated LPSN records. NCBI/GTDB
+        name-and-rank matches instead set ``inferred=True``: the match is a
+        software-generated similarity prediction, not a curator's assertion or
+        a logical entailment from equal labels (#1071).
         """
         headers = self.edge_header
         row_out = [""] * len(headers)
@@ -796,6 +862,8 @@ class LPSNTransform(Transform):
             "object": strain_curie,
             "relation": CLOSE_MATCH_RELATION,
             "primary_knowledge_source": LPSN_KNOWLEDGE_SOURCE,
+            KNOWLEDGE_LEVEL_COLUMN: PREDICTION if inferred else KNOWLEDGE_ASSERTION,
+            AGENT_TYPE_COLUMN: AUTOMATED_AGENT if inferred else MANUAL_AGENT,
         }.items():
             if col in headers:
                 row_out[headers.index(col)] = val

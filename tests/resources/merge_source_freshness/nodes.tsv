@@ -1,0 +1,3 @@
+id	category	name	provided_by
+fixture:1	biolink:NamedThing	One	infores:test
+fixture:2	biolink:NamedThing	Two	infores:test

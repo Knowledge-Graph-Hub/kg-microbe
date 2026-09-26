@@ -1,0 +1,10 @@
+trait	object_id	object_label	positive	negative
+assimilation: 3-O-methyl alpha-D-glucopyranoside	kgmicrobe.compound:3-o-methyl_alpha-d-glucopyranoside	3-O-methyl alpha-D-glucopyranoside	METPO:2000002	METPO:2000027
+builds acid from: 3-O-methyl alpha-D-glucopyranoside	kgmicrobe.compound:3-o-methyl_alpha-d-glucopyranoside	3-O-methyl alpha-D-glucopyranoside	METPO:2000003	METPO:2000028
+carbon source: 3-O-methyl alpha-D-glucopyranoside	kgmicrobe.compound:3-o-methyl_alpha-d-glucopyranoside	3-O-methyl alpha-D-glucopyranoside	METPO:2000006	METPO:2000031
+fermentation: 3-O-methyl alpha-D-glucopyranoside	kgmicrobe.compound:3-o-methyl_alpha-d-glucopyranoside	3-O-methyl alpha-D-glucopyranoside	METPO:2000011	METPO:2000037
+growth: 3-O-methyl alpha-D-glucopyranoside	kgmicrobe.compound:3-o-methyl_alpha-d-glucopyranoside	3-O-methyl alpha-D-glucopyranoside	METPO:2000012	METPO:2000038
+assimilation: L-alanine 4-nitroanilide	kgmicrobe.compound:l-alanine_4-nitroanilide	L-alanine 4-nitroanilide	METPO:2000002	METPO:2000027
+nitrogen source: L-alanine 4-nitroanilide	kgmicrobe.compound:l-alanine_4-nitroanilide	L-alanine 4-nitroanilide	METPO:2000014	METPO:2000040
+assimilation: potassium 5-dehydro-D-gluconate	kgmicrobe.compound:potassium_5-dehydro-d-gluconate	potassium 5-dehydro-D-gluconate	METPO:2000002	METPO:2000027
+builds acid from: potassium 5-dehydro-D-gluconate	kgmicrobe.compound:potassium_5-dehydro-d-gluconate	potassium 5-dehydro-D-gluconate	METPO:2000003	METPO:2000028

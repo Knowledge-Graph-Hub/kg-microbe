@@ -52,7 +52,6 @@ fuller record.
 
 from __future__ import annotations
 
-import csv
 import gzip
 import json
 import re
@@ -76,6 +75,7 @@ from kg_microbe.utils.stub_curie_collection import (
 from kg_microbe.utils.stub_curie_collection import (
     REPO_ROOT as _STUB_REPO_ROOT,
 )
+from kg_microbe.utils.tsv_io import tsv_writer
 
 # Stub ontologies handled by this transform. Each entry maps the canonical
 # CURIE prefix (case-sensitive — must match how the prefix appears in
@@ -481,7 +481,7 @@ class OntologiesStubsTransform(Transform):
         """
         Run ``robot extract --method MIREOT`` and convert the result to OBO Graph JSON.
 
-        Writes intermediate ``.ofn`` and ``.json`` files into ``self.output_dir``
+        Writes intermediate ``.owl`` (RDF/XML) and ``.json`` files into ``self.output_dir``
         so they're available for inspection if the module needs auditing.
         """
         robot_bin = shutil.which("robot")
@@ -499,8 +499,16 @@ class OntologiesStubsTransform(Transform):
 
         lower_terms_file = self.output_dir / f"{prefix.lower()}_mireot_lower.txt"
         lower_terms_file.write_text("\n".join(lower_iris) + "\n", encoding="utf-8")
-        module_ofn = self.output_dir / f"{prefix.lower()}_mireot_module.ofn"
+        # RDF/XML, not functional syntax. ROBOT 1.9.6 writes an `.ofn` it then
+        # cannot parse back once the module carries MICRO literals with
+        # embedded newlines and a `™` -- every OWLAPI parser rejects it and the
+        # convert step fails with INVALID ONTOLOGY FILE ERROR. RDF/XML round-
+        # trips the same content (#986).
+        module_owl = self.output_dir / f"{prefix.lower()}_mireot_module.owl"
         module_json = self.output_dir / f"{prefix.lower()}_mireot_module.json"
+        # The superseded intermediate: leaving the unparsable file beside the
+        # parseable one says nothing about which is current (#988).
+        module_owl.with_suffix(".ofn").unlink(missing_ok=True)
 
         extract_cmd: List[str] = [
             robot_bin,
@@ -514,7 +522,7 @@ class OntologiesStubsTransform(Transform):
         ]
         for iri in upper_iris:
             extract_cmd += ["--upper-term", iri]
-        extract_cmd += ["--output", str(module_ofn)]
+        extract_cmd += ["--output", str(module_owl)]
         subprocess.run(extract_cmd, check=True)  # noqa: S603
 
         subprocess.run(  # noqa: S603
@@ -522,7 +530,7 @@ class OntologiesStubsTransform(Transform):
                 robot_bin,
                 "convert",
                 "--input",
-                str(module_ofn),
+                str(module_owl),
                 "--output",
                 str(module_json),
                 "-f",
@@ -886,6 +894,17 @@ class OntologiesStubsTransform(Transform):
             for value in metadata.get(predicate_key, []) or []:
                 if value:
                     xrefs.add(str(value))
+        # NCIT records CAS Registry Numbers in P210 rather than hasDbXref.
+        # Preserve these direct source annotations in the output xref column;
+        # they do not assert same_as or upgrade any MIM broadMatch relationship.
+        for predicate_key in (
+            "NCIT:P210",
+            "http://ncicb.nci.nih.gov/xml/owl/EVS/Thesaurus.owl#P210",
+        ):
+            for value in metadata.get(predicate_key, []) or []:
+                cas_xref = _cas_xref(value)
+                if cas_xref:
+                    xrefs.add(cas_xref)
         return (
             _sanitize(label),
             sorted({_sanitize(s) for s in synonyms} - {""}),
@@ -896,7 +915,7 @@ class OntologiesStubsTransform(Transform):
         """Write ``rows`` to ``path`` using the canonical Transform node header."""
         path.parent.mkdir(parents=True, exist_ok=True)
         with path.open("w", newline="", encoding="utf-8") as fh:
-            writer = csv.writer(fh, delimiter="\t", lineterminator="\n")
+            writer = tsv_writer(fh)
             writer.writerow(self.node_header)
             for row in rows:
                 writer.writerow(["" if cell is None else cell for cell in row])
@@ -905,10 +924,24 @@ class OntologiesStubsTransform(Transform):
         """Write ``rows`` to ``path`` using the canonical Transform edge header."""
         path.parent.mkdir(parents=True, exist_ok=True)
         with path.open("w", newline="", encoding="utf-8") as fh:
-            writer = csv.writer(fh, delimiter="\t", lineterminator="\n")
+            writer = tsv_writer(fh)
             writer.writerow(self.edge_header)
             for row in rows:
                 writer.writerow(["" if cell is None else cell for cell in row])
+
+
+def _cas_xref(value: Any) -> Optional[str]:
+    """Convert a CAS annotation with valid syntax and check digit to a CURIE."""
+    if not isinstance(value, str):
+        return None
+    registry_number = value.strip()
+    if not re.fullmatch(r"[1-9][0-9]{1,6}-[0-9]{2}-[0-9]", registry_number):
+        return None
+    body, check_digit = registry_number.rsplit("-", 1)
+    checksum = sum(position * int(digit) for position, digit in enumerate(reversed(body.replace("-", "")), 1))
+    if checksum % 10 != int(check_digit):
+        return None
+    return f"cas:{registry_number}"
 
 
 def _sanitize(value: Optional[str]) -> str:

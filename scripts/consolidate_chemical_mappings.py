@@ -61,32 +61,63 @@ Output:
       entity-centric view in memory by grouping rows on ``object_id``.
 """
 
+import argparse
 import csv
+import gzip
 import hashlib
+import io
 import json
+import os
 import re
 import shutil
+import tempfile
 from collections import defaultdict
+from itertools import dropwhile
 from pathlib import Path
-from typing import Dict, List, Set
+from typing import Dict, List, Optional, Set, Tuple
 
 import pandas as pd
 
 from kg_microbe.utils.chemical_mapping_utils import (
     PREDICATE_SEMANTICS_KEY,
+    normalize_chemical_primes,
     read_predicate_semantics,
 )
+from kg_microbe.utils.ingredient_identity import (
+    IDENTITY_POLICY,
+    ingredient_authority_label,
+    ingredient_mapping_allowed,
+    ingredient_name_target,
+    ingredient_xref_allowed,
+)
 from kg_microbe.utils.ontology_utils import FatalOntologyError, get_chebi_adapter
+
+# Environment override for the MediaIngredientMech checkout. Filesystem adjacency
+# is not a contract: worktrees, CI checkouts and containers routinely place MIM
+# somewhere other than `../MediaIngredientMech`, and silently falling back to the
+# vendored copy there produces a "successful" run built on stale data (#947).
+# `build_mim_ingredient_sssom.py` on the claw side already honours this variable.
+_MIM_ROOT_ENV = "MEDIAINGREDIENTMECH_ROOT"
+
+
+def _mim_root(base_dir: Path) -> Path:
+    """The MediaIngredientMech checkout: env override first, sibling by default."""
+    override = os.environ.get(_MIM_ROOT_ENV)
+    if override:
+        return Path(override).expanduser()
+    return base_dir / ".." / "MediaIngredientMech"
+
 
 # Path (relative to kg-microbe repo root) where the sibling MediaIngredientMech
 # checkout is expected to live. The MIM repo is the source of truth for the
 # ingredient SSSOM mapping set and is synced into ``mappings/`` on every run.
-_MIM_SIBLING_RELPATH = Path("..") / "MediaIngredientMech" / "mappings" / "ingredient_mappings.sssom.tsv"
+_MIM_SIBLING_RELPATH = Path("mappings") / "ingredient_mappings.sssom.tsv"
 _MIM_VENDORED_RELPATH = Path("mappings") / "ingredient_mappings.sssom.tsv"
 # MIM publishes the unified ingredient mapping at the repo root. kg-microbe's
-# vendored copy keeps its historical name (`culturebotai_reviewed_ingredients`)
-# and carries one extra column (`synonyms`) that the loader ignores.
-_CBAI_SIBLING_RELPATH = Path("..") / "MediaIngredientMech" / "UNIFIED_INGREDIENT_MAPPING.tsv"
+# vendored copy keeps its historical name (`culturebotai_reviewed_ingredients`);
+# the columns are identical, as they must be -- the sync copies the source over
+# the vendored file wholesale, so a divergent column could not survive a run.
+_CBAI_SIBLING_RELPATH = Path("UNIFIED_INGREDIENT_MAPPING.tsv")
 _CBAI_VENDORED_RELPATH = Path("mappings") / "culturebotai_reviewed_ingredients.tsv"
 
 
@@ -221,49 +252,342 @@ def _file_sha256(path: Path) -> str:
     return h.hexdigest()
 
 
+def script_fingerprint(path: Optional[Path] = None) -> str:
+    """
+    Identify the exporter by the content of its own source file.
+
+    Returned as ``sha256:<hex>`` for the ``mapping_tool_version`` header. A
+    commit SHA
+    cannot do this job: ``git rev-parse HEAD`` names the commit the checkout
+    sits on, not the code that ran, and the normal workflow -- regenerate from
+    a modified tree, then commit -- stamps the *parent* commit, whose version
+    of this script is not the one that produced the artifact (#961). The run
+    also necessarily precedes the commit containing its output, so no commit
+    SHA escapes this. A content hash is exact, needs no git, and does not move
+    for commits that leave this script alone.
+
+    It covers this file only. A behaviour change inside an imported module
+    (``kg_microbe.utils.chemical_mapping_utils``, ``ontology_utils``) is not
+    reflected here; the field claims the exporter's identity, not a closure
+    over everything it calls.
+    """
+    target = Path(__file__).resolve() if path is None else Path(path)
+    try:
+        return f"sha256:{_file_sha256(target)}"
+    except OSError as exc:
+        # Reachable only when the source is not on disk (frozen/zipped
+        # deployment). "unknown" is the honest answer; a stale or invented
+        # identifier would be worse than none. Say so on the way out: the
+        # alternative evidence is a header line inside a 13 MB gzip nobody
+        # opens, which is the silence #961 was about (#975).
+        print(f"  ! Could not fingerprint {target}: {exc}. mapping_tool_version will read 'unknown'.")
+        return "unknown"
+
+
+#: A ``mapping_date`` this exporter is willing to carry forward. Anything else
+#: is treated as absent; see :func:`published_mapping_dates`.
+_ISO_DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
+
+
+def open_deterministic_gzip(path: Path):
+    """
+    Open a gzip stream whose bytes depend only on what is written to it.
+
+    Two header fields otherwise leak the environment into the archive, so two
+    runs over identical rows produced different 13 MB blobs and git stored a
+    fresh one each time (#953):
+
+    * ``mtime`` carries wall-clock seconds, pinned to 0 here;
+    * ``FNAME`` carries the output filename, which ``GzipFile(path, ...)`` fills
+      in automatically -- so an export to a scratch path would not match the
+      same content exported to the published path.
+
+    Passing an explicit ``fileobj`` with ``filename=""`` suppresses the second.
+    The returned wrapper closes the underlying file as well as the gzip stream;
+    ``GzipFile`` does not close a ``fileobj`` it was handed.
+
+    :param path: Destination ``.gz`` path.
+    :return: A text-mode writable stream.
+    """
+    raw = path.open("wb")
+    try:
+        stream = gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=0)
+    except BaseException:
+        # The helper owns two handles instead of one, so it has to release the
+        # outer one when the inner never comes into existence (#959).
+        raw.close()
+        raise
+
+    class _ClosingWrapper(io.TextIOWrapper):
+        """Text wrapper that closes the gzip stream and the file beneath it."""
+
+        def close(self) -> None:
+            """Flush through the gzip stream, then release the file handle."""
+            try:
+                super().close()
+            finally:
+                raw.close()
+
+    try:
+        return _ClosingWrapper(stream, encoding="utf-8")
+    except BaseException:
+        stream.close()
+        raw.close()
+        raise
+
+
+def published_mapping_dates(path: Path) -> Dict[tuple, str]:
+    """
+    Read ``(subject, predicate, object) -> mapping_date`` from a published set.
+
+    A mapping's date records when the assertion was made, not when the exporter
+    last ran. Restamping every row with today's date rewrote 609,864 of 609,975
+    rows on a refresh that changed 1,814 of them, which buried the real change
+    and made the artifact churn on every run (#953).
+
+    Only ``YYYY-MM-DD`` values are accepted. The header's ``mapping_set_version``
+    is ``max()`` over these, and any non-digit string sorts above every real
+    date, so one malformed row would silently claim the version for the whole
+    set -- and, being preserved on the next run too, would keep it (#958). A
+    rejected value falls back to today for that row, which is the behaviour
+    every row had before this function existed.
+
+    Where a triple appears twice, the earliest date wins: the field records when
+    a mapping was first asserted, and file order is no basis for choosing.
+
+    Returns an empty mapping when the file is absent, unreadable or malformed:
+    the worst case is that rows fall back to today's date, which is the old
+    behaviour, and a refresh must not fail because a previous artifact could
+    not be parsed.
+
+    :param path: A published SSSOM set, plain or gzipped.
+    :return: Mapping from ``(subject_id, predicate_id, object_id)`` to date.
+    """
+    dates: Dict[tuple, str] = {}
+    if not path.exists():
+        return dates
+    opener = gzip.open if str(path).endswith(".gz") else open
+    try:
+        with opener(path, "rt", encoding="utf-8") as fh:
+            header = None
+            for line in fh:
+                if line.startswith("#"):
+                    continue
+                parts = line.rstrip("\n").split("\t")
+                if header is None:
+                    header = parts
+                    continue
+                row = dict(zip(header, parts, strict=False))
+                recorded = (row.get("mapping_date") or "").strip()
+                if not _ISO_DATE.fullmatch(recorded):
+                    continue
+                triple = (row.get("subject_id"), row.get("predicate_id"), row.get("object_id"))
+                previous = dates.get(triple)
+                if previous is None or recorded < previous:
+                    dates[triple] = recorded
+    except (OSError, EOFError, UnicodeDecodeError) as exc:
+        print(f"Warning: could not read prior mapping dates from {path} ({exc}); using today for every row")
+        return {}
+    return dates
+
+
+def published_synonym_labels(path: Path) -> Dict[tuple, str]:
+    """
+    Read unambiguous published synonym surfaces as presentation hints only.
+
+    The exporter must independently confirm that an exact surface is still in
+    the accepted current synonym set for the same triple. Historical labels
+    cannot supply scientific evidence, restore removed names, or override a
+    current canonical label. Conflicting duplicate labels have no preferred
+    historical surface; the normal deterministic current-label choice applies.
+    """
+    if not path.exists():
+        return {}
+    labels: Dict[tuple, str] = {}
+    conflicts = set()
+    opener = gzip.open if str(path).endswith(".gz") else open
+    try:
+        with opener(path, "rt", encoding="utf-8", newline="") as stream:
+            reader = csv.DictReader(dropwhile(lambda line: line.startswith("#"), stream), delimiter="\t", strict=True)
+            required = {"subject_id", "predicate_id", "object_id", "subject_label", "comment"}
+            if not required.issubset(reader.fieldnames or []) or len(reader.fieldnames) != len(set(reader.fieldnames)):
+                return {}
+            for row in reader:
+                if None in row or any(value is None for value in row.values()):
+                    raise csv.Error("Malformed published synonym row")
+                subject = row["subject_id"]
+                label = row["subject_label"]
+                if (
+                    not subject.startswith("kgm.name:") or not row["object_id"] or not label
+                    or row["predicate_id"] != "skos:closeMatch" or row["comment"] != "synonym"
+                    or row.get("predicate_modifier", "").strip()
+                ):
+                    continue
+                triple = (subject, row["predicate_id"], row["object_id"])
+                if triple in labels and labels[triple] != label:
+                    conflicts.add(triple)
+                labels[triple] = label
+    except (OSError, EOFError, UnicodeDecodeError, csv.Error) as exc:
+        print(f"Warning: could not read prior synonym labels from {path} ({exc}); using current labels")
+        return {}
+    return {triple: label for triple, label in labels.items() if triple not in conflicts}
+
+
+def _sssom_triples(path: Path) -> set:
+    """The (subject, predicate, object) triples in a unified SSSOM export."""
+    opener = gzip.open if str(path).endswith(".gz") else open
+    triples = set()
+    with opener(path, "rt", encoding="utf-8") as fh:
+        header = None
+        for line in fh:
+            if line.startswith("#"):
+                continue
+            parts = line.rstrip("\n").split("\t")
+            if header is None:
+                header = parts
+                continue
+            row = dict(zip(header, parts, strict=False))
+            triples.add((row.get("subject_id"), row.get("predicate_id"), row.get("object_id")))
+    return triples
+
+
+def _report_export_delta(candidate: Path, published: Path, before=None) -> None:
+    """
+    Print what promoting ``candidate`` over ``published`` would change.
+
+    A row count alone hides the shape of a change: the refresh that prompted
+    this preview was +1,814 net, which was 2,093 added against 279 removed.
+
+    ``before`` is the caller's already-parsed view of ``published``. Re-reading
+    it here made a preview decompress and parse 609,975 rows twice for a value
+    it had in hand, and left room for the two reports to disagree about what the
+    seed was (#969).
+
+    :param candidate: The artifact just written to a scratch path.
+    :param published: The artifact it would replace.
+    :param before: Triples already read from ``published``, if the caller has them.
+    :return: None.
+    """
+    if not published.exists():
+        print(f"[dry-run] no published artifact at {published}; would create it")
+        return
+    if before is None:
+        before = _sssom_triples(published)
+    after = _sssom_triples(candidate)
+    added, removed = after - before, before - after
+    print(f"\n[dry-run] would write {candidate.name} over {published}")
+    print(f"  triples   {len(before):,} -> {len(after):,}  ({len(after) - len(before):+,})")
+    print(f"  added     {len(added):,}")
+    print(f"  removed   {len(removed):,}")
+    for label, sample in (("added", added), ("removed", removed)):
+        for subject, predicate, obj in list(sample)[:5]:
+            print(f"    {label[:1]} {subject}  {predicate}  {obj}")
+    print("  Nothing was written. Re-run without --dry-run to apply.")
+
+
+def _report_convergence(seed_triples, written: Path) -> None:
+    """
+    Say whether the run reached the fixed point, or how far it moved.
+
+    ``main()`` seeds from this script's own previous output, so run *N*'s input
+    includes run *N-1*'s output: a name one run derives can seed another row on
+    the next. The artifact therefore depends on how many times the script has
+    been run, not only on the source data (#948).
+
+    The seeding is load-bearing -- it is how the absent legacy priority-1/2
+    inputs survive their own absence -- so this reports the property rather than
+    removing it. Without the report, a reviewer regenerating to check the
+    committed artifact sees a non-empty diff that looks exactly like
+    non-determinism, and nothing says whether what was committed is the fixed
+    point or one step short.
+
+    :param seed_triples: Triples read before the export, or None on a first run.
+    :param written: The artifact just written.
+    :return: None.
+    """
+    if seed_triples is None:
+        print("\n  First run: no previous artifact to converge against.")
+        return
+    after = _sssom_triples(written)
+    added, removed = after - seed_triples, seed_triples - after
+    if not added and not removed:
+        print(f"\n  Converged: identical to the seed ({len(after):,} triples). This is the fixed point.")
+        return
+    print(
+        f"\n  Not yet converged: {len(added):,} added, {len(removed):,} removed "
+        f"({len(seed_triples):,} -> {len(after):,}). The seeding is intentional, but the "
+        "output is one step ahead of its input -- re-run to reach the fixed point before committing."
+    )
+
+
 def _sync_vendored_from_sibling(
     base_dir: Path,
     sibling_relpath: Path,
     vendored_relpath: Path,
     label: str,
+    allow_stale_vendored: bool = False,
+    dry_run: bool = False,
 ) -> Path:
     """
     Refresh a vendored copy of a MediaIngredientMech artifact from the sibling repo.
 
     The MediaIngredientMech repo is the authoritative source of truth for the
-    ingredient mapping artifacts kg-microbe consumes. When checked out as a
-    sibling of kg-microbe, this refreshes the vendored copy so the consolidator
+    ingredient mapping artifacts kg-microbe consumes. Its location comes from
+    ``MEDIAINGREDIENTMECH_ROOT`` when set, else the ``../MediaIngredientMech``
+    sibling; either way this refreshes the vendored copy so the consolidator
     always ingests the latest curations.
 
     Behaviour:
       - sibling present, content differs → overwrite vendored (sibling wins)
       - sibling present, content matches → no copy, just confirm up-to-date
-      - sibling absent, vendored present → warn and continue with vendored
+      - sibling absent, vendored present → raise, unless allow_stale_vendored
+        (a refresh that cannot reach its source of truth is a failed refresh, #947)
       - neither present → raise FileNotFoundError
 
     Returns the path to use (always the vendored path, which is authoritative
     once synced).
     """
     vendored = (base_dir / vendored_relpath).resolve()
-    sibling = (base_dir / sibling_relpath).resolve()
+    sibling = (_mim_root(base_dir) / sibling_relpath).resolve()
 
     if sibling.exists():
         if not vendored.exists():
-            print(f"Syncing {label} (vendored copy missing): {sibling} → {vendored}")
-            shutil.copy2(sibling, vendored)
+            verb = "[dry-run] would sync" if dry_run else "Syncing"
+            print(f"{verb} {label} (vendored copy missing): {sibling} → {vendored}")
+            if not dry_run:
+                shutil.copy2(sibling, vendored)
         elif _file_sha256(sibling) != _file_sha256(vendored):
-            print(f"Syncing {label} from source of truth: {sibling} → {vendored}")
-            shutil.copy2(sibling, vendored)
+            verb = "[dry-run] would sync" if dry_run else "Syncing"
+            print(f"{verb} {label} from source of truth: {sibling} → {vendored}")
+            if not dry_run:
+                shutil.copy2(sibling, vendored)
         else:
             print(f"{label} up-to-date with sibling repo ({sibling})")
-        return vendored
+        print(f"  {label} source of truth: {sibling} sha256={_file_sha256(sibling)[:12]}")
+        # Under --dry-run nothing was copied, so handing back the vendored path
+        # would have callers load the pre-refresh content and preview the delta
+        # of doing nothing -- wrong in exactly the case the preview exists for
+        # (#951). Return the source instead: read what the apply would install,
+        # write nothing.
+        return sibling if dry_run else vendored
 
     if vendored.exists():
-        print(
-            f"Warning: MediaIngredientMech sibling repo not found at {sibling};\n"
-            f"  using vendored {label} copy {vendored} (may be stale — "
-            "clone/pull MediaIngredientMech as a sibling of kg-microbe and re-run)"
+        message = (
+            f"MediaIngredientMech source of truth not found for {label}.\n"
+            f"  expected: {sibling}\n"
+            f"  vendored: {vendored} (may be stale)\n"
+            f"  Set {_MIM_ROOT_ENV} to the MediaIngredientMech checkout, or clone it\n"
+            "  as a sibling of kg-microbe, and re-run."
         )
+        if not allow_stale_vendored:
+            # Exiting 0 here regenerates every artifact from stale input while
+            # every downstream validation still passes, because the output is
+            # internally consistent with the wrong source (#947). A refresh that
+            # cannot reach its source of truth is a failed refresh.
+            raise FileNotFoundError(
+                message + "\n  Pass --allow-stale-vendored to proceed anyway."
+            )
+        print(f"Warning: {message}\n  Proceeding on the vendored copy (--allow-stale-vendored).")
         return vendored
 
     raise FileNotFoundError(
@@ -275,14 +599,23 @@ def _sync_vendored_from_sibling(
     )
 
 
-def sync_mim_sssom(base_dir: Path) -> Path:
+def sync_mim_sssom(
+    base_dir: Path, allow_stale_vendored: bool = False, dry_run: bool = False
+) -> Path:
     """Sync the vendored MIM SSSOM mapping from the sibling repo if present."""
     return _sync_vendored_from_sibling(
-        base_dir, _MIM_SIBLING_RELPATH, _MIM_VENDORED_RELPATH, "MIM SSSOM"
+        base_dir,
+        _MIM_SIBLING_RELPATH,
+        _MIM_VENDORED_RELPATH,
+        "MIM SSSOM",
+        allow_stale_vendored=allow_stale_vendored,
+        dry_run=dry_run,
     )
 
 
-def sync_culturebotai_reviewed(base_dir: Path) -> Path:
+def sync_culturebotai_reviewed(
+    base_dir: Path, allow_stale_vendored: bool = False, dry_run: bool = False
+) -> Path:
     """
     Sync the vendored unified ingredient mapping from the sibling repo.
 
@@ -297,6 +630,8 @@ def sync_culturebotai_reviewed(base_dir: Path) -> Path:
         _CBAI_SIBLING_RELPATH,
         _CBAI_VENDORED_RELPATH,
         "CultureBotAI reviewed ingredients",
+        allow_stale_vendored=allow_stale_vendored,
+        dry_run=dry_run,
     )
 
 
@@ -305,8 +640,8 @@ def normalize_name(name: str) -> str:
     if pd.isna(name) or not name:
         return ""
     # Convert to lowercase, remove extra spaces, punctuation
-    normalized = str(name).lower().strip()
-    normalized = re.sub(r"[^\w\s-]", "", normalized)
+    normalized = normalize_chemical_primes(str(name).lower().strip())
+    normalized = re.sub(r"[^\w\s'-]", "", normalized)
     normalized = re.sub(r"\s+", " ", normalized)
     return normalized
 
@@ -757,6 +1092,11 @@ class ChemicalMappingConsolidator:
         if not is_accepted_primary(id):
             return
 
+        if canonical_name and not pd.isna(canonical_name) and not ingredient_mapping_allowed(canonical_name, id):
+            canonical_name = ingredient_authority_label(id)
+        synonyms = [name for name in (synonyms or []) if ingredient_mapping_allowed(name, id)]
+        xrefs = [xref for xref in (xrefs or []) if ingredient_xref_allowed(xref, id)]
+
         if id not in self.chemicals:
             self.chemicals[id] = {
                 "id": id,
@@ -819,6 +1159,9 @@ class ChemicalMappingConsolidator:
         #      synonym added at priority=1 from clobbering an already-indexed
         #      CHEBI entry at priority=1.
         def _set_name_index(name: str) -> None:
+            scoped_target = ingredient_name_target(name)
+            if scoped_target is not None and scoped_target != id:
+                return
             norm_name = normalize_name(name)
             if not norm_name:
                 return
@@ -1399,6 +1742,17 @@ class ChemicalMappingConsolidator:
         Rows whose ``object_id`` prefix is not in the consolidator's accepted
         set are skipped.
         """
+        from kg_microbe.utils.chemical_mapping_utils import _scope_metadata
+
+        metadata = _scope_metadata(filepath)
+        if metadata.get("ext_scope_profile") or any(
+            definition.get("slot_name") == "ext_scope_profile"
+            for definition in metadata.get("extension_definitions", [])
+        ):
+            raise ValueError(
+                "Profiled MIM requires a verified ingredient bundle; use build_ingredient_lookup_bundle "
+                "to preserve scoped source resolution separately from legacy name mappings"
+            )
         # Carry the set's declared predicate semantics through to the unified
         # header. The asymmetric rows below are passed through verbatim, so the
         # declaration describes the rows the unified file ships and must travel
@@ -1501,7 +1855,7 @@ class ChemicalMappingConsolidator:
                 # even if a prior priority-11 baseline set a different
                 # value (add_chemical's first-seed tiebreaker can't see
                 # "MIM-this-run is fresher than MIM-last-run").
-                if subject_label:
+                if subject_label and ingredient_mapping_allowed(subject_label, object_id):
                     self.chemicals[object_id]["canonical_name"] = subject_label
                 if extra_sources:
                     self.chemicals[object_id]["sources"].update(extra_sources)
@@ -1639,12 +1993,11 @@ class ChemicalMappingConsolidator:
         added = 0
         with _gzip.open(filepath, "rt", encoding="utf-8") as f:
             header = f.readline().rstrip("\n").split("\t")
-            col = {name: i for i, name in enumerate(header)}
             for raw in f:
                 parts = raw.rstrip("\n").split("\t")
                 if len(parts) < len(header):
                     parts += [""] * (len(header) - len(parts))
-                row = dict(zip(header, parts))
+                row = dict(zip(header, parts, strict=False))
                 primary = (row.get("id") or "").strip()
                 if not primary or not is_accepted_primary(primary):
                     continue
@@ -1861,9 +2214,17 @@ class ChemicalMappingConsolidator:
                     rec["canonical_name"] = ""
                     retracted_canonical = True
                     hit = True
+                # Register the retraction whether or not the record carries the
+                # name right now. ``propagate_synonyms_via_xrefs`` reads this set
+                # as its guard, and registering only on a hit made the guard
+                # depend on the seed: a run whose seed lacked the name had no
+                # guard, propagation handed the name back across the xref, and
+                # the next run's seed carried it again -- a two-cycle, never a
+                # fixed point (#976). The retraction is a standing rule about
+                # the object, not a removal event.
+                self._retracted_names.setdefault(oid, set()).add(norm)
                 if hit:
                     removed += 1
-                    self._retracted_names.setdefault(oid, set()).add(norm)
                     if self.name_index.get(norm) == oid:
                         del self.name_index[norm]
 
@@ -2094,6 +2455,21 @@ class ChemicalMappingConsolidator:
             f"(across {len(name_retractions)} object(s))"
         )
 
+    def enforce_ingredient_identity(self):
+        """Prune rejected groundings after direct enrichment and before export."""
+        removed = 0
+        for curie, record in self.chemicals.items():
+            if not ingredient_mapping_allowed(record["canonical_name"], curie):
+                record["canonical_name"] = ingredient_authority_label(curie)
+                removed += 1
+            allowed_names = {name for name in record["synonyms"] if ingredient_mapping_allowed(name, curie)}
+            allowed_xrefs = {xref for xref in record["xrefs"] if ingredient_xref_allowed(xref, curie)}
+            removed += len(record["synonyms"] - allowed_names) + len(record["xrefs"] - allowed_xrefs)
+            record["synonyms"] = allowed_names
+            record["xrefs"] = allowed_xrefs
+        self.name_index = {name: curie for name, curie in self.name_index.items() if ingredient_mapping_allowed(name, curie)}
+        return removed
+
     def propagate_synonyms_via_xrefs(self):
         """
         Pull names across equivalent-CURIE records into each primary's synonyms.
@@ -2114,6 +2490,7 @@ class ChemicalMappingConsolidator:
         the synonym set accumulates. No records are merged or deleted.
         """
         print("\nPropagating synonyms across equivalent-CURIE records via xrefs...")
+        self.enforce_ingredient_identity()
         # Snapshot names by primary CURIE before mutation so propagation
         # uses a fixed input set (no feedback).
         name_snapshot: Dict[str, Set[str]] = {}
@@ -2139,6 +2516,7 @@ class ChemicalMappingConsolidator:
                 # set — otherwise it would show up in synonyms.
                 incoming = other_names - {chem["canonical_name"]}
                 new_syns = incoming - chem["synonyms"]
+                new_syns = {name for name in new_syns if ingredient_mapping_allowed(name, curie)}
                 if retracted:
                     kept = {s for s in new_syns if normalize_name(s) not in retracted}
                     blocked += len(new_syns) - len(kept)
@@ -2156,7 +2534,7 @@ class ChemicalMappingConsolidator:
             + (f" (blocked {blocked} retracted name(s) from returning)" if blocked else "")
         )
 
-    def export_unified_sssom(self, sssom_output_path: Path):
+    def export_unified_sssom(self, sssom_output_path: Path, published_path: Optional[Path] = None):
         """
         Export the unified mapping as a standards-compliant SSSOM set.
 
@@ -2193,8 +2571,9 @@ class ChemicalMappingConsolidator:
         loader can reconstruct the entity-centric view directly from
         this file without a separate TSV index.
         """
-        import subprocess
         from datetime import date
+
+        self.enforce_ingredient_identity()
 
         # Prefixes emitted as exactMatch equivalences. Everything else is
         # treated as bibliographic / descriptive and skipped.
@@ -2258,18 +2637,14 @@ class ChemicalMappingConsolidator:
             if prefix not in prefix_map:
                 prefix_map[prefix] = f"https://bioregistry.io/{prefix}:"
 
-        # Git SHA for reproducibility in the mapping-set header.
-        try:
-            git_sha = (
-                subprocess.check_output(
-                    ["git", "-C", str(sssom_output_path.parent.parent), "rev-parse", "HEAD"],
-                    stderr=subprocess.DEVNULL,
-                )
-                .decode()
-                .strip()
-            )
-        except Exception:
-            git_sha = "unknown"
+        # Provenance of the exporter, for the mapping-set header's
+        # `mapping_tool_version`. This is the script's own content hash, not a
+        # commit: see script_fingerprint for
+        # why a commit SHA is a claim the artifact cannot support (#961). It is
+        # also independent of where the output lands, so --dry-run and the
+        # apply agree -- deriving it from the output path made the preview
+        # write "@unknown" from its temporary directory.
+        tool_fingerprint = script_fingerprint()
 
         def _sanitize_tsv(value: str) -> str:
             if value is None:
@@ -2304,7 +2679,7 @@ class ChemicalMappingConsolidator:
             if not norm:
                 return ""
             folded = unicodedata.normalize("NFKD", norm).encode("ascii", "ignore").decode("ascii")
-            folded = folded.replace(" ", "_")
+            folded = folded.replace(" ", "_").replace("'", "_prime")
             # Keep only CURIE-safe chars (pchar-ish: alnum, underscore, hyphen,
             # dot). Everything else collapses away.
             folded = re.sub(r"[^A-Za-z0-9_.\-]", "", folded)
@@ -2346,6 +2721,15 @@ class ChemicalMappingConsolidator:
 
         mapping_rows = []
         today = date.today().isoformat()
+        # A row's date belongs to the assertion, not to this run. Reusing the
+        # published date for a triple that already existed keeps the diff to the
+        # rows that actually changed (#953).
+        prior_dates = published_mapping_dates(
+            published_path if published_path is not None else sssom_output_path
+        )
+        prior_synonym_labels = published_synonym_labels(
+            published_path if published_path is not None else sssom_output_path
+        )
 
         for curie in sorted(self.chemicals.keys()):
             if curie in KNOWN_BAD_PRIMARY_IDS:
@@ -2373,7 +2757,7 @@ class ChemicalMappingConsolidator:
                     "object_source": object_source,
                     "mapping_justification": justification,
                     "source": source_tag,
-                    "mapping_date": today,
+                    "mapping_date": prior_dates.get((subject_id, predicate, object_id), today),
                     "confidence": "",
                     "comment": comment,
                     "object_formula": object_formula,
@@ -2433,6 +2817,16 @@ class ChemicalMappingConsolidator:
                 if slug in seen_synonym_slugs:
                     continue
                 seen_synonym_slugs.add(slug)
+                # Case/punctuation variants can share one lexical subject. Keep
+                # its published surface only while that exact surface remains
+                # accepted today; history never adds a synonym or changes the
+                # canonical scientific label (#979).
+                prior_label = prior_synonym_labels.get((f"kgm.name:{slug}", "skos:closeMatch", object_id))
+                if (
+                    prior_label in chem["synonyms"] and _slugify_name(prior_label) == slug
+                    and ingredient_mapping_allowed(prior_label, object_id)
+                ):
+                    syn = prior_label
                 mapping_rows.append(_row(
                     f"kgm.name:{slug}",
                     _sanitize_tsv(syn),
@@ -2487,7 +2881,15 @@ class ChemicalMappingConsolidator:
                 "object_source": normalized_source,
                 "mapping_justification": rel["mapping_justification"] or "semapv:ManualMappingCuration",
                 "source": rel["source"],
-                "mapping_date": rel["mapping_date"] or today,
+                # Published date first, like every other row class. MIM
+                # re-stamps mapping_date at build time, so letting it win
+                # moved 18 rows on a refresh that changed nothing about them
+                # (#978). MIM's date is what a first-ever export records.
+                "mapping_date": (
+                    prior_dates.get((translated_subject, rel["predicate_id"], obj_id))
+                    or rel["mapping_date"]
+                    or today
+                ),
                 "confidence": rel["confidence"],
                 "comment": rel["comment"],
                 "object_formula": "",
@@ -2524,7 +2926,7 @@ class ChemicalMappingConsolidator:
                 "object_source": "obo:chebi.owl",
                 "mapping_justification": "semapv:UnspecifiedMatching",
                 "source": "mediadive_compounds_hydrate",
-                "mapping_date": today,
+                "mapping_date": prior_dates.get((anhydrous, "skos:closeMatch", hydrated), today),
                 "confidence": "",
                 "comment": "recipe_equivalent_hydrate",
                 "object_formula": hydrated_chem.get("formula") or "",
@@ -2534,6 +2936,11 @@ class ChemicalMappingConsolidator:
 
         rows_emitted = xref_rows + name_rows + synonym_rows + parent_rows + hydrate_rows
 
+        # The set's version is the newest assertion it carries, not the moment
+        # it was serialised. Stamping the clock here would change two header
+        # lines on every run and defeat the point of stabilising the rows (#953).
+        set_version = max((row["mapping_date"] for row in mapping_rows if row["mapping_date"]), default=today)
+
         # Build the header.
         header_lines = ["# curie_map:"]
         for prefix in sorted(prefix_map.keys()):
@@ -2541,14 +2948,20 @@ class ChemicalMappingConsolidator:
         header_lines += [
             '# license: "https://creativecommons.org/publicdomain/zero/1.0/"',
             '# mapping_set_id: "https://w3id.org/sssom/mappings/kg_microbe_unified_ingredients"',
-            f'# mapping_set_version: "{today}"',
+            f'# mapping_set_version: "{set_version}"',
             '# mapping_set_description: "kg-microbe unified ingredient mappings (CHEBI + FOODON + UBERON + ENVO + NCIT + kgmicrobe.compound). Emitted from scripts/consolidate_chemical_mappings.py. Row types: (1) xref-CURIE → primary-CURIE as skos:exactMatch; (2) canonical-name via kgm.name:<slug> → primary-CURIE as skos:exactMatch / semapv:LexicalMatching; (3) free-text synonym via kgm.name:<slug> → primary-CURIE as skos:closeMatch / semapv:LexicalMatching; (4) anhydrous-CHEBI → hydrated-CHEBI as skos:closeMatch with comment=recipe_equivalent_hydrate (NOT chemically identical, but media-recipe interchangeable). Per-row `comment` is empty for xrefs, `canonical_name` for name rows, `synonym` for synonym rows, `recipe_equivalent_hydrate` for hydrate pairs."',
-            f'# mapping_date: "{today}"',
+            f'# mapping_date: "{set_version}"',
         ]
         if self.predicate_semantics:
             header_lines.append(f'# {PREDICATE_SEMANTICS_KEY}: "{self.predicate_semantics}"')
+        policy_hash = ingredient_policy_fingerprint()
+        header_lines = [line.removesuffix('"') + f' Ingredient identity policy sha256:{policy_hash}."' if line.startswith("# mapping_set_description:") else line for line in header_lines]
         header_lines += [
-            f'# mapping_tool: "kg-microbe/scripts/consolidate_chemical_mappings.py@{git_sha}"',
+            # `mapping_tool` names the tool and `mapping_tool_version` its version:
+            # both are MappingSet slots, and packing the second into the first
+            # made a spec-aware reader see a tool called "...py@sha256:..." (#971).
+            '# mapping_tool: "kg-microbe/scripts/consolidate_chemical_mappings.py"',
+            f'# mapping_tool_version: "{tool_fingerprint}"',
             '# extension_definitions:',
             '#   - slot_name: source',
             '#     property: "https://w3id.org/kg-microbe/source"',
@@ -2574,9 +2987,10 @@ class ChemicalMappingConsolidator:
         # Gzip if the output path ends in .gz — the sssom parser accepts
         # gzipped input transparently. Uncompressed the file is ~150 MB
         # (over GitHub's 100 MB per-file limit); compressed it is ~18 MB.
-        import gzip
+        # Deterministic archive: see open_deterministic_gzip. Without it "run
+        # until the output hash stops changing" is advice that cannot terminate.
         open_fn = (
-            (lambda p: gzip.open(p, "wt", encoding="utf-8"))
+            open_deterministic_gzip
             if str(sssom_output_path).endswith(".gz")
             else (lambda p: p.open("w", encoding="utf-8"))
         )
@@ -2604,12 +3018,143 @@ class ChemicalMappingConsolidator:
         self._validate_sssom_file(sssom_output_path)
 
 
-def main():
+def ingredient_policy_fingerprint() -> str:
+    """Fingerprint both the curated policy and its shared implementation."""
+    helper = Path(__file__).resolve().parents[1] / "kg_microbe/utils/ingredient_identity.py"
+    digest = hashlib.sha256()
+    for path in (IDENTITY_POLICY, helper):
+        digest.update(path.name.encode())
+        digest.update(path.read_bytes())
+    return digest.hexdigest()
+
+
+def refresh_identity_policy(source: Path, output: Path) -> dict:
+    """
+    Apply only reviewed identity exclusions without reload/enrichment.
+
+    Preserve non-identity rows and all unrelated columns/ordering. A full
+    reseed/export is deliberately not used: reseed drops hydrate and parent
+    rows in expectation that the full source pipeline will recreate them.
+    """
+    if source.resolve() == output.resolve():
+        raise ValueError("Identity-only refresh requires a separate candidate output")
+    policy_hash = ingredient_policy_fingerprint()
+    stats = {"rows_read": 0, "rows_removed": 0, "rows_relabelled": 0}
+    open_source = gzip.open if source.suffix == ".gz" else open
+    output.parent.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix=".identity-refresh-", dir=output.parent) as scratch:
+        candidate = Path(scratch) / output.name
+        output_open = open_deterministic_gzip if output.suffix == ".gz" else lambda p: p.open("w", encoding="utf-8", newline="")
+        with open_source(source, "rt", encoding="utf-8", newline="") as incoming, output_open(candidate) as outgoing:
+            for line in incoming:
+                if not line.startswith("#"):
+                    fields = next(csv.reader([line], delimiter="\t"))
+                    break
+                if line.startswith("# mapping_tool_version:"):
+                    line = f'# mapping_tool_version: "{script_fingerprint()}"\n'
+                elif line.startswith("# mapping_set_description:"):
+                    line = re.sub(r" Ingredient identity policy sha256:[0-9a-f]{64}\.", "", line)
+                    line = line.rstrip("\r\n").removesuffix('"') + f' Ingredient identity policy sha256:{policy_hash}."\n'
+                outgoing.write(line)
+            else:
+                raise ValueError("SSSOM input has no column header")
+            required = {"subject_id", "subject_label", "predicate_id", "object_id", "object_label", "comment"}
+            if not required.issubset(fields):
+                raise ValueError(f"Missing SSSOM identity columns: {required - set(fields)}")
+            outgoing.write(line)
+            # This artifact's exporter emits literal, sanitized TSV, not CSV
+            # quoting. Preserve every unrelated serialized row byte-for-byte.
+            for line in incoming:
+                values = line.rstrip("\r\n").split("\t")
+                if len(values) != len(fields):
+                    raise ValueError("Malformed SSSOM row width")
+                row = dict(zip(fields, values, strict=True))
+                changed = False
+                stats["rows_read"] += 1
+                # A rejected equivalence can still be a valid parent relation.
+                # Preserve asymmetric assertions, including their labels/dates.
+                if row["predicate_id"] in {"skos:broadMatch", "skos:narrowMatch"}:
+                    outgoing.write(line)
+                    continue
+                target, subject = row["object_id"], row["subject_id"]
+                if not ingredient_xref_allowed(subject, target):
+                    stats["rows_removed"] += 1
+                    continue
+                if subject.startswith("kgm.name:") and not ingredient_mapping_allowed(row["subject_label"], target):
+                    # Remove the false assertion, including canonical rows.
+                    # Do not mint a replacement exactMatch with a historical
+                    # date. Surviving native aliases/xrefs carry the corrected
+                    # object_label, which also feeds the reader's canonical
+                    # index. A future full export dates any new exactMatch.
+                    stats["rows_removed"] += 1
+                    continue
+                if not ingredient_mapping_allowed(row["object_label"], target):
+                    row["object_label"] = ingredient_authority_label(target)
+                    stats["rows_relabelled"] += 1
+                    changed = True
+                outgoing.write("\t".join(row[field] for field in fields) + "\n" if changed else line)
+        ChemicalMappingConsolidator._validate_sssom_file(candidate)
+        os.replace(candidate, output)
+    return stats
+
+
+def _parse_args(argv=None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__.strip().splitlines()[0])
+    parser.add_argument(
+        "--identity-policy-only", action="store_true",
+        help="Apply only reviewed ingredient identity exclusions to the current unified artifact; no OAK, source sync, or propagation.",
+    )
+    parser.add_argument("--output", type=Path, help="Separate candidate path required by --identity-policy-only.")
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help=(
+            "Run the full consolidation and report what would change, without writing "
+            "the vendored copies or the unified artifact."
+        ),
+    )
+    parser.add_argument(
+        "--allow-stale-vendored",
+        action="store_true",
+        help=(
+            "Proceed when the MediaIngredientMech checkout cannot be found, using the "
+            "possibly-stale vendored copies. Off by default: a refresh that cannot reach "
+            "its source of truth is a failed refresh (#947)."
+        ),
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv=None):
     """Main consolidation workflow."""
+    args = _parse_args(argv)
     base_dir = Path(__file__).parent.parent
+    if args.identity_policy_only:
+        if args.output is None or args.dry_run:
+            raise ValueError("--identity-policy-only requires --output and does not accept --dry-run")
+        source = base_dir / "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+        print(refresh_identity_policy(source, args.output))
+        return
+    if args.output is not None:
+        raise ValueError("--output is only supported with --identity-policy-only")
+    if (base_dir / "mappings/mim_reviewed_release.json").exists():
+        raise ValueError(
+            "A reviewed MIM release is pinned. Legacy additive consolidation could "
+            "reintroduce withheld or stale MIM claims through the seed and companion exports. "
+            "Build a separate candidate with `poetry run python -m scripts.refresh_reviewed_mim "
+            "--release-directory <bundle> --output-directory <new-directory>` and review its report. "
+            "Neither --allow-stale-vendored nor --dry-run bypasses this migration safeguard. "
+            "See docs/MIM_REVIEWED_RELEASE.md."
+        )
     consolidator = ChemicalMappingConsolidator()
 
     sssom_output_path = base_dir / "mappings" / "kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+    # Read before anything can overwrite it: the export writes in place, so this
+    # is the only chance to compare the result against what seeded it (#948).
+    # The preview and the apply share this one read, so they cannot disagree
+    # about what the seed was -- and the preview no longer parses 609,975 rows
+    # twice to throw one copy away (#969).
+    seed_triples = _sssom_triples(sssom_output_path) if sssom_output_path.exists() else None
 
     # Seed from the existing unified SSSOM (single source of truth). Each
     # row's sources contribute to the accumulated per-entity source set;
@@ -2652,11 +3197,19 @@ def main():
 
     # Authoritative CultureBotAI reviewed mappings (required).
     # MIM sibling repo is the source of truth — sync the vendored copy first.
-    consolidator.load_culturebotai_reviewed(sync_culturebotai_reviewed(base_dir))
+    consolidator.load_culturebotai_reviewed(
+        sync_culturebotai_reviewed(
+            base_dir,
+            allow_stale_vendored=args.allow_stale_vendored,
+            dry_run=args.dry_run,
+        )
+    )
 
     # Authoritative MediaIngredientMech SSSOM mapping set (required).
     # MIM sibling repo is the source of truth — sync the vendored copy first.
-    mim_sssom_path = sync_mim_sssom(base_dir)
+    mim_sssom_path = sync_mim_sssom(
+        base_dir, allow_stale_vendored=args.allow_stale_vendored, dry_run=args.dry_run
+    )
     consolidator.load_mediaingredientmech_sssom(mim_sssom_path)
 
     # Optional complementary MIM artifact: complex_ingredients.tsv.gz
@@ -2664,17 +3217,17 @@ def main():
     # carry. Published by MIM alongside the SSSOM — vendored here if
     # available, otherwise we try the sibling repo's mappings/ folder.
     complex_path = base_dir / "mappings" / "complex_ingredients.tsv.gz"
+    sibling_complex = _mim_root(base_dir) / "mappings" / "complex_ingredients.tsv.gz"
     if not complex_path.exists():
-        sibling_complex = (
-            base_dir.parent / "MediaIngredientMech" / "mappings"
-            / "complex_ingredients.tsv.gz"
-        )
         if sibling_complex.exists():
-            import shutil as _shutil
-            _shutil.copy2(sibling_complex, complex_path)
-            print(f"Synced complex_ingredients.tsv.gz: {sibling_complex} → {complex_path}")
-    if complex_path.exists():
-        consolidator.load_complex_ingredients(complex_path)
+            if args.dry_run:
+                print(f"[dry-run] would sync complex_ingredients.tsv.gz from {sibling_complex}")
+            else:
+                shutil.copy2(sibling_complex, complex_path)
+                print(f"Synced complex_ingredients.tsv.gz: {sibling_complex} → {complex_path}")
+    complex_source = complex_path if complex_path.exists() else sibling_complex
+    if complex_source is not None and complex_source.exists():
+        consolidator.load_complex_ingredients(complex_source)
     else:
         print("Skipping complex_ingredients.tsv.gz: not present")
 
@@ -2720,7 +3273,21 @@ def main():
     # product. Runtime transforms read this same file via
     # ``kg_microbe.utils.chemical_mapping_utils``; the entity-centric TSV
     # index has been retired in favour of SSSOM-with-extension-columns.
+    if args.dry_run:
+        # Export to a scratch path so the whole pipeline still runs -- including
+        # the sssom round-trip validation -- then report the delta and discard.
+        # Skipping the write instead would preview nothing worth reviewing.
+        with tempfile.TemporaryDirectory() as scratch:
+            candidate = Path(scratch) / sssom_output_path.name
+            # The published artifact, not the scratch path, is where prior
+            # mapping dates live -- without this the preview would restamp
+            # every row and report a delta the apply would never produce.
+            consolidator.export_unified_sssom(candidate, published_path=sssom_output_path)
+            _report_export_delta(candidate, sssom_output_path, before=seed_triples)
+        return
+
     consolidator.export_unified_sssom(sssom_output_path)
+    _report_convergence(seed_triples, sssom_output_path)
 
     print(f"\n✓ Unified SSSOM created: {sssom_output_path}")
     print(f"  To inspect: gunzip -c {sssom_output_path.name} | head")

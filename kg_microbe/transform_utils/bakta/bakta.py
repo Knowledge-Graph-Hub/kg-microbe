@@ -106,6 +106,7 @@ class BaktaTransform(Transform):
         :param data_file: Not used (kept for API compatibility)
         :param show_status: Show progress bar (default: True)
         """
+        self.finalization_output_dirs = []
         logger.info("Starting Bakta transform")
 
         # Use input_base_dir instead of constant to support testing
@@ -164,6 +165,7 @@ class BaktaTransform(Transform):
             # Write output files for this dataset
             logger.info(f"Writing {len(self.nodes)} nodes and {len(self.edges)} edges for {dataset_name}")
             self.write_output(dataset_name)
+            self.finalization_output_dirs.append(self.output_dir / dataset_name)
 
         logger.info("Bakta transform complete")
 
@@ -407,7 +409,7 @@ class BaktaTransform(Transform):
         :param go_id: GO identifier (e.g., 'GO:0003677')
         """
         # Determine GO aspect (with caching to avoid repeated queries)
-        aspect = get_go_aspect(go_id, cache=self.go_aspect_cache)
+        aspect = get_go_aspect(go_id, cache=self.go_aspect_cache, raw_dir=self.input_base_dir)
 
         # Get Biolink category and predicate
         category = get_biolink_category_for_go(aspect)

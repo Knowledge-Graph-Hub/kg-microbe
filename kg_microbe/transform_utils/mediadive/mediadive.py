@@ -19,6 +19,7 @@ import csv
 import json
 import math
 import os
+import shutil
 import time
 from pathlib import Path
 from typing import Dict, Optional, Union
@@ -26,15 +27,20 @@ from urllib.parse import urlparse
 
 import pandas as pd
 import requests
-import requests_cache
 import yaml
+from requests_cache import CachedSession
+from requests_cache.backends.sqlite import SQLiteCache
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
+    AGENT_TYPE_COLUMN,
     AMOUNT_COLUMN,
+    BACDIVE,
     BACDIVE_ID_COLUMN,
     BACDIVE_PREFIX,
     BACDIVE_TMP_DIR,
+    BROAD_MATCH_PREDICATE,
+    BROAD_MATCH_RELATION,
     CAS_RN_KEY,
     CAS_RN_PREFIX,
     CATEGORY_COLUMN,
@@ -57,6 +63,7 @@ from kg_microbe.transform_utils.constants import (
     IS_GROWN_IN,
     KEGG_KEY,
     KEGG_PREFIX,
+    KNOWLEDGE_LEVEL_COLUMN,
     MANUAL_AGENT,
     MEDIADIVE,
     MEDIADIVE_COMPLEX_MEDIUM_COLUMN,
@@ -94,13 +101,18 @@ from kg_microbe.transform_utils.constants import (
     NCBI_TO_MEDIUM_EDGE,
     NCBI_TO_MEDIUM_NEGATIVE_EDGE,
     NCBITAXON_ID_COLUMN,
+    OBJECT_COLUMN,
     OBSERVATION,
+    PREDICATE_COLUMN,
+    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PROVIDED_BY_COLUMN,
     PUBCHEM_KEY,
     PUBCHEM_PREFIX,
+    PUBLICATIONS_COLUMN,
     RAW_DATA_DIR,
     RDFS_SUBCLASS_OF,
     RECIPE_KEY,
+    RELATION_COLUMN,
     ROLE_CATEGORY,
     SAME_AS_COLUMN,
     SOLUTION,
@@ -112,6 +124,7 @@ from kg_microbe.transform_utils.constants import (
     SPECIES,
     STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
+    SUBJECT_COLUMN,
     SYNONYM_COLUMN,
     TRANSLATION_TABLE_FOR_LABELS,
     UNIT_COLUMN,
@@ -120,13 +133,27 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
+from kg_microbe.utils.ingredient_identity import ingredient_mapping_allowed
 from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
 )
+from kg_microbe.utils.provenance import bacdive_record_url
+from kg_microbe.utils.tsv_io import tsv_writer
+
+#: HTTP response cache for the API fallback, kept beside the bulk JSONs. The
+#: old name is the file `requests_cache.install_cache("mediadive_cache")` left
+#: in the working directory; it is adopted on first use so nothing re-downloads.
+HTTP_CACHE_FILENAME = "mediadive_transform_cache.sqlite"
+LEGACY_HTTP_CACHE_FILENAME = "mediadive_cache.sqlite"
 
 
 class MediaDiveTransform(Transform):
     """Template for how the transform class would be designed."""
+
+    #: Reads ``ontologies/chebi_nodes.tsv`` and ``chebi_edges.tsv`` (roles/categories)
+    #: via constants.py (#1035), plus BacDive's intermediate strain-taxid TSV (#1091).
+    TRANSFORM_INPUTS = ("ontologies", BACDIVE)
+    REQUIRED_CONSUMED_INPUTS = ("bacdive_taxon_lookup",)
 
     DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
 
@@ -137,15 +164,20 @@ class MediaDiveTransform(Transform):
         # Extend edge schema with `value`/`unit` so solution→ingredient edges
         # can carry the recipe's amount + unit (g/l, mmol/l, ml/l, ...).
         # Other edge sites in this transform leave both columns empty.
-        self.edge_header = self.edge_header + ["value", "unit"]
-        requests_cache.install_cache("mediadive_cache")
+        self.edge_header = self.edge_header + ["value", "unit", PUBLICATIONS_COLUMN]
+        # No `requests_cache.install_cache()` here: that monkeypatched
+        # `requests.Session` for the whole process from a constructor, so every
+        # HTTP client in the run became a CachedSession and a test that merely
+        # built this transform changed the outcome of unrelated tests (#624).
+        # The cache is a session this transform owns, opened on first API call.
+        self._http: Optional[requests.Session] = None
         self.translation_table = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)
 
         # Load ChEBI role relationships from ontologies transform output (fast TSV lookup).
         # NOTE: This depends on TSV files produced by the ontologies transform being present.
-        # If the required files are missing, _load_chebi_roles() will silently skip loading,
-        # and self.chebi_roles and self.chebi_labels will remain empty.
+        # Missing or incompatible required tables fail before any graph output is opened.
         self.chebi_roles: Dict[str, list] = {}  # {chebi_id: [role_ids]}
+        self.chebi_role_edges: Dict[str, list] = {}  # Original ontology assertion metadata.
         self.chebi_labels: Dict[str, str] = {}  # {chebi_id: label}
         self.chebi_categories: Dict[str, str] = {}  # {chebi_id: category} for category alignment
         self._load_chebi_roles()
@@ -277,46 +309,69 @@ class MediaDiveTransform(Transform):
         This is much faster than querying the ChEBI SQLite database via OakLib.
         Loads roles and labels from chebi_edges.tsv and chebi_nodes.tsv.
         """
-        chebi_edges_file = CHEBI_EDGES_FILE
-        chebi_nodes_file = CHEBI_NODES_FILE
+        required_edges = {
+            SUBJECT_COLUMN,
+            PREDICATE_COLUMN,
+            OBJECT_COLUMN,
+            RELATION_COLUMN,
+            PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+            KNOWLEDGE_LEVEL_COLUMN,
+            AGENT_TYPE_COLUMN,
+        }
+        roles, role_edges, labels = {}, {}, {}
+        seen = set()
+        print("Loading ChEBI roles from ontologies transform output...")
+        for path, required in (
+            (CHEBI_EDGES_FILE, required_edges),
+            (CHEBI_NODES_FILE, {ID_COLUMN, NAME_COLUMN}),
+        ):
+            if not path.is_file():
+                raise FileNotFoundError(
+                    f"Missing required MediaDive ontology input {path}; run 'poetry run kg transform -s ontologies'"
+                )
+            with path.open(encoding="utf-8", newline="") as stream:
+                # Ontology finalization writes unquoted KGX TSV: quotes inside
+                # labels or scalar metadata are data, not CSV escape syntax.
+                reader = csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE)
+                if len(reader.fieldnames or ()) != len(set(reader.fieldnames or ())):
+                    raise ValueError(f"Invalid MediaDive ontology input {path}: duplicate column names")
+                missing = required - set(reader.fieldnames or ())
+                if missing:
+                    raise ValueError(f"Invalid MediaDive ontology input {path}: missing columns {sorted(missing)}")
+                for line, row in enumerate(reader, 2):
+                    if None in row or any(row.get(column) is None for column in required):
+                        raise ValueError(f"Malformed MediaDive ontology input {path}, row {line}")
+                    if path == CHEBI_NODES_FILE:
+                        if row[ID_COLUMN].startswith(CHEBI_PREFIX) and row[NAME_COLUMN]:
+                            labels[row[ID_COLUMN]] = row[NAME_COLUMN]
+                        continue
+                    subject, obj = row[SUBJECT_COLUMN], row[OBJECT_COLUMN]
+                    if row[RELATION_COLUMN] != HAS_ROLE or not subject.startswith(CHEBI_PREFIX):
+                        continue
+                    if not obj.startswith(CHEBI_PREFIX) or not all(
+                        row[column]
+                        for column in (PRIMARY_KNOWLEDGE_SOURCE_COLUMN, KNOWLEDGE_LEVEL_COLUMN, AGENT_TYPE_COLUMN)
+                    ):
+                        raise ValueError(f"Incomplete ChEBI role assertion in {path}, row {line}")
+                    key = tuple(sorted(row.items()))
+                    if key not in seen:
+                        seen.add(key)
+                        role_edges.setdefault(subject, []).append(row)
+                    if obj not in roles.setdefault(subject, []):
+                        roles[subject].append(obj)
+        # Publish the in-memory index only after both tables validate successfully.
+        self.chebi_roles, self.chebi_role_edges, self.chebi_labels = roles, role_edges, labels
+        print(f"  Loaded {len(roles)} ChEBI compounds with roles")
+        print(f"  Loaded {len(labels)} ChEBI labels")
 
-        # Load role relationships from edges file
-        if chebi_edges_file.exists():
-            try:
-                print("Loading ChEBI roles from ontologies transform output...")
-                with open(chebi_edges_file) as f:
-                    f.readline()  # skip header
-                    for line in f:
-                        parts = line.strip().split("\t")
-                        if len(parts) >= 5:
-                            # KGX edges.tsv columns: [0]=id, [1]=subject, [2]=predicate, [3]=object, [4]=relation
-                            subject = parts[1]  # ChEBI compound ID
-                            obj = parts[3]  # ChEBI role ID
-                            relation = parts[4]  # RO relation (looking for HAS_ROLE)
-                            if relation == HAS_ROLE and subject.startswith("CHEBI:"):
-                                if subject not in self.chebi_roles:
-                                    self.chebi_roles[subject] = []
-                                self.chebi_roles[subject].append(obj)
-                print(f"  Loaded {len(self.chebi_roles)} ChEBI compounds with roles")
-            except Exception as e:
-                print(f"Warning: Could not load ChEBI roles: {e}")
-
-        # Load labels from nodes file
-        if chebi_nodes_file.exists():
-            try:
-                with open(chebi_nodes_file) as f:
-                    f.readline()  # skip header
-                    for line in f:
-                        parts = line.strip().split("\t")
-                        if len(parts) >= 3:
-                            # KGX nodes.tsv columns: [0]=id, [1]=category, [2]=name, ...
-                            node_id = parts[0]
-                            name = parts[2]
-                            if node_id.startswith("CHEBI:") and name:
-                                self.chebi_labels[node_id] = name
-                print(f"  Loaded {len(self.chebi_labels)} ChEBI labels")
-            except Exception as e:
-                print(f"Warning: Could not load ChEBI labels: {e}")
+    def _generate_chebi_role_edges(self, chebi_ids):
+        """Project source ontology assertions to the actual output header without inventing observations."""
+        edges = []
+        for chebi_id in dict.fromkeys(chebi_ids):
+            for assertion in self.chebi_role_edges.get(chebi_id, ()):
+                fields = {**assertion, PREDICATE_COLUMN: CHEBI_TO_ROLE_EDGE, RELATION_COLUMN: HAS_ROLE}
+                edges.append([fields.get(column, "") for column in self.edge_header])
+        return edges
 
     def _load_chebi_categories(self):
         """
@@ -406,6 +461,14 @@ class MediaDiveTransform(Transform):
             mask = ~df["mapped"].str.startswith(unwanted_prefixes)
             df = df[mask].copy()  # Single copy after filtering
 
+            # Reject reviewed false identities before deduplication so a later
+            # valid grounding for the same ingredient remains available.
+            df = df[
+                [
+                    ingredient_mapping_allowed(name, target)
+                    for name, target in zip(df["original"], df["mapped"], strict=True)
+                ]
+            ]
             # Drop duplicates to keep first occurrence (earlier mappings take precedence)
             df = df.drop_duplicates(subset="original_normalized", keep="first")
             mappings = df.set_index("original_normalized")["mapped"].to_dict()
@@ -471,7 +534,7 @@ class MediaDiveTransform(Transform):
         """
         for attempt in range(retry_count):
             try:
-                r = requests.get(url, timeout=30)
+                r = self._http_session().get(url, timeout=30)
                 r.raise_for_status()
                 data_json = r.json()
                 return data_json.get(DATA_KEY, {})
@@ -482,6 +545,43 @@ class MediaDiveTransform(Transform):
                 else:
                     print(f"  Failed after {retry_count} attempts: {e} (URL: {url})")
                     return {}
+
+    def _http_cache_path(self) -> Path:
+        """
+        Return the API fallback's cache file, adopting the legacy one if present.
+
+        Older code cached in the working directory (usually the repo root).
+        Moving that file, rather than ignoring it, keeps its responses; it is
+        an optimisation, so a failed move is reported and a fresh cache used.
+        """
+        cache_path = self.bulk_data_dir / HTTP_CACHE_FILENAME
+        legacy = Path.cwd() / LEGACY_HTTP_CACHE_FILENAME
+        if not cache_path.exists() and legacy.is_file():
+            try:
+                cache_path.parent.mkdir(parents=True, exist_ok=True)
+                shutil.move(str(legacy), str(cache_path))
+                print(f"  Adopted legacy HTTP cache {legacy} -> {cache_path}")
+            except OSError as e:
+                print(f"  Could not adopt {legacy} ({e}); using a fresh HTTP cache")
+        return cache_path
+
+    def _http_session(self) -> requests.Session:
+        """Return this transform's cached HTTP session, opening it on first use."""
+        if self._http is None:
+            cache_path = self._http_cache_path()
+            cache_path.parent.mkdir(parents=True, exist_ok=True)
+            self._http = CachedSession(backend=SQLiteCache(str(cache_path)))
+        return self._http
+
+    def _close_http(self) -> None:
+        """Close the HTTP session so its SQLite connection does not linger."""
+        # getattr: tests build the transform with __new__ and no __init__.
+        session = getattr(self, "_http", None)
+        if session is not None:
+            try:
+                session.close()
+            finally:
+                self._http = None
 
     def _get_chebi_label(self, curie: str) -> str:
         """
@@ -554,10 +654,17 @@ class MediaDiveTransform(Transform):
                 solution_name_normalized = solution_name.lower()
 
                 # Check if solution name can be mapped to ontology via unified or legacy mappings
-                solution_id = (
-                    self.chemical_loader.find_chebi_by_name(solution_name)
-                    or self.compound_mappings.get(solution_name_normalized)
-                    or MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY])
+                candidates = [
+                    self.chemical_loader.find_chebi_by_name(solution_name),
+                    self.compound_mappings.get(solution_name_normalized),
+                ]
+                solution_id = next(
+                    (
+                        candidate
+                        for candidate in candidates
+                        if candidate and ingredient_mapping_allowed(solution_name, candidate)
+                    ),
+                    MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY]),
                 )
 
                 ingredients_dict[solution_name] = {
@@ -594,13 +701,14 @@ class MediaDiveTransform(Transform):
             # trailing hydrate specifiers (e.g. "MgCl2 x 6 H2O") resolve to
             # the anhydrous entry when no exact hydrate-form entry exists.
             mapped_id = self.chemical_loader.find_chebi_by_name(compound_name, fuzzy_hydrate=True)
-            if mapped_id:
+            if mapped_id and ingredient_mapping_allowed(compound_name, mapped_id):
                 return mapped_id
 
             # Fallback: check legacy MicroMediaParam mappings by compound name
             normalized_name = compound_name.lower().strip()
-            if normalized_name in self.compound_mappings:
-                return self.compound_mappings[normalized_name]
+            mapped_id = self.compound_mappings.get(normalized_name)
+            if mapped_id and ingredient_mapping_allowed(compound_name, mapped_id):
+                return mapped_id
 
         # Check bulk downloaded data for embedded compound mappings
         # Note: MediaDive compound API endpoint does not exist (returns 400 "not supported")
@@ -612,15 +720,19 @@ class MediaDiveTransform(Transform):
             if self.using_bulk_data:
                 self.api_calls_avoided += 1
             data = self.compounds_data[id]
-            # Try compound mappings from embedded data
-            if data.get(CHEBI_KEY) is not None:
-                return CHEBI_PREFIX + str(data[CHEBI_KEY])
-            elif data.get(KEGG_KEY) is not None:
-                return KEGG_PREFIX + str(data[KEGG_KEY])
-            elif data.get(PUBCHEM_KEY) is not None:
-                return PUBCHEM_PREFIX + str(data[PUBCHEM_KEY])
-            elif data.get(CAS_RN_KEY) is not None:
-                return CAS_RN_PREFIX + str(data[CAS_RN_KEY])
+            # Every embedded namespace must pass the same identity contract;
+            # a rejected ChEBI entry cannot escape through PubChem/CAS (#1155).
+            name = compound_name or data.get(COMPOUND_KEY) or data.get("name", "")
+            for key, prefix in (
+                (CHEBI_KEY, CHEBI_PREFIX),
+                (KEGG_KEY, KEGG_PREFIX),
+                (PUBCHEM_KEY, PUBCHEM_PREFIX),
+                (CAS_RN_KEY, CAS_RN_PREFIX),
+            ):
+                if data.get(key) is not None:
+                    mapped_id = prefix + str(data[key])
+                    if ingredient_mapping_allowed(name, mapped_id):
+                        return mapped_id
 
         # Fall back to custom ingredient prefix
         return MEDIADIVE_INGREDIENT_PREFIX + id
@@ -796,7 +908,7 @@ class MediaDiveTransform(Transform):
         Refuse to transform when the bulk MediaDive download is missing.
 
         Without it the medium/solution lookups fall back to the YAML cache
-        under ``tmp/medium_yaml`` and to ``requests_cache``, neither of
+        under ``tmp/medium_yaml`` and to this transform's HTTP cache, neither of
         which carries an expiry. Those caches hold responses from 2023 and
         2025 that predate MediaDive restructuring solutions, so the run
         succeeds with exit code 0 while emitting a graph built from years-old
@@ -821,12 +933,21 @@ class MediaDiveTransform(Transform):
         )
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
+        """Run the transformation, closing the API session afterwards."""
+        try:
+            self._run(data_file, show_status)
+        finally:
+            self._close_http()
+
+    def _run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
+        self.begin_consumed_inputs()
         self._assert_bulk_data_available()
         # replace with downloaded data filename for this source
         input_file = os.path.join(self.input_base_dir, "mediadive.json")  # must exist already
         bacdive_input_file = BACDIVE_TMP_DIR / "bacdive.tsv"
-        bacdive_df = pd.read_csv(bacdive_input_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN])
+        with self.consume_input("bacdive_taxon_lookup", bacdive_input_file) as bacdive_file:
+            bacdive_df = pd.read_csv(bacdive_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN])
 
         # Create dictionary lookup for O(1) access instead of O(n) DataFrame filtering
         bacdive_strain_to_ncbi = dict(zip(bacdive_df[BACDIVE_ID_COLUMN], bacdive_df[NCBITAXON_ID_COLUMN], strict=True))
@@ -858,13 +979,13 @@ class MediaDiveTransform(Transform):
             open(self.output_node_file, "w") as node,
             open(self.output_edge_file, "w") as edge,
         ):
-            writer = csv.writer(tsvfile, delimiter="\t")
+            writer = tsv_writer(tsvfile)
             # Write the column names to the output file
             writer.writerow(COLUMN_NAMES)
 
-            node_writer = csv.writer(node, delimiter="\t")
+            node_writer = tsv_writer(node)
             node_writer.writerow(self.node_header)
-            edge_writer = csv.writer(edge, delimiter="\t")
+            edge_writer = tsv_writer(edge)
             edge_writer.writerow(self.edge_header)
 
             # Choose the appropriate context manager based on the flag
@@ -916,7 +1037,7 @@ class MediaDiveTransform(Transform):
                                 SUBCLASS_PREDICATE,
                                 MEDIADIVE_MEDIUM_TYPE_COMPLEX_ID,
                                 RDFS_SUBCLASS_OF,
-                                "MediaDive",
+                                self.knowledge_source,
                                 OBSERVATION,
                                 MANUAL_AGENT,
                             ]
@@ -928,7 +1049,7 @@ class MediaDiveTransform(Transform):
                                 SUBCLASS_PREDICATE,
                                 MEDIADIVE_MEDIUM_TYPE_DEFINED_ID,
                                 RDFS_SUBCLASS_OF,
-                                "MediaDive",
+                                self.knowledge_source,
                                 OBSERVATION,
                                 MANUAL_AGENT,
                             ]
@@ -948,9 +1069,9 @@ class MediaDiveTransform(Transform):
                     node_writer.writerow(self._create_node_row(medium_id, medium_category, dictionary[NAME_COLUMN]))
 
                     # Medium-Strains KG
+                    medium_strain_nodes = []
                     if json_obj_medium_strain:
                         medium_strain_edge = []
-                        medium_strain_nodes = []
                         for strain in json_obj_medium_strain:
                             if strain.get(BACDIVE_ID_COLUMN):
                                 strain_id = BACDIVE_PREFIX + str(strain[BACDIVE_ID_COLUMN])
@@ -990,16 +1111,8 @@ class MediaDiveTransform(Transform):
                                             ]
                                         )
 
-                                        # Emit primary_knowledge_source as the list literal
-                                        # ['infores:bacdive', 'bacdive:NNN'] — matches the
-                                        # bacdive transform's _StrainProvenanceWriter output
-                                        # byte-for-byte so KGX dedupes the two rows (this
-                                        # mediadive row + the corresponding bacdive row for the
-                                        # same s,p,o) by exact-string match in the merge step.
-                                        # Without the matching format KGX nests the two values
-                                        # under a 2-element list of strings — uglier and harder
-                                        # to query.
-                                        provenance = f"['infores:bacdive', '{strain_id}']"
+                                        # The resource is scalar; its public record page is
+                                        # publication evidence, matching BacDive (#688, #1070).
                                         medium_strain_edge.extend(
                                             [
                                                 [
@@ -1007,9 +1120,12 @@ class MediaDiveTransform(Transform):
                                                     predicate,
                                                     medium_id,
                                                     relation,
-                                                    provenance,
+                                                    "infores:bacdive",
                                                     OBSERVATION,
                                                     MANUAL_AGENT,
+                                                    "",
+                                                    "",
+                                                    bacdive_record_url(strain_id),
                                                 ],
                                             ]
                                         )
@@ -1079,19 +1195,23 @@ class MediaDiveTransform(Transform):
                                 synonym=enrichment["synonym"] or None,
                             )
                         )
-                        # If MIM curators have asserted a parent for this ingredient
-                        # via skos:narrowMatch (e.g. MIM:Vermont_Soil narrowMatch
-                        # ENVO:00001998), the unified mappings file now carries
-                        # those rows and the loader exposes them via get_parents().
-                        # Emit one biolink:subclass_of edge per parent so the
-                        # ingredient sits inside the canonical OBO hierarchy.
+                        # If MIM curators have anchored this ingredient to a
+                        # parent via skos:broadMatch (e.g. MIM:Vermont_Soil
+                        # broadMatch ENVO:00001998), the unified mappings file
+                        # carries those rows and the loader exposes them via
+                        # get_parents(). MIM's contract (MAPPING_SEMANTICS.md
+                        # Section 1, #245) is that the parent is the *closest
+                        # broader term* -- the ingredient may be a salt, hydrate,
+                        # solution or racemate of it, which ChEBI models with
+                        # has-part, not is_a -- so emit biolink:broad_match,
+                        # never biolink:subclass_of, one edge per parent.
                         for parent_id in self.chemical_loader.get_parents(ingredient_id):
                             ingredient_subclass_edges.append(
                                 [
                                     ingredient_id,
-                                    "biolink:subclass_of",
+                                    BROAD_MATCH_PREDICATE,
                                     parent_id,
-                                    "rdfs:subClassOf",
+                                    BROAD_MATCH_RELATION,
                                     self.knowledge_source,
                                     "knowledge_assertion",
                                     "manual_agent",
@@ -1106,15 +1226,14 @@ class MediaDiveTransform(Transform):
                     # Each MediaDive solution is a chemical mixture — subclass it under
                     # CHEBI:60004 (mixture) so OBO-aware reasoners can navigate from any
                     # solution back to the canonical chemical hierarchy. Edge schema is
-                    # the standard 9-col MediaDive edge_header (subject, predicate, object,
-                    # relation, primary_knowledge_source, knowledge_level, agent_type, value, unit).
+                    # the standard edge_header, with the final publications cell empty.
                     solution_subclass_edges = [
                         [
                             MEDIADIVE_SOLUTION_PREFIX + str(k),
                             "biolink:subclass_of",
                             "CHEBI:60004",
                             "rdfs:subClassOf",
-                            self.source_name,
+                            self.knowledge_source,
                             "knowledge_assertion",
                             "manual_agent",
                             "",
@@ -1130,22 +1249,11 @@ class MediaDiveTransform(Transform):
                     if len(chebi_list) > 0 and self.chebi_roles:
                         # Collect all role relationships for these compounds
                         role_set = set()
-                        role_edges_data = []
+                        role_edges_data = self._generate_chebi_role_edges(chebi_list)
                         for chebi_id in chebi_list:
                             if chebi_id in self.chebi_roles:
                                 for role_id in self.chebi_roles[chebi_id]:
                                     role_set.add(role_id)
-                                    role_edges_data.append(
-                                        [
-                                            chebi_id,
-                                            CHEBI_TO_ROLE_EDGE,
-                                            role_id,
-                                            HAS_ROLE,
-                                            "infores:chebi",
-                                            OBSERVATION,
-                                            MANUAL_AGENT,
-                                        ]
-                                    )
                         # Write role nodes with labels
                         role_nodes = []
                         for role in role_set:

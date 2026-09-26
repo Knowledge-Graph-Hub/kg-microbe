@@ -64,6 +64,15 @@ Every API response is cached to `data/raw/lpsn/api_cache/<record_no>.json`
 (gitignored) so partial runs resume cleanly and re-runs skip
 already-fetched records.
 
+Records the API does not serve at all — every basonym that predates the
+Approved Lists (665 in the 2026-09-10 graph, #1004) — are labelled from
+LPSN's public web page `https://lpsn.dsmz.de/taxon/<record_no>` instead:
+rank and name from the page title, nomenclatural and taxonomic status from
+the page body. Those are cached apart, under `data/raw/lpsn/web_cache/`,
+and the node's description says the label came from the page. No edges are
+minted from a page. If the page fetch fails too, the node is an unnamed
+stub in our namespace, as before.
+
 ## Expected wall-clock
 
 - **Cold cache** — 6–10 hours for 34,300 records (LPSN's empirical

@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "status": "CANDIDATE_REQUIRES_REVIEW",
+  "manifest_sha256": "49c9ca480b7e7856f2402b4290e281b3f19651c43bf268e7fa9dfcaee9d64024",
+  "source_sha256": "0dcf0bf18b22e0a42044797f01748c3babc2b3ef8f67b5a488da71ff5e0157bb",
+  "review_sha256": "11759c30af0669f5e7730d1d6ab9407b370d93804a31c6e31a8b44e78b4a4d7e",
+  "input_sha256": {
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/transformed/ontologies/chebi_nodes.tsv": "c161f8aea7ffeb1a2557f24100b3b3b67bfd62196d484b33c675921154c8b152",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/transformed/ontologies/envo_nodes.tsv": "6b130674df9cf8f1533919c609355cba126ed8df950d945b072f9ee0bae9819f",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/transformed/ontologies/foodon_nodes.tsv": "8d2a8b11c3c2b499895acd4a319a42cbd587258237944c48caf954c73957bd2e",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/transformed/ontologies/uberon_nodes.tsv": "18aa8e920507438e1915e3945f272f3bfc6f1884e186c6e0a9fe496537570612",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/transformed/ontologies_stubs/bto_nodes.tsv": "3fd4a0311b1fa62810afa9645d2a34e6135e929ea1f5854301f77b6add345d23",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/transformed/ontologies_stubs/mesh_nodes.tsv": "a7994036447f31273677d9c95ce24e5d1c545762f9fe3ddbeb79d421dfa64b26",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/transformed/ontologies_stubs/micro_nodes.tsv": "a2ac455b4c4a6b94b7d3f2846ccdbf72779069ed2c09a052c391e2ee9fb6d282",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/transformed/ontologies_stubs/ncit_nodes.tsv": "8f288cf5f8b4a91c933de1c7741edede359919162963487c0c8ac6d7e331060c",
+    "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/transformed/ontologies_stubs/po_nodes.tsv": "648a19e93f6537db1fa4b2b2d66c80c3b3079c1a145bf879e5f8fe713e5a66e8",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/kgm/kg_microbe/transform_utils/bacdive/metabolite_mapping.json": "8eba07ebf75c6b4019992df77c5a40842dbfe710d8e1e68b7ea7e838cd61bc10",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/kgm/kg_microbe/transform_utils/madin_etal/chebi_manual_annotation.tsv": "06ef070a13fb42997e175443cc979eff220ff6c9a38be0915e38b712b1e53434",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/kgm/kg_microbe/utils/chemical_mapping_utils.py": "25a2082d596aa1cb5bbb288e80da7530e365516d2105b24d9b3c0d0317788210",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/kgm/kg_microbe/utils/ingredient_identity.py": "776a2a5aa424ab1f9e6f5406f7b56a46689c0ac94a5b3460fde69f77845281fd",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/kgm/mappings/canonical/chemical_mappings.tsv": "73ac6cc03f3e4c0820748dd2adbd857cede40b0d29295a818f70979163bacd41",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/kgm/mappings/ingredient_identity_exclusions.tsv": "76bfddfa0377e2478e797c23449342b92721beab7dde1f1ca7a9550e2219f508",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/kgm/mappings/ingredient_name_scopes.tsv": "d569d4bd26c9437d60f6c93c1574e6c9de3d6c2d686dbf17d3038fe3b20b5046",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/kgm/mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz": "0f8c148fb6f8386daee19b8e3a5af4725d4841b02b9125e64f39497e51ea00c3",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/kgm/scripts/consolidate_chemical_mappings.py": "0bcf5e072b0da0d6d088877371bb8b61903210863c956d4bbbe94f7036fbb33f",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/kgm/scripts/mim_conservative_refresh.py": "44e686bfb356466cf103aa7bdd10d1130bdbb7eeab3e47b85b2c301aefd4957c",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/kgm/scripts/mim_reviewed_release.py": "03e6bed504de06c7ea573f0e857b445875def594bf6b2123a7aeed729ef4efb1",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/mim-micro-source/output/mim-reviewed-sssom/ingredient_mappings.sssom.tsv": "c957e61b8890f55e1bee2a314b0f816ebe9c143a96015cdc7ab634070eb52541",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/mim-micro-source/output/mim-reviewed-sssom/manifest.json": "49c9ca480b7e7856f2402b4290e281b3f19651c43bf268e7fa9dfcaee9d64024",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/mim-micro-source/output/mim-reviewed-sssom/mapping-dispositions.tsv": "4162fb61dbb196874ad80215914c8088db3cc6f221017c1dec487cc8989945c4",
+    "/private/tmp/mim-kgm-feedback-20260922-p5kpjvj1/mim-micro-source/output/mim-reviewed-sssom/withheld_mappings.sssom.tsv": "1a6490885f67d5104cf8aee17c49715b1df5d658f50901ad8a923533f31e16c6"
+  },
+  "candidate_sha256": "cb2b6f4f0e6bcc60f0ee76f76c1c8c4bf0030d529ea4d5452d28a29ba5767078",
+  "quarantine_sha256": "3f7df46e68adc01342ffca4dc63186881bbdf799caf81574056fbfdf003c4d16",
+  "counts": {
+    "baseline_rows": 610059,
+    "candidate_entities": 120214,
+    "candidate_rows": 591711,
+    "preserved_rows": 571644,
+    "quarantined_rows": 38415,
+    "rebuilt_entities": 3156,
+    "rebuilt_rows": 20067,
+    "relabelled_nonidentity_rows": 14,
+    "removed_mim_nonidentity_rows": 143,
+    "unreconstructed_lexical_entities": 486
+  },
+  "accepted_name_scope_distinctions": [
+    {
+      "expected": "CHEBI:17712",
+      "explicit_resolved": "CHEBI:17712",
+      "name": "Xanthine",
+      "reason": "Reviewed generic trait versus 9H ingredient scope; native subclass relation retained.",
+      "resolved": "CHEBI:15318",
+      "subject_id": "MIM:Xanthine"
+    }
+  ],
+  "supported_xref_lookup_conflicts": [],
+  "limitations": [
+    "Historical quarantine covers entities and undirected exact-identity closure, including shared xrefs.",
+    "Absent historical provenance cannot be recovered; current direct evidence replaces affected claims.",
+    "No synonym propagation, roles, components, or scientific approval of withheld mappings is performed.",
+    "Source/review hashes are publisher claims; original scientific evidence is outside this bundle.",
+    "The caller must establish independent input lineage; a manual/legacy filename does not prove it.",
+    "Native xref annotations inform quarantine scope only; new identity claims require explicit same_as."
+  ],
+  "raw_per_row_name_conflicts": 75,
+  "note": "Use runtime-audit.json for name-group conflicts: resolving to any approved target is valid for multi-target MIM subjects."
+}

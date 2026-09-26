@@ -93,11 +93,14 @@ def get_media_preferences(conn: duckdb.DuckDBPyConnection, taxon_id: str) -> Dic
     """
     Get growth media preferences (grows in / doesn't grow in).
 
-    Growth media edges use Biolink predicates (e.g. ``biolink:located_in``) and
-    encode the METPO "grows in" / "does not grow in" semantics in the
-    ``relation`` column (``METPO:2000517`` / ``METPO:2000518``), matching the
-    transform output produced by BacDive and MediaDive. Filtering on
-    ``relation`` keeps the query aligned with that KGX encoding.
+    BacDive and MediaDive emit growth-media edges with the METPO term in the
+    ``predicate`` column *and* the ``relation`` column: ``METPO:2000517``
+    (grows in) / ``METPO:2000518`` (does not grow in). Measured on the
+    2026-09-10 outputs: 36,596 + 55,251 edges, every one ``predicate ==
+    relation``; none carry ``biolink:located_in`` (the docs here and in the
+    kg-query skill said otherwise, #539). The predicate is matched first;
+    ``relation`` is a fallback for a graph built before the METPO predicate
+    replaced ``biolink:located_in``, so an older release still answers.
 
     :param conn: DuckDB connection
     :param taxon_id: NCBITaxon ID
@@ -105,15 +108,16 @@ def get_media_preferences(conn: duckdb.DuckDBPyConnection, taxon_id: str) -> Dic
     """
     query = """
     SELECT
-        e.relation,
+        CASE WHEN e.predicate IN ('METPO:2000517', 'METPO:2000518') THEN e.predicate ELSE e.relation END AS growth,
         e.object AS medium_id,
         n.name AS medium_name,
         e.primary_knowledge_source
     FROM edges e
     JOIN nodes n ON e.object = n.id
     WHERE e.subject = ?
-      AND e.relation IN ('METPO:2000517', 'METPO:2000518')
-    ORDER BY e.relation, n.name;
+      AND (e.predicate IN ('METPO:2000517', 'METPO:2000518')
+           OR e.relation IN ('METPO:2000517', 'METPO:2000518'))
+    ORDER BY growth, n.name;
     """
 
     result = conn.execute(query, [taxon_id]).fetchall()
@@ -121,16 +125,16 @@ def get_media_preferences(conn: duckdb.DuckDBPyConnection, taxon_id: str) -> Dic
     grows_in = []
     no_growth = []
 
-    for relation, medium_id, medium_name, source in result:
+    for growth, medium_id, medium_name, source in result:
         media_entry = {
             "medium_id": medium_id,
             "medium_name": medium_name,
             "source": source,
         }
 
-        if relation == "METPO:2000517":  # grows in
+        if growth == "METPO:2000517":  # grows in
             grows_in.append(media_entry)
-        elif relation == "METPO:2000518":  # doesn't grow in
+        elif growth == "METPO:2000518":  # doesn't grow in
             no_growth.append(media_entry)
 
     return {"grows_in": grows_in, "no_growth": no_growth}

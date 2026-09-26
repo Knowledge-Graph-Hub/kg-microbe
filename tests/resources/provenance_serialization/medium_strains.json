@@ -1,0 +1,6 @@
+[
+  {"bacdive_id": 160227, "growth": 1, "species": "Fixture organism"},
+  {"bacdive_id": 160228, "growth": 1, "species": "Fixture organism"},
+  {"bacdive_id": 999, "growth": 0, "species": "Negative fixture organism"},
+  {"bacdive_id": 42, "growth": null, "species": "Unknown growth fixture organism"}
+]

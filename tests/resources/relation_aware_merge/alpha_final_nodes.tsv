@@ -1,0 +1,4 @@
+id	category	name	provided_by
+time:Instant	biolink:OntologyClass	instant	infores:iri
+time:Instant	biolink:OntologyClass	instant	infores:curie
+FOODON:1	biolink:Food	food	infores:alpha

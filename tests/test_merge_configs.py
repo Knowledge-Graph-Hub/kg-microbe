@@ -299,10 +299,11 @@ def test_a_second_destination_is_not_reported_as_stale(tmp_path):
 
     out = tmp_path / "merged"
     out.mkdir()
-    (out / "merged-kg_nodes.tsv").write_text("id\tcategory\n")
-    (out / "merged-kg_edges.tsv").write_text("subject\tpredicate\tobject\n")
-    (out / "merged-kg-second_nodes.tsv").write_text("id\tcategory\n")
-    (out / "merged-kg-second_edges.tsv").write_text("subject\tpredicate\tobject\n")
+    for base in ("merged-kg", "merged-kg-second"):
+        (out / f"{base}_nodes.tsv").write_text("id\tcategory\tname\tdescription\tprovided_by\n")
+        (out / f"{base}_edges.tsv").write_text(
+            "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\n"
+        )
 
     config = tmp_path / "merge.two.yaml"
     config.write_text(

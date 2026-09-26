@@ -1,0 +1,7 @@
+[
+  {"name":"alias","input":{"primary_knowledge_source":"bacdive"},"provider":"infores:bacdive","publications":"PMID:7"},
+  {"name":"record","input":{"primary_knowledge_source":"bacdive:12"},"provider":"infores:bacdive","publications":"PMID:7|https://bacdive.dsmz.de/strain/12"},
+  {"name":"mixed-list","input":{"primary_knowledge_source":"['bacdive', 'bacdive:12']"},"provider":"infores:bacdive","publications":"PMID:7|https://bacdive.dsmz.de/strain/12"},
+  {"name":"legacy-column","input":{"primary_knowledge_source":"","knowledge_source":"MediaDive"},"provider":"infores:mediadive","publications":"PMID:7"},
+  {"name":"matching-legacy-column","input":{"primary_knowledge_source":"infores:bacdive","knowledge_source":"bacdive:12"},"provider":"infores:bacdive","publications":"PMID:7|https://bacdive.dsmz.de/strain/12"}
+]

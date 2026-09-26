@@ -274,6 +274,50 @@ def test_propagation_cannot_hand_a_retracted_name_back(name_level_consolidator, 
     assert "Cbl" not in rec["synonyms"]
 
 
+def test_a_name_the_record_does_not_carry_is_still_blocked_from_propagation(tmp_path, capsys):
+    """
+    The two-cycle (#976).
+
+    On a run whose seed lacked the retracted name, the pass had nothing to
+    remove, so it never registered the guard that
+    ``propagate_synonyms_via_xrefs`` reads -- and propagation copied the name
+    straight back from the xref-equivalent target. The next run's seed then
+    carried it, the pass removed it, and the run after that put it back.
+    """
+    mod = _load_consolidator_module()
+    c = mod.ChemicalMappingConsolidator()
+    c.add_chemical(
+        id="CHEBI:28911",
+        canonical_name="cob(III)alamin",
+        synonyms=["cobalamin(III)"],
+        source="culturebotai_reviewed",
+        priority=10,
+        xrefs=["CHEBI:30411"],
+    )
+    c.add_chemical(
+        id="CHEBI:30411",
+        canonical_name="Cobalamine",
+        synonyms=["COBALAMIN", "Cbl"],
+        source="culturebotai_reviewed",
+        priority=10,
+        xrefs=["CHEBI:28911"],
+    )
+    rf = tmp_path / "retract.tsv"
+    _write_name_level_tsv(rf)
+
+    c.apply_retractions(rf)
+    assert "name-level groundings removed 0" in capsys.readouterr().out
+    c.propagate_synonyms_via_xrefs()
+
+    rec = c.chemicals["CHEBI:28911"]
+    for name in ("Cobalamine", "COBALAMIN", "Cbl"):
+        assert name not in rec["synonyms"]
+    assert rec["canonical_name"] == "cob(III)alamin"
+    # The term's own names, and the target's, are untouched.
+    assert "cobalamin(III)" in rec["synonyms"]
+    assert "COBALAMIN" in c.chemicals["CHEBI:30411"]["synonyms"]
+
+
 def test_object_level_drop_prunes_the_name_index(consolidator, tmp_path):
     """
     #599 item 2: a dropped record must not leave indices pointing at it.

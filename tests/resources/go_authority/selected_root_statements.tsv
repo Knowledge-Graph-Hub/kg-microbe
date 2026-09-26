@@ -1,0 +1,3 @@
+subject	predicate	object	value
+GO:0004096	rdfs:label		Selected-root catalase activity
+GO:0004096	oio:hasOBONamespace		molecular_function

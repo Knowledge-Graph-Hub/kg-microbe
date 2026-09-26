@@ -1,4 +1,5 @@
-"""Build a taxon->GO gold standard WITH NEGATIVES from BacDive assay results.
+"""
+Build a taxon->GO gold standard WITH NEGATIVES from BacDive assay results.
 
 BacDive records assay outcomes with polarity — METPO:2000302 "shows activity of"
 and METPO:2000303 "does not show activity of" — so chaining

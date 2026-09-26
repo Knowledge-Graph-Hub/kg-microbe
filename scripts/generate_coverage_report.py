@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Generate mapping-coverage report for a transform.
+"""
+Generate mapping-coverage report for a transform.
 
 Reads the transform's ``edges.tsv`` (for predicate + object-ontology
 distributions) and its per-source unmapped queue (for the still-to-map

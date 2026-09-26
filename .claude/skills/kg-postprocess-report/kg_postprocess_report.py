@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
-"""Report status of every post-transform / post-merge operation in KG-Microbe.
+r"""
+Report status of every post-transform / post-merge operation in KG-Microbe.
 
 Walks a hand-maintained catalog of operations that run *after* `kg transform`
 and `kg merge` to arrive at the final shipped data products. For each
 operation, inspects the filesystem to determine current freshness and emits a
 structured Markdown report.
 
-Default invocation scans the most-recent merged release directory it can find:
+Default invocation discovers root-level and dated artifacts, refusing ambiguous choices:
 
     poetry run python .claude/skills/kg-postprocess-report/kg_postprocess_report.py
 
@@ -26,11 +27,15 @@ import sys
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from kg_microbe.utils.postprocess_artifacts import ArtifactStatus, inspect_artifact, review_status, select_artifact
+
 STATUS_OK = "ok"
 STATUS_STALE = "stale"
 STATUS_MISSING = "missing"
 STATUS_NA = "n/a"
 STATUS_AUTO = "auto"
+STATUS_UNVERIFIED = "unverified"
+STATUS_INVALID = "invalid"
 
 # Severity used to decide whether the operation blocks a release. Tweak per row
 # in the catalog. "blocker" rows are summarized at the top of the report.
@@ -41,6 +46,8 @@ SEV_OPTIONAL = "optional"
 
 @dataclass
 class Operation:
+    """One catalogued operation and its declared artifact dependencies."""
+
     name: str
     stage: str
     title: str
@@ -58,15 +65,16 @@ class Operation:
 # Catalog
 # ----------------------------------------------------------------------------
 
-def build_catalog(merged_dir: Path | None, transformed_dir: Path) -> list[Operation]:
-    """Return the full list of catalogued operations.
+
+def build_catalog(merged_dir: Path | None, transformed_dir: Path, artifact=None) -> list[Operation]:
+    """
+    Return the full list of catalogued operations.
 
     `merged_dir` may be None when no merged release has been built yet; in that
     case post-merge entries will simply report "missing".
     """
     merged_nodes = str(merged_dir / "merged-kg_nodes.tsv") if merged_dir else ""
     merged_edges = str(merged_dir / "merged-kg_edges.tsv") if merged_dir else ""
-    merged_stats = str(merged_dir / "merged-kg_stats.yaml") if merged_dir else ""
     merged_tar = str(merged_dir / "merged-kg.tar.gz") if merged_dir else ""
 
     transformed_glob = f"{transformed_dir}/*/nodes.tsv"
@@ -86,15 +94,17 @@ def build_catalog(merged_dir: Path | None, transformed_dir: Path) -> list[Operat
             inputs=[
                 "scripts/consolidate_chemical_mappings.py",
                 "mappings/ingredient_mappings.sssom.tsv",
-                "data/raw/mediadive/*",
-                "data/raw/bacdive/*",
+                "mappings/culturebotai_reviewed_ingredients.tsv",
+                "mappings/ingredient_identity_exclusions.tsv",
             ],
             outputs=["mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"],
             required_for="bacdive / mediadive / metatraits transforms (reads this file)",
             severity=SEV_BLOCKER,
             notes=(
-                "If this is stale, transforms emit phantom CHEBI/PubChem mappings "
-                "or drop ingredients silently. See `chemical-mapping` skill."
+                "Tracked inputs are the reviewed mappings and identity exclusions. "
+                "The consolidator also consumes available optional legacy mapping files and "
+                "syncs sibling MediaIngredientMech inputs; mtime is not a complete freshness proof. "
+                "See `chemical-mapping` skill."
             ),
         ),
         Operation(
@@ -126,10 +136,7 @@ def build_catalog(merged_dir: Path | None, transformed_dir: Path) -> list[Operat
             name="manual-mapping-validate",
             stage="post-transform",
             title="Hardcoded-mapping conflict scan",
-            purpose=(
-                "Detect duplicates / conflicts across hand-curated mapping files "
-                "used by transforms."
-            ),
+            purpose=("Detect duplicates / conflicts across hand-curated mapping files used by transforms."),
             command="poetry run python mappings/validate_manual_mappings.py",
             inputs=["mappings/*.tsv", "mappings/*.yaml"],
             outputs=[],
@@ -171,10 +178,7 @@ def build_catalog(merged_dir: Path | None, transformed_dir: Path) -> list[Operat
             name="metpo-proposals-extract",
             stage="post-transform",
             title="METPO term-proposal extraction",
-            purpose=(
-                "Mine unmapped traits to draft new METPO terms with definitions "
-                "and candidate parents."
-            ),
+            purpose=("Mine unmapped traits to draft new METPO terms with definitions and candidate parents."),
             command="poetry run python scripts/extract_metpo_proposals.py",
             inputs=[f"{transformed_dir}/metatraits/unmapped_traits.tsv"],
             outputs=[],
@@ -193,10 +197,7 @@ def build_catalog(merged_dir: Path | None, transformed_dir: Path) -> list[Operat
                 "mapping / trait vocabulary loops that shrink the report on "
                 "subsequent transform runs."
             ),
-            command=(
-                "poetry run python scripts/dump_unmapped_microbedecoder_labels.py "
-                "--min-occurrences 100"
-            ),
+            command=("poetry run python scripts/dump_unmapped_microbedecoder_labels.py --min-occurrences 100"),
             inputs=[f"{transformed_dir}/microbedecoder/unmapped_labels.tsv"],
             outputs=["mappings/microbedecoder_unmapped_labels_to_curate.tsv"],
             required_for="microbedecoder curation loop (issue #650)",
@@ -240,8 +241,7 @@ def build_catalog(merged_dir: Path | None, transformed_dir: Path) -> list[Operat
             stage="post-transform",
             title="Knowledge-source provenance validation",
             purpose=(
-                "Verify every `provided_by` / `primary_knowledge_source` is "
-                "registered in infores or a known alias."
+                "Verify every `provided_by` / `primary_knowledge_source` is registered in infores or a known alias."
             ),
             command="poetry run python scripts/validate_knowledge_sources.py",
             inputs=[transformed_glob],
@@ -254,8 +254,7 @@ def build_catalog(merged_dir: Path | None, transformed_dir: Path) -> list[Operat
             stage="post-transform",
             title="Custom METPO mapping audit",
             purpose=(
-                "Analyze hardcoded METPO mappings across transform code for "
-                "consistency; surface candidate new terms."
+                "Analyze hardcoded METPO mappings across transform code for consistency; surface candidate new terms."
             ),
             command="poetry run python scripts/analyze_custom_metpo_mappings.py",
             inputs=["kg_microbe/transform_utils/**/*.py"],
@@ -267,10 +266,7 @@ def build_catalog(merged_dir: Path | None, transformed_dir: Path) -> list[Operat
             name="gtdb-metatraits-overlap",
             stage="post-transform",
             title="GTDB vs metatraits overlap analysis",
-            purpose=(
-                "Detect redundant or conflicting claims between metatraits and "
-                "metatraits_gtdb."
-            ),
+            purpose=("Detect redundant or conflicting claims between metatraits and metatraits_gtdb."),
             command="poetry run python scripts/analyze_gtdb_metatraits_overlap.py",
             inputs=[
                 f"{transformed_dir}/metatraits/edges.tsv",
@@ -280,17 +276,16 @@ def build_catalog(merged_dir: Path | None, transformed_dir: Path) -> list[Operat
             required_for="merge variant decision (merge.yaml vs merge.no_metatraits.yaml)",
             severity=SEV_OPTIONAL,
         ),
-
         # -------------------- POST-MERGE (automatic) --------------------
         Operation(
             name="merge-cleanup",
             stage="post-merge",
-            title="Merged TSV cleanup & canonical column order",
+            title="Canonical serialization, validation and single archive packaging",
             purpose=(
-                "Dedup columns, drop auxiliary KGX columns (`subsets`, `meta`, "
-                "`id`), strip stray `\\r`, fold deprecated `knowledge_source` "
-                "into `primary_knowledge_source`, reorder to the canonical "
-                "schema, and re-tar if compression is enabled."
+                "Source finalization owns audited schema/provenance migration. "
+                "The serializer writes canonical literal LF TSVs once; merge "
+                "validates cross-source closure, records final statistics and "
+                "hashes, then builds the requested archive once before publication."
             ),
             command="(runs automatically inside `kg merge`)",
             inputs=[],
@@ -300,18 +295,23 @@ def build_catalog(merged_dir: Path | None, transformed_dir: Path) -> list[Operat
             auto=True,
             notes=(
                 "Implemented in `kg_microbe/merge_utils/merge_kg.py::"
-                "_cleanup_merged_outputs`. If you see un-normalized columns "
-                "this hook silently failed — re-run merge."
+                "_cleanup_merged_outputs`. Required validation/manifest failures "
+                "abort publication; optional diagnostics are reported separately. "
+                "Archive-only output is valid; no loose TSVs are required beside it. "
+                "This status verifies artifact integrity, not source freshness or biological correctness."
             ),
         ),
         Operation(
             name="merge-graph-stats",
             stage="post-merge",
             title="Merged-KG statistics YAML",
-            purpose="Counts of nodes / edges by category, predicate, and SPO signature.",
-            command="(emitted by KGX during `kg merge`)",
+            purpose=(
+                "Stream final serialized TSV counts; retain original KGX statistics separately "
+                "as pre_normalization_stats."
+            ),
+            command="(final streaming recount and provenance annotation inside `kg merge`)",
             inputs=[merged_nodes, merged_edges] if merged_dir else [],
-            outputs=[merged_stats, "merged_graph_stats.yaml"] if merged_dir else ["merged_graph_stats.yaml"],
+            outputs=["merged_graph_stats.yaml"],
             required_for="release notes, kg-release-diff",
             severity=SEV_RECOMMENDED,
             auto=True,
@@ -321,8 +321,7 @@ def build_catalog(merged_dir: Path | None, transformed_dir: Path) -> list[Operat
             stage="post-merge",
             title="Quick summary dump",
             purpose=(
-                "Print high-level node/edge counts by major prefix and "
-                "relationship type to sanity-check a merge."
+                "Print high-level node/edge counts by major prefix and relationship type to sanity-check a merge."
             ),
             command="make run-summary",
             inputs=[merged_nodes, merged_edges] if merged_dir else [],
@@ -330,7 +329,6 @@ def build_catalog(merged_dir: Path | None, transformed_dir: Path) -> list[Operat
             required_for="manual smoke test after merge",
             severity=SEV_OPTIONAL,
         ),
-
         # -------------------- POST-MERGE (format conversion / DBs) --------------------
         Operation(
             name="convert-merged-to-nt",
@@ -338,7 +336,9 @@ def build_catalog(merged_dir: Path | None, transformed_dir: Path) -> list[Operat
             title="TSV → N-Triples conversion",
             purpose="Produce an RDF N-Triples copy of the merged KG for SPARQL endpoints.",
             command="kgx transform --transform-config convert_merged_to_nt.yaml",
-            inputs=["convert_merged_to_nt.yaml", merged_nodes, merged_edges] if merged_dir else ["convert_merged_to_nt.yaml"],
+            inputs=["convert_merged_to_nt.yaml", merged_nodes, merged_edges]
+            if merged_dir
+            else ["convert_merged_to_nt.yaml"],
             outputs=[str(merged_dir / "merged-kg.nt")] if merged_dir else [],
             required_for="SPARQL endpoint, semantic-web downstream users",
             severity=SEV_OPTIONAL,
@@ -409,15 +409,13 @@ def build_catalog(merged_dir: Path | None, transformed_dir: Path) -> list[Operat
             required_for="release hygiene (not a hard gate)",
             severity=SEV_RECOMMENDED,
         ),
-
         # -------------------- RELEASE --------------------
         Operation(
             name="kg-release-diff",
             stage="release",
             title="Inter-release semantic diff",
             purpose=(
-                "Quantify category / predicate / relation / prefix / "
-                "knowledge-source deltas vs the prior release."
+                "Quantify category / predicate / relation / prefix / knowledge-source deltas vs the prior release."
             ),
             command=(
                 "poetry run python .claude/skills/kg-release-diff/"
@@ -447,12 +445,21 @@ def build_catalog(merged_dir: Path | None, transformed_dir: Path) -> list[Operat
             severity=SEV_BLOCKER,
         ),
     ]
+    if artifact is not None and artifact.path is not None:
+        graph_names = {merged_nodes, merged_edges, merged_tar}
+        for operation in ops:
+            operation.inputs = list(
+                dict.fromkeys(str(artifact.path) if value in graph_names else value for value in operation.inputs)
+            )
+            if operation.name == "merge-cleanup":
+                operation.outputs = [str(artifact.path)]
     return ops
 
 
 # ----------------------------------------------------------------------------
 # Status evaluation
 # ----------------------------------------------------------------------------
+
 
 def _expand(paths: list[str], repo: Path) -> list[Path]:
     out: list[Path] = []
@@ -478,15 +485,12 @@ def _latest_mtime(paths: list[Path]) -> dt.datetime | None:
 
 
 def evaluate(op: Operation, repo: Path) -> tuple[str, str]:
-    if op.auto:
-        outs = _expand(op.outputs, repo)
-        out_mt = _latest_mtime(outs) if outs else None
-        if out_mt is None and op.outputs:
-            return STATUS_MISSING, "Auto-step ran in a prior merge but output is gone — re-run `kg merge`."
-        if out_mt:
-            return STATUS_AUTO, f"Last produced {out_mt.isoformat(timespec='seconds')} (auto)."
-        return STATUS_AUTO, "Runs automatically inside its parent command."
-
+    """Presence and timestamp hints cannot establish a content-bound successful operation."""
+    for kind, patterns in (("input", op.inputs), ("output", op.outputs)):
+        for pattern in patterns:
+            paths = _expand([pattern], repo)
+            if not paths or any(not path.exists() for path in paths):
+                return STATUS_MISSING, f"Required {kind} missing: {pattern}; completion is not verified."
     outs = _expand(op.outputs, repo)
     ins = _expand(op.inputs, repo)
     out_mt = _latest_mtime(outs) if outs else None
@@ -499,10 +503,13 @@ def evaluate(op: Operation, repo: Path) -> tuple[str, str]:
         return STATUS_MISSING, f"Expected output not found: {first}"
     if in_mt and in_mt > out_mt:
         return STATUS_STALE, (
-            f"Inputs newer than output "
+            f"Timestamp-only staleness hint (not content proof): inputs newer than output "
             f"({in_mt.isoformat(timespec='seconds')} > {out_mt.isoformat(timespec='seconds')})."
         )
-    return STATUS_OK, f"Last produced {out_mt.isoformat(timespec='seconds')}."
+    return STATUS_UNVERIFIED, (
+        f"Output present (mtime {out_mt.isoformat(timespec='seconds')}); "
+        "timestamps are heuristic only, with no content-bound completion receipt."
+    )
 
 
 # ----------------------------------------------------------------------------
@@ -518,8 +525,15 @@ STAGE_TITLE = {
 }
 
 
-def render(ops: list[Operation], statuses: dict[str, tuple[str, str]], repo: Path,
-           merged_dir: Path | None, transformed_dir: Path) -> str:
+def render(
+    ops: list[Operation],
+    statuses: dict[str, tuple[str, str]],
+    repo: Path,
+    merged_dir: Path | None,
+    transformed_dir: Path,
+    artifact=None,
+) -> str:
+    """Render content-evidence distinctions without promoting unknown blockers to green."""
     now = dt.datetime.now().isoformat(timespec="seconds")
     lines: list[str] = []
     lines.append("# KG-Microbe post-processing status report")
@@ -528,13 +542,14 @@ def render(ops: list[Operation], statuses: dict[str, tuple[str, str]], repo: Pat
     lines.append(f"Repo: `{repo}`")
     lines.append(f"Transformed dir: `{transformed_dir}`")
     lines.append(f"Merged dir: `{merged_dir if merged_dir else '(none detected)'}`")
+    if artifact is not None:
+        lines.append(f"Selected artifact: `{artifact.path or '(none)'}` — {artifact.status}")
+        if artifact.archive_sha256:
+            lines.append(f"Archive SHA-256: `{artifact.archive_sha256}`")
     lines.append("")
 
     # Top-line summary
-    blockers_missing = [
-        op for op in ops
-        if op.severity == SEV_BLOCKER and statuses[op.name][0] in (STATUS_MISSING, STATUS_STALE)
-    ]
+    blockers_missing = [op for op in ops if op.severity == SEV_BLOCKER and statuses[op.name][0] != STATUS_OK]
     lines.append("## Top-line summary")
     lines.append("")
     if blockers_missing:
@@ -543,7 +558,9 @@ def render(ops: list[Operation], statuses: dict[str, tuple[str, str]], repo: Pat
             status, detail = statuses[op.name]
             lines.append(f"- `{op.name}` ({status}) — {detail}")
     else:
-        lines.append("All release-blocker operations are present and fresh.")
+        lines.append(
+            "All catalogued blockers have content-bound evidence; this is not a substitute for release authorization."
+        )
     lines.append("")
 
     counts: dict[str, int] = {}
@@ -552,7 +569,7 @@ def render(ops: list[Operation], statuses: dict[str, tuple[str, str]], repo: Pat
         counts[s] = counts.get(s, 0) + 1
     lines.append("| Status | Count |")
     lines.append("|---|---|")
-    for status in (STATUS_OK, STATUS_AUTO, STATUS_STALE, STATUS_MISSING, STATUS_NA):
+    for status in (STATUS_OK, STATUS_INVALID, STATUS_UNVERIFIED, STATUS_AUTO, STATUS_STALE, STATUS_MISSING, STATUS_NA):
         if counts.get(status):
             lines.append(f"| {status} | {counts[status]} |")
     lines.append("")
@@ -595,10 +612,12 @@ def render(ops: list[Operation], statuses: dict[str, tuple[str, str]], repo: Pat
 
     lines.append("---")
     lines.append("")
-    lines.append("Legend: `ok` = output fresh relative to inputs; `stale` = inputs newer "
-                 "than output; `missing` = expected output not found; `auto` = runs "
-                 "automatically inside another command; `n/a` = no tracked artifact, "
-                 "must be re-run to confirm.")
+    lines.append(
+        "Legend: `ok` = specified content evidence verified (not a global release verdict); "
+        "`invalid` = integrity/receipt failure; `unverified` = present without sufficient content-bound evidence; "
+        "`stale` = timestamp hint only; `missing` = required artifact/input absent; "
+        "`n/a` = no tracked completion evidence. Automatic execution alone is not proof of success."
+    )
     return "\n".join(lines) + "\n"
 
 
@@ -606,36 +625,39 @@ def render(ops: list[Operation], statuses: dict[str, tuple[str, str]], repo: Pat
 # Helpers
 # ----------------------------------------------------------------------------
 
+
 def autodetect_merged_dir(repo: Path) -> Path | None:
-    candidates: list[Path] = []
-    merged_root = repo / "data" / "merged"
-    if merged_root.exists():
-        for child in merged_root.iterdir():
-            if child.is_dir() and (child / "merged-kg_nodes.tsv").exists():
-                candidates.append(child)
-    if not candidates:
-        return None
-    candidates.sort(key=lambda p: p.stat().st_mtime, reverse=True)
-    return candidates[0]
+    """Compatibility helper: discover artifacts, never select by directory mtime."""
+    selected = select_artifact(repo)
+    return selected.parent if selected else None
 
 
 def main() -> int:
+    """Inspect the selected artifact and emit a read-only status report."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
-        "--repo", default=".",
+        "--repo",
+        default=".",
         help="Path to the kg-microbe repo root (default: cwd).",
     )
     parser.add_argument(
-        "--merged-dir", default=None,
+        "--merged-dir",
+        default=None,
         help="Specific merged release dir under data/merged/. "
-             "Auto-detects the most-recent if omitted.",
+        "Auto-discovers artifacts if omitted; ambiguous choices need explicit selection.",
     )
     parser.add_argument(
-        "--transformed-dir", default="data/transformed",
+        "--transformed-dir",
+        default="data/transformed",
         help="Per-source transform output root (default: data/transformed).",
     )
+    parser.add_argument("--archive", help="Exact canonical, variant or relocated .tar.gz archive to inspect.")
     parser.add_argument(
-        "--out", default=None,
+        "--review-dir", action="append", default=[], help="Additional review evidence directory (repeatable)."
+    )
+    parser.add_argument(
+        "--out",
+        default=None,
         help="Write report here (default: stdout).",
     )
     args = parser.parse_args()
@@ -645,24 +667,19 @@ def main() -> int:
     if not transformed_dir.is_absolute():
         transformed_dir = repo / transformed_dir
 
-    if args.merged_dir:
-        merged_dir = Path(args.merged_dir)
-        if not merged_dir.is_absolute():
-            merged_dir = repo / merged_dir
-        if not merged_dir.exists():
-            print(f"warning: merged dir not found: {merged_dir}", file=sys.stderr)
-            merged_dir = None
-    else:
-        merged_dir = autodetect_merged_dir(repo)
-        if merged_dir:
-            print(f"[info] auto-detected merged dir: {merged_dir}", file=sys.stderr)
-        else:
-            print("[info] no merged release found; post-merge entries will show as missing",
-                  file=sys.stderr)
-
-    ops = build_catalog(merged_dir, transformed_dir)
+    try:
+        selected = select_artifact(repo, merged_dir=args.merged_dir, archive=args.archive)
+        artifact = inspect_artifact(selected)
+    except ValueError as error:
+        artifact = ArtifactStatus(None, STATUS_UNVERIFIED, str(error))
+    merged_dir = artifact.path.parent if artifact.path else None
+    review_dirs = [Path(value) if Path(value).is_absolute() else repo / value for value in args.review_dir]
+    ops = build_catalog(merged_dir, transformed_dir, artifact)
     statuses = {op.name: evaluate(op, repo) for op in ops}
-    report = render(ops, statuses, repo, merged_dir, transformed_dir)
+    statuses["merge-cleanup"] = artifact.status, artifact.detail
+    for skill in ("kg-model-review", "kg-path-review"):
+        statuses[skill] = review_status(skill, artifact, repo, review_dirs)
+    report = render(ops, statuses, repo, merged_dir, transformed_dir, artifact)
 
     if args.out:
         out_path = Path(args.out)

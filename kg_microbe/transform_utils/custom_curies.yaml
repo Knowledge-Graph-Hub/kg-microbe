@@ -3,6 +3,7 @@
 # kgmicrobe.* sub-prefixes:
 #   kgmicrobe.activity:*   — molecular activities not yet in GO/EC/METPO
 #   kgmicrobe.trait:*      — phenotypic qualities not yet in METPO
+#   kgmicrobe.source_attribute:* — reported source-field tokens, not decoded phenotypes
 #   kgmicrobe.compound:*   — chemical entities not yet in CHEBI
 #   kgmicrobe.pathway:*    — biological processes not yet in GO/METPO
 #   kgmicrobe.medium:*     — growth media not present in MediaDive's catalog
@@ -15,10 +16,17 @@
 # recognized by validators (kg_model_review.py STANDARD_PREFIXES):
 #   MICRO — Microbiology Ontology (https://obofoundry.org/ontology/micro), used by MediaDive
 #           to label growth-medium ingredients (e.g. MICRO:0000082 "Nutrient broth No. 2").
-#   GOLD  — Genomes OnLine Database (https://bioregistry.io/registry/gold.genome), organism
-#           and project IDs surfaced by MicrobeDecoder's pre-joined crosswalk.
+#   gold  — Genomes OnLine Database (https://bioregistry.io/registry/gold.genome), organism
+#           and project IDs surfaced by MicrobeDecoder's pre-joined crosswalk; canonical
+#           lowercase namespace shared with the gold transform (#1051/#1065).
 #   IMG   — JGI Integrated Microbial Genomes (https://bioregistry.io/registry/img.genome),
 #           genome IDs from the same MicrobeDecoder crosswalk.
+#   ncbi.assembly — NCBI Assembly accessions (https://bioregistry.io/registry/ncbi.assembly),
+#           minted by the gtdb transform for every classified genome. One prefix covers both
+#           archives: GCA_* comes from GenBank, GCF_* from RefSeq, and the accession says which.
+#           The version suffix is part of the identifier (GCA_000005845.1 and .2 are different
+#           assemblies). A RefSeq-primary genome carries its GenBank twin in `same_as` rather
+#           than getting a second node. See #882.
 #
 # Any kgmicrobe.* CURIE that exists as a placeholder for a proposed METPO term
 # (i.e. one that appears in mappings/metpo_proposal_*.tsv and will be swapped to
@@ -397,6 +405,10 @@ other:
 # empty: entries are generated at transform time (slug of the ingredient label),
 # not curated here. Listed so the prefix is registered for validators.
 "kgmicrobe.ingredient": {}
+
+# Dynamic source + column + exact-token identities. Evidence is on each edge;
+# these are biolink:Attribute nodes, not proposed METPO terms or phenotype classes.
+"kgmicrobe.source_attribute": {}
 
 
 "kgmicrobe.compound":

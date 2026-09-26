@@ -1,0 +1,26 @@
+kind	query	target_id	reason
+case_sensitive_name	COCl2	CHEBI:29365	Verified native phosgene formula alias; uppercase O distinguishes oxygen from cobalt. Finite scope only, not a general formula parser (#1151).
+case_sensitive_name	CoCl2	CHEBI:35696	Verified native cobalt dichloride formula alias; lowercase o is part of Co. Hydrates remain distinct and unknown case fails closed (#1151).
+name	Polymyxin B	NCIT:C61894	Unqualified antibiotic is the NCI B1/B2 mixture; B1 and sulfate remain separate. See reviews/chemical-scopes-20260923.md.
+name	Polymyxin B1	CHEBI:8309	Explicit B1 component, not the B1/B2 mixture.
+name	Rifamycin	CHEBI:26580	Three original unqualified MicrobeDecoder observations do not specify SV; index at family scope without member-wide inference.
+name	Rifamycin SV	CHEBI:29673	Explicit SV retains the specific chemical identity.
+name	Xanthine	CHEBI:15318	Bare name has generic scope; an explicit MIM subject, 9H label or reviewed CAS selects CHEBI:17712.
+name	9H-xanthine	CHEBI:17712	Explicit 9H representation; preserve its native subclass relationship to CHEBI:15318.
+name	Sorbitan Monooleate	kgmicrobe.ingredient:sorbitan_monooleate	Unspecified recipe material; exact molecular identity and CAS remain withheld pending product evidence.
+cas	cas:1404-26-8	NCIT:C61894	Verified NCIT P210 annotation for the B1/B2 mixture; no equivalence to B1 or sulfate.
+cas	cas:4135-11-9	CHEBI:8309	Verified ChEBI CAS annotation for B1 only.
+cas	cas:6998-60-3	CHEBI:29673	Verified ChEBI CAS annotation for SV only; the rifamycin family has no single CAS.
+cas	cas:69-89-6	CHEBI:17712	Reviewed MIM ingredient representation and ChEBI CAS annotation; no parent-child equivalence or tautomer-purity claim.
+name	Lysozyme	kgmicrobe.ingredient:lysozyme	Original material has no supplier or preparation evidence and an invalid CAS. Keep its local identity; no hen-egg or food-additive scope is inferred. See reviews/ingredient-identities-20260924.md.
+cas	cas:65589-70-0	NCIT:C76253	FDA GSRS 1T3A50395T PRIMARY CAS for the reviewed acriflavine mixture. The source's 8048-52-0 is SUPERSEDED in that record and remains in registry history, not active xrefs. See reviews/ingredient-identities-20260924.md.
+cas	cas:53912-89-3	NCIT:C216370	Reviewed stereospecific anabasine monohydrochloride; source, NCIT and FDA W4917XZ12G agree. See reviews/ingredient-identities-20260924.md.
+cas	cas:9048-46-8	NCIT:C85253	Reviewed generic bovine albumin; FDA 27432CM55Q qualifies the CAS as GENERIC (FAMILY). Product/recipe preparations remain separate. See reviews/ingredient-identities-20260924.md.
+cas	cas:10018-19-6	NCIT:C79997	Reviewed 1:1 cotarninium chloride salt; source, NCIT and FDA 03F6B8N3QN agree. See reviews/ingredient-identities-20260924.md.
+cas	cas:187235-37-6	NCIT:C166606	Reviewed S pretomanid; original source, NCIT and FDA 2XOI31YC4N agree. See reviews/ingredient-identities-20260924.md.
+cas	cas:168828-58-8	NCIT:C152482	Reviewed S sutezolid; original source, NCIT and FDA 3A71182L8P agree. See reviews/ingredient-identities-20260924.md.
+cas	cas:8001-21-6	NCIT:C1241	Reviewed generic sunflower seed oil; source, NCIT and FDA 3W1JG795YI agree. No processing grade inferred. See reviews/ingredient-identities-20260924.md.
+cas	cas:9010-72-4	NCIT:C183132	Reviewed named zymosan preparation; source, NCIT and MeSH D015054 agree. No general beta-glucan equivalence. See reviews/ingredient-identities-20260924.md.
+cas	cas:9000-40-2	FOODON:03413132	Original Sigma G0753 and JECFA INS 410 independently verify the locust bean gum CAS. No clarified preparation inferred. See reviews/ingredient-identities-20260924.md.
+cas	cas:39300-88-4	FOODON:03413299	Original Biosynth YT58656 and JECFA INS 417 independently verify the tara gum material and CAS. See reviews/ingredient-identities-20260924.md.
+cas	cas:7486-38-6	FOODON:03413240	Original source and JECFA INS 356 verify disodium adipate; structure retains two sodium ions. See reviews/ingredient-identities-20260924.md.

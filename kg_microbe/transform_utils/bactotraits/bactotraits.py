@@ -10,6 +10,7 @@ from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
     ASSOCIATED_WITH,
+    BACDIVE,
     BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN,
     BACDIVE_ID_COLUMN,
     BACDIVE_PREFIX,
@@ -38,12 +39,13 @@ from kg_microbe.transform_utils.constants import (
     XREF_COLUMN,
 )
 from kg_microbe.transform_utils.transform import Transform
-from kg_microbe.utils.atomic_io import atomic_write, cache_is_complete
+from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings, uri_to_curie
 from kg_microbe.utils.oak_utils import get_label
 from kg_microbe.utils.ontology_utils import get_ncbitaxon_adapter, resolve_adapter
 from kg_microbe.utils.pandas_utils import drop_duplicates
+from kg_microbe.utils.tsv_io import tsv_writer
 
 
 class BactoTraitsTransform(Transform):
@@ -162,6 +164,10 @@ class BactoTraitsTransform(Transform):
 
     """
 
+    #: The BacDive-produced intermediate TSV supplies strain-taxid mappings (#1091).
+    TRANSFORM_INPUTS = (BACDIVE,)
+    REQUIRED_CONSUMED_INPUTS = ("bacdive_taxon_lookup",)
+
     def __init__(self, input_dir: Optional[Union[str, Path]], output_dir: Optional[Union[str, Path]]):
         """Initialize BactoTraitsTransform."""
         source_name = BACTOTRAITS
@@ -215,6 +221,7 @@ class BactoTraitsTransform(Transform):
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True) -> None:
         """Run BactoTraitsTransform."""
+        self.begin_consumed_inputs()
         if data_file is None:
             data_file = "BactoTraits_databaseV2_Jun2022.csv"
         input_file = self.input_base_dir / data_file
@@ -237,44 +244,23 @@ class BactoTraitsTransform(Transform):
         BACTOTRAITS_TMP_DIR.mkdir(parents=True, exist_ok=True)
         bacdive_ncbitaxon_dict = {}
         mapping_file = BACTOTRAITS_TMP_DIR / f"{self.source_name}_mapping.tsv"
-        # Content, not mere existence: a mapping truncated by an interrupted run
-        # before atomic_write landed would otherwise be accepted as complete
-        # forever, silently losing the bacdive→ncbitaxon links past that point.
-        if cache_is_complete(mapping_file):
-            with open(mapping_file, "r") as mapping_file:
-                mapping_reader = csv.DictReader(mapping_file, delimiter="\t")
-                for row in mapping_reader:
-                    bacdive_ncbitaxon_dict[row["Bacdive_ID"]] = row[NCBITAXON_ID_COLUMN]
-        else:
-            # Atomic: this cache's only guard is the .exists() above, so a run
-            # that dies part-way through the loop would otherwise leave a
-            # truncated mapping that every later run silently accepts as
-            # complete — losing the bacdive→ncbitaxon links for every row after
-            # the failure point.
-            with (
-                open(BACDIVE_TMP_DIR / "bacdive.tsv", "r") as bacdive_file,
-                atomic_write(mapping_file, mark_complete=True) as mapping_handle,
-            ):
-                # get 3 columns from bacdive.tsv: ['bacdive_id', 'culture_collection_number', 'ncbitaxon_id']
-                bacdive_reader = csv.DictReader(bacdive_file, delimiter="\t")
-                mapping_writer = csv.writer(mapping_handle, delimiter="\t")
-                mapping_writer.writerow(["Bacdive_ID", BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN, NCBITAXON_ID_COLUMN])
-                for row in bacdive_reader:
-                    collection_number_list = row[BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN]
-                    # Determine the value for the second column based on whether collection_number_list is not empty.
-                    second_column_value = (
-                        self._clean_row(ast.literal_eval(collection_number_list)) if collection_number_list else ""
-                    )
-
-                    # Write the row with the determined values.
-                    mapping_writer.writerow(
-                        [
-                            row[BACDIVE_ID_COLUMN],
-                            second_column_value,
-                            row[NCBITAXON_ID_COLUMN],
-                        ]
-                    )
-                    bacdive_ncbitaxon_dict[row[BACDIVE_ID_COLUMN]] = row[NCBITAXON_ID_COLUMN]
+        # A completion certificate proves only the old cache's own bytes, not
+        # freshness against BacDive. Rebuild this small projection every run.
+        # The input guard exits before atomic_write publishes the replacement.
+        with (
+            atomic_write(mapping_file, mark_complete=True, newline="") as mapping_handle,
+            self.consume_input("bacdive_taxon_lookup", BACDIVE_TMP_DIR / "bacdive.tsv") as bacdive_file,
+        ):
+            bacdive_reader = csv.DictReader(bacdive_file, delimiter="\t")
+            mapping_writer = tsv_writer(mapping_handle)
+            mapping_writer.writerow(["Bacdive_ID", BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN, NCBITAXON_ID_COLUMN])
+            for row in bacdive_reader:
+                collection_number_list = row[BACDIVE_CULTURE_COLLECTION_NUMBER_COLUMN]
+                second_column_value = (
+                    self._clean_row(ast.literal_eval(collection_number_list)) if collection_number_list else ""
+                )
+                mapping_writer.writerow([row[BACDIVE_ID_COLUMN], second_column_value, row[NCBITAXON_ID_COLUMN]])
+                bacdive_ncbitaxon_dict[row[BACDIVE_ID_COLUMN]] = row[NCBITAXON_ID_COLUMN]
 
         pruned_file = BACTOTRAITS_TMP_DIR / f"{self.source_name}.tsv"
 
@@ -307,10 +293,10 @@ class BactoTraitsTransform(Transform):
             open(self.output_edge_file, "w") as edge,
         ):
             reader = csv.reader(infile, delimiter=";")
-            writer = csv.writer(outfile, delimiter="\t")
-            node_writer = csv.writer(node, delimiter="\t")
+            writer = tsv_writer(outfile)
+            node_writer = tsv_writer(node)
             node_writer.writerow(self.node_header)
-            edge_writer = csv.writer(edge, delimiter="\t")
+            edge_writer = tsv_writer(edge)
             edge_writer.writerow(self.edge_header)
 
             # Load custom YAML mappings for terms not in METPO

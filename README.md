@@ -50,20 +50,31 @@ distinct names such as `merged-kg-minimal.tar.gz`,
 variant cannot masquerade as the canonical graph. The source differences are
 defined in `config/merge_variants.yaml`.
 
-The release workflow publishes the checksum-verified Jenkins artifact as
-`kg-microbe-YYYYMMDD.tar.gz`. It contains the canonical
-`merged-kg_nodes.tsv`, `merged-kg_edges.tsv`, and dated graph statistics. The
-release also includes `artifact-provenance.txt` with the build URL, checksum,
-and workflow revision.
+Published releases use their own asset names. For example, the 2025-03-07
+release provides `kg-microbe-core.tar.gz` and `kg-microbe-biomedical.tar.gz`;
+the 2024-08-26 release provides `20240826.tar.gz`. These historical assets
+do not include the proposed `artifact-provenance.txt` sidecar. Inspect each
+release's actual asset list and archive contents rather than assuming that
+current build statistics or manifests are included.
 
-- Immutable dated builds:
-  `https://kg-hub.berkeleybop.io/kg-microbe/YYYYMMDD/kg-microbe.tar.gz`
-- Mutable most-recent build:
-  `https://kg-hub.berkeleybop.io/kg-microbe/current/kg-microbe.tar.gz`
-- Latest curated GitHub release: [releases/latest](https://github.com/Knowledge-Graph-Hub/kg-microbe/releases/latest)
+The `release.yml` workflow is configured to publish
+`kg-microbe-YYYYMMDD.tar.gz` plus `artifact-provenance.txt`, but its download
+step still depends on the retired kg-hub endpoint
+([#887](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/887)).
+This describes the workflow contract, not a successfully published artifact.
 
-Use a dated URL or a GitHub release checksum for reproducible downstream work;
-the `current` URL changes after a successful pipeline publication.
+Download builds from GitHub releases:
+
+- All releases: [releases](https://github.com/Knowledge-Graph-Hub/kg-microbe/releases)
+- Latest curated release: [releases/latest](https://github.com/Knowledge-Graph-Hub/kg-microbe/releases/latest)
+- Merged graph matching the 2024-08-26 taxa-to-media predictions:
+  [2024-08-26/20240826.tar.gz](https://github.com/Knowledge-Graph-Hub/kg-microbe/releases/download/2024-08-26/20240826.tar.gz)
+  (SHA-256 `5eae75b3d189dc61cb53a3b2348435c6fcf6941d98538af3e789f7059d0a67fa`)
+
+Pin a specific release tag and verify the checksum for reproducible downstream
+work. The former `https://kg-hub.berkeleybop.io/kg-microbe/...` dated and
+`current` URLs are no longer served (they return 404); GitHub releases are the
+supported distribution channel.
 
 ## Release
  ### Requirements

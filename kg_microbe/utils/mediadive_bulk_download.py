@@ -7,10 +7,12 @@ to avoid repeated API calls during transforms.
 
 import json
 import logging
+import math
 import shutil
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -22,6 +24,10 @@ from tqdm import tqdm
 # Default to 5 workers — still a large speedup over sequential but polite to
 # MediaDive, which is a small academic REST API at DSMZ.
 DEFAULT_MAX_WORKERS = 5
+
+# A longer server-requested pause ends this request instead of tying up a worker
+# indefinitely or retrying earlier than the server permits.
+MAX_RETRY_AFTER_SECONDS = 300
 
 # Name of the HTTP response cache, stored alongside the bulk output files.
 CACHE_FILENAME = "mediadive_bulk_cache.sqlite"
@@ -226,6 +232,23 @@ def _make_session() -> requests.Session:
     return session
 
 
+def _retry_after_delay(value, default: float) -> Optional[float]:
+    """Parse seconds/date; use default for malformed values, None for long waits."""
+    try:
+        delay = float(value)
+    except (TypeError, ValueError):
+        try:
+            parsed = parsedate_to_datetime(value)
+            if parsed.tzinfo is None:
+                return default
+            delay = max(0.0, parsed.timestamp() - time.time())
+        except (TypeError, ValueError, OverflowError):
+            return default
+    if not math.isfinite(delay) or delay < 0:
+        return default
+    return delay if delay <= MAX_RETRY_AFTER_SECONDS else None
+
+
 def get_json_from_api(
     url: str,
     retry_count: int = 3,
@@ -236,7 +259,9 @@ def get_json_from_api(
     """
     Get JSON data from MediaDive API with retry logic.
 
-    Respects Retry-After headers on 429 responses.
+    Respects Retry-After headers on 429 responses. A requested delay over five
+    minutes ends the request without retrying early; malformed headers use
+    retry_delay instead.
 
     Args:
     ----
@@ -264,7 +289,13 @@ def get_json_from_api(
             return result
         except requests.exceptions.HTTPError as e:
             if e.response is not None and e.response.status_code == 429:
-                wait = float(e.response.headers.get("Retry-After", retry_delay))
+                if attempt == retry_count - 1:
+                    logger.warning(f"Request failed after {retry_count} 429 responses: {e} (URL: {url})")
+                    return {}
+                wait = _retry_after_delay(e.response.headers.get("Retry-After"), retry_delay)
+                if wait is None:
+                    logger.warning(f"Retry-After exceeds bounded wait; not retrying (URL: {url})")
+                    return {}
                 logger.debug(f"429 Too Many Requests — waiting {wait}s (URL: {url})")
                 time.sleep(wait)
                 continue
@@ -274,6 +305,7 @@ def get_json_from_api(
             else:
                 logger.warning(f"Request failed after {retry_count} attempts: {e} (URL: {url})")
                 return {}
+
         except requests.exceptions.RequestException as e:
             if attempt < retry_count - 1:
                 logger.debug(f"Retry {attempt + 1}/{retry_count} after error: {e} (URL: {url})")
@@ -282,6 +314,8 @@ def get_json_from_api(
                 # Log to file instead of stdout - 404s are expected for media without strains
                 logger.warning(f"Request failed after {retry_count} attempts: {e} (URL: {url})")
                 return {}
+
+    return {}
 
 
 def load_basic_media_list(basic_file: str) -> List[Dict]:
@@ -349,7 +383,7 @@ def download_detailed_media(
         max_workers: Number of parallel download threads
         retry_count: Number of retries on request failure
         retry_delay: Seconds between retries (overridden by Retry-After on 429)
-        requests_per_second: Maximum sustained request rate (smooths bursts)
+        requests_per_second: Reserved for caller compatibility; concurrency is limited by max_workers
 
     Returns:
     -------
@@ -394,7 +428,7 @@ def download_medium_strains(
         max_workers: Number of parallel download threads
         retry_count: Number of retries on request failure
         retry_delay: Seconds between retries (overridden by Retry-After on 429)
-        requests_per_second: Maximum sustained request rate (smooths bursts)
+        requests_per_second: Reserved for caller compatibility; concurrency is limited by max_workers
 
     Returns:
     -------

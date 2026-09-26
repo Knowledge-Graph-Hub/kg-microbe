@@ -1,0 +1,22 @@
+ID	label	parent classes (one strongly preferred)	biolink close match	biolink broad match	madin synonym or field	bacdive keyword synonym
+ID	LABEL	SC % SPLIT=|	AI skos:closeMatch	AI skos:broadMatch	A oboInOwl:hasRelatedSynonym SPLIT=|	A oboInOwl:hasRelatedSynonym SPLIT=|
+METPO:1000059	phenotype	quality	https://biolink.github.io/biolink-model/PhenotypicQuality			
+METPO:1000188	quality					
+METPO:1000601	oxygen preference	phenotype			metabolism	Physiology and metabolism.oxygen tolerance.oxygen tolerance
+METPO:1000602	aerobic	oxygen preference			aerobic	aerobe
+METPO:1000620	halophilic	halophily preference			halophilic	halophilic
+METPO:1000629	halophily preference	phenotype			range_salinity	Physiology and metabolism.halophily.halophily level
+METPO:1000631	trophic type	phenotype			pathways	Physiology and metabolism.nutrition type.type
+METPO:1000632	autotrophic	trophic type			autotrophy	autotroph
+METPO:1000666	cell shape	phenotype			cell_shape	Morphology.cell morphology.cell shape
+METPO:1000681	rod shaped	cell shape				rod-shaped
+METPO:1000697	gram stain	phenotype			gram_stain	Morphology.cell morphology.gram stain
+METPO:1000698	gram positive	gram stain			positive	positive
+METPO:1000701	motility	phenotype			motility	Morphology.cell morphology.motility
+METPO:1000702	motile	motility			yes	yes
+METPO:1000703	non motile	motility			no	no
+METPO:1000870	sporulation	phenotype			sporulation	Physiology and metabolism.spore formation.spore formation|General.keywords
+METPO:1000871	spore forming	sporulation			yes	yes
+METPO:1000872	non-spore forming	sporulation			no	no
+METPO:1001101	biosafety level	quality				Safety information.risk assessment.biosafety level
+METPO:1001102	biosafety level 1	biosafety level				1

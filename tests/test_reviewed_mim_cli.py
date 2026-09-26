@@ -13,10 +13,13 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_committed_release_pin():
-    """Pin the selected supported release independently of downloaded bytes."""
+    """Pin the selected immutable export without inventing a published release tag."""
     pin = cli.load_release_pin(REPO_ROOT)
-    assert pin["release_tag"] == "mim-sssom-2026-09-21"
-    assert pin["manifest_sha256"] == "cf883804354b5d4e9796e7e952a023b240ff951ed95372fb212c7afd47c65dcd"
+    assert pin["schema_version"] == 2
+    assert pin["origin"] == "immutable_commit_export"
+    assert pin["source_commit"] == "1848b0fe521bc2462f165912fcf92d09ad9a8cec"
+    assert pin["manifest_sha256"] == "9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af"
+    assert "release_tag" not in pin and "release_url" not in pin
     assert pin["mode"] == "candidate_only"
 
 
@@ -72,13 +75,18 @@ def test_candidate_uses_only_explicit_reconstruction_inputs(tmp_path):
     """Do not silently replay MIM companions or feedback-derived fallback tables."""
     from scripts import mim_conservative_refresh as builder
 
-    with patch.object(builder, "build_conservative_candidate", return_value="candidate") as build:
+    with (
+        patch.object(builder, "build_conservative_candidate", return_value="candidate") as build,
+        patch.object(cli, "validate_immutable_export", return_value={"verification": "test-only"}) as verify,
+    ):
         result = cli.build_candidate(
             repo_root=REPO_ROOT,
             data_root=tmp_path / "data",
             release_directory=tmp_path / "release",
             output_directory=tmp_path / "candidate",
+            source_archive=tmp_path / "source.tar.gz",
         )
+    verify.assert_called_once()
     assert result == "candidate"
     parameters = build.call_args.kwargs
     names = {source.path.name for source in parameters["independent_sources"]}
@@ -86,6 +94,8 @@ def test_candidate_uses_only_explicit_reconstruction_inputs(tmp_path):
     assert len(parameters["ontology_paths"]) == 9
     assert parameters["baseline"] == REPO_ROOT / "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
     assert parameters["expected_manifest_sha256"] == cli.load_release_pin(REPO_ROOT)["manifest_sha256"]
+    assert parameters["upstream_provenance"]["pin"] == cli.load_release_pin(REPO_ROOT)
+    assert str(tmp_path / "source.tar.gz") in {str(path) for path in parameters["provenance_inputs"]}
 
 
 def test_committed_reconstruction_inputs_have_valid_shapes():

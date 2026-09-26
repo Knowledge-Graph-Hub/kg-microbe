@@ -382,6 +382,59 @@ class TestIgnoreCachePlumbing:
 class TestRetryAfter:
     """Verify that 429 responses with Retry-After headers are honoured."""
 
+    @pytest.mark.parametrize(
+        ("header", "expected"),
+        [
+            ("7", 7),
+            ("300", 300),
+            ("0.5", 0.5),
+            ("Thu, 01 Jan 1970 00:01:45 GMT", 5),
+            ("Thu, 01 Jan 1970 00:00:01 GMT", 0),
+            ("not a date", 2),
+            (None, 2),
+            ("NaN", 2),
+            ("inf", 2),
+            ("-1", 2),
+        ],
+    )
+    def test_retry_header_is_safe_and_exhaustion_returns_dict(self, header, expected):
+        """Mock responses, clock and sleep; no retry or malformed date escapes."""
+        response = MagicMock(spec=requests.Response)
+        response.status_code = 429
+        response.headers = {"Retry-After": header}
+        response.raise_for_status.side_effect = requests.exceptions.HTTPError(response=response)
+        session = MagicMock()
+        session.get.return_value = response
+        with (
+            patch("kg_microbe.utils.mediadive_bulk_download.time.sleep") as sleep,
+            patch("kg_microbe.utils.mediadive_bulk_download.time.time", return_value=100),
+        ):
+            result = get_json_from_api("https://example.invalid", retry_count=2, session=session)
+        assert result == {}
+        assert session.get.call_count == 2
+        sleep.assert_called_once_with(expected)
+
+    @pytest.mark.parametrize("header", ["301", "1e300", "Fri, 31 Dec 9999 23:59:59 GMT"])
+    def test_long_retry_after_stops_without_retrying_early(self, header):
+        """Large finite delays neither overflow sleep nor bypass server backoff."""
+        response = MagicMock(spec=requests.Response)
+        response.status_code = 429
+        response.headers = {"Retry-After": header}
+        response.raise_for_status.side_effect = requests.exceptions.HTTPError(response=response)
+        session = MagicMock()
+        session.get.return_value = response
+        with patch("kg_microbe.utils.mediadive_bulk_download.time.sleep") as sleep:
+            result = get_json_from_api("https://example.invalid", retry_count=2, session=session)
+        assert result == {}
+        assert session.get.call_count == 1
+        sleep.assert_not_called()
+
+    def test_zero_attempts_returns_empty_dict_without_request(self):
+        """Even an empty retry range preserves the documented dictionary result."""
+        session = MagicMock()
+        assert get_json_from_api("https://example.invalid", retry_count=0, session=session) == {}
+        session.get.assert_not_called()
+
     def test_respects_retry_after_header(self):
         """On 429, should wait the Retry-After duration before retrying."""
         mock_429 = MagicMock(spec=requests.Response)

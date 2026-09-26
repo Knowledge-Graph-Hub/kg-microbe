@@ -438,57 +438,128 @@ class MediaDiveTransform(Transform):
             Dictionary mapping normalized compound names to ontology IDs.
 
         """
-        mappings = {}
+        from kg_microbe.transform_utils.constants import HAS_PART_PREDICATE
+        from kg_microbe.utils.ingredient_identity import _hydration_scope
+
         try:
             if not mapping_file.exists():
                 print(f"  {description} not found at {mapping_file}")
-                return mappings
+                return {}
 
             print(f"  Loading {description} from {mapping_file}")
-
-            # Load TSV file (format: medium_id, original, mapped, ...)
-            df = pd.read_csv(mapping_file, sep="\t")
-
-            # Create lookup dictionary: original (normalized) -> mapped
-            # Only include mappings that are NOT custom MediaDive prefixes (we want real ontology IDs)
-            # Filter both old-style (ingredient:, solution:, medium:) and
-            # Bioregistry-style (mediadive.ingredient:, mediadive.solution:, mediadive.medium:) prefixes
-            df["original_normalized"] = df["original"].astype(str).str.lower().str.strip()
-            df["mapped"] = df["mapped"].astype(str)
-
-            # Filter out unwanted prefixes (both old-style and Bioregistry-style)
-            unwanted_prefixes = (
-                "ingredient:",
-                "solution:",
-                "medium:",
-                MEDIADIVE_INGREDIENT_PREFIX,
-                MEDIADIVE_SOLUTION_PREFIX,
-                MEDIADIVE_MEDIUM_PREFIX,
-            )
-            mask = ~df["mapped"].str.startswith(unwanted_prefixes)
-            df = df[mask].copy()  # Single copy after filtering
-
-            # Reject reviewed false identities before deduplication so a later
-            # valid grounding for the same ingredient remains available.
-            df = df[
-                [
-                    self._ingredient_identity_allowed(name, target)
-                    for name, target in zip(df["original"], df["mapped"], strict=True)
-                ]
-            ]
-            # Drop duplicates to keep first occurrence (earlier mappings take precedence)
-            df = df.drop_duplicates(subset="original_normalized", keep="first")
-            mappings = df.set_index("original_normalized")["mapped"].to_dict()
-            print(f"    Loaded {len(mappings)} mappings from {description}")
-
-        except KeyError as e:
-            print(f"  Warning: Could not load {description}: KeyError {e}")
+            # Preserve identifiers and blank optional fields without NaN coercion.
+            df = pd.read_csv(mapping_file, sep="\t", dtype=str, keep_default_na=False)
+            if not {"original", "mapped"}.issubset(df.columns):
+                print(f"  Warning: Could not load {description}: missing original/mapped columns")
+                return {}
         except pd.errors.ParserError as e:
             print(f"  Warning: Could not parse {description}: {e}")
+            return {}
         except pd.errors.EmptyDataError:
             print(f"  Warning: {description} file is empty")
-        except Exception as e:
-            print(f"  Warning: Could not load {description}: {type(e).__name__}: {e}")
+            return {}
+
+        # The hydrate file supplies a *different* identity, not permission to
+        # strip water. Confirm its relationship to that row's supplied base
+        # independently in native ChEBI before considering the supplied ID.
+        # Infrastructure failures must abort, outside the optional TSV parser.
+        has_hydrates = "hydrated_chebi_id" in df and df["hydrated_chebi_id"].str.strip().ne("").any()
+        if has_hydrates and not hasattr(self, "_native_hydrate_parts"):
+            parts = set()
+            required = {
+                SUBJECT_COLUMN,
+                PREDICATE_COLUMN,
+                OBJECT_COLUMN,
+                RELATION_COLUMN,
+                PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+            }
+            with CHEBI_EDGES_FILE.open(encoding="utf-8", newline="") as stream:
+                reader = csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE)
+                if len(reader.fieldnames or ()) != len(set(reader.fieldnames or ())) or not required.issubset(
+                    reader.fieldnames or ()
+                ):
+                    raise ValueError(f"Invalid MediaDive native hydrate evidence header: {CHEBI_EDGES_FILE}")
+                for line, row in enumerate(reader, 2):
+                    if None in row or any(row.get(column) is None for column in required):
+                        raise ValueError(f"Malformed MediaDive native hydrate evidence: {CHEBI_EDGES_FILE}, row {line}")
+                    if (
+                        row[PREDICATE_COLUMN] == HAS_PART_PREDICATE
+                        and row[RELATION_COLUMN] == HAS_PART
+                        and row[PRIMARY_KNOWLEDGE_SOURCE_COLUMN] == "infores:chebi"
+                    ):
+                        parts.add((row[SUBJECT_COLUMN], row[OBJECT_COLUMN]))
+            self._native_hydrate_parts = frozenset(parts)
+
+        unwanted_prefixes = (
+            "ingredient:",
+            "solution:",
+            "medium:",
+            MEDIADIVE_INGREDIENT_PREFIX,
+            MEDIADIVE_SOLUTION_PREFIX,
+            MEDIADIVE_MEDIUM_PREFIX,
+        )
+        mappings = {}
+        declared = getattr(self, "_supplied_hydrate_names", set())
+        held = getattr(self, "_held_hydrate_names", set())
+        claims = getattr(self, "_legacy_identity_claims", {})
+        for row in df.to_dict("records"):
+            name, base = row["original"].strip(), row["mapped"].strip()
+            if not name or not base or base.startswith(unwanted_prefixes):
+                continue
+            key = name.lower()
+            candidates = set()
+            if self._ingredient_identity_allowed(name, base):
+                candidates.add(base)
+            hydrated = row.get("hydrated_chebi_id", "").strip()
+            if hydrated:
+                declared.add(key)
+                label = getattr(self, "chebi_labels", {}).get(hydrated, "")
+                native_names = (label, *getattr(self, "chebi_hydrate_names", {}).get(hydrated, ()))
+                supplied_label = row.get("hydrated_chebi_label", "").strip()
+                scope = _hydration_scope(name)
+                supplied_count = row.get("hydration_number", "").strip()
+                try:
+                    count_agrees = not supplied_count or float(supplied_count) == scope
+                except ValueError:
+                    count_agrees = False
+                valid_id = (
+                    hydrated.startswith(CHEBI_PREFIX)
+                    and hydrated[len(CHEBI_PREFIX) :].isascii()
+                    and hydrated[len(CHEBI_PREFIX) :].isdigit()
+                )
+                valid_label = bool(label and supplied_label) and supplied_label.casefold() in {
+                    value.strip().casefold() for value in native_names if value
+                }
+                same_declared_target = hydrated == base and base in candidates
+                independently_linked = (
+                    (hydrated, base) in self._native_hydrate_parts and isinstance(scope, (int, float)) and scope > 0
+                )
+                if (
+                    valid_id
+                    and valid_label
+                    and count_agrees
+                    and (same_declared_target or independently_linked)
+                    and self._ingredient_identity_allowed(name, hydrated)
+                ):
+                    candidates.add(hydrated)
+                else:
+                    held.add(key)
+            claims.setdefault(key, set()).update(candidates)
+            if candidates:
+                # Non-hydrate legacy rows retain first-admitted-row priority.
+                mappings.setdefault(key, base if base in candidates else next(iter(candidates)))
+
+        # Reject contradictory supplied identities, also across the priority
+        # files. A later strict row cannot restore a held hydrate alias or leave
+        # an already-installed conflicting legacy result behind.
+        held.update(key for key in declared if len(claims.get(key, ())) > 1)
+        for key in held:
+            mappings.pop(key, None)
+            getattr(self, "compound_mappings", {}).pop(key, None)
+        self._supplied_hydrate_names = declared
+        self._held_hydrate_names = held
+        self._legacy_identity_claims = claims
+        print(f"    Loaded {len(mappings)} mappings from {description}")
 
         return mappings
 
@@ -497,7 +568,7 @@ class MediaDiveTransform(Transform):
         Load MicroMediaParam compound mappings for chemical name to ontology ID mapping.
 
         Loads mappings in priority order:
-        1. Hydrate mappings (highest priority) - maps hydrated compounds to base ChEBI IDs
+        1. Hydrate mappings (highest priority) - admits supplied hydrate IDs with native evidence
         2. Strict mappings (fallback) - standard compound name to ontology ID mappings
 
         Maps compound names to standardized IDs (ChEBI, CAS-RN, PubChem, etc.)
@@ -507,7 +578,7 @@ class MediaDiveTransform(Transform):
         print("Loading MicroMediaParam compound mappings...")
 
         # Step 1: Load hydrate mappings first (these take precedence)
-        # Hydrate mappings map hydrated compound names to their base (anhydrous) ChEBI IDs
+        # Supplied hydrate IDs require native scope and hydrate-to-base part evidence.
         hydrate_file = Path(self.input_base_dir) / MICROMEDIAPARAM_HYDRATE_MAPPINGS_FILE
         hydrate_mappings = self._load_mapping_file(hydrate_file, "hydrate mappings")
         self.compound_mappings.update(hydrate_mappings)
@@ -636,40 +707,43 @@ class MediaDiveTransform(Transform):
             return ingredients_dict
         for item in data[RECIPE_KEY]:
             if COMPOUND_ID_KEY in item and item[COMPOUND_ID_KEY] is not None:
-                item[COMPOUND_KEY] = (
+                # Display cleanup must not erase chemical formula/scope before
+                # lookup, or mutate the cached source for later calls (#1167).
+                source_name = item[COMPOUND_KEY]
+                display_name = (
                     item[COMPOUND_KEY].translate(self.translation_table).replace('""', "").strip()
                     if isinstance(item[COMPOUND_KEY], str)
                     else item[COMPOUND_KEY]
                 )
-                ingredients_dict[item[COMPOUND_KEY]] = {
-                    ID_COLUMN: self.standardize_compound_id(str(item[COMPOUND_ID_KEY]), item[COMPOUND_KEY]),
+                ingredients_dict[display_name] = {
+                    ID_COLUMN: self.standardize_compound_id(str(item[COMPOUND_ID_KEY]), source_name),
                     AMOUNT_COLUMN: item.get(AMOUNT_COLUMN),
                     UNIT_COLUMN: item.get(UNIT_COLUMN),
                     GRAMS_PER_LITER_COLUMN: item.get(GRAMS_PER_LITER_COLUMN),
                     MMOL_PER_LITER_COLUMN: item.get(MMOL_PER_LITER_COLUMN),
                 }
             elif SOLUTION_ID_KEY in item and item[SOLUTION_ID_KEY] is not None:
-                # Normalize solution name for display and mapping lookup
-                # Ensure consistent string handling for both dict key and mapping lookup
+                # Resolve the original scope; normalize only the display key.
                 if isinstance(item[SOLUTION_KEY], str):
-                    solution_name = item[SOLUTION_KEY].translate(self.translation_table).replace('""', "").strip()
+                    source_name = item[SOLUTION_KEY]
+                    solution_name = source_name.translate(self.translation_table).replace('""', "").strip()
                 elif item[SOLUTION_KEY] is not None:
-                    solution_name = str(item[SOLUTION_KEY])
+                    source_name = solution_name = str(item[SOLUTION_KEY])
                 else:
-                    solution_name = ""
+                    source_name = solution_name = ""
 
-                solution_name_normalized = solution_name.lower()
+                solution_name_normalized = source_name.lower().strip()
 
                 # Check if solution name can be mapped to ontology via unified or legacy mappings
                 candidates = [
-                    self.chemical_loader.find_chebi_by_name(solution_name),
+                    self.chemical_loader.find_chebi_by_name(source_name),
                     self.compound_mappings.get(solution_name_normalized),
                 ]
                 solution_id = next(
                     (
                         candidate
                         for candidate in candidates
-                        if candidate and self._ingredient_identity_allowed(solution_name, candidate)
+                        if candidate and self._ingredient_identity_allowed(source_name, candidate)
                     ),
                     MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY]),
                 )

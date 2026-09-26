@@ -411,7 +411,7 @@ Uses module-level caching internally.</p>
 <li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Chemical name to search for</p></li>
 <li><p><strong>synonyms</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, search both canonical names and synonyms</p></li>
 <li><p><strong>fuzzy_stereochemistry</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, retry with stereochemistry prefixes removed</p></li>
-<li><p><strong>fuzzy_hydrate</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, retry with trailing hydrate suffixes stripped</p></li>
+<li><p><strong>fuzzy_hydrate</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Compatibility argument; never strips hydration to infer identity</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -636,10 +636,9 @@ name matches. The legacy function name is retained for API stability.</p>
 <li><p><strong>synonyms</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, search both canonical names and synonyms
 If False, only search canonical names</p></li>
 <li><p><strong>fuzzy_stereochemistry</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True and exact match fails, retry with stereochemistry prefixes removed</p></li>
-<li><p><strong>fuzzy_hydrate</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True and exact match fails, retry with trailing hydrate suffixes
-(e.g. “ x n H2O”, “ · 6 H2O”) stripped from the query and also check
-a hydrate-free index of canonical/synonym names. Useful for MediaDive
-inorganic-hydrate ingredient names.</p></li>
+<li><p><strong>fuzzy_hydrate</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Retained for call compatibility; hydration stripping no longer
+establishes identity. Use get_hydrate_equivalents for separately
+asserted weak recipe relations, not ingredient substitution.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -2218,6 +2217,18 @@ an ontology identifier itself. Native ontology declarations/edges remain valid.<
 <dt class="sig sig-object py" id="kg_microbe.utils.ingredient_identity.ingredient_case_sensitive_name_scope">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.ingredient_identity.</span></span><span class="sig-name descname"><span class="pre">ingredient_case_sensitive_name_scope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ingredient_identity.ingredient_case_sensitive_name_scope" title="Link to this definition"></a></dt>
 <dd><p>Return (recognized family, exact-case target); unknown spelling in a family fails closed.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.ingredient_identity.ingredient_hydration_compatible">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.ingredient_identity.</span></span><span class="sig-name descname"><span class="pre">ingredient_hydration_compatible</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authority_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">authority_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ingredient_identity.ingredient_hydration_compatible" title="Link to this definition"></a></dt>
+<dd><p>Reject hydration-scope changes without asserting a replacement chemical identity.</p>
+<p>A separately supplied mapping still establishes the base identity. An
+explicit hydrate additionally needs a declared target label with the same
+water count. Independently native synonyms may refine an unspecified target
+hydrate only when their numeric scopes agree. Two unspecified hydrate scopes
+are compatible, but neither authorizes a specific water count. Missing
+evidence fails closed. Native labels remain queryable.</p>
 </dd></dl>
 
 <dl class="py function">

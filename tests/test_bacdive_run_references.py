@@ -176,3 +176,67 @@ def test_run_keeps_native_phenotype_contexts_separate(tmp_path, monkeypatch, mot
     phenotype_nodes = [row for row in nodes if row["id"].startswith("METPO:")]
     assert {row["id"] for row in phenotype_nodes} == {curie for _, curie in expected}
     assert all(row["category"] == "biolink:PhenotypicQuality" for row in phenotype_nodes)
+
+
+def test_run_preserves_observed_spore_keyword_and_conflict(tmp_path, monkeypatch):
+    """Exact raw projections retain the independent positive and opposing structured claim."""
+    monkeypatch.setenv("KG_MICROBE_METPO_TEMPLATE_DIR", str(FIXTURE.parent.parent / "bacdive_phenotype_context"))
+    records = json.loads((FIXTURE.parent.parent / "bacdive_spore_keyword/records.json").read_text())
+    edges, nodes = _run_fixture(tmp_path, monkeypatch, records, native_context=True)
+    sporulation = [row for row in edges if row["object"] in {"METPO:1000871", "METPO:1000872"}]
+    assert {(row["subject"], row["object"]) for row in sporulation} == {
+        ("kgmicrobe.strain:bacdive_164622", "METPO:1000871"),
+        ("kgmicrobe.strain:bacdive_164622", "METPO:1000872"),
+        ("kgmicrobe.strain:bacdive_654", "METPO:1000871"),
+    }
+    assert len(sporulation) == 3
+    for row in sporulation:
+        assert row["predicate"] == "biolink:has_phenotype"
+        assert row["relation"] == module.HAS_PHENOTYPE
+        assert row["primary_knowledge_source"] == "infores:bacdive"
+        assert row["knowledge_level"] == "observation"
+        assert row["agent_type"] == "manual_agent"
+        assert row[PUBLICATIONS_COLUMN] == f"https://bacdive.dsmz.de/strain/{row['subject'].rsplit('_', 1)[1]}"
+        assert row["value"] == row["unit"] == row[ORIGINAL_OBJECT_COLUMN] == ""
+    assert {row["id"] for row in nodes if row["id"] in {"METPO:1000871", "METPO:1000872"}} == {
+        "METPO:1000871",
+        "METPO:1000872",
+    }
+
+
+@pytest.mark.parametrize("motility", ["yes", "no", None])
+@pytest.mark.parametrize("sporulation", ["yes", "no", None])
+@pytest.mark.parametrize("keyword_shape", ["scalar", "list", "repeated"])
+def test_run_spore_keyword_is_independent_of_motility(tmp_path, monkeypatch, motility, sporulation, keyword_shape):
+    """The keyword supports only positive sporulation, independently of both structured fields."""
+    monkeypatch.setenv("KG_MICROBE_METPO_TEMPLATE_DIR", str(FIXTURE.parent.parent / "bacdive_phenotype_context"))
+    keyword = "spore-forming"
+    keywords = keyword if keyword_shape == "scalar" else [keyword] * (2 if keyword_shape == "repeated" else 1)
+    record = {"General": {"BacDive-ID": 654, "keywords": keywords}}
+    if motility is not None:
+        record["Morphology"] = {"cell morphology": {"motility": motility}}
+    if sporulation is not None:
+        record["Physiology and metabolism"] = {"spore formation": {"spore formation": sporulation}}
+    edges, _ = _run_fixture(tmp_path, monkeypatch, [record], native_context=True)
+    expected = {"METPO:1000871"}
+    if sporulation == "no":
+        expected.add("METPO:1000872")
+    if motility is not None:
+        expected.add({"yes": "METPO:1000702", "no": "METPO:1000703"}[motility])
+    assert {row["object"] for row in edges} == expected
+    assert len(edges) == len(expected)
+    assert all(row["subject"] == "kgmicrobe.strain:bacdive_654" for row in edges)
+    assert all(row["predicate"] == "biolink:has_phenotype" for row in edges)
+    assert all(row[PUBLICATIONS_COLUMN] == "https://bacdive.dsmz.de/strain/654" for row in edges)
+
+
+@pytest.mark.parametrize(
+    "keyword", ["yes", "no", "non-spore-forming", "spore-shaped", "Spore-forming", "spore forming"]
+)
+@pytest.mark.parametrize("as_list", [False, True])
+def test_run_does_not_generalize_positive_spore_keyword(tmp_path, monkeypatch, keyword, as_list):
+    """The whole producer must not turn a naked value, negative or shape into positive sporulation."""
+    monkeypatch.setenv("KG_MICROBE_METPO_TEMPLATE_DIR", str(FIXTURE.parent.parent / "bacdive_phenotype_context"))
+    record = {"General": {"BacDive-ID": 654, "keywords": [keyword] if as_list else keyword}}
+    edges, _ = _run_fixture(tmp_path, monkeypatch, [record], native_context=True)
+    assert not any(row["object"] in {"METPO:1000871", "METPO:1000872"} for row in edges)

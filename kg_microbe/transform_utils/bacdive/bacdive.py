@@ -187,6 +187,7 @@ from kg_microbe.transform_utils.constants import (
     SENSITIVITY_KEY,
     SPECIES,
     SPORE_FORMATION,
+    SPORULATION_COLUMN,
     STRAIN,
     STRAIN_DESIGNATION,
     STRAIN_PREFIX,
@@ -1346,21 +1347,38 @@ class BacDiveTransform(Transform):
 
     def _phenotype_mapping(self, value, parent_node, json_path):
         """Resolve field values in their native trait context, never by last-wins alias."""
+        explicit_spore_keyword = json_path == f"{GENERAL}.{KEYWORDS}" and value == "spore-forming"
         if json_path == f"{GENERAL}.{KEYWORDS}":
             # This shared tag path happens to be listed under sporulation in
             # METPO. Its unambiguous tags can describe any phenotype branch.
-            if value in self._ambiguous_metpo_aliases:
-                return None
-            return self.bacdive_metpo_mappings.get(value)
-
-        mapping = self.bacdive_metpo_mappings.get(f"{parent_node.label}.{value}")
-        if mapping is None:
-            mapping = self.bacdive_metpo_mappings.get(value)
+            if value == "spore-forming":
+                # BacDive's explicit keyword names the native positive trait
+                # (#1178). Do not infer it from motility or normalize other
+                # tags/negations. Keep the same target/ancestry checks below.
+                if parent_node.label != SPORULATION_COLUMN:
+                    return None
+                mapping = self.bacdive_metpo_mappings.get(f"{SPORULATION_COLUMN}.yes")
+                if mapping is None or mapping.get("curie") != "METPO:1000871":
+                    raise ValueError("BacDive spore-forming keyword requires native sporulation.yes -> METPO:1000871")
+            else:
+                if value in self._ambiguous_metpo_aliases:
+                    return None
+                return self.bacdive_metpo_mappings.get(value)
+        else:
+            mapping = self.bacdive_metpo_mappings.get(f"{parent_node.label}.{value}")
+            if mapping is None:
+                mapping = self.bacdive_metpo_mappings.get(value)
         if mapping is None:
             return None
         target = self.bacdive_metpo_tree.get(mapping["curie"])
         if target is None:
             raise ValueError(f"BacDive phenotype mapping target is absent from METPO: {mapping['curie']}")
+        if explicit_spore_keyword and (
+            mapping.get("label") != target.label
+            or uri_to_curie(mapping.get("inferred_category", "")) != PHENOTYPIC_CATEGORY
+            or uri_to_curie(mapping.get("predicate_biolink_equivalent", "")) != HAS_PHENOTYPE_PREDICATE
+        ):
+            raise ValueError("BacDive spore-forming keyword has inconsistent native METPO metadata")
         seen = set()
         while target is not None:
             if target.iri == parent_node.iri:
@@ -1369,6 +1387,8 @@ class BacDiveTransform(Transform):
                 raise ValueError(f"Cycle in BacDive METPO phenotype ancestry: {target.iri}")
             seen.add(target.iri)
             target = target.parent
+        if explicit_spore_keyword:
+            raise ValueError("BacDive spore-forming keyword target is outside native sporulation ancestry")
         # A missing contextual alias must not fall back to another trait's
         # identically spelled value (e.g. motility.no -> non-spore forming).
         return None

@@ -1,0 +1,53 @@
+[
+  {
+    "General": {
+      "BacDive-ID": 94,
+      "keywords": ["genome sequence", "16S sequence", "Bacteria", "mesophilic", "Gram-negative", "rod-shaped"]
+    },
+    "Morphology": {
+      "cell morphology": {"@ref": 122180, "motility": "no"}
+    },
+    "Reference": [
+      {"@id": 20215, "doi/url": "10.1099/ijsem.0.004332"},
+      {"@id": 122180, "doi/url": "https://catalogue-crbip.pasteur.fr/fiche_catalogue.xhtml?crbip=CIP%20109761"}
+    ]
+  },
+  {
+    "General": {
+      "BacDive-ID": 654,
+      "keywords": ["genome sequence", "16S sequence", "Bacteria", "aerobe", "spore-forming", "lactate production"]
+    },
+    "Morphology": {
+      "cell morphology": [{"@ref": 22893}, {"@ref": 118318, "motility": "yes"}]
+    },
+    "Reference": [
+      {"@id": 22893, "doi/url": "10.1099/ijs.0.003913-0"},
+      {"@id": 118318, "doi/url": "https://catalogue-crbip.pasteur.fr/fiche_catalogue.xhtml?crbip=CIP%2066.25"}
+    ]
+  },
+  {
+    "General": {
+      "BacDive-ID": 164622,
+      "keywords": ["genome sequence", "16S sequence", "Bacteria", "obligate aerobe", "spore-forming", "mesophilic", "Gram-positive", "motile", "rod-shaped", "colony-forming"]
+    },
+    "Morphology": {
+      "cell morphology": {"@ref": 69640, "motility": "yes"}
+    },
+    "Physiology and metabolism": {
+      "spore formation": {"@ref": 69640, "spore formation": "no", "type of spore": "spore"}
+    },
+    "Reference": [
+      {"@id": 20215, "doi/url": "10.1099/ijsem.0.004332"},
+      {"@id": 69640, "doi/url": "10.1016/j.syapm.2020.126150"}
+    ]
+  },
+  {
+    "General": {
+      "BacDive-ID": 166227,
+      "keywords": ["genome sequence", "16S sequence", "Bacteria", "aerobe", "Gram-positive", "spore-shaped", "pigmented"]
+    },
+    "Morphology": {
+      "cell morphology": {"@ref": 68017, "motility": "no"}
+    }
+  }
+]

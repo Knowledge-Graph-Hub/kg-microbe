@@ -73,3 +73,108 @@ def test_broken_native_ancestry_aborts(native_transform):
     target.parent = target
     with pytest.raises(ValueError, match="Cycle"):
         transform._phenotype_mapping("yes", transform.bacdive_metpo_tree["METPO:1000701"], "field.path")
+
+
+def test_explicit_spore_keyword_uses_native_context(native_transform):
+    """The observed source tag reuses native metadata without adding a shared alias."""
+    transform = native_transform
+    mappings_before = dict(transform.bacdive_metpo_mappings)
+    parent = transform.bacdive_metpo_tree["METPO:1000870"]
+    assert (
+        transform._phenotype_mapping("spore-forming", parent, "General.keywords") == mappings_before["sporulation.yes"]
+    )
+    assert transform.bacdive_metpo_mappings == mappings_before
+    assert "spore-forming" not in transform.bacdive_metpo_mappings
+    assert transform._phenotype_mapping("spore-forming", parent, "Physiology and metabolism.spore formation") is None
+    assert (
+        transform._phenotype_mapping("spore-forming", transform.bacdive_metpo_tree["METPO:1000701"], "General.keywords")
+        is None
+    )
+
+
+@pytest.mark.parametrize(
+    "value",
+    ["yes", "no", "non-spore-forming", "not spore-forming", "no spore-forming", "Spore-forming", "spore forming"],
+)
+def test_explicit_spore_keyword_does_not_normalize_other_values(native_transform, value):
+    """Neither bare polarity nor negation, case or whitespace variants activate this alias."""
+    transform = native_transform
+    assert (
+        transform._phenotype_mapping(value, transform.bacdive_metpo_tree["METPO:1000870"], "General.keywords") is None
+    )
+
+
+@pytest.mark.parametrize("defect", ["wrong-parent", "missing-parent"])
+def test_spore_keyword_incomplete_or_foreign_native_context_is_rejected(native_transform, defect):
+    """A known keyword aborts on broken native ancestry rather than silently disappearing."""
+    transform = native_transform
+    parent = transform.bacdive_metpo_tree["METPO:1000870"]
+    transform.bacdive_metpo_tree["METPO:1000871"].parent = (
+        transform.bacdive_metpo_tree["METPO:1000701"] if defect == "wrong-parent" else None
+    )
+    with pytest.raises(ValueError, match="outside native sporulation ancestry"):
+        transform._phenotype_mapping("spore-forming", parent, "General.keywords")
+
+
+@pytest.mark.parametrize("defect", ["alias", "foreign-target", "opposite-polarity"])
+def test_spore_keyword_requires_native_positive_mapping(native_transform, defect):
+    """Absent or wrong native positive mappings abort rather than lose or invert a known tag."""
+    transform = native_transform
+    if defect == "alias":
+        del transform.bacdive_metpo_mappings["sporulation.yes"]
+    else:
+        key = "motility.yes" if defect == "foreign-target" else "sporulation.no"
+        transform.bacdive_metpo_mappings["sporulation.yes"] = transform.bacdive_metpo_mappings[key]
+    with pytest.raises(ValueError, match="requires native sporulation.yes"):
+        transform._phenotype_mapping("spore-forming", transform.bacdive_metpo_tree["METPO:1000870"], "General.keywords")
+
+
+@pytest.mark.parametrize(
+    "field,value",
+    [
+        ("label", "non-spore forming"),
+        ("inferred_category", "biolink:ChemicalEntity"),
+        ("predicate_biolink_equivalent", "biolink:has_attribute"),
+    ],
+)
+def test_spore_keyword_requires_consistent_native_metadata(native_transform, field, value):
+    """A known positive target cannot carry a conflicting label, category or predicate."""
+    transform = native_transform
+    transform.bacdive_metpo_mappings["sporulation.yes"] = {
+        **transform.bacdive_metpo_mappings["sporulation.yes"],
+        field: value,
+    }
+    with pytest.raises(ValueError, match="inconsistent native METPO metadata"):
+        transform._phenotype_mapping("spore-forming", transform.bacdive_metpo_tree["METPO:1000870"], "General.keywords")
+
+
+@pytest.mark.parametrize("defect", ["missing-target", "cycle"])
+def test_spore_keyword_native_infrastructure_errors_abort(native_transform, defect):
+    """Do not convert absent targets or cyclic native ancestry into silent coverage loss."""
+    transform = native_transform
+    if defect == "missing-target":
+        del transform.bacdive_metpo_tree["METPO:1000871"]
+        message = "absent from METPO"
+    else:
+        target = transform.bacdive_metpo_tree["METPO:1000871"]
+        target.parent = target
+        message = "Cycle"
+    with pytest.raises(ValueError, match=message):
+        transform._phenotype_mapping("spore-forming", transform.bacdive_metpo_tree["METPO:1000870"], "General.keywords")
+
+
+def test_absent_sporulation_route_keeps_existing_outer_noop(native_transform):
+    """Keep the outer helper's pre-existing missing-parent routing contract unchanged."""
+    transform = native_transform
+    del transform.bacdive_metpo_tree["METPO:1000870"]
+    assert (
+        transform._process_phenotype_by_metpo_parent(
+            {"General": {"keywords": ["spore-forming"]}},
+            "METPO:1000870",
+            "kgmicrobe.strain:bacdive_654",
+            "654",
+            None,
+            None,
+        )
+        is None
+    )

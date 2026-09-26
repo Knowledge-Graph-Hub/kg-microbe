@@ -599,6 +599,17 @@ class MetaTraitsTransform(Transform):
             return special.copy()
         return None
 
+    def _reviewed_manual_mapping(self, trait_name: str) -> Optional[dict]:
+        """Apply ingredient identity admission to manual Tier 2 as well as fallback routes."""
+        mapping = self.microbial_mappings.get(trait_name) or self.microbial_mappings.get(trait_name.lower())
+        if (
+            mapping
+            and ingredient_mapping_allowed(trait_name, mapping["object_id"])
+            and ingredient_mapping_allowed(mapping.get("object_label", ""), mapping["object_id"])
+        ):
+            return mapping.copy()
+        return None
+
     # DEPRECATED: _load_chemical_name_synonyms() removed in Phase 2 migration (2026-04-07)
     # Chemical synonyms are now loaded from unified_chemical_mappings.tsv.gz
     # via ChemicalMappingLoader.find_chebi_by_name() which includes synonym search
@@ -2769,9 +2780,7 @@ class MetaTraitsTransform(Transform):
                             label = mapping["name"]
                         else:
                             # Tier 2: Manual mappings (external ontologies + METPO terms not in synonyms)
-                            micro_mapping = self.microbial_mappings.get(trait_name) or self.microbial_mappings.get(
-                                trait_name.lower()
-                            )
+                            micro_mapping = self._reviewed_manual_mapping(trait_name)
                             if micro_mapping:
                                 # Manual mapping (ChEBI, GO, EC, or METPO term not in METPO synonyms)
                                 resolved_pred = self._apply_majority_label_to_predicate(
@@ -3444,9 +3453,7 @@ class MetaTraitsTransform(Transform):
                                 label = mapping["name"]
                             else:
                                 # Tier 2: Manual mappings (external ontologies + METPO terms not in synonyms)
-                                micro_mapping = self.microbial_mappings.get(trait_name) or self.microbial_mappings.get(
-                                    trait_name.lower()
-                                )
+                                micro_mapping = self._reviewed_manual_mapping(trait_name)
                                 if micro_mapping:
                                     # Manual mapping (ChEBI, GO, EC, or METPO term not in METPO synonyms)
                                     resolved_pred = self._apply_majority_label_to_predicate(

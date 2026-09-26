@@ -1,0 +1,3 @@
+subject_id	subject_label	predicate_id	object_id	object_label	object_source	mapping_justification	source	mapping_date	confidence	comment	other	validation_method
+MIM:Proteose	Proteose	skos:exactMatch	kgmicrobe.compound:proteose	Proteose	kgm:compound	semapv:ManualMappingCuration	MIM:MIM curation (#213)|MIM:curator=promote_resolved_unmapped	2026-08-06	0.9			manual:promote_resolved_unmapped|PROMOTED|2026-08-06
+MIM:Soyton	Soyton	skos:exactMatch	kgmicrobe.ingredient:soyton	Soyton	kgm:ingredient	semapv:ManualMappingCuration	MIM:kgm-metatraits|MIM:sssom_synonym_enrich_review_2026_05_10|MIM:curator=sssom_synonym_enrich_review_2026_05_10	2026-05-10	0.9			none|UNKNOWN_TERM|2026-07-07

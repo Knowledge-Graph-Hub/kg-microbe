@@ -16,7 +16,7 @@ import warnings
 # eutils is unmaintained but required by oaklib; warning doesn't affect functionality
 warnings.filterwarnings("ignore", message=".*pkg_resources is deprecated.*", category=UserWarning)
 from pathlib import Path  # noqa: E402
-from typing import Any, Dict, List, Optional, Set, Tuple, Union  # noqa: E402
+from typing import Any, Dict, List, Optional, Set, TextIO, Tuple, Union  # noqa: E402
 
 import pandas as pd  # noqa: E402
 import yaml  # noqa: E402
@@ -2146,12 +2146,15 @@ class MetaTraitsTransform(Transform):
 
         If majority_label is false and a negative predicate exists, returns it.
         If majority_label is false and no negative predicate exists, returns None (caller should skip).
-        If majority_label is true (or empty/unknown), returns the positive predicate.
+        The explicit 'No robust majority' sentinel has no polarity and returns None.
+        Otherwise preserve the existing true/empty and nonempty-label behavior.
 
         :param mapping: Resolver result dict with 'predicate' key (METPO ID or biolink string)
-        :param majority_label: 'true' / 'false' string from input data
+        :param majority_label: Majority label string from input data
         :return: Predicate string to use, or None to skip this observation
         """
+        if majority_label == "No robust majority":
+            return None
         pos_pred = mapping["predicate"]
         is_positive = "true" in majority_label.lower() if majority_label else True
         if is_positive:
@@ -2161,6 +2164,38 @@ class MetaTraitsTransform(Transform):
         if neg_pred:
             return neg_pred
         return None  # no negative form — caller should skip
+
+    @property
+    def indeterminate_traits_file(self) -> Path:
+        """Return the shared serial/worker diagnostic path, including for GTDB."""
+        return self.output_dir / "indeterminate_traits.jsonl"
+
+    def _defer_indeterminate_trait(self, stream: TextIO, summary: dict, tax_name: str, tax_id: str) -> bool:
+        """
+        Preserve an explicitly indeterminate regular summary without asserting polarity.
+
+        Numeric/measurement handling is separate and unchanged. This diagnostic
+        covers summaries reached after taxon admission; it is not an inventory
+        of unresolved taxa. Keep the complete typed summary and repeated records,
+        without claiming a global line number for temporary worker chunks.
+        """
+        if summary.get("majority_label") != "No robust majority" or self._is_measurement_trait(
+            summary.get("name", "").strip()
+        ):
+            return False
+        payload = json.dumps(
+            {
+                "reason": "No robust majority",
+                "primary_knowledge_source": self.knowledge_source,
+                "tax_name": tax_name,
+                "resolved_taxon": tax_id,
+                "summary": summary,
+            },
+            ensure_ascii=False,
+            allow_nan=False,
+        )
+        stream.write(payload + "\n")
+        return True
 
     def _calculate_optimal_workers_for_chunking(self) -> int:
         """
@@ -2346,6 +2381,7 @@ class MetaTraitsTransform(Transform):
         """
         temp_nodes_file = temp_output_dir / f"{input_file.stem}_nodes.tsv"
         temp_edges_file = temp_output_dir / f"{input_file.stem}_edges.tsv"
+        temp_indeterminate_file = temp_output_dir / f"{input_file.stem}_indeterminate_traits.jsonl"
 
         seen_taxon_nodes: Set[str] = set()
         seen_trait_nodes: Set[str] = set()
@@ -2357,6 +2393,7 @@ class MetaTraitsTransform(Transform):
         with (
             _StreamingRowWriter(temp_nodes_file, self.node_header) as node_writer,
             _StreamingRowWriter(temp_edges_file, self.edge_header) as edge_writer,
+            temp_indeterminate_file.open("w", encoding="utf-8") as indeterminate_writer,
         ):
             with _open_jsonl(input_file) as f:
                 line_iter = tqdm(f, desc=f"  {input_file.name}", leave=False) if show_status else f
@@ -2711,6 +2748,8 @@ class MetaTraitsTransform(Transform):
                         ]:
                             continue
 
+                        if self._defer_indeterminate_trait(indeterminate_writer, s, tax_name, tax_id):
+                            continue
                         majority_label = s.get("majority_label", "")
                         percentages = s.get("percentages", {}) or {}
                         # Preserve 0.0 as float (avoid 'or 0' which coerces to int)
@@ -2949,6 +2988,7 @@ class MetaTraitsTransform(Transform):
         return {
             "nodes_file": temp_nodes_file,
             "edges_file": temp_edges_file,
+            "indeterminate_traits_file": temp_indeterminate_file,
             "unmapped_traits": unmapped_traits,
             "measurement_traits": measurement_traits,
             "unresolved_taxa": unresolved_taxa,
@@ -3022,6 +3062,8 @@ class MetaTraitsTransform(Transform):
         seen_edges = set()
         first_chunk = True
         for chunk in pd.read_csv(self.output_edge_file, sep="\t", dtype=str, chunksize=50000):
+            # The seen set covers earlier chunks, not repeats inside this one.
+            chunk = chunk.drop_duplicates()
             # Create tuple key for each edge row
             chunk_tuples = chunk.apply(tuple, axis=1)
             mask = ~chunk_tuples.isin(seen_edges)
@@ -3061,6 +3103,12 @@ class MetaTraitsTransform(Transform):
             rw.writerow(["tax_name"])
             for t in sorted(all_unresolved):
                 rw.writerow([t])
+
+        # Stream diagnostics exactly once, retaining identical source summaries.
+        with self.indeterminate_traits_file.open("wb") as output:
+            for result in results:
+                with result["indeterminate_traits_file"].open("rb") as source:
+                    shutil.copyfileobj(source, output)
 
         # Cleanup temp files
         shutil.rmtree(temp_dir)
@@ -3221,6 +3269,7 @@ class MetaTraitsTransform(Transform):
         with (
             _StreamingRowWriter(self.output_node_file, self.node_header) as node_writer,
             _StreamingRowWriter(self.output_edge_file, self.edge_header) as edge_writer,
+            self.indeterminate_traits_file.open("w", encoding="utf-8") as indeterminate_writer,
         ):
             iterable = tqdm(input_files, desc="Processing files") if show_status else input_files
 
@@ -3378,6 +3427,8 @@ class MetaTraitsTransform(Transform):
                             if not trait_name:
                                 continue
 
+                            if self._defer_indeterminate_trait(indeterminate_writer, s, tax_name, tax_id):
+                                continue
                             majority_label = s.get("majority_label", "")
                             percentages = s.get("percentages", {}) or {}
                             # Preserve 0.0 as float (avoid 'or 0' which coerces to int)

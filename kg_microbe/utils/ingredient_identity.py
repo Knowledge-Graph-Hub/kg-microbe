@@ -13,6 +13,82 @@ from pathlib import Path
 IDENTITY_POLICY = Path(__file__).resolve().parents[2] / "mappings" / "ingredient_identity_exclusions.tsv"
 NAME_SCOPE_POLICY = IDENTITY_POLICY.with_name("ingredient_name_scopes.tsv")
 
+# These are lexical scope markers, not a chemical formula parser. Comparing
+# them may reject an existing mapping; it must never create a new identity.
+_HYDRATE_FORMULA = re.compile(r"[x·*.]\s*(?P<count>\d+(?:\.\d+)?|n|x)?\s*h2o\s*$", re.IGNORECASE)
+_HYDRATE_WORD = re.compile(
+    r"\b(?P<count>mono|di|tri|tetra|penta|hexa|hepta|octa|nona|deca|undeca|dodeca|octadeca|hemi|sesqui)?hydrate\b",
+    re.IGNORECASE,
+)
+_HYDRATE_COUNTS = {
+    "mono": 1,
+    "di": 2,
+    "tri": 3,
+    "tetra": 4,
+    "penta": 5,
+    "hexa": 6,
+    "hepta": 7,
+    "octa": 8,
+    "nona": 9,
+    "deca": 10,
+    "undeca": 11,
+    "dodeca": 12,
+    "octadeca": 18,
+    "hemi": 0.5,
+    "sesqui": 1.5,
+}
+
+
+def _hydration_scope(name):
+    """Read an explicit lexical water count; unknown hydrates have unresolved scope."""
+    text = str(name or "").strip()
+    match = _HYDRATE_FORMULA.search(text)
+    if match:
+        count = match["count"] or "1"
+        return "unknown" if count.lower() in {"n", "x"} else float(count)
+    match = _HYDRATE_WORD.search(text)
+    if match:
+        return _HYDRATE_COUNTS.get((match["count"] or "").lower(), "unknown")
+    if re.search(r"\bhydrated\b", text, re.IGNORECASE):
+        return "unknown"
+    return None
+
+
+def ingredient_hydration_compatible(name, authority_label, authority_names=()):
+    """
+    Reject hydration-scope changes without asserting a replacement chemical identity.
+
+    A separately supplied mapping still establishes the base identity. An
+    explicit hydrate additionally needs a declared target label with the same
+    water count. Independently native synonyms may refine an unspecified target
+    hydrate only when their numeric scopes agree. Two unspecified hydrate scopes
+    are compatible, but neither authorizes a specific water count. Missing
+    evidence fails closed. Native labels remain queryable.
+    """
+    query, label = str(name or "").strip(), str(authority_label or "").strip()
+    lower_query, lower_label = query.casefold(), label.casefold()
+    if not any(marker in text for text in (lower_query, lower_label) for marker in ("hydrat", "h2o")):
+        return True  # The common graph-scale path needs no regex parsing.
+    identifier = re.fullmatch(r"(?:cas(?:-rn)?:)?(\d{2,7})-(\d{2})-(\d)", query, re.IGNORECASE)
+    if identifier and sum(i * int(n) for i, n in enumerate((identifier[1] + identifier[2])[::-1], 1)) % 10 == int(
+        identifier[3]
+    ):
+        # An existing exact CAS lookup supplies identity without a lexical water
+        # count. This exception does not create or choose any CAS mapping.
+        return True
+    if label and lower_query == lower_label:
+        return True
+    query_scope, target_scope = _hydration_scope(query), _hydration_scope(label)
+    if target_scope == "unknown":
+        numeric = {_hydration_scope(value) for value in authority_names} - {None, "unknown"}
+        if len(numeric) > 1:
+            return False
+        if numeric:
+            target_scope = numeric.pop()
+    if query_scope is None and target_scope is None:
+        return True
+    return query_scope is not None and query_scope == target_scope
+
 
 def _policy_target_key(value):
     """Recognize finite legacy namespace spellings, without inferring chemical identity."""

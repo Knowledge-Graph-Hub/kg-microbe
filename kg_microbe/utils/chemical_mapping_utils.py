@@ -25,6 +25,7 @@ from kg_microbe.utils.ingredient_identity import (
     ingredient_authority_label,
     ingredient_cas_annotations,
     ingredient_case_sensitive_name_scope,
+    ingredient_hydration_compatible,
     ingredient_mapping_allowed,
     ingredient_name_scopes,
     ingredient_name_target,
@@ -41,7 +42,6 @@ _LOADED: bool = False
 _ENTITY_COUNT: int = 0
 _NAME_INDEX: Optional[Dict[str, str]] = None
 _CANONICAL_NAME_INDEX: Optional[Dict[str, str]] = None
-_HYDRATE_FREE_NAME_INDEX: Optional[Dict[str, str]] = None
 # Parent-of relationships imported from skos:narrowMatch / skos:broadMatch
 # rows in the unified SSSOM. ``_PARENT_INDEX[child_curie]`` is the sorted
 # list of broader (parent) CURIEs the child is narrower than. Used by
@@ -67,6 +67,7 @@ _PRIMARY_NAME_INDEX: Optional[Dict[str, str]] = None
 _PRIMARY_SYNONYMS_INDEX: Optional[Dict[str, List[str]]] = None
 _PRIMARY_XREFS_INDEX: Optional[Dict[str, List[str]]] = None
 _PRIMARY_FORMULA_INDEX: Optional[Dict[str, str]] = None
+_NATIVE_HYDRATION_NAMES: Dict[str, set] = {}
 _CACHED_PATH: Optional[Path] = None
 _CACHED_DIGEST: Optional[str] = None
 _MAPPING_LOAD_AUDIT: dict = {}
@@ -327,10 +328,11 @@ def load_unified_mappings(mappings_path: Optional[Path] = None, *, expected_sha2
 
 def _build_indices(mappings_path: Path):
     """Build lookup indices directly from the SSSOM file (streaming)."""
-    global _NAME_INDEX, _CANONICAL_NAME_INDEX, _HYDRATE_FREE_NAME_INDEX
+    global _NAME_INDEX, _CANONICAL_NAME_INDEX
     global _FORMULA_INDEX, _XREF_INDEX, _CATEGORY_INDEX
     global _PRIMARY_NAME_INDEX, _PRIMARY_SYNONYMS_INDEX
     global _PRIMARY_XREFS_INDEX, _PRIMARY_FORMULA_INDEX
+    global _NATIVE_HYDRATION_NAMES
     global _PARENT_INDEX
     global _HYDRATE_EQUIV_INDEX
     global _ENTITY_COUNT
@@ -349,7 +351,6 @@ def _build_indices(mappings_path: Path):
 
     _NAME_INDEX = {}
     _CANONICAL_NAME_INDEX = {}
-    _HYDRATE_FREE_NAME_INDEX = {}
     _FORMULA_INDEX = {}
     _XREF_INDEX = {}
     _CATEGORY_INDEX = {}
@@ -357,6 +358,7 @@ def _build_indices(mappings_path: Path):
     _PRIMARY_SYNONYMS_INDEX = {}
     _PRIMARY_XREFS_INDEX = {}
     _PRIMARY_FORMULA_INDEX = {}
+    _NATIVE_HYDRATION_NAMES = {}
     _PARENT_INDEX = {}
     _HYDRATE_EQUIV_INDEX = {}
 
@@ -365,6 +367,7 @@ def _build_indices(mappings_path: Path):
     parent_sets: Dict[str, set] = {}
     hydrate_sets: Dict[str, set] = {}
     broader_categories: Dict[str, set] = {}
+    hydrate_lexicals = []
     scope_metadata = _scope_metadata(mappings_path)
 
     # Which way round the asymmetric predicates read. Absence means legacy, so
@@ -385,7 +388,6 @@ def _build_indices(mappings_path: Path):
     # (0 = canonical, 1 = synonym) and only overwrite when the new row has
     # strictly better rank. Within the same rank, first-row-wins remains.
     _NAME_INDEX_RANK: Dict[str, int] = {}
-    _HYDRATE_FREE_NAME_INDEX_RANK: Dict[str, int] = {}
 
     def _index_name(curie: str, name: str, rank: int = 1):
         """
@@ -397,6 +399,10 @@ def _build_indices(mappings_path: Path):
         first-seen CURIE for determinism.
         """
         if not ingredient_mapping_allowed(name, curie):
+            return ""
+        if not ingredient_hydration_compatible(
+            name, _PRIMARY_NAME_INDEX.get(curie, ""), _NATIVE_HYDRATION_NAMES.get(curie, ())
+        ):
             return ""
         if ingredient_case_sensitive_name_scope(name)[0]:
             return ""  # Exact-case scopes must never share a case-folded index key.
@@ -410,12 +416,6 @@ def _build_indices(mappings_path: Path):
         if rank < existing or norm not in _NAME_INDEX:
             _NAME_INDEX[norm] = curie
             _NAME_INDEX_RANK[norm] = rank
-        norm_hf = normalize_name(name, strip_hydrate=True)
-        if norm_hf and norm_hf != norm:
-            existing_hf = _HYDRATE_FREE_NAME_INDEX_RANK.get(norm_hf, 999)
-            if rank < existing_hf or norm_hf not in _HYDRATE_FREE_NAME_INDEX:
-                _HYDRATE_FREE_NAME_INDEX[norm_hf] = curie
-                _HYDRATE_FREE_NAME_INDEX_RANK[norm_hf] = rank
         return norm
 
     for position, row in enumerate(_iter_sssom_rows(mappings_path), 1):
@@ -484,7 +484,17 @@ def _build_indices(mappings_path: Path):
         if not ingredient_xref_allowed(subject, curie):
             exclusions["identity"] += 1
             continue
-        if subject.startswith("kgm.name:") and not ingredient_mapping_allowed(row.get("subject_label", ""), curie):
+        if subject.startswith("kgm.name:") and "hydrate" in _PRIMARY_NAME_INDEX.get(curie, "").casefold():
+            # Buffer only this small scope-sensitive cohort so independently
+            # native synonym evidence is complete regardless of row ordering.
+            hydrate_lexicals.append(row)
+            if any(source.startswith("native_ontology:") for source in row.get("source", "").split("|")):
+                _NATIVE_HYDRATION_NAMES.setdefault(curie, set()).add(row.get("subject_label", ""))
+            continue
+        if subject.startswith("kgm.name:") and (
+            not ingredient_mapping_allowed(row.get("subject_label", ""), curie)
+            or not ingredient_hydration_compatible(row.get("subject_label", ""), _PRIMARY_NAME_INDEX.get(curie, ""))
+        ):
             exclusions["lexical"] += 1
             continue
 
@@ -502,6 +512,17 @@ def _build_indices(mappings_path: Path):
             primary_xrefs_sets.setdefault(curie, set()).add(subject)
             norm_xref = subject.lower()
             _XREF_INDEX.setdefault(norm_xref, curie)
+
+    for row in hydrate_lexicals:
+        curie, name = row["object_id"], row.get("subject_label", "")
+        if not ingredient_mapping_allowed(name, curie) or not ingredient_hydration_compatible(
+            name, _PRIMARY_NAME_INDEX.get(curie, ""), _NATIVE_HYDRATION_NAMES.get(curie, ())
+        ):
+            exclusions["lexical"] += 1
+            continue
+        if row.get("comment") == "synonym" and name:
+            primary_synonyms_sets.setdefault(curie, set()).add(name)
+            _index_name(curie, name, rank=1)
 
     # Prefer independent declarations; ambiguous broader-row categories do not
     # choose a winner by row order. This does not populate any identity lookup.
@@ -559,10 +580,9 @@ def find_chebi_by_name(
     :param synonyms: If True, search both canonical names and synonyms
                      If False, only search canonical names
     :param fuzzy_stereochemistry: If True and exact match fails, retry with stereochemistry prefixes removed
-    :param fuzzy_hydrate: If True and exact match fails, retry with trailing hydrate suffixes
-                          (e.g. " x n H2O", " · 6 H2O") stripped from the query and also check
-                          a hydrate-free index of canonical/synonym names. Useful for MediaDive
-                          inorganic-hydrate ingredient names.
+    :param fuzzy_hydrate: Retained for call compatibility; hydration stripping no longer
+                          establishes identity. Use get_hydrate_equivalents for separately
+                          asserted weak recipe relations, not ingredient substitution.
     :return: CURIE (e.g., "CHEBI:12345", "FOODON:00002441") or None if not found
     """
     global _NEGATIVE_LOOKUP_CACHE
@@ -578,7 +598,11 @@ def find_chebi_by_name(
     if recognized_case:
         return (
             case_target
-            if case_target in _PRIMARY_NAME_INDEX and ingredient_mapping_allowed(name, case_target)
+            if case_target in _PRIMARY_NAME_INDEX
+            and ingredient_mapping_allowed(name, case_target)
+            and ingredient_hydration_compatible(
+                name, _PRIMARY_NAME_INDEX[case_target], _NATIVE_HYDRATION_NAMES.get(case_target, ())
+            )
             else None
         )
 
@@ -587,7 +611,11 @@ def find_chebi_by_name(
     if scoped_target is not None:
         return (
             scoped_target
-            if scoped_target in _PRIMARY_NAME_INDEX and ingredient_mapping_allowed(name, scoped_target)
+            if scoped_target in _PRIMARY_NAME_INDEX
+            and ingredient_mapping_allowed(name, scoped_target)
+            and ingredient_hydration_compatible(
+                name, _PRIMARY_NAME_INDEX[scoped_target], _NATIVE_HYDRATION_NAMES.get(scoped_target, ())
+            )
             else None
         )
     norm_name = normalize_name(name)
@@ -625,23 +653,15 @@ def find_chebi_by_name(
         ):
             result = primary_index.get(norm_name_fuzzy)
 
-    # Hydrate fallback:
-    #   1) Strip trailing hydrate suffix from the query and retry against the
-    #      primary index (handles query "CaCl2 x 2 H2O" → entry "calcium chloride").
-    #   2) Look up the un-stripped query in the hydrate-free index (handles the
-    #      reverse: query "calcium chloride" → canonical "calcium chloride x n H2O").
-    if result is None and fuzzy_hydrate:
-        norm_name_no_hydrate = normalize_name(name, strip_hydrate=True)
-        protected_formula = ingredient_case_sensitive_name_scope(norm_name_no_hydrate)[0]
-        if norm_name_no_hydrate and norm_name_no_hydrate != norm_name and primary_index and not protected_formula:
-            result = primary_index.get(norm_name_no_hydrate)
-        if result is None and _HYDRATE_FREE_NAME_INDEX and not protected_formula:
-            result = _HYDRATE_FREE_NAME_INDEX.get(norm_name)
-
     # Index-time admission checked the indexed alias, not this original query.
-    # In particular hydrate/stereochemistry fallback must not erase a reviewed
+    # In particular stereochemistry fallback must not erase a reviewed
     # source-name restriction. Reject the result without guessing a replacement.
-    if result is not None and not ingredient_mapping_allowed(name, result):
+    if result is not None and (
+        not ingredient_mapping_allowed(name, result)
+        or not ingredient_hydration_compatible(
+            name, (_PRIMARY_NAME_INDEX or {}).get(result, ""), _NATIVE_HYDRATION_NAMES.get(result, ())
+        )
+    ):
         result = None
 
     # If lookup failed, add to bounded negative cache to avoid retrying
@@ -940,7 +960,7 @@ class ChemicalMappingLoader:
         :param name: Chemical name to search for
         :param synonyms: If True, search both canonical names and synonyms
         :param fuzzy_stereochemistry: If True, retry with stereochemistry prefixes removed
-        :param fuzzy_hydrate: If True, retry with trailing hydrate suffixes stripped
+        :param fuzzy_hydrate: Compatibility argument; never strips hydration to infer identity
         :return: ChEBI ID or None if not found
         """
         self._select_mappings()

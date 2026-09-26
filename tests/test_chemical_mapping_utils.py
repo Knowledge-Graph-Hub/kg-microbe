@@ -206,7 +206,6 @@ def reset_cache():
         chemical_mapping_utils._ENTITY_COUNT = 0
         chemical_mapping_utils._NAME_INDEX = None
         chemical_mapping_utils._CANONICAL_NAME_INDEX = None
-        chemical_mapping_utils._HYDRATE_FREE_NAME_INDEX = None
         chemical_mapping_utils._FORMULA_INDEX = None
         chemical_mapping_utils._XREF_INDEX = None
         chemical_mapping_utils._CATEGORY_INDEX = None
@@ -658,7 +657,7 @@ class TestNegativeCache:
 
 
 class TestFuzzyHydrate:
-    """Hydrate-suffix retry behavior in ``find_chebi_by_name``."""
+    """The legacy fuzzy flag cannot equate distinct hydration forms."""
 
     @pytest.fixture
     def hydrate_mappings_file(self, tmp_path):
@@ -691,38 +690,28 @@ class TestFuzzyHydrate:
         )
         return path
 
-    def test_query_with_hydrate_finds_anhydrous_canonical(self, hydrate_mappings_file):
-        """Query "CaCl2 x 2 H2O" → hits entry whose canonical is "calcium chloride" (hydrate stripped from query)."""
+    def test_query_with_hydrate_never_finds_anhydrous_canonical(self, hydrate_mappings_file):
+        """A dihydrate query cannot identify either anhydrous or unspecified hydrate material."""
         chemical_mapping_utils.load_unified_mappings(hydrate_mappings_file)
-        # Stereochemistry-stripped form of "calcium chloride · 2 H2O" is "calcium chloride".
-        assert find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=True) == "CHEBI:3312"
+        assert find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=True) is None
 
-    def test_query_without_hydrate_finds_hydrated_canonical(self, hydrate_mappings_file):
-        """Query without hydrate resolves via the hydrate-free canonical index."""
+    def test_query_without_hydrate_keeps_its_own_canonical(self, hydrate_mappings_file):
+        """A bare-name query must not gain hydration scope from another declaration."""
         chemical_mapping_utils.load_unified_mappings(hydrate_mappings_file)
-        # "calcium chloride" alone should resolve via the hydrate-free canonical
-        # index to the first matching entry. We accept either entry — both are
-        # valid calcium chloride rows — but the lookup must not return None.
         result = find_chebi_by_name("calcium chloride", fuzzy_hydrate=True)
-        assert result in {"CHEBI:3312", "KGM:calcium-chloride-nhydrate"}
+        assert result == "CHEBI:3312"
 
     def test_fuzzy_hydrate_off_does_not_retry(self, hydrate_mappings_file):
         """A query with a hydrate suffix misses when ``fuzzy_hydrate=False``."""
         chemical_mapping_utils.load_unified_mappings(hydrate_mappings_file)
         assert find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=False) is None
 
-    def test_fuzzy_hydrate_cache_key_is_distinct(self, hydrate_mappings_file):
-        """
-        Verify that ``fuzzy_hydrate`` is part of the negative-cache key.
-
-        A miss cached with ``fuzzy_hydrate=False`` must not prevent a retry
-        under ``fuzzy_hydrate=True`` from reaching the hydrate fallback path.
-        """
+    def test_fuzzy_hydrate_cache_cannot_reenable_identity_collapse(self, hydrate_mappings_file):
+        """Both compatibility flag values fail safely, independent of cached misses."""
         chemical_mapping_utils.load_unified_mappings(hydrate_mappings_file)
         # First call: misses and caches under fuzzy_hydrate=False.
         assert find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=False) is None
-        # Second call: same name, fuzzy_hydrate=True — different cache key → hits.
-        assert find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=True) == "CHEBI:3312"
+        assert find_chebi_by_name("calcium chloride · 2 H2O", fuzzy_hydrate=True) is None
 
 
 class TestNarrowMatchChildResolution:

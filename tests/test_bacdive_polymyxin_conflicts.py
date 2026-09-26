@@ -41,6 +41,7 @@ def _run(tmp_path, monkeypatch, records, loader=None):
     original = BacDiveTransform._prepare_assay_outputs
 
     def prepare(transform):
+        """Keep the fixture setup and inject the reviewed chemical lookup and sign map."""
         original(transform)
         transform.chemical_loader = loader
         transform.metpo_metabolite_utilization_mappings["assimilation"] = {
@@ -222,6 +223,7 @@ def test_name_only_mixture_and_explicit_conflict_remain_separate_in_one_record(t
     enrichment_calls = []
 
     def enrichment(identifier):
+        """Reject enrichment of unresolved local materials and record native lookup calls."""
         enrichment_calls.append(identifier)
         assert not identifier.startswith(LOCAL)
         return {"xref": "", "synonym": ""}

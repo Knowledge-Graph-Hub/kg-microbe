@@ -23,6 +23,7 @@ from kg_microbe.merge_utils.stats_provenance import STATS_OPERATION
 from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
     DEPRECATED_COLUMN,
+    DESCRIPTION_COLUMN,
     ID_COLUMN,
     OBJECT_COLUMN,
     PREDICATE_COLUMN,
@@ -476,6 +477,12 @@ class RelationAwareTsvSink(TsvSink):
             column: _canonical_node_boolean(column, value) if column in _BOOLEAN_NODE_PROPERTIES else value
             for column, value in record.items()
         }
+        description = data.get(DESCRIPTION_COLUMN)
+        if isinstance(description, (list, tuple, set)):
+            # KGX retains empty scalar contributions during node overlap. They
+            # are absent descriptions, not text to join into literal pipes.
+            # Keep nonempty text (including whitespace and repeats) unchanged.
+            data[DESCRIPTION_COLUMN] = [item for item in description if item is not None and item != ""]
         self._write_record(data, self.ordered_node_columns, self._node_writer)
 
     def write_edge(self, record):

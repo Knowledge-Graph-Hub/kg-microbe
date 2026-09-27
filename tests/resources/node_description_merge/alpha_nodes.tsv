@@ -1,0 +1,7 @@
+id	category	name	description	provided_by	xref
+fixture:blank	biolink:NamedThing	blank		infores:alpha	fixture:common|fixture:alpha
+fixture:left_blank	biolink:NamedThing	left_blank		infores:alpha	fixture:common|fixture:alpha
+fixture:right_blank	biolink:NamedThing	right_blank	meaningful	infores:alpha	fixture:common|fixture:alpha
+fixture:repeat	biolink:NamedThing	repeat	meaningful	infores:alpha	fixture:common|fixture:alpha
+fixture:distinct	biolink:NamedThing	distinct	beta	infores:alpha	fixture:common|fixture:alpha
+fixture:whitespace	biolink:NamedThing	whitespace	 	infores:alpha	fixture:common|fixture:alpha

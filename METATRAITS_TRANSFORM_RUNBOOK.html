@@ -119,6 +119,19 @@ poetry<span class="w"> </span>run<span class="w"> </span>pip<span class="w"> </s
 </tbody>
 </table>
 <p>Files may be gzipped (<code class="docutils literal notranslate"><span class="pre">.jsonl.gz</span></code>) or plain (<code class="docutils literal notranslate"><span class="pre">.jsonl</span></code>).</p>
+<p>Both <code class="docutils literal notranslate"><span class="pre">metatraits</span></code> and <code class="docutils literal notranslate"><span class="pre">metatraits_gtdb</span></code> read the optional EC-to-GO lookup from
+the repository’s <code class="docutils literal notranslate"><span class="pre">data/raw/ec2go.txt</span></code>, even when an alternate input directory
+is selected. An absent file retains the existing EC identifier fallback; it
+is not made a required download. A present file is parsed from an immutable
+consumed-byte snapshot. The completion record binds its declared lexical path,
+resolved path and digest, or explicit observed absence. Unreadable files,
+dangling symlinks, read failures, byte changes, retargeting or later appearance
+after observed absence invalidate that evidence rather than certify a partial
+lookup. Old receipts without this read contract require an actual producer rerun,
+not fingerprint migration or restamping. Deploying the shared guard change
+invalidates all 15 canonical source receipts once, requiring source rebuilds
+and a new merge; subsequent EC-only changes affect these two consumers, not
+unrelated producers with otherwise unchanged dependencies.</p>
 <p><strong>Expected JSONL format</strong> (one JSON object per line):</p>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="nt">&quot;tax_name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Escherichia coli&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;summaries&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;antibiotic_resistance&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;is_discrete&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;num_observations&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">15</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;majority_label&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;true: (100%)&quot;</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;percentages&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;true&quot;</span><span class="p">:</span><span class="w"> </span><span class="mf">100.0</span><span class="p">}}]}</span>
 </pre></div>

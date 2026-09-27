@@ -351,6 +351,7 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html">kg_microbe.transform_utils.ontologies_stubs package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html#module-kg_microbe.transform_utils.ontologies_stubs.ncit_category_projection">kg_microbe.transform_utils.ontologies_stubs.ncit_category_projection module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html#module-kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform">kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html#module-kg_microbe.transform_utils.ontologies_stubs">Module contents</a></li>
 </ul>
@@ -408,13 +409,16 @@
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.DATA_INPUTS"><code class="docutils literal notranslate"><span class="pre">Transform.DATA_INPUTS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.DEFAULT_INPUT_DIR"><code class="docutils literal notranslate"><span class="pre">Transform.DEFAULT_INPUT_DIR</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.DEFAULT_OUTPUT_DIR"><code class="docutils literal notranslate"><span class="pre">Transform.DEFAULT_OUTPUT_DIR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.OPTIONAL_CONSUMED_INPUTS"><code class="docutils literal notranslate"><span class="pre">Transform.OPTIONAL_CONSUMED_INPUTS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.REQUIRED_CONSUMED_INPUTS"><code class="docutils literal notranslate"><span class="pre">Transform.REQUIRED_CONSUMED_INPUTS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.TRANSFORM_INPUTS"><code class="docutils literal notranslate"><span class="pre">Transform.TRANSFORM_INPUTS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.begin_consumed_inputs"><code class="docutils literal notranslate"><span class="pre">Transform.begin_consumed_inputs()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.begin_dependency_admission"><code class="docutils literal notranslate"><span class="pre">Transform.begin_dependency_admission()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.consume_input"><code class="docutils literal notranslate"><span class="pre">Transform.consume_input()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.consume_optional_input"><code class="docutils literal notranslate"><span class="pre">Transform.consume_optional_input()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.consumed_input_snapshots"><code class="docutils literal notranslate"><span class="pre">Transform.consumed_input_snapshots</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.finalize"><code class="docutils literal notranslate"><span class="pre">Transform.finalize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.optional_consumed_inputs"><code class="docutils literal notranslate"><span class="pre">Transform.optional_consumed_inputs</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.pass_through"><code class="docutils literal notranslate"><span class="pre">Transform.pass_through()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.run"><code class="docutils literal notranslate"><span class="pre">Transform.run()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.verify_consumed_inputs"><code class="docutils literal notranslate"><span class="pre">Transform.verify_consumed_inputs()</span></code></a></li>
@@ -783,6 +787,13 @@
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_utils.replace_category_ontology"><code class="docutils literal notranslate"><span class="pre">replace_category_ontology()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_utils.replace_deprecated_categories"><code class="docutils literal notranslate"><span class="pre">replace_deprecated_categories()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_utils.resolve_adapter"><code class="docutils literal notranslate"><span class="pre">resolve_adapter()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.optional_consumed_inputs">kg_microbe.utils.optional_consumed_inputs module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.optional_consumed_inputs.optional_input_paths"><code class="docutils literal notranslate"><span class="pre">optional_input_paths()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.optional_consumed_inputs.snapshot_optional_input"><code class="docutils literal notranslate"><span class="pre">snapshot_optional_input()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.optional_consumed_inputs.verify_optional_inputs"><code class="docutils literal notranslate"><span class="pre">verify_optional_inputs()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.optional_consumed_inputs.verify_recorded_optional_inputs"><code class="docutils literal notranslate"><span class="pre">verify_recorded_optional_inputs()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.pandas_utils">kg_microbe.utils.pandas_utils module</a><ul>

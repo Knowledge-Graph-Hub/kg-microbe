@@ -4,6 +4,14 @@ kg\_microbe.transform\_utils.ontologies\_stubs package
 Submodules
 ----------
 
+kg\_microbe.transform\_utils.ontologies\_stubs.ncit\_category\_projection module
+--------------------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.ontologies_stubs.ncit_category_projection
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.transform\_utils.ontologies\_stubs.ontologies\_stubs\_transform module
 ----------------------------------------------------------------------------------
 

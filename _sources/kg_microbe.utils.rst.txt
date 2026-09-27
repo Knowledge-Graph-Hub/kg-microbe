@@ -252,6 +252,14 @@ kg\_microbe.utils.ontology\_utils module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.utils.optional\_consumed\_inputs module
+---------------------------------------------------
+
+.. automodule:: kg_microbe.utils.optional_consumed_inputs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.utils.pandas\_utils module
 --------------------------------------
 

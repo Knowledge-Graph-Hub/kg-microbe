@@ -34,6 +34,20 @@ Place one or more metatraits JSONL files in `data/raw/metatraits/`. Supported fi
 
 Files may be gzipped (`.jsonl.gz`) or plain (`.jsonl`).
 
+Both `metatraits` and `metatraits_gtdb` read the optional EC-to-GO lookup from
+the repository's `data/raw/ec2go.txt`, even when an alternate input directory
+is selected. An absent file retains the existing EC identifier fallback; it
+is not made a required download. A present file is parsed from an immutable
+consumed-byte snapshot. The completion record binds its declared lexical path,
+resolved path and digest, or explicit observed absence. Unreadable files,
+dangling symlinks, read failures, byte changes, retargeting or later appearance
+after observed absence invalidate that evidence rather than certify a partial
+lookup. Old receipts without this read contract require an actual producer rerun,
+not fingerprint migration or restamping. Deploying the shared guard change
+invalidates all 15 canonical source receipts once, requiring source rebuilds
+and a new merge; subsequent EC-only changes affect these two consumers, not
+unrelated producers with otherwise unchanged dependencies.
+
 **Expected JSONL format** (one JSON object per line):
 
 ```json

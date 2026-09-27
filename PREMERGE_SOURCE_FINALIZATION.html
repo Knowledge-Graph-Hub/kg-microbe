@@ -150,8 +150,8 @@ entire graph as acyclic. Those are separate review scopes.</p>
 <section id="generated-lookup-consumption">
 <h2>Generated lookup consumption<a class="headerlink" href="#generated-lookup-consumption" title="Link to this heading"></a></h2>
 <p>MediaDive and BactoTraits declare <code class="docutils literal notranslate"><span class="pre">bacdive_taxon_lookup</span></code> as a required
-producer-time input. At each real run they reset prior consumption claims and
-parse an owned immutable snapshot of BacDive’s generated <code class="docutils literal notranslate"><span class="pre">bacdive.tsv</span></code>, copied
+producer-time input. At each real run they parse an owned immutable snapshot
+of BacDive’s generated <code class="docutils literal notranslate"><span class="pre">bacdive.tsv</span></code>, copied
 and SHA256-hashed with bounded memory. The source path is checked against those
 exact bytes after copying and parsing, before finalization, and before its
 record is published. A missing input, an unperformed required read, or changed
@@ -172,6 +172,30 @@ batch preflight runs before BacDive can create them in a clean checkout.
 raw file consumed anywhere in the pipeline is now snapshotted. Multiple source
 files are not a filesystem transaction; later changes are rejected when the
 recorded inputs and graph members are verified again.</p>
+<section id="optional-mediadive-raw-mappings-1205">
+<h3>Optional MediaDive raw mappings (#1205)<a class="headerlink" href="#optional-mediadive-raw-mappings-1205" title="Link to this heading"></a></h3>
+<p>MediaDive also consumes <code class="docutils literal notranslate"><span class="pre">compound_mappings_strict.tsv</span></code> and
+<code class="docutils literal notranslate"><span class="pre">compound_mappings_strict_hydrate.tsv</span></code> from its effective raw input directory.
+Each optional file is parsed from an immutable snapshot; absence is recorded
+explicitly and retains the existing fallback behavior. Hydrate-file precedence
+and identity policy are unchanged. These raw-relative declarations do not
+relocate repository-relative optional inputs such as MetaTraits’ EC mapping.
+The selected raw directory must exist: the producer still requires its
+<code class="docutils literal notranslate"><span class="pre">mediadive.json</span></code>, including in stale-cache override mode. Only the two mapping
+files are optional; their absence does not make the directory itself optional.</p>
+<p>MediaDive retains its constructor’s original input epoch through <code class="docutils literal notranslate"><span class="pre">run()</span></code>,
+finalization and fingerprint publication. Unchanged repeated runs on that
+instance are allowed; changed inputs or a failed run require a new instance.
+Resetting snapshots cannot certify its cached mappings. Recorded evidence binds
+the lexical raw directory, resolved directory and both optional file states;
+changes, deletion, appearance and locator retargeting are rejected by freshness
+and retained public admission. Old receipts without these states require a real
+producer rerun, never fingerprint migration or finalization-only restamping.</p>
+<p>This adds exactly two raw mapping dependencies, not complete bulk JSON or cache
+coverage. Changes to shared fingerprinted helpers invalidate existing source
+receipts broadly; rebuild the affected configured source closure before merge,
+rather than assuming only MediaDive is stale from the issue’s scope.</p>
+</section>
 </section>
 <section id="discovered-curation-and-inherited-producer-code-1188">
 <h2>Discovered curation and inherited producer code (#1188)<a class="headerlink" href="#discovered-curation-and-inherited-producer-code-1188" title="Link to this heading"></a></h2>

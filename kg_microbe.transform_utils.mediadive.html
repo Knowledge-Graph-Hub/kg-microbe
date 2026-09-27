@@ -148,6 +148,13 @@ constant, derive this from it rather than restating it.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.OPTIONAL_RAW_CONSUMED_INPUTS">
+<span class="sig-name descname"><span class="pre">OPTIONAL_RAW_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(('micromediaparam_strict',</span> <span class="pre">'compound_mappings_strict.tsv'),</span> <span class="pre">('micromediaparam_hydrate',</span> <span class="pre">'compound_mappings_strict_hydrate.tsv'))</span></em><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.OPTIONAL_RAW_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Named optional reads relative to the effective input_base_dir, including explicit absence.
+Kept separate so repository-relative optional inputs never silently relocate.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.REQUIRED_CONSUMED_INPUTS">
 <span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('bacdive_taxon_lookup',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
 <dd><p>Named generated inputs that must actually be read before fresh finalization.
@@ -293,6 +300,13 @@ declaration fails silently and looks identical to a complete one:
 ontologies_stubs declared 1 of the 11 files it read and was reported
 fresh after changes to the other ten (#839). Where the set comes from a
 constant, derive this from it rather than restating it.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.MediaDiveTransform.OPTIONAL_RAW_CONSUMED_INPUTS">
+<span class="sig-name descname"><span class="pre">OPTIONAL_RAW_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(('micromediaparam_strict',</span> <span class="pre">'compound_mappings_strict.tsv'),</span> <span class="pre">('micromediaparam_hydrate',</span> <span class="pre">'compound_mappings_strict_hydrate.tsv'))</span></em><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.MediaDiveTransform.OPTIONAL_RAW_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Named optional reads relative to the effective input_base_dir, including explicit absence.
+Kept separate so repository-relative optional inputs never silently relocate.</p>
 </dd></dl>
 
 <dl class="py attribute">

@@ -3946,11 +3946,17 @@ reads better in a log.</p>
 </section>
 <section id="module-kg_microbe.utils.optional_consumed_inputs">
 <span id="kg-microbe-utils-optional-consumed-inputs-module"></span><h2>kg_microbe.utils.optional_consumed_inputs module<a class="headerlink" href="#module-kg_microbe.utils.optional_consumed_inputs" title="Link to this heading"></a></h2>
-<p>Exact producer-read contracts for declared optional repository inputs (#1193).</p>
+<p>Exact producer-read contracts for declared optional repository and effective-raw inputs.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.optional_consumed_inputs.has_optional_inputs">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.optional_consumed_inputs.</span></span><span class="sig-name descname"><span class="pre">has_optional_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">producer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.optional_consumed_inputs.has_optional_inputs" title="Link to this definition"></a></dt>
+<dd><p>Recognize both explicit locator modes without relocating repository inputs.</p>
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.optional_consumed_inputs.optional_input_paths">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.optional_consumed_inputs.</span></span><span class="sig-name descname"><span class="pre">optional_input_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">producer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.optional_consumed_inputs.optional_input_paths" title="Link to this definition"></a></dt>
-<dd><p>Resolve registered declarations against the repository, never an alternate raw directory.</p>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.optional_consumed_inputs.</span></span><span class="sig-name descname"><span class="pre">optional_input_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">producer</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.optional_consumed_inputs.optional_input_paths" title="Link to this definition"></a></dt>
+<dd><p>Resolve repository roles at the repository and raw roles at the selected lexical directory.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -3961,7 +3967,7 @@ reads better in a log.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.optional_consumed_inputs.verify_optional_inputs">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.optional_consumed_inputs.</span></span><span class="sig-name descname"><span class="pre">verify_optional_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">producer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contract</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snapshots</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.optional_consumed_inputs.verify_optional_inputs" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.optional_consumed_inputs.</span></span><span class="sig-name descname"><span class="pre">verify_optional_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">producer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contract</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snapshots</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.optional_consumed_inputs.verify_optional_inputs" title="Link to this definition"></a></dt>
 <dd><p>Check declared membership, locator, original bytes or absence, retaining the same guards.</p>
 </dd></dl>
 

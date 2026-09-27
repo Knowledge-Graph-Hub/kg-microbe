@@ -474,6 +474,7 @@
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#kg_microbe.transform_utils.mediadive.mediadive.HTTP_CACHE_FILENAME"><code class="docutils literal notranslate"><span class="pre">HTTP_CACHE_FILENAME</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform"><code class="docutils literal notranslate"><span class="pre">MediaDiveTransform</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.DATA_INPUTS"><code class="docutils literal notranslate"><span class="pre">MediaDiveTransform.DATA_INPUTS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.OPTIONAL_RAW_CONSUMED_INPUTS"><code class="docutils literal notranslate"><span class="pre">MediaDiveTransform.OPTIONAL_RAW_CONSUMED_INPUTS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.REQUIRED_CONSUMED_INPUTS"><code class="docutils literal notranslate"><span class="pre">MediaDiveTransform.REQUIRED_CONSUMED_INPUTS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.TRANSFORM_INPUTS"><code class="docutils literal notranslate"><span class="pre">MediaDiveTransform.TRANSFORM_INPUTS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.download_yaml_and_get_json"><code class="docutils literal notranslate"><span class="pre">MediaDiveTransform.download_yaml_and_get_json()</span></code></a></li>
@@ -489,6 +490,7 @@
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#module-kg_microbe.transform_utils.mediadive">Module contents</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#kg_microbe.transform_utils.mediadive.MediaDiveTransform"><code class="docutils literal notranslate"><span class="pre">MediaDiveTransform</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#kg_microbe.transform_utils.mediadive.MediaDiveTransform.DATA_INPUTS"><code class="docutils literal notranslate"><span class="pre">MediaDiveTransform.DATA_INPUTS</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#kg_microbe.transform_utils.mediadive.MediaDiveTransform.OPTIONAL_RAW_CONSUMED_INPUTS"><code class="docutils literal notranslate"><span class="pre">MediaDiveTransform.OPTIONAL_RAW_CONSUMED_INPUTS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#kg_microbe.transform_utils.mediadive.MediaDiveTransform.REQUIRED_CONSUMED_INPUTS"><code class="docutils literal notranslate"><span class="pre">MediaDiveTransform.REQUIRED_CONSUMED_INPUTS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#kg_microbe.transform_utils.mediadive.MediaDiveTransform.TRANSFORM_INPUTS"><code class="docutils literal notranslate"><span class="pre">MediaDiveTransform.TRANSFORM_INPUTS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#kg_microbe.transform_utils.mediadive.MediaDiveTransform.chebi_categories"><code class="docutils literal notranslate"><span class="pre">MediaDiveTransform.chebi_categories</span></code></a></li>
@@ -898,6 +900,13 @@ Unlike DATA_INPUTS these locators do not relocate to input_base_dir.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.transform.Transform.OPTIONAL_RAW_CONSUMED_INPUTS">
+<span class="sig-name descname"><span class="pre">OPTIONAL_RAW_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></em><a class="headerlink" href="#kg_microbe.transform_utils.transform.Transform.OPTIONAL_RAW_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Named optional reads relative to the effective input_base_dir, including explicit absence.
+Kept separate so repository-relative optional inputs never silently relocate.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.transform.Transform.REQUIRED_CONSUMED_INPUTS">
 <span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">()</span></em><a class="headerlink" href="#kg_microbe.transform_utils.transform.Transform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
 <dd><p>Named generated inputs that must actually be read before fresh finalization.
@@ -951,7 +960,7 @@ version of this contract was opt-in and was forgotten (#812, #839, #876).</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.transform.Transform.consume_optional_input">
 <span class="sig-name descname"><span class="pre">consume_optional_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.transform.Transform.consume_optional_input" title="Link to this definition"></a></dt>
-<dd><p>Read one declared repository input immutably, retaining explicit optional absence.</p>
+<dd><p>Read one declared optional input immutably, retaining its locator and explicit absence.</p>
 </dd></dl>
 
 <dl class="py property">

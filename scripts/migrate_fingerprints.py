@@ -29,6 +29,7 @@ def main() -> int:
     :return: Process exit code.
     """
     from kg_microbe.transform import DATA_SOURCES
+    from kg_microbe.utils.optional_consumed_inputs import has_optional_inputs
     from kg_microbe.utils.transform_fingerprint import migrate_markers
 
     transformed = REPO_ROOT / "data" / "transformed"
@@ -48,7 +49,7 @@ def main() -> int:
                 "data_inputs": tuple(getattr(cls, "DATA_INPUTS", ()) or ()),
                 "transform_inputs": tuple(getattr(cls, "TRANSFORM_INPUTS", ()) or ()),
                 "requires_dependency_rebuild": bool(
-                    getattr(cls, "OPTIONAL_CONSUMED_INPUTS", ())
+                    has_optional_inputs(cls)
                     or getattr(cls, "discovered_data_inputs", None)
                     or getattr(cls, "CODE_INPUTS", ())
                 ),

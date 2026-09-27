@@ -162,6 +162,10 @@ class MediaDiveTransform(Transform):
     REQUIRED_CONSUMED_INPUTS = ("bacdive_taxon_lookup",)
 
     DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
+    OPTIONAL_RAW_CONSUMED_INPUTS = (
+        ("micromediaparam_strict", MICROMEDIAPARAM_COMPOUND_MAPPINGS_FILE),
+        ("micromediaparam_hydrate", MICROMEDIAPARAM_HYDRATE_MAPPINGS_FILE),
+    )
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
         """Instantiate part."""
@@ -434,7 +438,9 @@ class MediaDiveTransform(Transform):
         """
         return self.chebi_categories.get(chebi_id, INGREDIENT_CATEGORY)
 
-    def _load_mapping_file(self, mapping_file: Path, description: str) -> Dict[str, str]:
+    def _load_mapping_file(
+        self, mapping_file: Path, description: str, *, consumed_role=None, reader=None
+    ) -> Dict[str, str]:
         """
         Load a single MicroMediaParam mapping file and return filtered mappings.
 
@@ -442,23 +448,32 @@ class MediaDiveTransform(Transform):
         ----
             mapping_file: Path to the TSV mapping file.
             description: Human-readable description for logging.
+            consumed_role: Optional declared role used by production callers to capture an immutable read.
+            reader: Already captured parser handle, used internally without reopening the source path.
 
         Returns:
         -------
             Dictionary mapping normalized compound names to ontology IDs.
 
         """
+        if consumed_role is not None:
+            with self.consume_optional_input(consumed_role) as snapshot:
+                if snapshot is None:
+                    print(f"  {description} not found at {mapping_file}")
+                    return {}
+                return self._load_mapping_file(mapping_file, description, reader=snapshot)
+
         from kg_microbe.transform_utils.constants import HAS_PART_PREDICATE
         from kg_microbe.utils.ingredient_identity import _hydration_scope
 
         try:
-            if not mapping_file.exists():
+            if reader is None and not mapping_file.exists():
                 print(f"  {description} not found at {mapping_file}")
                 return {}
 
             print(f"  Loading {description} from {mapping_file}")
             # Preserve identifiers and blank optional fields without NaN coercion.
-            df = pd.read_csv(mapping_file, sep="\t", dtype=str, keep_default_na=False)
+            df = pd.read_csv(reader if reader is not None else mapping_file, sep="\t", dtype=str, keep_default_na=False)
             if not {"original", "mapped"}.issubset(df.columns):
                 print(f"  Warning: Could not load {description}: missing original/mapped columns")
                 return {}
@@ -590,12 +605,16 @@ class MediaDiveTransform(Transform):
         # Step 1: Load hydrate mappings first (these take precedence)
         # Supplied hydrate IDs require native scope and hydrate-to-base part evidence.
         hydrate_file = Path(self.input_base_dir) / MICROMEDIAPARAM_HYDRATE_MAPPINGS_FILE
-        hydrate_mappings = self._load_mapping_file(hydrate_file, "hydrate mappings")
+        hydrate_mappings = self._load_mapping_file(
+            hydrate_file, "hydrate mappings", consumed_role="micromediaparam_hydrate"
+        )
         self.compound_mappings.update(hydrate_mappings)
 
         # Step 2: Load strict mappings for compounds not in hydrate mappings
         strict_file = Path(self.input_base_dir) / MICROMEDIAPARAM_COMPOUND_MAPPINGS_FILE
-        strict_mappings = self._load_mapping_file(strict_file, "strict mappings")
+        strict_mappings = self._load_mapping_file(
+            strict_file, "strict mappings", consumed_role="micromediaparam_strict"
+        )
 
         # Only add strict mappings for compounds NOT already in hydrate mappings
         new_from_strict = 0
@@ -1068,18 +1087,24 @@ class MediaDiveTransform(Transform):
         """Run the transformation, closing the API session afterwards."""
         try:
             self._run(data_file, show_status)
+        except BaseException as error:
+            self._consumed_input_error = str(error)
+            raise
         finally:
             self._close_http()
 
     def _run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
-        self.begin_consumed_inputs()
+        # Constructor-loaded mappings belong to this instance's original input
+        # epoch. Repeated runs may reuse it only unchanged; a new epoch requires
+        # a new instance, never resetting evidence underneath cached mappings.
         self._assert_bulk_data_available()
         # replace with downloaded data filename for this source
         input_file = os.path.join(self.input_base_dir, "mediadive.json")  # must exist already
         bacdive_input_file = BACDIVE_TMP_DIR / "bacdive.tsv"
         with self.consume_input("bacdive_taxon_lookup", bacdive_input_file) as bacdive_file:
             bacdive_df = pd.read_csv(bacdive_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN])
+        self.verify_consumed_inputs()
 
         # Create dictionary lookup for O(1) access instead of O(n) DataFrame filtering
         bacdive_strain_to_ncbi = dict(zip(bacdive_df[BACDIVE_ID_COLUMN], bacdive_df[NCBITAXON_ID_COLUMN], strict=True))

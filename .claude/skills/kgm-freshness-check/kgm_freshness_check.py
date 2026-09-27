@@ -398,8 +398,10 @@ def _fingerprint_verdict(source: str, code_dir: Path) -> Optional[tuple]:
             )
         if data_stale:
             return "STALE_VS_DATA", f"a declared data input differs from the recorded build; rerun `poetry run kg transform -s {source}`"
+        from kg_microbe.utils.optional_consumed_inputs import has_optional_inputs
+
         producer = DATA_SOURCES.get(source)
-        if getattr(producer, "OPTIONAL_CONSUMED_INPUTS", ()):
+        if has_optional_inputs(producer):
             import inspect
 
             from kg_microbe.utils.source_finalization import (

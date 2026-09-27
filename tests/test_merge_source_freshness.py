@@ -50,6 +50,10 @@ def prepare_source(tmp_path, source, *, prefix="", marker=True, output_name=None
         shutil.copyfile(FIXTURES / "lookup.tsv", lookup)
         with transform.consume_input(role, lookup) as reader:
             reader.read()
+    for role, _ in cls.OPTIONAL_RAW_CONSUMED_INPUTS:
+        with transform.consume_optional_input(role) as reader:
+            if reader is not None:
+                reader.read()
     transform.finalize(file_prefix=prefix, fresh_run=True)
     if marker:
         record_source(transform)

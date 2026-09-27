@@ -141,7 +141,6 @@ def _run_transform(tmp_path, monkeypatch, recipes):
     with (
         mock.patch.object(mod.MediaDiveTransform, "_load_chebi_roles"),
         mock.patch.object(mod.MediaDiveTransform, "_load_chebi_categories"),
-        mock.patch.object(mod.MediaDiveTransform, "_load_micromediaparam_mappings"),
         mock.patch.object(mod.MediaDiveTransform, "_load_bulk_data"),
         mock.patch.object(mod, "ChemicalMappingLoader", return_value=_loader()),
     ):

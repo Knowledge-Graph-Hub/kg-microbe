@@ -28,6 +28,7 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.graph_canonicalization import canonical_node_category, compact_identifier
 from kg_microbe.utils.graph_schema import canonical_header, validate_canonical_tsv
+from kg_microbe.utils.optional_consumed_inputs import has_optional_inputs
 from kg_microbe.utils.provenance import primary_source_and_publications, serialize_knowledge_sources
 from kg_microbe.utils.transform_fingerprint import (
     SHARED_DATA_INPUTS,
@@ -96,7 +97,7 @@ def verify_consumed_inputs(transform, *, native_output_dir=None):
         raise SourceFinalizationRequired(f"Required consumed inputs were not read: {', '.join(sorted(missing))}")
     for name, snapshot in snapshots.items():
         _verify_input_snapshot(name, snapshot)
-    if getattr(type(transform), "OPTIONAL_CONSUMED_INPUTS", ()):
+    if has_optional_inputs(type(transform)):
         from kg_microbe.utils.optional_consumed_inputs import verify_optional_inputs
 
         verify_optional_inputs(
@@ -104,6 +105,7 @@ def verify_consumed_inputs(transform, *, native_output_dir=None):
             transform.optional_consumed_inputs,
             snapshots,
             admission=transform._optional_input_admission,
+            input_dir=transform.input_base_dir,
         )
     native_verifier = getattr(transform, "verify_native_inputs", None)
     if native_verifier is not None:
@@ -177,7 +179,7 @@ def _verify_recorded_consumed_inputs(report, *, report_path=None, admission=None
         if report.get("declared_data_inputs") != list(declared_data_inputs(producer, root)):
             raise SourceFinalizationRequired("Discovered producer input inventory changed; rerun the producer")
     native_verifier = getattr(producer, "verify_recorded_native_inputs", None)
-    if (native_verifier is not None or getattr(producer, "OPTIONAL_CONSUMED_INPUTS", ())) and admission is None:
+    if (native_verifier is not None or has_optional_inputs(producer)) and admission is None:
         from kg_microbe.merge_utils.source_admission import SourceAdmission
 
         admission = SourceAdmission()
@@ -438,7 +440,7 @@ def _repeat_finalization(transform, file_prefix):
             "Consumed inputs differ from finalized run; rerun and finalize(fresh_run=True)"
         )
     transform._consumed_input_snapshots = {name: dict(snapshot) for name, snapshot in snapshots.items()}
-    if getattr(type(transform), "OPTIONAL_CONSUMED_INPUTS", ()):
+    if has_optional_inputs(type(transform)):
         previous_optional = transform.optional_consumed_inputs
         recorded_optional = report.get("optional_consumed_inputs")
         if previous_optional["inputs"] and previous_optional != recorded_optional:
@@ -613,8 +615,10 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
         }
         if getattr(transform, "verify_native_inputs", None) is not None:
             report["producer_native_inputs"] = transform.producer_native_inputs
-        if getattr(type(transform), "OPTIONAL_CONSUMED_INPUTS", ()):
+        if has_optional_inputs(type(transform)):
             report["optional_consumed_inputs"] = transform.optional_consumed_inputs
+        if getattr(type(transform), "OPTIONAL_RAW_CONSUMED_INPUTS", ()):
+            report["raw_input_locator"] = str(raw_dir.absolute())
         try:
             producer_file = inspect.getsourcefile(type(transform))
         except TypeError:

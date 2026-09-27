@@ -1,4 +1,4 @@
-"""Exact producer-read contracts for declared optional repository inputs (#1193)."""
+"""Exact producer-read contracts for declared optional repository and effective-raw inputs."""
 
 import json
 import os
@@ -6,13 +6,28 @@ from contextlib import contextmanager
 from pathlib import Path
 
 
-def optional_input_paths(producer):
-    """Resolve registered declarations against the repository, never an alternate raw directory."""
+def has_optional_inputs(producer):
+    """Recognize both explicit locator modes without relocating repository inputs."""
+    return bool(
+        getattr(producer, "OPTIONAL_CONSUMED_INPUTS", ()) or getattr(producer, "OPTIONAL_RAW_CONSUMED_INPUTS", ())
+    )
+
+
+def optional_input_paths(producer, *, input_dir=None):
+    """Resolve repository roles at the repository and raw roles at the selected lexical directory."""
     from kg_microbe.utils.source_finalization import SourceFinalizationRequired
     from kg_microbe.utils.transform_fingerprint import _repo_root
 
     paths = {}
-    for name, relative in getattr(producer, "OPTIONAL_CONSUMED_INPUTS", ()):
+    repository = getattr(producer, "OPTIONAL_CONSUMED_INPUTS", ())
+    raw = getattr(producer, "OPTIONAL_RAW_CONSUMED_INPUTS", ())
+    if raw and input_dir is None:
+        raise SourceFinalizationRequired("Optional raw inputs require the selected raw directory")
+    declarations = [
+        *((name, relative, _repo_root()) for name, relative in repository),
+        *((name, relative, Path(input_dir)) for name, relative in raw),
+    ]
+    for name, relative, base in declarations:
         if (
             not isinstance(name, str)
             or not name
@@ -23,16 +38,16 @@ def optional_input_paths(producer):
             or ".." in Path(relative).parts
         ):
             raise SourceFinalizationRequired("Invalid optional consumed-input declaration")
-        paths[name] = (_repo_root() / relative).absolute()
+        paths[name] = (base / relative).absolute()
     return paths
 
 
-def verify_optional_inputs(producer, contract, snapshots, *, admission=None):
+def verify_optional_inputs(producer, contract, snapshots, *, admission=None, input_dir=None):
     """Check declared membership, locator, original bytes or absence, retaining the same guards."""
     from kg_microbe.merge_utils.source_admission import SourceAdmission
     from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 
-    paths = optional_input_paths(producer)
+    paths = optional_input_paths(producer, input_dir=input_dir)
     if not paths and contract is None:
         return
     if (
@@ -86,7 +101,7 @@ def snapshot_optional_input(transform, name):
     from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 
     try:
-        paths = optional_input_paths(type(transform))
+        paths = optional_input_paths(type(transform), input_dir=transform.input_base_dir)
         if name not in paths:
             raise SourceFinalizationRequired(f"Undeclared optional consumed input: {name!r}")
         if transform._optional_input_admission is None:
@@ -124,7 +139,7 @@ def verify_recorded_optional_inputs(producer, report, *, report_path=None, admis
     from kg_microbe.merge_utils.source_admission import SourceAdmission
     from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 
-    if getattr(producer, "OPTIONAL_CONSUMED_INPUTS", ()):
+    if has_optional_inputs(producer):
         if report_path is None:
             raise SourceFinalizationRequired("Optional input verification requires its actual completion record")
         guard = admission if admission is not None else SourceAdmission()
@@ -148,6 +163,24 @@ def verify_recorded_optional_inputs(producer, report, *, report_path=None, admis
         if parsed != report:
             raise SourceFinalizationRequired("Optional input completion record changed while reading")
         admission = guard
+    raw_locator = None
+    if getattr(producer, "OPTIONAL_RAW_CONSUMED_INPUTS", ()):
+        raw_locator = report.get("raw_input_locator")
+        raw_directory = report.get("raw_input_directory")
+        if (
+            not isinstance(raw_locator, str)
+            or not Path(raw_locator).is_absolute()
+            or not isinstance(raw_directory, str)
+            or not Path(raw_directory).is_absolute()
+            or not Path(raw_locator).is_dir()
+            or str(Path(raw_locator).resolve()) != raw_directory
+        ):
+            raise SourceFinalizationRequired("Missing or changed optional raw input directory; rerun the producer")
+        admission.bind_path(raw_locator)
     verify_optional_inputs(
-        producer, report.get("optional_consumed_inputs"), report.get("consumed_inputs", {}), admission=admission
+        producer,
+        report.get("optional_consumed_inputs"),
+        report.get("consumed_inputs", {}),
+        admission=admission,
+        input_dir=raw_locator,
     )

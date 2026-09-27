@@ -81,8 +81,8 @@ entire graph as acyclic. Those are separate review scopes.
 ## Generated lookup consumption
 
 MediaDive and BactoTraits declare `bacdive_taxon_lookup` as a required
-producer-time input. At each real run they reset prior consumption claims and
-parse an owned immutable snapshot of BacDive's generated `bacdive.tsv`, copied
+producer-time input. At each real run they parse an owned immutable snapshot
+of BacDive's generated `bacdive.tsv`, copied
 and SHA256-hashed with bounded memory. The source path is checked against those
 exact bytes after copying and parsing, before finalization, and before its
 record is published. A missing input, an unperformed required read, or changed
@@ -106,6 +106,32 @@ This is an exact-byte contract for these tracked reads, not a claim that every
 raw file consumed anywhere in the pipeline is now snapshotted. Multiple source
 files are not a filesystem transaction; later changes are rejected when the
 recorded inputs and graph members are verified again.
+
+### Optional MediaDive raw mappings (#1205)
+
+MediaDive also consumes `compound_mappings_strict.tsv` and
+`compound_mappings_strict_hydrate.tsv` from its effective raw input directory.
+Each optional file is parsed from an immutable snapshot; absence is recorded
+explicitly and retains the existing fallback behavior. Hydrate-file precedence
+and identity policy are unchanged. These raw-relative declarations do not
+relocate repository-relative optional inputs such as MetaTraits' EC mapping.
+The selected raw directory must exist: the producer still requires its
+`mediadive.json`, including in stale-cache override mode. Only the two mapping
+files are optional; their absence does not make the directory itself optional.
+
+MediaDive retains its constructor's original input epoch through `run()`,
+finalization and fingerprint publication. Unchanged repeated runs on that
+instance are allowed; changed inputs or a failed run require a new instance.
+Resetting snapshots cannot certify its cached mappings. Recorded evidence binds
+the lexical raw directory, resolved directory and both optional file states;
+changes, deletion, appearance and locator retargeting are rejected by freshness
+and retained public admission. Old receipts without these states require a real
+producer rerun, never fingerprint migration or finalization-only restamping.
+
+This adds exactly two raw mapping dependencies, not complete bulk JSON or cache
+coverage. Changes to shared fingerprinted helpers invalidate existing source
+receipts broadly; rebuild the affected configured source closure before merge,
+rather than assuming only MediaDive is stale from the issue's scope.
 
 ## Discovered curation and inherited producer code (#1188)
 

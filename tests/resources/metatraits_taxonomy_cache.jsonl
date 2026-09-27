@@ -1,0 +1,5 @@
+{"tax_name":"Escherichia coli","summaries":[{"name":"gram positive","is_discrete":true,"num_observations":2,"majority_label":"false: (100%)","percentages":{"true":0}}]}
+{"tax_name":"Escherichia sp. TEST1","summaries":[{"name":"gram positive","is_discrete":true,"num_observations":2,"majority_label":"true: (100%)","percentages":{"true":100}}]}
+{"tax_name":"Bacillales bacterium UBA0001","summaries":[{"name":"gram positive","is_discrete":true,"num_observations":2,"majority_label":"true: (100%)","percentages":{"true":100}}]}
+{"tax_name":"Bacillales bacterium UBA0002","summaries":[{"name":"gram positive","is_discrete":true,"num_observations":2,"majority_label":"false: (100%)","percentages":{"true":0}}]}
+{"tax_name":"Missing singleword","summaries":[]}

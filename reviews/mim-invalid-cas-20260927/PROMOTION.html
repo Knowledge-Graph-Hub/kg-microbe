@@ -1,0 +1,217 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invalid-CAS paired mapping review — 2026-09-27 &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=7026087e"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Invalid-CAS paired mapping review — 2026-09-27</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reviews/mim-invalid-cas-20260927/PROMOTION.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="invalid-cas-paired-mapping-review-2026-09-27">
+<h1>Invalid-CAS paired mapping review — 2026-09-27<a class="headerlink" href="#invalid-cas-paired-mapping-review-2026-09-27" title="Link to this heading"></a></h1>
+<section id="status-proposed-staging-change-remaining-gates-separate">
+<h2>Status: proposed staging change; remaining gates separate<a class="headerlink" href="#status-proposed-staging-change-remaining-gates-separate" title="Link to this heading"></a></h2>
+<p>This record proposes the reviewed candidate pair below on code revision
+<code class="docutils literal notranslate"><span class="pre">409caa076db725ea0dc7c925d133ad61b22d8bfe</span></code>. The original fixed55/67-cohort
+replays passed on this exact code/candidate pair, retaining their original
+scientific expectations. Independent review, new paired-change full tests and
+CI belong to the promotion PR/build records and are required before integration.
+This record
+does not establish production installation, fresh source outputs, a rebuilt KG
+or release approval.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Canonical artifact</p></th>
+<th class="head"><p>Proposed SHA256</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">f1545663016b3871d2176ccbdc76caffdefa472838b716956e8d722aaa2caff9</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mappings/ingredient_mappings.sssom.tsv</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">6b52b30e018b369aa322d41dfd4e81fcfae0e895e34d7fe48900abf5835815fb</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>Only the unified artifact changes. The supported table is already byte-identical
+and is verified as the other member of the pair. The release pin remains
+<code class="docutils literal notranslate"><span class="pre">f082c05656a0910c85176eec7b41deeb77c27967aecb80393fddc262819b6d97</span></code>,
+including its immutable upstream selection and <code class="docutils literal notranslate"><span class="pre">candidate_only</span></code> mode. The
+<a class="reference internal" href="../mim-native-category-20260927/PROMOTION.html"><span class="std std-doc">previous native-category record</span></a>
+retains its original scope and results.</p>
+</section>
+<section id="exact-reviewed-delta">
+<h2>Exact reviewed delta<a class="headerlink" href="#exact-reviewed-delta" title="Link to this heading"></a></h2>
+<p>Relative to unified artifact
+<code class="docutils literal notranslate"><span class="pre">fe54cd1a1dc14123b41bd8f08c9c42096cf2815b2ae5a5bb4ce4bd349041c98d</span></code>,
+the complete full-row/multiplicity comparison removes exactly 33 original
+invalid-CAS endpoint assertions, all retained in quarantine with reason
+<code class="docutils literal notranslate"><span class="pre">invalid_cas_identifier</span></code>. No invalid CAS subject/object endpoint remains in
+the candidate. Syntax/checksum validity does not prove chemical identity, and
+no replacement check digit or substitute CAS identity is invented.</p>
+<p>The builder also adds 90 native-provenance assertions for the 32 affected ChEBI
+targets: 32 canonical exact matches and 58 synonym close matches. Each already
+has one unchanged prior lexical assertion equal on the other 11 fields; only
+<code class="docutils literal notranslate"><span class="pre">source=native_ontology:chebi</span></code> and <code class="docutils literal notranslate"><span class="pre">mapping_date=2026-09-24</span></code> distinguish the new
+rows. These are not 90 new lexical identities. All other full rows and their
+multiplicities remain unchanged. Existing competing names are not resolved.</p>
+<p>The net change is 591,893 to 591,950 rows, with 120,184 targets, 336,050 exact
+and 255,900 close matches, and no broad/narrow matches. The only metadata change
+is the builder fingerprint:
+<code class="docutils literal notranslate"><span class="pre">sha256:58ec62b9b01a28f4f3b6b47ff319a11396617d4a07ada409acc2742bcb77ae6a</span></code>.
+Historical unified version/direction metadata and the five reviewed Sugar/Mucin
+native-category cells remain unchanged.</p>
+</section>
+<section id="completed-checks-and-limits">
+<h2>Completed checks and limits<a class="headerlink" href="#completed-checks-and-limits" title="Link to this heading"></a></h2>
+<p>The unchanged fixed55 replay passed all 55 scientific dispositions, 330 resolver
+probes and 55 manual dictionary routes. The separate fixed67 supplement passed
+all 356 routes (308 MediaDive, 26 MetaTraits, 17 MetaTraits-GTDB and five
+MicrobeDecoder), 67 three-mode name queries, 110 manual-admission observations
+and the original three parent-withdrawal controls, with no findings. It retained
+all 510 historical assertion contexts but did not claim to rebuild those source
+rows. Both actual processes exited zero with complete unchanged input guards
+and closed output/log identities. Neither replay altered its historical oracle.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Closed artifact</p></th>
+<th class="head"><p>SHA256</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Fixed55 report</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">19f81633a8daf87bd4de0b4ae7a88c46cd7179935685001cc38ab8ee74084d49</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Fixed55 execution receipt</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">f59eef93b30eec6d2c0e21653221413cc411086d359c6e4042b63123bd837323</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Fixed67 supplement report</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1432550729dcf7ad18784a40ccd8e5ce7c61a5ed7f1aa641bef6391a618e4822</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Fixed67 execution receipt</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">954239c228162040496ed8a0cc8f19e7147515e3f4d624685bca0a6749ac235c</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>Closed guarded candidate checks include complete delta/quarantine review,
+unchanged native graph tables and stub selection, finite identity, supported
+mapping and ingredient-policy audits, zero remaining supported-name/subject
+disagreements, and all six second-cycle checks including identical candidate
+bytes. Three separate runtime roles distinguish code-only rejection from the
+candidate mapping change; they do not infer mapping-only causality for a
+combined old-code/old-mapping versus new-code/new-mapping comparison.</p>
+<p>Whole-MediaDive replay preserves all 1,213 compound records and 39,879 ordered
+recipe occurrences, including typed source records, quantities, provenance and
+multiplicity. Exactly three identifiers change: compound 1603 and occurrence
+<code class="docutils literal notranslate"><span class="pre">mediadive.solution:3640#recipe/2</span></code> use <code class="docutils literal notranslate"><span class="pre">mediadive.ingredient:1603</span></code>; the distinct
+nested-solution occurrence <code class="docutils literal notranslate"><span class="pre">mediadive.solution:1727#recipe/14</span></code> uses
+<code class="docutils literal notranslate"><span class="pre">mediadive.solution:1729</span></code>. No other payload fields change. The two optional raw
+mapping reads retain their real input snapshots;
+this partial resolver audit is not full-producer freshness or admission.</p>
+<p>Historical scientific caveats and original cohorts remain unchanged. Withheld
+MIM claims are not globally false; independent native evidence does not approve
+every historical alias. Review is agent-assisted with independent adversarial
+review, not human curator signoff. The old 234-CAS cohort and broad curation
+backlog are not replaced by the fixed 33-row inventory.</p>
+<p>After reviewed integration, repeat actual producer freshness/admission and the
+dependency-ordered source closure, including post-install stub feedback. Do not
+restamp existing receipts. A fresh all-source merge, archive/member validation,
+model/path/finite observation reviews and release approval remain separate.
+Neither #1203 nor #1205 output acceptance is completed by this mapping PR alone.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

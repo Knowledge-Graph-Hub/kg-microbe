@@ -70,7 +70,6 @@ def _media(tmp_path, monkeypatch):
     with (
         mock.patch.object(media.MediaDiveTransform, "_load_chebi_roles"),
         mock.patch.object(media.MediaDiveTransform, "_load_chebi_categories"),
-        mock.patch.object(media.MediaDiveTransform, "_load_micromediaparam_mappings"),
         mock.patch.object(media.MediaDiveTransform, "_load_bulk_data"),
         mock.patch.object(media, "ChemicalMappingLoader"),
     ):
@@ -225,6 +224,9 @@ def test_clean_preflight_allows_upstream_to_create_lookup_then_real_media_reads_
     with pytest.raises(FileNotFoundError):
         transform.run(show_status=False)
     path = _lookup(tmp_path, changed=True)
+    with pytest.raises(finalizer.SourceFinalizationRequired, match="read failed"):
+        transform.run(show_status=False)
+    transform = _media(tmp_path, monkeypatch)
     transform.run(show_status=False)
     assert transform.consumed_input_snapshots[ROLE]["sha256"] == hashlib.sha256(path.read_bytes()).hexdigest()
     assert any(row["subject"] == "NCBITaxon:2" for row in _rows(transform.output_edge_file))

@@ -63,7 +63,6 @@ def test_original_legacy_broad_mapping_survives_mediadive_and_merge(tmp_path, mo
     with (
         mock.patch.object(mod.MediaDiveTransform, "_load_chebi_roles"),
         mock.patch.object(mod.MediaDiveTransform, "_load_chebi_categories"),
-        mock.patch.object(mod.MediaDiveTransform, "_load_micromediaparam_mappings"),
         mock.patch.object(mod.MediaDiveTransform, "_load_bulk_data"),
         mock.patch.object(mod, "ChemicalMappingLoader", return_value=loader),
     ):

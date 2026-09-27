@@ -759,6 +759,27 @@ class MetaTraitsTransform(Transform):
             self._ncbi_adapter = _get_ncbitaxon_adapter()
         return self._ncbi_adapter
 
+    def _search_ncbitaxon_label(self, label: str) -> List[str]:
+        """
+        Memoize ordinary exact-query misses for this worker's immutable ontology.
+
+        Keep the original spelling: OAK's case-sensitive search is distinct
+        from the existing lowercase positive-label index. Reset on adapter
+        replacement, and never convert an ontology/search failure to a miss.
+        This state is deliberately absent from shared worker initialization.
+        """
+        adapter = self._get_ncbitaxon_impl()
+        cached = getattr(self, "_ncbi_label_miss_cache", None)
+        if cached is None or cached[0] is not adapter:
+            cached = self._ncbi_label_miss_cache = (adapter, set())
+        misses = cached[1]
+        if label in misses:
+            return []
+        results = search_by_label(adapter, label, limit=1)
+        if not results:
+            misses.add(label)
+        return results
+
     def _search_ncbitaxon_by_label(self, search_name: str) -> Optional[str]:
         """
         Resolve taxon name to NCBITaxon ID with GTDB fallback.
@@ -779,7 +800,7 @@ class MetaTraitsTransform(Transform):
             return ncbitaxon_id
 
         # Try NCBI OAK lookup
-        results = search_by_label(self._get_ncbitaxon_impl(), search_name, limit=1)
+        results = self._search_ncbitaxon_label(search_name)
         if results:
             ncbitaxon_id = results[0]
             self.ncbitaxon_name_to_id[key] = ncbitaxon_id
@@ -796,14 +817,14 @@ class MetaTraitsTransform(Transform):
             if gtdb_species and gtdb_species != "NA" and mapping_type == "exact_species":
                 # Search for "Genus species" in NCBI
                 species_name = f"{gtdb_genus} {gtdb_species.replace('_', ' ')}"
-                species_results = search_by_label(self._get_ncbitaxon_impl(), species_name, limit=1)
+                species_results = self._search_ncbitaxon_label(species_name)
                 if species_results:
                     ncbitaxon_id = species_results[0]
                     self.ncbitaxon_name_to_id[key] = ncbitaxon_id
                     return ncbitaxon_id
 
             # Fallback to genus level (for genus_level/family_level mappings)
-            genus_results = search_by_label(self._get_ncbitaxon_impl(), gtdb_genus, limit=1)
+            genus_results = self._search_ncbitaxon_label(gtdb_genus)
             if genus_results:
                 ncbitaxon_id = genus_results[0]
                 # Cache with original name for future lookups

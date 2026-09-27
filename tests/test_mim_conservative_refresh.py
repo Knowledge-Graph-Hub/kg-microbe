@@ -3,6 +3,7 @@
 import csv
 import gzip
 import io
+from collections import Counter
 
 import pytest
 import yaml
@@ -239,12 +240,76 @@ def test_second_cycle_is_byte_identical_and_runtime_lookups_are_clean(inputs, mo
     assert runtime.get_hydrate_equivalents("CHEBI:1") == ["CHEBI:5"]
 
 
-def test_current_evidence_xrefs_participate_before_first_build(inputs):
-    """A newly restored native xref cannot expand scope only on the next cycle."""
+@pytest.fixture
+def untouched_claims(inputs):
+    """Give the untainted target a legacy alias, duplicate, and explicit identity."""
+    baseline = inputs["baseline"]
+    rows = list(refresh._rows(baseline))
+    alias = _row(
+        "kgm.name:legacy_four_alias",
+        "CHEBI:4",
+        "Untouched",
+        source="independent_prior|fixture_curator",
+        predicate="skos:closeMatch",
+        name="Legacy four alias",
+        comment="synonym",
+    )
+    alias.update(confidence="0.73", object_formula="FixtureFormula")
+    rows.extend([alias, dict(alias), _row("cas:four", "CHEBI:4", "Untouched")])
+    _table(baseline, FIELDS, rows, _metadata())
+    return [row for row in rows if row["object_id"] == "CHEBI:4"]
+
+
+def _assert_untouched_lookup_and_rows(candidate, expected, monkeypatch):
+    """Verify complete preserved claims and query them through the real runtime."""
+    actual = [row for row in _read(candidate) if row["object_id"] == "CHEBI:4"]
+    assert Counter(tuple(sorted(row.items())) for row in actual) == Counter(
+        tuple(sorted(row.items())) for row in expected
+    )
+    monkeypatch.setattr(runtime, "_LOADED", False)
+    monkeypatch.setattr(runtime, "_CACHED_PATH", None)
+    runtime.load_unified_mappings(candidate)
+    assert runtime.find_chebi_by_name("Legacy four alias") == "CHEBI:4"
+    assert runtime.find_chebi_by_xref("cas:four") == "CHEBI:4"
+
+
+@pytest.mark.parametrize("bridge", ["direct", "shared_cas"])
+@pytest.mark.parametrize("native_relation", ["xref", "same_as"])
+@pytest.mark.parametrize("owner", ["CHEBI:1", "CHEBI:15377"])
+def test_native_annotation_bridge_does_not_reset_unrelated_claims(
+    inputs, untouched_claims, monkeypatch, bridge, native_relation, owner
+):
+    """Only explicit native identity may extend a recorded historical taint path."""
+    baseline = inputs["baseline"]
+    target = "CHEBI:4" if bridge == "direct" else "cas:bridge"
+    if bridge == "shared_cas":
+        historical_bridge = _row(target, "CHEBI:4", "Untouched")
+        _table(baseline, FIELDS, [*refresh._rows(baseline), historical_bridge], _metadata())
+        untouched_claims.append(historical_bridge)
     path = inputs["ontology_paths"][0]
-    path.write_text(path.read_text().replace("cas:real", "cas:real|CHEBI:4"))
+    native = list(refresh._rows(path))
+    next(row for row in native if row["id"] == owner)[native_relation] = target
+    _table(path, NODE_FIELDS, native)
+
     first = refresh.build_conservative_candidate(**inputs)
-    assert "CHEBI:4" in first.report["affected_entities"]
+    rows = _read(first.candidate_path)
+    assert {"CHEBI:1", "CHEBI:2", "CHEBI:3"} <= set(first.report["affected_entities"])
+    assert not any("Copied MIM poison" in row.values() for row in rows)
+    assert ("CHEBI:4" in first.report["affected_entities"]) == (native_relation == "same_as")
+    native_identity = [
+        row
+        for row in rows
+        if row["subject_id"] == target and row["object_id"] == owner and row["predicate_id"] == "skos:exactMatch"
+    ]
+    if native_relation == "same_as":
+        assert len(native_identity) == 1
+        assert native_identity[0]["source"] == "native_ontology:chebi"
+    else:
+        assert native_identity == []
+        _assert_untouched_lookup_and_rows(first.candidate_path, untouched_claims, monkeypatch)
+        if bridge == "shared_cas":
+            assert runtime.find_chebi_by_xref(target) == "CHEBI:4"
+
     second = refresh.build_conservative_candidate(
         **dict(
             inputs,
@@ -253,6 +318,128 @@ def test_current_evidence_xrefs_participate_before_first_build(inputs):
         )
     )
     assert first.candidate_path.read_bytes() == second.candidate_path.read_bytes()
+    if owner == "CHEBI:15377":
+        assert owner in first.report["initial_affected_entities"]
+        assert owner in second.report["initial_affected_entities"]
+    if native_relation == "xref":
+        _assert_untouched_lookup_and_rows(second.candidate_path, untouched_claims, monkeypatch)
+
+
+@pytest.mark.parametrize(
+    "relations", [("xref", "xref"), ("xref", "same_as"), ("same_as", "xref"), ("same_as", "same_as")]
+)
+@pytest.mark.parametrize("reverse_native_order", [False, True])
+@pytest.mark.parametrize("owner", ["CHEBI:1", "CHEBI:15377"])
+def test_native_only_intermediate_cannot_bridge_across_an_annotation(
+    inputs, untouched_claims, monkeypatch, relations, reverse_native_order, owner
+):
+    """Follow full explicit-identity chains, never a chain with an annotation hop."""
+    intermediate = "CHEBI:900001"
+    assert not any(intermediate in (row["subject_id"], row["object_id"]) for row in refresh._rows(inputs["baseline"]))
+    path = inputs["ontology_paths"][0]
+    native = list(refresh._rows(path))
+    next(row for row in native if row["id"] == owner)[relations[0]] = intermediate
+    middle = _node(intermediate, "Native-only intermediate")
+    middle[relations[1]] = "CHEBI:4"
+    native.append(middle)
+    _table(path, NODE_FIELDS, list(reversed(native)) if reverse_native_order else native)
+
+    first = refresh.build_conservative_candidate(**inputs)
+    rows = _read(first.candidate_path)
+    fully_explicit = relations == ("same_as", "same_as")
+    assert ("CHEBI:4" in first.report["affected_entities"]) == fully_explicit
+    assert {"CHEBI:1", "CHEBI:2", "CHEBI:3"} <= set(first.report["affected_entities"])
+    assert not any("Copied MIM poison" in row.values() for row in rows)
+    assert intermediate not in first.report["affected_entities"]
+    assert not any(row["object_id"] == intermediate for row in rows)
+    identities = [
+        row
+        for row in rows
+        if row["subject_id"] == intermediate and row["object_id"] == owner and row["predicate_id"] == "skos:exactMatch"
+    ]
+    assert bool(identities) == (relations[0] == "same_as")
+    if identities:
+        assert len(identities) == 1
+        assert identities[0]["source"] == "native_ontology:chebi"
+    if not fully_explicit:
+        _assert_untouched_lookup_and_rows(first.candidate_path, untouched_claims, monkeypatch)
+
+    second = refresh.build_conservative_candidate(
+        **dict(inputs, baseline=first.candidate_path, output_directory=inputs["output_directory"].with_name("second"))
+    )
+    assert first.candidate_path.read_bytes() == second.candidate_path.read_bytes()
+    if owner == "CHEBI:15377":
+        assert owner in first.report["initial_affected_entities"]
+        assert owner in second.report["initial_affected_entities"]
+    if not fully_explicit:
+        _assert_untouched_lookup_and_rows(second.candidate_path, untouched_claims, monkeypatch)
+
+
+@pytest.mark.parametrize("same_as", ["CHEBI:4", " CHEBI:4", "CHEBI:4 ", " CHEBI:4 "])
+def test_native_same_as_whitespace_closes_scope_in_first_cycle(inputs, untouched_claims, same_as):
+    """Normalize explicit identity before scope closure, using a persistent MIM seed."""
+    owner = "CHEBI:15377"
+    path = inputs["ontology_paths"][0]
+    native = list(refresh._rows(path))
+    next(row for row in native if row["id"] == owner)["same_as"] = same_as
+    _table(path, NODE_FIELDS, native)
+
+    first = refresh.build_conservative_candidate(**inputs)
+    rows = _read(first.candidate_path)
+    assert owner in first.report["initial_affected_entities"]
+    assert "CHEBI:4" in first.report["affected_entities"]
+    identities = [
+        row
+        for row in rows
+        if row["subject_id"].strip() == "CHEBI:4"
+        and row["object_id"] == owner
+        and row["predicate_id"] == "skos:exactMatch"
+    ]
+    assert len(identities) == 1
+    assert identities[0]["subject_id"] == "CHEBI:4"
+    assert identities[0]["source"] == "native_ontology:chebi"
+    quarantined = [row for row in _read(first.quarantine_path) if row["object_id"] == "CHEBI:4"]
+    assert Counter(
+        tuple(sorted((key, value) for key, value in row.items() if key != "quarantine_reason")) for row in quarantined
+    ) == Counter(tuple(sorted(row.items())) for row in untouched_claims)
+    assert {row["quarantine_reason"] for row in quarantined} == {"historical_entity_provenance_or_identity_component"}
+    assert not any(row["subject_id"] == "kgm.name:legacy_four_alias" for row in rows)
+
+    second = refresh.build_conservative_candidate(
+        **dict(inputs, baseline=first.candidate_path, output_directory=inputs["output_directory"].with_name("second"))
+    )
+    assert owner in second.report["initial_affected_entities"]
+    assert "CHEBI:4" in second.report["affected_entities"]
+    assert first.candidate_path.read_bytes() == second.candidate_path.read_bytes()
+
+
+@pytest.mark.parametrize("same_as", ["CHEBI: 4", "   ", "UnknownPrefix:4", " CHEBI:15377 "])
+def test_native_same_as_invalid_tokens_do_not_expand_scope(inputs, untouched_claims, monkeypatch, same_as):
+    """Trimming must not admit malformed, unknown-prefix, blank, or self identities."""
+    owner = "CHEBI:15377"
+    path = inputs["ontology_paths"][0]
+    native = list(refresh._rows(path))
+    next(row for row in native if row["id"] == owner)["same_as"] = same_as
+    _table(path, NODE_FIELDS, native)
+
+    first = refresh.build_conservative_candidate(**inputs)
+    for row in _read(first.candidate_path):
+        assert not (
+            row["subject_id"] in {same_as, same_as.strip()}
+            and row["object_id"] == owner
+            and row["predicate_id"] == "skos:exactMatch"
+        )
+    assert owner in first.report["initial_affected_entities"]
+    assert "CHEBI:4" not in first.report["affected_entities"]
+    _assert_untouched_lookup_and_rows(first.candidate_path, untouched_claims, monkeypatch)
+
+    second = refresh.build_conservative_candidate(
+        **dict(inputs, baseline=first.candidate_path, output_directory=inputs["output_directory"].with_name("second"))
+    )
+    assert owner in second.report["initial_affected_entities"]
+    assert "CHEBI:4" not in second.report["affected_entities"]
+    assert first.candidate_path.read_bytes() == second.candidate_path.read_bytes()
+    _assert_untouched_lookup_and_rows(second.candidate_path, untouched_claims, monkeypatch)
 
 
 def test_explicit_same_as_is_restored_but_native_dbxref_is_not(inputs):

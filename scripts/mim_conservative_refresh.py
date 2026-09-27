@@ -219,7 +219,7 @@ def _historical_object_label_rejected(row):
 
 
 class _Components:
-    """Track undirected identity connectivity, including shared external xrefs."""
+    """Track explicit identity connectivity, including shared historical exact IDs."""
 
     def __init__(self):
         """Start an empty union-find index."""
@@ -597,7 +597,11 @@ def build_conservative_candidate(
     for _, row in _native_rows(ontology_paths):
         if "hydrate" in row["name"].casefold():
             native_hydrate_names[row["id"]] = tuple(row["synonym"].split("|"))
-        for xref in (row["xref"] + "|" + row.get("same_as", "")).split("|"):
+        # New annotations cannot demonstrate historical identity propagation.
+        # Join only native identities that reconstruction may actually reassert;
+        # historical exactMatch links below still trace potential contamination.
+        for xref in row.get("same_as", "").split("|"):
+            xref = xref.strip()  # Match _Evidence.add before testing identity scope.
             if evidence.allowed_xref(row["id"], xref):
                 components.join(row["id"], xref)
     policy_pruned_targets = set()
@@ -903,7 +907,10 @@ def build_conservative_candidate(
                     "original scientific evidence is outside this bundle."
                 ),
                 "The caller must establish independent input lineage; a manual/legacy filename does not prove it.",
-                "Native xref annotations inform quarantine scope only; new identity claims require explicit same_as.",
+                "Native xref annotations neither expand quarantine scope nor establish identity; "
+                "native same_as participates before reconstruction. Historical exactMatch links still trace taint.",
+                "Already-erased historical identity links cannot establish reset scope from the surviving seed; "
+                "retained historical claims are not newly scientifically validated.",
                 "preserved_rows counts retained assertions including metadata-repaired copies, not unchanged bytes; "
                 "their originals also count in quarantined_rows. identity_policy_relabelled_rows reports the overlap.",
             ],

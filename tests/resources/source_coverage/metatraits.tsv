@@ -1,0 +1,4 @@
+trait_name	tax_name	majority_label	num_observations
+same label	Taxon A	present	7
+same label	Taxon B	absent	0
+same label	Taxon A	present	7

@@ -1,0 +1,7 @@
+subject	predicate	object	description
+taxon:1	biolink:consumes	CHEBI:1	"literal quote
+taxon:1	biolink:consumes	CHEBI:1	"literal quote
+taxon:1	biolink:has_attribute	kgmicrobe.source_attribute:motility_0	
+taxon:1	biolink:capable_of	kgmicrobe.pathway:unknown	
+taxon:1	biolink:consumes	kgmicrobe.compound:unknown	
+taxon:1	biolink:close_match	NCBITaxon:1	

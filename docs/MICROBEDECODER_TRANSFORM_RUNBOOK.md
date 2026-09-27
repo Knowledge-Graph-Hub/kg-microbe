@@ -101,19 +101,26 @@ The **per-run `unmapped_labels.tsv` → tracked curation TSV → target
 tool → next run** loop:
 
 ```bash
-# 1. Refresh the tracked curation TSV from the latest run (defaults to
-#    labels with 10+ occurrences — filters per-strain literal tail).
-poetry run python scripts/dump_unmapped_microbedecoder_labels.py
+# Preserve the old tracked queue and any curator annotations. The writer
+# replaces its destination and initializes blank curator fields.
+queue_dir=$(mktemp -d data/microbedecoder-curation.XXXXXX)
+poetry run python scripts/dump_unmapped_microbedecoder_labels.py \
+    --min-occurrences 0 --output "$queue_dir/all.tsv"
 
-# 2. Or split by facet so each batch hands to the right target tool:
-poetry run python scripts/dump_unmapped_microbedecoder_labels.py --prefix pathway
-poetry run python scripts/dump_unmapped_microbedecoder_labels.py --prefix compound
-poetry run python scripts/dump_unmapped_microbedecoder_labels.py --prefix source_attribute
+# Separate facets into different files, without dropping low-frequency rows.
+poetry run python scripts/dump_unmapped_microbedecoder_labels.py \
+    --prefix pathway --min-occurrences 0 --output "$queue_dir/pathway.tsv"
+poetry run python scripts/dump_unmapped_microbedecoder_labels.py \
+    --prefix compound --min-occurrences 0 --output "$queue_dir/compound.tsv"
+poetry run python scripts/dump_unmapped_microbedecoder_labels.py \
+    --prefix source_attribute --min-occurrences 0 --output "$queue_dir/source_attribute.tsv"
 ```
 
-Output lands at `mappings/microbedecoder_unmapped_labels_to_curate.tsv`
-(tracked in git — mirrors the `mappings/mediadive_unmapped_ingredients_to_curate.tsv`
-pattern). Columns:
+The default output, when `--output` is omitted, is the tracked
+`mappings/microbedecoder_unmapped_labels_to_curate.tsv`. Review a newly generated
+queue before deliberately updating that historical curation asset. The default
+threshold is 10; it is useful for prioritization, not a complete inventory.
+Columns:
 
 | Column | Meaning |
 |---|---|
@@ -121,7 +128,7 @@ pattern). Columns:
 | `category` | Biolink category the placeholder carried |
 | `label` | Raw source label |
 | `source_columns` | Pipe-set of source columns this label appeared under |
-| `occurrences` | Edges this placeholder anchored last run |
+| `occurrences` | Producer emission attempts before finalized edge deduplication; not necessarily distinct edge rows |
 | `target_curie` | *(empty, curator fills)* — CHEBI / METPO / GO / EC |
 | `target_label` | *(empty)* — human-readable target name |
 | `mapping_status` | `UNMAPPED` at emit; curator sets `MAPPED` / `PROPOSED` / `SKIP` |
@@ -153,13 +160,23 @@ wc -l data/transformed/microbedecoder/nodes.tsv \
       data/transformed/microbedecoder/edges.tsv \
       data/transformed/microbedecoder/unmapped_labels.tsv
 
-# Coverage report (parametrized script; add `-s microbedecoder`)
+# Separate source-edge distributions and producer report counts
 poetry run python scripts/generate_coverage_report.py -s microbedecoder
 
 # Category / predicate / prefix validation
 poetry run python .claude/skills/kg-model-review/kg_model_review.py \
     --transform microbedecoder
 ```
+
+The coverage report does **not** calculate a mapping-success percentage. Source
+edge rows include crosswalks, resolved and unresolved materials, pathways and
+reported Attributes; queue counts are a separate producer measure. Repeated
+labels in different columns/facets retain their context. A missing queue means
+unknown report totals, whereas a valid header-only queue records zero rows.
+For MetaTraits modes, each unresolved trait/taxon report row remains separate
+and `num_observations` is reported independently of the number of report rows.
+Ontology prefixes and lexical matches do not establish chemical identity or
+decode an assay's meaning.
 
 ## Merge
 

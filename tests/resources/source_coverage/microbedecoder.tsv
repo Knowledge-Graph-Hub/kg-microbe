@@ -1,0 +1,6 @@
+placeholder_curie	category	label	source_columns	occurrences
+kgmicrobe.source_attribute:motility_0	biolink:Attribute	0	BacDive_Motility	20
+kgmicrobe.source_attribute:spores_0	biolink:Attribute	0	BacDive_Spores	30
+kgmicrobe.compound:0	biolink:ChemicalEntity	0	bergey:substrates	0
+kgmicrobe.pathway:0	biolink:BiologicalProcess	0	vpi:type_of_metabolism	2
+kgmicrobe.compound:record_scoped_sugar	biolink:ChemicalEntity	sugar	Bergey_Substrates_for_end_products	1

@@ -12,13 +12,15 @@ old September 21 release. Its `candidate_only` mode controls candidate generatio
 not permission to publish or silently replace production mappings. Paired
 production promotion remains the separate reviewed step below.
 
-The [2026-09-25 acceptance record](reviews/mim-admission-20260925/PROMOTION.md)
-separates candidate evidence, consumer checks, paired installation, and the new
-KG build. Its pending gates must not be inferred complete from the existence of
-this pin, a candidate file, or earlier passing reports. The first hydration
-candidate exposed three further legacy scope defects (#1169) during full
-MediaDive replay; its previous passing audits are retained as diagnostic history,
-not relabeled as final promotion approval.
+The [2026-09-27 native-category acceptance record](reviews/mim-native-category-20260927/PROMOTION.md)
+records the latest candidate and consumer acceptance for paired staging.
+Paired-change tests, CI, production integration and fresh KG validation remain
+separate required gates. The [2026-09-25 acceptance record](reviews/mim-admission-20260925/PROMOTION.md)
+is preserved as historical evidence, not reassigned to the new candidate. The
+first hydration candidate exposed three further legacy scope defects (#1169)
+during full MediaDive replay; its previous passing audits remain diagnostic
+history. A pin, candidate file or earlier passing report does not complete a
+later installation or graph-release gate.
 
 The complete export contains 1,747 supported exact mappings and 1,252 withheld
 rows (2,999 source assertions). Its three product files are byte-identical to the

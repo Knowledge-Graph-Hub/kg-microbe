@@ -1,0 +1,199 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Native-category paired mapping acceptance — 2026-09-27 &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=7026087e"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Native-category paired mapping acceptance — 2026-09-27</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/reviews/mim-native-category-20260927/PROMOTION.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="native-category-paired-mapping-acceptance-2026-09-27">
+<h1>Native-category paired mapping acceptance — 2026-09-27<a class="headerlink" href="#native-category-paired-mapping-acceptance-2026-09-27" title="Link to this heading"></a></h1>
+<section id="status-candidate-accepted-for-staging-integration-and-release-gates-separate">
+<h2>Status: candidate accepted for staging; integration and release gates separate<a class="headerlink" href="#status-candidate-accepted-for-staging-integration-and-release-gates-separate" title="Link to this heading"></a></h2>
+<p>Candidate and consumer review accept the pair below for a reviewed repository
+change based on <code class="docutils literal notranslate"><span class="pre">09c6ca52ec07315b818117def4b345a4bb5c7583</span></code>. This is staging
+acceptance, not production integration or approval of a newly built KG. At
+preparation, the new paired-change tests and CI had not run; their exact-head
+results belong to the promotion PR and build records. Full local tests,
+independent review and CI are required before integration. This record does not
+establish production integration, post-promotion fresh sources, merge or
+archive/release validation.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Canonical artifact</p></th>
+<th class="head"><p>Accepted SHA256</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">fe54cd1a1dc14123b41bd8f08c9c42096cf2815b2ae5a5bb4ce4bd349041c98d</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mappings/ingredient_mappings.sssom.tsv</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">6b52b30e018b369aa322d41dfd4e81fcfae0e895e34d7fe48900abf5835815fb</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>The supported TSV is already byte-identical and remains unchanged; both members
+are accepted and verified together. The immutable upstream selection, complete
+manifest and <code class="docutils literal notranslate"><span class="pre">mappings/mim_reviewed_release.json</span></code> remain unchanged, including
+<code class="docutils literal notranslate"><span class="pre">mode=candidate_only</span></code>. Neither the withheld product nor the original upstream
+source table is installed. The <a class="reference internal" href="../mim-admission-20260925/PROMOTION.html"><span class="std std-doc">September 25 record</span></a>
+retains its original results and limitations.</p>
+</section>
+<section id="exact-artifact-delta">
+<h2>Exact artifact delta<a class="headerlink" href="#exact-artifact-delta" title="Link to this heading"></a></h2>
+<p>Relative to the installed unified artifact <code class="docutils literal notranslate"><span class="pre">9e481e31f23b7a2414537f967ea513a7b494824799a002ca4300765f5acea0f1</span></code>,
+the complete literal/full-row comparisons identify exactly five category-cell
+changes:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">MIM:Mucin</span></code>, <code class="docutils literal notranslate"><span class="pre">kgm.name:mucin</span></code> and <code class="docutils literal notranslate"><span class="pre">kgm.name:mucus_glycoprotein</span></code>, all targeting
+<code class="docutils literal notranslate"><span class="pre">NCIT:C16883</span></code>: <code class="docutils literal notranslate"><span class="pre">biolink:OntologyClass</span></code> becomes <code class="docutils literal notranslate"><span class="pre">biolink:ChemicalEntity</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">MIM:Sugar</span></code> and <code class="docutils literal notranslate"><span class="pre">kgm.name:sugar</span></code>, both targeting <code class="docutils literal notranslate"><span class="pre">NCIT:C71939</span></code>:
+<code class="docutils literal notranslate"><span class="pre">biolink:OntologyClass</span></code> becomes <code class="docutils literal notranslate"><span class="pre">biolink:Food</span></code>.</p></li>
+</ul>
+<p>The only SSSOM metadata change is the builder fingerprint:
+<code class="docutils literal notranslate"><span class="pre">mapping_tool_version:</span> <span class="pre">sha256:a6cbacfba8bc9dc02d7f328ef7bfd86041c56c0988dee621df4ea4d536a7f8f8</span></code>.
+Names, endpoints, predicates, other row fields and multiplicities are unchanged.
+Both the installed and candidate unified artifacts contain 591,893 rows and
+120,185 target entities, with 336,050 exact and 255,843 close matches and no
+broad/narrow matches. The unified artifact retains its historical version and
+absent <code class="docutils literal notranslate"><span class="pre">predicate_semantics</span></code> declaration;
+the supported product independently declares SKOS semantics.</p>
+<p>These finite native category projections do not approve a new chemical identity,
+change an observation endpoint or endorse every historical alias. The builder
+retains historical exact-identity connectivity while ordinary native <code class="docutils literal notranslate"><span class="pre">xref</span></code>
+annotations do not expand that scope. Explicit native <code class="docutils literal notranslate"><span class="pre">same_as</span></code>, admitted
+independent evidence, supported MIM identities and existing policy exclusions
+remain distinct inputs to reconstruction.</p>
+</section>
+<section id="completed-candidate-checks">
+<h2>Completed candidate checks<a class="headerlink" href="#completed-candidate-checks" title="Link to this heading"></a></h2>
+<p>The candidate was built and replayed with frozen source revision
+<code class="docutils literal notranslate"><span class="pre">0b054bcb37b6ef07b1589ba73f245a14c3db8aef</span></code>. Closed executions retained unchanged
+input/code guards; their accepted scope includes:</p>
+<ul class="simple">
+<li><p>Native category evidence, report/quarantine review, complete artifact delta,
+unchanged stub selection and a second build passing all six convergence checks,
+including identical complete candidate bytes.</p></li>
+<li><p>Supported-product, finite ingredient/identity and runtime lookup checks.</p></li>
+<li><p>All 55 original special-override dispositions, 330 target/predicate probes and
+55 manual dictionary routes, plus actual manual admission for both producers.</p></li>
+<li><p>The fixed 67-ID cohort’s 356 routes, including 308 complete typed MediaDive
+occurrence joins; the 510 original edge rows remain historical exposure
+evidence, not counts from a new graph.</p></li>
+<li><p>Whole-MediaDive preservation of all 39,879 ordered occurrences and their typed
+payloads/quantities against the original occurrence oracle. This is not a claim
+of quantity normalization or general medium-formulation equivalence.</p></li>
+</ul>
+<p>These checks preserve their original cohorts and scientific caveats. Review is
+agent-assisted with independent adversarial review, not human curator signoff.
+Preserved historical assertions are not newly curated; withheld upstream rows
+are not a global prohibition on independently supported claims.</p>
+</section>
+<section id="remaining-boundary">
+<h2>Remaining boundary<a class="headerlink" href="#remaining-boundary" title="Link to this heading"></a></h2>
+<p>Run full pytest, all tox environments, lock and generated-config checks for the
+new paired-change revision, then exact-head review and CI before integration.
+Earlier code-only gates do not substitute for these artifact-change gates.</p>
+<p>After integration, recompute actual freshness for all canonical producers and
+run the dependency-ordered closure, including post-install stub feedback. Never
+restamp old receipts. Review the newly merged archive’s finite observations,
+model, paths and release validation separately. Neither candidate acceptance
+nor a successful merge alone establishes graph-release readiness.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

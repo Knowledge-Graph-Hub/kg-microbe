@@ -47,6 +47,9 @@ def main() -> int:
                 "code_dir": Path(inspect.getsourcefile(cls)).parent,
                 "data_inputs": tuple(getattr(cls, "DATA_INPUTS", ()) or ()),
                 "transform_inputs": tuple(getattr(cls, "TRANSFORM_INPUTS", ()) or ()),
+                "requires_dependency_rebuild": bool(
+                    getattr(cls, "discovered_data_inputs", None) or getattr(cls, "CODE_INPUTS", ())
+                ),
             }
         )
     outcome = migrate_markers(transformed, REPO_ROOT, sources)

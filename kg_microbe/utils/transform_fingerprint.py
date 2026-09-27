@@ -209,7 +209,7 @@ def _behaviour_tree_digest(paths: Iterable[Path], relative_to: Optional[Path]) -
     return digest.hexdigest()
 
 
-def code_fingerprint(code_dir: Path, repo_root: Optional[Path] = None) -> str:
+def code_fingerprint(code_dir: Path, repo_root: Optional[Path] = None, code_inputs: Iterable[str] = ()) -> str:
     """
     Fingerprint every Python file in a transform's package directory.
 
@@ -223,11 +223,29 @@ def code_fingerprint(code_dir: Path, repo_root: Optional[Path] = None) -> str:
 
     :param code_dir: e.g. ``kg_microbe/transform_utils/gold``.
     :param repo_root: Repository root; inferred from this module when omitted.
+    :param code_inputs: Additional repo-relative Python packages/files used only by this producer.
     :return: Hex digest, or the digest of nothing when the directory is absent.
     """
-    if not code_dir.is_dir():
+    dependencies = tuple(code_inputs)
+    if not code_dir.is_dir() and not dependencies:
         return hashlib.sha256(b"").hexdigest()
-    return _behaviour_tree_digest(code_dir.rglob("*.py"), repo_root or _repo_root())
+    root = repo_root or _repo_root()
+    paths = set(code_dir.rglob("*.py"))
+    for relative in dependencies:
+        target = root / relative
+        if target.is_dir():
+            paths.update(target.rglob("*.py"))
+        else:
+            # Missing declared code is a changed identity, not an empty dependency.
+            paths.add(target)
+    return _behaviour_tree_digest(paths, root)
+
+
+def declared_data_inputs(transform_class, repo_root: Path) -> tuple[str, ...]:
+    """Resolve static and discovered inputs now, never freezing a glob at class import."""
+    discover = getattr(transform_class, "discovered_data_inputs", None)
+    discovered = discover(repo_root) if discover is not None else ()
+    return tuple(sorted({*getattr(transform_class, "DATA_INPUTS", ()), *discovered}))
 
 
 def shared_code_fingerprint(repo_root: Optional[Path] = None) -> str:
@@ -376,6 +394,7 @@ def write_fingerprint(
     input_dir: Optional[Path] = None,
     finalization_inputs: Iterable[str] = (),
     verify_inputs: Optional[Callable[[], None]] = None,
+    code_inputs: Iterable[str] = (),
 ) -> dict:
     """
     Record the fingerprint of a completed run.
@@ -393,13 +412,14 @@ def write_fingerprint(
     :param finalization_inputs: Exact authority/dependency paths consumed by source finalization.
     :param verify_inputs: Optional producer-time snapshot verifier. Raises if consumed bytes changed;
         checked before hashing and immediately before atomic marker publication.
+    :param code_inputs: Producer-specific inherited Python code, using the same AST semantics.
     :return: The recorded payload.
     """
     if verify_inputs is not None:
         verify_inputs()
     payload = {
         "version": FINGERPRINT_VERSION,
-        "code": code_fingerprint(code_dir, repo_root),
+        "code": code_fingerprint(code_dir, repo_root, code_inputs),
         # Shared first-party code, recorded apart from the package so the
         # report can say which of the two moved (#1002).
         "shared": shared_code_fingerprint(repo_root),
@@ -516,7 +536,8 @@ def migrate_markers(transformed_dir: Path, repo_root: Path, sources: Iterable[di
     :param repo_root: Repository root.
     :param sources: One dict per registered source: ``name``, ``output_dir``
         (the directory under ``transformed_dir``), ``code_dir``,
-        ``data_inputs``, ``transform_inputs``.
+        ``data_inputs``, ``transform_inputs``; optional ``requires_dependency_rebuild``
+        refuses migration when older evidence did not bind discovered/inherited inputs.
     :return: ``{source name: "migrated" | "left: <reason>"}``.
     """
     sources = list(sources)
@@ -536,6 +557,9 @@ def migrate_markers(transformed_dir: Path, repo_root: Path, sources: Iterable[di
             continue
         if marker.get("version") != 2:
             reasons[src["name"]] = f"left: unknown scheme {marker.get('version')!r}"
+            continue
+        if src.get("requires_dependency_rebuild"):
+            reasons[src["name"]] = "left: discovered/inherited dependencies require a producer rerun"
             continue
         ok = (
             marker.get("code") == _v2_code_fingerprint(src["code_dir"])

@@ -29,7 +29,8 @@ UNIFIED = REPO_ROOT / "mappings" / "kgmicrobe_unified_entity_mappings.sssom.tsv.
 SOURCE_COMMIT = "1848b0fe521bc2462f165912fcf92d09ad9a8cec"
 MANIFEST_SHA256 = "9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af"
 SUPPORTED_SHA256 = "6b52b30e018b369aa322d41dfd4e81fcfae0e895e34d7fe48900abf5835815fb"
-UNIFIED_SHA256 = "9e481e31f23b7a2414537f967ea513a7b494824799a002ca4300765f5acea0f1"
+UNIFIED_SHA256 = "fe54cd1a1dc14123b41bd8f08c9c42096cf2815b2ae5a5bb4ce4bd349041c98d"
+BUILDER_SHA256 = "a6cbacfba8bc9dc02d7f328ef7bfd86041c56c0988dee621df4ea4d536a7f8f8"
 
 
 def _sha256(path):
@@ -111,6 +112,7 @@ class PromotedMappingPairTest(TestCase):
         metadata = _metadata(UNIFIED)
         pin = load_release_pin(REPO_ROOT)
         self.assertEqual(metadata["mapping_tool"], "kg-microbe/scripts/mim_conservative_refresh.py")
+        self.assertEqual(metadata["mapping_tool_version"], "sha256:" + BUILDER_SHA256)
         self.assertIn("reviewed manifest sha256:" + pin["manifest_sha256"], metadata["mapping_set_description"])
         # The conservative builder preserves historical baseline metadata
         # (#1170). Absence retains the reader's legacy direction contract; the
@@ -122,17 +124,28 @@ class PromotedMappingPairTest(TestCase):
         # be fabricated as the supported product's September 24 release date.
         self.assertEqual(metadata["mapping_set_version"], "2026-09-06")
 
-    def test_unified_row_and_entity_counts_match_the_reviewed_candidate(self):
-        """Stream the larger artifact rather than construct a graph or dataframe."""
+    def test_unified_counts_and_native_categories_match_the_reviewed_candidate(self):
+        """Stream counts and the five reviewed category rows without another full scan."""
         entities = set()
         predicates = Counter()
+        native_rows = Counter()
+        expected_native_rows = {
+            ("MIM:Mucin", "skos:exactMatch", "NCIT:C16883", "biolink:ChemicalEntity"): 1,
+            ("kgm.name:mucin", "skos:exactMatch", "NCIT:C16883", "biolink:ChemicalEntity"): 1,
+            ("kgm.name:mucus_glycoprotein", "skos:closeMatch", "NCIT:C16883", "biolink:ChemicalEntity"): 1,
+            ("MIM:Sugar", "skos:exactMatch", "NCIT:C71939", "biolink:Food"): 1,
+            ("kgm.name:sugar", "skos:exactMatch", "NCIT:C71939", "biolink:Food"): 1,
+        }
         rows = 0
         for row in _iter_sssom_rows(UNIFIED):
             rows += 1
             entities.add(row["object_id"])
             predicates[row["predicate_id"]] += 1
+            if row["object_id"] in {"NCIT:C16883", "NCIT:C71939"}:
+                native_rows[(row["subject_id"], row["predicate_id"], row["object_id"], row["object_category"])] += 1
         self.assertEqual(rows, 591893)
         self.assertEqual(len(entities), 120185)
         self.assertEqual(predicates, {"skos:exactMatch": 336050, "skos:closeMatch": 255843})
         self.assertEqual(predicates["skos:broadMatch"], 0)
         self.assertEqual(predicates["skos:narrowMatch"], 0)
+        self.assertEqual(native_rows, expected_native_rows)

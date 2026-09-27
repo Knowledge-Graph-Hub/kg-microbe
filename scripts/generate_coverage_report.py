@@ -1,26 +1,15 @@
 #!/usr/bin/env python3
 """
-Generate mapping-coverage report for a transform.
+Report source-edge distributions and unresolved/source-observation queues.
 
-Reads the transform's ``edges.tsv`` (for predicate + object-ontology
-distributions) and its per-source unmapped queue (for the still-to-map
-labels). Prints a scannable summary suitable for pasting into a release
-report or a curation issue.
-
-Historically metatraits-specific; now parametrised by ``--source`` so the
-same shape works for any transform that emits an unmapped-labels TSV.
-
-Supported sources today:
-
-- ``metatraits`` → ``unmapped_traits.tsv`` (``trait_name`` column)
-- ``metatraits_gtdb`` → same layout as ``metatraits``
-- ``microbedecoder`` → ``unmapped_labels.tsv`` (``label`` +
-  ``occurrences`` columns; occurrences are summed rather than
-  counting rows)
+Finalized edge rows and producer-reported observations have different units.
+Neither local IDs nor ontology prefixes establish mapping success, and reported
+MicrobeDecoder Attributes are not failed chemical identities. No combined
+mapping-success rate is calculated.
 
 Usage:
 
-    poetry run python scripts/generate_coverage_report.py                # defaults to metatraits
+    poetry run python scripts/generate_coverage_report.py
     poetry run python scripts/generate_coverage_report.py -s microbedecoder
     poetry run python scripts/generate_coverage_report.py -s metatraits_gtdb
 """
@@ -29,144 +18,164 @@ from __future__ import annotations
 
 import argparse
 import csv
-from collections import defaultdict
+import json
+import re
+from collections import Counter
 from pathlib import Path
-from typing import Dict, Tuple
 
-# ---------------------------------------------------------------------------
-# Per-source layout: where the edge file lives, where the unmapped queue
-# lives, which column carries the raw label, and how to compute the per-row
-# occurrence count. Kept as a dict so adding a source is a one-line change.
-# ---------------------------------------------------------------------------
-SOURCE_LAYOUTS: Dict[str, Dict[str, object]] = {
+SOURCE_LAYOUTS = {
     "metatraits": {
         "edges": "data/transformed/metatraits/edges.tsv",
         "unmapped": "data/transformed/metatraits/unmapped_traits.tsv",
         "label_column": "trait_name",
-        "occurrences": lambda row: 1,  # one row = one occurrence
+        "count_column": "num_observations",
+        "required_columns": ("trait_name", "tax_name", "majority_label", "num_observations"),
     },
     "metatraits_gtdb": {
         "edges": "data/transformed/metatraits_gtdb/edges.tsv",
         "unmapped": "data/transformed/metatraits_gtdb/unmapped_traits.tsv",
         "label_column": "trait_name",
-        "occurrences": lambda row: 1,
+        "count_column": "num_observations",
+        "required_columns": ("trait_name", "tax_name", "majority_label", "num_observations"),
     },
     "microbedecoder": {
         "edges": "data/transformed/microbedecoder/edges.tsv",
         "unmapped": "data/transformed/microbedecoder/unmapped_labels.tsv",
         "label_column": "label",
-        # Microbedecoder pre-aggregates the count in the row itself.
-        "occurrences": lambda row: int(row.get("occurrences", 1) or 1),
+        "count_column": "occurrences",
+        "required_columns": ("placeholder_curie", "category", "label", "source_columns", "occurrences"),
     },
 }
 
 
-def load_edge_stats(edges_file: Path) -> Tuple[Dict[str, int], Dict[str, Dict[str, int]]]:
-    """Return (predicate_counts, ontology_object_counts) for an edges.tsv."""
-    predicate_counts: Dict[str, int] = defaultdict(int)
-    ontology_counts: Dict[str, Dict[str, int]] = {
-        "METPO": defaultdict(int),
-        "CHEBI": defaultdict(int),
-        "GO": defaultdict(int),
-        "EC": defaultdict(int),
+def _rows(path: Path, required_columns, *, quoting=csv.QUOTE_MINIMAL):
+    """Read complete TSV rows, rejecting malformed headers and widths."""
+    with path.open(encoding="utf-8", newline="") as stream:
+        reader = csv.DictReader(stream, delimiter="\t", quoting=quoting, strict=True)
+        fields = reader.fieldnames
+        if (
+            not fields
+            or len(fields) != len(set(fields))
+            or any(not field for field in fields)
+            or not set(required_columns).issubset(fields)
+        ):
+            raise ValueError(f"{path}: invalid header; required columns: {', '.join(required_columns)}")
+        for row in reader:
+            if None in row or any(value is None for value in row.values()):
+                raise ValueError(f"{path}:{reader.line_num}: invalid TSV row width")
+            yield reader.line_num, row
+
+
+def _id_family(curie: str) -> str:
+    """Describe local object families without inferring their identity status."""
+    for family in ("source_attribute", "pathway", "compound", "ingredient", "trait"):
+        if curie.startswith(f"kgmicrobe.{family}:"):
+            return family
+    return "other"
+
+
+def load_edge_stats(edges_file: Path) -> dict:
+    """Stream finalized edge rows; retain duplicate rows in all distributions."""
+    predicates, families, prefixes = Counter(), Counter(), Counter()
+    ontology_objects = {prefix: Counter() for prefix in ("METPO", "CHEBI", "GO", "EC")}
+    for line, row in _rows(edges_file, ("predicate", "object"), quoting=csv.QUOTE_NONE):
+        predicate, obj = row["predicate"], row["object"]
+        if not predicate or not obj:
+            raise ValueError(f"{edges_file}:{line}: empty predicate or object")
+        predicates[predicate] += 1
+        families[_id_family(obj)] += 1
+        prefix = obj.partition(":")[0] if ":" in obj else "(no prefix)"
+        prefixes[prefix] += 1
+        if prefix in ontology_objects:
+            ontology_objects[prefix][obj] += 1
+    return {
+        "edge_rows": sum(predicates.values()),
+        "predicates": predicates,
+        "object_families": families,
+        "object_prefixes": prefixes,
+        "ontology_objects": ontology_objects,
     }
-    with open(edges_file) as f:
-        reader = csv.DictReader(f, delimiter="\t")
-        for row in reader:
-            predicate_counts[row["predicate"]] += 1
-            obj = row.get("object", "")
-            for prefix in ontology_counts:
-                if obj.startswith(f"{prefix}:"):
-                    ontology_counts[prefix][obj] += 1
-                    break
-    return predicate_counts, ontology_counts
 
 
-def load_unmapped(unmapped_file: Path, label_column: str, occurrences_fn) -> Dict[str, int]:
-    """Return {label: occurrence_count} from a source-specific unmapped queue."""
-    unmapped: Dict[str, int] = defaultdict(int)
+def load_unmapped(unmapped_file: Path, layout: dict) -> list[dict] | None:
+    """Retain every report row and its context; None means absent, not empty."""
     if not unmapped_file.exists():
-        return unmapped
-    with open(unmapped_file) as f:
-        reader = csv.DictReader(f, delimiter="\t")
-        for row in reader:
-            label = (row.get(label_column) or "").strip()
-            if not label:
-                continue
-            unmapped[label] += occurrences_fn(row)
-    return unmapped
+        return None
+    records = []
+    for line, row in _rows(unmapped_file, layout["required_columns"]):
+        value = row[layout["count_column"]]
+        if re.fullmatch(r"[0-9]+", value) is None:
+            raise ValueError(
+                f"{unmapped_file}:{line}: {layout['count_column']} must be a nonnegative integer; got {value!r}"
+            )
+        if not row[layout["label_column"]]:
+            raise ValueError(f"{unmapped_file}:{line}: empty {layout['label_column']}")
+        facet = (
+            _id_family(row["placeholder_curie"])
+            if "placeholder_curie" in layout["required_columns"]
+            else "unresolved_trait"
+        )
+        records.append({"line": line, "row": row, "count": int(value), "facet": facet})
+    return records
 
 
-def _report(source: str, layout: Dict[str, object]) -> None:
-    """Print the coverage report for one source."""
-    edges_file = Path(str(layout["edges"]))
-    unmapped_file = Path(str(layout["unmapped"]))
-    if not edges_file.exists():
-        raise SystemExit(f"[coverage] {edges_file} does not exist; run the transform first")
+def _report(source: str, layout: dict) -> None:
+    """Print separate edge distributions and context-preserving queue priorities."""
+    edges_file, unmapped_file = Path(layout["edges"]), Path(layout["unmapped"])
+    stats = load_edge_stats(edges_file)
+    records = load_unmapped(unmapped_file, layout)
 
-    print(f"Loading {edges_file}...")
-    predicate_counts, ontology_counts = load_edge_stats(edges_file)
+    print(f"{source} Source-edge and reported-observation inventory")
+    print(f"Edges: {edges_file}")
+    print(f"Finalized source edge rows: {stats['edge_rows']:,}")
+    print("\nEdges by predicate (all rows, not mapping successes):")
+    for predicate, count in stats["predicates"].most_common():
+        print(f"  {predicate}: {count:,}")
+    print("\nObject ID families (not resolution status):")
+    for family, count in sorted(stats["object_families"].items()):
+        print(f"  {family}: {count:,}")
+    print("\nObject prefixes (not identity validation):")
+    for prefix, count in stats["object_prefixes"].most_common():
+        print(f"  {prefix}: {count:,}")
+    print("\nSelected ontology object counts:")
+    for prefix, counts in stats["ontology_objects"].items():
+        print(f"  {prefix}: {len(counts):,} distinct objects; {sum(counts.values()):,} edge rows")
 
-    print(f"Loading {unmapped_file}...")
-    unmapped = load_unmapped(
-        unmapped_file,
-        str(layout["label_column"]),
-        layout["occurrences"],  # type: ignore[arg-type]
-    )
+    print(f"\nProducer report: {unmapped_file}")
+    if records is None:
+        print("Report status: MISSING; unresolved/source-observation totals are unknown.")
+    else:
+        print("Report status: PRESENT" if records else "Report status: PRESENT_EMPTY (header only)")
+        print(f"Report rows: {len(records):,} (no label-only deduplication)")
+        if source == "microbedecoder":
+            print("Count unit: producer placeholder/source-attribute emission attempts, before edge deduplication.")
+        else:
+            print("Count unit: producer-reported num_observations; report rows are separate trait/taxon records.")
+        print(f"Reported count total: {sum(record['count'] for record in records):,}")
+        facets, counts = Counter(), Counter()
+        for record in records:
+            facets[record["facet"]] += 1
+            counts[record["facet"]] += record["count"]
+        print("Queue facets:")
+        for facet in sorted(facets):
+            print(f"  {facet}: {facets[facet]:,} report rows; {counts[facet]:,} reported counts")
+        print("\nTop 10 report rows by reported count (full context; input order breaks ties):")
+        for record in sorted(records, key=lambda item: -item["count"])[:10]:
+            print(f"  {record['facet']} line {record['line']}: {json.dumps(record['row'], ensure_ascii=False)}")
 
-    total_edges = sum(predicate_counts.values())
-    total_unmapped_occurrences = sum(unmapped.values())
-
-    print("\n" + "=" * 70)
-    print(f"{source} Mapping Coverage Report")
-    print("=" * 70)
-
-    print("\n📊 OVERALL STATISTICS")
-    print(f"  Total edges: {total_edges:,}")
-    print(f"  Unique unmapped labels: {len(unmapped):,}")
-    print(f"  Total unmapped label occurrences: {total_unmapped_occurrences:,}")
-
-    print("\n🎯 EDGES BY PREDICATE")
-    for pred, count in sorted(predicate_counts.items(), key=lambda x: -x[1]):
-        pct = (count / total_edges) * 100 if total_edges else 0
-        print(f"  {pred}: {count:,} ({pct:.1f}%)")
-
-    print("\n🧬 ONTOLOGY COVERAGE")
-    for prefix, counts in ontology_counts.items():
-        print(f"  {prefix} objects: {len(counts):,} unique terms")
-
-    if ontology_counts["METPO"]:
-        print("\n🔝 TOP 15 METPO OBJECTS")
-        for obj, count in sorted(ontology_counts["METPO"].items(), key=lambda x: -x[1])[:15]:
-            pct = (count / total_edges) * 100 if total_edges else 0
-            print(f"  {obj}: {count:,} edges ({pct:.2f}%)")
-
-    print("\n🔝 TOP 10 UNMAPPED LABELS")
-    for label, count in sorted(unmapped.items(), key=lambda x: -x[1])[:10]:
-        print(f"  {label}: {count:,} occurrences")
-
-    print("\n📈 MAPPING SUCCESS RATE")
-    print(f"  Mapped edges: {total_edges:,}")
-    print(f"  Unmapped label occurrences: {total_unmapped_occurrences:,}")
-    if total_edges + total_unmapped_occurrences:
-        mapped_pct = 100 * total_edges / (total_edges + total_unmapped_occurrences)
-        print(f"  Approximate mapping rate: {mapped_pct:.1f}%")
-
-    print("\n" + "=" * 70)
+    print("\nEdge rows and reported observations are separate measures; no mapping-success rate is inferred.")
+    print("Source Attributes require field/coding-scheme review, not automatic phenotype or chemical grounding.")
 
 
 def main() -> None:
-    """Parse args and dispatch to :func:`_report`."""
+    """Parse args and report without importing producers or resolving identities."""
     parser = argparse.ArgumentParser(description=__doc__.strip().splitlines()[0])
-    parser.add_argument(
-        "-s",
-        "--source",
-        default="metatraits",
-        choices=sorted(SOURCE_LAYOUTS),
-        help="Transform whose coverage to report (default: metatraits).",
-    )
+    parser.add_argument("-s", "--source", default="metatraits", choices=sorted(SOURCE_LAYOUTS))
     args = parser.parse_args()
-    _report(args.source, SOURCE_LAYOUTS[args.source])
+    try:
+        _report(args.source, SOURCE_LAYOUTS[args.source])
+    except (OSError, ValueError, csv.Error) as error:
+        raise SystemExit(f"[coverage] {error}") from error
 
 
 if __name__ == "__main__":

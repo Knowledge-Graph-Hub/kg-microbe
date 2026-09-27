@@ -1,0 +1,2 @@
+subject	predicate	object	relation	primary_knowledge_source	knowledge_level	agent_type
+fixture:blank	biolink:related_to	fixture:repeat	RO:0002215	infores:fixture	knowledge_assertion	manual_agent

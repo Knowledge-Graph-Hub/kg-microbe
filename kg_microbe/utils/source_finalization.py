@@ -32,6 +32,7 @@ from kg_microbe.utils.provenance import primary_source_and_publications, seriali
 from kg_microbe.utils.transform_fingerprint import (
     SHARED_DATA_INPUTS,
     code_fingerprint,
+    declared_data_inputs,
     resolve_data_input,
     shared_code_fingerprint,
 )
@@ -82,6 +83,9 @@ def _verify_input_snapshot(name, snapshot):
 
 def verify_consumed_inputs(transform):
     """Require every declared producer read and verify its immutable path/digest snapshot."""
+    verifier = getattr(transform, "verify_declared_dependencies", None)
+    if verifier is not None:
+        verifier()
     if getattr(transform, "_consumed_input_error", None) is not None:
         raise SourceFinalizationRequired(
             f"Consumed-input read failed: {transform._consumed_input_error}; rerun the producer"
@@ -127,8 +131,8 @@ def snapshot_consumed_input(transform, name, path):
         raise
 
 
-def _verify_recorded_consumed_inputs(report):
-    """Enforce current registered producer requirements and their persisted input identities."""
+def _registered_producer(report):
+    """Resolve producer declarations from registered code, not a mutable source label alone."""
     from kg_microbe.transform import DATA_SOURCES, LazyTransform
 
     # A mutable source label must not erase the requirements of the code that
@@ -150,6 +154,16 @@ def _verify_recorded_consumed_inputs(report):
                 break
     if isinstance(producer, LazyTransform):
         producer = producer.transform_class
+    return producer
+
+
+def _verify_recorded_consumed_inputs(report):
+    """Enforce current registered producer requirements and their persisted input identities."""
+    producer = _registered_producer(report)
+    if getattr(producer, "discovered_data_inputs", None) is not None:
+        root = Path(__file__).resolve().parents[2]
+        if report.get("declared_data_inputs") != list(declared_data_inputs(producer, root)):
+            raise SourceFinalizationRequired("Discovered producer input inventory changed; rerun the producer")
     required = set(getattr(producer, "REQUIRED_CONSUMED_INPUTS", ()))
     snapshots = report.get("consumed_inputs", {})
     if not isinstance(snapshots, dict) or not required <= snapshots.keys():
@@ -466,7 +480,7 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
     consumed = getattr(transform, "consumed_input_snapshots", {})
     used_inputs = {
         resolve_data_input(repo_root, declaration, raw_dir)
-        for declaration in (*getattr(type(transform), "DATA_INPUTS", ()), *SHARED_DATA_INPUTS)
+        for declaration in (*declared_data_inputs(type(transform), repo_root), *SHARED_DATA_INPUTS)
     }
     used_inputs.update(Path(snapshot["path"]) for snapshot in consumed.values())
     with tempfile.TemporaryDirectory(prefix=".finalize-", dir=output_dir) as temporary:
@@ -552,6 +566,7 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
                 for path in (audit_path, external_report, go_report)
             },
             "consumed_inputs": consumed,
+            "declared_data_inputs": list(declared_data_inputs(type(transform), repo_root)),
             "inputs": [
                 {
                     "path": str(path.resolve()),
@@ -574,7 +589,7 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
             if code_dir != repo_root / "kg_microbe" / "transform_utils":
                 report["producer_code"] = {
                     "directory": str(code_dir),
-                    "fingerprint": code_fingerprint(code_dir, repo_root),
+                    "fingerprint": code_fingerprint(code_dir, repo_root, getattr(type(transform), "CODE_INPUTS", ())),
                 }
         report_path = staging / f"{file_prefix}{FINALIZATION_FILE}"
         with report_path.open("w", encoding="utf-8") as stream:
@@ -694,7 +709,10 @@ def verify_finalized_source_files(paths):
                 if report.get("finalizer_code") != current_finalizer:
                     error = "source-finalization code changed; rerun kg transform"
                 producer = report.get("producer_code")
-                if producer and producer["fingerprint"] != code_fingerprint(Path(producer["directory"]), repo_root):
+                code_inputs = getattr(_registered_producer(report), "CODE_INPUTS", ()) if producer else ()
+                if producer and producer["fingerprint"] != code_fingerprint(
+                    Path(producer["directory"]), repo_root, code_inputs
+                ):
                     error = "producer code changed; rerun kg transform"
                 try:
                     _verify_recorded_consumed_inputs(report)

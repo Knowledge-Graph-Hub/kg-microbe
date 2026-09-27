@@ -69,13 +69,14 @@ def _declared_data_inputs(source: str) -> tuple:
     """
     try:
         from kg_microbe.transform import DATA_SOURCES  # noqa: PLC0415 - optional, see docstring
+        from kg_microbe.utils.transform_fingerprint import declared_data_inputs
     except Exception:
         return ()
     cls = DATA_SOURCES.get(source)
     if cls is None:
         return ()
     try:
-        return tuple(getattr(cls, "DATA_INPUTS", ()) or ())
+        return declared_data_inputs(cls, REPO)
     except (ImportError, AttributeError):
         return ()
 
@@ -356,7 +357,10 @@ def _fingerprint_verdict(source: str, code_dir: Path) -> Optional[tuple]:
             continue
         # The package, then the first-party code every transform shares (#1002):
         # either moving means the output may differ, and the note says which.
-        package_stale = recorded.get("code") != code_fingerprint(code_dir, REPO)
+        from kg_microbe.transform import DATA_SOURCES
+
+        code_inputs = getattr(DATA_SOURCES.get(source), "CODE_INPUTS", ())
+        package_stale = recorded.get("code") != code_fingerprint(code_dir, REPO, code_inputs)
         shared_stale = recorded.get("shared") != shared_code_fingerprint(REPO)
         code_stale = package_stale or shared_stale
         code_what = "code" if package_stale else "shared code (utils/, constants.py, transform.py)"

@@ -1,0 +1,2 @@
+subject_label	subject_label_normalized	object_id	object_label	object_source	emit_predicate	emit_category
+enzyme activity: example	enzyme activity: example	GO:0003824	catalytic activity	GO	biolink:capable_of	biolink:MolecularActivity

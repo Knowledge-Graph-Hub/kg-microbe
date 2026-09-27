@@ -121,6 +121,12 @@ def _resolve_object_category(object_source: str, entity_category: str = "") -> s
     return _OBJECT_SOURCE_TO_CATEGORY.get(object_source, "biolink:NamedThing")
 
 
+def canonical_mapping_paths(mappings_dir: Optional[Path] = None) -> tuple[Path, ...]:
+    """Select the current positive canonical TSV inventory for readers and freshness."""
+    base = mappings_dir if mappings_dir is not None else _MAPPINGS_DIR
+    return tuple(path for path in sorted(base.rglob("*.tsv")) if "negative" not in path.name)
+
+
 def load_microbial_trait_mappings(
     mappings_dir: Optional[Path] = None,
 ) -> Dict[str, Dict[str, str]]:
@@ -139,9 +145,7 @@ def load_microbial_trait_mappings(
 
     result: Dict[str, Dict[str, str]] = {}
 
-    for tsv_path in sorted(base.rglob("*.tsv")):
-        if "negative" in tsv_path.name:
-            continue
+    for tsv_path in canonical_mapping_paths(base):
         # Derive entity category from filename (e.g. enzyme_mappings.tsv -> enzymes)
         entity_category = tsv_path.stem.replace("_mappings", "").replace("_mapping", "")
 

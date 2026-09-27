@@ -1,0 +1,74 @@
+def verify_finalized_source_files(paths):
+    """Require exact prepared graph bytes and unchanged authority inputs before public merge."""
+    records, authority_hashes, record_errors = {}, {}, {}
+    repo_root = Path(__file__).resolve().parents[2]
+    current_finalizer = shared_code_fingerprint(repo_root)
+    for filename in paths:
+        path = Path(filename)
+        if not path.is_file():
+            raise SourceFinalizationRequired(f"Missing configured graph input: {path}")
+        directory = path.parent
+        if directory not in records:
+            records[directory] = []
+            for report_path in sorted(directory.glob(f"*{FINALIZATION_FILE}")):
+                try:
+                    with report_path.open(encoding="utf-8") as stream:
+                        report = json.load(stream)
+                except (OSError, ValueError) as exc:
+                    raise SourceFinalizationRequired(f"Unreadable source finalization record: {report_path}") from exc
+                _validate_finalization_record_shape(report, report_path)
+                # A full v2 producer rerun does not delete older scoped v1
+                # receipts. Retain those files as evidence, but never use
+                # them to admit a graph under the current source contract.
+                # Malformed records above and unfamiliar versions below
+                # remain hard failures, not silently ignored candidates.
+                if report["version"] == 1:
+                    continue
+                if report.get("version") != FINALIZATION_VERSION:
+                    raise SourceFinalizationRequired(f"Unsupported source finalization record: {report_path}")
+                records[directory].append((report_path, report))
+        candidates = [(name, report) for name, report in records[directory] if path.name in report.get("members", {})]
+        actual = {"bytes": path.stat().st_size, "sha256": _sha256(path)}
+        candidates = [(name, report) for name, report in candidates if report["members"][path.name] == actual]
+        if not candidates:
+            raise SourceFinalizationRequired(f"{path}: absent/stale finalization record; rerun kg transform")
+        # A valid later full-ontology record can supersede an older scoped
+        # record even if the graph bytes are identical. Never select a stale
+        # narrower record before checking each candidate's actual authorities.
+        for record_path, report in sorted(candidates, key=lambda item: len(item[1]["members"])):
+            if record_path not in record_errors:
+                error = None
+                if report.get("finalizer_code") != current_finalizer:
+                    error = "source-finalization code changed; rerun kg transform"
+                producer = report.get("producer_code")
+                code_inputs = getattr(_registered_producer(report), "CODE_INPUTS", ()) if producer else ()
+                if producer and producer["fingerprint"] != code_fingerprint(
+                    Path(producer["directory"]), repo_root, code_inputs
+                ):
+                    error = "producer code changed; rerun kg transform"
+                try:
+                    _verify_recorded_consumed_inputs(report, report_path=record_path)
+                except SourceFinalizationRequired as exc:
+                    error = str(exc)
+                for authority in report.get("inputs", []):
+                    authority_path = Path(authority["path"])
+                    if authority_path not in authority_hashes:
+                        authority_hashes[authority_path] = _sha256(authority_path) if authority_path.is_file() else None
+                    if authority_hashes[authority_path] != authority["sha256"]:
+                        error = f"consumed authority changed or missing: {authority_path}"
+                audits = report.get("audit_members", {})
+                if not audits:
+                    error = "missing mandatory audit-member identities; rerun kg transform"
+                for name, expected in audits.items():
+                    audit_path = record_path.parent / name
+                    if (
+                        not audit_path.is_file()
+                        or {"bytes": audit_path.stat().st_size, "sha256": _sha256(audit_path)} != expected
+                    ):
+                        error = f"mandatory audit report changed or missing: {audit_path}"
+                record_errors[record_path] = error
+            if record_errors[record_path] is None:
+                break
+        else:
+            raise SourceFinalizationRequired(f"{record_path}: {record_errors[record_path]}")
+

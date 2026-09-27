@@ -89,6 +89,10 @@ class Transform:
     #: Unlike DATA_INPUTS, these are checked after upstream producers have run.
     REQUIRED_CONSUMED_INPUTS: tuple = ()
 
+    #: Named optional repository-relative reads; absence is evidence, never a required file.
+    #: Unlike DATA_INPUTS these locators do not relocate to input_base_dir.
+    OPTIONAL_CONSUMED_INPUTS: tuple = ()
+
     def __init__(
         self,
         source_name,
@@ -183,6 +187,8 @@ class Transform:
         """Start a real producer run with no inherited input-consumption claims."""
         self._consumed_input_snapshots = {}
         self._consumed_input_error = None
+        self._optional_input_states = {}
+        self._optional_input_admission = None
 
     def begin_dependency_admission(self):
         """Bind discovered curation and inherited code before a producer loads either."""
@@ -222,6 +228,17 @@ class Transform:
         from kg_microbe.utils.source_finalization import snapshot_consumed_input
 
         return snapshot_consumed_input(self, name, path)
+
+    @property
+    def optional_consumed_inputs(self):
+        """Return independent serialized state without replacing original read evidence."""
+        return {"version": 1, "inputs": {name: dict(value) for name, value in self._optional_input_states.items()}}
+
+    def consume_optional_input(self, name):
+        """Read one declared repository input immutably, retaining explicit optional absence."""
+        from kg_microbe.utils.optional_consumed_inputs import snapshot_optional_input
+
+        return snapshot_optional_input(self, name)
 
     def verify_consumed_inputs(self):
         """Reject missing required reads or changed/deleted bytes consumed by this run."""

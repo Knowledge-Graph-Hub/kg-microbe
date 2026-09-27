@@ -122,7 +122,11 @@ SUMMARY
   with explicit but missing/unusable completion evidence instead report
   `MISSING_BUILD_RECORD`, including interrupted reruns of finalized sources.
 - The ref default is `origin/master`. On a fork, override with `--ref`.
-- The `data/raw/` inputs are not currently checked. If a raw input was
-  refreshed but its transform wasn't rerun, this skill will report the
-  transform FRESH. That's a known gap; add a `--check-raw` mode if it
-  becomes an issue.
+- This diagnostic is not an exhaustive audit of every `data/raw/` input.
+  Declared and consumed-input contracts cover their recorded dependencies;
+  undeclared raw inputs can still change without invalidating a fingerprint.
+  In particular, `metatraits` and `metatraits_gtdb` check their optional
+  repository-global `data/raw/ec2go.txt` read contract, including recorded
+  absence, bytes and locator identity. Missing or altered evidence requires
+  a real producer rerun. A diagnostic FRESH result still does not replace
+  production merge's complete source/admission checks.

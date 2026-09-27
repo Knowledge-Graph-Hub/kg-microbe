@@ -58,7 +58,7 @@ def test_real_kgx_merge_preserves_node_sources(tmp_path, monkeypatch):
     assert rows["NCBITaxon:beta"]["provided_by"] == "infores:beta"
 
 
-def test_export_provenance_override_is_restored_on_failure(monkeypatch):
+def test_export_provenance_override_is_restored_on_failure(tmp_path, monkeypatch):
     """The compatibility shim must not change later KGX calls after an exception."""
     import pytest
 
@@ -82,8 +82,12 @@ def test_export_provenance_override_is_restored_on_failure(monkeypatch):
         raise RuntimeError("failed merge")
 
     monkeypatch.setattr(cli_utils, "merge", fail)
+    # Eligibility now inspects a real config before invoking KGX. Keep the
+    # injected KGX failure (and every restoration assertion) as the test seam.
+    config = tmp_path / "merge.yaml"
+    config.write_text("merged_graph: {}\n")
     with pytest.raises(RuntimeError, match="failed merge"):
-        merge("unused.yaml")
+        merge(str(config))
     assert cli_utils.Transformer is original
     assert cli_utils.parse_source is parser
     assert cli_utils.merge_all_graphs is graph_merger

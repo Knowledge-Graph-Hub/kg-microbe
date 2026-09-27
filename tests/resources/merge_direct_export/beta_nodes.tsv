@@ -1,0 +1,3 @@
+id	category	name	description	provided_by	deprecated	node_literal	empty_node_extension
+NCBITaxon:1	biolink:OrganismTaxon	root	literal "quote" and a|b	infores:beta	false	beta|alpha	
+CHEBI:1	biolink:NamedThing	fixture chemical		infores:beta	false		

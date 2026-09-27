@@ -11,10 +11,15 @@ import copy
 import csv
 import hashlib
 import json
+from contextlib import contextmanager
+from contextvars import ContextVar
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from threading import RLock
 
 from kg_microbe.merge_utils.local_context import local_prefix_context
+from kg_microbe.merge_utils.progress import merge_phase
+from kg_microbe.merge_utils.stats_provenance import STATS_OPERATION
 from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
     DEPRECATED_COLUMN,
@@ -49,6 +54,7 @@ from bmt import Toolkit  # noqa: E402
 from kgx import transformer as transformer_module  # noqa: E402
 from kgx.cli import cli_utils as cli_utils_module  # noqa: E402
 from kgx.cli.cli_utils import parse_source as _kgx_parse_source  # noqa: E402
+from kgx.graph.nx_graph import NxGraph  # noqa: E402
 from kgx.graph_operations.graph_merge import add_all_nodes  # noqa: E402
 from kgx.sink.graph_sink import GraphSink  # noqa: E402
 from kgx.sink.sink import Sink  # noqa: E402
@@ -80,6 +86,11 @@ _BOOLEAN_NODE_PROPERTIES = {DEPRECATED_COLUMN} | {
 # Independent multiprocessing workers never share this lock. It also makes
 # scoped overrides safe for callers that use a ThreadPool for tiny merges.
 _SOURCE_MAP_LOCK = RLock()
+# Only merge() may create a scope, and only its actual assertion merger may
+# register the resulting object. Empty destination operations alone say nothing
+# about earlier graph mutations. Never attach a reusable permission to a graph.
+_DIRECT_EXPORT = ContextVar("kgm_direct_export", default=None)
+_DIRECT_EXPORT_KGX_VERSION = "2.7.0"
 _RELATION_IRI_PREFIXES = {
     "http://www.w3.org/2000/01/rdf-schema#": "rdfs:",
     "http://www.w3.org/1999/02/22-rdf-syntax-ns#": "rdf:",
@@ -189,7 +200,94 @@ def merge_assertion_graphs(graphs, preserve=True):
         add_all_nodes(result, graph, preserve)
         for _, _, data in graph.edges(data=True):
             _add_assertion(result, data)
+    scope = _DIRECT_EXPORT.get()
+    if scope is not None:
+        scope["graph"] = result
     return result
+
+
+def _read_only_operations(operations):
+    """Permit only the inspected KGX 2.7 statistics operation, never arbitrary callbacks."""
+    return isinstance(operations, list) and all(
+        isinstance(operation, dict)
+        and set(operation) <= {"name", "args"}
+        and operation.get("name") == STATS_OPERATION
+        and isinstance(operation.get("args"), dict)
+        for operation in operations
+    )
+
+
+def _eligible_merge_configuration(config, selected_sources=None):
+    """Require the normal canonical TSV ingestion/merge pipeline before direct export."""
+    try:
+        installed_version = version("kgx")
+    except (PackageNotFoundError, OSError):
+        # Optimization is optional. A usable imported KGX may lack readable
+        # distribution metadata; keep its existing path, not an untested fast one.
+        return False
+    if installed_version != _DIRECT_EXPORT_KGX_VERSION:
+        return False
+    graph = config.get("merged_graph", {})
+    sources = graph.get("source", {})
+    if not isinstance(sources, dict) or not _read_only_operations(graph.get("operations", [])):
+        return False
+    selected = list(selected_sources) if selected_sources else list(sources)
+    if not selected or any(name not in sources for name in selected):
+        return False
+    for name in selected:
+        source = sources[name]
+        if not isinstance(source, dict) or not _read_only_operations(source.get("operations", [])):
+            return False
+        inputs = source.get("input", {})
+        if not isinstance(inputs, dict) or inputs.get("format") != "tsv":
+            return False
+        if not _read_only_operations(inputs.get("operations", [])):
+            return False
+    return True
+
+
+@contextmanager
+def direct_export_scope(config, selected_sources=None):
+    """Bind eligibility to this normal merge only; restore nested/failed calls exactly."""
+    eligible = _eligible_merge_configuration(config, selected_sources)
+    token = _DIRECT_EXPORT.set({"graph": None} if eligible else None)
+    try:
+        yield
+    finally:
+        _DIRECT_EXPORT.reset(token)
+
+
+def _eligible_graph_export(input_args, output_args, inspector, parallel):
+    """Reject arbitrary graphs, incomplete inventories, remapping and destination operations."""
+    scope = _DIRECT_EXPORT.get()
+    if scope is None or scope["graph"] is not input_args.get("graph") or scope["graph"] is None:
+        return False
+    if type(scope["graph"]) is not NxGraph:
+        return False
+    if input_args.get("format") != "graph" or set(input_args) - {"format", "graph", PROVIDED_BY_COLUMN}:
+        return False
+    if inspector is not None or parallel != 1 or not isinstance(output_args, dict):
+        return False
+    allowed = {
+        "format",
+        "filename",
+        "compression",
+        "node_properties",
+        "edge_properties",
+        "reverse_prefix_map",
+        "reverse_predicate_mappings",
+    }
+    return (
+        not set(output_args) - allowed
+        and output_args.get("format") == "tsv"
+        and output_args.get("compression") is None
+        and not output_args.get("reverse_prefix_map")
+        and not output_args.get("reverse_predicate_mappings")
+        and isinstance(output_args.get("node_properties"), set)
+        and isinstance(output_args.get("edge_properties"), set)
+        and transformer_module.SOURCE_MAP["graph"] is RelationAwareGraphSource
+        and transformer_module.SINK_MAP["tsv"] is RelationAwareTsvSink
+    )
 
 
 class RelationAwareTsvSource(TsvSource):
@@ -400,11 +498,47 @@ def _preserve_node_sources(values=None):
 class ProvenancePreservingTransformer(Transformer):
     """Keep graph-export provenance in a module-level class safe to return from workers."""
 
-    def transform(self, input_args, *args, **kwargs):
+    def transform(self, input_args, output_args=None, inspector=None, parallel=1):
         """Override graph provenance without changing ordinary TSV ingestion defaults."""
         if input_args.get("format") == "graph":
             input_args = {**input_args, PROVIDED_BY_COLUMN: _preserve_node_sources}
-        return super().transform(input_args, *args, **kwargs)
+        if _eligible_graph_export(input_args, output_args, inspector, parallel):
+            return self._export_completed_graph(input_args, output_args)
+        options = {"parallel": parallel} if parallel != 1 else {}
+        if input_args.get("format") == "graph" and output_args:
+            with merge_phase("export-intermediate", unit="calls") as progress:
+                result = super().transform(input_args, output_args, inspector=inspector, **options)
+                progress.advance()
+                return result
+        return super().transform(input_args, output_args, inspector=inspector, **options)
+
+    def _export_completed_graph(self, input_args, output_args):
+        """Use KGX's existing record processor and canonical reader/writer without GraphSink."""
+        source = self.get_source("graph")
+        records = source.parse(input_args["graph"], provided_by=_preserve_node_sources)
+        sink = self.get_sink(**output_args)
+        previous = self.inspector, self.node_filters, self.edge_filters
+        self.inspector, self.node_filters, self.edge_filters = None, {}, {}
+        try:
+            with merge_phase("export-nodes") as nodes, merge_phase("export-edges") as edges:
+
+                def counted_records():
+                    """Count actual records without changing their fields or processing order."""
+                    for record in records:
+                        yield record
+                        (edges if len(record) == 4 else nodes).advance()
+
+                self.process(counted_records(), sink)
+                sink.finalize()
+            self.store.node_properties.update(sink.node_properties)
+            self.store.edge_properties.update(sink.edge_properties)
+            self._infores_catalog.update(source.get_infores_catalog())
+        finally:
+            self.inspector, self.node_filters, self.edge_filters = previous
+            # KGX's normal transform does not close a failed sink. These are
+            # private loose files; never package/publish a partially written pair.
+            sink.NFH.close()
+            sink.EFH.close()
 
 
 def parse_source(

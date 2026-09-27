@@ -11,6 +11,7 @@ from typing import BinaryIO, Dict, Iterable, Optional
 
 import yaml
 
+from kg_microbe.merge_utils.progress import merge_phase
 from kg_microbe.merge_utils.stats_provenance import git_commit, source_markers
 from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.transform_fingerprint import schema_fingerprint
@@ -21,13 +22,14 @@ MANIFEST_MEMBER = "manifest.json"
 class _CountedReader:
     """Hash/count a TSV as tarfile reads it, so the manifest describes archived bytes."""
 
-    def __init__(self, handle: BinaryIO):
+    def __init__(self, handle: BinaryIO, progress=None):
         """Wrap a binary stream without buffering the graph in memory."""
         self.handle = handle
         self.digest = hashlib.sha256()
         self.size = 0
         self.lines = 0
         self.tail = b""
+        self.progress = progress
 
     def read(self, size: int = -1) -> bytes:
         """Consume bytes and count physical KGX TSV lines (fields are newline-sanitized)."""
@@ -37,6 +39,8 @@ class _CountedReader:
         self.lines += chunk.count(b"\n")
         if chunk:
             self.tail = chunk[-1:]
+        if self.progress is not None:
+            self.progress.advance(len(chunk))
         return chunk
 
     def summary(self) -> Dict:
@@ -77,8 +81,11 @@ def write_graph_archive(archive: Path, files: Iterable[Path], provenance: Option
             for path in files:
                 if path.name == MANIFEST_MEMBER or path.name in members:
                     raise ValueError(f"Duplicate or reserved archive member: {path.name}")
-                with path.open("rb") as handle:
-                    reader = _CountedReader(handle)
+                with (
+                    path.open("rb") as handle,
+                    merge_phase(f"archive-member-{path.name}", interval=64 * 1024 * 1024, unit="bytes") as progress,
+                ):
+                    reader = _CountedReader(handle, progress)
                     info = tar.gettarinfo(str(path), arcname=path.name)
                     if not info.isfile():
                         raise ValueError(f"Graph member must be a regular file: {path}")

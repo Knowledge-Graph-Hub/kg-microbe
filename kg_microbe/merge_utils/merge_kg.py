@@ -15,6 +15,7 @@ import yaml
 
 from kg_microbe.merge_utils.artifact_manifest import build_provenance, write_graph_archive, write_loose_manifest
 from kg_microbe.merge_utils.invariants import check_merged_invariants
+from kg_microbe.merge_utils.progress import merge_phase
 from kg_microbe.merge_utils.stats_provenance import STATS_OPERATION, annotate_graph_stats, stats_filename_from_config
 from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.graph_schema import validate_canonical_tsv
@@ -34,6 +35,7 @@ def merge(*args, **kwargs):
         RelationAwareGraphSink,
         RelationAwareGraphSource,
         RelationAwareTsvSink,
+        direct_export_scope,
         merge_assertion_graphs,
         parse_source,
     )
@@ -53,7 +55,9 @@ def merge(*args, **kwargs):
     transformer_module.SOURCE_MAP["graph"] = RelationAwareGraphSource
     transformer_module.SINK_MAP.update({name: RelationAwareTsvSink for name in original_tsv_sinks})
     try:
-        with local_prefix_context():
+        config_path = args[0] if args else kwargs["merge_config"]
+        selected_sources = args[1] if len(args) > 1 else kwargs.get("source")
+        with local_prefix_context(), direct_export_scope(parse_load_config(config_path), selected_sources):
             return cli_utils.merge(*args, **kwargs)
     finally:
         cli_utils.Transformer = original_transformer
@@ -400,8 +404,10 @@ def _cleanup_merged_outputs(
             # or remapping categories, identities or original assertions.
             # The required report includes schema/provenance validation; do
             # not add a second redundant full-file contract scan here.
-            validation_counts = write_merge_validation_report(nodes_file, edges_file, reference_report)
-            print(f"[merge-validation] {base}: {validation_counts}; no semantic rewrites")
+            with merge_phase("validation") as progress:
+                validation_counts = write_merge_validation_report(nodes_file, edges_file, reference_report)
+                progress.advance(sum(validation_counts.values()))
+            print(f"[merge-validation] {base}: {validation_counts}; no semantic rewrites", flush=True)
             # Checked here rather than in each transform: a transform can only
             # police the edges it writes, and kgmicrobe.strain is a namespace
             # several sources mint into (#896).
@@ -446,14 +452,18 @@ def _cleanup_merged_outputs(
             diagnostic = config.get("configuration", {}).get("allow_unfinalized_sources", False)
             provenance["source_finalization"] = {"required": not diagnostic, "diagnostic_opt_out": diagnostic}
             if compression == "tar.gz":
-                _rewrite_tarball(archive, [nodes_file, edges_file, reference_report], provenance=provenance)
+                with merge_phase("packaging", unit="members") as progress:
+                    _rewrite_tarball(archive, [nodes_file, edges_file, reference_report], provenance=provenance)
+                    progress.advance(3)
                 # Private transport files are not independent published
                 # artifacts for an archive-only destination.
                 nodes_file.unlink(missing_ok=True)
                 edges_file.unlink(missing_ok=True)
             else:
                 manifest_file = output_dir / f"{base}_manifest.json"
-                write_loose_manifest(manifest_file, [nodes_file, edges_file, reference_report], provenance)
+                with merge_phase("manifest", unit="members") as progress:
+                    write_loose_manifest(manifest_file, [nodes_file, edges_file, reference_report], provenance)
+                    progress.advance(3)
                 written.add(manifest_file)
 
         written |= {nodes_file, edges_file, reference_report, archive}

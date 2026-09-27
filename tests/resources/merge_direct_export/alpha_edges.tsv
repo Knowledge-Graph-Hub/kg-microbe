@@ -1,0 +1,4 @@
+subject	predicate	object	relation	primary_knowledge_source	knowledge_level	agent_type	publications	has_percentage	value	unit	negated	source_record	empty_edge_extension
+NCBITaxon:1	biolink:related_to	CHEBI:1	RO:0000056	infores:alpha	knowledge_assertion	manual_agent	PMID:2|PMID:1	51	3.5	mg	false	{"note":"literal|pipe and \"quote\"","flag":false}	
+NCBITaxon:1	biolink:related_to	CHEBI:1	RO:0000056	infores:alpha	knowledge_assertion	manual_agent	PMID:1|PMID:2	51	3.5	mg	false	{"note":"literal|pipe and \"quote\"","flag":false}	
+NCBITaxon:1	biolink:related_to	CHEBI:1	RO:0000056	infores:alpha	knowledge_assertion	manual_agent	PMID:3	52	3.5	mg	true	{"note":"distinct evidence"}	

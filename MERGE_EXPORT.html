@@ -1,0 +1,160 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Canonical destination export &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Canonical destination export</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/MERGE_EXPORT.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="canonical-destination-export">
+<h1>Canonical destination export<a class="headerlink" href="#canonical-destination-export" title="Link to this heading"></a></h1>
+<p>The normal KGM merge may serialize its completed assertion graph directly to
+the existing canonical TSV sink. This removes KGX’s populated intermediate
+destination <code class="docutils literal notranslate"><span class="pre">GraphSink</span></code>; it does <strong>not</strong> remove the in-memory merged graph or
+the source stores retained by KGX.</p>
+<p>Eligibility is scoped to one actual KGM merge call and the exact object returned
+by its assertion merger. It requires the inspected <strong>KGX 2.7.0</strong> / <code class="docutils literal notranslate"><span class="pre">NxGraph</span></code> interface, TSV
+source ingestion, full node/edge property inventories, and only the inspected
+read-only statistics operation (or no operations) in selected source and merged
+configuration. An arbitrary graph passed to <code class="docutils literal notranslate"><span class="pre">Transformer</span></code>, mutating operation,
+destination filter/remapping, missing inventory, unsupported output/compression
+or unknown installed KGX version takes the existing intermediate-graph path.
+That fallback preserves existing behavior; it is not a general compatibility
+claim for other KGX versions (the broader contract remains tracked in #1066).</p>
+<p>Checking destination <code class="docutils literal notranslate"><span class="pre">operations=[]</span></code> alone would be unsafe: KGX has already
+applied source/merged operations before destination export. Such operations can
+leave differently keyed observations that only the intermediate graph’s
+normalization/deduplication coalesces. The optimization must not authorize those
+graphs. The normal source sinks already coalesce only fully identical normalized
+observations; distinct evidence, provider, context, relation and polarity remain
+separate. Node provider/category unions are not scalar edge-provenance unions.</p>
+<p>Both export paths keep <code class="docutils literal notranslate"><span class="pre">RelationAwareGraphSource</span></code> and <code class="docutils literal notranslate"><span class="pre">RelationAwareTsvSink</span></code>
+validation and canonical full-field serialization. Header inventories include
+all declared extensions even if every value is blank. No source loading,
+scientific identity resolution, public input admission, validation, manifest,
+single-archive packaging or per-artifact atomic publication gate is bypassed.
+Progress messages contain flushed phase/counters and elapsed time, not record
+contents or a guessed ETA. Direct serialization reports every 100,000 records;
+archive member streaming reports every 64 MiB. Validation announces entry and
+completion/counts without inserting a new graph scan.</p>
+<section id="bounded-offline-benchmark">
+<h2>Bounded offline benchmark<a class="headerlink" href="#bounded-offline-benchmark" title="Link to this heading"></a></h2>
+<p>Run with the existing project interpreter, from this checkout, into a <strong>new</strong>
+evidence directory whose parent exists:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nv">PYTHONDONTWRITEBYTECODE</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/benchmark_merge_export.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--edges<span class="w"> </span><span class="m">20000</span><span class="w"> </span>--repeats<span class="w"> </span><span class="m">3</span><span class="w"> </span>--output<span class="w"> </span>/absolute/new/benchmark-output
+</pre></div>
+</div>
+<p>The script uses immutable synthetic fixture/schema templates, deterministic
+generated observations with exact duplicate controls, and separate fresh
+interpreters for alternating baseline/direct runs. It exercises real public
+merge/export, required validation and one archive, with the explicitly declared
+diagnostic unfinalized-source option. It does not read production sources or
+claim source freshness. External network access is forbidden. Both the complete
+TSV/audit member byte hashes and generated input hashes must match across every
+run; mismatches cannot produce an accepted timing report. The fast-path call
+count must prove the optimization actually ran.</p>
+<p>Export-call wall time is measured separately from whole-public-call time. Peak
+process RSS includes imports, ingestion and export and is not isolated export
+memory. Concurrent host load is uncontrolled; report individual repetitions,
+not an extrapolated production speedup. No timing or memory threshold belongs
+in the unit-test gate. The benchmark is bounded to at most 200,000 unique edges
+and ten paired repetitions, writes only its new output directory, and preserves
+logs and exact fixture/code/interpreter before/after hashes.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

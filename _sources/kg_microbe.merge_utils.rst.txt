@@ -52,6 +52,14 @@ kg\_microbe.merge\_utils.merge\_kg module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.merge\_utils.progress module
+----------------------------------------
+
+.. automodule:: kg_microbe.merge_utils.progress
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.merge\_utils.source\_admission module
 -------------------------------------------------
 

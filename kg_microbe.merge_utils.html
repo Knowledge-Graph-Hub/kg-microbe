@@ -418,6 +418,35 @@ repairs are permitted. Sources must be explicitly finalized first.</p>
 </dd></dl>
 
 </section>
+<section id="module-kg_microbe.merge_utils.progress">
+<span id="kg-microbe-merge-utils-progress-module"></span><h2>kg_microbe.merge_utils.progress module<a class="headerlink" href="#module-kg_microbe.merge_utils.progress" title="Link to this heading"></a></h2>
+<p>Bounded, flushed progress for long merge serialization and release phases.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.progress.MergeProgress">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.progress.</span></span><span class="sig-name descname"><span class="pre">MergeProgress</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'rows'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.progress.MergeProgress" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Report counters, not record contents or an estimated completion time.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.progress.MergeProgress.advance">
+<span class="sig-name descname"><span class="pre">advance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">amount</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.progress.MergeProgress.advance" title="Link to this definition"></a></dt>
+<dd><p>Emit at most one report per bounded batch, including large byte reads.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.progress.MergeProgress.report">
+<span class="sig-name descname"><span class="pre">report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">state</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.progress.MergeProgress.report" title="Link to this definition"></a></dt>
+<dd><p>Flush a small status record even when stdout is redirected to a log.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.merge_utils.progress.merge_phase">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.progress.</span></span><span class="sig-name descname"><span class="pre">merge_phase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">phase</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.progress.merge_phase" title="Link to this definition"></a></dt>
+<dd><p>Report terminal success or failure without changing exception/publication semantics.</p>
+</dd></dl>
+
+</section>
 <section id="module-kg_microbe.merge_utils.source_admission">
 <span id="kg-microbe-merge-utils-source-admission-module"></span><h2>kg_microbe.merge_utils.source_admission module<a class="headerlink" href="#module-kg_microbe.merge_utils.source_admission" title="Link to this heading"></a></h2>
 <p>Bind one merge to unchanged admitted files without copying graph-scale inputs (#1100).</p>

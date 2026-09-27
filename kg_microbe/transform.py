@@ -28,7 +28,12 @@ from kg_microbe.transform_utils.constants import (
     PREGO,
     RHEAMAPPINGS,
 )
-from kg_microbe.utils.transform_fingerprint import FINGERPRINT_FILE, resolve_data_input, write_fingerprint
+from kg_microbe.utils.transform_fingerprint import (
+    FINGERPRINT_FILE,
+    declared_data_inputs,
+    resolve_data_input,
+    write_fingerprint,
+)
 
 
 class LazyTransform:
@@ -157,7 +162,7 @@ def _missing_declared_inputs(sources: List[str], repo_root: Path, input_dir: Opt
     missing = []
     for source in sources:
         cls = DATA_SOURCES.get(source)
-        for rel in getattr(cls, "DATA_INPUTS", ()) if cls is not None else ():
+        for rel in declared_data_inputs(cls, repo_root) if cls is not None else ():
             path = resolve_data_input(repo_root, rel, input_dir)
             if not path.exists():
                 missing.append(f"{source}: {rel}" + (f" ({path})" if input_dir is not None else ""))
@@ -314,7 +319,8 @@ def _record_fingerprint(transform_obj, source: str) -> None:
             output_dir=transform_obj.output_dir,
             code_dir=code_dir,
             repo_root=Path(__file__).resolve().parent.parent,
-            data_inputs=getattr(type(transform_obj), "DATA_INPUTS", ()),
+            data_inputs=declared_data_inputs(type(transform_obj), Path(__file__).resolve().parent.parent),
+            code_inputs=getattr(type(transform_obj), "CODE_INPUTS", ()),
             transform_inputs=getattr(type(transform_obj), "TRANSFORM_INPUTS", ()),
             input_dir=getattr(transform_obj, "input_base_dir", None),
             finalization_inputs=getattr(transform_obj, "finalization_inputs", ()),

@@ -58,6 +58,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
     # Synthetic crosswalks reuse GTDB's whole-release fan-in decisions (#1053).
     TRANSFORM_INPUTS = (*MetaTraitsTransform.TRANSFORM_INPUTS, GTDB)
     DATA_INPUTS = (*MetaTraitsTransform.DATA_INPUTS, "data/raw/taxdump.tar.gz")
+    CODE_INPUTS = ("kg_microbe/transform_utils/metatraits",)
 
     def __init__(
         self,

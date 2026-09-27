@@ -107,6 +107,30 @@ raw file consumed anywhere in the pipeline is now snapshotted. Multiple source
 files are not a filesystem transaction; later changes are rejected when the
 recorded inputs and graph members are verified again.
 
+## Discovered curation and inherited producer code (#1188)
+
+MetaTraits and MetaTraits-GTDB discover the canonical input inventory using the
+same recursive, sorted positive-TSV selector as their mapping reader. Files
+whose names contain `negative` remain excluded. Discovery happens at use time,
+not class import: additions, removals, renames and content changes invalidate
+completed outputs. The selected inventory is recorded in finalization evidence.
+Producer-time snapshots and the merge admission's final guard also reject input
+drift during a run; they cannot certify newly substituted inputs by rehashing.
+
+MetaTraits-GTDB declares the inherited MetaTraits Python package as a producer-
+specific `CODE_INPUTS` dependency. This uses the existing repository-relative
+AST digest, so unchanged checkouts and comment/formatting-only edits retain
+content freshness. It does not declare a dependency on MetaTraits graph output
+or put parent code in the global shared-code set. Future parent-only behavior
+changes invalidate MetaTraits and GTDB, not otherwise unrelated producers.
+
+Installing this shared fingerprint/finalization implementation itself changes
+the existing shared-code digest and invalidates prior source receipts broadly;
+rebuild the configured source closure, then merge. Do not re-stamp old outputs.
+The legacy v2-marker migration refuses producers with discovered or inherited
+dependencies because old evidence did not bind that dependency contract.
+This does not add previously undeclared raw/EC inputs or certify all reads.
+
 ## TSV representation is explicit
 
 Legacy producers default to CSV-quoted TSV. A producer writing native KGX

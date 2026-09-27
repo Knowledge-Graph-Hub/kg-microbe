@@ -262,6 +262,15 @@ class MetaTraitsTransform(Transform):
 
     DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
 
+    @classmethod
+    def discovered_data_inputs(cls, repo_root: Path) -> tuple[str, ...]:
+        """Bind exactly the positive canonical TSVs accepted by the mapping reader."""
+        from kg_microbe.utils.microbial_trait_mappings import canonical_mapping_paths
+
+        return tuple(
+            path.relative_to(repo_root).as_posix() for path in canonical_mapping_paths(repo_root / "mappings/canonical")
+        )
+
     # Measurement traits that should be excluded from unmapped_traits.tsv
     # These represent quantitative measurements, not ontology classes
     MEASUREMENT_TRAITS = {

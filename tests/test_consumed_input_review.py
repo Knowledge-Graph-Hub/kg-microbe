@@ -21,6 +21,10 @@ def consumer(tmp_path):
     cls = DATA_SOURCES["mediadive"].transform_class
     transform = cls.__new__(cls)
     Transform.__init__(transform, "mediadive", tmp_path / "raw", tmp_path / "transformed")
+    transform.input_base_dir.mkdir()
+    for role, _ in cls.OPTIONAL_RAW_CONSUMED_INPUTS:
+        with transform.consume_optional_input(role) as reader:
+            assert reader is None
     lookup = tmp_path / "lookup.tsv"
     shutil.copyfile(FIXTURE, lookup)
     return transform, lookup
@@ -89,6 +93,9 @@ def test_caught_parser_failure_cannot_certify_partial_consumption(consumer):
     with pytest.raises(SourceFinalizationRequired, match="read failed"):
         transform.verify_consumed_inputs()
     transform.begin_consumed_inputs()
+    for role, _ in type(transform).OPTIONAL_RAW_CONSUMED_INPUTS:
+        with transform.consume_optional_input(role) as reader:
+            assert reader is None
     with transform.consume_input("bacdive_taxon_lookup", lookup) as reader:
         reader.read()
     transform.verify_consumed_inputs()

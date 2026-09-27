@@ -48,6 +48,9 @@ def _prepare(tmp_path, name):
         shutil.copyfile(FIXTURES / "lookup.tsv", lookup)
         with transform.consume_input(role, lookup) as reader:
             reader.read()
+    for role, _ in getattr(cls, "OPTIONAL_RAW_CONSUMED_INPUTS", ()):
+        with transform.consume_optional_input(role) as reader:
+            assert reader is None
     transform.finalize(fresh_run=True)
     _record(transform)
     return transform

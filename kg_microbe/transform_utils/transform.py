@@ -93,6 +93,10 @@ class Transform:
     #: Unlike DATA_INPUTS these locators do not relocate to input_base_dir.
     OPTIONAL_CONSUMED_INPUTS: tuple = ()
 
+    #: Named optional reads relative to the effective input_base_dir, including explicit absence.
+    #: Kept separate so repository-relative optional inputs never silently relocate.
+    OPTIONAL_RAW_CONSUMED_INPUTS: tuple = ()
+
     def __init__(
         self,
         source_name,
@@ -235,7 +239,7 @@ class Transform:
         return {"version": 1, "inputs": {name: dict(value) for name, value in self._optional_input_states.items()}}
 
     def consume_optional_input(self, name):
-        """Read one declared repository input immutably, retaining explicit optional absence."""
+        """Read one declared optional input immutably, retaining its locator and explicit absence."""
         from kg_microbe.utils.optional_consumed_inputs import snapshot_optional_input
 
         return snapshot_optional_input(self, name)

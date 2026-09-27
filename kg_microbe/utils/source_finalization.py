@@ -81,7 +81,7 @@ def _verify_input_snapshot(name, snapshot):
         raise SourceFinalizationRequired(f"Consumed input {name!r} changed or missing: {path}; rerun the producer")
 
 
-def verify_consumed_inputs(transform):
+def verify_consumed_inputs(transform, *, native_output_dir=None):
     """Require every declared producer read and verify its immutable path/digest snapshot."""
     verifier = getattr(transform, "verify_declared_dependencies", None)
     if verifier is not None:
@@ -96,6 +96,9 @@ def verify_consumed_inputs(transform):
         raise SourceFinalizationRequired(f"Required consumed inputs were not read: {', '.join(sorted(missing))}")
     for name, snapshot in snapshots.items():
         _verify_input_snapshot(name, snapshot)
+    native_verifier = getattr(transform, "verify_native_inputs", None)
+    if native_verifier is not None:
+        native_verifier(byte_verified=True, output_dir=native_output_dir)
 
 
 @contextmanager
@@ -157,13 +160,18 @@ def _registered_producer(report):
     return producer
 
 
-def _verify_recorded_consumed_inputs(report):
+def _verify_recorded_consumed_inputs(report, *, report_path=None, admission=None):
     """Enforce current registered producer requirements and their persisted input identities."""
     producer = _registered_producer(report)
     if getattr(producer, "discovered_data_inputs", None) is not None:
         root = Path(__file__).resolve().parents[2]
         if report.get("declared_data_inputs") != list(declared_data_inputs(producer, root)):
             raise SourceFinalizationRequired("Discovered producer input inventory changed; rerun the producer")
+    native_verifier = getattr(producer, "verify_recorded_native_inputs", None)
+    if native_verifier is not None and admission is None:
+        from kg_microbe.merge_utils.source_admission import SourceAdmission
+
+        admission = SourceAdmission()
     required = set(getattr(producer, "REQUIRED_CONSUMED_INPUTS", ()))
     snapshots = report.get("consumed_inputs", {})
     if not isinstance(snapshots, dict) or not required <= snapshots.keys():
@@ -179,7 +187,12 @@ def _verify_recorded_consumed_inputs(report):
             or inputs.get(snapshot["path"]) != snapshot["sha256"]
         ):
             raise SourceFinalizationRequired(f"Invalid consumed-input snapshot {name!r}; rerun the producer")
-        _verify_input_snapshot(name, snapshot)
+        if admission is None:
+            _verify_input_snapshot(name, snapshot)
+        elif admission.capture(snapshot["path"])["sha256"] != snapshot["sha256"]:
+            raise SourceFinalizationRequired(f"Consumed input {name!r} changed; rerun the producer")
+    if native_verifier is not None:
+        native_verifier(report, report_path, admission=admission)
 
 
 def validate_identifier(identifier):
@@ -412,6 +425,8 @@ def _repeat_finalization(transform, file_prefix):
             "Consumed inputs differ from finalized run; rerun and finalize(fresh_run=True)"
         )
     transform._consumed_input_snapshots = {name: dict(snapshot) for name, snapshot in snapshots.items()}
+    if getattr(transform, "verify_native_inputs", None) is not None:
+        transform.producer_native_inputs = report.get("producer_native_inputs")
     verify_consumed_inputs(transform)
     transform.finalization_inputs = tuple(item["path"] for item in report.get("inputs", []))
     return report
@@ -420,7 +435,7 @@ def _repeat_finalization(transform, file_prefix):
 def _publish_finalization(transform, prepared):
     """Publish one validated staging area, with its exact-byte completion record last."""
     staging, report_path, used_inputs, report = prepared
-    verify_consumed_inputs(transform)
+    verify_consumed_inputs(transform, native_output_dir=staging)
     for path in sorted(staging.iterdir(), key=lambda path: (path == report_path, path.name)):
         os.replace(path, Path(transform.output_dir) / path.name)
     transform.finalization_inputs = tuple(str(path.resolve()) for path in sorted(used_inputs))
@@ -548,7 +563,7 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
             for path in paths:
                 _order_finalized_schema(path, is_node)
         summaries["rows"] = validate_graph_bundle(staged_nodes, staged_edges, require_contract=True)
-        verify_consumed_inputs(transform)
+        verify_consumed_inputs(transform, native_output_dir=staging)
         consumed_hashes = {snapshot["path"]: snapshot["sha256"] for snapshot in consumed.values()}
         report = {
             "version": FINALIZATION_VERSION,
@@ -577,6 +592,8 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
                 for path in sorted(used_inputs)
             ],
         }
+        if getattr(transform, "verify_native_inputs", None) is not None:
+            report["producer_native_inputs"] = transform.producer_native_inputs
         try:
             producer_file = inspect.getsourcefile(type(transform))
         except TypeError:
@@ -715,7 +732,7 @@ def verify_finalized_source_files(paths):
                 ):
                     error = "producer code changed; rerun kg transform"
                 try:
-                    _verify_recorded_consumed_inputs(report)
+                    _verify_recorded_consumed_inputs(report, report_path=record_path)
                 except SourceFinalizationRequired as exc:
                     error = str(exc)
                 for authority in report.get("inputs", []):

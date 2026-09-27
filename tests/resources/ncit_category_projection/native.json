@@ -1,0 +1,25 @@
+{
+  "source_diagnostic_sha256": "672d0bb62d363316ea5243b813a35ee4946fdf0ba734936589138d017c7c12d9",
+  "native_db_sha256": "7d1245d10a80ab29ba02e7eab03b37dd9940cdd18f92855d44c95578584f6eb5",
+  "schema_sha256": "b6a1320772a92d69e84b8c700cd6386dffe45ed635c8197d61e22b6a6fa3b35e",
+  "statements": [
+    ["NCIT:C16883", "IAO:0000115", null, "An albuminoid substance containing mucopolysaccharides and protein which is contained in mucus, and gives to the latter secretion its peculiar ropy character. It is found in all the secretions from mucous glands, and also between the fibres of connective tissue, as in tendons."],
+    ["NCIT:C16883", "NCIT:P106", null, "Amino Acid, Peptide, or Protein"],
+    ["NCIT:C16883", "rdfs:label", null, "Mucin"],
+    ["NCIT:C16883", "rdfs:subClassOf", "_:riog00570852", null],
+    ["NCIT:C16883", "rdfs:subClassOf", "_:riog00570851", null],
+    ["NCIT:C16883", "rdfs:subClassOf", "NCIT:C16642", null],
+    ["NCIT:C71939", "IAO:0000115", null, "A white crystalline carbohydrate, typically sucrose, used as a sweetener and preservative."],
+    ["NCIT:C71939", "NCIT:P106", null, "Food"],
+    ["NCIT:C71939", "rdfs:label", null, "Sugar"],
+    ["NCIT:C71939", "rdfs:subClassOf", "NCIT:C62695", null]
+  ],
+  "aliases": {"NCIT:C16883": ["Mucus Glycoprotein"], "NCIT:C71939": []},
+  "schema_parents": {"food": "chemical mixture", "chemical mixture": "chemical entity", "chemical entity": "named thing"},
+  "raw_csv_sha256": "0c6ff730a108720a5d6972400f2bccf2eca8621713b62736abdf5df0fb188c95",
+  "source_observations": [
+    {"record": 1200, "subject": "lpsn:773071", "column": "Bergey_Substrates_for_end_products", "value": "sugar", "explanation": "NA", "object": "NCIT:C71939", "publications": "doi:10.1002/9781118960608.gbm00239"},
+    {"record": 6810, "subject": "lpsn:776427", "column": "Bergey_Substrates_for_end_products", "value": "sugar", "explanation": "NA", "object": "NCIT:C71939", "publications": "doi:10.1002/9781118960608.gbm00020"},
+    {"record": 944, "subject": "lpsn:783337", "column": "Bergey_Substrates_for_end_products", "value": "mucin", "explanation": "NA", "object": "NCIT:C16883", "publications": "doi:10.1002/9781118960608.gbm01282"}
+  ]
+}

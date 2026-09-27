@@ -114,7 +114,7 @@ class _SourceFreshness:
     def _check_record(self, path, report):
         """Tie candidate selection to exact current graph/audit/authority bytes, including scoped alternatives."""
         source, cls, directory, fingerprint = self._producer(report)
-        _verify_recorded_consumed_inputs(report)
+        _verify_recorded_consumed_inputs(report, report_path=path, admission=self.admission)
         if report.get("finalizer_code") != self.shared:
             raise SourceFinalizationRequired(f"{path}: source-finalization code changed")
         members = report.get("members", {})

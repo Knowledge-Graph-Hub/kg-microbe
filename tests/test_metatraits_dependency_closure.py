@@ -54,6 +54,8 @@ def _child(root):
         Transform.__init__(transform, name, root / "data/raw", root / "data/transformed")
         for kind in ("nodes", "edges"):
             shutil.copyfile(root / "fixture" / f"{kind}.tsv", transform.output_dir / f"{kind}.tsv")
+        if name in ("metatraits", "metatraits_gtdb"):
+            transform.ec_to_go = transform._load_ec_to_go()
         transform.finalize(fresh_run=True)
         dispatcher._record_fingerprint(transform, name)
         assert (transform.output_dir / fingerprint.FINGERPRINT_FILE).is_file()

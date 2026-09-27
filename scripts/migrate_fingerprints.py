@@ -48,7 +48,9 @@ def main() -> int:
                 "data_inputs": tuple(getattr(cls, "DATA_INPUTS", ()) or ()),
                 "transform_inputs": tuple(getattr(cls, "TRANSFORM_INPUTS", ()) or ()),
                 "requires_dependency_rebuild": bool(
-                    getattr(cls, "discovered_data_inputs", None) or getattr(cls, "CODE_INPUTS", ())
+                    getattr(cls, "OPTIONAL_CONSUMED_INPUTS", ())
+                    or getattr(cls, "discovered_data_inputs", None)
+                    or getattr(cls, "CODE_INPUTS", ())
                 ),
             }
         )

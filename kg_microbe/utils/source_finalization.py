@@ -96,6 +96,15 @@ def verify_consumed_inputs(transform, *, native_output_dir=None):
         raise SourceFinalizationRequired(f"Required consumed inputs were not read: {', '.join(sorted(missing))}")
     for name, snapshot in snapshots.items():
         _verify_input_snapshot(name, snapshot)
+    if getattr(type(transform), "OPTIONAL_CONSUMED_INPUTS", ()):
+        from kg_microbe.utils.optional_consumed_inputs import verify_optional_inputs
+
+        verify_optional_inputs(
+            type(transform),
+            transform.optional_consumed_inputs,
+            snapshots,
+            admission=transform._optional_input_admission,
+        )
     native_verifier = getattr(transform, "verify_native_inputs", None)
     if native_verifier is not None:
         native_verifier(byte_verified=True, output_dir=native_output_dir)
@@ -168,7 +177,7 @@ def _verify_recorded_consumed_inputs(report, *, report_path=None, admission=None
         if report.get("declared_data_inputs") != list(declared_data_inputs(producer, root)):
             raise SourceFinalizationRequired("Discovered producer input inventory changed; rerun the producer")
     native_verifier = getattr(producer, "verify_recorded_native_inputs", None)
-    if native_verifier is not None and admission is None:
+    if (native_verifier is not None or getattr(producer, "OPTIONAL_CONSUMED_INPUTS", ())) and admission is None:
         from kg_microbe.merge_utils.source_admission import SourceAdmission
 
         admission = SourceAdmission()
@@ -193,6 +202,10 @@ def _verify_recorded_consumed_inputs(report, *, report_path=None, admission=None
             raise SourceFinalizationRequired(f"Consumed input {name!r} changed; rerun the producer")
     if native_verifier is not None:
         native_verifier(report, report_path, admission=admission)
+    from kg_microbe.utils.optional_consumed_inputs import verify_recorded_optional_inputs
+
+    verify_recorded_optional_inputs(producer, report, report_path=report_path, admission=admission)
+    return admission
 
 
 def validate_identifier(identifier):
@@ -425,6 +438,12 @@ def _repeat_finalization(transform, file_prefix):
             "Consumed inputs differ from finalized run; rerun and finalize(fresh_run=True)"
         )
     transform._consumed_input_snapshots = {name: dict(snapshot) for name, snapshot in snapshots.items()}
+    if getattr(type(transform), "OPTIONAL_CONSUMED_INPUTS", ()):
+        previous_optional = transform.optional_consumed_inputs
+        recorded_optional = report.get("optional_consumed_inputs")
+        if previous_optional["inputs"] and previous_optional != recorded_optional:
+            raise SourceFinalizationRequired("Optional input state differs from finalized run; rerun the producer")
+        transform._optional_input_states = {name: dict(state) for name, state in recorded_optional["inputs"].items()}
     if getattr(transform, "verify_native_inputs", None) is not None:
         transform.producer_native_inputs = report.get("producer_native_inputs")
     verify_consumed_inputs(transform)
@@ -594,6 +613,8 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
         }
         if getattr(transform, "verify_native_inputs", None) is not None:
             report["producer_native_inputs"] = transform.producer_native_inputs
+        if getattr(type(transform), "OPTIONAL_CONSUMED_INPUTS", ()):
+            report["optional_consumed_inputs"] = transform.optional_consumed_inputs
         try:
             producer_file = inspect.getsourcefile(type(transform))
         except TypeError:
@@ -686,6 +707,7 @@ def _validate_finalization_record_shape(report, report_path):
 def verify_finalized_source_files(paths):
     """Require exact prepared graph bytes and unchanged authority inputs before public merge."""
     records, authority_hashes, record_errors = {}, {}, {}
+    record_admissions, accepted_admissions = {}, {}
     repo_root = Path(__file__).resolve().parents[2]
     current_finalizer = shared_code_fingerprint(repo_root)
     for filename in paths:
@@ -732,7 +754,7 @@ def verify_finalized_source_files(paths):
                 ):
                     error = "producer code changed; rerun kg transform"
                 try:
-                    _verify_recorded_consumed_inputs(report, report_path=record_path)
+                    record_admissions[record_path] = _verify_recorded_consumed_inputs(report, report_path=record_path)
                 except SourceFinalizationRequired as exc:
                     error = str(exc)
                 for authority in report.get("inputs", []):
@@ -753,9 +775,13 @@ def verify_finalized_source_files(paths):
                         error = f"mandatory audit report changed or missing: {audit_path}"
                 record_errors[record_path] = error
             if record_errors[record_path] is None:
+                if record_admissions.get(record_path) is not None:
+                    accepted_admissions[record_path] = record_admissions[record_path]
                 break
         else:
             raise SourceFinalizationRequired(f"{record_path}: {record_errors[record_path]}")
+    for admission in accepted_admissions.values():
+        admission.verify(metadata_only=True)
 
 
 def write_merge_validation_report(node_path, edge_path, report_path):

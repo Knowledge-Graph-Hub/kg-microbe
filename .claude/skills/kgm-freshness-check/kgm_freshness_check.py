@@ -398,6 +398,33 @@ def _fingerprint_verdict(source: str, code_dir: Path) -> Optional[tuple]:
             )
         if data_stale:
             return "STALE_VS_DATA", f"a declared data input differs from the recorded build; rerun `poetry run kg transform -s {source}`"
+        producer = DATA_SOURCES.get(source)
+        if getattr(producer, "OPTIONAL_CONSUMED_INPUTS", ()):
+            import inspect
+
+            from kg_microbe.utils.source_finalization import (
+                FINALIZATION_FILE,
+                SourceFinalizationRequired,
+                _registered_producer,
+                _verify_recorded_consumed_inputs,
+            )
+
+            record_path = directory / FINALIZATION_FILE
+            try:
+                report = json.loads(record_path.read_bytes())
+                producer_class = getattr(producer, "transform_class", producer)
+                expected_directory = str(Path(inspect.getsourcefile(producer_class)).resolve().parent)
+                if (
+                    not isinstance(report, dict)
+                    or report.get("source") != source
+                    or not isinstance(report.get("producer_code"), dict)
+                    or report["producer_code"].get("directory") != expected_directory
+                    or _registered_producer(report) is not producer_class
+                ):
+                    raise SourceFinalizationRequired("Optional-input receipt does not identify requested producer")
+                _verify_recorded_consumed_inputs(report, report_path=record_path)
+            except (OSError, ValueError, TypeError, KeyError):
+                return "STALE_VS_DATA", "optional consumed-input evidence missing or changed; rerun the producer"
         return "FRESH", "verified by content fingerprint"
     return None
 

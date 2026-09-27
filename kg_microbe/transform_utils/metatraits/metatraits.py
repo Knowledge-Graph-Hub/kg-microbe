@@ -261,6 +261,7 @@ class MetaTraitsTransform(Transform):
     TRANSFORM_INPUTS = ("ontologies",)
 
     DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
+    OPTIONAL_CONSUMED_INPUTS = (("ec_to_go", "data/raw/ec2go.txt"),)
 
     @classmethod
     def discovered_data_inputs(cls, repo_root: Path) -> tuple[str, ...]:
@@ -632,17 +633,18 @@ class MetaTraitsTransform(Transform):
 
         :return: Dictionary mapping ec_number (e.g., "1.1.1.1") -> {go_id, go_label}
         """
-        ec2go_file = RAW_DATA_DIR / "ec2go.txt"
+        from kg_microbe.utils.optional_consumed_inputs import optional_input_paths
+
+        ec2go_file = optional_input_paths(type(self))["ec_to_go"]
         ec_mappings = {}
 
-        if not ec2go_file.exists():
-            print(f"  Warning: EC to GO mappings file not found: {ec2go_file}")
-            return ec_mappings
+        import re
 
-        try:
-            import re
-
-            with open(ec2go_file, "r", encoding="utf-8") as f:
+        with self.consume_optional_input("ec_to_go") as f:
+            if f is None:
+                print(f"  Warning: EC to GO mappings file not found: {ec2go_file}")
+                return ec_mappings
+            else:
                 for line in f:
                     line = line.strip()
                     # Skip comments and empty lines
@@ -658,9 +660,7 @@ class MetaTraitsTransform(Transform):
 
                         ec_mappings[ec_number] = {"go_id": go_id, "go_label": go_label}
 
-            print(f"  Loaded {len(ec_mappings)} EC to GO mappings")
-        except Exception as e:
-            print(f"  Warning: Could not load EC to GO mappings: {e}")
+        print(f"  Loaded {len(ec_mappings)} EC to GO mappings")
 
         return ec_mappings
 

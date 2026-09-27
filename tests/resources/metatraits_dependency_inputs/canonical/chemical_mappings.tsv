@@ -1,0 +1,2 @@
+subject_label	subject_label_normalized	object_id	object_label	object_source	emit_predicate	emit_category
+produces: ethanol	produces: ethanol	CHEBI:16236	ethanol	CHEBI	biolink:produces	biolink:ChemicalEntity

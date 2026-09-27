@@ -66,6 +66,13 @@ from kg_microbe.transform_utils.constants import (
     RDFS_SUBCLASS_OF,
     SUBCLASS_PREDICATE,
 )
+from kg_microbe.transform_utils.ontologies_stubs.ncit_category_projection import (
+    REVIEWED_CATEGORIES,
+    native_contract,
+    project_category,
+    read_dispositions,
+    validate_native_contract,
+)
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.isolation_source_mapping_utils import STUB_ONTOLOGY_CATEGORY
 from kg_microbe.utils.stub_curie_collection import (
@@ -230,6 +237,7 @@ STUB_ONTOLOGY_SOURCES: Dict[str, Dict[str, Any]] = {
 _MAX_CELL_LEN = 500
 
 ONTOLOGIES_STUBS_SOURCE_NAME = "ontologies_stubs"
+NCIT_CATEGORY_DISPOSITIONS = _STUB_REPO_ROOT / "mappings/ncit_category_dispositions.tsv"
 
 
 class OntologiesStubsTransform(Transform):
@@ -250,7 +258,7 @@ class OntologiesStubsTransform(Transform):
     #: ImportError from a tuple comprehension — breaking every importer, and
     #: pointing nowhere near the entry that caused it (#841). An out-of-repo
     #: path is not git-checkable anyway, so dropping it loses no signal.
-    DATA_INPUTS = tuple(
+    DATA_INPUTS = ("mappings/ncit_category_dispositions.tsv",) + tuple(
         sorted(
             path.relative_to(_STUB_REPO_ROOT).as_posix()
             for path in DEFAULT_MAPPING_PATHS
@@ -271,6 +279,12 @@ class OntologiesStubsTransform(Transform):
             written (defaults to ``data/transformed/``).
         """
         super().__init__(ONTOLOGIES_STUBS_SOURCE_NAME, input_dir, output_dir)
+
+    def begin_consumed_inputs(self):
+        """Start the native authority guard afresh only when a new producer run begins."""
+        super().begin_consumed_inputs()
+        self._ncit_category_authority_admission = None
+        self.producer_native_inputs = {"version": 1, "authority": None}
 
     def run(self, data_file=None, **kwargs) -> None:  # noqa: D401 — base class signature
         """
@@ -382,7 +396,7 @@ class OntologiesStubsTransform(Transform):
                 label = curie
             row = [
                 curie,  # id (canonical prefix)
-                STUB_ONTOLOGY_CATEGORY,  # category
+                self._reviewed_ncit_category(adapter, db_curie, label),  # category
                 label,  # name
                 None,  # description
                 _join_pipe(xrefs),  # xref
@@ -393,6 +407,8 @@ class OntologiesStubsTransform(Transform):
             ]
             rows.append(row)
 
+        if self._ncit_category_authority_admission is not None:
+            self.verify_consumed_inputs()
         self._write_node_file(output_file, rows)
         print(
             f"  [{prefix}] wrote {len(rows)} stub nodes to {output_file.name} "
@@ -674,7 +690,10 @@ class OntologiesStubsTransform(Transform):
                 continue
             try:
                 rels = list(adapter.outgoing_relationships(current, predicates=[RDFS_SUBCLASS_OF]))
-            except Exception:
+            except Exception as error:
+                if current in REVIEWED_CATEGORIES:
+                    self._consumed_input_error = str(error)
+                    raise
                 rels = []
             for _, parent in rels:
                 edges.append((current, parent))
@@ -693,7 +712,7 @@ class OntologiesStubsTransform(Transform):
             node_rows.append(
                 [
                     out_curie,
-                    STUB_ONTOLOGY_CATEGORY,
+                    self._reviewed_ncit_category(adapter, db_curie, label),
                     label,
                     None,
                     _join_pipe(xrefs),
@@ -727,6 +746,8 @@ class OntologiesStubsTransform(Transform):
                 ]
             )
 
+        if self._ncit_category_authority_admission is not None:
+            self.verify_consumed_inputs()
         self._write_node_file(nodes_file, node_rows)
         self._write_edge_file(edges_file, edge_rows)
 
@@ -854,19 +875,115 @@ class OntologiesStubsTransform(Transform):
         sibling ``.db.gz`` is present, decompress it once (idempotent) and
         use the result.
         """
+        if prefix == "NCIT" and not db_path.resolve().is_relative_to(self.input_base_dir.resolve()):
+            self._consumed_input_error = "NCIT category authority is outside the selected input directory"
+            raise ValueError(self._consumed_input_error)
         if not db_path.is_file():
             gz_path = db_path.with_suffix(db_path.suffix + ".gz")
             if gz_path.is_file():
+                if prefix == "NCIT" and not gz_path.resolve().is_relative_to(self.input_base_dir.resolve()):
+                    self._consumed_input_error = "NCIT compressed authority is outside the selected input directory"
+                    raise ValueError(self._consumed_input_error)
                 print(f"  [{prefix}] decompressing {gz_path.name} → {db_path.name}")
                 with gzip.open(gz_path, "rb") as src, db_path.open("wb") as dst:
                     shutil.copyfileobj(src, dst)
             else:
+                if prefix == "NCIT":
+                    self._consumed_input_error = f"Selected NCIT native authority is missing: {db_path}"
                 return None
+        if prefix == "NCIT":
+            self._bind_ncit_category_authority(db_path)
         try:
             from oaklib import get_adapter
         except ImportError as exc:  # pragma: no cover — oaklib is a dep
             raise RuntimeError(f"oaklib import failed while opening SemSQL adapter for {prefix}: {exc}") from exc
-        return get_adapter(f"sqlite:{db_path}")
+        try:
+            return get_adapter(f"sqlite:{db_path}")
+        except Exception as error:
+            if prefix == "NCIT":
+                self._consumed_input_error = str(error)
+            raise
+
+    def _bind_ncit_category_authority(self, db_path):
+        """Bind the selected native DB after decompression, without copying binary authority."""
+        from kg_microbe.merge_utils.source_admission import SourceAdmission
+
+        try:
+            lexical = Path(db_path).absolute()
+            path = lexical.resolve()
+            if not path.is_relative_to(self.input_base_dir.resolve()):
+                raise ValueError("NCIT category authority must stay inside the selected input directory")
+            admission = getattr(self, "_ncit_category_authority_admission", None)
+            freshly_captured = admission is None
+            if admission is None:
+                admission = SourceAdmission()
+                identity = admission.capture(lexical)
+                snapshot = {"path": str(path), "sha256": identity["sha256"]}
+                previous = self._consumed_input_snapshots.setdefault("ncit_category_authority", snapshot)
+                if previous != snapshot:
+                    raise ValueError("NCIT category authority changed within one producer run")
+                self.producer_native_inputs = native_contract(lexical, path, identity["sha256"])
+                self._ncit_category_authority_admission = admission
+            elif lexical not in admission.bindings or path not in admission.identities:
+                raise ValueError("NCIT category authority selection changed within one producer run")
+            self.verify_native_inputs(byte_verified=freshly_captured)
+        except BaseException as error:
+            self._consumed_input_error = str(error)
+            raise
+
+    def verify_native_inputs(self, *, byte_verified=False, output_dir=None):
+        """Check native guards; only the byte-verifying consumed-input checkpoint may skip rehashing."""
+        try:
+            admission = validate_native_contract(
+                self.producer_native_inputs,
+                self.input_base_dir,
+                self.consumed_input_snapshots,
+                Path(self.output_dir if output_dir is None else output_dir) / "ncit_nodes.tsv",
+                admission=self._ncit_category_authority_admission,
+            )
+            if self.producer_native_inputs["authority"] is not None:
+                self._ncit_category_authority_admission = admission
+            admission.verify(metadata_only=byte_verified)
+        except BaseException as error:
+            self._consumed_input_error = str(error)
+            raise
+
+    @classmethod
+    def verify_recorded_native_inputs(cls, report, report_path, *, admission=None):
+        """Verify saved NCIT provenance and retain locator/absence checks for public merge admission."""
+        from kg_microbe.utils.source_finalization import SourceFinalizationRequired
+
+        if report_path is None:
+            raise SourceFinalizationRequired("NCIT native authority validation requires its completion-record path")
+        members = report.get("members", {})
+        ncit_member = members.get("ncit_nodes.tsv")
+        contract = report.get("producer_native_inputs")
+        if isinstance(contract, dict) and contract.get("authority") is None and ncit_member is None:
+            raise SourceFinalizationRequired("Null NCIT authority requires its canonical recorded output")
+        return validate_native_contract(
+            contract,
+            report.get("raw_input_directory"),
+            report.get("consumed_inputs", {}),
+            Path(report_path).parent / "ncit_nodes.tsv",
+            admission=admission,
+            expected_member=ncit_member,
+        )
+
+    def _reviewed_ncit_category(self, adapter, curie, label):
+        """Keep unknown concepts unchanged and fail closed on the two reviewed native projections."""
+        if curie not in REVIEWED_CATEGORIES:
+            return STUB_ONTOLOGY_CATEGORY
+        try:
+            if getattr(self, "_ncit_category_authority_admission", None) is None:
+                raise ValueError("NCIT category projection requires a bound native authority")
+            with self.consume_input("ncit_category_dispositions", NCIT_CATEGORY_DISPOSITIONS) as stream:
+                disposition = read_dispositions(stream)[curie]
+            if label != disposition["label"]:
+                raise ValueError(f"NCIT emitted label differs from reviewed native evidence: {curie}")
+            return project_category(adapter, curie, disposition)
+        except BaseException as error:
+            self._consumed_input_error = str(error)
+            raise
 
     def _fetch_metadata(self, adapter, curie: str):
         """Return (label, synonyms_list, xrefs_list) for ``curie`` via the OAK adapter."""
@@ -875,17 +992,26 @@ class OntologiesStubsTransform(Transform):
         xrefs: Set[str] = set()
         try:
             label = adapter.label(curie) or ""
-        except Exception:  # noqa: S110 — obsolete CURIEs are expected to miss
+        except Exception as error:  # noqa: S110 — obsolete CURIEs are expected to miss
+            if curie in REVIEWED_CATEGORIES:
+                self._consumed_input_error = str(error)
+                raise
             pass
         try:
             synonyms = {s for s in adapter.entity_aliases(curie) if s}
-        except Exception:  # noqa: S110
+        except Exception as error:  # noqa: S110
+            if curie in REVIEWED_CATEGORIES:
+                self._consumed_input_error = str(error)
+                raise
             pass
         # Drop the canonical label out of the synonym set to keep them disjoint.
         synonyms.discard(label)
         try:
             metadata = adapter.entity_metadata_map(curie) or {}
-        except Exception:  # noqa: S110
+        except Exception as error:  # noqa: S110
+            if curie in REVIEWED_CATEGORIES:
+                self._consumed_input_error = str(error)
+                raise
             metadata = {}
         # OAK returns metadata keyed by short-form predicate. dbxref entries
         # land under "oio:hasDbXref" (or "oboInOwl:hasDbXref" on older

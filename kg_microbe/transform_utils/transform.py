@@ -55,6 +55,10 @@ class Transform:
     #: constant, derive this from it rather than restating it.
     DATA_INPUTS: tuple = ()
 
+    #: Additional repo-relative Python packages/files whose behavior this producer inherits.
+    #: This is code provenance, never a dependency on another producer's graph outputs.
+    CODE_INPUTS: tuple = ()
+
     #: Registered source names whose **output** this transform reads.
     #:
     #: `DATA_INPUTS` covers curation files under ``mappings/``. It does not
@@ -103,6 +107,7 @@ class Transform:
         # default columns, can be appended to or overwritten as necessary
         self.source_name = source_name
         self.begin_consumed_inputs()
+        self.begin_dependency_admission()
         self.node_header = [
             ID_COLUMN,
             CATEGORY_COLUMN,
@@ -178,6 +183,34 @@ class Transform:
         """Start a real producer run with no inherited input-consumption claims."""
         self._consumed_input_snapshots = {}
         self._consumed_input_error = None
+
+    def begin_dependency_admission(self):
+        """Bind discovered curation and inherited code before a producer loads either."""
+        discover = getattr(type(self), "discovered_data_inputs", None)
+        self._dependency_admission = None
+        if discover is None and not self.CODE_INPUTS:
+            return
+        from kg_microbe.merge_utils.source_admission import SourceAdmission
+        from kg_microbe.utils.transform_fingerprint import _repo_root
+
+        root = _repo_root()
+        admission = SourceAdmission()
+        if discover is not None:
+            for relative in admission.capture_resolution(discover, root):
+                admission.capture(root / relative)
+        for relative in self.CODE_INPUTS:
+            path = root / relative
+            if path.is_dir():
+                admission.capture_tree(path)
+            else:
+                admission.capture(path)
+        self._dependency_admission = admission
+
+    def verify_declared_dependencies(self):
+        """Refuse drift without replacing the original producer-time dependency snapshot."""
+        admission = getattr(self, "_dependency_admission", None)
+        if admission is not None:
+            admission.verify()
 
     @property
     def consumed_input_snapshots(self):

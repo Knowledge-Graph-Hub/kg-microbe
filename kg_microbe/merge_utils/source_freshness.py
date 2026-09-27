@@ -17,6 +17,7 @@ from kg_microbe.utils.transform_fingerprint import (
     SHARED_CODE,
     code_fingerprint,
     data_fingerprint,
+    declared_data_inputs,
     finalization_inputs_current,
     resolve_data_input,
     schema_fingerprint,
@@ -85,7 +86,13 @@ class _SourceFreshness:
             if actual_directory != directory:
                 raise SourceFinalizationRequired(f"Producer metadata does not match registered source {source}")
             self.admission.capture_tree(directory)
-            self.packages[source] = (cls, directory, code_fingerprint(directory, self.root))
+            for relative in cls.CODE_INPUTS:
+                selected = self.root / relative
+                if selected.is_dir():
+                    self.admission.capture_tree(selected)
+                else:
+                    self.admission.capture(selected)
+            self.packages[source] = (cls, directory, code_fingerprint(directory, self.root, cls.CODE_INPUTS))
         cls, directory, fingerprint = self.packages[source]
         if producer.get("fingerprint") != fingerprint:
             raise SourceFinalizationRequired(f"{source}: producer code changed; rerun kg transform")
@@ -107,7 +114,7 @@ class _SourceFreshness:
     def _check_record(self, path, report):
         """Tie candidate selection to exact current graph/audit/authority bytes, including scoped alternatives."""
         source, cls, directory, fingerprint = self._producer(report)
-        _verify_recorded_consumed_inputs(report)
+        _verify_recorded_consumed_inputs(report, report_path=path, admission=self.admission)
         if report.get("finalizer_code") != self.shared:
             raise SourceFinalizationRequired(f"{path}: source-finalization code changed")
         members = report.get("members", {})
@@ -166,7 +173,8 @@ class _SourceFreshness:
         if not isinstance(raw_value, str) or not Path(raw_value).is_dir():
             raise SourceFinalizationRequired(f"{source}: missing selected raw directory evidence")
         raw = Path(raw_value)
-        for declaration in cls.DATA_INPUTS:
+        declarations = self.admission.capture_resolution(declared_data_inputs, cls, self.root)
+        for declaration in declarations:
             selected = resolve_data_input(self.root, declaration, raw)
             if not selected.is_file():
                 raise SourceFinalizationRequired(f"{source}: declared input missing: {selected}")
@@ -174,7 +182,7 @@ class _SourceFreshness:
         expected = {
             "code": code,
             "shared": self.shared,
-            "data": data_fingerprint(self.root, cls.DATA_INPUTS, input_dir=raw),
+            "data": data_fingerprint(self.root, declarations, input_dir=raw),
             "schema": self.schema,
         }
         for key, current in expected.items():

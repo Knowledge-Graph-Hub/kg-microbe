@@ -1,0 +1,3 @@
+id	label	semantic_type	named_parent	definition	category
+NCIT:C71939	Sugar	Food	NCIT:C62695	A white crystalline carbohydrate, typically sucrose, used as a sweetener and preservative.	biolink:Food
+NCIT:C16883	Mucin	Amino Acid, Peptide, or Protein	NCIT:C16642	An albuminoid substance containing mucopolysaccharides and protein which is contained in mucus, and gives to the latter secretion its peculiar ropy character. It is found in all the secretions from mucous glands, and also between the fibres of connective tissue, as in tendons.	biolink:ChemicalEntity

@@ -1,0 +1,2 @@
+subject_label	subject_label_normalized	object_id	object_label	object_source	emit_predicate	emit_category
+growth: sulfur	growth: sulfur	CHEBI:26833	sulfur	CHEBI	METPO:2000012	biolink:ChemicalEntity

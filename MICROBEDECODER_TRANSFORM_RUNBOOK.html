@@ -196,19 +196,26 @@ for the curation gap.</p>
 <h2>Curation loop<a class="headerlink" href="#curation-loop" title="Link to this heading"></a></h2>
 <p>The <strong>per-run <code class="docutils literal notranslate"><span class="pre">unmapped_labels.tsv</span></code> → tracked curation TSV → target
 tool → next run</strong> loop:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># 1. Refresh the tracked curation TSV from the latest run (defaults to</span>
-<span class="c1">#    labels with 10+ occurrences — filters per-strain literal tail).</span>
-poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/dump_unmapped_microbedecoder_labels.py
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Preserve the old tracked queue and any curator annotations. The writer</span>
+<span class="c1"># replaces its destination and initializes blank curator fields.</span>
+<span class="nv">queue_dir</span><span class="o">=</span><span class="k">$(</span>mktemp<span class="w"> </span>-d<span class="w"> </span>data/microbedecoder-curation.XXXXXX<span class="k">)</span>
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/dump_unmapped_microbedecoder_labels.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--min-occurrences<span class="w"> </span><span class="m">0</span><span class="w"> </span>--output<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$queue_dir</span><span class="s2">/all.tsv&quot;</span>
 
-<span class="c1"># 2. Or split by facet so each batch hands to the right target tool:</span>
-poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/dump_unmapped_microbedecoder_labels.py<span class="w"> </span>--prefix<span class="w"> </span>pathway
-poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/dump_unmapped_microbedecoder_labels.py<span class="w"> </span>--prefix<span class="w"> </span>compound
-poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/dump_unmapped_microbedecoder_labels.py<span class="w"> </span>--prefix<span class="w"> </span>source_attribute
+<span class="c1"># Separate facets into different files, without dropping low-frequency rows.</span>
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/dump_unmapped_microbedecoder_labels.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--prefix<span class="w"> </span>pathway<span class="w"> </span>--min-occurrences<span class="w"> </span><span class="m">0</span><span class="w"> </span>--output<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$queue_dir</span><span class="s2">/pathway.tsv&quot;</span>
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/dump_unmapped_microbedecoder_labels.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--prefix<span class="w"> </span>compound<span class="w"> </span>--min-occurrences<span class="w"> </span><span class="m">0</span><span class="w"> </span>--output<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$queue_dir</span><span class="s2">/compound.tsv&quot;</span>
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/dump_unmapped_microbedecoder_labels.py<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--prefix<span class="w"> </span>source_attribute<span class="w"> </span>--min-occurrences<span class="w"> </span><span class="m">0</span><span class="w"> </span>--output<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$queue_dir</span><span class="s2">/source_attribute.tsv&quot;</span>
 </pre></div>
 </div>
-<p>Output lands at <code class="docutils literal notranslate"><span class="pre">mappings/microbedecoder_unmapped_labels_to_curate.tsv</span></code>
-(tracked in git — mirrors the <code class="docutils literal notranslate"><span class="pre">mappings/mediadive_unmapped_ingredients_to_curate.tsv</span></code>
-pattern). Columns:</p>
+<p>The default output, when <code class="docutils literal notranslate"><span class="pre">--output</span></code> is omitted, is the tracked
+<code class="docutils literal notranslate"><span class="pre">mappings/microbedecoder_unmapped_labels_to_curate.tsv</span></code>. Review a newly generated
+queue before deliberately updating that historical curation asset. The default
+threshold is 10; it is useful for prioritization, not a complete inventory.
+Columns:</p>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Column</p></th>
@@ -229,7 +236,7 @@ pattern). Columns:</p>
 <td><p>Pipe-set of source columns this label appeared under</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">occurrences</span></code></p></td>
-<td><p>Edges this placeholder anchored last run</p></td>
+<td><p>Producer emission attempts before finalized edge deduplication; not necessarily distinct edge rows</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">target_curie</span></code></p></td>
 <td><p><em>(empty, curator fills)</em> — CHEBI / METPO / GO / EC</p></td>
@@ -271,7 +278,7 @@ wc<span class="w"> </span>-l<span class="w"> </span>data/transformed/microbedeco
 <span class="w">      </span>data/transformed/microbedecoder/edges.tsv<span class="w"> </span><span class="se">\</span>
 <span class="w">      </span>data/transformed/microbedecoder/unmapped_labels.tsv
 
-<span class="c1"># Coverage report (parametrized script; add `-s microbedecoder`)</span>
+<span class="c1"># Separate source-edge distributions and producer report counts</span>
 poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/generate_coverage_report.py<span class="w"> </span>-s<span class="w"> </span>microbedecoder
 
 <span class="c1"># Category / predicate / prefix validation</span>
@@ -279,6 +286,15 @@ poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> 
 <span class="w">    </span>--transform<span class="w"> </span>microbedecoder
 </pre></div>
 </div>
+<p>The coverage report does <strong>not</strong> calculate a mapping-success percentage. Source
+edge rows include crosswalks, resolved and unresolved materials, pathways and
+reported Attributes; queue counts are a separate producer measure. Repeated
+labels in different columns/facets retain their context. A missing queue means
+unknown report totals, whereas a valid header-only queue records zero rows.
+For MetaTraits modes, each unresolved trait/taxon report row remains separate
+and <code class="docutils literal notranslate"><span class="pre">num_observations</span></code> is reported independently of the number of report rows.
+Ontology prefixes and lexical matches do not establish chemical identity or
+decode an assay’s meaning.</p>
 </section>
 <section id="merge">
 <h2>Merge<a class="headerlink" href="#merge" title="Link to this heading"></a></h2>

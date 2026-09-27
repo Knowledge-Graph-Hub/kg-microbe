@@ -2,6 +2,7 @@
 
 from collections.abc import Mapping
 
+from kg_microbe.utils.cas import invalid_cas_identifier
 from kg_microbe.utils.ingredient_scope import validate_scope_row
 
 _ANNOTATION_PREDICATES = frozenset({"oboInOwl:hasDbXref", "biolink:xref", "rdfs:seeAlso"})
@@ -21,6 +22,8 @@ def classify_mapping_row(row: Mapping[str, str], metadata: dict | None = None) -
     comment = (row.get("comment") or "").strip()
     if not subject or not target or not predicate:
         return "quarantined", "missing_subject_predicate_or_object"
+    if invalid_cas_identifier(subject) or invalid_cas_identifier(target):
+        return "quarantined", "invalid_cas_identifier"
     if (row.get("predicate_modifier") or "").strip():
         return "quarantined", "unsupported_predicate_modifier"
     try:

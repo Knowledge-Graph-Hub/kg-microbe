@@ -70,12 +70,12 @@ def test_independently_supplied_iron_hexahydrate_survives(route):
 @pytest.mark.parametrize("label", [None, "unhydrated fixture chemical", "fixture chemical dihydrate"])
 def test_other_embedded_namespaces_require_independent_matching_scope(key, prefix, label):
     """Missing labels and different hydrates cannot escape via an alternate namespace."""
-    value = resolver(
-        embedded={key: "fixture", "compound": "fixture chemical x 6 H2O"}, labels={prefix + "fixture": label}
-    )
+    # Isolate hydration admission from CAS syntax/checksum admission.
+    local = "10025-77-1" if key == "CAS-RN" else "fixture"
+    value = resolver(embedded={key: local, "compound": "fixture chemical x 6 H2O"}, labels={prefix + local: label})
     assert value.standardize_compound_id("99") == "mediadive.ingredient:99"
     value.chemical_loader.get_canonical_name = lambda target: "fixture chemical hexahydrate"
-    assert value.standardize_compound_id("99") == prefix + "fixture"
+    assert value.standardize_compound_id("99") == prefix + local
 
 
 def test_native_label_overrides_contaminated_unified_label():

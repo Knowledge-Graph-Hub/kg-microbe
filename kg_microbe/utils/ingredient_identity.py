@@ -1,14 +1,17 @@
 """
-Curated, target-scoped exclusions for false ingredient identities.
+Structural admission and target-scoped exclusions for ingredient identities.
 
-These policies reject specific lexical groundings and equivalence pairs, never
-an ontology identifier itself. Native ontology declarations/edges remain valid.
+Curated policies reject specific lexical groundings and equivalence pairs, not
+ontology identifiers themselves. Separately, malformed CAS identifiers cannot
+establish a grounding. Neither check supplies a replacement identity.
 """
 
 import csv
 import re
 from functools import lru_cache
 from pathlib import Path
+
+from kg_microbe.utils.cas import invalid_cas_identifier, valid_cas
 
 IDENTITY_POLICY = Path(__file__).resolve().parents[2] / "mappings" / "ingredient_identity_exclusions.tsv"
 NAME_SCOPE_POLICY = IDENTITY_POLICY.with_name("ingredient_name_scopes.tsv")
@@ -69,10 +72,10 @@ def ingredient_hydration_compatible(name, authority_label, authority_names=()):
     lower_query, lower_label = query.casefold(), label.casefold()
     if not any(marker in text for text in (lower_query, lower_label) for marker in ("hydrat", "h2o")):
         return True  # The common graph-scale path needs no regex parsing.
-    identifier = re.fullmatch(r"(?:cas(?:-rn)?:)?(\d{2,7})-(\d{2})-(\d)", query, re.IGNORECASE)
-    if identifier and sum(i * int(n) for i, n in enumerate((identifier[1] + identifier[2])[::-1], 1)) % 10 == int(
-        identifier[3]
-    ):
+    registry = lower_query
+    if registry.startswith(("cas:", "cas-rn:")):
+        registry = registry.partition(":")[2]
+    if valid_cas("cas:" + registry):
         # An existing exact CAS lookup supplies identity without a lexical water
         # count. This exception does not create or choose any CAS mapping.
         return True
@@ -129,10 +132,7 @@ def _ingredient_scope_policy():
             routes[query] = target
             normal_keys.add(_scope_key(query))
             if row["kind"] == "cas":
-                match = re.fullmatch(r"cas:(\d{2,7})-(\d{2})-(\d)", query)
-                if not match or sum(i * int(n) for i, n in enumerate((match[1] + match[2])[::-1], 1)) % 10 != int(
-                    match[3]
-                ):
+                if not valid_cas(query):
                     raise ValueError("Invalid reviewed CAS annotation")
                 cas[query] = target
                 routes[query.removeprefix("cas:")] = target
@@ -217,7 +217,9 @@ def ingredient_identity_policy():
 
 
 def ingredient_mapping_allowed(name: str, target: str) -> bool:
-    """Reject reviewed ingredient-name/target pairs without banning targets."""
+    """Reject invalid CAS inputs and reviewed ingredient-name/target pairs."""
+    if invalid_cas_identifier(target) or invalid_cas_identifier(name, allow_bare=True):
+        return False
     recognized, scoped_target = ingredient_case_sensitive_name_scope(name)
     if recognized and (scoped_target is None or _policy_target_key(scoped_target) != _policy_target_key(target)):
         return False
@@ -234,6 +236,8 @@ def ingredient_mapping_allowed(name: str, target: str) -> bool:
 
 def ingredient_xref_allowed(subject: str, target: str) -> bool:
     """Reject reviewed false equivalences in either serialization direction."""
+    if invalid_cas_identifier(subject) or invalid_cas_identifier(target):
+        return False
     return frozenset((_policy_target_key(subject), _policy_target_key(target))) not in ingredient_identity_policy()[1]
 
 

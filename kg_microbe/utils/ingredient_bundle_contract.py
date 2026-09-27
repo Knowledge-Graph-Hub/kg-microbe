@@ -15,6 +15,7 @@ from pathlib import Path
 import yaml
 from jsonschema import Draft202012Validator
 
+from .cas import invalid_cas_identifier, valid_cas
 from .ingredient_scope import (
     profile_metadata,
     read_profile_table,
@@ -105,14 +106,6 @@ def alternative_id(occurrence: str, group_key: str) -> str:
     return stable_id("alternative", [occurrence, group_key])
 
 
-def valid_cas(identifier: str) -> bool:
-    """Validate normalized CAS syntax and checksum without guessing a replacement."""
-    if not re.fullmatch(r"cas:[1-9][0-9]{1,6}-[0-9]{2}-[0-9]", identifier):
-        return False
-    digits = identifier.removeprefix("cas:").replace("-", "")
-    return sum(i * int(value) for i, value in enumerate(reversed(digits[:-1]), 1)) % 10 == int(digits[-1])
-
-
 def _unique_object(pairs):
     result = {}
     for key, value in pairs:
@@ -161,6 +154,7 @@ def validate_payload(kind: str, payload: dict) -> None:
         validity = payload["identifier_validity"]
         if identifier and (
             not re.fullmatch(r"\S+:\S+", identifier)
+            or invalid_cas_identifier(identifier)
             or (identifier.lower().startswith("cas:") and not valid_cas(identifier))
         ):
             raise ValueError("Invalid normalized identifier; preserve rejected raw evidence instead")

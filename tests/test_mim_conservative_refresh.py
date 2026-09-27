@@ -105,6 +105,7 @@ def _node(curie, name, synonyms="", xrefs=""):
 @pytest.fixture
 def inputs(tmp_path, request):
     """Provide old mixed-source claims, connected contamination, and current evidence."""
+    # CAS values are checksum-valid graph fixtures, not substance assignments.
     release_directory, pin = request.getfixturevalue("bundle")
     baseline = tmp_path / "baseline.tsv"
     rows = [
@@ -117,8 +118,8 @@ def inputs(tmp_path, request):
             name="Unsupported old name",
             comment="canonical_name",
         ),
-        _row("cas:shared", "CHEBI:1", "Unsupported old name", "culturebotai_reviewed"),
-        _row("cas:shared", "CHEBI:2", "Two"),
+        _row("cas:50-00-0", "CHEBI:1", "Unsupported old name", "culturebotai_reviewed"),
+        _row("cas:50-00-0", "CHEBI:2", "Two"),
         _row(
             "kgm.name:poison",
             "CHEBI:2",
@@ -148,7 +149,7 @@ def inputs(tmp_path, request):
         native,
         NODE_FIELDS,
         [
-            _node("CHEBI:1", "One", "Legitimate independent alias", "cas:real"),
+            _node("CHEBI:1", "One", "Legitimate independent alias", "cas:64-17-5"),
             _node("CHEBI:2", "Two"),
             _node("CHEBI:3", "Three"),
             _node("CHEBI:4", "Untouched"),
@@ -200,7 +201,7 @@ def test_conservative_refresh_rebuilds_connected_claims_and_preserves_independen
     assert not any("Unsupported old name" in row.values() for row in rows)
     assert not any("Foreign imported wrong label" in row.values() for row in rows)
     assert any(row["subject_label"] == "Sample" and row["object_id"] == "CHEBI:1" for row in rows)
-    assert not any(row["subject_id"] == "cas:real" for row in rows)
+    assert not any(row["subject_id"] == "cas:64-17-5" for row in rows)
     assert any(
         row["subject_id"] == "CHEBI:4" and row["predicate_id"] == "skos:broadMatch" and row["object_label"] == "One"
         for row in rows
@@ -255,7 +256,7 @@ def untouched_claims(inputs):
         comment="synonym",
     )
     alias.update(confidence="0.73", object_formula="FixtureFormula")
-    rows.extend([alias, dict(alias), _row("cas:four", "CHEBI:4", "Untouched")])
+    rows.extend([alias, dict(alias), _row("cas:67-56-1", "CHEBI:4", "Untouched")])
     _table(baseline, FIELDS, rows, _metadata())
     return [row for row in rows if row["object_id"] == "CHEBI:4"]
 
@@ -270,7 +271,7 @@ def _assert_untouched_lookup_and_rows(candidate, expected, monkeypatch):
     monkeypatch.setattr(runtime, "_CACHED_PATH", None)
     runtime.load_unified_mappings(candidate)
     assert runtime.find_chebi_by_name("Legacy four alias") == "CHEBI:4"
-    assert runtime.find_chebi_by_xref("cas:four") == "CHEBI:4"
+    assert runtime.find_chebi_by_xref("cas:67-56-1") == "CHEBI:4"
 
 
 @pytest.mark.parametrize("bridge", ["direct", "shared_cas"])
@@ -281,7 +282,7 @@ def test_native_annotation_bridge_does_not_reset_unrelated_claims(
 ):
     """Only explicit native identity may extend a recorded historical taint path."""
     baseline = inputs["baseline"]
-    target = "CHEBI:4" if bridge == "direct" else "cas:bridge"
+    target = "CHEBI:4" if bridge == "direct" else "cas:67-64-1"
     if bridge == "shared_cas":
         historical_bridge = _row(target, "CHEBI:4", "Untouched")
         _table(baseline, FIELDS, [*refresh._rows(baseline), historical_bridge], _metadata())
@@ -447,12 +448,12 @@ def test_explicit_same_as_is_restored_but_native_dbxref_is_not(inputs):
     path = inputs["ontology_paths"][0]
     rows = list(csv.DictReader(io.StringIO(path.read_text()), delimiter="\t"))
     rows[0]["same_as"] = "CHEBI:3"
-    rows[0]["xref"] = "cas:real|pubmed:123"
+    rows[0]["xref"] = "cas:64-17-5|pubmed:123"
     _table(path, NODE_FIELDS, rows)
     result = refresh.build_conservative_candidate(**inputs)
     output = _read(result.candidate_path)
     assert any(row["subject_id"] == "CHEBI:3" and row["object_id"] == "CHEBI:1" for row in output)
-    assert not any(row["subject_id"] in {"cas:real", "pubmed:123"} for row in output)
+    assert not any(row["subject_id"] in {"cas:64-17-5", "pubmed:123"} for row in output)
 
 
 def test_existing_prefix_expansions_are_preserved_and_differences_reported(inputs):

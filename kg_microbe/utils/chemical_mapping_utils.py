@@ -21,6 +21,7 @@ from typing import Dict, List, Optional
 
 import pandas as pd
 
+from kg_microbe.utils.cas import invalid_cas_identifier
 from kg_microbe.utils.ingredient_identity import (
     ingredient_authority_label,
     ingredient_cas_annotations,
@@ -709,6 +710,8 @@ def find_chebi_by_xref(xref: str) -> Optional[str]:
 
     # Normalize xref format
     norm_xref = xref.lower().strip()
+    if invalid_cas_identifier(norm_xref):
+        return None
     target = ingredient_name_scopes()[1].get(norm_xref)
     if target is not None:
         return target if target in _PRIMARY_NAME_INDEX else None

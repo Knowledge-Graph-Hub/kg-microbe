@@ -24,7 +24,7 @@ def test_policy_rejected_label_repairs_metadata_not_claim_identity(inputs, nativ
         comment="synonym",
     )
     valid_nonidentity = _row("CHEBI:4", target, "polymyxin b", predicate="skos:relatedMatch")
-    already_safe = _row("cas:unrelated_valid_fixture", target, "polymyxin B1")
+    already_safe = _row("cas:67-56-1", target, "polymyxin B1")  # Synthetic unrelated checksum-valid xref.
     originals = [valid_xref, valid_alias, valid_nonidentity]
     _table(baseline, FIELDS, [*refresh._rows(baseline), bad_canonical, *originals, already_safe], _metadata())
     if native_present:

@@ -1,0 +1,41 @@
+def _load_ec_to_go(self) -> Dict[str, dict]:
+    """
+    Load EC to GO mappings from ec2go.txt.
+
+    Maps EC numbers to GO molecular function terms.
+    Format: EC:1.1.1.1 > GO:alcohol dehydrogenase (NAD+) activity ; GO:0004022
+
+    :return: Dictionary mapping ec_number (e.g., "1.1.1.1") -> {go_id, go_label}
+    """
+    ec2go_file = RAW_DATA_DIR / "ec2go.txt"
+    ec_mappings = {}
+
+    if not ec2go_file.exists():
+        print(f"  Warning: EC to GO mappings file not found: {ec2go_file}")
+        return ec_mappings
+
+    try:
+        import re
+
+        with open(ec2go_file, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                # Skip comments and empty lines
+                if line.startswith("!") or not line:
+                    continue
+
+                # Parse format: EC:1.1.1.1 > GO:label ; GO:0004022
+                match = re.match(r"^EC:([\d.-]+)\s*>\s*GO:(.+?)\s*;\s*(GO:\d+)\s*$", line)
+                if match:
+                    ec_number = match.group(1).strip()
+                    go_label = match.group(2).strip()
+                    go_id = match.group(3).strip()
+
+                    ec_mappings[ec_number] = {"go_id": go_id, "go_label": go_label}
+
+        print(f"  Loaded {len(ec_mappings)} EC to GO mappings")
+    except Exception as e:
+        print(f"  Warning: Could not load EC to GO mappings: {e}")
+
+    return ec_mappings
+

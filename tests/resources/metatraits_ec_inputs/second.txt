@@ -1,0 +1,2 @@
+! Synthetic EC lookup, not a scientific curation recommendation.
+EC:1.1.1.1 > GO:later label ; GO:0003824

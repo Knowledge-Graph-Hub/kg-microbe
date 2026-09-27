@@ -56,6 +56,7 @@ from kg_microbe.transform_utils.constants import (
     CAPABLE_OF,
     CAPABLE_OF_PREDICATE,
     CATEGORY_COLUMN,
+    CHEMICAL_CATEGORY,
     CLOSE_MATCH_PREDICATE,
     CLOSE_MATCH_RELATION,
     COMPOUND_PREFIX,
@@ -142,6 +143,19 @@ _CSV_INSIDE_ZIP = "database.csv"
 # ``unmapped_traits.tsv`` convention (per-source, in the transform's
 # output dir, TSV with a stable header).
 _UNMAPPED_REPORT_FILENAME = "unmapped_labels.tsv"
+
+# Reviewed unresolved source uses, not a global disposition of Sugar (#1180).
+# CSV ordinals 1200/6810 are evidence locators, not stable record identities.
+_UNRESOLVED_BERGEY_SUGAR = {
+    "773071": "https://doi.org/10.1002/9781118960608.gbm00239",
+    "776427": "https://doi.org/10.1002/9781118960608.gbm00020",
+}
+_UNRESOLVED_SUGAR_DESCRIPTION = (
+    "Unresolved MicrobeDecoder Bergey substrate material reported as sugar; "
+    "source substrate explanation is literal NA. Historical NCIT:C71939 "
+    "grounding is withdrawn for this record/field only (#1180); "
+    "no exact chemical identity or sucrose identity is asserted."
+)
 
 # Predicate map from metabolism-source group_label to the InforES knowledge
 # source used on every emitted edge. Kept as a dict so tests can override
@@ -652,6 +666,7 @@ class MicrobeDecoderTransform(Transform):
         edge_writer: "csv._writer",
     ) -> None:
         """Emit capable_of / produces / consumes edges per metabolism source."""
+        reviewed_sugar = self._reviewed_sugar_record(row)
         for group_label, fields in iter_metabolism_columns(row):
             provenance = _GROUP_TO_KS[group_label]
             citation_curie = format_citation(fields.get("citation"))
@@ -716,6 +731,10 @@ class MicrobeDecoderTransform(Transform):
             # so merged-KG queries stay consistent.
             for label in split_multivalue(fields.get("substrates")):
                 obj = self._resolve_chemical_curie(label, node_writer, source_column=f"{group_label}:substrates")
+                original_object = None
+                if group_label == "bergey" and reviewed_sugar:
+                    original_object = obj
+                    obj = self._resolve_reviewed_sugar(row, obj, node_writer)
                 edge_writer.writerow(
                     self._make_edge_row(
                         subject,
@@ -724,6 +743,7 @@ class MicrobeDecoderTransform(Transform):
                         TROPHICALLY_INTERACTS_WITH,
                         provenance,
                         publications=citation_curie,
+                        original_object=original_object,
                         source_citation=citation_text,
                         source_column=source_columns["substrates"],
                         value=label,
@@ -773,6 +793,55 @@ class MicrobeDecoderTransform(Transform):
     # ------------------------------------------------------------------
     # CURIE resolution
     # ------------------------------------------------------------------
+    @staticmethod
+    def _reviewed_sugar_record(source_row: Dict[str, Any]) -> bool:
+        """Admit exact finite record/field evidence before any group or token filtering."""
+        source_id = str(source_row.get(LPSN_ID_COLUMN, "")).strip()
+        citation = _UNRESOLVED_BERGEY_SUGAR.get(source_id)
+        if citation is None:
+            return False
+        if (
+            source_row.get(LPSN_ID_COLUMN) != source_id
+            or source_row.get("Bergey_Substrates_for_end_products") != "sugar"
+            or source_row.get("Bergey_Text_for_substrates") != "NA"
+            or source_row.get("Bergey_Article_link") != citation
+        ):
+            raise ValueError(f"Reviewed unresolved Bergey sugar evidence changed for LPSN_ID {source_id}")
+        return True
+
+    def _resolve_reviewed_sugar(
+        self,
+        source_row: Dict[str, Any],
+        historical_target: str,
+        node_writer: "csv._writer",
+    ) -> str:
+        """Preserve two ungrounded Bergey observations without sharing material identity."""
+        if not self._reviewed_sugar_record(source_row) or historical_target != "NCIT:C71939":
+            raise ValueError("Reviewed unresolved Bergey sugar mapping evidence changed")
+        column = "Bergey_Substrates_for_end_products"
+        # Full literal record content scopes the material without tying its ID
+        # to file order. Repeated identical records share a local material, but
+        # their existing CSV digest/ordinal assertion locators remain distinct.
+        identity = json.dumps(
+            [MICROBEDECODER, source_row, column, "sugar"],
+            ensure_ascii=False,
+            sort_keys=True,
+            separators=(",", ":"),
+            allow_nan=False,
+        )
+        digest = hashlib.sha256(identity.encode("utf-8", errors="surrogateescape")).hexdigest()
+        curie = f"{COMPOUND_PREFIX}{MICROBEDECODER}_unresolved_{digest}"
+        self._ensure_terminal_node(
+            curie, CHEMICAL_CATEGORY, "sugar", node_writer, description=_UNRESOLVED_SUGAR_DESCRIPTION
+        )
+        self._stats["unmatched_labels"] += 1
+        entry = self._unmapped.setdefault(
+            (curie, CHEMICAL_CATEGORY),
+            {"label": "sugar", "source_columns": {column}, "occurrences": 0},
+        )
+        entry["occurrences"] = int(entry["occurrences"]) + 1
+        return curie
+
     def _resolve_chemical_curie(
         self,
         label: str,

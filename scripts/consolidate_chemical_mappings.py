@@ -78,6 +78,7 @@ from typing import Dict, List, Optional, Set, Tuple
 
 import pandas as pd
 
+from kg_microbe.utils.cas import invalid_cas_identifier
 from kg_microbe.utils.chemical_mapping_utils import (
     PREDICATE_SEMANTICS_KEY,
     normalize_chemical_primes,
@@ -174,7 +175,10 @@ def _read_sssom_records(filepath: Path) -> dict:
         reader = csv.DictReader(reader_iter, delimiter="\t")
         for row in reader:
             obj = (row.get("object_id") or "").strip()
-            if not obj:
+            subj = (row.get("subject_id") or "").strip()
+            # Reject the complete claim before any extension or source metadata
+            # can seed an otherwise valid entity. The source file is untouched.
+            if not obj or invalid_cas_identifier(obj) or invalid_cas_identifier(subj):
                 continue
 
             rec = records.get(obj)
@@ -800,7 +804,7 @@ def extract_curie(value: str) -> str:
     canonical = _PREFIX_ALIASES.get(prefix, prefix)
     if not local:
         return ""
-    if f"{canonical}:" in _ACCEPTED_PREFIXES:
+    if f"{canonical}:" in _ACCEPTED_PREFIXES and not invalid_cas_identifier(f"{canonical}:{local}"):
         return f"{canonical}:{local}"
     return ""
 
@@ -921,7 +925,7 @@ def category_for(curie: str) -> str:
 
 def is_accepted_primary(curie: str) -> bool:
     """Return True if the CURIE is a supported primary key for the unified file."""
-    return bool(curie) and curie.startswith(_ACCEPTED_PREFIXES)
+    return bool(curie) and curie.startswith(_ACCEPTED_PREFIXES) and not invalid_cas_identifier(curie)
 
 
 def prefix_rank(curie: str) -> int:
@@ -2661,7 +2665,7 @@ class ChemicalMappingConsolidator:
             if not value or ":" not in value:
                 return False
             prefix, local = value.split(":", 1)
-            return bool(prefix) and bool(local)
+            return bool(prefix) and bool(local) and not invalid_cas_identifier(value)
 
         def _slugify_name(name: str) -> str:
             """
@@ -2732,6 +2736,9 @@ class ChemicalMappingConsolidator:
         )
 
         for curie in sorted(self.chemicals.keys()):
+            if invalid_cas_identifier(curie):
+                skipped_malformed += 1
+                continue
             if curie in KNOWN_BAD_PRIMARY_IDS:
                 skipped_known_bad_entity += 1
                 continue
@@ -2866,6 +2873,9 @@ class ChemicalMappingConsolidator:
             subject_id = rel["subject_id"]
             translated_subject = self.mim_to_primary.get(subject_id, subject_id)
             obj_id = rel["object_id"]
+            if any(invalid_cas_identifier(value) for value in (subject_id, translated_subject, obj_id)):
+                skipped_malformed += 1
+                continue
             obj_prefix = obj_id.split(":", 1)[0] if ":" in obj_id else ""
             normalized_source = (
                 f"obo:{obj_prefix.lower()}.owl"
@@ -3022,7 +3032,7 @@ def ingredient_policy_fingerprint() -> str:
     """Fingerprint both the curated policy and its shared implementation."""
     helper = Path(__file__).resolve().parents[1] / "kg_microbe/utils/ingredient_identity.py"
     digest = hashlib.sha256()
-    for path in (IDENTITY_POLICY, helper):
+    for path in (IDENTITY_POLICY, helper, helper.with_name("cas.py")):
         digest.update(path.name.encode())
         digest.update(path.read_bytes())
     return digest.hexdigest()
@@ -3030,9 +3040,9 @@ def ingredient_policy_fingerprint() -> str:
 
 def refresh_identity_policy(source: Path, output: Path) -> dict:
     """
-    Apply only reviewed identity exclusions without reload/enrichment.
+    Apply structural CAS admission and reviewed identity exclusions without enrichment.
 
-    Preserve non-identity rows and all unrelated columns/ordering. A full
+    Preserve valid non-identity rows and all unrelated columns/ordering. A full
     reseed/export is deliberately not used: reseed drops hydrate and parent
     rows in expectation that the full source pipeline will recreate them.
     """
@@ -3071,12 +3081,15 @@ def refresh_identity_policy(source: Path, output: Path) -> dict:
                 row = dict(zip(fields, values, strict=True))
                 changed = False
                 stats["rows_read"] += 1
+                target, subject = row["object_id"], row["subject_id"]
+                if invalid_cas_identifier(subject) or invalid_cas_identifier(target):
+                    stats["rows_removed"] += 1
+                    continue
                 # A rejected equivalence can still be a valid parent relation.
                 # Preserve asymmetric assertions, including their labels/dates.
                 if row["predicate_id"] in {"skos:broadMatch", "skos:narrowMatch"}:
                     outgoing.write(line)
                     continue
-                target, subject = row["object_id"], row["subject_id"]
                 if not ingredient_xref_allowed(subject, target):
                     stats["rows_removed"] += 1
                     continue

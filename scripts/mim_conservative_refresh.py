@@ -25,6 +25,7 @@ from pathlib import Path
 import yaml
 
 from kg_microbe.utils import chemical_mapping_utils as runtime
+from kg_microbe.utils.cas import invalid_cas_identifier
 from kg_microbe.utils.ingredient_identity import (
     IDENTITY_POLICY,
     NAME_SCOPE_POLICY,
@@ -178,8 +179,10 @@ def _mim_row(row):
 
 
 def _historical_policy_rejection(row, native_hydrate_names=None):
-    """Reject reviewed lexical/exact claims without banning targets or weaker relations."""
+    """Reject invalid CAS endpoints, then apply reviewed lexical/exact exclusions."""
     subject, target = row["subject_id"], row["object_id"]
+    if invalid_cas_identifier(subject) or invalid_cas_identifier(target):
+        return "invalid_cas_identifier"
     if subject.startswith("kgm.name:") and row["predicate_id"] in {"skos:exactMatch", "skos:closeMatch"}:
         if not ingredient_mapping_allowed(row.get("subject_label", ""), target):
             return "reviewed_identity_policy_name"
@@ -566,6 +569,7 @@ def build_conservative_candidate(
         IDENTITY_POLICY.resolve(),
         NAME_SCOPE_POLICY.resolve(),
         IDENTITY_POLICY.parent.parent / "kg_microbe/utils/ingredient_identity.py",
+        IDENTITY_POLICY.parent.parent / "kg_microbe/utils/cas.py",
     )
     inputs = [
         baseline,
@@ -618,6 +622,8 @@ def build_conservative_candidate(
             policy_metadata_targets.add(target)
         if _mim_row(row):
             initial.add(target)
+        # Even an invalid historical registry link may have propagated copied
+        # aliases. Trace it for quarantine scope only; never reassert the link.
         if row["predicate_id"] == "skos:exactMatch" and not subject.startswith("kgm.name:"):
             components.join(target, subject)
     _load_independent(independent_sources, evidence)
@@ -909,6 +915,8 @@ def build_conservative_candidate(
                 "The caller must establish independent input lineage; a manual/legacy filename does not prove it.",
                 "Native xref annotations neither expand quarantine scope nor establish identity; "
                 "native same_as participates before reconstruction. Historical exactMatch links still trace taint.",
+                "Invalid CAS endpoints are quarantined with full original rows, never repaired; "
+                "historical exactMatch links involving them still trace potential copied-name contamination.",
                 "Already-erased historical identity links cannot establish reset scope from the surviving seed; "
                 "retained historical claims are not newly scientifically validated.",
                 "preserved_rows counts retained assertions including metadata-repaired copies, not unchanged bytes; "

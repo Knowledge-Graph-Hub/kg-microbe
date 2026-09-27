@@ -166,6 +166,22 @@ historical contamination check does not endorse the old identity scientifically.
 Mappings outside this scope remain historical assertions, not newly validated
 claims. Scope-independent reviewed identity/hydration exclusions still apply.
 
+CAS syntax and checksum validity are also required before a mapping row can
+contribute any active identity, name, formula, category, parent or hydrate index.
+The same structural rule covers lexical/xref lookups and MediaDive's unified,
+legacy and embedded fallbacks, including the legacy `CAS-RN` spelling. It does
+not guess a replacement digit or establish chemical equivalence. A rejected
+MediaDive grounding keeps the existing local ingredient/solution ID and complete
+recipe occurrence context. Raw source claims are not rewritten. The conservative
+candidate's quarantine retains every rejected baseline row, all columns and
+multiplicity, with reason `invalid_cas_identifier`. Historical exactMatch links
+still participate in quarantine scope even when their CAS endpoint is invalid:
+they may have propagated copied names, but cannot be reasserted as active claims.
+The older full consolidator and identity-only refresh also reject invalid active
+endpoints; they leave their source files intact, rather than producing the
+conservative candidate's separate full-row quarantine. A valid checksum alone
+does not establish that a source's chemical assignment is scientifically correct.
+
 Review `report.json`, the candidate, and quarantine before promotion. Check lost
 entities, changed canonical names, identity cross-references, name collisions,
 and actual runtime lookups. Repeat the build with the candidate as baseline to

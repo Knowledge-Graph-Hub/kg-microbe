@@ -151,6 +151,19 @@ ontology names/aliases and explicit `same_as` identities can be reconstructed;
 ordinary ontology `xref` annotations are not automatically promoted to exact
 identity assertions.
 
+Native `xref` annotations also do not expand the identity-connected quarantine
+scope. A newly supplied database reference is not evidence that historical
+synonyms propagated between its owners. Native `same_as`, admitted independent
+identity evidence, and supported MIM identities do participate before the first
+build. Native `same_as` tokens have surrounding whitespace stripped consistently
+before both scope calculation and reconstruction; malformed or excluded tokens
+remain inadmissible. Historical nonlexical `skos:exactMatch` edges still connect the reset
+scope, including shared external identifiers and reversed edges: even a
+questionable old identity may have carried copied names. Retaining that
+historical contamination check does not endorse the old identity scientifically.
+Mappings outside this scope remain historical assertions, not newly validated
+claims. Scope-independent reviewed identity/hydration exclusions still apply.
+
 Review `report.json`, the candidate, and quarantine before promotion. Check lost
 entities, changed canonical names, identity cross-references, name collisions,
 and actual runtime lookups. Repeat the build with the candidate as baseline to

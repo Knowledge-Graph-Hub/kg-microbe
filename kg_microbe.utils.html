@@ -368,6 +368,35 @@ invocation, not once per record.</p>
 </dd></dl>
 
 </section>
+<section id="module-kg_microbe.utils.cas">
+<span id="kg-microbe-utils-cas-module"></span><h2>kg_microbe.utils.cas module<a class="headerlink" href="#module-kg_microbe.utils.cas" title="Link to this heading"></a></h2>
+<p>Structural CAS registry-number admission, without inferring chemical identity.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.cas.invalid_cas_identifier">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.cas.</span></span><span class="sig-name descname"><span class="pre">invalid_cas_identifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">allow_bare</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.cas.invalid_cas_identifier" title="Link to this definition"></a></dt>
+<dd><p>Reject recognizable invalid CAS inputs; leave other namespaces/names alone.</p>
+<p>Case and the legacy CAS-RN prefix are representation aliases only. Bare
+registry-shaped names are checked only at lexical lookup boundaries. No
+replacement digit, substance, or equivalence is ever supplied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.cas.valid_cas">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.cas.</span></span><span class="sig-name descname"><span class="pre">valid_cas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.cas.valid_cas" title="Link to this definition"></a></dt>
+<dd><p>Validate a canonical CAS CURIE’s syntax and checksum, never repair it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="module-kg_microbe.utils.chemical_mapping_utils">
 <span id="kg-microbe-utils-chemical-mapping-utils-module"></span><h2>kg_microbe.utils.chemical_mapping_utils module<a class="headerlink" href="#module-kg_microbe.utils.chemical_mapping_utils" title="Link to this heading"></a></h2>
 <p>Utilities for chemical mapping lookups.</p>
@@ -2141,17 +2170,6 @@ A consumer trusts a pinned bundle/review revision, never a self-issued checksum.
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="kg_microbe.utils.ingredient_bundle_contract.valid_cas">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.ingredient_bundle_contract.</span></span><span class="sig-name descname"><span class="pre">valid_cas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ingredient_bundle_contract.valid_cas" title="Link to this definition"></a></dt>
-<dd><p>Validate normalized CAS syntax and checksum without guessing a replacement.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.ingredient_bundle_contract.validate_bundle">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.ingredient_bundle_contract.</span></span><span class="sig-name descname"><span class="pre">validate_bundle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_manifest_sha256</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capabilities</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">frozenset({'catalog-products-v1',</span> <span class="pre">'identifier-annotations-v1',</span> <span class="pre">'ingredient-occurrences-v1',</span> <span class="pre">'ingredient-scope-v1',</span> <span class="pre">'owner-bound-review-v1'})</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ingredient_bundle_contract.validate_bundle" title="Link to this definition"></a></dt>
 <dd><p>Replay reviews and every projection before any consumer builds its indexes.</p>
@@ -2187,9 +2205,10 @@ A consumer trusts a pinned bundle/review revision, never a self-issued checksum.
 </section>
 <section id="module-kg_microbe.utils.ingredient_identity">
 <span id="kg-microbe-utils-ingredient-identity-module"></span><h2>kg_microbe.utils.ingredient_identity module<a class="headerlink" href="#module-kg_microbe.utils.ingredient_identity" title="Link to this heading"></a></h2>
-<p>Curated, target-scoped exclusions for false ingredient identities.</p>
-<p>These policies reject specific lexical groundings and equivalence pairs, never
-an ontology identifier itself. Native ontology declarations/edges remain valid.</p>
+<p>Structural admission and target-scoped exclusions for ingredient identities.</p>
+<p>Curated policies reject specific lexical groundings and equivalence pairs, not
+ontology identifiers themselves. Separately, malformed CAS identifiers cannot
+establish a grounding. Neither check supplies a replacement identity.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.ingredient_identity.accepted_name_scope">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.ingredient_identity.</span></span><span class="sig-name descname"><span class="pre">accepted_name_scope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolved</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">explicit_target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ingredient_identity.accepted_name_scope" title="Link to this definition"></a></dt>
@@ -2240,7 +2259,7 @@ evidence fails closed. Native labels remain queryable.</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.ingredient_identity.ingredient_mapping_allowed">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.ingredient_identity.</span></span><span class="sig-name descname"><span class="pre">ingredient_mapping_allowed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ingredient_identity.ingredient_mapping_allowed" title="Link to this definition"></a></dt>
-<dd><p>Reject reviewed ingredient-name/target pairs without banning targets.</p>
+<dd><p>Reject invalid CAS inputs and reviewed ingredient-name/target pairs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>

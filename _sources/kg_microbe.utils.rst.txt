@@ -28,6 +28,14 @@ kg\_microbe.utils.biolink\_model module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.utils.cas module
+----------------------------
+
+.. automodule:: kg_microbe.utils.cas
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.utils.chemical\_mapping\_utils module
 -------------------------------------------------
 

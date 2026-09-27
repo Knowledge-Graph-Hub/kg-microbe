@@ -3226,6 +3226,17 @@ without an issue defeats the check.</p>
 <p>These mappings provide subject_label -&gt; (object_id, object_source, biolink_predicate, object_category)
 for metatraits transform edge resolution. Used as the authoritative lookup before METPO fallback.</p>
 <dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.microbial_trait_mappings.canonical_mapping_paths">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.microbial_trait_mappings.</span></span><span class="sig-name descname"><span class="pre">canonical_mapping_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mappings_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.microbial_trait_mappings.canonical_mapping_paths" title="Link to this definition"></a></dt>
+<dd><p>Select the current positive canonical TSV inventory for readers and freshness.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.microbial_trait_mappings.load_microbial_trait_mappings">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.microbial_trait_mappings.</span></span><span class="sig-name descname"><span class="pre">load_microbial_trait_mappings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mappings_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.microbial_trait_mappings.load_microbial_trait_mappings" title="Link to this definition"></a></dt>
 <dd><p>Load all positive mapping TSVs from mappings/canonical/.</p>
@@ -4526,7 +4537,7 @@ a cryptographic proof that two multi-gigabyte files are identical.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.transform_fingerprint.code_fingerprint">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.transform_fingerprint.</span></span><span class="sig-name descname"><span class="pre">code_fingerprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.transform_fingerprint.code_fingerprint" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.transform_fingerprint.</span></span><span class="sig-name descname"><span class="pre">code_fingerprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">code_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_inputs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.transform_fingerprint.code_fingerprint" title="Link to this definition"></a></dt>
 <dd><p>Fingerprint every Python file in a transform’s package directory.</p>
 <p>Directory rather than the single module, matching what the freshness check
 already treats as “this transform’s code”: several transforms are split
@@ -4539,6 +4550,7 @@ checkouts is one fingerprint (#983).</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>code_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – e.g. <code class="docutils literal notranslate"><span class="pre">kg_microbe/transform_utils/gold</span></code>.</p></li>
 <li><p><strong>repo_root</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Repository root; inferred from this module when omitted.</p></li>
+<li><p><strong>code_inputs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Additional repo-relative Python packages/files used only by this producer.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -4572,6 +4584,17 @@ checkouts is one fingerprint (#983).</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.transform_fingerprint.declared_data_inputs">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.transform_fingerprint.</span></span><span class="sig-name descname"><span class="pre">declared_data_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform_class</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_root</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.transform_fingerprint.declared_data_inputs" title="Link to this definition"></a></dt>
+<dd><p>Resolve static and discovered inputs now, never freezing a glob at class import.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.transform_fingerprint.finalization_inputs_current">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.transform_fingerprint.</span></span><span class="sig-name descname"><span class="pre">finalization_inputs_current</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recorded</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_root</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.transform_fingerprint.finalization_inputs_current" title="Link to this definition"></a></dt>
 <dd><p>Verify exact consumed authorities; missing or changed bytes invalidate finalized output.</p>
@@ -4597,7 +4620,8 @@ so each downstream’s new upstream digest sees its upstreams’ new markers.</p
 <li><p><strong>repo_root</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Repository root.</p></li>
 <li><p><strong>sources</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>]</span>) – One dict per registered source: <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">output_dir</span></code>
 (the directory under <code class="docutils literal notranslate"><span class="pre">transformed_dir</span></code>), <code class="docutils literal notranslate"><span class="pre">code_dir</span></code>,
-<code class="docutils literal notranslate"><span class="pre">data_inputs</span></code>, <code class="docutils literal notranslate"><span class="pre">transform_inputs</span></code>.</p></li>
+<code class="docutils literal notranslate"><span class="pre">data_inputs</span></code>, <code class="docutils literal notranslate"><span class="pre">transform_inputs</span></code>; optional <code class="docutils literal notranslate"><span class="pre">requires_dependency_rebuild</span></code>
+refuses migration when older evidence did not bind discovered/inherited inputs.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -4716,7 +4740,7 @@ was never established.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.transform_fingerprint.write_fingerprint">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.transform_fingerprint.</span></span><span class="sig-name descname"><span class="pre">write_fingerprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform_inputs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finalization_inputs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify_inputs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.transform_fingerprint.write_fingerprint" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.transform_fingerprint.</span></span><span class="sig-name descname"><span class="pre">write_fingerprint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_root</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_inputs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transform_inputs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finalization_inputs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verify_inputs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">code_inputs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.transform_fingerprint.write_fingerprint" title="Link to this definition"></a></dt>
 <dd><p>Record the fingerprint of a completed run.</p>
 <p>Call <strong>after</strong> the outputs are written, so a run that dies partway leaves
 no marker claiming its output matches the current inputs. Written through
@@ -4733,6 +4757,7 @@ no marker claiming its output matches the current inputs. Written through
 <li><p><strong>finalization_inputs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Exact authority/dependency paths consumed by source finalization.</p></li>
 <li><p><strong>verify_inputs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]]</span>) – Optional producer-time snapshot verifier. Raises if consumed bytes changed;
 checked before hashing and immediately before atomic marker publication.</p></li>
+<li><p><strong>code_inputs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Producer-specific inherited Python code, using the same AST semantics.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>

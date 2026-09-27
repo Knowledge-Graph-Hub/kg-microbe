@@ -173,6 +173,28 @@ raw file consumed anywhere in the pipeline is now snapshotted. Multiple source
 files are not a filesystem transaction; later changes are rejected when the
 recorded inputs and graph members are verified again.</p>
 </section>
+<section id="discovered-curation-and-inherited-producer-code-1188">
+<h2>Discovered curation and inherited producer code (#1188)<a class="headerlink" href="#discovered-curation-and-inherited-producer-code-1188" title="Link to this heading"></a></h2>
+<p>MetaTraits and MetaTraits-GTDB discover the canonical input inventory using the
+same recursive, sorted positive-TSV selector as their mapping reader. Files
+whose names contain <code class="docutils literal notranslate"><span class="pre">negative</span></code> remain excluded. Discovery happens at use time,
+not class import: additions, removals, renames and content changes invalidate
+completed outputs. The selected inventory is recorded in finalization evidence.
+Producer-time snapshots and the merge admission’s final guard also reject input
+drift during a run; they cannot certify newly substituted inputs by rehashing.</p>
+<p>MetaTraits-GTDB declares the inherited MetaTraits Python package as a producer-
+specific <code class="docutils literal notranslate"><span class="pre">CODE_INPUTS</span></code> dependency. This uses the existing repository-relative
+AST digest, so unchanged checkouts and comment/formatting-only edits retain
+content freshness. It does not declare a dependency on MetaTraits graph output
+or put parent code in the global shared-code set. Future parent-only behavior
+changes invalidate MetaTraits and GTDB, not otherwise unrelated producers.</p>
+<p>Installing this shared fingerprint/finalization implementation itself changes
+the existing shared-code digest and invalidates prior source receipts broadly;
+rebuild the configured source closure, then merge. Do not re-stamp old outputs.
+The legacy v2-marker migration refuses producers with discovered or inherited
+dependencies because old evidence did not bind that dependency contract.
+This does not add previously undeclared raw/EC inputs or certify all reads.</p>
+</section>
 <section id="tsv-representation-is-explicit">
 <h2>TSV representation is explicit<a class="headerlink" href="#tsv-representation-is-explicit" title="Link to this heading"></a></h2>
 <p>Legacy producers default to CSV-quoted TSV. A producer writing native KGX

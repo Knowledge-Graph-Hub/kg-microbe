@@ -12,11 +12,12 @@ old September 21 release. Its `candidate_only` mode controls candidate generatio
 not permission to publish or silently replace production mappings. Paired
 production promotion remains the separate reviewed step below.
 
-The [2026-09-27 native-category acceptance record](reviews/mim-native-category-20260927/PROMOTION.md)
-records the latest candidate and consumer acceptance for paired staging.
+The [2026-09-27 invalid-CAS mapping review](reviews/mim-invalid-cas-20260927/PROMOTION.md)
+records the latest proposed paired staging change and its remaining gates.
 Paired-change tests, CI, production integration and fresh KG validation remain
-separate required gates. The [2026-09-25 acceptance record](reviews/mim-admission-20260925/PROMOTION.md)
-is preserved as historical evidence, not reassigned to the new candidate. The
+separate required gates. The [earlier native-category record](reviews/mim-native-category-20260927/PROMOTION.md)
+and [2026-09-25 acceptance record](reviews/mim-admission-20260925/PROMOTION.md)
+are preserved as historical evidence, not reassigned to the new candidate. The
 first hydration candidate exposed three further legacy scope defects (#1169)
 during full MediaDive replay; its previous passing audits remain diagnostic
 history. A pin, candidate file or earlier passing report does not complete a

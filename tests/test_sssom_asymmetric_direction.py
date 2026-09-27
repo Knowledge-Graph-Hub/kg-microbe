@@ -16,12 +16,15 @@ from unittest import TestCase
 
 import yaml
 
+from kg_microbe.utils.cas import invalid_cas_identifier
 from kg_microbe.utils.chemical_mapping_utils import _iter_sssom_rows, read_predicate_semantics
 from scripts.refresh_reviewed_mim import load_release_pin
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 SSSOM = REPO_ROOT / "mappings" / "ingredient_mappings.sssom.tsv"
 UNIFIED = REPO_ROOT / "mappings" / "kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+RELEASE_PIN = REPO_ROOT / "mappings" / "mim_reviewed_release.json"
+PRIOR_CLAIMS = REPO_ROOT / "tests" / "resources" / "cas_mapping_promotion" / "prior_claims.tsv"
 
 # Byte identities accepted together in the immutable-export promotion review.
 # Updating a release requires reviewing both products, not regenerating these
@@ -29,8 +32,10 @@ UNIFIED = REPO_ROOT / "mappings" / "kgmicrobe_unified_entity_mappings.sssom.tsv.
 SOURCE_COMMIT = "1848b0fe521bc2462f165912fcf92d09ad9a8cec"
 MANIFEST_SHA256 = "9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af"
 SUPPORTED_SHA256 = "6b52b30e018b369aa322d41dfd4e81fcfae0e895e34d7fe48900abf5835815fb"
-UNIFIED_SHA256 = "fe54cd1a1dc14123b41bd8f08c9c42096cf2815b2ae5a5bb4ce4bd349041c98d"
-BUILDER_SHA256 = "a6cbacfba8bc9dc02d7f328ef7bfd86041c56c0988dee621df4ea4d536a7f8f8"
+UNIFIED_SHA256 = "f1545663016b3871d2176ccbdc76caffdefa472838b716956e8d722aaa2caff9"
+BUILDER_SHA256 = "58ec62b9b01a28f4f3b6b47ff319a11396617d4a07ada409acc2742bcb77ae6a"
+RELEASE_PIN_SHA256 = "f082c05656a0910c85176eec7b41deeb77c27967aecb80393fddc262819b6d97"
+PRIOR_CLAIMS_SHA256 = "629198d090f7e45f7f17ce97a124eb9cad879b0bb066930b11ea8cf80ce15b2c"
 
 
 def _sha256(path):
@@ -52,6 +57,11 @@ def _metadata(path):
                 break
             header.append(line[1:].removeprefix(" "))
     return yaml.safe_load("".join(header))
+
+
+def _row_key(row):
+    """Retain every field for exact full-row multiplicity comparisons."""
+    return tuple(sorted(row.items()))
 
 
 class VendoredSetShapeTest(TestCase):
@@ -106,6 +116,30 @@ class PromotedMappingPairTest(TestCase):
         self.assertEqual(pin["files"][SSSOM.name], SUPPORTED_SHA256)
         self.assertEqual(_sha256(SSSOM), SUPPORTED_SHA256)
         self.assertEqual(_sha256(UNIFIED), UNIFIED_SHA256)
+        self.assertEqual(_sha256(RELEASE_PIN), RELEASE_PIN_SHA256)
+
+    def test_prior_claim_fixture_is_fixed_before_candidate_reconstruction(self):
+        """Keep the original CAS33 and native lexical controls, not candidate-derived rows."""
+        self.assertEqual(_sha256(PRIOR_CLAIMS), PRIOR_CLAIMS_SHA256)
+        rows = list(_iter_sssom_rows(PRIOR_CLAIMS))
+        invalid = [row for row in rows if any(invalid_cas_identifier(row[key]) for key in ("subject_id", "object_id"))]
+        lexical = [row for row in rows if row["mapping_justification"] == "semapv:LexicalMatching"]
+        native_lexical = [row for row in lexical if row["source"] == "chebi_xrefs"]
+        self.assertEqual(len(rows), 123)
+        self.assertEqual(len({_row_key(row) for row in rows}), 123)
+        self.assertTrue(all(len(row) == 13 for row in rows))
+        self.assertEqual(len(invalid), 33)
+        self.assertEqual(
+            Counter((row["source"], row["predicate_id"]) for row in invalid),
+            {("chebi_xrefs", "skos:exactMatch"): 32, ("mediadive_compounds", "skos:closeMatch"): 1},
+        )
+        self.assertEqual(len(native_lexical), 90)
+        self.assertEqual(len({row["object_id"] for row in native_lexical}), 32)
+        self.assertEqual(
+            Counter(row["predicate_id"] for row in native_lexical),
+            {"skos:exactMatch": 32, "skos:closeMatch": 58},
+        )
+        self.assertTrue(all(row["mapping_date"] == "2026-09-04" for row in rows))
 
     def test_unified_header_identifies_the_pinned_review_and_builder(self):
         """Bind the accepted reconstruction to its manifest, not a floating input."""
@@ -125,10 +159,32 @@ class PromotedMappingPairTest(TestCase):
         self.assertEqual(metadata["mapping_set_version"], "2026-09-06")
 
     def test_unified_counts_and_native_categories_match_the_reviewed_candidate(self):
-        """Stream counts and the five reviewed category rows without another full scan."""
+        """Stream counts, CAS endpoints and exact native provenance without another full scan."""
         entities = set()
         predicates = Counter()
         native_rows = Counter()
+        prior_rows = list(_iter_sssom_rows(PRIOR_CLAIMS))
+        prior_invalid = {
+            _row_key(row)
+            for row in prior_rows
+            if any(invalid_cas_identifier(row[key]) for key in ("subject_id", "object_id"))
+        }
+        prior_lexical = {
+            _row_key(row): row
+            for row in prior_rows
+            if row["source"] == "chebi_xrefs" and row["mapping_justification"] == "semapv:LexicalMatching"
+        }
+        targets = {row["object_id"] for row in prior_lexical.values()}
+        # These 90 full lexical claims predate the candidate. Native evidence
+        # adds only its reviewed source/date; no candidate rows seed expectations.
+        expected_provenance = Counter(
+            _row_key({**row, "source": "native_ontology:chebi", "mapping_date": "2026-09-24"})
+            for row in prior_lexical.values()
+        )
+        retained_lexical = Counter()
+        added_provenance = Counter()
+        invalid_endpoints = Counter()
+        retained_invalid = Counter()
         expected_native_rows = {
             ("MIM:Mucin", "skos:exactMatch", "NCIT:C16883", "biolink:ChemicalEntity"): 1,
             ("kgm.name:mucin", "skos:exactMatch", "NCIT:C16883", "biolink:ChemicalEntity"): 1,
@@ -141,11 +197,27 @@ class PromotedMappingPairTest(TestCase):
             rows += 1
             entities.add(row["object_id"])
             predicates[row["predicate_id"]] += 1
+            for key in ("subject_id", "object_id"):
+                if invalid_cas_identifier(row[key]):
+                    invalid_endpoints[(key, row[key])] += 1
+            # Full-row counters retain duplicate multiplicity and extra fields.
+            if row["object_id"] in targets or row["object_id"] == "cas:977046-75-5":
+                full_row = _row_key(row)
+                if full_row in prior_invalid:
+                    retained_invalid[full_row] += 1
+                if full_row in prior_lexical:
+                    retained_lexical[full_row] += 1
+                if row["object_id"] in targets and row["source"] == "native_ontology:chebi":
+                    added_provenance[full_row] += 1
             if row["object_id"] in {"NCIT:C16883", "NCIT:C71939"}:
                 native_rows[(row["subject_id"], row["predicate_id"], row["object_id"], row["object_category"])] += 1
-        self.assertEqual(rows, 591893)
-        self.assertEqual(len(entities), 120185)
-        self.assertEqual(predicates, {"skos:exactMatch": 336050, "skos:closeMatch": 255843})
+        self.assertEqual(rows, 591893 - 33 + 90)
+        self.assertEqual(len(entities), 120184)
+        self.assertEqual(predicates, {"skos:exactMatch": 336050, "skos:closeMatch": 255900})
         self.assertEqual(predicates["skos:broadMatch"], 0)
         self.assertEqual(predicates["skos:narrowMatch"], 0)
         self.assertEqual(native_rows, expected_native_rows)
+        self.assertFalse(invalid_endpoints)
+        self.assertFalse(retained_invalid)
+        self.assertEqual(retained_lexical, Counter({key: 1 for key in prior_lexical}))
+        self.assertEqual(added_provenance, expected_provenance)

@@ -142,9 +142,12 @@ the claims report, and the node carries a description saying so. See issues
 - GOLD applies the microbial NCBITaxon scope by default. Only set
   `GOLD_APPLY_TAXON_TRIM=false` for explicit debugging: it restores viral,
   plant, and animal branches that the ontology transform intentionally drops.
-- MediaDive rejects stale response caches by default. Setting
-  `KG_MEDIADIVE_ALLOW_STALE_CACHE=true` is an explicit reproducibility waiver;
-  outputs may no longer match the current recipe list.
+- MediaDive requires the selected media-list JSON (normally `mediadive.json`)
+  and `mediadive/{media_detailed,media_strains,solutions,compounds}.json` under
+  its selected raw directory. Missing, malformed, or changed inputs fail;
+  YAML/HTTP caches are not a transform fallback. The old
+  `KG_MEDIADIVE_ALLOW_STALE_CACHE` option no longer bypasses this requirement.
+  Refresh the download and use a new producer instance after input changes.
 - `KG_SEMSQL_BUILD=on` is the safe default. Turning it off reuses prebuilt
   ontology databases and accepts their version risk; follow the
   [ontology-cache runbook](docs/runbooks/ontology-caches.md).

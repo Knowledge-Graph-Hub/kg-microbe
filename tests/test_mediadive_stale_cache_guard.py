@@ -11,9 +11,8 @@ wrapper solutions, so e.g. ``solution:1878`` linked straight to ``1885``
 instead of to the wrapper ``6570`` that now holds it, and ``1885`` was
 labelled "Solution F" rather than "Ferrous chloride solution (5.2%)".
 
-The guard turns that silent degradation into a refusal at ``run()`` — the
-point where the stale artifact would be written — while leaving construction
-cheap so unrelated tests can still instantiate the transform.
+The constructor now requires the bulk reads. The guard additionally refuses
+cache-only ``run()`` calls even on a low-level, manually constructed instance.
 """
 
 from pathlib import Path
@@ -27,8 +26,8 @@ def _bare_transform(tmp_path, using_bulk_data: bool) -> MediaDiveTransform:
     """
     Return a MediaDiveTransform with only the fields the guard reads.
 
-    ``__init__`` is skipped: it installs the HTTP cache and loads the ChEBI
-    category table, neither of which the guard touches.
+    ``__init__`` is skipped: it reads required bulk files and the ChEBI
+    category table, neither of which this guard-only test touches.
     """
     transform = MediaDiveTransform.__new__(MediaDiveTransform)
     transform.using_bulk_data = using_bulk_data
@@ -57,16 +56,16 @@ def test_bulk_data_present_is_a_no_op(tmp_path, monkeypatch):
 
 
 @pytest.mark.parametrize("value", ["true", "TRUE", "1", "yes"])
-def test_explicit_opt_out_allows_cache_only_run(tmp_path, monkeypatch, capsys, value):
-    """An explicit opt-out proceeds, but must say so on stdout."""
+def test_retired_opt_out_cannot_allow_cache_only_run(tmp_path, monkeypatch, value):
+    """An old environment setting cannot waive required source evidence."""
     monkeypatch.setenv("KG_MEDIADIVE_ALLOW_STALE_CACHE", value)
     transform = _bare_transform(tmp_path, using_bulk_data=False)
-    transform._assert_bulk_data_available()
-    assert "WARNING" in capsys.readouterr().out
+    with pytest.raises(FileNotFoundError, match="cannot bypass"):
+        transform._assert_bulk_data_available()
 
 
 def test_unrelated_env_value_still_refuses(tmp_path, monkeypatch):
-    """Only the documented truthy values count as an opt-out."""
+    """An unrelated value likewise cannot waive required bulk data."""
     monkeypatch.setenv("KG_MEDIADIVE_ALLOW_STALE_CACHE", "maybe")
     transform = _bare_transform(tmp_path, using_bulk_data=False)
     with pytest.raises(FileNotFoundError):
@@ -80,9 +79,8 @@ def test_explicit_input_dir_is_not_silently_overridden():
     Falling back to the repo-anchored raw dir whenever the given directory
     lacks the bulk files would reintroduce exactly the failure this guard
     exists to prevent: the user believes they ran against their own
-    directory and silently gets someone else's data. Only the class
-    default falls back, because it points at a directory that does not
-    exist.
+    directory and silently gets someone else's data. The default already
+    names the same repository-anchored raw directory as the list reader.
     """
     from kg_microbe.transform_utils.constants import RAW_DATA_DIR
 
@@ -91,11 +89,10 @@ def test_explicit_input_dir_is_not_silently_overridden():
     assert resolved == scratch / "mediadive"
     assert RAW_DATA_DIR not in resolved.parents
 
-    # The class default points at a directory that does not exist, so it
-    # is the one case that must fall back to the repo-anchored raw dir.
+    # This is a path contract, independent of local dataset availability.
     default_resolved = MediaDiveTransform._resolve_bulk_data_dir(MediaDiveTransform.DEFAULT_INPUT_DIR)
     assert default_resolved == RAW_DATA_DIR / "mediadive"
-    assert not Path(MediaDiveTransform.DEFAULT_INPUT_DIR).is_dir()
+    assert Path(MediaDiveTransform.DEFAULT_INPUT_DIR) == RAW_DATA_DIR
 
 
 def test_run_invokes_the_guard(tmp_path, monkeypatch):

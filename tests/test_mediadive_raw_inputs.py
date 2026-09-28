@@ -15,6 +15,7 @@ from kg_microbe.merge_utils import merge_kg
 from kg_microbe.transform_utils.mediadive import mediadive as mod
 from kg_microbe.utils.optional_consumed_inputs import optional_input_paths, verify_recorded_optional_inputs
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
+from tests.test_mediadive_bulk_inputs import write_bulk_inputs
 from tests.test_merge_source_freshness import FIXTURES, merge_config, prepare_source, record_source
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -28,15 +29,14 @@ def write_inputs(raw):
     for role, filename in ROLES.items():
         fixture = "hydrate.tsv" if role.endswith("hydrate") else "strict.tsv"
         shutil.copyfile(RESOURCES / "mediadive_raw_inputs" / fixture, raw / filename)
-    (raw / "mediadive.json").write_text('{"data": []}\n')
+    write_bulk_inputs(raw)
 
 
 @pytest.fixture
 def build(tmp_path, monkeypatch):
-    """Keep actual constructor/raw readers; stub only unrelated ontology, bulk and higher-priority index loads."""
+    """Keep actual constructor/raw/bulk readers; stub only unrelated ontology and higher-priority index loads."""
     monkeypatch.setattr(mod.MediaDiveTransform, "_load_chebi_roles", lambda self: None)
     monkeypatch.setattr(mod.MediaDiveTransform, "_load_chebi_categories", lambda self: None)
-    monkeypatch.setattr(mod.MediaDiveTransform, "_load_bulk_data", lambda self: None)
     monkeypatch.setattr(
         mod,
         "ChemicalMappingLoader",
@@ -50,15 +50,15 @@ def build(tmp_path, monkeypatch):
 
     def construct(raw=None):
         """Select one raw directory and retain actual constructor-time mapping snapshots."""
-        value = mod.MediaDiveTransform(raw or tmp_path / "raw", tmp_path / "transformed")
-        value.using_bulk_data = True
-        return value
+        return mod.MediaDiveTransform(raw or tmp_path / "raw", tmp_path / "transformed")
 
     return construct
 
 
 def read_lookup(value):
-    """Meet the separate required read using the real immutable consumption API."""
+    """Meet both run-time required reads using real immutable consumption, without graph emission."""
+    with value.consume_bulk_input("mediadive_media_list", value.input_base_dir / "mediadive.json") as reader:
+        json.load(reader)
     with value.consume_input("bacdive_taxon_lookup", mod.BACDIVE_TMP_DIR / "bacdive.tsv") as reader:
         reader.read()
 
@@ -158,6 +158,7 @@ def test_actual_parser_window_and_baseexception_are_sticky(tmp_path, build, monk
     raw = tmp_path / "raw"
     write_inputs(raw)
     value = build()
+    read_lookup(value)
     real = mod.pd.read_csv
     seen = []
 
@@ -175,7 +176,6 @@ def test_actual_parser_window_and_baseexception_are_sticky(tmp_path, build, monk
     monkeypatch.setattr(mod.pd, "read_csv", parse)
     with pytest.raises((SourceFinalizationRequired, KeyboardInterrupt)):
         value._load_micromediaparam_mappings()
-    read_lookup(value)
     with pytest.raises(SourceFinalizationRequired, match="read failed"):
         value.verify_consumed_inputs()
 

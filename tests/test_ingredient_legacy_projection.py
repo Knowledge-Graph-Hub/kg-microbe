@@ -58,25 +58,26 @@ def test_original_legacy_broad_mapping_survives_mediadive_and_merge(tmp_path, mo
         ):
             row.setdefault(field, "")
     (raw / "mediadive.json").write_text(json.dumps(medium))
+    bulk = raw / "mediadive"
+    bulk.mkdir()
+    recipes = {
+        "1": {"recipe": [{"compound": "2-oxobutyric acid sodium salt", "compound_id": 1, "amount": 1, "unit": "g/l"}]}
+    }
+    for filename, payload in (
+        ("media_detailed.json", {"1": {"solutions": [{"id": 1, "name": "Test solution"}]}}),
+        ("media_strains.json", {"1": {}}),
+        ("solutions.json", recipes),
+        ("compounds.json", {}),
+    ):
+        (bulk / filename).write_text(json.dumps(payload))
     monkeypatch.setattr(mod, "BACDIVE_TMP_DIR", raw)
     monkeypatch.setattr(mod, "MEDIADIVE_TMP_DIR", tmp_path)
     with (
         mock.patch.object(mod.MediaDiveTransform, "_load_chebi_roles"),
         mock.patch.object(mod.MediaDiveTransform, "_load_chebi_categories"),
-        mock.patch.object(mod.MediaDiveTransform, "_load_bulk_data"),
         mock.patch.object(mod, "ChemicalMappingLoader", return_value=loader),
     ):
         source = mod.MediaDiveTransform(raw, tmp_path / "transformed")
-    source.using_bulk_data = True
-
-    def fixture_response(path, endpoint, directory):
-        """Select a software-only occurrence of the unmodified broader source mapping."""
-        return {} if endpoint.startswith(mod.MEDIUM_STRAINS) else {"solutions": [{"id": 1, "name": "Test solution"}]}
-
-    monkeypatch.setattr(source, "get_json_object", fixture_response)
-    source.solutions_data = {
-        "1": {"recipe": [{"compound": "2-oxobutyric acid sodium salt", "compound_id": 1, "amount": 1, "unit": "g/l"}]}
-    }
     source.run(show_status=False)
     before = [row for row in graph_rows(source.output_edge_file) if row["subject"] == CHILD and row["object"] == PARENT]
     assert len(before) == 1 and before[0]["predicate"] == "biolink:broad_match"

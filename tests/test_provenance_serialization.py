@@ -3,6 +3,7 @@
 import csv
 import io
 import json
+import shutil
 import tarfile
 from multiprocessing.pool import ThreadPool
 from pathlib import Path
@@ -24,6 +25,25 @@ from kg_microbe.utils.tsv_io import tsv_writer
 FIXTURES = Path(__file__).parent / "resources" / "provenance_serialization"
 
 
+def _media_raw_inputs(tmp_path):
+    """Build a real tiny bulk bundle once, retaining original fixture bytes across retries."""
+    raw = tmp_path / "media_raw"
+    if raw.exists():
+        return raw
+    bulk = raw / "mediadive"
+    bulk.mkdir(parents=True)
+    shutil.copyfile(FIXTURES / "mediadive.json", raw / "mediadive.json")
+    strains = json.loads((FIXTURES / "medium_strains.json").read_text())
+    for filename, payload in (
+        ("media_detailed.json", {"1": {}}),
+        ("media_strains.json", {"1": strains}),
+        ("solutions.json", {}),
+        ("compounds.json", {}),
+    ):
+        (bulk / filename).write_text(json.dumps(payload, sort_keys=True) + "\n")
+    return raw
+
+
 @pytest.fixture
 def media_transform(tmp_path, monkeypatch):
     """Run the real growth-edge writer against immutable, offline MediaDive inputs."""
@@ -32,18 +52,9 @@ def media_transform(tmp_path, monkeypatch):
     with (
         mock.patch.object(mod.MediaDiveTransform, "_load_chebi_roles"),
         mock.patch.object(mod.MediaDiveTransform, "_load_chebi_categories"),
-        mock.patch.object(mod.MediaDiveTransform, "_load_bulk_data"),
         mock.patch.object(mod, "ChemicalMappingLoader"),
     ):
-        transform = mod.MediaDiveTransform(input_dir=FIXTURES, output_dir=tmp_path / "out")
-    transform.using_bulk_data = True
-    strains = json.loads((FIXTURES / "medium_strains.json").read_text())
-
-    def fixture_response(path, endpoint, directory):
-        """No solutions are needed to exercise positive, negative, and unknown growth."""
-        return strains if endpoint.startswith(mod.MEDIUM_STRAINS) else {}
-
-    monkeypatch.setattr(transform, "get_json_object", fixture_response)
+        transform = mod.MediaDiveTransform(input_dir=_media_raw_inputs(tmp_path), output_dir=tmp_path / "out")
     transform.run(show_status=False)
     return transform
 

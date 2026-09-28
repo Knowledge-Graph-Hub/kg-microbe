@@ -1,0 +1,14 @@
+{
+  "medium": [
+    {"data": {"medium": {"id": "P11", "name": "Fresh first medium"}, "solutions": []}},
+    {"data": {"medium": {"id": "P11", "name": "Fresh second medium"}, "solutions": [{"id": 72}]}}
+  ],
+  "strains": [
+    {"data": [{"id": 11, "growth": 0}]},
+    {"data": [{"id": 12, "growth": 1}]}
+  ],
+  "solution": [
+    {"data": {"recipe": [{"solution_id": 71, "solution": "Fresh first solution", "amount": 1, "unit": "ml"}]}},
+    {"data": {"recipe": [{"solution_id": 72, "solution": "Fresh second solution", "amount": 2, "unit": "ml"}]}}
+  ]
+}

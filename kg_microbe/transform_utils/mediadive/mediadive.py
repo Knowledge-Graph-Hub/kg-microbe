@@ -19,17 +19,12 @@ import csv
 import json
 import math
 import os
-import shutil
 import time
 from pathlib import Path
 from typing import Dict, Optional, Union
-from urllib.parse import urlparse
 
 import pandas as pd
 import requests
-import yaml
-from requests_cache import CachedSession
-from requests_cache.backends.sqlite import SQLiteCache
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
@@ -155,12 +150,6 @@ from kg_microbe.utils.provenance import bacdive_record_url
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 from kg_microbe.utils.tsv_io import tsv_writer
 
-#: HTTP response cache for the API fallback, kept beside the bulk JSONs. The
-#: old name is the file `requests_cache.install_cache("mediadive_cache")` left
-#: in the working directory; it is adopted on first use so nothing re-downloads.
-HTTP_CACHE_FILENAME = "mediadive_transform_cache.sqlite"
-LEGACY_HTTP_CACHE_FILENAME = "mediadive_cache.sqlite"
-
 
 class MediaDiveTransform(Transform):
     """Template for how the transform class would be designed."""
@@ -197,7 +186,8 @@ class MediaDiveTransform(Transform):
         # `requests.Session` for the whole process from a constructor, so every
         # HTTP client in the run became a CachedSession and a test that merely
         # built this transform changed the outcome of unrelated tests (#624).
-        # The cache is a session this transform owns, opened on first API call.
+        # Explicit API helpers own a plain, uncached session. Production reads
+        # admitted bulk JSONs only; old HTTP/YAML files are never adopted.
         self._http: Optional[requests.Session] = None
         self.translation_table = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)
 
@@ -633,7 +623,7 @@ class MediaDiveTransform(Transform):
 
     def _get_mediadive_json(self, url: str, retry_count: int = 3, retry_delay: float = 2.0) -> Dict:
         """
-        Use the API url to get a dict of information.
+        Fetch live API data through an owned uncached session, never old cache files.
 
         :param url: Path provided by MediaDive API.
         :param retry_count: Number of retry attempts on failure.
@@ -647,42 +637,25 @@ class MediaDiveTransform(Transform):
                 data_json = r.json()
                 return data_json.get(DATA_KEY, {})
             except requests.exceptions.RequestException as e:
+                self._close_http()
                 if attempt < retry_count - 1:
                     print(f"  Retry {attempt + 1}/{retry_count} after error: {e} (URL: {url})")
                     time.sleep(retry_delay)
                 else:
                     print(f"  Failed after {retry_count} attempts: {e} (URL: {url})")
                     return {}
-
-    def _http_cache_path(self) -> Path:
-        """
-        Return the API fallback's cache file, adopting the legacy one if present.
-
-        Older code cached in the working directory (usually the repo root).
-        Moving that file, rather than ignoring it, keeps its responses; it is
-        an optimisation, so a failed move is reported and a fresh cache used.
-        """
-        cache_path = self.bulk_data_dir / HTTP_CACHE_FILENAME
-        legacy = Path.cwd() / LEGACY_HTTP_CACHE_FILENAME
-        if not cache_path.exists() and legacy.is_file():
-            try:
-                cache_path.parent.mkdir(parents=True, exist_ok=True)
-                shutil.move(str(legacy), str(cache_path))
-                print(f"  Adopted legacy HTTP cache {legacy} -> {cache_path}")
-            except OSError as e:
-                print(f"  Could not adopt {legacy} ({e}); using a fresh HTTP cache")
-        return cache_path
+            except BaseException:
+                self._close_http()
+                raise
 
     def _http_session(self) -> requests.Session:
-        """Return this transform's cached HTTP session, opening it on first use."""
+        """Return this transform's uncached HTTP session, opening it on first explicit use."""
         if self._http is None:
-            cache_path = self._http_cache_path()
-            cache_path.parent.mkdir(parents=True, exist_ok=True)
-            self._http = CachedSession(backend=SQLiteCache(str(cache_path)))
+            self._http = requests.Session()
         return self._http
 
     def _close_http(self) -> None:
-        """Close the HTTP session so its SQLite connection does not linger."""
+        """Close this transform's owned session without touching any persistent cache."""
         # getattr: tests build the transform with __new__ and no __init__.
         session = getattr(self, "_http", None)
         if session is not None:
@@ -971,29 +944,23 @@ class MediaDiveTransform(Transform):
         target_dir: Path,
     ) -> Dict[str, str]:
         """
-        Download MetaDive data using a url.
+        Fetch live MediaDive data; retain the legacy signature without YAML persistence.
 
-        :param url: Path provided by MetaDive API.
+        :param url: Path provided by MediaDive API.
+        :param target_dir: Ignored legacy cache destination; never read, created or written.
         """
-        data_json = self._get_mediadive_json(url)
-        if data_json:
-            parsed_url = urlparse(url)
-            fn = parsed_url.path.split("/")[-1] + ".yaml"
-            if not (target_dir / fn).is_file():
-                with open(str(target_dir / fn), "w") as f:
-                    f.write(yaml.dump(data_json))
-        return data_json
+        return self._get_mediadive_json(url)
 
     def get_json_object(self, fn: Union[Path, str], url_extension: str, target_dir: Path) -> Dict[str, str]:
         """
-        Download YAML file if absent and return contents as a JSON object.
+        Read admitted bulk data, or fetch live data for an explicit nonbulk lookup.
 
         Bulk mode never falls back to YAML or HTTP for a missing record.
-        The legacy cache/API path is reserved for explicit cache-only debugging.
+        Nonbulk helper calls are uncached diagnostics, not a production transform mode.
 
-        :param fn: YAML file path.
+        :param fn: Ignored legacy YAML file path.
         :param url_extension: API endpoint extension (e.g., "medium/123").
-        :param target_dir: Directory for YAML cache.
+        :param target_dir: Ignored legacy YAML directory.
         :return: Dictionary.
         """
         # Extract ID from url_extension (e.g., "medium/123" -> "123")
@@ -1031,19 +998,9 @@ class MediaDiveTransform(Transform):
                 )
             raise ValueError(f"Unsupported MediaDive bulk lookup: {url_extension!r}")
 
-        # Fall back to YAML cache or API call
-        if not fn.is_file():
-            self.api_calls_made += 1
-            url = MEDIADIVE_REST_API_BASE_URL + url_extension
-            json_obj = self.download_yaml_and_get_json(url, target_dir)
-        else:
-            # Import YAML file fn as a dict
-            with open(fn, "r") as f:
-                try:
-                    json_obj = yaml.safe_load(f)
-                except yaml.YAMLError as exc:
-                    print(exc)
-        return json_obj
+        self.api_calls_made += 1
+        url = MEDIADIVE_REST_API_BASE_URL + url_extension
+        return self.download_yaml_and_get_json(url, target_dir)
 
     @classmethod
     def _resolve_bulk_data_dir(cls, input_base_dir) -> Path:
@@ -1054,19 +1011,17 @@ class MediaDiveTransform(Transform):
         """
         Refuse to transform when the bulk MediaDive download is missing.
 
-        Without it the medium/solution lookups fall back to the YAML cache
-        under ``tmp/medium_yaml`` and to this transform's HTTP cache, neither of
-        which carries an expiry. Those caches hold responses from 2023 and
-        2025 that predate MediaDive restructuring solutions, so the run
-        succeeds with exit code 0 while emitting a graph built from years-old
-        recipes. The former stale-cache override is no longer admitted.
+        Historical cache-only runs could silently reuse superseded recipes.
+        Production now requires the admitted bulk JSON evidence; neither old
+        caches nor explicit uncached diagnostic helpers can replace it.
+        The former stale-cache override is no longer admitted.
         """
         if self.using_bulk_data:
             return
         raise FileNotFoundError(
             f"MediaDive bulk data not found in {self.bulk_data_dir}/. Refusing to transform: "
-            "the fallback YAML and HTTP caches have no expiry and can silently produce a graph "
-            "from years-old recipes. Run `poetry run kg download -t mediadive` and let it finish "
+            "YAML caches and live diagnostic helpers cannot replace required bulk evidence. "
+            "Run `poetry run kg download -t mediadive` and let it finish "
             "first. KG_MEDIADIVE_ALLOW_STALE_CACHE cannot bypass required source evidence."
         )
 

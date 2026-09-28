@@ -6,6 +6,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+import yaml
 
 from kg_microbe.transform_utils.mediadive import mediadive as mod
 
@@ -40,7 +41,7 @@ def bulk_source(tmp_path, monkeypatch):
     monkeypatch.setattr(source, "_get_mediadive_json", reject_fallback)
     monkeypatch.setattr(source, "_http_session", reject_fallback)
     monkeypatch.setattr(source, "download_yaml_and_get_json", reject_fallback)
-    monkeypatch.setattr(mod.yaml, "safe_load", reject_fallback)
+    monkeypatch.setattr(yaml, "safe_load", reject_fallback)
     monkeypatch.setattr(Path, "is_file", guarded_is_file)
     return source
 

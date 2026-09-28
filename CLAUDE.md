@@ -148,6 +148,9 @@ the claims report, and the node carries a description saying so. See issues
   YAML/HTTP caches are not a transform fallback. The old
   `KG_MEDIADIVE_ALLOW_STALE_CACHE` option no longer bypasses this requirement.
   Refresh the download and use a new producer instance after input changes.
+  Deliberate API helper calls use an owned uncached `requests.Session`; old
+  YAML/SQLite files are left untouched, never read or adopted. These live
+  diagnostic calls do not authorize cache-only or API-only graph production.
 - `KG_SEMSQL_BUILD=on` is the safe default. Turning it off reuses prebuilt
   ontology databases and accepts their version risk; follow the
   [ontology-cache runbook](docs/runbooks/ontology-caches.md).

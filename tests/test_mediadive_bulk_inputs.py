@@ -10,6 +10,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+import yaml
 
 from kg_microbe.merge_utils import merge_kg
 from kg_microbe.transform_utils.mediadive import mediadive as mod
@@ -417,7 +418,7 @@ def test_requested_bulk_records_fail_before_any_graph_write(tmp_path, monkeypatc
 
     monkeypatch.setattr(value, "_get_mediadive_json", no_fallback)
     monkeypatch.setattr(value, "download_yaml_and_get_json", no_fallback)
-    monkeypatch.setattr(mod.yaml, "safe_load", no_fallback)
+    monkeypatch.setattr(yaml, "safe_load", no_fallback)
     previous = {value.output_node_file: b"previous nodes\n", value.output_edge_file: b"previous edges\n"}
     for path, payload in previous.items():
         path.write_bytes(payload)
@@ -446,7 +447,7 @@ def test_present_metadata_only_medium_is_not_a_missing_record(tmp_path, monkeypa
         pytest.fail("metadata-only bulk medium attempted YAML/HTTP fallback")
 
     monkeypatch.setattr(value, "_get_mediadive_json", no_fallback)
-    monkeypatch.setattr(mod.yaml, "safe_load", no_fallback)
+    monkeypatch.setattr(yaml, "safe_load", no_fallback)
     value.run(show_status=False)
     with value.output_node_file.open(newline="") as stream:
         medium = [row for row in csv.DictReader(stream, delimiter="\t") if row["id"] == "mediadive.medium:1"]

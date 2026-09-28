@@ -36,6 +36,7 @@ from kg_microbe.transform_utils.constants import (
     SUBJECT_COLUMN,
 )
 from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.graph_schema import canonical_header
 from kg_microbe.utils.provenance import knowledge_source_tokens, serialize_knowledge_sources
 from kg_microbe.utils.tsv_io import tsv_dict_writer
 
@@ -64,7 +65,7 @@ for _prefix in ("oio:", "oboInOwl:", "http://www.geneontology.org/formats/oboInO
         _PREDICATES[_prefix + _suffix] = _field
 
 _CACHE = {}
-_REPORT_VERSION = 1
+_REPORT_VERSION = 2
 _STRUCTURAL_POLICY_VERSION = 1
 _STRUCTURAL_RELATIONS = {
     RDFS_SUBCLASS_OF: SUBCLASS_PREDICATE,
@@ -392,6 +393,21 @@ def _graph_writer(handle, fields, quoting):
     )
 
 
+def _ordered_header(fields, is_node):
+    """Share publication ordering without adding unrelated columns to standalone GO bundles."""
+    return [field for field in canonical_header(fields, is_node) if field in fields]
+
+
+def _canonical_bundle_headers(node_paths, edge_paths, quoting):
+    """Require representation compliance separately from byte-exact audit eligibility."""
+    for paths, is_node in ((node_paths, True), (edge_paths, False)):
+        for path in paths:
+            fields = _header(path, quoting)
+            if fields != _ordered_header(fields, is_node):
+                return False
+    return True
+
+
 def write_empty_go_report(report_path: Path) -> None:
     """Atomically clear a stale GO audit without scanning authority files or rewriting graph bytes."""
     report_path = Path(report_path)
@@ -520,9 +536,17 @@ def normalize_go_bundle(
     authority_fingerprint = _authority_fingerprint(authority)
     previous = _report_checkpoint(report_path)
     retain_audit = bool(
-        previous and previous.get("version") == _REPORT_VERSION and previous.get("bundle") == input_fingerprint
+        previous and previous.get("version") in (1, _REPORT_VERSION) and previous.get("bundle") == input_fingerprint
     )
-    if retain_audit and previous.get("authority") == authority_fingerprint:
+    # A verified v1 report may preserve historical audit evidence, but cannot
+    # bypass v2's final-header ordering. Never inherit an old intermediate
+    # checkpoint whose bytes differ from the actual incoming bundle.
+    if (
+        retain_audit
+        and previous.get("version") == _REPORT_VERSION
+        and previous.get("authority") == authority_fingerprint
+        and _canonical_bundle_headers(node_paths, edge_paths, quoting)
+    ):
         return {"already_normalized": 1}
     report_path.parent.mkdir(parents=True, exist_ok=True)
     counts = Counter()
@@ -574,6 +598,7 @@ def normalize_go_bundle(
                 for field in (NAME_COLUMN, CATEGORY_COLUMN, PROVIDED_BY_COLUMN, DEPRECATED_COLUMN, DESCRIPTION_COLUMN):
                     if field not in fields and identifiers:
                         fields.append(field)
+                fields = _ordered_header(fields, True)
                 target = stage / f"nodes-{number}.tsv"
                 with target.open("w", encoding="utf-8", newline="") as handle:
                     output = _graph_writer(handle, fields, quoting)
@@ -626,6 +651,7 @@ def normalize_go_bundle(
                     for field in ("original_subject", "original_object", GO_REFERENCE_CONTEXT_COLUMN):
                         if field not in fields:
                             fields.append(field)
+                fields = _ordered_header(fields, False)
                 target = stage / f"edges-{number}.tsv"
                 with target.open("w", encoding="utf-8", newline="") as handle:
                     output = _graph_writer(handle, fields, quoting)
@@ -686,7 +712,9 @@ def normalize_go_bundle(
             for identifier, result in resolutions.items():
                 record("", "resolution", identifier)
                 counts[result.disposition] += 1
-            # Use source basenames rather than ephemeral staging names so the
+            # All authority evidence columns are now in canonical order. The
+            # source finalizer's subsequent header-order pass must be a no-op.
+            # Bind source basenames rather than ephemeral staging names so the
             # checkpoint remains valid after caller-owned source publication.
             output_fingerprint = [
                 {

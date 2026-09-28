@@ -14,6 +14,7 @@ import pandas as pd
 
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
+    BIOLOGICAL_PROCESS_CATEGORY,
     CATEGORY_COLUMN,
     DEPRECATED_COLUMN,
     DESCRIPTION_COLUMN,
@@ -27,6 +28,7 @@ from kg_microbe.transform_utils.constants import (
     KNOWLEDGE_LEVEL_COLUMN,
     MANUAL_AGENT,
     MONDO_XREFS_FILEPATH,
+    NAME_COLUMN,
     NCBITAXON_PREFIX,
     OBJECT_COLUMN,
     ONTOLOGIES,
@@ -757,6 +759,20 @@ class OntologiesTransform(Transform):
 
             df["category"] = df.apply(fix_go_category, axis=1)
 
+        elif ontology_name == "metpo":
+            # Only the ontology's asserted biological-process branch is typed.
+            # Phenotypes, properties and imported classes retain their categories.
+            process_classes = self._metpo_process_classes(df, nodes_file_path.with_name("metpo_edges.tsv"))
+            print(f"  Fixing METPO categories ({len(process_classes)} asserted biological process classes)...")
+            df[CATEGORY_COLUMN] = [
+                BIOLOGICAL_PROCESS_CATEGORY
+                if compact_identifier(str(identifier)) in process_classes
+                else replace_deprecated_categories(str(category))
+                if pd.notna(category)
+                else category
+                for identifier, category in zip(df[ID_COLUMN], df[CATEGORY_COLUMN], strict=True)
+            ]
+
         elif ontology_name == "chebi":
             # Fix ChEBI categories: detect roles/macromolecules;
             # small molecules default to CHEBI_CATEGORY (biolink:ChemicalEntity)
@@ -856,6 +872,82 @@ class OntologiesTransform(Transform):
         # Write back
         df.to_csv(nodes_file_path, sep="\t", index=False)
         print(f"  Fixed categories for {ontology_name}")
+
+    @staticmethod
+    def _metpo_process_classes(nodes: pd.DataFrame, edges_file: Path) -> set[str]:
+        """Type only active named METPO subclasses of its native process root (#1216)."""
+        # METPO 2026-06-12 explicitly declares this class "biological process".
+        # This is an ontology-owned root, not a keyword or phenotype classifier.
+        root = "METPO:1000630"
+        if not {ID_COLUMN, NAME_COLUMN, CATEGORY_COLUMN}.issubset(nodes.columns) or nodes.columns.has_duplicates:
+            raise ValueError("Missing METPO process-class declaration columns")
+        declarations = {}
+        active = set()
+        for row in nodes.to_dict("records"):
+            identifier = compact_identifier(str(row[ID_COLUMN]))
+            if not re.fullmatch(r"METPO:1\d{6}", identifier):
+                continue
+            if identifier in declarations:
+                raise ValueError(f"Duplicate METPO class declaration: {identifier}")
+            declarations[identifier] = row
+            deprecated = row.get(DEPRECATED_COLUMN)
+            if pd.isna(deprecated) or str(deprecated).strip().lower() in {"", "false", "0"}:
+                if isinstance(row[NAME_COLUMN], str) and row[NAME_COLUMN].strip():
+                    active.add(identifier)
+            elif str(deprecated).strip().lower() not in {"true", "1"}:
+                raise ValueError(f"Invalid METPO class deprecation status: {identifier}")
+        if root not in active or declarations[root][NAME_COLUMN] != "biological process":
+            raise ValueError("Missing or changed active METPO biological-process root METPO:1000630")
+
+        children = defaultdict(set)
+        with edges_file.open(encoding="utf-8", newline="") as stream:
+            reader = csv.DictReader(stream, delimiter="\t")
+            header = reader.fieldnames or []
+            required = {SUBJECT_COLUMN, PREDICATE_COLUMN, OBJECT_COLUMN}
+            if not required.issubset(header) or len(header) != len(set(header)):
+                raise ValueError("Missing or duplicate METPO ancestry edge columns")
+            for row in reader:
+                if (
+                    None in row
+                    or any(value is None for value in row.values())
+                    or any(not row[column].strip() for column in required)
+                ):
+                    raise ValueError("Malformed METPO ancestry edge row")
+                predicate = compact_identifier(row[PREDICATE_COLUMN])
+                if predicate not in {"is_a", RDFS_SUBCLASS_OF, SUBCLASS_PREDICATE}:
+                    continue
+                relation = compact_identifier(row.get(RELATION_COLUMN, ""))
+                if relation and relation not in {"is_a", RDFS_SUBCLASS_OF}:
+                    raise ValueError("Conflicting METPO subclass predicate/relation")
+                child, parent = (compact_identifier(row[column]) for column in (SUBJECT_COLUMN, OBJECT_COLUMN))
+                if not all(re.fullmatch(r"METPO:1\d{6}", term) for term in (child, parent)):
+                    continue
+                if child not in declarations or parent not in declarations:
+                    raise ValueError(f"Missing METPO ancestry endpoint declaration: {child} -> {parent}")
+                if child in active and parent in active:
+                    children[parent].add(child)
+
+        # An iterative DFS rejects cycles in the selected branch without either
+        # recursion depth limits or guessing categories for disconnected cycles.
+        found, visiting, finished = set(), set(), set()
+        stack = [(root, False)]
+        while stack:
+            current, exiting = stack.pop()
+            if exiting:
+                visiting.remove(current)
+                finished.add(current)
+                continue
+            if current in visiting:
+                raise ValueError(f"Cycle in asserted METPO biological-process ancestry: {current}")
+            if current in finished:
+                continue
+            visiting.add(current)
+            found.add(current)
+            stack.append((current, True))
+            stack.extend((child, False) for child in sorted(children.get(current, ()), reverse=True))
+        if found == {root}:
+            raise ValueError("No asserted METPO biological-process ancestry edges")
+        return found
 
     def post_process(self, name: str):
         """Post process specific nodes and edges files."""

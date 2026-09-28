@@ -32,6 +32,11 @@ def _supply_gold_fold_report(output_dir):
     gtdb_dir = output_dir / "gtdb"
     gtdb_dir.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(FIXTURE_DIR / "gtdb_nodes.tsv", gtdb_dir / "nodes.tsv")
+    ontology_dir = output_dir / "ontologies"
+    ontology_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(FIXTURE_DIR / "metpo_nodes.tsv", ontology_dir / "metpo_nodes.tsv")
+    shutil.copyfile(FIXTURE_DIR / "go_nodes.tsv", ontology_dir / "go_nodes.tsv")
+    shutil.copyfile(FIXTURE_DIR / "chebi_record_nodes.tsv", ontology_dir / "chebi_nodes.tsv")
 
 
 class _NoChebi:

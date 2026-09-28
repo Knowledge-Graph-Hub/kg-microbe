@@ -48,10 +48,15 @@ def _read(path):
 
 
 def _microbedecoder(gold):
-    """Supply the immutable empty GTDB authority and build the consumer in the temporary output tree."""
+    """Supply immutable GTDB/METPO authorities and build the consumer in the temporary output tree."""
     gtdb_dir = gold.output_base_dir / "gtdb"
     gtdb_dir.mkdir(parents=True, exist_ok=True)
     shutil.copyfile(FIXTURES.parent / "microbedecoder" / "gtdb_nodes.tsv", gtdb_dir / "nodes.tsv")
+    ontology_dir = gold.output_base_dir / "ontologies"
+    ontology_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(FIXTURES.parent / "microbedecoder" / "metpo_nodes.tsv", ontology_dir / "metpo_nodes.tsv")
+    shutil.copyfile(FIXTURES.parent / "microbedecoder" / "go_nodes.tsv", ontology_dir / "go_nodes.tsv")
+    shutil.copyfile(FIXTURES.parent / "microbedecoder" / "chebi_record_nodes.tsv", ontology_dir / "chebi_nodes.tsv")
     return MicrobeDecoderTransform(
         input_dir=gold.input_base_dir,
         output_dir=gold.output_base_dir,

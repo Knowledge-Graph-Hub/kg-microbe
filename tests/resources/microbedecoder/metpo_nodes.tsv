@@ -1,0 +1,26 @@
+id	name	category	deprecated
+METPO:1002005	Fermentation	biolink:BiologicalProcess	
+METPO:1000844	Methanogenesis	biolink:BiologicalProcess	
+METPO:1005039	nitrogen fixation	biolink:BiologicalProcess	
+METPO:1000668	coccus shaped	biolink:OntologyClass	
+METPO:1000671	diplococcus shaped	biolink:OntologyClass	
+METPO:1000673	ellipsoidal	biolink:OntologyClass	
+METPO:1000678	oval shaped	biolink:OntologyClass	
+METPO:1000677	ovoid shaped	biolink:OntologyClass	
+METPO:1000679	pleomorphic shaped	biolink:OntologyClass	
+METPO:1000680	ring shaped	biolink:OntologyClass	
+METPO:1000681	rod shaped	biolink:OntologyClass	
+METPO:1000685	star shaped	biolink:OntologyClass	
+METPO:1000686	vibrio shaped	biolink:OntologyClass	
+METPO:1000699	gram negative	biolink:OntologyClass	
+METPO:1000698	gram positive	biolink:OntologyClass	
+METPO:1000700	gram variable	biolink:OntologyClass	
+METPO:1000602	aerobic	biolink:OntologyClass	
+METPO:1000609	aerotolerant	biolink:OntologyClass	
+METPO:1000603	anaerobic	biolink:OntologyClass	
+METPO:1000608	facultatively aerobic	biolink:OntologyClass	
+METPO:1000605	facultatively anaerobic	biolink:OntologyClass	
+METPO:1000604	microaerophilic	biolink:OntologyClass	
+METPO:1000610	microaerotolerant	biolink:OntologyClass	
+METPO:1000606	obligately aerobic	biolink:OntologyClass	
+METPO:1000607	obligately anaerobic	biolink:OntologyClass	

@@ -1,0 +1,10 @@
+id	name	category	deprecated
+GO:0006032	chitin catabolic process	biolink:BiologicalProcess	
+GO:0019332	aerobic respiration, using nitrite as electron donor	biolink:BiologicalProcess	
+GO:0019333	denitrification pathway	biolink:BiologicalProcess	
+GO:0019385	methanogenesis, from acetate	biolink:BiologicalProcess	
+GO:0030245	cellulose catabolic process	biolink:BiologicalProcess	
+GO:0043419	urea catabolic process	biolink:BiologicalProcess	
+GO:0045493	xylan catabolic process	biolink:BiologicalProcess	
+GO:0046274	lignin catabolic process	biolink:BiologicalProcess	
+GO:0120253	hydrocarbon catabolic process	biolink:BiologicalProcess	

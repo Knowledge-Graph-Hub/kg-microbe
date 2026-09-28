@@ -47,6 +47,9 @@ def run_fixture(tmp_path, fixture="snapshot_context.csv"):
     for source, dependency_fixture, target in (
         ("gold", GOLD_ORGANISM_FOLD_FILE, GOLD_ORGANISM_FOLD_FILE),
         ("gtdb", "gtdb_nodes.tsv", "nodes.tsv"),
+        ("ontologies", "metpo_nodes.tsv", "metpo_nodes.tsv"),
+        ("ontologies", "go_nodes.tsv", "go_nodes.tsv"),
+        ("ontologies", "chebi_record_nodes.tsv", "chebi_nodes.tsv"),
     ):
         destination = tmp_path / source
         destination.mkdir(exist_ok=True)

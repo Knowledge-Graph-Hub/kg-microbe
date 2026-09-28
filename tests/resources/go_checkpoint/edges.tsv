@@ -1,0 +1,4 @@
+subject	predicate	object	relation	primary_knowledge_source	knowledge_level	agent_type	original_object	value	value_encoding	z_context	a_context
+fixture:1	biolink:capable_of	GO:0004096	RO:0002215	infores:test	knowledge_assertion	manual_agent	GO:9999001	"quoted"\nbackslash	backslash	last	first
+fixture:1	biolink:capable_of	GO:0004096	RO:0002215	infores:test	knowledge_assertion	manual_agent	GO:9999001	"quoted"\nbackslash	backslash	last	first
+fixture:1	biolink:related_to	NCBITaxon:12	skos:related	infores:test	knowledge_assertion	manual_agent		context	backslash	last	first

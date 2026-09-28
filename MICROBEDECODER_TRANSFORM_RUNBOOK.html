@@ -90,8 +90,9 @@ citations</p></li>
 <li><p><strong>FAPROTAX</strong> — functional labels joined at strain granularity</p></li>
 </ul>
 <p>Plus a <strong>pre-joined LPSN ↔ NCBITaxon ↔ GTDB ↔ GOLD ↔ IMG ↔ BacDive
-identity crosswalk</strong> — ~80 K <code class="docutils literal notranslate"><span class="pre">biolink:close_match</span></code> edges the transform
-emits without further mapping work.</p>
+crosswalk</strong>. Taxon/identifier links use <code class="docutils literal notranslate"><span class="pre">biolink:close_match</span></code>; the BacDive
+strain links use <code class="docutils literal notranslate"><span class="pre">biolink:subclass_of</span></code>, not identity. Current counts must
+be measured from the selected source output.</p>
 <section id="prerequisites">
 <h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h2>
 <section id="environment">
@@ -112,20 +113,32 @@ run the transform extracts the archive into
 </section>
 <section id="lpsn-dependency">
 <h3>LPSN dependency<a class="headerlink" href="#lpsn-dependency" title="Link to this heading"></a></h3>
-<p>Every emitted edge is keyed on <code class="docutils literal notranslate"><span class="pre">lpsn:&lt;LPSN_ID&gt;</span></code> — the MicrobeDecoder
-transform <strong>does not stub LPSN taxon nodes</strong> (the <code class="docutils literal notranslate"><span class="pre">lpsn</span></code> transform is
-their authoritative source, per the add-transform skill’s
-“don’t stub cross-refs” rule). Run <code class="docutils literal notranslate"><span class="pre">-s</span> <span class="pre">lpsn</span></code> alongside for a coherent
-merged KG.</p>
+<p>Metabolism and source-attribute assertions attach to <code class="docutils literal notranslate"><span class="pre">lpsn:&lt;LPSN_ID&gt;</span></code> subjects.
+The LPSN transform supplies their authoritative declarations where available;
+MicrobeDecoder emits source-backed typed stubs only for referenced LPSN IDs
+absent from that dependency. BacDive strain links instead have strain subjects
+and LPSN objects. Run <code class="docutils literal notranslate"><span class="pre">-s</span> <span class="pre">lpsn</span></code> before MicrobeDecoder for a coherent source build
+and merged KG.</p>
 </section>
 </section>
 <section id="running-the-transform">
 <h2>Running the transform<a class="headerlink" href="#running-the-transform" title="Link to this heading"></a></h2>
+<p>The current producer requires finalized LPSN, GOLD and GTDB dependencies, plus
+the selected ontology output’s <code class="docutils literal notranslate"><span class="pre">metpo_nodes.tsv</span></code>, <code class="docutils literal notranslate"><span class="pre">go_nodes.tsv</span></code> and
+<code class="docutils literal notranslate"><span class="pre">chebi_nodes.tsv</span></code>. The versioned tables
+<code class="docutils literal notranslate"><span class="pre">mappings/canonical/microbedecoder_process_mappings.tsv</span></code> and
+<code class="docutils literal notranslate"><span class="pre">mappings/canonical/microbedecoder_phenotype_mappings.tsv</span></code> are required curation
+inputs. Both tables and the actual native declarations read by the producer
+are fingerprinted through source finalization and admission. METPO supports
+reviewed processes and report-only phenotype terms, GO supports the reviewed
+catabolic/respiratory processes, and ChEBI supports the record-scoped chemical
+correction. Missing or incompatible required authority is an error, not a
+reason to mint a new target stub.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </span>transform<span class="w"> </span>-s<span class="w"> </span>microbedecoder
 </pre></div>
 </div>
-<p>Wall-clock: ~20–30 seconds on a MacBook (single-CSV parse, no ontology
-adapter loads). Default paths:</p>
+<p>Runtime includes mapping validation and source finalization as well as the
+single-CSV parse. Default paths:</p>
 <ul class="simple">
 <li><p><strong>Input:</strong> <code class="docutils literal notranslate"><span class="pre">data/raw/microbedecoder_database.zip</span></code> (auto-extracted)</p></li>
 <li><p><strong>Output:</strong> <code class="docutils literal notranslate"><span class="pre">data/transformed/microbedecoder/</span></code></p></li>
@@ -141,7 +154,7 @@ adapter loads). Default paths:</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">nodes.tsv</span></code></p></td>
-<td><p>Terminal-node stubs for <strong>placeholder</strong> CURIEs only — resolved cross-ref targets (NCBITaxon, GTDB, bacdive, GOLD, IMG, CHEBI) come from their owner transforms. Typical size: ~5 K nodes.</p></td>
+<td><p>Producer-owned local material/process/attribute declarations and source taxon stubs where necessary. Source finalization may also copy authoritative declarations. Resolved targets remain owned by their authority transforms; their presence here is not a new identity mapping.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">edges.tsv</span></code></p></td>
 <td><p>Crosswalk, metabolism and column-scoped BacDive source-attribute assertions. Snapshot tokens are not automatically interpreted as phenotypes. Counts depend on the source build.</p></td>
@@ -149,9 +162,13 @@ adapter loads). Default paths:</p>
 <tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">unmapped_labels.tsv</span></code></p></td>
 <td><p>Per-run curation queue — unresolved pathways/compounds and preserved source attributes, with <code class="docutils literal notranslate"><span class="pre">kgmicrobe.{pathway,compound,source_attribute}:</span></code> IDs, sorted by occurrence descending. See “Curation loop” below.</p></td>
 </tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">phenotype_normalizations.tsv</span></code></p></td>
+<td><p>Reviewed exact textual groundings linked to original source records; <strong>not phenotype graph assertions</strong>. The current endpoint categories do not meet pinned <code class="docutils literal notranslate"><span class="pre">has_phenotype</span></code> domain/range. This report is not a merge input.</p></td>
+</tr>
 </tbody>
 </table>
-<p>The transform prints a one-line summary at end of run:</p>
+<p>The transform prints a one-line summary at end of run. For example, this
+historical summary is not an expected count for the current producer:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">microbedecoder</span><span class="p">]</span> <span class="n">rows</span><span class="o">=</span><span class="mi">27010</span><span class="p">,</span> <span class="n">crosswalk_edges</span><span class="o">=</span><span class="mi">80971</span><span class="p">,</span> <span class="n">metabolism_edges</span><span class="o">=</span><span class="mi">69962</span><span class="p">,</span>
                  <span class="n">bacdive_snapshot_edges</span><span class="o">=</span><span class="mi">366298</span><span class="p">,</span> <span class="n">unmatched_labels</span><span class="o">=</span><span class="mi">428305</span>
 </pre></div>
@@ -173,11 +190,11 @@ the add-transform skill mandates for every transform:</p>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>Chemical (end-products, substrates)</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">ChemicalMappingLoader.find_chebi_by_name()</span></code></p></td>
+<td><p>Reviewed full-record corrections, then <code class="docutils literal notranslate"><span class="pre">ChemicalMappingLoader.find_chebi_by_name()</span></code>; the two unresolved sugar records remain protected</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">kgmicrobe.compound:&lt;slug&gt;</span></code></p></td>
 </tr>
 <tr class="row-odd"><td><p>Pathway (<code class="docutils literal notranslate"><span class="pre">Type_of_metabolism</span></code> from Bergey/VPI/Literature/FAPROTAX)</p></td>
-<td><p>(not yet integrated — see follow-up below)</p></td>
+<td><p>Exact, source-scoped reviewed process rules; targets must be declared and active in the ontology output</p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">kgmicrobe.pathway:&lt;slug&gt;</span></code></p></td>
 </tr>
 <tr class="row-even"><td><p>BacDive snapshot</p></td>
@@ -191,6 +208,43 @@ coverage from a fresh build; historical mapping rates predate the current
 source-attribute model and must not be used as current acceptance evidence. See
 <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/650">issue #650</a>
 for the curation gap.</p>
+<p>The reviewed process table contains seventeen source-field/token pairs: the
+first eight METPO rules and nine additional GO catabolic/respiratory rules.
+Seventeen separate non-process/unspecified source labels are retained as
+field-scoped reporting attributes instead of process objects. None of these
+rules interprets unrelated assay codes or narrower/negative process terms. See the
+<a class="reference internal" href="microbedecoder_process_curation.html"><span class="std std-doc">curation evidence and limitations</span></a>.
+FAPROTAX assignments remain predictions, not newly established experiments.</p>
+<p>The exact <code class="docutils literal notranslate"><span class="pre">Not</span> <span class="pre">reported</span></code> token in <code class="docutils literal notranslate"><span class="pre">Bergey_Substrates_for_end_products</span></code> is retained
+as <code class="docutils literal notranslate"><span class="pre">has_attribute</span></code> reporting metadata with its source record and citation. It
+is not a consumed chemical and does not assert an inability to use substrates.</p>
+<p>The continuation also reviews 22 explicit Gram-stain, oxygen-tolerance and cell
+shape literals. Their native METPO groundings are written only to the new
+normalization report: original graph attributes stay intact, including
+contradictory/multivalued observations. Numeric codes, signed assays, units,
+measurements and isolation contexts are not automatically decoded. Read the
+<a class="reference internal" href="microbedecoder_observation_curation.html"><span class="std std-doc">observation curation contract</span></a> before
+treating the report as organism phenotype evidence.</p>
+<section id="complete-current-data-inventory">
+<h3>Complete current-data inventory<a class="headerlink" href="#complete-current-data-inventory" title="Link to this heading"></a></h3>
+<p>An unmapped-report row can be a measurement, unit, isolation context or an
+undecoded assay value. It is not necessarily a missing ontology mapping. The
+historical 5,224-label total predates the current model and is not a current
+acceptance checklist. Generate an inventory from actual source graph rows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>scripts.review_microbedecoder_curation<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--source-dir<span class="w"> </span>data/transformed/microbedecoder<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--output-dir<span class="w"> </span>data/microbedecoder-curation-review-NEW
+</pre></div>
+</div>
+<p>The destination must not already exist. This writes <code class="docutils literal notranslate"><span class="pre">curation_inventory.tsv</span></code>
+and <code class="docutils literal notranslate"><span class="pre">summary.json</span></code>, with exact input/output hashes and a before/after input
+check. It streams every source edge, separately accounts for crosswalks,
+chemical mappings/local materials, reviewed/unreviewed processes, and all 27
+snapshot field roles. No frequency threshold discards the long tail. Counts
+are finalized source edge rows, not raw placeholder emission attempts or
+distinct organisms. The report does not certify merged propagation, new
+chemical identity, a complete scientific interpretation, or release readiness.</p>
+</section>
 </section>
 <section id="curation-loop">
 <h2>Curation loop<a class="headerlink" href="#curation-loop" title="Link to this heading"></a></h2>
@@ -254,11 +308,11 @@ Columns:</p>
 </table>
 <p>Curator workflow by facet:</p>
 <ul class="simple">
-<li><p><strong>pathway</strong> — file a METPO PR adding a <code class="docutils literal notranslate"><span class="pre">&quot;microbedecoder</span> <span class="pre">synonym&quot;</span></code>
-column to <code class="docutils literal notranslate"><span class="pre">berkeleybop/metpo</span></code>’s <code class="docutils literal notranslate"><span class="pre">src/templates/metpo_sheet.tsv</span></code> and
-pre-populate the top labels. Once merged, the transform’s
-METPO-alias hookup (currently marked as a v2 follow-up in
-<code class="docutils literal notranslate"><span class="pre">_resolve_metabolism_curie</span></code>) will promote these placeholders.</p></li>
+<li><p><strong>pathway</strong> — review the exact source field and process definition against an
+existing ontology class. Add supported rules to the source-scoped process
+table, with evidence, authoritative target metadata and boundary tests. Do
+not turn source-specific evidence into a global synonym, use a predicate as
+a process object, or upgrade a FAPROTAX prediction to experimental evidence.</p></li>
 <li><p><strong>compound</strong> — review identity evidence through
 <a class="reference internal" href="MIM_REVIEWED_RELEASE.html"><span class="std std-doc">the supported MIM / unified mapping workflow</span></a>.
 A curation queue row is not by itself an active resolver mapping.</p></li>
@@ -302,9 +356,11 @@ decode an assay’s meaning.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </span>merge<span class="w"> </span>-y<span class="w"> </span>merge.yaml
 </pre></div>
 </div>
-<p>The MicrobeDecoder edges attach to <code class="docutils literal notranslate"><span class="pre">lpsn:&lt;LPSN_ID&gt;</span></code> subjects, which are
-provided by the <code class="docutils literal notranslate"><span class="pre">lpsn</span></code> transform’s <code class="docutils literal notranslate"><span class="pre">nodes.tsv</span></code>. Merge-time dedup on
-<code class="docutils literal notranslate"><span class="pre">id</span></code> collapses any incidental overlap.</p>
+<p>Most biological assertions attach to <code class="docutils literal notranslate"><span class="pre">lpsn:&lt;LPSN_ID&gt;</span></code> subjects; BacDive strain
+hierarchy links use the reverse endpoint roles described above. LPSN supplies
+authoritative nodes where available, while MicrobeDecoder’s source-backed stubs
+cover referenced IDs missing from that dependency. Merge aggregates shared IDs;
+it does not turn a source stub into independently established LPSN evidence.</p>
 </section>
 <section id="follow-ups-out-of-scope-for-the-initial-ingest">
 <h2>Follow-ups (out of scope for the initial ingest)<a class="headerlink" href="#follow-ups-out-of-scope-for-the-initial-ingest" title="Link to this heading"></a></h2>
@@ -317,11 +373,13 @@ transform (BLAST-able) can pull them later.</p></li>
 joined <code class="docutils literal notranslate"><span class="pre">FAPROTAX_Type_of_metabolism</span></code> label per strain.</p></li>
 <li><p>Bergey as its own full ingest — this ingest only carries the
 Bergey-derived edges MicrobeDecoder pre-joins.</p></li>
-<li><p>METPO alias hookup — see <code class="docutils literal notranslate"><span class="pre">_resolve_metabolism_curie</span></code>; blocked on the
-METPO ROBOT template getting a <code class="docutils literal notranslate"><span class="pre">&quot;microbedecoder</span> <span class="pre">synonym&quot;</span></code> column.</p></li>
-<li><p>Smarter multi-value splitter (currently over-splits chemical names
-containing embedded commas like <code class="docutils literal notranslate"><span class="pre">2,3-butanediol</span></code>; same limitation as
-<code class="docutils literal notranslate"><span class="pre">madin_etal</span></code>).</p></li>
+<li><p>Further METPO/GO process grounding — see <code class="docutils literal notranslate"><span class="pre">_resolve_metabolism_curie</span></code>; blocked
+on the remaining source-specific definition review. Seventeen reviewed rules
+are implemented; additional global synonyms are not a prerequisite or a safe
+substitute for checking source roles and target definitions.</p></li>
+<li><p>Further ambiguous multi-value parsing. Bracketed separators and numeric
+chemical locants such as <code class="docutils literal notranslate"><span class="pre">2,3-butanediol</span></code> are already preserved; the parser
+is not a general chemical-name interpreter.</p></li>
 </ul>
 </section>
 <section id="related">

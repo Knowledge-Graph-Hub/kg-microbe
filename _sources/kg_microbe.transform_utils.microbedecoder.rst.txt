@@ -4,10 +4,42 @@ kg\_microbe.transform\_utils.microbedecoder package
 Submodules
 ----------
 
+kg\_microbe.transform\_utils.microbedecoder.chemical\_curation module
+---------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.microbedecoder.chemical_curation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.microbedecoder.curation module
+-----------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.microbedecoder.curation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.transform\_utils.microbedecoder.microbedecoder module
 -----------------------------------------------------------------
 
 .. automodule:: kg_microbe.transform_utils.microbedecoder.microbedecoder
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.microbedecoder.phenotype\_curation module
+----------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.microbedecoder.phenotype_curation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.microbedecoder.source\_annotations module
+----------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.microbedecoder.source_annotations
    :members:
    :undoc-members:
    :show-inheritance:

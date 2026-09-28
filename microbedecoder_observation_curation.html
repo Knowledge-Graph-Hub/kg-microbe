@@ -1,0 +1,175 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MicrobeDecoder observation curation (#650) &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">MicrobeDecoder observation curation (#650)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/microbedecoder_observation_curation.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="microbedecoder-observation-curation-650">
+<h1>MicrobeDecoder observation curation (#650)<a class="headerlink" href="#microbedecoder-observation-curation-650" title="Link to this heading"></a></h1>
+<section id="report-only-textual-phenotype-groundings">
+<h2>Report-only textual phenotype groundings<a class="headerlink" href="#report-only-textual-phenotype-groundings" title="Link to this heading"></a></h2>
+<p>The canonical <code class="docutils literal notranslate"><span class="pre">microbedecoder_phenotype_mappings.tsv</span></code> contains 22 exact
+field/literal rules: three Gram-stain values, nine oxygen-tolerance values and
+ten cell-shape values. Each target was reviewed against a native active METPO
+class with a textual definition, phenotype ancestry, and the exact literal as
+a BacDive-attributed related synonym. This is source-scoped term normalization,
+not promotion of related synonyms to global identity.</p>
+<p>Native version and fixture provenance are in
+<span class="xref myst">the authority note</span>.
+Runtime admission checks exact active target declarations and tracks the
+actual METPO export and mapping table through consumed-input finalization.</p>
+<p>The producer retains every original <code class="docutils literal notranslate"><span class="pre">has_attribute</span></code> edge. It writes reviewed
+matches separately to <code class="docutils literal notranslate"><span class="pre">phenotype_normalizations.tsv</span></code>, retaining subject,
+source-record digest/ordinal, source column, literal/backslash encoding,
+primary source and evidence tier. Target metadata, evidence URI, rationale
+and <code class="docutils literal notranslate"><span class="pre">reviewed_literal_grounding_not_graph_assertion</span></code> make the report’s limited
+meaning explicit. Join using subject, source_record, source_column and value;
+do not join on the label alone or propagate observations to a taxon’s members.
+Rows are source token observations, not distinct organisms or independent tests.</p>
+<p>The schema limitation is deliberate: pinned Biolink 4.4.2 <code class="docutils literal notranslate"><span class="pre">has_phenotype</span></code> has
+domain BiologicalEntity and range PhenotypicFeature. LPSN’s OrganismTaxon and
+METPO’s current OntologyClass exports do not satisfy those endpoint types.
+Neither retyping authority-owned nodes nor substituting a vague predicate is
+justified. The report is not a merge input, and source graph finalization does
+not certify the sidecar as a graph member. Acceptance must fingerprint and
+compare that report separately. A valid graph phenotype route requires a
+reviewed taxon/phenotype model and ontology-owner category handling upstream.</p>
+<p>Positive plus negative Gram observations are preserved separately; they are
+not a newly observed variable result. Broad and obligate oxygen terms are not
+interchanged. Nine other shape synonyms lack native textual definitions;
+<code class="docutils literal notranslate"><span class="pre">other</span></code> is ambiguous. Flagellation does not automatically establish motility.
+Numeric codes and signed assays require an independently established coding
+scheme for the actual saved source fields and remain unconverted.</p>
+</section>
+<section id="one-record-specific-chemical-correction">
+<h2>One record-specific chemical correction<a class="headerlink" href="#one-record-specific-chemical-correction" title="Link to this heading"></a></h2>
+<p>The saved Ilyobacter tartaricus record (LPSN 777027, strain GraTa2/DSM 2382)
+reports <code class="docutils literal notranslate"><span class="pre">tartate</span></code> in its Bergey substrate field. The original
+<a class="reference external" href="https://d-nb.info/1105570576/34">Schink 1984 paper</a>, including its fermentation
+products, independently supports tartrate. The exact complete raw record is
+pinned by canonical JSON SHA-256
+<code class="docutils literal notranslate"><span class="pre">de979939d39a74aad45a0edffe59cde4e11b6d294ee9fb22e848a12bd0dda13f</span></code>.</p>
+<p>Only that authenticated record/field resolves to native <code class="docutils literal notranslate"><span class="pre">CHEBI:132950</span></code>
+(<code class="docutils literal notranslate"><span class="pre">tartrate</span></code>). The broad native class does not invent a counterion or narrower
+stereoisomer. The graph retains the original misspelling, source citation and
+record locator, and records the withdrawn local placeholder as original_object.
+It does not create a new ChEBI stub or a global <code class="docutils literal notranslate"><span class="pre">tartate</span></code> synonym. The constructor
+validates the native ChEBI declaration and fingerprints the consumed authority.</p>
+<p>Admission runs before empty-field/token filtering. Whitespace-normalized IDs
+identify the guarded record as the producer would, but changed original IDs,
+citations, fields or full-row bytes fail closed; they are not admitted by
+normalizing away the difference. A new source snapshot requires reviewing any
+changed guarded record. The two earlier record-scoped unresolved <code class="docutils literal notranslate"><span class="pre">sugar</span></code>
+observations are unchanged.</p>
+<p>The chemical-mapping skill’s reviewed-release policy was followed: no floating
+MIM aliases, vendor changes or manual unified-map edits. Independent native and
+source evidence can support a scoped correction without converting it to a
+globally supported MIM alias. Peptones, culture-medium abbreviations, combined
+substrates and the ambiguous <code class="docutils literal notranslate"><span class="pre">3-methylacetate</span></code> name remain distinct curation work.</p>
+</section>
+<section id="acceptance-limits">
+<h2>Acceptance limits<a class="headerlink" href="#acceptance-limits" title="Link to this heading"></a></h2>
+<p>These changes do not close every interpretation in #650. Separate the process
+mapping queue, local materials, undecoded assays/codes and the phenotype graph
+model blocker. Historical label totals are not a present-day acceptance target.
+Use the complete current source inventory and independent full-field comparison;
+then review a freshly merged graph before making release claims.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

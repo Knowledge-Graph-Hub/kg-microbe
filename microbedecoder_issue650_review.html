@@ -1,0 +1,186 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MicrobeDecoder curation review (#650) &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">MicrobeDecoder curation review (#650)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/microbedecoder_issue650_review.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="microbedecoder-curation-review-650">
+<h1>MicrobeDecoder curation review (#650)<a class="headerlink" href="#microbedecoder-curation-review-650" title="Link to this heading"></a></h1>
+<p>This change is a bounded, evidence-backed contribution to
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/650">#650</a>, not closure
+of every remaining scientific interpretation. The historical 5,224-label figure
+is not a reproduced current backlog or an acceptance target.</p>
+<section id="delivered-scope">
+<h2>Delivered scope<a class="headerlink" href="#delivered-scope" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Seventeen exact source-column/process rules normalize 7,152 assertions in
+the reviewed saved cohort; source citations and FAPROTAX prediction provenance
+remain intact.</p></li>
+<li><p>Seventeen finite group/unspecified-metabolism labels remain source Attributes,
+not asserted biological processes. Four <code class="docutils literal notranslate"><span class="pre">Not</span> <span class="pre">reported</span></code> substrate observations
+likewise remain reporting attributes rather than chemical consumption.</p></li>
+<li><p>One complete-record-pinned <code class="docutils literal notranslate"><span class="pre">tartate</span></code> observation is normalized to tartrate;
+this creates no global alias and does not alter the pinned MIM/unified export.</p></li>
+<li><p>Twenty-two reviewed textual phenotype groundings are report-only evidence
+covering 33,144 observations, not additional organism phenotype assertions.</p></li>
+<li><p>A full-source inventory separates identity crosswalks, processes, materials,
+and reported source attributes without a frequency cutoff.</p></li>
+</ul>
+<p>See <a class="reference internal" href="microbedecoder_process_curation.html"><span class="std std-doc">process evidence and contracts</span></a>,
+<a class="reference internal" href="microbedecoder_observation_curation.html"><span class="std std-doc">observation/chemical boundaries</span></a>, and
+the <a class="reference internal" href="MICROBEDECODER_TRANSFORM_RUNBOOK.html"><span class="std std-doc">transform runbook</span></a>.</p>
+</section>
+<section id="independent-adversarial-findings">
+<h2>Independent adversarial findings<a class="headerlink" href="#independent-adversarial-findings" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Issue</p></th>
+<th class="head"><p>Confirmed defect</p></th>
+<th class="head"><p>Fix boundary</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1212">#1212</a></p></td>
+<td><p>GO audit hashed an intermediate header representation</p></td>
+<td><p>Separate shared-infrastructure PR; canonical staging before checkpoint hashing, byte-verified legacy history only</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1213">#1213</a></p></td>
+<td><p>Inventory accepted empty scientific endpoints</p></td>
+<td><p>Reject blank/whitespace subjects and objects before classification</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1214">#1214</a></p></td>
+<td><p>Fallback process routes skipped relation checks</p></td>
+<td><p>Require the full capable_of predicate/relation pairing on all process routes</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1215">#1215</a></p></td>
+<td><p>External IDs bypassed explicit material-category contradictions</p></td>
+<td><p>Reject contradictory declared categories without inventing external declarations</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1216">#1216</a></p></td>
+<td><p>METPO process objects were generic OntologyClass, incompatible with capable_of</p></td>
+<td><p>Native asserted biological-process ancestry in the ontology producer, plus strict consumer category admission</p></td>
+</tr>
+</tbody>
+</table>
+<p>Reviews examined logic, consistency, robustness, bugs, bottlenecks and scaling.
+The inventory negative cases are synthetic validation reproducers, not a claim
+that those malformed rows occur in the saved production data. The ontology
+category finding is a real modeling incompatibility: reviewed process identity
+alone does not make a generic OntologyClass a valid Occurrent endpoint.</p>
+</section>
+<section id="remaining-scientific-scope">
+<h2>Remaining scientific scope<a class="headerlink" href="#remaining-scientific-scope" title="Link to this heading"></a></h2>
+<p>The complete pre-shipping-review candidate inventory accounts for 521,217 edges,
+including 84,244 crosswalks, and groups other assertions into 6,974 rows. It
+retains 61 local process IDs (41,388 assertions), 10 queued material IDs
+(225 assertions), and three additional registry-local materials (15 assertions).
+These counts identify the reviewed snapshot; they are not runtime constants.</p>
+<p>The 6,592 field-scoped source-attribute IDs represent measurements, units,
+isolation context, classifications and assay observations. They are not all
+missing chemicals. Numeric/signed assay interpretation still needs source
+coding and observation context. Report-only phenotype grounding does not
+resolve the pinned graph model’s endpoint-category constraints.</p>
+<p>The issue remains open for those explicit scientific tasks. Merging this code
+does not refresh production sources or certify a merged release: rebuild native
+ontology output before its consumers, respect source freshness, then merge and
+perform graph-level acceptance. Prior isolated candidate receipts are evidence
+for their exact code/input hashes, not acceptance for later code changes.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

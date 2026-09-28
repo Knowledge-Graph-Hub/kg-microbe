@@ -11,6 +11,7 @@ import pytest
 from kg_microbe.transform import DATA_SOURCES
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
+from tests.test_merge_source_freshness import read_mediadive_bulk_inputs
 
 FIXTURE = Path(__file__).parent / "resources/consumed_input_fingerprint/lookup.tsv"
 
@@ -22,6 +23,7 @@ def consumer(tmp_path):
     transform = cls.__new__(cls)
     Transform.__init__(transform, "mediadive", tmp_path / "raw", tmp_path / "transformed")
     transform.input_base_dir.mkdir()
+    read_mediadive_bulk_inputs(transform, create=True)
     for role, _ in cls.OPTIONAL_RAW_CONSUMED_INPUTS:
         with transform.consume_optional_input(role) as reader:
             assert reader is None
@@ -93,6 +95,7 @@ def test_caught_parser_failure_cannot_certify_partial_consumption(consumer):
     with pytest.raises(SourceFinalizationRequired, match="read failed"):
         transform.verify_consumed_inputs()
     transform.begin_consumed_inputs()
+    read_mediadive_bulk_inputs(transform)
     for role, _ in type(transform).OPTIONAL_RAW_CONSUMED_INPUTS:
         with transform.consume_optional_input(role) as reader:
             assert reader is None

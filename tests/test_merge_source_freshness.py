@@ -21,6 +21,30 @@ FIXTURES = Path(__file__).parent / "resources/merge_source_freshness"
 pytestmark = pytest.mark.usefixtures("local_source_schema")
 
 
+def read_mediadive_bulk_inputs(transform, *, create=False):
+    """Read all five immutable JSON fixtures through the real required-input protocol."""
+    paths = {
+        "mediadive_media_list": "mediadive.json",
+        "mediadive_media_detailed": "mediadive/media_detailed.json",
+        "mediadive_media_strains": "mediadive/media_strains.json",
+        "mediadive_solutions": "mediadive/solutions.json",
+        "mediadive_compounds": "mediadive/compounds.json",
+    }
+    payloads = json.loads((FIXTURES.parent / "mediadive_bulk_inputs.json").read_text())
+    # Create the whole fixture before retaining any input/optional-directory guards.
+    # A restarted read epoch below reuses these exact files without rewriting them.
+    if create:
+        for role, relative in paths.items():
+            path = transform.input_base_dir / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            if not path.exists():
+                path.write_text(json.dumps(payloads[role], sort_keys=True) + "\n")
+    for role, relative in paths.items():
+        with transform.consume_bulk_input(role, transform.input_base_dir / relative) as reader:
+            assert json.load(reader) == payloads[role]
+    return tuple(paths)
+
+
 def record_source(transform):
     """Write the actual registered producer's metadata over the isolated fixture graph."""
     cls = type(transform)
@@ -44,7 +68,10 @@ def prepare_source(tmp_path, source, *, prefix="", marker=True, output_name=None
     Transform.__init__(transform, output_name or source, raw, tmp_path / "transformed")
     for kind in ("nodes", "edges"):
         shutil.copyfile(FIXTURES / f"{kind}.tsv", transform.output_dir / f"{prefix}{kind}.tsv")
+    bulk_roles = read_mediadive_bulk_inputs(transform, create=True) if source == "mediadive" else ()
     for role in getattr(cls, "REQUIRED_CONSUMED_INPUTS", ()):
+        if role in bulk_roles:
+            continue
         assert role == "bacdive_taxon_lookup", f"Fixture needs an explicit immutable input for {role}"
         lookup = tmp_path / f"{source}-bacdive-lookup.tsv"
         shutil.copyfile(FIXTURES / "lookup.tsv", lookup)

@@ -13,6 +13,7 @@ from kg_microbe.transform import DATA_SOURCES
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 from kg_microbe.utils.transform_fingerprint import upstream_fingerprint, write_fingerprint
+from tests.test_merge_source_freshness import read_mediadive_bulk_inputs
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = Path(__file__).parent / "resources/merge_source_freshness"
@@ -42,7 +43,10 @@ def _prepare(tmp_path, name):
     Transform.__init__(transform, name, raw, tmp_path / "transformed")
     for kind in ("nodes", "edges"):
         shutil.copyfile(FIXTURES / f"{kind}.tsv", transform.output_dir / f"{kind}.tsv")
+    bulk_roles = read_mediadive_bulk_inputs(transform, create=True) if name == "mediadive" else ()
     for role in getattr(cls, "REQUIRED_CONSUMED_INPUTS", ()):
+        if role in bulk_roles:
+            continue
         assert role == "bacdive_taxon_lookup", f"An explicit immutable fixture is required for {role}"
         lookup = tmp_path / f"{name}-bacdive-lookup.tsv"
         shutil.copyfile(FIXTURES / "lookup.tsv", lookup)

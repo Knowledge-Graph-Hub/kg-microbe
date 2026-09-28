@@ -4,6 +4,14 @@ kg\_microbe.transform\_utils.mediadive package
 Submodules
 ----------
 
+kg\_microbe.transform\_utils.mediadive.bulk\_inputs module
+----------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.mediadive.bulk_inputs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.transform\_utils.mediadive.mediadive module
 -------------------------------------------------------
 

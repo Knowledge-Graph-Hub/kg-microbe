@@ -136,27 +136,26 @@ def _run_transform(tmp_path, monkeypatch, recipes):
     ):
         medium[field] = ""
     (raw / "mediadive.json").write_text(json.dumps({"data": [medium]}))
+    bulk = raw / "mediadive"
+    bulk.mkdir()
+    for filename, payload in (
+        (
+            "media_detailed.json",
+            {"1": {"solutions": [{"id": int(identifier), "name": "Fixture solution"} for identifier in recipes]}},
+        ),
+        ("media_strains.json", {"1": {}}),
+        ("solutions.json", recipes),
+        ("compounds.json", {}),
+    ):
+        (bulk / filename).write_text(json.dumps(payload))
     monkeypatch.setattr(mod, "BACDIVE_TMP_DIR", RESOURCE / "provenance_serialization")
     monkeypatch.setattr(mod, "MEDIADIVE_TMP_DIR", tmp_path)
     with (
         mock.patch.object(mod.MediaDiveTransform, "_load_chebi_roles"),
         mock.patch.object(mod.MediaDiveTransform, "_load_chebi_categories"),
-        mock.patch.object(mod.MediaDiveTransform, "_load_bulk_data"),
         mock.patch.object(mod, "ChemicalMappingLoader", return_value=_loader()),
     ):
         value = mod.MediaDiveTransform(raw, tmp_path / "transformed")
-    value.using_bulk_data = True
-    value.solutions_data = copy.deepcopy(recipes)
-
-    def response(path, endpoint, directory):
-        """Supply only the fixture medium's own solutions; no strain growth is needed."""
-        return (
-            {}
-            if endpoint.startswith(mod.MEDIUM_STRAINS)
-            else {"solutions": [{"id": int(identifier), "name": "Fixture solution"} for identifier in recipes]}
-        )
-
-    monkeypatch.setattr(value, "get_json_object", response)
 
     def reject_legacy_view(identifier):
         """Production must never request a dictionary that cannot represent repetitions."""

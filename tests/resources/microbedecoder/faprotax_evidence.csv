@@ -1,0 +1,3 @@
+LPSN_ID,Genus,Species,BacDive_ID,BacDive_Motility,Bergey_Type_of_metabolism,Bergey_Major_end_products,Bergey_Substrates_for_end_products,Bergey_Article_link,VPI_Type_of_metabolism,Literature_Type_of_metabolism,Literature_Citation,FAPROTAX_Type_of_metabolism
+101,Bacillus,subtilis,123,0,Fermentation,acetate,glucose,https://doi.org/10.1000/fixture,Fermentation,Fermentation,PMID:12345,fermentation;unknown_process
+101,Bacillus,subtilis,123,0,Fermentation,acetate,glucose,https://doi.org/10.1000/fixture,Fermentation,Fermentation,PMID:12345,fermentation;unknown_process

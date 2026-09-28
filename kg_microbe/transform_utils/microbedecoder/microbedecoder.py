@@ -60,6 +60,7 @@ from kg_microbe.transform_utils.constants import (
     CLOSE_MATCH_PREDICATE,
     CLOSE_MATCH_RELATION,
     COMPOUND_PREFIX,
+    COMPUTATIONAL_MODEL,
     DESCRIPTION_COLUMN,
     FAPROTAX_KNOWLEDGE_SOURCE,
     GENOME_CATEGORY,
@@ -89,6 +90,7 @@ from kg_microbe.transform_utils.constants import (
     ORIGINAL_OBJECT_COLUMN,
     PATHWAY_PREFIX,
     PREDICATE_COLUMN,
+    PREDICTION,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PRODUCES_PREDICATE,
     PROVIDED_BY_COLUMN,
@@ -696,6 +698,10 @@ class MicrobeDecoderTransform(Transform):
                             source_citation=citation_text,
                             source_column=source_columns["type_of_metabolism"],
                             value=label,
+                            # FAPROTAX extrapolates curated taxon-function rules;
+                            # its per-organism assignments are predictions (#1209).
+                            knowledge_level=PREDICTION if group_label == "faprotax" else KNOWLEDGE_ASSERTION,
+                            agent_type=COMPUTATIONAL_MODEL if group_label == "faprotax" else MANUAL_AGENT,
                         )
                     )
                     self._stats["metabolism_edges"] += 1
@@ -1072,6 +1078,9 @@ class MicrobeDecoderTransform(Transform):
         source_column: Optional[str] = None,
         value: Optional[str] = None,
         source_citation: Optional[str] = None,
+        *,
+        knowledge_level: str = KNOWLEDGE_ASSERTION,
+        agent_type: str = MANUAL_AGENT,
     ) -> List:
         """
         Build an edge row in canonical Transform.edge_header order.
@@ -1087,8 +1096,8 @@ class MicrobeDecoderTransform(Transform):
         row[self.edge_header.index(OBJECT_COLUMN)] = obj
         row[self.edge_header.index(RELATION_COLUMN)] = relation
         row[self.edge_header.index(PRIMARY_KNOWLEDGE_SOURCE_COLUMN)] = primary_knowledge_source
-        row[self.edge_header.index(KNOWLEDGE_LEVEL_COLUMN)] = KNOWLEDGE_ASSERTION
-        row[self.edge_header.index(AGENT_TYPE_COLUMN)] = MANUAL_AGENT
+        row[self.edge_header.index(KNOWLEDGE_LEVEL_COLUMN)] = knowledge_level
+        row[self.edge_header.index(AGENT_TYPE_COLUMN)] = agent_type
         row[self.edge_header.index(ORIGINAL_OBJECT_COLUMN)] = original_object
         row[self.edge_header.index(DESCRIPTION_COLUMN)] = self._escape_literal(description)
         row[self.edge_header.index(PUBLICATIONS_COLUMN)] = publications

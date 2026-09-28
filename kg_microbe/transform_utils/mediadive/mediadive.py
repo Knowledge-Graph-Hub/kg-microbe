@@ -19,17 +19,12 @@ import csv
 import json
 import math
 import os
-import shutil
 import time
 from pathlib import Path
 from typing import Dict, Optional, Union
-from urllib.parse import urlparse
 
 import pandas as pd
 import requests
-import yaml
-from requests_cache import CachedSession
-from requests_cache.backends.sqlite import SQLiteCache
 from tqdm import tqdm
 
 from kg_microbe.transform_utils.constants import (
@@ -132,6 +127,14 @@ from kg_microbe.transform_utils.constants import (
     UNIT_COLUMN,
     XREF_COLUMN,
 )
+from kg_microbe.transform_utils.mediadive.bulk_inputs import (
+    BULK_INPUTS,
+    MEDIA_LIST_INPUT,
+    REQUIRED_BULK_INPUTS,
+    snapshot_bulk_input,
+    verify_bulk_inputs,
+    verify_recorded_bulk_inputs,
+)
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
@@ -144,13 +147,8 @@ from kg_microbe.utils.pandas_utils import (
     drop_duplicates,
 )
 from kg_microbe.utils.provenance import bacdive_record_url
+from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 from kg_microbe.utils.tsv_io import tsv_writer
-
-#: HTTP response cache for the API fallback, kept beside the bulk JSONs. The
-#: old name is the file `requests_cache.install_cache("mediadive_cache")` left
-#: in the working directory; it is adopted on first use so nothing re-downloads.
-HTTP_CACHE_FILENAME = "mediadive_transform_cache.sqlite"
-LEGACY_HTTP_CACHE_FILENAME = "mediadive_cache.sqlite"
 
 
 class MediaDiveTransform(Transform):
@@ -159,7 +157,8 @@ class MediaDiveTransform(Transform):
     #: Reads ``ontologies/chebi_nodes.tsv`` and ``chebi_edges.tsv`` (roles/categories)
     #: via constants.py (#1035), plus BacDive's intermediate strain-taxid TSV (#1091).
     TRANSFORM_INPUTS = ("ontologies", BACDIVE)
-    REQUIRED_CONSUMED_INPUTS = ("bacdive_taxon_lookup",)
+    DEFAULT_INPUT_DIR = RAW_DATA_DIR
+    REQUIRED_CONSUMED_INPUTS = ("bacdive_taxon_lookup", *REQUIRED_BULK_INPUTS)
 
     DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
     OPTIONAL_RAW_CONSUMED_INPUTS = (
@@ -187,7 +186,8 @@ class MediaDiveTransform(Transform):
         # `requests.Session` for the whole process from a constructor, so every
         # HTTP client in the run became a CachedSession and a test that merely
         # built this transform changed the outcome of unrelated tests (#624).
-        # The cache is a session this transform owns, opened on first API call.
+        # Explicit API helpers own a plain, uncached session. Production reads
+        # admitted bulk JSONs only; old HTTP/YAML files are never adopted.
         self._http: Optional[requests.Session] = None
         self.translation_table = str.maketrans(TRANSLATION_TABLE_FOR_LABELS)
 
@@ -202,6 +202,8 @@ class MediaDiveTransform(Transform):
         self._load_chebi_categories()
 
         self.bulk_data_dir = self._resolve_bulk_data_dir(self.input_base_dir)
+        self._bulk_input_admission = None
+        self._bulk_input_states = {}
         self.media_detailed = {}
         self.media_strains = {}
         self.solutions_data = {}
@@ -221,6 +223,30 @@ class MediaDiveTransform(Transform):
         self.knowledge_source = "infores:mediadive"  # InforES standard knowledge source
 
         self._load_bulk_data()
+
+    def consume_bulk_input(self, name, path):
+        """Consume a required JSON from the original lexical path and immutable bytes."""
+        return snapshot_bulk_input(self, name, path)
+
+    @property
+    def producer_native_inputs(self):
+        """Serialize original reads, never substitute current files at finalization."""
+        return {"version": 1, "inputs": {name: dict(state) for name, state in self._bulk_input_states.items()}}
+
+    @producer_native_inputs.setter
+    def producer_native_inputs(self, recorded):
+        """Permit exact repeated finalization without replacing the retained read epoch."""
+        if recorded != self.producer_native_inputs:
+            raise SourceFinalizationRequired("MediaDive bulk reads differ from finalized run; rerun the producer")
+
+    def verify_native_inputs(self, *, byte_verified=False, output_dir=None):
+        """Keep the constructor and selected list bound through finalization."""
+        verify_bulk_inputs(self, byte_verified=byte_verified, output_dir=output_dir)
+
+    @classmethod
+    def verify_recorded_native_inputs(cls, report, report_path, *, admission=None):
+        """Admit the original raw JSON identities with the public source validator."""
+        return verify_recorded_bulk_inputs(report, report_path, admission=admission)
 
     def _create_node_row(
         self,
@@ -260,65 +286,30 @@ class MediaDiveTransform(Transform):
         return node_row
 
     def _load_bulk_data(self):
-        """
-        Load bulk downloaded MediaDive data if available.
-
-        This method loads pre-downloaded data files to avoid API calls during transform.
-        Files are created by running: poetry run kg download.
-        """
+        """Read all four required bulk dictionaries; never fill gaps from an undated cache."""
         try:
-            media_detailed_file = self.bulk_data_dir / "media_detailed.json"
-            media_strains_file = self.bulk_data_dir / "media_strains.json"
-            solutions_file = self.bulk_data_dir / "solutions.json"
-            compounds_file = self.bulk_data_dir / "compounds.json"
-
-            files_exist = all(
-                [
-                    media_detailed_file.exists(),
-                    media_strains_file.exists(),
-                    solutions_file.exists(),
-                    compounds_file.exists(),
-                ]
-            )
-
-            if files_exist:
-                print(f"Loading bulk MediaDive data from {self.bulk_data_dir}/")
-
-                with open(media_detailed_file) as f:
-                    self.media_detailed = json.load(f)
-                print(f"  Loaded {len(self.media_detailed)} detailed media recipes")
-
-                with open(media_strains_file) as f:
-                    self.media_strains = json.load(f)
-                print(f"  Loaded strain associations for {len(self.media_strains)} media")
-
-                with open(solutions_file) as f:
-                    self.solutions_data = json.load(f)
-                print(f"  Loaded {len(self.solutions_data)} solutions")
-
-                with open(compounds_file) as f:
-                    self.compounds_data = json.load(f)
-                print(f"  Loaded {len(self.compounds_data)} compounds")
-
-                self.using_bulk_data = True
-                print("  Bulk data loaded successfully - API calls will be avoided")
-            else:
-                print(f"Bulk MediaDive data not found in {self.bulk_data_dir}/")
-                print("  Transform will use API calls (may be slow)")
-                print("  To download bulk data, run: poetry run kg download")
-
-        except FileNotFoundError as e:
-            print(f"Warning: Bulk data file not found: {e.filename}")
-            print("  Transform will use API calls (may be slow)")
-            print("  To download bulk data, run: poetry run kg download")
-        except json.JSONDecodeError as e:
-            print(f"Warning: A bulk data file contains invalid JSON (line {e.lineno}: {e.msg})")
-            print("  This usually means the file was corrupted during download.")
-            print("  Transform will use API calls (may be slow)")
-            print("  To fix, re-download: poetry run kg download --ignore-cache")
-        except OSError as e:
-            print(f"Warning: Could not read bulk data file: {e}")
-            print("  Transform will use API calls (may be slow)")
+            print(f"Loading bulk MediaDive data from {self.bulk_data_dir}/")
+            loaded = {}
+            for name, filename in BULK_INPUTS.items():
+                with self.consume_bulk_input(name, self.bulk_data_dir / filename) as reader:
+                    loaded[name] = json.load(reader)
+                    if not isinstance(loaded[name], dict):
+                        raise ValueError(f"MediaDive {filename} must contain an object keyed by record ID")
+            # Publish only one complete set of dictionaries, all read in this
+            # instance's original epoch. A partial/retried read cannot mix epochs.
+            self.media_detailed = loaded["mediadive_media_detailed"]
+            self.media_strains = loaded["mediadive_media_strains"]
+            self.solutions_data = loaded["mediadive_solutions"]
+            self.compounds_data = loaded["mediadive_compounds"]
+            self.using_bulk_data = True
+            print(f"  Loaded {len(self.media_detailed)} detailed media recipes")
+            print(f"  Loaded strain associations for {len(self.media_strains)} media")
+            print(f"  Loaded {len(self.solutions_data)} solutions")
+            print(f"  Loaded {len(self.compounds_data)} compounds")
+            print("  Bulk data loaded successfully - YAML/HTTP fallback is disabled")
+        except BaseException as error:
+            self._consumed_input_error = str(error)
+            raise
 
     def _load_chebi_roles(self):
         """
@@ -632,7 +623,7 @@ class MediaDiveTransform(Transform):
 
     def _get_mediadive_json(self, url: str, retry_count: int = 3, retry_delay: float = 2.0) -> Dict:
         """
-        Use the API url to get a dict of information.
+        Fetch live API data through an owned uncached session, never old cache files.
 
         :param url: Path provided by MediaDive API.
         :param retry_count: Number of retry attempts on failure.
@@ -646,42 +637,25 @@ class MediaDiveTransform(Transform):
                 data_json = r.json()
                 return data_json.get(DATA_KEY, {})
             except requests.exceptions.RequestException as e:
+                self._close_http()
                 if attempt < retry_count - 1:
                     print(f"  Retry {attempt + 1}/{retry_count} after error: {e} (URL: {url})")
                     time.sleep(retry_delay)
                 else:
                     print(f"  Failed after {retry_count} attempts: {e} (URL: {url})")
                     return {}
-
-    def _http_cache_path(self) -> Path:
-        """
-        Return the API fallback's cache file, adopting the legacy one if present.
-
-        Older code cached in the working directory (usually the repo root).
-        Moving that file, rather than ignoring it, keeps its responses; it is
-        an optimisation, so a failed move is reported and a fresh cache used.
-        """
-        cache_path = self.bulk_data_dir / HTTP_CACHE_FILENAME
-        legacy = Path.cwd() / LEGACY_HTTP_CACHE_FILENAME
-        if not cache_path.exists() and legacy.is_file():
-            try:
-                cache_path.parent.mkdir(parents=True, exist_ok=True)
-                shutil.move(str(legacy), str(cache_path))
-                print(f"  Adopted legacy HTTP cache {legacy} -> {cache_path}")
-            except OSError as e:
-                print(f"  Could not adopt {legacy} ({e}); using a fresh HTTP cache")
-        return cache_path
+            except BaseException:
+                self._close_http()
+                raise
 
     def _http_session(self) -> requests.Session:
-        """Return this transform's cached HTTP session, opening it on first use."""
+        """Return this transform's uncached HTTP session, opening it on first explicit use."""
         if self._http is None:
-            cache_path = self._http_cache_path()
-            cache_path.parent.mkdir(parents=True, exist_ok=True)
-            self._http = CachedSession(backend=SQLiteCache(str(cache_path)))
+            self._http = requests.Session()
         return self._http
 
     def _close_http(self) -> None:
-        """Close the HTTP session so its SQLite connection does not linger."""
+        """Close this transform's owned session without touching any persistent cache."""
         # getattr: tests build the transform with __new__ and no __init__.
         session = getattr(self, "_http", None)
         if session is not None:
@@ -751,7 +725,12 @@ class MediaDiveTransform(Transform):
         :return: Ordered occurrence dictionaries with resolved IDs and source evidence.
         """
         # Check bulk downloaded data first
-        if self.using_bulk_data and id in self.solutions_data:
+        if self.using_bulk_data:
+            if id not in self.solutions_data:
+                raise FileNotFoundError(
+                    f"Missing MediaDive bulk solution {id!r} in {self.bulk_data_dir / 'solutions.json'}. "
+                    "Refresh the bulk download; refusing YAML/HTTP fallback in bulk mode."
+                )
             self.api_calls_avoided += 1
             data = self.solutions_data[id]
         else:
@@ -965,28 +944,23 @@ class MediaDiveTransform(Transform):
         target_dir: Path,
     ) -> Dict[str, str]:
         """
-        Download MetaDive data using a url.
+        Fetch live MediaDive data; retain the legacy signature without YAML persistence.
 
-        :param url: Path provided by MetaDive API.
+        :param url: Path provided by MediaDive API.
+        :param target_dir: Ignored legacy cache destination; never read, created or written.
         """
-        data_json = self._get_mediadive_json(url)
-        if data_json:
-            parsed_url = urlparse(url)
-            fn = parsed_url.path.split("/")[-1] + ".yaml"
-            if not (target_dir / fn).is_file():
-                with open(str(target_dir / fn), "w") as f:
-                    f.write(yaml.dump(data_json))
-        return data_json
+        return self._get_mediadive_json(url)
 
     def get_json_object(self, fn: Union[Path, str], url_extension: str, target_dir: Path) -> Dict[str, str]:
         """
-        Download YAML file if absent and return contents as a JSON object.
+        Read admitted bulk data, or fetch live data for an explicit nonbulk lookup.
 
-        First checks bulk downloaded data, then YAML cache, then makes API call.
+        Bulk mode never falls back to YAML or HTTP for a missing record.
+        Nonbulk helper calls are uncached diagnostics, not a production transform mode.
 
-        :param fn: YAML file path.
+        :param fn: Ignored legacy YAML file path.
         :param url_extension: API endpoint extension (e.g., "medium/123").
-        :param target_dir: Directory for YAML cache.
+        :param target_dir: Ignored legacy YAML directory.
         :return: Dictionary.
         """
         # Extract ID from url_extension (e.g., "medium/123" -> "123")
@@ -1018,69 +992,37 @@ class MediaDiveTransform(Transform):
                     # Note: SOLUTIONS_KEY ("solutions") is at the top level, not RECIPE_KEY.
                     # The "recipe" key is nested within each solution object.
                     return self.media_detailed[medium_id]
+                raise FileNotFoundError(
+                    f"Missing MediaDive bulk medium {medium_id!r} in {self.bulk_data_dir / 'media_detailed.json'}. "
+                    "Refresh the bulk download; refusing YAML/HTTP fallback in bulk mode."
+                )
+            raise ValueError(f"Unsupported MediaDive bulk lookup: {url_extension!r}")
 
-        # Fall back to YAML cache or API call
-        if not fn.is_file():
-            self.api_calls_made += 1
-            url = MEDIADIVE_REST_API_BASE_URL + url_extension
-            json_obj = self.download_yaml_and_get_json(url, target_dir)
-        else:
-            # Import YAML file fn as a dict
-            with open(fn, "r") as f:
-                try:
-                    json_obj = yaml.safe_load(f)
-                except yaml.YAMLError as exc:
-                    print(exc)
-        return json_obj
+        self.api_calls_made += 1
+        url = MEDIADIVE_REST_API_BASE_URL + url_extension
+        return self.download_yaml_and_get_json(url, target_dir)
 
     @classmethod
     def _resolve_bulk_data_dir(cls, input_base_dir) -> Path:
-        """
-        Return the directory the bulk MediaDive JSONs should be read from.
-
-        An explicit input dir is honoured exactly: `kg transform -i
-        /scratch/raw` that is missing its bulk files must fail naming
-        /scratch, never silently read the repo's copy instead — that would
-        reintroduce the same class of silent-wrong-data failure
-        :meth:`_assert_bulk_data_available` exists to prevent. Only the
-        class default falls back to the repo-anchored raw dir, because
-        ``Transform.DEFAULT_INPUT_DIR`` points at a directory that does not
-        exist.
-
-        :param input_base_dir: The input dir this transform was constructed with.
-        :return: Directory expected to contain the four bulk JSON files.
-        """
-        if Path(input_base_dir) == Path(cls.DEFAULT_INPUT_DIR):
-            return RAW_DATA_DIR / "mediadive"
+        """Resolve bulk JSONs beneath the same selected raw root as the list and mappings."""
         return Path(input_base_dir) / "mediadive"
 
     def _assert_bulk_data_available(self) -> None:
         """
         Refuse to transform when the bulk MediaDive download is missing.
 
-        Without it the medium/solution lookups fall back to the YAML cache
-        under ``tmp/medium_yaml`` and to this transform's HTTP cache, neither of
-        which carries an expiry. Those caches hold responses from 2023 and
-        2025 that predate MediaDive restructuring solutions, so the run
-        succeeds with exit code 0 while emitting a graph built from years-old
-        recipes. Set ``KG_MEDIADIVE_ALLOW_STALE_CACHE=true`` to accept that
-        tradeoff deliberately (offline reruns, cache-only debugging).
+        Historical cache-only runs could silently reuse superseded recipes.
+        Production now requires the admitted bulk JSON evidence; neither old
+        caches nor explicit uncached diagnostic helpers can replace it.
+        The former stale-cache override is no longer admitted.
         """
         if self.using_bulk_data:
             return
-        if os.getenv("KG_MEDIADIVE_ALLOW_STALE_CACHE", "").strip().lower() in {"1", "true", "yes"}:
-            print(
-                "WARNING: MediaDive bulk data missing; proceeding on the undated YAML/HTTP "
-                "caches because KG_MEDIADIVE_ALLOW_STALE_CACHE is set. Output may reflect "
-                "long-superseded MediaDive recipes."
-            )
-            return
         raise FileNotFoundError(
             f"MediaDive bulk data not found in {self.bulk_data_dir}/. Refusing to transform: "
-            "the fallback YAML and HTTP caches have no expiry and can silently produce a graph "
-            "from years-old recipes. Run `poetry run kg download -t mediadive` and let it finish "
-            "first, or export KG_MEDIADIVE_ALLOW_STALE_CACHE=true to override. It must be a shell "
-            "variable: load_dotenv() is not called on the transform path, so .env is not read."
+            "YAML caches and live diagnostic helpers cannot replace required bulk evidence. "
+            "Run `poetry run kg download -t mediadive` and let it finish "
+            "first. KG_MEDIADIVE_ALLOW_STALE_CACHE cannot bypass required source evidence."
         )
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
@@ -1093,26 +1035,57 @@ class MediaDiveTransform(Transform):
         finally:
             self._close_http()
 
+    def _preflight_bulk_records(self, input_json):
+        """Check every requested medium and expanded solution before opening graph outputs."""
+        if not isinstance(input_json, dict) or not isinstance(input_json.get(DATA_KEY), list):
+            raise ValueError("MediaDive media list must contain a 'data' list")
+        for record in input_json[DATA_KEY]:
+            if not isinstance(record, dict) or ID_COLUMN not in record:
+                raise ValueError("MediaDive media list contains a record without an ID")
+            medium_id = str(record[ID_COLUMN])
+            if medium_id not in self.media_detailed:
+                raise FileNotFoundError(
+                    f"Missing MediaDive bulk medium {medium_id!r} in {self.bulk_data_dir / 'media_detailed.json'}. "
+                    "Refresh the bulk download; refusing YAML/HTTP fallback in bulk mode."
+                )
+            detail = self.media_detailed[medium_id]
+            if not isinstance(detail, dict):
+                raise ValueError(f"MediaDive bulk medium {medium_id!r} must be an object")
+            # Present metadata-only entries are valid, unlike absent records.
+            solutions = detail.get(SOLUTIONS_KEY, [])
+            if not isinstance(solutions, list):
+                raise ValueError(f"MediaDive bulk medium {medium_id!r} solutions must be a list")
+            for solution in solutions:
+                if not isinstance(solution, dict) or ID_COLUMN not in solution:
+                    raise ValueError(f"MediaDive bulk medium {medium_id!r} has a solution without an ID")
+                solution_id = str(solution[ID_COLUMN])
+                if solution_id not in self.solutions_data:
+                    raise FileNotFoundError(
+                        f"Missing MediaDive bulk solution {solution_id!r} requested by medium {medium_id!r} "
+                        f"in {self.bulk_data_dir / 'solutions.json'}. Refresh the bulk download."
+                    )
+                if not isinstance(self.solutions_data[solution_id], dict):
+                    raise ValueError(f"MediaDive bulk solution {solution_id!r} must be an object")
+
     def _run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
         # Constructor-loaded mappings belong to this instance's original input
         # epoch. Repeated runs may reuse it only unchanged; a new epoch requires
         # a new instance, never resetting evidence underneath cached mappings.
         self._assert_bulk_data_available()
-        # replace with downloaded data filename for this source
-        input_file = os.path.join(self.input_base_dir, "mediadive.json")  # must exist already
+        input_file = Path(data_file) if data_file is not None else Path("mediadive.json")
+        if not input_file.is_absolute():
+            input_file = self.input_base_dir / input_file
+        with self.consume_bulk_input(MEDIA_LIST_INPUT, input_file) as reader:
+            input_json = json.load(reader)
         bacdive_input_file = BACDIVE_TMP_DIR / "bacdive.tsv"
         with self.consume_input("bacdive_taxon_lookup", bacdive_input_file) as bacdive_file:
             bacdive_df = pd.read_csv(bacdive_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN])
         self.verify_consumed_inputs()
+        self._preflight_bulk_records(input_json)
 
         # Create dictionary lookup for O(1) access instead of O(n) DataFrame filtering
         bacdive_strain_to_ncbi = dict(zip(bacdive_df[BACDIVE_ID_COLUMN], bacdive_df[NCBITAXON_ID_COLUMN], strict=True))
-
-        # mediadive_data:List = mediadive["data"]
-        # Read the JSON file into the variable input_json
-        with open(input_file, "r") as f:
-            input_json = json.load(f)
 
         COLUMN_NAMES = [
             MEDIADIVE_ID_COLUMN,
@@ -1477,6 +1450,7 @@ class MediaDiveTransform(Transform):
             dedup_on_sort_column=True,
         )
         drop_duplicates(self.output_edge_file)
+        self.verify_consumed_inputs()
 
         # Print data source and API call statistics
         print("\n" + "=" * 80)
@@ -1486,8 +1460,7 @@ class MediaDiveTransform(Transform):
             print(f"Data source: Bulk downloaded files ({self.bulk_data_dir}/)")
             print(f"API calls avoided: {self.api_calls_avoided}")
             print(f"API calls made: {self.api_calls_made}")
-            if self.api_calls_made > 0:
-                print("  (Some API calls may have been needed for missing data in bulk files)")
+            print("YAML/HTTP fallback: disabled in bulk mode")
         else:
             print("Data source: MediaDive API (slow - consider running bulk download)")
             print(f"API calls made: {self.api_calls_made}")

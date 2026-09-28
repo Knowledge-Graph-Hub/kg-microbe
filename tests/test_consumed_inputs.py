@@ -2,7 +2,6 @@
 
 import csv
 import hashlib
-import json
 import os
 import shutil
 from pathlib import Path
@@ -17,9 +16,9 @@ from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils import source_finalization as finalizer
 from kg_microbe.utils.atomic_io import atomic_write, cache_is_complete
 from kg_microbe.utils.transform_fingerprint import finalization_inputs_current, write_fingerprint
+from tests.test_provenance_serialization import _media_raw_inputs
 
 FIXTURES = Path(__file__).parent / "resources" / "consumed_inputs"
-MEDIA_FIXTURES = Path(__file__).parent / "resources" / "provenance_serialization"
 ROLE = "bacdive_taxon_lookup"
 
 
@@ -64,24 +63,15 @@ def _rows(path):
 
 
 def _media(tmp_path, monkeypatch):
-    """Prepare the real MediaDive run with fixture responses, no network or authority reads."""
+    """Prepare the real MediaDive readers with tiny immutable payloads and no network."""
     monkeypatch.setattr(media, "BACDIVE_TMP_DIR", tmp_path / "bacdive")
     monkeypatch.setattr(media, "MEDIADIVE_TMP_DIR", tmp_path)
     with (
         mock.patch.object(media.MediaDiveTransform, "_load_chebi_roles"),
         mock.patch.object(media.MediaDiveTransform, "_load_chebi_categories"),
-        mock.patch.object(media.MediaDiveTransform, "_load_bulk_data"),
         mock.patch.object(media, "ChemicalMappingLoader"),
     ):
-        result = media.MediaDiveTransform(input_dir=MEDIA_FIXTURES, output_dir=tmp_path / "out")
-    result.using_bulk_data = True
-    strains = json.loads((MEDIA_FIXTURES / "medium_strains.json").read_text())
-
-    def response(path, endpoint, directory):
-        """Return immutable fixture growth records and no recipe solutions."""
-        return strains if endpoint.startswith(media.MEDIUM_STRAINS) else {}
-
-    monkeypatch.setattr(result, "get_json_object", response)
+        result = media.MediaDiveTransform(input_dir=_media_raw_inputs(tmp_path), output_dir=tmp_path / "out")
     return result
 
 

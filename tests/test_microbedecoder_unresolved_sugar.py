@@ -75,6 +75,10 @@ def _run(tmp_path, records=None, lookup=None):
         destination.mkdir()
         shutil.copyfile(FIXTURES / (filename if name == "gold" else "gtdb_nodes.tsv"), destination / filename)
     transform = MicrobeDecoderTransform(tmp_path, tmp_path, chemical_loader=lookup or ChemicalLookup())
+    (tmp_path / "ontologies").mkdir()
+    shutil.copyfile(FIXTURES / "metpo_nodes.tsv", tmp_path / "ontologies/metpo_nodes.tsv")
+    shutil.copyfile(FIXTURES / "go_nodes.tsv", tmp_path / "ontologies/go_nodes.tsv")
+    shutil.copyfile(FIXTURES / "chebi_record_nodes.tsv", tmp_path / "ontologies/chebi_nodes.tsv")
     transform.run(data_file=source, show_status=False)
     return transform, _read(transform.output_node_file), _read(transform.output_edge_file), source
 

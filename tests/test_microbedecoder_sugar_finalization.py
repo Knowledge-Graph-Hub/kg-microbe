@@ -7,6 +7,7 @@ import json
 import os
 import shutil
 import socket
+import sqlite3
 import subprocess
 import sys
 from collections import Counter
@@ -32,6 +33,7 @@ def _child(root):
     import kg_microbe.transform as dispatcher
     from kg_microbe.transform_utils.constants import GOLD_ORGANISM_FOLD_FILE
     from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
+    from kg_microbe.utils import go_authority
     from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
     from kg_microbe.utils.graph_schema import validate_canonical_tsv
     from kg_microbe.utils.source_finalization import SourceFinalizationRequired, verify_finalized_source_files
@@ -59,6 +61,11 @@ def _child(root):
     # not assert that its NCBI/GOLD crosswalks are scientifically correct.
     authority = output / "ontologies/fixture_nodes.tsv"
     authority.parent.mkdir()
+    shutil.copyfile(root / "tests/resources/microbedecoder/metpo_nodes.tsv", authority.parent / "metpo_nodes.tsv")
+    shutil.copyfile(root / "tests/resources/microbedecoder/go_nodes.tsv", authority.parent / "go_nodes.tsv")
+    shutil.copyfile(
+        root / "tests/resources/microbedecoder/chebi_record_nodes.tsv", authority.parent / "chebi_nodes.tsv"
+    )
     authority.write_text(
         "id\tcategory\tname\n"
         "NCBITaxon:38284\tbiolink:OrganismTaxon\tsynthetic declared taxon A\n"
@@ -69,6 +76,21 @@ def _child(root):
         "gold:Gp0012393\tbiolink:OrganismTaxon\tsynthetic declared project B\n"
     )
     mapping = root / "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+    # The saved second sugar record reports xylanolysis. The reviewed default
+    # mapping now references GO, so supply its actual minimal authority excerpt.
+    # Only the production database-size/build gate is bypassed for this tiny
+    # offline fixture; parsing, hashing, reference normalization and admission
+    # all execute their real implementations against an actual SQLite database.
+    with sqlite3.connect(raw / "go.db") as database:
+        database.execute("CREATE TABLE statements(subject,predicate,object,value)")
+        database.execute("CREATE TABLE edge(subject,predicate,object)")
+        database.executemany(
+            "INSERT INTO statements VALUES(?,?,?,?)",
+            [
+                ("GO:0045493", "rdfs:label", None, "xylan catabolic process"),
+                ("GO:0045493", "oio:hasOBONamespace", None, "biological_process"),
+            ],
+        )
     lookup = ChemicalMappingLoader(mapping)
     transform = MicrobeDecoderTransform(raw, output, chemical_loader=lookup)
     transform.run(data_file=source, show_status=False)
@@ -82,7 +104,9 @@ def _child(root):
     assert all(row["original_object"] == OLD for row in selected if row["value"] == "sugar")
     assert next(row for row in selected if row["value"] == "mucin")["object"] == "NCIT:C16883"
 
-    report = transform.finalize(fresh_run=True)
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(go_authority, "_prepare_go_database", lambda selected: selected / "go.db")
+        report = transform.finalize(fresh_run=True)
     paths = [transform.output_node_file, transform.output_edge_file]
     after_nodes, after_edges = map(_read, paths)
     before_fields = set(before_edges[0])
@@ -97,7 +121,14 @@ def _child(root):
 
     assert rows(before_edges, before_fields) == rows(after_edges, before_fields)
     assert set(before_nodes[0]) == set(after_nodes[0])
-    assert rows(before_nodes, before_nodes[0]) == rows(after_nodes, before_nodes[0])
+    added_go = [row for row in after_nodes if row["id"] == "GO:0045493"]
+    assert len(added_go) == 1
+    assert added_go[0]["name"] == "xylan catabolic process"
+    assert added_go[0]["category"] == "biolink:BiologicalProcess"
+    assert added_go[0]["provided_by"] == "infores:go"
+    assert rows(before_nodes, before_nodes[0]) == rows(
+        [row for row in after_nodes if row["id"] != "GO:0045493"], before_nodes[0]
+    )
     assert [row for row in after_nodes if row["id"] in scoped] == before_local
     assert all(row["name"] == "sugar" and row["category"] == "biolink:ChemicalEntity" for row in before_local)
     assert all(not row[key] for row in before_local for key in ("xref", "same_as", "synonym"))
@@ -105,7 +136,7 @@ def _child(root):
     assert validate_canonical_tsv(paths[1], is_node=False) == len(after_edges)
     assert report["source"] == "microbedecoder"
     assert report["producer_code"]["directory"] == str(root / "kg_microbe/transform_utils/microbedecoder")
-    assert report["declared_data_inputs"] == list(MicrobeDecoderTransform.DATA_INPUTS)
+    assert report["declared_data_inputs"] == sorted(MicrobeDecoderTransform.DATA_INPUTS)
     inputs = {item["path"]: item["sha256"] for item in report["inputs"]}
     assert inputs[str(mapping)] == hashlib.sha256(mapping.read_bytes()).hexdigest()
     assert inputs[str(authority)] == hashlib.sha256(authority.read_bytes()).hexdigest()
@@ -158,6 +189,11 @@ def test_registered_sugar_finalization_preserves_full_observations(tmp_path):
         destination = root / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / relative, destination)
+    process_table = Path("mappings/canonical/microbedecoder_process_mappings.tsv")
+    (root / process_table).parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(ROOT / process_table, root / process_table)
+    phenotype_table = Path("mappings/canonical/microbedecoder_phenotype_mappings.tsv")
+    shutil.copyfile(ROOT / phenotype_table, root / phenotype_table)
     evidence = json.loads((root / "tests/resources/microbedecoder/bergey_unresolved_sugar.json").read_bytes())
     controls = evidence["sugar_mapping_controls"]
     # The only synthetic mapping control adds native Mucin; exact Sugar rows

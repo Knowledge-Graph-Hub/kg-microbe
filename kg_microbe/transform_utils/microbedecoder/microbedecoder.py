@@ -110,6 +110,13 @@ from kg_microbe.transform_utils.constants import (
     VALUE_ENCODING_COLUMN,
     VPI_KNOWLEDGE_SOURCE,
 )
+from kg_microbe.transform_utils.microbedecoder.chemical_curation import RecordChemicalCuration
+from kg_microbe.transform_utils.microbedecoder.curation import DEFAULT_PROCESS_MAPPINGS, ProcessCuration
+from kg_microbe.transform_utils.microbedecoder.phenotype_curation import (
+    DEFAULT_PHENOTYPE_MAPPINGS,
+    PhenotypeCuration,
+)
+from kg_microbe.transform_utils.microbedecoder.source_annotations import is_reported_metabolism_annotation
 from kg_microbe.transform_utils.microbedecoder.utils import (
     BACDIVE_CROSSWALK_COLUMN,
     BACDIVE_SNAPSHOT_COLUMNS,
@@ -145,6 +152,23 @@ _CSV_INSIDE_ZIP = "database.csv"
 # ``unmapped_traits.tsv`` convention (per-source, in the transform's
 # output dir, TSV with a stable header).
 _UNMAPPED_REPORT_FILENAME = "unmapped_labels.tsv"
+_PHENOTYPE_REPORT_FILENAME = "phenotype_normalizations.tsv"
+_PHENOTYPE_REPORT_FIELDS = (
+    SUBJECT_COLUMN,
+    SOURCE_RECORD_COLUMN,
+    SOURCE_COLUMN,
+    VALUE_COLUMN,
+    VALUE_ENCODING_COLUMN,
+    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+    KNOWLEDGE_LEVEL_COLUMN,
+    AGENT_TYPE_COLUMN,
+    "target_curie",
+    "target_label",
+    "target_category",
+    "evidence_uri",
+    "curation_rationale",
+    "disposition",
+)
 
 # Reviewed unresolved source uses, not a global disposition of Sugar (#1180).
 # CSV ordinals 1200/6810 are evidence locators, not stable record identities.
@@ -176,15 +200,28 @@ class MicrobeDecoderTransform(Transform):
     TSV_QUOTING = csv.QUOTE_NONE
 
     #: Reads this transform's output; see Transform.TRANSFORM_INPUTS (#845).
-    TRANSFORM_INPUTS = ("lpsn", "gold", "gtdb")
+    TRANSFORM_INPUTS = ("lpsn", "gold", "gtdb", "ontologies")
 
-    DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
+    DATA_INPUTS = (
+        "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
+        "mappings/canonical/microbedecoder_process_mappings.tsv",
+        "mappings/canonical/microbedecoder_phenotype_mappings.tsv",
+    )
+    REQUIRED_CONSUMED_INPUTS = (
+        "process_mappings",
+        "process_authority",
+        "process_go_authority",
+        "phenotype_mappings",
+        "chemical_authority",
+    )
 
     def __init__(
         self,
         input_dir: Optional[Union[str, Path]] = None,
         output_dir: Optional[Union[str, Path]] = None,
         chemical_loader: Any = None,
+        process_mappings: Optional[Union[str, Path]] = None,
+        phenotype_mappings: Optional[Union[str, Path]] = None,
     ) -> None:
         """
         Instantiate.
@@ -205,6 +242,13 @@ class MicrobeDecoderTransform(Transform):
             deferral pattern as ``lpsn._load_ncbi_adapter`` so a missing
             input CSV fails fast without triggering the full mapping-load
             path. Tests inject a fake to keep fixtures self-contained.
+        process_mappings:
+            Optional exact source-scoped process curation table. Defaults to
+            the versioned canonical table; every actual read is fingerprinted.
+        phenotype_mappings:
+            Optional exact BacDive field/literal normalization table. Original
+            source attributes stay in the graph; reviewed groundings are reported
+            separately until the taxon/phenotype category contract is resolved.
 
         """
         super().__init__(MICROBEDECODER, input_dir, output_dir)
@@ -226,6 +270,14 @@ class MicrobeDecoderTransform(Transform):
         )
         self.knowledge_source = MICROBEDECODER_KNOWLEDGE_SOURCE
         self.chemical_loader = chemical_loader
+        self.process_mappings = Path(process_mappings) if process_mappings is not None else DEFAULT_PROCESS_MAPPINGS
+        self._process_curation: Optional[ProcessCuration] = None
+        self.phenotype_mappings = (
+            Path(phenotype_mappings) if phenotype_mappings is not None else DEFAULT_PHENOTYPE_MAPPINGS
+        )
+        self._phenotype_curation: Optional[PhenotypeCuration] = None
+        self._record_chemical_curation: Optional[RecordChemicalCuration] = None
+        self._phenotype_report_writer = None
         # Track dedup state so unmatched-label placeholders are emitted
         # once per run. Cross-ref targets (NCBITaxon/GTDB/bacdive/GOLD/IMG)
         # and successfully-resolved CHEBI CURIEs are never stubbed here —
@@ -244,6 +296,7 @@ class MicrobeDecoderTransform(Transform):
             "lpsn_repointed": 0,
             "metabolism_edges": 0,
             "bacdive_snapshot_edges": 0,
+            "reviewed_phenotype_reports": 0,
             "unmatched_labels": 0,
             "lpsn_stubbed": 0,
             "lpsn_stub_unnamed": 0,
@@ -267,6 +320,10 @@ class MicrobeDecoderTransform(Transform):
         self._stubbed_lpsn.clear()
         self._assembly_references.clear()
         self._source_record = ""
+        self._process_curation = None
+        self._phenotype_curation = None
+        self._record_chemical_curation = None
+        self._phenotype_report_writer = None
 
     # ------------------------------------------------------------------
     # Public entry point
@@ -310,6 +367,28 @@ class MicrobeDecoderTransform(Transform):
             raise FileNotFoundError(f"{assembly_nodes} is missing; run the gtdb transform first (#1064).")
         self._assembly_declared, self._assembly_aliases = load_assembly_aliases(assembly_nodes)
         self._reset_run_state()
+        self.begin_consumed_inputs()
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        # Resolve only reviewed column/literal pairs, and require their actual
+        # ontology-owned declarations before writing any graph output (#650).
+        # Consumption guards bind both inputs through finalization/admission.
+        with (
+            self.consume_input("process_mappings", self.process_mappings) as mappings,
+            self.consume_input(
+                "process_authority", self.output_dir.parent / "ontologies" / "metpo_nodes.tsv"
+            ) as authority,
+            self.consume_input(
+                "process_go_authority", self.output_dir.parent / "ontologies" / "go_nodes.tsv"
+            ) as go_authority,
+            self.consume_input("phenotype_mappings", self.phenotype_mappings) as phenotype_mappings,
+            self.consume_input(
+                "chemical_authority", self.output_dir.parent / "ontologies" / "chebi_nodes.tsv"
+            ) as chemical_authority,
+        ):
+            self._process_curation = ProcessCuration(mappings, authority, go_authority)
+            authority.seek(0)
+            self._phenotype_curation = PhenotypeCuration(phenotype_mappings, authority)
+            self._record_chemical_curation = RecordChemicalCuration(chemical_authority)
         source_digest = hashlib.sha256()
         with csv_path.open("rb") as source:
             for block in iter(lambda: source.read(1024 * 1024), b""):
@@ -329,6 +408,9 @@ class MicrobeDecoderTransform(Transform):
         with (
             atomic_write(self.output_node_file, "w", newline="", encoding="utf-8") as node_fh,
             atomic_write(self.output_edge_file, "w", newline="", encoding="utf-8") as edge_fh,
+            atomic_write(
+                self.output_dir / _PHENOTYPE_REPORT_FILENAME, "w", newline="", encoding="utf-8"
+            ) as phenotype_fh,
         ):
             # KGX reads TSV with QUOTE_NONE. Escape control characters in
             # literal values explicitly; CSV quotation is not a TSV escape.
@@ -336,6 +418,13 @@ class MicrobeDecoderTransform(Transform):
             edge_writer = tsv_writer(edge_fh, quoting=csv.QUOTE_NONE, quotechar=None)
             node_writer.writerow(self.node_header)
             edge_writer.writerow(self.edge_header)
+            self._phenotype_report_writer = tsv_dict_writer(
+                phenotype_fh,
+                fieldnames=_PHENOTYPE_REPORT_FIELDS,
+                quoting=csv.QUOTE_NONE,
+                quotechar=None,
+            )
+            self._phenotype_report_writer.writeheader()
 
             # CSV strings retain operators, zeros and leading zeros. Record
             # ordinals count CSV records, not physical lines (quoted cells
@@ -345,6 +434,7 @@ class MicrobeDecoderTransform(Transform):
                 for ordinal, row in enumerate(csv.DictReader(source), start=1):
                     self._source_record = f"sha256:{source_fingerprint}#record={ordinal}"
                     self._process_row(row, node_writer, edge_writer)
+        self._phenotype_report_writer = None
 
         # Sorted dedup: keeps the output stable across runs and lets the
         # merged KG collapse duplicates cheaply.
@@ -354,6 +444,7 @@ class MicrobeDecoderTransform(Transform):
         # descending. Matches the metatraits `unmapped_traits.tsv` pattern.
         self._write_unmapped_report()
         self._write_assembly_reference_report()
+        self.verify_consumed_inputs()
         self._log_summary()
 
     @staticmethod
@@ -669,6 +760,15 @@ class MicrobeDecoderTransform(Transform):
     ) -> None:
         """Emit capable_of / produces / consumes edges per metabolism source."""
         reviewed_sugar = self._reviewed_sugar_record(row)
+        # Review known source identity before splitting/skipping empty fields;
+        # missing or changed evidence must not silently bypass this admission.
+        reviewed_substrate = (
+            self._record_chemical_curation.resolve(
+                row, "bergey:substrates", row.get("Bergey_Substrates_for_end_products")
+            )
+            if self._record_chemical_curation
+            else None
+        )
         for group_label, fields in iter_metabolism_columns(row):
             provenance = _GROUP_TO_KS[group_label]
             citation_curie = format_citation(fields.get("citation"))
@@ -677,26 +777,30 @@ class MicrobeDecoderTransform(Transform):
                 group["columns"] for group in METABOLISM_GROUPS if group["group_label"] == group_label
             )
 
-            # `Type_of_metabolism` label → capable_of a metabolism-class
-            # object. Uses a kgmicrobe.pathway: placeholder for now;
-            # curated METPO mappings (via load_metpo_mappings) can promote
-            # these to METPO: CURIEs in a follow-up curation pass.
+            # Normalize reviewed source-specific process assertions to METPO/GO;
+            # keep local pathway objects for labels lacking equivalent evidence.
             type_of_metabolism = fields.get("type_of_metabolism")
             if not is_empty_cell(type_of_metabolism):
                 for label in split_multivalue(type_of_metabolism):
-                    obj = self._resolve_metabolism_curie(
-                        label, node_writer, source_column=f"{group_label}:type_of_metabolism"
+                    column = source_columns["type_of_metabolism"]
+                    annotation = is_reported_metabolism_annotation(column, label)
+                    obj = (
+                        self._resolve_source_attribute_curie(label, column, node_writer)
+                        if annotation
+                        else self._resolve_metabolism_curie(
+                            label, node_writer, source_column=f"{group_label}:type_of_metabolism"
+                        )
                     )
                     edge_writer.writerow(
                         self._make_edge_row(
                             subject,
-                            CAPABLE_OF_PREDICATE,
+                            HAS_ATTRIBUTE_PREDICATE if annotation else CAPABLE_OF_PREDICATE,
                             obj,
-                            CAPABLE_OF,
+                            HAS_ATTRIBUTE_RELATION if annotation else CAPABLE_OF,
                             provenance,
                             publications=citation_curie,
                             source_citation=citation_text,
-                            source_column=source_columns["type_of_metabolism"],
+                            source_column=column,
                             value=label,
                             # FAPROTAX extrapolates curated taxon-function rules;
                             # its per-organism assignments are predictions (#1209).
@@ -736,8 +840,33 @@ class MicrobeDecoderTransform(Transform):
             # organism→substrate emitter routes through, incl. madin_etal)
             # so merged-KG queries stay consistent.
             for label in split_multivalue(fields.get("substrates")):
-                obj = self._resolve_chemical_curie(label, node_writer, source_column=f"{group_label}:substrates")
+                if group_label == "bergey" and label == "Not reported":
+                    # This is missing-report metadata, not a consumed chemical
+                    # and not a negative utilization result (#650). Retain the
+                    # original observation and citation as a source attribute.
+                    column = source_columns["substrates"]
+                    obj = self._resolve_source_attribute_curie(label, column, node_writer)
+                    edge_writer.writerow(
+                        self._make_edge_row(
+                            subject,
+                            HAS_ATTRIBUTE_PREDICATE,
+                            obj,
+                            HAS_ATTRIBUTE_RELATION,
+                            provenance,
+                            publications=citation_curie,
+                            source_citation=citation_text,
+                            source_column=column,
+                            value=label,
+                        )
+                    )
+                    self._stats["metabolism_edges"] += 1
+                    continue
                 original_object = None
+                if group_label == "bergey" and reviewed_substrate is not None:
+                    obj = reviewed_substrate
+                    original_object = f"{COMPOUND_PREFIX}{slugify_label(label)}"
+                else:
+                    obj = self._resolve_chemical_curie(label, node_writer, source_column=f"{group_label}:substrates")
                 if group_label == "bergey" and reviewed_sugar:
                     original_object = obj
                     obj = self._resolve_reviewed_sugar(row, obj, node_writer)
@@ -769,7 +898,7 @@ class MicrobeDecoderTransform(Transform):
         edge_writer: "csv._writer",
     ) -> None:
         """
-        Attach reported source attributes, without interpreting them as phenotypes.
+        Retain source attributes and report reviewed literal groundings outside graph edges.
 
         Every edge carries ``primary_knowledge_source =
         infores:microbedecoder`` so the paper's exact snapshot stays
@@ -795,6 +924,32 @@ class MicrobeDecoderTransform(Transform):
                     )
                 )
                 self._stats["bacdive_snapshot_edges"] += 1
+                mapping = self._phenotype_curation.resolve(column, label) if self._phenotype_curation else None
+                if mapping is not None:
+                    # Current LPSN OrganismTaxon / METPO OntologyClass categories
+                    # do not fit pinned has_phenotype domain/range. This reviewed
+                    # normalization is therefore explicitly NOT a new KG edge.
+                    if self._phenotype_report_writer is None:
+                        raise RuntimeError("Phenotype normalization report is not open")
+                    self._phenotype_report_writer.writerow(
+                        {
+                            SUBJECT_COLUMN: subject,
+                            SOURCE_RECORD_COLUMN: self._source_record,
+                            SOURCE_COLUMN: column,
+                            VALUE_COLUMN: self._escape_literal(label),
+                            VALUE_ENCODING_COLUMN: "backslash",
+                            PRIMARY_KNOWLEDGE_SOURCE_COLUMN: self.knowledge_source,
+                            KNOWLEDGE_LEVEL_COLUMN: KNOWLEDGE_ASSERTION,
+                            AGENT_TYPE_COLUMN: MANUAL_AGENT,
+                            "target_curie": mapping.target_curie,
+                            "target_label": mapping.target_label,
+                            "target_category": mapping.target_category,
+                            "evidence_uri": mapping.evidence_uri,
+                            "curation_rationale": mapping.curation_rationale,
+                            "disposition": "reviewed_literal_grounding_not_graph_assertion",
+                        }
+                    )
+                    self._stats["reviewed_phenotype_reports"] += 1
 
     # ------------------------------------------------------------------
     # CURIE resolution
@@ -894,13 +1049,16 @@ class MicrobeDecoderTransform(Transform):
         """
         Resolve a type_of_metabolism label to a pathway CURIE or placeholder.
 
-        v1: no METPO integration yet — always mints a
-        ``kgmicrobe.pathway:<slug>`` placeholder (same prefix ``madin_etal``
-        uses for its unmatched pathway labels). A follow-up can promote
-        recognised labels (Fermentation, Homofermentative, Methanogenesis, …)
-        to METPO CURIEs via ``load_metpo_mappings("microbedecoder synonym")``
-        once the upstream METPO ROBOT template gains that synonym column.
+        Only exact reviewed source-column/literal pairs resolve to validated
+        ontology-owned process classes. Other roles, case variants, negative
+        assertions and narrower processes keep the existing local fallback.
+        The asserting edge retains its source record, literal, citation and
+        evidence tier; normalizing its object is not new experimental evidence.
         """
+        if self._process_curation is not None:
+            mapping = self._process_curation.resolve(source_column, label)
+            if mapping is not None:
+                return mapping.target_curie
         return self._mint_placeholder(
             label,
             node_writer,
@@ -1191,5 +1349,6 @@ class MicrobeDecoderTransform(Transform):
             f"crosswalk_edges={s['crosswalk_edges']}, "
             f"metabolism_edges={s['metabolism_edges']}, "
             f"bacdive_snapshot_edges={s['bacdive_snapshot_edges']}, "
+            f"reviewed_phenotype_reports={s['reviewed_phenotype_reports']}, "
             f"unmatched_labels={s['unmatched_labels']}"
         )

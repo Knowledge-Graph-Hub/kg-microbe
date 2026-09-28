@@ -1,0 +1,2 @@
+id	category	name	description	xref	provided_by	synonym	same_as	deprecated
+CHEBI:132950	biolink:ChemicalEntity	tartrate	A dicarboxylic acid anion obtained by deprotonation of at least one of the carboxy groups of any tartaric acid.		chebi.json	tartaric acid anion|tartaric acid anions|tartrate|tartrate anion|tartrate anions|tartrates		

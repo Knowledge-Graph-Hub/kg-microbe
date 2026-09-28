@@ -1,0 +1,42 @@
+# Exact relevant ancestry/domain/range excerpt of Biolink 4.4.2:
+# https://github.com/biolink/biolink-model/blob/v4.4.2/biolink-model.yaml
+id: https://w3id.org/biolink/biolink-model
+name: Biolink-Model
+version: 4.4.2
+prefixes:
+  biolink: https://w3id.org/biolink/vocab/
+  RO: http://purl.obolibrary.org/obo/RO_
+default_prefix: biolink
+classes:
+  entity:
+    abstract: true
+  named thing:
+    is_a: entity
+  organism taxon:
+    is_a: named thing
+  biological entity:
+    is_a: named thing
+    abstract: true
+  ontology class:
+    mixin: true
+  physical essence or occurrent:
+    mixin: true
+  occurrent:
+    is_a: physical essence or occurrent
+    mixin: true
+  biological process or activity:
+    is_a: biological entity
+    mixins:
+      - occurrent
+      - ontology class
+  biological process:
+    is_a: biological process or activity
+    mixins:
+      - occurrent
+      - ontology class
+slots:
+  capable of:
+    domain: named thing
+    range: occurrent
+    exact_mappings:
+      - RO:0002215

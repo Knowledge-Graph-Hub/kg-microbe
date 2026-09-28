@@ -17,8 +17,9 @@ KG-Microbe does not otherwise cover:
 - **FAPROTAX** — functional labels joined at strain granularity
 
 Plus a **pre-joined LPSN ↔ NCBITaxon ↔ GTDB ↔ GOLD ↔ IMG ↔ BacDive
-identity crosswalk** — ~80 K `biolink:close_match` edges the transform
-emits without further mapping work.
+crosswalk**. Taxon/identifier links use `biolink:close_match`; the BacDive
+strain links use `biolink:subclass_of`, not identity. Current counts must
+be measured from the selected source output.
 
 ## Prerequisites
 
@@ -41,20 +42,33 @@ run the transform extracts the archive into
 
 ### LPSN dependency
 
-Every emitted edge is keyed on `lpsn:<LPSN_ID>` — the MicrobeDecoder
-transform **does not stub LPSN taxon nodes** (the `lpsn` transform is
-their authoritative source, per the add-transform skill's
-"don't stub cross-refs" rule). Run `-s lpsn` alongside for a coherent
-merged KG.
+Metabolism and source-attribute assertions attach to `lpsn:<LPSN_ID>` subjects.
+The LPSN transform supplies their authoritative declarations where available;
+MicrobeDecoder emits source-backed typed stubs only for referenced LPSN IDs
+absent from that dependency. BacDive strain links instead have strain subjects
+and LPSN objects. Run `-s lpsn` before MicrobeDecoder for a coherent source build
+and merged KG.
 
 ## Running the transform
+
+The current producer requires finalized LPSN, GOLD and GTDB dependencies, plus
+the selected ontology output's `metpo_nodes.tsv`, `go_nodes.tsv` and
+`chebi_nodes.tsv`. The versioned tables
+`mappings/canonical/microbedecoder_process_mappings.tsv` and
+`mappings/canonical/microbedecoder_phenotype_mappings.tsv` are required curation
+inputs. Both tables and the actual native declarations read by the producer
+are fingerprinted through source finalization and admission. METPO supports
+reviewed processes and report-only phenotype terms, GO supports the reviewed
+catabolic/respiratory processes, and ChEBI supports the record-scoped chemical
+correction. Missing or incompatible required authority is an error, not a
+reason to mint a new target stub.
 
 ```bash
 poetry run kg transform -s microbedecoder
 ```
 
-Wall-clock: ~20–30 seconds on a MacBook (single-CSV parse, no ontology
-adapter loads). Default paths:
+Runtime includes mapping validation and source finalization as well as the
+single-CSV parse. Default paths:
 
 - **Input:** `data/raw/microbedecoder_database.zip` (auto-extracted)
 - **Output:** `data/transformed/microbedecoder/`
@@ -63,11 +77,13 @@ adapter loads). Default paths:
 
 | File | Description |
 |------|-------------|
-| `nodes.tsv` | Terminal-node stubs for **placeholder** CURIEs only — resolved cross-ref targets (NCBITaxon, GTDB, bacdive, GOLD, IMG, CHEBI) come from their owner transforms. Typical size: ~5 K nodes. |
+| `nodes.tsv` | Producer-owned local material/process/attribute declarations and source taxon stubs where necessary. Source finalization may also copy authoritative declarations. Resolved targets remain owned by their authority transforms; their presence here is not a new identity mapping. |
 | `edges.tsv` | Crosswalk, metabolism and column-scoped BacDive source-attribute assertions. Snapshot tokens are not automatically interpreted as phenotypes. Counts depend on the source build. |
 | `unmapped_labels.tsv` | Per-run curation queue — unresolved pathways/compounds and preserved source attributes, with `kgmicrobe.{pathway,compound,source_attribute}:` IDs, sorted by occurrence descending. See "Curation loop" below. |
+| `phenotype_normalizations.tsv` | Reviewed exact textual groundings linked to original source records; **not phenotype graph assertions**. The current endpoint categories do not meet pinned `has_phenotype` domain/range. This report is not a merge input. |
 
-The transform prints a one-line summary at end of run:
+The transform prints a one-line summary at end of run. For example, this
+historical summary is not an expected count for the current producer:
 
 ```
 [microbedecoder] rows=27010, crosswalk_edges=80971, metabolism_edges=69962,
@@ -85,8 +101,8 @@ the add-transform skill mandates for every transform:
 
 | Facet | Resolver | Placeholder prefix on miss |
 |---|---|---|
-| Chemical (end-products, substrates) | `ChemicalMappingLoader.find_chebi_by_name()` | `kgmicrobe.compound:<slug>` |
-| Pathway (`Type_of_metabolism` from Bergey/VPI/Literature/FAPROTAX) | (not yet integrated — see follow-up below) | `kgmicrobe.pathway:<slug>` |
+| Chemical (end-products, substrates) | Reviewed full-record corrections, then `ChemicalMappingLoader.find_chebi_by_name()`; the two unresolved sugar records remain protected | `kgmicrobe.compound:<slug>` |
+| Pathway (`Type_of_metabolism` from Bergey/VPI/Literature/FAPROTAX) | Exact, source-scoped reviewed process rules; targets must be declared and active in the ontology output | `kgmicrobe.pathway:<slug>` |
 | BacDive snapshot | Column-scoped source field and token, typed `biolink:Attribute`; interpretation requires the field's coding scheme | `kgmicrobe.source_attribute:<column-and-token-slug>` |
 
 The `unmapped_labels.tsv` report shows where each facet is landing. Recompute
@@ -94,6 +110,48 @@ coverage from a fresh build; historical mapping rates predate the current
 source-attribute model and must not be used as current acceptance evidence. See
 [issue #650](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/650)
 for the curation gap.
+
+The reviewed process table contains seventeen source-field/token pairs: the
+first eight METPO rules and nine additional GO catabolic/respiratory rules.
+Seventeen separate non-process/unspecified source labels are retained as
+field-scoped reporting attributes instead of process objects. None of these
+rules interprets unrelated assay codes or narrower/negative process terms. See the
+[curation evidence and limitations](microbedecoder_process_curation.md).
+FAPROTAX assignments remain predictions, not newly established experiments.
+
+The exact `Not reported` token in `Bergey_Substrates_for_end_products` is retained
+as `has_attribute` reporting metadata with its source record and citation. It
+is not a consumed chemical and does not assert an inability to use substrates.
+
+The continuation also reviews 22 explicit Gram-stain, oxygen-tolerance and cell
+shape literals. Their native METPO groundings are written only to the new
+normalization report: original graph attributes stay intact, including
+contradictory/multivalued observations. Numeric codes, signed assays, units,
+measurements and isolation contexts are not automatically decoded. Read the
+[observation curation contract](microbedecoder_observation_curation.md) before
+treating the report as organism phenotype evidence.
+
+### Complete current-data inventory
+
+An unmapped-report row can be a measurement, unit, isolation context or an
+undecoded assay value. It is not necessarily a missing ontology mapping. The
+historical 5,224-label total predates the current model and is not a current
+acceptance checklist. Generate an inventory from actual source graph rows:
+
+```bash
+poetry run python -m scripts.review_microbedecoder_curation \
+    --source-dir data/transformed/microbedecoder \
+    --output-dir data/microbedecoder-curation-review-NEW
+```
+
+The destination must not already exist. This writes `curation_inventory.tsv`
+and `summary.json`, with exact input/output hashes and a before/after input
+check. It streams every source edge, separately accounts for crosswalks,
+chemical mappings/local materials, reviewed/unreviewed processes, and all 27
+snapshot field roles. No frequency threshold discards the long tail. Counts
+are finalized source edge rows, not raw placeholder emission attempts or
+distinct organisms. The report does not certify merged propagation, new
+chemical identity, a complete scientific interpretation, or release readiness.
 
 ## Curation loop
 
@@ -136,11 +194,11 @@ Columns:
 
 Curator workflow by facet:
 
-- **pathway** — file a METPO PR adding a `"microbedecoder synonym"`
-  column to `berkeleybop/metpo`'s `src/templates/metpo_sheet.tsv` and
-  pre-populate the top labels. Once merged, the transform's
-  METPO-alias hookup (currently marked as a v2 follow-up in
-  `_resolve_metabolism_curie`) will promote these placeholders.
+- **pathway** — review the exact source field and process definition against an
+  existing ontology class. Add supported rules to the source-scoped process
+  table, with evidence, authoritative target metadata and boundary tests. Do
+  not turn source-specific evidence into a global synonym, use a predicate as
+  a process object, or upgrade a FAPROTAX prediction to experimental evidence.
 - **compound** — review identity evidence through
   [the supported MIM / unified mapping workflow](MIM_REVIEWED_RELEASE.md).
   A curation queue row is not by itself an active resolver mapping.
@@ -186,9 +244,11 @@ Included in `merge.yaml` by default. To rebuild the merged KG:
 poetry run kg merge -y merge.yaml
 ```
 
-The MicrobeDecoder edges attach to `lpsn:<LPSN_ID>` subjects, which are
-provided by the `lpsn` transform's `nodes.tsv`. Merge-time dedup on
-`id` collapses any incidental overlap.
+Most biological assertions attach to `lpsn:<LPSN_ID>` subjects; BacDive strain
+hierarchy links use the reverse endpoint roles described above. LPSN supplies
+authoritative nodes where available, while MicrobeDecoder's source-backed stubs
+cover referenced IDs missing from that dependency. Merge aggregates shared IDs;
+it does not turn a source stub into independently established LPSN evidence.
 
 ## Follow-ups (out of scope for the initial ingest)
 
@@ -200,11 +260,13 @@ provided by the `lpsn` transform's `nodes.tsv`. Merge-time dedup on
   joined `FAPROTAX_Type_of_metabolism` label per strain.
 - Bergey as its own full ingest — this ingest only carries the
   Bergey-derived edges MicrobeDecoder pre-joins.
-- METPO alias hookup — see `_resolve_metabolism_curie`; blocked on the
-  METPO ROBOT template getting a `"microbedecoder synonym"` column.
-- Smarter multi-value splitter (currently over-splits chemical names
-  containing embedded commas like `2,3-butanediol`; same limitation as
-  `madin_etal`).
+- Further METPO/GO process grounding — see `_resolve_metabolism_curie`; blocked
+  on the remaining source-specific definition review. Seventeen reviewed rules
+  are implemented; additional global synonyms are not a prerequisite or a safe
+  substitute for checking source roles and target definitions.
+- Further ambiguous multi-value parsing. Bracketed separators and numeric
+  chemical locants such as `2,3-butanediol` are already preserved; the parser
+  is not a general chemical-name interpreter.
 
 ## Related
 

@@ -1,0 +1,11 @@
+id	name	category	deprecated
+METPO:1000630	biological process	biolink:OntologyClass	
+METPO:1000060	metabolism	biolink:OntologyClass	
+METPO:1002005	Fermentation	biolink:OntologyClass	
+METPO:1000844	Methanogenesis	biolink:OntologyClass	
+METPO:1005039	nitrogen fixation	biolink:OntologyClass	
+METPO:1000059	phenotype	biolink:OntologyClass	
+METPO:1000631	trophic type	biolink:OntologyClass	
+METPO:1000697	gram stain	biolink:OntologyClass	
+METPO:1000698	gram positive	biolink:OntologyClass	
+METPO:2000011	ferments	biolink:OntologyClass	

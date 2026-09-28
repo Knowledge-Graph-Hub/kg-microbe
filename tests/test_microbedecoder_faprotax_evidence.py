@@ -18,7 +18,6 @@ from kg_microbe.transform_utils.constants import (
     FAPROTAX_KNOWLEDGE_SOURCE,
     KNOWLEDGE_ASSERTION,
     MANUAL_AGENT,
-    METABOLISM_CATEGORY,
     PREDICTION,
 )
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
@@ -34,20 +33,18 @@ def _read(path):
 
 
 def _run(tmp_path, mapped):
-    """Use the real producer; simulate only a future mapped-return resolver branch."""
+    """Exercise real reviewed mapping and explicit unmapped fixture-table branches."""
     _supply_gold_fold_report(tmp_path)
-    transform = MicrobeDecoderTransform(FIXTURE_DIR, tmp_path, chemical_loader=_NoChebi())
-    if mapped:
-        original = transform._resolve_metabolism_curie
+    process_table = None
+    if not mapped:
+        from kg_microbe.transform_utils.microbedecoder.curation import DEFAULT_PROCESS_MAPPINGS
 
-        def resolve(label, node_writer, source_column):
-            """Use the same mapped object for every source group, not just FAPROTAX."""
-            if label.casefold() == "fermentation":
-                transform._ensure_terminal_node("METPO:1002005", METABOLISM_CATEGORY, "Fermentation", node_writer)
-                return "METPO:1002005"
-            return original(label, node_writer, source_column)
-
-        transform._resolve_metabolism_curie = resolve
+        process_table = tmp_path / "empty_process_mappings.tsv"
+        rows = DEFAULT_PROCESS_MAPPINGS.read_text().splitlines()
+        process_table.write_text("\n".join([rows[0], *[row for row in rows[1:] if "nitrogen_fixation" in row]]) + "\n")
+    transform = MicrobeDecoderTransform(
+        FIXTURE_DIR, tmp_path, chemical_loader=_NoChebi(), process_mappings=process_table
+    )
     transform.run(data_file=FIXTURE_DIR / "faprotax_evidence.csv", show_status=False)
     return transform
 
@@ -144,6 +141,11 @@ def test_registered_finalization_preserves_faprotax_evidence(tmp_path, mapped):
         target = root / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / relative, target)
+    process_table = Path("mappings/canonical/microbedecoder_process_mappings.tsv")
+    (root / process_table).parent.mkdir(parents=True, exist_ok=True)
+    shutil.copyfile(ROOT / process_table, root / process_table)
+    phenotype_table = Path("mappings/canonical/microbedecoder_phenotype_mappings.tsv")
+    shutil.copyfile(ROOT / phenotype_table, root / phenotype_table)
     # The injected resolver never reads unified mappings; give the real finalizer
     # an immutable declared-input fixture, not a production mapping symlink.
     (root / "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz").write_bytes(

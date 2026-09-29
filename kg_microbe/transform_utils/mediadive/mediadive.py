@@ -139,6 +139,7 @@ from kg_microbe.transform_utils.mediadive.material_scope_audit import (
     AUDIT_FILENAME,
     MaterialScopeAudit,
     p3556_material,
+    sugar_material,
     verify_recorded_material_inputs,
 )
 from kg_microbe.transform_utils.transform import Transform
@@ -781,7 +782,7 @@ class MediaDiveTransform(Transform):
                 # Check if solution name can be mapped to ontology via unified or legacy mappings
                 candidates = (
                     []
-                    if p3556_material(item)
+                    if p3556_material(item) or sugar_material(item)
                     else [
                         self.chemical_loader.find_chebi_by_name(source_name),
                         self.compound_mappings.get(solution_name_normalized),
@@ -848,7 +849,7 @@ class MediaDiveTransform(Transform):
         # A whole supplier product is not a pure molecular species. The actual
         # occurrence wins over another recipe's cached embedded record (#1241).
         evidence = source_record if source_record is not None else getattr(self, "compounds_data", {}).get(id, {})
-        if p3556_material(evidence):
+        if p3556_material(evidence) or sugar_material(evidence, compound_name):
             return MEDIADIVE_INGREDIENT_PREFIX + id
         if compound_name:
             # Check unified chemical mappings by compound name. The unified

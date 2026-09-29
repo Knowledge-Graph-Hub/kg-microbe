@@ -51,6 +51,20 @@ AUTHORITY_URI = "https://www.mhsr.sk/uploads/files/Zwx10C5G.pdf#page=21"
 UNIFIED_ROLE = "material_scope_unified"
 POLICY_ROLE = "material_scope_policy"
 SUPPORTED_ROLE = "material_scope_supported"
+CONTEXT_ROLE = "material_scope_context_policy"
+CONTEXT_POLICY = "mappings/canonical/mediadive_material_context_dispositions.tsv"
+SUGAR_ATTRIBUTE = "250 mM each of xylose, maltose and cellobiose"
+SUGAR_REASON = "qualified_sugar_solution_not_demonstrated_food_identity"
+SUGAR_URI = "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=537"
+CONTEXT_FIELDS = {
+    "source_name",
+    "source_attribute",
+    "disposition",
+    "reason",
+    "evidence_uri",
+    "authority_label",
+    "withheld_target_example",
+}
 P3556_MIM = "MIM:L-alpha-Phosphatidylcholine"
 P3556_TARGET = "CHEBI:86658"
 P3556_AUTHORITY_LABEL = "Sigma P3556 egg-yolk phosphatidylcholine material (variable fatty-acid composition)"
@@ -94,10 +108,26 @@ def p3556_material(raw):
     return isinstance(value, str) and " ".join(value.split()).casefold() == "sigma p3556"
 
 
+def sugar_material(raw, name=None):
+    """Match only the reviewed source name and stock qualifier, with case/whitespace normalization."""
+    if not isinstance(raw, dict):
+        return False
+    name = raw.get(COMPOUND_KEY, raw.get(SOLUTION_KEY, name))
+    attribute = raw.get("attribute")
+    return (
+        isinstance(name, str)
+        and " ".join(name.split()).casefold() == "sugar"
+        and isinstance(attribute, str)
+        and " ".join(attribute.split()).casefold() == SUGAR_ATTRIBUTE.casefold()
+    )
+
+
 def _profile(raw):
     """Give explicit product evidence priority over a possibly contradictory display name."""
     if p3556_material(raw):
         return "p3556"
+    if sugar_material(raw):
+        return "sugar"
     return "potato" if _potato(raw.get(COMPOUND_KEY, raw.get(SOLUTION_KEY))) else None
 
 
@@ -149,7 +179,7 @@ class MaterialScopeAudit:
             for medium in media_list[DATA_KEY]
             for solution in transform.media_detailed[str(medium[ID_COLUMN])].get(SOLUTIONS_KEY, [])
         }
-        self.names = {"potato": set(), "p3556": set()}
+        self.names = {"potato": set(), "p3556": set(), "sugar": set()}
         for identifier in solutions:
             recipe = transform.solutions_data[identifier].get(RECIPE_KEY)
             # Match the existing producer's absent/non-list recipe behavior.
@@ -163,8 +193,26 @@ class MaterialScopeAudit:
             return
         # Bind the exact current policy even if the mapping reader has already
         # excluded the row. Such rows are candidates, not attempted lookups.
-        with self._consume(POLICY_ROLE, IDENTITY_POLICY) as stream:
-            policies = list(_table_rows(stream, {"target_id", "authority_label", "kind", "value", "reason"}))
+        policies = []
+        if self.names["potato"] or self.names["p3556"]:
+            with self._consume(POLICY_ROLE, IDENTITY_POLICY) as stream:
+                policies = list(_table_rows(stream, {"target_id", "authority_label", "kind", "value", "reason"}))
+        if self.names["sugar"]:
+            with self._consume(CONTEXT_ROLE, _repo_root() / CONTEXT_POLICY) as stream:
+                decisions = list(_table_rows(stream, CONTEXT_FIELDS))
+            if len(decisions) != 1:
+                raise SourceFinalizationRequired("Reviewed Sugar context requires one exact decision")
+            self.sugar_decision = decisions[0][1]
+            if set(self.sugar_decision) != CONTEXT_FIELDS or self.sugar_decision != {
+                "source_name": "Sugar",
+                "source_attribute": SUGAR_ATTRIBUTE,
+                "disposition": "retain_existing_local",
+                "reason": SUGAR_REASON,
+                "evidence_uri": SUGAR_URI,
+                "authority_label": "JCM 537 mixed xylose, maltose and cellobiose stock solution",
+                "withheld_target_example": "NCIT:C71939",
+            }:
+                raise SourceFinalizationRequired("Reviewed Sugar context decision changed or is missing")
         if self.names["potato"] and (
             not any(
                 _policy_target_key(row["target_id"]) == TARGET
@@ -197,7 +245,7 @@ class MaterialScopeAudit:
                 with io.TextIOWrapper(compressed, encoding="utf-8", newline="") as stream:
                     for locator, row in _table_rows(stream, {"subject_id", "subject_label", "object_id"}):
                         self._mapping_claims(UNIFIED_ROLE, locator, row)
-        if self.names["p3556"]:
+        if self.names["p3556"] or self.names["sugar"]:
             # Original imported evidence remains available after the derived
             # unified row is removed. This never feeds an identity lookup.
             with self._consume(SUPPORTED_ROLE, _repo_root() / "mappings/ingredient_mappings.sssom.tsv") as stream:
@@ -215,9 +263,10 @@ class MaterialScopeAudit:
                         and _policy_target_key(row["mapped"]) == TARGET
                     ):
                         self._claim("potato", None, role, locator, row["mapped"], row)
-                    for name in self.names["p3556"]:
-                        if name and name.lower().strip() == row["original"].lower().strip():
-                            self._claim("p3556", name, role, locator, row["mapped"], row)
+                    for profile in ("p3556", "sugar"):
+                        for name in self.names[profile]:
+                            if name and name.lower().strip() == row["original"].lower().strip():
+                                self._claim(profile, name, role, locator, row["mapped"], row)
         self.guard.verify()
 
     def _mapping_claims(self, role, locator, row):
@@ -236,20 +285,24 @@ class MaterialScopeAudit:
         # rejects that label. These are available candidates, not lookup calls.
         if route not in {"identity", "attribute", "canonical_name", "synonym"}:
             return
-        if (
-            self.names["p3556"]
-            and route == "identity"
-            and row["subject_id"] == P3556_MIM
-            and row["object_id"] == P3556_TARGET
+        for profile, subject, target in (
+            ("p3556", P3556_MIM, P3556_TARGET),
+            ("sugar", "MIM:Sugar", "NCIT:C71939"),
         ):
-            self._claim("p3556", None, role, locator, row["object_id"], row)
-            return
-        for name in self.names["p3556"]:
-            if name and (
-                normalize_name(name) == normalize_name(row.get("object_label", ""))
-                or (route == "synonym" and normalize_name(name) == normalize_name(row["subject_label"]))
+            if (
+                self.names[profile]
+                and route == "identity"
+                and row["subject_id"] == subject
+                and row["object_id"] == target
             ):
-                self._claim("p3556", name, role, locator, row["object_id"], row)
+                self._claim(profile, None, role, locator, row["object_id"], row)
+                continue
+            for name in self.names[profile]:
+                if name and (
+                    normalize_name(name) == normalize_name(row.get("object_label", ""))
+                    or (route == "synonym" and normalize_name(name) == normalize_name(row["subject_label"]))
+                ):
+                    self._claim(profile, name, role, locator, row["object_id"], row)
 
     def _consume(self, role, path):
         """Guard the original lexical locator in addition to the immutable parser snapshot."""
@@ -269,14 +322,14 @@ class MaterialScopeAudit:
             return
         if profile == "potato" and _policy_target_key(occurrence[ID_COLUMN]) == TARGET:
             raise SourceFinalizationRequired("Held Potato extract identity escaped source resolution")
-        if profile == "p3556":
+        if profile in {"p3556", "sugar"}:
             local = (
                 MEDIADIVE_INGREDIENT_PREFIX + str(raw[COMPOUND_ID_KEY])
                 if raw.get(COMPOUND_ID_KEY) is not None
                 else MEDIADIVE_SOLUTION_PREFIX + str(raw[SOLUTION_ID_KEY])
             )
             if occurrence[ID_COLUMN] != local:
-                raise SourceFinalizationRequired("Held P3556 product identity escaped source resolution")
+                raise SourceFinalizationRequired("Held source material identity escaped source resolution")
         name = raw.get(COMPOUND_KEY, raw.get(SOLUTION_KEY))
         candidates = [claim for group, spelling, claim in self.claims if group == profile and spelling in (None, name)]
         identifier = raw.get(COMPOUND_ID_KEY)
@@ -302,12 +355,15 @@ class MaterialScopeAudit:
                     )
                 )
         source = self.transform.consumed_input_snapshots["mediadive_solutions"]
-        policy = self.transform.consumed_input_snapshots[POLICY_ROLE]
+        policy_role = CONTEXT_ROLE if profile == "sugar" else POLICY_ROLE
+        policy = self.transform.consumed_input_snapshots[policy_role]
         reason, qualifiers = (
             ("whole_product_not_molecular_identity", _json({"attribute": raw["attribute"]}))
             if profile == "p3556"
             else _reason(raw)
         )
+        if profile == "sugar":
+            reason, qualifiers = self.sugar_decision["reason"], _json({"attribute": raw["attribute"]})
         payload = occurrence[SOURCE_RECORD_COLUMN]
         for route, snapshot, locator, target, candidate in candidates:
             row = (
@@ -328,8 +384,12 @@ class MaterialScopeAudit:
                 candidate,
                 policy["path"],
                 policy["sha256"],
-                P3556_AUTHORITY_LABEL if profile == "p3556" else AUTHORITY_LABEL,
-                P3556_AUTHORITY_URI if profile == "p3556" else AUTHORITY_URI,
+                self.sugar_decision["authority_label"]
+                if profile == "sugar"
+                else (P3556_AUTHORITY_LABEL if profile == "p3556" else AUTHORITY_LABEL),
+                self.sugar_decision["evidence_uri"]
+                if profile == "sugar"
+                else (P3556_AUTHORITY_URI if profile == "p3556" else AUTHORITY_URI),
             )
             key = (occurrence[SOURCE_ASSERTION_ID_COLUMN], route, locator)
             if self.rows.setdefault(key, row) != row:
@@ -354,6 +414,8 @@ class MaterialScopeAudit:
 def verify_recorded_material_inputs(report, report_path):
     """Require actual canonical evidence origins for the producer-bound candidate sidecar."""
     snapshots = report.get("consumed_inputs", {})
+    context_path = str((_repo_root() / CONTEXT_POLICY).resolve())
+    context_recorded = any(item.get("path") == context_path for item in report.get("inputs", ()))
     path = Path(report_path).parent / AUDIT_FILENAME
     with path.open(encoding="utf-8", newline="") as stream:
         reader = csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE)
@@ -361,16 +423,28 @@ def verify_recorded_material_inputs(report, report_path):
             raise SourceFinalizationRequired("Invalid material-scope producer audit header")
         has_rows = False
         needs_supported = False
+        needs_context = False
+        needs_identity = False
         for row in reader:
             has_rows = True
-            needs_supported |= row.get("reason") == "whole_product_not_molecular_identity"
-    if not has_rows and not any(role in snapshots for role in (UNIFIED_ROLE, POLICY_ROLE, SUPPORTED_ROLE)):
+            sugar = row.get("reason") == SUGAR_REASON
+            needs_context |= sugar
+            needs_identity |= not sugar
+            needs_supported |= sugar or row.get("reason") == "whole_product_not_molecular_identity"
+    if (
+        not has_rows
+        and not context_recorded
+        and not any(role in snapshots for role in (UNIFIED_ROLE, POLICY_ROLE, SUPPORTED_ROLE, CONTEXT_ROLE))
+    ):
         return
     expected = {
         UNIFIED_ROLE: _repo_root() / "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
-        POLICY_ROLE: IDENTITY_POLICY,
     }
-    if needs_supported or SUPPORTED_ROLE in snapshots:
+    if needs_identity or POLICY_ROLE in snapshots:
+        expected[POLICY_ROLE] = IDENTITY_POLICY
+    if needs_context or context_recorded or CONTEXT_ROLE in snapshots:
+        expected[CONTEXT_ROLE] = _repo_root() / CONTEXT_POLICY
+    if needs_supported or needs_context or context_recorded or CONTEXT_ROLE in snapshots or SUPPORTED_ROLE in snapshots:
         expected[SUPPORTED_ROLE] = _repo_root() / "mappings/ingredient_mappings.sssom.tsv"
     for role, origin in expected.items():
         if snapshots.get(role, {}).get("path") != str(origin.resolve()):

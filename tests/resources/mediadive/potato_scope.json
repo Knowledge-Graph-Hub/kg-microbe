@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "issue": "https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1236",
+  "authority": {
+    "cas": "cas:93348-51-7",
+    "ec_identifier": "297-194-4",
+    "label": "zemiak, Solanum tuberosum aegrotans, extrakt",
+    "label_language": "sk",
+    "url": "https://www.mhsr.sk/uploads/files/Zwx10C5G.pdf",
+    "pdf_page_one_based": 21,
+    "accessed": "2026-09-29",
+    "scope_paraphrase": "Extractives and physically modified derivatives from Solanum tuberosum aegrotans; not proof of identity for a bare Potato starting ingredient.",
+    "retrieval_limit": "Primary inventory text was retrieved; this fixture preserves its exact row label and identifiers, not a complete hash-pinned PDF or a direct CAS Registry payload."
+  },
+  "historical": {
+    "archive_sha256": "b97b026e11dc1394d61d58c0b926c8a65d665ec8fb8e04df5e640abd2bceac9d",
+    "witness_file": "data/mim-ship-20260925.QDVfoK/cas-inventory-a75-preparation.HJMtnx/result/cas-incident-edges.jsonl",
+    "witness_sha256": "d73d7c65f997cd7c8e06bfb65c52bdbf9b9f6a0b9387d5c3092164b494c59384",
+    "scope": "Nine selected historical raw recipe observations, not current output expectations. Raw records themselves contain no CAS field."
+  },
+  "mapping_claims": {
+    "unified": {
+      "sha256": "f1545663016b3871d2176ccbdc76caffdefa472838b716956e8d722aaa2caff9",
+      "physical_line": 591193,
+      "row": {
+        "subject_id": "kgm.name:potato",
+        "subject_label": "Potato",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "cas:93348-51-7",
+        "object_label": "",
+        "object_source": "obo:cas.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "mediadive_compounds",
+        "mapping_date": "2026-09-04",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      }
+    },
+    "legacy": {
+      "strict_sha256": "7e100314f1a62f675154aef7537be5b72ed2db9fbb8e8b1785198103aff31c71",
+      "hydrate_sha256": "d2bc349ae31990cf54ef308a14826c756be0e0ee874d35a0a6068d75ef04b3a3",
+      "physical_line_each": 13770,
+      "selected_fields_only": {"medium_id": "jcm_333_composition", "original": "Potato", "mapped": "CAS-RN:93348-51-7"},
+      "scope": "Selected identifying fields, not a replacement for preserving complete original legacy rows in a producer audit."
+    }
+  },
+  "occurrences": [
+    {"source_assertion_id": "mediadive.solution:227#recipe/2", "raw": {"amount": 200, "compound": "Potato", "compound_id": 1606, "g_l": 200, "optional": 0, "recipe_order": 2, "unit": "g"}, "review_disposition": "insufficient_material_specificity"},
+    {"source_assertion_id": "mediadive.solution:3653#recipe/1", "raw": {"amount": 200, "compound": "Potato", "compound_id": 1606, "condition": " peeled and cut", "g_l": 200, "optional": 0, "recipe_order": 1, "unit": "g"}, "review_disposition": "unsupported_material_form_identity"},
+    {"source_assertion_id": "mediadive.solution:3678#recipe/1", "raw": {"amount": 300, "compound": "Potato", "compound_id": 1606, "condition": " peeled and cut", "g_l": 300, "optional": 0, "recipe_order": 1, "unit": "g"}, "review_disposition": "unsupported_material_form_identity"},
+    {"source_assertion_id": "mediadive.solution:3679#recipe/1", "raw": {"amount": 30, "compound": "Potato", "compound_id": 1606, "condition": " peeled and cut", "g_l": 30, "optional": 0, "recipe_order": 1, "unit": "g"}, "review_disposition": "unsupported_material_form_identity"},
+    {"source_assertion_id": "mediadive.solution:3754#recipe/1", "raw": {"amount": 200, "compound": "Potato", "compound_id": 1606, "condition": " peeled and cut", "g_l": 200, "optional": 0, "recipe_order": 1, "unit": "g"}, "review_disposition": "unsupported_material_form_identity"},
+    {"source_assertion_id": "mediadive.solution:4051#recipe/1", "raw": {"amount": 200, "compound": "Potato", "compound_id": 1606, "g_l": 200, "optional": 0, "recipe_order": 1, "unit": "g"}, "review_disposition": "insufficient_material_specificity"},
+    {"source_assertion_id": "mediadive.solution:4879#recipe/1", "raw": {"amount": 200, "compound": "Potato", "compound_id": 1606, "condition": " peeled and cut", "g_l": 200, "optional": 0, "recipe_order": 1, "unit": "g"}, "review_disposition": "unsupported_material_form_identity"},
+    {"source_assertion_id": "mediadive.solution:5502#recipe/1", "raw": {"amount": 150, "compound": "Potato", "compound_id": 1606, "g_l": 150, "optional": 0, "recipe_order": 1, "unit": "g"}, "review_disposition": "insufficient_material_specificity"},
+    {"source_assertion_id": "mediadive.solution:840#recipe/1", "raw": {"amount": 200, "attribute": "fresh, washed, peeled and sliced", "compound": "Potato", "compound_id": 1606, "condition": "", "g_l": 200, "optional": 0, "recipe_order": 1, "unit": "g"}, "review_disposition": "unsupported_material_form_identity"}
+  ]
+}

@@ -84,10 +84,11 @@ The user explicitly selected immutable-commit/export consumption; the schema-v2
 old September 21 release. Its <code class="docutils literal notranslate"><span class="pre">candidate_only</span></code> mode controls candidate generation,
 not permission to publish or silently replace production mappings. Paired
 production promotion remains the separate reviewed step below.</p>
-<p>The <a class="reference internal" href="reviews/mim-invalid-cas-20260927/PROMOTION.html"><span class="std std-doc">2026-09-27 invalid-CAS mapping review</span></a>
-records the latest proposed paired staging change and its remaining gates.
+<p>The <a class="reference internal" href="reviews/mediadive-potato-scope-20260929/PROMOTION.html"><span class="std std-doc">2026-09-29 Potato scope record</span></a>
+records the latest isolated paired staging change and its remaining gates.
 Paired-change tests, CI, production integration and fresh KG validation remain
-separate required gates. The <a class="reference internal" href="reviews/mim-native-category-20260927/PROMOTION.html"><span class="std std-doc">earlier native-category record</span></a>
+separate required gates. The <a class="reference internal" href="reviews/mim-invalid-cas-20260927/PROMOTION.html"><span class="std std-doc">2026-09-27 invalid-CAS mapping review</span></a>,
+<a class="reference internal" href="reviews/mim-native-category-20260927/PROMOTION.html"><span class="std std-doc">earlier native-category record</span></a>
 and <a class="reference internal" href="reviews/mim-admission-20260925/PROMOTION.html"><span class="std std-doc">2026-09-25 acceptance record</span></a>
 are preserved as historical evidence, not reassigned to the new candidate. The
 first hydration candidate exposed three further legacy scope defects (#1169)
@@ -251,7 +252,12 @@ claim of exhaustive scientific recuration.</p>
 including with <code class="docutils literal notranslate"><span class="pre">--dry-run</span></code> or <code class="docutils literal notranslate"><span class="pre">--allow-stale-vendored</span></code>: its additive seed and raw
 companion paths would undo the migration. Its narrowly scoped
 <code class="docutils literal notranslate"><span class="pre">--identity-policy-only</span> <span class="pre">--output</span> <span class="pre">...</span></code> operation remains available; it does not
-constitute a MIM refresh.</p>
+constitute a MIM refresh. That bounded operation names its actual writer,
+<code class="docutils literal notranslate"><span class="pre">scripts/consolidate_chemical_mappings.py</span></code>, and its code SHA-256 in the tool/version
+metadata. It preserves the description’s meaning and adds one current identity
+policy fingerprint. Original reconstruction provenance is retained through the
+reviewed baseline hash and prior record, not a mismatched old tool/new version.
+Unrelated metadata and retained mapping rows remain unchanged.</p>
 <p>The earlier input-schema repair added explicit empty <code class="docutils literal notranslate"><span class="pre">verified_date</span></code> cells to
 two canonical chemical rows. That formatting-only repair did not install the
 reviewed MIM input and its old two-source rerun advice is not the closure for
@@ -261,9 +267,9 @@ receipts to hide input or code drift.</p>
 <section id="promotion-transforms-and-merge">
 <h2>Promotion, transforms, and merge<a class="headerlink" href="#promotion-transforms-and-merge" title="Link to this heading"></a></h2>
 <p>Candidate generation does not publish files or run production transforms. Once
-the final delta and consumer behavior are accepted, promote <strong>both</strong> the reviewed
-unified candidate and the byte-exact supported MIM table to their canonical
-mapping paths in one reviewed change:</p>
+the final delta and consumer behavior are accepted, verify and promote the
+reviewed unified candidate and the byte-exact supported MIM table <strong>together</strong> at
+their canonical mapping paths in one reviewed change:</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">mappings/ingredient_mappings.sssom.tsv</span></code></p></li>
@@ -271,7 +277,9 @@ mapping paths in one reviewed change:</p>
 <p>The supported file must match the committed pin’s supported-product hash; the
 unified file must match the final accepted candidate hash. Do not install the
 upstream source SSSOM, the withheld product, a floating sibling checkout, or
-only one member of the pair. <code class="docutils literal notranslate"><span class="pre">mode=candidate_only</span></code> remains the CLI’s publication
+an unverified counterpart. If the supported table already has the pinned bytes,
+retain it unchanged; paired review does not require a meaningless rewrite or a
+new MIM release pin. <code class="docutils literal notranslate"><span class="pre">mode=candidate_only</span></code> remains the CLI’s publication
 boundary: paired installation is an explicit reviewed repository operation,
 not permission for future automatic refreshes.</p>
 <p>Keep release hashes, input fingerprints, quarantine disposition, second-cycle

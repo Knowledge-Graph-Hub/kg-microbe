@@ -122,6 +122,35 @@
 </dd></dl>
 
 </section>
+<section id="module-kg_microbe.transform_utils.mediadive.material_scope_audit">
+<span id="kg-microbe-transform-utils-mediadive-material-scope-audit-module"></span><h2>kg_microbe.transform_utils.mediadive.material_scope_audit module<a class="headerlink" href="#module-kg_microbe.transform_utils.mediadive.material_scope_audit" title="Link to this heading"></a></h2>
+<p>Preserve finite Potato/extract grounding candidates separately from identity (#1236).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.material_scope_audit.MaterialScopeAudit">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.mediadive.material_scope_audit.</span></span><span class="sig-name descname"><span class="pre">MaterialScopeAudit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.material_scope_audit.MaterialScopeAudit" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Collect only the reviewed grounding candidates; never create or choose an identity.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.material_scope_audit.MaterialScopeAudit.observe">
+<span class="sig-name descname"><span class="pre">observe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">occurrence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.material_scope_audit.MaterialScopeAudit.observe" title="Link to this definition"></a></dt>
+<dd><p>Attach available candidates to an actual emitted occurrence and its selected target.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.material_scope_audit.MaterialScopeAudit.write">
+<span class="sig-name descname"><span class="pre">write</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.material_scope_audit.MaterialScopeAudit.write" title="Link to this definition"></a></dt>
+<dd><p>Write complete producer-time evidence, including a valid empty-cohort header.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.material_scope_audit.verify_recorded_material_inputs">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.mediadive.material_scope_audit.</span></span><span class="sig-name descname"><span class="pre">verify_recorded_material_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">report</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.material_scope_audit.verify_recorded_material_inputs" title="Link to this definition"></a></dt>
+<dd><p>Require actual canonical evidence origins for the producer-bound candidate sidecar.</p>
+</dd></dl>
+
+</section>
 <section id="module-kg_microbe.transform_utils.mediadive.mediadive">
 <span id="kg-microbe-transform-utils-mediadive-mediadive-module"></span><h2>kg_microbe.transform_utils.mediadive.mediadive module<a class="headerlink" href="#module-kg_microbe.transform_utils.mediadive.mediadive" title="Link to this heading"></a></h2>
 <p>MediaDive KG.</p>
@@ -171,6 +200,12 @@ constant, derive this from it rather than restating it.</p>
 <span class="sig-name descname"><span class="pre">OPTIONAL_RAW_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(('micromediaparam_strict',</span> <span class="pre">'compound_mappings_strict.tsv'),</span> <span class="pre">('micromediaparam_hydrate',</span> <span class="pre">'compound_mappings_strict_hydrate.tsv'))</span></em><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.OPTIONAL_RAW_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
 <dd><p>Named optional reads relative to the effective input_base_dir, including explicit absence.
 Kept separate so repository-relative optional inputs never silently relocate.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.REQUIRED_AUDIT_FILES">
+<span class="sig-name descname"><span class="pre">REQUIRED_AUDIT_FILES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mediadive_material_scope_quarantine.tsv',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.REQUIRED_AUDIT_FILES" title="Link to this definition"></a></dt>
+<dd><p>Producer-owned disposition reports whose emitted bytes must survive finalization/merge.</p>
 </dd></dl>
 
 <dl class="py attribute">
@@ -359,6 +394,12 @@ constant, derive this from it rather than restating it.</p>
 <span class="sig-name descname"><span class="pre">OPTIONAL_RAW_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(('micromediaparam_strict',</span> <span class="pre">'compound_mappings_strict.tsv'),</span> <span class="pre">('micromediaparam_hydrate',</span> <span class="pre">'compound_mappings_strict_hydrate.tsv'))</span></em><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.MediaDiveTransform.OPTIONAL_RAW_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
 <dd><p>Named optional reads relative to the effective input_base_dir, including explicit absence.
 Kept separate so repository-relative optional inputs never silently relocate.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.MediaDiveTransform.REQUIRED_AUDIT_FILES">
+<span class="sig-name descname"><span class="pre">REQUIRED_AUDIT_FILES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mediadive_material_scope_quarantine.tsv',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.MediaDiveTransform.REQUIRED_AUDIT_FILES" title="Link to this definition"></a></dt>
+<dd><p>Producer-owned disposition reports whose emitted bytes must survive finalization/merge.</p>
 </dd></dl>
 
 <dl class="py attribute">

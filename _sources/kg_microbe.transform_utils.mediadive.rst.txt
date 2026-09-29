@@ -12,6 +12,14 @@ kg\_microbe.transform\_utils.mediadive.bulk\_inputs module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.transform\_utils.mediadive.material\_scope\_audit module
+--------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.mediadive.material_scope_audit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.transform\_utils.mediadive.mediadive module
 -------------------------------------------------------
 

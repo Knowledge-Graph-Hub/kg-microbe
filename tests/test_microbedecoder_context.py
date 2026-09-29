@@ -14,6 +14,7 @@ import yaml
 
 from kg_microbe.transform_utils.constants import GOLD_ORGANISM_FOLD_FILE
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
+from tests.microbedecoder_quarantine_fixtures import bind_fixture_quarantine_policy
 
 FIXTURES = Path(__file__).parent / "resources" / "microbedecoder"
 
@@ -55,6 +56,7 @@ def run_fixture(tmp_path, fixture="snapshot_context.csv"):
         destination.mkdir(exist_ok=True)
         shutil.copyfile(FIXTURES / dependency_fixture, destination / target)
     transform = MicrobeDecoderTransform(FIXTURES, tmp_path, chemical_loader=NoChemicals())
+    bind_fixture_quarantine_policy(transform, input_path)
     transform.run(data_file=input_path, show_status=False)
     return transform, read_tsv(transform.output_node_file), read_tsv(transform.output_edge_file)
 
@@ -187,6 +189,7 @@ def test_repeat_run_is_byte_identical(tmp_path):
     """Reusing a producer must reset per-run node and context state."""
     transform, _, _ = run_fixture(tmp_path)
     before = (transform.output_node_file.read_bytes(), transform.output_edge_file.read_bytes())
+    bind_fixture_quarantine_policy(transform, FIXTURES / "snapshot_context.csv")
     transform.run(data_file=FIXTURES / "snapshot_context.csv", show_status=False)
     assert (transform.output_node_file.read_bytes(), transform.output_edge_file.read_bytes()) == before
 
@@ -198,6 +201,7 @@ def test_later_run_without_placeholders_clears_old_curation_rows(tmp_path):
     assert read_tsv(report)
     source = tmp_path / "crosswalk_only.csv"
     source.write_text("LPSN_ID,NCBI_Taxonomy_ID\n101,1\n")
+    bind_fixture_quarantine_policy(transform, source)
     transform.run(data_file=source, show_status=False)
     assert read_tsv(report) == []
 
@@ -216,6 +220,7 @@ def test_mapping_lookup_io_failure_is_not_an_unmapped_chemical(tmp_path):
 
     transform.chemical_loader = BrokenMapping()
     with pytest.raises(OSError, match="mapping authority read failed"):
+        bind_fixture_quarantine_policy(transform, FIXTURES / "snapshot_context.csv")
         transform.run(data_file=FIXTURES / "snapshot_context.csv", show_status=False)
     assert (transform.output_node_file.read_bytes(), transform.output_edge_file.read_bytes()) == before
 
@@ -234,6 +239,7 @@ def test_required_mapping_initialization_failure_preserves_outputs(tmp_path, mon
     monkeypatch.setattr(mappings, "ChemicalMappingLoader", fail_load)
     transform.chemical_loader = None
     with pytest.raises(FileNotFoundError, match="required mapping is missing"):
+        bind_fixture_quarantine_policy(transform, FIXTURES / "snapshot_context.csv")
         transform.run(data_file=FIXTURES / "snapshot_context.csv", show_status=False)
     assert (transform.output_node_file.read_bytes(), transform.output_edge_file.read_bytes()) == before
 
@@ -339,6 +345,7 @@ def test_non_utf8_citation_bytes_are_recoverable(tmp_path):
     transform, _, _ = run_fixture(tmp_path)
     source = tmp_path / "mixed_encoding.csv"
     source.write_bytes(b"LPSN_ID,Literature_Major_end_products,Literature_Citation\n101,acetate,Pr\xe9vot (1989)\n")
+    bind_fixture_quarantine_policy(transform, source)
     transform.run(data_file=source, show_status=False)
     edge = read_tsv(transform.output_edge_file)[0]
     assert edge["source_citation"] == "Pr\ufffdvot (1989)"
@@ -385,6 +392,7 @@ def test_literal_context_does_not_use_csv_quoting_or_coerce_numbers(tmp_path, mo
         writer = csv.writer(stream)
         writer.writerow(["LPSN_ID", "BacDive_Oxygen_tolerance"])
         writer.writerows([101, value] for value in labels)
+    bind_fixture_quarantine_policy(transform, source)
     transform.run(data_file=source, show_status=False)
     edges = read_tsv(transform.output_edge_file)
     assert len(edges) == len(labels)

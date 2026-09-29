@@ -10,6 +10,7 @@ from kg_microbe.transform_utils.microbedecoder.phenotype_curation import (
     ATTRIBUTE_TYPE_CURATION_SOURCE,
     DEFAULT_PHENOTYPE_MAPPINGS,
 )
+from tests.microbedecoder_quarantine_fixtures import bind_fixture_quarantine_policy
 from tests.test_microbedecoder_context import read_tsv, run_fixture
 from tests.test_microbedecoder_curation_integration import _transform, _write_source
 
@@ -86,6 +87,7 @@ def test_bacdive_original_edge_bytes_are_unchanged_by_node_typing(tmp_path):
             {"LPSN_ID": "102", "BacDive_Gram_stain": "positive"},
         ],
     )
+    bind_fixture_quarantine_policy(transform, source)
     transform.run(data_file=source)
     before = transform.output_edge_file.read_bytes()
     nodes = read_tsv(transform.output_node_file)
@@ -99,6 +101,7 @@ def test_bacdive_original_edge_bytes_are_unchanged_by_node_typing(tmp_path):
         writer = csv.DictWriter(stream, fieldnames=header, delimiter="\t")
         writer.writeheader()
         writer.writerow(unmatched_rule)
+    bind_fixture_quarantine_policy(transform, source)
     transform.run(data_file=source)
     assert transform.output_edge_file.read_bytes() == before
     untyped = read_tsv(transform.output_node_file)
@@ -120,7 +123,9 @@ def test_bacdive_original_edge_bytes_are_unchanged_by_node_typing(tmp_path):
 def test_undecoded_codes_and_spore_scope_do_not_gain_an_attribute_type(tmp_path, column, literal):
     """Numeric meaning and generic-spore versus endospore scope need their own evidence."""
     transform = _transform(tmp_path)
-    transform.run(data_file=_write_source(tmp_path, [{"LPSN_ID": "101", column: literal}]))
+    quarantine_source = _write_source(tmp_path, [{"LPSN_ID": "101", column: literal}])
+    bind_fixture_quarantine_policy(transform, quarantine_source)
+    transform.run(data_file=quarantine_source)
     node = read_tsv(transform.output_node_file)[0]
     assert node["category"] == "biolink:Attribute"
     assert node["has_attribute_type"] == ""
@@ -175,7 +180,9 @@ def test_snapshot_supported_codes_type_only_original_field_scoped_attribute(tmp_
     assert compatibility["different_field_cells_or_bacdive_ids"] == 0
     assert compatibility["upstream_csv_sha256"] != compatibility["selected_local_csv_sha256"]
     transform = _transform(tmp_path)
-    transform.run(data_file=_write_source(tmp_path, [{"LPSN_ID": "101", "BacDive_ID": "123", column: literal}]))
+    quarantine_source = _write_source(tmp_path, [{"LPSN_ID": "101", "BacDive_ID": "123", column: literal}])
+    bind_fixture_quarantine_policy(transform, quarantine_source)
+    transform.run(data_file=quarantine_source)
     edges = read_tsv(transform.output_edge_file)
     observed = [edge for edge in edges if edge["source_column"] == column]
     assert len(observed) == 1
@@ -199,20 +206,20 @@ def test_snapshot_supported_codes_type_only_original_field_scoped_attribute(tmp_
 def test_contradictory_codes_and_ambiguous_assay_results_remain_separate_observations(tmp_path):
     """Neither conflicting signs nor generic spores authorize a new aggregate identity."""
     transform = _transform(tmp_path)
-    transform.run(
-        data_file=_write_source(
-            tmp_path,
-            [
-                {
-                    "LPSN_ID": "101",
-                    "BacDive_Motility": "0;1",
-                    "BacDive_Spore_formation": "0;1",
-                    "BacDive_Voges_proskauer": "+;-;+/-",
-                    "BacDive_Indole_test": "0;1",
-                }
-            ],
-        )
+    quarantine_source = _write_source(
+        tmp_path,
+        [
+            {
+                "LPSN_ID": "101",
+                "BacDive_Motility": "0;1",
+                "BacDive_Spore_formation": "0;1",
+                "BacDive_Voges_proskauer": "+;-;+/-",
+                "BacDive_Indole_test": "0;1",
+            }
+        ],
     )
+    bind_fixture_quarantine_policy(transform, quarantine_source)
+    transform.run(data_file=quarantine_source)
     edges = read_tsv(transform.output_edge_file)
     nodes = {node["id"]: node for node in read_tsv(transform.output_node_file)}
     assert len(edges) == 9

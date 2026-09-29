@@ -16,6 +16,7 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.transform_utils.gold.gold import GOLDTransform
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
 from kg_microbe.utils.transform_fingerprint import upstream_fingerprint, write_fingerprint
+from tests.microbedecoder_quarantine_fixtures import write_fixture_quarantine_policy
 
 FIXTURES = Path(__file__).parent / "resources" / "gold_folds"
 
@@ -61,6 +62,9 @@ def _microbedecoder(gold):
         input_dir=gold.input_base_dir,
         output_dir=gold.output_base_dir,
         chemical_loader=object(),  # fixture contains only identity crosswalks
+        crosswalk_quarantine_policy=write_fixture_quarantine_policy(
+            gold.input_base_dir / "database.csv", gold.output_base_dir / "fixture-crosswalk-policy"
+        ),
     )
 
 

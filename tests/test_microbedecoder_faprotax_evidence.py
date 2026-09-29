@@ -21,6 +21,10 @@ from kg_microbe.transform_utils.constants import (
     PREDICTION,
 )
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
+from tests.microbedecoder_quarantine_fixtures import (
+    bind_fixture_quarantine_policy,
+    write_fixture_quarantine_policy,
+)
 from tests.test_microbedecoder_transform import FIXTURE_DIR, _NoChebi, _supply_gold_fold_report
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -45,6 +49,7 @@ def _run(tmp_path, mapped):
     transform = MicrobeDecoderTransform(
         FIXTURE_DIR, tmp_path, chemical_loader=_NoChebi(), process_mappings=process_table
     )
+    bind_fixture_quarantine_policy(transform, FIXTURE_DIR / "faprotax_evidence.csv")
     transform.run(data_file=FIXTURE_DIR / "faprotax_evidence.csv", show_status=False)
     return transform
 
@@ -112,6 +117,11 @@ def _finalize_child(root, mapped):
     socket.getaddrinfo = offline
     assert Path(sys.modules[MicrobeDecoderTransform.__module__].__file__).resolve().is_relative_to(root)
     transform = _run(root / "data/transformed", mapped)
+    # Declared canonical policy inputs are fingerprinted in addition to the
+    # explicitly consumed fixture policy, like other injected curation tables.
+    write_fixture_quarantine_policy(
+        FIXTURE_DIR / "faprotax_evidence.csv", root / "mappings/canonical", canonical_names=True
+    )
     before = _read(transform.output_edge_file)
     _check(before, mapped)
     report = transform.finalize(fresh_run=True)
@@ -130,7 +140,12 @@ def test_registered_finalization_preserves_faprotax_evidence(tmp_path, mapped):
     """Finalize real output without replacing any admission, normalization or fingerprint function."""
     root = tmp_path / "isolated"
     shutil.copytree(ROOT / "kg_microbe", root / "kg_microbe", ignore=shutil.ignore_patterns("__pycache__", "tmp"))
-    for name in ("__init__.py", "test_microbedecoder_transform.py", Path(__file__).name):
+    for name in (
+        "__init__.py",
+        "microbedecoder_quarantine_fixtures.py",
+        "test_microbedecoder_transform.py",
+        Path(__file__).name,
+    ):
         target = root / "tests" / name
         target.parent.mkdir(exist_ok=True)
         shutil.copyfile(ROOT / "tests" / name, target)

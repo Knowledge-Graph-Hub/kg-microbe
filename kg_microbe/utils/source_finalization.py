@@ -29,6 +29,7 @@ from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.graph_canonicalization import canonical_node_category, compact_identifier
 from kg_microbe.utils.graph_schema import canonical_header, validate_canonical_tsv
 from kg_microbe.utils.optional_consumed_inputs import has_optional_inputs
+from kg_microbe.utils.producer_audits import verify_producer_audits, verify_recorded_producer_audits
 from kg_microbe.utils.provenance import primary_source_and_publications, serialize_knowledge_sources
 from kg_microbe.utils.transform_fingerprint import (
     SHARED_DATA_INPUTS,
@@ -174,6 +175,7 @@ def _registered_producer(report):
 def _verify_recorded_consumed_inputs(report, *, report_path=None, admission=None):
     """Enforce current registered producer requirements and their persisted input identities."""
     producer = _registered_producer(report)
+    verify_recorded_producer_audits(producer, report, report_path, admission)
     if getattr(producer, "discovered_data_inputs", None) is not None:
         root = Path(__file__).resolve().parents[2]
         if report.get("declared_data_inputs") != list(declared_data_inputs(producer, root)):
@@ -440,6 +442,13 @@ def _repeat_finalization(transform, file_prefix):
             "Consumed inputs differ from finalized run; rerun and finalize(fresh_run=True)"
         )
     transform._consumed_input_snapshots = {name: dict(snapshot) for name, snapshot in snapshots.items()}
+    producer_audits = report.get("producer_audit_members", {})
+    previous_audits = getattr(transform, "producer_audit_snapshots", {})
+    if previous_audits and previous_audits != producer_audits:
+        raise SourceFinalizationRequired("Producer audit identities differ from finalized run; rerun the producer")
+    transform._producer_audit_snapshots = {name: dict(identity) for name, identity in producer_audits.items()}
+    transform._producer_audit_directory = str(output_dir.resolve()) if producer_audits else None
+    verify_producer_audits(transform)
     if has_optional_inputs(type(transform)):
         previous_optional = transform.optional_consumed_inputs
         recorded_optional = report.get("optional_consumed_inputs")
@@ -457,6 +466,8 @@ def _publish_finalization(transform, prepared):
     """Publish one validated staging area, with its exact-byte completion record last."""
     staging, report_path, used_inputs, report = prepared
     verify_consumed_inputs(transform, native_output_dir=staging)
+    verify_producer_audits(transform)
+    verify_producer_audits(transform, output_dir=staging)
     for path in sorted(staging.iterdir(), key=lambda path: (path == report_path, path.name)):
         os.replace(path, Path(transform.output_dir) / path.name)
     transform.finalization_inputs = tuple(str(path.resolve()) for path in sorted(used_inputs))
@@ -513,6 +524,7 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
         raise SourceFinalizationRequired(f"{output_dir}: source finalization requires node and edge TSV files")
     repo_root = Path(__file__).resolve().parents[2]
     verify_consumed_inputs(transform)
+    producer_audits = verify_producer_audits(transform)
     consumed = getattr(transform, "consumed_input_snapshots", {})
     used_inputs = {
         resolve_data_input(repo_root, declaration, raw_dir)
@@ -521,6 +533,10 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
     used_inputs.update(Path(snapshot["path"]) for snapshot in consumed.values())
     with tempfile.TemporaryDirectory(prefix=".finalize-", dir=output_dir) as temporary:
         staging = Path(temporary)
+        for name in producer_audits:
+            shutil.copyfile(output_dir / name, staging / name)
+        verify_producer_audits(transform)
+        verify_producer_audits(transform, output_dir=staging)
         staged_nodes = [staging / path.name for path in node_paths]
         staged_edges = [staging / path.name for path in edge_paths]
         audit_path = staging / f"{file_prefix}source_canonicalization.tsv"
@@ -585,6 +601,8 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
                 _order_finalized_schema(path, is_node)
         summaries["rows"] = validate_graph_bundle(staged_nodes, staged_edges, require_contract=True)
         verify_consumed_inputs(transform, native_output_dir=staging)
+        verify_producer_audits(transform)
+        verify_producer_audits(transform, output_dir=staging)
         consumed_hashes = {snapshot["path"]: snapshot["sha256"] for snapshot in consumed.values()}
         report = {
             "version": FINALIZATION_VERSION,
@@ -599,8 +617,9 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
             },
             "audit_members": {
                 path.name: {"bytes": path.stat().st_size, "sha256": _sha256(path)}
-                for path in (audit_path, external_report, go_report)
+                for path in (audit_path, external_report, go_report, *(staging / name for name in producer_audits))
             },
+            "producer_audit_members": producer_audits,
             "consumed_inputs": consumed,
             "declared_data_inputs": list(declared_data_inputs(type(transform), repo_root)),
             "inputs": [

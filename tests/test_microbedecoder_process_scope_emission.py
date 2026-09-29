@@ -5,6 +5,7 @@ import csv
 import pytest
 
 from kg_microbe.transform_utils.microbedecoder.process_scopes import ProcessScopeCuration
+from tests.microbedecoder_quarantine_fixtures import bind_fixture_quarantine_policy
 from tests.test_microbedecoder_curation_integration import _rows, _transform, _write_source
 from tests.test_microbedecoder_curation_inventory import inventory
 
@@ -25,6 +26,7 @@ def test_all_scopes_emit_separate_ids_complete_definitions_and_original_assertio
             for index, scope in enumerate(scopes)
         ],
     )
+    bind_fixture_quarantine_policy(transform, source)
     transform.run(data_file=source)
     nodes = {row["id"]: row for row in _rows(transform.output_node_file)}
     edges = _rows(transform.output_edge_file)
@@ -62,9 +64,9 @@ def test_all_scopes_emit_separate_ids_complete_definitions_and_original_assertio
 def test_conflicting_native_and_source_scope_policies_abort_before_outputs(tmp_path, literal):
     """Do not silently choose table precedence when curated meanings conflict."""
     transform = _transform(tmp_path)
-    transform.run(
-        data_file=_write_source(tmp_path, [{"LPSN_ID": "101", "FAPROTAX_Type_of_metabolism": "nitrification"}])
-    )
+    quarantine_source = _write_source(tmp_path, [{"LPSN_ID": "101", "FAPROTAX_Type_of_metabolism": "nitrification"}])
+    bind_fixture_quarantine_policy(transform, quarantine_source)
+    transform.run(data_file=quarantine_source)
     before = {path: path.read_bytes() for path in (transform.output_node_file, transform.output_edge_file)}
     rows = _rows(transform.process_scopes)
     rows[0]["source_literal"] = literal
@@ -73,6 +75,7 @@ def test_conflicting_native_and_source_scope_policies_abort_before_outputs(tmp_p
         writer.writeheader()
         writer.writerows(rows)
     with pytest.raises(ValueError, match="Conflicting process scope"):
+        bind_fixture_quarantine_policy(transform, tmp_path / "source.csv")
         transform.run(data_file=tmp_path / "source.csv")
     assert {path: path.read_bytes() for path in before} == before
 
@@ -84,9 +87,9 @@ def test_conflicting_native_and_source_scope_policies_abort_before_outputs(tmp_p
 def test_inventory_requires_complete_scoped_declaration_and_source_use(tmp_path, mutation):
     """A declared process meaning cannot validate mutated ownership or unrelated assertions."""
     transform = _transform(tmp_path)
-    transform.run(
-        data_file=_write_source(tmp_path, [{"LPSN_ID": "101", "FAPROTAX_Type_of_metabolism": "nitrification"}])
-    )
+    quarantine_source = _write_source(tmp_path, [{"LPSN_ID": "101", "FAPROTAX_Type_of_metabolism": "nitrification"}])
+    bind_fixture_quarantine_policy(transform, quarantine_source)
+    transform.run(data_file=quarantine_source)
     if mutation is not None:
         node_fields = {"description", "provided_by", "name", "category"}
         path = transform.output_node_file if mutation in node_fields else transform.output_edge_file

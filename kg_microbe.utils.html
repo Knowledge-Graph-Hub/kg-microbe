@@ -4148,6 +4148,34 @@ different attributes.</p></li>
 </dd></dl>
 
 </section>
+<section id="module-kg_microbe.utils.producer_audits">
+<span id="kg-microbe-utils-producer-audits-module"></span><h2>kg_microbe.utils.producer_audits module<a class="headerlink" href="#module-kg_microbe.utils.producer_audits" title="Link to this heading"></a></h2>
+<p>Preserve mandatory producer disposition reports through finalization and merge.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.producer_audits.record_producer_audit">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.producer_audits.</span></span><span class="sig-name descname"><span class="pre">record_producer_audit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.producer_audits.record_producer_audit" title="Link to this definition"></a></dt>
+<dd><p>Record successful producer output once; finalization must not restamp changed bytes.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.producer_audits.required_producer_audits">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.producer_audits.</span></span><span class="sig-name descname"><span class="pre">required_producer_audits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">producer</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.producer_audits.required_producer_audits" title="Link to this definition"></a></dt>
+<dd><p>Allow only distinct local sidecars, never graph or finalizer-owned members.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.producer_audits.verify_producer_audits">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.producer_audits.</span></span><span class="sig-name descname"><span class="pre">verify_producer_audits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.producer_audits.verify_producer_audits" title="Link to this definition"></a></dt>
+<dd><p>Verify original producer identities against the original or staged report bytes.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.producer_audits.verify_recorded_producer_audits">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.producer_audits.</span></span><span class="sig-name descname"><span class="pre">verify_recorded_producer_audits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">producer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.producer_audits.verify_recorded_producer_audits" title="Link to this definition"></a></dt>
+<dd><p>Enforce current registered requirements even if a report omits its own evidence.</p>
+</dd></dl>
+
+</section>
 <section id="module-kg_microbe.utils.provenance">
 <span id="kg-microbe-utils-provenance-module"></span><h2>kg_microbe.utils.provenance module<a class="headerlink" href="#module-kg_microbe.utils.provenance" title="Link to this heading"></a></h2>
 <p>Separate scalar information-resource provenance from public record evidence.</p>

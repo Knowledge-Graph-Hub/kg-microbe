@@ -12,6 +12,22 @@ kg\_microbe.transform\_utils.microbedecoder.chemical\_curation module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.transform\_utils.microbedecoder.crosswalk\_quarantine module
+------------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.microbedecoder.crosswalk_quarantine
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.microbedecoder.crosswalk\_witnesses module
+-----------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.microbedecoder.crosswalk_witnesses
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.transform\_utils.microbedecoder.curation module
 -----------------------------------------------------------
 

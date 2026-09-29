@@ -292,6 +292,14 @@ kg\_microbe.utils.postprocess\_artifacts module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.utils.producer\_audits module
+-----------------------------------------
+
+.. automodule:: kg_microbe.utils.producer_audits
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.utils.provenance module
 -----------------------------------
 

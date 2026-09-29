@@ -43,8 +43,12 @@ Candidate quarantine and producer-bound audit retain imported claims separately
 from active graph identity. Audit reasons distinguish
 `unsupported_material_form_identity` from `insufficient_material_specificity`.
 
-This code change does not replace the pinned supported MIM product, release pin,
-or unified artifact. Candidate generation and reviewed paired promotion follow
+The policy change alone does not replace mapping artifacts. The separate
+[2026-09-29 staging record](mediadive-potato-scope-20260929/PROMOTION.md)
+records the reviewed identity-only unified candidate staged in an isolated
+worktree; the pinned supported MIM product and release pin remain byte-identical.
+Production integration, full replay and release acceptance are separate gates.
+Candidate generation and reviewed paired promotion follow
 `docs/MIM_REVIEWED_RELEASE.md`; changing a shared policy can stale consumers and
 requires fresh producer/merge admission. The historical nine-record fixture is
 not an expected count or release acceptance for a future rebuilt graph.

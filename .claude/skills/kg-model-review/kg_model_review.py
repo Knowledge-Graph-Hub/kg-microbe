@@ -722,6 +722,44 @@ def check_nodes(path: Path, max_rows: int, registered_prefixes: set,
     return check_nodes_rows(rows, max_rows, registered_prefixes, metpo_curies, verbose)
 
 
+def read_microbedecoder_nodes(path: Path, max_rows: int) -> tuple[list, list]:
+    """Reject ambiguous source slots before DictReader can erase evidence (#1223).
+
+    A genuinely absent type column remains a supported historical profile.
+    Duplicate headers or short rows do not establish intentional absence.
+    Keep the generic reader and all other source/merged scopes unchanged.
+    """
+    rows = []
+    opener = gzip.open if path.suffix == ".gz" else open
+    mode = "rt" if path.suffix == ".gz" else "r"
+    try:
+        with opener(path, mode, encoding="utf-8", newline="") as stream:
+            # MicrobeDecoder/finalized KGX TSVs use QUOTE_NONE: quotes are
+            # literal evidence, not CSV syntax that may hide an invalid type.
+            reader = csv.reader(stream, delimiter="\t", quoting=csv.QUOTE_NONE, quotechar=None, strict=True)
+            header = next(reader, [])
+            if not header or any(not column.strip() for column in header) or len(header) != len(set(header)):
+                return [], [Finding(
+                    "ERROR", "AttributeType",
+                    f"MicrobeDecoder node header is empty, blank or duplicated: {path}",
+                )]
+            for values in reader:
+                if not values:  # Preserve DictReader's handling of empty physical lines.
+                    continue
+                if len(values) != len(header):
+                    return [], [Finding(
+                        "ERROR", "AttributeType",
+                        f"Malformed MicrobeDecoder node row at line {reader.line_num}: "
+                        f"expected {len(header)} cells, found {len(values)}; slot absence is unverifiable",
+                    )]
+                rows.append(dict(zip(header, values)))
+                if max_rows and len(rows) >= max_rows:
+                    break
+    except (OSError, UnicodeError, csv.Error, EOFError) as error:
+        return [], [Finding("ERROR", "AttributeType", f"MicrobeDecoder node file is unreadable: {path}: {error}")]
+    return rows, []
+
+
 def check_microbedecoder_attribute_types(rows: list, verbose: bool) -> list:
     """Check the source-specific Attribute slot contract, not generic LinkML conformance.
 
@@ -1656,13 +1694,19 @@ def review_transform(name: str, transform_dir: Path, max_rows: int,
         result["edges"] = []
         return result
 
-    node_rows = list(iter_tsv(nodes_path, max_rows)) if nodes_path.exists() else []
+    from kg_microbe.transform_utils.constants import MICROBEDECODER
+    if name == MICROBEDECODER and nodes_path.exists():
+        node_rows, shape_findings = read_microbedecoder_nodes(nodes_path, max_rows)
+        if shape_findings:
+            result["nodes"] = shape_findings
+            return _tally(result)
+    else:
+        node_rows = list(iter_tsv(nodes_path, max_rows)) if nodes_path.exists() else []
     edge_rows = list(iter_tsv(edges_path, max_rows)) if edges_path.exists() else []
     result["nodes"] = (
         check_nodes_rows(node_rows, max_rows, registered_prefixes, metpo_curies, verbose)
         if node_rows else [Finding("ERROR", "KGX", f"nodes.tsv not found: {nodes_path}")]
     )
-    from kg_microbe.transform_utils.constants import MICROBEDECODER
     if name == MICROBEDECODER:
         result["nodes"].extend(check_microbedecoder_attribute_types(node_rows, verbose))
     result["edges"] = (

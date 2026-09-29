@@ -1,6 +1,7 @@
 """MicrobeDecoder's focused node-slot review exposes its profile exception (#1222)."""
 
 import csv
+import gzip
 import importlib.util
 import sys
 from pathlib import Path
@@ -253,3 +254,134 @@ def test_source_review_hook_is_bounded_and_tallies_slot_errors(reviewer, tmp_pat
     result = reviewer.review_transform(source, directory, 0, prefixes, {TARGET}, True)
     assert bool(result["errors"]) == expect_error
     assert any(finding.check == "AttributeType" for finding in result["nodes"]) == expect_error
+
+
+def _review_source_text(reviewer, tmp_path, text, *, compressed=False, max_rows=0, source="microbedecoder"):
+    """Exercise source parsing, not only the checker after dictionary conversion."""
+    directory = tmp_path / source
+    directory.mkdir()
+    path = directory / ("nodes.tsv.gz" if compressed else "nodes.tsv")
+    payload = text.encode("utf-8") if isinstance(text, str) else text
+    path.write_bytes(gzip.compress(payload) if compressed else payload)
+    _write(
+        directory / "edges.tsv",
+        [
+            {
+                "subject": "lpsn:1",
+                "predicate": "biolink:has_attribute",
+                "object": ATTRIBUTE_ID,
+                "relation": "SIO:000008",
+            }
+        ],
+    )
+    return reviewer.review_transform(
+        source, directory, max_rows, {"lpsn", "kgmicrobe.source_attribute", "SIO"}, {TARGET}, True
+    )
+
+
+@pytest.mark.parametrize("compressed", [False, True])
+@pytest.mark.parametrize("later_value", ["", TARGET])
+def test_duplicate_source_type_header_cannot_hide_invalid_present_value(reviewer, tmp_path, compressed, later_value):
+    """Neither an intentional-absence claim nor a later valid type can mask the first value."""
+    text = (
+        "id\tcategory\tname\thas_attribute_type\thas_attribute_type\n"
+        f"{ATTRIBUTE_ID}\tbiolink:Attribute\ttest\tMETPO:1999999\t{later_value}\n"
+    )
+    result = _review_source_text(reviewer, tmp_path, text, compressed=compressed)
+    assert result["errors"] == 1
+    assert "header" in result["nodes"][0].message
+    assert result["nodes"][0].severity == "ERROR"
+    assert not any("house-profile exception" in finding.message for finding in result["nodes"])
+
+
+@pytest.mark.parametrize("malformation", ["missing_cell", "extra_cell", "quoted_partial", "invalid_utf8"])
+@pytest.mark.parametrize("compressed", [False, True])
+def test_malformed_source_row_is_not_intentional_slot_absence(reviewer, tmp_path, malformation, compressed):
+    """A truncated or malformed present column is different from a historical absent column."""
+    header = "id\tcategory\tname\thas_attribute_type\n"
+    record = f"{ATTRIBUTE_ID}\tbiolink:Attribute\ttest"
+    if malformation == "missing_cell":
+        text = header + record + "\n"
+    elif malformation == "extra_cell":
+        text = header + record + "\t\tMETPO:1999999\n"
+    elif malformation == "quoted_partial":
+        text = header + record + '\t"METPO:1000698\n'
+    else:
+        text = (header + record + "\t").encode() + b"\xff\n"
+    result = _review_source_text(reviewer, tmp_path, text, compressed=compressed)
+    assert result["errors"] == 1
+    assert any(finding.severity == "ERROR" for finding in result["nodes"])
+    if malformation == "quoted_partial":
+        # QUOTE_NONE makes this a literal invalid type, not malformed CSV.
+        assert any("not one native METPO class CURIE" in finding.message for finding in result["nodes"])
+    assert not any("house-profile exception" in finding.message for finding in result["nodes"])
+
+
+@pytest.mark.parametrize("header", ["", "id\tcategory\tname\t\n", "id\tcategory\tname\tcategory\n"])
+def test_source_ambiguous_header_fails_before_node_dictionaries(reviewer, tmp_path, header):
+    """Other duplicate owner columns must not bypass the exact Attribute category contract."""
+    result = _review_source_text(reviewer, tmp_path, header)
+    assert result["errors"] == 1
+    assert "header" in result["nodes"][0].message
+
+
+@pytest.mark.parametrize("absent_column", [False, True])
+@pytest.mark.parametrize("compressed", [False, True])
+def test_source_reader_preserves_legitimate_untyped_historical_profile(reviewer, tmp_path, absent_column, compressed):
+    """Both entire absent columns and explicitly blank cells remain supported."""
+    header, record = "id\tcategory\tname", f"{ATTRIBUTE_ID}\tbiolink:Attribute\ttest"
+    if not absent_column:
+        header += "\thas_attribute_type"
+        record += "\t"
+    result = _review_source_text(reviewer, tmp_path, header + "\n" + record + "\n", compressed=compressed)
+    assert result["errors"] == 0
+    focused = [finding for finding in result["nodes"] if finding.check == "AttributeType"]
+    assert len(focused) == 1 and focused[0].severity == "INFO"
+    assert "1 untyped" in focused[0].message
+
+
+@pytest.mark.parametrize("max_rows, expected_errors", [(1, 0), (0, 1)])
+def test_source_row_shape_validation_honors_existing_sampling_boundary(reviewer, tmp_path, max_rows, expected_errors):
+    """Finite sampling stays finite; unlimited source review detects a later bad row."""
+    text = (
+        "id\tcategory\tname\thas_attribute_type\n"
+        f"{ATTRIBUTE_ID}\tbiolink:Attribute\ttest\t{TARGET}\n\n"
+        "kgmicrobe.source_attribute:second\tbiolink:Attribute\ttruncated\n"
+    )
+    result = _review_source_text(reviewer, tmp_path, text, max_rows=max_rows)
+    assert result["errors"] == expected_errors
+
+
+def test_source_specific_reader_does_not_change_other_transform_parsing(reviewer, tmp_path):
+    """The deliberately bounded fix leaves generic parser behavior outside this source unchanged."""
+    text = (
+        "id\tcategory\tname\thas_attribute_type\thas_attribute_type\n"
+        f"{ATTRIBUTE_ID}\tbiolink:Attribute\ttest\tMETPO:1999999\t\n"
+    )
+    result = _review_source_text(reviewer, tmp_path, text, source="other_source")
+    assert result["errors"] == 0
+    assert not any(finding.check == "AttributeType" for finding in result["nodes"])
+
+
+@pytest.mark.parametrize("compressed", [False, True])
+@pytest.mark.parametrize("literal", ['"METPO:1000698"', '"METPO:1000698'])
+def test_source_quoted_type_literal_is_not_stripped_to_a_valid_target(reviewer, tmp_path, compressed, literal):
+    """Canonical source TSV quotes are literal characters, never a CURIE normalization."""
+    text = f"id\tcategory\tname\thas_attribute_type\n{ATTRIBUTE_ID}\tbiolink:Attribute\ttest\t{literal}\n"
+    result = _review_source_text(reviewer, tmp_path, text, compressed=compressed)
+    assert result["errors"] == 1
+    assert any("not one native METPO class CURIE" in finding.message for finding in result["nodes"])
+
+
+@pytest.mark.parametrize("compressed", [False, True])
+@pytest.mark.parametrize("literal", ['"source literal"', '"source literal'])
+def test_source_quoted_name_is_preserved_as_literal_tsv_data(reviewer, tmp_path, compressed, literal):
+    """A paired or unpaired quote in a source label cannot change row shape or content."""
+    text = f"id\tcategory\tname\thas_attribute_type\n{ATTRIBUTE_ID}\tbiolink:Attribute\t{literal}\t{TARGET}\n"
+    result = _review_source_text(reviewer, tmp_path, text, compressed=compressed)
+    assert result["errors"] == 0
+    path = tmp_path / "microbedecoder" / ("nodes.tsv.gz" if compressed else "nodes.tsv")
+    rows, findings = reviewer.read_microbedecoder_nodes(path, 0)
+    assert not findings
+    assert rows[0][NAME_COLUMN] == literal
+    assert rows[0][HAS_ATTRIBUTE_TYPE_COLUMN] == TARGET

@@ -16,7 +16,13 @@ from kg_microbe.transform_utils.mediadive import mediadive as mod
 from kg_microbe.utils.optional_consumed_inputs import optional_input_paths, verify_recorded_optional_inputs
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 from tests.test_mediadive_bulk_inputs import write_bulk_inputs
-from tests.test_merge_source_freshness import FIXTURES, merge_config, prepare_source, record_source
+from tests.test_merge_source_freshness import (
+    FIXTURES,
+    merge_config,
+    prepare_source,
+    record_source,
+    write_empty_mediadive_audit,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 RESOURCES = Path(__file__).parent / "resources"
@@ -199,6 +205,7 @@ def admitted(tmp_path, monkeypatch, local_source_schema, build, request):
     read_lookup(value)
     for kind in ("nodes", "edges"):
         shutil.copyfile(FIXTURES / f"{kind}.tsv", value.output_dir / f"{kind}.tsv")
+    write_empty_mediadive_audit(value)
     value.finalize(fresh_run=True)
     record_source(value)
     config = merge_config(tmp_path, [value])

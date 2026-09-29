@@ -12,8 +12,10 @@ from click.testing import CliRunner
 from kg_microbe.merge_utils import merge_kg
 from kg_microbe.run import main
 from kg_microbe.transform import DATA_SOURCES
+from kg_microbe.transform_utils.constants import DATA_KEY
+from kg_microbe.transform_utils.mediadive.material_scope_audit import AUDIT_FILENAME, AUDIT_HEADER, MaterialScopeAudit
 from kg_microbe.transform_utils.transform import Transform
-from kg_microbe.utils.source_finalization import SourceFinalizationRequired
+from kg_microbe.utils.source_finalization import SourceFinalizationRequired, verify_finalized_source_files
 from kg_microbe.utils.transform_fingerprint import upstream_fingerprint, write_fingerprint
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -43,6 +45,17 @@ def read_mediadive_bulk_inputs(transform, *, create=False):
         with transform.consume_bulk_input(role, transform.input_base_dir / relative) as reader:
             assert json.load(reader) == payloads[role]
     return tuple(paths)
+
+
+def write_empty_mediadive_audit(transform):
+    """Run the actual audit writer only for the consumed immutable zero-cohort fixture."""
+    payloads = json.loads((FIXTURES.parent / "mediadive_bulk_inputs.json").read_text())
+    with transform.consume_bulk_input("mediadive_media_list", transform.input_base_dir / "mediadive.json") as reader:
+        media_list = json.load(reader)
+    assert media_list == payloads["mediadive_media_list"]
+    assert media_list[DATA_KEY] == [], "Nonempty media require the actual producer's occurrence processing"
+    transform._material_scope_audit = MaterialScopeAudit(transform, media_list)
+    transform._material_scope_audit.write()
 
 
 def record_source(transform):
@@ -81,10 +94,38 @@ def prepare_source(tmp_path, source, *, prefix="", marker=True, output_name=None
         with transform.consume_optional_input(role) as reader:
             if reader is not None:
                 reader.read()
+    if source == "mediadive":
+        write_empty_mediadive_audit(transform)
     transform.finalize(file_prefix=prefix, fresh_run=True)
     if marker:
         record_source(transform)
     return transform
+
+
+def test_empty_mediadive_fixture_has_real_producer_audit(tmp_path):
+    """An empty cohort still retains the writer's exact bytes through public source admission."""
+    transform = prepare_source(tmp_path, "mediadive")
+    path = transform.output_dir / AUDIT_FILENAME
+    assert path.read_bytes() == ("\t".join(AUDIT_HEADER) + "\n").encode()
+    identity = transform.producer_audit_snapshots[AUDIT_FILENAME]
+    report = json.loads((transform.output_dir / "source_finalization.json").read_text())
+    assert report["producer_audit_members"][AUDIT_FILENAME] == identity
+    assert report["audit_members"][AUDIT_FILENAME] == identity
+    verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+
+
+@pytest.mark.parametrize("damage", ["missing", "unrecorded"])
+def test_empty_mediadive_fixture_cannot_omit_producer_evidence(tmp_path, damage):
+    """Neither finalized metadata nor a header-only file replaces producer-time evidence."""
+    transform = prepare_source(tmp_path, "mediadive")
+    if damage == "missing":
+        (transform.output_dir / AUDIT_FILENAME).unlink()
+    else:
+        transform._producer_audit_snapshots.clear()
+    before = {path.name: path.read_bytes() for path in transform.output_dir.iterdir()}
+    with pytest.raises(SourceFinalizationRequired, match="producer audit"):
+        transform.finalize(fresh_run=True)
+    assert {path.name: path.read_bytes() for path in transform.output_dir.iterdir()} == before
 
 
 def merge_config(tmp_path, transforms, *, diagnostic=False):

@@ -13,7 +13,7 @@ from kg_microbe.transform import DATA_SOURCES
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 from kg_microbe.utils.transform_fingerprint import upstream_fingerprint, write_fingerprint
-from tests.test_merge_source_freshness import read_mediadive_bulk_inputs
+from tests.test_merge_source_freshness import read_mediadive_bulk_inputs, write_empty_mediadive_audit
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = Path(__file__).parent / "resources/merge_source_freshness"
@@ -55,6 +55,8 @@ def _prepare(tmp_path, name):
     for role, _ in getattr(cls, "OPTIONAL_RAW_CONSUMED_INPUTS", ()):
         with transform.consume_optional_input(role) as reader:
             assert reader is None
+    if name == "mediadive":
+        write_empty_mediadive_audit(transform)
     transform.finalize(fresh_run=True)
     _record(transform)
     return transform

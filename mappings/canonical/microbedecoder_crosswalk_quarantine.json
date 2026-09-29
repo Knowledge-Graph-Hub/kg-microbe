@@ -1,0 +1,12 @@
+{
+  "decisions_file": "microbedecoder_crosswalk_quarantine.tsv",
+  "decisions_rows": 10066,
+  "decisions_sha256": "7d35ebf9d56cefb473d60462426ccfcd0f7a202d1547aa8c47b8ebf3ea132718",
+  "evidence_file": "microbedecoder_crosswalk_quarantine_evidence.json.gz",
+  "evidence_sha256": "57e2af2e05988bb0d2c73aee28507f7e4254a0b0ce687c7a2eaa38d035060202",
+  "evidence_uncompressed_bytes": 74732088,
+  "evidence_uncompressed_sha256": "8ec77360de95d449fba4ac234c3a066f60c1212c74ed23402b9ec16af0595ace",
+  "source_records": 27010,
+  "source_sha256": "0c6ff730a108720a5d6972400f2bccf2eca8621713b62736abdf5df0fb188c95",
+  "version": 1
+}

@@ -37,6 +37,10 @@ def _child(root):
     from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
     from kg_microbe.utils.graph_schema import validate_canonical_tsv
     from kg_microbe.utils.source_finalization import SourceFinalizationRequired, verify_finalized_source_files
+    from tests.microbedecoder_quarantine_fixtures import (
+        bind_fixture_quarantine_policy,
+        write_fixture_quarantine_policy,
+    )
     from tests.test_microbedecoder_unresolved_sugar import OLD, _read, _records, _scoped_id, _substrates
 
     assert dispatcher.DATA_SOURCES["microbedecoder"].transform_class is MicrobeDecoderTransform
@@ -93,6 +97,8 @@ def _child(root):
         )
     lookup = ChemicalMappingLoader(mapping)
     transform = MicrobeDecoderTransform(raw, output, chemical_loader=lookup)
+    write_fixture_quarantine_policy(source, root / "mappings/canonical", canonical_names=True)
+    bind_fixture_quarantine_policy(transform, source)
     transform.run(data_file=source, show_status=False)
     before_nodes, before_edges = _read(transform.output_node_file), _read(transform.output_edge_file)
     scoped = {_scoped_id(record) for record in records[:2]}
@@ -178,7 +184,12 @@ def test_registered_sugar_finalization_preserves_full_observations(tmp_path):
     """Finalize real three-record output; verify recorded provenance and stale-input rejection."""
     root = tmp_path / "isolated"
     shutil.copytree(ROOT / "kg_microbe", root / "kg_microbe", ignore=shutil.ignore_patterns("__pycache__", "tmp"))
-    for name in ("__init__.py", "test_microbedecoder_unresolved_sugar.py", "test_chemical_mapping_utils.py"):
+    for name in (
+        "__init__.py",
+        "microbedecoder_quarantine_fixtures.py",
+        "test_microbedecoder_unresolved_sugar.py",
+        "test_chemical_mapping_utils.py",
+    ):
         target = root / "tests" / name
         target.parent.mkdir(exist_ok=True)
         shutil.copyfile(ROOT / "tests" / name, target)

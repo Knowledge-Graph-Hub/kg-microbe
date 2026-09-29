@@ -89,6 +89,9 @@ class Transform:
     #: Unlike DATA_INPUTS, these are checked after upstream producers have run.
     REQUIRED_CONSUMED_INPUTS: tuple = ()
 
+    #: Producer-owned disposition reports whose emitted bytes must survive finalization/merge.
+    REQUIRED_AUDIT_FILES: tuple = ()
+
     #: Named optional repository-relative reads; absence is evidence, never a required file.
     #: Unlike DATA_INPUTS these locators do not relocate to input_base_dir.
     OPTIONAL_CONSUMED_INPUTS: tuple = ()
@@ -193,6 +196,9 @@ class Transform:
         self._consumed_input_error = None
         self._optional_input_states = {}
         self._optional_input_admission = None
+        self._producer_audit_snapshots = {}
+        self._producer_audit_directory = None
+        self._producer_audit_error = None
 
     def begin_dependency_admission(self):
         """Bind discovered curation and inherited code before a producer loads either."""
@@ -232,6 +238,17 @@ class Transform:
         from kg_microbe.utils.source_finalization import snapshot_consumed_input
 
         return snapshot_consumed_input(self, name, path)
+
+    @property
+    def producer_audit_snapshots(self):
+        """Return copied exact-byte identities recorded by the successful producer."""
+        return {name: dict(identity) for name, identity in self._producer_audit_snapshots.items()}
+
+    def record_producer_audit(self, name):
+        """Bind a mandatory sidecar after its successful write, before source finalization."""
+        from kg_microbe.utils.producer_audits import record_producer_audit
+
+        record_producer_audit(self, name)
 
     @property
     def optional_consumed_inputs(self):

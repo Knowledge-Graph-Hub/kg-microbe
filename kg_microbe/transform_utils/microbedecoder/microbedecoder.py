@@ -117,6 +117,13 @@ from kg_microbe.transform_utils.constants import (
     VPI_KNOWLEDGE_SOURCE,
 )
 from kg_microbe.transform_utils.microbedecoder.chemical_curation import RecordChemicalCuration
+from kg_microbe.transform_utils.microbedecoder.crosswalk_quarantine import (
+    DEFAULT_CROSSWALK_QUARANTINE_POLICY,
+    QUARANTINE_REPORT_FIELDS,
+    QUARANTINE_REPORT_FILENAME,
+    CrosswalkQuarantine,
+    QuarantinePolicy,
+)
 from kg_microbe.transform_utils.microbedecoder.curation import DEFAULT_PROCESS_MAPPINGS, ProcessCuration
 from kg_microbe.transform_utils.microbedecoder.phenotype_curation import (
     ATTRIBUTE_TYPE_CURATION_SOURCE,
@@ -223,6 +230,9 @@ class MicrobeDecoderTransform(Transform):
         "mappings/canonical/microbedecoder_process_mappings.tsv",
         "mappings/canonical/microbedecoder_phenotype_mappings.tsv",
         "mappings/canonical/microbedecoder_process_scope_definitions.tsv",
+        "mappings/canonical/microbedecoder_crosswalk_quarantine.json",
+        "mappings/canonical/microbedecoder_crosswalk_quarantine.tsv",
+        "mappings/canonical/microbedecoder_crosswalk_quarantine_evidence.json.gz",
     )
     REQUIRED_CONSUMED_INPUTS = (
         "process_mappings",
@@ -231,7 +241,12 @@ class MicrobeDecoderTransform(Transform):
         "phenotype_mappings",
         "process_scope_definitions",
         "chemical_authority",
+        "crosswalk_policy",
+        "crosswalk_decisions",
+        "crosswalk_evidence",
+        "crosswalk_raw",
     )
+    REQUIRED_AUDIT_FILES = (QUARANTINE_REPORT_FILENAME,)
 
     def __init__(
         self,
@@ -241,6 +256,7 @@ class MicrobeDecoderTransform(Transform):
         process_mappings: Optional[Union[str, Path]] = None,
         phenotype_mappings: Optional[Union[str, Path]] = None,
         process_scopes: Optional[Union[str, Path]] = None,
+        crosswalk_quarantine_policy: Optional[Union[str, Path]] = None,
     ) -> None:
         """
         Instantiate.
@@ -271,6 +287,10 @@ class MicrobeDecoderTransform(Transform):
         process_scopes:
             Reviewed source-local process meanings, without an external ontology
             identity assertion. Exact field/literal rules are fingerprinted.
+        crosswalk_quarantine_policy:
+            Exact-snapshot reviewed crosswalk disposition policy. The default
+            is mandatory in production; tests may inject a separately pinned
+            fixture policy. No missing/changed policy silently disables review.
 
         """
         super().__init__(MICROBEDECODER, input_dir, output_dir)
@@ -313,6 +333,13 @@ class MicrobeDecoderTransform(Transform):
         self._process_scopes: Optional[ProcessScopeCuration] = None
         self._record_chemical_curation: Optional[RecordChemicalCuration] = None
         self._phenotype_report_writer = None
+        self.crosswalk_quarantine_policy = (
+            Path(crosswalk_quarantine_policy)
+            if crosswalk_quarantine_policy is not None
+            else DEFAULT_CROSSWALK_QUARANTINE_POLICY
+        )
+        self._crosswalk_quarantine: Optional[CrosswalkQuarantine] = None
+        self._quarantine_report_writer = None
         # Track dedup state so unmatched-label placeholders are emitted
         # once per run. Cross-ref targets (NCBITaxon/GTDB/bacdive/GOLD/IMG)
         # and successfully-resolved CHEBI CURIEs are never stubbed here —
@@ -328,6 +355,7 @@ class MicrobeDecoderTransform(Transform):
         self._stats: Dict[str, int] = {
             "rows_processed": 0,
             "crosswalk_edges": 0,
+            "crosswalk_quarantined": 0,
             "lpsn_repointed": 0,
             "metabolism_edges": 0,
             "bacdive_snapshot_edges": 0,
@@ -360,6 +388,8 @@ class MicrobeDecoderTransform(Transform):
         self._process_scopes = None
         self._record_chemical_curation = None
         self._phenotype_report_writer = None
+        self._crosswalk_quarantine = None
+        self._quarantine_report_writer = None
 
     # ------------------------------------------------------------------
     # Public entry point
@@ -405,6 +435,29 @@ class MicrobeDecoderTransform(Transform):
         self._reset_run_state()
         self.begin_consumed_inputs()
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        # Parse and emit from one read-only raw snapshot. This prevents a
+        # changed raw path from being stamped with an earlier source digest.
+        with self.consume_input("crosswalk_raw", csv_path) as raw_snapshot:
+            raw_snapshot.reconfigure(errors="surrogateescape")
+            with self.consume_input("crosswalk_policy", self.crosswalk_quarantine_policy) as policy_input:
+                policy = QuarantinePolicy.load(policy_input)
+            with (
+                self.consume_input(
+                    "crosswalk_decisions", self.crosswalk_quarantine_policy.parent / policy.decisions_file
+                ) as decisions,
+                self.consume_input(
+                    "crosswalk_evidence", self.crosswalk_quarantine_policy.parent / policy.evidence_file
+                ) as evidence,
+            ):
+                self._crosswalk_quarantine = CrosswalkQuarantine(policy, decisions, evidence)
+            source_fingerprint = self.consumed_input_snapshots["crosswalk_raw"]["sha256"]
+            self._crosswalk_quarantine.preflight(raw_snapshot, source_fingerprint, self._accepted_lpsn_records())
+            self._run_snapshot(raw_snapshot, source_fingerprint)
+            self.verify_consumed_inputs()
+        self._log_summary()
+
+    def _run_snapshot(self, raw_snapshot, source_fingerprint: str) -> None:
+        """Emit only after the complete selected source has passed crosswalk preflight."""
         # Resolve only reviewed column/literal pairs, and require their actual
         # ontology-owned declarations before writing any graph output (#650).
         # Consumption guards bind both inputs through finalization/admission.
@@ -433,12 +486,6 @@ class MicrobeDecoderTransform(Transform):
                 ):
                     raise ValueError(f"Conflicting process scope disposition for {scope.source_literal!r}")
             self._record_chemical_curation = RecordChemicalCuration(chemical_authority)
-        source_digest = hashlib.sha256()
-        with csv_path.open("rb") as source:
-            for block in iter(lambda: source.read(1024 * 1024), b""):
-                source_digest.update(block)
-        source_fingerprint = source_digest.hexdigest()
-
         # Lazy loader: constructor stays inert with respect to expensive
         # chemical-mapping resources. Matches the round-34 lpsn pattern
         # (get_ontology_adapter is deferred to run()).
@@ -455,6 +502,9 @@ class MicrobeDecoderTransform(Transform):
             atomic_write(
                 self.output_dir / _PHENOTYPE_REPORT_FILENAME, "w", newline="", encoding="utf-8"
             ) as phenotype_fh,
+            atomic_write(
+                self.output_dir / QUARANTINE_REPORT_FILENAME, "w", newline="", encoding="utf-8"
+            ) as quarantine_fh,
         ):
             # KGX reads TSV with QUOTE_NONE. Escape control characters in
             # literal values explicitly; CSV quotation is not a TSV escape.
@@ -469,16 +519,23 @@ class MicrobeDecoderTransform(Transform):
                 quotechar=None,
             )
             self._phenotype_report_writer.writeheader()
+            self._quarantine_report_writer = tsv_dict_writer(
+                quarantine_fh, fieldnames=QUARANTINE_REPORT_FIELDS, quoting=csv.QUOTE_NONE, quotechar=None
+            )
+            self._quarantine_report_writer.writeheader()
 
             # CSV strings retain operators, zeros and leading zeros. Record
             # ordinals count CSV records, not physical lines (quoted cells
             # can contain newlines). The digest anchors the original bytes,
             # including the upstream file's rare non-UTF8 label bytes.
-            with csv_path.open(newline="", encoding="utf-8", errors="surrogateescape") as source:
-                for ordinal, row in enumerate(csv.DictReader(source), start=1):
-                    self._source_record = f"sha256:{source_fingerprint}#record={ordinal}"
-                    self._process_row(row, node_writer, edge_writer)
+            raw_snapshot.seek(0)
+            for ordinal, row in enumerate(csv.DictReader(raw_snapshot), start=1):
+                self._source_record = f"sha256:{source_fingerprint}#record={ordinal}"
+                self._process_row(row, node_writer, edge_writer)
+            self._crosswalk_quarantine.require_complete()
         self._phenotype_report_writer = None
+        self._quarantine_report_writer = None
+        self.record_producer_audit(QUARANTINE_REPORT_FILENAME)
 
         # Sorted dedup: keeps the output stable across runs and lets the
         # merged KG collapse duplicates cheaply.
@@ -488,8 +545,6 @@ class MicrobeDecoderTransform(Transform):
         # descending. Matches the metatraits `unmapped_traits.tsv` pattern.
         self._write_unmapped_report()
         self._write_assembly_reference_report()
-        self.verify_consumed_inputs()
-        self._log_summary()
 
     @staticmethod
     def _deduplicate_literal_tsv(path: Path, sort_column: str) -> None:
@@ -762,6 +817,30 @@ class MicrobeDecoderTransform(Transform):
             for local_id in split_multivalue_comma_only(raw):
                 object_curie = crosswalk_curie(local_id, prefix, source_prefix)
                 original_object = object_curie
+                # Match the original column/token/target before GOLD folding
+                # or assembly resolution can redirect it or emit a stub.
+                decision = (
+                    self._crosswalk_quarantine.match(
+                        self._source_record, row, subject, column, local_id, original_object
+                    )
+                    if self._crosswalk_quarantine is not None
+                    else None
+                )
+                if decision is not None:
+                    if self._quarantine_report_writer is None:
+                        raise ValueError("Crosswalk quarantine audit writer is unavailable")
+                    claim = self._make_edge_row(
+                        subject, CLOSE_MATCH_PREDICATE, original_object, CLOSE_MATCH_RELATION, self.knowledge_source
+                    )
+                    original_claim = {
+                        key: value if value is not None else ""
+                        for key, value in zip(self.edge_header, claim, strict=True)
+                    }
+                    self._quarantine_report_writer.writerow(
+                        self._crosswalk_quarantine.audit_row(decision, row, original_claim)
+                    )
+                    self._stats["crosswalk_quarantined"] += 1
+                    continue
                 if object_curie.startswith(NCBI_ASSEMBLY_PREFIX):
                     object_curie = self._resolve_assembly_reference(object_curie, node_writer)
                 if prefix == GOLD_PREFIX:
@@ -1447,12 +1526,13 @@ class MicrobeDecoderTransform(Transform):
         s = self._stats
         logger.info(
             "[microbedecoder] rows=%d, crosswalk_edges=%d, metabolism_edges=%d, "
-            "bacdive_snapshot_edges=%d, unmatched_labels=%d",
+            "bacdive_snapshot_edges=%d, unmatched_labels=%d, crosswalk_quarantined=%d",
             s["rows_processed"],
             s["crosswalk_edges"],
             s["metabolism_edges"],
             s["bacdive_snapshot_edges"],
             s["unmatched_labels"],
+            s["crosswalk_quarantined"],
         )
         print(
             f"[microbedecoder] rows={s['rows_processed']}, "
@@ -1460,5 +1540,6 @@ class MicrobeDecoderTransform(Transform):
             f"metabolism_edges={s['metabolism_edges']}, "
             f"bacdive_snapshot_edges={s['bacdive_snapshot_edges']}, "
             f"reviewed_phenotype_reports={s['reviewed_phenotype_reports']}, "
+            f"crosswalk_quarantined={s['crosswalk_quarantined']}, "
             f"unmatched_labels={s['unmatched_labels']}"
         )

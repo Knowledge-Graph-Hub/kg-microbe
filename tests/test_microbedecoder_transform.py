@@ -20,6 +20,10 @@ from kg_microbe.transform_utils.constants import (
     VPI_KNOWLEDGE_SOURCE,
 )
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
+from tests.microbedecoder_quarantine_fixtures import (
+    bind_fixture_quarantine_policy,
+    write_fixture_quarantine_policy,
+)
 
 FIXTURE_DIR = Path(__file__).parent / "resources" / "microbedecoder"
 
@@ -70,6 +74,9 @@ def microbedecoder_transform(tmp_path):
         input_dir=FIXTURE_DIR,
         output_dir=tmp_path,
         chemical_loader=_NoChebi(),
+        crosswalk_quarantine_policy=write_fixture_quarantine_policy(
+            FIXTURE_DIR / "database.csv", tmp_path / "fixture-crosswalk-policy"
+        ),
     )
 
 
@@ -380,6 +387,7 @@ def test_crosswalk_uses_owner_namespaces(tmp_path, column, raw, expected):
         output_dir=tmp_path / "transformed",
         chemical_loader=_NoChebi(),
     )
+    bind_fixture_quarantine_policy(transform, input_dir / "database.csv")
     transform.run()
     edges = _read_tsv(transform.output_edge_file)
     assert len(edges) == 1
@@ -648,6 +656,7 @@ def test_unmapped_labels_report_is_empty_when_no_placeholders(tmp_path):
         output_dir=tmp_path,
         chemical_loader=_AlwaysResolves(),
     )
+    bind_fixture_quarantine_policy(xform, xform.input_base_dir / "database.csv")
     xform.run(data_file="database.csv")
     report = xform.output_dir / "unmapped_labels.tsv"
     assert report.exists()
@@ -676,6 +685,7 @@ def test_mixed_encoding_csv_is_read_with_replacement(tmp_path):
         output_dir=tmp_path,
         chemical_loader=_NoChebi(),
     )
+    bind_fixture_quarantine_policy(xform, xform.input_base_dir / "database_mixed_encoding.csv")
     xform.run(data_file="database_mixed_encoding.csv")
     edges = _read_tsv(xform.output_edge_file)
     subjects = {e["subject"] for e in edges}

@@ -16,6 +16,7 @@ import yaml
 
 from kg_microbe.transform_utils.constants import GOLD_ORGANISM_FOLD_FILE
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
+from tests.microbedecoder_quarantine_fixtures import bind_fixture_quarantine_policy
 from tests.test_chemical_mapping_utils import reset_cache as reset_cache
 
 FIXTURES = Path(__file__).parent / "resources/microbedecoder"
@@ -79,6 +80,7 @@ def _run(tmp_path, records=None, lookup=None):
     shutil.copyfile(FIXTURES / "metpo_nodes.tsv", tmp_path / "ontologies/metpo_nodes.tsv")
     shutil.copyfile(FIXTURES / "go_nodes.tsv", tmp_path / "ontologies/go_nodes.tsv")
     shutil.copyfile(FIXTURES / "chebi_record_nodes.tsv", tmp_path / "ontologies/chebi_nodes.tsv")
+    bind_fixture_quarantine_policy(transform, source)
     transform.run(data_file=source, show_status=False)
     return transform, _read(transform.output_node_file), _read(transform.output_edge_file), source
 
@@ -193,6 +195,7 @@ def test_changed_finite_evidence_aborts_without_replacing_existing_outputs(tmp_p
         writer.writeheader()
         writer.writerows(records)
     with pytest.raises(ValueError, match="Reviewed unresolved Bergey sugar evidence changed"):
+        bind_fixture_quarantine_policy(transform, source)
         transform.run(data_file=source, show_status=False)
     assert before == (transform.output_node_file.read_bytes(), transform.output_edge_file.read_bytes())
 

@@ -43,8 +43,7 @@ PRIOR_CLAIMS_SHA256 = "629198d090f7e45f7f17ce97a124eb9cad879b0bb066930b11ea8cf80
 POTATO_SCOPE_SHA256 = "b4755925efe8cde9871569b047e28c185ac56e2cba6295fca20fef2901062723"
 P3556_SCOPE_SHA256 = "7c06f4e2179356ddf1d917a6938cba5e3bdf6669f42a29019b93963e4a70646c"
 P3556_REVIEWED_LABEL = (
-    "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] "
-    "2-(trimethylammonio)ethyl phosphate"
+    "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] 2-(trimethylammonio)ethyl phosphate"
 )
 
 
@@ -201,9 +200,7 @@ class PromotedMappingPairTest(TestCase):
             P3556_REVIEWED_LABEL,
             {entry["val"] for entry in p3556_fixture["native_structure"][0]["node"]["meta"]["synonyms"]},
         )
-        expected_p3556 = Counter(
-            _row_key({**row, "object_label": P3556_REVIEWED_LABEL}) for row in p3556_structured
-        )
+        expected_p3556 = Counter(_row_key({**row, "object_label": P3556_REVIEWED_LABEL}) for row in p3556_structured)
         retained_p3556_originals = Counter()
         relabelled_p3556 = Counter()
         prior_rows = list(_iter_sssom_rows(PRIOR_CLAIMS))

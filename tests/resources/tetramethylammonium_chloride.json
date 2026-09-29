@@ -1,0 +1,31 @@
+{
+  "origin": {
+    "compounds_sha256": "ccc1130355354a55729d31618b152d1c340d75379dfea49352e9075f3419cea1",
+    "solutions_sha256": "9ab0fbf72c2e5ac25ecab3ada268dfe524db971daa86d67532dea6a5412a5c44",
+    "native_nodes_sha256": "c161f8aea7ffeb1a2557f24100b3b3b67bfd62196d484b33c675921154c8b152",
+    "source_edges_sha256": "05ecb2df49afa66607393fbc0d6f9e15980315ba7bd088d38793d5c329fbf787"
+  },
+  "native_projection": {
+    "id": "CHEBI:7070",
+    "name": "N,N,N-Trimethylmethanaminium chloride",
+    "synonym": "Tetramethylammonium chloride",
+    "category": "biolink:ChemicalEntity",
+    "xref": "cas:75-57-0|kegg.compound:C11335"
+  },
+  "occurrences": [
+    {
+      "solution_id": "1577",
+      "array_index": 3,
+      "previous_target": "mediadive.ingredient:720",
+      "expected_target": "CHEBI:7070",
+      "raw": {"recipe_order":4,"compound":"Tetramethyl ammonium chloride","compound_id":720,"amount":1,"unit":"g","g_l":1,"optional":0}
+    },
+    {
+      "solution_id": "3797",
+      "array_index": 0,
+      "previous_target": "kgmicrobe.compound:tetramethyl_ammonium",
+      "expected_target": "kgmicrobe.compound:tetramethyl_ammonium",
+      "raw": {"recipe_order":1,"compound":"Tetramethyl ammonium","compound_id":1649,"amount":1,"unit":"g","g_l":1,"optional":0}
+    }
+  ]
+}

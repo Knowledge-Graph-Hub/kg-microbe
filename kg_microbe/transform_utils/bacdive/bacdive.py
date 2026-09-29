@@ -25,6 +25,21 @@ from typing import Dict, List, Optional, Union
 import yaml
 from tqdm import tqdm
 
+from kg_microbe.transform_utils.bacdive.ec_substrate_corrections import (
+    AUDIT_FIELDS as EC_SUBSTRATE_AUDIT_FIELDS,
+)
+from kg_microbe.transform_utils.bacdive.ec_substrate_corrections import (
+    AUDIT_FILE as EC_SUBSTRATE_AUDIT_FILE,
+)
+from kg_microbe.transform_utils.bacdive.ec_substrate_corrections import (
+    POLICY_RELATIVE as EC_SUBSTRATE_POLICY,
+)
+from kg_microbe.transform_utils.bacdive.ec_substrate_corrections import (
+    REQUIRED_INPUTS as EC_SUBSTRATE_INPUTS,
+)
+from kg_microbe.transform_utils.bacdive.ec_substrate_corrections import (
+    prepare_corrections,
+)
 from kg_microbe.transform_utils.bacdive.emission import (
     DEPOSIT_CONFLICT_HEADER,
     RESOLUTION_COLLAPSED,
@@ -267,7 +282,10 @@ class BacDiveTransform(Transform):
     DATA_INPUTS = (
         "mappings/isolation_source_to_ontology.tsv",
         "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
+        EC_SUBSTRATE_POLICY,
     )
+    REQUIRED_CONSUMED_INPUTS = EC_SUBSTRATE_INPUTS
+    REQUIRED_AUDIT_FILES = (EC_SUBSTRATE_AUDIT_FILE,)
 
     def __init__(
         self,
@@ -2016,6 +2034,7 @@ class BacDiveTransform(Transform):
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
         """Run the transformation."""
+        self.begin_consumed_inputs()
         # Resolve the ontology adapter before any output file is opened. The
         # adapters are lazy, so without this the first lookup happens deep inside
         # the write loop — and a fatal ontology error there leaves the previous,
@@ -2023,6 +2042,9 @@ class BacDiveTransform(Transform):
         # before the truncation costs a run; failing after costs the outputs.
         resolve_adapter(self.ncbi_impl)
         self._prepare_assay_outputs()
+        ec_substrate_rows, ec_substrate_audit, ec_substrate_admission = prepare_corrections(
+            self, BACDIVE_TMP_DIR / BACDIVE_MAPPING_FILE
+        )
         # replace with downloaded data filename for this source
         input_file = os.path.join(self.input_base_dir, "bacdive_strains.json")  # must exist already
         # Read the JSON file into the variable input_json
@@ -2123,7 +2145,6 @@ class BacDiveTransform(Transform):
         with (
             open(str(BACDIVE_TMP_DIR / "bacdive.tsv"), "w") as tsvfile_1,
             open(str(BACDIVE_TMP_DIR / "bacdive_physiology_metabolism.tsv"), "w") as tsvfile_2,
-            open(str(BACDIVE_TMP_DIR / BACDIVE_MAPPING_FILE), "r") as tsvfile_3,
             open(str(BACDIVE_TMP_DIR / "bacdive_name_tax_classification.tsv"), "w") as tsvfile_4,
             # Atomic: a run that dies here used to leave a truncated pair on
             # disk with nothing marking it partial -- a SIGTERM during the
@@ -2133,6 +2154,7 @@ class BacDiveTransform(Transform):
             # before it. Same rule as lpsn (#820) and lpsn_api (#985).
             atomic_write(self.output_node_file, newline="") as node,
             atomic_write(self.output_edge_file, newline="") as edge,
+            atomic_write(Path(self.output_dir) / EC_SUBSTRATE_AUDIT_FILE, newline="") as ec_audit,
             # This source-local diagnostic is not covered by the ordinary graph
             # receipt: postbuild acceptance must hash/admit it explicitly (#1185).
             atomic_write(Path(self.output_dir) / CHEMICAL_IDENTITY_CONFLICTS_FILE) as chemical_conflicts,
@@ -2145,6 +2167,11 @@ class BacDiveTransform(Transform):
             writer_2.writerow(PHYS_AND_META_COL_NAMES)
             writer_3 = tsv_writer(tsvfile_4)
             writer_3.writerow(NAME_TAX_CLASSIFICATION_COL_NAMES)
+            ec_audit_writer = tsv_writer(ec_audit, quoting=csv.QUOTE_NONE, quotechar=None)
+            ec_audit_writer.writerow(EC_SUBSTRATE_AUDIT_FIELDS)
+            ec_audit_writer.writerows(
+                [entry[column] for column in EC_SUBSTRATE_AUDIT_FIELDS] for entry in ec_substrate_audit
+            )
 
             node_writer = tsv_writer(node)
             node_writer.writerow(self.node_header)
@@ -2192,18 +2219,14 @@ class BacDiveTransform(Transform):
                     node_writer.writerows(self.assay_target_nodes_generated)
 
             custom_curie_data = yaml.safe_load(cc_file)
-            bacdive_mappings_list_of_dicts = list(csv.DictReader(tsvfile_3, delimiter="\t"))
 
             # Generate EC→substrate edges from bacdive_mappings.tsv
             # These represent enzymatic reactions where an enzyme (EC number) acts on a substrate (ChEBI)
             # Note: EC and ChEBI nodes are normally created by the ontologies transform.
-            # Obsolete CHEBI IDs (e.g. CHEBI:54684 4-Nitrophenyl-alpha-D-galactoside) are
-            # missing from chebi_nodes.tsv, so we emit a labelled stub here using the
-            # `substrate` column from bacdive_mappings.tsv to prevent KGX from creating
-            # a biolink:NamedThing stub at merge time.
-            ec_substrate_edges, ec_substrate_stub_nodes = self._generate_ec_substrate_rows(
-                bacdive_mappings_list_of_dicts
-            )
+            # A missing native ID is not proof of obsolescence or a replacement.
+            # Exact reviewed row corrections run before graph output (#1249);
+            # other legacy claims retain their original endpoint and label.
+            ec_substrate_edges, ec_substrate_stub_nodes = self._generate_ec_substrate_rows(ec_substrate_rows)
 
             # Write EC→substrate edges
             if ec_substrate_edges:
@@ -3717,6 +3740,11 @@ class BacDiveTransform(Transform):
                     with open(METABOLITE_MAPPING_FILE, "w") as f:
                         json.dump(METABOLITE_MAP, f, indent=4)
 
+            ec_substrate_admission.verify()
+            self.verify_consumed_inputs()
+
+        self.record_producer_audit(EC_SUBSTRATE_AUDIT_FILE)
+
         # Write non-matching media links to a file
         media_links_file = os.path.join(self.output_dir, "bacdive_media_links.txt")
         with atomic_write(media_links_file) as f:
@@ -3761,6 +3789,8 @@ class BacDiveTransform(Transform):
             dedup_on_sort_column=True,
         )
         drop_duplicates(self.output_edge_file)
+        ec_substrate_admission.verify()
+        self.verify_consumed_inputs()
 
         logger.info(
             "[bacdive] LPSN cross-refs: %s matched, %s unmatched, %s ambiguous",

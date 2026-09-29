@@ -1,0 +1,15 @@
+{
+  "raw": {"amount": 0.1, "attribute": "250 mM each of xylose, maltose and cellobiose", "compound": "Sugar", "compound_id": 1795, "optional": 0, "recipe_order": 16, "unit": "ml"},
+  "source_assertion_id": "mediadive.solution:4338#recipe/16",
+  "source_solutions_sha256": "9ab0fbf72c2e5ac25ecab3ada268dfe524db971daa86d67532dea6a5412a5c44",
+  "source_compounds_sha256": "ccc1130355354a55729d31618b152d1c340d75379dfea49352e9075f3419cea1",
+  "saved_mapping_evidence_sha256": "801e802d8cecead0af2b11486a35d79ecc9dcf02786329887e739b7d8ad25617",
+  "primary_recipe_uri": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=537",
+  "native_definition_fixture": "tests/resources/ncit_category_projection/native.json",
+  "native_definition_fixture_sha256": "92e77fc97f4b0e5c1253251ed0868d62b6b163f1232dbba816e06388cefd54f4",
+  "mapping_claims": [
+    {"table": "unified", "original_record": 590651, "original_line_end": 590729, "row": {"subject_id": "MIM:Sugar", "subject_label": "", "predicate_id": "skos:exactMatch", "object_id": "NCIT:C71939", "object_label": "Sugar", "object_source": "obo:ncit.owl", "mapping_justification": "semapv:ManualMappingCuration", "source": "mediaingredientmech_reviewed[manifest=9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af]", "mapping_date": "2026-09-24", "confidence": "", "comment": "", "object_formula": "", "object_category": "biolink:Food"}},
+    {"table": "unified", "original_record": 590652, "original_line_end": 590730, "row": {"subject_id": "kgm.name:sugar", "subject_label": "Sugar", "predicate_id": "skos:exactMatch", "object_id": "NCIT:C71939", "object_label": "Sugar", "object_source": "obo:ncit.owl", "mapping_justification": "semapv:LexicalMatching", "source": "mediaingredientmech_reviewed[manifest=9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af]|native_ontology:ncit", "mapping_date": "2026-09-24", "confidence": "", "comment": "canonical_name", "object_formula": "", "object_category": "biolink:Food"}},
+    {"table": "supported", "original_record": 1559, "original_line_end": 1596, "row": {"subject_id": "MIM:Sugar", "subject_label": "Sugar", "predicate_id": "skos:exactMatch", "object_id": "NCIT:C71939", "object_label": "Sugar", "object_source": "obo:ncit.owl", "mapping_justification": "semapv:LexicalMatching", "source": "MIM:mim-queue|MIM:curator=refresh_occurrence_statistics", "mapping_date": "2026-08-27", "confidence": "0.99", "comment": "", "other": "", "validation_method": "none|UNKNOWN_TERM|2026-07-07"}}
+  ]
+}

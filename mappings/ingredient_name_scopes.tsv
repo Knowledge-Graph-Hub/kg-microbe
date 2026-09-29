@@ -8,6 +8,7 @@ name	Rifamycin SV	CHEBI:29673	Explicit SV retains the specific chemical identity
 name	Xanthine	CHEBI:15318	Bare name has generic scope; an explicit MIM subject, 9H label or reviewed CAS selects CHEBI:17712.
 name	9H-xanthine	CHEBI:17712	Explicit 9H representation; preserve its native subclass relationship to CHEBI:15318.
 name	Sorbitan Monooleate	kgmicrobe.ingredient:sorbitan_monooleate	Unspecified recipe material; exact molecular identity and CAS remain withheld pending product evidence.
+name	Tetramethyl ammonium chloride	CHEBI:7070	Finite reviewed chloride-salt spelling; native ChEBI and MediaDive CAS 75-57-0 agree. Unqualified parent and other counterions remain separate. See reviews/tetramethylammonium-chloride-20260929.md (#1242).
 cas	cas:1404-26-8	NCIT:C61894	Verified NCIT P210 annotation for the B1/B2 mixture; no equivalence to B1 or sulfate.
 cas	cas:4135-11-9	CHEBI:8309	Verified ChEBI CAS annotation for B1 only.
 cas	cas:6998-60-3	CHEBI:29673	Verified ChEBI CAS annotation for SV only; the rifamycin family has no single CAS.

@@ -12,6 +12,7 @@ from click.testing import CliRunner
 from kg_microbe.merge_utils import merge_kg
 from kg_microbe.run import main
 from kg_microbe.transform import DATA_SOURCES
+from kg_microbe.transform_utils.bacdive import ec_substrate_corrections
 from kg_microbe.transform_utils.constants import DATA_KEY
 from kg_microbe.transform_utils.mediadive.material_scope_audit import AUDIT_FILENAME, AUDIT_HEADER, MaterialScopeAudit
 from kg_microbe.transform_utils.transform import Transform
@@ -58,6 +59,25 @@ def write_empty_mediadive_audit(transform):
     transform._material_scope_audit.write()
 
 
+def prepare_bacdive_ec_correction_inputs(transform):
+    """Bind a zero-cohort fixture through real policy/read/audit contracts, without claiming a producer run."""
+    legacy = transform.input_base_dir / "bacdive_ec_substrates.tsv"
+    original = FIXTURES / "bacdive_ec_substrates.tsv"
+    if not legacy.exists():
+        shutil.copyfile(original, legacy)
+    assert legacy.read_bytes() == original.read_bytes()
+    transform.knowledge_source = "infores:bacdive"
+    rows, audit, admission = ec_substrate_corrections.prepare_corrections(transform, legacy)
+    assert rows == [] and audit == [], "Nonempty correction cohorts require the actual producer's graph/audit emission"
+    header = (FIXTURES / "ec_substrate_corrections.tsv").read_bytes()
+    assert header == ("\t".join(ec_substrate_corrections.AUDIT_FIELDS) + "\n").encode()
+    (transform.output_dir / ec_substrate_corrections.AUDIT_FILE).write_bytes(header)
+    transform.record_producer_audit(ec_substrate_corrections.AUDIT_FILE)
+    admission.verify()
+    transform.verify_consumed_inputs()
+    return ec_substrate_corrections.REQUIRED_INPUTS
+
+
 def record_source(transform):
     """Write the actual registered producer's metadata over the isolated fixture graph."""
     cls = type(transform)
@@ -82,8 +102,9 @@ def prepare_source(tmp_path, source, *, prefix="", marker=True, output_name=None
     for kind in ("nodes", "edges"):
         shutil.copyfile(FIXTURES / f"{kind}.tsv", transform.output_dir / f"{prefix}{kind}.tsv")
     bulk_roles = read_mediadive_bulk_inputs(transform, create=True) if source == "mediadive" else ()
+    correction_roles = prepare_bacdive_ec_correction_inputs(transform) if source == "bacdive" else ()
     for role in getattr(cls, "REQUIRED_CONSUMED_INPUTS", ()):
-        if role in bulk_roles:
+        if role in (*bulk_roles, *correction_roles):
             continue
         assert role == "bacdive_taxon_lookup", f"Fixture needs an explicit immutable input for {role}"
         lookup = tmp_path / f"{source}-bacdive-lookup.tsv"
@@ -100,6 +121,37 @@ def prepare_source(tmp_path, source, *, prefix="", marker=True, output_name=None
     if marker:
         record_source(transform)
     return transform
+
+
+def test_empty_bacdive_fixture_has_real_correction_input_and_audit_contract(tmp_path):
+    """An inert graph fixture still exercises actual policy preflight and immutable audit registration."""
+    transform = prepare_source(tmp_path, "bacdive", marker=False)
+    filename = ec_substrate_corrections.AUDIT_FILE
+    path = transform.output_dir / filename
+    assert path.read_bytes() == (FIXTURES / filename).read_bytes()
+    identity = transform.producer_audit_snapshots[filename]
+    report = json.loads((transform.output_dir / "source_finalization.json").read_text())
+    assert set(report["consumed_inputs"]) == set(ec_substrate_corrections.REQUIRED_INPUTS)
+    assert report["producer_audit_members"][filename] == identity
+    assert report["audit_members"][filename] == identity
+    verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+
+
+@pytest.mark.parametrize("damage", ["missing", "unrecorded", "changed"])
+def test_empty_bacdive_fixture_cannot_omit_or_restamp_correction_audit(tmp_path, damage):
+    """The merge fixture cannot bypass the same mandatory evidence checks as the actual producer."""
+    transform = prepare_source(tmp_path, "bacdive", marker=False)
+    path = transform.output_dir / ec_substrate_corrections.AUDIT_FILE
+    if damage == "missing":
+        path.unlink()
+    elif damage == "changed":
+        path.write_bytes(path.read_bytes() + b"changed\n")
+    else:
+        transform._producer_audit_snapshots.clear()
+    before = {path.name: path.read_bytes() for path in transform.output_dir.iterdir()}
+    with pytest.raises(SourceFinalizationRequired, match="audit"):
+        transform.finalize(fresh_run=True)
+    assert {path.name: path.read_bytes() for path in transform.output_dir.iterdir()} == before
 
 
 def test_empty_mediadive_fixture_has_real_producer_audit(tmp_path):

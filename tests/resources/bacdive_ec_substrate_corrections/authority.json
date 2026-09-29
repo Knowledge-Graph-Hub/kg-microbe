@@ -1,0 +1,577 @@
+{
+  "review_date": "2026-09-29",
+  "native_raw_sha256": "a5d40380ab78bde0e8b5a704dbee3cba2bcaa7608be46eebc2f4a92932516c9b",
+  "native_tsv_sha256": "c161f8aea7ffeb1a2557f24100b3b3b67bfd62196d484b33c675921154c8b152",
+  "legacy_mapping_sha256": "f39e9753fe2879877b2cba51c9896f44515f3a5785e790deb0d0bd5ca02c9379",
+  "complete_native_scan": {
+    "nodes": 218301,
+    "edges": 417074
+  },
+  "raw_selected_nodes_or_exact_identifier_references": [
+    {
+      "ordinal": 160861,
+      "node": {
+        "id": "http://purl.obolibrary.org/obo/CHEBI_546840",
+        "lbl": "4-nitrophenyl alpha-D-galactoside",
+        "type": "CLASS",
+        "meta": {
+          "definition": {
+            "val": "An α-<small>D</small>-galactopyranoside having a 4-nitrophenyl substituent at the anomeric position."
+          },
+          "subsets": [
+            "http://purl.obolibrary.org/obo/chebi/3_STAR"
+          ],
+          "synonyms": [
+            {
+              "synonymType": "http://purl.obolibrary.org/obo/chebi/IUPAC_NAME",
+              "pred": "hasExactSynonym",
+              "val": "4-nitrophenyl-alpha-D-galactopyranoside",
+              "xrefs": [
+                "IUPAC"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "1-O-(4-nitrophenyl)-alpha-D-galactopyranose",
+              "xrefs": [
+                "chebi"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "1-O-(4-nitrophenyl)-alpha-D-galactose",
+              "xrefs": [
+                "chebi"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "1-O-(p-nitrophenyl)-alpha-D-galactopyranose",
+              "xrefs": [
+                "chebi"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "1-O-(p-nitrophenyl)-alpha-D-galactose",
+              "xrefs": [
+                "chebi"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "4-nitrophenyl-alpha-D-galactopyranoside",
+              "xrefs": [
+                "chebi"
+              ]
+            },
+            {
+              "synonymType": "http://purl.obolibrary.org/obo/chebi/IUPAC_NAME",
+              "pred": "hasRelatedSynonym",
+              "val": "4-nitrophenyl-alpha-D-galactopyranoside",
+              "xrefs": [
+                "iupac"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "4-nitrophenyl-alpha-D-galactoside",
+              "xrefs": [
+                "chebi"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "p-Nitrophenyl alpha-D-galactopyranoside",
+              "xrefs": [
+                "chemidplus"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "p-nitrophenyl alpha-D-galactoside",
+              "xrefs": [
+                "chebi"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "p-nitrophenyl-alpha-D-galactopyranoside",
+              "xrefs": [
+                "chebi"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "p-nitrophenyl-alpha-D-galactoside",
+              "xrefs": [
+                "chebi"
+              ]
+            }
+          ],
+          "xrefs": [
+            {
+              "val": "cas:7493-95-0"
+            },
+            {
+              "val": "pubmed:19913595"
+            },
+            {
+              "val": "reaxys:92214"
+            }
+          ],
+          "basicPropertyValues": [
+            {
+              "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+              "val": "chebi_ontology"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/charge",
+              "val": "0"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/generalized_empirical_formula",
+              "val": "C12H15NO8"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/inchi_key_string",
+              "val": "IFBHRQDFSNCLOZ-IIRVCBMXSA-N"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/inchi_string",
+              "val": "InChI=1S/C12H15NO8/c14-5-8-9(15)10(16)11(17)12(21-8)20-7-3-1-6(2-4-7)13(18)19/h1-4,8-12,14-17H,5H2/t8-,9+,10+,11-,12+/m1/s1"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/mass",
+              "val": "301.251"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/monoisotopic_mass",
+              "val": "301.07977"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/smiles_string",
+              "val": "O=[N+]([O-])c1ccc(O[C@H]2O[C@H](CO)[C@H](O)[C@H](O)[C@H]2O)cc1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "ordinal": 208951,
+      "node": {
+        "id": "http://purl.obolibrary.org/obo/CHEBI_91122",
+        "lbl": "4-nitrophenyl alpha-D-glucoside",
+        "type": "CLASS",
+        "meta": {
+          "definition": {
+            "val": "An α-<small>D</small>-glucoside that is β-<small>D</small>-glucopyranose in which the anomeric hydroxy hydrogen is replaced by a 4-nitrophenyl group."
+          },
+          "subsets": [
+            "http://purl.obolibrary.org/obo/chebi/3_STAR"
+          ],
+          "synonyms": [
+            {
+              "synonymType": "http://purl.obolibrary.org/obo/chebi/IUPAC_NAME",
+              "pred": "hasExactSynonym",
+              "val": "4-nitrophenyl alpha-D-glucopyranoside",
+              "xrefs": [
+                "IUPAC"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "4-Nitrophenyl alpha-glucoside",
+              "xrefs": [
+                "chemidplus"
+              ]
+            },
+            {
+              "synonymType": "http://purl.obolibrary.org/obo/chebi/IUPAC_NAME",
+              "pred": "hasRelatedSynonym",
+              "val": "4-nitrophenyl alpha-D-glucopyranoside",
+              "xrefs": [
+                "iupac"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "p-nitrophenyl alpha-D-glucoside",
+              "xrefs": [
+                "chebi"
+              ]
+            }
+          ],
+          "xrefs": [
+            {
+              "val": "cas:3767-28-0"
+            },
+            {
+              "val": "pubmed:16495668"
+            },
+            {
+              "val": "reaxys:92212"
+            }
+          ],
+          "basicPropertyValues": [
+            {
+              "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+              "val": "chebi_ontology"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/charge",
+              "val": "0"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/generalized_empirical_formula",
+              "val": "C12H15NO8"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/inchi_key_string",
+              "val": "IFBHRQDFSNCLOZ-ZIQFBCGOSA-N"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/inchi_string",
+              "val": "InChI=1S/C12H15NO8/c14-5-8-9(15)10(16)11(17)12(21-8)20-7-3-1-6(2-4-7)13(18)19/h1-4,8-12,14-17H,5H2/t8-,9-,10+,11-,12+/m1/s1"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/mass",
+              "val": "301.251"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/monoisotopic_mass",
+              "val": "301.07977"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/smiles_string",
+              "val": "O=[N+]([O-])c1ccc(O[C@H]2O[C@H](CO)[C@@H](O)[C@H](O)[C@H]2O)cc1"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "raw_incident_edges": [
+    {
+      "ordinal": 274660,
+      "edge": {
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_546840",
+        "pred": "is_a",
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_46953"
+      }
+    },
+    {
+      "ordinal": 274661,
+      "edge": {
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_546840",
+        "pred": "is_a",
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_63367"
+      }
+    },
+    {
+      "ordinal": 401927,
+      "edge": {
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_91122",
+        "pred": "is_a",
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_22390"
+      }
+    },
+    {
+      "ordinal": 401928,
+      "edge": {
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_91122",
+        "pred": "is_a",
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_35716"
+      }
+    },
+    {
+      "ordinal": 401929,
+      "edge": {
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_91122",
+        "pred": "is_a",
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_63367"
+      }
+    },
+    {
+      "ordinal": 401930,
+      "edge": {
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_91122",
+        "pred": "http://purl.obolibrary.org/obo/RO_0000087",
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_75050"
+      }
+    },
+    {
+      "ordinal": 401931,
+      "edge": {
+        "sub": "http://purl.obolibrary.org/obo/CHEBI_91122",
+        "pred": "http://purl.obolibrary.org/obo/RO_0018038",
+        "obj": "http://purl.obolibrary.org/obo/CHEBI_16836"
+      }
+    }
+  ],
+  "native_chebi_rows": {
+    "header": [
+      "id",
+      "category",
+      "name",
+      "description",
+      "xref",
+      "provided_by",
+      "synonym",
+      "deprecated",
+      "same_as"
+    ],
+    "selected_rows": [
+      {
+        "line_number": 160862,
+        "original_line": "CHEBI:546840\tbiolink:ChemicalEntity\t4-nitrophenyl alpha-D-galactoside\tAn α-<small>D</small>-galactopyranoside having a 4-nitrophenyl substituent at the anomeric position.\tcas:7493-95-0|pubmed:19913595|reaxys:92214\tchebi.json\t1-O-(4-nitrophenyl)-alpha-D-galactopyranose|1-O-(4-nitrophenyl)-alpha-D-galactose|1-O-(p-nitrophenyl)-alpha-D-galactopyranose|1-O-(p-nitrophenyl)-alpha-D-galactose|4-nitrophenyl-alpha-D-galactopyranoside|4-nitrophenyl-alpha-D-galactoside|p-Nitrophenyl alpha-D-galactopyranoside|p-nitrophenyl alpha-D-galactoside|p-nitrophenyl-alpha-D-galactopyranoside|p-nitrophenyl-alpha-D-galactoside\t\t\n",
+        "row": {
+          "id": "CHEBI:546840",
+          "category": "biolink:ChemicalEntity",
+          "name": "4-nitrophenyl alpha-D-galactoside",
+          "description": "An α-<small>D</small>-galactopyranoside having a 4-nitrophenyl substituent at the anomeric position.",
+          "xref": "cas:7493-95-0|pubmed:19913595|reaxys:92214",
+          "provided_by": "chebi.json",
+          "synonym": "1-O-(4-nitrophenyl)-alpha-D-galactopyranose|1-O-(4-nitrophenyl)-alpha-D-galactose|1-O-(p-nitrophenyl)-alpha-D-galactopyranose|1-O-(p-nitrophenyl)-alpha-D-galactose|4-nitrophenyl-alpha-D-galactopyranoside|4-nitrophenyl-alpha-D-galactoside|p-Nitrophenyl alpha-D-galactopyranoside|p-nitrophenyl alpha-D-galactoside|p-nitrophenyl-alpha-D-galactopyranoside|p-nitrophenyl-alpha-D-galactoside",
+          "deprecated": "",
+          "same_as": ""
+        }
+      },
+      {
+        "line_number": 208952,
+        "original_line": "CHEBI:91122\tbiolink:ChemicalEntity\t4-nitrophenyl alpha-D-glucoside\tAn α-<small>D</small>-glucoside that is β-<small>D</small>-glucopyranose in which the anomeric hydroxy hydrogen is replaced by a 4-nitrophenyl group.\tcas:3767-28-0|pubmed:16495668|reaxys:92212\tchebi.json\t4-Nitrophenyl alpha-glucoside|4-nitrophenyl alpha-D-glucopyranoside|p-nitrophenyl alpha-D-glucoside\t\t\n",
+        "row": {
+          "id": "CHEBI:91122",
+          "category": "biolink:ChemicalEntity",
+          "name": "4-nitrophenyl alpha-D-glucoside",
+          "description": "An α-<small>D</small>-glucoside that is β-<small>D</small>-glucopyranose in which the anomeric hydroxy hydrogen is replaced by a 4-nitrophenyl group.",
+          "xref": "cas:3767-28-0|pubmed:16495668|reaxys:92212",
+          "provided_by": "chebi.json",
+          "synonym": "4-Nitrophenyl alpha-glucoside|4-nitrophenyl alpha-D-glucopyranoside|p-nitrophenyl alpha-D-glucoside",
+          "deprecated": "",
+          "same_as": ""
+        }
+      }
+    ]
+  },
+  "native_ec_rows": {
+    "header": [
+      "id",
+      "category",
+      "name",
+      "description",
+      "xref",
+      "provided_by",
+      "synonym",
+      "deprecated",
+      "same_as"
+    ],
+    "selected_rows": [
+      {
+        "line_number": 9376,
+        "original_line": "EC:3.2.1.20\tbiolink:MolecularActivity|biolink:Protein\talpha-glucosidase\t\t\tec.json\tacid maltase|glucoinvertase|glucosidosucrase|lysosomal alpha-glucosidase|maltase|maltase-glucoamylase\t\t\n",
+        "row": {
+          "id": "EC:3.2.1.20",
+          "category": "biolink:MolecularActivity|biolink:Protein",
+          "name": "alpha-glucosidase",
+          "description": "",
+          "xref": "",
+          "provided_by": "ec.json",
+          "synonym": "acid maltase|glucoinvertase|glucosidosucrase|lysosomal alpha-glucosidase|maltase|maltase-glucoamylase",
+          "deprecated": "",
+          "same_as": ""
+        }
+      }
+    ]
+  },
+  "legacy_rows": {
+    "header": [
+      "CHEBI_ID",
+      "substrate",
+      "KEGG_ID",
+      "CAS_RN_ID",
+      "EC_ID",
+      "enzyme",
+      "pseudo_CURIE",
+      "reaction_name"
+    ],
+    "selected_rows": [
+      {
+        "line_number": 28,
+        "original_line": "CHEBI:54684\t4-Nitrophenyl-alpha-D-galactoside\t\tCAS-RN:7493-95-0\tEC:3.2.1.22\talpha-galactosidase\tkgmicrobe.assay:API_rID32A_alpha GAL\talpha-Galactosidase\n",
+        "row": {
+          "CHEBI_ID": "CHEBI:54684",
+          "substrate": "4-Nitrophenyl-alpha-D-galactoside",
+          "KEGG_ID": "",
+          "CAS_RN_ID": "CAS-RN:7493-95-0",
+          "EC_ID": "EC:3.2.1.22",
+          "enzyme": "alpha-galactosidase",
+          "pseudo_CURIE": "kgmicrobe.assay:API_rID32A_alpha GAL",
+          "reaction_name": "alpha-Galactosidase"
+        }
+      },
+      {
+        "line_number": 119,
+        "original_line": "CHEBI:54684\t4-Nitrophenyl alpha-D-glucopyranoside \t\tCAS-RN:3767-28-0\tEC:3.2.1.20\talpha-glucosidase\tkgmicrobe.assay:API_ID32E_alpha GLU\talpha-Glucosidase\n",
+        "row": {
+          "CHEBI_ID": "CHEBI:54684",
+          "substrate": "4-Nitrophenyl alpha-D-glucopyranoside ",
+          "KEGG_ID": "",
+          "CAS_RN_ID": "CAS-RN:3767-28-0",
+          "EC_ID": "EC:3.2.1.20",
+          "enzyme": "alpha-glucosidase",
+          "pseudo_CURIE": "kgmicrobe.assay:API_ID32E_alpha GLU",
+          "reaction_name": "alpha-Glucosidase"
+        }
+      },
+      {
+        "line_number": 120,
+        "original_line": "CHEBI:54684\t4-Nitrophenyl-alpha-D-galactoside\tKEGG:C01083\tCAS-RN:7493-95-0\tEC:3.2.1.22\talpha-galactosidase\tkgmicrobe.assay:API_ID32E_alpha GAL\talpha-Galactosidase\n",
+        "row": {
+          "CHEBI_ID": "CHEBI:54684",
+          "substrate": "4-Nitrophenyl-alpha-D-galactoside",
+          "KEGG_ID": "KEGG:C01083",
+          "CAS_RN_ID": "CAS-RN:7493-95-0",
+          "EC_ID": "EC:3.2.1.22",
+          "enzyme": "alpha-galactosidase",
+          "pseudo_CURIE": "kgmicrobe.assay:API_ID32E_alpha GAL",
+          "reaction_name": "alpha-Galactosidase"
+        }
+      },
+      {
+        "line_number": 271,
+        "original_line": "CHEBI:54684\t4-Nitrophenyl-alpha-D-galactoside\t\tCAS-RN:7493-95-0\tEC:3.2.1.22\talpha-galactosidase\tkgmicrobe.assay:API_rID32STR_alpha GAL\talpha-Galactosidase\n",
+        "row": {
+          "CHEBI_ID": "CHEBI:54684",
+          "substrate": "4-Nitrophenyl-alpha-D-galactoside",
+          "KEGG_ID": "",
+          "CAS_RN_ID": "CAS-RN:7493-95-0",
+          "EC_ID": "EC:3.2.1.22",
+          "enzyme": "alpha-galactosidase",
+          "pseudo_CURIE": "kgmicrobe.assay:API_rID32STR_alpha GAL",
+          "reaction_name": "alpha-Galactosidase"
+        }
+      }
+    ]
+  },
+  "native_assay_wells": [
+    {
+      "kit_index": 8,
+      "well_index": 23,
+      "kit_name": "API ID32E",
+      "well": {
+        "name": "alpha GLU",
+        "label": [
+          "α-glucosidase"
+        ],
+        "type": [
+          "enzyme"
+        ],
+        "description": [
+          "Tests for α-glucosidase activity"
+        ],
+        "chebi_id": [],
+        "chebi_name": [],
+        "pubchem_cid": [],
+        "pubchem_name": [],
+        "inchi": [],
+        "smiles": [],
+        "enzyme_name": [
+          "α-glucosidase"
+        ],
+        "ec_number": [
+          "3.2.1.20"
+        ],
+        "ec_name": [],
+        "go_terms": [],
+        "go_names": [],
+        "kegg_ko": [],
+        "kegg_reaction": [],
+        "rhea_ids": [],
+        "metacyc_reaction": [],
+        "metacyc_pathway": []
+      }
+    },
+    {
+      "kit_index": 8,
+      "well_index": 30,
+      "kit_name": "API ID32E",
+      "well": {
+        "name": "alphaMAL",
+        "label": [
+          "α-maltosidase"
+        ],
+        "type": [
+          "enzyme"
+        ],
+        "description": [
+          "Tests for α-maltosidase activity"
+        ],
+        "chebi_id": [],
+        "chebi_name": [],
+        "pubchem_cid": [],
+        "pubchem_name": [],
+        "inchi": [],
+        "smiles": [],
+        "enzyme_name": [
+          "α-maltosidase"
+        ],
+        "ec_number": [
+          "3.2.1.20"
+        ],
+        "ec_name": [],
+        "go_terms": [],
+        "go_names": [],
+        "kegg_ko": [],
+        "kegg_reaction": [],
+        "rhea_ids": [],
+        "metacyc_reaction": [],
+        "metacyc_pathway": []
+      }
+    }
+  ],
+  "primary_structure_witnesses": [
+    {
+      "url": "https://www.sigmaaldrich.com/US/en/product/mm/487506",
+      "product": "487506",
+      "cas": "3767-28-0",
+      "name": "p-Nitrophenyl-alpha-D-glucopyranoside",
+      "inchi": "InChI=1S/C12H15NO8/c14-5-8-9(15)10(16)11(17)12(21-8)20-7-3-1-6(2-4-7)13(18)19/h1-4,8-12,14-17H,5H2/t8-,9-,10+,11-,12+/m1/s1",
+      "inchi_key": "IFBHRQDFSNCLOZ-ZIQFBCGOSA-N",
+      "application_summary": "Manufacturer identifies use as alpha-glucosidase substrate."
+    },
+    {
+      "url": "https://www.sigmaaldrich.com/US/en/product/sigma/n0877",
+      "product": "N0877",
+      "cas": "7493-95-0",
+      "name": "4-Nitrophenyl-alpha-D-galactopyranoside",
+      "inchi": "InChI=1S/C12H15NO8/c14-5-8-9(15)10(16)11(17)12(21-8)20-7-3-1-6(2-4-7)13(18)19/h1-4,8-12,14-17H,5H2/t8-,9+,10+,11-,12+/m1/s1",
+      "inchi_key": "IFBHRQDFSNCLOZ-IIRVCBMXSA-N",
+      "application_summary": "Formal product/application sections identify alpha-galactosidase use; marketing subtitle conflicts by calling it alpha-glucosidase substrate."
+    }
+  ],
+  "authority_caveats": [
+    "CHEBI:54684 absent from the selected complete native node/edge scan; historical obsolescence or official replacement is not established.",
+    "CHEBI:91122 prose definition mentions beta-D-glucopyranose, while exact IUPAC synonym, parent, stereostructure and independent supplier identify alpha glucoside.",
+    "Supplier products are independent molecular evidence, not proof of the physical API kit batch.",
+    "Source physical line120 KEGG:C01083 is contradicted by the primary KEGG trehalose record and is withheld from corrected in-memory data."
+  ],
+  "primary_ec_witnesses": [
+    {
+      "id": "EC:3.2.1.20",
+      "name": "alpha-glucosidase",
+      "url": "https://iubmb.qmul.ac.uk/enzyme/EC3/2/1/20.html"
+    },
+    {
+      "id": "EC:3.2.1.22",
+      "name": "alpha-galactosidase",
+      "url": "https://iubmb.qmul.ac.uk/enzyme/EC3/2/1/22.html"
+    }
+  ],
+  "withheld_kegg_witness": {
+    "id": "KEGG:C01083",
+    "name": "alpha,alpha-Trehalose",
+    "formula": "C12H22O11",
+    "url": "https://www.kegg.jp/entry/C01083"
+  }
+}

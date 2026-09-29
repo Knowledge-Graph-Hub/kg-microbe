@@ -135,6 +135,11 @@ from kg_microbe.transform_utils.mediadive.bulk_inputs import (
     verify_bulk_inputs,
     verify_recorded_bulk_inputs,
 )
+from kg_microbe.transform_utils.mediadive.material_scope_audit import (
+    AUDIT_FILENAME,
+    MaterialScopeAudit,
+    verify_recorded_material_inputs,
+)
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
@@ -158,6 +163,7 @@ class MediaDiveTransform(Transform):
     #: via constants.py (#1035), plus BacDive's intermediate strain-taxid TSV (#1091).
     TRANSFORM_INPUTS = ("ontologies", BACDIVE)
     DEFAULT_INPUT_DIR = RAW_DATA_DIR
+    REQUIRED_AUDIT_FILES = (AUDIT_FILENAME,)
     REQUIRED_CONSUMED_INPUTS = ("bacdive_taxon_lookup", *REQUIRED_BULK_INPUTS)
 
     DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
@@ -242,11 +248,16 @@ class MediaDiveTransform(Transform):
     def verify_native_inputs(self, *, byte_verified=False, output_dir=None):
         """Keep the constructor and selected list bound through finalization."""
         verify_bulk_inputs(self, byte_verified=byte_verified, output_dir=output_dir)
+        material_audit = getattr(self, "_material_scope_audit", None)
+        if material_audit is not None:
+            material_audit.guard.verify(metadata_only=byte_verified)
 
     @classmethod
     def verify_recorded_native_inputs(cls, report, report_path, *, admission=None):
         """Admit the original raw JSON identities with the public source validator."""
-        return verify_recorded_bulk_inputs(report, report_path, admission=admission)
+        guard = verify_recorded_bulk_inputs(report, report_path, admission=admission)
+        verify_recorded_material_inputs(report, report_path)
+        return guard
 
     def _create_node_row(
         self,
@@ -796,6 +807,9 @@ class MediaDiveTransform(Transform):
                     ),
                 }
             )
+            material_audit = getattr(self, "_material_scope_audit", None)
+            if material_audit is not None:
+                material_audit.observe(occurrences[-1], item)
         return occurrences
 
     def _ingredient_identity_allowed(self, name: str, target: str) -> bool:
@@ -1083,6 +1097,7 @@ class MediaDiveTransform(Transform):
             bacdive_df = pd.read_csv(bacdive_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN])
         self.verify_consumed_inputs()
         self._preflight_bulk_records(input_json)
+        self._material_scope_audit = MaterialScopeAudit(self, input_json)
 
         # Create dictionary lookup for O(1) access instead of O(n) DataFrame filtering
         bacdive_strain_to_ncbi = dict(zip(bacdive_df[BACDIVE_ID_COLUMN], bacdive_df[NCBITAXON_ID_COLUMN], strict=True))
@@ -1451,6 +1466,7 @@ class MediaDiveTransform(Transform):
         )
         drop_duplicates(self.output_edge_file)
         self.verify_consumed_inputs()
+        self._material_scope_audit.write()
 
         # Print data source and API call statistics
         print("\n" + "=" * 80)

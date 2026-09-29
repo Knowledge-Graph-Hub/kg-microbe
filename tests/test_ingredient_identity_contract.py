@@ -2,12 +2,15 @@
 
 import csv
 import gzip
+import hashlib
 import io
+import json
 from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
 
+from kg_microbe.transform_utils import constants as c
 from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
 from kg_microbe.transform_utils.metatraits.metatraits import MetaTraitsTransform
 from kg_microbe.transform_utils.metatraits_gtdb.metatraits_gtdb import MetaTraitsGTDBTransform
@@ -15,6 +18,145 @@ from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDeco
 from kg_microbe.utils import chemical_mapping_utils as mapping
 from kg_microbe.utils.ingredient_identity import ingredient_mapping_allowed
 from tests.test_consolidate_chemical_mappings import _load_module
+from tests.test_mim_conservative_refresh import FIELDS, _metadata, _row, _table
+
+
+def _potato_scope():
+    """Load a hash-bound historical source excerpt, never current transformed data."""
+    path = Path(__file__).parent / "resources/mediadive/potato_scope.json"
+    payload = path.read_bytes()
+    assert hashlib.sha256(payload).hexdigest() == "b4755925efe8cde9871569b047e28c185ac56e2cba6295fca20fef2901062723"
+    return json.loads(payload)
+
+
+@pytest.mark.parametrize("name", ["Potato", "potato", " POTATO ", "Pot.ato", "(Potato)"])
+@pytest.mark.parametrize("target", ["cas:93348-51-7", "CAS:93348-51-7", "CAS-RN:93348-51-7", "cas-rn:93348-51-7"])
+def test_potato_hold_is_target_scoped_and_covers_existing_normalization(name, target):
+    """Case/punctuation or legacy prefixes cannot reinstate the one reviewed narrowing."""
+    assert not ingredient_mapping_allowed(name, target)
+    assert ingredient_mapping_allowed(name, c.MEDIADIVE_INGREDIENT_PREFIX + "1606")
+
+
+def test_potato_hold_does_not_ban_registry_or_other_material_names():
+    """Eligibility is not new identity evidence for an extract, flour, or starch."""
+    scope = _potato_scope()
+    target = scope["authority"]["cas"]
+    for name in (scope["authority"]["label"], target, "93348-51-7", "Potato flour", "Potato starch", "Potato extract"):
+        assert ingredient_mapping_allowed(name, target)
+    for name, supported in (
+        ("KH2PO3", "cas:13977-65-6"),
+        ("TAPSO", "cas:68399-81-5"),
+        ("TitaniumIII chloride", "cas:7705-07-9"),
+        ("CrKSO42 x 12 H2O", "cas:7788-99-0"),
+    ):
+        assert ingredient_mapping_allowed(name, supported)
+    assert ingredient_mapping_allowed("Potato flour", "FOODON:03302378")
+    assert {row["review_disposition"] for row in scope["occurrences"]} == {
+        "unsupported_material_form_identity",
+        "insufficient_material_specificity",
+    }
+    assert sum(row["review_disposition"] == "unsupported_material_form_identity" for row in scope["occurrences"]) == 6
+    assert len(scope["occurrences"]) == 9
+    assert all(c.CAS_RN_KEY not in row["raw"] for row in scope["occurrences"])
+
+
+@pytest.mark.parametrize("stale_object_label", ["", "Potato"])
+def test_potato_unified_reader_rejects_stale_alias_and_canonical_label(tmp_path, monkeypatch, stale_object_label):
+    """The historical lexical row cannot confer an extract identity or its node name."""
+    scope = _potato_scope()
+    target, authority = scope["authority"]["cas"], scope["authority"]["label"]
+    stale = dict(scope["mapping_claims"]["unified"]["row"], object_label=stale_object_label)
+    rows = [
+        stale,
+        _row("kgm.name:native_extract", target, authority, name=authority, comment="canonical_name"),
+        _row("kgm.name:registry_literal", target, authority, name=target, comment="synonym"),
+        _row("MIM:Potato_Flour", "FOODON:03302378", "Potato flour"),
+        _row("MIM:Tapso", "cas:68399-81-5", "TAPSO"),
+    ]
+    path = tmp_path / "potato.tsv"
+    _table(path, FIELDS, rows, _metadata())
+    monkeypatch.setattr(mapping, "_LOADED", False)
+    monkeypatch.setattr(mapping, "_CACHED_PATH", None)
+    mapping.load_unified_mappings(path)
+    for options in ({}, {"synonyms": False}, {"fuzzy_hydrate": True}, {"fuzzy_stereochemistry": True}):
+        assert mapping.find_chebi_by_name("Potato", **options) is None
+    assert "Potato" not in mapping.get_synonyms(target)
+    assert mapping.get_canonical_name(target) == authority
+    assert mapping.find_chebi_by_name(authority) == target
+    assert mapping.find_chebi_by_name(target) == target
+    assert mapping.find_chebi_by_name("Potato flour") == "FOODON:03302378"
+    assert mapping.find_chebi_by_name("TAPSO") == "cas:68399-81-5"
+
+
+@pytest.mark.parametrize("route", ["unified", "strict", "hydrate", "embedded", "all"])
+@pytest.mark.parametrize("target", ["cas:93348-51-7", "CAS-RN:93348-51-7"])
+def test_potato_mediadive_all_fallbacks_remain_source_local(tmp_path, route, target):
+    """Both legacy loaders and later embedded evidence cannot bypass the shared hold."""
+    transform = MediaDiveTransform.__new__(MediaDiveTransform)
+    transform.chemical_loader = SimpleNamespace(
+        find_chebi_by_name=lambda *_: target if route in {"unified", "all"} else None
+    )
+    transform.compound_mappings = {}
+    for selected in ("hydrate", "strict"):
+        if route not in {selected, "all"}:
+            continue
+        path = tmp_path / f"compound_mappings_{selected}.tsv"
+        path.write_text(f"original\tmapped\nPotato\t{target}\n", encoding="utf-8")
+        loaded = transform._load_mapping_file(path, selected)
+        assert loaded == {}
+        transform.compound_mappings.update(loaded)
+    # Simulate a stale caller cache too; read-time validation alone is insufficient.
+    if route == "all":
+        transform.compound_mappings["potato"] = target
+    transform.compounds_data = (
+        {"1606": {c.COMPOUND_KEY: "Potato", c.CAS_RN_KEY: "93348-51-7"}} if route in {"embedded", "all"} else {}
+    )
+    transform.using_bulk_data = True
+    transform.api_calls_avoided = 0
+    assert transform.standardize_compound_id("1606", "Potato") == c.MEDIADIVE_INGREDIENT_PREFIX + "1606"
+    if route == "embedded":
+        assert transform.standardize_compound_id("1606") == c.MEDIADIVE_INGREDIENT_PREFIX + "1606"
+
+
+@pytest.mark.parametrize("route", ["unified", "legacy", "all"])
+def test_potato_nested_solution_name_does_not_reinstate_registry(route):
+    """A synthetic nested-solution probe exercises the adjacent non-compound branch."""
+    transform = MediaDiveTransform.__new__(MediaDiveTransform)
+    target = _potato_scope()["authority"]["cas"]
+    transform.using_bulk_data = True
+    transform.api_calls_avoided = 0
+    transform.translation_table = {}
+    raw = {"solution_id": 2, "solution": "Potato", "amount": 5, "unit": "ml"}
+    transform.solutions_data = {"1": {"recipe": [raw]}}
+    transform.chemical_loader = SimpleNamespace(
+        find_chebi_by_name=lambda *_: target if route in {"unified", "all"} else None
+    )
+    transform.compound_mappings = {"potato": target} if route in {"legacy", "all"} else {}
+    occurrence = transform.get_solution_recipe_occurrences("1")[0]
+    assert occurrence[c.ID_COLUMN] == c.MEDIADIVE_SOLUTION_PREFIX + "2"
+    assert json.loads(occurrence[c.SOURCE_RECORD_COLUMN]) == raw
+
+
+@pytest.mark.parametrize("filename", ["compound_mappings_strict.tsv", "compound_mappings_strict_hydrate.tsv"])
+def test_potato_legacy_consolidator_cannot_regenerate_held_synonym(tmp_path, monkeypatch, filename):
+    """Tiny in-memory regeneration tests no production CLI, pin, or export replacement."""
+    module = _load_module()
+    monkeypatch.setattr(module, "_build_mangle_blacklist", lambda *_: set())
+    scope = _potato_scope()
+    path = tmp_path / filename
+    _table(
+        path,
+        ("original", "mapped", "chebi_label"),
+        [{"original": "Potato", "mapped": "CAS-RN:93348-51-7", "chebi_label": scope["authority"]["label"]}],
+    )
+    original = path.read_bytes()
+    consolidator = module.ChemicalMappingConsolidator()
+    consolidator.load_compound_mappings(path)
+    entity = consolidator.chemicals[scope["authority"]["cas"]]
+    assert entity["canonical_name"] == scope["authority"]["label"]
+    assert "Potato" not in entity["synonyms"]
+    assert "potato" not in consolidator.name_index
+    assert path.read_bytes() == original
 
 
 @pytest.fixture
@@ -173,7 +315,7 @@ def test_bounded_refresh_preserves_nonidentity_rows_and_is_a_fixed_point(identit
     module.refresh_identity_policy(first, second)
     assert first.read_bytes() == second.read_bytes()
     with gzip.open(first, "rt") as handle:
-        rows = list(csv.DictReader(handle, delimiter="\t"))
+        rows = list(csv.DictReader((line for line in handle if not line.startswith("#")), delimiter="\t"))
     assert rows[-2]["predicate_id"] == "skos:broadMatch"
     assert rows[-1]["comment"] == "recipe_equivalent_hydrate"
     assert {row["object_id"] for row in rows} >= {"CHEBI:78018", "FOODON:03302071"}

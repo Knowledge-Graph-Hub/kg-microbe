@@ -12,10 +12,11 @@ old September 21 release. Its `candidate_only` mode controls candidate generatio
 not permission to publish or silently replace production mappings. Paired
 production promotion remains the separate reviewed step below.
 
-The [2026-09-27 invalid-CAS mapping review](reviews/mim-invalid-cas-20260927/PROMOTION.md)
-records the latest proposed paired staging change and its remaining gates.
+The [2026-09-29 Potato scope record](reviews/mediadive-potato-scope-20260929/PROMOTION.md)
+records the latest isolated paired staging change and its remaining gates.
 Paired-change tests, CI, production integration and fresh KG validation remain
-separate required gates. The [earlier native-category record](reviews/mim-native-category-20260927/PROMOTION.md)
+separate required gates. The [2026-09-27 invalid-CAS mapping review](reviews/mim-invalid-cas-20260927/PROMOTION.md),
+[earlier native-category record](reviews/mim-native-category-20260927/PROMOTION.md)
 and [2026-09-25 acceptance record](reviews/mim-admission-20260925/PROMOTION.md)
 are preserved as historical evidence, not reassigned to the new candidate. The
 first hydration candidate exposed three further legacy scope defects (#1169)
@@ -194,7 +195,12 @@ The legacy full consolidator now refuses to run while the release pin is present
 including with `--dry-run` or `--allow-stale-vendored`: its additive seed and raw
 companion paths would undo the migration. Its narrowly scoped
 `--identity-policy-only --output ...` operation remains available; it does not
-constitute a MIM refresh.
+constitute a MIM refresh. That bounded operation names its actual writer,
+`scripts/consolidate_chemical_mappings.py`, and its code SHA-256 in the tool/version
+metadata. It preserves the description's meaning and adds one current identity
+policy fingerprint. Original reconstruction provenance is retained through the
+reviewed baseline hash and prior record, not a mismatched old tool/new version.
+Unrelated metadata and retained mapping rows remain unchanged.
 
 The earlier input-schema repair added explicit empty `verified_date` cells to
 two canonical chemical rows. That formatting-only repair did not install the
@@ -205,9 +211,9 @@ receipts to hide input or code drift.
 ## Promotion, transforms, and merge
 
 Candidate generation does not publish files or run production transforms. Once
-the final delta and consumer behavior are accepted, promote **both** the reviewed
-unified candidate and the byte-exact supported MIM table to their canonical
-mapping paths in one reviewed change:
+the final delta and consumer behavior are accepted, verify and promote the
+reviewed unified candidate and the byte-exact supported MIM table **together** at
+their canonical mapping paths in one reviewed change:
 
 - `mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz`
 - `mappings/ingredient_mappings.sssom.tsv`
@@ -215,7 +221,9 @@ mapping paths in one reviewed change:
 The supported file must match the committed pin's supported-product hash; the
 unified file must match the final accepted candidate hash. Do not install the
 upstream source SSSOM, the withheld product, a floating sibling checkout, or
-only one member of the pair. `mode=candidate_only` remains the CLI's publication
+an unverified counterpart. If the supported table already has the pinned bytes,
+retain it unchanged; paired review does not require a meaningless rewrite or a
+new MIM release pin. `mode=candidate_only` remains the CLI's publication
 boundary: paired installation is an explicit reviewed repository operation,
 not permission for future automatic refreshes.
 

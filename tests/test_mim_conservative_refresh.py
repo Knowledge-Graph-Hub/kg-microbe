@@ -3,7 +3,9 @@
 import csv
 import gzip
 import io
+import json
 from collections import Counter
+from pathlib import Path
 
 import pytest
 import yaml
@@ -187,6 +189,33 @@ def _read(path):
     """Read the tiny output fixture without changing runtime global caches."""
     with gzip.open(path, "rt") as handle:
         return list(csv.DictReader((line for line in handle if not line.startswith("#")), delimiter="\t"))
+
+
+def test_potato_historical_mapping_is_losslessly_quarantined_and_not_reasserted(inputs, monkeypatch):
+    """The supported-only candidate retains old full rows, not a generic-to-extract identity."""
+    fixture = json.loads((Path(__file__).parent / "resources/mediadive/potato_scope.json").read_text())
+    held = fixture["mapping_claims"]["unified"]["row"]
+    target, label = fixture["authority"]["cas"], fixture["authority"]["label"]
+    positive = _row("kgm.name:explicit_extract", target, label, name=label, comment="canonical_name")
+    _table(inputs["baseline"], FIELDS, [*refresh._rows(inputs["baseline"]), held, dict(held), positive], _metadata())
+    original = inputs["baseline"].read_bytes()
+    first = refresh.build_conservative_candidate(**inputs)
+    quarantined = [row for row in _read(first.quarantine_path) if row["subject_id"] == held["subject_id"]]
+    assert len(quarantined) == 2
+    assert all(row.pop("quarantine_reason") == "reviewed_identity_policy_name" for row in quarantined)
+    assert quarantined == [held, held]
+    assert positive in _read(first.candidate_path)
+    assert not any(row["subject_id"] == held["subject_id"] for row in _read(first.candidate_path))
+    assert inputs["baseline"].read_bytes() == original
+    second = refresh.build_conservative_candidate(
+        **dict(inputs, baseline=first.candidate_path, output_directory=inputs["output_directory"].with_name("second"))
+    )
+    assert first.candidate_path.read_bytes() == second.candidate_path.read_bytes()
+    monkeypatch.setattr(runtime, "_LOADED", False)
+    monkeypatch.setattr(runtime, "_CACHED_PATH", None)
+    runtime.load_unified_mappings(second.candidate_path)
+    assert runtime.find_chebi_by_name("Potato") is None
+    assert runtime.find_chebi_by_name(label) == target
 
 
 def test_conservative_refresh_rebuilds_connected_claims_and_preserves_independent_relations(inputs):

@@ -1,171 +1,128 @@
-"""Integration tests for transform category alignment."""
+"""Hermetic category alignment checks using real isolated source loaders (#1244)."""
 
-import csv
+import builtins
+from collections import Counter
 from pathlib import Path
 
 import pytest
+import requests
 
-from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
-from kg_microbe.transform_utils.constants import CHEBI_NODES_FILE
+from kg_microbe.transform_utils.bacdive import bacdive as bacdive_module
+from kg_microbe.transform_utils.constants import INGREDIENT_CATEGORY, METABOLITE_CATEGORY
 from kg_microbe.transform_utils.mediadive import mediadive as mediadive_module
-from kg_microbe.transform_utils.mediadive.mediadive import MediaDiveTransform
+
+RESOURCE = Path(__file__).parent / "resources/transform_category_alignment/chebi_nodes.tsv"
+EXPECTED = {
+    "CHEBI:16828": "biolink:ChemicalEntity",
+    "CHEBI:50906": "biolink:ChemicalRole",
+    "CHEBI:60004": "biolink:ChemicalEntity",
+}
+PRODUCERS = {
+    "bacdive": (bacdive_module, bacdive_module.BacDiveTransform, METABOLITE_CATEGORY),
+    "mediadive": (mediadive_module, mediadive_module.MediaDiveTransform, INGREDIENT_CATEGORY),
+}
 
 
-@pytest.fixture
-def mediadive_categories(monkeypatch):
-    """Exercise the category loader without unrelated API/ontology orchestration."""
-    fixture = Path(__file__).parent / "resources/transform_category_alignment/chebi_nodes.tsv"
-    monkeypatch.setattr(mediadive_module, "CHEBI_NODES_FILE", fixture)
-    transform = MediaDiveTransform.__new__(MediaDiveTransform)
-    transform.chebi_categories = {}
-    transform._load_chebi_categories()
-    assert len(transform.chebi_categories) == 3
-    return transform
+@pytest.fixture(params=["absent", "populated"])
+def category_loader(tmp_path, monkeypatch, request):
+    """Exercise real loaders while rejecting full initialization and unrelated I/O."""
+    immutable = RESOURCE.read_bytes()
+    selected = tmp_path / "selected-chebi-nodes.tsv"
+    selected.write_bytes(immutable)
+    defaults = tmp_path / "unrelated-defaults"
+    defaults.mkdir()
+    if request.param == "populated":
+        for relative in (
+            "data/raw/mediadive/media_detailed.json",
+            "data/raw/bacdive/record.yaml",
+            "data/transformed/ontologies/chebi_nodes.tsv",
+        ):
+            path = defaults / relative
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text("Poison default input: unit tests must never read this.\n")
+    monkeypatch.chdir(defaults)
+    opened = []
+    forbidden = []
+    real_open = builtins.open
+
+    def reject_initialization(*args, **kwargs):
+        """Reject full constructors, mapping/ontology setup and network requests."""
+        forbidden.append("initialization or network")
+        raise AssertionError("Category unit test invoked unrelated initialization or network")
+
+    def category_only_open(path, mode="r", *args, **kwargs):
+        """Admit only the selected fixture in read-only mode; never production files."""
+        if Path(path).resolve() != selected.resolve() or mode not in ("r", "rt"):
+            forbidden.append(str(path))
+            raise AssertionError(f"Category unit test attempted unrelated file I/O: {path}")
+        opened.append(str(Path(path).resolve()))
+        return real_open(path, mode, *args, **kwargs)
+
+    for module, producer, _ in PRODUCERS.values():
+        monkeypatch.setattr(producer, "__init__", reject_initialization)
+        monkeypatch.setattr(module, "CHEBI_NODES_FILE", selected)
+        monkeypatch.setattr(module, "open", category_only_open, raising=False)
+        monkeypatch.setattr(module, "ChemicalMappingLoader", reject_initialization)
+    monkeypatch.setattr(requests.sessions.Session, "request", reject_initialization)
+
+    def load(source, *, missing=False):
+        """Call the unmodified loader without constructor side effects or stubbed results."""
+        module, producer, _ = PRODUCERS[source]
+        if missing:
+            monkeypatch.setattr(module, "CHEBI_NODES_FILE", tmp_path / "missing-selected-category.tsv")
+        value = producer.__new__(producer)
+        value.chebi_categories = {}
+        before = len(opened)
+        value._load_chebi_categories()
+        assert len(opened) == before + (0 if missing else 1)
+        assert not forbidden, "A real loader swallowed an unrelated-I/O rejection"
+        return value
+
+    yield load
+    assert forbidden == []
+    assert selected.read_bytes() == immutable
+    assert RESOURCE.read_bytes() == immutable
 
 
-class TestTransformCategoryAlignment:
-    """Test that transforms correctly align categories with ontologies transform."""
+@pytest.mark.parametrize("source", PRODUCERS)
+def test_loads_exact_native_category_fixture(category_loader, source):
+    """Both real loaders must retain every fixture category, not only the default type."""
+    assert category_loader(source).chebi_categories == EXPECTED
 
-    @pytest.fixture
-    def chebi_categories_from_ontologies(self):
-        """Load CHEBI categories from ontologies transform for comparison."""
-        categories = {}
-        chebi_nodes_file = CHEBI_NODES_FILE
 
-        if not chebi_nodes_file.exists():
-            pytest.skip("CHEBI nodes file not found - ontologies transform not run")
+@pytest.mark.parametrize("source", PRODUCERS)
+@pytest.mark.parametrize("identifier", EXPECTED)
+def test_each_known_category_matches_native_fixture(category_loader, source, identifier):
+    """Check all selected IDs so a loader returning only fallback ChemicalEntity fails."""
+    assert category_loader(source)._get_chebi_category(identifier) == EXPECTED[identifier]
 
-        with open(chebi_nodes_file) as f:
-            reader = csv.DictReader(f, delimiter="\t")
-            for row in reader:
-                if row["id"].startswith("CHEBI:"):
-                    categories[row["id"]] = row["category"]
 
-        return categories
+@pytest.mark.parametrize("source", PRODUCERS)
+def test_exact_category_distribution(category_loader, source):
+    """Use a finite fixture distribution, never a graph-scale count or conditional skip."""
+    assert Counter(category_loader(source).chebi_categories.values()) == {
+        "biolink:ChemicalEntity": 2,
+        "biolink:ChemicalRole": 1,
+    }
 
-    def test_bacdive_loads_chebi_categories(self):
-        """Test that BacDive transform loads CHEBI categories from ontologies."""
-        if not CHEBI_NODES_FILE.exists():
-            pytest.skip("CHEBI nodes file not found - ontologies transform not run")
-        bacdive = BacDiveTransform()
 
-        # Check that categories were loaded
-        assert len(bacdive.chebi_categories) > 0, "BacDive should load CHEBI categories from ontologies transform"
-        print(f"\n✓ BacDive loaded {len(bacdive.chebi_categories):,} CHEBI categories")
+@pytest.mark.parametrize("source", PRODUCERS)
+def test_unknown_identifier_uses_source_fallback(category_loader, source):
+    """Unknown IDs retain each source-specific declared fallback contract."""
+    assert category_loader(source)._get_chebi_category("CHEBI:99999999") == PRODUCERS[source][2]
 
-    def test_mediadive_loads_chebi_categories(self):
-        """Test that MediaDive transform loads CHEBI categories from ontologies."""
-        if not CHEBI_NODES_FILE.exists():
-            pytest.skip("CHEBI nodes file not found - ontologies transform not run")
-        mediadive = MediaDiveTransform()
 
-        # Check that categories were loaded
-        assert len(mediadive.chebi_categories) > 0, "MediaDive should load CHEBI categories from ontologies transform"
-        print(f"\n✓ MediaDive loaded {len(mediadive.chebi_categories):,} CHEBI categories")
+@pytest.mark.parametrize("source", PRODUCERS)
+def test_missing_selected_fixture_uses_fallback_without_default_input(category_loader, source):
+    """A missing explicit category file never authorizes unrelated default data access."""
+    value = category_loader(source, missing=True)
+    assert value.chebi_categories == {}
+    assert value._get_chebi_category("CHEBI:16828") == PRODUCERS[source][2]
 
-    def test_bacdive_get_chebi_category_specific_examples(self):
-        """Test that BacDive returns correct categories for specific CHEBI IDs."""
-        bacdive = BacDiveTransform()
 
-        if "CHEBI:16828" in bacdive.chebi_categories:
-            category = bacdive._get_chebi_category("CHEBI:16828")
-            print(f"\n✓ CHEBI:16828 category: {category}")
-            assert category == bacdive.chebi_categories["CHEBI:16828"]
-
-    def test_mediadive_get_chebi_category_specific_examples(self, mediadive_categories):
-        """Test that MediaDive returns correct categories for specific CHEBI IDs."""
-        assert mediadive_categories._get_chebi_category("CHEBI:16828") == "biolink:ChemicalEntity"
-
-    def test_bacdive_category_matches_ontologies(self, chebi_categories_from_ontologies):
-        """Test that BacDive categories match ontologies transform categories."""
-        bacdive = BacDiveTransform()
-
-        # Compare samples (not all 224k, just a sample)
-        sample_ids = list(bacdive.chebi_categories.keys())[:100]
-        mismatches = []
-
-        for chebi_id in sample_ids:
-            bacdive_cat = bacdive.chebi_categories[chebi_id]
-            ontologies_cat = chebi_categories_from_ontologies.get(chebi_id)
-
-            if ontologies_cat and bacdive_cat != ontologies_cat:
-                mismatches.append((chebi_id, bacdive_cat, ontologies_cat))
-
-        assert len(mismatches) == 0, f"Found {len(mismatches)} category mismatches between BacDive and ontologies"
-        print(f"\n✓ Verified {len(sample_ids)} CHEBI categories match ontologies transform")
-
-    def test_mediadive_category_matches_ontologies(self, chebi_categories_from_ontologies):
-        """Test that MediaDive categories match ontologies transform categories."""
-        mediadive = MediaDiveTransform()
-
-        # Compare samples (not all 224k, just a sample)
-        sample_ids = list(mediadive.chebi_categories.keys())[:100]
-        mismatches = []
-
-        for chebi_id in sample_ids:
-            mediadive_cat = mediadive.chebi_categories[chebi_id]
-            ontologies_cat = chebi_categories_from_ontologies.get(chebi_id)
-
-            if ontologies_cat and mediadive_cat != ontologies_cat:
-                mismatches.append((chebi_id, mediadive_cat, ontologies_cat))
-
-        assert len(mismatches) == 0, f"Found {len(mismatches)} category mismatches between MediaDive and ontologies"
-        print(f"\n✓ Verified {len(sample_ids)} CHEBI categories match ontologies transform")
-
-    def test_bacdive_fallback_to_metabolite_category(self):
-        """Test that BacDive falls back to METABOLITE_CATEGORY for unknown CHEBI IDs."""
-        from kg_microbe.transform_utils.constants import METABOLITE_CATEGORY
-
-        bacdive = BacDiveTransform()
-
-        # Test with a CHEBI ID that definitely doesn't exist
-        fake_chebi = "CHEBI:99999999"
-        category = bacdive._get_chebi_category(fake_chebi)
-
-        assert category == METABOLITE_CATEGORY
-        print(f"\n✓ BacDive correctly falls back to {METABOLITE_CATEGORY} for unknown CHEBI IDs")
-
-    def test_mediadive_fallback_to_ingredient_category(self, mediadive_categories):
-        """Test that MediaDive falls back to INGREDIENT_CATEGORY for unknown CHEBI IDs."""
-        from kg_microbe.transform_utils.constants import INGREDIENT_CATEGORY
-
-        mediadive = mediadive_categories
-
-        # Test with a CHEBI ID that definitely doesn't exist
-        fake_chebi = "CHEBI:99999999"
-        category = mediadive._get_chebi_category(fake_chebi)
-
-        assert category == INGREDIENT_CATEGORY
-        print(f"\n✓ MediaDive correctly falls back to {INGREDIENT_CATEGORY} for unknown CHEBI IDs")
-
-    def test_category_distribution(self, chebi_categories_from_ontologies):
-        """Test distribution of CHEBI categories in ontologies transform."""
-        from collections import Counter
-
-        category_counts = Counter(chebi_categories_from_ontologies.values())
-
-        print("\n✓ CHEBI category distribution in ontologies transform:")
-        for category, count in category_counts.most_common(10):
-            percentage = (count / len(chebi_categories_from_ontologies)) * 100
-            print(f"  {category}: {count:,} ({percentage:.1f}%)")
-
-        assert "biolink:ChemicalEntity" in category_counts
-        assert category_counts["biolink:ChemicalEntity"] > 100000, "Most CHEBI compounds should be ChemicalEntity"
-
-    def test_mediadive_classify_ingredient_uses_chebi_category(self, mediadive_categories):
-        """Test that MediaDive _classify_ingredient_category uses CHEBI categories for CHEBI IDs."""
-        mediadive = mediadive_categories
-
-        # Test with a known CHEBI ID from ontologies
-        test_chebi_ids = [cid for cid in list(mediadive.chebi_categories.keys())[:5] if cid.startswith("CHEBI:")]
-        assert len(test_chebi_ids) == 3
-
-        for chebi_id in test_chebi_ids:
-            expected_category = mediadive.chebi_categories[chebi_id]
-            actual_category = mediadive._classify_ingredient_category(chebi_id, "test compound")
-
-            assert actual_category == expected_category, (
-                f"MediaDive _classify_ingredient_category should use CHEBI category for {chebi_id}"
-            )
-
-        print("\n✓ MediaDive _classify_ingredient_category correctly uses CHEBI categories")
+@pytest.mark.parametrize("identifier", EXPECTED)
+def test_mediadive_ingredient_classification_uses_native_category(category_loader, identifier):
+    """The real ingredient classifier must preserve the selected ChEBI category."""
+    assert (
+        category_loader("mediadive")._classify_ingredient_category(identifier, "test compound") == EXPECTED[identifier]
+    )

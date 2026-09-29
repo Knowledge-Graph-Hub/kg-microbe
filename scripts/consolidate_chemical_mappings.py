@@ -77,6 +77,7 @@ from pathlib import Path
 from typing import Dict, List, Optional, Set, Tuple
 
 import pandas as pd
+import yaml
 
 from kg_microbe.utils.cas import invalid_cas_identifier
 from kg_microbe.utils.chemical_mapping_utils import (
@@ -3038,6 +3039,92 @@ def ingredient_policy_fingerprint() -> str:
     return digest.hexdigest()
 
 
+def _refresh_identity_metadata(lines: List[str], policy_hash: str) -> List[str]:
+    """Edit three YAML fields semantically while retaining unrelated header bytes."""
+    text = "".join(line[1:].removeprefix(" ") for line in lines)
+    # These are logical YAML newlines but not physical TSV line boundaries.
+    # Reject unsupported raw forms rather than slice the wrong metadata rows.
+    if any(separator in text for separator in ("\x85", "\u2028", "\u2029")):
+        raise ValueError("Unsupported raw Unicode line separator in SSSOM metadata")
+    try:
+        # An alias could bind an unrelated field to a rewritten scalar. Do not
+        # silently change that field or leave a dangling anchor reference.
+        events = list(yaml.parse(text))
+        if any(isinstance(event, yaml.AliasEvent) for event in events):
+            raise ValueError("SSSOM metadata aliases are not supported by identity refresh")
+        document_end = next(
+            (event.start_mark.line for event in events if isinstance(event, yaml.DocumentEndEvent) and event.explicit),
+            None,
+        )
+        root = yaml.compose(text)
+
+        def validate(node):
+            """Reject duplicate/non-string mapping keys before constructing metadata."""
+            if isinstance(node, yaml.MappingNode):
+                seen = set()
+                for key, value in node.value:
+                    if not isinstance(key, yaml.ScalarNode) or key.tag != "tag:yaml.org,2002:str":
+                        raise ValueError("SSSOM metadata keys must be strings")
+                    if key.value in seen:
+                        raise ValueError(f"Duplicate SSSOM metadata key: {key.value}")
+                    seen.add(key.value)
+                    validate(value)
+            elif isinstance(node, yaml.SequenceNode):
+                for value in node.value:
+                    validate(value)
+
+        if root is not None:
+            if not isinstance(root, yaml.MappingNode) or root.flow_style:
+                raise ValueError("SSSOM metadata must be a top-level block mapping")
+            validate(root)
+        metadata = yaml.safe_load(text)
+        if metadata is None:
+            metadata = {}
+        if not isinstance(metadata, dict):
+            raise ValueError("SSSOM metadata must be a mapping")
+    except yaml.YAMLError as exc:
+        raise ValueError("Malformed SSSOM metadata YAML") from exc
+
+    fields = {
+        "mapping_tool": "kg-microbe/scripts/consolidate_chemical_mappings.py",
+        "mapping_tool_version": script_fingerprint(),
+        "mapping_set_description": "",
+    }
+    for key in fields:
+        if key in metadata and not isinstance(metadata[key], str):
+            raise ValueError(f"SSSOM metadata {key} must be a string")
+    description = metadata.get("mapping_set_description", "")
+    description = re.sub(r"(?: Ingredient identity policy sha256:[0-9a-f]{64}\.)+$", "", description)
+    fields["mapping_set_description"] = description + f" Ingredient identity policy sha256:{policy_hash}."
+
+    replacements = {}
+    if root is not None:
+        for key, value in root.value:
+            if key.start_mark.column != 0:
+                raise ValueError("SSSOM metadata fields must begin on separate top-level physical lines")
+            if key.value not in fields:
+                continue
+            end = value.end_mark.line + bool(value.end_mark.column)
+            replacements[key.start_mark.line] = (end, key.value)
+    # JSON quoting is valid YAML and preserves quotes, Unicode and exact
+    # newlines for every original YAML scalar style. No assertion is redated.
+    rendered = {key: f"# {key}: {json.dumps(value)}\n" for key, value in fields.items()}
+    result, position = [], 0
+    while position < len(lines):
+        if position == document_end:
+            result.extend(rendered.values())
+            rendered.clear()
+        if position in replacements:
+            end, key = replacements[position]
+            result.append(rendered.pop(key))
+            position = end
+        else:
+            result.append(lines[position])
+            position += 1
+    result.extend(rendered.values())
+    return result
+
+
 def refresh_identity_policy(source: Path, output: Path) -> dict:
     """
     Apply structural CAS admission and reviewed identity exclusions without enrichment.
@@ -3056,21 +3143,18 @@ def refresh_identity_policy(source: Path, output: Path) -> dict:
         candidate = Path(scratch) / output.name
         output_open = open_deterministic_gzip if output.suffix == ".gz" else lambda p: p.open("w", encoding="utf-8", newline="")
         with open_source(source, "rt", encoding="utf-8", newline="") as incoming, output_open(candidate) as outgoing:
+            metadata_lines = []
             for line in incoming:
                 if not line.startswith("#"):
                     fields = next(csv.reader([line], delimiter="\t"))
                     break
-                if line.startswith("# mapping_tool_version:"):
-                    line = f'# mapping_tool_version: "{script_fingerprint()}"\n'
-                elif line.startswith("# mapping_set_description:"):
-                    line = re.sub(r" Ingredient identity policy sha256:[0-9a-f]{64}\.", "", line)
-                    line = line.rstrip("\r\n").removesuffix('"') + f' Ingredient identity policy sha256:{policy_hash}."\n'
-                outgoing.write(line)
+                metadata_lines.append(line)
             else:
                 raise ValueError("SSSOM input has no column header")
             required = {"subject_id", "subject_label", "predicate_id", "object_id", "object_label", "comment"}
             if not required.issubset(fields):
                 raise ValueError(f"Missing SSSOM identity columns: {required - set(fields)}")
+            outgoing.writelines(_refresh_identity_metadata(metadata_lines, policy_hash))
             outgoing.write(line)
             # This artifact's exporter emits literal, sanitized TSV, not CSV
             # quoting. Preserve every unrelated serialized row byte-for-byte.

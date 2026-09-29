@@ -64,7 +64,12 @@ def bulk_build(tmp_path, monkeypatch):
 
 def test_declares_all_five_actual_json_reads_and_existing_lookup():
     """Missing old completion evidence must fail under registered current producer requirements."""
-    assert set(mod.MediaDiveTransform.REQUIRED_CONSUMED_INPUTS) == {*JSON_INPUTS, "bacdive_taxon_lookup"}
+    assert set(mod.MediaDiveTransform.REQUIRED_CONSUMED_INPUTS) == {
+        *JSON_INPUTS,
+        "bacdive_taxon_lookup",
+        mod.REVIEWED_ROLE,
+        mod.POLICY_ROLE,
+    }
 
 
 def test_default_raw_root_is_consistent():

@@ -113,6 +113,10 @@ def test_unique_name_compatibility_view_retains_the_original_shape():
 
 def _run_transform(tmp_path, monkeypatch, recipes):
     """Run the real writer against small source recipes, without external services."""
+    catalogue = tmp_path / mod.REVIEWED_PATH
+    catalogue.parent.mkdir(exist_ok=True)
+    if not catalogue.exists():
+        catalogue.write_bytes((Path(__file__).resolve().parents[1] / mod.REVIEWED_PATH).read_bytes())
     raw = tmp_path / "raw"
     raw.mkdir()
     # Reuse immutable native closure evidence for the transform's existing

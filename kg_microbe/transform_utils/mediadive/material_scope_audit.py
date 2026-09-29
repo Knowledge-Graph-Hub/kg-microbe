@@ -53,6 +53,8 @@ POLICY_ROLE = "material_scope_policy"
 SUPPORTED_ROLE = "material_scope_supported"
 CONTEXT_ROLE = "material_scope_context_policy"
 CONTEXT_POLICY = "mappings/canonical/mediadive_material_context_dispositions.tsv"
+REVIEWED_ROLE = "material_scope_reviewed_claims"
+REVIEWED_PATH = "mappings/mediadive_material_grounding_review.json"
 SUGAR_ATTRIBUTE = "250 mM each of xylose, maltose and cellobiose"
 SUGAR_REASON = "qualified_sugar_solution_not_demonstrated_food_identity"
 SUGAR_URI = "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=537"
@@ -183,6 +185,101 @@ def _table_rows(stream, required):
         yield f"record={ordinal};line_end={skipped + reader.line_num}", row
 
 
+def _reviewed_catalogue(stream):
+    """Read finite historical claims as evidence only, never as a lookup or replacement policy."""
+
+    def unique_keys(pairs):
+        """Reject duplicate JSON keys rather than silently replacing curated evidence."""
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise SourceFinalizationRequired("Duplicate reviewed material catalogue key")
+            result[key] = value
+        return result
+
+    def require(condition):
+        """Reject malformed or internally inconsistent catalogue evidence."""
+        if not condition:
+            raise SourceFinalizationRequired("Invalid reviewed material grounding catalogue")
+
+    try:
+        text = stream.read(4 * 1024 * 1024 + 1)
+        require(len(text) <= 4 * 1024 * 1024)
+        catalogue = json.loads(text, object_pairs_hook=unique_keys)
+    except SourceFinalizationRequired:
+        raise
+    except (ValueError, TypeError) as exc:
+        raise SourceFinalizationRequired("Invalid reviewed material grounding catalogue JSON") from exc
+    require(
+        isinstance(catalogue, dict) and set(catalogue) == {"version", "baseline", "dispositions", "historical_claims"}
+    )
+    require(type(catalogue["version"]) is int and catalogue["version"] == 1)
+    baseline = catalogue["baseline"]
+    require(isinstance(baseline, dict) and set(baseline) == {"path", "sha256", "fields"})
+    require(baseline["path"] == "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz")
+    require(isinstance(baseline["sha256"], str) and re.fullmatch(r"[0-9a-f]{64}", baseline["sha256"]))
+    fields = baseline["fields"]
+    require(isinstance(fields, list) and all(isinstance(field, str) and field for field in fields))
+    require(
+        len(fields) == len(set(fields))
+        and {
+            "subject_id",
+            "subject_label",
+            "object_id",
+            "object_label",
+            "predicate_id",
+            "mapping_justification",
+            "comment",
+        }.issubset(fields)
+    )
+    require(isinstance(catalogue["dispositions"], list) and isinstance(catalogue["historical_claims"], list))
+    dispositions, names = {}, {}
+    for decision in catalogue["dispositions"]:
+        require(
+            isinstance(decision, dict)
+            and set(decision) == {"id", "target_id", "authority_label", "reason", "evidence_uri", "source_names"}
+        )
+        require(
+            all(isinstance(value, str) and value.strip() for key, value in decision.items() if key != "source_names")
+        )
+        require(
+            re.fullmatch(r"CHEBI:[0-9]+", decision["target_id"]) and decision["evidence_uri"].startswith("https://")
+        )
+        require(decision["id"] not in dispositions)
+        require(isinstance(decision["source_names"], list) and decision["source_names"])
+        require(all(isinstance(name, str) and normalize_name(name) for name in decision["source_names"]))
+        require(len(decision["source_names"]) == len(set(decision["source_names"])))
+        dispositions[decision["id"]] = decision
+        for name in decision["source_names"]:
+            key = normalize_name(name)
+            require(key not in names or names[key] == decision)
+            names[key] = decision
+    ordinals, represented = set(), set()
+    for claim in catalogue["historical_claims"]:
+        require(isinstance(claim, dict) and set(claim) == {"disposition_id", "data_row_ordinal", "row"})
+        require(isinstance(claim["disposition_id"], str) and claim["disposition_id"] in dispositions)
+        ordinal = claim["data_row_ordinal"]
+        require(type(ordinal) is int and ordinal > 0 and ordinal not in ordinals)
+        ordinals.add(ordinal)
+        row, decision = claim["row"], dispositions[claim["disposition_id"]]
+        require(
+            isinstance(row, dict) and set(row) == set(fields) and all(isinstance(value, str) for value in row.values())
+        )
+        require(row["object_id"] == decision["target_id"] and row["subject_id"].startswith("kgm.name:"))
+        require(classify_mapping_row(row)[0] in {"canonical_name", "synonym"})
+        require(names.get(normalize_name(row["subject_label"])) == decision)
+        represented.add(claim["disposition_id"])
+    require(represented == set(dispositions))
+    return catalogue, names
+
+
+def _policy_name_forms(name):
+    """Mirror existing identity-policy spelling forms without adding lexical heuristics."""
+    original = name.strip()
+    normalized = re.sub(r"[^\w\s-]", "", original)
+    return (original, normalized, re.sub(r"[\s_-]+", " ", original), re.sub(r"[\s_-]+", " ", normalized))
+
+
 class MaterialScopeAudit:
     """Collect only the reviewed grounding candidates; never create or choose an identity."""
 
@@ -192,29 +289,32 @@ class MaterialScopeAudit:
         self.guard = SourceAdmission()
         self.claims = []
         self.rows = {}
+        with self._consume(REVIEWED_ROLE, _repo_root() / REVIEWED_PATH) as stream:
+            self.reviewed_catalogue, self.reviewed_names = _reviewed_catalogue(stream)
+        with self._consume(POLICY_ROLE, IDENTITY_POLICY) as stream:
+            policies = list(_table_rows(stream, {"target_id", "authority_label", "kind", "value", "reason"}))
+        self.reviewed_selected = {}
+        self._validate_reviewed_policy(policies)
         solutions = {
             str(solution[ID_COLUMN])
             for medium in media_list[DATA_KEY]
             for solution in transform.media_detailed[str(medium[ID_COLUMN])].get(SOLUTIONS_KEY, [])
         }
-        self.names = {"potato": set(), "p3556": set(), "sugar": set(), "peptone": set()}
+        self.names = {"potato": set(), "p3556": set(), "sugar": set(), "peptone": set(), "reviewed": set()}
         for identifier in solutions:
             recipe = transform.solutions_data[identifier].get(RECIPE_KEY)
             # Match the existing producer's absent/non-list recipe behavior.
             if isinstance(recipe, list):
                 for item in recipe:
-                    if isinstance(item, dict) and (profile := _profile(item)):
+                    if isinstance(item, dict) and (profile := self._profile(item)):
                         name = item.get(COMPOUND_KEY, item.get(SOLUTION_KEY))
                         self.names[profile].add(name if isinstance(name, str) else "")
         self.active = any(self.names.values())
         if not self.active:
+            self.guard.verify()
             return
         # Bind the exact current policy even if the mapping reader has already
         # excluded the row. Such rows are candidates, not attempted lookups.
-        policies = []
-        if self.names["potato"] or self.names["p3556"] or self.names["peptone"]:
-            with self._consume(POLICY_ROLE, IDENTITY_POLICY) as stream:
-                policies = list(_table_rows(stream, {"target_id", "authority_label", "kind", "value", "reason"}))
         if self.names["sugar"]:
             with self._consume(CONTEXT_ROLE, _repo_root() / CONTEXT_POLICY) as stream:
                 decisions = list(_table_rows(stream, CONTEXT_FIELDS))
@@ -269,6 +369,16 @@ class MaterialScopeAudit:
             for name, pattern in PEPTONE_PATTERNS.items()
         ):
             raise SourceFinalizationRequired("Reviewed peptone material-scope identity holds are missing")
+        if self.names["reviewed"]:
+            for name in self.names["reviewed"]:
+                decision = self.reviewed_selected[name]
+                for claim in self.reviewed_catalogue["historical_claims"]:
+                    if claim["disposition_id"] == decision["id"]:
+                        baseline = self.reviewed_catalogue["baseline"]
+                        locator = (
+                            f"historical-baseline-sha256={baseline['sha256']};data-record={claim['data_row_ordinal']}"
+                        )
+                        self._claim("reviewed", name, REVIEWED_ROLE, locator, claim["row"]["object_id"], claim["row"])
         unified = _repo_root() / transform.DATA_INPUTS[0]
         with self._consume(UNIFIED_ROLE, unified) as snapshot:
             with gzip.GzipFile(fileobj=snapshot.buffer) as compressed:
@@ -301,7 +411,55 @@ class MaterialScopeAudit:
                         for name in self.names["peptone"]:
                             if name.lower().strip() == row["original"].lower().strip():
                                 self._claim("peptone", name, role, locator, row["mapped"], row)
+                    for name in self.names["reviewed"]:
+                        decision = self.reviewed_selected[name]
+                        if name.lower().strip() == row["original"].lower().strip() and _policy_target_key(
+                            row["mapped"]
+                        ) == _policy_target_key(decision["target_id"]):
+                            self._claim("reviewed", name, role, locator, row["mapped"], row)
         self.guard.verify()
+
+    def _profile(self, raw):
+        """Select finite audited pairs without changing source identity resolution."""
+        existing = _profile(raw)
+        name = raw.get(COMPOUND_KEY, raw.get(SOLUTION_KEY))
+        if existing or not isinstance(name, str):
+            return existing
+        if name not in self.reviewed_selected:
+            matches = [
+                decision
+                for decision, patterns in self.reviewed_patterns
+                if any(pattern.search(form) for pattern in patterns for form in _policy_name_forms(name))
+            ]
+            if len(matches) > 1:
+                raise SourceFinalizationRequired("Ambiguous reviewed material name/target dispositions")
+            if matches and ingredient_mapping_allowed(name, matches[0]["target_id"]):
+                raise SourceFinalizationRequired("Reviewed material policy disagrees with runtime mapping admission")
+            self.reviewed_selected[name] = matches[0] if matches else None
+        return "reviewed" if self.reviewed_selected[name] is not None else None
+
+    def _validate_reviewed_policy(self, policies):
+        """Require actual selected policy bytes, not only a previously cached rejection."""
+        self.reviewed_patterns = []
+        for decision in self.reviewed_catalogue["dispositions"]:
+            patterns = [
+                re.compile(row["value"])
+                for _, row in policies
+                if row["target_id"] == decision["target_id"]
+                and row["authority_label"] == decision["authority_label"]
+                and row["kind"] == "name_pattern"
+            ]
+            patterns = [
+                pattern
+                for pattern in patterns
+                if any(pattern.search(form) for name in decision["source_names"] for form in _policy_name_forms(name))
+            ]
+            for name in decision["source_names"]:
+                if not any(
+                    pattern.search(form) for pattern in patterns for form in _policy_name_forms(name)
+                ) or ingredient_mapping_allowed(name, decision["target_id"]):
+                    raise SourceFinalizationRequired("Reviewed material name/target policy changed or is missing")
+            self.reviewed_patterns.append((decision, patterns))
 
     def _mapping_claims(self, role, locator, row):
         """Select only reader-eligible lexical or exact imported claims for the actual spelling."""
@@ -319,6 +477,13 @@ class MaterialScopeAudit:
         # rejects that label. These are available candidates, not lookup calls.
         if route not in {"identity", "attribute", "canonical_name", "synonym"}:
             return
+        for name in self.names["reviewed"]:
+            decision = self.reviewed_selected[name]
+            if row["object_id"].strip() == decision["target_id"] and (
+                normalize_name(name) == normalize_name(row.get("object_label", ""))
+                or (route == "synonym" and normalize_name(name) == normalize_name(row["subject_label"]))
+            ):
+                self._claim("reviewed", name, role, locator, row["object_id"], row)
         if _policy_target_key(row["object_id"]) == PEPTONE_TARGET:
             for name in self.names["peptone"]:
                 if normalize_name(name) == normalize_name(row.get("object_label", "")) or (
@@ -357,7 +522,7 @@ class MaterialScopeAudit:
 
     def observe(self, occurrence, raw):
         """Attach available candidates to an actual emitted occurrence and its selected target."""
-        profile = _profile(raw)
+        profile = self._profile(raw)
         if not self.active or not profile:
             return
         if profile == "potato" and _policy_target_key(occurrence[ID_COLUMN]) == TARGET:
@@ -373,6 +538,9 @@ class MaterialScopeAudit:
             if occurrence[ID_COLUMN] != local:
                 raise SourceFinalizationRequired("Held source material identity escaped source resolution")
         name = raw.get(COMPOUND_KEY, raw.get(SOLUTION_KEY))
+        reviewed = self.reviewed_selected[name] if profile == "reviewed" else None
+        if reviewed and _policy_target_key(occurrence[ID_COLUMN]) == _policy_target_key(reviewed["target_id"]):
+            raise SourceFinalizationRequired("Held reviewed material name/target pair escaped source resolution")
         candidates = [claim for group, spelling, claim in self.claims if group == profile and spelling in (None, name)]
         identifier = raw.get(COMPOUND_ID_KEY)
         if identifier is not None:
@@ -388,6 +556,8 @@ class MaterialScopeAudit:
                 if value is None or (profile == "potato" and _policy_target_key(target) != TARGET):
                     continue
                 if profile == "peptone" and _policy_target_key(target) != PEPTONE_TARGET:
+                    continue
+                if reviewed and _policy_target_key(target) != _policy_target_key(reviewed["target_id"]):
                     continue
                 candidates.append(
                     (
@@ -417,6 +587,9 @@ class MaterialScopeAudit:
             authority_label, authority_uri = PEPTONE_AUTHORITY_LABEL, PEPTONE_AUTHORITY_URI
         elif profile == "sugar":
             authority_label, authority_uri = self.sugar_decision["authority_label"], self.sugar_decision["evidence_uri"]
+        elif reviewed:
+            reason = reviewed["reason"]
+            authority_label, authority_uri = reviewed["authority_label"], reviewed["evidence_uri"]
         payload = occurrence[SOURCE_RECORD_COLUMN]
         for route, snapshot, locator, target, candidate in candidates:
             row = (
@@ -426,7 +599,9 @@ class MaterialScopeAudit:
                 source["path"],
                 source["sha256"],
                 occurrence[ID_COLUMN],
-                "quarantined_grounding_candidate",
+                "historical_quarantined_grounding_claim"
+                if route == REVIEWED_ROLE
+                else "quarantined_grounding_candidate",
                 reason,
                 qualifiers,
                 route,
@@ -463,6 +638,10 @@ class MaterialScopeAudit:
 def verify_recorded_material_inputs(report, report_path):
     """Require actual canonical evidence origins for the producer-bound candidate sidecar."""
     snapshots = report.get("consumed_inputs", {})
+    if snapshots.get(REVIEWED_ROLE, {}).get("path") != str((_repo_root() / REVIEWED_PATH).resolve()):
+        raise SourceFinalizationRequired(f"Missing or wrong material-scope input origin: {REVIEWED_ROLE}")
+    if snapshots.get(POLICY_ROLE, {}).get("path") != str(IDENTITY_POLICY.resolve()):
+        raise SourceFinalizationRequired(f"Missing or wrong material-scope input origin: {POLICY_ROLE}")
     context_path = str((_repo_root() / CONTEXT_POLICY).resolve())
     context_recorded = any(item.get("path") == context_path for item in report.get("inputs", ()))
     path = Path(report_path).parent / AUDIT_FILENAME
@@ -486,9 +665,9 @@ def verify_recorded_material_inputs(report, report_path):
         and not any(role in snapshots for role in (UNIFIED_ROLE, POLICY_ROLE, SUPPORTED_ROLE, CONTEXT_ROLE))
     ):
         return
-    expected = {
-        UNIFIED_ROLE: _repo_root() / "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
-    }
+    expected = {}
+    if has_rows or UNIFIED_ROLE in snapshots:
+        expected[UNIFIED_ROLE] = _repo_root() / "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
     if needs_identity or POLICY_ROLE in snapshots:
         expected[POLICY_ROLE] = IDENTITY_POLICY
     if needs_context or context_recorded or CONTEXT_ROLE in snapshots:

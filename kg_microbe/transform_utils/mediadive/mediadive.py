@@ -137,6 +137,9 @@ from kg_microbe.transform_utils.mediadive.bulk_inputs import (
 )
 from kg_microbe.transform_utils.mediadive.material_scope_audit import (
     AUDIT_FILENAME,
+    POLICY_ROLE,
+    REVIEWED_PATH,
+    REVIEWED_ROLE,
     MaterialScopeAudit,
     p3556_material,
     sugar_material,
@@ -166,9 +169,9 @@ class MediaDiveTransform(Transform):
     TRANSFORM_INPUTS = ("ontologies", BACDIVE)
     DEFAULT_INPUT_DIR = RAW_DATA_DIR
     REQUIRED_AUDIT_FILES = (AUDIT_FILENAME,)
-    REQUIRED_CONSUMED_INPUTS = ("bacdive_taxon_lookup", *REQUIRED_BULK_INPUTS)
+    REQUIRED_CONSUMED_INPUTS = ("bacdive_taxon_lookup", *REQUIRED_BULK_INPUTS, REVIEWED_ROLE, POLICY_ROLE)
 
-    DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
+    DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz", REVIEWED_PATH)
     OPTIONAL_RAW_CONSUMED_INPUTS = (
         ("micromediaparam_strict", MICROMEDIAPARAM_COMPOUND_MAPPINGS_FILE),
         ("micromediaparam_hydrate", MICROMEDIAPARAM_HYDRATE_MAPPINGS_FILE),
@@ -1109,9 +1112,9 @@ class MediaDiveTransform(Transform):
         bacdive_input_file = BACDIVE_TMP_DIR / "bacdive.tsv"
         with self.consume_input("bacdive_taxon_lookup", bacdive_input_file) as bacdive_file:
             bacdive_df = pd.read_csv(bacdive_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN])
-        self.verify_consumed_inputs()
         self._preflight_bulk_records(input_json)
         self._material_scope_audit = MaterialScopeAudit(self, input_json)
+        self.verify_consumed_inputs()
 
         # Create dictionary lookup for O(1) access instead of O(n) DataFrame filtering
         bacdive_strain_to_ncbi = dict(zip(bacdive_df[BACDIVE_ID_COLUMN], bacdive_df[NCBITAXON_ID_COLUMN], strict=True))

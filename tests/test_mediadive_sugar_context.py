@@ -127,7 +127,10 @@ def test_actual_writer_binds_new_policy_and_full_original_claims(tmp_path, monke
     assert len(actual) == 3
     originals = Counter(audit._json(row) for row in _claims("unified") + _claims("supported"))
     assert Counter(row["candidate_record"] for row in actual) == originals
-    assert audit.POLICY_ROLE not in producer.consumed_input_snapshots
+    # Catalogue membership now reads the finite identity policy even when no
+    # reviewed historical-name pair is selected. Sugar's audit still binds its
+    # distinct context policy below, never mislabeling the new selection read.
+    assert producer.consumed_input_snapshots[audit.POLICY_ROLE]["path"] == str(audit.IDENTITY_POLICY.resolve())
     for row in actual:
         assert row["policy_input_path"] == str(policy.resolve())
         assert row["policy_input_sha256"] == hashlib.sha256(policy.read_bytes()).hexdigest()

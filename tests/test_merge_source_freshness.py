@@ -14,7 +14,13 @@ from kg_microbe.run import main
 from kg_microbe.transform import DATA_SOURCES
 from kg_microbe.transform_utils.bacdive import ec_substrate_corrections
 from kg_microbe.transform_utils.constants import DATA_KEY
-from kg_microbe.transform_utils.mediadive.material_scope_audit import AUDIT_FILENAME, AUDIT_HEADER, MaterialScopeAudit
+from kg_microbe.transform_utils.mediadive.material_scope_audit import (
+    AUDIT_FILENAME,
+    AUDIT_HEADER,
+    POLICY_ROLE,
+    REVIEWED_ROLE,
+    MaterialScopeAudit,
+)
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, verify_finalized_source_files
 from kg_microbe.utils.transform_fingerprint import upstream_fingerprint, write_fingerprint
@@ -45,7 +51,9 @@ def read_mediadive_bulk_inputs(transform, *, create=False):
     for role, relative in paths.items():
         with transform.consume_bulk_input(role, transform.input_base_dir / relative) as reader:
             assert json.load(reader) == payloads[role]
-    return tuple(paths)
+    assert payloads["mediadive_media_list"][DATA_KEY] == []
+    transform._material_scope_audit = MaterialScopeAudit(transform, payloads["mediadive_media_list"])
+    return (*paths, REVIEWED_ROLE, POLICY_ROLE)
 
 
 def write_empty_mediadive_audit(transform):

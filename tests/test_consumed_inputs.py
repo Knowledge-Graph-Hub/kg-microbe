@@ -209,6 +209,9 @@ def test_clean_preflight_allows_upstream_to_create_lookup_then_real_media_reads_
     curated.parent.mkdir(parents=True)
     curated.write_text("fixture curation\n")
     assert not (tmp_path / "bacdive/bacdive.tsv").exists()
+    assert _missing_declared_inputs(["mediadive", "bactotraits"], tmp_path) == [f"mediadive: {media.REVIEWED_PATH}"]
+    catalogue = tmp_path / media.REVIEWED_PATH
+    catalogue.write_bytes((Path(__file__).resolve().parents[1] / media.REVIEWED_PATH).read_bytes())
     assert _missing_declared_inputs(["mediadive", "bactotraits"], tmp_path) == []
     transform = _media(tmp_path, monkeypatch)
     with pytest.raises(FileNotFoundError):

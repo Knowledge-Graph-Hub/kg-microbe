@@ -37,6 +37,7 @@ def _write_mappings(root, *, unified=1, legacy=True):
     """Create tiny genuine parser inputs, including duplicate rows and extension columns."""
     mappings = root / "mappings"
     mappings.mkdir()
+    (root / audit.REVIEWED_PATH).write_bytes((Path(__file__).resolve().parents[1] / audit.REVIEWED_PATH).read_bytes())
     row = json.loads(FIXTURE.read_text())["mapping_claims"]["unified"]["row"]
     path = mappings / "kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
     with gzip.open(path, "wt", encoding="utf-8", newline="") as stream:
@@ -291,8 +292,11 @@ def test_recorded_claims_require_both_original_evidence_origins(tmp_path, monkey
 def test_missing_policy_row_is_not_hidden_by_reader_cache(tmp_path, monkeypatch):
     """Actual policy bytes must retain the reviewed finite rule even with an old in-memory cache."""
     producer, _ = _producer(tmp_path, monkeypatch)
-    policy = tmp_path / "empty-policy.tsv"
-    policy.write_text("target_id\tauthority_label\tkind\tvalue\treason\n")
+    policy = tmp_path / "missing-potato-policy.tsv"
+    original = audit.IDENTITY_POLICY.read_text().splitlines(keepends=True)
+    removed = [line for line in original if line.startswith(audit.TARGET + "\t")]
+    assert removed
+    policy.write_text("".join(line for line in original if line not in removed))
     monkeypatch.setattr(audit, "IDENTITY_POLICY", policy)
     monkeypatch.setattr(audit, "ingredient_mapping_allowed", lambda name, target: False)
     with pytest.raises(SourceFinalizationRequired, match="hold is missing"):

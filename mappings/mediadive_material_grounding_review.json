@@ -1,0 +1,364 @@
+{
+  "version": 1,
+  "baseline": {
+    "path": "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
+    "sha256": "67c48e1bf6bed1f1fef03a0da1d7d1b56af9fc72374dddd703c222fb36df3cd4",
+    "fields": [
+      "subject_id",
+      "subject_label",
+      "predicate_id",
+      "object_id",
+      "object_label",
+      "object_source",
+      "mapping_justification",
+      "source",
+      "mapping_date",
+      "confidence",
+      "comment",
+      "object_formula",
+      "object_category"
+    ]
+  },
+  "dispositions": [
+    {
+      "id": "sl10",
+      "target_id": "CHEBI:1387",
+      "authority_label": "3,4-dihydroxyphenylethyleneglycol",
+      "reason": "source_material_not_native_molecular_identity",
+      "evidence_uri": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium1521.pdf",
+      "source_names": [
+        "SL10"
+      ]
+    },
+    {
+      "id": "trace-vitamins-197",
+      "target_id": "CHEBI:1784",
+      "authority_label": "biphenyl-4-amine",
+      "reason": "source_material_not_native_molecular_identity",
+      "evidence_uri": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=197",
+      "source_names": [
+        "Trace vitamin (see Medium No.197)",
+        "Trace vitamins (See Medium No.197)",
+        "Trace vitamins (see Medium No. 197)",
+        "Trace vitamins (see Medium No.197)",
+        "Trace vitamins (see Medium No.197)*",
+        "Trace vitamins(see Medium No.197)",
+        "Trace vitamins* (see Medium No. 197)",
+        "Trace vitamins* (see Medium No.197)"
+      ]
+    },
+    {
+      "id": "mueller-hinton-broth",
+      "target_id": "CHEBI:748",
+      "authority_label": "12alpha-Hydroxyamoorstatin",
+      "reason": "source_material_not_native_molecular_identity",
+      "evidence_uri": "https://mediadive.dsmz.de/ingredients/748",
+      "source_names": [
+        "Mueller-Hinton broth"
+      ]
+    },
+    {
+      "id": "difco-marine-broth-2216",
+      "target_id": "CHEBI:2216",
+      "authority_label": "6-Methylpenicillin",
+      "reason": "source_material_not_native_molecular_identity",
+      "evidence_uri": "https://mediadive.dsmz.de/ingredients/1379",
+      "source_names": [
+        "Difco Marine Broth 2216",
+        "Difco marine broth (Difco 2216)",
+        "Difco marine broth (Difco2216)"
+      ]
+    },
+    {
+      "id": "malted-wheat-meal",
+      "target_id": "CHEBI:1881",
+      "authority_label": "4-Hydroxypheoxyacetate",
+      "reason": "source_material_not_native_molecular_identity",
+      "evidence_uri": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=730",
+      "source_names": [
+        "Malted wheat meal"
+      ]
+    },
+    {
+      "id": "k2hso4",
+      "target_id": "CHEBI:1895",
+      "authority_label": "4-methylbenzyl alcohol",
+      "reason": "source_material_not_native_molecular_identity",
+      "evidence_uri": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=788",
+      "source_names": [
+        "K2HSO4"
+      ]
+    },
+    {
+      "id": "leibovitz-l15-medium",
+      "target_id": "CHEBI:1941",
+      "authority_label": "4-(trimethylammonio)butanoic acid",
+      "reason": "source_material_not_native_molecular_identity",
+      "evidence_uri": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=930",
+      "source_names": [
+        "Leibovitz's L-15 medium"
+      ]
+    },
+    {
+      "id": "selenite-tungstate-solution",
+      "target_id": "CHEBI:88",
+      "authority_label": "(S)-(-)-citronellol",
+      "reason": "source_material_not_native_molecular_identity",
+      "evidence_uri": "https://mediadive.dsmz.de/solutions/777",
+      "source_names": [
+        "Selenite-Tungstate Solution:",
+        "Selenite-Tungstate solution",
+        "Selenite-tungstate solution"
+      ]
+    }
+  ],
+  "historical_claims": [
+    {
+      "disposition_id": "sl10",
+      "data_row_ordinal": 24154,
+      "row": {
+        "subject_id": "kgm.name:sl10",
+        "subject_label": "SL10",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "CHEBI:1387",
+        "object_label": "3,4-dihydroxyphenylethyleneglycol",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "chebi_xrefs|mediadive_compounds|primary_mappings[kegg_compound]",
+        "mapping_date": "2026-09-04",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      }
+    },
+    {
+      "disposition_id": "trace-vitamins-197",
+      "data_row_ordinal": 172765,
+      "row": {
+        "subject_id": "kgm.name:trace_vitamin_see_medium_no197",
+        "subject_label": "Trace vitamin (see Medium No.197)",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "CHEBI:1784",
+        "object_label": "biphenyl-4-amine",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "chebi_xrefs|mediadive_compounds|primary_mappings[kegg_compound]",
+        "mapping_date": "2026-09-04",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      }
+    },
+    {
+      "disposition_id": "trace-vitamins-197",
+      "data_row_ordinal": 172766,
+      "row": {
+        "subject_id": "kgm.name:trace_vitamins_see_medium_no197",
+        "subject_label": "Trace vitamins (See Medium No.197)",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "CHEBI:1784",
+        "object_label": "biphenyl-4-amine",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "chebi_xrefs|mediadive_compounds|primary_mappings[kegg_compound]",
+        "mapping_date": "2026-09-04",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      }
+    },
+    {
+      "disposition_id": "trace-vitamins-197",
+      "data_row_ordinal": 172767,
+      "row": {
+        "subject_id": "kgm.name:trace_vitamins_see_medium_no_197",
+        "subject_label": "Trace vitamins* (see Medium No. 197)",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "CHEBI:1784",
+        "object_label": "biphenyl-4-amine",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "chebi_xrefs|mediadive_compounds|primary_mappings[kegg_compound]",
+        "mapping_date": "2026-09-04",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      }
+    },
+    {
+      "disposition_id": "trace-vitamins-197",
+      "data_row_ordinal": 172768,
+      "row": {
+        "subject_id": "kgm.name:trace_vitaminssee_medium_no197",
+        "subject_label": "Trace vitamins(see Medium No.197)",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "CHEBI:1784",
+        "object_label": "biphenyl-4-amine",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "chebi_xrefs|mediadive_compounds|primary_mappings[kegg_compound]",
+        "mapping_date": "2026-09-04",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      }
+    },
+    {
+      "disposition_id": "malted-wheat-meal",
+      "data_row_ordinal": 213179,
+      "row": {
+        "subject_id": "kgm.name:malted_wheat_meal",
+        "subject_label": "Malted wheat meal",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "CHEBI:1881",
+        "object_label": "4-Hydroxypheoxyacetate",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "chebi_xrefs|mediadive_compounds|primary_mappings[kegg_compound]",
+        "mapping_date": "2026-09-04",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      }
+    },
+    {
+      "disposition_id": "k2hso4",
+      "data_row_ordinal": 218142,
+      "row": {
+        "subject_id": "kgm.name:k2hso4",
+        "subject_label": "K2HSO4",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "CHEBI:1895",
+        "object_label": "4-methylbenzyl alcohol",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "chebi_xrefs|mediadive_compounds|primary_mappings[kegg_compound]",
+        "mapping_date": "2026-09-04",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      }
+    },
+    {
+      "disposition_id": "leibovitz-l15-medium",
+      "data_row_ordinal": 233793,
+      "row": {
+        "subject_id": "kgm.name:leibovitzs_l-15_medium",
+        "subject_label": "Leibovitz's L-15 medium",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "CHEBI:1941",
+        "object_label": "4-(trimethylammonio)butanoic acid",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "chebi_xrefs|mediadive_compounds|primary_mappings[kegg_compound]",
+        "mapping_date": "2026-09-04",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      }
+    },
+    {
+      "disposition_id": "difco-marine-broth-2216",
+      "data_row_ordinal": 306843,
+      "row": {
+        "subject_id": "kgm.name:difco_marine_broth_2216",
+        "subject_label": "Difco Marine Broth 2216",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "CHEBI:2216",
+        "object_label": "6-Methylpenicillin",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "chebi_xrefs|mediadive_compounds|primary_mappings[kegg_compound]",
+        "mapping_date": "2026-09-04",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      }
+    },
+    {
+      "disposition_id": "difco-marine-broth-2216",
+      "data_row_ordinal": 306844,
+      "row": {
+        "subject_id": "kgm.name:difco_marine_broth_difco2216",
+        "subject_label": "Difco marine broth (Difco2216)",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "CHEBI:2216",
+        "object_label": "6-Methylpenicillin",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "chebi_xrefs|mediadive_compounds|primary_mappings[kegg_compound]",
+        "mapping_date": "2026-09-04",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      }
+    },
+    {
+      "disposition_id": "difco-marine-broth-2216",
+      "data_row_ordinal": 306845,
+      "row": {
+        "subject_id": "kgm.name:difco_marine_broth_difco_2216",
+        "subject_label": "Difco marine broth (Difco 2216)",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "CHEBI:2216",
+        "object_label": "6-Methylpenicillin",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "chebi_xrefs|mediadive_compounds|primary_mappings[kegg_compound]",
+        "mapping_date": "2026-09-04",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      }
+    },
+    {
+      "disposition_id": "mueller-hinton-broth",
+      "data_row_ordinal": 527611,
+      "row": {
+        "subject_id": "kgm.name:mueller-hinton_broth",
+        "subject_label": "Mueller-Hinton broth",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "CHEBI:748",
+        "object_label": "12alpha-Hydroxyamoorstatin",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "chebi_xrefs|mediadive_compounds|primary_mappings[kegg_compound]",
+        "mapping_date": "2026-09-04",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      }
+    },
+    {
+      "disposition_id": "selenite-tungstate-solution",
+      "data_row_ordinal": 583379,
+      "row": {
+        "subject_id": "kgm.name:selenite-tungstate_solution",
+        "subject_label": "Selenite-Tungstate Solution:",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "CHEBI:88",
+        "object_label": "(S)-(-)-citronellol",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "chebi_xrefs|mediadive_compounds|primary_mappings[kegg_compound]",
+        "mapping_date": "2026-09-04",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      }
+    }
+  ]
+}

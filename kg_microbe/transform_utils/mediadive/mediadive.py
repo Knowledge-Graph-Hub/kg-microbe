@@ -138,6 +138,7 @@ from kg_microbe.transform_utils.mediadive.bulk_inputs import (
 from kg_microbe.transform_utils.mediadive.material_scope_audit import (
     AUDIT_FILENAME,
     MaterialScopeAudit,
+    p3556_material,
     verify_recorded_material_inputs,
 )
 from kg_microbe.transform_utils.transform import Transform
@@ -762,7 +763,9 @@ class MediaDiveTransform(Transform):
                     if isinstance(item[COMPOUND_KEY], str)
                     else item[COMPOUND_KEY]
                 )
-                ingredient_id = self.standardize_compound_id(str(item[COMPOUND_ID_KEY]), source_name)
+                ingredient_id = self.standardize_compound_id(
+                    str(item[COMPOUND_ID_KEY]), source_name, source_record=item
+                )
             elif SOLUTION_ID_KEY in item and item[SOLUTION_ID_KEY] is not None:
                 # Resolve the original scope; normalize only the display key.
                 if isinstance(item[SOLUTION_KEY], str):
@@ -776,10 +779,14 @@ class MediaDiveTransform(Transform):
                 solution_name_normalized = source_name.lower().strip()
 
                 # Check if solution name can be mapped to ontology via unified or legacy mappings
-                candidates = [
-                    self.chemical_loader.find_chebi_by_name(source_name),
-                    self.compound_mappings.get(solution_name_normalized),
-                ]
+                candidates = (
+                    []
+                    if p3556_material(item)
+                    else [
+                        self.chemical_loader.find_chebi_by_name(source_name),
+                        self.compound_mappings.get(solution_name_normalized),
+                    ]
+                )
                 solution_id = next(
                     (
                         candidate
@@ -823,7 +830,7 @@ class MediaDiveTransform(Transform):
             label = getter(target) if getter else ""
         return ingredient_hydration_compatible(name, label, getattr(self, "chebi_hydrate_names", {}).get(target, ()))
 
-    def standardize_compound_id(self, id: str, compound_name: str = None):
+    def standardize_compound_id(self, id: str, compound_name: str = None, *, source_record: dict = None):
         """
         Get standardized IDs via unified chemical mappings, bulk data, or legacy mappings.
 
@@ -835,8 +842,14 @@ class MediaDiveTransform(Transform):
 
         :param id: MediaDive compound ID.
         :param compound_name: Compound name for mapping lookup.
+        :param source_record: Actual occurrence evidence; even an empty dictionary overrides embedded qualifiers.
         :return: Standardized ID.
         """
+        # A whole supplier product is not a pure molecular species. The actual
+        # occurrence wins over another recipe's cached embedded record (#1241).
+        evidence = source_record if source_record is not None else getattr(self, "compounds_data", {}).get(id, {})
+        if p3556_material(evidence):
+            return MEDIADIVE_INGREDIENT_PREFIX + id
         if compound_name:
             # Check unified chemical mappings by compound name. The unified
             # mapping is not restricted to CHEBI — it also holds FOODON

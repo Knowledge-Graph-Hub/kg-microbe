@@ -1,0 +1,277 @@
+{
+  "version": 1,
+  "source_assertion_id": "mediadive.solution:629#recipe/1",
+  "raw": {
+    "recipe_order": 1,
+    "compound": "L-α-Phosphatidylcholine",
+    "compound_id": 2082,
+    "attribute": "SIGMA P3556",
+    "amount": 5,
+    "unit": "mg",
+    "g_l": 5,
+    "optional": 0
+  },
+  "input_sha256": {
+    "compounds": "ccc1130355354a55729d31618b152d1c340d75379dfea49352e9075f3419cea1",
+    "solutions": "9ab0fbf72c2e5ac25ecab3ada268dfe524db971daa86d67532dea6a5412a5c44",
+    "unified": "09c44642ab13b234e89ce113f7510aa9efb56969e4b539cb7843b43dcb425ba7",
+    "supported": "6b52b30e018b369aa322d41dfd4e81fcfae0e895e34d7fe48900abf5835815fb",
+    "chebi_json": "a5d40380ab78bde0e8b5a704dbee3cba2bcaa7608be46eebc2f4a92932516c9b"
+  },
+  "mapping_claims": [
+    {
+      "record_key": "unified:record=582794:line=582872",
+      "table": "unified",
+      "row": {
+        "subject_id": "MIM:L-alpha-Phosphatidylcholine",
+        "subject_label": "",
+        "predicate_id": "skos:exactMatch",
+        "object_id": "CHEBI:86658",
+        "object_label": "L-alpha-Phosphatidylcholine",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:ManualMappingCuration",
+        "source": "mediaingredientmech_reviewed[manifest=9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af]",
+        "mapping_date": "2026-09-24",
+        "confidence": "",
+        "comment": "",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      },
+      "original_physical_line_utf8": "MIM:L-alpha-Phosphatidylcholine\t\tskos:exactMatch\tCHEBI:86658\tL-alpha-Phosphatidylcholine\tobo:chebi.owl\tsemapv:ManualMappingCuration\tmediaingredientmech_reviewed[manifest=9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af]\t2026-09-24\t\t\t\tbiolink:ChemicalEntity\n"
+    },
+    {
+      "record_key": "unified:record=582795:line=582873",
+      "table": "unified",
+      "row": {
+        "subject_id": "kgm.name:2r-3-1-oxohexadecoxy-2-9e12e-1-oxooctadeca-912-dienoxypropyl_2-trimethylammonioethyl_phosphate",
+        "subject_label": "[(2R)-3-(1-oxohexadecoxy)-2-[(9E,12E)-1-oxooctadeca-9,12-dienoxy]propyl] 2-(trimethylammonio)ethyl phosphate",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "CHEBI:86658",
+        "object_label": "L-alpha-Phosphatidylcholine",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "native_ontology:chebi",
+        "mapping_date": "2026-09-24",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      },
+      "original_physical_line_utf8": "kgm.name:2r-3-1-oxohexadecoxy-2-9e12e-1-oxooctadeca-912-dienoxypropyl_2-trimethylammonioethyl_phosphate\t[(2R)-3-(1-oxohexadecoxy)-2-[(9E,12E)-1-oxooctadeca-9,12-dienoxy]propyl] 2-(trimethylammonio)ethyl phosphate\tskos:closeMatch\tCHEBI:86658\tL-alpha-Phosphatidylcholine\tobo:chebi.owl\tsemapv:LexicalMatching\tnative_ontology:chebi\t2026-09-24\t\tsynonym\t\tbiolink:ChemicalEntity\n"
+    },
+    {
+      "record_key": "unified:record=582796:line=582874",
+      "table": "unified",
+      "row": {
+        "subject_id": "kgm.name:2r-3-hexadecanoyloxy-2-9e12e-octadeca-912-dienoyloxy-propyl_2-trimethylammonioethyl_phosphate",
+        "subject_label": "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] 2-(trimethylammonio)ethyl phosphate",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "CHEBI:86658",
+        "object_label": "L-alpha-Phosphatidylcholine",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "native_ontology:chebi",
+        "mapping_date": "2026-09-24",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      },
+      "original_physical_line_utf8": "kgm.name:2r-3-hexadecanoyloxy-2-9e12e-octadeca-912-dienoyloxy-propyl_2-trimethylammonioethyl_phosphate\t[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] 2-(trimethylammonio)ethyl phosphate\tskos:closeMatch\tCHEBI:86658\tL-alpha-Phosphatidylcholine\tobo:chebi.owl\tsemapv:LexicalMatching\tnative_ontology:chebi\t2026-09-24\t\tsynonym\t\tbiolink:ChemicalEntity\n"
+    },
+    {
+      "record_key": "unified:record=582797:line=582875",
+      "table": "unified",
+      "row": {
+        "subject_id": "kgm.name:2r-3-hexadecanoyloxy-2-9e12e-octadeca-912-dienoyloxy-propyl_2-trimethylazaniumylethyl_phosphate",
+        "subject_label": "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] 2-(trimethylazaniumyl)ethyl phosphate",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "CHEBI:86658",
+        "object_label": "L-alpha-Phosphatidylcholine",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "native_ontology:chebi",
+        "mapping_date": "2026-09-24",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      },
+      "original_physical_line_utf8": "kgm.name:2r-3-hexadecanoyloxy-2-9e12e-octadeca-912-dienoyloxy-propyl_2-trimethylazaniumylethyl_phosphate\t[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] 2-(trimethylazaniumyl)ethyl phosphate\tskos:closeMatch\tCHEBI:86658\tL-alpha-Phosphatidylcholine\tobo:chebi.owl\tsemapv:LexicalMatching\tnative_ontology:chebi\t2026-09-24\t\tsynonym\t\tbiolink:ChemicalEntity\n"
+    },
+    {
+      "record_key": "unified:record=582798:line=582876",
+      "table": "unified",
+      "row": {
+        "subject_id": "kgm.name:2r-3-hexadecanoyloxy-2-9e12e-octadeca-912-dienoyloxypropyl_2-trimethylazaniumylethyl_phosphate",
+        "subject_label": "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxypropyl] 2-(trimethylazaniumyl)ethyl phosphate",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "CHEBI:86658",
+        "object_label": "L-alpha-Phosphatidylcholine",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "native_ontology:chebi",
+        "mapping_date": "2026-09-24",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      },
+      "original_physical_line_utf8": "kgm.name:2r-3-hexadecanoyloxy-2-9e12e-octadeca-912-dienoyloxypropyl_2-trimethylazaniumylethyl_phosphate\t[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxypropyl] 2-(trimethylazaniumyl)ethyl phosphate\tskos:closeMatch\tCHEBI:86658\tL-alpha-Phosphatidylcholine\tobo:chebi.owl\tsemapv:LexicalMatching\tnative_ontology:chebi\t2026-09-24\t\tsynonym\t\tbiolink:ChemicalEntity\n"
+    },
+    {
+      "record_key": "unified:record=582799:line=582877",
+      "table": "unified",
+      "row": {
+        "subject_id": "kgm.name:l--phosphatidylcholine",
+        "subject_label": "L-α-Phosphatidylcholine",
+        "predicate_id": "skos:closeMatch",
+        "object_id": "CHEBI:86658",
+        "object_label": "L-alpha-Phosphatidylcholine",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "mediaingredientmech_reviewed[manifest=9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af]",
+        "mapping_date": "2026-09-24",
+        "confidence": "",
+        "comment": "synonym",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      },
+      "original_physical_line_utf8": "kgm.name:l--phosphatidylcholine\tL-α-Phosphatidylcholine\tskos:closeMatch\tCHEBI:86658\tL-alpha-Phosphatidylcholine\tobo:chebi.owl\tsemapv:LexicalMatching\tmediaingredientmech_reviewed[manifest=9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af]\t2026-09-24\t\tsynonym\t\tbiolink:ChemicalEntity\n"
+    },
+    {
+      "record_key": "unified:record=582800:line=582878",
+      "table": "unified",
+      "row": {
+        "subject_id": "kgm.name:l-alpha-phosphatidylcholine",
+        "subject_label": "L-alpha-Phosphatidylcholine",
+        "predicate_id": "skos:exactMatch",
+        "object_id": "CHEBI:86658",
+        "object_label": "L-alpha-Phosphatidylcholine",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "mediaingredientmech_reviewed[manifest=9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af]|native_ontology:chebi",
+        "mapping_date": "2026-09-24",
+        "confidence": "",
+        "comment": "canonical_name",
+        "object_formula": "",
+        "object_category": "biolink:ChemicalEntity"
+      },
+      "original_physical_line_utf8": "kgm.name:l-alpha-phosphatidylcholine\tL-alpha-Phosphatidylcholine\tskos:exactMatch\tCHEBI:86658\tL-alpha-Phosphatidylcholine\tobo:chebi.owl\tsemapv:LexicalMatching\tmediaingredientmech_reviewed[manifest=9bb29d5605d93dea351be9624d99c5d8ada57d4b9831b22764957b784bd685af]|native_ontology:chebi\t2026-09-24\t\tcanonical_name\t\tbiolink:ChemicalEntity\n"
+    },
+    {
+      "record_key": "supported:record=950:line=987",
+      "table": "supported",
+      "row": {
+        "subject_id": "MIM:L-alpha-Phosphatidylcholine",
+        "subject_label": "L-alpha-Phosphatidylcholine",
+        "predicate_id": "skos:exactMatch",
+        "object_id": "CHEBI:86658",
+        "object_label": "L-alpha-Phosphatidylcholine",
+        "object_source": "obo:chebi.owl",
+        "mapping_justification": "semapv:LexicalMatching",
+        "source": "MIM:EBI OLS exact search|MIM:curator=refresh_occurrence_statistics|kgm:culturebotai_reviewed|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=unmapped_ols_exact_audit]",
+        "mapping_date": "2026-08-27",
+        "confidence": "0.99",
+        "comment": "",
+        "other": "L-α-Phosphatidylcholine",
+        "validation_method": "OAK+OLS:chebi|SYNONYM_ENRICH|2026-07-07"
+      },
+      "original_physical_line_utf8": "MIM:L-alpha-Phosphatidylcholine\tL-alpha-Phosphatidylcholine\tskos:exactMatch\tCHEBI:86658\tL-alpha-Phosphatidylcholine\tobo:chebi.owl\tsemapv:LexicalMatching\tMIM:EBI OLS exact search|MIM:curator=refresh_occurrence_statistics|kgm:culturebotai_reviewed|kgm:mediaingredientmech_reviewed|kgm:mediaingredientmech_reviewed[curator=unmapped_ols_exact_audit]\t2026-08-27\t0.99\t\tL-α-Phosphatidylcholine\tOAK+OLS:chebi|SYNONYM_ENRICH|2026-07-07\n"
+    }
+  ],
+  "native_structure": [
+    {
+      "node_ordinal": 204443,
+      "node": {
+        "id": "http://purl.obolibrary.org/obo/CHEBI_86658",
+        "lbl": "L-alpha-Phosphatidylcholine",
+        "type": "CLASS",
+        "meta": {
+          "subsets": [
+            "http://purl.obolibrary.org/obo/chebi/1_STAR"
+          ],
+          "synonyms": [
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "[(2R)-3-(1-oxohexadecoxy)-2-[(9E,12E)-1-oxooctadeca-9,12-dienoxy]propyl] 2-(trimethylammonio)ethyl phosphate",
+              "xrefs": [
+                "chebi"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] 2-(trimethylammonio)ethyl phosphate",
+              "xrefs": [
+                "chebi"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxy-propyl] 2-(trimethylazaniumyl)ethyl phosphate",
+              "xrefs": [
+                "chebi"
+              ]
+            },
+            {
+              "pred": "hasRelatedSynonym",
+              "val": "[(2R)-3-hexadecanoyloxy-2-[(9E,12E)-octadeca-9,12-dienoyl]oxypropyl] 2-(trimethylazaniumyl)ethyl phosphate",
+              "xrefs": [
+                "chebi"
+              ]
+            }
+          ],
+          "basicPropertyValues": [
+            {
+              "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+              "val": "chebi_ontology"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/charge",
+              "val": "0"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/generalized_empirical_formula",
+              "val": "C42H80NO8P"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/inchi_key_string",
+              "val": "JLPULHDHAOZNQI-JLOPVYAASA-N"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/inchi_string",
+              "val": "InChI=1S/C42H80NO8P/c1-6-8-10-12-14-16-18-20-21-23-25-27-29-31-33-35-42(45)51-40(39-50-52(46,47)49-37-36-43(3,4)5)38-48-41(44)34-32-30-28-26-24-22-19-17-15-13-11-9-7-2/h14,16,20-21,40H,6-13,15,17-19,22-39H2,1-5H3/b16-14+,21-20+/t40-/m1/s1"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/mass",
+              "val": "758.075"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/monoisotopic_mass",
+              "val": "757.56216"
+            },
+            {
+              "pred": "https://w3id.org/chemrof/smiles_string",
+              "val": "CCCCC/C=C/C/C=C/CCCCCCCC(=O)O[C@H](COC(=O)CCCCCCCCCCCCCCC)COP(=O)([O-])OCC[N+](C)(C)C"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "primary_evidence": [
+    {
+      "uri": "https://www.sigmaaldrich.com/deepweb/assets/sigmaaldrich/product/documents/152/475/p3556pis.pdf",
+      "scope": "Supplier P3556 product sheet: egg-yolk fatty-acid composition has 16:0, 18:0, 18:1, 18:2 and minor other residues. This does not establish one pure acyl species."
+    },
+    {
+      "uri": "https://b2b.sigmaaldrich.com/deepweb/assets/sigmaaldrich/marketing/global/documents/709/352/polymeric-drug-delivery-techniques-web.pdf",
+      "scope": "PDF page index 18 (printed 17) depicts variable fatty-acid residues R and R-prime for P3556."
+    },
+    {
+      "uri": "https://www.sigmaaldrich.com/US/en/product/sigma/p3556",
+      "scope": "Catalog includes a fixed structure alongside egg-yolk product scope. It is not whole-product purity evidence; the catalog stereolayer also differs from native CHEBI:86658."
+    }
+  ],
+  "limitations": "Primary documents were read online, not locally byte-pinned. No claim that the specific molecule is absent from the mixture; no new CAS, charge or chemical identity is approved."
+}

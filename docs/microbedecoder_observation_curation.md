@@ -1,6 +1,6 @@
 # MicrobeDecoder source-value typing
 
-Reviewed source values are retained as `biolink:Attribute` nodes. The optional
+Reviewed source values are retained as `biolink:Attribute` nodes. The optional-in-KG-Microbe
 **node property** `has_attribute_type` identifies the native METPO class that
 describes a reviewed source-column/literal pair. It is not an edge predicate.
 No METPO categories, LPSN categories, source record identifiers, original
@@ -11,6 +11,14 @@ Attribute slot with range OntologyClass. It does not make it a descendant of
 `related to`, so checking domain/range alone would not authorize a new KG edge.
 The slot uses the native class category, including OntologyClass; this is not
 an attempt to retype METPO qualities as PhenotypicFeature.
+
+The slot is **required in full Biolink**. Its optionality here is an explicit
+KG-Microbe source-preservation profile exception: unreviewed values retain
+their original Attributes without invented type identities. This is not full
+LinkML instance conformance. The source modeling review counts that exception
+as INFO and checks present types against unique active native METPO declarations;
+malformed, missing, deprecated or wrong-category targets are ERRORs (#1222).
+The focused check does not validate every Biolink node slot or certify a release.
 
 ## Evidence and query semantics
 

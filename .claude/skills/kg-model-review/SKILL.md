@@ -40,6 +40,16 @@ When this skill is invoked, run `kg_model_review.py` with the specified scope an
 - `category` is not empty
 - No duplicate `id` values within a single transform
 
+For `--transform microbedecoder`, the focused Attribute node-slot check (#1222)
+requires present `has_attribute_type` values to be singleton METPO class CURIEs
+on Attribute nodes, with unique active declarations in native
+`ontologies/metpo_nodes.tsv` and the pinned slot-range category. Invalid or
+unverifiable targets are ERRORs. Untyped Attributes are counted explicitly as
+an INFO house-profile exception: the slot is required in full Biolink but
+optional in KG-Microbe's source-preservation profile. Do not infer full LinkML
+instance conformance from a green review or invent types to remove this count.
+This source-specific check does not run on merged or unrelated source outputs.
+
 #### KGX Format (edges.tsv)
 - Required columns present: `subject`, `predicate`, `object`, `relation`
 - `subject`, `object` are valid CURIEs

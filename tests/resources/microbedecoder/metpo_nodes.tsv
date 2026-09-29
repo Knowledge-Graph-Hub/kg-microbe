@@ -2,6 +2,18 @@ id	name	category	deprecated
 METPO:1002005	Fermentation	biolink:BiologicalProcess	
 METPO:1000844	Methanogenesis	biolink:BiologicalProcess	
 METPO:1005039	nitrogen fixation	biolink:BiologicalProcess	
+METPO:1000636	chemoheterotrophic	biolink:OntologyClass	
+METPO:1000656	photoautotrophic	biolink:OntologyClass	
+METPO:1000657	photoheterotrophic	biolink:OntologyClass	
+METPO:1004003	plant pathogen	biolink:OntologyClass	
+METPO:1000703	non motile	biolink:OntologyClass	
+METPO:1000702	motile	biolink:OntologyClass	
+METPO:1004002	animal pathogen	biolink:OntologyClass	
+METPO:1004004	human pathogen	biolink:OntologyClass	
+METPO:1005011	indole test positive	biolink:OntologyClass	
+METPO:1005012	indole test negative	biolink:OntologyClass	
+METPO:1005017	Voges-Proskauer test positive	biolink:OntologyClass	
+METPO:1005018	Voges-Proskauer test negative	biolink:OntologyClass	
 METPO:1000668	coccus shaped	biolink:OntologyClass	
 METPO:1000671	diplococcus shaped	biolink:OntologyClass	
 METPO:1000673	ellipsoidal	biolink:OntologyClass	

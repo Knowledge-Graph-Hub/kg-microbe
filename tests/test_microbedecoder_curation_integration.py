@@ -10,6 +10,7 @@ import pytest
 from kg_microbe.transform_utils.microbedecoder.curation import DEFAULT_PROCESS_MAPPINGS
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
 from kg_microbe.transform_utils.microbedecoder.phenotype_curation import DEFAULT_PHENOTYPE_MAPPINGS
+from kg_microbe.transform_utils.microbedecoder.process_scopes import DEFAULT_PROCESS_SCOPE_DEFINITIONS
 from kg_microbe.transform_utils.microbedecoder.source_annotations import REPORTED_METABOLISM_ANNOTATIONS
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 from tests.test_microbedecoder_transform import FIXTURE_DIR, _NoChebi, _supply_gold_fold_report
@@ -28,12 +29,15 @@ def _transform(tmp_path):
     shutil.copyfile(DEFAULT_PROCESS_MAPPINGS, mapping)
     phenotypes = tmp_path / "phenotypes.tsv"
     shutil.copyfile(DEFAULT_PHENOTYPE_MAPPINGS, phenotypes)
+    scopes = tmp_path / "process_scopes.tsv"
+    shutil.copyfile(DEFAULT_PROCESS_SCOPE_DEFINITIONS, scopes)
     return MicrobeDecoderTransform(
         FIXTURE_DIR,
         tmp_path,
         chemical_loader=_NoChebi(),
         process_mappings=mapping,
         phenotype_mappings=phenotypes,
+        process_scopes=scopes,
     )
 
 
@@ -71,6 +75,7 @@ def test_real_mapping_retains_source_evidence_and_has_no_ontology_stubs(tmp_path
         "process_authority",
         "process_go_authority",
         "phenotype_mappings",
+        "process_scope_definitions",
         "chemical_authority",
     }
 
@@ -113,6 +118,7 @@ def test_missing_report_is_preserved_without_a_chemical_or_negative_assertion(tm
         "process_authority",
         "process_go_authority",
         "phenotype_mappings",
+        "process_scope_definitions",
         "chemical_authority",
     ],
 )
@@ -123,6 +129,7 @@ def test_actual_consumed_curation_drift_is_rejected(tmp_path, name):
     target = {
         "process_mappings": transform.process_mappings,
         "phenotype_mappings": transform.phenotype_mappings,
+        "process_scope_definitions": transform.process_scopes,
         "process_authority": tmp_path / "ontologies/metpo_nodes.tsv",
         "process_go_authority": tmp_path / "ontologies/go_nodes.tsv",
         "chemical_authority": tmp_path / "ontologies/chebi_nodes.tsv",
@@ -169,7 +176,7 @@ def test_reported_phenotype_groundings_preserve_originals_and_do_not_emit_invali
     attributes = [row for row in edges if row["predicate"] == "biolink:has_attribute"]
     phenotypes = _rows(transform.output_dir / "phenotype_normalizations.tsv")
     assert len(attributes) == 11
-    assert len(phenotypes) == 4
+    assert len(phenotypes) == 8
     assert len(edges) == 11
     assert not any(row["predicate"] == "biolink:has_phenotype" for row in edges)
     for phenotype in phenotypes:

@@ -722,6 +722,134 @@ def check_nodes(path: Path, max_rows: int, registered_prefixes: set,
     return check_nodes_rows(rows, max_rows, registered_prefixes, metpo_curies, verbose)
 
 
+def read_microbedecoder_nodes(path: Path, max_rows: int) -> tuple[list, list]:
+    """Reject ambiguous source slots before DictReader can erase evidence (#1223).
+
+    A genuinely absent type column remains a supported historical profile.
+    Duplicate headers or short rows do not establish intentional absence.
+    Keep the generic reader and all other source/merged scopes unchanged.
+    """
+    rows = []
+    opener = gzip.open if path.suffix == ".gz" else open
+    mode = "rt" if path.suffix == ".gz" else "r"
+    try:
+        with opener(path, mode, encoding="utf-8", newline="") as stream:
+            # MicrobeDecoder/finalized KGX TSVs use QUOTE_NONE: quotes are
+            # literal evidence, not CSV syntax that may hide an invalid type.
+            reader = csv.reader(stream, delimiter="\t", quoting=csv.QUOTE_NONE, quotechar=None, strict=True)
+            header = next(reader, [])
+            if not header or any(not column.strip() for column in header) or len(header) != len(set(header)):
+                return [], [Finding(
+                    "ERROR", "AttributeType",
+                    f"MicrobeDecoder node header is empty, blank or duplicated: {path}",
+                )]
+            for values in reader:
+                if not values:  # Preserve DictReader's handling of empty physical lines.
+                    continue
+                if len(values) != len(header):
+                    return [], [Finding(
+                        "ERROR", "AttributeType",
+                        f"Malformed MicrobeDecoder node row at line {reader.line_num}: "
+                        f"expected {len(header)} cells, found {len(values)}; slot absence is unverifiable",
+                    )]
+                rows.append(dict(zip(header, values)))
+                if max_rows and len(rows) >= max_rows:
+                    break
+    except (OSError, UnicodeError, csv.Error, EOFError) as error:
+        return [], [Finding("ERROR", "AttributeType", f"MicrobeDecoder node file is unreadable: {path}: {error}")]
+    return rows, []
+
+
+def check_microbedecoder_attribute_types(rows: list, verbose: bool) -> list:
+    """Check the source-specific Attribute slot contract, not generic LinkML conformance.
+
+    Native METPO declarations are read independently of consumer stubs. Missing
+    types remain an explicit source-preservation profile exception (#1222),
+    never an invitation to invent an ontology identity for an unknown value.
+    """
+    from kg_microbe.transform_utils.constants import (
+        ATTRIBUTE_CATEGORY, CATEGORY_COLUMN, DEPRECATED_COLUMN,
+        HAS_ATTRIBUTE_TYPE_COLUMN, ID_COLUMN, METPO_PREFIX, NAME_COLUMN,
+    )
+
+    findings, typed, untyped = [], [], 0
+    violations = defaultdict(list)
+    for row in rows:
+        value = row.get(HAS_ATTRIBUTE_TYPE_COLUMN) or ""
+        category = row.get(CATEGORY_COLUMN) or ""
+        if not value:
+            if ATTRIBUTE_CATEGORY in category.split("|"):
+                untyped += 1
+            continue
+        node_id = row.get(ID_COLUMN, "")
+        if category != ATTRIBUTE_CATEGORY:
+            violations["type slot on a node not typed exactly Attribute"].append(node_id)
+        if not re.fullmatch(rf"{re.escape(METPO_PREFIX)}1\d{{6}}", value):
+            violations["type slot is not one native METPO class CURIE"].append(f"{node_id}: {value!r}")
+            continue
+        typed.append((node_id, value))
+
+    if untyped:
+        findings.append(Finding(
+            "INFO", "AttributeType",
+            f"{untyped:,} untyped Attribute nodes use the explicit KG-Microbe source-preservation "
+            "house-profile exception: has_attribute_type is required by full Biolink, optional "
+            "only in this profile; this is not full LinkML instance conformance",
+        ))
+
+    if typed:
+        # Read the actual pinned slot range, without treating the node slot as
+        # a graph predicate or broadening the native producer category contract.
+        model = _model_domain_range(f"biolink:{HAS_ATTRIBUTE_TYPE_COLUMN}")
+        expected_categories = model[1] if model else None
+        if not expected_categories or len(expected_categories) != 1:
+            violations["pinned Attribute slot range could not be validated"].append(HAS_ATTRIBUTE_TYPE_COLUMN)
+        targets = {target for _, target in typed}
+        declarations = {}
+        native_file = ONTOLOGIES_DIR / "metpo_nodes.tsv"
+        try:
+            with native_file.open(encoding="utf-8", newline="") as stream:
+                reader = csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE)
+                header = reader.fieldnames or []
+                required = {ID_COLUMN, NAME_COLUMN, CATEGORY_COLUMN, DEPRECATED_COLUMN}
+                if len(header) != len(set(header)) or not required.issubset(header):
+                    violations["native METPO declaration header is malformed"].append(str(native_file))
+                else:
+                    for declaration in reader:
+                        target = declaration.get(ID_COLUMN)
+                        if target not in targets:
+                            continue
+                        if target in declarations:
+                            violations["duplicate native METPO declaration"].append(target)
+                        declarations[target] = declaration
+                        if None in declaration or any(declaration.get(key) is None for key in required):
+                            violations["malformed native METPO declaration"].append(target)
+                            continue
+                        if not declaration[NAME_COLUMN].strip():
+                            violations["native METPO declaration has no name"].append(target)
+                        if expected_categories and declaration[CATEGORY_COLUMN] not in expected_categories:
+                            violations["native METPO category differs from the pinned slot range"].append(
+                                f"{target}: {declaration[CATEGORY_COLUMN]!r}"
+                            )
+                        if declaration[DEPRECATED_COLUMN].strip().lower() not in {"", "false", "0"}:
+                            violations["native METPO target is deprecated or has invalid status"].append(target)
+        except (OSError, UnicodeError, csv.Error) as error:
+            violations["native METPO declaration file is unreadable"].append(f"{native_file}: {error}")
+        for target in sorted(targets - declarations.keys()):
+            violations["missing native METPO declaration"].append(target)
+
+    for reason, examples in sorted(violations.items()):
+        findings.append(Finding("ERROR", "AttributeType", f"{len(examples):,} {reason}", examples if verbose else []))
+    if typed and not violations:
+        findings.append(Finding(
+            "INFO", "AttributeType",
+            f"{len(typed):,} singleton Attribute type slots resolve to {len({target for _, target in typed}):,} "
+            "unique active native METPO declarations with the pinned slot-range category; "
+            "focused source check only, not full LinkML instance conformance",
+        ))
+    return findings
+
+
 def check_edges_rows(rows: list, max_rows: int, registered_prefixes: set,
                      metpo_curies: set, verbose: bool) -> list:
     """Check a pre-loaded list of edge rows."""
@@ -1566,12 +1694,21 @@ def review_transform(name: str, transform_dir: Path, max_rows: int,
         result["edges"] = []
         return result
 
-    node_rows = list(iter_tsv(nodes_path, max_rows)) if nodes_path.exists() else []
+    from kg_microbe.transform_utils.constants import MICROBEDECODER
+    if name == MICROBEDECODER and nodes_path.exists():
+        node_rows, shape_findings = read_microbedecoder_nodes(nodes_path, max_rows)
+        if shape_findings:
+            result["nodes"] = shape_findings
+            return _tally(result)
+    else:
+        node_rows = list(iter_tsv(nodes_path, max_rows)) if nodes_path.exists() else []
     edge_rows = list(iter_tsv(edges_path, max_rows)) if edges_path.exists() else []
     result["nodes"] = (
         check_nodes_rows(node_rows, max_rows, registered_prefixes, metpo_curies, verbose)
         if node_rows else [Finding("ERROR", "KGX", f"nodes.tsv not found: {nodes_path}")]
     )
+    if name == MICROBEDECODER:
+        result["nodes"].extend(check_microbedecoder_attribute_types(node_rows, verbose))
     result["edges"] = (
         check_edges_rows(edge_rows, max_rows, registered_prefixes, metpo_curies, verbose)
         if edge_rows else [Finding("ERROR", "KGX", f"edges.tsv not found: {edges_path}")]

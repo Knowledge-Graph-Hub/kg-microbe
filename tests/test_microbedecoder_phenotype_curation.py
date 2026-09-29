@@ -1,4 +1,4 @@
-"""Keep report-only phenotype normalization scoped to reviewed explicit text."""
+"""Keep Attribute node typing scoped to reviewed values without organism phenotype edges."""
 
 import csv
 import io
@@ -14,6 +14,18 @@ from kg_microbe.transform_utils.microbedecoder.phenotype_curation import (
 
 AUTHORITY = Path(__file__).parent / "resources" / "microbedecoder" / "metpo_nodes.tsv"
 REVIEWED = {
+    "BacDive_Motility": {"0": "1000703", "1": "1000702"},
+    "BacDive_Pathogenicity_animal": {"1": "1004002"},
+    "BacDive_Pathogenicity_human": {"1": "1004004"},
+    "BacDive_Pathogenicity_plant": {"1": "1004003"},
+    "BacDive_Indole_test": {"+": "1005011", "-": "1005012"},
+    "BacDive_Voges_proskauer": {"+": "1005017", "-": "1005018"},
+    "FAPROTAX_Type_of_metabolism": {
+        "chemoheterotrophy": "1000636",
+        "photoautotrophy": "1000656",
+        "photoheterotrophy": "1000657",
+        "plant_pathogen": "1004003",
+    },
     "BacDive_Gram_stain": {"positive": "1000698", "negative": "1000699", "variable": "1000700"},
     "BacDive_Cell_shape": {
         "coccus-shaped": "1000668",
@@ -68,10 +80,10 @@ def curation():
     return PhenotypeCuration(DEFAULT_PHENOTYPE_MAPPINGS, AUTHORITY)
 
 
-def test_exact_twenty_two_rules_keep_native_category_and_source_evidence(curation):
+def test_exact_reviewed_rules_keep_native_category_and_source_evidence(curation):
     """Require native declarations without granting graph assertion or provenance fields."""
     rows = mapping_rows()
-    assert len(rows) == sum(map(len, REVIEWED.values())) == 22
+    assert len(rows) == sum(map(len, REVIEWED.values())) == 35
     assert {(row["source_column"], row["source_literal"]) for row in rows} == {
         (column, literal) for column, literals in REVIEWED.items() for literal in literals
     }
@@ -84,8 +96,15 @@ def test_exact_twenty_two_rules_keep_native_category_and_source_evidence(curatio
             assert not hasattr(rule, "predicate")
             assert not hasattr(rule, "relation")
             assert rule.target_category == "biolink:OntologyClass"
-            assert "872726c257b39d14ffb1827df09127b5c8ef72bb" in rule.evidence_uri
-            assert "BacDive-origin" in rule.curation_rationale
+            if column.startswith("BacDive_"):
+                assert "872726c257b39d14ffb1827df09127b5c8ef72bb" in rule.evidence_uri
+                assert "BacDive-origin" in rule.curation_rationale
+            else:
+                assert "FAPROTAX_1.2.12.zip" in rule.evidence_uri
+                assert (
+                    "prediction/computational_model" in rule.curation_rationale
+                    or "predicted" in rule.curation_rationale
+                )
             assert not hasattr(rule, "knowledge_level")
             assert not hasattr(rule, "agent_type")
 
@@ -101,10 +120,12 @@ def test_exact_twenty_two_rules_keep_native_category_and_source_evidence(curatio
         ("BacDive_Gram_stain", "1"),
         ("BacDive_Gram_stain", "+"),
         ("BacDive_Gram_stain", "-"),
-        ("BacDive_Motility", "1"),
+        ("BacDive_Motility", "2"),
         ("BacDive_Spore_formation", "0"),
-        ("BacDive_Indole_test", "+"),
-        ("BacDive_Voges_proskauer", "-"),
+        ("BacDive_Indole_test", "1"),
+        ("BacDive_Voges_proskauer", "0"),
+        ("BacDive_Voges_proskauer", "+/-"),
+        ("BacDive_Pathogenicity_plant", "0"),
         ("BacDive_Flagellum_arrangement", "polar"),
         ("BacDive_Cell_shape", "other"),
         ("BacDive_Cell_shape", "filament-shaped"),
@@ -122,6 +143,12 @@ def test_exact_twenty_two_rules_keep_native_category_and_source_evidence(curatio
         ("Bergey_Type_of_metabolism", "anaerobe"),
         ("BacDive_Metabolite_utilization", "glucose"),
         ("gram_stain", "positive"),
+        ("FAPROTAX_Type_of_metabolism", "phototrophy"),
+        ("FAPROTAX_Type_of_metabolism", "aerobic_chemoheterotrophy"),
+        ("FAPROTAX_Type_of_metabolism", "anoxygenic_photoautotrophy"),
+        ("FAPROTAX_Type_of_metabolism", "Chemoheterotrophy"),
+        ("Bergey_Type_of_metabolism", "chemoheterotrophy"),
+        ("Literature_Type_of_metabolism", "plant_pathogen"),
     ],
 )
 def test_unreviewed_literals_and_scopes_remain_attributes(curation, column, literal):
@@ -149,7 +176,7 @@ def test_streams_remain_open_and_rules_are_immutable():
 @pytest.mark.parametrize(
     "field,value,message",
     [
-        ("source_column", "BacDive_Motility", "source column scope"),
+        ("source_column", "BacDive_Spore_formation", "source column scope"),
         ("source_column", "BacDive_Flagellum_arrangement", "source column scope"),
         ("source_column", "Bergey_Type_of_metabolism", "source column scope"),
         ("source_literal", " positive", "malformed"),

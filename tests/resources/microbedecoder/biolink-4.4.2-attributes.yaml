@@ -14,6 +14,8 @@ classes:
     abstract: true
   named thing:
     is_a: entity
+  ontology class:
+    mixin: true
   organism taxon:
     is_a: named thing
     description: A classification of a set of organisms.
@@ -22,7 +24,11 @@ classes:
     abstract: true
   attribute:
     is_a: named thing
+    mixins:
+      - ontology class
     description: A property or characteristic of an entity.
+    slots:
+      - has attribute type
   organism attribute:
     is_a: attribute
   phenotypic quality:
@@ -32,6 +38,17 @@ classes:
   phenotypic feature:
     is_a: disease or phenotypic feature
 slots:
+  has attribute type:
+    description: connects an attribute to a class that describes it
+    domain: attribute
+    range: ontology class
+    multivalued: false
+    required: true
+    in_subset:
+      - samples
+    narrow_mappings:
+      - LOINC:has_modality_type
+      - LOINC:has_view_type
   has attribute:
     description: connects any entity to an attribute
     domain: entity

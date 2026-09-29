@@ -194,6 +194,8 @@ def test_registered_sugar_finalization_preserves_full_observations(tmp_path):
     shutil.copyfile(ROOT / process_table, root / process_table)
     phenotype_table = Path("mappings/canonical/microbedecoder_phenotype_mappings.tsv")
     shutil.copyfile(ROOT / phenotype_table, root / phenotype_table)
+    scope_table = Path("mappings/canonical/microbedecoder_process_scope_definitions.tsv")
+    shutil.copyfile(ROOT / scope_table, root / scope_table)
     evidence = json.loads((root / "tests/resources/microbedecoder/bergey_unresolved_sugar.json").read_bytes())
     controls = evidence["sugar_mapping_controls"]
     # The only synthetic mapping control adds native Mucin; exact Sugar rows

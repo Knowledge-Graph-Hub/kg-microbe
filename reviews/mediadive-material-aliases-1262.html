@@ -1,0 +1,256 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eight inherited MediaDive material alias defects (#1262) &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7026087e"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Eight inherited MediaDive material alias defects (#1262)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/reviews/mediadive-material-aliases-1262.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="eight-inherited-mediadive-material-alias-defects-1262">
+<h1>Eight inherited MediaDive material alias defects (#1262)<a class="headerlink" href="#eight-inherited-mediadive-material-alias-defects-1262" title="Link to this heading"></a></h1>
+<section id="evidence-and-finite-scope">
+<h2>Evidence and finite scope<a class="headerlink" href="#evidence-and-finite-scope" title="Link to this heading"></a></h2>
+<p>The actual finalized MediaDive source at <code class="docutils literal notranslate"><span class="pre">02f6e128dce6c16a95230266cd9123a69530b9e1</span></code>
+contains 289 recipe observations assigned to eight unrelated native ChEBI
+identities. Every complete <code class="docutils literal notranslate"><span class="pre">source_record</span></code> matches its saved raw recipe object.
+These assignments predate the annotation-only #1259 correction; passing that
+comparison did not approve their chemical identity.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Source material</p></th>
+<th class="head"><p>Incorrect target and native identity</p></th>
+<th class="head text-right"><p>Observations</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SL10</p></td>
+<td><p>CHEBI:1387, 3,4-dihydroxyphenylethyleneglycol</p></td>
+<td class="text-right"><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>Trace vitamins (see Medium No. 197)</p></td>
+<td><p>CHEBI:1784, biphenyl-4-amine</p></td>
+<td class="text-right"><p>21</p></td>
+</tr>
+<tr class="row-even"><td><p>Mueller-Hinton broth</p></td>
+<td><p>CHEBI:748, 12alpha-Hydroxyamoorstatin</p></td>
+<td class="text-right"><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>Difco Marine Broth 2216</p></td>
+<td><p>CHEBI:2216, 6-Methylpenicillin</p></td>
+<td class="text-right"><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>Malted wheat meal</p></td>
+<td><p>CHEBI:1881, 4-Hydroxypheoxyacetate</p></td>
+<td class="text-right"><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>K2HSO4</p></td>
+<td><p>CHEBI:1895, 4-methylbenzyl alcohol</p></td>
+<td class="text-right"><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>Leibovitz’s L-15 medium</p></td>
+<td><p>CHEBI:1941, 4-(trimethylammonio)butanoic acid</p></td>
+<td class="text-right"><p>3</p></td>
+</tr>
+<tr class="row-odd"><td><p>Selenite-tungstate solution</p></td>
+<td><p>CHEBI:88, (S)-(-)-citronellol</p></td>
+<td class="text-right"><p>260</p></td>
+</tr>
+</tbody>
+</table>
+<p>The active unified baseline contains 13 false lexical synonym rows, each with
+aggregate ontology/MediaDive/KEGG source tags. Aggregate tags do not establish
+native support for each alias. The strict/hydrate source tables retain local
+<code class="docutils literal notranslate"><span class="pre">ingredient:</span></code> identifiers, not evidence for these native accessions. The pattern
+is consistent with historical first-digit extraction from local IDs, including
+the marine-broth product suffix. The current writer’s prefix-preserving parser
+is not newly accused of that conversion.</p>
+<p>The evidence is stronger than a preferred-label disagreement:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium1521.pdf">DSMZ medium 1521</a>
+uses SL10 as a solution; the <a class="reference external" href="https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium320.pdf">SL-10 recipe in medium 320</a>
+contains multiple trace salts, not the native catechol/tetrol.</p></li>
+<li><p><a class="reference external" href="https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=197">JCM medium 197</a>
+defines the trace vitamins as a multicomponent preparation, not an aminobiphenyl.</p></li>
+<li><p>MediaDive identifies <a class="reference external" href="https://mediadive.dsmz.de/ingredients/748">Mueller-Hinton broth</a>
+and <a class="reference external" href="https://mediadive.dsmz.de/ingredients/1379">marine broth</a> as complex
+substances, not the unrelated limonoid or penicillin molecule.</p></li>
+<li><p><a class="reference external" href="https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=730">JCM medium 730</a>
+names malted wheat meal. <a class="reference external" href="https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=788">JCM medium 788</a>
+repeats literal K2HSO4. Its unresolved formula is not permission to substitute
+K2HPO4, KHSO4, or another guessed salt, much less methylbenzyl alcohol.</p></li>
+<li><p><a class="reference external" href="https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=930">JCM medium 930</a>
+names Leibovitz’s L-15 medium, a formulation rather than butyrobetaine.</p></li>
+<li><p>The saved <a class="reference external" href="https://mediadive.dsmz.de/solutions/777">selenite-tungstate solution</a>
+and six other source solution records contain selenite, tungstate, alkali and
+water, not citronellol. Their quantities/formulations are not all identical.</p></li>
+</ul>
+<p>Live primary pages corroborate the saved source; they are not claimed to be
+hash-pinned downloads. Raw, native and graph witnesses are hash-bound in the
+immutable fixture. Ontology declarations for all eight native chemicals remain
+valid and must not be globally removed.</p>
+</section>
+<section id="resolution-boundary">
+<h2>Resolution boundary<a class="headerlink" href="#resolution-boundary" title="Link to this heading"></a></h2>
+<p>Eight anchored target-scoped name exclusions reject only the reviewed false
+pairs, including observed punctuation and spacing variants. Existing shared
+reader, export and MediaDive unified/legacy/embedded/nested-solution guards
+enforce them. Direct native IDs, native names and synonyms remain eligible.
+There is no unconditional source-name ban, no invented replacement, and no
+new positive entry in <code class="docutils literal notranslate"><span class="pre">ingredient_name_scopes.tsv</span></code>. An independently supported
+alternative must be evaluated on its own evidence; it is not rejected merely
+because the old target was wrong.</p>
+<p>When no supported identity survives, the existing source-local ingredient or
+solution ID is retained. The 260 selenite observations include four ingredient
+uses and 256 nested solution references: 777 (179), 4172 (72), and 1725, 1915,
+2804, 3177, 5543 (one each). Never collapse those seven solution identities
+into one ingredient. Quantities, ordinals, qualifiers and full original source
+records must survive the actual rebuild.</p>
+<p>The reviewed non-lookup catalogue
+<code class="docutils literal notranslate"><span class="pre">mappings/mediadive_material_grounding_review.json</span></code> retains all 13 original
+SSSOM records, complete columns and original data-row ordinals, tied to baseline
+SHA-256 <code class="docutils literal notranslate"><span class="pre">67c48e1bf6bed1f1fef03a0da1d7d1b56af9fc72374dddd703c222fb36df3cd4</span></code>.
+Removing an active alias must not erase this historical evidence. Producer
+audits distinguish those archived claims from current unified, legacy or
+embedded candidates; the catalogue is not an identity lookup input. Current
+candidate records are audited only for the rejected name/target pair, not
+unrelated local IDs or alternative identities.</p>
+</section>
+<section id="positive-controls-and-acceptance">
+<h2>Positive controls and acceptance<a class="headerlink" href="#positive-controls-and-acceptance" title="Link to this heading"></a></h2>
+<p>The chelator node CHEBI:38161 has five genuine native <code class="docutils literal notranslate"><span class="pre">has_chemical_role</span></code>
+assertions in this source and no recipe ingredient assertion. Its broad label
+or KEGG xrefs are not grounds to quarantine those roles. CHEBI:27407 Kinetin
+and CHEBI:7070 tetramethylammonium chloride are retained positive controls.
+Legitimate native role edges belonging to the eight wrongly used chemical IDs
+also remain native ontology facts; correcting the ingredient links removes the
+inappropriate recipe paths without deleting ontology assertions globally.</p>
+<p><code class="docutils literal notranslate"><span class="pre">tests/resources/mediadive/material_aliases_1262.json</span></code> retains the 289 complete
+original observations, all seven nested solution records, native nodes/edges,
+all original unified target rows and positive controls. SHA-256:
+<code class="docutils literal notranslate"><span class="pre">e6db6174173a12101875104c33478f1868f4454ddd296db8e46b47ab6119f126</span></code>.
+Catalogue SHA-256:
+<code class="docutils literal notranslate"><span class="pre">b94ecaa4935082a6ed79faddfa448ed3a1768a858a572bc63306d20f43701e03</span></code>.
+Counts describe this snapshot, not future allowlists.</p>
+<p>Targeted tests, adversarial review, finite full-artifact delta and reader
+comparison, second-cycle stability, actual isolated MediaDive replay, full
+repository gates and CI are required before landing. All-source transforms
+and candidate-merge/model/path acceptance follow separately. At the time of
+this evidence record those gates have not completed. The supported MIM table
+and immutable release pin remain unchanged. This is not a release approval or
+closure of umbrella issues #650 / #286.</p>
+</section>
+<section id="adversarial-audit-findings-1263">
+<h2>Adversarial audit findings (#1263)<a class="headerlink" href="#adversarial-audit-findings-1263" title="Link to this heading"></a></h2>
+<p>Independent synthetic producer tests found two evidence-completeness gaps in
+the initial implementation: policy-covered separator variants such as <code class="docutils literal notranslate"><span class="pre">SL-10</span></code>
+could omit archived claims, and current reader-eligible rows with whitespace
+around <code class="docutils literal notranslate"><span class="pre">object_id</span></code> could be absent from the audit. Neither test allowed the
+incorrect chemical identity through. The original failing review remains
+historical evidence, not a passing result for the repaired implementation.</p>
+<p>The repair associates each finite disposition only with the selected policy’s
+target/native-label-matching name patterns that cover its saved source names.
+It uses the same policy spelling forms, rejects ambiguous dispositions, and
+checks agreement with runtime identity admission. Catalogue and identity policy
+are consumed even for an empty cohort. Current candidate target comparison
+strips boundary whitespace as the reader does; the full original candidate
+record and its raw target spelling remain unchanged in the audit. No new
+identity rule, replacement mapping, or expansion of the eight-pair scientific
+scope is introduced. Independent re-review and the later acceptance gates
+remain separate requirements.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

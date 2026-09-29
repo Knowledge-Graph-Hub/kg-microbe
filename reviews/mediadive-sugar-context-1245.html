@@ -1,0 +1,159 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MediaDive’s qualified mixed-sugar stock (#1245) &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7026087e"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">MediaDive’s qualified mixed-sugar stock (#1245)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/reviews/mediadive-sugar-context-1245.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="mediadive-s-qualified-mixed-sugar-stock-1245">
+<h1>MediaDive’s qualified mixed-sugar stock (#1245)<a class="headerlink" href="#mediadive-s-qualified-mixed-sugar-stock-1245" title="Link to this heading"></a></h1>
+<p>The original JCM 537 recipe describes a stock solution containing xylose,
+maltose and cellobiose, each at 250 mM. The saved MediaDive record at
+<code class="docutils literal notranslate"><span class="pre">mediadive.solution:4338#recipe/16</span></code> names <code class="docutils literal notranslate"><span class="pre">Sugar</span></code>, compound 1795, and preserves
+that exact qualifier with an addition of <code class="docutils literal notranslate"><span class="pre">0.1</span> <span class="pre">ml</span></code>. It supplies no CAS field.
+Primary source: https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=537;
+MediaDive display: https://mediadive.dsmz.de/medium/J537.</p>
+<p>The immutable generic MIM Sugar assertion targets NCIT:C71939. Its native
+Food semantics do not demonstrate that this specific three-sugar solution
+is equivalent to that identity. This is a finite withheld grounding, not
+proof that NCIT excludes every nonsucrose substance, a regulatory food-grade
+claim, or a global Sugar/NCIT prohibition.</p>
+<section id="source-decision-and-evidence">
+<h2>Source decision and evidence<a class="headerlink" href="#source-decision-and-evidence" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">mappings/canonical/mediadive_material_context_dispositions.tsv</span></code> has one exact
+source-name/attribute decision, with case/whitespace-only recognition.
+The withheld target is an example explaining the review, not a global ban.
+The source occurrence remains on its existing local MediaDive ingredient
+(or nested-solution) ID before unified, legacy or embedded fallback. An
+explicit empty occurrence never borrows the cached compound’s qualifier.
+Unqualified or differently qualified Sugar observations retain normal lookup.
+No component assertions, replacement molecular/CAS identity, or inferred
+utilization are added. The existing broad ChemicalEntity category is retained;
+this patch does not claim newly implemented mixture-specific categorization.</p>
+<p>The selected decision is consumed as <code class="docutils literal notranslate"><span class="pre">material_scope_context_policy</span></code> before
+graph output and guarded with the existing SourceAdmission/snapshot contract.
+Missing, duplicate or changed decision content fails closed. Finalization’s
+existing consumed-input ledger and finalization-input fingerprint include the
+exact selected file. Sugar audit rows name this actual policy and hash;
+Potato and P3556 retain their original identity-exclusion policy bindings.
+Conditional supported-MIM evidence applies to both P3556 and Sugar, including
+selected-context/header-only cases after all grounding candidates disappear.</p>
+<p>The existing material audit retains complete eligible unified, supported,
+legacy and real embedded candidate rows, their physical ordinals, source raw
+JSON, quantity, provenance and assertion position. Duplicate physical input
+rows remain distinct. These are available original claims, not claims that
+the held source invoked each lookup. The supported MIM table, release pin,
+unified artifact and raw inputs are unchanged.</p>
+</section>
+<section id="verification-boundary">
+<h2>Verification boundary<a class="headerlink" href="#verification-boundary" title="Link to this heading"></a></h2>
+<p>The immutable <code class="docutils literal notranslate"><span class="pre">tests/resources/mediadive/sugar_context.json</span></code> records the saved
+raw observation and all three original mapping rows with origin digests.
+Tests use only that fixture and temporary inputs. They exercise ordinary
+generic Sugar lookups, every current fallback namespace, explicit empty and
+other contexts, physical claim/occurrence multiplicity, selected file drift,
+actual new policy origin, coexistence with Potato/P3556, and a tiny real
+source graph through finalization/repeat/public admission.</p>
+<p>Full code gates, independent review, actual source replay, source-to-merged
+preservation and final KG release checks remain separate. This document is
+not a claim of completed production rebuild or release acceptance. The local
+chemical-mapping skill and reviewed MIM runbook required retaining immutable
+upstream inputs rather than refreshing or rewriting their generic evidence.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

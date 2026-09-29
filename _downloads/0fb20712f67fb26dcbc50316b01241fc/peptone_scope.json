@@ -1,0 +1,1403 @@
+{
+  "authority_uris": [
+    "https://pubchem.ncbi.nlm.nih.gov/compound/167312541",
+    "https://www.thermofisher.com/order/catalog/product/228820",
+    "https://www.thermofisher.com/order/catalog/product/kr/en/243620"
+  ],
+  "inputs": {
+    "data/issue1224-quarantine-20260929.xjuS9H/issue286-display-join-mo25m5zm/groups.json": "56d0c510b84106de7a124f927f4428bab95a3879593bdca970424093e7092ec4",
+    "data/raw/compound_mappings_strict.tsv": "7e100314f1a62f675154aef7537be5b72ed2db9fbb8e8b1785198103aff31c71",
+    "data/raw/compound_mappings_strict_hydrate.tsv": "d2bc349ae31990cf54ef308a14826c756be0e0ee874d35a0a6068d75ef04b3a3"
+  },
+  "mapping_claims": [
+    {
+      "header_original_line_utf8": "medium_id\toriginal\tmapped\tchebi_label\tchebi_formula\tvalue\tconcentration\tunit\tmmol_l\toptional\tsource\tnormalized_compound\thydration_number\tchebi_match\tchebi_id\tchebi_original_name\tsimilarity_score\tmatch_confidence\tmatching_method\tmapping_status\tmapping_quality\tbase_compound\tbase_formula\twater_molecules\thydrate_formula\tbase_chebi_id\tbase_chebi_label\tbase_chebi_formula\thydration_state\thydration_parsing_method\thydration_confidence\tbase_compound_for_mapping\tbase_molecular_weight\twater_molecular_weight\thydrated_molecular_weight\tcorrected_mmol_l\n",
+      "input": "data/raw/compound_mappings_strict.tsv",
+      "input_sha256": "7e100314f1a62f675154aef7537be5b72ed2db9fbb8e8b1785198103aff31c71",
+      "line_number": 12,
+      "original_line_utf8": "3\tsoy peptone\tPubChem:167312541\t\t\t3.0\t\tg/L\t\t\tjson\t\t0\t\t\t\t\t\t\toriginal_only\tgood\tsoy peptone\tsoypeptone\t\tsoypeptone\t\t\t\t\tno_hydration\thigh\t\t100.0\t0.0\t100.0\t30.0\n",
+      "record": 11,
+      "row": {
+        "base_chebi_formula": "",
+        "base_chebi_id": "",
+        "base_chebi_label": "",
+        "base_compound": "soy peptone",
+        "base_compound_for_mapping": "",
+        "base_formula": "soypeptone",
+        "base_molecular_weight": "100.0",
+        "chebi_formula": "",
+        "chebi_id": "",
+        "chebi_label": "",
+        "chebi_match": "",
+        "chebi_original_name": "",
+        "concentration": "",
+        "corrected_mmol_l": "30.0",
+        "hydrate_formula": "soypeptone",
+        "hydrated_molecular_weight": "100.0",
+        "hydration_confidence": "high",
+        "hydration_number": "0",
+        "hydration_parsing_method": "no_hydration",
+        "hydration_state": "",
+        "mapped": "PubChem:167312541",
+        "mapping_quality": "good",
+        "mapping_status": "original_only",
+        "match_confidence": "",
+        "matching_method": "",
+        "medium_id": "3",
+        "mmol_l": "",
+        "normalized_compound": "",
+        "optional": "",
+        "original": "soy peptone",
+        "similarity_score": "",
+        "source": "json",
+        "unit": "g/L",
+        "value": "3.0",
+        "water_molecular_weight": "0.0",
+        "water_molecules": ""
+      }
+    },
+    {
+      "header_original_line_utf8": "medium_id\toriginal\tmapped\tchebi_label\tchebi_formula\tvalue\tconcentration\tunit\tmmol_l\toptional\tsource\tnormalized_compound\thydration_number\tchebi_match\tchebi_id\tchebi_original_name\tsimilarity_score\tmatch_confidence\tmatching_method\tmapping_status\tmapping_quality\tbase_compound\tbase_formula\twater_molecules\thydrate_formula\tbase_chebi_id\tbase_chebi_label\tbase_chebi_formula\thydration_state\thydration_parsing_method\thydration_confidence\tbase_compound_for_mapping\tbase_molecular_weight\twater_molecular_weight\thydrated_molecular_weight\tcorrected_mmol_l\n",
+      "input": "data/raw/compound_mappings_strict.tsv",
+      "input_sha256": "7e100314f1a62f675154aef7537be5b72ed2db9fbb8e8b1785198103aff31c71",
+      "line_number": 4974,
+      "original_line_utf8": "dsmz_1658_composition\tSoy peptone\tPubChem:167312541\t\t\t5.0\t\tg\t\t\tjson\t\t0\t\t\t\t\t\t\toriginal_only\tgood\tSoy peptone\tSoypeptone\t\tSoypeptone\t\t\t\t\tno_hydration\thigh\t\t100.0\t0.0\t100.0\t50.0\n",
+      "record": 4971,
+      "row": {
+        "base_chebi_formula": "",
+        "base_chebi_id": "",
+        "base_chebi_label": "",
+        "base_compound": "Soy peptone",
+        "base_compound_for_mapping": "",
+        "base_formula": "Soypeptone",
+        "base_molecular_weight": "100.0",
+        "chebi_formula": "",
+        "chebi_id": "",
+        "chebi_label": "",
+        "chebi_match": "",
+        "chebi_original_name": "",
+        "concentration": "",
+        "corrected_mmol_l": "50.0",
+        "hydrate_formula": "Soypeptone",
+        "hydrated_molecular_weight": "100.0",
+        "hydration_confidence": "high",
+        "hydration_number": "0",
+        "hydration_parsing_method": "no_hydration",
+        "hydration_state": "",
+        "mapped": "PubChem:167312541",
+        "mapping_quality": "good",
+        "mapping_status": "original_only",
+        "match_confidence": "",
+        "matching_method": "",
+        "medium_id": "dsmz_1658_composition",
+        "mmol_l": "",
+        "normalized_compound": "",
+        "optional": "",
+        "original": "Soy peptone",
+        "similarity_score": "",
+        "source": "json",
+        "unit": "g",
+        "value": "5.0",
+        "water_molecular_weight": "0.0",
+        "water_molecules": ""
+      }
+    },
+    {
+      "header_original_line_utf8": "medium_id\toriginal\tmapped\tchebi_label\tchebi_formula\tvalue\tconcentration\tunit\tmmol_l\toptional\tsource\tnormalized_compound\thydration_number\tchebi_match\tchebi_id\tchebi_original_name\tsimilarity_score\tmatch_confidence\tmatching_method\tmapping_status\tmapping_quality\tbase_compound\tbase_formula\twater_molecules\thydrate_formula\tbase_chebi_id\tbase_chebi_label\tbase_chebi_formula\thydration_state\thydration_parsing_method\thydration_confidence\tbase_compound_for_mapping\tbase_molecular_weight\twater_molecular_weight\thydrated_molecular_weight\tcorrected_mmol_l\n",
+      "input": "data/raw/compound_mappings_strict.tsv",
+      "input_sha256": "7e100314f1a62f675154aef7537be5b72ed2db9fbb8e8b1785198103aff31c71",
+      "line_number": 5038,
+      "original_line_utf8": "dsmz_1669_composition\tSoy peptone\tPubChem:167312541\t\t\t1.0\t\tg\t\t\tjson\t\t0\t\t\t\t\t\t\toriginal_only\tgood\tSoy peptone\tSoypeptone\t\tSoypeptone\t\t\t\t\tno_hydration\thigh\t\t100.0\t0.0\t100.0\t10.0\n",
+      "record": 5035,
+      "row": {
+        "base_chebi_formula": "",
+        "base_chebi_id": "",
+        "base_chebi_label": "",
+        "base_compound": "Soy peptone",
+        "base_compound_for_mapping": "",
+        "base_formula": "Soypeptone",
+        "base_molecular_weight": "100.0",
+        "chebi_formula": "",
+        "chebi_id": "",
+        "chebi_label": "",
+        "chebi_match": "",
+        "chebi_original_name": "",
+        "concentration": "",
+        "corrected_mmol_l": "10.0",
+        "hydrate_formula": "Soypeptone",
+        "hydrated_molecular_weight": "100.0",
+        "hydration_confidence": "high",
+        "hydration_number": "0",
+        "hydration_parsing_method": "no_hydration",
+        "hydration_state": "",
+        "mapped": "PubChem:167312541",
+        "mapping_quality": "good",
+        "mapping_status": "original_only",
+        "match_confidence": "",
+        "matching_method": "",
+        "medium_id": "dsmz_1669_composition",
+        "mmol_l": "",
+        "normalized_compound": "",
+        "optional": "",
+        "original": "Soy peptone",
+        "similarity_score": "",
+        "source": "json",
+        "unit": "g",
+        "value": "1.0",
+        "water_molecular_weight": "0.0",
+        "water_molecules": ""
+      }
+    },
+    {
+      "header_original_line_utf8": "medium_id\toriginal\tmapped\tchebi_label\tchebi_formula\tvalue\tconcentration\tunit\tmmol_l\toptional\tsource\tnormalized_compound\thydration_number\tchebi_match\tchebi_id\tchebi_original_name\tsimilarity_score\tmatch_confidence\tmatching_method\tmapping_status\tmapping_quality\tbase_compound\tbase_formula\twater_molecules\thydrate_formula\tbase_chebi_id\tbase_chebi_label\tbase_chebi_formula\thydration_state\thydration_parsing_method\thydration_confidence\tbase_compound_for_mapping\tbase_molecular_weight\twater_molecular_weight\thydrated_molecular_weight\tcorrected_mmol_l\n",
+      "input": "data/raw/compound_mappings_strict.tsv",
+      "input_sha256": "7e100314f1a62f675154aef7537be5b72ed2db9fbb8e8b1785198103aff31c71",
+      "line_number": 7400,
+      "original_line_utf8": "dsmz_545_composition\tSoy peptone\tPubChem:167312541\t\t\t2.5\t\tg\t\t\tjson\t\t0\t\t\t\t\t\t\toriginal_only\tgood\tSoy peptone\tSoypeptone\t\tSoypeptone\t\t\t\t\tno_hydration\thigh\t\t100.0\t0.0\t100.0\t25.0\n",
+      "record": 7395,
+      "row": {
+        "base_chebi_formula": "",
+        "base_chebi_id": "",
+        "base_chebi_label": "",
+        "base_compound": "Soy peptone",
+        "base_compound_for_mapping": "",
+        "base_formula": "Soypeptone",
+        "base_molecular_weight": "100.0",
+        "chebi_formula": "",
+        "chebi_id": "",
+        "chebi_label": "",
+        "chebi_match": "",
+        "chebi_original_name": "",
+        "concentration": "",
+        "corrected_mmol_l": "25.0",
+        "hydrate_formula": "Soypeptone",
+        "hydrated_molecular_weight": "100.0",
+        "hydration_confidence": "high",
+        "hydration_number": "0",
+        "hydration_parsing_method": "no_hydration",
+        "hydration_state": "",
+        "mapped": "PubChem:167312541",
+        "mapping_quality": "good",
+        "mapping_status": "original_only",
+        "match_confidence": "",
+        "matching_method": "",
+        "medium_id": "dsmz_545_composition",
+        "mmol_l": "",
+        "normalized_compound": "",
+        "optional": "",
+        "original": "Soy peptone",
+        "similarity_score": "",
+        "source": "json",
+        "unit": "g",
+        "value": "2.5",
+        "water_molecular_weight": "0.0",
+        "water_molecules": ""
+      }
+    },
+    {
+      "header_original_line_utf8": "medium_id\toriginal\tmapped\tchebi_label\tchebi_formula\tvalue\tconcentration\tunit\tmmol_l\toptional\tsource\tnormalized_compound\thydration_number\tchebi_match\tchebi_id\tchebi_original_name\tsimilarity_score\tmatch_confidence\tmatching_method\tmapping_status\tmapping_quality\tbase_compound\tbase_formula\twater_molecules\thydrate_formula\tbase_chebi_id\tbase_chebi_label\tbase_chebi_formula\thydration_state\thydration_parsing_method\thydration_confidence\tbase_compound_for_mapping\tbase_molecular_weight\twater_molecular_weight\thydrated_molecular_weight\tcorrected_mmol_l\n",
+      "input": "data/raw/compound_mappings_strict.tsv",
+      "input_sha256": "7e100314f1a62f675154aef7537be5b72ed2db9fbb8e8b1785198103aff31c71",
+      "line_number": 8099,
+      "original_line_utf8": "dsmz_668_composition\tVitamin-free casamino acids\tPubChem:167312541\t\t\t1.0\t\tg\t\t\tjson\t\t0\t\t\t\t\t\t\toriginal_only\tgood\tVitamin-free casamino acids\tVitamin-freecasaminoacids\t\tVitamin-freecasaminoacids\t\t\t\t\tno_hydration\thigh\t\t100.0\t0.0\t100.0\t10.0\n",
+      "record": 8094,
+      "row": {
+        "base_chebi_formula": "",
+        "base_chebi_id": "",
+        "base_chebi_label": "",
+        "base_compound": "Vitamin-free casamino acids",
+        "base_compound_for_mapping": "",
+        "base_formula": "Vitamin-freecasaminoacids",
+        "base_molecular_weight": "100.0",
+        "chebi_formula": "",
+        "chebi_id": "",
+        "chebi_label": "",
+        "chebi_match": "",
+        "chebi_original_name": "",
+        "concentration": "",
+        "corrected_mmol_l": "10.0",
+        "hydrate_formula": "Vitamin-freecasaminoacids",
+        "hydrated_molecular_weight": "100.0",
+        "hydration_confidence": "high",
+        "hydration_number": "0",
+        "hydration_parsing_method": "no_hydration",
+        "hydration_state": "",
+        "mapped": "PubChem:167312541",
+        "mapping_quality": "good",
+        "mapping_status": "original_only",
+        "match_confidence": "",
+        "matching_method": "",
+        "medium_id": "dsmz_668_composition",
+        "mmol_l": "",
+        "normalized_compound": "",
+        "optional": "",
+        "original": "Vitamin-free casamino acids",
+        "similarity_score": "",
+        "source": "json",
+        "unit": "g",
+        "value": "1.0",
+        "water_molecular_weight": "0.0",
+        "water_molecules": ""
+      }
+    },
+    {
+      "header_original_line_utf8": "medium_id\toriginal\tmapped\tchebi_label\tchebi_formula\tvalue\tconcentration\tunit\tmmol_l\toptional\tsource\tnormalized_compound\thydration_number\tchebi_match\tchebi_id\tchebi_original_name\tsimilarity_score\tmatch_confidence\tmatching_method\tmapping_status\tmapping_quality\tbase_compound\tbase_formula\twater_molecules\thydrate_formula\tbase_chebi_id\tbase_chebi_label\tbase_chebi_formula\thydration_state\thydration_parsing_method\thydration_confidence\tbase_compound_for_mapping\tbase_molecular_weight\twater_molecular_weight\thydrated_molecular_weight\tcorrected_mmol_l\thydrated_chebi_id\thydrated_chebi_label\thydrate_mapping_source\n",
+      "input": "data/raw/compound_mappings_strict_hydrate.tsv",
+      "input_sha256": "d2bc349ae31990cf54ef308a14826c756be0e0ee874d35a0a6068d75ef04b3a3",
+      "line_number": 12,
+      "original_line_utf8": "3\tsoy peptone\tPubChem:167312541\t\t\t3.0\t\tg/L\t\t\tjson\t\t0\t\t\t\t\t\t\toriginal_only\tgood\tsoy peptone\tsoypeptone\t\tsoypeptone\t\t\t\t\tno_hydration\thigh\t\t100.0\t0.0\t100.0\t30.0\t\t\t\n",
+      "record": 11,
+      "row": {
+        "base_chebi_formula": "",
+        "base_chebi_id": "",
+        "base_chebi_label": "",
+        "base_compound": "soy peptone",
+        "base_compound_for_mapping": "",
+        "base_formula": "soypeptone",
+        "base_molecular_weight": "100.0",
+        "chebi_formula": "",
+        "chebi_id": "",
+        "chebi_label": "",
+        "chebi_match": "",
+        "chebi_original_name": "",
+        "concentration": "",
+        "corrected_mmol_l": "30.0",
+        "hydrate_formula": "soypeptone",
+        "hydrate_mapping_source": "",
+        "hydrated_chebi_id": "",
+        "hydrated_chebi_label": "",
+        "hydrated_molecular_weight": "100.0",
+        "hydration_confidence": "high",
+        "hydration_number": "0",
+        "hydration_parsing_method": "no_hydration",
+        "hydration_state": "",
+        "mapped": "PubChem:167312541",
+        "mapping_quality": "good",
+        "mapping_status": "original_only",
+        "match_confidence": "",
+        "matching_method": "",
+        "medium_id": "3",
+        "mmol_l": "",
+        "normalized_compound": "",
+        "optional": "",
+        "original": "soy peptone",
+        "similarity_score": "",
+        "source": "json",
+        "unit": "g/L",
+        "value": "3.0",
+        "water_molecular_weight": "0.0",
+        "water_molecules": ""
+      }
+    },
+    {
+      "header_original_line_utf8": "medium_id\toriginal\tmapped\tchebi_label\tchebi_formula\tvalue\tconcentration\tunit\tmmol_l\toptional\tsource\tnormalized_compound\thydration_number\tchebi_match\tchebi_id\tchebi_original_name\tsimilarity_score\tmatch_confidence\tmatching_method\tmapping_status\tmapping_quality\tbase_compound\tbase_formula\twater_molecules\thydrate_formula\tbase_chebi_id\tbase_chebi_label\tbase_chebi_formula\thydration_state\thydration_parsing_method\thydration_confidence\tbase_compound_for_mapping\tbase_molecular_weight\twater_molecular_weight\thydrated_molecular_weight\tcorrected_mmol_l\thydrated_chebi_id\thydrated_chebi_label\thydrate_mapping_source\n",
+      "input": "data/raw/compound_mappings_strict_hydrate.tsv",
+      "input_sha256": "d2bc349ae31990cf54ef308a14826c756be0e0ee874d35a0a6068d75ef04b3a3",
+      "line_number": 4974,
+      "original_line_utf8": "dsmz_1658_composition\tSoy peptone\tPubChem:167312541\t\t\t5.0\t\tg\t\t\tjson\t\t0\t\t\t\t\t\t\toriginal_only\tgood\tSoy peptone\tSoypeptone\t\tSoypeptone\t\t\t\t\tno_hydration\thigh\t\t100.0\t0.0\t100.0\t50.0\t\t\t\n",
+      "record": 4971,
+      "row": {
+        "base_chebi_formula": "",
+        "base_chebi_id": "",
+        "base_chebi_label": "",
+        "base_compound": "Soy peptone",
+        "base_compound_for_mapping": "",
+        "base_formula": "Soypeptone",
+        "base_molecular_weight": "100.0",
+        "chebi_formula": "",
+        "chebi_id": "",
+        "chebi_label": "",
+        "chebi_match": "",
+        "chebi_original_name": "",
+        "concentration": "",
+        "corrected_mmol_l": "50.0",
+        "hydrate_formula": "Soypeptone",
+        "hydrate_mapping_source": "",
+        "hydrated_chebi_id": "",
+        "hydrated_chebi_label": "",
+        "hydrated_molecular_weight": "100.0",
+        "hydration_confidence": "high",
+        "hydration_number": "0",
+        "hydration_parsing_method": "no_hydration",
+        "hydration_state": "",
+        "mapped": "PubChem:167312541",
+        "mapping_quality": "good",
+        "mapping_status": "original_only",
+        "match_confidence": "",
+        "matching_method": "",
+        "medium_id": "dsmz_1658_composition",
+        "mmol_l": "",
+        "normalized_compound": "",
+        "optional": "",
+        "original": "Soy peptone",
+        "similarity_score": "",
+        "source": "json",
+        "unit": "g",
+        "value": "5.0",
+        "water_molecular_weight": "0.0",
+        "water_molecules": ""
+      }
+    },
+    {
+      "header_original_line_utf8": "medium_id\toriginal\tmapped\tchebi_label\tchebi_formula\tvalue\tconcentration\tunit\tmmol_l\toptional\tsource\tnormalized_compound\thydration_number\tchebi_match\tchebi_id\tchebi_original_name\tsimilarity_score\tmatch_confidence\tmatching_method\tmapping_status\tmapping_quality\tbase_compound\tbase_formula\twater_molecules\thydrate_formula\tbase_chebi_id\tbase_chebi_label\tbase_chebi_formula\thydration_state\thydration_parsing_method\thydration_confidence\tbase_compound_for_mapping\tbase_molecular_weight\twater_molecular_weight\thydrated_molecular_weight\tcorrected_mmol_l\thydrated_chebi_id\thydrated_chebi_label\thydrate_mapping_source\n",
+      "input": "data/raw/compound_mappings_strict_hydrate.tsv",
+      "input_sha256": "d2bc349ae31990cf54ef308a14826c756be0e0ee874d35a0a6068d75ef04b3a3",
+      "line_number": 5038,
+      "original_line_utf8": "dsmz_1669_composition\tSoy peptone\tPubChem:167312541\t\t\t1.0\t\tg\t\t\tjson\t\t0\t\t\t\t\t\t\toriginal_only\tgood\tSoy peptone\tSoypeptone\t\tSoypeptone\t\t\t\t\tno_hydration\thigh\t\t100.0\t0.0\t100.0\t10.0\t\t\t\n",
+      "record": 5035,
+      "row": {
+        "base_chebi_formula": "",
+        "base_chebi_id": "",
+        "base_chebi_label": "",
+        "base_compound": "Soy peptone",
+        "base_compound_for_mapping": "",
+        "base_formula": "Soypeptone",
+        "base_molecular_weight": "100.0",
+        "chebi_formula": "",
+        "chebi_id": "",
+        "chebi_label": "",
+        "chebi_match": "",
+        "chebi_original_name": "",
+        "concentration": "",
+        "corrected_mmol_l": "10.0",
+        "hydrate_formula": "Soypeptone",
+        "hydrate_mapping_source": "",
+        "hydrated_chebi_id": "",
+        "hydrated_chebi_label": "",
+        "hydrated_molecular_weight": "100.0",
+        "hydration_confidence": "high",
+        "hydration_number": "0",
+        "hydration_parsing_method": "no_hydration",
+        "hydration_state": "",
+        "mapped": "PubChem:167312541",
+        "mapping_quality": "good",
+        "mapping_status": "original_only",
+        "match_confidence": "",
+        "matching_method": "",
+        "medium_id": "dsmz_1669_composition",
+        "mmol_l": "",
+        "normalized_compound": "",
+        "optional": "",
+        "original": "Soy peptone",
+        "similarity_score": "",
+        "source": "json",
+        "unit": "g",
+        "value": "1.0",
+        "water_molecular_weight": "0.0",
+        "water_molecules": ""
+      }
+    },
+    {
+      "header_original_line_utf8": "medium_id\toriginal\tmapped\tchebi_label\tchebi_formula\tvalue\tconcentration\tunit\tmmol_l\toptional\tsource\tnormalized_compound\thydration_number\tchebi_match\tchebi_id\tchebi_original_name\tsimilarity_score\tmatch_confidence\tmatching_method\tmapping_status\tmapping_quality\tbase_compound\tbase_formula\twater_molecules\thydrate_formula\tbase_chebi_id\tbase_chebi_label\tbase_chebi_formula\thydration_state\thydration_parsing_method\thydration_confidence\tbase_compound_for_mapping\tbase_molecular_weight\twater_molecular_weight\thydrated_molecular_weight\tcorrected_mmol_l\thydrated_chebi_id\thydrated_chebi_label\thydrate_mapping_source\n",
+      "input": "data/raw/compound_mappings_strict_hydrate.tsv",
+      "input_sha256": "d2bc349ae31990cf54ef308a14826c756be0e0ee874d35a0a6068d75ef04b3a3",
+      "line_number": 7400,
+      "original_line_utf8": "dsmz_545_composition\tSoy peptone\tPubChem:167312541\t\t\t2.5\t\tg\t\t\tjson\t\t0\t\t\t\t\t\t\toriginal_only\tgood\tSoy peptone\tSoypeptone\t\tSoypeptone\t\t\t\t\tno_hydration\thigh\t\t100.0\t0.0\t100.0\t25.0\t\t\t\n",
+      "record": 7395,
+      "row": {
+        "base_chebi_formula": "",
+        "base_chebi_id": "",
+        "base_chebi_label": "",
+        "base_compound": "Soy peptone",
+        "base_compound_for_mapping": "",
+        "base_formula": "Soypeptone",
+        "base_molecular_weight": "100.0",
+        "chebi_formula": "",
+        "chebi_id": "",
+        "chebi_label": "",
+        "chebi_match": "",
+        "chebi_original_name": "",
+        "concentration": "",
+        "corrected_mmol_l": "25.0",
+        "hydrate_formula": "Soypeptone",
+        "hydrate_mapping_source": "",
+        "hydrated_chebi_id": "",
+        "hydrated_chebi_label": "",
+        "hydrated_molecular_weight": "100.0",
+        "hydration_confidence": "high",
+        "hydration_number": "0",
+        "hydration_parsing_method": "no_hydration",
+        "hydration_state": "",
+        "mapped": "PubChem:167312541",
+        "mapping_quality": "good",
+        "mapping_status": "original_only",
+        "match_confidence": "",
+        "matching_method": "",
+        "medium_id": "dsmz_545_composition",
+        "mmol_l": "",
+        "normalized_compound": "",
+        "optional": "",
+        "original": "Soy peptone",
+        "similarity_score": "",
+        "source": "json",
+        "unit": "g",
+        "value": "2.5",
+        "water_molecular_weight": "0.0",
+        "water_molecules": ""
+      }
+    },
+    {
+      "header_original_line_utf8": "medium_id\toriginal\tmapped\tchebi_label\tchebi_formula\tvalue\tconcentration\tunit\tmmol_l\toptional\tsource\tnormalized_compound\thydration_number\tchebi_match\tchebi_id\tchebi_original_name\tsimilarity_score\tmatch_confidence\tmatching_method\tmapping_status\tmapping_quality\tbase_compound\tbase_formula\twater_molecules\thydrate_formula\tbase_chebi_id\tbase_chebi_label\tbase_chebi_formula\thydration_state\thydration_parsing_method\thydration_confidence\tbase_compound_for_mapping\tbase_molecular_weight\twater_molecular_weight\thydrated_molecular_weight\tcorrected_mmol_l\thydrated_chebi_id\thydrated_chebi_label\thydrate_mapping_source\n",
+      "input": "data/raw/compound_mappings_strict_hydrate.tsv",
+      "input_sha256": "d2bc349ae31990cf54ef308a14826c756be0e0ee874d35a0a6068d75ef04b3a3",
+      "line_number": 8099,
+      "original_line_utf8": "dsmz_668_composition\tVitamin-free casamino acids\tPubChem:167312541\t\t\t1.0\t\tg\t\t\tjson\t\t0\t\t\t\t\t\t\toriginal_only\tgood\tVitamin-free casamino acids\tVitamin-freecasaminoacids\t\tVitamin-freecasaminoacids\t\t\t\t\tno_hydration\thigh\t\t100.0\t0.0\t100.0\t10.0\t\t\t\n",
+      "record": 8094,
+      "row": {
+        "base_chebi_formula": "",
+        "base_chebi_id": "",
+        "base_chebi_label": "",
+        "base_compound": "Vitamin-free casamino acids",
+        "base_compound_for_mapping": "",
+        "base_formula": "Vitamin-freecasaminoacids",
+        "base_molecular_weight": "100.0",
+        "chebi_formula": "",
+        "chebi_id": "",
+        "chebi_label": "",
+        "chebi_match": "",
+        "chebi_original_name": "",
+        "concentration": "",
+        "corrected_mmol_l": "10.0",
+        "hydrate_formula": "Vitamin-freecasaminoacids",
+        "hydrate_mapping_source": "",
+        "hydrated_chebi_id": "",
+        "hydrated_chebi_label": "",
+        "hydrated_molecular_weight": "100.0",
+        "hydration_confidence": "high",
+        "hydration_number": "0",
+        "hydration_parsing_method": "no_hydration",
+        "hydration_state": "",
+        "mapped": "PubChem:167312541",
+        "mapping_quality": "good",
+        "mapping_status": "original_only",
+        "match_confidence": "",
+        "matching_method": "",
+        "medium_id": "dsmz_668_composition",
+        "mmol_l": "",
+        "normalized_compound": "",
+        "optional": "",
+        "original": "Vitamin-free casamino acids",
+        "similarity_score": "",
+        "source": "json",
+        "unit": "g",
+        "value": "1.0",
+        "water_molecular_weight": "0.0",
+        "water_molecules": ""
+      }
+    }
+  ],
+  "occurrences": [
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 69305,
+          "original_line_utf8": "mediadive.solution:1139\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t1.0\t\t\tmediadive.solution:1139#recipe/3\t{\"amount\":1,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":1,\"optional\":0,\"recipe_order\":3,\"unit\":\"g\"}\tg\t1.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "1.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:1139#recipe/3",
+            "source_record": "{\"amount\":1,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":1,\"optional\":0,\"recipe_order\":3,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:1139",
+            "unit": "g",
+            "value": "1.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 1,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 1,
+        "optional": 0,
+        "recipe_order": 3,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:1139#recipe/3"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 69737,
+          "original_line_utf8": "mediadive.solution:1185\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t3.0\t\t\tmediadive.solution:1185#recipe/2\t{\"amount\":3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t3.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "3.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:1185#recipe/2",
+            "source_record": "{\"amount\":3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:1185",
+            "unit": "g",
+            "value": "3.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 3,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 3,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:1185#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 69892,
+          "original_line_utf8": "mediadive.solution:1203\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t3.0\t\t\tmediadive.solution:1203#recipe/2\t{\"amount\":3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t3.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "3.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:1203#recipe/2",
+            "source_record": "{\"amount\":3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:1203",
+            "unit": "g",
+            "value": "3.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 3,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 3,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:1203#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 71429,
+          "original_line_utf8": "mediadive.solution:1390\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t5.0\t\t\tmediadive.solution:1390#recipe/2\t{\"amount\":5,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":5,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t5.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "5.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:1390#recipe/2",
+            "source_record": "{\"amount\":5,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":5,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:1390",
+            "unit": "g",
+            "value": "5.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 5,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 5,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:1390#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 72789,
+          "original_line_utf8": "mediadive.solution:1537\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t8.0\t\t\tmediadive.solution:1537#recipe/2\t{\"amount\":8,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":8,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t8.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "8.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:1537#recipe/2",
+            "source_record": "{\"amount\":8,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":8,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:1537",
+            "unit": "g",
+            "value": "8.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 8,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 8,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:1537#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 73213,
+          "original_line_utf8": "mediadive.solution:159\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t3.0\t\t\tmediadive.solution:159#recipe/2\t{\"amount\":3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t3.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "3.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:159#recipe/2",
+            "source_record": "{\"amount\":3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:159",
+            "unit": "g",
+            "value": "3.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 3,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 3,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:159#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 80004,
+          "original_line_utf8": "mediadive.solution:2339\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t1.0\t\t\tmediadive.solution:2339#recipe/2\t{\"amount\":1,\"attribute\":\"e.g. Bacto Soytone\",\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":1,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t1.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "1.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:2339#recipe/2",
+            "source_record": "{\"amount\":1,\"attribute\":\"e.g. Bacto Soytone\",\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":1,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:2339",
+            "unit": "g",
+            "value": "1.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 1,
+        "attribute": "e.g. Bacto Soytone",
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 1,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:2339#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 82746,
+          "original_line_utf8": "mediadive.solution:2668\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t5.0\t\t\tmediadive.solution:2668#recipe/2\t{\"amount\":5,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":5,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t5.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "5.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:2668#recipe/2",
+            "source_record": "{\"amount\":5,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":5,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:2668",
+            "unit": "g",
+            "value": "5.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 5,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 5,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:2668#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 83396,
+          "original_line_utf8": "mediadive.solution:2745\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t3.0\t\t\tmediadive.solution:2745#recipe/2\t{\"amount\":3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t3.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "3.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:2745#recipe/2",
+            "source_record": "{\"amount\":3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:2745",
+            "unit": "g",
+            "value": "3.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 3,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 3,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:2745#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 83887,
+          "original_line_utf8": "mediadive.solution:2815\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t3.3\t\t\tmediadive.solution:2815#recipe/7\t{\"amount\":3.3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3.3,\"optional\":0,\"recipe_order\":7,\"unit\":\"g\"}\tg\t3.3\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "3.3",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:2815#recipe/7",
+            "source_record": "{\"amount\":3.3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3.3,\"optional\":0,\"recipe_order\":7,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:2815",
+            "unit": "g",
+            "value": "3.3"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 3.3,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 3.3,
+        "optional": 0,
+        "recipe_order": 7,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:2815#recipe/7"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 86205,
+          "original_line_utf8": "mediadive.solution:3119\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t1.0\t\t\tmediadive.solution:3119#recipe/3\t{\"amount\":1,\"attribute\":\"BD Soytone\",\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":1,\"optional\":0,\"recipe_order\":3,\"unit\":\"g\"}\tg\t1.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "1.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:3119#recipe/3",
+            "source_record": "{\"amount\":1,\"attribute\":\"BD Soytone\",\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":1,\"optional\":0,\"recipe_order\":3,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:3119",
+            "unit": "g",
+            "value": "1.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 1,
+        "attribute": "BD Soytone",
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 1,
+        "optional": 0,
+        "recipe_order": 3,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:3119#recipe/3"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 86246,
+          "original_line_utf8": "mediadive.solution:313\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t5.0\t\t\tmediadive.solution:313#recipe/3\t{\"amount\":5,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":5,\"optional\":0,\"recipe_order\":3,\"unit\":\"g\"}\tg\t5.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "5.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:313#recipe/3",
+            "source_record": "{\"amount\":5,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":5,\"optional\":0,\"recipe_order\":3,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:313",
+            "unit": "g",
+            "value": "5.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 5,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 5,
+        "optional": 0,
+        "recipe_order": 3,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:313#recipe/3"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 86337,
+          "original_line_utf8": "mediadive.solution:3145\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t3.0\t\t\tmediadive.solution:3145#recipe/2\t{\"amount\":3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t3.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "3.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:3145#recipe/2",
+            "source_record": "{\"amount\":3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:3145",
+            "unit": "g",
+            "value": "3.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 3,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 3,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:3145#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 86624,
+          "original_line_utf8": "mediadive.solution:3170\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t3.0\t\t\tmediadive.solution:3170#recipe/2\t{\"amount\":3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t3.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "3.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:3170#recipe/2",
+            "source_record": "{\"amount\":3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:3170",
+            "unit": "g",
+            "value": "3.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 3,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 3,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:3170#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 88350,
+          "original_line_utf8": "mediadive.solution:3439\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t5.0\t\t\tmediadive.solution:3439#recipe/2\t{\"amount\":5,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":5,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t5.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "5.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:3439#recipe/2",
+            "source_record": "{\"amount\":5,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":5,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:3439",
+            "unit": "g",
+            "value": "5.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 5,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 5,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:3439#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 88581,
+          "original_line_utf8": "mediadive.solution:3464\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t1.0\t\t\tmediadive.solution:3464#recipe/2\t{\"amount\":1,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":1,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t1.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "1.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:3464#recipe/2",
+            "source_record": "{\"amount\":1,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":1,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:3464",
+            "unit": "g",
+            "value": "1.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 1,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 1,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:3464#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 88790,
+          "original_line_utf8": "mediadive.solution:3500\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t3.0\t\t\tmediadive.solution:3500#recipe/2\t{\"amount\":3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t3.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "3.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:3500#recipe/2",
+            "source_record": "{\"amount\":3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:3500",
+            "unit": "g",
+            "value": "3.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 3,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 3,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:3500#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 89197,
+          "original_line_utf8": "mediadive.solution:3553\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t0.3\t\t\tmediadive.solution:3553#recipe/2\t{\"amount\":0.3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":0.3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t0.3\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "0.3",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:3553#recipe/2",
+            "source_record": "{\"amount\":0.3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":0.3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:3553",
+            "unit": "g",
+            "value": "0.3"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 0.3,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 0.3,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:3553#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 98993,
+          "original_line_utf8": "mediadive.solution:477\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t\t\t\tmediadive.solution:477#recipe/2\t{\"amount\":5,\"compound\":\"Soy peptone\",\"compound_id\":75,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t5.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:477#recipe/2",
+            "source_record": "{\"amount\":5,\"compound\":\"Soy peptone\",\"compound_id\":75,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:477",
+            "unit": "g",
+            "value": "5.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 5,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:477#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 99199,
+          "original_line_utf8": "mediadive.solution:479\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t5.0\t\t\tmediadive.solution:479#recipe/2\t{\"amount\":5,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":5,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t5.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "5.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:479#recipe/2",
+            "source_record": "{\"amount\":5,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":5,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:479",
+            "unit": "g",
+            "value": "5.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 5,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 5,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:479#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 99287,
+          "original_line_utf8": "mediadive.solution:48\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t2.0\t\t\tmediadive.solution:48#recipe/3\t{\"amount\":2,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":2,\"optional\":0,\"recipe_order\":3,\"unit\":\"g\"}\tg\t2.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "2.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:48#recipe/3",
+            "source_record": "{\"amount\":2,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":2,\"optional\":0,\"recipe_order\":3,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:48",
+            "unit": "g",
+            "value": "2.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 2,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 2,
+        "optional": 0,
+        "recipe_order": 3,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:48#recipe/3"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 111177,
+          "original_line_utf8": "mediadive.solution:6398\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t3.0\t\t\tmediadive.solution:6398#recipe/2\t{\"amount\":3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t3.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "3.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:6398#recipe/2",
+            "source_record": "{\"amount\":3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:6398",
+            "unit": "g",
+            "value": "3.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 3,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 3,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:6398#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 111399,
+          "original_line_utf8": "mediadive.solution:6469\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t10.0\t\t\tmediadive.solution:6469#recipe/1\t{\"amount\":10,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":10,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t10.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "10.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:6469#recipe/1",
+            "source_record": "{\"amount\":10,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":10,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:6469",
+            "unit": "g",
+            "value": "10.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 10,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 10,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:6469#recipe/1"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 112217,
+          "original_line_utf8": "mediadive.solution:72\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t3.0\t\t\tmediadive.solution:72#recipe/2\t{\"amount\":3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t3.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "3.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:72#recipe/2",
+            "source_record": "{\"amount\":3,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":3,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:72",
+            "unit": "g",
+            "value": "3.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 3,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 3,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:72#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 113259,
+          "original_line_utf8": "mediadive.solution:900\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t5.0\t\t\tmediadive.solution:900#recipe/2\t{\"amount\":5,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":5,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t5.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "5.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:900#recipe/2",
+            "source_record": "{\"amount\":5,\"compound\":\"Soy peptone\",\"compound_id\":75,\"g_l\":5,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:900",
+            "unit": "g",
+            "value": "5.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 5,
+        "compound": "Soy peptone",
+        "compound_id": 75,
+        "g_l": 5,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:900#recipe/2"
+    },
+    {
+      "observed_edge_rows": [
+        {
+          "header_original_line_utf8": "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\tg_l\tmmol_l\tpublications\tsource_assertion_id\tsource_record\tunit\tvalue\n",
+          "line_number": 71635,
+          "original_line_utf8": "mediadive.solution:1410\tbiolink:has_part\tPubChem:167312541\tBFO:0000051\tinfores:mediadive\tobservation\tmanual_agent\t1.0\t\t\tmediadive.solution:1410#recipe/2\t{\"amount\":1,\"compound\":\"Vitamin-free casamino acids\",\"compound_id\":654,\"g_l\":1,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}\tg\t1.0\n",
+          "row": {
+            "agent_type": "manual_agent",
+            "g_l": "1.0",
+            "knowledge_level": "observation",
+            "mmol_l": "",
+            "object": "PubChem:167312541",
+            "predicate": "biolink:has_part",
+            "primary_knowledge_source": "infores:mediadive",
+            "publications": "",
+            "relation": "BFO:0000051",
+            "source_assertion_id": "mediadive.solution:1410#recipe/2",
+            "source_record": "{\"amount\":1,\"compound\":\"Vitamin-free casamino acids\",\"compound_id\":654,\"g_l\":1,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+            "subject": "mediadive.solution:1410",
+            "unit": "g",
+            "value": "1.0"
+          }
+        }
+      ],
+      "raw": {
+        "amount": 1,
+        "compound": "Vitamin-free casamino acids",
+        "compound_id": 654,
+        "g_l": 1,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "source_assertion_id": "mediadive.solution:1410#recipe/2"
+    }
+  ],
+  "scope": "26 saved raw observations plus all ten exact name/target legacy claim rows; no new identity"
+}

@@ -1,0 +1,174 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Two finite peptone material identity holds (#1248) &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7026087e"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Two finite peptone material identity holds (#1248)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/reviews/mediadive-peptone-scope-1248.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="two-finite-peptone-material-identity-holds-1248">
+<h1>Two finite peptone material identity holds (#1248)<a class="headerlink" href="#two-finite-peptone-material-identity-holds-1248" title="Link to this heading"></a></h1>
+<section id="scientific-scope">
+<h2>Scientific scope<a class="headerlink" href="#scientific-scope" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">Soy</span> <span class="pre">peptone</span></code> and <code class="docutils literal notranslate"><span class="pre">Vitamin-free</span> <span class="pre">casamino</span> <span class="pre">acids</span></code> do not establish exact identity
+with the particular structural record PubChem:167312541. Keep the original
+material observations and imported lookup claims separately. No replacement
+CAS, ChEBI, PubChem or inferred constituent identity is approved here.</p>
+<p>The <a class="reference external" href="https://pubchem.ncbi.nlm.nih.gov/compound/167312541">PubChem record</a> really
+does carry soybean-peptone annotations and casein-digest synonyms; preferred
+name disagreement alone is not the exclusion criterion. It also describes a
+specific multicomponent structure, formula C290H252N8O72. Its annotations do not
+demonstrate that either variable digest is exactly that structure.
+<a class="reference external" href="https://pubchem.ncbi.nlm.nih.gov/docs/glossary">PubChem distinguishes</a> unique
+compound structures from deposited substances.</p>
+<p>The manufacturer’s <a class="reference external" href="https://www.thermofisher.com/order/catalog/product/228820">vitamin-assay casamino acids</a>
+is an acid hydrolysate of casein; <a class="reference external" href="https://www.thermofisher.com/order/catalog/product/kr/en/243620">Bacto Soytone</a>
+is an enzymatic soybean digest. Two saved soy occurrences name Bacto/BD Soytone;
+these qualifiers remain specific to their own records, not inferred for the
+other 23. The evidence supports distinct source materials, not an exact
+supplier or composition for every occurrence, and not a global ban on the CID
+or its registry annotations.</p>
+</section>
+<section id="implementation-boundary">
+<h2>Implementation boundary<a class="headerlink" href="#implementation-boundary" title="Link to this heading"></a></h2>
+<p>Two anchored <code class="docutils literal notranslate"><span class="pre">name_pattern</span></code> rules in <code class="docutils literal notranslate"><span class="pre">ingredient_identity_exclusions.tsv</span></code>
+reject only the reviewed name/target combinations. Existing case, punctuation
+and separator normalization is retained, including the <code class="docutils literal notranslate"><span class="pre">PubChem</span></code> and
+<code class="docutils literal notranslate"><span class="pre">pubchem.compound</span></code> prefix spellings. Direct CID references, unrelated material
+names and independently supported other targets remain eligible. There is no
+new raw compound-ID rule or unconditional supplier/product override.</p>
+<p>The existing MediaDive ingredient checks enforce these rules on unified names,
+legacy strict/hydrate lookups, embedded identifiers and adjacent solution-name
+resolution. A missing identity retains the existing source-local ID. The two
+observed compound IDs 75 and 654 describe this saved cohort; they are not
+hardcoded policy keys.</p>
+<p>The existing producer-owned <code class="docutils literal notranslate"><span class="pre">mediadive_material_scope_quarantine.tsv</span></code> gains a
+finite peptone profile. It records only eligible claims to the reviewed CID,
+not unrelated alternative targets or weak/nonidentity rows. It preserves
+complete original mapping columns, duplicate row ordinals, source records,
+locators, original qualifiers, selected retained targets and consumed-input
+hashes. The reason is <code class="docutils literal notranslate"><span class="pre">digest_material_not_demonstrated_structural_identity</span></code>.
+Repeated visits do not duplicate evidence; distinct recipe positions remain
+distinct. No historical row is invented when the current input lacks it.</p>
+<p>The canonical shared policy and unified input remain required audit origins.
+Producer-time audit binding, source finalization and public merge admission
+continue to enforce the existing mandatory audit contract. No audit schema,
+merge rewriting or additional finalizer behavior is introduced.</p>
+</section>
+<section id="immutable-fixture-and-regression-scope">
+<h2>Immutable fixture and regression scope<a class="headerlink" href="#immutable-fixture-and-regression-scope" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">tests/resources/mediadive/peptone_scope.json</span></code>, SHA-256
+<code class="docutils literal notranslate"><span class="pre">41a556f70cc0ae696d01895371214af7f25bb62c9d7a7b9a73c0fe589fed1fa3</span></code>,
+retains all 26 saved observations (25 soy, one vitamin-free), their complete
+old edge rows, and all ten original matching strict/hydrate claims (four soy
+and one vitamin-free in each table). It preserves source-file hashes and exact
+original physical rows; unrelated multi-line source cells were parsed with
+the actual CSV dialect during extraction. This is a bounded fixture, not a
+complete source snapshot or a newly accepted rebuild.</p>
+<p>Tests exercise actual cold lookup, both target-prefix spellings, unified and
+legacy fallback, embedded IDs, nested solution names, unaffected direct CID
+and other-name routes, original quantities, duplicate observations, current
+policy origins, immutable audit bytes and real finalization/admission. A tiny
+identity-only exporter regression verifies stable second-cycle behavior; it
+does not regenerate the real candidate.</p>
+<p>The unified archive, supported MIM TSV and immutable MIM release pin are not
+changed by this source patch. Derived candidate review, actual MediaDive replay,
+full tests/CI, all-source freshness/rebuild and merged-KG review remain separate
+gates. This does not close umbrella #286 or certify a release.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

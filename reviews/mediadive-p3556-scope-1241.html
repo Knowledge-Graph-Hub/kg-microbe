@@ -1,0 +1,205 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Source-qualified Sigma P3556 material scope (#1241) &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7026087e"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Source-qualified Sigma P3556 material scope (#1241)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/reviews/mediadive-p3556-scope-1241.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="source-qualified-sigma-p3556-material-scope-1241">
+<h1>Source-qualified Sigma P3556 material scope (#1241)<a class="headerlink" href="#source-qualified-sigma-p3556-material-scope-1241" title="Link to this heading"></a></h1>
+<section id="evidence-and-scientific-limit">
+<h2>Evidence and scientific limit<a class="headerlink" href="#evidence-and-scientific-limit" title="Link to this heading"></a></h2>
+<p>The saved MediaDive observation <code class="docutils literal notranslate"><span class="pre">mediadive.solution:629#recipe/1</span></code> names
+<code class="docutils literal notranslate"><span class="pre">L-α-Phosphatidylcholine</span></code>, compound 2082, and explicitly supplies
+<code class="docutils literal notranslate"><span class="pre">attribute:</span> <span class="pre">SIGMA</span> <span class="pre">P3556</span></code>. Its amount is 5 mg and its source <code class="docutils literal notranslate"><span class="pre">g_l</span></code> value is 5.
+Those original values are retained, not recalculated or silently corrected.
+The source does <strong>not</strong> assert a CAS identifier.</p>
+<p>The <a class="reference external" href="https://www.sigmaaldrich.com/deepweb/assets/sigmaaldrich/product/documents/152/475/p3556pis.pdf">supplier product sheet</a>
+describes an egg-yolk material with several fatty-acid constituents, not one
+pure acyl species. The supplier’s <a class="reference external" href="https://b2b.sigmaaldrich.com/deepweb/assets/sigmaaldrich/marketing/global/documents/709/352/polymeric-drug-delivery-techniques-web.pdf">drug-delivery brochure</a>
+also depicts variable fatty-acid residues for P3556 (PDF page index 18,
+printed page 17). The <a class="reference external" href="https://www.sigmaaldrich.com/US/en/product/sigma/p3556">product page</a>
+additionally supplies a fixed structure. That catalog structure is not proof
+of whole-product molecular purity; its stereolayer differs from the native
+ChEBI witness. These primary documents were read online. Local PDF downloads
+failed, so no local PDF checksum is claimed.</p>
+<p>Native <code class="docutils literal notranslate"><span class="pre">CHEBI:86658</span></code> has a generic preferred label but explicit synonyms,
+SMILES and InChI identifying a particular 16:0/(9E,12E)-18:2 structure.
+The immutable fixture <code class="docutils literal notranslate"><span class="pre">tests/resources/mediadive/p3556_scope.json</span></code> preserves
+that structured witness, all eight selected full original mapping rows,
+the exact raw occurrence, and hashes of the original raw/mapping inputs.
+The error is assigning the <strong>whole product quantity</strong> to that molecule.
+This is not a claim that the molecule cannot occur in the material.</p>
+</section>
+<section id="transform-and-mapping-behavior">
+<h2>Transform and mapping behavior<a class="headerlink" href="#transform-and-mapping-behavior" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Two finite existing-policy exclusions reject generic <code class="docutils literal notranslate"><span class="pre">L-alpha</span></code>/<code class="docutils literal notranslate"><span class="pre">L-α</span></code>
+phosphatidylcholine names and the exact <code class="docutils literal notranslate"><span class="pre">MIM:L-alpha-Phosphatidylcholine</span></code>
+pair for <code class="docutils literal notranslate"><span class="pre">CHEBI:86658</span></code>. The policy authority label is an actual native
+structured synonym, not the misleadingly generic preferred label.</p></li>
+<li><p>The explicit source qualifier <code class="docutils literal notranslate"><span class="pre">SIGMA</span> <span class="pre">P3556</span></code> (case and whitespace only)
+keeps a recipe occurrence on its existing MediaDive ingredient/solution
+ID before unified, legacy or embedded identity selection. The current
+observation therefore remains <code class="docutils literal notranslate"><span class="pre">mediadive.ingredient:2082</span></code> with its raw
+source record, assertion ID, quantities and observation/manual provenance.
+Neither ingredient number, recipe number, a generic name nor a fuzzy
+catalog-code match triggers this product decision.</p></li>
+<li><p>A supplied occurrence, including <code class="docutils literal notranslate"><span class="pre">{}</span></code>, never inherits another recipe’s
+embedded product qualifier. Direct calls without an occurrence can use an
+explicit qualifier in the embedded source compound record.</p></li>
+<li><p>Local category remains the existing broad <code class="docutils literal notranslate"><span class="pre">biolink:ChemicalEntity</span></code> for
+the current source name. This change does not assert new native mixture
+typing, a replacement ChEBI charge/class, CAS or other molecular identity.</p></li>
+<li><p>Explicitly structured native molecular routes and unrelated generic
+phosphatidylcholine classification claims remain eligible. There is no
+global ban on <code class="docutils literal notranslate"><span class="pre">CHEBI:86658</span></code>, <code class="docutils literal notranslate"><span class="pre">CHEBI:16110</span></code>, <code class="docutils literal notranslate"><span class="pre">CHEBI:49183</span></code> or CAS 8002-43-5.
+Eligibility alone is not new identity approval.</p></li>
+</ul>
+</section>
+<section id="reversible-candidate-evidence">
+<h2>Reversible candidate evidence<a class="headerlink" href="#reversible-candidate-evidence" title="Link to this heading"></a></h2>
+<p>The existing required producer sidecar
+<code class="docutils literal notranslate"><span class="pre">mediadive_material_scope_quarantine.tsv</span></code> retains available candidate rows
+separately from graph identity. Its schema, producer-time byte snapshot,
+source-finalization copying and public-admission checks are unchanged.
+Potato/extract and P3556 candidates are separate finite profiles.</p>
+<p>For a P3556 observation, the audit preserves applicable current unified and
+legacy rows (matching the actual occurrence spelling), the original exact
+generic MIM claim, and actual embedded identifiers when present. Duplicate
+input rows have separate locators. Full original row columns, raw record,
+source/candidate path and hash, retained local target, qualifier, authority
+URI and reason are retained. A contradictory structure-specific display
+name cannot override the product qualifier; its applicable mapping claims
+are still auditable. These rows are <strong>available candidates</strong>, not assertions
+that every lookup was attempted, and are never fabricated raw CAS claims.</p>
+<p>Review #1243 corrected canonical object-label coverage: eligible identity,
+attribute, canonical-name and synonym rows can supply the reader’s object
+label; synonym rows additionally supply the subject label. A row matching
+both fields is retained once per original locator, while duplicate physical
+rows remain distinct. Broader, hydrate and annotation rows do not become
+grounding candidates. The old fixture’s four structured-synonym rows also
+carry the generic object label, so they remain auditable until a reviewed
+derived export relabels that metadata. Audit row counts are not historical
+constants.</p>
+<p>Conditional consumed-input role <code class="docutils literal notranslate"><span class="pre">material_scope_supported</span></code> binds the
+canonical unchanged <code class="docutils literal notranslate"><span class="pre">mappings/ingredient_mappings.sssom.tsv</span></code> only when the
+selected source contains P3556. It is audit evidence, not an active grounding
+source. It preserves the complete original imported assertion after a future
+derived unified export removes the held pair. The supported MIM table and
+release pin remain immutable. Empty source cohorts or removed candidates
+are valid; a genuinely empty audit retains its header.</p>
+</section>
+<section id="verification-and-deployment-boundary">
+<h2>Verification and deployment boundary<a class="headerlink" href="#verification-and-deployment-boundary" title="Link to this heading"></a></h2>
+<p>Hermetic tests cover native reader/direct-pair denial, explicit structure
+controls, legacy and bounded/conservative regeneration, all occurrence
+fallbacks, raw quantities, duplicate full-row audit evidence, profile
+isolation, input-origin/drift protection, and real source finalization/reuse/
+public admission. The tiny identity-only refresh removes three generic rows
+and replaces the misleading object label on four retained structural rows;
+its second cycle is byte-identical. Conservative regeneration preserves full
+quarantined originals and multiplicity.</p>
+<p>This source change alone is not a rebuilt graph or release acceptance.
+A separate reviewed derived-mapping candidate, source replay, transform
+freshness checks and merged-graph reviews remain required. No immutable
+supported MIM release, production raw data or production archive is modified
+by this implementation stage.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

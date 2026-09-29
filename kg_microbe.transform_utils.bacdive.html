@@ -116,7 +116,7 @@ and running <cite>run.py download</cite>.</p>
 <p>Template for how the transform class would be designed.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.DATA_INPUTS">
-<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/isolation_source_to_ontology.tsv',</span> <span class="pre">'mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/isolation_source_to_ontology.tsv',</span> <span class="pre">'mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz',</span> <span class="pre">'mappings/canonical/bacdive_ec_substrate_corrections.tsv')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
 <dd><p>Repo-relative curation files this transform reads, beyond its own
 <code class="docutils literal notranslate"><span class="pre">data/raw/</span></code> download.</p>
 <p>Declared so freshness tooling can tell that an output is stale against
@@ -137,6 +137,19 @@ constant, derive this from it rather than restating it.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.REQUIRED_AUDIT_FILES">
+<span class="sig-name descname"><span class="pre">REQUIRED_AUDIT_FILES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ec_substrate_corrections.tsv',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.REQUIRED_AUDIT_FILES" title="Link to this definition"></a></dt>
+<dd><p>Producer-owned disposition reports whose emitted bytes must survive finalization/merge.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.REQUIRED_CONSUMED_INPUTS">
+<span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ec_substrate_correction_policy',</span> <span class="pre">'ec_substrate_legacy_mapping')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Named generated inputs that must actually be read before fresh finalization.
+Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.TRANSFORM_INPUTS">
 <span class="sig-name descname"><span class="pre">TRANSFORM_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ontologies',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.TRANSFORM_INPUTS" title="Link to this definition"></a></dt>
 <dd><p>Reads <code class="docutils literal notranslate"><span class="pre">ontologies/ncbitaxon_nodes.tsv</span></code> and <code class="docutils literal notranslate"><span class="pre">ontologies/chebi_nodes.tsv</span></code>
@@ -150,6 +163,28 @@ path lives in constants.py, so the cross-transform guard never saw it.</p>
 <dd><p>Run the transformation.</p>
 </dd></dl>
 
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.bacdive.ec_substrate_corrections">
+<span id="kg-microbe-transform-utils-bacdive-ec-substrate-corrections-module"></span><h2>kg_microbe.transform_utils.bacdive.ec_substrate_corrections module<a class="headerlink" href="#module-kg_microbe.transform_utils.bacdive.ec_substrate_corrections" title="Link to this heading"></a></h2>
+<p>Apply finite reviewed legacy EC/substrate corrections without raw or global aliases.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.ec_substrate_corrections.apply_corrections">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.ec_substrate_corrections.</span></span><span class="sig-name descname"><span class="pre">apply_corrections</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_rows</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policies</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knowledge_source</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.ec_substrate_corrections.apply_corrections" title="Link to this definition"></a></dt>
+<dd><p>Correct only complete reviewed rows; known-scope drift requires a new review.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.ec_substrate_corrections.load_policy">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.ec_substrate_corrections.</span></span><span class="sig-name descname"><span class="pre">load_policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.ec_substrate_corrections.load_policy" title="Link to this definition"></a></dt>
+<dd><p>Read explicit complete-row curation, never partial names or global old-ID replacements.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.ec_substrate_corrections.prepare_corrections">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.ec_substrate_corrections.</span></span><span class="sig-name descname"><span class="pre">prepare_corrections</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">legacy_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/kg-microbe/kg-microbe/mappings/canonical/bacdive_ec_substrate_corrections.tsv')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.ec_substrate_corrections.prepare_corrections" title="Link to this definition"></a></dt>
+<dd><p>Bind actual policy/source reads before opening graph outputs, retaining the original admission.</p>
 </dd></dl>
 
 </section>
@@ -365,7 +400,7 @@ deposit with more than one claim; <code class="docutils literal notranslate"><sp
 <p>Template for how the transform class would be designed.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.DATA_INPUTS">
-<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/isolation_source_to_ontology.tsv',</span> <span class="pre">'mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/isolation_source_to_ontology.tsv',</span> <span class="pre">'mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz',</span> <span class="pre">'mappings/canonical/bacdive_ec_substrate_corrections.tsv')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
 <dd><p>Repo-relative curation files this transform reads, beyond its own
 <code class="docutils literal notranslate"><span class="pre">data/raw/</span></code> download.</p>
 <p>Declared so freshness tooling can tell that an output is stale against
@@ -383,6 +418,19 @@ declaration fails silently and looks identical to a complete one:
 ontologies_stubs declared 1 of the 11 files it read and was reported
 fresh after changes to the other ten (#839). Where the set comes from a
 constant, derive this from it rather than restating it.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.REQUIRED_AUDIT_FILES">
+<span class="sig-name descname"><span class="pre">REQUIRED_AUDIT_FILES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ec_substrate_corrections.tsv',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.REQUIRED_AUDIT_FILES" title="Link to this definition"></a></dt>
+<dd><p>Producer-owned disposition reports whose emitted bytes must survive finalization/merge.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.REQUIRED_CONSUMED_INPUTS">
+<span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ec_substrate_correction_policy',</span> <span class="pre">'ec_substrate_legacy_mapping')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Named generated inputs that must actually be read before fresh finalization.
+Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
 </dd></dl>
 
 <dl class="py attribute">

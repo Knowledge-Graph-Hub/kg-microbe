@@ -124,7 +124,7 @@
 </section>
 <section id="module-kg_microbe.transform_utils.mediadive.material_scope_audit">
 <span id="kg-microbe-transform-utils-mediadive-material-scope-audit-module"></span><h2>kg_microbe.transform_utils.mediadive.material_scope_audit module<a class="headerlink" href="#module-kg_microbe.transform_utils.mediadive.material_scope_audit" title="Link to this heading"></a></h2>
-<p>Preserve finite Potato/extract grounding candidates separately from identity (#1236).</p>
+<p>Preserve reviewed material grounding candidates separately from identity.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.material_scope_audit.MaterialScopeAudit">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.mediadive.material_scope_audit.</span></span><span class="sig-name descname"><span class="pre">MaterialScopeAudit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">media_list</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.material_scope_audit.MaterialScopeAudit" title="Link to this definition"></a></dt>
@@ -142,6 +142,18 @@
 <dd><p>Write complete producer-time evidence, including a valid empty-cohort header.</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.material_scope_audit.p3556_material">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.mediadive.material_scope_audit.</span></span><span class="sig-name descname"><span class="pre">p3556_material</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.material_scope_audit.p3556_material" title="Link to this definition"></a></dt>
+<dd><p>Recognize only an explicit supplier/product qualifier, never a name or source ID.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.material_scope_audit.sugar_material">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.mediadive.material_scope_audit.</span></span><span class="sig-name descname"><span class="pre">sugar_material</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.material_scope_audit.sugar_material" title="Link to this definition"></a></dt>
+<dd><p>Match only the reviewed source name and stock qualifier, with case/whitespace normalization.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -319,7 +331,7 @@ source order, optional flag and all supplied quantity fields.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.standardize_compound_id">
-<span class="sig-name descname"><span class="pre">standardize_compound_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compound_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.standardize_compound_id" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">standardize_compound_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compound_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_record</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.standardize_compound_id" title="Link to this definition"></a></dt>
 <dd><p>Get standardized IDs via unified chemical mappings, bulk data, or legacy mappings.</p>
 <p>Lookup order:
 1. Unified chemical mappings by compound name (ChemicalMappingLoader)
@@ -331,6 +343,7 @@ source order, optional flag and all supplied quantity fields.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – MediaDive compound ID.</p></li>
 <li><p><strong>compound_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Compound name for mapping lookup.</p></li>
+<li><p><strong>source_record</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>]</span>) – Actual occurrence evidence; even an empty dictionary overrides embedded qualifiers.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -533,7 +546,7 @@ source order, optional flag and all supplied quantity fields.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.MediaDiveTransform.standardize_compound_id">
-<span class="sig-name descname"><span class="pre">standardize_compound_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compound_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.MediaDiveTransform.standardize_compound_id" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">standardize_compound_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compound_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_record</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.MediaDiveTransform.standardize_compound_id" title="Link to this definition"></a></dt>
 <dd><p>Get standardized IDs via unified chemical mappings, bulk data, or legacy mappings.</p>
 <p>Lookup order:
 1. Unified chemical mappings by compound name (ChemicalMappingLoader)
@@ -545,6 +558,7 @@ source order, optional flag and all supplied quantity fields.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – MediaDive compound ID.</p></li>
 <li><p><strong>compound_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Compound name for mapping lookup.</p></li>
+<li><p><strong>source_record</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>]</span>) – Actual occurrence evidence; even an empty dictionary overrides embedded qualifiers.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

@@ -12,6 +12,14 @@ kg\_microbe.transform\_utils.bacdive.bacdive module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.transform\_utils.bacdive.ec\_substrate\_corrections module
+----------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bacdive.ec_substrate_corrections
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.transform\_utils.bacdive.emission module
 ----------------------------------------------------
 

@@ -21,6 +21,7 @@ from typing import Dict, List, Optional
 
 import pandas as pd
 
+from kg_microbe.transform_utils.constants import XREF_COLUMN
 from kg_microbe.utils.cas import invalid_cas_identifier
 from kg_microbe.utils.ingredient_identity import (
     ingredient_authority_label,
@@ -755,9 +756,19 @@ def get_synonyms(chebi_id: str) -> List[str]:
     return list(_PRIMARY_SYNONYMS_INDEX.get(chebi_id, ()))
 
 
+def _xref_annotation(identifier: str) -> str:
+    """Repair only the historical doubled KEGG compound prefix in output annotations."""
+    match = re.fullmatch(r"kegg\.compound:cpd:(C[0-9]{5})", identifier)
+    return f"kegg.compound:{match.group(1)}" if match else identifier
+
+
 def get_xrefs(chebi_id: str) -> List[str]:
     """
-    Get all cross-references for a given CURIE.
+    Get cross-reference annotations, without changing literal identity lookup keys.
+
+    The historical doubled KEGG compound prefix is presentation-only (#1259).
+    Keep original SSSOM rows and the independently keyed xref lookup index intact:
+    canonical and alias keys can have different historical mapping winners.
 
     :param chebi_id: Primary CURIE (e.g., "CHEBI:12345")
     :return: List of xrefs (e.g., ["cas:50-00-0", "kegg.compound:C00001"])
@@ -768,7 +779,7 @@ def get_xrefs(chebi_id: str) -> List[str]:
         load_unified_mappings()
     if _PRIMARY_XREFS_INDEX is None:
         return []
-    return list(_PRIMARY_XREFS_INDEX.get(chebi_id, ()))
+    return sorted({_xref_annotation(value) for value in _PRIMARY_XREFS_INDEX.get(chebi_id, ())})
 
 
 def get_parents(curie: str) -> List[str]:
@@ -894,7 +905,10 @@ def get_node_enrichment(curie: str, *, ingredient_bundle=None) -> Dict[str, str]
         "synonym": "|".join(synonyms) if synonyms else "",
         "name": name,
     }
-    return ingredient_bundle.enrich_node(curie, result) if ingredient_bundle is not None else result
+    if ingredient_bundle is not None:
+        result = ingredient_bundle.enrich_node(curie, result)
+        result[XREF_COLUMN] = "|".join(sorted({_xref_annotation(value) for value in result[XREF_COLUMN].split("|")}))
+    return result
 
 
 class ChemicalMappingLoader:

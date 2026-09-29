@@ -94,7 +94,7 @@ def test_same_target_annotations_deduplicate_without_erasing_original_rows(tmp_p
         "KEGG.COMPOUND:cpd:C12345",
         "kegg.compound:CPD:C12345",
         "kegg.compound:cpd:C１２３４５",
-        "hsa:12345",
+        "hsa:12345",  # codespell:ignore hsa
         "pdb-ccd:https://example.org/entry",
         "https://example.org/kegg.compound:cpd:C12345",
         " kegg.compound:cpd:C12345",

@@ -1,4 +1,4 @@
-"""Preserve reviewed material grounding candidates separately from identity (#1236/#1241)."""
+"""Preserve reviewed material grounding candidates separately from identity."""
 
 import csv
 import gzip
@@ -69,6 +69,14 @@ P3556_MIM = "MIM:L-alpha-Phosphatidylcholine"
 P3556_TARGET = "CHEBI:86658"
 P3556_AUTHORITY_LABEL = "Sigma P3556 egg-yolk phosphatidylcholine material (variable fatty-acid composition)"
 P3556_AUTHORITY_URI = "https://www.sigmaaldrich.com/deepweb/assets/sigmaaldrich/product/documents/152/475/p3556pis.pdf"
+PEPTONE_TARGET = "pubchem.compound:167312541"
+PEPTONE_AUTHORITY_LABEL = "Glycerides, C8-10 mono-and di-"
+PEPTONE_AUTHORITY_URI = "https://pubchem.ncbi.nlm.nih.gov/compound/167312541"
+PEPTONE_REASON = "digest_material_not_demonstrated_structural_identity"
+PEPTONE_PATTERNS = {
+    "Soy peptone": "(?i)^soy[ _-]+peptone$",
+    "Vitamin-free casamino acids": "(?i)^vitamin[ _-]+free[ _-]+casamino[ _-]+acids$",
+}
 AUDIT_HEADER = (
     SOURCE_ASSERTION_ID_COLUMN,
     SOURCE_RECORD_COLUMN,
@@ -108,6 +116,14 @@ def p3556_material(raw):
     return isinstance(value, str) and " ".join(value.split()).casefold() == "sigma p3556"
 
 
+def _peptone(value):
+    """Match only the two reviewed digest names, including shared policy normalization."""
+    return isinstance(value, str) and _scope_key(re.sub(r"[^\w\s-]", "", value)) in {
+        "soy peptone",
+        "vitamin free casamino acids",
+    }
+
+
 def sugar_material(raw, name=None):
     """Match only the reviewed source name and stock qualifier, with case/whitespace normalization."""
     if not isinstance(raw, dict):
@@ -128,6 +144,8 @@ def _profile(raw):
         return "p3556"
     if sugar_material(raw):
         return "sugar"
+    if _peptone(raw.get(COMPOUND_KEY, raw.get(SOLUTION_KEY))):
+        return "peptone"
     return "potato" if _potato(raw.get(COMPOUND_KEY, raw.get(SOLUTION_KEY))) else None
 
 
@@ -179,7 +197,7 @@ class MaterialScopeAudit:
             for medium in media_list[DATA_KEY]
             for solution in transform.media_detailed[str(medium[ID_COLUMN])].get(SOLUTIONS_KEY, [])
         }
-        self.names = {"potato": set(), "p3556": set(), "sugar": set()}
+        self.names = {"potato": set(), "p3556": set(), "sugar": set(), "peptone": set()}
         for identifier in solutions:
             recipe = transform.solutions_data[identifier].get(RECIPE_KEY)
             # Match the existing producer's absent/non-list recipe behavior.
@@ -194,7 +212,7 @@ class MaterialScopeAudit:
         # Bind the exact current policy even if the mapping reader has already
         # excluded the row. Such rows are candidates, not attempted lookups.
         policies = []
-        if self.names["potato"] or self.names["p3556"]:
+        if self.names["potato"] or self.names["p3556"] or self.names["peptone"]:
             with self._consume(POLICY_ROLE, IDENTITY_POLICY) as stream:
                 policies = list(_table_rows(stream, {"target_id", "authority_label", "kind", "value", "reason"}))
         if self.names["sugar"]:
@@ -239,6 +257,18 @@ class MaterialScopeAudit:
             )
         ):
             raise SourceFinalizationRequired("Reviewed P3556 material-scope identity hold is missing")
+        if self.names["peptone"] and not all(
+            not ingredient_mapping_allowed(name, PEPTONE_TARGET)
+            and any(
+                _policy_target_key(row["target_id"]) == PEPTONE_TARGET
+                and row["authority_label"] == PEPTONE_AUTHORITY_LABEL
+                and row["kind"] == "name_pattern"
+                and row["value"] == pattern
+                for _, row in policies
+            )
+            for name, pattern in PEPTONE_PATTERNS.items()
+        ):
+            raise SourceFinalizationRequired("Reviewed peptone material-scope identity holds are missing")
         unified = _repo_root() / transform.DATA_INPUTS[0]
         with self._consume(UNIFIED_ROLE, unified) as snapshot:
             with gzip.GzipFile(fileobj=snapshot.buffer) as compressed:
@@ -267,6 +297,10 @@ class MaterialScopeAudit:
                         for name in self.names[profile]:
                             if name and name.lower().strip() == row["original"].lower().strip():
                                 self._claim(profile, name, role, locator, row["mapped"], row)
+                    if _policy_target_key(row["mapped"]) == PEPTONE_TARGET:
+                        for name in self.names["peptone"]:
+                            if name.lower().strip() == row["original"].lower().strip():
+                                self._claim("peptone", name, role, locator, row["mapped"], row)
         self.guard.verify()
 
     def _mapping_claims(self, role, locator, row):
@@ -285,6 +319,12 @@ class MaterialScopeAudit:
         # rejects that label. These are available candidates, not lookup calls.
         if route not in {"identity", "attribute", "canonical_name", "synonym"}:
             return
+        if _policy_target_key(row["object_id"]) == PEPTONE_TARGET:
+            for name in self.names["peptone"]:
+                if normalize_name(name) == normalize_name(row.get("object_label", "")) or (
+                    route == "synonym" and normalize_name(name) == normalize_name(row["subject_label"])
+                ):
+                    self._claim("peptone", name, role, locator, row["object_id"], row)
         for profile, subject, target in (
             ("p3556", P3556_MIM, P3556_TARGET),
             ("sugar", "MIM:Sugar", "NCIT:C71939"),
@@ -322,6 +362,8 @@ class MaterialScopeAudit:
             return
         if profile == "potato" and _policy_target_key(occurrence[ID_COLUMN]) == TARGET:
             raise SourceFinalizationRequired("Held Potato extract identity escaped source resolution")
+        if profile == "peptone" and _policy_target_key(occurrence[ID_COLUMN]) == PEPTONE_TARGET:
+            raise SourceFinalizationRequired("Held peptone structural identity escaped source resolution")
         if profile in {"p3556", "sugar"}:
             local = (
                 MEDIADIVE_INGREDIENT_PREFIX + str(raw[COMPOUND_ID_KEY])
@@ -345,6 +387,8 @@ class MaterialScopeAudit:
                 target = prefix + str(value)
                 if value is None or (profile == "potato" and _policy_target_key(target) != TARGET):
                     continue
+                if profile == "peptone" and _policy_target_key(target) != PEPTONE_TARGET:
+                    continue
                 candidates.append(
                     (
                         "mediadive_compounds",
@@ -364,6 +408,15 @@ class MaterialScopeAudit:
         )
         if profile == "sugar":
             reason, qualifiers = self.sugar_decision["reason"], _json({"attribute": raw["attribute"]})
+        if profile == "peptone":
+            reason = PEPTONE_REASON
+        authority_label, authority_uri = AUTHORITY_LABEL, AUTHORITY_URI
+        if profile == "p3556":
+            authority_label, authority_uri = P3556_AUTHORITY_LABEL, P3556_AUTHORITY_URI
+        elif profile == "peptone":
+            authority_label, authority_uri = PEPTONE_AUTHORITY_LABEL, PEPTONE_AUTHORITY_URI
+        elif profile == "sugar":
+            authority_label, authority_uri = self.sugar_decision["authority_label"], self.sugar_decision["evidence_uri"]
         payload = occurrence[SOURCE_RECORD_COLUMN]
         for route, snapshot, locator, target, candidate in candidates:
             row = (
@@ -384,12 +437,8 @@ class MaterialScopeAudit:
                 candidate,
                 policy["path"],
                 policy["sha256"],
-                self.sugar_decision["authority_label"]
-                if profile == "sugar"
-                else (P3556_AUTHORITY_LABEL if profile == "p3556" else AUTHORITY_LABEL),
-                self.sugar_decision["evidence_uri"]
-                if profile == "sugar"
-                else (P3556_AUTHORITY_URI if profile == "p3556" else AUTHORITY_URI),
+                authority_label,
+                authority_uri,
             )
             key = (occurrence[SOURCE_ASSERTION_ID_COLUMN], route, locator)
             if self.rows.setdefault(key, row) != row:

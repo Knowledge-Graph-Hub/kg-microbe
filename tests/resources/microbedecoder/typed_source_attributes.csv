@@ -1,0 +1,4 @@
+LPSN_ID,BacDive_Gram_stain,BacDive_Cell_shape,FAPROTAX_Type_of_metabolism
+101,positive,rod-shaped,chemoheterotrophy
+102,positive,,photoautotrophy;photoheterotrophy;plant_pathogen
+103,Positive,other,phototrophy

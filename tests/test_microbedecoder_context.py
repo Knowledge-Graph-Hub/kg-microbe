@@ -105,7 +105,10 @@ def test_all_snapshot_families_are_reported_source_attributes(tmp_path):
     assert all(edge["object"].startswith("kgmicrobe.source_attribute:microbedecoder_") for edge in attributes)
     assert all(by_id[edge["object"]]["category"] == "biolink:Attribute" for edge in attributes)
     assert all("reported" in by_id[edge["object"]]["name"] for edge in attributes)
-    assert all("not a decoded phenotype" in by_id[edge["object"]]["description"] for edge in attributes)
+    assert all("not a decoded phenotype" in node["description"] for node in nodes if not node["has_attribute_type"])
+    assert all(
+        "not an independently observed phenotype" in node["description"] for node in nodes if node["has_attribute_type"]
+    )
     assert not any(node["id"].startswith("kgmicrobe.trait:") for node in nodes)
     assert not any(edge["predicate"] == "biolink:has_phenotype" for edge in edges)
     # Gram-negative is a reported stain value, not a negated generic attribute;
@@ -235,7 +238,9 @@ def test_required_mapping_initialization_failure_preserves_outputs(tmp_path, mon
     assert (transform.output_node_file.read_bytes(), transform.output_edge_file.read_bytes()) == before
 
 
-@pytest.mark.parametrize("fixture", ["snapshot_context.csv", "citation_context.csv", "source_attributes.json"])
+@pytest.mark.parametrize(
+    "fixture", ["snapshot_context.csv", "citation_context.csv", "source_attributes.json", "typed_source_attributes.csv"]
+)
 def test_actual_kgx_archive_retains_source_context(tmp_path, monkeypatch, fixture):
     """Source dimensions and major/minor citations survive the real KGX pipeline."""
     from kg_microbe.merge_utils.merge_kg import merge
@@ -244,7 +249,7 @@ def test_actual_kgx_archive_retains_source_context(tmp_path, monkeypatch, fixtur
     prepare_kgx()
     from kgx.cli import cli_utils
 
-    transform, _, before = run_fixture(tmp_path, fixture)
+    transform, before_nodes, before = run_fixture(tmp_path, fixture)
     monkeypatch.setattr("kgx.prefix_manager.get_jsonld_context", lambda: {})
     monkeypatch.setattr(cli_utils, "Pool", ThreadPool)
     config = tmp_path / "merge.yaml"
@@ -270,6 +275,19 @@ def test_actual_kgx_archive_retains_source_context(tmp_path, monkeypatch, fixtur
     with tarfile.open(tmp_path / "context.tar.gz") as archive:
         with archive.extractfile("context_edges.tsv") as stream:
             after = list(csv.DictReader(io.TextIOWrapper(stream), delimiter="\t", quoting=csv.QUOTE_NONE))
+        with archive.extractfile("context_nodes.tsv") as stream:
+            after_nodes = {
+                row["id"]: row
+                for row in csv.DictReader(io.TextIOWrapper(stream), delimiter="\t", quoting=csv.QUOTE_NONE)
+            }
+    for node in before_nodes:
+        for field in (
+            "has_attribute_type",
+            "attribute_type_source",
+            "attribute_type_evidence",
+            "attribute_type_rationale",
+        ):
+            assert after_nodes[node["id"]].get(field, "") == node[field]
     fields = (
         "subject",
         "predicate",

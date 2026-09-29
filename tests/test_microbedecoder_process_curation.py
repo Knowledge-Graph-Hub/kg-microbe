@@ -37,12 +37,14 @@ REVIEWED_PAIRS = (
     ("faprotax", "chitinolysis", "GO:0006032"),
     ("faprotax", "ligninolysis", "GO:0046274"),
     ("faprotax", "hydrocarbon_degradation", "GO:0120253"),
+    ("faprotax", "knallgas_bacteria", "GO:0019412"),
+    ("faprotax", "methanotrophy", "GO:0046188"),
 )
 GO_FIXTURE = Path(__file__).parent / "resources" / "microbedecoder" / "go_nodes.tsv"
 
 
 def go_authority_stream():
-    """Use the immutable nine-declaration fixture, not live ontology outputs."""
+    """Use the immutable eleven-declaration fixture, not live ontology outputs."""
     return io.StringIO(GO_FIXTURE.read_text(encoding="utf-8"))
 
 
@@ -81,9 +83,9 @@ def curation(tmp_path):
 
 
 def test_all_reviewed_source_pairs_and_evidence(curation):
-    """Keep the seventeen selected routes explicit without creating global aliases."""
+    """Keep the nineteen selected routes explicit without creating global aliases."""
     rows = mapping_rows()
-    assert len(rows) == len(REVIEWED_PAIRS) == 17
+    assert len(rows) == len(REVIEWED_PAIRS) == 19
     assert {(row["source_key"].split(":")[0], row["source_literal"], row["target_curie"]) for row in rows} == set(
         REVIEWED_PAIRS
     )
@@ -151,7 +153,14 @@ def test_metpo_process_rules_cannot_admit_generic_or_nonprocess_types(category):
         ("faprotax:type_of_metabolism", "methanogenesis_by_CO2_reduction_with_H2"),
         ("faprotax:type_of_metabolism", "aerobic_chemoheterotrophy"),
         ("faprotax:type_of_metabolism", "nitrate_reduction"),
-        ("faprotax:type_of_metabolism", "methanotrophy"),
+        ("faprotax:type_of_metabolism", "dark_hydrogen_oxidation"),
+        ("faprotax:type_of_metabolism", "sulfate_respiration"),
+        ("faprotax:type_of_metabolism", "methylotrophy"),
+        ("faprotax:type_of_metabolism", "Knallgas_bacteria"),
+        ("faprotax:type_of_metabolism", "methanotrophy "),
+        ("faprotax2:type_of_metabolism", "knallgas_bacteria"),
+        ("bergey:type_of_metabolism", "methanotrophy"),
+        ("faprotax:substrates", "methanotrophy"),
         ("faprotax:type_of_metabolism", "nitrification"),
         ("faprotax:type_of_metabolism", "aerobic_ammonia_oxidation"),
         ("faprotax:type_of_metabolism", "denitrification"),

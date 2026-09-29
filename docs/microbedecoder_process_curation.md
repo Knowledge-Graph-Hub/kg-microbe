@@ -1,8 +1,8 @@
 # MicrobeDecoder process curation (#650)
 
 The [curated table](../mappings/canonical/microbedecoder_process_mappings.tsv)
-normalizes seventeen exact source-column/literal pairs to existing METPO or GO
-process classes: the original eight METPO routes and nine FAPROTAX-only GO routes.
+normalizes nineteen exact source-column/literal pairs to existing METPO or GO
+process classes: the original eight METPO routes and eleven FAPROTAX-only GO routes.
 It does not declare global synonyms or independently verify each organism's
 experimental phenotype. Original source records, literals and citations remain
 on the source assertions; the table's evidence describes the term normalization.
@@ -26,6 +26,8 @@ on the source assertions; the table's evidence describes the term normalization.
 | FAPROTAX_Type_of_metabolism | chitinolysis | GO:0006032 |
 | FAPROTAX_Type_of_metabolism | ligninolysis | GO:0046274 |
 | FAPROTAX_Type_of_metabolism | hydrocarbon_degradation | GO:0120253 |
+| FAPROTAX_Type_of_metabolism | knallgas_bacteria | GO:0019412 |
+| FAPROTAX_Type_of_metabolism | methanotrophy | GO:0046188 |
 
 ## Source evidence and limits
 
@@ -108,18 +110,19 @@ predicate/relation, and source evidence provenance are validated before use.
 Caller-owned consumed-input streams remain open for fingerprinting.
 
 Unreviewed case variants, negative/narrower labels, product/substrate fields,
-FAPROTAX2, and all other process labels keep the transform's existing fallback.
-The seventeen routes retain `biolink:capable_of` / `RO:0002215`; no additional oxygen,
+FAPROTAX2, and labels outside the finite mapping, annotation and local-scope
+tables keep the transform's existing fallback.
+The nineteen routes retain `biolink:capable_of` / `RO:0002215`; no additional oxygen,
 chemical-use, assay, or taxonomy claim follows from the normalization.
 
-The saved cohort contained 5,611 assertions, not distinct organisms or a
+The initial eight-route saved cohort contained 5,611 assertions, not distinct organisms or a
 current output count. The review was bound to raw CSV SHA-256
 `0c6ff730a108720a5d6972400f2bccf2eca8621713b62736abdf5df0fb188c95`
 and saved ledger SHA-256
 `82848eb0ff016094f10448a0e4c9d696b7790955268cd0ff81a7a6a2dfef3a4c`.
 Those historical counts are evidence context and are not runtime expectations.
 
-Offline resolver tests use tiny local declarations and cover the seventeen routes,
+Offline resolver tests use tiny local declarations and cover the nineteen routes,
 excluded scopes, malformed/duplicate rules, authority failures, caller-owned
 streams, source prediction provenance, and fresh validation on subsequent loads.
 
@@ -230,7 +233,7 @@ are not a whole-issue closure claim.
 
 ## Finite reported non-process annotations
 
-Seventeen exact source-column/literal pairs are retained as field-scoped
+The initial seventeen exact source-column/literal pairs are retained as field-scoped
 reported annotations rather than process objects. Bergey's `Other` is an
 unspecified report. Sixteen FAPROTAX groups describe source group membership:
 `photosynthetic_cyanobacteria`, `animal_parasites_or_symbionts`,
@@ -246,6 +249,84 @@ they are not ontology identity mappings or newly inferred infection, host,
 habitat, or taxonomy relationships. The original literal, source record and
 prediction provenance remain intact. The finite list does not classify unseen
 terms by spelling, and it excludes `knallgas_bacteria`, whose definition
-describes hydrogen/oxygen metabolism and needs its own process review.
+describes hydrogen/oxygen metabolism and now has a separately reviewed GO route.
 Process tables are rejected if they try to shadow one of these exact
 non-process dispositions.
+
+## Complete review of the remaining 61 process labels
+
+The saved continuation inventory contained 61 remaining FAPROTAX labels and
+41,388 assertions. Each was reviewed against native GO/METPO definitions and
+the complete FAPROTAX 1.2.12 source group, not just its label. Independent raw
+record/token counts agree for every label. This is a count of assertions, not
+distinct organisms, current merged rows, or new experimental observations.
+
+| Representation after this review | Labels | Saved assertions |
+| --- | ---: | ---: |
+| Additional native GO process routes | 2 | 133 |
+| Source Attributes with reviewed native type | 4 | 16,059 |
+| Source Attributes preserving an untyped compound/application label | 10 | 18,997 |
+| Source-local processes with explicit reviewed definitions | 45 | 6,199 |
+
+`knallgas_bacteria` maps to `GO:0019412`: the source specifies hydrogen donor,
+oxygen acceptor and aerobic metabolism. Its cited [Hydrogenothermus culture
+study](https://doi.org/10.1099/00207713-51-5-1853) supports that meaning. The
+broader `dark_hydrogen_oxidation` group permits other acceptors and is not an
+alias. `methanotrophy` maps to `GO:0046188` methane catabolism: source members
+include [nitrate-dependent anaerobic methane oxidation](https://doi.org/10.1038/nature12375),
+so neither oxygen dependence nor methane-monooxygenase activity is inferred.
+The study's [published equation correction](https://doi.org/10.1038/nature12619)
+is included in the evidence. The two rules retain prediction/computational-model
+provenance and preserve original source tokens and record citations.
+
+Four exact source labels have a trait interpretation: `chemoheterotrophy`
+(`METPO:1000636`), `photoautotrophy` (`METPO:1000656`), `photoheterotrophy`
+(`METPO:1000657`) and `plant_pathogen` (`METPO:1004003`). The native declarations
+remain `OntologyClass`. The source-column/literal Attribute receives the class
+in its **has_attribute_type node slot**; original use edges retain record-level
+provenance. This is not an edge predicate, a direct organism-to-class phenotype
+assertion, a class-category override, or evidence that every strain shares a
+reported species-level characteristic.
+
+Ten other labels retain their complete meanings as source Attributes without
+native types: `aerobic_anoxygenic_phototrophy`, `aerobic_chemoheterotrophy`,
+`anoxygenic_photoautotrophy`, its `Fe_oxidizing`, `H2_oxidizing` and `S_oxidizing`
+subtypes, `oxygenic_photoautotrophy`, `phototrophy`, `methylotrophy` and
+`oil_bioremediation`. These are finite representation decisions, not claims of
+exact ontology grounding. Native related synonyms do not authorize removal of
+oxygen/donor qualifiers. In particular, `METPO:1000660` requires light as the
+primary energy source, whereas the source's phototrophy union includes aerobic
+anoxygenic phototrophs using light to [supplement organic-energy
+metabolism](https://doi.org/10.1038/ismej.2017.79). The original literal remains
+queryable even when its native type is unresolved. The reported-annotation set
+therefore contains 27 exact pairs, counting the original 17.
+
+The [45-row local scope table](../mappings/canonical/microbedecoder_process_scope_definitions.tsv)
+preserves actual process meanings, including compound acceptor/donor and
+pathway-entry scope, without inventing ontology equivalence. Every row binds an
+exact source column/literal to a paraphrased definition, HTTPS evidence, reviewed
+version, archive/member SHA-256 and source start line. The loader rejects malformed,
+duplicate, incomplete or non-process rows and exposes immutable declarations;
+it neither downloads a new vocabulary nor classifies unknown labels by spelling.
+The consumer preserves source-specific identity rather than reusing an unscoped
+global label node for definitions from different fields.
+
+`sulfate_respiration` remains local despite the promising `GO:0019420` label.
+The pinned authority explicitly places it under `GO:0000103` sulfate assimilation,
+whose definition requires incorporation into sulfated compounds; that is not
+the respiratory process. Its terminal-acceptor wording also needs correction.
+[Experimental energy-conservation evidence](https://doi.org/10.1126/science.aad3558)
+supports the source meaning but does not repair native GO ancestry. Neither
+the authority nor the source process is silently rewritten. Other held targets
+similarly retain exact source meaning rather than collapsing to generic respiration,
+replacing an entire process with an enzyme activity, or asserting a complete
+pathway from one step.
+
+The immutable [MicrobeDecoder assembly instructions](https://github.com/thackmann/MicrobeDecoder/blob/872726c257b39d14ffb1827df09127b5c8ef72bb/Database/FAPROTAX/getFAPROTAXpredictions.R#L69-L75)
+explicitly name FAPROTAX 1.2.12, matching the reviewed archive. That strengthens
+vocabulary-version compatibility but still does not prove that this commit
+generated the saved local CSV or revalidate individual taxonomic assignments.
+The local definitions are reviewed semantic context, not refreshed FAPROTAX
+predictions. Native grounding remains open for the 45 local processes and 10
+untyped source groups; source data coverage and valid representation are separate
+acceptance dimensions.

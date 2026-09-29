@@ -1,77 +1,84 @@
-# MicrobeDecoder observation curation (#650)
+# MicrobeDecoder source-value typing
 
-## Report-only textual phenotype groundings
+Reviewed source values are retained as `biolink:Attribute` nodes. The optional
+**node property** `has_attribute_type` identifies the native METPO class that
+describes a reviewed source-column/literal pair. It is not an edge predicate.
+No METPO categories, LPSN categories, source record identifiers, original
+literal values, or evidence tiers are changed to make the model validate.
 
-The canonical `microbedecoder_phenotype_mappings.tsv` contains 22 exact
-field/literal rules: three Gram-stain values, nine oxygen-tolerance values and
-ten cell-shape values. Each target was reviewed against a native active METPO
-class with a textual definition, phenotype ancestry, and the exact literal as
-a BacDive-attributed related synonym. This is source-scoped term normalization,
-not promotion of related synonyms to global identity.
+The pinned Biolink 4.4.2 schema declares `has attribute type` as a single-valued
+Attribute slot with range OntologyClass. It does not make it a descendant of
+`related to`, so checking domain/range alone would not authorize a new KG edge.
+The slot uses the native class category, including OntologyClass; this is not
+an attempt to retype METPO qualities as PhenotypicFeature.
 
-Native version and fixture provenance are in
-[the authority note](../tests/resources/microbedecoder/phenotype_curation_authority.md).
-Runtime admission checks exact active target declarations and tracks the
-actual METPO export and mapping table through consumed-input finalization.
+## Evidence and query semantics
 
-The producer retains every original `has_attribute` edge. It writes reviewed
-matches separately to `phenotype_normalizations.tsv`, retaining subject,
-source-record digest/ordinal, source column, literal/backslash encoding,
-primary source and evidence tier. Target metadata, evidence URI, rationale
-and `reviewed_literal_grounding_not_graph_assertion` make the report's limited
-meaning explicit. Join using subject, source_record, source_column and value;
-do not join on the label alone or propagate observations to a taxon's members.
-Rows are source token observations, not distinct organisms or independent tests.
+The original record-qualified `has_attribute` edges remain the observations.
+Attribute identifiers are shared by exact source column and literal, not by
+record. Multiple records using the same value therefore have separate source
+edges to the same attribute, with one reviewed type on that node. That type is
+KG-Microbe's normalization, not a new biological experiment or a statement
+that every strain in the LPSN taxon has the property.
 
-The schema limitation is deliberate: pinned Biolink 4.4.2 `has_phenotype` has
-domain BiologicalEntity and range PhenotypicFeature. LPSN's OrganismTaxon and
-METPO's current OntologyClass exports do not satisfy those endpoint types.
-Neither retyping authority-owned nodes nor substituting a vague predicate is
-justified. The report is not a merge input, and source graph finalization does
-not certify the sidecar as a graph member. Acceptance must fingerprint and
-compare that report separately. A valid graph phenotype route requires a
-reviewed taxon/phenotype model and ontology-owner category handling upstream.
+Node extensions separate the curation from the original observation provider:
 
-Positive plus negative Gram observations are preserved separately; they are
-not a newly observed variable result. Broad and obligate oxygen terms are not
-interchanged. Nine other shape synonyms lack native textual definitions;
-`other` is ambiguous. Flagellation does not automatically establish motility.
-Numeric codes and signed assays require an independently established coding
-scheme for the actual saved source fields and remain unconverted.
+- `has_attribute_type`: one native target CURIE, never a pipe list;
+- `attribute_type_source`: KG-Microbe's project URI;
+- `attribute_type_evidence`: the reviewed rule's evidence URLs;
+- `attribute_type_rationale`: the rule's field-specific interpretation.
 
-## One record-specific chemical correction
+The `phenotype_normalizations.tsv` report still binds each use to its original
+source record, column, literal and evidence tier. Its historical disposition
+`reviewed_literal_grounding_not_graph_assertion` means no new organism-phenotype
+edge is asserted; the class is now also queryable as node metadata.
 
-The saved Ilyobacter tartaricus record (LPSN 777027, strain GraTa2/DSM 2382)
-reports `tartate` in its Bergey substrate field. The original
-[Schink 1984 paper](https://d-nb.info/1105570576/34), including its fermentation
-products, independently supports tartrate. The exact complete raw record is
-pinned by canonical JSON SHA-256
-`de979939d39a74aad45a0edffe59cde4e11b6d294ee9fb22e848a12bd0dda13f`.
+A query must join an original source edge's object to the Attribute node ID,
+then filter the node's `has_attribute_type`. It must return the edge's
+`source_record`, `source_column`, `value`, `primary_knowledge_source`,
+`knowledge_level`, and `agent_type`. Do not turn the result into a universal
+species/strain phenotype or treat two records as independent experiments.
 
-Only that authenticated record/field resolves to native `CHEBI:132950`
-(`tartrate`). The broad native class does not invent a counterion or narrower
-stereoisomer. The graph retains the original misspelling, source citation and
-record locator, and records the withdrawn local placeholder as original_object.
-It does not create a new ChEBI stub or a global `tartate` synonym. The constructor
-validates the native ChEBI declaration and fingerprints the consumed authority.
+## Reviewed scope
 
-Admission runs before empty-field/token filtering. Whitespace-normalized IDs
-identify the guarded record as the producer would, but changed original IDs,
-citations, fields or full-row bytes fail closed; they are not admitted by
-normalizing away the difference. A new source snapshot requires reviewing any
-changed guarded record. The two earlier record-scoped unresolved `sugar`
-observations are unchanged.
+The table contains 35 finite source-column/literal rules: 22 BacDive-origin
+textual values (Gram stain, cell shape, oxygen tolerance), nine reviewed
+numeric/sign codes, and four exact FAPROTAX labels (chemoheterotrophy,
+photoautotrophy, photoheterotrophy, plant_pathogen). The latter are trophic or
+host-type annotations, not biological process identities: their former local
+`capable_of` process objects become reported source Attribute objects, using
+`has_attribute`. They retain `infores:faprotax`, `prediction`, and
+`computational_model`. Source spelling and source record provenance remain
+unchanged. Qualified variants and generic phototrophy are not silently folded
+into these reviewed types.
 
-The chemical-mapping skill's reviewed-release policy was followed: no floating
-MIM aliases, vendor changes or manual unified-map edits. Independent native and
-source evidence can support a scoped correction without converting it to a
-globally supported MIM alias. Peptones, culture-medium abbreviations, combined
-substrates and the ambiguous `3-methylacetate` name remain distinct curation work.
+The nine codes are motility `0`/`1`, pathogenicity animal/human/plant `1`, and
+indole/Voges–Proskauer `+`/`-`. Their field-specific meanings are established by
+the immutable MicrobeDecoder preprocessing code at commit
+`872726c257b39d14ffb1827df09127b5c8ef72bb`. The selected local source's 16,317
+nonempty field cells and associated BacDive IDs match that commit's database
+export by LPSN ID. Whole CSV hashes and headers differ: this is selected-cohort
+compatibility, not a claim that the entire local database has that revision.
+The immutable codebook receipt and hashes are in
+`tests/resources/microbedecoder/phenotype_codebook.json`; individual curation
+rows link the decoder, its field-mode call site, and native METPO targets.
 
-## Acceptance limits
+Other codes, generic spore formation, unreviewed cell shapes, flagellar
+arrangements and ambiguous values remain original attributes without a type.
+The native spore-forming METPO definition is specifically about **endospores**;
+decoding a generic source boolean is not sufficient to establish that scope.
+The `+/-` assay token stays separate and untyped; contradictory `+` and `-`
+observations are not combined into it. A negative assay outcome is not missing
+data, and neither assay sign creates a chemical production/consumption edge.
+No general numeric/sign decoder is applied to other fields.
 
-These changes do not close every interpretation in #650. Separate the process
-mapping queue, local materials, undecoded assays/codes and the phenotype graph
-model blocker. Historical label totals are not a present-day acceptance target.
-Use the complete current source inventory and independent full-field comparison;
-then review a freshly merged graph before making release claims.
+## Contracts and regression tests
+
+Every producer run validates exact mapping columns, allowed source fields,
+single native class IDs, unique active authoritative declarations, expected
+labels/categories, and read-time input fingerprints before opening outputs.
+It never invents native target stubs. Source finalization and the actual KGX
+archive serializer retain the optional node fields. Tests cover raw snapshot
+edge byte identity with and without reviewed node typing, record/literal
+identity, singleton slots, unreviewed values, FAPROTAX evidence tiers, and
+actual merge/archive round trips of every curation field.

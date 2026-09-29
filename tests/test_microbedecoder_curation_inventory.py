@@ -8,7 +8,10 @@ import pytest
 
 from kg_microbe.transform_utils.constants import HAS_ATTRIBUTE_RELATION
 from kg_microbe.transform_utils.microbedecoder.curation import DEFAULT_PROCESS_MAPPINGS
-from kg_microbe.transform_utils.microbedecoder.phenotype_curation import DEFAULT_PHENOTYPE_MAPPINGS
+from kg_microbe.transform_utils.microbedecoder.phenotype_curation import (
+    ATTRIBUTE_TYPE_CURATION_SOURCE,
+    DEFAULT_PHENOTYPE_MAPPINGS,
+)
 from kg_microbe.transform_utils.microbedecoder.source_annotations import REPORTED_METABOLISM_ANNOTATIONS
 from kg_microbe.transform_utils.microbedecoder.utils import BACDIVE_SNAPSHOT_COLUMNS
 from scripts import review_microbedecoder_curation as inventory
@@ -79,10 +82,42 @@ def source(tmp_path, edges, nodes=()):
     directory = tmp_path / "source"
     directory.mkdir()
     write_tsv(directory / "edges.tsv", EDGE_FIELDS, edges)
+    with DEFAULT_PHENOTYPE_MAPPINGS.open(newline="") as stream:
+        rules = {(r["source_column"], r["source_literal"]): r for r in csv.DictReader(stream, delimiter="\t")}
+    node_rows = []
+    for node in nodes:
+        row = {
+            "id": node[0],
+            "category": node[1],
+            "provided_by": "infores:microbedecoder",
+            "has_attribute_type": node[2] if len(node) > 2 else "",
+        }
+        if row["has_attribute_type"]:
+            observations = [e for e in edges if e["object"] == node[0]]
+            rule = rules.get((observations[0]["source_column"], observations[0]["value"])) if observations else None
+            if rule:
+                row.update(
+                    {
+                        "attribute_type_source": ATTRIBUTE_TYPE_CURATION_SOURCE,
+                        "attribute_type_evidence": rule["evidence_uri"],
+                        "attribute_type_rationale": rule["curation_rationale"],
+                    }
+                )
+        if len(node) > 3:
+            row.update(node[3])
+        node_rows.append(row)
     write_tsv(
         directory / "nodes.tsv",
-        ["id", "category"],
-        [{"id": identifier, "category": category} for identifier, category in nodes],
+        [
+            "id",
+            "category",
+            "provided_by",
+            "has_attribute_type",
+            "attribute_type_source",
+            "attribute_type_evidence",
+            "attribute_type_rationale",
+        ],
+        node_rows,
     )
     return directory
 
@@ -98,7 +133,7 @@ def run_review(source_dir, tmp_path):
 
 
 def test_all_27_attribute_columns_remain_scoped_reported_values(tmp_path):
-    """A zero in any column does not become a negative phenotype or a chemical."""
+    """Zeros stay source attributes, distinguishing only field-specific reviewed coding."""
     edges, nodes = [], []
     for column in BACDIVE_SNAPSHOT_COLUMNS:
         target = "kgmicrobe.source_attribute:" + column
@@ -116,6 +151,7 @@ def test_all_27_attribute_columns_remain_scoped_reported_values(tmp_path):
         "reported_phenotype_code",
         "reported_assay_result",
         "reported_assay_label",
+        "reviewed_attribute_type_not_applied",
     }
     assert all(row["value"] == "0" and row["object_category"] == "biolink:Attribute" for row in rows)
 
@@ -143,6 +179,8 @@ def test_finalized_edge_rows_not_raw_report_attempts_or_unique_taxa(tmp_path):
         "process_authority",
         "process_go_authority",
         "phenotype_mappings",
+        "process_scope_definitions",
+        "material_dispositions",
     }
 
 
@@ -151,7 +189,7 @@ def test_reviewed_applied_pending_and_unsupported_processes_are_distinct(tmp_pat
     edges = [
         process("fermentation", "METPO:1002005"),
         process("nitrogen_fixation", "kgmicrobe.pathway:nitrogen_fixation"),
-        process("chemoheterotrophy", "kgmicrobe.pathway:chemoheterotrophy"),
+        process("unreviewed_process", "kgmicrobe.pathway:unreviewed_process"),
     ]
     nodes = [(row["object"], "biolink:BiologicalProcess") for row in edges if row["object"].startswith("kg")]
     summary, rows = run_review(source(tmp_path, edges, nodes), tmp_path)
@@ -282,7 +320,7 @@ def test_unclassifiable_or_semantically_wrong_routes_abort(tmp_path, kind):
     elif kind == "unknown_column":
         row = edge("BacDive_NotConfigured", "0", "kgmicrobe.source_attribute:unknown")
     elif kind == "external_process":
-        row = process("chemoheterotrophy", "METPO:1002005")
+        row = process("unreviewed_process", "METPO:1002005")
     else:
         row = edge("Bergey_Substrates_for_end_products", "sugar", "kgmicrobe.compound:missing")
     source_dir = source(tmp_path, [row])
@@ -315,9 +353,9 @@ def test_reviewed_target_does_not_hide_evidence_or_relation_changes(tmp_path, fi
 @pytest.mark.parametrize("category", [None, "biolink:Attribute"])
 def test_fallback_process_needs_source_biological_process_declaration(tmp_path, category):
     """A pathway-looking prefix is insufficient evidence of a valid local declaration."""
-    target = "kgmicrobe.pathway:chemoheterotrophy"
+    target = "kgmicrobe.pathway:unreviewed_process"
     nodes = [] if category is None else [(target, category)]
-    source_dir = source(tmp_path, [process("chemoheterotrophy", target)], nodes)
+    source_dir = source(tmp_path, [process("unreviewed_process", target)], nodes)
     with pytest.raises(ValueError, match="Missing or mistyped local process"):
         inventory.review(source_dir, tmp_path / "inventory", DEFAULT_PROCESS_MAPPINGS, AUTHORITY)
     assert not (tmp_path / "inventory").exists()
@@ -358,7 +396,7 @@ def test_every_scientific_route_requires_nonblank_endpoints(tmp_path, column, fi
     assert not (tmp_path / "inventory").exists()
 
 
-@pytest.mark.parametrize("literal", ["chemoheterotrophy", "fermentation", "human_associated"])
+@pytest.mark.parametrize("literal", ["aerobic_chemoheterotrophy", "fermentation", "human_associated"])
 @pytest.mark.parametrize("relation", ["", "RO:0002234", "RO:0002438"])
 def test_fallback_processes_and_legacy_annotations_reject_wrong_relations(tmp_path, literal, relation):
     """Unmapped, unapplied and legacy process targets cannot bypass relation checks (#1214)."""
@@ -551,10 +589,10 @@ def test_all_seventeen_annotations_preserve_legitimate_source_evidence(tmp_path)
         rows.append(edge(column, literal, target))
         nodes.append((target, "biolink:Attribute"))
     summary, detail = run_review(source(tmp_path, rows, nodes), tmp_path)
-    assert len(rows) == 17
-    assert summary["edges"] == 17
-    assert summary["edge_rows_by_facet"] == {"source_attribute": 17}
-    assert summary["edge_rows_by_disposition"] == {"reported_group_or_unspecified_metabolism": 17}
+    assert len(rows) == len(REPORTED_METABOLISM_ANNOTATIONS)
+    assert summary["edges"] == len(rows)
+    assert summary["edge_rows_by_facet"] == {"source_attribute": len(rows)}
+    assert summary["edge_rows_by_disposition"] == {"reported_group_or_unspecified_metabolism": len(rows)}
     expected = {row["source_column"] + ":" + row["value"]: row for row in rows}
     for actual in detail:
         original = expected[actual["source_column"] + ":" + actual["value"]]
@@ -657,7 +695,8 @@ def test_external_chemical_inventory_does_not_invent_or_narrow_authority_categor
     assert rows[0]["object_category"] == (category or "")
 
 
-def test_reviewed_phenotype_groundings_are_inventory_annotations_not_extra_graph_edges(tmp_path):
+@pytest.mark.parametrize("applied", [False, True])
+def test_reviewed_phenotype_groundings_are_inventory_annotations_not_extra_graph_edges(tmp_path, applied):
     """Account for every reviewed literal while preserving its actual source Attribute assertion."""
     with DEFAULT_PHENOTYPE_MAPPINGS.open(newline="") as stream:
         mappings = list(csv.DictReader(stream, delimiter="\t"))
@@ -665,16 +704,22 @@ def test_reviewed_phenotype_groundings_are_inventory_annotations_not_extra_graph
     for index, mapping in enumerate(mappings):
         target = f"kgmicrobe.source_attribute:phenotype_{index}"
         rows.append(edge(mapping["source_column"], mapping["source_literal"], target))
-        nodes.append((target, "biolink:Attribute"))
+        nodes.append((target, "biolink:Attribute", mapping["target_curie"] if applied else ""))
     source_dir = source(tmp_path, rows, nodes)
     summary, detail = run_review(source_dir, tmp_path)
-    assert summary["edges"] == len(mappings) == 22
-    assert summary["edge_rows_by_facet"] == {"source_attribute": 22}
-    assert summary["edge_rows_by_disposition"] == {"reported_phenotype_with_reviewed_literal_grounding": 22}
+    assert summary["edges"] == len(mappings)
+    assert summary["edge_rows_by_facet"] == {"source_attribute": len(mappings)}
+    disposition = "reviewed_attribute_type" if applied else "reviewed_attribute_type_not_applied"
+    assert summary["edge_rows_by_disposition"] == {disposition: len(mappings)}
+    assert summary["typed_attribute_nodes"] == (len(mappings) if applied else 0)
     assert all(row["predicate"] == "biolink:has_attribute" for row in detail)
     assert all(row["object"].startswith("kgmicrobe.source_attribute:") for row in detail)
     assert all(row["object_category"] == "biolink:Attribute" for row in detail)
-    assert all(row["primary_knowledge_source"] == "infores:microbedecoder" for row in detail)
+    for row in detail:
+        predicted = row["source_column"] == "FAPROTAX_Type_of_metabolism"
+        assert row["primary_knowledge_source"] == ("infores:faprotax" if predicted else "infores:microbedecoder")
+        assert row["knowledge_level"] == ("prediction" if predicted else "knowledge_assertion")
+        assert bool(row["object_attribute_type"]) == applied
     assert "not additional graph phenotype assertions" in summary["limitations"][0]
 
 
@@ -684,3 +729,98 @@ def test_report_only_phenotype_mapping_does_not_authorize_has_phenotype(tmp_path
     source_dir = source(tmp_path, [row])
     with pytest.raises(ValueError, match="Reported source attribute lost"):
         inventory.review(source_dir, tmp_path / "inventory", DEFAULT_PROCESS_MAPPINGS, AUTHORITY)
+
+
+@pytest.mark.parametrize("attribute_type", ["METPO:1000699", " METPO:1000698", "METPO:1000698|METPO:1000699"])
+def test_inventory_rejects_unreviewed_conflicting_or_multivalued_attribute_type(tmp_path, attribute_type):
+    """A node slot must express exactly the field/literal mapping, not a guessed type."""
+    target = "kgmicrobe.source_attribute:gram_positive"
+    row = edge("BacDive_Gram_stain", "positive", target)
+    source_dir = source(tmp_path, [row], [(target, "biolink:Attribute", attribute_type)])
+    with pytest.raises(ValueError, match="Unsupported reported attribute type"):
+        inventory.review(source_dir, tmp_path / "inventory", DEFAULT_PROCESS_MAPPINGS, AUTHORITY)
+    assert not (tmp_path / "inventory").exists()
+
+
+def test_attribute_type_requires_matching_field_on_every_observation(tmp_path):
+    """A shared reported node may not leak a typed Gram result into an unrelated field."""
+    target = "kgmicrobe.source_attribute:shared_wrongly"
+    rows = [edge("BacDive_Gram_stain", "positive", target), edge("BacDive_Cell_shape", "positive", target)]
+    source_dir = source(tmp_path, rows, [(target, "biolink:Attribute", "METPO:1000698")])
+    with pytest.raises(ValueError, match="Unsupported reported attribute type"):
+        inventory.review(source_dir, tmp_path / "inventory", DEFAULT_PROCESS_MAPPINGS, AUTHORITY)
+
+
+def test_orphan_or_nonattribute_type_metadata_cannot_escape_inventory(tmp_path):
+    """No unused node property can be silently counted as a validated grounding."""
+    source_dir = source(tmp_path, [], [("kgmicrobe.source_attribute:orphan", "biolink:Attribute", "METPO:1000698")])
+    with pytest.raises(ValueError, match="lack validating source-field observations"):
+        inventory.review(source_dir, tmp_path / "inventory", DEFAULT_PROCESS_MAPPINGS, AUTHORITY)
+
+
+@pytest.mark.parametrize("field", ["attribute_type_source", "attribute_type_evidence", "attribute_type_rationale"])
+def test_type_grounding_requires_its_exact_curation_provenance(tmp_path, field):
+    """A correct target cannot launder missing or altered curation evidence."""
+    target = "kgmicrobe.source_attribute:gram_positive"
+    row = edge("BacDive_Gram_stain", "positive", target)
+    source_dir = source(tmp_path, [row], [(target, "biolink:Attribute", "METPO:1000698", {field: ""})])
+    with pytest.raises(ValueError, match="lost its curation evidence"):
+        inventory.review(source_dir, tmp_path / "inventory", DEFAULT_PROCESS_MAPPINGS, AUTHORITY)
+
+
+@pytest.mark.parametrize(
+    "provider",
+    [None, "", "infores:bacdive", "Graph", "infores:microbedecoder|infores:bacdive", " infores:microbedecoder"],
+)
+def test_typed_source_nodes_require_original_node_provider(tmp_path, provider):
+    """Type-curation metadata and edge provenance cannot mask lost node ownership (#1219)."""
+    target = "kgmicrobe.source_attribute:gram_positive"
+    row = edge("BacDive_Gram_stain", "positive", target)
+    source_dir = source(
+        tmp_path,
+        [row],
+        [(target, "biolink:Attribute", "METPO:1000698", {"provided_by": provider or ""})],
+    )
+    if provider is None:
+        with (source_dir / "nodes.tsv").open(newline="") as stream:
+            reader = csv.DictReader(stream, delimiter="\t")
+            fields = [field for field in reader.fieldnames if field != "provided_by"]
+            nodes = [{key: value for key, value in node.items() if key != "provided_by"} for node in reader]
+        write_tsv(source_dir / "nodes.tsv", fields, nodes)
+    with pytest.raises(ValueError, match="Typed source Attribute node lost its provider"):
+        inventory.review(source_dir, tmp_path / "inventory", DEFAULT_PROCESS_MAPPINGS, AUTHORITY)
+    assert not (tmp_path / "inventory").exists()
+
+
+def test_untyped_legacy_inventory_does_not_require_new_node_provenance_field(tmp_path):
+    """Restrict the new ownership guard to the typed-source contract under review."""
+    target = "kgmicrobe.source_attribute:motility_unreviewed"
+    source_dir = source(tmp_path, [edge("BacDive_Motility", "unreviewed", target)])
+    write_tsv(source_dir / "nodes.tsv", ["id", "category"], [{"id": target, "category": "biolink:Attribute"}])
+    summary, _ = run_review(source_dir, tmp_path)
+    assert summary["typed_attribute_nodes"] == 0
+    assert summary["edge_rows_by_disposition"] == {"reported_phenotype_code": 1}
+
+
+def test_real_producer_typed_node_provider_survives_inventory(tmp_path):
+    """Validate actual producer ownership separately from FAPROTAX prediction provenance."""
+    from tests.test_microbedecoder_context import FIXTURES, read_tsv, run_fixture
+
+    transform, nodes, _ = run_fixture(tmp_path, "typed_source_attributes.csv")
+    typed = [row for row in nodes if row["has_attribute_type"]]
+    assert typed and all(row["provided_by"] == "infores:microbedecoder" for row in typed)
+    summary, _ = run_review(transform.output_dir, tmp_path)
+    assert summary["typed_attribute_nodes"] == len(typed)
+    # A correct curation provider and unchanged edge tier do not excuse loss of
+    # the source node's owner after serialization or another processing step.
+    typed[0]["provided_by"] = "infores:bacdive"
+    write_tsv(transform.output_node_file, list(nodes[0]), nodes)
+    with pytest.raises(ValueError, match="Typed source Attribute node lost its provider"):
+        inventory.review(
+            transform.output_dir,
+            tmp_path / "corrupted-inventory",
+            DEFAULT_PROCESS_MAPPINGS,
+            FIXTURES / "metpo_nodes.tsv",
+        )
+    assert not (tmp_path / "corrupted-inventory").exists()
+    assert read_tsv(tmp_path / "inventory" / "curation_inventory.tsv")

@@ -282,10 +282,10 @@
 #   local_name: CTD_chemicals_diseases.tsv.gz
 
 #
-# MicrobeDecoder (successor to FermentationExplorer, same authors and DOI)
-# Hackmann & Zhang, Science Advances 2023, https://doi.org/10.1126/sciadv.adg8687
+# MicrobeDecoder (includes FermentationExplorer as a contributing resource)
+# Hackmann et al., Nucleic Acids Research 2026, https://doi.org/10.1093/nar/gkag515
 # License: CC BY 4.0 — redistribution permitted with attribution
-# Content: wide CSV keyed on LPSN strain, ~8,350 rows, joining Bergey / VPI /
+# Content: wide CSV keyed on LPSN name-record ID, joining Bergey / VPI /
 # literature-curated / FAPROTAX fermentation profiles + a pre-joined LPSN ↔
 # GTDB ↔ NCBI ↔ GOLD ↔ IMG ↔ BacDive crosswalk. The zip contains a single
 # `database.csv`; extraction happens once in MicrobeDecoderTransform.run().

@@ -31,6 +31,19 @@ REPORTED_METABOLISM_ANNOTATIONS = frozenset(
             "human_pathogens_diarrhea",
             "human_pathogens_nosocomia",
             "fish_parasites",
+            # Qualified trophic types and source application groups are not
+            # exact process identities. Keep their full source-scoped literal;
+            # these finite dispositions do not imply a native attribute type.
+            "aerobic_anoxygenic_phototrophy",
+            "aerobic_chemoheterotrophy",
+            "anoxygenic_photoautotrophy",
+            "anoxygenic_photoautotrophy_Fe_oxidizing",
+            "anoxygenic_photoautotrophy_H2_oxidizing",
+            "anoxygenic_photoautotrophy_S_oxidizing",
+            "oxygenic_photoautotrophy",
+            "phototrophy",
+            "methylotrophy",
+            "oil_bioremediation",
         )
     }
 )

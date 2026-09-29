@@ -146,6 +146,8 @@ def test_registered_finalization_preserves_faprotax_evidence(tmp_path, mapped):
     shutil.copyfile(ROOT / process_table, root / process_table)
     phenotype_table = Path("mappings/canonical/microbedecoder_phenotype_mappings.tsv")
     shutil.copyfile(ROOT / phenotype_table, root / phenotype_table)
+    scope_table = Path("mappings/canonical/microbedecoder_process_scope_definitions.tsv")
+    shutil.copyfile(ROOT / scope_table, root / scope_table)
     # The injected resolver never reads unified mappings; give the real finalizer
     # an immutable declared-input fixture, not a production mapping symlink.
     (root / "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz").write_bytes(

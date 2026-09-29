@@ -1,0 +1,76 @@
+{
+  "upstream_repository": "https://github.com/thackmann/MicrobeDecoder",
+  "immutable_commit": "872726c257b39d14ffb1827df09127b5c8ef72bb",
+  "decoder": {
+    "path": "Shiny/MicrobeDecoder/preprocessing/functions.R",
+    "sha256": "fe4b96af9bfad8dc4c83e9a9267b3248cb21c0c157c75fecb0b0f878e8bf35da",
+    "lines": "116-122",
+    "mode": "is_numeric = FALSE",
+    "standalone_token_replacements": {
+      "0": "negative",
+      "1": "positive",
+      "-": "negative",
+      "+": "positive",
+      "+/-": "variable"
+    }
+  },
+  "callsite": {
+    "path": "Shiny/MicrobeDecoder/preprocessing/dataPreprocessing.R",
+    "sha256": "dd42b04c47972f37faadcd2e227c795cc5788ef871c12061abac6546ad8a415f",
+    "lines": "34-56",
+    "data_vars_count": 29,
+    "is_numeric_vars_count": 29,
+    "data_vars": [
+      "BacDive_Antibiotic_resistance", "BacDive_Antibiotic_sensitivity", "BacDive_Cell_length",
+      "BacDive_Cell_shape", "BacDive_Cell_width", "BacDive_Colony_size",
+      "BacDive_Enzyme_activity", "BacDive_Flagellum_arrangement", "BacDive_Gram_stain",
+      "BacDive_Incubation_period", "BacDive_Indole_test", "BacDive_Metabolite_production",
+      "BacDive_Metabolite_utilization", "BacDive_Motility", "BacDive_Oxygen_tolerance",
+      "BacDive_pH_for_growth", "BacDive_Pathogenicity_animal", "BacDive_Pathogenicity_human",
+      "BacDive_Pathogenicity_plant", "BacDive_Salt_concentration", "BacDive_Salt_concentration_unit",
+      "BacDive_Spore_formation", "BacDive_Temperature_for_growth", "BacDive_Voges_proskauer",
+      "BacDive_Isolation_category_1", "BacDive_Isolation_category_2", "BacDive_Isolation_category_3",
+      "FAPROTAX_Type_of_metabolism", "FAPROTAX2_Type_of_metabolism"
+    ],
+    "is_numeric_vars": [
+      false, false, true, false, true, true, false, false, false,
+      true, false, false, false, false, false, true, false, false,
+      false, true, false, false, true, false, false, false, false, false, false
+    ],
+    "selected_field_flags": {
+      "BacDive_Motility": false,
+      "BacDive_Pathogenicity_animal": false,
+      "BacDive_Pathogenicity_human": false,
+      "BacDive_Pathogenicity_plant": false,
+      "BacDive_Indole_test": false,
+      "BacDive_Voges_proskauer": false,
+      "BacDive_Spore_formation": false
+    }
+  },
+  "selected_snapshot_compatibility": {
+    "upstream_archive_path": "Shiny/MicrobeDecoder/data/database/database.zip",
+    "upstream_archive_sha256": "85ad335e6dfa2da4bbbd22a99931da32a2187f92f351e9bf084521b857a2b309",
+    "upstream_csv_sha256": "22ee067e7beb040cb0e87c0212a897c967e7fda7a9f60b1a8b4197d7a90a2728",
+    "selected_local_csv_sha256": "0c6ff730a108720a5d6972400f2bccf2eca8621713b62736abdf5df0fb188c95",
+    "upstream_rows": 27010,
+    "local_rows": 27010,
+    "join_key": "LPSN_ID",
+    "compared_fields": {
+      "BacDive_Motility": 9331,
+      "BacDive_Pathogenicity_animal": 559,
+      "BacDive_Pathogenicity_human": 177,
+      "BacDive_Pathogenicity_plant": 163,
+      "BacDive_Indole_test": 3022,
+      "BacDive_Voges_proskauer": 3065
+    },
+    "nonempty_field_cells_compared": 16317,
+    "different_field_cells_or_bacdive_ids": 0,
+    "comparison": "Compare each nonempty selected local field cell, unsplit, and its BacDive_ID against the immutable upstream row with the same LPSN_ID.",
+    "limit": "Whole CSV byte hashes and column headers differ. This establishes selected-field cohort compatibility, not identity of the entire local database or its build revision."
+  },
+  "holds": {
+    "BacDive_Spore_formation": "Generic spores do not establish the endospore scope of METPO:1000871 or METPO:1000872.",
+    "BacDive_Voges_proskauer:+/-": "Preserve the original variable/weak token. No exact native assay-outcome type is established.",
+    "other_field_or_code": "No generic numeric/sign decoder is implemented; only finite reviewed source-column/literal pairs are typed."
+  }
+}

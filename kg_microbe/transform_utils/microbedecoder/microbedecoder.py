@@ -1,7 +1,7 @@
 """
-MicrobeDecoder transform (Hackmann & Zhang, Sci Adv 2023).
+MicrobeDecoder transform (Hackmann et al., Nucleic Acids Research 2026).
 
-Ingests the wide per-LPSN-strain CSV MicrobeDecoder publishes on GitHub —
+Ingests the wide LPSN-name-record CSV MicrobeDecoder publishes on GitHub —
 `Shiny/MicrobeDecoder/data/database/database.zip` — into KGX-format nodes
 and edges. The database is the actively-maintained successor to
 FermentationExplorer and pre-joins four curated fermentation-metabolism
@@ -14,11 +14,13 @@ sources KG-Microbe does not otherwise cover:
   fermentation profiles for anaerobes
 - **Primary literature** — hand-curated end-products with DOI/PMID
   citations
-- **FAPROTAX** — functional labels joined at strain granularity
+- **FAPROTAX** — taxon-based functional predictions joined to source records
 
 Also emits a `biolink:close_match` crosswalk from every `lpsn:<LPSN_ID>`
 row to `NCBITaxon:`, `ncbi.assembly:` (or `GTDB:` taxonomy strings), `gold:`,
 and `IMG:`. BacDive crosswalks use `kgmicrobe.strain:bacdive_*` subsumption.
+An LPSN name record is not a strain identity, and its reported traits must not
+be propagated as universal observations about every member of the taxon.
 
 Design decisions locked from the plan-mode Q&A:
 
@@ -52,6 +54,9 @@ import pandas as pd
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
     ATTRIBUTE_CATEGORY,
+    ATTRIBUTE_TYPE_EVIDENCE_COLUMN,
+    ATTRIBUTE_TYPE_RATIONALE_COLUMN,
+    ATTRIBUTE_TYPE_SOURCE_COLUMN,
     BERGEY_KNOWLEDGE_SOURCE,
     CAPABLE_OF,
     CAPABLE_OF_PREDICATE,
@@ -69,6 +74,7 @@ from kg_microbe.transform_utils.constants import (
     GOLD_PREFIX,
     HAS_ATTRIBUTE_PREDICATE,
     HAS_ATTRIBUTE_RELATION,
+    HAS_ATTRIBUTE_TYPE_COLUMN,
     HAS_OUTPUT_RELATION,
     ID_COLUMN,
     INGREDIENT_PREFIX,
@@ -113,8 +119,15 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.transform_utils.microbedecoder.chemical_curation import RecordChemicalCuration
 from kg_microbe.transform_utils.microbedecoder.curation import DEFAULT_PROCESS_MAPPINGS, ProcessCuration
 from kg_microbe.transform_utils.microbedecoder.phenotype_curation import (
+    ATTRIBUTE_TYPE_CURATION_SOURCE,
     DEFAULT_PHENOTYPE_MAPPINGS,
     PhenotypeCuration,
+    PhenotypeMapping,
+)
+from kg_microbe.transform_utils.microbedecoder.process_scopes import (
+    DEFAULT_PROCESS_SCOPE_DEFINITIONS,
+    ProcessScope,
+    ProcessScopeCuration,
 )
 from kg_microbe.transform_utils.microbedecoder.source_annotations import is_reported_metabolism_annotation
 from kg_microbe.transform_utils.microbedecoder.utils import (
@@ -192,6 +205,9 @@ _GROUP_TO_KS: Dict[str, str] = {
     "literature": LITERATURE_KNOWLEDGE_SOURCE,
     "faprotax": FAPROTAX_KNOWLEDGE_SOURCE,
 }
+_PROCESS_SOURCE_COLUMNS = {
+    f"{group['group_label']}:type_of_metabolism": group["columns"]["type_of_metabolism"] for group in METABOLISM_GROUPS
+}
 
 
 class MicrobeDecoderTransform(Transform):
@@ -206,12 +222,14 @@ class MicrobeDecoderTransform(Transform):
         "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
         "mappings/canonical/microbedecoder_process_mappings.tsv",
         "mappings/canonical/microbedecoder_phenotype_mappings.tsv",
+        "mappings/canonical/microbedecoder_process_scope_definitions.tsv",
     )
     REQUIRED_CONSUMED_INPUTS = (
         "process_mappings",
         "process_authority",
         "process_go_authority",
         "phenotype_mappings",
+        "process_scope_definitions",
         "chemical_authority",
     )
 
@@ -222,6 +240,7 @@ class MicrobeDecoderTransform(Transform):
         chemical_loader: Any = None,
         process_mappings: Optional[Union[str, Path]] = None,
         phenotype_mappings: Optional[Union[str, Path]] = None,
+        process_scopes: Optional[Union[str, Path]] = None,
     ) -> None:
         """
         Instantiate.
@@ -246,12 +265,26 @@ class MicrobeDecoderTransform(Transform):
             Optional exact source-scoped process curation table. Defaults to
             the versioned canonical table; every actual read is fingerprinted.
         phenotype_mappings:
-            Optional exact BacDive field/literal normalization table. Original
-            source attributes stay in the graph; reviewed groundings are reported
-            separately until the taxon/phenotype category contract is resolved.
+            Optional exact source field/literal attribute-type table. Original
+            observations stay intact; reviewed types use a node slot, not an
+            organism phenotype assertion. Every use retains a curation report.
+        process_scopes:
+            Reviewed source-local process meanings, without an external ontology
+            identity assertion. Exact field/literal rules are fingerprinted.
 
         """
         super().__init__(MICROBEDECODER, input_dir, output_dir)
+        self.node_header = list(
+            dict.fromkeys(
+                [
+                    *self.node_header,
+                    HAS_ATTRIBUTE_TYPE_COLUMN,
+                    ATTRIBUTE_TYPE_SOURCE_COLUMN,
+                    ATTRIBUTE_TYPE_EVIDENCE_COLUMN,
+                    ATTRIBUTE_TYPE_RATIONALE_COLUMN,
+                ]
+            )
+        )
         self.edge_header = list(
             dict.fromkeys(
                 [
@@ -276,6 +309,8 @@ class MicrobeDecoderTransform(Transform):
             Path(phenotype_mappings) if phenotype_mappings is not None else DEFAULT_PHENOTYPE_MAPPINGS
         )
         self._phenotype_curation: Optional[PhenotypeCuration] = None
+        self.process_scopes = Path(process_scopes) if process_scopes is not None else DEFAULT_PROCESS_SCOPE_DEFINITIONS
+        self._process_scopes: Optional[ProcessScopeCuration] = None
         self._record_chemical_curation: Optional[RecordChemicalCuration] = None
         self._phenotype_report_writer = None
         # Track dedup state so unmatched-label placeholders are emitted
@@ -322,6 +357,7 @@ class MicrobeDecoderTransform(Transform):
         self._source_record = ""
         self._process_curation = None
         self._phenotype_curation = None
+        self._process_scopes = None
         self._record_chemical_curation = None
         self._phenotype_report_writer = None
 
@@ -381,6 +417,7 @@ class MicrobeDecoderTransform(Transform):
                 "process_go_authority", self.output_dir.parent / "ontologies" / "go_nodes.tsv"
             ) as go_authority,
             self.consume_input("phenotype_mappings", self.phenotype_mappings) as phenotype_mappings,
+            self.consume_input("process_scope_definitions", self.process_scopes) as process_scopes,
             self.consume_input(
                 "chemical_authority", self.output_dir.parent / "ontologies" / "chebi_nodes.tsv"
             ) as chemical_authority,
@@ -388,6 +425,13 @@ class MicrobeDecoderTransform(Transform):
             self._process_curation = ProcessCuration(mappings, authority, go_authority)
             authority.seek(0)
             self._phenotype_curation = PhenotypeCuration(phenotype_mappings, authority)
+            self._process_scopes = ProcessScopeCuration(process_scopes)
+            process_keys = {column: key for key, column in _PROCESS_SOURCE_COLUMNS.items()}
+            for scope in self._process_scopes.rules:
+                if self._process_curation.resolve(process_keys[scope.source_column], scope.source_literal) or (
+                    self._phenotype_curation.resolve(scope.source_column, scope.source_literal)
+                ):
+                    raise ValueError(f"Conflicting process scope disposition for {scope.source_literal!r}")
             self._record_chemical_curation = RecordChemicalCuration(chemical_authority)
         source_digest = hashlib.sha256()
         with csv_path.open("rb") as source:
@@ -783,7 +827,8 @@ class MicrobeDecoderTransform(Transform):
             if not is_empty_cell(type_of_metabolism):
                 for label in split_multivalue(type_of_metabolism):
                     column = source_columns["type_of_metabolism"]
-                    annotation = is_reported_metabolism_annotation(column, label)
+                    mapping = self._phenotype_curation.resolve(column, label) if self._phenotype_curation else None
+                    annotation = is_reported_metabolism_annotation(column, label) or mapping is not None
                     obj = (
                         self._resolve_source_attribute_curie(label, column, node_writer)
                         if annotation
@@ -802,6 +847,13 @@ class MicrobeDecoderTransform(Transform):
                             source_citation=citation_text,
                             source_column=column,
                             value=label,
+                            original_object=(
+                                f"{PATHWAY_PREFIX}{slugify_label(label)}"
+                                if not annotation
+                                and self._process_scopes
+                                and self._process_scopes.resolve(column, label)
+                                else None
+                            ),
                             # FAPROTAX extrapolates curated taxon-function rules;
                             # its per-organism assignments are predictions (#1209).
                             knowledge_level=PREDICTION if group_label == "faprotax" else KNOWLEDGE_ASSERTION,
@@ -809,6 +861,16 @@ class MicrobeDecoderTransform(Transform):
                         )
                     )
                     self._stats["metabolism_edges"] += 1
+                    if mapping is not None:
+                        self._write_phenotype_normalization(
+                            subject,
+                            column,
+                            label,
+                            mapping,
+                            provenance,
+                            PREDICTION if group_label == "faprotax" else KNOWLEDGE_ASSERTION,
+                            COMPUTATIONAL_MODEL if group_label == "faprotax" else MANUAL_AGENT,
+                        )
 
             # End-product rows → biolink:produces + relation has_output.
             # `qualifier` (major / minor) is carried in the edge description
@@ -898,7 +960,7 @@ class MicrobeDecoderTransform(Transform):
         edge_writer: "csv._writer",
     ) -> None:
         """
-        Retain source attributes and report reviewed literal groundings outside graph edges.
+        Retain source observations, with reviewed attribute types on nodes only.
 
         Every edge carries ``primary_knowledge_source =
         infores:microbedecoder`` so the paper's exact snapshot stays
@@ -926,30 +988,42 @@ class MicrobeDecoderTransform(Transform):
                 self._stats["bacdive_snapshot_edges"] += 1
                 mapping = self._phenotype_curation.resolve(column, label) if self._phenotype_curation else None
                 if mapping is not None:
-                    # Current LPSN OrganismTaxon / METPO OntologyClass categories
-                    # do not fit pinned has_phenotype domain/range. This reviewed
-                    # normalization is therefore explicitly NOT a new KG edge.
-                    if self._phenotype_report_writer is None:
-                        raise RuntimeError("Phenotype normalization report is not open")
-                    self._phenotype_report_writer.writerow(
-                        {
-                            SUBJECT_COLUMN: subject,
-                            SOURCE_RECORD_COLUMN: self._source_record,
-                            SOURCE_COLUMN: column,
-                            VALUE_COLUMN: self._escape_literal(label),
-                            VALUE_ENCODING_COLUMN: "backslash",
-                            PRIMARY_KNOWLEDGE_SOURCE_COLUMN: self.knowledge_source,
-                            KNOWLEDGE_LEVEL_COLUMN: KNOWLEDGE_ASSERTION,
-                            AGENT_TYPE_COLUMN: MANUAL_AGENT,
-                            "target_curie": mapping.target_curie,
-                            "target_label": mapping.target_label,
-                            "target_category": mapping.target_category,
-                            "evidence_uri": mapping.evidence_uri,
-                            "curation_rationale": mapping.curation_rationale,
-                            "disposition": "reviewed_literal_grounding_not_graph_assertion",
-                        }
+                    self._write_phenotype_normalization(
+                        subject, column, label, mapping, self.knowledge_source, KNOWLEDGE_ASSERTION, MANUAL_AGENT
                     )
-                    self._stats["reviewed_phenotype_reports"] += 1
+
+    def _write_phenotype_normalization(
+        self,
+        subject: str,
+        column: str,
+        label: str,
+        mapping: PhenotypeMapping,
+        provenance: str,
+        knowledge_level: str,
+        agent_type: str,
+    ) -> None:
+        """Report each source use without changing evidence tier or asserting a phenotype edge."""
+        if self._phenotype_report_writer is None:
+            raise RuntimeError("Phenotype normalization report is not open")
+        self._phenotype_report_writer.writerow(
+            {
+                SUBJECT_COLUMN: subject,
+                SOURCE_RECORD_COLUMN: self._source_record,
+                SOURCE_COLUMN: column,
+                VALUE_COLUMN: self._escape_literal(label),
+                VALUE_ENCODING_COLUMN: "backslash",
+                PRIMARY_KNOWLEDGE_SOURCE_COLUMN: provenance,
+                KNOWLEDGE_LEVEL_COLUMN: knowledge_level,
+                AGENT_TYPE_COLUMN: agent_type,
+                "target_curie": mapping.target_curie,
+                "target_label": mapping.target_label,
+                "target_category": mapping.target_category,
+                "evidence_uri": mapping.evidence_uri,
+                "curation_rationale": mapping.curation_rationale,
+                "disposition": "reviewed_literal_grounding_not_graph_assertion",
+            }
+        )
+        self._stats["reviewed_phenotype_reports"] += 1
 
     # ------------------------------------------------------------------
     # CURIE resolution
@@ -1059,12 +1133,18 @@ class MicrobeDecoderTransform(Transform):
             mapping = self._process_curation.resolve(source_column, label)
             if mapping is not None:
                 return mapping.target_curie
+        scope = (
+            self._process_scopes.resolve(_PROCESS_SOURCE_COLUMNS.get(source_column, ""), label)
+            if self._process_scopes
+            else None
+        )
         return self._mint_placeholder(
             label,
             node_writer,
             prefix=PATHWAY_PREFIX,
             category=METABOLISM_CATEGORY,
             source_column=source_column,
+            process_scope=scope,
         )
 
     def _resolve_source_attribute_curie(
@@ -1097,6 +1177,7 @@ class MicrobeDecoderTransform(Transform):
         prefix: str,
         category: str,
         source_column: str,
+        process_scope: Optional[ProcessScope] = None,
     ) -> str:
         """
         Return a stable ``<prefix><slug>`` CURIE and emit the terminal stub.
@@ -1113,6 +1194,10 @@ class MicrobeDecoderTransform(Transform):
         curie = f"{prefix}{slugify_label(label)}"
         name = label
         description = None
+        if process_scope is not None:
+            curie = process_scope.curie
+            description = process_scope.description
+        attribute_mapping = None
         if prefix == SOURCE_ATTRIBUTE_PREFIX:
             identity = json.dumps([MICROBEDECODER, source_column, label], ensure_ascii=False, separators=(",", ":"))
             digest = hashlib.sha256(identity.encode("utf-8", errors="surrogateescape")).hexdigest()
@@ -1124,7 +1209,19 @@ class MicrobeDecoderTransform(Transform):
                 "or a claim that every member of the taxon has a trait. "
                 "Source record, field and literal token are retained on the asserting edge."
             )
-        self._ensure_terminal_node(curie, category, name, node_writer, description=description)
+            attribute_mapping = (
+                self._phenotype_curation.resolve(source_column, label) if self._phenotype_curation else None
+            )
+            if attribute_mapping is not None:
+                description = (
+                    f"Reported MicrobeDecoder {source_column} field value. "
+                    "has_attribute_type is KG-Microbe's reviewed classification of this exact source value, "
+                    "not an independently observed phenotype or a claim that every member of the taxon has a trait. "
+                    "Source record, field, literal token and evidence tier remain on the original asserting edge."
+                )
+        self._ensure_terminal_node(
+            curie, category, name, node_writer, description=description, attribute_mapping=attribute_mapping
+        )
         self._stats["unmatched_labels"] += 1
         # Aggregate per placeholder CURIE. Same CURIE from multiple
         # columns keeps them all in the ``source_columns`` set so the
@@ -1189,6 +1286,7 @@ class MicrobeDecoderTransform(Transform):
         name: str,
         node_writer: "csv._writer",
         description: Optional[str] = None,
+        attribute_mapping: Optional[PhenotypeMapping] = None,
     ) -> None:
         """
         Emit a placeholder terminal node once per run (dedup via _seen_nodes).
@@ -1202,7 +1300,9 @@ class MicrobeDecoderTransform(Transform):
         if curie in self._seen_nodes:
             return
         self._seen_nodes.add(curie)
-        node_writer.writerow(self._make_node_row(curie, category, name, description=description))
+        node_writer.writerow(
+            self._make_node_row(curie, category, name, description=description, attribute_mapping=attribute_mapping)
+        )
 
     # ------------------------------------------------------------------
     # Row builders
@@ -1213,6 +1313,7 @@ class MicrobeDecoderTransform(Transform):
         category: str,
         name: str,
         description: Optional[str] = None,
+        attribute_mapping: Optional[PhenotypeMapping] = None,
     ) -> List:
         """Build a node row in canonical Transform.node_header order."""
         row = [None] * len(self.node_header)
@@ -1221,6 +1322,15 @@ class MicrobeDecoderTransform(Transform):
         row[self.node_header.index(NAME_COLUMN)] = self._escape_literal(name)
         row[self.node_header.index(DESCRIPTION_COLUMN)] = self._escape_literal(description)
         row[self.node_header.index(PROVIDED_BY_COLUMN)] = self.knowledge_source
+        if attribute_mapping is not None:
+            if category != ATTRIBUTE_CATEGORY or not node_id.startswith(SOURCE_ATTRIBUTE_PREFIX):
+                raise ValueError("Reviewed attribute types belong only on source Attribute nodes")
+            row[self.node_header.index(HAS_ATTRIBUTE_TYPE_COLUMN)] = attribute_mapping.target_curie
+            row[self.node_header.index(ATTRIBUTE_TYPE_SOURCE_COLUMN)] = ATTRIBUTE_TYPE_CURATION_SOURCE
+            row[self.node_header.index(ATTRIBUTE_TYPE_EVIDENCE_COLUMN)] = attribute_mapping.evidence_uri
+            row[self.node_header.index(ATTRIBUTE_TYPE_RATIONALE_COLUMN)] = self._escape_literal(
+                attribute_mapping.curation_rationale
+            )
         return row
 
     def _make_edge_row(

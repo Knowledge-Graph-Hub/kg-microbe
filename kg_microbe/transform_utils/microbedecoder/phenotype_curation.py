@@ -1,10 +1,11 @@
 """
-Resolve reviewed literal phenotypes for a non-graph normalization report.
+Resolve reviewed source values to an Attribute's native ontology type.
 
 Rules are exact source-column/literal normalizations, not global synonyms or
 independent organism observations. The producer retains source attributes and
-their original provenance tier. These rules do not authorize phenotype edges:
-native endpoint categories do not satisfy the pinned has-phenotype signature.
+their original provenance tier. The native class is an Attribute node's
+``has_attribute_type`` slot, never an edge predicate or a taxon phenotype edge.
+The record-level normalization report retains the evidence for each use.
 """
 
 from __future__ import annotations
@@ -26,14 +27,28 @@ from kg_microbe.transform_utils.microbedecoder.curation import TextInput, _read_
 DEFAULT_PHENOTYPE_MAPPINGS = (
     Path(__file__).resolve().parents[3] / "mappings" / "canonical" / "microbedecoder_phenotype_mappings.tsv"
 )
+ATTRIBUTE_TYPE_CURATION_SOURCE = "https://github.com/Knowledge-Graph-Hub/kg-microbe"
 
-# Only fields whose explicit textual meanings were reviewed in this cohort.
-_SOURCE_COLUMNS = frozenset({"BacDive_Gram_stain", "BacDive_Cell_shape", "BacDive_Oxygen_tolerance"})
+# Only fields with reviewed textual meanings or snapshot-compatible coded literals.
+_SOURCE_COLUMNS = frozenset(
+    {
+        "BacDive_Gram_stain",
+        "BacDive_Cell_shape",
+        "BacDive_Oxygen_tolerance",
+        "FAPROTAX_Type_of_metabolism",
+        "BacDive_Motility",
+        "BacDive_Pathogenicity_animal",
+        "BacDive_Pathogenicity_human",
+        "BacDive_Pathogenicity_plant",
+        "BacDive_Indole_test",
+        "BacDive_Voges_proskauer",
+    }
+)
 
 
 @dataclass(frozen=True)
 class PhenotypeMapping:
-    """Keep exact normalization evidence separate from the original observation."""
+    """Keep exact attribute-type curation separate from the original observation."""
 
     source_column: str
     source_literal: str

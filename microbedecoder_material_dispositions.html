@@ -1,0 +1,248 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Finite MicrobeDecoder material dispositions &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Finite MicrobeDecoder material dispositions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/microbedecoder_material_dispositions.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="finite-microbedecoder-material-dispositions">
+<h1>Finite MicrobeDecoder material dispositions<a class="headerlink" href="#finite-microbedecoder-material-dispositions" title="Link to this heading"></a></h1>
+<p>This catalogue records scientific review of <strong>13 existing local material IDs,
+240 source assertions and 235 complete raw records</strong> from the selected #650
+cohort. It does not ground those materials to external chemical identities,
+alter MIM’s pinned supported mappings, change graph nodes/edges, or approve a
+graph release. Every row explicitly retains <code class="docutils literal notranslate"><span class="pre">identity_status=unresolved</span></code> and
+<code class="docutils literal notranslate"><span class="pre">identity_approved=false</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">mappings/canonical/microbedecoder_material_dispositions.tsv</span></code> has one row per
+reviewed record/field/literal use. These are not 240 independent experiments
+or 235 distinct taxonomic identities. The source subject is an LPSN name record;
+different raw records can point to the same accepted LPSN subject.</p>
+<section id="exact-scope-and-provenance">
+<h2>Exact scope and provenance<a class="headerlink" href="#exact-scope-and-provenance" title="Link to this heading"></a></h2>
+<p>Each row carries:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">source_record</span></code>: the original whole-CSV SHA-256 and CSV-record ordinal;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">raw_record_sha256</span></code>: all raw fields serialized as sorted compact JSON,
+<code class="docutils literal notranslate"><span class="pre">ensure_ascii=False</span></code>, <code class="docutils literal notranslate"><span class="pre">allow_nan=False</span></code>, UTF-8 with <code class="docutils literal notranslate"><span class="pre">surrogateescape</span></code>, without
+a trailing newline; it is independent of the ordinal and column ordering;</p></li>
+<li><p>original subject, field, literal, citation, existing local object,
+scientific predicate/relation, knowledge source, knowledge level and agent;</p></li>
+<li><p>a semantic disposition, unresolved identity status, evidence URI(s) and
+field/record-specific curation rationale.</p></li>
+</ul>
+<p>Literal and citation cells use the producer’s finalized backslash display
+encoding. The complete-record hash preserves the original CSV fields instead
+of treating that display encoding as the source bytes. Major/minor products
+remain distinguished by their exact source columns.</p>
+<p>No wildcard, case-folding, normalized global alias, substrate decomposition,
+external target or same-as relation is authorized. The two existing <code class="docutils literal notranslate"><span class="pre">sugar</span></code>
+nodes remain distinct and keep the user’s approved <strong>record-scoped unresolved</strong>
+policy; “approved” there describes the preservation policy, not chemical
+identity. Registry-local MIM identities are likewise not ontology groundings.</p>
+</section>
+<section id="dispositions-and-remaining-scientific-uncertainty">
+<h2>Dispositions and remaining scientific uncertainty<a class="headerlink" href="#dispositions-and-remaining-scientific-uncertainty" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Reviewed context</p></th>
+<th class="head text-right"><p>Assertions</p></th>
+<th class="head"><p>Meaning preserved</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>PYG</p></td>
+<td class="text-right"><p>114</p></td>
+<td><p>Named medium, with unknown specific recipe; not exact MICRO:0001573.</p></td>
+</tr>
+<tr class="row-odd"><td><p>PYGS</p></td>
+<td class="text-right"><p>3</p></td>
+<td><p>Three strain-matched descriptions expand the name to peptone–yeast extract–glucose–starch broth; no complete recipe or independent component consumption inferred.</p></td>
+</tr>
+<tr class="row-even"><td><p>CMC + PY + horse serum</p></td>
+<td class="text-right"><p>1</p></td>
+<td><p>Separate culture-preparation contexts; CMC is not assumed to be carboxymethylcellulose.</p></td>
+</tr>
+<tr class="row-odd"><td><p>H2+CO2 and cyclopentanol+CO2</p></td>
+<td class="text-right"><p>101</p></td>
+<td><p>Joint conditions, not individual molecules or independent component-use assertions.</p></td>
+</tr>
+<tr class="row-even"><td><p>Mono-/disaccharides and sugars</p></td>
+<td class="text-right"><p>14</p></td>
+<td><p>Substrate-class descriptions, not an identified sugar or physical mixture.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Peptones</p></td>
+<td class="text-right"><p>2</p></td>
+<td><p>Unspecified protein digest; mammalian origin/formulation unproved.</p></td>
+</tr>
+<tr class="row-even"><td><p>Isopropionate and 3-methylacetate</p></td>
+<td class="text-right"><p>2</p></td>
+<td><p>Unresolved product identities, with original literal and source role retained.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Aminovalerate</p></td>
+<td class="text-right"><p>1</p></td>
+<td><p>Identity unresolved; culture-authenticity/phenotype warning cannot establish either a positive or negative result.</p></td>
+</tr>
+<tr class="row-even"><td><p>Record-scoped sugar</p></td>
+<td class="text-right"><p>2</p></td>
+<td><p>Original distinct nodes preserved without NCIT:C71939 substitution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Total</strong></p></td>
+<td class="text-right"><p><strong>240</strong></p></td>
+<td><p><strong>Disposition reviewed; chemical identities unresolved.</strong></p></td>
+</tr>
+</tbody>
+</table>
+<p>The catalogue’s citations distinguish primary growth evidence from source
+vocabulary interpretation. In particular, the Methanolacinia paynteri
+cyclopentanol/CO2 record is not claimed to have strain-specific growth verified
+from an abstract that separately describes enzyme assays. No blanket primary
+revalidation of all 240 observations is claimed.</p>
+<p>Pinned MIM record links refer to commit
+<code class="docutils literal notranslate"><span class="pre">1848b0fe521bc2462f165912fcf92d09ad9a8cec</span></code>, not the sibling checkout’s floating
+state. They document reviewed limitations rather than importing withheld
+mappings. The public-target restrictions for PYG and peptones must not be
+overridden by a matching acronym/plural synonym.</p>
+</section>
+<section id="loader-and-optional-cohort-diagnostics">
+<h2>Loader and optional cohort diagnostics<a class="headerlink" href="#loader-and-optional-cohort-diagnostics" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">kg_microbe.transform_utils.microbedecoder.material_dispositions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">MaterialDispositionCuration</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">materials</span> <span class="o">=</span> <span class="n">MaterialDispositionCuration</span><span class="p">()</span>  <span class="c1"># or a caller-owned consumed-input stream</span>
+<span class="n">decision</span> <span class="o">=</span> <span class="n">materials</span><span class="o">.</span><span class="n">resolve_edge</span><span class="p">(</span><span class="n">edge</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">resolve_edge</span></code> returns an immutable decision only for an exact known
+record/field/literal. It checks the original subject, local object, citation,
+scientific route and evidence tier; a changed witness for a known use raises
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code>. An unseen record, snapshot, field or literal returns <code class="docutils literal notranslate"><span class="pre">None</span></code> and
+remains unreviewed. Consumers must continue reporting the identity as
+unresolved and must not replace <code class="docutils literal notranslate"><span class="pre">object</span></code> or the edge predicate with a
+disposition label.</p>
+<p>The table is an <strong>inventory dependency, not a transform dependency</strong>. A future
+source download must not stop transforming merely because it is not this
+reviewed cohort. It also must not inherit these reviews by matching material
+names alone. If an inventory consumes the table, include its actual file bytes
+in that inventory’s consumed-input/fingerprint contract.</p>
+<p>Two explicit diagnostic methods are available:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">materials</span><span class="o">.</span><span class="n">validate_raw</span><span class="p">(</span><span class="n">raw_csv_path</span><span class="p">)</span>
+<span class="n">materials</span><span class="o">.</span><span class="n">validate_edges</span><span class="p">(</span><span class="n">source_edges_path</span><span class="p">,</span> <span class="n">require_all</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The raw check requires the exact reviewed source snapshot, verifies complete
+records plus literal/citation membership, and detects missing records or
+input changes. The edge check streams finalized source rows, rejects duplicate
+known assertions and changed evidence, and optionally requires all reviewed
+uses. <code class="docutils literal notranslate"><span class="pre">require_all=False</span></code> permits partial/other snapshots while reporting
+matched counts, missing reviewed uses, snapshot applicability and whether the
+cohort is complete. The downstream inventory should request strict coverage
+only when explicitly checking this reviewed cohort, not for every old fixture
+or later source snapshot.</p>
+<p>For the selected evidence, raw source SHA-256 is
+<code class="docutils literal notranslate"><span class="pre">0c6ff730a108720a5d6972400f2bccf2eca8621713b62736abdf5df0fb188c95</span></code>.
+The closed continuation-source edge witness SHA-256 is
+<code class="docutils literal notranslate"><span class="pre">1f00bad342261fee143ebcaeaed10b49459011e3a1f7a8500532d47bbcce17b6</span></code>.
+These describe the reviewed source artifacts, not the hash or acceptance of a
+current production merged archive.</p>
+<p>Hermetic regression coverage lives in
+<code class="docutils literal notranslate"><span class="pre">tests/test_microbedecoder_material_dispositions.py</span></code>; its raw fixture is a
+tiny synthetic immutable CSV, not a redistributed 27,010-record source.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

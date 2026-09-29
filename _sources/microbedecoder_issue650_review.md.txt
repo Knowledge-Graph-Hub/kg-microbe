@@ -1,11 +1,21 @@
 # MicrobeDecoder curation review (#650)
 
+> Historical checkpoint: this document records the initial curation work merged
+> in PR #1218 (`bc7c6e73a13e90ddadd201d938530c59288aeeea`), before the expanded
+> source-value typing, local process definitions and material dispositions.
+> Its counts and "remaining" statements are not the current backlog. See the
+> current [process contract](microbedecoder_process_curation.md),
+> [Attribute typing contract](microbedecoder_observation_curation.md),
+> [material dispositions](microbedecoder_material_dispositions.md), and
+> [runbook](MICROBEDECODER_TRANSFORM_RUNBOOK.md). Neither checkpoint certifies
+> a production rebuild or merged release by itself.
+
 This change is a bounded, evidence-backed contribution to
 [#650](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/650), not closure
 of every remaining scientific interpretation. The historical 5,224-label figure
 is not a reproduced current backlog or an acceptance target.
 
-## Delivered scope
+## Delivered scope at the initial checkpoint
 
 - Seventeen exact source-column/process rules normalize 7,152 assertions in
   the reviewed saved cohort; source citations and FAPROTAX prediction provenance
@@ -40,7 +50,7 @@ that those malformed rows occur in the saved production data. The ontology
 category finding is a real modeling incompatibility: reviewed process identity
 alone does not make a generic OntologyClass a valid Occurrent endpoint.
 
-## Remaining scientific scope
+## Remaining scientific scope at the initial checkpoint
 
 The complete pre-shipping-review candidate inventory accounts for 521,217 edges,
 including 84,244 crosswalks, and groups other assertions into 6,974 rows. It

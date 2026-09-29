@@ -1,10 +1,11 @@
 # MicrobeDecoder Transform: Runbook
 
-The MicrobeDecoder transform ingests the wide per-LPSN-strain CSV that
-[Hackmann & Zhang (Sci Adv 2023)](https://www.science.org/doi/10.1126/sciadv.adg8687)
-publish on GitHub and turns it into KGX-format nodes and edges. The
-database is the actively-maintained successor to FermentationExplorer
-(CC BY 4.0) and pre-joins four curated fermentation-metabolism sources
+The MicrobeDecoder transform ingests a wide CSV keyed by LPSN name-record ID
+and turns it into KGX-format nodes and edges. Microbe Decoder is described by
+[Hackmann et al. (Nucleic Acids Research 2026)](https://doi.org/10.1093/nar/gkag515);
+the earlier [Hackmann & Zhang (Science Advances 2023)](https://doi.org/10.1126/sciadv.adg8687)
+paper describes Fermentation Explorer, one of its contributing resources.
+The actively maintained database (CC BY 4.0) pre-joins four metabolism sources
 KG-Microbe does not otherwise cover:
 
 - **Bergey's Manual of Systematics of Archaea and Bacteria** — expert
@@ -14,12 +15,28 @@ KG-Microbe does not otherwise cover:
   fermentation profiles for anaerobes
 - **Primary literature** — hand-curated end-products with DOI/PMID
   citations
-- **FAPROTAX** — functional labels joined at strain granularity
+- **FAPROTAX** — taxon-based functional predictions joined to the source records
 
 Plus a **pre-joined LPSN ↔ NCBITaxon ↔ GTDB ↔ GOLD ↔ IMG ↔ BacDive
 crosswalk**. Taxon/identifier links use `biolink:close_match`; the BacDive
 strain links use `biolink:subclass_of`, not identity. Current counts must
 be measured from the selected source output.
+
+### Record grain and interpretation
+
+An LPSN identifier denotes a nomenclatural name record, not a strain identifier.
+The saved CSV reviewed for #650 contains 27,010 rows and 27,010 distinct
+`LPSN_ID` values; its status column includes species, subspecies, varieties and
+forms. A populated strain field supplies associated strain information, not
+proof that the LPSN subject is a strain. The earlier 8,350-organism figure from
+Fermentation Explorer does not establish the grain or size of this later input.
+
+Microbe Decoder's methods describe joining taxonomy and trait databases to LPSN
+names and preserving multiple reported trait values separately. KGM likewise
+retains the source record, field, literal and evidence tier. An assertion on an
+LPSN subject is not proof that every strain of that taxon shares the observation.
+Do not discard conflicting values or aggregate records merely to match a paper's
+historical organism count. See [observation curation](microbedecoder_observation_curation.md).
 
 ## Prerequisites
 
@@ -54,11 +71,12 @@ and merged KG.
 The current producer requires finalized LPSN, GOLD and GTDB dependencies, plus
 the selected ontology output's `metpo_nodes.tsv`, `go_nodes.tsv` and
 `chebi_nodes.tsv`. The versioned tables
-`mappings/canonical/microbedecoder_process_mappings.tsv` and
-`mappings/canonical/microbedecoder_phenotype_mappings.tsv` are required curation
-inputs. Both tables and the actual native declarations read by the producer
+`mappings/canonical/microbedecoder_process_mappings.tsv`,
+`mappings/canonical/microbedecoder_phenotype_mappings.tsv` and
+`mappings/canonical/microbedecoder_process_scope_definitions.tsv` are required curation
+inputs. These tables and the actual native declarations read by the producer
 are fingerprinted through source finalization and admission. METPO supports
-reviewed processes and report-only phenotype terms, GO supports the reviewed
+reviewed processes and Attribute node types, GO supports the reviewed
 catabolic/respiratory processes, and ChEBI supports the record-scoped chemical
 correction. Missing or incompatible required authority is an error, not a
 reason to mint a new target stub.
@@ -80,7 +98,7 @@ single-CSV parse. Default paths:
 | `nodes.tsv` | Producer-owned local material/process/attribute declarations and source taxon stubs where necessary. Source finalization may also copy authoritative declarations. Resolved targets remain owned by their authority transforms; their presence here is not a new identity mapping. |
 | `edges.tsv` | Crosswalk, metabolism and column-scoped BacDive source-attribute assertions. Snapshot tokens are not automatically interpreted as phenotypes. Counts depend on the source build. |
 | `unmapped_labels.tsv` | Per-run curation queue — unresolved pathways/compounds and preserved source attributes, with `kgmicrobe.{pathway,compound,source_attribute}:` IDs, sorted by occurrence descending. See "Curation loop" below. |
-| `phenotype_normalizations.tsv` | Reviewed exact textual groundings linked to original source records; **not phenotype graph assertions**. The current endpoint categories do not meet pinned `has_phenotype` domain/range. This report is not a merge input. |
+| `phenotype_normalizations.tsv` | Reviewed field/literal types linked to original source records; **not additional phenotype graph assertions**. Types also appear in the Attribute node's `has_attribute_type` property, with separate curation evidence. This report is not a merge input. |
 
 The transform prints a one-line summary at end of run. For example, this
 historical summary is not an expected count for the current producer:
@@ -102,8 +120,8 @@ the add-transform skill mandates for every transform:
 | Facet | Resolver | Placeholder prefix on miss |
 |---|---|---|
 | Chemical (end-products, substrates) | Reviewed full-record corrections, then `ChemicalMappingLoader.find_chebi_by_name()`; the two unresolved sugar records remain protected | `kgmicrobe.compound:<slug>` |
-| Pathway (`Type_of_metabolism` from Bergey/VPI/Literature/FAPROTAX) | Exact, source-scoped reviewed process rules; targets must be declared and active in the ontology output | `kgmicrobe.pathway:<slug>` |
-| BacDive snapshot | Column-scoped source field and token, typed `biolink:Attribute`; interpretation requires the field's coding scheme | `kgmicrobe.source_attribute:<column-and-token-slug>` |
+| Pathway (`Type_of_metabolism` from Bergey/VPI/Literature/FAPROTAX) | Exact process rules require active native declarations; finite source-local definitions use field/literal-hashed IDs and retain the old locator as `original_object` | `kgmicrobe.pathway:<slug>` for unreviewed fallback |
+| BacDive snapshot | Column/literal-scoped `biolink:Attribute`; reviewed `has_attribute_type` node property requires field-specific evidence | `kgmicrobe.source_attribute:microbedecoder_<column>_<sha256>` |
 
 The `unmapped_labels.tsv` report shows where each facet is landing. Recompute
 coverage from a fresh build; historical mapping rates predate the current
@@ -111,9 +129,12 @@ source-attribute model and must not be used as current acceptance evidence. See
 [issue #650](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/650)
 for the curation gap.
 
-The reviewed process table contains seventeen source-field/token pairs: the
-first eight METPO rules and nine additional GO catabolic/respiratory rules.
-Seventeen separate non-process/unspecified source labels are retained as
+The reviewed process table contains nineteen source-field/token pairs: eight
+METPO rules and eleven GO catabolic/respiratory rules. Forty-five further exact
+FAPROTAX pairs have reviewed source-local definitions, not external ontology
+identity mappings. Their source-scoped IDs prevent definition leakage into
+same-spelled labels from other sources.
+Twenty-seven separate non-process/unspecified source labels are retained as
 field-scoped reporting attributes instead of process objects. None of these
 rules interprets unrelated assay codes or narrower/negative process terms. See the
 [curation evidence and limitations](microbedecoder_process_curation.md).
@@ -123,10 +144,11 @@ The exact `Not reported` token in `Bergey_Substrates_for_end_products` is retain
 as `has_attribute` reporting metadata with its source record and citation. It
 is not a consumed chemical and does not assert an inability to use substrates.
 
-The continuation also reviews 22 explicit Gram-stain, oxygen-tolerance and cell
-shape literals. Their native METPO groundings are written only to the new
-normalization report: original graph attributes stay intact, including
-contradictory/multivalued observations. Numeric codes, signed assays, units,
+Thirty-five exact source-column/literal rules add native METPO types to Attribute
+nodes: 22 Gram-stain/oxygen-tolerance/cell-shape values, nine evidence-backed
+numeric/sign codes, and four FAPROTAX trait labels. Original record-qualified
+assertions and contradictory/multivalued observations remain intact; FAPROTAX
+traits use `has_attribute` rather than a process relation. Other codes, units,
 measurements and isolation contexts are not automatically decoded. Read the
 [observation curation contract](microbedecoder_observation_curation.md) before
 treating the report as organism phenotype evidence.
@@ -152,6 +174,25 @@ snapshot field roles. No frequency threshold discards the long tail. Counts
 are finalized source edge rows, not raw placeholder emission attempts or
 distinct organisms. The report does not certify merged propagation, new
 chemical identity, a complete scientific interpretation, or release readiness.
+
+The inventory separately annotates the finite reviewed material cohort with
+context, evidence and **unresolved** identity status. This is not an exact
+chemical mapping or a transform admission requirement. When accepting a rebuild
+of that same saved snapshot, explicitly require all reviewed uses and validate
+their complete raw records:
+
+```bash
+poetry run python -m scripts.review_microbedecoder_curation \
+    --source-dir data/transformed/microbedecoder \
+    --output-dir data/microbedecoder-cohort-review-NEW \
+    --require-reviewed-material-cohort \
+    --reviewed-material-raw data/raw/database.csv
+```
+
+That closed-cohort check must fail for a different source snapshot, rather than
+silently applying historical reviews by label. Ordinary partial inventories
+report matched/missing counts without asserting complete acceptance. See
+[the material disposition contract](microbedecoder_material_dispositions.md).
 
 ## Curation loop
 
@@ -257,12 +298,12 @@ it does not turn a source stub into independently established LPSN evidence.
 - 16S rRNA sequences (`LPSN_16S_Ribosomal_sequence`) — sequence-oriented
   transform (BLAST-able) can pull them later.
 - FAPROTAX as its own full transform — this ingest only carries the
-  joined `FAPROTAX_Type_of_metabolism` label per strain.
+  joined `FAPROTAX_Type_of_metabolism` labels per source name record.
 - Bergey as its own full ingest — this ingest only carries the
   Bergey-derived edges MicrobeDecoder pre-joins.
-- Further METPO/GO process grounding — see `_resolve_metabolism_curie`; blocked
-  on the remaining source-specific definition review. Seventeen reviewed rules
-  are implemented; additional global synonyms are not a prerequisite or a safe
+- Further METPO/GO process grounding — nineteen native rules are implemented;
+  forty-five source-local meanings are reviewed but retain explicit native
+  identity holds. Additional global synonyms are not a prerequisite or a safe
   substitute for checking source roles and target definitions.
 - Further ambiguous multi-value parsing. Bracketed separators and numeric
   chemical locants such as `2,3-butanediol` are already preserved; the parser

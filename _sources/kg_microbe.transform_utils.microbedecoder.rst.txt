@@ -20,6 +20,14 @@ kg\_microbe.transform\_utils.microbedecoder.curation module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.transform\_utils.microbedecoder.material\_dispositions module
+-------------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.microbedecoder.material_dispositions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.transform\_utils.microbedecoder.microbedecoder module
 -----------------------------------------------------------------
 
@@ -32,6 +40,14 @@ kg\_microbe.transform\_utils.microbedecoder.phenotype\_curation module
 ----------------------------------------------------------------------
 
 .. automodule:: kg_microbe.transform_utils.microbedecoder.phenotype_curation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.microbedecoder.process\_scopes module
+------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.microbedecoder.process_scopes
    :members:
    :undoc-members:
    :show-inheritance:

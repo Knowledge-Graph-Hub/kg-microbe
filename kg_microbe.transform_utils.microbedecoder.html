@@ -243,10 +243,166 @@ reviewed update before these rules can run.</p>
 </dd></dl>
 
 </section>
+<section id="module-kg_microbe.transform_utils.microbedecoder.material_dispositions">
+<span id="kg-microbe-transform-utils-microbedecoder-material-dispositions-module"></span><h2>kg_microbe.transform_utils.microbedecoder.material_dispositions module<a class="headerlink" href="#module-kg_microbe.transform_utils.microbedecoder.material_dispositions" title="Link to this heading"></a></h2>
+<p>Describe a finite reviewed material cohort without resolving chemical identity.</p>
+<p>This catalogue is inventory metadata, never a producer dependency or an alias
+table. Source records, existing graph endpoints, citations and evidence tiers
+are matched exactly. Closed-cohort checks are explicit diagnostic operations.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.material_dispositions.</span></span><span class="sig-name descname"><span class="pre">MaterialDisposition</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_record</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_record_sha256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_literal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_citation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">object_curie</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predicate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_knowledge_source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knowledge_level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value_encoding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disposition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity_status</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">identity_approved</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evidence_uri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curation_rationale</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>One original source use, its unchanged graph witness and unresolved identity.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.agent_type">
+<span class="sig-name descname"><span class="pre">agent_type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.agent_type" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.curation_rationale">
+<span class="sig-name descname"><span class="pre">curation_rationale</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.curation_rationale" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.disposition">
+<span class="sig-name descname"><span class="pre">disposition</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.disposition" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.evidence_uri">
+<span class="sig-name descname"><span class="pre">evidence_uri</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.evidence_uri" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.identity_approved">
+<span class="sig-name descname"><span class="pre">identity_approved</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.identity_approved" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.identity_status">
+<span class="sig-name descname"><span class="pre">identity_status</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.identity_status" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.key">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">key</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.key" title="Link to this definition"></a></dt>
+<dd><p>Identify an exact record/field/token, not a global chemical name.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.knowledge_level">
+<span class="sig-name descname"><span class="pre">knowledge_level</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.knowledge_level" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.object_curie">
+<span class="sig-name descname"><span class="pre">object_curie</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.object_curie" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.predicate">
+<span class="sig-name descname"><span class="pre">predicate</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.predicate" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.primary_knowledge_source">
+<span class="sig-name descname"><span class="pre">primary_knowledge_source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.primary_knowledge_source" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.raw_record_sha256">
+<span class="sig-name descname"><span class="pre">raw_record_sha256</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.raw_record_sha256" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.relation">
+<span class="sig-name descname"><span class="pre">relation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.relation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.source_citation">
+<span class="sig-name descname"><span class="pre">source_citation</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.source_citation" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.source_column">
+<span class="sig-name descname"><span class="pre">source_column</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.source_column" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.source_literal">
+<span class="sig-name descname"><span class="pre">source_literal</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.source_literal" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.source_record">
+<span class="sig-name descname"><span class="pre">source_record</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.source_record" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.subject">
+<span class="sig-name descname"><span class="pre">subject</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.subject" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.value_encoding">
+<span class="sig-name descname"><span class="pre">value_encoding</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition.value_encoding" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDispositionCuration">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.material_dispositions.</span></span><span class="sig-name descname"><span class="pre">MaterialDispositionCuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/kg-microbe/kg-microbe/mappings/canonical/microbedecoder_material_dispositions.tsv')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDispositionCuration" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Load exact finite review metadata; never mint or redirect graph identities.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDispositionCuration.resolve_edge">
+<span class="sig-name descname"><span class="pre">resolve_edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edge</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDispositionCuration.resolve_edge" title="Link to this definition"></a></dt>
+<dd><p>Describe a known use, rejecting changed evidence; leave unseen uses unreviewed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition" title="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition"><code class="xref py py-class docutils literal notranslate"><span class="pre">MaterialDisposition</span></code></a> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDispositionCuration.rules">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rules</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition" title="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDisposition"><span class="pre">MaterialDisposition</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDispositionCuration.rules" title="Link to this definition"></a></dt>
+<dd><p>Expose immutable declarations for complete-cohort diagnostics.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDispositionCuration.validate_edges">
+<span class="sig-name descname"><span class="pre">validate_edges</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">require_all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDispositionCuration.validate_edges" title="Link to this definition"></a></dt>
+<dd><p>Stream an explicit cohort diagnostic without making it a transform dependency.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDispositionCuration.validate_raw">
+<span class="sig-name descname"><span class="pre">validate_raw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.material_dispositions.MaterialDispositionCuration.validate_raw" title="Link to this definition"></a></dt>
+<dd><p>Explicitly verify the full reviewed records against an unchanged raw snapshot.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="module-kg_microbe.transform_utils.microbedecoder.microbedecoder">
 <span id="kg-microbe-transform-utils-microbedecoder-microbedecoder-module"></span><h2>kg_microbe.transform_utils.microbedecoder.microbedecoder module<a class="headerlink" href="#module-kg_microbe.transform_utils.microbedecoder.microbedecoder" title="Link to this heading"></a></h2>
-<p>MicrobeDecoder transform (Hackmann &amp; Zhang, Sci Adv 2023).</p>
-<p>Ingests the wide per-LPSN-strain CSV MicrobeDecoder publishes on GitHub —
+<p>MicrobeDecoder transform (Hackmann et al., Nucleic Acids Research 2026).</p>
+<p>Ingests the wide LPSN-name-record CSV MicrobeDecoder publishes on GitHub —
 <cite>Shiny/MicrobeDecoder/data/database/database.zip</cite> — into KGX-format nodes
 and edges. The database is the actively-maintained successor to
 FermentationExplorer and pre-joins four curated fermentation-metabolism
@@ -259,11 +415,13 @@ curation of <cite>Type_of_metabolism</cite>, <cite>Major_end_products</cite>,
 fermentation profiles for anaerobes</p></li>
 <li><p><strong>Primary literature</strong> — hand-curated end-products with DOI/PMID
 citations</p></li>
-<li><p><strong>FAPROTAX</strong> — functional labels joined at strain granularity</p></li>
+<li><p><strong>FAPROTAX</strong> — taxon-based functional predictions joined to source records</p></li>
 </ul>
 <p>Also emits a <cite>biolink:close_match</cite> crosswalk from every <cite>lpsn:&lt;LPSN_ID&gt;</cite>
 row to <cite>NCBITaxon:</cite>, <cite>ncbi.assembly:</cite> (or <cite>GTDB:</cite> taxonomy strings), <cite>gold:</cite>,
-and <cite>IMG:</cite>. BacDive crosswalks use <cite>kgmicrobe.strain:bacdive_*</cite> subsumption.</p>
+and <cite>IMG:</cite>. BacDive crosswalks use <cite>kgmicrobe.strain:bacdive_*</cite> subsumption.
+An LPSN name record is not a strain identity, and its reported traits must not
+be propagated as universal observations about every member of the taxon.</p>
 <p>Design decisions locked from the plan-mode Q&amp;A:</p>
 <ol class="arabic simple">
 <li><p><strong>Node identity</strong>: attach every edge to the <em>existing</em> <cite>lpsn:&lt;LPSN_ID&gt;</cite>
@@ -279,12 +437,12 @@ distinguishable by provenance.</p></li>
 <p>License: CC BY 4.0 (matches the upstream repo).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.microbedecoder.</span></span><span class="sig-name descname"><span class="pre">MicrobeDecoderTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chemical_loader</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_mappings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phenotype_mappings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.microbedecoder.</span></span><span class="sig-name descname"><span class="pre">MicrobeDecoderTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chemical_loader</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_mappings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phenotype_mappings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_scopes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
 <p>Transform the MicrobeDecoder wide CSV into KGX nodes and edges.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.DATA_INPUTS">
-<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz',</span> <span class="pre">'mappings/canonical/microbedecoder_process_mappings.tsv',</span> <span class="pre">'mappings/canonical/microbedecoder_phenotype_mappings.tsv')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz',</span> <span class="pre">'mappings/canonical/microbedecoder_process_mappings.tsv',</span> <span class="pre">'mappings/canonical/microbedecoder_phenotype_mappings.tsv',</span> <span class="pre">'mappings/canonical/microbedecoder_process_scope_definitions.tsv')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
 <dd><p>Repo-relative curation files this transform reads, beyond its own
 <code class="docutils literal notranslate"><span class="pre">data/raw/</span></code> download.</p>
 <p>Declared so freshness tooling can tell that an output is stale against
@@ -306,7 +464,7 @@ constant, derive this from it rather than restating it.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.REQUIRED_CONSUMED_INPUTS">
-<span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('process_mappings',</span> <span class="pre">'process_authority',</span> <span class="pre">'process_go_authority',</span> <span class="pre">'phenotype_mappings',</span> <span class="pre">'chemical_authority')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('process_mappings',</span> <span class="pre">'process_authority',</span> <span class="pre">'process_go_authority',</span> <span class="pre">'phenotype_mappings',</span> <span class="pre">'process_scope_definitions',</span> <span class="pre">'chemical_authority')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
 <dd><p>Named generated inputs that must actually be read before fresh finalization.
 Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
 </dd></dl>
@@ -352,11 +510,12 @@ pulling <code class="docutils literal notranslate"><span class="pre">tqdm</span>
 </section>
 <section id="module-kg_microbe.transform_utils.microbedecoder.phenotype_curation">
 <span id="kg-microbe-transform-utils-microbedecoder-phenotype-curation-module"></span><h2>kg_microbe.transform_utils.microbedecoder.phenotype_curation module<a class="headerlink" href="#module-kg_microbe.transform_utils.microbedecoder.phenotype_curation" title="Link to this heading"></a></h2>
-<p>Resolve reviewed literal phenotypes for a non-graph normalization report.</p>
+<p>Resolve reviewed source values to an Attribute’s native ontology type.</p>
 <p>Rules are exact source-column/literal normalizations, not global synonyms or
 independent organism observations. The producer retains source attributes and
-their original provenance tier. These rules do not authorize phenotype edges:
-native endpoint categories do not satisfy the pinned has-phenotype signature.</p>
+their original provenance tier. The native class is an Attribute node’s
+<code class="docutils literal notranslate"><span class="pre">has_attribute_type</span></code> slot, never an edge predicate or a taxon phenotype edge.
+The record-level normalization report retains the evidence for each use.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.phenotype_curation.PhenotypeCuration">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.phenotype_curation.</span></span><span class="sig-name descname"><span class="pre">PhenotypeCuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mapping_input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metpo_nodes_input</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.phenotype_curation.PhenotypeCuration" title="Link to this definition"></a></dt>
@@ -382,7 +541,7 @@ were reviewed against the pinned native ontology, not inferred from a label.</p>
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.phenotype_curation.PhenotypeMapping">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.phenotype_curation.</span></span><span class="sig-name descname"><span class="pre">PhenotypeMapping</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_literal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_curie</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_label</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_category</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evidence_uri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">curation_rationale</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.phenotype_curation.PhenotypeMapping" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Keep exact normalization evidence separate from the original observation.</p>
+<p>Keep exact attribute-type curation separate from the original observation.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.phenotype_curation.PhenotypeMapping.curation_rationale">
 <span class="sig-name descname"><span class="pre">curation_rationale</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.phenotype_curation.PhenotypeMapping.curation_rationale" title="Link to this definition"></a></dt>
@@ -417,6 +576,96 @@ were reviewed against the pinned native ontology, not inferred from a label.</p>
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.phenotype_curation.PhenotypeMapping.target_label">
 <span class="sig-name descname"><span class="pre">target_label</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.phenotype_curation.PhenotypeMapping.target_label" title="Link to this definition"></a></dt>
 <dd></dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.microbedecoder.process_scopes">
+<span id="kg-microbe-transform-utils-microbedecoder-process-scopes-module"></span><h2>kg_microbe.transform_utils.microbedecoder.process_scopes module<a class="headerlink" href="#module-kg_microbe.transform_utils.microbedecoder.process_scopes" title="Link to this heading"></a></h2>
+<p>Load reviewed local process meanings without asserting ontology identity.</p>
+<p>The source version identifies the reviewed vocabulary, not a demonstrated build
+of the saved organism assignment CSV. Original prediction provenance is separate
+and must be retained by consumers. This module never fetches or rewrites inputs.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.process_scopes.</span></span><span class="sig-name descname"><span class="pre">ProcessScope</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_literal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope_definition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evidence_uri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_version</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">archive_sha256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">member_sha256</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_first_line</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>One field-scoped local process definition and its reviewed source witness.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.archive_sha256">
+<span class="sig-name descname"><span class="pre">archive_sha256</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.archive_sha256" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.curie">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">curie</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.curie" title="Link to this definition"></a></dt>
+<dd><p>Identify one exact source-column/literal meaning without global slug collisions.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.description">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">description</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.description" title="Link to this definition"></a></dt>
+<dd><p>Keep semantic-review evidence distinct from organism assignment evidence.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.evidence_uri">
+<span class="sig-name descname"><span class="pre">evidence_uri</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.evidence_uri" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.member_sha256">
+<span class="sig-name descname"><span class="pre">member_sha256</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.member_sha256" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.scope_definition">
+<span class="sig-name descname"><span class="pre">scope_definition</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.scope_definition" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.source_column">
+<span class="sig-name descname"><span class="pre">source_column</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.source_column" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.source_first_line">
+<span class="sig-name descname"><span class="pre">source_first_line</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.source_first_line" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.source_literal">
+<span class="sig-name descname"><span class="pre">source_literal</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.source_literal" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.source_version">
+<span class="sig-name descname"><span class="pre">source_version</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope.source_version" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScopeCuration">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.process_scopes.</span></span><span class="sig-name descname"><span class="pre">ProcessScopeCuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">definitions_input</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/kg-microbe/kg-microbe/mappings/canonical/microbedecoder_process_scope_definitions.tsv')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScopeCuration" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Validate the complete finite table; fail closed instead of dropping bad rows.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScopeCuration.resolve">
+<span class="sig-name descname"><span class="pre">resolve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_column</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">literal</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScopeCuration.resolve" title="Link to this definition"></a></dt>
+<dd><p>Match the exact source field and token without additional normalization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope" title="kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessScope</span></code></a> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScopeCuration.rules">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rules</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope" title="kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScope"><span class="pre">ProcessScope</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.process_scopes.ProcessScopeCuration.rules" title="Link to this definition"></a></dt>
+<dd><p>Expose immutable declarations for cross-policy conflict validation.</p>
+</dd></dl>
 
 </dd></dl>
 

@@ -864,7 +864,10 @@ solutions of the parent, which ChEBI relates by has-part, not is_a
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.chemical_mapping_utils.get_xrefs">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.chemical_mapping_utils.</span></span><span class="sig-name descname"><span class="pre">get_xrefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chebi_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.chemical_mapping_utils.get_xrefs" title="Link to this definition"></a></dt>
-<dd><p>Get all cross-references for a given CURIE.</p>
+<dd><p>Get cross-reference annotations, without changing literal identity lookup keys.</p>
+<p>The historical doubled KEGG compound prefix is presentation-only (#1259).
+Keep original SSSOM rows and the independently keyed xref lookup index intact:
+canonical and alias keys can have different historical mapping winners.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>chebi_id</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Primary CURIE (e.g., “CHEBI:12345”)</p>

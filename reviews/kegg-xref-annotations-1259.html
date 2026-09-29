@@ -1,0 +1,141 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KEGG compound annotation syntax (#1259) &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7026087e"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">KEGG compound annotation syntax (#1259)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/reviews/kegg-xref-annotations-1259.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kegg-compound-annotation-syntax-1259">
+<h1>KEGG compound annotation syntax (#1259)<a class="headerlink" href="#kegg-compound-annotation-syntax-1259" title="Link to this heading"></a></h1>
+<p>The shared chemical reader now emits <code class="docutils literal notranslate"><span class="pre">kegg.compound:Cnnnnn</span></code> instead of the exact
+historical <code class="docutils literal notranslate"><span class="pre">kegg.compound:cpd:Cnnnnn</span></code> spelling in node xref annotations. The rule
+requires uppercase <code class="docutils literal notranslate"><span class="pre">C</span></code> and exactly five ASCII digits. It deduplicates and sorts
+emitted xrefs, including optional ingredient-bundle enrichment. Other KEGG
+subspaces, identifiers and malformed forms are unchanged. KEGG documents <code class="docutils literal notranslate"><span class="pre">cpd</span></code>
+as the compound database abbreviation and <code class="docutils literal notranslate"><span class="pre">C</span></code> plus five digits as the entry
+format. <a class="reference external" href="https://www.kegg.jp/kegg/rest/keggapi.html">Official KEGG API manual</a>.</p>
+<p>This is an annotation-only repair. Original unified SSSOM rows, their provenance
+and multiplicity, literal identity lookup keys, query behavior, supported MIM
+export and immutable pin are unchanged. Canonical and historical alias queries
+can therefore still have different historical targets; this change neither
+endorses those equivalences nor resolves their scientific conflicts.</p>
+<p>The accepted unified artifact with SHA-256
+<code class="docutils literal notranslate"><span class="pre">67c48e1bf6bed1f1fef03a0da1d7d1b56af9fc72374dddd703c222fb36df3cd4</span></code>
+contains 15,370 affected rows. Of these, 15,355 have exact full-row canonical
+counterparts after subject normalization, while 15 do not. Blind normalization
+before lookup indexing would change five canonical choices; routing aliases
+through canonical choices would change 35 historical alias-query choices and
+alias-only fallback would newly resolve two canonical keys. None of those
+lookup changes is part of this fix.</p>
+<p>The current native ChEBI JSON and node TSV have no such double-prefixed compound
+xrefs; each has 17,446 canonical compound xref values. The primary-mapping
+importer already removes the <code class="docutils literal notranslate"><span class="pre">cpd:</span></code> abbreviation before prefixing new entries.
+The malformed retained rows can be reproduced by historical seed paths; no
+exporter or physical SSSOM cleanup is claimed here. Such cleanup needs its own
+reviewed, stable identity-precedence contract, because existing exporters sort
+by target and simple row relocation cannot preserve canonical precedence.</p>
+<p>The full original-row inventory, counterpart ordinals, five canonical conflicts,
+35 alias-query differences and native-byte evidence are retained under
+<code class="docutils literal notranslate"><span class="pre">data/issue1224-quarantine-20260929.xjuS9H/issue1259-diagnosis.7T9Jn8/</span></code>.
+Hermetic tests cover conflicting rows in either order, reloads, alias-only
+unresolved canonical queries, weak-relation exclusion and actual MediaDive
+producer enrichment through unified, legacy and embedded identity routes.
+The chemical-mapping skill and reviewed-MIM runbook governed this bounded scope;
+no MIM regeneration or mapping promotion is required for this code change.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

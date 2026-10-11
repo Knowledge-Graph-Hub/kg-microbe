@@ -14,6 +14,7 @@ from kg_microbe.transform_utils.metatraits_gtdb.metatraits_gtdb import (
     _register_numeric_candidate,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils import optional_consumed_inputs
 from kg_microbe.utils.producer_audits import verify_producer_audits
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 from kg_microbe.utils.tsv_io import tsv_dict_writer
@@ -22,8 +23,21 @@ FIXTURES = Path(__file__).parent / "resources" / "metatraits_gtdb_mapping"
 
 
 @pytest.fixture
-def transform(tmp_path):
+def transform(tmp_path, monkeypatch):
     """Construct only the post-processing stage, without live ontology resources."""
+    # MetaTraits resolves its optional ec2go table against the repository root,
+    # not this fixture's raw directory. Pin it to an absent fixture path so a
+    # local run never binds the developer's data/raw copy (CI has none).
+    real_paths = optional_consumed_inputs.optional_input_paths
+
+    def fixture_paths(producer, *, input_dir=None):
+        """Keep every other declared role; relocate only the shared raw ec2go table."""
+        paths = real_paths(producer, input_dir=input_dir)
+        if "ec_to_go" in paths:
+            paths["ec_to_go"] = (tmp_path / "raw" / "ec2go.txt").absolute()
+        return paths
+
+    monkeypatch.setattr(optional_consumed_inputs, "optional_input_paths", fixture_paths)
     instance = object.__new__(MetaTraitsGTDBTransform)
     Transform.__init__(instance, METATRAITS_GTDB, input_dir=tmp_path / "raw", output_dir=tmp_path)
     instance.edge_header += ["has_percentage", "value", "unit"]

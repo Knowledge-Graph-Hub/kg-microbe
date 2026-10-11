@@ -450,7 +450,7 @@ def _child(root):
 def lifecycle(tmp_path_factory, record_testsuite_property):
     """Run one offline real registered-source matrix, with no production raw or graph access."""
     root = tmp_path_factory.mktemp("ec-lifecycle").resolve()
-    shutil.copytree(ROOT / "kg_microbe", root / "kg_microbe", ignore=shutil.ignore_patterns("__pycache__"))
+    shutil.copytree(ROOT / "kg_microbe", root / "kg_microbe", ignore=shutil.ignore_patterns("__pycache__", "tmp"))
     shutil.copytree(ROOT / "tests/resources/metatraits_dependency_inputs/canonical", root / "mappings/canonical")
     from kg_microbe.utils.transform_fingerprint import SHARED_DATA_INPUTS
 

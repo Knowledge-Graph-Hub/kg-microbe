@@ -309,7 +309,7 @@ def _child(root):
 def dependency_probe(tmp_path_factory):
     """Run a single isolated real-public-gate matrix, shared by small result assertions."""
     root = tmp_path_factory.mktemp("metatraits-dependency-copy")
-    shutil.copytree(ROOT / "kg_microbe", root / "kg_microbe", ignore=shutil.ignore_patterns("__pycache__"))
+    shutil.copytree(ROOT / "kg_microbe", root / "kg_microbe", ignore=shutil.ignore_patterns("__pycache__", "tmp"))
     shutil.copytree(FIXTURE / "canonical", root / "mappings/canonical")
     from kg_microbe.utils.transform_fingerprint import SHARED_DATA_INPUTS
 

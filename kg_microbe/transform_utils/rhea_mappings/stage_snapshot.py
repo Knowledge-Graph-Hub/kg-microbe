@@ -5,6 +5,7 @@ import hashlib
 import io
 import json
 import os
+import stat
 import tempfile
 from pathlib import Path
 
@@ -65,6 +66,17 @@ def _copy_pinned(source, destination, expected):
         raise ValueError(f"Rhea snapshot pin mismatch: {source.name}")
 
 
+def _refuse_linked_payloads(directory):
+    """Certify an existing snapshot only by its own payload files, never links into another tree."""
+    for name in NATIVE_FILES.values():
+        try:
+            mode = (directory / name).lstat().st_mode
+        except FileNotFoundError:
+            continue  # a partial destination is refused by _validate_pair
+        if not stat.S_ISREG(mode):
+            raise ValueError(f"Refusing a symlink or non-regular Rhea payload: {name}")
+
+
 def _same_directory(path, identity):
     """Recognize only the empty reservation created by this invocation, not a replacement or symlink."""
     try:
@@ -111,6 +123,7 @@ def stage_snapshot(source_dir, input_dir, *, policy_path=POLICY_PATH):
     if destination.is_symlink():
         raise ValueError("Refusing a symlink Rhea destination; select a real input directory")
     if destination.exists():
+        _refuse_linked_payloads(destination)
         return result("already_matching", _validate_pair(destination, policy))
     input_dir.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=".rhea-stage-", dir=input_dir) as temporary:
@@ -126,6 +139,7 @@ def stage_snapshot(source_dir, input_dir, *, policy_path=POLICY_PATH):
         except FileExistsError:
             if destination.is_symlink():
                 raise ValueError("Rhea destination became a symlink during staging") from None
+            _refuse_linked_payloads(destination)
             return result("already_matching", _validate_pair(destination, policy))
         status = destination.lstat()
         identity = (status.st_dev, status.st_ino, status.st_mode)

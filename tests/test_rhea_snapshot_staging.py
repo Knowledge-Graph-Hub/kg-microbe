@@ -104,6 +104,17 @@ def test_symlink_destination_is_not_replaced_or_followed(tmp_path):
     assert before == {p.name: p.read_bytes() for p in source.iterdir()}
 
 
+def test_existing_destination_with_linked_payloads_is_refused(tmp_path):
+    """A real destination directory cannot certify payload links into another, mutable tree."""
+    source, raw, policy_path, policy = _staging_inputs(tmp_path)
+    (raw / "rhea").mkdir(parents=True)
+    for name in policy["files"]:
+        (raw / "rhea" / name).symlink_to(source / name)
+    with pytest.raises(ValueError, match="symlink or non-regular"):
+        module.stage_snapshot(source, raw, policy_path=policy_path)
+    assert all((raw / "rhea" / name).is_symlink() for name in policy["files"])
+
+
 def test_publication_failure_cleans_only_owned_empty_reservation(tmp_path, monkeypatch):
     """No canonical half-pair survives a rename failure; unrelated raw inputs remain untouched."""
     source, raw, policy_path, _ = _staging_inputs(tmp_path)

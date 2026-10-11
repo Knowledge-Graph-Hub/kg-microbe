@@ -1189,7 +1189,9 @@ def load_gold_declarations(transform, requested_ids, *, admission=None):
         proofs = {key: value for key, value in proofs.items() if key in requested}
         authority = {
             "kind": "selected_sibling_gold",
-            "report_path": str(report_path.absolute()),
+            # Resolved, like the consumed-input snapshots admission compares below:
+            # an unresolved locator under a symlinked root never matches again.
+            "report_path": str(report_path.resolve()),
             "report_identity": admitted.capture(report_path),
         }
         guard = GoldDeclarationGuard(
@@ -1247,7 +1249,7 @@ def verify_recorded_gold_declarations(report, report_path, *, admission=None):
         selected = Path(report_path).parent.parent / GOLD / "source_finalization.json"
         if (
             authority.get("kind") != "selected_sibling_gold"
-            or Path(authority.get("report_path", "")).absolute() != selected.absolute()
+            or Path(authority.get("report_path", "")).resolve() != selected.resolve()
         ):
             raise SourceFinalizationRequired("GOLD consumer authority locator differs from selected sibling")
         if admission.capture(selected) != authority.get("report_identity"):

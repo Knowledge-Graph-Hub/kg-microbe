@@ -184,10 +184,12 @@ class PregoTransform(Transform):
 
     #: Reads this transform's output; see Transform.TRANSFORM_INPUTS (#845).
     TRANSFORM_INPUTS = ("ontologies",)
+    # foodon.json is not downloaded: the ontologies transform converts foodon.owl
+    # into it earlier in the same batch, so a pre-run existence check would refuse
+    # a fresh `kg transform`. It is bound after upstream runs as prego_native_foodon.
     DATA_INPUTS = (
         "mappings/prego_envo_identity_dispositions.tsv",
         "data/raw/envo.json",
-        "data/raw/foodon.json",
     )
     REQUIRED_CONSUMED_INPUTS = ("prego_envo_policy", "prego_native_envo", "prego_native_foodon")
     REQUIRED_AUDIT_FILES = ("prego_envo_identity.tsv",)

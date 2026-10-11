@@ -7,6 +7,7 @@ import io
 import json
 import tarfile
 from collections import Counter
+from pathlib import Path
 
 import pytest
 
@@ -432,3 +433,14 @@ def test_public_finalization_and_readonly_admission_recheck_native_evidence(tmp_
             stream.write(b"\n")
     with pytest.raises(SourceFinalizationRequired):
         verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+
+
+def test_generated_foodon_json_is_not_a_preflight_input(tmp_path):
+    """foodon.json is produced from foodon.owl by the ontologies transform in the same batch."""
+    from kg_microbe.transform import _missing_declared_inputs
+
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    (raw / "envo.json").write_text("{}")
+    (raw / "foodon.owl").write_text("")
+    assert _missing_declared_inputs(["prego"], Path(__file__).resolve().parents[1], raw) == []

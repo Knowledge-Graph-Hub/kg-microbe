@@ -13,6 +13,7 @@ from pathlib import Path
 import pandas as pd
 import pytest
 
+from kg_microbe.transform_utils.constants import MONDO_XREFS_FILEPATH, UNIPATHWAYS_XREFS_FILEPATH
 from kg_microbe.transform_utils.ontologies.ontologies_transform import OntologiesTransform
 from kg_microbe.utils import native_ro_retention as native
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, verify_finalized_source_files
@@ -174,6 +175,14 @@ def execute_parse_fixture(raw, output, policy, policy_digest, name):
         temporal_path = raw.parent / "temporal-policy.json"
         temporal_path.write_text(json.dumps(temporal_policy()))
         temporal.TEMPORAL_DISPOSITIONS_FILE = temporal_path
+    # The MONDO converter also derives a shared xref table. Keep it beside this
+    # run, as tests/test_go_authority.py does, never in the tracked copy under
+    # kg_microbe/transform_utils/ontologies/xrefs/.
+    from kg_microbe.transform_utils.ontologies import ontologies_transform as ontology_module
+
+    ontology_module.ONTOLOGIES_XREFS_DIR = output / "xrefs"
+    ontology_module.MONDO_XREFS_FILEPATH = output / "xrefs" / "mondo_xrefs.tsv"
+    ontology_module.UNIPATHWAYS_XREFS_FILEPATH = output / "xrefs" / "unipathways_xrefs.tsv"
     transform = OntologiesTransform(raw, output)
     # Run all real authority lifecycles. ENVO has no quarantined parent rows,
     # but its native parent, converter and selected-member receipts are real.
@@ -213,6 +222,7 @@ def execute_parse_fixture(raw, output, policy, policy_digest, name):
 def test_real_parse_finalize_and_admission_preserve_new_native_supplier(tmp_path, monkeypatch, name):
     """Use a fresh actual KGX reader, with network denied and private sanitation visible."""
     transform, _, _ = prepare(tmp_path, monkeypatch, sources=())
+    tracked = {path: _sha256(path) for path in (MONDO_XREFS_FILEPATH, UNIPATHWAYS_XREFS_FILEPATH)}
     script = """
 import socket, sys
 def offline(*args, **kwargs):
@@ -247,3 +257,15 @@ execute_parse_fixture(*sys.argv[1:])
     )
     assert result.returncode == 0, result.stdout + result.stderr
     assert '"finalized_admission": "passed"' in result.stdout
+    assert {path: _sha256(path) for path in tracked} == tracked, "A fixture parse rewrote a tracked xref table"
+    if name == "mondo":
+        assert (tmp_path / "actual" / "xrefs" / "mondo_xrefs.tsv").is_file()
+
+
+def _sha256(path):
+    """Identify a tracked table without holding it in memory."""
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as stream:
+        for block in iter(lambda: stream.read(1 << 20), b""):
+            digest.update(block)
+    return digest.hexdigest()

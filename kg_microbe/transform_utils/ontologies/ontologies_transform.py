@@ -534,8 +534,13 @@ class OntologiesTransform(Transform):
             raw_dir=report.get("raw_input_locator") or report.get("raw_input_directory"),
             admission=admission,
         )
+        # A report without recorded members has an unknown scope: keep the
+        # conservative whole-directory scan rather than an empty member set.
         verify_audit_input_bindings(
-            Path(report_path).parent, report.get("consumed_inputs", {}), members=member_names, admission=admission
+            Path(report_path).parent,
+            report.get("consumed_inputs", {}),
+            members=report.get("members"),
+            admission=admission,
         )
         from kg_microbe.utils.foodon_kernel_producer import verify_kernel_audit_bindings
 

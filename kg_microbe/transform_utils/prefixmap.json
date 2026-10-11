@@ -8,6 +8,7 @@
     "mediadive.medium-type": "https://mediadive.dsmz.de/medium-type/",
     "kgmicrobe.strain": "https://example.org/kgmicrobe/strain/",
     "kgmicrobe.source_attribute": "https://example.org/kgmicrobe/source_attribute/",
+    "kgmicrobe.source_record": "https://example.org/kgmicrobe/source_record/",
     "SIO": "http://semanticscience.org/resource/SIO_",
     "GTDB": "https://gtdb.ecogenomic.org/tree?r=",
     "lpsn": "https://lpsn.dsmz.de/",

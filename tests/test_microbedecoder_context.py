@@ -162,12 +162,13 @@ def test_snapshot_signed_field_tokens_do_not_change_generic_missingness(column, 
 
 
 def test_source_attribute_namespace_and_relation_are_registered():
-    """The explicit dynamic namespace and pinned SIO IRI are registered for graph consumers."""
+    """The explicit dynamic namespaces and pinned SIO IRI are registered for graph consumers."""
     root = Path(__file__).resolve().parents[1]
     registry = yaml.safe_load((root / "kg_microbe/transform_utils/custom_curies.yaml").read_text())
     prefixmap = json.loads((root / "kg_microbe/transform_utils/prefixmap.json").read_text())
-    assert "kgmicrobe.source_attribute" in registry
-    assert "kgmicrobe.source_attribute" in prefixmap
+    for namespace in ("kgmicrobe.source_attribute", "kgmicrobe.source_record"):
+        assert namespace in registry
+        assert namespace in prefixmap
     assert prefixmap["SIO"] == "http://semanticscience.org/resource/SIO_"
 
 

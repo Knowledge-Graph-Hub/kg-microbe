@@ -26,6 +26,13 @@ import yaml
 
 from kg_microbe.utils import chemical_mapping_utils as runtime
 from kg_microbe.utils.cas import invalid_cas_identifier
+from kg_microbe.utils.ingredient_context import (
+    CONTEXT_POLICY,
+    NATIVE_AUTHORITY,
+    contextualize_ingredient_row,
+    ingredient_context_allowed,
+    ingredient_context_pair_allowed,
+)
 from kg_microbe.utils.ingredient_identity import (
     IDENTITY_POLICY,
     NAME_SCOPE_POLICY,
@@ -199,11 +206,17 @@ def _candidate_name_lookup(name, names, declared, labels=None, native_hydrate_na
     """Mirror finite runtime query scopes without putting case-sensitive aliases in a shared key."""
     recognized, target = ingredient_case_sensitive_name_scope(name)
     if recognized:
-        return target if target in declared and ingredient_mapping_allowed(name, target) else None
+        return (
+            target
+            if target in declared and ingredient_context_allowed(target) and ingredient_mapping_allowed(name, target)
+            else None
+        )
     normalized = runtime.normalize_name(name)
     if ingredient_case_sensitive_name_scope(normalized)[0]:
         return None
     target = names.get(normalized)
+    if not ingredient_context_allowed(target):
+        return None
     if (
         target is not None
         and labels is not None
@@ -568,6 +581,9 @@ def build_conservative_candidate(
         Path(__file__).with_name("mim_reviewed_release.py").resolve(),
         IDENTITY_POLICY.resolve(),
         NAME_SCOPE_POLICY.resolve(),
+        CONTEXT_POLICY.resolve(),
+        NATIVE_AUTHORITY.resolve(),
+        IDENTITY_POLICY.parent.parent / "kg_microbe/utils/ingredient_context.py",
         IDENTITY_POLICY.parent.parent / "kg_microbe/utils/ingredient_identity.py",
         IDENTITY_POLICY.parent.parent / "kg_microbe/utils/cas.py",
     )
@@ -662,8 +678,10 @@ def build_conservative_candidate(
     mim_source = "mediaingredientmech_reviewed[manifest=" + bundle.manifest_sha256 + "]"
     for row in bundle.supported_rows:
         curie = row["object_id"]
-        if not ingredient_mapping_allowed(row["subject_label"], curie) or not ingredient_xref_allowed(
-            row["subject_id"], curie
+        if (
+            not ingredient_context_pair_allowed(row["subject_id"], curie)
+            or not ingredient_mapping_allowed(row["subject_label"], curie)
+            or not ingredient_xref_allowed(row["subject_id"], curie)
         ):
             raise ValueError(f"Supported MIM assertion conflicts with current identity policy: {row['subject_id']}")
         declared_label = evidence.records.get(curie, _Entity()).label or row["object_label"]
@@ -710,6 +728,7 @@ def build_conservative_candidate(
         "removed_mim_nonidentity_rows": 0,
         "identity_policy_quarantined_rows": 0,
         "identity_policy_relabelled_rows": 0,
+        "ingredient_context_scoped_rows": 0,
     }
     output_directory.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=".mim-candidate-", dir=output_directory.parent) as temporary:
@@ -719,7 +738,13 @@ def build_conservative_candidate(
         database = sqlite3.connect(Path(temporary) / "rows.sqlite")
         database.execute("CREATE TABLE rows (object TEXT, subject TEXT, predicate TEXT, comment TEXT, value TEXT)")
 
-        def insert(row):
+        def insert(row, audit_handle):
+            contextualized = contextualize_ingredient_row(row)
+            if contextualized != row:
+                audit_handle.write(_serialize(row, fields) + "\tingredient_material_identity_context\n")
+                stats["quarantined_rows"] += 1
+                stats["ingredient_context_scoped_rows"] += 1
+            row = contextualized
             database.execute(
                 "INSERT INTO rows VALUES (?, ?, ?, ?, ?)",
                 (row["object_id"], row["subject_id"], row["predicate_id"], row["comment"], _serialize(row, fields)),
@@ -756,11 +781,11 @@ def build_conservative_candidate(
                     if row["subject_id"] in affected:
                         adjusted["subject_label"] = evidence.records.get(row["subject_id"], _Entity()).label
                     stats["relabelled_nonidentity_rows"] += int(adjusted != row)
-                    insert(adjusted)
+                    insert(adjusted, handle)
                     stats["preserved_rows"] += 1
                     continue
                 if curie not in affected and not _mim_row(row):
-                    insert(row)
+                    insert(row, handle)
                     stats["preserved_rows"] += 1
                     continue
                 reason = (
@@ -771,10 +796,10 @@ def build_conservative_candidate(
                 handle.write(_serialize(row, fields) + "\t" + reason + "\n")
                 stats["quarantined_rows"] += 1
                 stats["removed_mim_nonidentity_rows"] += int(nonidentity)
-        for curie in sorted(evidence.records):
-            for row in _fresh_rows(curie, evidence.records[curie], fields, date):
-                insert(row)
-                stats["rebuilt_rows"] += 1
+            for curie in sorted(evidence.records):
+                for row in _fresh_rows(curie, evidence.records[curie], fields, date):
+                    insert(row, handle)
+                    stats["rebuilt_rows"] += 1
         database.commit()
         names, ranks, mim_xrefs, named_entities, declared_labels = {}, {}, {}, set(), {}
         with consolidator.open_deterministic_gzip(candidate) as handle:
@@ -788,6 +813,8 @@ def build_conservative_candidate(
                     named_entities.add(row["object_id"])
                     declared_labels.setdefault(row["object_id"], row["object_label"])
                 for label, rank in ((row["object_label"], 0), (row["subject_label"], 1)):
+                    if not ingredient_context_allowed(row["object_id"]):
+                        continue
                     if rank and not (row["subject_id"].startswith("kgm.name:") and row["comment"] == "synonym"):
                         continue
                     if not runtime.ingredient_hydration_compatible(
@@ -800,10 +827,12 @@ def build_conservative_candidate(
                         continue
                     if normalized and (normalized not in names or rank < ranks[normalized]):
                         names[normalized], ranks[normalized] = row["object_id"], rank
-                if row["subject_id"].startswith("MIM:"):
+                if row["subject_id"].startswith("MIM:") and ingredient_context_pair_allowed(
+                    row["subject_id"], row["object_id"]
+                ):
                     mim_xrefs.setdefault(row["subject_id"], row["object_id"])
         for query, target in ingredient_name_scopes()[0].items():
-            if target in named_entities:
+            if target in named_entities and ingredient_context_allowed(target):
                 names[runtime.normalize_name(query)] = target
         unreconstructed_lexicals = sorted(
             curie for curie in reconstruction_targets if not evidence.records.get(curie, _Entity()).label

@@ -1,8 +1,11 @@
 """A transform that reads another's output must declare it (#845)."""
 
+import ast
 import re
 from pathlib import Path
 from unittest import TestCase
+
+import pytest
 
 from kg_microbe.transform import DATA_SOURCES
 from kg_microbe.utils.transform_fingerprint import upstream_fingerprint, write_fingerprint
@@ -89,6 +92,7 @@ def _observed_dependencies():
         found = set()
         for path in code_dir.rglob("*.py"):
             text = path.read_text(encoding="utf-8")
+            found.update(_called_helper_dependencies(text) - {source})
             for match in _UPSTREAM_PATTERNS.finditer(text):
                 name = next(group for group in match.groups() if group)
                 if name != source and name in DATA_SOURCES:
@@ -99,6 +103,95 @@ def _observed_dependencies():
         if found:
             observed[source] = found
     return observed
+
+
+def _called_helper_dependencies(text, *, root=REPO_ROOT):
+    """Follow actual imported helper calls to sibling-output paths, never producer declarations."""
+    tree = ast.parse(text)
+    imported, modules = {}, {}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module and not node.level:
+            for name in node.names:
+                imported[name.asname or name.name] = (node.module, name.name)
+        elif isinstance(node, ast.Import):
+            for name in node.names:
+                if name.asname:
+                    modules[name.asname] = name.name
+    called = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call):
+            continue
+        if isinstance(node.func, ast.Name) and node.func.id in imported:
+            called.add(imported[node.func.id])
+        elif (
+            isinstance(node.func, ast.Attribute)
+            and isinstance(node.func.value, ast.Name)
+            and node.func.value.id in modules
+        ):
+            called.add((modules[node.func.value.id], node.func.attr))
+    constants = dict(
+        re.findall(r"^([A-Z][A-Z0-9_]*) *= *[\"\']([a-z_]+)[\"\'] *(?:#.*)?$", _CONSTANTS_FILE.read_text(), re.M)
+    )
+    found = set()
+    for module, function in called:
+        if not module.startswith("kg_microbe.transform_utils."):
+            continue
+        path = root.joinpath(*module.split(".")).with_suffix(".py")
+        if not path.is_file():
+            continue
+        helper_tree = ast.parse(path.read_text(encoding="utf-8"))
+        names = {
+            name.asname or name.name: constants[name.name]
+            for node in helper_tree.body
+            if isinstance(node, ast.ImportFrom) and node.module == "kg_microbe.transform_utils.constants"
+            for name in node.names
+            if name.name in constants
+        }
+        for definition in helper_tree.body:
+            if not isinstance(definition, (ast.FunctionDef, ast.AsyncFunctionDef)) or definition.name != function:
+                continue
+            for node in ast.walk(definition):
+                if not isinstance(node, ast.BinOp) or not isinstance(node.op, ast.Div):
+                    continue
+                if not isinstance(node.left, ast.Attribute) or node.left.attr != "output_base_dir":
+                    continue
+                upstream = (
+                    node.right.value
+                    if isinstance(node.right, ast.Constant)
+                    else names.get(getattr(node.right, "id", ""))
+                )
+                if isinstance(upstream, str) and upstream in DATA_SOURCES:
+                    found.add(upstream)
+    return found
+
+
+@pytest.mark.parametrize(
+    "statement",
+    [
+        "from kg_microbe.transform_utils.gold.authority import load as selected\nselected(transform)",
+        "import kg_microbe.transform_utils.gold.authority as selected\nselected.load(transform)",
+    ],
+)
+def test_called_helper_aliases_expose_actual_sibling_output(tmp_path, statement):
+    """Both function and module aliases reach the helper body without reading declarations."""
+    path = tmp_path / "kg_microbe/transform_utils/gold/authority.py"
+    path.parent.mkdir(parents=True)
+    path.write_text(
+        "from kg_microbe.transform_utils.constants import GOLD as SOURCE\n"
+        "def load(transform):\n    return transform.output_base_dir / SOURCE / 'source_finalization.json'\n"
+    )
+    assert _called_helper_dependencies(statement, root=tmp_path) == {"gold"}
+    assert _called_helper_dependencies(statement.splitlines()[0], root=tmp_path) == set()
+    assert _called_helper_dependencies("# " + statement.replace("\n", "\n# "), root=tmp_path) == set()
+    assert _called_helper_dependencies(repr(statement), root=tmp_path) == set()
+
+
+def test_missing_real_gold_dependency_declaration_is_still_detected(monkeypatch):
+    """The observed helper route remains independent when its claimed dependency is removed."""
+    producer = DATA_SOURCES["microbedecoder"].transform_class
+    monkeypatch.setattr(producer, "TRANSFORM_INPUTS", tuple(x for x in producer.TRANSFORM_INPUTS if x != "gold"))
+    with pytest.raises(AssertionError, match="microbedecoder reads.*gold"):
+        CrossTransformDeclarationTest().test_every_observed_dependency_is_declared()
 
 
 class CrossTransformDeclarationTest(TestCase):

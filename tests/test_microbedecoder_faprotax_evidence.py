@@ -21,6 +21,7 @@ from kg_microbe.transform_utils.constants import (
     PREDICTION,
 )
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
+from tests.microbedecoder_inactive_join_fixtures import bind_inactive_join_policy, write_empty_join_gss
 from tests.microbedecoder_quarantine_fixtures import (
     bind_fixture_quarantine_policy,
     write_fixture_quarantine_policy,
@@ -36,7 +37,7 @@ def _read(path):
         return list(csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE))
 
 
-def _run(tmp_path, mapped):
+def _run(tmp_path, mapped, *, monkeypatch):
     """Exercise real reviewed mapping and explicit unmapped fixture-table branches."""
     _supply_gold_fold_report(tmp_path)
     process_table = None
@@ -47,9 +48,14 @@ def _run(tmp_path, mapped):
         rows = DEFAULT_PROCESS_MAPPINGS.read_text().splitlines()
         process_table.write_text("\n".join([rows[0], *[row for row in rows[1:] if "nitrogen_fixation" in row]]) + "\n")
     transform = MicrobeDecoderTransform(
-        FIXTURE_DIR, tmp_path, chemical_loader=_NoChebi(), process_mappings=process_table
+        write_empty_join_gss(tmp_path / "raw").parent,
+        tmp_path,
+        chemical_loader=_NoChebi(),
+        process_mappings=process_table,
     )
     bind_fixture_quarantine_policy(transform, FIXTURE_DIR / "faprotax_evidence.csv")
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, FIXTURE_DIR / "faprotax_evidence.csv", monkeypatch)
     transform.run(data_file=FIXTURE_DIR / "faprotax_evidence.csv", show_status=False)
     return transform
 
@@ -97,13 +103,19 @@ def _check(edges, mapped):
 
 
 @pytest.mark.parametrize("mapped", [False, True])
-def test_faprotax_capability_metadata_uses_source_context(tmp_path, mapped):
+def test_faprotax_capability_metadata_uses_source_context(monkeypatch, tmp_path, mapped):
     """All FAPROTAX labels are predictions, independent of mapped/fallback object identity."""
-    transform = _run(tmp_path, mapped)
+    transform = _run(tmp_path, mapped, monkeypatch=monkeypatch)
     _check(_read(transform.output_edge_file), mapped)
 
 
 def _finalize_child(root, mapped):
+    """Retain explicit fixture anchors for the complete isolated child lifecycle."""
+    with pytest.MonkeyPatch.context() as monkeypatch:
+        return _finalize_child_bound(monkeypatch, root, mapped)
+
+
+def _finalize_child_bound(monkeypatch, root, mapped):
     """Run the normal registered finalizer with only copied code and immutable fixtures."""
     import socket
 
@@ -116,11 +128,17 @@ def _finalize_child(root, mapped):
     socket.socket.connect = offline
     socket.getaddrinfo = offline
     assert Path(sys.modules[MicrobeDecoderTransform.__module__].__file__).resolve().is_relative_to(root)
-    transform = _run(root / "data/transformed", mapped)
+    transform = _run(root / "data/transformed", mapped, monkeypatch=monkeypatch)
     # Declared canonical policy inputs are fingerprinted in addition to the
     # explicitly consumed fixture policy, like other injected curation tables.
     write_fixture_quarantine_policy(
         FIXTURE_DIR / "faprotax_evidence.csv", root / "mappings/canonical", canonical_names=True
+    )
+    bind_inactive_join_policy(
+        transform,
+        FIXTURE_DIR / "faprotax_evidence.csv",
+        monkeypatch,
+        canonical_directory=root / "mappings/canonical",
     )
     before = _read(transform.output_edge_file)
     _check(before, mapped)
@@ -143,6 +161,7 @@ def test_registered_finalization_preserves_faprotax_evidence(tmp_path, mapped):
     for name in (
         "__init__.py",
         "microbedecoder_quarantine_fixtures.py",
+        "microbedecoder_inactive_join_fixtures.py",
         "test_microbedecoder_transform.py",
         Path(__file__).name,
     ):
@@ -150,9 +169,11 @@ def test_registered_finalization_preserves_faprotax_evidence(tmp_path, mapped):
         target.parent.mkdir(exist_ok=True)
         shutil.copyfile(ROOT / "tests" / name, target)
     shutil.copytree(FIXTURE_DIR, root / "tests/resources/microbedecoder")
+    shutil.copytree(ROOT / "tests/resources/gold_abscess", root / "tests/resources/gold_abscess")
+    from kg_microbe.transform_utils.gold.gold import GOLDTransform
     from kg_microbe.utils.transform_fingerprint import SHARED_DATA_INPUTS
 
-    for relative in SHARED_DATA_INPUTS:
+    for relative in (*SHARED_DATA_INPUTS, *GOLDTransform.DATA_INPUTS):
         target = root / relative
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / relative, target)

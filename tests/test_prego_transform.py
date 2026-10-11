@@ -30,6 +30,7 @@ from kg_microbe.transform_utils.prego.utils import (
     entity_to_curie,
     load_doid_to_mondo,
 )
+from tests.prego_identity_fixtures import stage_prego_identity_inputs
 
 FIXTURE_DIR = Path(__file__).parent / "resources" / "prego"
 
@@ -84,6 +85,7 @@ def prego_input_dir(tmp_path: Path) -> Path:
     constant, a uniformly-4.0 fixture could not exercise that.
     """
     raw_dir = tmp_path / "raw"
+    stage_prego_identity_inputs(raw_dir)
     prego_raw = raw_dir / "prego"
     prego_raw.mkdir(parents=True)
     for archive_name, payload in (
@@ -323,6 +325,7 @@ def test_empty_entity_id_row_is_dropped(tmp_path: Path, prego_output_dir: Path):
     emit a malformed CURIE like `NCBITaxon:`.
     """
     raw_dir = tmp_path / "raw"
+    stage_prego_identity_inputs(raw_dir)
     prego_raw = raw_dir / "prego"
     prego_raw.mkdir(parents=True)
     tsv_path = prego_raw / "one_row.tsv"
@@ -494,6 +497,7 @@ def test_bto_row_with_non_bto_id_drops_to_prefix_mismatch(tmp_path: Path, prego_
     The transform must NOT emit those as malformed BTO nodes.
     """
     raw_dir = tmp_path / "raw"
+    stage_prego_identity_inputs(raw_dir)
     prego_raw = raw_dir / "prego"
     prego_raw.mkdir(parents=True)
     tsv_path = prego_raw / "one_row.tsv"

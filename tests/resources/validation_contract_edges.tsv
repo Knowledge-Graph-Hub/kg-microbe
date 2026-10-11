@@ -1,0 +1,2 @@
+subject	predicate	object	relation	primary_knowledge_source	knowledge_level	agent_type
+NCBITaxon:1	METPO:2000006	CHEBI:1	RO:0002215	infores:fixture	knowledge_assertion	manual_agent

@@ -70,11 +70,22 @@ def test_foodon_asserted_organism_branch_and_curated_kelp_preserve_food_parts(tm
             {
                 "graphs": [
                     {
+                        "nodes": [
+                            {"id": identifier, "type": "CLASS"}
+                            for identifier in (
+                                "FOODON:1",
+                                "FOODON:2",
+                                "FOODON:3",
+                                "PO:0000003",
+                                "FOODON:03411744",
+                                "FOODON:00003673",
+                            )
+                        ],
                         "edges": [
                             {"sub": "FOODON:1", "pred": "is_a", "obj": "PO:0000003"},
                             {"sub": "FOODON:2", "pred": "is_a", "obj": "FOODON:1"},
                             {"sub": "FOODON:3", "pred": "RO:0002162", "obj": "FOODON:2"},
-                        ]
+                        ],
                     }
                 ]
             }

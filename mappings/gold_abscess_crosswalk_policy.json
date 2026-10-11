@@ -1,0 +1,719 @@
+{
+  "context_ids": [
+    "gold.ecosystem:1",
+    "gold.ecosystem:3381",
+    "gold.ecosystem:3592",
+    "gold.ecosystem:3595",
+    "gold.ecosystem:4",
+    "gold.ecosystem:4495",
+    "gold.ecosystem:5035",
+    "gold.ecosystem:5211",
+    "gold.ecosystem:6090",
+    "gold.ecosystem:6113",
+    "gold.ecosystem:6114",
+    "gold.ecosystem:6320",
+    "gold.ecosystem:6338",
+    "gold.ecosystem:6342",
+    "gold.ecosystem:6343",
+    "gold.ecosystem:6344",
+    "gold.ecosystem:6346",
+    "gold.ecosystem:6347",
+    "gold.ecosystem:6357",
+    "gold.ecosystem:6544",
+    "gold.ecosystem:7007",
+    "gold.ecosystem:7037",
+    "gold.ecosystem:7038"
+  ],
+  "current_mapping": {
+    "curator": "kg_review_native_evidence",
+    "decision": "QUARANTINE_EXACT",
+    "edges": "34",
+    "gold_label": "Abscess",
+    "mesh_id": "mesh:D000038",
+    "mesh_label": "Abscess",
+    "reason": "Native GOLD site-qualified ecosystem context does not establish exact equivalence to the generic MeSH descriptor; retain native nodes and location assertions, quarantine only the seven reviewed label-derived bridges (#1294).",
+    "verified_date": "2026-09-30"
+  },
+  "descendant_ids": [
+    "gold.ecosystem:6338",
+    "gold.ecosystem:6342",
+    "gold.ecosystem:6343",
+    "gold.ecosystem:6344",
+    "gold.ecosystem:6346",
+    "gold.ecosystem:6347",
+    "gold.ecosystem:7007",
+    "gold.ecosystem:7038"
+  ],
+  "ecosystem_ids": [
+    "gold.ecosystem:6338",
+    "gold.ecosystem:6342",
+    "gold.ecosystem:6343",
+    "gold.ecosystem:6344",
+    "gold.ecosystem:6346",
+    "gold.ecosystem:7007",
+    "gold.ecosystem:7038"
+  ],
+  "expected_locations": 34,
+  "historical_crosswalks": [
+    {
+      "ending_physical_line": 705423,
+      "full_row_sha256": "d0a6ca947709a8265015e27dfeab13662e1e7abf1a935ece1c6709742f361e92",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "mesh:D000038",
+        "original_object": "",
+        "predicate": "biolink:exact_match",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "skos:exactMatch",
+        "subject": "gold.ecosystem:6338"
+      }
+    },
+    {
+      "ending_physical_line": 705424,
+      "full_row_sha256": "5f6848ad9252999c6cf36ce28aea6e85011ceaee69c411747c8187284a8a3c77",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "mesh:D000038",
+        "original_object": "",
+        "predicate": "biolink:exact_match",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "skos:exactMatch",
+        "subject": "gold.ecosystem:6342"
+      }
+    },
+    {
+      "ending_physical_line": 705425,
+      "full_row_sha256": "009ceeac630bf0a3f985a71a780c00d0ab9b6c9abf0e4c4b274f04487b482a8a",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "mesh:D000038",
+        "original_object": "",
+        "predicate": "biolink:exact_match",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "skos:exactMatch",
+        "subject": "gold.ecosystem:6343"
+      }
+    },
+    {
+      "ending_physical_line": 705426,
+      "full_row_sha256": "8ec387245ac341be8cae6fd9d770057a0237a749579b480571fb35c9fffdae25",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "mesh:D000038",
+        "original_object": "",
+        "predicate": "biolink:exact_match",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "skos:exactMatch",
+        "subject": "gold.ecosystem:6344"
+      }
+    },
+    {
+      "ending_physical_line": 705427,
+      "full_row_sha256": "0a464efcfff6eec947450c8c4d8006198cc207a01488b483252d5d4647b8c7be",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "mesh:D000038",
+        "original_object": "",
+        "predicate": "biolink:exact_match",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "skos:exactMatch",
+        "subject": "gold.ecosystem:6346"
+      }
+    },
+    {
+      "ending_physical_line": 705573,
+      "full_row_sha256": "17c3079f70e0fa21ed5211d7d4ec3b11704938718bb0ce1a87aa1459e75bdd40",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "mesh:D000038",
+        "original_object": "",
+        "predicate": "biolink:exact_match",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "skos:exactMatch",
+        "subject": "gold.ecosystem:7007"
+      }
+    },
+    {
+      "ending_physical_line": 705576,
+      "full_row_sha256": "bf3504b14a50c72c5fb43cd34542a57a02114c629a3e81a95f62b6272902fb5f",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "mesh:D000038",
+        "original_object": "",
+        "predicate": "biolink:exact_match",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "skos:exactMatch",
+        "subject": "gold.ecosystem:7038"
+      }
+    }
+  ],
+  "issue": 1294,
+  "mesh_namespace": "http://id.nlm.nih.gov/mesh/2026/",
+  "mesh_statement_count": 53,
+  "mesh_statements_sha256": "3a96fde4801dd9b6e4018dc38ff0b0adde0b73972ca26b64828237380670ea3a",
+  "mesh_subjects": [
+    "D000038",
+    "M0000059"
+  ],
+  "native_selection_sha256": "8d0e356858c05093bd150bee2f69a9b99e4bb2b136f2b69bd0440d3f4bcb79d6",
+  "original_mapping": {
+    "curator": "claude",
+    "decision": "SITE",
+    "edges": "34",
+    "gold_label": "Abscess",
+    "mesh_id": "mesh:D000038",
+    "mesh_label": "Abscess",
+    "reason": "Body site / lesion. bacdive already uses mesh:D000038 as an isolation-source target, so this is consistent with an existing decision rather than a new one.",
+    "verified_date": "2026-08-21"
+  },
+  "reviewed_source_files": {
+    "raw/gold/GOLD_edges.tsv": {
+      "bytes": 184164126,
+      "sha256": "54982c25de9d2c820eeebc1452aeac0b034595921d04d55b810bf1d2b1e127e0"
+    },
+    "raw/gold/GOLD_nodes.tsv": {
+      "bytes": 121818977,
+      "sha256": "c13c21bdd04619c75ce16e63b05e51577b0cefec5b61765d383313f654ab3fae"
+    },
+    "raw/gold_ontology.owl": {
+      "bytes": 4602231,
+      "sha256": "5db2896ba89524f0576863d0543feddcf7f12fc84f7686f75356982c55aadd31"
+    },
+    "raw/mesh2026.nt.gz": {
+      "bytes": 120696702,
+      "sha256": "6997c24530cfbc698690e3d85ba5436e5ee56708f7f77073cbf8f502f3de7c5e"
+    },
+    "validation-upstream-20260930.DbltzT/worktree/mappings/gold_ecosystem_mesh_sites.tsv": {
+      "bytes": 3332,
+      "sha256": "2a5b75587601c6e17e1b4a34352afe7ec8c9fd26a7fc2244227a944bf177f847"
+    }
+  },
+  "target": "mesh:D000038",
+  "historical_locations": [
+    {
+      "ending_physical_line": 9757,
+      "full_row_sha256": "3a5b54c878f826c956e152272550fe283b6828ba538afc289938c3e47456b2c7",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6342",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0027541"
+      }
+    },
+    {
+      "ending_physical_line": 63423,
+      "full_row_sha256": "22c61038fd4ebd37f5b408cf858de1b09293dba21744e7927a6135d1f281ec1a",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6342",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0032278"
+      }
+    },
+    {
+      "ending_physical_line": 77409,
+      "full_row_sha256": "e1992b0f9283aaa2123ac01cfcc54af576c7dfb75065fbc8dc81cad1997a77c1",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6342",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0000388"
+      }
+    },
+    {
+      "ending_physical_line": 84221,
+      "full_row_sha256": "93eaf466088da2fd8da8bdca63717ab060f62f13ac4c4043b7341ccfda0c710c",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6346",
+        "original_object": "gold.ecosystem:6347",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0000369"
+      }
+    },
+    {
+      "ending_physical_line": 92453,
+      "full_row_sha256": "e26a9e255c90d6cc5baf34f2841f347ac0eaf4a79eb822c01eae8fb0152bf897",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6342",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0030708"
+      }
+    },
+    {
+      "ending_physical_line": 94418,
+      "full_row_sha256": "811f3bbaf4f8e25795d1305eaec15ced4d319560d5a97856c833f1ff68d6b590",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6342",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "NCBITaxon:585502"
+      }
+    },
+    {
+      "ending_physical_line": 101255,
+      "full_row_sha256": "b60a1c79c8c661714994e6e9dd8cebc7fa3e4f718d552d430fb785827c381ad2",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6338",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0001180"
+      }
+    },
+    {
+      "ending_physical_line": 102971,
+      "full_row_sha256": "d7eb6e5c08c72f5884f8c3635d49b5565b7cb8158dffbaf514634c700ce8cd6d",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6338",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0624835"
+      }
+    },
+    {
+      "ending_physical_line": 114812,
+      "full_row_sha256": "d9a23c6feb457bf0ec8636e047248477de9a49a6cc2d6e1cea5aa0e7d45d6402",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6342",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "NCBITaxon:525370"
+      }
+    },
+    {
+      "ending_physical_line": 117309,
+      "full_row_sha256": "d14dcb4466343e217f9c5f15d26c497c08260743c6f1a26aa95d86771d5eac9a",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6342",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "NCBITaxon:1125779"
+      }
+    },
+    {
+      "ending_physical_line": 124097,
+      "full_row_sha256": "8dabae5d7466aaf43205e3fc659943ca9ba3e6c1c8c85c1753349b1bd0305468",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6338",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0624834"
+      }
+    },
+    {
+      "ending_physical_line": 139546,
+      "full_row_sha256": "ba2e0d8ca4c0a79c2cdbf6993b8ce77ad9a81b55369e39746cccbb49823722bd",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6346",
+        "original_object": "gold.ecosystem:6347",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "NCBITaxon:1203611"
+      }
+    },
+    {
+      "ending_physical_line": 175911,
+      "full_row_sha256": "a43a2f04338f77fe3912c15a1d3a3784a216f5ece488d099ccef402d8bab8e53",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6344",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "NCBITaxon:1206723"
+      }
+    },
+    {
+      "ending_physical_line": 182107,
+      "full_row_sha256": "672a1d5d246f6ed10b6279b2ebf8af81bb03a5247e392c2721db8cf6b456c0ff",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6342",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0013011"
+      }
+    },
+    {
+      "ending_physical_line": 184147,
+      "full_row_sha256": "a0f85540be3d1edc84134c59125b6cffa6ab3b369540a2c0b793689ae9363bb3",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6342",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0032583"
+      }
+    },
+    {
+      "ending_physical_line": 209502,
+      "full_row_sha256": "ecfeb4e424b03ba4d8e4c880a78f232231731b4aac64eeea661c7d5e67f860cd",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6342",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "NCBITaxon:1123488"
+      }
+    },
+    {
+      "ending_physical_line": 211091,
+      "full_row_sha256": "0b64ccc54ac2ab09fe7e2bf52afc2a1c30eebf67c59c1ce9bfede5f9ab5e76bc",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6338",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0624833"
+      }
+    },
+    {
+      "ending_physical_line": 268684,
+      "full_row_sha256": "13503f1f1f8664d29f8add06210919212369dc2e197e6852ed8519b70ebd3b21",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6342",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0375798"
+      }
+    },
+    {
+      "ending_physical_line": 283333,
+      "full_row_sha256": "b81168598c9aee83c94e8d2735383b26fa574dc8a7b1f85ae71dda57ceb5194c",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6346",
+        "original_object": "gold.ecosystem:6347",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0012223"
+      }
+    },
+    {
+      "ending_physical_line": 294549,
+      "full_row_sha256": "aa6ac0f1e6c03c72cf5fad02c8d525c41184d49f034314fc556492d64384c85d",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:7007",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0615263"
+      }
+    },
+    {
+      "ending_physical_line": 297629,
+      "full_row_sha256": "e91632eb2acaf922e670aeba0262bb73141f499ac892f3b5c6a43a384241490d",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6338",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0624836"
+      }
+    },
+    {
+      "ending_physical_line": 312807,
+      "full_row_sha256": "9b0672adb46802447978d9a4b8e504213a1941843ad1e21df9345a6f8c08dbfd",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:7007",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0615264"
+      }
+    },
+    {
+      "ending_physical_line": 352808,
+      "full_row_sha256": "bb793ae7f3060112bc1c7a0ca786c89657f0ab1f4da210b820339bc23ac0ea87",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6343",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "NCBITaxon:1120944"
+      }
+    },
+    {
+      "ending_physical_line": 352836,
+      "full_row_sha256": "c75313ce045ce06ffbbdca36e82a277324952641d25e0c86c9664e6f3de23988",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6342",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "NCBITaxon:1170318"
+      }
+    },
+    {
+      "ending_physical_line": 367447,
+      "full_row_sha256": "08113f1fba5bd55e9f56ade235a03249a617461bd3b793e58bac21b87b0f335e",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:7007",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0615266"
+      }
+    },
+    {
+      "ending_physical_line": 371608,
+      "full_row_sha256": "fc0bd6bcc084ba5355fec3a25e36a1a6678d4dc8a1f4789dae251a0fcd222993",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6342",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "NCBITaxon:1136877"
+      }
+    },
+    {
+      "ending_physical_line": 407288,
+      "full_row_sha256": "4261f72ba85225bdb1e266588905ab859dcc689ce33abcb270531000aa1c7fe5",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6346",
+        "original_object": "gold.ecosystem:6347",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "NCBITaxon:1408286"
+      }
+    },
+    {
+      "ending_physical_line": 472892,
+      "full_row_sha256": "342b141e11c531a374d6d77ab27d94583d86127dbb8a9cc6ae8da250ca3a8577",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6342",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0125711"
+      }
+    },
+    {
+      "ending_physical_line": 474789,
+      "full_row_sha256": "1069903372e4d734006c5ae453a0e9179b59c136b11c9844810e9e70b5005584",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6342",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0375807"
+      }
+    },
+    {
+      "ending_physical_line": 483930,
+      "full_row_sha256": "772f864857416de84a2111a84ae97c4847ad3a18e0c735fc19df292faf8aee07",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6343",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "NCBITaxon:1204719"
+      }
+    },
+    {
+      "ending_physical_line": 498100,
+      "full_row_sha256": "bb4ba4669700d6d401ce90ffb9436f060d0e14fca9e50b94e15585b519c0dd43",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6342",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0012758"
+      }
+    },
+    {
+      "ending_physical_line": 516567,
+      "full_row_sha256": "3c8fffdbceea5866a3d49cccb9555bb434d6234e385c7628158c6a812d7d0dc9",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6342",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0013953"
+      }
+    },
+    {
+      "ending_physical_line": 570818,
+      "full_row_sha256": "4e5ab7f30312de0c9d9c7c57a0793ff8e71f03cb34e6478f2037a04a4c815267",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:6343",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0031965"
+      }
+    },
+    {
+      "ending_physical_line": 589104,
+      "full_row_sha256": "315de8bbe9be258fb47c5172a3b3cef39b19a44d332fde3baba51994052b7d3a",
+      "row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "gold.ecosystem:7007",
+        "original_object": "",
+        "predicate": "biolink:located_in",
+        "primary_knowledge_source": "infores:gold",
+        "publications": "",
+        "relation": "RO:0001025",
+        "subject": "gold:Go0615265"
+      }
+    }
+  ],
+  "version": 1
+}

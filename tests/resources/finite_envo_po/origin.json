@@ -1,0 +1,753 @@
+{
+  "native_files": {
+    "envo.json": {
+      "evidence_sha256": "621468efa1f7e0e26a86c0549dbdab7b30962377b0fdd6eeccd1529cdc693048",
+      "fixture_sha256": "7f20a5865c860dce7bdb3c381934df08f1fd88fac8ea334ddc4f0b56144e4b7d",
+      "full_source_sha256": "c3c288b9d95cf1e62b0146bcb2a365bdbd294b0072bbf2efab8819e5db8fff2b"
+    },
+    "po.owl": {
+      "evidence_sha256": "884a50fb5dcb9837292d7b5b390df580cf35b6e138b61a66ac8a59e478fac584",
+      "fixture_sha256": "4fc2345f3eac3b3f0c075098c2c816ebbb66fdb4d8d6c8c4a13670e4dda2bef0",
+      "full_source_sha256": "a066a2091b96dc6c960683a67936ccda4926afd96e4edb22df9e30feec16e9e0"
+    }
+  },
+  "policy_sha256": "eb622aea6bc3b291dafe0746e797b8dc01b1409c186c2b3a36f3a3f54717dd96",
+  "pristine_envo_review": {
+    "coexistence": "The same verbatim native excerpt includes all ten PREGO retired declarations and the complete finite-category witness.",
+    "interpretation": "Preserved native evidence only: not live category ancestry, a graph addition, or an automatic OBI-to-COB replacement.",
+    "issue": 1338,
+    "obsolete_side_branch": {
+      "id": "http://purl.obolibrary.org/obo/OBI_0000011",
+      "lbl": "obsolete planned process",
+      "meta": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/IAO_0100001",
+            "val": "http://purl.obolibrary.org/obo/COB_0000035"
+          }
+        ],
+        "definition": {
+          "val": "A process that realizes a plan which is the concretization of a plan specification."
+        },
+        "deprecated": true
+      },
+      "type": "CLASS"
+    },
+    "obsolete_side_branch_edge": {
+      "obj": "http://purl.obolibrary.org/obo/OBI_0000011",
+      "pred": "is_a",
+      "sub": "http://purl.obolibrary.org/obo/ENVO_01001436"
+    }
+  },
+  "scope": "Verbatim native selected declarations with original ontology metadata; smaller separately hashed fixtures, not full exports.",
+  "selected_native_evidence": {
+    "envo.json": {
+      "declarations": {
+        "BFO:0000003": {
+          "id": "http://purl.obolibrary.org/obo/BFO_0000003",
+          "lbl": "occurrent",
+          "meta": {
+            "definition": {
+              "val": "An entity that has temporal parts and that happens, unfolds or develops through time."
+            }
+          },
+          "type": "CLASS"
+        },
+        "ENVO:01000906": {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01000906",
+          "lbl": "aquaculture process",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "Expand the sites of occurrence listed as axioms as new terms emerge."
+              }
+            ],
+            "comments": [
+              "In 1988, the FAO introduced a definition of aquaculture which reduces its confusion with capture fisheries: Aquaculture is the farming of aquatic organisms, including fish, molluscs, crustaceans and aquatic plants. Farming implies some form of intervention in the rearing process to enhance production, such as regular stocking, feeding, protection from predators, etc. Farming also implies individual or corporate ownership of the stock being cultivated. For statistical purposes, aquatic organisms which are harvested by an individual or corporate body which has owned them throughout their rearing period contribute to aquaculture, while aquatic organisms which are exploitable by the public as a common property resources, with or without appropriate licences, are the harvest of fisheries."
+            ],
+            "definition": {
+              "val": "A process during which humans rear animals or plants in bodies of water for harvest and consumption.",
+              "xrefs": [
+                "http://www.fao.org/docrep/003/x6941e/x6941e04.htm#bm04"
+              ]
+            },
+            "synonyms": [
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "aquatic farming"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        "ENVO:01001254": {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01001254",
+          "lbl": "animal aquaculture process",
+          "meta": {
+            "definition": {
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+                    "val": "http://www.fao.org/docrep/003/x6941e/x6941e04.htm#bm04"
+                  }
+                ]
+              },
+              "val": "An aquaculture process during which humans rear animals."
+            },
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "animal aquaculture"
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "aquaculture of animals"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        "ENVO:01001255": {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01001255",
+          "lbl": "plant aquaculture process",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "This is unlikely to be limited to Viridiplantae, better axiomatisation should be sought in revisions."
+              }
+            ],
+            "definition": {
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+                    "val": "http://www.fao.org/docrep/003/x6941e/x6941e04.htm#bm04"
+                  }
+                ]
+              },
+              "val": "An aquaculture process during which humans rear plants."
+            },
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "plant aquaculture"
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "aquaculture of plants"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        "ENVO:01001436": {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01001436",
+          "lbl": "planned environmental usage process",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#created_by",
+                "val": "https://orcid.org/0000-0002-4366-3088"
+              }
+            ],
+            "definition": {
+              "val": "A planned process during which humans access and obtain resources, benefits, or services from a natural or anthropised ecosystem."
+            }
+          },
+          "type": "CLASS"
+        }
+      },
+      "named_parents": {
+        "BFO:0000003": [
+          "BFO:0000001"
+        ],
+        "ENVO:01000906": [
+          "ENVO:01001436"
+        ],
+        "ENVO:01001254": [
+          "ENVO:01000906"
+        ],
+        "ENVO:01001255": [
+          "ENVO:01000906"
+        ],
+        "ENVO:01001436": [
+          "BFO:0000003",
+          "OBI:0000011"
+        ]
+      },
+      "restrictions": {}
+    },
+    "po.owl": {
+      "declarations": {
+        "PO:0000003": {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/PO_0000003"
+          },
+          "children": [
+            {
+              "attributes": {
+                "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/PO_0009011"
+              },
+              "children": [],
+              "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+              "text": ""
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+              "text": "A plant structure (PO:0005679) which is a whole organism."
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasBroadSynonym",
+              "text": "genet (broad)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasBroadSynonym",
+              "text": "ramet (broad)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasDbXref",
+              "text": "FNA:4b610104-1bb0-4c6b-9bb9-e3cc61d11ac0"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasDbXref",
+              "text": "FNA:99508f62-7116-4e2b-90c0-19ff55ebd967"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasDbXref",
+              "text": "FNA:ba1b1bd5-75bd-4195-b11c-3aba08da08c2"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasDbXref",
+              "text": "FNA:c1ccca7d-2a98-4a9d-8603-c34b551935e0"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasDbXref",
+              "text": "FNA:e4dde193-57f7-4ab9-9d25-96b4ca0088ba"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasDbXref",
+              "text": "FNA:ec8c2064-2a67-43d7-8e14-aecfef5cf33b"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasDbXref",
+              "text": "FNA:f8f31520-e4bc-4430-9274-8dd3cee7ffd8"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasDbXref",
+              "text": "PO_GIT:538"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasDbXref",
+              "text": "PO_GIT:69"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasExactSynonym",
+              "text": "planta entera (Spanish, exact)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasExactSynonym",
+              "text": "植物体全体 (Japanese, exact)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasNarrowSynonym",
+              "text": "bush (narrow)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasNarrowSynonym",
+              "text": "frutex (narrow)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasNarrowSynonym",
+              "text": "frutices (narrow, plural)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasNarrowSynonym",
+              "text": "gametophyte (narrow)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasNarrowSynonym",
+              "text": "herb (narrow)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasNarrowSynonym",
+              "text": "liana (narrow)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasNarrowSynonym",
+              "text": "prothalli (narrow, plural)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasNarrowSynonym",
+              "text": "prothallium (narrow)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasNarrowSynonym",
+              "text": "prothallus (narrow)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasNarrowSynonym",
+              "text": "shrub (narrow)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasNarrowSynonym",
+              "text": "sporophyte (narrow)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasNarrowSynonym",
+              "text": "suffrutex (narrow)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasNarrowSynonym",
+              "text": "suffrutices (narrow, plural)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasNarrowSynonym",
+              "text": "tree (narrow)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasNarrowSynonym",
+              "text": "vine (narrow)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasNarrowSynonym",
+              "text": "woody clump (narrow)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasOBONamespace",
+              "text": "plant_anatomy"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasRelatedSynonym",
+              "text": "clonal colony (related)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasRelatedSynonym",
+              "text": "colony (related)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}id",
+              "text": "PO:0000003"
+            },
+            {
+              "attributes": {
+                "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/po#TraitNet"
+              },
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}inSubset",
+              "text": ""
+            },
+            {
+              "attributes": {
+                "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/po#reference"
+              },
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}inSubset",
+              "text": ""
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.w3.org/2000/01/rdf-schema#}comment",
+              "text": "Examples include plant embryo (PO:0009009), megagametophyte (PO:0025279) and microgametophyte (PO:0025280)."
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+              "text": "whole plant"
+            }
+          ],
+          "tag": "{http://www.w3.org/2002/07/owl#}Class",
+          "text": ""
+        },
+        "PO:0007033": {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/PO_0007033"
+          },
+          "children": [
+            {
+              "attributes": {
+                "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/PO_0009012"
+              },
+              "children": [],
+              "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+              "text": ""
+            },
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {},
+                  "children": [
+                    {
+                      "attributes": {
+                        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0000057"
+                      },
+                      "children": [],
+                      "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                      "text": ""
+                    },
+                    {
+                      "attributes": {
+                        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/PO_0000003"
+                      },
+                      "children": [],
+                      "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                      "text": ""
+                    }
+                  ],
+                  "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+              "text": ""
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+              "text": "A plant structure development stage (PO:0009012) that has as primary participant a whole plant (PO:0000003)."
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasDbXref",
+              "text": "PO_GIT:390"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasOBONamespace",
+              "text": "plant_structure_development_stage"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasRelatedSynonym",
+              "text": "Solanaceae whole plant growth stages (SGN:0000001) (related)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasRelatedSynonym",
+              "text": "cereal plant growth stage ontology (GRO:0007199) (related)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasRelatedSynonym",
+              "text": "maize growth stage (GRO:0007002) (related)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasRelatedSynonym",
+              "text": "plant growth stages in Arabidopsis (TAIR:0000021) (related)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasRelatedSynonym",
+              "text": "rice growth stage (GRO:0007040) (related)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasRelatedSynonym",
+              "text": "sorghum growth stage (GRO:0007124) (related)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasRelatedSynonym",
+              "text": "wheat, barley and oat growth stage (GRO:0007156) (related)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}id",
+              "text": "PO:0007033"
+            },
+            {
+              "attributes": {
+                "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/po#TraitNet"
+              },
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}inSubset",
+              "text": ""
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+              "text": "whole plant development stage"
+            }
+          ],
+          "tag": "{http://www.w3.org/2002/07/owl#}Class",
+          "text": ""
+        },
+        "PO:0009011": {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/PO_0009011"
+          },
+          "children": [
+            {
+              "attributes": {
+                "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/PO_0025131"
+              },
+              "children": [],
+              "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+              "text": ""
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+              "text": "A plant anatomical entity (PO:0025131) that is, or was, part of a plant, or was derived from a part of a plant."
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasDbXref",
+              "text": "PO_GIT:57"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasExactSynonym",
+              "text": "estructura vegetal (Spanish, exact)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasExactSynonym",
+              "text": "植物 構造 (Japanese, exact)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasOBONamespace",
+              "text": "plant_anatomy"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}id",
+              "text": "PO:0009011"
+            },
+            {
+              "attributes": {
+                "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/po#TraitNet"
+              },
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}inSubset",
+              "text": ""
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.w3.org/2000/01/rdf-schema#}comment",
+              "text": "'Part' includes both proper parts and the whole plant. CARO:0000003 'connected anatomical structure' is defined as: Material anatomical entity that is a single connected structure with inherent 3D shape, generated by coordinated expression of the organism's own genome."
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+              "text": "plant structure"
+            }
+          ],
+          "tag": "{http://www.w3.org/2002/07/owl#}Class",
+          "text": ""
+        },
+        "PO:0009012": {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/PO_0009012"
+          },
+          "children": [
+            {
+              "attributes": {
+                "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/BFO_0000015"
+              },
+              "children": [],
+              "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+              "text": ""
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+              "text": "A stage in the life of a plant structure (PO:0009011) during which the plant structure undergoes developmental processes."
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasAlternativeId",
+              "text": "PO:0007021"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasDbXref",
+              "text": "PO_GIT:185"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasDbXref",
+              "text": "TAIR:0000205"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasExactSynonym",
+              "text": "etapa de desarrollo de estructura vegetal (Spanish, exact)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasExactSynonym",
+              "text": "plant growth and development stage (exact)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasOBONamespace",
+              "text": "plant_structure_development_stage"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}hasRelatedSynonym",
+              "text": "Arabidopsis growth (related)"
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}id",
+              "text": "PO:0009012"
+            },
+            {
+              "attributes": {
+                "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/po#TraitNet"
+              },
+              "children": [],
+              "tag": "{http://www.geneontology.org/formats/oboInOwl#}inSubset",
+              "text": ""
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.w3.org/2000/01/rdf-schema#}comment",
+              "text": "Refers to GO:0032502 'developmental process', which includes growth, differentiation, and senescence, and BFO:0000003 'ocurrent'."
+            },
+            {
+              "attributes": {},
+              "children": [],
+              "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+              "text": "plant structure development stage"
+            }
+          ],
+          "tag": "{http://www.w3.org/2002/07/owl#}Class",
+          "text": ""
+        }
+      },
+      "named_parents": {
+        "PO:0000003": [
+          "PO:0009011"
+        ],
+        "PO:0007033": [
+          "PO:0009012"
+        ],
+        "PO:0009011": [
+          "PO:0025131"
+        ],
+        "PO:0009012": [
+          "BFO:0000015"
+        ]
+      },
+      "restrictions": {
+        "PO:0000003": [],
+        "PO:0007033": [
+          [
+            "RO:0000057",
+            "PO:0000003"
+          ]
+        ],
+        "PO:0009011": [],
+        "PO:0009012": []
+      }
+    }
+  }
+}

@@ -1,0 +1,2704 @@
+{
+  "graphs": [
+    {
+      "edges": [
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000465",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/COB_0000022"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00002403",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00001002"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00001002",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00001015"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00004331",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00001015"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00001173",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00001093"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00001093",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00001141"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_03460177",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00001173"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00001141",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00002254"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/BFO_0000040",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00002403"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005092",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00003424"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_03420116",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00004331"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_03413507",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005088"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_4565",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005088"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00002254",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005092"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_03411421",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005093"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_4565",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005093"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005088",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005105"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005093",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005105"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00003424",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005106"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005088",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005106"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005105",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002162",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005106"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005106",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005107"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005107",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005108"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00004348",
+          "pred": "http://purl.obolibrary.org/obo/RO_0000086",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005108"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005107",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005109"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005106",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005119"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005119",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005120"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00004348",
+          "pred": "http://purl.obolibrary.org/obo/RO_0000086",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005120"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005119",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005121"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005106",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005122"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005122",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005123"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00004348",
+          "pred": "http://purl.obolibrary.org/obo/RO_0000086",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005123"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005122",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005124"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005106",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005125"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005125",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005126"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00004348",
+          "pred": "http://purl.obolibrary.org/obo/RO_0000086",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005126"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005125",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005127"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005106",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005128"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005128",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005129"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00004348",
+          "pred": "http://purl.obolibrary.org/obo/RO_0000086",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005129"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005128",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005130"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005106",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005131"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005131",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005132"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00004348",
+          "pred": "http://purl.obolibrary.org/obo/RO_0000086",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005132"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005131",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005133"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005106",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005134"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005134",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005135"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00004348",
+          "pred": "http://purl.obolibrary.org/obo/RO_0000086",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005135"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00005134",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00005136"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/PO_0000003",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_03411013"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_03411013",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_03411017"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/PO_0000003",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_03411047"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_03411017",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_03411312"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_03411324",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_03411312"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_03411047",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_03411324"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_03413507",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_03411421"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_03411312",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_03413507"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/BFO_0000040",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_03420116"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00001015",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/FOODON_03460177"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/COB_0000022",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_131567"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_3398",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_1437183"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_4447",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_1437197"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_359160",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_147368"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_147368",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_147389"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_131567",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_2759"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_2759",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_33090"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_58024",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_3398"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_4479",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_359160"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_4734",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_38820"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_1437183",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_4447"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_38820",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_4479"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_147389",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_4564"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_4564",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_4565"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_1437197",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_4734"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_33090",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_58023"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_78536",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_58024"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NCBITaxon_58023",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/NCBITaxon_78536"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00004331",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/PO_0000003"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/PO_0009011",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/PO_0000003"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/PO_0025131",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/PO_0009011"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/BFO_0000040",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/PO_0025131"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/BFO_0000040",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000465"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0001062",
+          "pred": "is_a",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000465"
+        }
+      ],
+      "id": "http://purl.obolibrary.org/obo/foodon.owl",
+      "logicalDefinitionAxioms": [
+        {
+          "definedClassId": "http://purl.obolibrary.org/obo/FOODON_00005106",
+          "genusIds": [
+            "http://purl.obolibrary.org/obo/FOODON_00003424"
+          ],
+          "restrictions": [
+            {
+              "fillerId": "http://purl.obolibrary.org/obo/FOODON_00005105",
+              "propertyId": "http://purl.obolibrary.org/obo/RO_0002162"
+            }
+          ]
+        },
+        {
+          "definedClassId": "http://purl.obolibrary.org/obo/FOODON_00005108",
+          "genusIds": [
+            "http://purl.obolibrary.org/obo/FOODON_00005107"
+          ],
+          "restrictions": [
+            {
+              "fillerId": "http://purl.obolibrary.org/obo/FOODON_00004348",
+              "propertyId": "http://purl.obolibrary.org/obo/RO_0000086"
+            }
+          ]
+        },
+        {
+          "definedClassId": "http://purl.obolibrary.org/obo/FOODON_00005120",
+          "genusIds": [
+            "http://purl.obolibrary.org/obo/FOODON_00005119"
+          ],
+          "restrictions": [
+            {
+              "fillerId": "http://purl.obolibrary.org/obo/FOODON_00004348",
+              "propertyId": "http://purl.obolibrary.org/obo/RO_0000086"
+            }
+          ]
+        },
+        {
+          "definedClassId": "http://purl.obolibrary.org/obo/FOODON_00005123",
+          "genusIds": [
+            "http://purl.obolibrary.org/obo/FOODON_00005122"
+          ],
+          "restrictions": [
+            {
+              "fillerId": "http://purl.obolibrary.org/obo/FOODON_00004348",
+              "propertyId": "http://purl.obolibrary.org/obo/RO_0000086"
+            }
+          ]
+        },
+        {
+          "definedClassId": "http://purl.obolibrary.org/obo/FOODON_00005126",
+          "genusIds": [
+            "http://purl.obolibrary.org/obo/FOODON_00005125"
+          ],
+          "restrictions": [
+            {
+              "fillerId": "http://purl.obolibrary.org/obo/FOODON_00004348",
+              "propertyId": "http://purl.obolibrary.org/obo/RO_0000086"
+            }
+          ]
+        },
+        {
+          "definedClassId": "http://purl.obolibrary.org/obo/FOODON_00005129",
+          "genusIds": [
+            "http://purl.obolibrary.org/obo/FOODON_00005128"
+          ],
+          "restrictions": [
+            {
+              "fillerId": "http://purl.obolibrary.org/obo/FOODON_00004348",
+              "propertyId": "http://purl.obolibrary.org/obo/RO_0000086"
+            }
+          ]
+        },
+        {
+          "definedClassId": "http://purl.obolibrary.org/obo/FOODON_00005132",
+          "genusIds": [
+            "http://purl.obolibrary.org/obo/FOODON_00005131"
+          ],
+          "restrictions": [
+            {
+              "fillerId": "http://purl.obolibrary.org/obo/FOODON_00004348",
+              "propertyId": "http://purl.obolibrary.org/obo/RO_0000086"
+            }
+          ]
+        },
+        {
+          "definedClassId": "http://purl.obolibrary.org/obo/FOODON_00005135",
+          "genusIds": [
+            "http://purl.obolibrary.org/obo/FOODON_00005134"
+          ],
+          "restrictions": [
+            {
+              "fillerId": "http://purl.obolibrary.org/obo/FOODON_00004348",
+              "propertyId": "http://purl.obolibrary.org/obo/RO_0000086"
+            }
+          ]
+        }
+      ],
+      "meta": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "https://orcid.org/0000-0002-3410-4655"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "https://orcid.org/0000-0002-8844-9165"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Adrien Barton"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Anoosha Sehar"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Diane Alexander"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Emma Griffiths"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Fumiaki Toyoshima"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Gurinder Gosal"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Hande K\u00fc\u00e7\u00fck McGinty"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Lauren Chen"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Magalie Weber"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/contributor",
+            "val": "Rhiannon Cameron"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/date",
+            "val": "2025-05-21"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/description",
+            "val": "FoodOn is a consortium-driven project to build a comprehensive and easily accessible global farm-to-fork ontology about food, that accurately and consistently describes foods commonly known in cultures from around the world. See https://foodon.org for more details."
+          },
+          {
+            "pred": "http://purl.org/dc/terms/license",
+            "val": "https://creativecommons.org/licenses/by/4.0/"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/title",
+            "val": "FoodOn Food Ontology"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#default-namespace",
+            "val": "FOODON"
+          },
+          {
+            "pred": "http://www.w3.org/2002/07/owl#versionInfo",
+            "val": "2025-12-30"
+          }
+        ],
+        "version": "http://purl.obolibrary.org/obo/foodon/releases/2025-12-30/foodon.owl"
+      },
+      "nodes": [
+        {
+          "id": "http://purl.obolibrary.org/obo/BFO_0000040",
+          "lbl": "material entity",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000111",
+                "val": "material entity"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/agro.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/cdno.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/cob.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/dron.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/envo.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/obi.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ons.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/po.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/uberon.owl"
+              }
+            ],
+            "definition": {
+              "val": "An independent continuant that is spatially extended whose identity is independent of that of other entities and can be maintained through time."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/COB_0000022",
+          "lbl": "organism",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/cob.owl"
+              }
+            ],
+            "definition": {
+              "val": "A material entity that is a maximal functionally integrated unit that develops from a program encoded in a genome"
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00001002",
+          "lbl": "food product",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "Damion Dooley"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+                "val": "Foodon product type"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://en.wikipedia.org/wiki/Food"
+              }
+            ],
+            "comments": [
+              "The FoodOn \"food product\"class is provided as a branch under which new food product categories and food products themselves can be placed. Here classes are provided to differentiate a food product by its food composition, processing and/or consumption characteristics. This avoids brand name products but it may include generic food dish categories. It has a much greater depth and polyhierarchy than other agency product type schemes have in an effort to group related products together.  The upper level basis of this tree originated in the environment ontology (ENVO) and from the US Code of Federal Regulations."
+            ],
+            "definition": {
+              "val": "Food material for humans and animals which is processed with the intention that it be consumable as a whole or added to other food products."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00001015",
+          "lbl": "plant food product",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000122"
+              },
+              {
+                "pred": "http://purl.org/dc/elements/1.1/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              }
+            ],
+            "definition": {
+              "val": "A food product which has as a defining ingredient some plant material."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00001093",
+          "lbl": "cereal grain food product",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00001141",
+          "lbl": "wheat food product",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2023-05-03T04:59:00Z"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "https://bioregistry.io/reference/siren:F10142"
+              }
+            ],
+            "comments": [
+              "SIREN DB annotation:\n* seed (anatomical part) FOODON:03420155"
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00001173",
+          "lbl": "plant seed food product",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00002254",
+          "lbl": "soft wheat food product",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00002403",
+          "lbl": "food material",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://en.wikipedia.org/wiki/Food"
+              }
+            ],
+            "comments": [
+              "This class is the top of FOODON's main food product hierarchy which is described in the https://www.foodon.org website, and can be searched in lookup services like https://www.ebi.ac.uk/ols/"
+            ],
+            "definition": {
+              "val": "Any substance that can be consumed by an organism to satisfy nutritional or other health needs, or to provide a social or organoleptic food experience"
+            },
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "food"
+              },
+              {
+                "pred": "hasExactSynonym",
+                "val": "foodstuff"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "nourishment"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "sustenance"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00003424",
+          "lbl": "soft white wheat kernel",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2020-09-09T16:32:05Z"
+              }
+            ],
+            "definition": {
+              "val": "A caryopsis fruit of a soft white wheat plant."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00004331",
+          "lbl": "plant material",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000122"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2023-03-02T22:31:04Z"
+              }
+            ],
+            "definition": {
+              "val": "Anatomical or other piece(s) or substance derived from one or more plants."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005088",
+          "lbl": "winter wheat plant",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A winter wheat plant."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005092",
+          "lbl": "soft wheat kernel",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A caryopsis fruit of a soft wheat plant."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005093",
+          "lbl": "soft white wheat plant",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A soft white wheat plant."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005105",
+          "lbl": "soft white winter wheat plant",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://grainscanada.gc.ca/en/grain-quality/grain-grading/wheat-classes.html"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A soft winter wheat plant."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005106",
+          "lbl": "soft white winter wheat kernel",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A caryopsis fruit of a soft white winter wheat plant."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005107",
+          "lbl": "Piranha soft white winter wheat kernel",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://varietyselection.cahnrs.wsu.edu/Home/VarietyDetails/1321"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A caryopsis fruit of a Piranha soft white winter wheat plant."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005108",
+          "lbl": "Piranha soft white winter wheat kernel (raw)",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://varietyselection.cahnrs.wsu.edu/Home/VarietyDetails/1321"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A raw Piranha soft white wheat kernel."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005109",
+          "lbl": "Piranha soft white winter wheat kernel (dried raw)",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://varietyselection.cahnrs.wsu.edu/Home/VarietyDetails/1321"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A raw Piranha soft white kernel that has been dried."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005119",
+          "lbl": "Artdedo soft white winter wheat kernel",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://limagraincerealseeds.com/pacific-northwest/soft-white-winter-wheat-seed/lcs-artdeco/"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A caryopsis fruit of an Artdedo soft white winter plant."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005120",
+          "lbl": "Artdedo soft white winter wheat kernel (raw)",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://limagraincerealseeds.com/pacific-northwest/soft-white-winter-wheat-seed/lcs-artdeco/"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A raw Artdedo soft white winter wheat kernel."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005121",
+          "lbl": "Artdedo soft white winter wheat kernel (dried raw)",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://limagraincerealseeds.com/pacific-northwest/soft-white-winter-wheat-seed/lcs-artdeco/"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A raw Artdedo soft white winter wheat kernel that has been dried."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005122",
+          "lbl": "Shine soft white winter wheat kernel",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://limagraincerealseeds.com/lcs-shine/"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A caryopsis fruit of a Shine soft white winter wheat plant."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005123",
+          "lbl": "Shine soft white winter wheat kernel (raw)",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://limagraincerealseeds.com/lcs-shine/"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A raw Shine soft white winter wheat kernel."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005124",
+          "lbl": "Shine soft white winter wheat kernel (dried raw)",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://limagraincerealseeds.com/lcs-shine/"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A raw Shine soft white winter kernel that has been dried."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005125",
+          "lbl": "Mela soft white winter wheat kernel",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://s3.wp.wsu.edu/uploads/sites/3122/2022/09/Mela-CL-rack-card.pdf"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A caryopsis fruit of a Mela soft winter wheat plant."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005126",
+          "lbl": "Mela soft white winter wheat kernel (raw)",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://s3.wp.wsu.edu/uploads/sites/3122/2022/09/Mela-CL-rack-card.pdf"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A raw Mela soft white winter kernel."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005127",
+          "lbl": "Mela soft white winter wheat kernel (dried raw)",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://s3.wp.wsu.edu/uploads/sites/3122/2022/09/Mela-CL-rack-card.pdf"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A raw Mela soft white winter kernel that has been dried."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005128",
+          "lbl": "Stingray soft white winter wheat kernel",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://wsu.technologypublisher.com/technology/35312"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A caryopsis fruit of a Stingray soft white winter wheat plant."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005129",
+          "lbl": "Stingray soft white winter wheat kernel (raw)",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://wsu.technologypublisher.com/technology/35312"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A raw Stingray soft white winter kernel."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005130",
+          "lbl": "Stingray soft white winter wheat kernel (dried raw)",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://wsu.technologypublisher.com/technology/35312"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A raw Stingray soft white winter kernel that has been dried."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005131",
+          "lbl": "Tandem soft white winter wheat kernel",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://limagraincerealseeds.com/pacific-northwest/soft-white-winter-wheat-seed/norwest-tandem/"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A caryopsis fruit of a Tandem soft white winter wheat plant."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005132",
+          "lbl": "Tandem soft white winter wheat kernel (raw)",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://limagraincerealseeds.com/pacific-northwest/soft-white-winter-wheat-seed/norwest-tandem/"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A raw Tandem soft white winter wheat kernel."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005133",
+          "lbl": "Tandem soft white winter wheat kernel (dried raw)",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://limagraincerealseeds.com/pacific-northwest/soft-white-winter-wheat-seed/norwest-tandem/"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A raw Tandem soft white winter wheat kernel that has been dried."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005134",
+          "lbl": "Hailey soft white winter wheat kernel",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://washingtoncrop.com/soft-white-winter-wheat/v/PNW%20Hailey"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A caryopsis fruit of a Hailey soft white winter wheat plant."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005135",
+          "lbl": "Hailey soft white winter wheat kernel (raw)",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://washingtoncrop.com/soft-white-winter-wheat/v/PNW%20Hailey"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A raw Hailey soft white winter kernel."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00005136",
+          "lbl": "Hailey soft white winter wheat kernel (dried raw)",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://washingtoncrop.com/soft-white-winter-wheat/v/PNW%20Hailey"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0001-5275-8866"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-0995-0278"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8461-9745"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0002-8844-9165"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "https://orcid.org/0000-0003-3653-3805"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/date",
+                "val": "2024-06-16T13:14:52Z"
+              }
+            ],
+            "definition": {
+              "val": "A raw Hailey soft white winter kernel  that has been dried."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_03411013",
+          "lbl": "plant used for producing extract or concentrate",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000428"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=B1013"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_03411017",
+          "lbl": "oil-producing plant",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000428"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=B1017"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_03411047",
+          "lbl": "grain or seed-producing plant",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000428"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=B1047"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_03411312",
+          "lbl": "wheat plant",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000428"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "WIKIPEDIA:Wheat"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=B1312"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasSynonym",
+                "val": "triticum spp."
+              }
+            ],
+            "definition": {
+              "val": "Wheat (*Triticum* spp.) is a domesticated grass from the Levant that is cultivated worldwide. Major cultivated species of wheat:\n\n    * Common wheat or Bread wheat (*Triticum aestivum*) A hexaploid species that is the most widely cultivated in the world.\n\n    * Durum (*Triticum durum*) The only tetraploid form of wheat widely used today, and the second most widely cultivated wheat.\n\n    * Einkorn (*Triticum monococcum*) A diploid species with wild and cultivated variants. Domesticated at the same time as emmer wheat, but never reached the same importance.\n\n    * Emmer (*Triticum dicoccon*) A tetraploid species, cultivated in ancient times but no longer in widespread use.\n\n    * Spelt (*Triticum spelta*) Another hexaploid species cultivated in limited quantities."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_03411324",
+          "lbl": "grain plant",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000122"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "Damion Dooley"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://en.wikipedia.org/wiki/Cereal"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=B1324"
+              },
+              {
+                "pred": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+                "val": "https://en.wikipedia.org/wiki/List_of_edible_seeds"
+              }
+            ],
+            "definition": {
+              "val": "Any grass cultivated (grown) for the edible components of its grain."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_03411421",
+          "lbl": "soft wheat plant",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000428"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=B1421"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasSynonym",
+                "val": "triticum aestivum"
+              }
+            ],
+            "definition": {
+              "val": "Soft wheat (red or white) are lower protein (gluten), higher starch varieties used for cakes, pie crusts, biscuits and muffins."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_03413507",
+          "lbl": "common wheat plant",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000428"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://eol.org/pages/1115240"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://purl.obolibrary.org/obo/NCBITaxon_4565"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.ars-grin.gov/cgi-bin/npgs/html/taxon.pl?40544"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.ars-grin.gov/cgi-bin/npgs/html/taxon.pl?410383"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.itis.gov/servlet/SingleRpt/SingleRpt?search_topic=TSN&search_value=42237"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=B3507"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasSynonym",
+                "val": "triticum aestivum"
+              }
+            ],
+            "synonyms": [
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "Triticum aestivum L."
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "Triticum aestivum subsp. aestivum"
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "MANSFELD:34204"
+              },
+              {
+                "val": "PLANTS:TRAE"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_03420116",
+          "lbl": "organism material",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000428"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "This was renamed from \"part of organism\" (and from LanguaL's original \"part of plant or animal\") to encompass organism material that is produced by an animal or plant rather than \"part of\" it, such as an egg, and might not be countable per se, such as milk. Additionally the existing definition's \"from which a food product or its major ingredient is derived.\"was removed as an unnecessary constraint. [2023/03/02]"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=B0001"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=B1564"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=C0116"
+              }
+            ],
+            "comments": [
+              "LanguaL curation note: \"e.g. *LEAF*, *ROOT OR TUBER*, *ORGAN MEAT*, *MILK* OR *EGG*; it also includes components of parts, such as *CREAM*, and extracts, concentrates or isolates, such as *PROTEIN EXTRACT* or *SUGAR*.\"",
+              "Old definition as of Feb 25, 2025: Anatomical or other part(s) or substances derived from plant or animal or fungal organisms."
+            ],
+            "definition": {
+              "val": "Material which is distinguished primarily by the organism(s) it derives from."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_03460177",
+          "lbl": "plant seed or nut food product",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "This disjunction is provided for food indexers who used the LanguaL category per guidelines.  Currently, by specifying the more specific nut or seed as ingredient instead, this category can be inferred."
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+                "val": "nut or seed added"
+              }
+            ],
+            "comments": [
+              "LanguaL curation note: With the exception of peanut (see *PEANUT OR PEANUT BUTTER ADDED*), used when a nut or seed ingredient is the second ingredient in order of predominance."
+            ],
+            "xrefs": [
+              {
+                "val": "langual:H0177"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_131567",
+          "lbl": "cellular organism",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/cob.owl"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_1437183",
+          "lbl": "Mesangiospermae",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_1437197",
+          "lbl": "Petrosaviidae",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_147368",
+          "lbl": "Pooideae",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_147389",
+          "lbl": "Triticeae",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_2759",
+          "lbl": "Eukaryota",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+              }
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "eukaryotes"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_33090",
+          "lbl": "Viridiplantae",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+              }
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "Chlorophyta/Embryophyta group"
+              },
+              {
+                "pred": "hasExactSynonym",
+                "val": "chlorophyte/embryophyte group"
+              },
+              {
+                "pred": "hasExactSynonym",
+                "val": "green plants"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_3398",
+          "lbl": "Magnoliopsida",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+              }
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "angiosperms"
+              },
+              {
+                "pred": "hasExactSynonym",
+                "val": "flowering plants"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_359160",
+          "lbl": "BOP clade",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+              }
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "BEP clade"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_38820",
+          "lbl": "Poales",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_4447",
+          "lbl": "Liliopsida",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+              }
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "monocots"
+              },
+              {
+                "pred": "hasExactSynonym",
+                "val": "monocotyledons"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_4479",
+          "lbl": "Poaceae",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+              }
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "grass family"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_4564",
+          "lbl": "Triticum",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+              }
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "wheats"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_4565",
+          "lbl": "Triticum aestivum",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+              }
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "Canadian hard winter wheat"
+              },
+              {
+                "pred": "hasExactSynonym",
+                "val": "bread wheat"
+              },
+              {
+                "pred": "hasExactSynonym",
+                "val": "common wheat"
+              },
+              {
+                "pred": "hasExactSynonym",
+                "val": "wheat"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_4734",
+          "lbl": "commelinids",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_58023",
+          "lbl": "Tracheophyta",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+              }
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "vascular plants"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_58024",
+          "lbl": "Spermatophyta",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+              }
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "seed plants"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NCBITaxon_78536",
+          "lbl": "Euphyllophyta",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/ncbitaxon.owl"
+              }
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "euphyllophytes"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/PO_0000003",
+          "lbl": "whole plant",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/po.owl"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=B1347"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "plant_anatomy"
+              }
+            ],
+            "comments": [
+              "Examples include plant embryo (PO:0009009), megagametophyte (PO:0025279) and microgametophyte (PO:0025280)."
+            ],
+            "definition": {
+              "val": "A plant structure (PO:0005679) which is a whole organism."
+            },
+            "subsets": [
+              "http://purl.oboInOwllibrary.org/oboInOwl/po#TraitNet",
+              "http://purl.oboInOwllibrary.org/oboInOwl/po#reference"
+            ],
+            "synonyms": [
+              {
+                "pred": "hasBroadSynonym",
+                "val": "genet (broad)"
+              },
+              {
+                "pred": "hasBroadSynonym",
+                "val": "ramet (broad)"
+              },
+              {
+                "pred": "hasExactSynonym",
+                "val": "planta entera (Spanish, exact)"
+              },
+              {
+                "pred": "hasExactSynonym",
+                "val": "\u690d\u7269\u4f53\u5168\u4f53 (Japanese, exact)"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "bush (narrow)"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "frutex (narrow)"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "frutices (narrow, plural)"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "gametophyte (narrow)"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "herb (narrow)"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "liana (narrow)"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "prothalli (narrow, plural)"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "prothallium (narrow)"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "prothallus (narrow)"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "shrub (narrow)"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "sporophyte (narrow)"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "suffrutex (narrow)"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "suffrutices (narrow, plural)"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "tree (narrow)"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "vine (narrow)"
+              },
+              {
+                "pred": "hasNarrowSynonym",
+                "val": "woody clump (narrow)"
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "clonal colony (related)"
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "colony (related)"
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "FNA:4b610104-1bb0-4c6b-9bb9-e3cc61d11ac0"
+              },
+              {
+                "val": "FNA:99508f62-7116-4e2b-90c0-19ff55ebd967"
+              },
+              {
+                "val": "FNA:ba1b1bd5-75bd-4195-b11c-3aba08da08c2"
+              },
+              {
+                "val": "FNA:c1ccca7d-2a98-4a9d-8603-c34b551935e0"
+              },
+              {
+                "val": "FNA:e4dde193-57f7-4ab9-9d25-96b4ca0088ba"
+              },
+              {
+                "val": "FNA:ec8c2064-2a67-43d7-8e14-aecfef5cf33b"
+              },
+              {
+                "val": "FNA:f8f31520-e4bc-4430-9274-8dd3cee7ffd8"
+              },
+              {
+                "val": "PO_GIT:538"
+              },
+              {
+                "val": "PO_GIT:69"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/PO_0009011",
+          "lbl": "plant structure",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/po.owl"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasDbXref",
+                "val": "http://www.langual.org/langual_thesaurus.asp?termid=C0174"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "plant_anatomy"
+              }
+            ],
+            "comments": [
+              "'Part' includes both proper parts and the whole plant. CARO:0000003 'connected anatomical structure' is defined as: Material anatomical entity that is a single connected structure with inherent 3D shape, generated by coordinated expression of the organism's own genome."
+            ],
+            "definition": {
+              "val": "A plant anatomical entity (PO:0025131) that is, or was, part of a plant, or was derived from a part of a plant."
+            },
+            "subsets": [
+              "http://purl.oboInOwllibrary.org/oboInOwl/po#TraitNet"
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "estructura vegetal (Spanish, exact)"
+              },
+              {
+                "pred": "hasExactSynonym",
+                "val": "\u690d\u7269 \u69cb\u9020 (Japanese, exact)"
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "PO_GIT:57"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/PO_0025131",
+          "lbl": "plant anatomical entity",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/po.owl"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#created_by",
+                "val": "rwalls"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#creation_date",
+                "val": "2010-11-15T11:41:38Z"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "plant_anatomy"
+              }
+            ],
+            "comments": [
+              "Includes both material entities such as plant structures and immaterial entities such as plant anatomical spaces. CARO:0000000 'anatomical entity' is defined as: A part of a cellular organism that is either an immaterial entity or a material entity with granularity aboove the level of a protein complex.  Or, a substance produced by a cellular organism with granularity above the level of a protein complex.  Refers to BFO:0000004 'independent continuant'."
+            ],
+            "definition": {
+              "val": "An anatomical entity that is or was part of a plant."
+            },
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "entidad anat&#243mica vegetal (Spanish, exact)"
+              },
+              {
+                "pred": "hasExactSynonym",
+                "val": "\u690d\u7269 \u89e3\u5256\u5b66\uff08\u5f62\u614b\uff09\u7684\u5b9f\u4f53 (Japanese, exact)"
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "PO_GIT:224"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000465",
+          "lbl": "material anatomical entity",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/cob.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/uberon.owl"
+              }
+            ],
+            "definition": {
+              "val": "Anatomical entity that has mass."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001062",
+          "lbl": "anatomical entity",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/cob.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/po.owl"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                "val": "http://purl.obolibrary.org/obo/uberon.owl"
+              }
+            ],
+            "definition": {
+              "val": "Biological entity that is either an individual member of a biological species or constitutes the structural organization of an individual member of a biological species."
+            }
+          },
+          "type": "CLASS"
+        }
+      ]
+    }
+  ]
+}

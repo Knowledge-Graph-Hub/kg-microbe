@@ -1,0 +1,3 @@
+id	category	name	description	provided_by
+NCBITaxon:1	biolink:OrganismTaxon	fixture taxon		infores:fixture
+CHEBI:1	biolink:ChemicalEntity	fixture chemical		infores:fixture

@@ -1,0 +1,13 @@
+{
+  "chebi": {
+    "CHEBI:15377": "water",
+    "CHEBI:15378": "hydron",
+    "CHEBI:27732": "fixture polymer base"
+  },
+  "go": {
+    "GO:0000001": "fixture GO activity"
+  },
+  "eccode": {
+    "EC:1.2.3.4": "fixture EC activity"
+  }
+}

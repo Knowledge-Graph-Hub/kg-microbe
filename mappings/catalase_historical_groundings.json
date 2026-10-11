@@ -1,0 +1,120 @@
+{
+  "claims": [
+    {
+      "line": 452,
+      "row": {
+        "cas_rn": "",
+        "chebi_id": "",
+        "culturemech_term_id": "",
+        "example_media": "CultureMech:001112; CultureMech:004177; CultureMech:005582",
+        "ingredient_name": "Catalase",
+        "kg_microbe_node_id": "",
+        "mapping_status": "MAPPED",
+        "mim_id": "NCIT:C61062",
+        "occurrence_count": "26",
+        "synonyms": "Catalase (Sigma C--10)"
+      },
+      "source_path": "mappings/culturebotai_reviewed_ingredients.tsv",
+      "source_sha256": "832dcda804efb66c0a4224b3c359091760e1c0df3f00a0582c33f0b3f538372f"
+    },
+    {
+      "line": 2560,
+      "row": {
+        "cas_rn": "",
+        "chebi_id": "",
+        "culturemech_term_id": "",
+        "example_media": "CultureMech:007617",
+        "ingredient_name": "Catalase (Sigma C--10)",
+        "kg_microbe_node_id": "",
+        "mapping_status": "MAPPED",
+        "mim_id": "NCIT:C61062",
+        "occurrence_count": "1",
+        "synonyms": "Catalase (Sigma C--10)"
+      },
+      "source_path": "mappings/culturebotai_reviewed_ingredients.tsv",
+      "source_sha256": "832dcda804efb66c0a4224b3c359091760e1c0df3f00a0582c33f0b3f538372f"
+    },
+    {
+      "line": 590691,
+      "row": {
+        "comment": "synonym",
+        "confidence": "",
+        "mapping_date": "2026-09-24",
+        "mapping_justification": "semapv:LexicalMatching",
+        "object_category": "biolink:OntologyClass",
+        "object_formula": "",
+        "object_id": "NCIT:C61062",
+        "object_label": "Catalase",
+        "object_source": "obo:ncit.owl",
+        "predicate_id": "skos:closeMatch",
+        "source": "native_ontology:ncit",
+        "subject_id": "kgm.name:cat",
+        "subject_label": "CAT"
+      },
+      "source_path": "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
+      "source_sha256": "59464e08017cc907a1240a4378d2462efc9e2c1b9d6c3cf0b08b4344ef695ae8"
+    },
+    {
+      "line": 590692,
+      "row": {
+        "comment": "synonym",
+        "confidence": "",
+        "mapping_date": "2026-09-24",
+        "mapping_justification": "semapv:LexicalMatching",
+        "object_category": "biolink:OntologyClass",
+        "object_formula": "",
+        "object_id": "NCIT:C61062",
+        "object_label": "Catalase",
+        "object_source": "obo:ncit.owl",
+        "predicate_id": "skos:closeMatch",
+        "source": "native_ontology:ncit",
+        "subject_id": "kgm.name:cat_protein",
+        "subject_label": "CAT Protein"
+      },
+      "source_path": "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
+      "source_sha256": "59464e08017cc907a1240a4378d2462efc9e2c1b9d6c3cf0b08b4344ef695ae8"
+    },
+    {
+      "line": 590693,
+      "row": {
+        "comment": "canonical_name",
+        "confidence": "",
+        "mapping_date": "2026-09-24",
+        "mapping_justification": "semapv:LexicalMatching",
+        "object_category": "biolink:OntologyClass",
+        "object_formula": "",
+        "object_id": "NCIT:C61062",
+        "object_label": "Catalase",
+        "object_source": "obo:ncit.owl",
+        "predicate_id": "skos:exactMatch",
+        "source": "native_ontology:ncit",
+        "subject_id": "kgm.name:catalase",
+        "subject_label": "Catalase"
+      },
+      "source_path": "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
+      "source_sha256": "59464e08017cc907a1240a4378d2462efc9e2c1b9d6c3cf0b08b4344ef695ae8"
+    },
+    {
+      "line": 590694,
+      "row": {
+        "comment": "synonym",
+        "confidence": "",
+        "mapping_date": "2026-09-24",
+        "mapping_justification": "semapv:LexicalMatching",
+        "object_category": "biolink:OntologyClass",
+        "object_formula": "",
+        "object_id": "NCIT:C61062",
+        "object_label": "Catalase",
+        "object_source": "obo:ncit.owl",
+        "predicate_id": "skos:closeMatch",
+        "source": "native_ontology:ncit",
+        "subject_id": "kgm.name:ec_11116",
+        "subject_label": "EC 1.11.1.6"
+      },
+      "source_path": "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
+      "source_sha256": "59464e08017cc907a1240a4378d2462efc9e2c1b9d6c3cf0b08b4344ef695ae8"
+    }
+  ],
+  "scope": "Historical rejected claims only; never active resolution evidence",
+  "version": 1
+}

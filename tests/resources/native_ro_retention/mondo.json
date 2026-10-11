@@ -1,0 +1,2303 @@
+{
+  "graphs": [
+    {
+      "edges": [
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007283",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/CL_0000015"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007596",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/CL_0000233"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0009566",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/CL_0000586"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007601",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/CL_0008028"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/ENVO_03000010",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002229",
+          "sub": "http://purl.obolibrary.org/obo/ENVO_03000036"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000002",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000037"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000096",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000097"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000097",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000098"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000098",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000099"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000099",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000100"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000100",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000101"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000101",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000102"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000102",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000103"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000103",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000104"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000104",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000105"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000105",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000106"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000106",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000107"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000107",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000108"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000108",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000109"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000109",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000110"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000110",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000111"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000111",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000112"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000112",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000113"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000113",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000114"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000114",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000115"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000115",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000116"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000116",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000117"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000117",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000118"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000118",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000119"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000119",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000120"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000120",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000121"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000121",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000122"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000122",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000123"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000123",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000124"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000124",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000125"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000125",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000126"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000126",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000127"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000127",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000128"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000128",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000129"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000129",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000130"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000130",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000131"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000131",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000132"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000132",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000133"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000133",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000134"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000134",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000135"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000135",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000136"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000136",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000137"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000137",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000138"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000138",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000139"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000139",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000140"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000140",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000141"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000141",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000142"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000142",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000143"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000143",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000144"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000268",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000237"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000237",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000238"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000238",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000239"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000239",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000240"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000264",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000258"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000262",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000261"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000045",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000264"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000261",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000265"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000266",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000267"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000246",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000270"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000265",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0000271"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/HsapDv_0000045",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/HsapDv_0010000"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007608",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000004"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007276",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000007"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007586",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000017"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000019"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0060073",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000057"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000071",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002497",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000061"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0009790",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002082",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000068"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0002164",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002082",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000069"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000068",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000069"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000104",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002229",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000071"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000080",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002285",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000081"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000081"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000107",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002488",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000085"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000107",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000085"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0009791",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002082",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000092"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000071",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002230",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000104"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000104",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002223",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000106"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0040016",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002082",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000107"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000106",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002087",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000107"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007369",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002082",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000109"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0001841",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002082",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000110"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0048513",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002082",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000111"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0070295",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000362"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007601",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000411"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000068",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002489",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000922"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000068",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002493",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000922"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000949"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000955"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007613",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000956"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0022414",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000990"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000990"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0042713",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0000999"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0003055",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002285",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001003"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001004"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001007"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001008"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001009"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001016"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007600",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001032"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0050912",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001033"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001033"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0055074",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001132"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0003094",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001230"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0055127",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001352"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001434"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000068",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002488",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001530"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0003039",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001629"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0071625",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001734"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007586",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001836"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007613",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001954"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007586",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001970"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0008015",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001981"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0050911",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0001997"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0055074",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002046"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002101"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007601",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002104"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007605",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002105"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0045058",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002123"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007613",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002129"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007613",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002191"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0040011",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002204"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002204"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000068",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002488",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002328"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002330"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000110",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002488",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002342"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0060048",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002351"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002405"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002416"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002423"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0002418",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002285",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002513"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000068",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002488",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002529"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0002529"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000109",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002488",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0003077"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0022414",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0003133"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0050912",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0003212"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0071625",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0003706"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000109",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002488",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0003886"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000111",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0003886"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0071626",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0003913"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0019233",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0003942"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0050975",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0003942"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0005625",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002285",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0004114"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0004122"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0004456"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0060005",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0004681"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000068",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002489",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0004716"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000068",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002493",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0004716"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0040011",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0004720"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/NBO_0000355",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0004720"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0002119",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002082",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0004729"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0002418",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002285",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0004763"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0004770"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0030421",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0004916"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0070295",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0005211"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0005409"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0005725"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0003094",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0005749"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007585",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0005928"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0009672",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002285",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0006272"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0048240",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0006530"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_1902093",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0006530"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000107",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002489",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0007010"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000107",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002493",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0007010"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000112",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002489",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0007021"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000112",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002493",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0007021"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000113",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002489",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0007023"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000113",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002493",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0007023"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000109",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002488",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0007026"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007626",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0007812"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007620",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0008811"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000068",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0009671"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0005625",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002285",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0009692"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000092",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002489",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0009953"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0071626",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0011648"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002492",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0012125"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0001659",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0013719"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007585",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0014398"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/UBERON_0000111",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002496",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0016880"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0030432",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0018261"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0071625",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0034681"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0001659",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_0035549"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/GO_0007601",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002216",
+          "sub": "http://purl.obolibrary.org/obo/UBERON_8440011"
+        }
+      ],
+      "id": "http://purl.obolibrary.org/obo/mondo.owl",
+      "nodes": [
+        {
+          "id": "http://protege.stanford.edu/plugins/owl/protege#defaultLanguage",
+          "propertyType": "ANNOTATION",
+          "type": "PROPERTY"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/CL_0000015",
+          "lbl": "male germ cell",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/CL_0000233",
+          "lbl": "platelet",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/CL_0000586",
+          "lbl": "germ cell",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/CL_0008028",
+          "lbl": "visual system neuron",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_03000010",
+          "lbl": "material transport process",
+          "meta": {
+            "definition": {
+              "val": "A process during which material is displaced from its original location and transported either to a new location or back to the original location."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_03000036",
+          "lbl": "sedimentation in a water body",
+          "meta": {
+            "definition": {
+              "val": "A material accumulation process during which solid particles are pulled through a water body by gravitation or centrifugal force and which ends when they settle on a solid surface."
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0001659",
+          "lbl": "temperature homeostasis",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0001841",
+          "lbl": "neural tube formation",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0002119",
+          "lbl": "nematode larval development",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0002164",
+          "lbl": "larval development",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0003039",
+          "lbl": "detection of reduced oxygen by carotid body chemoreceptor signaling",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0003094",
+          "lbl": "glomerular filtration",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0007276",
+          "lbl": "gamete generation",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0007283",
+          "lbl": "spermatogenesis",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0007369",
+          "lbl": "gastrulation",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0007585",
+          "lbl": "respiratory gaseous exchange by respiratory system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0007586",
+          "lbl": "digestion",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0007596",
+          "lbl": "blood coagulation",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0007600",
+          "lbl": "sensory perception",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0007601",
+          "lbl": "visual perception",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0007605",
+          "lbl": "sensory perception of sound",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0007608",
+          "lbl": "sensory perception of smell",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0007613",
+          "lbl": "memory",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0007620",
+          "lbl": "copulation",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0007626",
+          "lbl": "locomotory behavior",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0008015",
+          "lbl": "blood circulation",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0009566",
+          "lbl": "fertilization",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0009790",
+          "lbl": "embryo development",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0009791",
+          "lbl": "post-embryonic development",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0019233",
+          "lbl": "sensory perception of pain",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0022414",
+          "lbl": "reproductive process",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0030421",
+          "lbl": "defecation",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0030432",
+          "lbl": "peristalsis",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0040011",
+          "lbl": "locomotion",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0040016",
+          "lbl": "embryonic cleavage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0042713",
+          "lbl": "sperm ejaculation",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0045058",
+          "lbl": "T cell selection",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0048240",
+          "lbl": "sperm capacitation",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0048513",
+          "lbl": "animal organ development",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0050911",
+          "lbl": "detection of chemical stimulus involved in sensory perception of smell",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0050912",
+          "lbl": "detection of chemical stimulus involved in sensory perception of taste",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0050975",
+          "lbl": "sensory perception of touch",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0055074",
+          "lbl": "calcium ion homeostasis",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0055127",
+          "lbl": "vibrational conductance of sound to the inner ear",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0060005",
+          "lbl": "vestibular reflex",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0060048",
+          "lbl": "cardiac muscle contraction",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0060073",
+          "lbl": "micturition",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0070295",
+          "lbl": "renal water absorption",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0071625",
+          "lbl": "vocalization behavior",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_0071626",
+          "lbl": "mastication",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/GO_1902093",
+          "lbl": "positive regulation of flagellated sperm motility",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000002",
+          "lbl": "embryonic stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000037",
+          "lbl": "fetal stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000045",
+          "lbl": "prenatal stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000096",
+          "lbl": "2-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000097",
+          "lbl": "3-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000098",
+          "lbl": "4-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000099",
+          "lbl": "5-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000100",
+          "lbl": "6-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000101",
+          "lbl": "7-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000102",
+          "lbl": "8-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000103",
+          "lbl": "9-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000104",
+          "lbl": "10-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000105",
+          "lbl": "11-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000106",
+          "lbl": "12-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000107",
+          "lbl": "13-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000108",
+          "lbl": "14-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000109",
+          "lbl": "15-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000110",
+          "lbl": "16-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000111",
+          "lbl": "17-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000112",
+          "lbl": "18-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000113",
+          "lbl": "19-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000114",
+          "lbl": "20-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000115",
+          "lbl": "21-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000116",
+          "lbl": "22-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000117",
+          "lbl": "23-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000118",
+          "lbl": "24-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000119",
+          "lbl": "25-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000120",
+          "lbl": "26-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000121",
+          "lbl": "27-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000122",
+          "lbl": "28-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000123",
+          "lbl": "29-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000124",
+          "lbl": "30-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000125",
+          "lbl": "31-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000126",
+          "lbl": "32-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000127",
+          "lbl": "33-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000128",
+          "lbl": "34-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000129",
+          "lbl": "35-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000130",
+          "lbl": "36-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000131",
+          "lbl": "37-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000132",
+          "lbl": "38-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000133",
+          "lbl": "39-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000134",
+          "lbl": "40-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000135",
+          "lbl": "41-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000136",
+          "lbl": "42-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000137",
+          "lbl": "43-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000138",
+          "lbl": "44-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000139",
+          "lbl": "45-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000140",
+          "lbl": "46-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000141",
+          "lbl": "47-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000142",
+          "lbl": "48-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000143",
+          "lbl": "49-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000144",
+          "lbl": "50-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000237",
+          "lbl": "third decade stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000238",
+          "lbl": "fourth decade stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000239",
+          "lbl": "fifth decade stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000240",
+          "lbl": "sixth decade stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000246",
+          "lbl": "1-year-old stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000258",
+          "lbl": "adult stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000261",
+          "lbl": "infant stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000262",
+          "lbl": "newborn stage (0-28 days)",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000264",
+          "lbl": "pediatric stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000265",
+          "lbl": "child stage (1-4 yo)",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000266",
+          "lbl": "young adult stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000267",
+          "lbl": "middle aged stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000268",
+          "lbl": "15-19 year-old",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000270",
+          "lbl": "2-4 year-old child stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0000271",
+          "lbl": "juvenile stage (5-14 yo)",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/HsapDv_0010000",
+          "lbl": "postnatal stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/NBO_0000355",
+          "lbl": "posture",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000004",
+          "lbl": "nose",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000007",
+          "lbl": "pituitary gland",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000017",
+          "lbl": "exocrine pancreas",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000019",
+          "lbl": "camera-type eye",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000057",
+          "lbl": "urethra",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000061",
+          "lbl": "anatomical structure",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/RO_0002175",
+                "val": "http://purl.obolibrary.org/obo/NCBITaxon_33090"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/RO_0002175",
+                "val": "http://purl.obolibrary.org/obo/NCBITaxon_33208"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/RO_0002175",
+                "val": "http://purl.obolibrary.org/obo/NCBITaxon_4751"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000066",
+          "lbl": "fully formed stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000068",
+          "lbl": "embryo stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000069",
+          "lbl": "larval stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000071",
+          "lbl": "death stage",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/RO_0002175",
+                "val": "http://purl.obolibrary.org/obo/NCBITaxon_33090"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/RO_0002175",
+                "val": "http://purl.obolibrary.org/obo/NCBITaxon_33208"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/RO_0002175",
+                "val": "http://purl.obolibrary.org/obo/NCBITaxon_4751"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000080",
+          "lbl": "mesonephros",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000081",
+          "lbl": "metanephros",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "TODO check developmental relationships"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000085",
+          "lbl": "morula",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000092",
+          "lbl": "post-embryonic stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000104",
+          "lbl": "life cycle",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/RO_0002175",
+                "val": "http://purl.obolibrary.org/obo/NCBITaxon_33090"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/RO_0002175",
+                "val": "http://purl.obolibrary.org/obo/NCBITaxon_33208"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/RO_0002175",
+                "val": "http://purl.obolibrary.org/obo/NCBITaxon_4751"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000106",
+          "lbl": "zygote stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000107",
+          "lbl": "cleavage stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000109",
+          "lbl": "gastrula stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000110",
+          "lbl": "neurula stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000111",
+          "lbl": "organogenesis stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000112",
+          "lbl": "sexually immature stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000113",
+          "lbl": "post-juvenile adult stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000362",
+          "lbl": "renal medulla",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000411",
+          "lbl": "visual cortex",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000922",
+          "lbl": "embryo",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000949",
+          "lbl": "endocrine system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000955",
+          "lbl": "brain",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "requires review for applicability to invertebrate structures, e.g. synganglion"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000956",
+          "lbl": "cerebral cortex",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/RO_0002175",
+                "val": "http://purl.obolibrary.org/obo/NCBITaxon_117569"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000990",
+          "lbl": "reproductive system",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "consider splitting genitalia from reproductive system"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0000999",
+          "lbl": "ejaculatory duct",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001003",
+          "lbl": "skin epidermis",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001004",
+          "lbl": "respiratory system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001007",
+          "lbl": "digestive system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001008",
+          "lbl": "renal system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001009",
+          "lbl": "circulatory system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001016",
+          "lbl": "nervous system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001032",
+          "lbl": "sensory system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001033",
+          "lbl": "gustatory system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001132",
+          "lbl": "parathyroid gland",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001230",
+          "lbl": "glomerular capsule",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001352",
+          "lbl": "external acoustic meatus",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "consider revisiting superclass after refinement of CARO/EAO, conduit may not be quite correct."
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001434",
+          "lbl": "skeletal system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001530",
+          "lbl": "common carotid artery plus branches",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "we follow the FMA and treat the artery as a tree-structure - here we include the internal and external as parts. For the part that excludes the branches, see 'trunk of common carotid artery'"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001629",
+          "lbl": "carotid body",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001734",
+          "lbl": "palatine uvula",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001836",
+          "lbl": "saliva",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001954",
+          "lbl": "Ammon's horn",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001970",
+          "lbl": "bile",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001981",
+          "lbl": "blood vessel",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "consider adopting the EMAPA superclass 'vascular element', which includes microvasculature (e.g. capillaries), vascular plexus"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0001997",
+          "lbl": "olfactory epithelium",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0002046",
+          "lbl": "thyroid gland",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0002101",
+          "lbl": "limb",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0002104",
+          "lbl": "visual system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0002105",
+          "lbl": "vestibulo-auditory system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0002123",
+          "lbl": "cortex of thymus",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0002129",
+          "lbl": "cerebellar cortex",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0002191",
+          "lbl": "subiculum",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0002204",
+          "lbl": "musculoskeletal system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0002328",
+          "lbl": "notochord",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0002330",
+          "lbl": "exocrine system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0002342",
+          "lbl": "neural crest",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0002351",
+          "lbl": "sinoatrial node",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0002405",
+          "lbl": "immune system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0002416",
+          "lbl": "integumental system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0002418",
+          "lbl": "cartilage tissue",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0002423",
+          "lbl": "hepatobiliary system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0002513",
+          "lbl": "endochondral bone",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "placement in this class to be inferred"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0002529",
+          "lbl": "limb segment",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "TODO - align this with the CARO2 class 'appendage segment'; note the FMA class does not appear to require repetition"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0003055",
+          "lbl": "periderm",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0003077",
+          "lbl": "paraxial mesoderm",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0003133",
+          "lbl": "reproductive organ",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0003212",
+          "lbl": "gustatory organ",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0003706",
+          "lbl": "laryngeal vocal fold",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "we follow FMA in modeling this is mucous membrane plus ligament"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0003886",
+          "lbl": "future coelemic cavity lumen",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0003913",
+          "lbl": "tooth-like structure",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0003942",
+          "lbl": "somatosensory system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0004114",
+          "lbl": "tympanic cavity",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0004122",
+          "lbl": "genitourinary system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0004456",
+          "lbl": "entire sense organ system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0004681",
+          "lbl": "vestibular system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0004716",
+          "lbl": "conceptus",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "EHDAA2 places this as a subtype of organism. This leads to the inference that a conceptus is an embryo (if an embryo is defined as an organism at embryo stage), which eliminates the embryonic + extra-embryonic = conceptus"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0004720",
+          "lbl": "cerebellar vermis",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0004729",
+          "lbl": "nematode larval stage",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0004763",
+          "lbl": "endochondral bone tissue",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0004770",
+          "lbl": "articular system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0004916",
+          "lbl": "anal sphincter",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0005211",
+          "lbl": "renal medulla interstitium",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0005409",
+          "lbl": "alimentary part of gastrointestinal system",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "the decision to split digestive and gastrointestinal in this way may be revisited. As it currently stands, this class more closely aligns what MA calls the alimentary system"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0005625",
+          "lbl": "tubotympanic recess lumen",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0005725",
+          "lbl": "olfactory system",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "consider splitting into main and accessory. See also: vomeronasal organ"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "we make the relationship to nervous system 'overlaps', as the olfactory system includes e.g. apertures in the cranium that are not part of the nervous system"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0005749",
+          "lbl": "glomerular tuft",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0005928",
+          "lbl": "external naris",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0006272",
+          "lbl": "oronasal cavity",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0006530",
+          "lbl": "seminal fluid",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0007010",
+          "lbl": "cleaving embryo",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0007021",
+          "lbl": "sexually immature organism",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0007023",
+          "lbl": "adult organism",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0007026",
+          "lbl": "presumptive gut",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0007812",
+          "lbl": "post-anal tail",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0008811",
+          "lbl": "intromittent organ",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0009671",
+          "lbl": "nasal fin",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0009672",
+          "lbl": "oronasal membrane",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "split into two?"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0009692",
+          "lbl": "lumen of pharyngotympanic tube",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "Check relationships for conformance with AAO and XAO"
+              }
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0009953",
+          "lbl": "post-embryonic organism",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0011648",
+          "lbl": "jaw muscle",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0012125",
+          "lbl": "dermatological-muscosal system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0013719",
+          "lbl": "dartos muscle of scrotum",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0014398",
+          "lbl": "respiratory muscle",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0016880",
+          "lbl": "future nervous system",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0018261",
+          "lbl": "muscular coat of digestive tract",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0034681",
+          "lbl": "vocal organ",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_0035549",
+          "lbl": "vasculature of integument",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UBERON_8440011",
+          "lbl": "cortical visual area",
+          "type": "CLASS"
+        }
+      ]
+    }
+  ]
+}

@@ -1,4 +1,4 @@
-"""Portable manifests for the exact cleaned KGX TSV bytes shipped by a merge."""
+"""Portable manifests for the exact first-write KGX TSV bytes shipped by a merge."""
 
 import hashlib
 import io
@@ -73,7 +73,27 @@ def _manifest(members: Dict, provenance: Optional[Dict]) -> Dict:
     return {"manifest_version": 1, "members": members, "provenance": provenance or {}}
 
 
-def write_graph_archive(archive: Path, files: Iterable[Path], provenance: Optional[Dict] = None) -> None:
+def file_identity(path: Path) -> Dict:
+    """Stream a first-write identity before diagnostics can access a serialized graph."""
+    if path.is_symlink() or not path.is_file():
+        raise ValueError(f"Graph member must be a regular file: {path}")
+    with path.open("rb") as handle:
+        reader = _CountedReader(handle)
+        while reader.read(1024 * 1024):
+            pass
+    return reader.summary()
+
+
+def _verify_unchanged(members: Dict, expected_members: Optional[Dict]) -> None:
+    """Treat any post-serialization graph edit as a required publication failure."""
+    for name, expected in (expected_members or {}).items():
+        if members.get(name) != expected:
+            raise ValueError(f"Post-serialization graph mutation detected: {name}; fix the upstream transform")
+
+
+def write_graph_archive(
+    archive: Path, files: Iterable[Path], provenance: Optional[Dict] = None, *, expected_members: Optional[Dict] = None
+) -> None:
     """Atomically ship TSVs and their byte-accurate manifest; retain the old archive on failure."""
     members = {}
     with atomic_write(archive, "wb") as output:
@@ -91,21 +111,25 @@ def write_graph_archive(archive: Path, files: Iterable[Path], provenance: Option
                         raise ValueError(f"Graph member must be a regular file: {path}")
                     tar.addfile(info, reader)
                     members[path.name] = reader.summary()
+            _verify_unchanged(members, expected_members)
             payload = (json.dumps(_manifest(members, provenance), indent=2, sort_keys=True) + "\n").encode("utf-8")
             info = tarfile.TarInfo(MANIFEST_MEMBER)
             info.size = len(payload)
             tar.addfile(info, io.BytesIO(payload))
 
 
-def write_loose_manifest(destination: Path, files: Iterable[Path], provenance: Optional[Dict] = None) -> None:
+def write_loose_manifest(
+    destination: Path,
+    files: Iterable[Path],
+    provenance: Optional[Dict] = None,
+    *,
+    expected_members: Optional[Dict] = None,
+) -> None:
     """Describe the matching uncompressed TSV pair using paths relative to the manifest."""
     members = {}
     for path in files:
-        with path.open("rb") as handle:
-            reader = _CountedReader(handle)
-            while reader.read(1024 * 1024):
-                pass
-            members[path.name] = reader.summary()
+        members[path.name] = file_identity(path)
+    _verify_unchanged(members, expected_members)
     with atomic_write(destination, encoding="utf-8", newline="\n") as output:
         json.dump(_manifest(members, provenance), output, indent=2, sort_keys=True)
         output.write("\n")

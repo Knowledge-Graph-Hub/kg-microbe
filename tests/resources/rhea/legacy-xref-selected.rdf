@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" xmlns:rh="http://rdf.rhea-db.org/">
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/15929">
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rdfs:label>methylenediurea + 2 H2O + 2 H(+) = urea + formaldehyde + 2 NH4(+) + CO2</rdfs:label>
+    <rh:ec rdf:resource="http://purl.uniprot.org/enzyme/3.5.1.141"/>
+    <rdfs:seeAlso rdf:resource="http://purl.obolibrary.org/obo/GO_0047424"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/19441">
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rdfs:label>benzene-1,2,4-triol + O2 = 3-hydroxy-cis,cis-muconate + 2 H(+)</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/35595">
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rdfs:label>benzene-1,2,4-triol + O2 = maleylacetate + 2 H(+)</rdfs:label>
+    <rdfs:seeAlso rdf:resource="http://purl.obolibrary.org/obo/GO_0047074"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/22140">
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rdfs:label>a nucleoside 5'-phosphate + H2O = a nucleoside + phosphate</rdfs:label>
+    <rdfs:seeAlso rdf:resource="http://purl.obolibrary.org/obo/GO_0008253"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/28338">
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rdfs:label>(R)-carnitinyl-CoA = crotonobetainyl-CoA + H2O</rdfs:label>
+    <rh:ec rdf:resource="http://purl.uniprot.org/enzyme/4.2.1.149"/>
+    <rdfs:seeAlso rdf:resource="http://purl.obolibrary.org/obo/GO_0140427"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/28526">
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rdfs:label>crotonobetainyl-CoA + (R)-carnitine = crotonobetaine + (R)-carnitinyl-CoA</rdfs:label>
+    <rdfs:seeAlso rdf:resource="http://purl.obolibrary.org/obo/GO_0008735"/>
+    <rh:ec rdf:resource="http://purl.uniprot.org/enzyme/2.8.3.21"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/47152">
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rdfs:label>2,5-dioxopentanoate + NAD(+) + H2O = 2-oxoglutarate + NADH + 2 H(+)</rdfs:label>
+    <rdfs:seeAlso rdf:resource="http://purl.obolibrary.org/obo/GO_0044104"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/16185">
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rdfs:label>an aldehyde + NAD(+) + H2O = a carboxylate + NADH + 2 H(+)</rdfs:label>
+    <rdfs:seeAlso rdf:resource="http://purl.obolibrary.org/obo/GO_0004029"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/58872">
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rdfs:label>24-methylidenelophenol + 2 Fe(II)-[cytochrome b5] + O2 + 2 H(+) = 4alpha-hydroxymethyl-ergosta-7,24(24(1))-dien-3beta-ol + 2 Fe(III)-[cytochrome b5] + H2O</rdfs:label>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/58868">
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rdfs:label>24-methylidenelophenol + 6 Fe(II)-[cytochrome b5] + 3 O2 + 5 H(+) = 4alpha-carboxy-ergosta-7,24(24(1))-dien-3beta-ol + 6 Fe(III)-[cytochrome b5] + 4 H2O</rdfs:label>
+    <rdfs:seeAlso rdf:resource="http://purl.obolibrary.org/obo/GO_0102177"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/25075">
+    <rh:substrates rdf:resource="http://rdf.rhea-db.org/25074_L"/>
+    <rh:products rdf:resource="http://rdf.rhea-db.org/25074_R"/>
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rdfs:seeAlso rdf:resource="http://purl.obolibrary.org/obo/GO_0009978"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/25074">
+    <rh:directionalReaction rdf:resource="http://rdf.rhea-db.org/25075"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/33752">
+    <rh:substrates rdf:resource="http://rdf.rhea-db.org/33751_L"/>
+    <rh:products rdf:resource="http://rdf.rhea-db.org/33751_R"/>
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rdfs:seeAlso rdf:resource="http://purl.obolibrary.org/obo/GO_0008962"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/33751">
+    <rh:directionalReaction rdf:resource="http://rdf.rhea-db.org/33752"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/42305">
+    <rh:substrates rdf:resource="http://rdf.rhea-db.org/42304_L"/>
+    <rh:products rdf:resource="http://rdf.rhea-db.org/42304_R"/>
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rdfs:seeAlso rdf:resource="http://purl.obolibrary.org/obo/GO_0008962"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/42304">
+    <rh:directionalReaction rdf:resource="http://rdf.rhea-db.org/42305"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/57721">
+    <rh:substrates rdf:resource="http://rdf.rhea-db.org/57720_L"/>
+    <rh:products rdf:resource="http://rdf.rhea-db.org/57720_R"/>
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rdfs:seeAlso rdf:resource="http://purl.obolibrary.org/obo/GO_0046961"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/57720">
+    <rh:directionalReaction rdf:resource="http://rdf.rhea-db.org/57721"/>
+    <rh:directionalReaction rdf:resource="http://rdf.rhea-db.org/57722"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/57722">
+    <rh:substrates rdf:resource="http://rdf.rhea-db.org/57720_R"/>
+    <rh:products rdf:resource="http://rdf.rhea-db.org/57720_L"/>
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rdfs:seeAlso rdf:resource="http://purl.obolibrary.org/obo/GO_0046933"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/58157">
+    <rh:substrates rdf:resource="http://rdf.rhea-db.org/58156_L"/>
+    <rh:products rdf:resource="http://rdf.rhea-db.org/58156_R"/>
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rdfs:seeAlso rdf:resource="http://purl.obolibrary.org/obo/GO_0046962"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/58156">
+    <rh:directionalReaction rdf:resource="http://rdf.rhea-db.org/58157"/>
+    <rh:directionalReaction rdf:resource="http://rdf.rhea-db.org/58158"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/58158">
+    <rh:substrates rdf:resource="http://rdf.rhea-db.org/58156_R"/>
+    <rh:products rdf:resource="http://rdf.rhea-db.org/58156_L"/>
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rdfs:seeAlso rdf:resource="http://purl.obolibrary.org/obo/GO_0046932"/>
+  </rdf:Description>
+</rdf:RDF>

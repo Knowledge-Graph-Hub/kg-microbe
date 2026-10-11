@@ -1,0 +1,280 @@
+{
+  "classes": {
+    "cellular organism": {
+      "comments": "see: https://github.com/OBOFoundry/COB/pull/211",
+      "description": "An organism that contains one or more cells belonging to the cellular lineages of life (Archaea, Bacteria, or Eukaryota), whose body consists of one or more cells. Distinguished from acellular biological entities such as viruses and viroids.",
+      "exact_mappings": [
+        "NCBITaxon:131567"
+      ],
+      "is_a": "organismal entity",
+      "mixins": [
+        "subject of investigation"
+      ]
+    },
+    "chemical entity": {
+      "broad_mappings": [
+        "STY:T167"
+      ],
+      "description": "A chemical entity is a physical entity that pertains to chemistry or biochemistry.",
+      "exact_mappings": [
+        "CHEBI:24431",
+        "SIO:010004",
+        "WIKIDATA:Q79529",
+        "STY:T103"
+      ],
+      "id_prefixes": [
+        "CHEBI",
+        "UNII",
+        "PUBCHEM.COMPOUND",
+        "CHEMBL.COMPOUND",
+        "DRUGBANK",
+        "MESH",
+        "CAS",
+        "DrugCentral",
+        "GTOPDB",
+        "HMDB",
+        "KEGG.COMPOUND",
+        "PHARMGKB.DRUG",
+        "ChemBank",
+        "PUBCHEM.SUBSTANCE",
+        "SIDER.DRUG",
+        "INCHI",
+        "INCHIKEY",
+        "BIGG.METABOLITE",
+        "foodb.compound",
+        "KEGG.GLYCAN",
+        "KEGG.DRUG",
+        "KEGG.ENVIRON",
+        "KEGG",
+        "UMLS"
+      ],
+      "in_subset": [
+        "translator_minimal"
+      ],
+      "is_a": "named thing",
+      "mixins": [
+        "physical essence",
+        "chemical or drug or treatment",
+        "chemical entity or gene or gene product",
+        "chemical entity or protein or polypeptide"
+      ],
+      "narrow_mappings": [
+        "WIKIDATA:Q43460564",
+        "STY:T123",
+        "STY:T131"
+      ],
+      "slots": [
+        "trade name",
+        "available from",
+        "max tolerated dose",
+        "is toxic",
+        "has chemical role",
+        "routes of delivery",
+        "chembl prodrug",
+        "chembl black box warning",
+        "chembl natural product",
+        "chembl availability type",
+        "chembl chirality",
+        "chembl drug warning"
+      ]
+    },
+    "chemical mixture": {
+      "close_mappings": [
+        "dcid:ChemicalCompound"
+      ],
+      "description": "A chemical mixture is a chemical entity composed of two or more molecular entities.",
+      "id_prefixes": [
+        "CHEBI",
+        "UNII",
+        "PUBCHEM.COMPOUND",
+        "CHEMBL.COMPOUND",
+        "DRUGBANK",
+        "MESH",
+        "CAS",
+        "DrugCentral",
+        "GTOPDB",
+        "HMDB",
+        "KEGG.COMPOUND",
+        "PHARMGKB.DRUG",
+        "ChemBank",
+        "PUBCHEM.SUBSTANCE",
+        "SIDER.DRUG",
+        "INCHI",
+        "INCHIKEY",
+        "BIGG.METABOLITE",
+        "foodb.compound",
+        "KEGG.GLYCAN",
+        "KEGG.DRUG",
+        "KEGG.ENVIRON",
+        "KEGG",
+        "UMLS"
+      ],
+      "in_subset": [
+        "translator_minimal"
+      ],
+      "is_a": "chemical entity",
+      "mixins": [
+        "ontology class"
+      ],
+      "narrow_mappings": [
+        "NCIT:C20401",
+        "SNOMEDCT:49616005"
+      ],
+      "slots": [
+        "is supplement",
+        "highest FDA approval status",
+        "drug regulatory status world wide"
+      ]
+    },
+    "food": {
+      "description": "A substance of plant, animal, or artificial origin consumed by a living organism to provide essential nutrients, energy, and support growth and the processes of life, or to satisfy other health needs or provide a social or organoleptic experience.",
+      "exact_mappings": [
+        "CHEBI:33290",
+        "FOODON:00002403"
+      ],
+      "id_prefixes": [
+        "foodb.food",
+        "foodb.compound",
+        "FOODON",
+        "CHEBI",
+        "UNII",
+        "PUBCHEM.COMPOUND",
+        "CHEMBL.COMPOUND",
+        "DRUGBANK",
+        "MESH",
+        "CAS",
+        "DrugCentral",
+        "GTOPDB",
+        "HMDB",
+        "KEGG.COMPOUND",
+        "PHARMGKB.DRUG",
+        "ChemBank",
+        "PUBCHEM.SUBSTANCE",
+        "SIDER.DRUG",
+        "INCHI",
+        "INCHIKEY",
+        "BIGG.METABOLITE",
+        "KEGG.GLYCAN",
+        "KEGG.DRUG",
+        "KEGG.ENVIRON",
+        "KEGG",
+        "UMLS"
+      ],
+      "is_a": "chemical mixture"
+    },
+    "mammal": {
+      "deprecated": true,
+      "exact_mappings": [
+        "NCBITaxon:40674",
+        "STY:T015",
+        "NCIT:C14234",
+        "FOODON:03411134"
+      ],
+      "is_a": "cellular organism",
+      "mixins": [
+        "subject of investigation"
+      ]
+    },
+    "material sample": {
+      "aliases": [
+        "biospecimen",
+        "sample",
+        "biosample",
+        "physical sample"
+      ],
+      "description": "A sample is a limited quantity of something (e.g. an individual or set of individuals from a population, or a portion of a substance) to be used for testing, analysis, inspection, investigation, demonstration, or trial use. [SIO]",
+      "exact_mappings": [
+        "OBI:0000747",
+        "SIO:001050"
+      ],
+      "id_prefixes": [
+        "BIOSAMPLE",
+        "GOLD.META"
+      ],
+      "is_a": "physical entity",
+      "mixins": [
+        "subject of investigation"
+      ]
+    },
+    "phenotypic feature": {
+      "aliases": [
+        "sign",
+        "symptom",
+        "phenotype",
+        "trait",
+        "endophenotype"
+      ],
+      "broad_mappings": [
+        "BFO:0000019",
+        "PATO:0000001"
+      ],
+      "description": "A combination of entity and quality that makes up a phenotyping statement. An observable characteristic of an individual often resulting from the interaction of its genotype with its molecular and physical environment.",
+      "exact_mappings": [
+        "UPHENO:0001001",
+        "SIO:010056",
+        "WIKIDATA:Q104053",
+        "UMLS:C4021819",
+        "NCIT:C16977",
+        "SNOMEDCT:8116006",
+        "MESH:D010641"
+      ],
+      "examples": [
+        {
+          "description": "decreased body weight",
+          "value": "MP:0001262"
+        }
+      ],
+      "id_prefixes": [
+        "HP",
+        "EFO",
+        "NCIT",
+        "UMLS",
+        "MEDDRA",
+        "MP",
+        "ZP",
+        "UPHENO",
+        "APO",
+        "FBcv",
+        "WBPhenotype",
+        "SNOMEDCT",
+        "MESH",
+        "XPO",
+        "FYPO",
+        "TO"
+      ],
+      "in_subset": [
+        "model_organism_database"
+      ],
+      "is_a": "disease or phenotypic feature",
+      "narrow_mappings": [
+        "STY:T184",
+        "WIKIDATA:Q169872",
+        "WIKIDATA:Q25203551",
+        "ZP:00000000",
+        "FBcv:0001347",
+        "HP:0000118",
+        "MP:0000001",
+        "WBPhenotype:0000886",
+        "XPO:00000000",
+        "FYPO:0000001",
+        "APO:0000017",
+        "TO:0000387",
+        "STY:T190"
+      ]
+    },
+    "physical entity": {
+      "description": "An entity that has material reality (a.k.a. physical essence).",
+      "exact_mappings": [
+        "STY:T072"
+      ],
+      "is_a": "named thing",
+      "mixins": [
+        "physical essence"
+      ],
+      "narrow_mappings": [
+        "STY:T073"
+      ]
+    }
+  },
+  "version": "4.4.2"
+}

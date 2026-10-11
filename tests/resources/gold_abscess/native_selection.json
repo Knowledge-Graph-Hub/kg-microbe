@@ -1,0 +1,617 @@
+{
+  "assignments": [
+    {
+      "id": "gold:Go0000369-occurs_in-gold.ecosystem:6347",
+      "object": "gold.ecosystem:6347",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0000369"
+    },
+    {
+      "id": "gold:Go0000388-occurs_in-gold.ecosystem:6342",
+      "object": "gold.ecosystem:6342",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0000388"
+    },
+    {
+      "id": "gold:Go0001180-occurs_in-gold.ecosystem:6338",
+      "object": "gold.ecosystem:6338",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0001180"
+    },
+    {
+      "id": "gold:Go0003374-occurs_in-gold.ecosystem:6342",
+      "object": "gold.ecosystem:6342",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0003374"
+    },
+    {
+      "id": "gold:Go0003555-occurs_in-gold.ecosystem:6342",
+      "object": "gold.ecosystem:6342",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0003555"
+    },
+    {
+      "id": "gold:Go0012223-occurs_in-gold.ecosystem:6347",
+      "object": "gold.ecosystem:6347",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0012223"
+    },
+    {
+      "id": "gold:Go0012480-occurs_in-gold.ecosystem:6342",
+      "object": "gold.ecosystem:6342",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0012480"
+    },
+    {
+      "id": "gold:Go0012758-occurs_in-gold.ecosystem:6342",
+      "object": "gold.ecosystem:6342",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0012758"
+    },
+    {
+      "id": "gold:Go0012968-occurs_in-gold.ecosystem:6347",
+      "object": "gold.ecosystem:6347",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0012968"
+    },
+    {
+      "id": "gold:Go0013011-occurs_in-gold.ecosystem:6342",
+      "object": "gold.ecosystem:6342",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0013011"
+    },
+    {
+      "id": "gold:Go0013936-occurs_in-gold.ecosystem:6343",
+      "object": "gold.ecosystem:6343",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0013936"
+    },
+    {
+      "id": "gold:Go0013953-occurs_in-gold.ecosystem:6342",
+      "object": "gold.ecosystem:6342",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0013953"
+    },
+    {
+      "id": "gold:Go0014180-occurs_in-gold.ecosystem:6342",
+      "object": "gold.ecosystem:6342",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0014180"
+    },
+    {
+      "id": "gold:Go0020784-occurs_in-gold.ecosystem:6342",
+      "object": "gold.ecosystem:6342",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0020784"
+    },
+    {
+      "id": "gold:Go0021502-occurs_in-gold.ecosystem:6342",
+      "object": "gold.ecosystem:6342",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0021502"
+    },
+    {
+      "id": "gold:Go0023479-occurs_in-gold.ecosystem:6344",
+      "object": "gold.ecosystem:6344",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0023479"
+    },
+    {
+      "id": "gold:Go0027541-occurs_in-gold.ecosystem:6342",
+      "object": "gold.ecosystem:6342",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0027541"
+    },
+    {
+      "id": "gold:Go0030708-occurs_in-gold.ecosystem:6342",
+      "object": "gold.ecosystem:6342",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0030708"
+    },
+    {
+      "id": "gold:Go0031965-occurs_in-gold.ecosystem:6343",
+      "object": "gold.ecosystem:6343",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0031965"
+    },
+    {
+      "id": "gold:Go0032278-occurs_in-gold.ecosystem:6342",
+      "object": "gold.ecosystem:6342",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0032278"
+    },
+    {
+      "id": "gold:Go0032583-occurs_in-gold.ecosystem:6342",
+      "object": "gold.ecosystem:6342",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0032583"
+    },
+    {
+      "id": "gold:Go0036871-occurs_in-gold.ecosystem:6343",
+      "object": "gold.ecosystem:6343",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0036871"
+    },
+    {
+      "id": "gold:Go0070874-occurs_in-gold.ecosystem:6347",
+      "object": "gold.ecosystem:6347",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0070874"
+    },
+    {
+      "id": "gold:Go0125711-occurs_in-gold.ecosystem:6342",
+      "object": "gold.ecosystem:6342",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0125711"
+    },
+    {
+      "id": "gold:Go0375798-occurs_in-gold.ecosystem:6342",
+      "object": "gold.ecosystem:6342",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0375798"
+    },
+    {
+      "id": "gold:Go0375807-occurs_in-gold.ecosystem:6342",
+      "object": "gold.ecosystem:6342",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0375807"
+    },
+    {
+      "id": "gold:Go0615263-occurs_in-gold.ecosystem:7007",
+      "object": "gold.ecosystem:7007",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0615263"
+    },
+    {
+      "id": "gold:Go0615264-occurs_in-gold.ecosystem:7007",
+      "object": "gold.ecosystem:7007",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0615264"
+    },
+    {
+      "id": "gold:Go0615265-occurs_in-gold.ecosystem:7007",
+      "object": "gold.ecosystem:7007",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0615265"
+    },
+    {
+      "id": "gold:Go0615266-occurs_in-gold.ecosystem:7007",
+      "object": "gold.ecosystem:7007",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0615266"
+    },
+    {
+      "id": "gold:Go0624833-occurs_in-gold.ecosystem:6338",
+      "object": "gold.ecosystem:6338",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0624833"
+    },
+    {
+      "id": "gold:Go0624834-occurs_in-gold.ecosystem:6338",
+      "object": "gold.ecosystem:6338",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0624834"
+    },
+    {
+      "id": "gold:Go0624835-occurs_in-gold.ecosystem:6338",
+      "object": "gold.ecosystem:6338",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0624835"
+    },
+    {
+      "id": "gold:Go0624836-occurs_in-gold.ecosystem:6338",
+      "object": "gold.ecosystem:6338",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0624836"
+    }
+  ],
+  "hierarchy": [
+    {
+      "id": "gold.ecosystem:3381-subclass_of-gold.ecosystem:4",
+      "object": "gold.ecosystem:4",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:3381"
+    },
+    {
+      "id": "gold.ecosystem:3592-subclass_of-gold.ecosystem:3381",
+      "object": "gold.ecosystem:3381",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:3592"
+    },
+    {
+      "id": "gold.ecosystem:3595-subclass_of-gold.ecosystem:3381",
+      "object": "gold.ecosystem:3381",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:3595"
+    },
+    {
+      "id": "gold.ecosystem:4-subclass_of-gold.ecosystem:1",
+      "object": "gold.ecosystem:1",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:4"
+    },
+    {
+      "id": "gold.ecosystem:4495-subclass_of-gold.ecosystem:3595",
+      "object": "gold.ecosystem:3595",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:4495"
+    },
+    {
+      "id": "gold.ecosystem:5035-subclass_of-gold.ecosystem:3381",
+      "object": "gold.ecosystem:3381",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:5035"
+    },
+    {
+      "id": "gold.ecosystem:5211-subclass_of-gold.ecosystem:3381",
+      "object": "gold.ecosystem:3381",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:5211"
+    },
+    {
+      "id": "gold.ecosystem:6090-subclass_of-gold.ecosystem:3592",
+      "object": "gold.ecosystem:3592",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:6090"
+    },
+    {
+      "id": "gold.ecosystem:6113-subclass_of-gold.ecosystem:3381",
+      "object": "gold.ecosystem:3381",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:6113"
+    },
+    {
+      "id": "gold.ecosystem:6114-subclass_of-gold.ecosystem:6113",
+      "object": "gold.ecosystem:6113",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:6114"
+    },
+    {
+      "id": "gold.ecosystem:6320-subclass_of-gold.ecosystem:5211",
+      "object": "gold.ecosystem:5211",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:6320"
+    },
+    {
+      "id": "gold.ecosystem:6338-subclass_of-gold.ecosystem:6090",
+      "object": "gold.ecosystem:6090",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:6338"
+    },
+    {
+      "id": "gold.ecosystem:6342-subclass_of-gold.ecosystem:6114",
+      "object": "gold.ecosystem:6114",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:6342"
+    },
+    {
+      "id": "gold.ecosystem:6343-subclass_of-gold.ecosystem:4495",
+      "object": "gold.ecosystem:4495",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:6343"
+    },
+    {
+      "id": "gold.ecosystem:6344-subclass_of-gold.ecosystem:6320",
+      "object": "gold.ecosystem:6320",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:6344"
+    },
+    {
+      "id": "gold.ecosystem:6346-subclass_of-gold.ecosystem:5035",
+      "object": "gold.ecosystem:5035",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:6346"
+    },
+    {
+      "id": "gold.ecosystem:6347-subclass_of-gold.ecosystem:6346",
+      "object": "gold.ecosystem:6346",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:6347"
+    },
+    {
+      "id": "gold.ecosystem:6357-subclass_of-gold.ecosystem:3381",
+      "object": "gold.ecosystem:3381",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:6357"
+    },
+    {
+      "id": "gold.ecosystem:6544-subclass_of-gold.ecosystem:3595",
+      "object": "gold.ecosystem:3595",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:6544"
+    },
+    {
+      "id": "gold.ecosystem:7007-subclass_of-gold.ecosystem:6544",
+      "object": "gold.ecosystem:6544",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:7007"
+    },
+    {
+      "id": "gold.ecosystem:7037-subclass_of-gold.ecosystem:6357",
+      "object": "gold.ecosystem:6357",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:7037"
+    },
+    {
+      "id": "gold.ecosystem:7038-subclass_of-gold.ecosystem:7037",
+      "object": "gold.ecosystem:7037",
+      "predicate": "biolink:subclass_of",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:ecosystem_classification_2.parent",
+      "subject": "gold.ecosystem:7038"
+    }
+  ],
+  "nodes": [
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:1",
+      "name": "root",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:3381",
+      "name": "Mammals: Human",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:3592",
+      "name": "Respiratory system",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:3595",
+      "name": "Nervous system",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:4",
+      "name": "Host-associated",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:4495",
+      "name": "Brain",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:5035",
+      "name": "Abdominal/Peritoneal cavity",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:5211",
+      "name": "Skeletal system",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:6090",
+      "name": "Nasal cavity",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:6113",
+      "name": "Integumentary system",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:6114",
+      "name": "Skin",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:6320",
+      "name": "Joint capsule",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:6338",
+      "name": "Abscess",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:6342",
+      "name": "Abscess",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:6343",
+      "name": "Abscess",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:6344",
+      "name": "Abscess",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:6346",
+      "name": "Abscess",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:6347",
+      "name": "Unclassified",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:6357",
+      "name": "Multisystem conditions",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:6544",
+      "name": "Spinal cord",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:7007",
+      "name": "Abscess",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:7037",
+      "name": "Soft tissues",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:EnvironmentalFeature",
+      "id": "gold.ecosystem:7038",
+      "name": "Abscess",
+      "provided_by": "infores:gold",
+      "xref": ""
+    }
+  ]
+}

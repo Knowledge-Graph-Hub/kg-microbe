@@ -23,6 +23,7 @@ import pandas as pd
 
 from kg_microbe.transform_utils.constants import XREF_COLUMN
 from kg_microbe.utils.cas import invalid_cas_identifier
+from kg_microbe.utils.ingredient_context import ingredient_context_allowed, ingredient_context_pair_allowed
 from kg_microbe.utils.ingredient_identity import (
     ingredient_authority_label,
     ingredient_cas_annotations,
@@ -400,7 +401,7 @@ def _build_indices(mappings_path: Path):
         synonym hits. Lower rank wins on collision; equal rank keeps the
         first-seen CURIE for determinism.
         """
-        if not ingredient_mapping_allowed(name, curie):
+        if not ingredient_context_allowed(curie) or not ingredient_mapping_allowed(name, curie):
             return ""
         if not ingredient_hydration_compatible(
             name, _PRIMARY_NAME_INDEX.get(curie, ""), _NATIVE_HYDRATION_NAMES.get(curie, ())
@@ -483,6 +484,15 @@ def _build_indices(mappings_path: Path):
 
         # The existing source/target exclusions deny the identity or lexical
         # link, not independent object metadata on a recognized row shape.
+        if not ingredient_context_pair_allowed(subject, curie):
+            # Native labels/synonyms remain authority metadata, not ingredient
+            # identities. This also closes object_label reinjection on xrefs.
+            if row.get("subject_label") in {"CAT", "CAT Protein", "EC 1.11.1.6"} and (
+                "native_ontology:ncit" in row.get("source", "").split("|")
+            ):
+                primary_synonyms_sets.setdefault(curie, set()).add(row["subject_label"])
+            exclusions["ingredient_context"] += 1
+            continue
         if not ingredient_xref_allowed(subject, curie):
             exclusions["identity"] += 1
             continue
@@ -535,7 +545,7 @@ def _build_indices(mappings_path: Path):
     # Query scope is reviewed independently of lexical rank. A missing target
     # stays unresolved; a stale specific synonym must not stand in for it.
     for query, target in ingredient_name_scopes()[0].items():
-        if target in _PRIMARY_NAME_INDEX:
+        if target in _PRIMARY_NAME_INDEX and ingredient_context_allowed(target):
             _NAME_INDEX[normalize_name(query)] = target
     # Freeze accumulated sets into deterministic lists.
     for curie, syns in primary_synonyms_sets.items():
@@ -601,6 +611,7 @@ def find_chebi_by_name(
         return (
             case_target
             if case_target in _PRIMARY_NAME_INDEX
+            and ingredient_context_allowed(case_target)
             and ingredient_mapping_allowed(name, case_target)
             and ingredient_hydration_compatible(
                 name, _PRIMARY_NAME_INDEX[case_target], _NATIVE_HYDRATION_NAMES.get(case_target, ())
@@ -614,6 +625,7 @@ def find_chebi_by_name(
         return (
             scoped_target
             if scoped_target in _PRIMARY_NAME_INDEX
+            and ingredient_context_allowed(scoped_target)
             and ingredient_mapping_allowed(name, scoped_target)
             and ingredient_hydration_compatible(
                 name, _PRIMARY_NAME_INDEX[scoped_target], _NATIVE_HYDRATION_NAMES.get(scoped_target, ())
@@ -659,7 +671,8 @@ def find_chebi_by_name(
     # In particular stereochemistry fallback must not erase a reviewed
     # source-name restriction. Reject the result without guessing a replacement.
     if result is not None and (
-        not ingredient_mapping_allowed(name, result)
+        not ingredient_context_allowed(result)
+        or not ingredient_mapping_allowed(name, result)
         or not ingredient_hydration_compatible(
             name, (_PRIMARY_NAME_INDEX or {}).get(result, ""), _NATIVE_HYDRATION_NAMES.get(result, ())
         )
@@ -690,7 +703,7 @@ def find_chebi_by_formula(formula: str) -> List[str]:
         load_unified_mappings()
 
     if _FORMULA_INDEX:
-        return _FORMULA_INDEX.get(formula, [])
+        return [target for target in _FORMULA_INDEX.get(formula, []) if ingredient_context_allowed(target)]
 
     return []
 
@@ -715,10 +728,11 @@ def find_chebi_by_xref(xref: str) -> Optional[str]:
         return None
     target = ingredient_name_scopes()[1].get(norm_xref)
     if target is not None:
-        return target if target in _PRIMARY_NAME_INDEX else None
+        return target if target in _PRIMARY_NAME_INDEX and ingredient_context_pair_allowed(xref, target) else None
 
     if _XREF_INDEX:
-        return _XREF_INDEX.get(norm_xref)
+        target = _XREF_INDEX.get(norm_xref)
+        return target if ingredient_context_pair_allowed(xref, target) else None
 
     return None
 

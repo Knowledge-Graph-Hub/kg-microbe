@@ -1,5 +1,6 @@
 {
     "METPO": "https://w3id.org/metpo/",
+    "rheav": "http://rdf.rhea-db.org/",
     "biolink": "https://biolink.github.io/biolink-model/",
     "mediadive.medium": "https://mediadive.dsmz.de/medium/",
     "mediadive.solution": "https://mediadive.dsmz.de/solution/",

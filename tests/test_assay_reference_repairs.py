@@ -1,6 +1,7 @@
 """Assay references use authoritative GO aspects and historical identity evidence (#1079)."""
 
 import csv
+import gzip
 import json
 from pathlib import Path
 
@@ -124,6 +125,9 @@ def test_authority_and_supported_aspect_are_required(authority, transform):
 def test_assay_preflight_failure_preserves_existing_outputs(authority, transform, monkeypatch):
     """The actual run fails on GO references before opening either prior output."""
     transform.output_dir.mkdir(parents=True, exist_ok=True)
+    transform.input_base_dir.mkdir(parents=True, exist_ok=True)
+    native_mesh = FIXTURES / "bacdive_clinical_mesh/mesh2026-clinical-excerpt.nt"
+    (transform.input_base_dir / "mesh2026.nt.gz").write_bytes(gzip.compress(native_mesh.read_bytes(), mtime=0))
     for path in (transform.output_node_file, transform.output_edge_file):
         path.write_text("previous completed output\n")
     transform.ncbi_impl = object()

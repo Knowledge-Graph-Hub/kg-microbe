@@ -1,0 +1,412 @@
+{
+  "source_sha256": "57344e55e5683d168b735b6f186fd239d5637820d0c1559a210945bca883cea2",
+  "scope": "Literal selected native BacDive-ID and complete isolation sections; other source sections omitted. Native array position is fixture metadata.",
+  "records": [
+    {
+      "native_array_index": 105,
+      "General": {
+        "BacDive-ID": 194
+      },
+      "Isolation, sampling and environmental information": {
+        "isolation": [
+          {
+            "@ref": 16130,
+            "continent": "Europe",
+            "country": "Germany",
+            "geographic location": "Freiburg/Breisgau",
+            "origin.country": "DEU",
+            "sample type": "wound swab of a 89-year-old female patient"
+          },
+          {
+            "@ref": 61364,
+            "continent": "Europe",
+            "country": "Germany",
+            "geographic location": "Freiburg/Breisgau",
+            "origin.country": "DEU",
+            "sample type": "Human wound,89-yr-old female",
+            "sampling date": "2008-11-01"
+          }
+        ],
+        "isolation source categories": [
+          {
+            "Cat1": "#Infection",
+            "Cat2": "#Patient"
+          },
+          {
+            "Cat1": "#Infection",
+            "Cat2": "#Patient",
+            "Cat3": "#Swab"
+          },
+          {
+            "Cat1": "#Host Body-Site",
+            "Cat2": "#Other",
+            "Cat3": "#Wound"
+          },
+          {
+            "Cat1": "#Host",
+            "Cat2": "#Human",
+            "Cat3": "#Female"
+          }
+        ],
+        "taxonmaps": {
+          "16S sequence": "FJ617539",
+          "@ref": 69479,
+          "File name": "preview.99_61529.png",
+          "Last taxonomy": "Gleimia hominis subclade",
+          "Sequence Identity": null,
+          "Total samples": 576,
+          "animal counts": 548,
+          "aquatic counts": 19,
+          "plant counts": 2,
+          "soil counts": 7,
+          "url": "https://microbeatlas.org/index.html?action=taxon&taxon_id=90_6086;96_26997;97_33922;98_43666;99_61529&stattab=map"
+        }
+      }
+    },
+    {
+      "native_array_index": 110,
+      "General": {
+        "BacDive-ID": 192
+      },
+      "Isolation, sampling and environmental information": {
+        "isolation": [
+          {
+            "@ref": 16669,
+            "continent": "Europe",
+            "country": "France",
+            "geographic location": "Marseille",
+            "origin.country": "FRA",
+            "sample type": "human blood (pleuropneumonia)"
+          },
+          {
+            "@ref": 59924,
+            "continent": "Europe",
+            "country": "France",
+            "geographic location": "Marseille,Timone hospital",
+            "origin.country": "FRA",
+            "sample type": "Human blood,39-yr-old man,pleuropneumonia",
+            "sampling date": "2004-05-01"
+          },
+          {
+            "@ref": 67770,
+            "sample type": "Human blood sample"
+          },
+          {
+            "@ref": 67771,
+            "continent": "Europe",
+            "country": "France",
+            "geographic location": "Marseille",
+            "origin.country": "FRA",
+            "sample type": "From human blood (pleuropneumonia)"
+          },
+          {
+            "@ref": 120847,
+            "continent": "Europe",
+            "country": "France",
+            "geographic location": "Marseille",
+            "isolation date": "2004",
+            "origin.country": "FRA",
+            "sample type": "Human, Blood"
+          }
+        ],
+        "isolation source categories": [
+          {
+            "Cat1": "#Infection",
+            "Cat2": "#Inflammation"
+          },
+          {
+            "Cat1": "#Host",
+            "Cat2": "#Human"
+          },
+          {
+            "Cat1": "#Host Body-Site",
+            "Cat2": "#Oral cavity and airways",
+            "Cat3": "#Lung"
+          },
+          {
+            "Cat1": "#Host Body Product",
+            "Cat2": "#Fluids",
+            "Cat3": "#Blood"
+          }
+        ],
+        "taxonmaps": {
+          "16S sequence": "AB545934",
+          "@ref": 69479,
+          "File name": "preview.99_6038.png",
+          "Last taxonomy": "Actinomyces massiliensis subclade",
+          "Sequence Identity": null,
+          "Total samples": 48677,
+          "animal counts": 45755,
+          "aquatic counts": 1557,
+          "plant counts": 370,
+          "soil counts": 995,
+          "url": "https://microbeatlas.org/index.html?action=taxon&taxon_id=90_124;96_2879;97_3538;98_4479;99_6038&stattab=map"
+        }
+      }
+    },
+    {
+      "native_array_index": 111,
+      "General": {
+        "BacDive-ID": 189
+      },
+      "Isolation, sampling and environmental information": {
+        "isolation": [
+          {
+            "@ref": 7902,
+            "continent": "Europe",
+            "country": "United Kingdom",
+            "geographic location": "Edinburgh",
+            "origin.country": "GBR",
+            "sample type": "human dental abscess"
+          },
+          {
+            "@ref": 23123,
+            "sample type": "pus of a dental abscess from a\n72-year-old female with facial swelling",
+            "sampling date": "2003"
+          },
+          {
+            "@ref": 57970,
+            "continent": "Europe",
+            "country": "United Kingdom",
+            "geographic location": "Edinburgh",
+            "origin.country": "GBR",
+            "sample type": "Human dental abscess,72-yr-old woman",
+            "sampling date": "2003"
+          },
+          {
+            "@ref": 67771,
+            "continent": "Europe",
+            "country": "United Kingdom",
+            "origin.country": "GBR",
+            "sample type": "From human dental abscess, 72-yr-old woman"
+          },
+          {
+            "@ref": 118908,
+            "continent": "Europe",
+            "country": "United Kingdom",
+            "geographic location": "Edinburgh, Scotland",
+            "origin.country": "GBR",
+            "sample type": "Human, Dental abscess"
+          }
+        ],
+        "isolation source categories": [
+          {
+            "Cat1": "#Host",
+            "Cat2": "#Human"
+          },
+          {
+            "Cat1": "#Infection",
+            "Cat2": "#Patient"
+          },
+          {
+            "Cat1": "#Host Body-Site",
+            "Cat2": "#Oral cavity and airways",
+            "Cat3": "#Tooth"
+          },
+          {
+            "Cat1": "#Host Body-Site",
+            "Cat2": "#Other",
+            "Cat3": "#Abscess"
+          },
+          {
+            "Cat1": "#Host Body Product",
+            "Cat2": "#Fluids"
+          },
+          {
+            "Cat1": "#Host",
+            "Cat2": "#Human",
+            "Cat3": "#Female"
+          }
+        ],
+        "taxonmaps": {
+          "16S sequence": "AJ697609",
+          "@ref": 69479,
+          "File name": "preview.99_28146.png",
+          "Last taxonomy": "Actinomyces dentalis subclade",
+          "Sequence Identity": null,
+          "Total samples": 18407,
+          "animal counts": 17456,
+          "aquatic counts": 501,
+          "plant counts": 144,
+          "soil counts": 306,
+          "url": "https://microbeatlas.org/index.html?action=taxon&taxon_id=90_15897;96_13901;97_16939;98_21045;99_28146&stattab=map"
+        }
+      }
+    },
+    {
+      "native_array_index": 2126,
+      "General": {
+        "BacDive-ID": 2127
+      },
+      "Isolation, sampling and environmental information": {
+        "isolation": [
+          {
+            "@ref": 1331,
+            "sample type": "human peridontal pocket"
+          },
+          {
+            "@ref": 47138,
+            "continent": "North America",
+            "country": "USA",
+            "geographic location": "Boston",
+            "origin.country": "USA",
+            "sample type": "Human periodontal pocket",
+            "sampling date": "1974"
+          },
+          {
+            "@ref": 67770,
+            "sample type": "Human periodontal pocket"
+          }
+        ],
+        "isolation source categories": [
+          {
+            "Cat1": "#Host",
+            "Cat2": "#Human"
+          },
+          {
+            "Cat1": "#Host Body-Site",
+            "Cat2": "#Oral cavity and airways",
+            "Cat3": "#Periodontal pocket"
+          }
+        ]
+      }
+    },
+    {
+      "native_array_index": 12440,
+      "General": {
+        "BacDive-ID": 12504
+      },
+      "Isolation, sampling and environmental information": {
+        "isolation": [
+          {
+            "@ref": 9021,
+            "host species": "Macaca arctoides",
+            "sample type": "periodontal pocket of stumptailed macaque (<I>Macaca arctoides</I>)"
+          },
+          {
+            "@ref": 57827,
+            "sample type": "Macaque,periodontal pocket (Macaca arctoides)"
+          },
+          {
+            "@ref": 67770,
+            "sample type": "Monkey subgingival plaque"
+          }
+        ],
+        "isolation source categories": [
+          {
+            "Cat1": "#Host",
+            "Cat2": "#Mammals",
+            "Cat3": "#Primates"
+          },
+          {
+            "Cat1": "#Host Body-Site",
+            "Cat2": "#Oral cavity and airways",
+            "Cat3": "#Periodontal pocket"
+          }
+        ]
+      }
+    },
+    {
+      "native_array_index": 55854,
+      "General": {
+        "BacDive-ID": 132849
+      },
+      "Isolation, sampling and environmental information": {
+        "isolation": [
+          {
+            "@ref": 24637,
+            "sample type": "periodontal pocket; dog"
+          },
+          {
+            "@ref": 57826,
+            "continent": "Europe",
+            "country": "Finland",
+            "geographic location": "Helsinki ?",
+            "origin.country": "FIN",
+            "sample type": "Dog periodontic pocket"
+          },
+          {
+            "@ref": 67770,
+            "sample type": "Dog periodontal pocket"
+          }
+        ],
+        "isolation source categories": [
+          {
+            "Cat1": "#Host",
+            "Cat2": "#Mammals",
+            "Cat3": "#Canidae (Dog)"
+          },
+          {
+            "Cat1": "#Host Body-Site",
+            "Cat2": "#Oral cavity and airways",
+            "Cat3": "#Periodontal pocket"
+          }
+        ],
+        "taxonmaps": {
+          "16S sequence": "X76260",
+          "@ref": 69479,
+          "File name": "preview.99_2334.png",
+          "Last taxonomy": "Porphyromonas crevioricanis subclade",
+          "Sequence Identity": null,
+          "Total samples": 5285,
+          "animal counts": 5055,
+          "aquatic counts": 75,
+          "plant counts": 26,
+          "soil counts": 129,
+          "url": "https://microbeatlas.org/index.html?action=taxon&taxon_id=90_312;96_1260;97_1495;98_1821;99_2334&stattab=map"
+        }
+      }
+    },
+    {
+      "native_array_index": 55855,
+      "General": {
+        "BacDive-ID": 132848
+      },
+      "Isolation, sampling and environmental information": {
+        "isolation": [
+          {
+            "@ref": 24636,
+            "sample type": "periodontal pocket; dog"
+          },
+          {
+            "@ref": 57824,
+            "continent": "Europe",
+            "country": "Finland",
+            "geographic location": "Helsinki ?",
+            "origin.country": "FIN",
+            "sample type": "Dog periodontal pocket"
+          },
+          {
+            "@ref": 67770,
+            "sample type": "Periodontal pocket"
+          }
+        ],
+        "isolation source categories": [
+          {
+            "Cat1": "#Host",
+            "Cat2": "#Mammals",
+            "Cat3": "#Canidae (Dog)"
+          },
+          {
+            "Cat1": "#Host Body-Site",
+            "Cat2": "#Oral cavity and airways",
+            "Cat3": "#Periodontal pocket"
+          }
+        ],
+        "taxonmaps": {
+          "16S sequence": "X76259",
+          "@ref": 69479,
+          "File name": "preview.99_283.png",
+          "Last taxonomy": "Porphyromonas cangingivalis subclade",
+          "Sequence Identity": null,
+          "Total samples": 15871,
+          "animal counts": 15011,
+          "aquatic counts": 354,
+          "plant counts": 159,
+          "soil counts": 347,
+          "url": "https://microbeatlas.org/index.html?action=taxon&taxon_id=90_15883;96_197;97_214;98_239;99_283&stattab=map"
+        }
+      }
+    }
+  ]
+}

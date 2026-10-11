@@ -13,6 +13,7 @@ from kg_microbe.transform_utils.microbedecoder.phenotype_curation import DEFAULT
 from kg_microbe.transform_utils.microbedecoder.process_scopes import DEFAULT_PROCESS_SCOPE_DEFINITIONS
 from kg_microbe.transform_utils.microbedecoder.source_annotations import REPORTED_METABOLISM_ANNOTATIONS
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
+from tests.microbedecoder_inactive_join_fixtures import bind_inactive_join_policy, write_empty_join_gss
 from tests.microbedecoder_quarantine_fixtures import bind_fixture_quarantine_policy
 from tests.test_microbedecoder_transform import FIXTURE_DIR, _NoChebi, _supply_gold_fold_report
 
@@ -33,7 +34,7 @@ def _transform(tmp_path):
     scopes = tmp_path / "process_scopes.tsv"
     shutil.copyfile(DEFAULT_PROCESS_SCOPE_DEFINITIONS, scopes)
     return MicrobeDecoderTransform(
-        FIXTURE_DIR,
+        write_empty_join_gss(tmp_path / "raw").parent,
         tmp_path,
         chemical_loader=_NoChebi(),
         process_mappings=mapping,
@@ -45,7 +46,7 @@ def _transform(tmp_path):
 def _write_source(tmp_path, records):
     """Write a small explicit source CSV without importing any live records."""
     path = tmp_path / "source.csv"
-    fields = list(dict.fromkeys(key for row in records for key in row))
+    fields = list(dict.fromkeys([*(key for row in records for key in row), "BacDive_ID"]))
     with path.open("w", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=fields)
         writer.writeheader()
@@ -53,10 +54,12 @@ def _write_source(tmp_path, records):
     return path
 
 
-def test_real_mapping_retains_source_evidence_and_has_no_ontology_stubs(tmp_path):
+def test_real_mapping_retains_source_evidence_and_has_no_ontology_stubs(monkeypatch, tmp_path):
     """Mapped and fallback assertions preserve distinct evidence tiers and complete contexts."""
     transform = _transform(tmp_path)
     bind_fixture_quarantine_policy(transform, FIXTURE_DIR / "faprotax_evidence.csv")
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, FIXTURE_DIR / "faprotax_evidence.csv", monkeypatch)
     transform.run(data_file=FIXTURE_DIR / "faprotax_evidence.csv")
     rows = _rows(transform.output_edge_file)
     mapped = [row for row in rows if row["object"] == "METPO:1002005"]
@@ -83,10 +86,13 @@ def test_real_mapping_retains_source_evidence_and_has_no_ontology_stubs(tmp_path
         "crosswalk_policy",
         "crosswalk_decisions",
         "crosswalk_evidence",
+        "bacdive_join_policy",
+        "bacdive_join_evidence",
+        "bacdive_join_lpsn_gss",
     }
 
 
-def test_missing_report_is_preserved_without_a_chemical_or_negative_assertion(tmp_path):
+def test_missing_report_is_preserved_without_a_chemical_or_negative_assertion(monkeypatch, tmp_path):
     """Only the exact reviewed Bergey substrate token becomes a missing-report attribute."""
     transform = _transform(tmp_path)
     source = tmp_path / "missing.csv"
@@ -95,12 +101,14 @@ def test_missing_report_is_preserved_without_a_chemical_or_negative_assertion(tm
         {"LPSN_ID": "102", "Bergey_Substrates_for_end_products": "not reported", "Bergey_Article_link": "doi:10.1/b"},
         {"LPSN_ID": "103", "Literature_Substrates_for_end_products": "Not reported"},
     ]
-    fields = list(dict.fromkeys(key for row in records for key in row))
+    fields = list(dict.fromkeys([*(key for row in records for key in row), "BacDive_ID"]))
     with source.open("w", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=fields)
         writer.writeheader()
         writer.writerows(records)
     bind_fixture_quarantine_policy(transform, source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, source, monkeypatch)
     transform.run(data_file=source)
     rows = {row["subject"]: row for row in _rows(transform.output_edge_file)}
     note = rows["lpsn:101"]
@@ -129,10 +137,12 @@ def test_missing_report_is_preserved_without_a_chemical_or_negative_assertion(tm
         "chemical_authority",
     ],
 )
-def test_actual_consumed_curation_drift_is_rejected(tmp_path, name):
+def test_actual_consumed_curation_drift_is_rejected(monkeypatch, tmp_path, name):
     """A successful producer read cannot be certified after either dependency changes."""
     transform = _transform(tmp_path)
     bind_fixture_quarantine_policy(transform, FIXTURE_DIR / "faprotax_evidence.csv")
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, FIXTURE_DIR / "faprotax_evidence.csv", monkeypatch)
     transform.run(data_file=FIXTURE_DIR / "faprotax_evidence.csv")
     target = {
         "process_mappings": transform.process_mappings,
@@ -148,25 +158,31 @@ def test_actual_consumed_curation_drift_is_rejected(tmp_path, name):
         transform.verify_consumed_inputs()
 
 
-def test_missing_authority_fails_before_overwriting_graph_and_rerun_reloads(tmp_path):
+def test_missing_authority_fails_before_overwriting_graph_and_rerun_reloads(monkeypatch, tmp_path):
     """Never cache past an authority change or publish invented target declarations."""
     transform = _transform(tmp_path)
     bind_fixture_quarantine_policy(transform, FIXTURE_DIR / "faprotax_evidence.csv")
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, FIXTURE_DIR / "faprotax_evidence.csv", monkeypatch)
     transform.run(data_file=FIXTURE_DIR / "faprotax_evidence.csv")
     before = transform.output_edge_file.read_bytes()
     authority = tmp_path / "ontologies/metpo_nodes.tsv"
     authority.write_text("id\tname\tcategory\tdeprecated\n")
     with pytest.raises(ValueError, match="Missing authoritative"):
         bind_fixture_quarantine_policy(transform, FIXTURE_DIR / "faprotax_evidence.csv")
+        write_empty_join_gss(transform.input_base_dir)
+        bind_inactive_join_policy(transform, FIXTURE_DIR / "faprotax_evidence.csv", monkeypatch)
         transform.run(data_file=FIXTURE_DIR / "faprotax_evidence.csv")
     assert transform.output_edge_file.read_bytes() == before
     shutil.copyfile(FIXTURE_DIR / "metpo_nodes.tsv", authority)
     bind_fixture_quarantine_policy(transform, FIXTURE_DIR / "faprotax_evidence.csv")
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, FIXTURE_DIR / "faprotax_evidence.csv", monkeypatch)
     transform.run(data_file=FIXTURE_DIR / "faprotax_evidence.csv")
     assert transform.output_edge_file.read_bytes() == before
 
 
-def test_reported_phenotype_groundings_preserve_originals_and_do_not_emit_invalid_edges(tmp_path):
+def test_reported_phenotype_groundings_preserve_originals_and_do_not_emit_invalid_edges(monkeypatch, tmp_path):
     """Review exact text without new schema-invalid edges or collapsing positive and negative."""
     transform = _transform(tmp_path)
     source = _write_source(
@@ -183,6 +199,8 @@ def test_reported_phenotype_groundings_preserve_originals_and_do_not_emit_invali
         ],
     )
     bind_fixture_quarantine_policy(transform, source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, source, monkeypatch)
     transform.run(data_file=source)
     edges = _rows(transform.output_edge_file)
     attributes = [row for row in edges if row["predicate"] == "biolink:has_attribute"]
@@ -218,25 +236,31 @@ def test_reported_phenotype_groundings_preserve_originals_and_do_not_emit_invali
     assert not any(row["id"].startswith("METPO:") for row in _rows(transform.output_node_file))
 
 
-def test_rerun_clears_phenotype_report_and_never_caches_previous_observations(tmp_path):
+def test_rerun_clears_phenotype_report_and_never_caches_previous_observations(monkeypatch, tmp_path):
     """An empty later cohort writes a new header-only report, not prior reviewed rows."""
     transform = _transform(tmp_path)
     source = _write_source(tmp_path, [{"LPSN_ID": "101", "BacDive_Gram_stain": "positive"}])
     bind_fixture_quarantine_policy(transform, source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, source, monkeypatch)
     transform.run(data_file=source)
     assert len(_rows(transform.output_dir / "phenotype_normalizations.tsv")) == 1
     source = _write_source(tmp_path, [{"LPSN_ID": "101", "BacDive_Gram_stain": "Positive"}])
     bind_fixture_quarantine_policy(transform, source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, source, monkeypatch)
     transform.run(data_file=source)
     assert _rows(transform.output_dir / "phenotype_normalizations.tsv") == []
 
 
 @pytest.mark.parametrize("column,literal", sorted(REPORTED_METABOLISM_ANNOTATIONS))
-def test_reported_group_disposition_never_fabricates_a_process(tmp_path, column, literal):
+def test_reported_group_disposition_never_fabricates_a_process(monkeypatch, tmp_path, column, literal):
     """Finite field-scoped annotations preserve provenance and do not become habitat/infection claims."""
     transform = _transform(tmp_path)
     quarantine_source = _write_source(tmp_path, [{"LPSN_ID": "101", column: literal}])
     bind_fixture_quarantine_policy(transform, quarantine_source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, quarantine_source, monkeypatch)
     transform.run(data_file=quarantine_source)
     rows = _rows(transform.output_edge_file)
     assert len(rows) == 1
@@ -251,7 +275,7 @@ def test_reported_group_disposition_never_fabricates_a_process(tmp_path, column,
     assert _rows(transform.output_node_file)[0]["category"] == "biolink:Attribute"
 
 
-def test_annotation_routes_are_case_and_column_specific(tmp_path):
+def test_annotation_routes_are_case_and_column_specific(monkeypatch, tmp_path):
     """No broad name heuristic or inferred missing-report status is introduced."""
     transform = _transform(tmp_path)
     source = _write_source(
@@ -263,16 +287,20 @@ def test_annotation_routes_are_case_and_column_specific(tmp_path):
         ],
     )
     bind_fixture_quarantine_policy(transform, source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, source, monkeypatch)
     transform.run(data_file=source)
     assert all(row["predicate"] == "biolink:capable_of" for row in _rows(transform.output_edge_file))
 
 
-def test_reviewed_tartrate_record_keeps_source_spelling_and_does_not_mint_old_stub(tmp_path):
+def test_reviewed_tartrate_record_keeps_source_spelling_and_does_not_mint_old_stub(monkeypatch, tmp_path):
     """Bind the complete immutable record rather than adding a global typo alias."""
     transform = _transform(tmp_path)
     record = json.loads((FIXTURE_DIR / "bergey_tartate_record.json").read_text())
     quarantine_source = _write_source(tmp_path, [record])
     bind_fixture_quarantine_policy(transform, quarantine_source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, quarantine_source, monkeypatch)
     transform.run(data_file=quarantine_source)
     matches = [
         row for row in _rows(transform.output_edge_file) if row["source_column"] == "Bergey_Substrates_for_end_products"
@@ -292,7 +320,7 @@ def test_reviewed_tartrate_record_keeps_source_spelling_and_does_not_mint_old_st
 
 
 @pytest.mark.parametrize("missing", ["", "NA", None])
-def test_known_tartrate_record_cannot_bypass_admission_by_empty_substrate(tmp_path, missing):
+def test_known_tartrate_record_cannot_bypass_admission_by_empty_substrate(monkeypatch, tmp_path, missing):
     """Validate the known record before any source-role/empty-token filtering."""
     transform = _transform(tmp_path)
     record = json.loads((FIXTURE_DIR / "bergey_tartate_record.json").read_text())
@@ -300,11 +328,13 @@ def test_known_tartrate_record_cannot_bypass_admission_by_empty_substrate(tmp_pa
     with pytest.raises(ValueError, match="tartrate record/field evidence changed"):
         quarantine_source = _write_source(tmp_path, [record])
         bind_fixture_quarantine_policy(transform, quarantine_source)
+        write_empty_join_gss(transform.input_base_dir)
+        bind_inactive_join_policy(transform, quarantine_source, monkeypatch)
         transform.run(data_file=quarantine_source)
 
 
 @pytest.mark.parametrize("identifier", ["777027 ", " 777027", "\t777027"])
-def test_known_tartrate_id_normalization_cannot_bypass_evidence_guard(tmp_path, identifier):
+def test_known_tartrate_id_normalization_cannot_bypass_evidence_guard(monkeypatch, tmp_path, identifier):
     """Identify guarded records as the producer does, but admit only exact original evidence."""
     transform = _transform(tmp_path)
     record = json.loads((FIXTURE_DIR / "bergey_tartate_record.json").read_text())
@@ -312,6 +342,8 @@ def test_known_tartrate_id_normalization_cannot_bypass_evidence_guard(tmp_path, 
     with pytest.raises(ValueError, match="tartrate record/field evidence changed"):
         quarantine_source = _write_source(tmp_path, [record])
         bind_fixture_quarantine_policy(transform, quarantine_source)
+        write_empty_join_gss(transform.input_base_dir)
+        bind_inactive_join_policy(transform, quarantine_source, monkeypatch)
         transform.run(data_file=quarantine_source)
 
 
@@ -322,11 +354,13 @@ def test_known_tartrate_id_normalization_cannot_bypass_evidence_guard(tmp_path, 
         ("ureolysis", "GO:0043419"),
     ],
 )
-def test_go_process_uses_authority_without_upgrading_prediction(tmp_path, literal, target):
+def test_go_process_uses_authority_without_upgrading_prediction(monkeypatch, tmp_path, literal, target):
     """Retain raw FAPROTAX evidence while normalizing only reviewed exact process objects."""
     transform = _transform(tmp_path)
     quarantine_source = _write_source(tmp_path, [{"LPSN_ID": "101", "FAPROTAX_Type_of_metabolism": literal}])
     bind_fixture_quarantine_policy(transform, quarantine_source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, quarantine_source, monkeypatch)
     transform.run(data_file=quarantine_source)
     edge = _rows(transform.output_edge_file)[0]
     assert (edge["object"], edge["predicate"], edge["relation"]) == (target, "biolink:capable_of", "RO:0002215")

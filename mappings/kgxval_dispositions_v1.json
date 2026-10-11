@@ -1,0 +1,1689 @@
+{
+  "version": 1,
+  "profile_id": "kgm-kgxval-dispositions-4.4.2-v1",
+  "contract_version": "kgm-validation-contract-v1",
+  "reference": {
+    "production_commit": "1408e7099d039026d7611c240938d8e177753406",
+    "archive_sha256": "158e7131025c7941ae98d70af5ca14d6efb69857ed019f7f61fa9b44279b2345",
+    "csv_sha256": "20ef42bf0eaf4683066f9bdcc9e2e26d7cdee1f98b4f0b4db7a2fe98877a8a6c",
+    "csv_records": 412,
+    "distinct_diagnostics": 176,
+    "biolink_version": "4.4.2",
+    "biolink_sha256": "b6a1320772a92d69e84b8c700cd6386dffe45ed635c8197d61e22b6a6fa3b35e",
+    "predicate_map_sha256": "b532220b1d33f0e51794566fa33a736905b5a41ed1fe38839f9e949cb58c796c",
+    "evidence_scope": "Complete original six-cell CSV diagnostics, not reconstructed endpoint-level graph signatures."
+  },
+  "csv_scope": {
+    "INGEST_NAME": "kg-microbe",
+    "NORMALIZED": "normalized"
+  },
+  "dispositions": {
+    "native_predicate_project_extension": {
+      "scientific_acceptance": false,
+      "evidence": [
+        "kg_microbe/utils/metpo_predicates.py:METPO_TO_BIOLINK_PREDICATE",
+        "kg_microbe/transform_utils/constants.py:ASSAY_HAS_INPUT_PREDICATE,ASSAY_HAS_OUTPUT_PREDICATE,ASSAY_BIOLOGICAL_PROCESS_PREDICATE",
+        "docs/SEMANTIC_MODEL_DECISIONS_20260914.md#assays-642"
+      ],
+      "remaining_verification": "Retain BAD BIOLINK as an actual external-model finding. These exact native properties are registered project extensions, not equivalent rewrites. Validate each assertion's domain, range, source evidence, original relation and positive/negative meaning separately; registration alone is not a row-level pass."
+    },
+    "class_subsumption_row_evidence_required": {
+      "scientific_acceptance": false,
+      "evidence": [
+        "docs/SEMANTIC_MODEL_DECISIONS_20260914.md#explicit-class-level-conventions-643644",
+        ".claude/skills/kg-model-review/kg_model_review.py:_class_level_house_reason"
+      ],
+      "remaining_verification": "Join complete assertions and both endpoints to the exact declared class/strain rule. Check original rdfs:subClassOf relation, distinct endpoints, reviewed namespace/type boundaries and source evidence. The CSV lacks those fields, so neither every ontology class nor every OrganismTaxon is automatically accepted."
+    },
+    "growth_medium_row_evidence_required": {
+      "scientific_acceptance": false,
+      "evidence": [
+        ".claude/skills/kg-model-review/kg_model_review.py:KGMICROBE_EXTENSION_CATEGORIES",
+        "docs/SEMANTIC_MODEL_DECISIONS_20260914.md#explicit-class-level-conventions-643644"
+      ],
+      "remaining_verification": "GrowthMedium is a project extension, but that does not approve this subclass assertion. Obtain exact medium/parent declarations, original relation and reviewed class semantics before granting a row disposition."
+    },
+    "taxon_phenotype_row_evidence_required": {
+      "scientific_acceptance": false,
+      "evidence": [
+        "docs/SEMANTIC_MODEL_DECISIONS_20260914.md#explicit-class-level-conventions-643644",
+        ".claude/skills/kg-model-review/kg_model_review.py:_class_level_house_reason"
+      ],
+      "remaining_verification": "Require an OrganismTaxon bearer and a METPO/PATO/OMP phenotype-class target with the reviewed substantive categories and retained evidence. Arbitrary Attribute, chemical or NamedThing targets are not allowed. The signature-only CSV cannot establish this endpoint pair."
+    },
+    "chemical_role_row_evidence_required": {
+      "scientific_acceptance": false,
+      "evidence": [
+        "docs/SEMANTIC_MODEL_DECISIONS_20260914.md#chebi-roles",
+        ".claude/skills/kg-model-review/kg_model_review.py:_class_level_house_reason"
+      ],
+      "remaining_verification": "Require exact CHEBI subject/object identifiers, RO:0000087 relation, a native ChemicalRole object and the reviewed macromolecule-class source category/evidence. Do not broadly classify all MacromolecularComplex nodes as chemicals."
+    },
+    "food_taxon_row_evidence_required": {
+      "scientific_acceptance": false,
+      "evidence": [
+        "docs/SEMANTIC_MODEL_DECISIONS_20260914.md#foodon-organism-classes-and-source-defects",
+        ".claude/skills/kg-model-review/kg_model_review.py:_class_level_house_reason"
+      ],
+      "remaining_verification": "Require a FOODON food-material subject, RO:0002162 relation, OrganismTaxon object, and authoritative source evidence. Distinguish a food part/material from a whole organism; do not infer identities or types from this single category cell."
+    },
+    "ontology_category_source_review_required": {
+      "scientific_acceptance": false,
+      "evidence": [
+        ".claude/skills/kg-model-review/kgxval_validate.py:build_node_category_map",
+        ".claude/skills/kg-model-review/kg_model_review.py:check_domain_range",
+        "docs/SEMANTIC_MODEL_DECISIONS_20260914.md"
+      ],
+      "remaining_verification": "Retain the external domain/range finding. OntologyClass, alone or in a union, does not establish the biological type needed by this predicate. Inspect full source declarations, authoritative class ancestry, relation and both endpoints; isolate confirmed source defects upstream. No blanket ontology-import waiver."
+    },
+    "domain_range_source_review_required": {
+      "scientific_acceptance": false,
+      "evidence": [
+        ".claude/skills/kg-model-review/kgxval_validate.py:build_node_category_map",
+        ".claude/skills/kg-model-review/kg_model_review.py:check_domain_range"
+      ],
+      "remaining_verification": "Retain the external domain/range finding. Obtain exact assertions, both category sets and authoritative source evidence; distinguish model inheritance/mixin limitations from source mapping or categorization defects. No rule follows from prefix, label, repeated CSV count or candidate graph membership alone."
+    }
+  },
+  "valid_category_sets": {
+    "set_0": "",
+    "set_1": "RNA product|RNA product isoform|accessible dna region|activity|administrative entity|affinity measurement|agent|anatomical entity|anatomical entity has part anatomical entity association|anatomical entity part of anatomical entity association|anatomical entity to anatomical entity association|anatomical entity to anatomical entity ontogenic association|article|association|attribute|bacterium|behavior|behavior to behavioral feature association|behavioral exposure|behavioral feature|biological entity|biological process|biological process or activity|biological process or activity to anatomical entity association|biological process or activity to biological process or activity association|biological process or activity to gene or gene product or gene family association|biological sex|biotic exposure|book|book chapter|case|case to disease association|case to gene association|case to phenotypic feature association|case to variant association|causal gene to disease association|cell|cell line|cell line as a model of disease association|cell line to disease or phenotypic feature association|cellular component|cellular organism|chemical affects biological entity association|chemical affects gene association|chemical entity|chemical entity assesses named thing association|chemical entity or gene or gene product regulates gene association|chemical entity to biological process association|chemical entity to chemical derivation association|chemical entity to chemical entity association|chemical entity to disease or phenotypic feature association|chemical entity to pathway association|chemical exposure|chemical gene interaction association|chemical mixture|chemical or drug or treatment adverse event association|chemical or drug or treatment side effect association|chemical or drug or treatment to disease or phenotypic feature association|chemical role|chi squared analysis result|clinical attribute|clinical course|clinical entity|clinical finding|clinical intervention|clinical measurement|clinical modifier|clinical trial|coding sequence|cohort|common data element|complex chemical exposure|complex molecular mixture|concept count analysis result|confidence level|contributor association|correlated gene to disease association|dataset|dataset distribution|dataset summary|dataset version|device|diagnostic aid|disease|disease associated with response to chemical entity association|disease or phenotypic feature|disease or phenotypic feature exposure|disease or phenotypic feature to genetic inheritance association|disease or phenotypic feature to location association|disease to exposure event association|disease to phenotypic feature association|drug|drug exposure|drug label|drug to gene association|drug to gene interaction exposure|druggable gene to disease association|entity|entity to disease association|entity to phenotypic feature association|environmental exposure|environmental feature|environmental food contaminant|environmental process|event|evidence|evidence type|exon|exon to transcript relationship|exposure event|exposure event to outcome association|exposure event to phenotypic feature association|food|food additive|functional association|fungus|gene|gene affects chemical association|gene as a model of disease association|gene family|gene family to gene or gene product or gene family association|gene has variant that contributes to disease association|gene or gene product or gene family to anatomical entity association|gene or gene product or gene family to biological process or activity association|gene regulates gene association|gene to disease association|gene to expression site association|gene to gene association|gene to gene coexpression association|gene to gene family association|gene to gene homology association|gene to gene product relationship|gene to go term association|gene to pathway association|gene to phenotypic feature association|genetic inheritance|genome|genomic background exposure|genomic sequence localization|genotype|genotype as a model of disease association|genotype to disease association|genotype to gene association|genotype to genotype part association|genotype to phenotypic feature association|genotype to variant association|genotypic sex|geographic exposure|geographic location|geographic location at time|gross anatomical structure|haplotype|hospitalization|human|icees study result|individual organism|information content entity|information content entity to named thing association|invertebrate|journal article|life stage|log odds analysis result|macromolecular complex|macromolecular machine has substrate association|macromolecular machine to biological process association|macromolecular machine to cellular component association|macromolecular machine to molecular activity association|mammal|material sample|material sample derivation association|material sample to disease or phenotypic feature association|microRNA|molecular activity|molecular activity to chemical entity association|molecular activity to molecular activity association|molecular activity to pathway association|molecular entity|molecular mixture|named thing|named thing associated with likelihood of named thing association|noncoding RNA product|nucleic acid entity|nucleic acid sequence motif|nucleosome modification|observed expected frequency analysis result|onset|organism attribute|organism taxon|organism taxon to environment association|organism taxon to organism taxon association|organism taxon to organism taxon interaction|organism taxon to organism taxon specialization|organism to organism association|organismal entity|organismal entity as a model of disease association|pairwise gene to gene interaction|pairwise molecular interaction|patent|pathological anatomical exposure|pathological anatomical structure|pathological process|pathological process exposure|pathway|phenomenon|phenotypic feature|phenotypic feature to disease association|phenotypic feature to phenotypic feature association|phenotypic quality|phenotypic sex|physical entity|physiological process|planetary entity|plant|polypeptide|population of individual organisms|population to population association|posttranslational modification|preprint publication|procedure|process regulates process association|processed material|protein|protein domain|protein family|protein isoform|publication|reaction to catalyst association|reaction to participant association|reagent targeted gene|regulatory region|relative frequency analysis result|retrieval source|sequence association|sequence feature relationship|sequence variant|sequence variant modulates treatment association|serial|severity value|siRNA|small molecule|snv|socioeconomic attribute|socioeconomic exposure|study|study population|study result|study variable|taxon to taxon association|text mining study result|transcript|transcript to gene relationship|transcription factor binding site|treatment|variant as a model of disease association|variant to disease association|variant to gene association|variant to gene expression association|variant to phenotypic feature association|variant to population association|vertebrate|virus|web page|zygosity",
+    "set_2": "RNA product|RNA product isoform|accessible dna region|activity|administrative entity|affinity measurement|agent|anatomical entity|article|attribute|bacterium|behavior|behavioral exposure|behavioral feature|biological entity|biological process|biological process or activity|biological sex|biotic exposure|book|book chapter|case|cell|cell line|cellular component|cellular organism|chemical entity|chemical exposure|chemical mixture|chemical role|chi squared analysis result|clinical attribute|clinical course|clinical entity|clinical finding|clinical intervention|clinical measurement|clinical modifier|clinical trial|coding sequence|cohort|common data element|complex chemical exposure|complex molecular mixture|concept count analysis result|confidence level|dataset|dataset distribution|dataset summary|dataset version|device|diagnostic aid|disease|disease or phenotypic feature|disease or phenotypic feature exposure|drug|drug exposure|drug label|drug to gene interaction exposure|environmental exposure|environmental feature|environmental food contaminant|environmental process|event|evidence|evidence type|exon|exposure event|food|food additive|fungus|gene|gene family|genetic inheritance|genome|genomic background exposure|genotype|genotypic sex|geographic exposure|geographic location|geographic location at time|gross anatomical structure|haplotype|hospitalization|human|icees study result|individual organism|information content entity|invertebrate|journal article|life stage|log odds analysis result|macromolecular complex|mammal|material sample|microRNA|molecular activity|molecular entity|molecular mixture|named thing|noncoding RNA product|nucleic acid entity|nucleic acid sequence motif|nucleosome modification|observed expected frequency analysis result|onset|organism attribute|organism taxon|organismal entity|patent|pathological anatomical exposure|pathological anatomical structure|pathological process|pathological process exposure|pathway|phenomenon|phenotypic feature|phenotypic quality|phenotypic sex|physical entity|physiological process|planetary entity|plant|polypeptide|population of individual organisms|posttranslational modification|preprint publication|procedure|processed material|protein|protein domain|protein family|protein isoform|publication|reagent targeted gene|regulatory region|relative frequency analysis result|retrieval source|sequence variant|serial|severity value|siRNA|small molecule|snv|socioeconomic attribute|socioeconomic exposure|study|study population|study result|study variable|text mining study result|transcript|transcription factor binding site|treatment|vertebrate|virus|web page|zygosity",
+    "set_3": "RNA product|RNA product isoform|accessible dna region|anatomical entity|bacterium|behavior|behavioral feature|biological entity|biological process|biological process or activity|case|cell|cell line|cellular component|cellular organism|clinical finding|coding sequence|cohort|disease|disease or phenotypic feature|exon|fungus|gene|gene family|genetic inheritance|genome|genomic background exposure|genotype|gross anatomical structure|haplotype|human|individual organism|invertebrate|life stage|macromolecular complex|mammal|microRNA|molecular activity|noncoding RNA product|nucleic acid entity|nucleic acid sequence motif|nucleosome modification|organismal entity|pathological anatomical structure|pathological process|pathway|phenotypic feature|physiological process|plant|polypeptide|population of individual organisms|posttranslational modification|protein|protein domain|protein family|protein isoform|reagent targeted gene|regulatory region|sequence variant|siRNA|snv|study population|thing with taxon|transcript|transcription factor binding site|vertebrate|virus",
+    "set_4": "RNA product|RNA product isoform|accessible dna region|anatomical entity|bacterium|behavior|behavioral feature|biological entity|biological process|biological process or activity|case|cell|cell line|cellular component|cellular organism|clinical finding|coding sequence|cohort|disease|disease or phenotypic feature|exon|fungus|gene|gene family|genetic inheritance|genome|genotype|gross anatomical structure|haplotype|human|individual organism|invertebrate|life stage|macromolecular complex|mammal|microRNA|molecular activity|noncoding RNA product|nucleic acid sequence motif|nucleosome modification|organismal entity|pathological anatomical structure|pathological process|pathway|phenotypic feature|physiological process|plant|polypeptide|population of individual organisms|posttranslational modification|protein|protein domain|protein family|protein isoform|reagent targeted gene|regulatory region|sequence variant|siRNA|snv|study population|transcript|transcription factor binding site|vertebrate|virus",
+    "set_5": "RNA product|RNA product isoform|gene|gene or gene product|gene product isoform mixin|gene product mixin|microRNA|noncoding RNA product|nucleosome modification|posttranslational modification|protein|protein isoform|siRNA",
+    "set_6": "accessible dna region|anatomical entity|attribute|behavior|behavioral exposure|behavioral feature|biological process|biological process or activity|biological sex|biotic exposure|cell|cellular component|chemical exposure|chemical mixture|chemical role|clinical attribute|clinical course|clinical finding|clinical measurement|clinical modifier|complex chemical exposure|complex molecular mixture|disease|disease or phenotypic feature|disease or phenotypic feature exposure|drug|drug exposure|drug to gene interaction exposure|environmental exposure|evidence type|exposure event|food|gene|genome|genomic background exposure|genotype|genotypic sex|geographic exposure|gross anatomical structure|haplotype|life stage|molecular activity|molecular entity|molecular mixture|nucleic acid entity|onset|ontology class|organism attribute|pathological anatomical exposure|pathological anatomical structure|pathological process|pathological process exposure|pathway|phenotypic feature|phenotypic quality|phenotypic sex|physiological process|processed material|reagent targeted gene|regulatory region|relationship type|sequence variant|severity value|small molecule|snv|socioeconomic attribute|socioeconomic exposure|taxonomic rank|transcription factor binding site|treatment|zygosity",
+    "set_7": "activity|activity and behavior|behavior|biological process|biological process or activity|clinical trial|environmental process|molecular activity|occurrent|pathological process|pathway|phenomenon|physiological process|procedure|study",
+    "set_8": "attribute|biological sex|chemical role|clinical attribute|clinical course|clinical measurement|clinical modifier|genotypic sex|onset|organism attribute|phenotypic quality|phenotypic sex|severity value|socioeconomic attribute|zygosity",
+    "set_9": "behavioral feature|clinical finding|phenotypic feature",
+    "set_10": "behavior|biological process|biological process or activity|molecular activity|pathological process|pathway|physiological process",
+    "set_11": "chemical entity|chemical mixture|complex molecular mixture|drug|environmental food contaminant|food|food additive|molecular entity|molecular mixture|nucleic acid entity|processed material|small molecule",
+    "set_12": "chemical role"
+  },
+  "diagnostics": [
+    {
+      "signature_sha256": "c4c332f6cbca3b2e1851cb5ee1ef439fbdcf61f03e5cee7e39b4447fb093bcc6",
+      "predicate": "biolink:subclass_of",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_6",
+      "actual_categories": "chemical entity",
+      "reference_occurrences": 5,
+      "disposition": "class_subsumption_row_evidence_required"
+    },
+    {
+      "signature_sha256": "0bc38afb35ab084ad90f580f99b98ab24615175b97837c24093b02a6eaceda70",
+      "predicate": "biolink:subclass_of",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_6",
+      "actual_categories": "chemical entity",
+      "reference_occurrences": 8,
+      "disposition": "class_subsumption_row_evidence_required"
+    },
+    {
+      "signature_sha256": "8526fdd2a0254c957e53af3352c2dd8f4d44b4ad7216a47bc93fcc5a78925b28",
+      "predicate": "biolink:subclass_of",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_6",
+      "actual_categories": "chemical entity|macromolecular complex",
+      "reference_occurrences": 6,
+      "disposition": "class_subsumption_row_evidence_required"
+    },
+    {
+      "signature_sha256": "17d991b3d0ec7bfd0ff085d53a87fe5cbfa313cc7a52598e66167cc0952a5aa6",
+      "predicate": "biolink:subclass_of",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_6",
+      "actual_categories": "chemical entity|macromolecular complex",
+      "reference_occurrences": 5,
+      "disposition": "class_subsumption_row_evidence_required"
+    },
+    {
+      "signature_sha256": "75b9d81cb21dadf1141497419206d91f88eb7f5cc5ffcefee6fed79a26cefed7",
+      "predicate": "biolink:subclass_of",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_6",
+      "actual_categories": "macromolecular complex",
+      "reference_occurrences": 2,
+      "disposition": "class_subsumption_row_evidence_required"
+    },
+    {
+      "signature_sha256": "ad01d488d3b4067bdce54d321d407a63a63e1f1b486463878fd96b462d91b276",
+      "predicate": "biolink:subclass_of",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_6",
+      "actual_categories": "macromolecular complex",
+      "reference_occurrences": 3,
+      "disposition": "class_subsumption_row_evidence_required"
+    },
+    {
+      "signature_sha256": "9075b2b674a01827d7d52111115376cd48254eb27c64263187f0aa7cd27c2c13",
+      "predicate": "biolink:has_chemical_role",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_11",
+      "actual_categories": "macromolecular complex",
+      "reference_occurrences": 2,
+      "disposition": "chemical_role_row_evidence_required"
+    },
+    {
+      "signature_sha256": "22066da4483875e37d8fb4e2b2c6d714840d2259bdeeaf1949f8df24c558cbd6",
+      "predicate": "biolink:location_of",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 3,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "f65574b3c0d5cf2e920ff7314d727c68d08166860b51b319e856151d50abf6e8",
+      "predicate": "biolink:subclass_of",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_6",
+      "actual_categories": "organism taxon",
+      "reference_occurrences": 5,
+      "disposition": "class_subsumption_row_evidence_required"
+    },
+    {
+      "signature_sha256": "f309df9cfa8b14a7dcf0fc1e208a43612619ca6e6697fe433519bfa1814b5194",
+      "predicate": "biolink:subclass_of",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_6",
+      "actual_categories": "organism taxon",
+      "reference_occurrences": 4,
+      "disposition": "class_subsumption_row_evidence_required"
+    },
+    {
+      "signature_sha256": "692c4811d08375b614716db5988b80f772c45922ef15312eea5a5eb68098e11f",
+      "predicate": "METPO:2000517",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 3,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "d267519e5dbc49718d2e412263394f77be9193b5b69f47418fe35761234fa725",
+      "predicate": "METPO:2000103",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 2,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "c516930591ec498dbabf638686c315ee6b68f003d0485dbbc463a08d21b05091",
+      "predicate": "biolink:has_phenotype",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_4",
+      "actual_categories": "organism taxon",
+      "reference_occurrences": 1,
+      "disposition": "taxon_phenotype_row_evidence_required"
+    },
+    {
+      "signature_sha256": "0b5c84f224ecf6eedf13a2a1eec1d753f87c13b41937dbece6e655e11e384e54",
+      "predicate": "biolink:has_phenotype",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_9",
+      "actual_categories": "ontology class|phenotypic quality",
+      "reference_occurrences": 2,
+      "disposition": "taxon_phenotype_row_evidence_required"
+    },
+    {
+      "signature_sha256": "b902f677e44ca5f8e21a43414119dab5fd7f01c52d909f85148530696d77ccf8",
+      "predicate": "METPO:2000102",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "d25d398b294d7dc474a7b8bf2ac365fa9e0c4fea89bd9e670ea514f77e369221",
+      "predicate": "METPO:2000033",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 7,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "f87358bb4ba16730388cf9615dfd76a7596424d1e4fe0de716dbdbae26bb94de",
+      "predicate": "METPO:2000606",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "4b801feaf85cda500e543624f6c07a43da9640755fa9a0912b1b1b56ef17e785",
+      "predicate": "METPO:2000034",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 2,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "1e840049f6aeb73f281708a9230e932c373a03cbc3ab6280b2891171e60c5b26",
+      "predicate": "METPO:2000042",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 4,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "2205606d56e80ea15e8fedef0df8faaf08d15b9021bd14b0c0d14f452f0b6a5a",
+      "predicate": "METPO:2000602",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "a0cb9b7fc315f9a0e99690446c6f5e0b84b04d4b226101637b35d6bb48f167d6",
+      "predicate": "METPO:2000604",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "0b2ffa50d4930e39043e5b7d8049a64defccf3e29d7abd816f4992942368147c",
+      "predicate": "METPO:2000222",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 4,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "34155cfcd15dc811defb96f01aa201b647c4c059922d556853bc2051b1fe6b34",
+      "predicate": "METPO:2000046",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 3,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "75a9463769d4e686aaf89c4f990dd6f8126d686cd977f3617f64ad2298a127c3",
+      "predicate": "METPO:2000017",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "f48eb0e451819ba0d75d5e64d9a810faa386de70fba8f6d6e00065ec4d8fa78d",
+      "predicate": "METPO:2000031",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 4,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "a9b1787e94e381ee41b5e1620d9d5c1fb83cf72dba5175309ab06cb15d9864b3",
+      "predicate": "METPO:2000044",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 2,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "c3cf3ccd1b01c76b7db952a881f8d36828d0da5db531b9780b5e1a6c053c2039",
+      "predicate": "METPO:2000039",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 5,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "78b83db22b545fa7180fbb0e89df2a591b771caa47b13bdbffac3af3271a4997",
+      "predicate": "METPO:2000605",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "b7464bcb355c071791cdb9f91e4104c0a6a00d575ffc292fda143f093f0df68a",
+      "predicate": "METPO:2000038",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 5,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "80c66b6197640f686717b4b407e7918112272bf60fbe7ebf5960e33ec9f9de38",
+      "predicate": "METPO:2000028",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 4,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "c61b0230f2c0b970420ca3351bbbfe4c4f79a927034ceb2ff0d890f032198f66",
+      "predicate": "METPO:2000302",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 4,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "ea4d02ccb467bf0a67f1cbc09e5758a88d24a704968d693ff436208604c25267",
+      "predicate": "METPO:2000037",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 5,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "8b21526455ec17d8253c0556499640d8503ab5f0074a60832555c75416be3e06",
+      "predicate": "METPO:2000041",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 2,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "d64a8e50d27c68f9c8ec6a51b99f2a9c62253a0519bc37c4da537826fc58b91c",
+      "predicate": "METPO:2000303",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 4,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "4730c45c23b5567a523bb894332ac4fed11268aaf064cc733f5b6a1c7c9bb5d4",
+      "predicate": "METPO:2000012",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 5,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "d5b38536f3994cd42e215c2f3013e36dc96026a93fe9ae9e5ff7a91d5b5bf478",
+      "predicate": "METPO:2000065",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "0500dce769f1a67137ad407e8d79c110f856e0e2b06a671e5dd4b38f9f55ba05",
+      "predicate": "METPO:2000013",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 6,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "0e7ee3b2a705871b3c5840642574ec6c41e7f2b1650b36f48121a87feced1003",
+      "predicate": "METPO:2000036",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 3,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "c383d7bc908d262a7d196d355a601f43d886296a04ea721f401813f445766fdb",
+      "predicate": "METPO:2000006",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 4,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "4c15f5cc3ea54a1804c6730bfc521a0ff16b5704ea52c0e4930318fd3f956166",
+      "predicate": "METPO:2000015",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 3,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "119cfbd3452b580547d3a911e35fcb8185704ad9a120de8bce465cd465b0e4e5",
+      "predicate": "METPO:2000016",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 3,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "13c9ed2df8c81eacd23011e9870b601a9660a9e395855e9d8b035c64834f6c63",
+      "predicate": "METPO:2000011",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 6,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "45220591ecdc9cb32423607ebf2f01978ba3e88f505cc66391870fd8b6eff29f",
+      "predicate": "METPO:2000027",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 6,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "921a4fda25f4af6a74f209711d370a6379aba26cad5cfdecd5d202842b8657ae",
+      "predicate": "METPO:2000202",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 4,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "f3d16b288c7dddcc8a01704d56cb8406092061610ee1c508c0a2854653d799ef",
+      "predicate": "METPO:2000007",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 7,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "66304d7365bbc2d3221e247b537367e9c0a5e8e30f59ea847e0eba93d78782e0",
+      "predicate": "METPO:2000002",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 7,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "9c232a54e8a4c52627f74136adbb2ebae253ef76d031aedd0abc1e16f4ab6858",
+      "predicate": "METPO:2000003",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 4,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "a96e13583d6473bb835b5e9b6d42c331ebaa8a482888caab2907742fc2e958b6",
+      "predicate": "METPO:2000601",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "42a0953840fb95a47ecaef2658c1244389899a8acb4f7c668bedc33797b12583",
+      "predicate": "METPO:2000045",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 2,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "9bc4599109d8a7fd0ec89547c16f9f8ed7b7b5636669a77a7edc92813ec6120d",
+      "predicate": "METPO:2000008",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 2,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "f51953298dc6b738b9638c6636b20da591ab879726ce551bd76871ed4812e684",
+      "predicate": "METPO:2000019",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 3,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "d0972e11730de4c26dce298070fe37f3d64b18a4d59863ef65549063c2e59c84",
+      "predicate": "METPO:2000603",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "7d6e52f661a8793ef304bb8dd063a803deee7d2065e428f64ddb37515e91eea8",
+      "predicate": "METPO:2000004",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "da9f66e5e4165863f2a2db0c17e51fae839ccfd61cbe6c9eae8c485f4d32fbd5",
+      "predicate": "METPO:2000014",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 4,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "bdda0fc434dfce659a3e5349e2a9158ef6bfcd4d502d8b51ed8f2ebabb5b3e52",
+      "predicate": "METPO:2000010",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 5,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "601ca0a0315a454c0d5ba1651255959969b062279d16892419caac552bb4158a",
+      "predicate": "METPO:2000040",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 2,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "62de03edb84c9e5f8f284917975e77670bb809c4bd2a87e732285f1f9e00fe86",
+      "predicate": "METPO:2000030",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 3,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "5a6dc47702a52f59eba76615438d3409f1049772a23d0618094064a89f12f469",
+      "predicate": "METPO:2000009",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 3,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "a24d8df340ab56c1f16a04d7c875b9bbe6bc2c972f50d7c34cafe354ee6b90c8",
+      "predicate": "METPO:2000035",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 4,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "953f5f719e56ce4e70d23f06fa6c179d1e29d5effdf4b6b7ca09050d8c02d4e3",
+      "predicate": "METPO:2000005",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 3,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "c324847e3084a2eb672ebaddfc281343334e94279ab1de6f5a187424fa8e40c9",
+      "predicate": "METPO:2000518",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "63bd8ff8dac6a1f32128bbb9ace41a126f625121b932a543269e53116beb9594",
+      "predicate": "METPO:2000001",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 2,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "d067431e90eef2bfdc33219d6799a0616dc26ca73c3d6f64db7c526e0fbf734d",
+      "predicate": "METPO:2000018",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 3,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "aafdd619dc0b940f53f52f08dacd7e677855084501d7a24e0b48d8bc64d98873",
+      "predicate": "METPO:2000047",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "9c82ec23589d92b5b499758554934ef86a3e039c0339a6f4d89f361f35274659",
+      "predicate": "METPO:2000048",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 2,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "28900b574412a10a9eea1076a6fab205cf2f1c02972c00a2ea91e5af7fba720d",
+      "predicate": "METPO:2000029",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "caa2255e1b1cda6db5f55c5f3c9ac13ffc4b53ae4d2eeeab36c20b5e29f73f59",
+      "predicate": "METPO:2000021",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "081cd564ea43d158c70ffcfcde0118e29431391ba041f01ac9b4141d2d04fde4",
+      "predicate": "METPO:2000020",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "6c7e1e6ee08415a28901cd4064fccea2b34bc8ec0423e08ad7a5f57f0a91aa2b",
+      "predicate": "METPO:2000032",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "d1a601b56e3e9e2d48c25fd89ebdb740f956bf0e0f2486411f8ea265edde0f8b",
+      "predicate": "MICRO:0000065",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 2,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "2197dc89021598d28068465e81f8e7a886cde47949ba53aa37948688af0c60b3",
+      "predicate": "biolink:subclass_of",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_6",
+      "actual_categories": "procedure",
+      "reference_occurrences": 1,
+      "disposition": "class_subsumption_row_evidence_required"
+    },
+    {
+      "signature_sha256": "859ae73364a0d1e72b2ec2f8da55bd9b7fc03d1f6e5f5f6144e98096e4e823cf",
+      "predicate": "biolink:subclass_of",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_6",
+      "actual_categories": "procedure",
+      "reference_occurrences": 1,
+      "disposition": "class_subsumption_row_evidence_required"
+    },
+    {
+      "signature_sha256": "feb874d55a5f39ccfb603210a473c13b88eb39bc1e83530611ccd808c4c541d4",
+      "predicate": "MICRO:0001206",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 2,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "7b8e271050703ea235f0247f1b7667d91620dfcfbf7aabcbb590f35f51dc497a",
+      "predicate": "MICRO:0001215",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "c5765ef572942851223c35ed1b8f676859da45353c98dc5f8e7c52c196ab93d9",
+      "predicate": "METPO:2000511",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "f5f4c41ec6b3d7f6bcecc8ea387a5e5fa5753d0657558758a1d210b44f6fb89e",
+      "predicate": "METPO:2000068",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "e293046e7d2dfa45c678d1f4ba27b90f3975973fd11c1da54740e4ccf9e97cc9",
+      "predicate": "METPO:2000067",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "b0a1ceaa7bcba09c6ea766b2d7b7d67e0411675e0369b5f2c21ab900ab5dc29f",
+      "predicate": "METPO:2000049",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 2,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "3d2df506e4a826413789d057d75f366e061861fb7ef2d2837113d5d093f924f5",
+      "predicate": "METPO:2000024",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "9dcbe7ebfa4fb3c8e23e11859de3d59504b5bcd2ad8aa835a723f2d729e2b04d",
+      "predicate": "METPO:2000051",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "a8052497136f7cf00b60507a10381c32b686fefc8c21ee2f5332ccb90f5e3163",
+      "predicate": "METPO:2000043",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 2,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "714d3240284adcee2c2bd489821c6ab1e318878a1f355fe70e5bcc99b8cbb547",
+      "predicate": "METPO:2000022",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 2,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "4a7d977f0875df63714be65d8165b3fc0bc52849e4f351b2cbf99c711786233a",
+      "predicate": "METPO:2000025",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "22703abc2aa33e642a5ca57039fee071ef206b18440676e86e640f1454f937e4",
+      "predicate": "METPO:2000026",
+      "error": "BAD BIOLINK",
+      "valid_category_set": "set_0",
+      "actual_categories": "",
+      "reference_occurrences": 1,
+      "disposition": "native_predicate_project_extension"
+    },
+    {
+      "signature_sha256": "e16b0edffd76f8745305dcdacb4bc190516744f7bc206b33392bf33e34bf701f",
+      "predicate": "biolink:subclass_of",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_6",
+      "actual_categories": "growth medium",
+      "reference_occurrences": 1,
+      "disposition": "growth_medium_row_evidence_required"
+    },
+    {
+      "signature_sha256": "500d05691a84654808843b83d294c3f728921f2e89d9df9a675c12d76135cb2d",
+      "predicate": "biolink:coexists_with",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 2,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "a13593eae61275614eed2e7b0251866afb522c9354ad38288cd54907268fdb56",
+      "predicate": "biolink:coexists_with",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 2,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "a0bd0d2eed2fa561cde18819d16b28a8218ab2ea98a3a0fd78103fe99d5a69db",
+      "predicate": "biolink:located_in",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "8def27481d08c876684a8feeec537521c7e0f5f4b10121d7c70ec5e071c9c3fc",
+      "predicate": "biolink:located_in",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 2,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "d1fa417df16eda60e3fcc8a9bc6ba23c4747cd0a2b18fc2b0a21506f4320a094",
+      "predicate": "biolink:part_of",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 5,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "7a65308510ec35aeb1ccaacfaff1679d7706db9cea4529d79c8d749d151231cf",
+      "predicate": "biolink:part_of",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 5,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "1f5e454785ba7a30c90e33999a240bf449e7e69f9e1b5e2b7b31c355086789e0",
+      "predicate": "biolink:related_to",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 12,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "d53242eaaa43acd097cd393d44d888bd3c3c47ed59d778889f3c9f5ff3c572a4",
+      "predicate": "biolink:related_to",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 5,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "48655a7439901dbd293bea7f6f0f5ef69df69f68d3593f80dad38116bd5c0296",
+      "predicate": "biolink:participates_in",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "7f7f6c4604d3932df31f8f692a858332b6cd1453d4461327cab350d686763bd5",
+      "predicate": "biolink:participates_in",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_10",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 2,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "c9dcb669c15b4407049b270bf3b7e52377eec8f2e41dfe3c7783b89745e0eb5e",
+      "predicate": "biolink:is_output_of",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 2,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "647ac9883673dfa419f2f0a395d4187d5a216dfb5d4a1709a6051ed1e306162d",
+      "predicate": "biolink:is_output_of",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_10",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 3,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "455f3cae9633390fa86f23f3b372c5fbe0ef3d34766ac1f3c37de3e6049914c5",
+      "predicate": "biolink:has_attribute",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_1",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 3,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "8d7c85f72a4d96c1d8a21a9b76d0260c8ca27ba09fb5c18906c4d30dda822d84",
+      "predicate": "biolink:has_attribute",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_8",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "7a9b3ec633f0a6bd295ec083efe8a2e0bdddcf0cba3ede3f6b91bd54d4dd8f52",
+      "predicate": "biolink:has_part",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 5,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "8d6fd8100271042c2502e4d04a8cecf14fd11ce918a98d2b998afda681b4ee1d",
+      "predicate": "biolink:has_part",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 6,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "4b95860da532e9318a3414da95f2f6298f23c0cf8e0cd47ad8dce8feecd8f643",
+      "predicate": "biolink:overlaps",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 2,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "c0f8973787778c21545ffe5fdd61225e06294a43df55c697b771feee52dbc194",
+      "predicate": "biolink:overlaps",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "c7d5957c1ff8df07a3ab9f06948b35be7b3551f4d4e656c17a686b2bd95ba267",
+      "predicate": "biolink:in_taxon",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_3",
+      "actual_categories": "food",
+      "reference_occurrences": 1,
+      "disposition": "food_taxon_row_evidence_required"
+    },
+    {
+      "signature_sha256": "bf72a7bff1db3d0938decca18e20fa2ca5085fd51baed8a6df9501b2d3e504ed",
+      "predicate": "biolink:develops_from",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "daa456a353f495e3744fda646d919efef37d98f9ebf1b9a508093db65b52d6c7",
+      "predicate": "biolink:develops_from",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 3,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "cc04ef89f8dee0e159b6711551882e77ba5c67b6f0ca0e68e90bad5ef816da25",
+      "predicate": "biolink:participates_in",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "anatomical entity",
+      "reference_occurrences": 2,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "e3c2a0d512744d0365fbd3c3798486f99e4226f1ad21af4af6163c02504e5652",
+      "predicate": "biolink:temporally_related_to",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "anatomical entity",
+      "reference_occurrences": 2,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "846360c57f1b9809e3e437cce3453b532673fc3c5e0b3e725b19fcfaf740e2fb",
+      "predicate": "biolink:temporally_related_to",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "anatomical entity",
+      "reference_occurrences": 2,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "5b9654b6e5506c57affad6c341fa44cb391aefbb692b76870c4cf1096b3256de",
+      "predicate": "biolink:subclass_of",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_6",
+      "actual_categories": "chemical entity|environmental feature",
+      "reference_occurrences": 1,
+      "disposition": "class_subsumption_row_evidence_required"
+    },
+    {
+      "signature_sha256": "c7e329493b8dba36ffa3ed3ffc411638818f16b0d52ebdc0e7b62ddfd3605864",
+      "predicate": "biolink:subclass_of",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_6",
+      "actual_categories": "chemical entity|environmental feature",
+      "reference_occurrences": 1,
+      "disposition": "class_subsumption_row_evidence_required"
+    },
+    {
+      "signature_sha256": "683a5acea3b62c327894f646360a52b930101b57e1ac571c7697b29945beca7f",
+      "predicate": "biolink:subclass_of",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_6",
+      "actual_categories": "protein",
+      "reference_occurrences": 2,
+      "disposition": "class_subsumption_row_evidence_required"
+    },
+    {
+      "signature_sha256": "8a85cec52f74cd7dab5c0c48f32791a9365c682ceac1cf7b4e6c236765d07fd1",
+      "predicate": "biolink:causes",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 4,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "ea2b247e7958475a82f86c9cad6fd2e011846c5e4c8c523312b1f427a4271713",
+      "predicate": "biolink:causes",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 2,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "9eb1458003c052850bd03cf7473afc11b9fbf52268fa37d24b53c9b67b49052c",
+      "predicate": "biolink:has_attribute",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_8",
+      "actual_categories": "environmental feature|ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "c302d864161bd695b7c88d14f694ea4b3196153fb9b6e8ed82ba2bc496610a1f",
+      "predicate": "biolink:derives_from",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 5,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "b316c201e0abdd331df73339b5978517e441d9bf6aa8edaea15bbac5567800cc",
+      "predicate": "biolink:location_of",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "ef36ea71b225acfb6a80cf1089a40f9791f8eb28318cad59d55a3d990c97648b",
+      "predicate": "biolink:occurs_in",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 3,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "2e5fbfcfb440a67abbf52b1a4bf0e06b879bd278c02c15b17b5c931bf0537cb5",
+      "predicate": "biolink:occurs_in",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "28e1e371ced03e1117dbff514ac6ed523e4fa1eaf67580bc72b7832e02a78bdf",
+      "predicate": "biolink:derives_from",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 2,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "fc011902ae308da20c87f0444244693b121eb9eab93ed1a785da1d28c6d719db",
+      "predicate": "biolink:has_chemical_role",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_11",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 2,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "b44b7a9bdf4769419a0efedd72e7e0e98467147cf8a850c47cb6ef33a24fb874",
+      "predicate": "biolink:has_chemical_role",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_12",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "fa4219cd622d35f40dff1f982bc2c45588d5542b915139fe20882810227fd488",
+      "predicate": "biolink:has_chemical_role",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_11",
+      "actual_categories": "environmental feature|ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "0bb14c5c38bdd763a3cf3179bc2c62573481d2a4f90f46aefd354d1ea5e1c558",
+      "predicate": "biolink:has_input",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_10",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 3,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "0cd8065d549054bc1c91c02137e2f7a413fbb21c6c816b431df41f49bab9e151",
+      "predicate": "biolink:has_input",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "624da8c0733ec3f0411b6d59b06f8c991870d494525005026f813e64adeb0ed8",
+      "predicate": "biolink:has_output",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_10",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 4,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "1c276f40d1dbeea28ffcb0791e24ae6c24ae8c7c640f7ce048446d1589a8e37a",
+      "predicate": "biolink:has_participant",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_10",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 4,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "d3b1e0614986a6a252426c95cd2ca9610897d84dbc2370885b0a99ac6afe4f99",
+      "predicate": "biolink:has_participant",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "environmental feature|ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "bbd65b8a87229e0bd03c7fda3d3e8ed9dc2e6cab71c74dfa27ccd4867eb9fb01",
+      "predicate": "biolink:has_participant",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 2,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "b9a54ec07e49c93fb87862469358d03b251d1a09467daa52f80c0ef9e9dd686d",
+      "predicate": "biolink:has_output",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 3,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "8e95903c3da50451bfc7edaf5b97758e18874892a6719ad961e150b64d43f88e",
+      "predicate": "biolink:caused_by",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 2,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "86d7ee27e3422df808581f99d8be99e8337b2182e40f9ecd8e1529040c15aca6",
+      "predicate": "biolink:has_participant",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "chemical entity",
+      "reference_occurrences": 2,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "4864a64c58ef74ce1ff4224c19b219764ea519369200b8002dfd024fc06fcefd",
+      "predicate": "biolink:caused_by",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "39db225456c6f22bd837083573cf32eb72c17b4f04d2c4efa6af0f40fe3f9203",
+      "predicate": "biolink:derives_into",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 2,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "70e21e3e86257878096d0b26935b2b2f9ec6c0b41f7cd8af6670f6962661d297",
+      "predicate": "biolink:derives_into",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "1877946dbe1f7f15187ffc9309e7210bbeb2e7b8133ac008662bd72f065b71e6",
+      "predicate": "biolink:has_participant",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "organism taxon",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "5079559c49e707b6a5439c50be41b2b692c0fe2b8e8e642be42d7284cefafa36",
+      "predicate": "biolink:capable_of",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "bb22185bae427d71dd02ce9f380fc4a3945e68bc794096e709e371261a2f3622",
+      "predicate": "biolink:capable_of",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 2,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "65f26ffbfef4451a03ff7b6df938d37c79da2aafe95aa7db06bd856ff3a722fa",
+      "predicate": "biolink:precedes",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "f5fe7e181181181f708169ef833cc92534f298d812799258667f7c5d9d92a2dd",
+      "predicate": "biolink:precedes",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "21242896ef1773e509f8260f7d5ff38492248b8e3eaa824d91bedbcefa5d150f",
+      "predicate": "biolink:preceded_by",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "2a0fac394372f6ece2d19612e4f39a201bb420eabe344f7c749f4cd292885a60",
+      "predicate": "biolink:preceded_by",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "71ab6d08d914753258c89642f0d8298e5effc582f0defd0e468e3f4bc8a88523",
+      "predicate": "biolink:temporally_related_to",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "ede09b3bc67910a15e53b3256c294e50e0b43a830d80420f6e6c39c5275e966a",
+      "predicate": "biolink:temporally_related_to",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "33b7f106d917a3ac29d9b7c7c2e7ef8e49e3940c5d5f5fffaf75e919343ed8a3",
+      "predicate": "biolink:has_output",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_10",
+      "actual_categories": "environmental feature|ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "7587348a78a4ef480c8131878f48e4a040c18bb30ee6618b59f04596bd1f7afd",
+      "predicate": "biolink:actively_involved_in",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "24cf4c2cf72a1ab41430e7e69cad9aa0aa5b194dfa9639862f4fe8f6d0ccd5a4",
+      "predicate": "biolink:actively_involved_in",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_10",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "1c91550854896f1d41cd6171c87f09ffcf6b84612ac49bb4d372a647f44de9d5",
+      "predicate": "biolink:has_output",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "environmental material|ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "5b0ef42a014c2ec680600c58d3c6ea17da0556408ef04eda0306a14dcc53ead4",
+      "predicate": "biolink:is_output_of",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_10",
+      "actual_categories": "food",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "cdcf9def8408da7cc800133e56ded1acd229ae4e68951b697cdac85e34a0f8f1",
+      "predicate": "biolink:in_taxon",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_3",
+      "actual_categories": "organism taxon",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "644ddca4164b9575dc33e295e47337e499bd254614497d2e9fa7254b4e1baed4",
+      "predicate": "biolink:has_participant",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "chemical entity|environmental feature",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "574fc4a667597439a20ef08b58144290a0499413d2dde3db9b3e91e279fda2e1",
+      "predicate": "biolink:actively_involved_in",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_10",
+      "actual_categories": "phenotypic quality",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "4008def70d70b17627171a4cfb2831ec5d8f718040b7eceaf4770ac9d90db765",
+      "predicate": "biolink:in_taxon",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_3",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "67ad929d9b456bfa0b5c86f25a667eaf9173849a0df72208cc35538029f11e67",
+      "predicate": "biolink:preceded_by",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "anatomical entity",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "6d18c660124b87f7dcd6c28e380d5ca804ad33efe0cc394216f9b6209e4e88c8",
+      "predicate": "biolink:preceded_by",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "anatomical entity",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "da50d7fecad3592f6940172769314f736ad9b88c2f02a8dbb059bdc82f43ee43",
+      "predicate": "biolink:has_participant",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "cellular component",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "ad2e9d7c9e6941b31219a38b9e357739e036dbc45d9296c3bab2e5a869091298",
+      "predicate": "biolink:has_participant",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "cell",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "352e833e2dc348d63b758b9239266d03bab9e004a7a88934b8ce3846221c8ebc",
+      "predicate": "biolink:participates_in",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "cellular component",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "30b498d763174dde72495ebb1f13e1384ddd59323d6669edaca8bec79808559b",
+      "predicate": "biolink:has_participant",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "chemical entity|macromolecular complex",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "26ade464e45f7ec4fefabf30e5bf970afff731b2958df4634582b0e180058f63",
+      "predicate": "biolink:has_participant",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "sequence feature",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "62c43dfa5e51c3bd98c7438a37682b921d8075ca603fb920bec3f76fa6bc6d19",
+      "predicate": "biolink:has_participant",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "protein",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "4746c13ada9e4eebad9d64d7935a1e36cfc60edda3387b1bf8907bdb8a16905f",
+      "predicate": "biolink:has_participant",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "anatomical entity",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "c600d5fdd18edf752015cd5f1cfb21e2b0662e2a8f17f316927b8b9c9e07fcc8",
+      "predicate": "biolink:participates_in",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "cell",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "4f12187d94607f13d17e1b397654d9409a60fba13517cac6a7bb44f4d2c52a49",
+      "predicate": "biolink:temporally_related_to",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "cell",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "9690fcfff49e407179d1f7d6c06cb1ab66d85cdc132d26261bf54c11d03ba813",
+      "predicate": "biolink:expresses",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_5",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "a00d1583185cc9501bea781cc4d26ef49a3990aa44dc5be61dd9e8fb5c1f364b",
+      "predicate": "biolink:subclass_of",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_6",
+      "actual_categories": "protein",
+      "reference_occurrences": 5,
+      "disposition": "class_subsumption_row_evidence_required"
+    },
+    {
+      "signature_sha256": "b0c367e565f84b6bd9ebd6fc4dfa91baf9646fed5d4a80931acf77bb2448806b",
+      "predicate": "biolink:precedes",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "anatomical entity",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "df4b584d802f21c6d60440205ed63d07db0e3519e7d86e59730da92a9d162d9d",
+      "predicate": "biolink:precedes",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "anatomical entity",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "f09faa7e22aee7fb862be13882090188258d799e3bfbd6dbd392006b4bb524b3",
+      "predicate": "biolink:is_input_of",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_10",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "253267248727ac20ce3ed90bdb06be084902eb9abbbe4b3f45a0ccbe3e784e40",
+      "predicate": "biolink:has_attribute",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_8",
+      "actual_categories": "food",
+      "reference_occurrences": 2,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "d6aea09f4dbc6df4feae298b4301bcbdd65beb336f2a05ac0f700c307d23bcd1",
+      "predicate": "biolink:has_output",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_10",
+      "actual_categories": "food",
+      "reference_occurrences": 2,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "eeccff1cf1ba79908cf022b56b1ed02d4008deea4b8a7750332b02590356d348",
+      "predicate": "biolink:has_participant",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_10",
+      "actual_categories": "food",
+      "reference_occurrences": 2,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "dc9f38bd1d1b12f52d7a8f6b0dac32b47b1d5545d5e8748426138b9c19e3172d",
+      "predicate": "biolink:has_participant",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_7",
+      "actual_categories": "food",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "4911e84d172d3c3b682461add9897cfd7975de0dd4f9035987fa6b2e02978c68",
+      "predicate": "biolink:has_phenotype",
+      "error": "BAD SUBJECT",
+      "valid_category_set": "set_4",
+      "actual_categories": "named thing",
+      "reference_occurrences": 1,
+      "disposition": "domain_range_source_review_required"
+    },
+    {
+      "signature_sha256": "0e11f0a0d2b417e0276fd96df9005ebc6d0d7ed634585c60b878a818e3e3bab3",
+      "predicate": "biolink:exact_match",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    },
+    {
+      "signature_sha256": "823a76395631e0e53220f8e12726500a6f2546d66bc6d39985ae4abc11cca420",
+      "predicate": "biolink:exact_match",
+      "error": "BAD OBJECT",
+      "valid_category_set": "set_2",
+      "actual_categories": "environmental material|ontology class",
+      "reference_occurrences": 1,
+      "disposition": "ontology_category_source_review_required"
+    }
+  ]
+}

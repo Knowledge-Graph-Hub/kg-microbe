@@ -81,6 +81,94 @@ The Relations Ontology (RO) provides standardized relation terms for biological 
 
 ## Transform Usage
 
+### Exact native ontology assertions (#1277)
+
+The finite policy `mappings/native_ro_predicate_dispositions.json` retains 516
+reviewed supplier assertions in ontology transform outputs with their exact native predicates:
+
+| Native predicate | Supplier | Assertions | Projection rejected |
+| --- | --- | ---: | --- |
+| RO:0002216, capable of part of | UBERON |157| realized participation |
+| RO:0002216, capable of part of | PATO |21| realized participation |
+| RO:0002503, towards | PATO |6| active involvement |
+| Six existence-boundary relations: RO:0002488/2489/2492/2493/2496/2497 | UBERON / PATO |63 / 35| generic process temporal relation |
+| RO:0002285, developmentally replaces | UBERON / PATO |8 / 2| process preceded-by |
+| RO:0002082, simultaneous with | UBERON / PATO |11 / 6| broader temporal relation |
+| RO:0002087, immediately preceded by | UBERON / PATO |7 / 1| broader preceded-by |
+| RO:0002223, starts | UBERON / PATO |3 / 1| broader temporal relation |
+| RO:0002229, ends | UBERON / PATO |2 / 1| broader temporal relation |
+| RO:0002230, ends with (finite stage cohort only) | UBERON / PATO |1 / 1| broader temporal relation |
+| Existing protected native relations, exact imported cohort (#1400) | MONDO |188| same broader projections as above |
+| RO:0002229, ends (#1400) | ENVO |2| broader temporal relation |
+
+The approved supplier extension preserves all original 326 records, eight
+unchanged GO controls and fourteen RO declarations. Its 190 additional rows
+are source-specific: 126 MONDO triples overlap the earlier cohort, 61 concern
+HsapDv immediate-predecessor assertions, and one repeats ENVO sedimentation.
+They remain distinct supplier assertions, not permission for a relation-wide
+rewrite. Full native ENVO/MONDO bytes and their exact graph IDs are pinned;
+ENVO's native graph ID ends in `envo.json`, not `envo.owl`.
+
+Capability to perform part of a process is not evidence of realized
+participation or of capability to execute the entire process. Relational
+quality dependence (`towards`) is not active participation. The ontology
+transform changes only these projected predicates, preserving subjects,
+objects, directions, native relations and source provenance. No intermediate
+processes, replacements, or post-merge semantic edits are introduced.
+
+The additional 108 temporal assertions were explicitly approved separately.
+An anatomical entity's existence boundary is not process ordering, and
+developmental replacement is not a claim that one process completed before
+another. Native comments include unvetted or directionally ambiguous wording;
+retention preserves their asserted direction without repairing definitions,
+reversing endpoints or deriving new temporal consequences.
+
+A separately approved 34-assertion extension retains exact ordering/synchrony
+predicates on a finite supplier/subject/relation/object cohort. These broader
+Biolink projections were model-declared narrow mappings, not demonstrated false
+temporal claims; native retention preserves their more precise traversal meaning.
+The remaining 28 assertions already have exact BFO-to-Biolink mappings and stay
+unchanged. Eight GO-to-GO assertions using RO:0002230 are explicitly outside the
+approved stage cohort and retain their original broader projection. The policy
+does not apply a relation-wide replacement to them. Unexpected new assertions
+of the protected relations fail closed.
+
+Immutable scientific fixtures prove all 62 class restrictions as existential
+`owl:someValuesFrom`, including two explicitly linked blank-node restrictions.
+They do not assert a relation between every instance of both endpoint classes;
+inverse properties do not license reversing class-level restrictions. Literal
+upstream formula/comment inconsistencies and axiom annotations are preserved,
+not repaired locally. Runtime evidence remains the actual pinned full native
+JSON exports and complete RO property declarations; the additional OWL excerpts
+are scientific test evidence, not a claim of new runtime OWL consumption.
+
+The policy binds exact supplier/triples, complete native input hashes and RO
+property declarations. Full ontology runs process RO before its consumers;
+an explicit PATO/UBERON/ENVO/MONDO run needs the prepared pinned `data/raw/ro.json`.
+Sanitization and KGX read private admitted copies, leaving native evidence
+unchanged. Unexpected sources, changed native bytes, wrong projections,
+missing/duplicate assertions and absent mandatory audits abort the run.
+
+`data/transformed/ontologies/native_relation_dispositions.tsv` records original
+normalization-input rows, canonical prior/final rows, native assertion objects,
+RO declarations, consumed-input identities and the explicit disposition
+`native_predicate_retained_not_strict_biolink_conformant`. Unrelated single-module
+runs emit a mandatory header-only audit. Input and audit hashes remain bound
+at source finalization and merge admission.
+
+These numeric RO predicates are **not strict Biolink4.4.2 predicates**. The
+installed strict KGX validator still reports them as invalid; tests preserve
+that outcome. This finite scientific disposition does not modify the pinned
+model, suppress strict errors, or certify the resulting merged graph. The
+516 count describes full ontology-producer supplier coverage, not a new release
+acceptance or a forecast of merged strict errors. Canonical `merge.yaml` still
+excludes MONDO; this change does not modify that selection. ENVO's native RO,
+parent and retirement roles retain the original selected authority locator,
+not the private copy subsequently sanitized and filtered for KGX.
+The LifeStage category also lacks the pinned model's Occurrent mixin: this
+truthful category/model limitation remains visible, without category coercion,
+model edits, strict-validation waivers or post-merge semantic rewrites.
+
 ### BacDive Transform
 **File**: `kg_microbe/transform_utils/bacdive/bacdive.py`
 

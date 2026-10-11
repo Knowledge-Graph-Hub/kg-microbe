@@ -8,6 +8,7 @@ import json
 import pytest
 
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
+from tests.microbedecoder_inactive_join_fixtures import bind_inactive_join_policy, write_empty_join_gss
 from tests.microbedecoder_quarantine_fixtures import bind_fixture_quarantine_policy
 from tests.test_microbedecoder_transform import _NoChebi, _supply_gold_fold_report
 
@@ -17,7 +18,7 @@ def _read(path):
         return list(csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE))
 
 
-def _setup(tmp_path, selected=((1, "NCBI_Taxonomy_ID"), (1, "GOLD_Organism_ID"))):
+def _setup(tmp_path, selected=((1, "NCBI_Taxonomy_ID"), (1, "GOLD_Organism_ID")), *, monkeypatch):
     raw = tmp_path / "database.csv"
     rows = [
         {
@@ -46,12 +47,14 @@ def _setup(tmp_path, selected=((1, "NCBI_Taxonomy_ID"), (1, "GOLD_Organism_ID"))
     _supply_gold_fold_report(tmp_path)
     transform = MicrobeDecoderTransform(input_dir=tmp_path, output_dir=tmp_path, chemical_loader=_NoChebi())
     policy = bind_fixture_quarantine_policy(transform, raw, selected=selected)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, raw, monkeypatch)
     return transform, raw, policy, rows
 
 
-def test_actual_producer_quarantines_only_exact_records_and_preserves_all_other_links(tmp_path):
+def test_actual_producer_quarantines_only_exact_records_and_preserves_all_other_links(monkeypatch, tmp_path):
     """Preserve unrelated assembly/IMG and same-target other-record assertions."""
-    transform, raw, _, rows = _setup(tmp_path)
+    transform, raw, _, rows = _setup(tmp_path, monkeypatch=monkeypatch)
     transform.run(raw)
     edges = _read(transform.output_edge_file)
     first = [edge for edge in edges if edge["subject"] == "lpsn:101"]
@@ -77,9 +80,9 @@ def test_actual_producer_quarantines_only_exact_records_and_preserves_all_other_
     )
 
 
-def test_gold_quarantine_precedes_fold_and_never_suppresses_ncbi_field(tmp_path):
+def test_gold_quarantine_precedes_fold_and_never_suppresses_ncbi_field(monkeypatch, tmp_path):
     """A GOLD rule cannot capture an NCBI source claim after folding."""
-    transform, raw, _, _ = _setup(tmp_path, selected=((1, "GOLD_Organism_ID"),))
+    transform, raw, _, _ = _setup(tmp_path, selected=((1, "GOLD_Organism_ID"),), monkeypatch=monkeypatch)
     transform._load_gold_organism_folds = lambda: {"gold:Go0020981": "NCBITaxon:1352"}
     transform.run(raw)
     first = [edge for edge in _read(transform.output_edge_file) if edge["subject"] == "lpsn:101"]
@@ -91,9 +94,9 @@ def test_gold_quarantine_precedes_fold_and_never_suppresses_ncbi_field(tmp_path)
 
 
 @pytest.mark.parametrize("mutation", ["blank_reference", "blank_subject", "reorder", "change_context"])
-def test_drift_fails_before_any_existing_output_is_replaced(tmp_path, mutation):
+def test_drift_fails_before_any_existing_output_is_replaced(monkeypatch, tmp_path, mutation):
     """Complete snapshot preflight protects all previous output bytes."""
-    transform, raw, _, _ = _setup(tmp_path)
+    transform, raw, _, _ = _setup(tmp_path, monkeypatch=monkeypatch)
     transform.output_dir.mkdir(parents=True, exist_ok=True)
     protected = [
         transform.output_node_file,
@@ -113,23 +116,25 @@ def test_drift_fails_before_any_existing_output_is_replaced(tmp_path, mutation):
     else:
         payload = payload.replace(b"Synthetic species", b"changed")
     raw.write_bytes(payload)
+    # Re-pin only the unrelated inactive join policy; the old policy stays stale.
+    bind_inactive_join_policy(transform, raw, monkeypatch)
     with pytest.raises(ValueError, match="newly reviewed policy"):
         transform.run(raw)
     assert all(path.read_text() == "previous committed bytes\n" for path in protected)
 
 
-def test_zero_decision_policy_still_emits_required_header_only_audit(tmp_path):
+def test_zero_decision_policy_still_emits_required_header_only_audit(monkeypatch, tmp_path):
     """Every successful run must produce its declared audit artifact."""
-    transform, raw, _, _ = _setup(tmp_path, selected=())
+    transform, raw, _, _ = _setup(tmp_path, selected=(), monkeypatch=monkeypatch)
     transform.run(raw)
     assert _read(transform.output_dir / "crosswalk_quarantine.tsv") == []
     assert transform._stats["crosswalk_quarantined"] == 0
     assert "crosswalk_quarantine.tsv" in transform.producer_audit_snapshots
 
 
-def test_reused_instance_resets_dispatch_and_audit_state(tmp_path):
+def test_reused_instance_resets_dispatch_and_audit_state(monkeypatch, tmp_path):
     """Replaying the exact source does not accumulate decisions or counts."""
-    transform, raw, _, _ = _setup(tmp_path)
+    transform, raw, _, _ = _setup(tmp_path, monkeypatch=monkeypatch)
     transform.run(raw)
     before = (transform.output_dir / "crosswalk_quarantine.tsv").read_bytes()
     transform.run(raw)

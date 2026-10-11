@@ -58,6 +58,27 @@ def test_real_producer_native_scope_and_kgx_archive_acceptance(acceptance_runs):
     assert synthetic["audit"]["retained_occurrence_records"] == 12
 
 
+@pytest.mark.parametrize("fault", ["missing", "wrong"])
+def test_actual_acceptance_subprocess_refuses_missing_or_wrong_ncit_authority(tmp_path, fault):
+    """The migrated fixture still fails actual finalization when its native authority is damaged."""
+    root = Path(__file__).resolve().parents[1]
+    output = tmp_path / "acceptance"
+    result = subprocess.run(  # noqa: S603 - fixed first-party test runner and pytest-owned output, no shell
+        [sys.executable, "-m", "tests.ingredient_acceptance_runner", str(output), "--ncit-fault", fault],
+        cwd=root,
+        env={**os.environ, "PYTHONPATH": str(root)},
+        capture_output=True,
+        text=True,
+        timeout=600,
+        check=False,
+    )
+    assert result.returncode != 0
+    assert "NCIT" in result.stderr or "ncit.db" in result.stderr
+    assert not (output / "acceptance.json").exists()
+    assert not (output / "published/ingredients.tar.gz").exists()
+    assert not (output / "transformed/ontologies/source_fingerprint.json").exists()
+
+
 @pytest.mark.parametrize("reverse_rows", [False, True])
 @pytest.mark.parametrize("padded", [False, True])
 def test_rehashed_legacy_identity_conflict_blocks_candidate(lookup_bundle, tmp_path, reverse_rows, padded):

@@ -1,0 +1,26 @@
+{
+  "authority_label": "Catalase",
+  "authority_uri": "http://purl.obolibrary.org/obo/NCIT_C61062",
+  "authority_witness": "mappings/catalase_native_authority.json",
+  "authority_witness_sha256": "b95f503a2d75f162c110bd624e6e09bb29ad2d921901058d53ec01fdb1b801ac",
+  "context": "ingredient_material_identity",
+  "mediadive_compound_id": "270",
+  "native_occurrence_attributes": [
+    "2000 U/ml",
+    "Beef",
+    "SIGMA C1345) (0.10% w/v",
+    "Sigma C-10",
+    "beef",
+    "filter-sterilized, 15000 - 35000 units/1000 ml"
+  ],
+  "notes": "Deny unscoped ingredient name/xref identity to the human gene product. Preserve native concept metadata and enzyme activity/assay evidence. No replacement external identity is authorized.",
+  "reason": "generic_catalase_reagent_not_demonstrated_human_CAT_identity",
+  "reviewed_material_names": [
+    "Catalase",
+    "Catalase (Sigma C--10)",
+    "Catalase (Sigma C-10)",
+    "Catalase (beef)"
+  ],
+  "target_id": "NCIT:C61062",
+  "version": 1
+}

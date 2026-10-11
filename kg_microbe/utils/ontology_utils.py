@@ -2789,8 +2789,9 @@ def get_uberon_category(uberon_term_id: str) -> str:
     """
     Return appropriate Biolink category for UBERON anatomical terms.
 
-    UBERON is an anatomy ontology, so all terms should be AnatomicalEntity.
-    This handles edge cases where UBERON terms have multiple categories.
+    Known temporal classes remain provisional OntologyClass here. Source
+    finalization applies their finite, native-evidence-backed categories to
+    primary and imported copies. Other terms retain the legacy anatomy default.
 
     Args:
     ----
@@ -2798,7 +2799,7 @@ def get_uberon_category(uberon_term_id: str) -> str:
 
     Returns:
     -------
-        Biolink category string (always AnatomicalEntity for UBERON)
+        Provisional Biolink category string, pending native source finalization
 
     Examples:
     --------
@@ -2837,7 +2838,7 @@ def get_ncbitaxon_category(ncbitaxon_id: str) -> str:
 
 
 def get_foodon_category(foodon_term_id: str) -> str:
-    """Return the Biolink category for a FOODON term: always biolink:Food (#1015)."""
+    """Read the local FOODON branch policy (producers use snapshot-bound finalization)."""
     return foodon_category(foodon_term_id)
 
 

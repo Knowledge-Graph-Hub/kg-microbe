@@ -1,0 +1,178 @@
+{
+  "version": 1,
+  "disposition": "retain_record_scoped_source_category_attribute",
+  "review_issue": 1323,
+  "native_source": {
+    "relative_path": "bacdive_strains.json",
+    "sha256": "57344e55e5683d168b735b6f186fd239d5637820d0c1559a210945bca883cea2",
+    "scope": "Four complete selected records from the independently scanned 99392-record export; runtime subsets retain their own actual raw coordinates and byte identity."
+  },
+  "original_mappings": [
+    {
+      "confidence": "high",
+      "curator": "kg_review_promote",
+      "mapping_justification": "semapv:ManualMappingCuration",
+      "notes": "fix: was GO:0001906 (cell killing process); kg-review-promote: BacDive's compound label resolves to 'Lesion' as the core concept",
+      "object_id": "NCIT:C3824",
+      "object_label": "Lesion",
+      "object_source": "NCIT",
+      "predicate_id": "skos:exactMatch",
+      "source_dataset": "bacdive",
+      "subject_label": "Lesion-incl.-Necrosis",
+      "subject_label_normalized": "lesion incl. necrosis",
+      "verified_date": "2026-05-02"
+    },
+    {
+      "confidence": "high",
+      "curator": "ols4_auto",
+      "mapping_justification": "semapv:LexicalMatching",
+      "notes": "Any organism that has a close, symbiotic relationship with a separate, host organism.",
+      "object_id": "NCIT:C28176",
+      "object_label": "Parasite",
+      "object_source": "NCIT",
+      "predicate_id": "skos:exactMatch",
+      "source_dataset": "bacdive",
+      "subject_label": "Parasite",
+      "subject_label_normalized": "parasite",
+      "verified_date": "2026-05-01"
+    }
+  ],
+  "rules": [
+    {
+      "record_id": "13026",
+      "native_array_position": 12915,
+      "source_path": [
+        "Isolation, sampling and environmental information",
+        "isolation source categories",
+        2,
+        "Cat3"
+      ],
+      "category": {
+        "Cat1": "#Infection",
+        "Cat2": "#Plant infections",
+        "Cat3": "#Lesion (incl. Necrosis)"
+      },
+      "value": "#Lesion (incl. Necrosis)",
+      "target": "NCIT:C3824",
+      "native_record_sha256": "7ad6e7cf624011738cadf931b0339edd25f892d25c9c24d4f81ef03d767cf2da",
+      "original_edge": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "observation",
+        "object": "kgmicrobe.strain:bacdive_13026",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:location_of",
+        "primary_knowledge_source": "infores:bacdive",
+        "publications": "https://bacdive.dsmz.de/strain/13026",
+        "relation": "RO:0001015",
+        "subject": "NCIT:C3824",
+        "unit": "",
+        "value": ""
+      },
+      "reason": "Literal lesion/infection classification is retained without asserting necrosis, causation or an identified physical site."
+    },
+    {
+      "record_id": "156949",
+      "native_array_position": 79951,
+      "source_path": [
+        "Isolation, sampling and environmental information",
+        "isolation source categories",
+        1,
+        "Cat3"
+      ],
+      "category": {
+        "Cat1": "#Host Body Product",
+        "Cat2": "#Plant",
+        "Cat3": "#Parasite"
+      },
+      "value": "#Parasite",
+      "target": "NCIT:C28176",
+      "native_record_sha256": "457be0e358528653b8332b2e8efd0ebc4ae08cb794b5d9cdcf3e350a3cd4fe91",
+      "original_edge": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "observation",
+        "object": "kgmicrobe.strain:bacdive_156949",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:location_of",
+        "primary_knowledge_source": "infores:bacdive",
+        "publications": "https://bacdive.dsmz.de/strain/156949",
+        "relation": "RO:0001015",
+        "subject": "NCIT:C28176",
+        "unit": "",
+        "value": ""
+      },
+      "reason": "Literal Parasite classification is retained without inferring parasitism, a host identity or a join to either water-isolation entry."
+    },
+    {
+      "record_id": "157411",
+      "native_array_position": 80491,
+      "source_path": [
+        "Isolation, sampling and environmental information",
+        "isolation source categories",
+        0,
+        "Cat3"
+      ],
+      "category": {
+        "Cat1": "#Infection",
+        "Cat2": "#Plant infections",
+        "Cat3": "#Lesion (incl. Necrosis)"
+      },
+      "value": "#Lesion (incl. Necrosis)",
+      "target": "NCIT:C3824",
+      "native_record_sha256": "bb9dcbff1a4ee88495704abdc5376bb839a73a273bf368c3c349d1bea970eab6",
+      "original_edge": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "observation",
+        "object": "kgmicrobe.strain:bacdive_157411",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:location_of",
+        "primary_knowledge_source": "infores:bacdive",
+        "publications": "https://bacdive.dsmz.de/strain/157411",
+        "relation": "RO:0001015",
+        "subject": "NCIT:C3824",
+        "unit": "",
+        "value": ""
+      },
+      "reason": "Literal lesion/infection classification is retained without asserting necrosis, causation or an identified physical site."
+    },
+    {
+      "record_id": "157533",
+      "native_array_position": 80569,
+      "source_path": [
+        "Isolation, sampling and environmental information",
+        "isolation source categories",
+        1,
+        "Cat3"
+      ],
+      "category": {
+        "Cat1": "#Infection",
+        "Cat2": "#Plant infections",
+        "Cat3": "#Lesion (incl. Necrosis)"
+      },
+      "value": "#Lesion (incl. Necrosis)",
+      "target": "NCIT:C3824",
+      "native_record_sha256": "b9d9415b1f5fc9b060c9e90ba949455dab3f4a7f5bc90d938488644666cffe94",
+      "original_edge": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "observation",
+        "object": "kgmicrobe.strain:bacdive_157533",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:location_of",
+        "primary_knowledge_source": "infores:bacdive",
+        "publications": "https://bacdive.dsmz.de/strain/157533",
+        "relation": "RO:0001015",
+        "subject": "NCIT:C3824",
+        "unit": "",
+        "value": ""
+      },
+      "reason": "Literal lesion/infection classification is retained without asserting necrosis, causation or an identified physical site."
+    }
+  ]
+}

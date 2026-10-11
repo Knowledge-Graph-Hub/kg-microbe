@@ -1,0 +1,14 @@
+{
+  "version": 2,
+  "decision": "retain_unverified_native_referents_without_taxon_identity",
+  "native_category": "biolink:IndividualOrganism",
+  "output_category": "biolink:NamedThing",
+  "native_predicate": "biolink:in_taxon",
+  "output_predicate": "biolink:related_to",
+  "native_relation": "preserve_literal_source_relation",
+  "accepted_strain_evidence": [],
+  "folds": "disabled_lexical_equality_is_diagnostic_not_identity",
+  "taxon_remapping": "selected_native_taxdump_and_reviewed_selected_ontology_aliases",
+  "interpretation": "Unresolved original GOLD referent, not a newly reified database record; names and xrefs do not prove strain identity.",
+  "issue": "https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1316"
+}

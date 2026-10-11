@@ -26,6 +26,8 @@ from kg_microbe.transform_utils.constants import (
     GTDB_PREFIX,
     GTDB_RAW_DIR,
     ID_COLUMN,
+    IN_TAXON_PREDICATE,
+    IN_TAXON_RELATION,
     KNOWLEDGE_ASSERTION,
     KNOWLEDGE_LEVEL_COLUMN,
     NAME_COLUMN,
@@ -245,7 +247,7 @@ class GTDBTransform(Transform):
 
         For each genome:
         1. Create the ncbi.assembly genome node
-        2. Create subclass_of edge to GTDB taxon
+        2. Create in_taxon edge from the genome to its GTDB classification
         3. Create skos:closeMatch edge to NCBITaxon (if available)
         """
         filepath = self.input_dir / filename
@@ -375,14 +377,17 @@ class GTDBTransform(Transform):
             same_as=same_as,
         )
 
-        # Create genome -> GTDB taxon edge
+        # GTDB assigns an assembly to a taxon; the genome is not a subclass of
+        # that organism class. Biolink 4.4.2 permits Genome (a BiologicalEntity
+        # with the ThingWithTaxon mixin) as the subject of in_taxon and maps it
+        # exactly to RO:0002162. Taxon -> parent taxonomy edges remain subclass_of.
         gtdb_taxon_id = self.taxon_to_id.get(gtdb_taxon)
         if gtdb_taxon_id:
             self._add_edge(
                 subject=genome_id,
-                predicate=SUBCLASS_PREDICATE,
+                predicate=IN_TAXON_PREDICATE,
                 obj=gtdb_taxon_id,
-                relation=RDFS_SUBCLASS_OF,
+                relation=IN_TAXON_RELATION,
             )
 
         # Record the GTDB -> NCBI mapping; the edges are emitted once every

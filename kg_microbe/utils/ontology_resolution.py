@@ -15,6 +15,7 @@ from kg_microbe.transform_utils.constants import (
     MACROMOLECULE_CATEGORY,
     MOLECULAR_ACTIVITY_CATEGORY,
     NCBI_CATEGORY,
+    ONTOLOGY_CLASS_CATEGORY,
     PHENOTYPIC_CATEGORY,
     PROTEIN_CATEGORY,
     RHEA_CATEGORY,
@@ -73,8 +74,12 @@ def chebi_category(term_id: str, adapter: CategoryAdapter) -> str:
     return SMALL_MOLECULE_CATEGORY
 
 
-def uberon_category(_term_id: str) -> str:
-    """Return the invariant category for an UBERON term."""
+def uberon_category(term_id: str) -> str:
+    """Avoid an anatomy assertion for reviewed temporal IDs pending source finalization."""
+    from kg_microbe.utils.uberon_temporal_categories import is_reviewed_temporal_identifier
+
+    if is_reviewed_temporal_identifier(term_id):
+        return ONTOLOGY_CLASS_CATEGORY
     return ANATOMICAL_ENTITY_CATEGORY
 
 
@@ -84,7 +89,7 @@ def ncbitaxon_category(_term_id: str) -> str:
 
 
 def foodon_category(term_id: str) -> str:
-    """Apply FOODON's asserted organism-versus-food boundary consistently across sources."""
+    """Read asserted FOODON organism, process, quality and information branches."""
     from kg_microbe.utils.foodon_classification import authoritative_foodon_category
 
     return authoritative_foodon_category(term_id)

@@ -13,8 +13,11 @@ from kg_microbe.transform import DATA_SOURCES
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 from kg_microbe.utils.transform_fingerprint import upstream_fingerprint, write_fingerprint
+from tests.rhea_fixtures import prepare_rhea_native_inputs
 from tests.test_merge_source_freshness import (
     prepare_bacdive_ec_correction_inputs,
+    prepare_madin_environment_correction_input,
+    prepare_prego_identity_inputs,
     read_mediadive_bulk_inputs,
     write_empty_mediadive_audit,
 )
@@ -49,8 +52,24 @@ def _prepare(tmp_path, name):
         shutil.copyfile(FIXTURES / f"{kind}.tsv", transform.output_dir / f"{kind}.tsv")
     bulk_roles = read_mediadive_bulk_inputs(transform, create=True) if name == "mediadive" else ()
     correction_roles = prepare_bacdive_ec_correction_inputs(transform) if name == "bacdive" else ()
+    madin_roles = prepare_madin_environment_correction_input(transform) if name == "madin_etal" else ()
+    prego_roles = prepare_prego_identity_inputs(transform) if name == "prego" else ()
+    from tests.gold_fixtures import prepare_empty_gold_crosswalk_inputs
+    from tests.native_ro_fixtures import prepare_empty_native_ro_contract
+
+    ontology_roles = prepare_empty_native_ro_contract(transform) if name == "ontologies" else ()
+    gold_roles = prepare_empty_gold_crosswalk_inputs(transform) if name == "gold" else ()
+    rhea_roles = prepare_rhea_native_inputs(transform) if name == "rhea_mappings" else ()
     for role in getattr(cls, "REQUIRED_CONSUMED_INPUTS", ()):
-        if role in (*bulk_roles, *correction_roles):
+        if role in (
+            *bulk_roles,
+            *correction_roles,
+            *madin_roles,
+            *prego_roles,
+            *ontology_roles,
+            *gold_roles,
+            *rhea_roles,
+        ):
             continue
         assert role == "bacdive_taxon_lookup", f"An explicit immutable fixture is required for {role}"
         lookup = tmp_path / f"{name}-bacdive-lookup.tsv"
@@ -62,6 +81,20 @@ def _prepare(tmp_path, name):
             assert reader is None
     if name == "mediadive":
         write_empty_mediadive_audit(transform)
+    if name == "ontologies":
+        # The immutable fixture has no native metadata exclusions; preserve
+        # the actual mandatory producer-audit contract even in this tiny chain.
+        audit_name = "ontology_metadata_exclusions.tsv"
+        assert cls.REQUIRED_AUDIT_FILES == (
+            audit_name,
+            "native_relation_dispositions.tsv",
+            "foodon_kernel_quarantine.tsv",
+            "ontology_parent_dispositions.tsv",
+            "upa_route_review.tsv",
+        )
+        assert len((FIXTURES / audit_name).read_bytes().splitlines()) == 1
+        shutil.copyfile(FIXTURES / audit_name, transform.output_dir / audit_name)
+        transform.record_producer_audit(audit_name)
     transform.finalize(fresh_run=True)
     _record(transform)
     return transform

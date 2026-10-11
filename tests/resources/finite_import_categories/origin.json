@@ -1,0 +1,219 @@
+{
+  "finite_id_set_sha256": "ae53a95abe9bcf5f9298f02e4f6ae93d7d39233462619e122c873951628d56cb",
+  "historical_cohort": {
+    "endpoint_sides": 150,
+    "identifiers": 80
+  },
+  "issue": 1291,
+  "model": {
+    "attribute_required_slot": {
+      "description": "connects an attribute to a class that describes it",
+      "domain": "attribute",
+      "in_subset": [
+        "samples"
+      ],
+      "multivalued": false,
+      "narrow_mappings": [
+        "LOINC:has_modality_type",
+        "LOINC:has_view_type"
+      ],
+      "range": "ontology class",
+      "required": true
+    },
+    "semantic_category_definitions": {
+      "attribute": {
+        "description": "A property or characteristic of an entity. For example, an apple may have properties such as color, shape, age, crispiness. An environmental sample may have attributes such as depth, lat, long, material.",
+        "exact_mappings": [
+          "SIO:000614"
+        ],
+        "id_prefixes": [
+          "EDAM-DATA",
+          "EDAM-FORMAT",
+          "EDAM-OPERATION",
+          "EDAM-TOPIC"
+        ],
+        "in_subset": [
+          "samples"
+        ],
+        "is_a": "named thing",
+        "mixins": [
+          "ontology class"
+        ],
+        "slot_usage": {
+          "name": {
+            "description": "The human-readable 'attribute name' can be set to a string which reflects its context of interpretation, e.g. SEPIO evidence/provenance/confidence annotation or it can default to the name associated with the 'has attribute type' slot ontology term."
+          }
+        },
+        "slots": [
+          "name",
+          "has attribute type",
+          "has quantitative value",
+          "has qualitative value",
+          "iri"
+        ]
+      },
+      "physical entity": {
+        "description": "An entity that has material reality (a.k.a. physical essence).",
+        "exact_mappings": [
+          "STY:T072"
+        ],
+        "is_a": "named thing",
+        "mixins": [
+          "physical essence"
+        ],
+        "narrow_mappings": [
+          "STY:T073"
+        ]
+      }
+    },
+    "sha256": "b6a1320772a92d69e84b8c700cd6386dffe45ed635c8197d61e22b6a6fa3b35e",
+    "version": "4.4.2"
+  },
+  "model_limitations": [
+    "Attribute required has_attribute_type must be separately dispositioned; no invented type/self-loop is authorized.",
+    "Categories express conservative native meaning, not approval of all incident edge constraints.",
+    "Source graph IDs OBO:COB_* are preserved exactly; native IRIs are evidence locators, not a CURIE migration."
+  ],
+  "native_manifest": {
+    "envo.json": {
+      "fixture_bytes": 13155,
+      "fixture_sha256": "59ee5a437bbee66b6ce3476162407798978ae636f9ce2d26d68580b7fa1d81d5",
+      "native_edge_objects": 14,
+      "native_fragments_verified": 28,
+      "native_node_objects": 14,
+      "negative_control_ancestor_closure_nodes": 13,
+      "positive_ancestor_closure_nodes": 0,
+      "scope": "Verbatim complete selected node/edge objects; graph-level wrapper is an excerpt, not the complete native ontology",
+      "source": {
+        "bytes": 5163742,
+        "sha256": "d676aae57774fee7f8818130c47e098367e6a5d8540a8c69d150b6575a3aebee"
+      },
+      "source_graph_id": "http://purl.obolibrary.org/obo/envo.json"
+    },
+    "foodon.json": {
+      "fixture_bytes": 99915,
+      "fixture_sha256": "de702104329b3c44e22d31dd438a245987269811acf199a9337c592e2d39fbb3",
+      "native_edge_objects": 155,
+      "native_fragments_verified": 244,
+      "native_node_objects": 89,
+      "negative_control_ancestor_closure_nodes": 7,
+      "positive_ancestor_closure_nodes": 85,
+      "scope": "Verbatim complete selected node/edge objects; graph-level wrapper is an excerpt, not the complete native ontology",
+      "source": {
+        "bytes": 33925004,
+        "sha256": "8dfba179356a84d8ddad4087dc1fa89a76f6511456c298b9dd7b09df9eb6d853"
+      },
+      "source_graph_id": "http://purl.obolibrary.org/obo/foodon.owl"
+    },
+    "pato.json": {
+      "fixture_bytes": 9074,
+      "fixture_sha256": "2502df5d64cca5497bc3fb2a3813c902aef243739dbb7a7ded330999c35ffe20",
+      "native_edge_objects": 14,
+      "native_fragments_verified": 29,
+      "native_node_objects": 15,
+      "negative_control_ancestor_closure_nodes": 9,
+      "positive_ancestor_closure_nodes": 6,
+      "scope": "Verbatim complete selected node/edge objects; graph-level wrapper is an excerpt, not the complete native ontology",
+      "source": {
+        "bytes": 10075199,
+        "sha256": "b129f5f5e968e4a8675bb9d6cb3a40668f1c5a2783bef81b30c86c563ce5d46d"
+      },
+      "source_graph_id": "http://purl.obolibrary.org/obo/pato.owl"
+    },
+    "uberon.json": {
+      "fixture_bytes": 32475,
+      "fixture_sha256": "3f7b2d578633dcd27369bc5938fda70d422c5de4608b1cb7870def4cf619cf62",
+      "native_edge_objects": 14,
+      "native_fragments_verified": 27,
+      "native_node_objects": 13,
+      "negative_control_ancestor_closure_nodes": 9,
+      "positive_ancestor_closure_nodes": 7,
+      "scope": "Verbatim complete selected node/edge objects; graph-level wrapper is an excerpt, not the complete native ontology",
+      "source": {
+        "bytes": 39224568,
+        "sha256": "87a892da0544a82f41f0a8b2b52f7ee705ec6d5ca2c102e7d439a7086d79f428"
+      },
+      "source_graph_id": "http://purl.obolibrary.org/obo/uberon.owl"
+    }
+  },
+  "negative_controls": [
+    {
+      "authority_file": "foodon.json",
+      "graph_id": "GAZ:00000013",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000013",
+      "native_label": "continent"
+    },
+    {
+      "authority_file": "foodon.json",
+      "graph_id": "COB:0000022",
+      "native_iri": "http://purl.obolibrary.org/obo/COB_0000022",
+      "native_label": "organism"
+    },
+    {
+      "authority_file": "foodon.json",
+      "graph_id": "GAZ:00000462",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000462",
+      "native_label": "Antarctica"
+    },
+    {
+      "authority_file": "uberon.json",
+      "graph_id": "OBO:COB_0000021",
+      "native_iri": "http://purl.obolibrary.org/obo/COB_0000021",
+      "native_label": "gross anatomical part"
+    },
+    {
+      "authority_file": "uberon.json",
+      "graph_id": "OBO:COB_0000022",
+      "native_iri": "http://purl.obolibrary.org/obo/COB_0000022",
+      "native_label": "organism"
+    },
+    {
+      "authority_file": "uberon.json",
+      "graph_id": "CLM:1000008",
+      "native_iri": "http://purl.obolibrary.org/obo/CLM_1000008",
+      "native_label": ""
+    },
+    {
+      "authority_file": "pato.json",
+      "graph_id": "PCO:0000001",
+      "native_iri": "http://purl.obolibrary.org/obo/PCO_0000001",
+      "native_label": "population of organisms"
+    },
+    {
+      "authority_file": "pato.json",
+      "graph_id": "PCO:0000002",
+      "native_iri": "http://purl.obolibrary.org/obo/PCO_0000002",
+      "native_label": "ecological community"
+    },
+    {
+      "authority_file": "pato.json",
+      "graph_id": "CLM:1000041",
+      "native_iri": "http://purl.obolibrary.org/obo/CLM_1000041",
+      "native_label": ""
+    },
+    {
+      "authority_file": "envo.json",
+      "graph_id": "PCO:0000000",
+      "native_iri": "http://purl.obolibrary.org/obo/PCO_0000000",
+      "native_label": "collection of organisms"
+    },
+    {
+      "authority_file": "envo.json",
+      "graph_id": "PCO:0000001",
+      "native_iri": "http://purl.obolibrary.org/obo/PCO_0000001",
+      "native_label": "population of organisms"
+    },
+    {
+      "authority_file": "envo.json",
+      "graph_id": "PCO:0000002",
+      "native_iri": "http://purl.obolibrary.org/obo/PCO_0000002",
+      "native_label": "ecological community"
+    },
+    {
+      "authority_file": "envo.json",
+      "graph_id": "PCO:1000004",
+      "native_iri": "http://purl.obolibrary.org/obo/PCO_1000004",
+      "native_label": "microbial community"
+    }
+  ]
+}

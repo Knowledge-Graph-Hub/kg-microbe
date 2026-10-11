@@ -1,0 +1,1204 @@
+{
+  "graphs": [
+    {
+      "id": "http://purl.obolibrary.org/obo/envo.json",
+      "meta": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.org/dc/elements/1.1/contributor",
+            "val": "https://orcid.org/0000-0002-2996-719X"
+          },
+          {
+            "pred": "http://purl.org/dc/elements/1.1/creator",
+            "val": "https://orcid.org/0000-0002-4366-3088"
+          },
+          {
+            "pred": "http://purl.org/dc/elements/1.1/creator",
+            "val": "http://orcid.org/0000-0002-6601-2165"
+          },
+          {
+            "pred": "http://purl.org/dc/elements/1.1/creator",
+            "val": "http://orcid.org/0000-0002-8343-612X"
+          },
+          {
+            "pred": "http://purl.org/dc/elements/1.1/creator",
+            "val": "http://orcid.org/0000-0003-1604-1512"
+          },
+          {
+            "pred": "http://purl.org/dc/elements/1.1/description",
+            "val": "ENVO is an ontology which represents knowledge about environments,environmental processes, ecosystems, habitats, and related entities"
+          },
+          {
+            "pred": "http://purl.org/dc/elements/1.1/title",
+            "val": "The Environment Ontology"
+          },
+          {
+            "pred": "http://purl.org/dc/terms/license",
+            "val": "https://creativecommons.org/publicdomain/zero/1.0/"
+          },
+          {
+            "pred": "http://usefulinc.com/ns/doap#GitRepository",
+            "val": "https://github.com/EnvironmentOntology/envo/"
+          },
+          {
+            "pred": "http://usefulinc.com/ns/doap#bug-database",
+            "val": "https://github.com/EnvironmentOntology/envo/issues/"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#default-namespace",
+            "val": "ENVO"
+          },
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+            "val": "Includes Ontology(OntologyID(OntologyIRI(<http://purl.obolibrary.org/obo/envo/modules/chemical_concentration.owl>) VersionIRI(<null>))) [Axioms: 679 Logical Axioms: 119]"
+          },
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+            "val": "Includes Ontology(OntologyID(OntologyIRI(<http://purl.obolibrary.org/obo/envo/modules/entity_attribute.owl>) VersionIRI(<null>))) [Axioms: 206 Logical Axioms: 34]"
+          },
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+            "val": "Includes Ontology(OntologyID(OntologyIRI(<http://purl.obolibrary.org/obo/envo/modules/entity_attribute_location.owl>) VersionIRI(<null>))) [Axioms: 168 Logical Axioms: 29]"
+          },
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+            "val": "Includes Ontology(OntologyID(OntologyIRI(<http://purl.obolibrary.org/obo/envo/modules/entity_quality_location.owl>) VersionIRI(<null>))) [Axioms: 40 Logical Axioms: 6]"
+          },
+          {
+            "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+            "val": "Includes Ontology(OntologyID(OntologyIRI(<http://purl.obolibrary.org/obo/envo/modules/process_attribute.owl>) VersionIRI(<null>))) [Axioms: 21 Logical Axioms: 2]"
+          },
+          {
+            "pred": "http://www.w3.org/2002/07/owl#versionInfo",
+            "val": "2026-06-26"
+          },
+          {
+            "pred": "http://xmlns.com/foaf/0.1/homepage",
+            "val": "http://environmentontology.org/"
+          }
+        ],
+        "version": "http://purl.obolibrary.org/obo/envo/releases/2026-06-26/envo.json"
+      },
+      "nodes": [
+        {
+          "id": "http://purl.obolibrary.org/obo/BFO_0000001",
+          "lbl": "entity",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/BFO_0000003",
+          "lbl": "occurrent",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "An entity that has temporal parts and that happens, unfolds or develops through time."
+            }
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/BFO_0000015",
+          "lbl": "process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "p is a process = Def. p is an occurrent that has temporal proper parts and for some time t, p s-depends_on some material entity at t. (axiom label in BFO2 Reference: [083-003])",
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://purl.obolibrary.org/obo/IAO_0010000",
+                    "val": "http://purl.obolibrary.org/obo/bfo/axiom/083-003"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_00000373",
+          "lbl": "obsolete geothermal field",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "An area where wells can be drilled to obtain elements contained in solution in hot brines or to tap heat energy.",
+              "xrefs": [
+                "wiki:http://www.webref.org/geology/g/geothermal_field.htm"
+              ]
+            },
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0100001",
+                "val": "ENVO:01001851"
+              }
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_00002002",
+          "lbl": "obsolete food product",
+          "type": "CLASS",
+          "meta": {
+            "comments": [
+              "The FAO has the following definition for \"food\": \"Any substance, whether processed, semi-processed, or raw, which is intended for human consumption, and includes drink, chewing gum and any substance which has been used in the manufacture, preparation or treatment of \"food\" but does not include cosmetics or tobacco or substances used only as drugs.\" (Nutrition Division/Meeting Programming and Documentation Service, FAO, 2013 (MI198) adopted from Codex Alimentarius Commission, Procedural Manual, Twentieth edition, 2011 (ftp://ftp.fao.org/codex/Publications/ProcManuals/Manual_20e.pdf). )"
+            ],
+            "subsets": [
+              "http://purl.obolibrary.org/obo/envo#EnvO-Lite-GSC"
+            ],
+            "xrefs": [
+              {
+                "val": "https://en.wikipedia.org/wiki/Food"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0100001",
+                "val": "FOODON:00001002"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "ENVO"
+              }
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_00002004",
+          "lbl": "obsolete physical object of mesoscopic geological size",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "An object which is large enough to be visible to humans, but small enough that humans can handle the object (i.e. transport it, examine it, etc) in its entirety with little to no technological assistance.",
+              "xrefs": [
+                "MA:ma"
+              ],
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+                    "val": "https://en.oxforddictionaries.com/definition/mesoscopic"
+                  }
+                ]
+              }
+            },
+            "comments": [
+              "This is a legacy class from ENVO's early versions. It will be depopulated and filled in by inference using a PATO quality. Not to be confused with \"mesoscopic\" as defined in physics, which deals with objects typically between 10e-6 and 10-8 meters in diameter."
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+                "val": "mesoscopic physical object"
+              }
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_00002036",
+          "lbl": "obsolete habitat",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A spatial region having environmental qualities which may sustain an organism or a community of organisms.",
+              "xrefs": [
+                "EnvO:EnvO"
+              ]
+            },
+            "comments": [
+              "This class is under development and its definition will be revised and its subclasses may be made obsolete. A habitat's specificity to a species or population will differentiate it from other environment classes."
+            ],
+            "synonyms": [
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "biotope"
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "EcoLexicon:habitat"
+              },
+              {
+                "val": "LTER:238"
+              },
+              {
+                "val": "SWEETRealm:Habitat"
+              },
+              {
+                "val": "https://en.wikipedia.org/wiki/Habitat"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0100001",
+                "val": "ENVO:01000739"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "ENVO"
+              }
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_00002041",
+          "lbl": "obsolete ground water",
+          "type": "CLASS",
+          "meta": {
+            "xrefs": [
+              {
+                "val": "EcoLexicon:groundwater"
+              },
+              {
+                "val": "LTER:235"
+              },
+              {
+                "val": "SWEETRealm:Groundwater"
+              },
+              {
+                "val": "https://en.wikipedia.org/wiki/Ground_water"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0100001",
+                "val": "ENVO:01001004"
+              }
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_00002265",
+          "lbl": "obsolete agricultural waste",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "Wastewater produced in the course of agricultural activities",
+              "xrefs": [
+                "https://en.wikipedia.org/wiki/Agricultural_wastewater_treatment"
+              ]
+            },
+            "xrefs": [
+              {
+                "val": "https://en.wikipedia.org/wiki/Agricultural_waste"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0100001",
+                "val": "ENVO:01000371"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "ENVO"
+              }
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_00002297",
+          "lbl": "obsolete environmental feature",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "OBSOLETE A material entity which determines an environmental system.",
+              "xrefs": [
+                "DOI:10.1186/2041-1480-4-43",
+                "NM:nm",
+                "ORCID:0000-0002-4366-3088"
+              ]
+            },
+            "comments": [
+              "A material entity determines an environmental system when its removal would cause the collapse of that system. For example, a seamount determines a seamount environment, acting as its 'hub'. This class is currently being aligned to the Basic Formal Ontology. Following this alignment, its definition and the definitions of its subclasses will be revised."
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01000009",
+          "lbl": "obsolete biotic mesoscopic physical object",
+          "type": "CLASS",
+          "meta": {
+            "synonyms": [
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "organic material feature"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#consider",
+                "val": "ENVO:01000159"
+              }
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01000105",
+          "lbl": "obsolete marine benthic feature",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "OBSOLETE A prominent or distinctive aspect, quality, or characteristic of environments occurring on or along marine benthic environments.",
+              "xrefs": [
+                "ISBN:978-0-618-45504-1",
+                "ORCID:0000-0002-4366-3088"
+              ]
+            },
+            "comments": [
+              "Ambiguous term, please consider using a more precise term which describes the feature of tinterest."
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#consider",
+                "val": "http://purl.obolibrary.org/obo/ENVO_00000191"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#consider",
+                "val": "http://purl.obolibrary.org/obo/ENVO_00000447"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#consider",
+                "val": "http://purl.obolibrary.org/obo/ENVO_01001479"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#consider",
+                "val": "http://purl.obolibrary.org/obo/ENVO_01001788"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#created_by",
+                "val": "ORCID:0000-0002-4366-3088"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#creation_date",
+                "val": "2010-03-16T12:27:00Z"
+              }
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01000159",
+          "lbl": "obsolete organic feature",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A prominent or distinctive aspect, quality, or characteristic pertaining to or derived from living organisms.",
+              "xrefs": [
+                "ORCID:0000-0002-4366-3088"
+              ]
+            },
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#consider",
+                "val": "ENVO:01001814"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#created_by",
+                "val": "ORCID:0000-0002-4366-3088"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#creation_date",
+                "val": "2010-03-20T09:00:40Z"
+              }
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01000371",
+          "lbl": "agricultural waste material",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "Agricultural waste is waste produced as a result of various agricultural operations. It includes manure and other wastes from farms, poultry houses and slaughterhouses; harvest waste; fertilizer run- off from fields; pesticides that enter into water, air or soils; and salt and silt drained from fields.",
+              "xrefs": [
+                "ISBN:978-92-1-161386-5",
+                "http://stats.oecd.org/glossary/detail.asp?ID=77"
+              ]
+            },
+            "comments": [
+              "As with other wastes, this is more a role than a material in itself. This should be revised."
+            ],
+            "synonyms": [
+              {
+                "pred": "hasBroadSynonym",
+                "val": "agricultural waste"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01000739",
+          "lbl": "habitat",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "An environmental system which can sustain and allow the growth of an ecological population.",
+              "xrefs": [
+                "EnvO:EnvO"
+              ]
+            },
+            "comments": [
+              "A habitat's specificity to an ecological population differentiates it from other environment classes."
+            ],
+            "xrefs": [
+              {
+                "val": "EcoLexicon:habitat"
+              },
+              {
+                "val": "LTER:238"
+              },
+              {
+                "val": "SWEETRealm:Habitat"
+              },
+              {
+                "val": "https://en.wikipedia.org/wiki/Habitat"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01000839",
+          "lbl": "combustion process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "Combustion or burning is a high-temperature exothermic redox chemical reaction between a fuel and an oxidant that produces oxidized, often gaseous products, in a mixture termed as smoke.",
+              "xrefs": [
+                "https://en.wikipedia.org/wiki/Combustion"
+              ]
+            },
+            "comments": [
+              "Unlike the \"combustion\" class in the Chemical Methods Ontology, this class is not necessarily a planned process. http://purl.obolibrary.org/obo/CHMO_0001473"
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "This class may be surrendered to REX."
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01000840",
+          "lbl": "thermolysis",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A chemical decomposition (the separation of a single chemical compound into its two or more elemental parts or to simpler compounds) caused by heat."
+            },
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "thermal decomposition"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01000906",
+          "lbl": "aquaculture process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A process during which humans rear animals or plants in bodies of water for harvest and consumption.",
+              "xrefs": [
+                "http://www.fao.org/docrep/003/x6941e/x6941e04.htm#bm04"
+              ]
+            },
+            "comments": [
+              "In 1988, the FAO introduced a definition of aquaculture which reduces its confusion with capture fisheries: Aquaculture is the farming of aquatic organisms, including fish, molluscs, crustaceans and aquatic plants. Farming implies some form of intervention in the rearing process to enhance production, such as regular stocking, feeding, protection from predators, etc. Farming also implies individual or corporate ownership of the stock being cultivated. For statistical purposes, aquatic organisms which are harvested by an individual or corporate body which has owned them throughout their rearing period contribute to aquaculture, while aquatic organisms which are exploitable by the public as a common property resources, with or without appropriate licences, are the harvest of fisheries."
+            ],
+            "synonyms": [
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "aquatic farming"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "Expand the sites of occurrence listed as axioms as new terms emerge."
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01001004",
+          "lbl": "groundwater",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "Underground water which is located in pore spaces found in rock or unconsolidated deposits such as soil, clay, or gravel.",
+              "xrefs": [
+                "https://en.wikipedia.org/wiki/Groundwater"
+              ]
+            },
+            "comments": [
+              "The definition of aquifer is quite permissive, referencing any water bearing rock or unconsolidated material."
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "ground water"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01001023",
+          "lbl": "radiation",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A process during which energy is emitted or transmitted in the form of waves or particles through space or a material medium.",
+              "xrefs": [
+                "https://en.wikipedia.org/wiki/Radiation"
+              ]
+            },
+            "subsets": [
+              "\"environmental_hazards\"",
+              "\"envoAstro\""
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "Requires addition of waves for full axiomatisation. This should be linked to \"subatomic particle\" with an \"or\". Note that ENVO represents space as an environmental material (a hard vacuum with sparse material inclusions)."
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01001246",
+          "lbl": "agricultural process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A process during which humans rear animals or plants on land for harvest and consumption.",
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+                    "val": "http://www.fao.org/docrep/003/x6941e/x6941e04.htm#bm04"
+                  }
+                ]
+              }
+            },
+            "synonyms": [
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "agriculture"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "Expand the sites of occurrence listed as axioms as new terms emerge."
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01001247",
+          "lbl": "agronomic process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "An agricultural process during which humans rear plants on land for harvest and consumption.",
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+                    "val": "http://www.fao.org/docrep/003/x6941e/x6941e04.htm#bm04"
+                  }
+                ]
+              }
+            },
+            "synonyms": [
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "agronomy"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "Expand the sites of occurrence listed as axioms as new terms emerge."
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01001248",
+          "lbl": "animal husbandry",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "An agricultural process during which humans rear animals on land for harvest and consumption.",
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+                    "val": "http://www.fao.org/docrep/003/x6941e/x6941e04.htm#bm04"
+                  }
+                ]
+              }
+            },
+            "synonyms": [
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "agriculture"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "Expand the sites of occurrence listed as axioms as new terms emerge."
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01001254",
+          "lbl": "animal aquaculture process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "An aquaculture process during which humans rear animals.",
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+                    "val": "http://www.fao.org/docrep/003/x6941e/x6941e04.htm#bm04"
+                  }
+                ]
+              }
+            },
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "animal aquaculture"
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "aquaculture of animals"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01001255",
+          "lbl": "plant aquaculture process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "An aquaculture process during which humans rear plants.",
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+                    "val": "http://www.fao.org/docrep/003/x6941e/x6941e04.htm#bm04"
+                  }
+                ]
+              }
+            },
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "plant aquaculture"
+              },
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "aquaculture of plants"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "This is unlikely to be limited to Viridiplantae, better axiomatisation should be sought in revisions."
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01001436",
+          "lbl": "planned environmental usage process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A planned process during which humans access and obtain resources, benefits, or services from a natural or anthropised ecosystem."
+            },
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#created_by",
+                "val": "https://orcid.org/0000-0002-4366-3088"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01001654",
+          "lbl": "aerosol formation process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A material transformation process during which solid or liquid particles form and are suspended in a mass of air, thus creating an aerosol."
+            },
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.org/dc/elements/1.1/creator",
+                "val": "https://orcid.org/0000-0002-4366-3088"
+              },
+              {
+                "pred": "http://purl.org/dc/elements/1.1/date",
+                "val": "2019-06-24T13:43:29Z"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01001851",
+          "lbl": "geothermally active field",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A field in which geothermal processes occur."
+            },
+            "comments": [
+              "In many geothermally active fields, wells can be drilled to obtain elements contained in solution in hot brines or to tap heat energy."
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000232",
+                "val": "This will usually be a part of a rocky planet's crust, with that planet being of sufficient size and age to allow geothermal activity. Such activity may also arise from gravitational effects of large bodies near a rocky astronomical body."
+              },
+              {
+                "pred": "http://purl.org/dc/elements/1.1/creator",
+                "val": "https://orcid.org/0000-0002-4366-3088"
+              },
+              {
+                "pred": "http://purl.org/dc/elements/1.1/date",
+                "val": "2020-02-13T12:41:07Z"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01001852",
+          "lbl": "energy transfer process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A process during which one entity loses energy to another entity."
+            },
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.org/dc/elements/1.1/creator",
+                "val": "https://orcid.org/0000-0002-4366-3088"
+              },
+              {
+                "pred": "http://purl.org/dc/elements/1.1/date",
+                "val": "2020-02-13T13:34:28Z"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_02500000",
+          "lbl": "environmental system process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A process in which includes the components of an environmental system as participants."
+            },
+            "comments": [
+              "This is a convenience class for organisation and should not be used for annotation."
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_02500027",
+          "lbl": "anthropogenic environmental process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "An environmental process which is driven by the action of humans."
+            }
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_02500030",
+          "lbl": "biogeochemical process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A process during which chemicals that are involved in natural ecosystem processes are transported or transformed, and which impact the activity of biological entities",
+              "xrefs": [
+                "https://en.wikipedia.org/wiki/Biogeochemistry"
+              ]
+            },
+            "subsets": [
+              "\"envoPolar\""
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_03000010",
+          "lbl": "material transport process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A process during which material is displaced from its original location and transported either to a new location or back to the original location."
+            },
+            "comments": [
+              "Experimental class for structural purposes not recommended for annotation."
+            ],
+            "subsets": [
+              "\"envoPolar\""
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-4366-3088"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "http://orcid.org/0000-0002-3410-4655"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_03000043",
+          "lbl": "material transformation process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A process during which a portion of some environmental material is converted into a different material or a collection of materials."
+            },
+            "comments": [
+              "Experimental class for structural purposes not recommended for annotation. A material transformation process only refers to ENVO:environmental material classes (e.g. bulk and typically impure substances), rather than transformations converting a specific chemical into another."
+            ],
+            "subsets": [
+              "\"envoPolar\""
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "A different material transformation process class (or similarly named class) pertaining to the conversion of a specific chemical into another belongs in CHEBI and or REX ontologies."
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-4366-3088"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "http://orcid.org/0000-0002-3410-4655"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_03000090",
+          "lbl": "explosion process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A process during which a material entity undergoes a rapid increase in volume, releasing gasses and various forms of energy, often including thermal, light and sound energy.",
+              "xrefs": [
+                "https://en.wikipedia.org/wiki/Explosion"
+              ]
+            },
+            "comments": [
+              "Supersonic explosions are known as detonations and subsonic explosions as deflagrations."
+            ],
+            "subsets": [
+              "\"envoPolar\""
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "explosion"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-4366-3088"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "http://orcid.org/0000-0002-3410-4655"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_03000091",
+          "lbl": "permafrost methane explosion",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "An explosion during which methane-rich gas trapped in permafrost combusts.",
+              "xrefs": [
+                "http://www.nature.com/news/mysterious-siberian-crater-attributed-to-methane-1.15649",
+                "http://www.sciencealert.com/7-000-huge-gas-bubbles-have-formed-under-siberia-and-could-explode-at-any-moment"
+              ]
+            },
+            "subsets": [
+              "\"environmental_hazards\"",
+              "\"envoPolar\""
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-4366-3088"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "http://orcid.org/0000-0002-3410-4655"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_03000092",
+          "lbl": "gas emission process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A material transport process during which a portion of gaseous environmental material is transported into the atmosphere.",
+              "xrefs": [
+                "https://en.wikipedia.org/wiki/Greenhouse_gas"
+              ]
+            },
+            "subsets": [
+              "\"envoPolar\""
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-4366-3088"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "http://orcid.org/0000-0002-3410-4655"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_03000093",
+          "lbl": "hydrocarbon gas emission process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A gas emission process during which a portion of hydrocarbon gas is transported into the atmosphere.",
+              "xrefs": [
+                "https://www.epa.gov/ghgemissions/overview-greenhouse-gases"
+              ]
+            },
+            "comments": [
+              "Some hydrocarbon gasses within the atmosphere contribute to the planetary green house gas effect by increasing absorption of solar energy."
+            ],
+            "subsets": [
+              "\"envoPolar\""
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-4366-3088"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "http://orcid.org/0000-0002-3410-4655"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_03000094",
+          "lbl": "methane gas emission process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A hydrocarbon gas emission process during which a portion of methane gas is transported into the atmosphere.",
+              "xrefs": [
+                "https://www.epa.gov/ghgemissions/overview-greenhouse-gases"
+              ]
+            },
+            "comments": [
+              "Methane is emitted during the production and transport of coal, natural gas, and oil. Methane emissions also result from livestock and other agricultural practices and by the decay of organic waste in municipal solid waste landfills."
+            ],
+            "subsets": [
+              "\"envoPolar\""
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-4366-3088"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "http://orcid.org/0000-0002-3410-4655"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/OBI_0000011",
+          "lbl": "obsolete planned process",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A process that realizes a plan which is the concretization of a plan specification."
+            },
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0100001",
+                "val": "http://purl.obolibrary.org/obo/COB_0000035"
+              }
+            ],
+            "deprecated": true
+          }
+        }
+      ],
+      "edges": [
+        {
+          "sub": "http://purl.obolibrary.org/obo/BFO_0000003",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/BFO_0000001"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/BFO_0000015",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/BFO_0000003"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_01000839",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_01000840"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_01000839",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_01001654"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_01000840",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_03000043"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_01000906",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_01001436"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_01001023",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_01001852"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_01001246",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_02500027"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_01001247",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_01001246"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_01001248",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_01001246"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_01001254",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_01000906"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_01001255",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_01000906"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_01001436",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/BFO_0000003"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_01001654",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_03000043"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_01001852",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_02500000"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_02500000",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/BFO_0000015"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_02500027",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_02500000"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_02500030",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_02500000"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_03000010",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_02500000"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_03000043",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_02500000"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_03000090",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_01000839"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_03000091",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_03000090"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_03000092",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_03000010"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_03000093",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_03000092"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_03000094",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/ENVO_03000093"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/ENVO_01001436",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/OBI_0000011"
+        }
+      ]
+    }
+  ]
+}

@@ -1,14 +1,21 @@
 """Synthetic GTDB crosswalks must respect the canonical fan-in decisions (#1053)."""
 
 import csv
+import json
 import shutil
 from pathlib import Path
 
 import pytest
 
 from kg_microbe.transform_utils.constants import GTDB, METATRAITS_GTDB
-from kg_microbe.transform_utils.metatraits_gtdb.metatraits_gtdb import MetaTraitsGTDBTransform
+from kg_microbe.transform_utils.metatraits_gtdb.metatraits_gtdb import (
+    HISTORICAL_BRIDGE_AUDIT,
+    MetaTraitsGTDBTransform,
+    _register_numeric_candidate,
+)
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.producer_audits import verify_producer_audits
+from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 from kg_microbe.utils.tsv_io import tsv_dict_writer
 
 FIXTURES = Path(__file__).parent / "resources" / "metatraits_gtdb_mapping"
@@ -21,6 +28,7 @@ def transform(tmp_path):
     Transform.__init__(instance, METATRAITS_GTDB, input_dir=tmp_path / "raw", output_dir=tmp_path)
     instance.edge_header += ["has_percentage", "value", "unit"]
     instance.knowledge_source = "infores:gtdb-metatraits"
+    instance.ec_to_go = instance._load_ec_to_go()
     instance.accession_to_gtdb_species = {
         "sp000000001": "Current one",
         "sp000000002": "Current solo",
@@ -48,12 +56,19 @@ def _read_edges(transform):
         return list(csv.DictReader(handle, delimiter="\t"))
 
 
-def test_synthetic_mappings_copy_whole_release_fan_in_decisions(transform, capsys):
-    """Outside taxa force broad_match; two aliases of one taxon do not force it."""
+def test_historical_mappings_preserve_proposals_without_asserting_containment(transform, capsys):
+    """The fan-in decision is about today's subject, not an alleged historical alias."""
+    original_nodes = transform.output_node_file.read_bytes()
+    original_edges = transform.output_edge_file.read_bytes()
     transform._create_hierarchical_edges()
-    edges = _read_edges(transform)
-    mappings = {edge["subject"]: edge for edge in edges if edge["object"].startswith("NCBITaxon:")}
-    assert len(edges) == 7  # Four current-species parents and three supported mappings.
+    assert transform.output_node_file.read_bytes() == original_nodes
+    assert transform.output_edge_file.read_bytes() == original_edges
+    with (transform.output_dir / HISTORICAL_BRIDGE_AUDIT).open(newline="") as handle:
+        audit = list(csv.DictReader(handle, delimiter="\t"))
+    assert len(audit) == 6
+    proposals = [edge for row in audit for edge in json.loads(row["proposed_edges_json"])]
+    assert len(proposals) == 7  # Four unproved subclass and three copied mapping proposals.
+    mappings = {edge["subject"]: edge for edge in proposals if edge["object"].startswith("NCBITaxon:")}
     assert len(mappings) == 3
     shared = mappings["GTDB:s__Historical_sp000000001"]
     assert (shared["predicate"], shared["relation"]) == ("biolink:broad_match", "skos:broadMatch")
@@ -62,14 +77,20 @@ def test_synthetic_mappings_copy_whole_release_fan_in_decisions(transform, capsy
             "biolink:close_match",
             "skos:closeMatch",
         )
-    assert not any(edge["predicate"] == "biolink:same_as" for edge in edges)
+    assert not _read_edges(transform)
+    verify_producer_audits(transform)
+    transform.verify_consumed_inputs()
     assert "1 NCBI links skipped: no matching canonical GTDB mapping" in capsys.readouterr().out
 
 
-def test_appended_hierarchy_and_mapping_edges_have_complete_provenance_and_lf(transform):
-    """Post-processing must not bypass the seven-column edge contract again."""
+def test_quarantined_proposals_keep_complete_provenance_and_lf(transform):
+    """Audit-only proposals retain the exact old semantics; they are not graph assertions."""
     transform._create_hierarchical_edges()
-    for edge in _read_edges(transform):
+    with (transform.output_dir / HISTORICAL_BRIDGE_AUDIT).open(newline="") as handle:
+        audit = list(csv.DictReader(handle, delimiter="\t"))
+    proposals = [edge for row in audit for edge in json.loads(row["proposed_edges_json"])]
+    assert len(proposals) == 7
+    for edge in proposals:
         assert None not in edge
         for column in transform.edge_header[:7]:
             assert edge[column], f"Missing {column} in {edge}"
@@ -78,6 +99,100 @@ def test_appended_hierarchy_and_mapping_edges_have_complete_provenance_and_lf(tr
         assert edge["knowledge_level"] == expected_level
         assert edge["agent_type"] == "automated_agent"
     assert b"\r\n" not in transform.output_edge_file.read_bytes()
+    assert b"\r\n" not in (transform.output_dir / HISTORICAL_BRIDGE_AUDIT).read_bytes()
+
+
+def test_audit_and_consumed_canonical_input_cannot_be_restamped(transform):
+    """Audit drift and authority mutation invalidate producer completion."""
+    transform._create_hierarchical_edges()
+    audit = transform.output_dir / HISTORICAL_BRIDGE_AUDIT
+    audit.write_bytes(audit.read_bytes() + b"changed\n")
+    with pytest.raises(SourceFinalizationRequired, match="audit changed"):
+        verify_producer_audits(transform)
+    canonical = transform.output_base_dir / GTDB / "edges.tsv"
+    canonical.write_bytes(canonical.read_bytes() + b"changed\n")
+    with pytest.raises(SourceFinalizationRequired, match="changed or missing"):
+        transform.verify_consumed_inputs()
+
+
+@pytest.mark.parametrize("values", [("first", "second", "first"), ("second", "first", "second")])
+def test_numeric_hint_conflicts_are_not_last_row_wins(values):
+    """Discarding accession namespace/version cannot resolve conflicting taxa."""
+    lookup, conflicts = {}, {}
+    for value in values:
+        _register_numeric_candidate(lookup, conflicts, "sp000000001", value)
+    assert lookup == {}
+    assert conflicts == {"sp000000001": {"first", "second"}}
+
+
+def test_conflicting_hint_keeps_every_candidate_in_audit(transform):
+    """Conflict candidates remain explicit and never authorize an edge."""
+    transform.accession_to_gtdb_species.pop("sp000000001")
+    transform.accession_species_conflicts = {"sp000000001": {"Current one", "Current other"}}
+    transform._create_hierarchical_edges()
+    with (transform.output_dir / HISTORICAL_BRIDGE_AUDIT).open(newline="") as handle:
+        audit = {row["subject"]: row for row in csv.DictReader(handle, delimiter="\t")}
+    row = audit["GTDB:s__Historical_sp000000001"]
+    assert row["disposition"] == "quarantined_ambiguous_numeric_hint"
+    assert json.loads(row["candidate_species_json"]) == ["Current one", "Current other"]
+    assert not _read_edges(transform)
+
+
+def test_exact_current_subject_retains_conflicted_ncbi_disposition(transform):
+    """An identical species name cannot resolve a conflicting NCBI hint (#1287)."""
+    transform.accession_to_gtdb_species["sp000000001"] = "Historical sp000000001"
+    transform.accession_to_ncbi.pop("sp000000001")
+    transform.accession_ncbi_conflicts = {"sp000000001": {"NCBITaxon:1", "NCBITaxon:9"}}
+    transform._create_hierarchical_edges()
+    with (transform.output_dir / HISTORICAL_BRIDGE_AUDIT).open(newline="") as handle:
+        audit = {row["subject"]: row for row in csv.DictReader(handle, delimiter="\t")}
+    row = audit["GTDB:s__Historical_sp000000001"]
+    assert row["disposition"] == "quarantined_ambiguous_numeric_hint"
+    assert json.loads(row["candidate_ncbi_json"]) == ["NCBITaxon:1", "NCBITaxon:9"]
+    assert not _read_edges(transform)
+
+
+def test_conflicting_hint_preserves_canonical_evidence_without_asserting_it(transform):
+    """Every supported candidate stays auditable, not just a chosen mapping (#1287)."""
+    transform.accession_to_gtdb_species.pop("sp000000001")
+    transform.accession_species_conflicts = {"sp000000001": {"Current one", "Current other"}}
+    path = transform.output_base_dir / GTDB / "edges.tsv"
+    with path.open() as handle:
+        header = next(csv.reader(handle, delimiter="\t"))
+    with path.open("a", newline="") as handle:
+        tsv_dict_writer(handle, fieldnames=header).writerow(
+            {
+                "subject": "GTDB:s__Current_other",
+                "predicate": "biolink:broad_match",
+                "object": "NCBITaxon:1",
+                "relation": "skos:broadMatch",
+                "primary_knowledge_source": "infores:gtdb",
+                "knowledge_level": "prediction",
+                "agent_type": "automated_agent",
+            }
+        )
+    before = transform.output_edge_file.read_bytes()
+    transform._create_hierarchical_edges()
+    with (transform.output_dir / HISTORICAL_BRIDGE_AUDIT).open(newline="") as handle:
+        audit = {row["subject"]: row for row in csv.DictReader(handle, delimiter="\t")}
+    evidence = json.loads(audit["GTDB:s__Historical_sp000000001"]["canonical_evidence_json"])
+    assert {row["subject"] for row in evidence} == {"GTDB:s__Current_one", "GTDB:s__Current_other"}
+    assert transform.output_edge_file.read_bytes() == before
+
+
+def test_reloading_selected_taxonomy_does_not_carry_previous_epoch(tmp_path):
+    """A new load resets candidates and conflicts together (#1287)."""
+    transform = object.__new__(MetaTraitsGTDBTransform)
+    transform.input_base_dir = tmp_path
+    transform.accession_to_gtdb_species = {"sp000000001": "Former species"}
+    root = tmp_path / "gtdb"
+    root.mkdir()
+    selected = Path(__file__).parent / "resources/metatraits_gtdb_selected_root/selected/gtdb"
+    for name in ("bac120_taxonomy.tsv", "ar53_taxonomy.tsv"):
+        shutil.copyfile(selected / name, root / name)
+    transform._load_gtdb_taxonomy()
+    assert transform.accession_to_gtdb_species["sp000000001"] == "Selected bacterium sp000000001"
+    assert transform.accession_species_conflicts == {}
 
 
 def test_missing_canonical_gtdb_output_aborts_before_appending(transform):

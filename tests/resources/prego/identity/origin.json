@@ -1,0 +1,32 @@
+{
+  "selection": "Exact native declaration objects for all ten finite ENVO retirement decisions and five live successors; no fabricated ancestry. Empty edges are an intentionally unselected portion, not absence of native axioms.",
+  "sources": {
+    "envo": {
+      "sha256": "c3c288b9d95cf1e62b0146bcb2a365bdbd294b0072bbf2efab8819e5db8fff2b",
+      "bytes": 6818650,
+      "selected_ids": [
+        "ENVO:00000373",
+        "ENVO:00002002",
+        "ENVO:00002004",
+        "ENVO:00002036",
+        "ENVO:00002041",
+        "ENVO:00002265",
+        "ENVO:00002297",
+        "ENVO:01000009",
+        "ENVO:01000105",
+        "ENVO:01000159",
+        "ENVO:01000371",
+        "ENVO:01000739",
+        "ENVO:01001004",
+        "ENVO:01001851"
+      ]
+    },
+    "foodon": {
+      "sha256": "8dfba179356a84d8ddad4087dc1fa89a76f6511456c298b9dd7b09df9eb6d853",
+      "bytes": 33925004,
+      "selected_ids": [
+        "FOODON:00001002"
+      ]
+    }
+  }
+}

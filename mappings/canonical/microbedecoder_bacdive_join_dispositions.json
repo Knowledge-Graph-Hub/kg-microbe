@@ -1,0 +1,77 @@
+{
+  "decisions": [
+    {
+      "accepted_lpsn_id": "789848",
+      "bacdive_id": "24683",
+      "disposition": "quarantine_contradicted_record_join",
+      "ordinal": 2256,
+      "raw_lpsn_id": "789848",
+      "raw_record_sha256": "121b25da2229520e493e5d0e85b4b6fc3504eb9001ba66753dcb6d5aea6ed83b",
+      "source_cell": "24683",
+      "source_token": "24683",
+      "witness_family": "incorrect_deposit_number"
+    },
+    {
+      "accepted_lpsn_id": "17324",
+      "bacdive_id": "166285",
+      "disposition": "quarantine_contradicted_record_join",
+      "ordinal": 9713,
+      "raw_lpsn_id": "17324",
+      "raw_record_sha256": "52ad642b493f8073879a2c5e7128386c3c420190f1753e0a613ee6f3bcda6073",
+      "source_cell": "166285",
+      "source_token": "166285",
+      "witness_family": "incorrect_deposit_number"
+    },
+    {
+      "accepted_lpsn_id": "792884",
+      "bacdive_id": "11880",
+      "disposition": "quarantine_contradicted_record_join",
+      "ordinal": 10524,
+      "raw_lpsn_id": "792884",
+      "raw_record_sha256": "70a213b70984acb743e170ee7228e0ef77d3101801e415e59f49029b4edabec6",
+      "source_cell": "11880",
+      "source_token": "11880",
+      "witness_family": "documented_non_equivalent_historical_deposits"
+    },
+    {
+      "accepted_lpsn_id": "26754",
+      "bacdive_id": "160327",
+      "disposition": "quarantine_contradicted_record_join",
+      "ordinal": 12563,
+      "raw_lpsn_id": "26754",
+      "raw_record_sha256": "bb411599447f296f8fe3b7d8c6c0d651f54c847614a5cf84c1f637847fc59594",
+      "source_cell": "160327",
+      "source_token": "160327",
+      "witness_family": "incorrect_deposit_number"
+    },
+    {
+      "accepted_lpsn_id": "784614",
+      "bacdive_id": "169088",
+      "disposition": "quarantine_contradicted_record_join",
+      "ordinal": 14251,
+      "raw_lpsn_id": "784614",
+      "raw_record_sha256": "8de647b4769d6b375b25127996d3023d324130053c07c47df2f2e32f589452c2",
+      "source_cell": "169088",
+      "source_token": "169088",
+      "witness_family": "incorrect_deposit_number"
+    },
+    {
+      "accepted_lpsn_id": "55697",
+      "bacdive_id": "133291",
+      "disposition": "quarantine_contradicted_record_join",
+      "ordinal": 21239,
+      "raw_lpsn_id": "55697",
+      "raw_record_sha256": "7bcc23115919d4d92bf0633b4231c95052ab54efb87b6306e3ca075ee7c6d511",
+      "source_cell": "133291",
+      "source_token": "133291",
+      "witness_family": "incorrect_deposit_number"
+    }
+  ],
+  "evidence_file": "microbedecoder_bacdive_join_evidence.json",
+  "evidence_sha256": "919a2c85ace14d93e630b264c37638920fec9a3c80e9e0d64f866601a4324516",
+  "lpsn_gss_sha256": "31cb2ac2d4eaf965a92a02ad28a39cfece141f703b17815b4223ac091ea603f3",
+  "snapshot_observation_disposition": "retain_on_record_scoped_source_node_without_taxon_identity",
+  "source_records": 27010,
+  "source_sha256": "0c6ff730a108720a5d6972400f2bccf2eca8621713b62736abdf5df0fb188c95",
+  "version": 1
+}

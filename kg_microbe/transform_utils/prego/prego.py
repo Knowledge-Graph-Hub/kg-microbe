@@ -27,10 +27,13 @@ threshold on confidence.
 
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 import pickle
 import tarfile
 from collections import defaultdict
+from contextlib import ExitStack
 from pathlib import Path
 from typing import Optional, Union
 
@@ -40,9 +43,12 @@ from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
     CAPABLE_OF_PREDICATE,
     CATEGORY_COLUMN,
+    DEPRECATED_COLUMN,
     ID_COLUMN,
     KNOWLEDGE_LEVEL_COLUMN,
+    NAME_COLUMN,
     OBJECT_COLUMN,
+    ORIGINAL_SUBJECT_COLUMN,
     PREDICATE_COLUMN,
     PREGO,
     PREGO_CHANNEL_COLUMN,
@@ -56,6 +62,7 @@ from kg_microbe.transform_utils.constants import (
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PROVIDED_BY_COLUMN,
     RELATION_COLUMN,
+    SOURCE_ASSERTION_ID_COLUMN,
     SUBJECT_COLUMN,
     SYNONYM_COLUMN,
 )
@@ -69,6 +76,8 @@ from kg_microbe.transform_utils.prego.calibration import (
     keep_row,
     validate_tau,
 )
+from kg_microbe.transform_utils.prego.envo_identity import AUDIT_COLUMNS, POLICY_FILE, load_identity_decisions
+from kg_microbe.transform_utils.prego.native_inputs import archive_payload_identity, verify_native_contract
 from kg_microbe.transform_utils.prego.utils import (
     CHANNEL_ENVIRONMENTAL,
     CHANNEL_GENOMES,
@@ -85,14 +94,14 @@ from kg_microbe.transform_utils.prego.utils import (
     edge_metadata_for,
     entity_to_curie,
     go_category_for_type,
-    iter_database_pairs,
+    iter_database_pair_lines,
     iter_dictionary_entities,
     iter_dictionary_names,
     load_doid_to_mondo,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.atomic_io import atomic_write
-from kg_microbe.utils.tsv_io import tsv_writer
+from kg_microbe.utils.tsv_io import tsv_dict_writer, tsv_writer
 
 # ---------------------------------------------------------------------------
 # Edge predicates and relations. PREGO uses only biolink predicates; the
@@ -175,6 +184,13 @@ class PregoTransform(Transform):
 
     #: Reads this transform's output; see Transform.TRANSFORM_INPUTS (#845).
     TRANSFORM_INPUTS = ("ontologies",)
+    DATA_INPUTS = (
+        "mappings/prego_envo_identity_dispositions.tsv",
+        "data/raw/envo.json",
+        "data/raw/foodon.json",
+    )
+    REQUIRED_CONSUMED_INPUTS = ("prego_envo_policy", "prego_native_envo", "prego_native_foodon")
+    REQUIRED_AUDIT_FILES = ("prego_envo_identity.tsv",)
 
     # Ceiling on distinct habitat values tracked per run. The measured value
     # space is ~42; 1000 leaves generous headroom while bounding memory if the
@@ -217,7 +233,14 @@ class PregoTransform(Transform):
         # Extend edge header with PREGO's per-row metadata columns. Node
         # header is unchanged (id / category / name / description / xref /
         # provided_by / synonym / deprecated / same_as).
-        self.edge_header = list(self.edge_header) + list(_PREGO_EDGE_EXTRA_COLUMNS)
+        self.edge_header = (
+            list(self.edge_header)
+            + list(_PREGO_EDGE_EXTRA_COLUMNS)
+            + [
+                ORIGINAL_SUBJECT_COLUMN,
+                SOURCE_ASSERTION_ID_COLUMN,
+            ]
+        )
         # Where mondo xrefs live in the ontologies output.
         self._mondo_nodes_file = self.output_base_dir / "ontologies" / "mondo_nodes.tsv"
         # Curation report path — one row per (drop_reason, source_id) pair
@@ -258,6 +281,12 @@ class PregoTransform(Transform):
         )
         self._cutoffs: dict = {}
         self._payload_cache: dict = {}
+        self._payload_metadata: dict = {}
+        self._native_raw_locator = str(self.input_base_dir.absolute())
+        self._native_raw_directory = str(self.input_base_dir.resolve())
+        self._identity_decisions = {}
+        self._identity_nodes = {}
+        self._identity_audit_writer = None
         # Per-resource cutoffs actually applied, written next to the outputs
         # so a filtered run says what it dropped.
         self.calibration_table_file = self.output_dir / "confidence_calibration.tsv"
@@ -311,6 +340,9 @@ class PregoTransform(Transform):
         # node de-dup set still holds every ID from the first run — leaving
         # edges whose endpoints have no node row.
         self._emitted_nodes = set()
+        self.begin_consumed_inputs()
+        self._payload_cache = {}
+        self._payload_metadata = {}
         self._drop_examples = defaultdict(lambda: defaultdict(int))
         self._cutoffs = {}
         for key, value in list(self._stats.items()):
@@ -329,6 +361,7 @@ class PregoTransform(Transform):
             )
 
         self._assert_archives_have_payloads(archives)
+        self._prepare_identity_decisions()
 
         doid_to_mondo = load_doid_to_mondo(self._mondo_nodes_file)
         if not doid_to_mondo:
@@ -361,17 +394,88 @@ class PregoTransform(Transform):
         with (
             self.output_node_file.open("w", newline="") as node_fh,
             self.output_edge_file.open("w", newline="") as edge_fh,
+            (self.output_dir / self.REQUIRED_AUDIT_FILES[0]).open("w", encoding="utf-8", newline="") as audit_fh,
         ):
             node_writer = tsv_writer(node_fh)
             edge_writer = tsv_writer(edge_fh)
             node_writer.writerow(self.node_header)
             edge_writer.writerow(self.edge_header)
+            self._identity_audit_writer = tsv_dict_writer(audit_fh, fieldnames=AUDIT_COLUMNS)
+            self._identity_audit_writer.writeheader()
 
             for archive_path in archives:
                 self._process_archive(archive_path, doid_to_mondo, node_writer, edge_writer, show_status=show_status)
 
+        self._identity_audit_writer = None
+        self.verify_consumed_inputs()
+        self.record_producer_audit(self.REQUIRED_AUDIT_FILES[0])
         self._write_unmapped_report()
         self._print_summary()
+
+    def _prepare_identity_decisions(self):
+        """Read all finite identity authorities immutably before opening graph outputs."""
+        self._native_raw_locator = str(self.input_base_dir.absolute())
+        self._native_raw_directory = str(self.input_base_dir.resolve())
+        self._native_input_admission = None
+        with ExitStack() as stack:
+            policy = stack.enter_context(self.consume_input("prego_envo_policy", POLICY_FILE))
+            envo = stack.enter_context(self.consume_input("prego_native_envo", self.input_base_dir / "envo.json"))
+            foodon = stack.enter_context(self.consume_input("prego_native_foodon", self.input_base_dir / "foodon.json"))
+            self._identity_decisions = load_identity_decisions(policy, envo, foodon)
+        self._identity_nodes = {item.target_id: item for item in self._identity_decisions.values()}
+
+    @property
+    def producer_native_inputs(self):
+        """Serialize the actual archive-to-payload identities without returning mutable state."""
+        return {
+            "version": 1,
+            "raw_locator": self._native_raw_locator,
+            "raw_directory": self._native_raw_directory,
+            "archives": {str(path.absolute()): dict(metadata) for path, metadata in self._payload_metadata.items()},
+        }
+
+    @producer_native_inputs.setter
+    def producer_native_inputs(self, recorded):
+        """Do not substitute a recorded assertion for this instance's original input reads."""
+        from kg_microbe.utils.source_finalization import SourceFinalizationRequired
+
+        if recorded != self.producer_native_inputs:
+            raise SourceFinalizationRequired("PREGO native reads differ from recorded completion; run the producer")
+
+    def verify_native_inputs(self, *, byte_verified=False, output_dir=None):
+        """Enforce complete actual input selection before source completion, even for an empty cohort."""
+        del byte_verified, output_dir
+        self._native_input_admission = verify_native_contract(
+            self.producer_native_inputs,
+            self.consumed_input_snapshots,
+            self.input_base_dir,
+            policy_path=POLICY_FILE,
+            admission=getattr(self, "_native_input_admission", None),
+        )
+
+    @classmethod
+    def verify_recorded_native_inputs(cls, report, report_path, *, admission=None):
+        """Bind saved archive selection and payload consumption during read-only merge admission."""
+        from kg_microbe.utils.source_finalization import SourceFinalizationRequired
+
+        contract = report.get("producer_native_inputs")
+        raw = contract.get("raw_locator") if isinstance(contract, dict) else None
+        if (
+            report_path is None
+            or not isinstance(raw, str)
+            or not Path(raw).is_absolute()
+            or str(Path(raw).resolve()) != report.get("raw_input_directory")
+        ):
+            raise SourceFinalizationRequired(
+                "PREGO native validation requires its completion location and raw directory"
+            )
+        return verify_native_contract(
+            contract,
+            report.get("consumed_inputs", {}),
+            raw,
+            admission=admission,
+            policy_path=POLICY_FILE,
+        )
 
     # ------------------------------------------------------------------ #
     # Phase 6b: dictionary synonym enrichment.
@@ -637,10 +741,10 @@ class PregoTransform(Transform):
                 continue
             payload_file = self._ensure_payload(archive_path)
             print(f"[prego] calibration pass over {payload_file.name} (channel {channel!r})")
-            row_iter = iter_database_pairs(payload_file)
+            row_iter = self._iter_payload(archive_path)
             if show_status:
                 row_iter = tqdm(row_iter, desc=f"calibrate {archive_path.name}", unit="rows")
-            for row, err in row_iter:
+            for row, err, _lineno in row_iter:
                 if err is not None:
                     continue
                 try:
@@ -699,61 +803,58 @@ class PregoTransform(Transform):
 
     def _ensure_payload(self, archive_path) -> Path:
         """
-        Return the extracted ``database_pairs.tsv`` for one archive.
+        Return a content-verified extraction, never trusting a same-size cache.
 
-        Cache-then-reuse: extract once into a sibling ``_extracted`` dir so
-        re-runs don't pay the ~30 s decompression cost twice. Guard against
-        interrupted-extraction: if the cached payload's size doesn't match the
-        tar member's declared size, re-extract rather than trusting a possibly
-        truncated file (the alternative would silently emit fewer edges on a
-        retry after Ctrl-C / disk-full / OOM).
-
-        Split out from :meth:`_process_archive` so the calibration pass can
-        reuse the same payload without re-extracting it.
-
-        :param archive_path: Path to one PREGO ``*.tar.gz``.
-        :return: Path to the extracted TSV.
+        Archive and parsed-payload reads are immutable snapshots. This costs
+        temporary disk space, but binds the actual consumed bytes rather than
+        claiming a cached file's basename proves archive-member provenance.
         """
-        # Memoized: listing members of a gzipped tar decompresses the whole
-        # archive — minutes for the 8.7 GB isolates file. A filtered run
-        # resolves each payload twice (calibrate, then emit), so without
-        # this the tar scan is paid twice for no benefit.
         cached = self._payload_cache.get(archive_path)
         if cached is not None:
             return cached
         payload_dir = archive_path.parent / archive_path.stem.replace(".tar", "_extracted")
         payload_dir.mkdir(parents=True, exist_ok=True)
         payload_file = payload_dir / "database_pairs.tsv"
-
-        # Read the member's declared size up front so we can compare against
-        # any cached file and decide whether re-extraction is needed.
-        with tarfile.open(archive_path, mode="r:gz") as tf:
-            member = next(
-                (m for m in tf.getmembers() if m.name.endswith("database_pairs.tsv")),
-                None,
-            )
-            if member is None:
-                raise SystemExit(f"[prego] {archive_path.name}: no database_pairs.tsv member found in tarball.")
-            expected_size = member.size
-            need_extract = not payload_file.exists() or payload_file.stat().st_size != expected_size
-            if need_extract:
-                if payload_file.exists():
-                    print(
-                        f"[prego] cached {payload_file.name} size "
-                        f"({payload_file.stat().st_size:,}) != tar member "
-                        f"({expected_size:,}); re-extracting"
-                    )
-                else:
-                    print(f"[prego] extracting {archive_path.name} → {payload_file.name}...")
-                with tf.extractfile(member) as src, payload_file.open("wb") as dst:
-                    while True:
-                        chunk = src.read(1024 * 1024)
-                        if not chunk:
-                            break
-                        dst.write(chunk)
-
+        receipt_file = payload_dir / "extraction-receipt.json"
+        archive_role = f"prego_archive_{archive_path.name}"
+        with self.consume_input(archive_role, archive_path) as archive_snapshot:
+            archive_sha = self.consumed_input_snapshots[archive_role]["sha256"]
+            # Prove provenance from the immutable compressed archive itself.
+            # A receipt can be coherently corrupted together with its cache;
+            # no receipt or completion-record hash substitutes this native read.
+            if payload_file.is_file():
+                native = archive_payload_identity(archive_snapshot.name)
+                if (
+                    payload_file.stat().st_size != native["payload_bytes"]
+                    or self._file_digest(payload_file) != native["payload_sha256"]
+                ):
+                    native = archive_payload_identity(archive_snapshot.name, destination=payload_file)
+            else:
+                native = archive_payload_identity(archive_snapshot.name, destination=payload_file)
+            receipt = {"version": 1, "archive_sha256": archive_sha, **native}
+            with atomic_write(receipt_file, "w", encoding="utf-8") as stream:
+                json.dump(receipt, stream, sort_keys=True)
+        self._payload_metadata[archive_path] = {**receipt, "archive": str(archive_path.resolve())}
         self._payload_cache[archive_path] = payload_file
         return payload_file
+
+    @staticmethod
+    def _file_digest(path):
+        """Hash a graph-scale native member without materializing it."""
+        digest = hashlib.sha256()
+        with path.open("rb") as stream:
+            for block in iter(lambda: stream.read(1024 * 1024), b""):
+                digest.update(block)
+        return digest.hexdigest()
+
+    def _iter_payload(self, archive_path):
+        """Parse exactly the immutable payload bytes certified by the extraction receipt."""
+        payload = self._ensure_payload(archive_path)
+        role = f"prego_payload_{archive_path.name}"
+        with self.consume_input(role, payload) as snapshot:
+            if self.consumed_input_snapshots[role]["sha256"] != self._payload_metadata[archive_path]["payload_sha256"]:
+                raise ValueError(f"PREGO payload changed after archive extraction: {payload}")
+            yield from iter_database_pair_lines(snapshot)
 
     def _process_archive(self, archive_path, doid_to_mondo, node_writer, edge_writer, show_status: bool = True):
         """
@@ -767,23 +868,30 @@ class PregoTransform(Transform):
         """
         payload_file = self._ensure_payload(archive_path)
         print(f"[prego] processing {payload_file.name} ({payload_file.stat().st_size / 1024**3:.1f} GB)")
-        row_iter = iter_database_pairs(payload_file)
+        row_iter = self._iter_payload(archive_path)
         if show_status:
             row_iter = tqdm(row_iter, desc=archive_path.name, unit="rows")
         # The channel is a property of the archive, not of any column in it.
         channel = channel_for_archive(archive_path.name)
-        for row, err in row_iter:
+        for row, err, lineno in row_iter:
             self._stats["rows_read"] += 1
             if err is not None:
                 self._stats["rows_malformed"] += 1
                 continue
-            self._process_row(row, doid_to_mondo, node_writer, edge_writer, channel)
+            self._process_row(
+                row,
+                doid_to_mondo,
+                node_writer,
+                edge_writer,
+                channel,
+                context={**self._payload_metadata[archive_path], "physical_line": lineno},
+            )
 
     # ------------------------------------------------------------------ #
     # Per-row processing.
     # ------------------------------------------------------------------ #
 
-    def _process_row(self, row, doid_to_mondo, node_writer, edge_writer, channel):
+    def _process_row(self, row, doid_to_mondo, node_writer, edge_writer, channel, context=None):
         """Route one raw row through the canonical-direction filter + edge emission."""
         try:
             entity1_type = int(row[0])
@@ -911,6 +1019,24 @@ class PregoTransform(Transform):
                 self._record_drop("below_habitat_min_score", entity1_type, entity1_id, entity2_type, entity2_id)
                 return
 
+        # Native identity migration follows eligibility against the original
+        # ENVO row, so the reviewed FOODON successor does not fail its guard.
+        decision = self._identity_decisions.get(subject) if outcome == KEEP_ENVO_TO_TAXON else None
+        original_subject, assertion_id = "", ""
+        if decision is not None:
+            if context is None or self._identity_audit_writer is None:
+                raise ValueError("PREGO identity migration requires physical source context and an audit writer")
+            original_subject = subject
+            subject = decision.target_id
+            pending_nodes = ((subject, _ENVO_CATEGORY), (obj, _NCBITAXON_CATEGORY))
+            assertion_key = [
+                Path(context["archive"]).name,
+                context["archive_sha256"],
+                context["member"],
+                context["physical_line"],
+            ]
+            assertion_id = "prego.assertion:" + hashlib.sha256(json.dumps(assertion_key).encode()).hexdigest()
+
         # Emitted only now, once the row is certain to survive. Emitting inside
         # the shape branches wrote a node for every edge the filters below then
         # dropped, so PREGO_MIN_CONFIDENCE left orphan nodes behind — nodes with
@@ -918,20 +1044,42 @@ class PregoTransform(Transform):
         for node_id, category in pending_nodes:
             self._emit_node(node_writer, node_id, category)
 
-        edge_writer.writerow(
-            self._make_edge_row(
-                subject=subject,
-                predicate=predicate,
-                obj=obj,
-                relation=relation,
-                score=score,
-                channel=channel,
-                source=source,
-                evidence=evidence,
-                direct_flag=direct_flag,
-                evidence_url=evidence_url,
-            )
+        emitted = self._make_edge_row(
+            subject=subject,
+            predicate=predicate,
+            obj=obj,
+            relation=relation,
+            score=score,
+            channel=channel,
+            source=source,
+            evidence=evidence,
+            direct_flag=direct_flag,
+            evidence_url=evidence_url,
         )
+        emitted[self.edge_header.index(ORIGINAL_SUBJECT_COLUMN)] = original_subject
+        emitted[self.edge_header.index(SOURCE_ASSERTION_ID_COLUMN)] = assertion_id
+        edge_writer.writerow(emitted)
+        if decision is not None:
+            identities = self.consumed_input_snapshots
+            self._identity_audit_writer.writerow(
+                {
+                    "source_assertion_id": assertion_id,
+                    "original_subject": original_subject,
+                    "normalized_subject": subject,
+                    "disposition": decision.disposition,
+                    **{
+                        key: context[key]
+                        for key in ("archive", "archive_sha256", "member", "payload_sha256", "physical_line")
+                    },
+                    "original_record_json": json.dumps(row, ensure_ascii=False),
+                    "emitted_edge_json": json.dumps(dict(zip(self.edge_header, emitted, strict=True)), sort_keys=True),
+                    "subject_node_json": json.dumps(self._node_row(subject, _ENVO_CATEGORY), sort_keys=True),
+                    "native_proof_json": decision.proof_json,
+                    "policy_sha256": identities["prego_envo_policy"]["sha256"],
+                    "envo_sha256": identities["prego_native_envo"]["sha256"],
+                    "foodon_sha256": identities["prego_native_foodon"]["sha256"],
+                }
+            )
         self._stats["edges_emitted"] += 1
         self._stats["edges_by_shape"][outcome] += 1
 
@@ -954,17 +1102,27 @@ class PregoTransform(Transform):
             return
         self._emitted_nodes.add(node_id)
         self._stats["unique_nodes_emitted"] += 1
+        row = self._node_row(node_id, category)
+        if row[SYNONYM_COLUMN]:
+            self._stats["nodes_enriched_with_synonyms"] += 1
+        node_writer.writerow([row[c] for c in self.node_header])
+
+    def _node_row(self, node_id, category):
+        """Project a native-backed node without transferring a retired donor's metadata."""
         row = {col: "" for col in self.node_header}
         row[ID_COLUMN] = node_id
         row[CATEGORY_COLUMN] = category
         row[PROVIDED_BY_COLUMN] = PREGO_KNOWLEDGE_SOURCE
+        identity = self._identity_nodes.get(node_id)
+        if identity is not None:
+            row[NAME_COLUMN] = identity.name
+            row[DEPRECATED_COLUMN] = "True" if identity.deprecated else ""
         synonyms = self._synonym_lookup.get(node_id)
         if synonyms:
             # Case-insensitively deduplicated at load time; sort for stable
             # output (deterministic diff on re-runs).
             row[SYNONYM_COLUMN] = "|".join(sorted(synonyms))
-            self._stats["nodes_enriched_with_synonyms"] += 1
-        node_writer.writerow([row[c] for c in self.node_header])
+        return row
 
     def _make_edge_row(
         self,

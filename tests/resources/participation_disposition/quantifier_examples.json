@@ -1,0 +1,342 @@
+[
+  {
+    "complete_selected_owl_declarations": [],
+    "disposition": "retain_native_ontology_projection",
+    "form": "json_only",
+    "matching_restrictions": [],
+    "original_native_triple": [
+      "ENVO:01001023",
+      "RO:0000057",
+      "CHEBI:36342"
+    ],
+    "supplier": "envo"
+  },
+  {
+    "complete_selected_owl_declarations": [
+      {
+        "declaration_xml": "<ns0:Class xmlns:ns0=\"http://www.w3.org/2002/07/owl#\" xmlns:ns2=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns:ns3=\"http://purl.obolibrary.org/obo/\" xmlns:ns4=\"http://www.geneontology.org/formats/oboInOwl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" rdf:about=\"http://purl.obolibrary.org/obo/GO_0006082\">\n        <ns0:equivalentClass>\n            <ns0:Class>\n                <ns0:intersectionOf rdf:parseType=\"Collection\">\n                    <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/GO_0008152\" />\n                    <ns0:Restriction>\n                        <ns0:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004007\" />\n                        <ns0:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_64709\" />\n                    </ns0:Restriction>\n                </ns0:intersectionOf>\n            </ns0:Class>\n        </ns0:equivalentClass>\n        <ns2:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000003\" />\n        <ns2:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0044281\" />\n        <ns2:subClassOf>\n            <ns0:Restriction>\n                <ns0:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004007\" />\n                <ns0:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_64709\" />\n            </ns0:Restriction>\n        </ns2:subClassOf>\n        <ns3:IAO_0000115>The chemical reactions and pathways involving organic acids, any acidic compound containing carbon in covalent linkage.</ns3:IAO_0000115>\n        <ns4:hasExactSynonym>organic acid metabolism</ns4:hasExactSynonym>\n        <ns4:hasOBONamespace>biological_process</ns4:hasOBONamespace>\n        <ns4:id>GO:0006082</ns4:id>\n        <ns4:inSubset rdf:resource=\"http://purl.obolibrary.org/obo/go#goslim_pir\" />\n        <ns2:label>organic acid metabolic process</ns2:label>\n    </ns0:Class>\n    ",
+        "node_id_references": [],
+        "referenced_blank_node_declarations": {},
+        "restrictions": [
+          {
+            "filler": "CHEBI:64709",
+            "path": "Class/equivalentClass[0]/Class[0]/intersectionOf[0]/Restriction[1]",
+            "property": "RO:0004007",
+            "quantifier": "someValuesFrom"
+          },
+          {
+            "filler": "CHEBI:64709",
+            "path": "Class/subClassOf[3]/Restriction[0]",
+            "property": "RO:0004007",
+            "quantifier": "someValuesFrom"
+          }
+        ],
+        "top_level_element_ordinal_one_based": 3457,
+        "type": "{http://www.w3.org/2002/07/owl#}Class"
+      }
+    ],
+    "disposition": "separate_GO_subject_quarantine_1302",
+    "form": "equivalent_intersection",
+    "matching_restrictions": [
+      {
+        "filler": "CHEBI:64709",
+        "path": "Class/equivalentClass[0]/Class[0]/intersectionOf[0]/Restriction[1]",
+        "property": "RO:0004007",
+        "quantifier": "someValuesFrom"
+      },
+      {
+        "filler": "CHEBI:64709",
+        "path": "Class/subClassOf[3]/Restriction[0]",
+        "property": "RO:0004007",
+        "quantifier": "someValuesFrom"
+      }
+    ],
+    "original_native_triple": [
+      "GO:0006082",
+      "RO:0004007",
+      "CHEBI:64709"
+    ],
+    "supplier": "pato"
+  },
+  {
+    "complete_selected_owl_declarations": [
+      {
+        "declaration_xml": "<ns0:Class xmlns:ns0=\"http://www.w3.org/2002/07/owl#\" xmlns:ns2=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns:ns3=\"http://purl.obolibrary.org/obo/\" xmlns:ns4=\"http://www.geneontology.org/formats/oboInOwl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" rdf:about=\"http://purl.obolibrary.org/obo/GO_0043603\">\n        <ns0:equivalentClass>\n            <ns0:Class>\n                <ns0:intersectionOf rdf:parseType=\"Collection\">\n                    <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/GO_0008152\" />\n                    <ns0:Restriction>\n                        <ns0:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004007\" />\n                        <ns0:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_32988\" />\n                    </ns0:Restriction>\n                </ns0:intersectionOf>\n            </ns0:Class>\n        </ns0:equivalentClass>\n        <ns2:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000003\" />\n        <ns2:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0008152\" />\n        <ns2:subClassOf>\n            <ns0:Restriction>\n                <ns0:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004007\" />\n                <ns0:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_32988\" />\n            </ns0:Restriction>\n        </ns2:subClassOf>\n        <ns3:IAO_0000115>The chemical reactions and pathways involving an amide, any derivative of an oxoacid in which an acidic hydroxy group has been replaced by an amino or substituted amino group, as carried out by individual cells.</ns3:IAO_0000115>\n        <ns4:hasExactSynonym>amide metabolism</ns4:hasExactSynonym>\n        <ns4:hasExactSynonym>cellular amide metabolic process</ns4:hasExactSynonym>\n        <ns4:hasOBONamespace>biological_process</ns4:hasOBONamespace>\n        <ns4:id>GO:0043603</ns4:id>\n        <ns4:inSubset rdf:resource=\"http://purl.obolibrary.org/obo/go#gocheck_do_not_annotate\" />\n        <ns4:inSubset rdf:resource=\"http://purl.obolibrary.org/obo/go#goslim_pir\" />\n        <ns2:comment>Note that this term is in the subset of terms that should not be used for direct gene product annotation. Instead, select a child term or, if no appropriate child term exists, please request a new term. Direct annotations to this term may be amended during annotation QC.</ns2:comment>\n        <ns2:label>amide metabolic process</ns2:label>\n    </ns0:Class>\n    ",
+        "node_id_references": [],
+        "referenced_blank_node_declarations": {},
+        "restrictions": [
+          {
+            "filler": "CHEBI:32988",
+            "path": "Class/equivalentClass[0]/Class[0]/intersectionOf[0]/Restriction[1]",
+            "property": "RO:0004007",
+            "quantifier": "someValuesFrom"
+          },
+          {
+            "filler": "CHEBI:32988",
+            "path": "Class/subClassOf[3]/Restriction[0]",
+            "property": "RO:0004007",
+            "quantifier": "someValuesFrom"
+          }
+        ],
+        "top_level_element_ordinal_one_based": 5888,
+        "type": "{http://www.w3.org/2002/07/owl#}Class"
+      }
+    ],
+    "disposition": "separate_GO_subject_quarantine_1302",
+    "form": "equivalent_intersection",
+    "matching_restrictions": [
+      {
+        "filler": "CHEBI:32988",
+        "path": "Class/equivalentClass[0]/Class[0]/intersectionOf[0]/Restriction[1]",
+        "property": "RO:0004007",
+        "quantifier": "someValuesFrom"
+      },
+      {
+        "filler": "CHEBI:32988",
+        "path": "Class/subClassOf[3]/Restriction[0]",
+        "property": "RO:0004007",
+        "quantifier": "someValuesFrom"
+      }
+    ],
+    "original_native_triple": [
+      "GO:0043603",
+      "RO:0004007",
+      "CHEBI:32988"
+    ],
+    "supplier": "pato"
+  },
+  {
+    "complete_selected_owl_declarations": [
+      {
+        "declaration_xml": "<ns0:Class xmlns:ns0=\"http://www.w3.org/2002/07/owl#\" xmlns:ns2=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns:ns3=\"http://purl.obolibrary.org/obo/\" xmlns:ns4=\"http://www.geneontology.org/formats/oboInOwl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" rdf:about=\"http://purl.obolibrary.org/obo/GO_0120252\">\n        <ns0:equivalentClass>\n            <ns0:Class>\n                <ns0:intersectionOf rdf:parseType=\"Collection\">\n                    <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/GO_0008152\" />\n                    <ns0:Restriction>\n                        <ns0:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004007\" />\n                        <ns0:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_24632\" />\n                    </ns0:Restriction>\n                </ns0:intersectionOf>\n            </ns0:Class>\n        </ns0:equivalentClass>\n        <ns2:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0008152\" />\n        <ns2:subClassOf>\n            <ns0:Restriction>\n                <ns0:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004007\" />\n                <ns0:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_24632\" />\n            </ns0:Restriction>\n        </ns2:subClassOf>\n        <ns3:IAO_0000115>The chemical reactions and pathways involving a hydrocarbon, a compound consisting of carbon and hydrogen only.</ns3:IAO_0000115>\n        <ns3:IAO_0000233 rdf:datatype=\"http://www.w3.org/2001/XMLSchema#anyURI\">https://github.com/geneontology/go-ontology/issues/19842</ns3:IAO_0000233>\n        <ns4:created_by>krc</ns4:created_by>\n        <ns4:creation_date>2020-09-02T20:47:28Z</ns4:creation_date>\n        <ns4:hasExactSynonym>hydrocarbon metabolism</ns4:hasExactSynonym>\n        <ns4:id>GO:0120252</ns4:id>\n        <ns2:label>hydrocarbon metabolic process</ns2:label>\n    </ns0:Class>\n    ",
+        "node_id_references": [],
+        "referenced_blank_node_declarations": {},
+        "restrictions": [
+          {
+            "filler": "CHEBI:24632",
+            "path": "Class/equivalentClass[0]/Class[0]/intersectionOf[0]/Restriction[1]",
+            "property": "RO:0004007",
+            "quantifier": "someValuesFrom"
+          },
+          {
+            "filler": "CHEBI:24632",
+            "path": "Class/subClassOf[2]/Restriction[0]",
+            "property": "RO:0004007",
+            "quantifier": "someValuesFrom"
+          }
+        ],
+        "top_level_element_ordinal_one_based": 23620,
+        "type": "{http://www.w3.org/2002/07/owl#}Class"
+      }
+    ],
+    "disposition": "retain_native_ontology_projection",
+    "form": "equivalent_intersection",
+    "matching_restrictions": [
+      {
+        "filler": "CHEBI:24632",
+        "path": "Class/equivalentClass[0]/Class[0]/intersectionOf[0]/Restriction[1]",
+        "property": "RO:0004007",
+        "quantifier": "someValuesFrom"
+      },
+      {
+        "filler": "CHEBI:24632",
+        "path": "Class/subClassOf[2]/Restriction[0]",
+        "property": "RO:0004007",
+        "quantifier": "someValuesFrom"
+      }
+    ],
+    "original_native_triple": [
+      "GO:0120252",
+      "RO:0004007",
+      "CHEBI:24632"
+    ],
+    "supplier": "uberon"
+  },
+  {
+    "complete_selected_owl_declarations": [
+      {
+        "declaration_xml": "<ns0:Class xmlns:ns0=\"http://www.w3.org/2002/07/owl#\" xmlns:ns2=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns:ns3=\"http://purl.obolibrary.org/obo/\" xmlns:ns4=\"http://www.geneontology.org/formats/oboInOwl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" rdf:about=\"http://purl.obolibrary.org/obo/PO_0007033\">\n        <ns2:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/PO_0009012\" />\n        <ns2:subClassOf>\n            <ns0:Restriction>\n                <ns0:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0000057\" />\n                <ns0:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/PO_0000003\" />\n            </ns0:Restriction>\n        </ns2:subClassOf>\n        <ns3:IAO_0000115>A plant structure development stage (PO:0009012) that has as primary participant a whole plant (PO:0000003).</ns3:IAO_0000115>\n        <ns3:IAO_0000412 rdf:resource=\"http://purl.obolibrary.org/obo/po.owl\" />\n        <ns4:hasDbXref>PO_GIT:390</ns4:hasDbXref>\n        <ns4:hasOBONamespace>plant_structure_development_stage</ns4:hasOBONamespace>\n        <ns4:hasRelatedSynonym>Solanaceae whole plant growth stages (SGN:0000001) (related)</ns4:hasRelatedSynonym>\n        <ns4:hasRelatedSynonym>cereal plant growth stage ontology (GRO:0007199) (related)</ns4:hasRelatedSynonym>\n        <ns4:hasRelatedSynonym>maize growth stage (GRO:0007002) (related)</ns4:hasRelatedSynonym>\n        <ns4:hasRelatedSynonym>plant growth stages in Arabidopsis (TAIR:0000021) (related)</ns4:hasRelatedSynonym>\n        <ns4:hasRelatedSynonym>rice growth stage (GRO:0007040) (related)</ns4:hasRelatedSynonym>\n        <ns4:hasRelatedSynonym>sorghum growth stage (GRO:0007124) (related)</ns4:hasRelatedSynonym>\n        <ns4:hasRelatedSynonym>wheat, barley and oat growth stage (GRO:0007156) (related)</ns4:hasRelatedSynonym>\n        <ns4:id>PO:0007033</ns4:id>\n        <ns4:inSubset rdf:resource=\"http://purl.oboInOwllibrary.org/oboInOwl/po#TraitNet\" />\n        <ns2:label>whole plant development stage</ns2:label>\n    </ns0:Class>\n    \n\n\n    \n\n    ",
+        "node_id_references": [],
+        "referenced_blank_node_declarations": {},
+        "restrictions": [
+          {
+            "filler": "PO:0000003",
+            "path": "Class/subClassOf[1]/Restriction[0]",
+            "property": "RO:0000057",
+            "quantifier": "someValuesFrom"
+          }
+        ],
+        "top_level_element_ordinal_one_based": 43636,
+        "type": "{http://www.w3.org/2002/07/owl#}Class"
+      }
+    ],
+    "disposition": "retain_native_ontology_projection",
+    "form": "direct_subclass",
+    "matching_restrictions": [
+      {
+        "filler": "PO:0000003",
+        "path": "Class/subClassOf[1]/Restriction[0]",
+        "property": "RO:0000057",
+        "quantifier": "someValuesFrom"
+      }
+    ],
+    "original_native_triple": [
+      "PO:0007033",
+      "RO:0000057",
+      "PO:0000003"
+    ],
+    "supplier": "foodon"
+  },
+  {
+    "complete_selected_owl_declarations": [
+      {
+        "declaration_xml": "<ns0:Class xmlns:ns0=\"http://www.w3.org/2002/07/owl#\" xmlns:ns2=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns:ns3=\"http://purl.obolibrary.org/obo/\" xmlns:ns4=\"http://purl.org/dc/terms/\" xmlns:ns5=\"http://www.geneontology.org/formats/oboInOwl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" rdf:about=\"http://purl.obolibrary.org/obo/CL_4030066\">\n        <ns0:equivalentClass>\n            <ns0:Class>\n                <ns0:intersectionOf rdf:parseType=\"Collection\">\n                    <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/CL_0000066\" />\n                    <ns0:Restriction>\n                        <ns0:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\" />\n                        <ns0:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UBERON_0000084\" />\n                    </ns0:Restriction>\n                </ns0:intersectionOf>\n            </ns0:Class>\n        </ns0:equivalentClass>\n        <ns2:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/CL_0000068\" />\n        <ns2:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/CL_0002518\" />\n        <ns2:subClassOf>\n            <ns0:Restriction>\n                <ns0:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\" />\n                <ns0:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UBERON_0000084\" />\n            </ns0:Restriction>\n        </ns2:subClassOf>\n        <ns2:subClassOf rdf:nodeID=\"genid16166\" />\n        <ns3:IAO_0000115>An epithelial cell that is part of a ureteric bud. A ureteric bud cell has the potential to induce metanephric mesenchymal cells to proliferate and convert to epithelia that form renal tubules via: (1) the secretion of multiple diffusible growth factors that rescue renal progenitors from apoptosis and stimulate them to proliferate and (2) contact-dependent mechanisms that induce mesenchymal-epithelial conversion.</ns3:IAO_0000115>\n        <ns4:contributor>https://orcid.org/0000-0002-1425-877X</ns4:contributor>\n        <ns4:date rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2023-10-13T11:22:42Z</ns4:date>\n        <ns5:hasRelatedSynonym>UB cell</ns5:hasRelatedSynonym>\n        <ns5:inSubset rdf:resource=\"http://purl.obolibrary.org/obo/cl#cellxgene_subset\" />\n        <ns2:label>ureteric bud cell</ns2:label>\n    </ns0:Class>\n    ",
+        "node_id_references": [
+          {
+            "element": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+            "node_id": "genid16166"
+          }
+        ],
+        "referenced_blank_node_declarations": {
+          "_:genid16166": [
+            {
+              "declaration_xml": "<ns0:Restriction xmlns:ns0=\"http://www.w3.org/2002/07/owl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" rdf:nodeID=\"genid16166\">\n        <ns0:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0000056\" />\n        <ns0:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_2001013\" />\n    </ns0:Restriction>\n    ",
+              "node_id_references": [],
+              "restrictions": [
+                {
+                  "filler": "GO:2001013",
+                  "path": "Restriction",
+                  "property": "RO:0000056",
+                  "quantifier": "someValuesFrom"
+                }
+              ],
+              "top_level_element_ordinal_one_based": 10010,
+              "type": "{http://www.w3.org/2002/07/owl#}Restriction"
+            }
+          ]
+        },
+        "restrictions": [
+          {
+            "filler": "UBERON:0000084",
+            "path": "Class/equivalentClass[0]/Class[0]/intersectionOf[0]/Restriction[1]",
+            "property": "BFO:0000050",
+            "quantifier": "someValuesFrom"
+          },
+          {
+            "filler": "UBERON:0000084",
+            "path": "Class/subClassOf[3]/Restriction[0]",
+            "property": "BFO:0000050",
+            "quantifier": "someValuesFrom"
+          },
+          {
+            "filler": "GO:2001013",
+            "path": "Class/subClassOf/@nodeID(_:genid16166)/Restriction",
+            "property": "RO:0000056",
+            "quantifier": "someValuesFrom"
+          }
+        ],
+        "top_level_element_ordinal_one_based": 10009,
+        "type": "{http://www.w3.org/2002/07/owl#}Class"
+      }
+    ],
+    "disposition": "retain_native_ontology_projection",
+    "form": "blank_node",
+    "matching_restrictions": [
+      {
+        "filler": "GO:2001013",
+        "path": "Class/subClassOf/@nodeID(_:genid16166)/Restriction",
+        "property": "RO:0000056",
+        "quantifier": "someValuesFrom"
+      }
+    ],
+    "original_native_triple": [
+      "CL:4030066",
+      "RO:0000056",
+      "GO:2001013"
+    ],
+    "supplier": "uberon"
+  },
+  {
+    "complete_selected_owl_declarations": [
+      {
+        "declaration_xml": "<ns0:Class xmlns:ns0=\"http://www.w3.org/2002/07/owl#\" xmlns:ns2=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns:ns3=\"http://purl.obolibrary.org/obo/\" xmlns:ns4=\"http://www.geneontology.org/formats/oboInOwl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" rdf:about=\"http://purl.obolibrary.org/obo/UBERON_0008913\">\n        <ns2:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UBERON_0007842\" />\n        <ns2:subClassOf rdf:nodeID=\"genid147864\" />\n        <ns2:subClassOf rdf:nodeID=\"genid147866\" />\n        <ns3:IAO_0000115>Bone element that is located on the surface of a cartilage element.</ns3:IAO_0000115>\n        <ns3:UBPROP_0000001>Replacement bone that forms within the connective tissue surrounding cartilage.[TAO]</ns3:UBPROP_0000001>\n        <ns4:hasDbXref>AAO:0010779</ns4:hasDbXref>\n        <ns4:hasDbXref>TAO:0001638</ns4:hasDbXref>\n        <ns4:hasDbXref>VSAO:0000308</ns4:hasDbXref>\n        <ns4:hasDbXref>ZFA:0001630</ns4:hasDbXref>\n        <ns4:hasExactSynonym>perichondral bones</ns4:hasExactSynonym>\n        <ns4:hasRelatedSynonym>perichondral bone</ns4:hasRelatedSynonym>\n        <ns4:id>UBERON:0008913</ns4:id>\n        <ns4:inSubset rdf:resource=\"http://purl.obolibrary.org/obo/uberon/core#human_subset\" />\n        <ns4:inSubset rdf:resource=\"http://purl.obolibrary.org/obo/uberon/core#mouse_subset\" />\n        <ns2:comment>include the subtyping under 'replacement bone', for consistency with ZFA, but VSAO does not include this intermediate class</ns2:comment>\n        <ns2:label>perichondral bone</ns2:label>\n    </ns0:Class>\n    ",
+        "node_id_references": [
+          {
+            "element": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+            "node_id": "genid147864"
+          },
+          {
+            "element": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+            "node_id": "genid147866"
+          }
+        ],
+        "referenced_blank_node_declarations": {
+          "_:genid147864": [
+            {
+              "declaration_xml": "<ns0:Restriction xmlns:ns0=\"http://www.w3.org/2002/07/owl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" rdf:nodeID=\"genid147864\">\n        <ns0:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0000056\" />\n        <ns0:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0036073\" />\n    </ns0:Restriction>\n    ",
+              "node_id_references": [],
+              "restrictions": [
+                {
+                  "filler": "GO:0036073",
+                  "path": "Restriction",
+                  "property": "RO:0000056",
+                  "quantifier": "someValuesFrom"
+                }
+              ],
+              "top_level_element_ordinal_one_based": 86374,
+              "type": "{http://www.w3.org/2002/07/owl#}Restriction"
+            }
+          ],
+          "_:genid147866": [
+            {
+              "declaration_xml": "<ns0:Restriction xmlns:ns0=\"http://www.w3.org/2002/07/owl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" rdf:nodeID=\"genid147866\">\n        <ns0:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002202\" />\n        <ns0:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UBERON_0002222\" />\n    </ns0:Restriction>\n    ",
+              "node_id_references": [],
+              "restrictions": [
+                {
+                  "filler": "UBERON:0002222",
+                  "path": "Restriction",
+                  "property": "RO:0002202",
+                  "quantifier": "someValuesFrom"
+                }
+              ],
+              "top_level_element_ordinal_one_based": 86375,
+              "type": "{http://www.w3.org/2002/07/owl#}Restriction"
+            }
+          ]
+        },
+        "restrictions": [
+          {
+            "filler": "GO:0036073",
+            "path": "Class/subClassOf/@nodeID(_:genid147864)/Restriction",
+            "property": "RO:0000056",
+            "quantifier": "someValuesFrom"
+          },
+          {
+            "filler": "UBERON:0002222",
+            "path": "Class/subClassOf/@nodeID(_:genid147866)/Restriction",
+            "property": "RO:0002202",
+            "quantifier": "someValuesFrom"
+          }
+        ],
+        "top_level_element_ordinal_one_based": 86373,
+        "type": "{http://www.w3.org/2002/07/owl#}Class"
+      }
+    ],
+    "disposition": "retain_native_ontology_projection",
+    "form": "blank_node",
+    "matching_restrictions": [
+      {
+        "filler": "GO:0036073",
+        "path": "Class/subClassOf/@nodeID(_:genid147864)/Restriction",
+        "property": "RO:0000056",
+        "quantifier": "someValuesFrom"
+      }
+    ],
+    "original_native_triple": [
+      "UBERON:0008913",
+      "RO:0000056",
+      "GO:0036073"
+    ],
+    "supplier": "uberon"
+  }
+]

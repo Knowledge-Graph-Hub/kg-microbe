@@ -15,10 +15,18 @@ from pathlib import Path
 
 import pytest
 
+from tests.microbedecoder_inactive_join_fixtures import bind_inactive_join_policy, write_empty_join_gss
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def _child(root):
+    """Retain explicit fixture anchors for the complete isolated child lifecycle."""
+    with pytest.MonkeyPatch.context() as monkeypatch:
+        return _child_bound(monkeypatch, root)
+
+
+def _child_bound(monkeypatch, root):
     """Use copied registered code and real validators, with no production data or network."""
     if sys.flags.optimize:
         raise RuntimeError("fixture assertions require an unoptimized child interpreter")
@@ -31,7 +39,6 @@ def _child(root):
     socket.socket.connect = offline
     socket.getaddrinfo = offline
     import kg_microbe.transform as dispatcher
-    from kg_microbe.transform_utils.constants import GOLD_ORGANISM_FOLD_FILE
     from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
     from kg_microbe.utils import go_authority
     from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
@@ -41,6 +48,7 @@ def _child(root):
         bind_fixture_quarantine_policy,
         write_fixture_quarantine_policy,
     )
+    from tests.test_microbedecoder_transform import _supply_gold_fold_report
     from tests.test_microbedecoder_unresolved_sugar import OLD, _read, _records, _scoped_id, _substrates
 
     assert dispatcher.DATA_SOURCES["microbedecoder"].transform_class is MicrobeDecoderTransform
@@ -52,19 +60,13 @@ def _child(root):
         writer = csv.DictWriter(stream, fieldnames=list(records[0]))
         writer.writeheader()
         writer.writerows(records)
-    for name, fixture in (("gold", GOLD_ORGANISM_FOLD_FILE), ("gtdb", "gtdb_nodes.tsv")):
-        destination = output / name
-        destination.mkdir(parents=True)
-        shutil.copyfile(
-            root / "tests/resources/microbedecoder" / fixture,
-            destination / (fixture if name == "gold" else "nodes.tsv"),
-        )
+    _supply_gold_fold_report(output)
 
     # Fixed synthetic dependency declarations, not inferred from emitted rows.
     # These preserve the fixture's unrelated literal cross-references; they do
     # not assert that its NCBI/GOLD crosswalks are scientifically correct.
     authority = output / "ontologies/fixture_nodes.tsv"
-    authority.parent.mkdir()
+    authority.parent.mkdir(exist_ok=True)
     shutil.copyfile(root / "tests/resources/microbedecoder/metpo_nodes.tsv", authority.parent / "metpo_nodes.tsv")
     shutil.copyfile(root / "tests/resources/microbedecoder/go_nodes.tsv", authority.parent / "go_nodes.tsv")
     shutil.copyfile(
@@ -99,6 +101,9 @@ def _child(root):
     transform = MicrobeDecoderTransform(raw, output, chemical_loader=lookup)
     write_fixture_quarantine_policy(source, root / "mappings/canonical", canonical_names=True)
     bind_fixture_quarantine_policy(transform, source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, source, monkeypatch)
+    bind_inactive_join_policy(transform, source, monkeypatch, canonical_directory=root / "mappings/canonical")
     transform.run(data_file=source, show_status=False)
     before_nodes, before_edges = _read(transform.output_node_file), _read(transform.output_edge_file)
     scoped = {_scoped_id(record) for record in records[:2]}
@@ -187,16 +192,20 @@ def test_registered_sugar_finalization_preserves_full_observations(tmp_path):
     for name in (
         "__init__.py",
         "microbedecoder_quarantine_fixtures.py",
+        "microbedecoder_inactive_join_fixtures.py",
         "test_microbedecoder_unresolved_sugar.py",
+        "test_microbedecoder_transform.py",
         "test_chemical_mapping_utils.py",
     ):
         target = root / "tests" / name
         target.parent.mkdir(exist_ok=True)
         shutil.copyfile(ROOT / "tests" / name, target)
     shutil.copytree(ROOT / "tests/resources/microbedecoder", root / "tests/resources/microbedecoder")
+    shutil.copytree(ROOT / "tests/resources/gold_abscess", root / "tests/resources/gold_abscess")
+    from kg_microbe.transform_utils.gold.gold import GOLDTransform
     from kg_microbe.utils.transform_fingerprint import SHARED_DATA_INPUTS
 
-    for relative in SHARED_DATA_INPUTS:
+    for relative in (*SHARED_DATA_INPUTS, *GOLDTransform.DATA_INPUTS):
         destination = root / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / relative, destination)

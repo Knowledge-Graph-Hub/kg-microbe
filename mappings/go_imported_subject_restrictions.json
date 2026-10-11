@@ -1,0 +1,2468 @@
+{
+  "canonical_go_metadata": [
+    {
+      "subject": "GO:0006629",
+      "predicate": "IAO:0000115",
+      "object": null,
+      "value": "The chemical reactions and pathways involving lipids, compounds soluble in an organic solvent but not, or sparingly, in an aqueous solvent. Includes fatty acids; neutral fats, other fatty-acid esters, and soaps; long-chain (fatty) alcohols and waxes; sphingoids and other long-chain bases; glycolipids, phospholipids and sphingolipids; and carotenes, polyprenols, sterols, terpenes and other isoprenoids."
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:hasDbXref",
+      "object": null,
+      "value": "Reactome:R-HSA-556833"
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:hasDbXref",
+      "object": null,
+      "value": "Wikipedia:Lipid_metabolism"
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:hasExactSynonym",
+      "object": null,
+      "value": "lipid metabolism"
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:hasOBONamespace",
+      "object": null,
+      "value": "biological_process"
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:id",
+      "object": null,
+      "value": "GO:0006629"
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_agr",
+      "value": null
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_candida",
+      "value": null
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_chembl",
+      "value": null
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_drosophila",
+      "value": null
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_euk_cellular_processes_ribbon",
+      "value": null
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_generic",
+      "value": null
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_metagenomics",
+      "value": null
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_mouse",
+      "value": null
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_pir",
+      "value": null
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_plant",
+      "value": null
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_plant_ribbon",
+      "value": null
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_pombe",
+      "value": null
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_prokaryote",
+      "value": null
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_prokaryote_ribbon",
+      "value": null
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_yeast",
+      "value": null
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "rdf:type",
+      "object": "owl:Class",
+      "value": null
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "rdfs:label",
+      "object": null,
+      "value": "lipid metabolic process"
+    },
+    {
+      "subject": "GO:0006629",
+      "predicate": "rdfs:subClassOf",
+      "object": "GO:0044238",
+      "value": null
+    },
+    {
+      "subject": "GO:0006893",
+      "predicate": "IAO:0000115",
+      "object": null,
+      "value": "The directed movement of substances from the Golgi to the plasma membrane in transport vesicles that move from the trans-Golgi network to the plasma membrane. Golgi to plasma membrane transport precedes exocytosis."
+    },
+    {
+      "subject": "GO:0006893",
+      "predicate": "IAO:0000233",
+      "object": null,
+      "value": "https://github.com/geneontology/go-ontology/issues/31197"
+    },
+    {
+      "subject": "GO:0006893",
+      "predicate": "oio:hasExactSynonym",
+      "object": null,
+      "value": "Golgi to plasma membrane vesicle-mediated transport"
+    },
+    {
+      "subject": "GO:0006893",
+      "predicate": "oio:hasOBONamespace",
+      "object": null,
+      "value": "biological_process"
+    },
+    {
+      "subject": "GO:0006893",
+      "predicate": "oio:id",
+      "object": null,
+      "value": "GO:0006893"
+    },
+    {
+      "subject": "GO:0006893",
+      "predicate": "rdf:type",
+      "object": "owl:Class",
+      "value": null
+    },
+    {
+      "subject": "GO:0006893",
+      "predicate": "rdfs:label",
+      "object": null,
+      "value": "Golgi to plasma membrane transport"
+    },
+    {
+      "subject": "GO:0006893",
+      "predicate": "rdfs:subClassOf",
+      "object": "GO:0006892",
+      "value": null
+    },
+    {
+      "subject": "GO:0006893",
+      "predicate": "rdfs:subClassOf",
+      "object": "GO:0098876",
+      "value": null
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "IAO:0000115",
+      "object": null,
+      "value": "A cellular process consisting of the biochemical pathways by which a living organism transforms chemical substances. This includes including anabolism (biosynthetic process) and catabolism (catabolic process). Metabolic processes includes the transformation of small molecules, as well  macromolecular processes such as DNA repair and replication, protein synthesis and degradation."
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "IAO:0000233",
+      "object": null,
+      "value": "https://github.com/geneontology/go-ontology/issues/26424"
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "IAO:0000233",
+      "object": null,
+      "value": "https://github.com/geneontology/go-ontology/issues/28932"
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "oio:created_by",
+      "object": null,
+      "value": "jl"
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "oio:creation_date",
+      "object": null,
+      "value": "2012-10-17T15:46:40Z"
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "oio:hasAlternativeId",
+      "object": null,
+      "value": "GO:0044236"
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "oio:hasAlternativeId",
+      "object": null,
+      "value": "GO:0044710"
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "oio:hasDbXref",
+      "object": null,
+      "value": "Reactome:R-HSA-1430728"
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "oio:hasDbXref",
+      "object": null,
+      "value": "Wikipedia:Metabolism"
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "oio:hasExactSynonym",
+      "object": null,
+      "value": "metabolism"
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "oio:hasOBONamespace",
+      "object": null,
+      "value": "biological_process"
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "oio:id",
+      "object": null,
+      "value": "GO:0008152"
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#gocheck_do_not_annotate",
+      "value": null
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_chembl",
+      "value": null
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_euk_cellular_processes_ribbon",
+      "value": null
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_metagenomics",
+      "value": null
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_pir",
+      "value": null
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_plant",
+      "value": null
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_prokaryote_ribbon",
+      "value": null
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "owl:disjointWith",
+      "object": "GO:0044848",
+      "value": null
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "owl:disjointWith",
+      "object": "GO:0051179",
+      "value": null
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "rdf:type",
+      "object": "owl:Class",
+      "value": null
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "rdfs:comment",
+      "object": null,
+      "value": "Note that metabolic processes do not include single functions or processes such as protein-protein interactions, protein-nucleic acids, nor receptor-ligand interactions."
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "rdfs:label",
+      "object": null,
+      "value": "metabolic process"
+    },
+    {
+      "subject": "GO:0008152",
+      "predicate": "rdfs:subClassOf",
+      "object": "GO:0009987",
+      "value": null
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "IAO:0000115",
+      "object": null,
+      "value": "A cellular process consisting of the biochemical pathways by which a living organism synthesizes chemical substances. This typically represents the energy-requiring part of metabolism in which simpler substances are transformed into more complex ones."
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "IAO:0000233",
+      "object": null,
+      "value": "https://github.com/geneontology/go-ontology/issues/28932"
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "oio:created_by",
+      "object": null,
+      "value": "jl"
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "oio:creation_date",
+      "object": null,
+      "value": "2012-10-17T15:52:18Z"
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "oio:hasAlternativeId",
+      "object": null,
+      "value": "GO:0044274"
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "oio:hasAlternativeId",
+      "object": null,
+      "value": "GO:0044711"
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "oio:hasBroadSynonym",
+      "object": null,
+      "value": "formation"
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "oio:hasDbXref",
+      "object": null,
+      "value": "Wikipedia:Anabolism"
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "oio:hasExactSynonym",
+      "object": null,
+      "value": "anabolism"
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "oio:hasExactSynonym",
+      "object": null,
+      "value": "biosynthesis"
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "oio:hasExactSynonym",
+      "object": null,
+      "value": "synthesis"
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "oio:hasNarrowSynonym",
+      "object": null,
+      "value": "multicellular organismal biosynthetic process"
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "oio:hasOBONamespace",
+      "object": null,
+      "value": "biological_process"
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "oio:hasRelatedSynonym",
+      "object": null,
+      "value": "single-organism biosynthetic process"
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "oio:id",
+      "object": null,
+      "value": "GO:0009058"
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#gocheck_do_not_annotate",
+      "value": null
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_chembl",
+      "value": null
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_metagenomics",
+      "value": null
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_plant",
+      "value": null
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_plant_ribbon",
+      "value": null
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "rdf:type",
+      "object": "owl:Class",
+      "value": null
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "rdfs:label",
+      "object": null,
+      "value": "biosynthetic process"
+    },
+    {
+      "subject": "GO:0009058",
+      "predicate": "rdfs:subClassOf",
+      "object": "GO:0008152",
+      "value": null
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "IAO:0000115",
+      "object": null,
+      "value": "A lipid bilayer along with all the proteins and protein complexes embedded in it and attached to it."
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:creation_date",
+      "object": null,
+      "value": "2014-03-06T11:37:54Z"
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:hasAlternativeId",
+      "object": null,
+      "value": "GO:0016021"
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:hasAlternativeId",
+      "object": null,
+      "value": "GO:0098589"
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:hasAlternativeId",
+      "object": null,
+      "value": "GO:0098805"
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:hasDbXref",
+      "object": null,
+      "value": "Wikipedia:Biological_membrane"
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:hasDbXref",
+      "object": null,
+      "value": "Wikipedia:Transmembrane_protein"
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:hasNarrowSynonym",
+      "object": null,
+      "value": "integral component of membrane"
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:hasNarrowSynonym",
+      "object": null,
+      "value": "integral to membrane"
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:hasNarrowSynonym",
+      "object": null,
+      "value": "membrane region"
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:hasNarrowSynonym",
+      "object": null,
+      "value": "region of membrane"
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:hasNarrowSynonym",
+      "object": null,
+      "value": "whole membrane"
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:hasOBONamespace",
+      "object": null,
+      "value": "cellular_component"
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:hasRelatedSynonym",
+      "object": null,
+      "value": "transmembrane"
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:id",
+      "object": null,
+      "value": "GO:0016020"
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_candida",
+      "value": null
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_chembl",
+      "value": null
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_flybase_ribbon",
+      "value": null
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_metagenomics",
+      "value": null
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_pir",
+      "value": null
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_plant",
+      "value": null
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_yeast",
+      "value": null
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "rdf:type",
+      "object": "owl:Class",
+      "value": null
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "rdfs:label",
+      "object": null,
+      "value": "membrane"
+    },
+    {
+      "subject": "GO:0016020",
+      "predicate": "rdfs:subClassOf",
+      "object": "GO:0110165",
+      "value": null
+    },
+    {
+      "subject": "GO:0030133",
+      "predicate": "IAO:0000115",
+      "object": null,
+      "value": "Any of the vesicles of the constitutive secretory pathway, which carry cargo from the endoplasmic reticulum to the Golgi, between Golgi cisternae, from the Golgi to the ER (retrograde transport) or to destinations within or outside the cell."
+    },
+    {
+      "subject": "GO:0030133",
+      "predicate": "oio:hasDbXref",
+      "object": null,
+      "value": "NIF_Subcellular:sao885490876"
+    },
+    {
+      "subject": "GO:0030133",
+      "predicate": "oio:hasExactSynonym",
+      "object": null,
+      "value": "constitutive secretory pathway transport vesicle"
+    },
+    {
+      "subject": "GO:0030133",
+      "predicate": "oio:hasNarrowSynonym",
+      "object": null,
+      "value": "Golgi to vacuole transport vesicle"
+    },
+    {
+      "subject": "GO:0030133",
+      "predicate": "oio:hasNarrowSynonym",
+      "object": null,
+      "value": "Golgi-vacuole transport vesicle"
+    },
+    {
+      "subject": "GO:0030133",
+      "predicate": "oio:hasOBONamespace",
+      "object": null,
+      "value": "cellular_component"
+    },
+    {
+      "subject": "GO:0030133",
+      "predicate": "oio:hasRelatedSynonym",
+      "object": null,
+      "value": "secretory vesicle"
+    },
+    {
+      "subject": "GO:0030133",
+      "predicate": "oio:id",
+      "object": null,
+      "value": "GO:0030133"
+    },
+    {
+      "subject": "GO:0030133",
+      "predicate": "rdf:type",
+      "object": "owl:Class",
+      "value": null
+    },
+    {
+      "subject": "GO:0030133",
+      "predicate": "rdfs:comment",
+      "object": null,
+      "value": "Note that the term 'secretory vesicle' is sometimes used in this sense, but can also mean 'secretory granule ; GO:0030141'."
+    },
+    {
+      "subject": "GO:0030133",
+      "predicate": "rdfs:label",
+      "object": null,
+      "value": "transport vesicle"
+    },
+    {
+      "subject": "GO:0030133",
+      "predicate": "rdfs:subClassOf",
+      "object": "GO:0031410",
+      "value": null
+    },
+    {
+      "subject": "GO:0030133",
+      "predicate": "rdfs:subClassOf",
+      "object": "_:riog00055663",
+      "value": null
+    },
+    {
+      "subject": "GO:0031012",
+      "predicate": "IAO:0000115",
+      "object": null,
+      "value": "A structure lying external to one or more cells, which provides structural support, biochemical or biomechanical cues for cells or tissues."
+    },
+    {
+      "subject": "GO:0031012",
+      "predicate": "oio:hasAlternativeId",
+      "object": null,
+      "value": "GO:0005578"
+    },
+    {
+      "subject": "GO:0031012",
+      "predicate": "oio:hasDbXref",
+      "object": null,
+      "value": "NIF_Subcellular:nlx_subcell_20090513"
+    },
+    {
+      "subject": "GO:0031012",
+      "predicate": "oio:hasDbXref",
+      "object": null,
+      "value": "Wikipedia:Extracellular_matrix"
+    },
+    {
+      "subject": "GO:0031012",
+      "predicate": "oio:hasExactSynonym",
+      "object": null,
+      "value": "proteinaceous extracellular matrix"
+    },
+    {
+      "subject": "GO:0031012",
+      "predicate": "oio:hasNarrowSynonym",
+      "object": null,
+      "value": "matrisome"
+    },
+    {
+      "subject": "GO:0031012",
+      "predicate": "oio:hasOBONamespace",
+      "object": null,
+      "value": "cellular_component"
+    },
+    {
+      "subject": "GO:0031012",
+      "predicate": "oio:id",
+      "object": null,
+      "value": "GO:0031012"
+    },
+    {
+      "subject": "GO:0031012",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_chembl",
+      "value": null
+    },
+    {
+      "subject": "GO:0031012",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_drosophila",
+      "value": null
+    },
+    {
+      "subject": "GO:0031012",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_euk_cellular_processes_ribbon",
+      "value": null
+    },
+    {
+      "subject": "GO:0031012",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_generic",
+      "value": null
+    },
+    {
+      "subject": "GO:0031012",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_pir",
+      "value": null
+    },
+    {
+      "subject": "GO:0031012",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_prokaryote",
+      "value": null
+    },
+    {
+      "subject": "GO:0031012",
+      "predicate": "rdf:type",
+      "object": "owl:Class",
+      "value": null
+    },
+    {
+      "subject": "GO:0031012",
+      "predicate": "rdfs:label",
+      "object": null,
+      "value": "extracellular matrix"
+    },
+    {
+      "subject": "GO:0031012",
+      "predicate": "rdfs:subClassOf",
+      "object": "GO:0030312",
+      "value": null
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "IAO:0000115",
+      "object": null,
+      "value": "The process in which a solute is transported across a lipid bilayer, from one side of a membrane to the other."
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "oio:created_by",
+      "object": null,
+      "value": "tb"
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "oio:creation_date",
+      "object": null,
+      "value": "2015-10-21T13:22:47Z"
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "oio:hasAlternativeId",
+      "object": null,
+      "value": "GO:0090662"
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "oio:hasDbXref",
+      "object": null,
+      "value": "Reactome:R-HSA-382556"
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "oio:hasDbXref",
+      "object": null,
+      "value": "Reactome:R-HSA-425407"
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "oio:hasDbXref",
+      "object": null,
+      "value": "Reactome:R-HSA-5223345"
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "oio:hasExactSynonym",
+      "object": null,
+      "value": "membrane transport"
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "oio:hasNarrowSynonym",
+      "object": null,
+      "value": "ATP hydrolysis coupled transmembrane transport"
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "oio:hasOBONamespace",
+      "object": null,
+      "value": "biological_process"
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "oio:id",
+      "object": null,
+      "value": "GO:0055085"
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_chembl",
+      "value": null
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_drosophila",
+      "value": null
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_euk_cellular_processes_ribbon",
+      "value": null
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_generic",
+      "value": null
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_pombe",
+      "value": null
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_yeast",
+      "value": null
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "rdf:type",
+      "object": "owl:Class",
+      "value": null
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "rdfs:comment",
+      "object": null,
+      "value": "Transmembrane transport is the transport of a solute across a lipid bilayer. Note that transport through the nuclear pore complex is not transmembrane because the nuclear membrane is a double membrane and is not traversed. For transport through the nuclear pore, consider instead the term 'nucleocytoplasmic transport ; GO:0006913' and its children. Note also that this term is not intended for use in annotating lateral movement within membranes."
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "rdfs:label",
+      "object": null,
+      "value": "transmembrane transport"
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "rdfs:subClassOf",
+      "object": "GO:0006810",
+      "value": null
+    },
+    {
+      "subject": "GO:0055085",
+      "predicate": "rdfs:subClassOf",
+      "object": "GO:0009987",
+      "value": null
+    },
+    {
+      "subject": "GO:0071705",
+      "predicate": "IAO:0000115",
+      "object": null,
+      "value": "The directed movement of nitrogen-containing compounds into, out of or within a cell, or between cells, by means of some agent such as a transporter or pore."
+    },
+    {
+      "subject": "GO:0071705",
+      "predicate": "oio:created_by",
+      "object": null,
+      "value": "mah"
+    },
+    {
+      "subject": "GO:0071705",
+      "predicate": "oio:creation_date",
+      "object": null,
+      "value": "2010-03-08T03:56:28Z"
+    },
+    {
+      "subject": "GO:0071705",
+      "predicate": "oio:hasOBONamespace",
+      "object": null,
+      "value": "biological_process"
+    },
+    {
+      "subject": "GO:0071705",
+      "predicate": "oio:id",
+      "object": null,
+      "value": "GO:0071705"
+    },
+    {
+      "subject": "GO:0071705",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#gocheck_obsoletion_candidate",
+      "value": null
+    },
+    {
+      "subject": "GO:0071705",
+      "predicate": "rdf:type",
+      "object": "owl:Class",
+      "value": null
+    },
+    {
+      "subject": "GO:0071705",
+      "predicate": "rdfs:label",
+      "object": null,
+      "value": "nitrogen compound transport"
+    },
+    {
+      "subject": "GO:0071705",
+      "predicate": "rdfs:subClassOf",
+      "object": "GO:0006810",
+      "value": null
+    },
+    {
+      "object": null,
+      "predicate": "IAO:0000115",
+      "subject": "GO:0016192",
+      "value": "A cellular transport process in which transported substances are moved in membrane-bounded vesicles; transported substances are enclosed in the vesicle lumen or located in the vesicle membrane. The process begins with a step that directs a substance to the forming vesicle, and includes vesicle budding and coating. Vesicles are then targeted to, and fuse with, an acceptor membrane."
+    },
+    {
+      "object": null,
+      "predicate": "IAO:0000233",
+      "subject": "GO:0016192",
+      "value": "https://github.com/geneontology/go-ontology/issues/25421"
+    },
+    {
+      "object": null,
+      "predicate": "oio:hasAlternativeId",
+      "subject": "GO:0016192",
+      "value": "GO:0006899"
+    },
+    {
+      "object": null,
+      "predicate": "oio:hasExactSynonym",
+      "subject": "GO:0016192",
+      "value": "vesicle transport"
+    },
+    {
+      "object": null,
+      "predicate": "oio:hasExactSynonym",
+      "subject": "GO:0016192",
+      "value": "vesicular transport"
+    },
+    {
+      "object": null,
+      "predicate": "oio:hasNarrowSynonym",
+      "subject": "GO:0016192",
+      "value": "nonselective vesicle transport"
+    },
+    {
+      "object": null,
+      "predicate": "oio:hasOBONamespace",
+      "subject": "GO:0016192",
+      "value": "biological_process"
+    },
+    {
+      "object": null,
+      "predicate": "oio:hasRelatedSynonym",
+      "subject": "GO:0016192",
+      "value": "protein sorting along secretory pathway"
+    },
+    {
+      "object": null,
+      "predicate": "oio:hasRelatedSynonym",
+      "subject": "GO:0016192",
+      "value": "vesicle trafficking"
+    },
+    {
+      "object": null,
+      "predicate": "oio:id",
+      "subject": "GO:0016192",
+      "value": "GO:0016192"
+    },
+    {
+      "object": "obo:go#goslim_candida",
+      "predicate": "oio:inSubset",
+      "subject": "GO:0016192",
+      "value": null
+    },
+    {
+      "object": "obo:go#goslim_chembl",
+      "predicate": "oio:inSubset",
+      "subject": "GO:0016192",
+      "value": null
+    },
+    {
+      "object": "obo:go#goslim_drosophila",
+      "predicate": "oio:inSubset",
+      "subject": "GO:0016192",
+      "value": null
+    },
+    {
+      "object": "obo:go#goslim_euk_cellular_processes_ribbon",
+      "predicate": "oio:inSubset",
+      "subject": "GO:0016192",
+      "value": null
+    },
+    {
+      "object": "obo:go#goslim_generic",
+      "predicate": "oio:inSubset",
+      "subject": "GO:0016192",
+      "value": null
+    },
+    {
+      "object": "obo:go#goslim_pir",
+      "predicate": "oio:inSubset",
+      "subject": "GO:0016192",
+      "value": null
+    },
+    {
+      "object": "obo:go#goslim_pombe",
+      "predicate": "oio:inSubset",
+      "subject": "GO:0016192",
+      "value": null
+    },
+    {
+      "object": "owl:Class",
+      "predicate": "rdf:type",
+      "subject": "GO:0016192",
+      "value": null
+    },
+    {
+      "object": null,
+      "predicate": "rdfs:label",
+      "subject": "GO:0016192",
+      "value": "vesicle-mediated transport"
+    },
+    {
+      "object": "GO:0006810",
+      "predicate": "rdfs:subClassOf",
+      "subject": "GO:0016192",
+      "value": null
+    },
+    {
+      "object": "GO:0009987",
+      "predicate": "rdfs:subClassOf",
+      "subject": "GO:0016192",
+      "value": null
+    },
+    {
+      "object": null,
+      "predicate": "IAO:0000115",
+      "subject": "GO:0048193",
+      "value": "The directed movement of substances into, out of or within the Golgi apparatus, mediated by vesicles."
+    },
+    {
+      "object": null,
+      "predicate": "oio:hasOBONamespace",
+      "subject": "GO:0048193",
+      "value": "biological_process"
+    },
+    {
+      "object": null,
+      "predicate": "oio:hasRelatedSynonym",
+      "subject": "GO:0048193",
+      "value": "Golgi-derived vesicle transport"
+    },
+    {
+      "object": null,
+      "predicate": "oio:id",
+      "subject": "GO:0048193",
+      "value": "GO:0048193"
+    },
+    {
+      "object": "obo:go#goslim_yeast",
+      "predicate": "oio:inSubset",
+      "subject": "GO:0048193",
+      "value": null
+    },
+    {
+      "object": "owl:Class",
+      "predicate": "rdf:type",
+      "subject": "GO:0048193",
+      "value": null
+    },
+    {
+      "object": null,
+      "predicate": "rdfs:label",
+      "subject": "GO:0048193",
+      "value": "Golgi vesicle transport"
+    },
+    {
+      "object": "GO:0016192",
+      "predicate": "rdfs:subClassOf",
+      "subject": "GO:0048193",
+      "value": null
+    },
+    {
+      "object": null,
+      "predicate": "IAO:0000115",
+      "subject": "GO:0005798",
+      "value": "Any vesicle associated with the Golgi complex and involved in mediating transport within the Golgi or between the Golgi and other parts of the cell."
+    },
+    {
+      "object": null,
+      "predicate": "oio:hasDbXref",
+      "subject": "GO:0005798",
+      "value": "NIF_Subcellular:sao819927218"
+    },
+    {
+      "object": null,
+      "predicate": "oio:hasOBONamespace",
+      "subject": "GO:0005798",
+      "value": "cellular_component"
+    },
+    {
+      "object": null,
+      "predicate": "oio:hasRelatedSynonym",
+      "subject": "GO:0005798",
+      "value": "Golgi vesicle"
+    },
+    {
+      "object": null,
+      "predicate": "oio:hasRelatedSynonym",
+      "subject": "GO:0005798",
+      "value": "vesicular component"
+    },
+    {
+      "object": null,
+      "predicate": "oio:id",
+      "subject": "GO:0005798",
+      "value": "GO:0005798"
+    },
+    {
+      "object": "owl:Class",
+      "predicate": "rdf:type",
+      "subject": "GO:0005798",
+      "value": null
+    },
+    {
+      "object": null,
+      "predicate": "rdfs:comment",
+      "subject": "GO:0005798",
+      "value": "Note that this definition includes vesicles that are transiently associated with the Golgi."
+    },
+    {
+      "object": null,
+      "predicate": "rdfs:label",
+      "subject": "GO:0005798",
+      "value": "Golgi-associated vesicle"
+    },
+    {
+      "object": "GO:0031410",
+      "predicate": "rdfs:subClassOf",
+      "subject": "GO:0005798",
+      "value": null
+    },
+    {
+      "object": null,
+      "predicate": "IAO:0000115",
+      "subject": "GO:0005737",
+      "value": "The contents of a cell excluding the plasma membrane and nucleus, but including other subcellular structures."
+    },
+    {
+      "object": null,
+      "predicate": "IAO:0000233",
+      "subject": "GO:0005737",
+      "value": "https://github.com/geneontology/go-ontology/issues/23023"
+    },
+    {
+      "object": null,
+      "predicate": "oio:hasDbXref",
+      "subject": "GO:0005737",
+      "value": "Wikipedia:Cytoplasm"
+    },
+    {
+      "object": null,
+      "predicate": "oio:hasOBONamespace",
+      "subject": "GO:0005737",
+      "value": "cellular_component"
+    },
+    {
+      "object": null,
+      "predicate": "oio:id",
+      "subject": "GO:0005737",
+      "value": "GO:0005737"
+    },
+    {
+      "object": "obo:go#goslim_candida",
+      "predicate": "oio:inSubset",
+      "subject": "GO:0005737",
+      "value": null
+    },
+    {
+      "object": "obo:go#goslim_chembl",
+      "predicate": "oio:inSubset",
+      "subject": "GO:0005737",
+      "value": null
+    },
+    {
+      "object": "obo:go#goslim_metagenomics",
+      "predicate": "oio:inSubset",
+      "subject": "GO:0005737",
+      "value": null
+    },
+    {
+      "object": "obo:go#goslim_pir",
+      "predicate": "oio:inSubset",
+      "subject": "GO:0005737",
+      "value": null
+    },
+    {
+      "object": "obo:go#goslim_plant",
+      "predicate": "oio:inSubset",
+      "subject": "GO:0005737",
+      "value": null
+    },
+    {
+      "object": "obo:go#goslim_plant_ribbon",
+      "predicate": "oio:inSubset",
+      "subject": "GO:0005737",
+      "value": null
+    },
+    {
+      "object": "obo:go#goslim_prokaryote",
+      "predicate": "oio:inSubset",
+      "subject": "GO:0005737",
+      "value": null
+    },
+    {
+      "object": "obo:go#goslim_prokaryote_ribbon",
+      "predicate": "oio:inSubset",
+      "subject": "GO:0005737",
+      "value": null
+    },
+    {
+      "object": "obo:go#goslim_yeast",
+      "predicate": "oio:inSubset",
+      "subject": "GO:0005737",
+      "value": null
+    },
+    {
+      "object": "owl:Class",
+      "predicate": "rdf:type",
+      "subject": "GO:0005737",
+      "value": null
+    },
+    {
+      "object": null,
+      "predicate": "rdfs:label",
+      "subject": "GO:0005737",
+      "value": "cytoplasm"
+    },
+    {
+      "object": "GO:0110165",
+      "predicate": "rdfs:subClassOf",
+      "subject": "GO:0005737",
+      "value": null
+    },
+    {
+      "object": "_:riog00023702",
+      "predicate": "rdfs:subClassOf",
+      "subject": "GO:0005737",
+      "value": null
+    }
+  ],
+  "disposition": "unsupported_imported_subject_restriction",
+  "records": [
+    {
+      "native_class_sha256": "5fa8c286f33d4760b6b434f9bed62a3a3eebf2f578681b23c2491fc6f49d6d32",
+      "native_class_xml": "<owl:Class rdf:about=\"http://purl.obolibrary.org/obo/GO_0006082\">\n        <owl:equivalentClass>\n            <owl:Class>\n                <owl:intersectionOf rdf:parseType=\"Collection\">\n                    <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/GO_0008152\"/>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004007\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_64709\"/>\n                    </owl:Restriction>\n                </owl:intersectionOf>\n            </owl:Class>\n        </owl:equivalentClass>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000003\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0044281\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004007\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_64709\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <obo:IAO_0000115>The chemical reactions and pathways involving organic acids, any acidic compound containing carbon in covalent linkage.</obo:IAO_0000115>\n        <oboInOwl:hasExactSynonym>organic acid metabolism</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasOBONamespace>biological_process</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>GO:0006082</oboInOwl:id>\n        <oboInOwl:inSubset rdf:resource=\"http://purl.obolibrary.org/obo/go#goslim_pir\"/>\n        <rdfs:label>organic acid metabolic process</rdfs:label>\n    </owl:Class>",
+      "object": "CHEBI:64709",
+      "predicate": "biolink:has_participant",
+      "primary_knowledge_source": "infores:pato",
+      "relation": "RO:0004007",
+      "replacement": "GO:0008152",
+      "selected_go_metadata": [
+        {
+          "object": null,
+          "predicate": "IAO:0000115",
+          "subject": "GO:0006082",
+          "value": "OBSOLETE. The chemical reactions and pathways involving organic acids, any acidic compound containing carbon in covalent linkage."
+        },
+        {
+          "object": null,
+          "predicate": "IAO:0000233",
+          "subject": "GO:0006082",
+          "value": "https://github.com/geneontology/go-ontology/issues/31816"
+        },
+        {
+          "object": "GO:0008152",
+          "predicate": "IAO:0100001",
+          "subject": "GO:0006082",
+          "value": null
+        },
+        {
+          "object": null,
+          "predicate": "oio:hasOBONamespace",
+          "subject": "GO:0006082",
+          "value": "biological_process"
+        },
+        {
+          "object": null,
+          "predicate": "oio:id",
+          "subject": "GO:0006082",
+          "value": "GO:0006082"
+        },
+        {
+          "object": null,
+          "predicate": "owl:deprecated",
+          "subject": "GO:0006082",
+          "value": "true"
+        },
+        {
+          "object": "owl:Class",
+          "predicate": "rdf:type",
+          "subject": "GO:0006082",
+          "value": null
+        },
+        {
+          "object": null,
+          "predicate": "rdfs:comment",
+          "subject": "GO:0006082",
+          "value": "The reason for obsoletion is that this term was an unnecessary grouping term."
+        },
+        {
+          "object": null,
+          "predicate": "rdfs:label",
+          "subject": "GO:0006082",
+          "value": "obsolete organic acid metabolic process"
+        }
+      ],
+      "subject": "GO:0006082"
+    },
+    {
+      "native_class_sha256": "cfa1929b0ff1489c8ea330850af1263c1f69fbd8f02431ad58fefadc02131d7a",
+      "native_class_xml": "<owl:Class rdf:about=\"http://purl.obolibrary.org/obo/GO_0043603\">\n        <owl:equivalentClass>\n            <owl:Class>\n                <owl:intersectionOf rdf:parseType=\"Collection\">\n                    <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/GO_0008152\"/>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004007\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_32988\"/>\n                    </owl:Restriction>\n                </owl:intersectionOf>\n            </owl:Class>\n        </owl:equivalentClass>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000003\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0008152\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004007\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_32988\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <obo:IAO_0000115>The chemical reactions and pathways involving an amide, any derivative of an oxoacid in which an acidic hydroxy group has been replaced by an amino or substituted amino group, as carried out by individual cells.</obo:IAO_0000115>\n        <oboInOwl:hasExactSynonym>amide metabolism</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasExactSynonym>cellular amide metabolic process</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasOBONamespace>biological_process</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>GO:0043603</oboInOwl:id>\n        <oboInOwl:inSubset rdf:resource=\"http://purl.obolibrary.org/obo/go#gocheck_do_not_annotate\"/>\n        <oboInOwl:inSubset rdf:resource=\"http://purl.obolibrary.org/obo/go#goslim_pir\"/>\n        <rdfs:comment>Note that this term is in the subset of terms that should not be used for direct gene product annotation. Instead, select a child term or, if no appropriate child term exists, please request a new term. Direct annotations to this term may be amended during annotation QC.</rdfs:comment>\n        <rdfs:label>amide metabolic process</rdfs:label>\n    </owl:Class>",
+      "object": "CHEBI:32988",
+      "predicate": "biolink:has_participant",
+      "primary_knowledge_source": "infores:pato",
+      "relation": "RO:0004007",
+      "replacement": "GO:0008152",
+      "selected_go_metadata": [
+        {
+          "object": null,
+          "predicate": "IAO:0000115",
+          "subject": "GO:0043603",
+          "value": "OBSOLETE. The chemical reactions and pathways involving an amide, any derivative of an oxoacid in which an acidic hydroxy group has been replaced by an amino or substituted amino group, as carried out by individual cells."
+        },
+        {
+          "object": null,
+          "predicate": "IAO:0000233",
+          "subject": "GO:0043603",
+          "value": "https://github.com/geneontology/go-ontology/issues/27189"
+        },
+        {
+          "object": null,
+          "predicate": "IAO:0000233",
+          "subject": "GO:0043603",
+          "value": "https://github.com/geneontology/go-ontology/issues/31123"
+        },
+        {
+          "object": "GO:0008152",
+          "predicate": "IAO:0100001",
+          "subject": "GO:0043603",
+          "value": null
+        },
+        {
+          "object": null,
+          "predicate": "oio:hasOBONamespace",
+          "subject": "GO:0043603",
+          "value": "biological_process"
+        },
+        {
+          "object": null,
+          "predicate": "oio:id",
+          "subject": "GO:0043603",
+          "value": "GO:0043603"
+        },
+        {
+          "object": null,
+          "predicate": "owl:deprecated",
+          "subject": "GO:0043603",
+          "value": "true"
+        },
+        {
+          "object": "owl:Class",
+          "predicate": "rdf:type",
+          "subject": "GO:0043603",
+          "value": null
+        },
+        {
+          "object": null,
+          "predicate": "rdfs:comment",
+          "subject": "GO:0043603",
+          "value": "The reason for obsoletion is that this term was an unnecessary grouping term. Note that this term is in the subset of terms that should not be used for direct gene product annotation. Instead, select a child term or, if no appropriate child term exists, please request a new term. Direct annotations to this term may be amended during annotation QC."
+        },
+        {
+          "object": null,
+          "predicate": "rdfs:label",
+          "subject": "GO:0043603",
+          "value": "obsolete amide metabolic process"
+        }
+      ],
+      "subject": "GO:0043603"
+    },
+    {
+      "subject": "GO:0006643",
+      "predicate": "biolink:occurs_in",
+      "object": "GO:0016020",
+      "relation": "BFO:0000066",
+      "primary_knowledge_source": "infores:pato",
+      "replacement": "GO:0006629",
+      "native_class_xml": "<owl:Class rdf:about=\"http://purl.obolibrary.org/obo/GO_0006643\">\n        <owl:equivalentClass>\n            <owl:Class>\n                <owl:intersectionOf rdf:parseType=\"Collection\">\n                    <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/GO_0008152\"/>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000066\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0016020\"/>\n                    </owl:Restriction>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004007\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_18059\"/>\n                    </owl:Restriction>\n                </owl:intersectionOf>\n            </owl:Class>\n        </owl:equivalentClass>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0006629\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000066\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0016020\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <obo:IAO_0000115>The chemical reactions and pathways involving membrane lipids, any lipid found in or associated with a biological membrane.</obo:IAO_0000115>\n        <oboInOwl:hasExactSynonym>membrane lipid metabolism</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasOBONamespace>biological_process</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>GO:0006643</oboInOwl:id>\n        <rdfs:label>membrane lipid metabolic process</rdfs:label>\n    </owl:Class>",
+      "native_class_sha256": "03414b767121a1cdee44ba6c464e6fffcac561bb3cf5ed9716cdc7f8d923777d",
+      "selected_go_metadata": [
+        {
+          "subject": "GO:0006643",
+          "predicate": "IAO:0000115",
+          "object": null,
+          "value": "OBSOLETE. The chemical reactions and pathways involving membrane lipids, any lipid found in or associated with a biological membrane."
+        },
+        {
+          "subject": "GO:0006643",
+          "predicate": "IAO:0000233",
+          "object": null,
+          "value": "https://github.com/geneontology/go-ontology/issues/26698"
+        },
+        {
+          "subject": "GO:0006643",
+          "predicate": "IAO:0000233",
+          "object": null,
+          "value": "https://github.com/geneontology/go-ontology/issues/28908"
+        },
+        {
+          "subject": "GO:0006643",
+          "predicate": "IAO:0100001",
+          "object": "GO:0006629",
+          "value": null
+        },
+        {
+          "subject": "GO:0006643",
+          "predicate": "oio:hasExactSynonym",
+          "object": null,
+          "value": "membrane lipid metabolism"
+        },
+        {
+          "subject": "GO:0006643",
+          "predicate": "oio:hasOBONamespace",
+          "object": null,
+          "value": "biological_process"
+        },
+        {
+          "subject": "GO:0006643",
+          "predicate": "oio:id",
+          "object": null,
+          "value": "GO:0006643"
+        },
+        {
+          "subject": "GO:0006643",
+          "predicate": "owl:deprecated",
+          "object": null,
+          "value": "true"
+        },
+        {
+          "subject": "GO:0006643",
+          "predicate": "rdf:type",
+          "object": "owl:Class",
+          "value": null
+        },
+        {
+          "subject": "GO:0006643",
+          "predicate": "rdfs:comment",
+          "object": null,
+          "value": "The reason for obsoletion is that this term groups lipids by their localization rather than by their metabolic function, which is problematic since most lipids can function in multiple locations."
+        },
+        {
+          "subject": "GO:0006643",
+          "predicate": "rdfs:label",
+          "object": null,
+          "value": "obsolete membrane lipid metabolic process"
+        }
+      ]
+    },
+    {
+      "subject": "GO:0015695",
+      "predicate": "biolink:has_input",
+      "object": "CHEBI:25697",
+      "relation": "RO:0004009",
+      "primary_knowledge_source": "infores:pato",
+      "replacement": "GO:0055085",
+      "native_class_xml": "<owl:Class rdf:about=\"http://purl.obolibrary.org/obo/GO_0015695\">\n        <owl:equivalentClass>\n            <owl:Class>\n                <owl:intersectionOf rdf:parseType=\"Collection\">\n                    <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/GO_0006810\"/>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004009\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_25697\"/>\n                    </owl:Restriction>\n                </owl:intersectionOf>\n            </owl:Class>\n        </owl:equivalentClass>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000003\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0006810\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004009\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_25697\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <obo:IAO_0000115>The directed movement of organic cations into, out of or within a cell, or between cells, by means of some agent such as a transporter or pore. Organic cations are atoms or small molecules with a positive charge which contain carbon in covalent linkage.</obo:IAO_0000115>\n        <oboInOwl:hasOBONamespace>biological_process</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>GO:0015695</oboInOwl:id>\n        <rdfs:label>organic cation transport</rdfs:label>\n    </owl:Class>",
+      "native_class_sha256": "d950a11a70da1e933433089c7c904e20a7af618e796291deb42d14807b8b9547",
+      "selected_go_metadata": [
+        {
+          "subject": "GO:0015695",
+          "predicate": "IAO:0000115",
+          "object": null,
+          "value": "OBSOLETE. The directed movement of organic cations into, out of or within a cell, or between cells, by means of some agent such as a transporter or pore. Organic cations are atoms or small molecules with a positive charge which contain carbon in covalent linkage."
+        },
+        {
+          "subject": "GO:0015695",
+          "predicate": "IAO:0000233",
+          "object": null,
+          "value": "https://github.com/geneontology/go-ontology/issues/30715"
+        },
+        {
+          "subject": "GO:0015695",
+          "predicate": "IAO:0100001",
+          "object": "GO:0055085",
+          "value": null
+        },
+        {
+          "subject": "GO:0015695",
+          "predicate": "oio:hasOBONamespace",
+          "object": null,
+          "value": "biological_process"
+        },
+        {
+          "subject": "GO:0015695",
+          "predicate": "oio:id",
+          "object": null,
+          "value": "GO:0015695"
+        },
+        {
+          "subject": "GO:0015695",
+          "predicate": "owl:deprecated",
+          "object": null,
+          "value": "true"
+        },
+        {
+          "subject": "GO:0015695",
+          "predicate": "rdf:type",
+          "object": "owl:Class",
+          "value": null
+        },
+        {
+          "subject": "GO:0015695",
+          "predicate": "rdfs:comment",
+          "object": null,
+          "value": "The reason for obsoletion is that this term was an unnecessary grouping term."
+        },
+        {
+          "subject": "GO:0015695",
+          "predicate": "rdfs:label",
+          "object": null,
+          "value": "obsolete organic cation transport"
+        }
+      ]
+    },
+    {
+      "subject": "GO:0015711",
+      "predicate": "biolink:has_input",
+      "object": "CHEBI:25696",
+      "relation": "RO:0004009",
+      "primary_knowledge_source": "infores:pato",
+      "replacement": "GO:0055085",
+      "native_class_xml": "<owl:Class rdf:about=\"http://purl.obolibrary.org/obo/GO_0015711\">\n        <owl:equivalentClass>\n            <owl:Class>\n                <owl:intersectionOf rdf:parseType=\"Collection\">\n                    <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/GO_0006810\"/>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004009\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_25696\"/>\n                    </owl:Restriction>\n                </owl:intersectionOf>\n            </owl:Class>\n        </owl:equivalentClass>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000003\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0006810\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004009\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_25696\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <obo:IAO_0000115>The directed movement of organic anions into, out of or within a cell, or between cells, by means of some agent such as a transporter or pore. Organic anions are atoms or small molecules with a negative charge which contain carbon in covalent linkage.</obo:IAO_0000115>\n        <oboInOwl:hasOBONamespace>biological_process</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>GO:0015711</oboInOwl:id>\n        <rdfs:label>organic anion transport</rdfs:label>\n    </owl:Class>",
+      "native_class_sha256": "c17f3052982d58536effbac3993bbbb6ff2f9d4663131cfa7f2662d0b5edbd0d",
+      "selected_go_metadata": [
+        {
+          "subject": "GO:0015711",
+          "predicate": "IAO:0000115",
+          "object": null,
+          "value": "OBSOLETE. The directed movement of organic anions into, out of or within a cell, or between cells, by means of some agent such as a transporter or pore. Organic anions are atoms or small molecules with a negative charge which contain carbon in covalent linkage."
+        },
+        {
+          "subject": "GO:0015711",
+          "predicate": "IAO:0000233",
+          "object": null,
+          "value": "https://github.com/geneontology/go-ontology/issues/30715"
+        },
+        {
+          "subject": "GO:0015711",
+          "predicate": "IAO:0100001",
+          "object": "GO:0055085",
+          "value": null
+        },
+        {
+          "subject": "GO:0015711",
+          "predicate": "oio:hasDbXref",
+          "object": null,
+          "value": "Reactome:R-HSA-9955298"
+        },
+        {
+          "subject": "GO:0015711",
+          "predicate": "oio:hasOBONamespace",
+          "object": null,
+          "value": "biological_process"
+        },
+        {
+          "subject": "GO:0015711",
+          "predicate": "oio:id",
+          "object": null,
+          "value": "GO:0015711"
+        },
+        {
+          "subject": "GO:0015711",
+          "predicate": "owl:deprecated",
+          "object": null,
+          "value": "true"
+        },
+        {
+          "subject": "GO:0015711",
+          "predicate": "rdf:type",
+          "object": "owl:Class",
+          "value": null
+        },
+        {
+          "subject": "GO:0015711",
+          "predicate": "rdfs:comment",
+          "object": null,
+          "value": "The reason for obsoletion is that this term was an unnecessary grouping term."
+        },
+        {
+          "subject": "GO:0015711",
+          "predicate": "rdfs:label",
+          "object": null,
+          "value": "obsolete organic anion transport"
+        }
+      ]
+    },
+    {
+      "subject": "GO:0016053",
+      "predicate": "biolink:has_output",
+      "object": "CHEBI:64709",
+      "relation": "RO:0004008",
+      "primary_knowledge_source": "infores:pato",
+      "replacement": "GO:0008152",
+      "native_class_xml": "<owl:Class rdf:about=\"http://purl.obolibrary.org/obo/GO_0016053\">\n        <owl:equivalentClass>\n            <owl:Class>\n                <owl:intersectionOf rdf:parseType=\"Collection\">\n                    <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/GO_0009058\"/>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004008\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_64709\"/>\n                    </owl:Restriction>\n                </owl:intersectionOf>\n            </owl:Class>\n        </owl:equivalentClass>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0006082\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0044283\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004008\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_64709\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <obo:IAO_0000115>The chemical reactions and pathways resulting in the formation of organic acids, any acidic compound containing carbon in covalent linkage.</obo:IAO_0000115>\n        <oboInOwl:hasExactSynonym>organic acid anabolism</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasExactSynonym>organic acid biosynthesis</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasExactSynonym>organic acid formation</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasExactSynonym>organic acid synthesis</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasOBONamespace>biological_process</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>GO:0016053</oboInOwl:id>\n        <rdfs:label>organic acid biosynthetic process</rdfs:label>\n    </owl:Class>",
+      "native_class_sha256": "e956c6ec4d43f96b3ab5d3f2f611d8e4e4dc090898ec8af11ca98792dcb22c53",
+      "selected_go_metadata": [
+        {
+          "subject": "GO:0016053",
+          "predicate": "IAO:0000115",
+          "object": null,
+          "value": "OBSOLETE. The chemical reactions and pathways resulting in the formation of organic acids, any acidic compound containing carbon in covalent linkage."
+        },
+        {
+          "subject": "GO:0016053",
+          "predicate": "IAO:0000233",
+          "object": null,
+          "value": "https://github.com/geneontology/go-ontology/issues/31816"
+        },
+        {
+          "subject": "GO:0016053",
+          "predicate": "IAO:0100001",
+          "object": "GO:0008152",
+          "value": null
+        },
+        {
+          "subject": "GO:0016053",
+          "predicate": "oio:hasOBONamespace",
+          "object": null,
+          "value": "biological_process"
+        },
+        {
+          "subject": "GO:0016053",
+          "predicate": "oio:id",
+          "object": null,
+          "value": "GO:0016053"
+        },
+        {
+          "subject": "GO:0016053",
+          "predicate": "owl:deprecated",
+          "object": null,
+          "value": "true"
+        },
+        {
+          "subject": "GO:0016053",
+          "predicate": "rdf:type",
+          "object": "owl:Class",
+          "value": null
+        },
+        {
+          "subject": "GO:0016053",
+          "predicate": "rdfs:comment",
+          "object": null,
+          "value": "The reason for obsoletion is that this term was an unnecessary grouping term."
+        },
+        {
+          "subject": "GO:0016053",
+          "predicate": "rdfs:label",
+          "object": null,
+          "value": "obsolete organic acid biosynthetic process"
+        }
+      ]
+    },
+    {
+      "subject": "GO:0042886",
+      "predicate": "biolink:has_input",
+      "object": "CHEBI:32988",
+      "relation": "RO:0004009",
+      "primary_knowledge_source": "infores:pato",
+      "replacement": "GO:0071705",
+      "native_class_xml": "<owl:Class rdf:about=\"http://purl.obolibrary.org/obo/GO_0042886\">\n        <owl:equivalentClass>\n            <owl:Class>\n                <owl:intersectionOf rdf:parseType=\"Collection\">\n                    <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/GO_0006810\"/>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004009\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_32988\"/>\n                    </owl:Restriction>\n                </owl:intersectionOf>\n            </owl:Class>\n        </owl:equivalentClass>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0071705\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004009\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_32988\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <obo:IAO_0000115>The directed movement of an amide, any compound containing one, two, or three acyl groups attached to a nitrogen atom, into, out of or within a cell, or between cells, by means of some agent such as a transporter or pore.</obo:IAO_0000115>\n        <oboInOwl:hasOBONamespace>biological_process</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>GO:0042886</oboInOwl:id>\n        <oboInOwl:inSubset rdf:resource=\"http://purl.obolibrary.org/obo/go#goslim_pir\"/>\n        <rdfs:label>amide transport</rdfs:label>\n    </owl:Class>",
+      "native_class_sha256": "7a11b9f35f33239771576bb1dd39574b49251a39471d6110dfcda0520b09214d",
+      "selected_go_metadata": [
+        {
+          "subject": "GO:0042886",
+          "predicate": "IAO:0000115",
+          "object": null,
+          "value": "OBSOLETE. The directed movement of an amide, any compound containing one, two, or three acyl groups attached to a nitrogen atom, into, out of or within a cell, or between cells, by means of some agent such as a transporter or pore."
+        },
+        {
+          "subject": "GO:0042886",
+          "predicate": "IAO:0000233",
+          "object": null,
+          "value": "https://github.com/geneontology/go-ontology/issues/31123"
+        },
+        {
+          "subject": "GO:0042886",
+          "predicate": "IAO:0100001",
+          "object": "GO:0071705",
+          "value": null
+        },
+        {
+          "subject": "GO:0042886",
+          "predicate": "oio:hasOBONamespace",
+          "object": null,
+          "value": "biological_process"
+        },
+        {
+          "subject": "GO:0042886",
+          "predicate": "oio:id",
+          "object": null,
+          "value": "GO:0042886"
+        },
+        {
+          "subject": "GO:0042886",
+          "predicate": "owl:deprecated",
+          "object": null,
+          "value": "true"
+        },
+        {
+          "subject": "GO:0042886",
+          "predicate": "rdf:type",
+          "object": "owl:Class",
+          "value": null
+        },
+        {
+          "subject": "GO:0042886",
+          "predicate": "rdfs:comment",
+          "object": null,
+          "value": "The reason for obsoletion is that this term was an unnecessary grouping term."
+        },
+        {
+          "subject": "GO:0042886",
+          "predicate": "rdfs:label",
+          "object": null,
+          "value": "obsolete amide transport"
+        }
+      ]
+    },
+    {
+      "subject": "GO:0043604",
+      "predicate": "biolink:has_output",
+      "object": "CHEBI:32988",
+      "relation": "RO:0004008",
+      "primary_knowledge_source": "infores:pato",
+      "replacement": "GO:0009058",
+      "native_class_xml": "<owl:Class rdf:about=\"http://purl.obolibrary.org/obo/GO_0043604\">\n        <owl:equivalentClass>\n            <owl:Class>\n                <owl:intersectionOf rdf:parseType=\"Collection\">\n                    <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/GO_0009058\"/>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004008\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_32988\"/>\n                    </owl:Restriction>\n                </owl:intersectionOf>\n            </owl:Class>\n        </owl:equivalentClass>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0009058\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0043603\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004008\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_32988\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <obo:IAO_0000115>The chemical reactions and pathways resulting in the formation of an amide, any derivative of an oxoacid in which an acidic hydroxy group has been replaced by an amino or substituted amino group.</obo:IAO_0000115>\n        <oboInOwl:hasOBONamespace>biological_process</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>GO:0043604</oboInOwl:id>\n        <rdfs:label>amide biosynthetic process</rdfs:label>\n    </owl:Class>",
+      "native_class_sha256": "95784864b9892803e6b72f4b180ef5a9d03e11e0132776d0111ba9c72d8f6a63",
+      "selected_go_metadata": [
+        {
+          "subject": "GO:0043604",
+          "predicate": "IAO:0000115",
+          "object": null,
+          "value": "OBSOLETE. The chemical reactions and pathways resulting in the formation of an amide, any derivative of an oxoacid in which an acidic hydroxy group has been replaced by an amino or substituted amino group."
+        },
+        {
+          "subject": "GO:0043604",
+          "predicate": "IAO:0000233",
+          "object": null,
+          "value": "https://github.com/geneontology/go-ontology/issues/31123"
+        },
+        {
+          "subject": "GO:0043604",
+          "predicate": "IAO:0100001",
+          "object": "GO:0009058",
+          "value": null
+        },
+        {
+          "subject": "GO:0043604",
+          "predicate": "oio:hasOBONamespace",
+          "object": null,
+          "value": "biological_process"
+        },
+        {
+          "subject": "GO:0043604",
+          "predicate": "oio:id",
+          "object": null,
+          "value": "GO:0043604"
+        },
+        {
+          "subject": "GO:0043604",
+          "predicate": "owl:deprecated",
+          "object": null,
+          "value": "true"
+        },
+        {
+          "subject": "GO:0043604",
+          "predicate": "rdf:type",
+          "object": "owl:Class",
+          "value": null
+        },
+        {
+          "subject": "GO:0043604",
+          "predicate": "rdfs:comment",
+          "object": null,
+          "value": "The reason for obsoletion is that this term was an unnecessary grouping term."
+        },
+        {
+          "subject": "GO:0043604",
+          "predicate": "rdfs:label",
+          "object": null,
+          "value": "obsolete amide biosynthetic process"
+        }
+      ]
+    },
+    {
+      "subject": "GO:0062023",
+      "predicate": "biolink:in_taxon",
+      "object": "NCBITaxon:33208",
+      "relation": "RO:0002162",
+      "primary_knowledge_source": "infores:pato",
+      "replacement": "GO:0031012",
+      "native_class_xml": "<owl:Class rdf:about=\"http://purl.obolibrary.org/obo/GO_0062023\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0031012\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002162\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/NCBITaxon_33208\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <obo:IAO_0000115>An extracellular matrix consisting mainly of proteins (especially collagen) and glycosaminoglycans (mostly as proteoglycans) that provides not only essential physical scaffolding for the cellular constituents but can also initiate crucial biochemical and biomechanical cues required for tissue morphogenesis, differentiation and homeostasis. The components are secreted by cells in the vicinity and form a sheet underlying or overlying cells such as endothelial and epithelial cells.</obo:IAO_0000115>\n        <oboInOwl:created_by>dph</oboInOwl:created_by>\n        <oboInOwl:creation_date>2018-04-13T12:47:21Z</oboInOwl:creation_date>\n        <oboInOwl:hasExactSynonym>collagen-containing ECM</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasOBONamespace>cellular_component</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>GO:0062023</oboInOwl:id>\n        <oboInOwl:inSubset rdf:resource=\"http://purl.obolibrary.org/obo/go#gocheck_obsoletion_candidate\"/>\n        <rdfs:label>collagen-containing extracellular matrix</rdfs:label>\n    </owl:Class>",
+      "native_class_sha256": "9648e8502617e41ad29e91cb750197865309c8d44791df400d795a0a56757f82",
+      "selected_go_metadata": [
+        {
+          "subject": "GO:0062023",
+          "predicate": "IAO:0000115",
+          "object": null,
+          "value": "OBSOLETE. An extracellular matrix consisting mainly of proteins (especially collagen) and glycosaminoglycans (mostly as proteoglycans) that provides not only essential physical scaffolding for the cellular constituents but can also initiate crucial biochemical and biomechanical cues required for tissue morphogenesis, differentiation and homeostasis. The components are secreted by cells in the vicinity and form a sheet underlying or overlying cells such as endothelial and epithelial cells."
+        },
+        {
+          "subject": "GO:0062023",
+          "predicate": "IAO:0000233",
+          "object": null,
+          "value": "https://github.com/geneontology/go-ontology/issues/29475"
+        },
+        {
+          "subject": "GO:0062023",
+          "predicate": "IAO:0100001",
+          "object": "GO:0031012",
+          "value": null
+        },
+        {
+          "subject": "GO:0062023",
+          "predicate": "oio:created_by",
+          "object": null,
+          "value": "dph"
+        },
+        {
+          "subject": "GO:0062023",
+          "predicate": "oio:creation_date",
+          "object": null,
+          "value": "2018-04-13T12:47:21Z"
+        },
+        {
+          "subject": "GO:0062023",
+          "predicate": "oio:hasExactSynonym",
+          "object": null,
+          "value": "collagen-containing ECM"
+        },
+        {
+          "subject": "GO:0062023",
+          "predicate": "oio:hasOBONamespace",
+          "object": null,
+          "value": "cellular_component"
+        },
+        {
+          "subject": "GO:0062023",
+          "predicate": "oio:id",
+          "object": null,
+          "value": "GO:0062023"
+        },
+        {
+          "subject": "GO:0062023",
+          "predicate": "owl:deprecated",
+          "object": null,
+          "value": "true"
+        },
+        {
+          "subject": "GO:0062023",
+          "predicate": "rdf:type",
+          "object": "owl:Class",
+          "value": null
+        },
+        {
+          "subject": "GO:0062023",
+          "predicate": "rdfs:comment",
+          "object": null,
+          "value": "This term was obsoleted because it was not clearly defined and usage has been inconsistent."
+        },
+        {
+          "subject": "GO:0062023",
+          "predicate": "rdfs:label",
+          "object": null,
+          "value": "obsolete collagen-containing extracellular matrix"
+        }
+      ]
+    },
+    {
+      "subject": "GO:0098660",
+      "predicate": "biolink:has_input",
+      "object": "CHEBI:36914",
+      "relation": "RO:0004009",
+      "primary_knowledge_source": "infores:pato",
+      "replacement": "GO:0055085",
+      "native_class_xml": "<owl:Class rdf:about=\"http://purl.obolibrary.org/obo/GO_0098660\">\n        <owl:equivalentClass>\n            <owl:Class>\n                <owl:intersectionOf rdf:parseType=\"Collection\">\n                    <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/GO_0055085\"/>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004009\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_36914\"/>\n                    </owl:Restriction>\n                </owl:intersectionOf>\n            </owl:Class>\n        </owl:equivalentClass>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0055085\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004009\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_36914\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <obo:IAO_0000115>The process in which an inorganic ion is transported across a membrane.</obo:IAO_0000115>\n        <oboInOwl:hasExactSynonym>inorganic ion membrane transport</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasExactSynonym>transmembrane inorganic ion transport</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasOBONamespace>biological_process</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>GO:0098660</oboInOwl:id>\n        <rdfs:comment>Note that this term is not intended for use in annotating lateral movement within membranes.</rdfs:comment>\n        <rdfs:label>inorganic ion transmembrane transport</rdfs:label>\n    </owl:Class>",
+      "native_class_sha256": "759fc1c3fc0a0e78bb795af9eabfa8ef79ef86527bc32c363dd17fa7c0c782bd",
+      "selected_go_metadata": [
+        {
+          "subject": "GO:0098660",
+          "predicate": "IAO:0000115",
+          "object": null,
+          "value": "OBSOLETE. The process in which an inorganic ion is transported across a membrane."
+        },
+        {
+          "subject": "GO:0098660",
+          "predicate": "IAO:0000233",
+          "object": null,
+          "value": "https://github.com/geneontology/go-ontology/issues/30715"
+        },
+        {
+          "subject": "GO:0098660",
+          "predicate": "IAO:0100001",
+          "object": "GO:0055085",
+          "value": null
+        },
+        {
+          "subject": "GO:0098660",
+          "predicate": "oio:hasExactSynonym",
+          "object": null,
+          "value": "inorganic ion membrane transport"
+        },
+        {
+          "subject": "GO:0098660",
+          "predicate": "oio:hasExactSynonym",
+          "object": null,
+          "value": "transmembrane inorganic ion transport"
+        },
+        {
+          "subject": "GO:0098660",
+          "predicate": "oio:hasOBONamespace",
+          "object": null,
+          "value": "biological_process"
+        },
+        {
+          "subject": "GO:0098660",
+          "predicate": "oio:id",
+          "object": null,
+          "value": "GO:0098660"
+        },
+        {
+          "subject": "GO:0098660",
+          "predicate": "owl:deprecated",
+          "object": null,
+          "value": "true"
+        },
+        {
+          "subject": "GO:0098660",
+          "predicate": "rdf:type",
+          "object": "owl:Class",
+          "value": null
+        },
+        {
+          "subject": "GO:0098660",
+          "predicate": "rdfs:comment",
+          "object": null,
+          "value": "Note that this term is not intended for use in annotating lateral movement within membranes. The reason for obsoletion is that this term was an unnecessary and confusing grouping term."
+        },
+        {
+          "subject": "GO:0098660",
+          "predicate": "rdfs:label",
+          "object": null,
+          "value": "obsolete inorganic ion transmembrane transport"
+        }
+      ]
+    },
+    {
+      "subject": "GO:0098662",
+      "predicate": "biolink:has_input",
+      "object": "CHEBI:36915",
+      "relation": "RO:0004009",
+      "primary_knowledge_source": "infores:pato",
+      "replacement": "GO:0055085",
+      "native_class_xml": "<owl:Class rdf:about=\"http://purl.obolibrary.org/obo/GO_0098662\">\n        <owl:equivalentClass>\n            <owl:Class>\n                <owl:intersectionOf rdf:parseType=\"Collection\">\n                    <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/GO_0055085\"/>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004009\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_36915\"/>\n                    </owl:Restriction>\n                </owl:intersectionOf>\n            </owl:Class>\n        </owl:equivalentClass>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0098660\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004009\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/CHEBI_36915\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <obo:IAO_0000115>A process in which an inorganic cation is transported from one side of a membrane to the other by means of some agent such as a transporter or pore.</obo:IAO_0000115>\n        <oboInOwl:hasAlternativeId>GO:0015672</oboInOwl:hasAlternativeId>\n        <oboInOwl:hasAlternativeId>GO:0072511</oboInOwl:hasAlternativeId>\n        <oboInOwl:hasExactSynonym>inorganic cation membrane transport</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasExactSynonym>transmembrane inorganic cation transport</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasNarrowSynonym>divalent inorganic cation transport</oboInOwl:hasNarrowSynonym>\n        <oboInOwl:hasNarrowSynonym>monovalent inorganic cation transport</oboInOwl:hasNarrowSynonym>\n        <oboInOwl:hasOBONamespace>biological_process</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>GO:0098662</oboInOwl:id>\n        <rdfs:comment>Note that this term is not intended for use in annotating lateral movement within membranes.</rdfs:comment>\n        <rdfs:label>inorganic cation transmembrane transport</rdfs:label>\n    </owl:Class>",
+      "native_class_sha256": "ee8c85ceda05caea1df5abf76e3aa8c4b82fbcb920f18014881bc7323905eec8",
+      "selected_go_metadata": [
+        {
+          "subject": "GO:0098662",
+          "predicate": "IAO:0000115",
+          "object": null,
+          "value": "OBSOLETE. A process in which an inorganic cation is transported from one side of a membrane to the other by means of some agent such as a transporter or pore."
+        },
+        {
+          "subject": "GO:0098662",
+          "predicate": "IAO:0000233",
+          "object": null,
+          "value": "https://github.com/geneontology/go-ontology/issues/30715"
+        },
+        {
+          "subject": "GO:0098662",
+          "predicate": "IAO:0100001",
+          "object": "GO:0055085",
+          "value": null
+        },
+        {
+          "subject": "GO:0098662",
+          "predicate": "oio:hasAlternativeId",
+          "object": null,
+          "value": "GO:0015672"
+        },
+        {
+          "subject": "GO:0098662",
+          "predicate": "oio:hasAlternativeId",
+          "object": null,
+          "value": "GO:0072511"
+        },
+        {
+          "subject": "GO:0098662",
+          "predicate": "oio:hasExactSynonym",
+          "object": null,
+          "value": "inorganic cation membrane transport"
+        },
+        {
+          "subject": "GO:0098662",
+          "predicate": "oio:hasExactSynonym",
+          "object": null,
+          "value": "transmembrane inorganic cation transport"
+        },
+        {
+          "subject": "GO:0098662",
+          "predicate": "oio:hasNarrowSynonym",
+          "object": null,
+          "value": "divalent inorganic cation transport"
+        },
+        {
+          "subject": "GO:0098662",
+          "predicate": "oio:hasNarrowSynonym",
+          "object": null,
+          "value": "monovalent inorganic cation transport"
+        },
+        {
+          "subject": "GO:0098662",
+          "predicate": "oio:hasOBONamespace",
+          "object": null,
+          "value": "biological_process"
+        },
+        {
+          "subject": "GO:0098662",
+          "predicate": "oio:id",
+          "object": null,
+          "value": "GO:0098662"
+        },
+        {
+          "subject": "GO:0098662",
+          "predicate": "owl:deprecated",
+          "object": null,
+          "value": "true"
+        },
+        {
+          "subject": "GO:0098662",
+          "predicate": "rdf:type",
+          "object": "owl:Class",
+          "value": null
+        },
+        {
+          "subject": "GO:0098662",
+          "predicate": "rdfs:comment",
+          "object": null,
+          "value": "Note that this term is not intended for use in annotating lateral movement within membranes. The reason for obsoletion is that this term was an unnecessary and confusing grouping term."
+        },
+        {
+          "subject": "GO:0098662",
+          "predicate": "rdfs:label",
+          "object": null,
+          "value": "obsolete inorganic cation transmembrane transport"
+        }
+      ]
+    },
+    {
+      "subject": "GO:0055108",
+      "predicate": "biolink:related_to",
+      "object": "GO:0030133",
+      "relation": "RO:0002339",
+      "primary_knowledge_source": "infores:pato",
+      "replacement": "GO:0006893",
+      "native_class_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/GO_0055108\">\n        <owl:equivalentClass>\n            <owl:Class>\n                <owl:intersectionOf rdf:parseType=\"Collection\">\n                    <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/GO_0006810\"/>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000066\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0005737\"/>\n                    </owl:Restriction>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002338\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0005794\"/>\n                    </owl:Restriction>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002339\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0030133\"/>\n                    </owl:Restriction>\n                </owl:intersectionOf>\n            </owl:Class>\n        </owl:equivalentClass>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0046907\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0048193\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000066\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0005737\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002338\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0005794\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002339\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0030133\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <obo:IAO_0000115>The directed movement of proteins from the Golgi to a transport vesicle. Continuously secreted proteins are sorted into transport vesicles that fuse with the plasma membrane, releasing their contents by exocytosis.</obo:IAO_0000115>\n        <oboInOwl:hasOBONamespace>biological_process</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>GO:0055108</oboInOwl:id>\n        <rdfs:label>Golgi to transport vesicle transport</rdfs:label>\n    </owl:Class>\n",
+      "native_class_sha256": "3a4a6549fe9e13abaa47c4ed1d1a882c50f1630978a7a78b6dd77e6c2a1d5db3",
+      "selected_go_metadata": [
+        {
+          "subject": "GO:0055108",
+          "predicate": "IAO:0000115",
+          "object": null,
+          "value": "OBSOLETE. The directed movement of proteins from the Golgi to a transport vesicle. Continuously secreted proteins are sorted into transport vesicles that fuse with the plasma membrane, releasing their contents by exocytosis."
+        },
+        {
+          "subject": "GO:0055108",
+          "predicate": "IAO:0000233",
+          "object": null,
+          "value": "https://github.com/geneontology/go-ontology/issues/31204"
+        },
+        {
+          "subject": "GO:0055108",
+          "predicate": "IAO:0100001",
+          "object": "GO:0006893",
+          "value": null
+        },
+        {
+          "subject": "GO:0055108",
+          "predicate": "oio:hasOBONamespace",
+          "object": null,
+          "value": "biological_process"
+        },
+        {
+          "subject": "GO:0055108",
+          "predicate": "oio:id",
+          "object": null,
+          "value": "GO:0055108"
+        },
+        {
+          "subject": "GO:0055108",
+          "predicate": "owl:deprecated",
+          "object": null,
+          "value": "true"
+        },
+        {
+          "subject": "GO:0055108",
+          "predicate": "rdf:type",
+          "object": "owl:Class",
+          "value": null
+        },
+        {
+          "subject": "GO:0055108",
+          "predicate": "rdfs:comment",
+          "object": null,
+          "value": "The reason for obsoletion is that this term is equivalent to Golgi to plasma membrane transport."
+        },
+        {
+          "subject": "GO:0055108",
+          "predicate": "rdfs:label",
+          "object": null,
+          "value": "obsolete Golgi to transport vesicle transport"
+        }
+      ],
+      "scientific_context": {
+        "review_issue": "https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1357",
+        "rationale": "The old imported restriction ends cargo transport at a transport vesicle; the replacement ends at plasma membrane and uses vesicles as the carrier. Identifier equivalence alone does not validate this transferred destination restriction.",
+        "evidence_limit": "Process-scope and role mismatch, not formal disjointness or uniqueness of location; no replacement object is invented.",
+        "supplier": "pato.owl",
+        "native_replacement_class_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/GO_0006893\">\n        <owl:equivalentClass>\n            <owl:Class>\n                <owl:intersectionOf rdf:parseType=\"Collection\">\n                    <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/GO_0016192\"/>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002338\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0005794\"/>\n                    </owl:Restriction>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002339\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0005886\"/>\n                    </owl:Restriction>\n                </owl:intersectionOf>\n            </owl:Class>\n        </owl:equivalentClass>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0006892\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0098876\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002338\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0005794\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <obo:IAO_0000115>The directed movement of substances from the Golgi to the plasma membrane in transport vesicles that move from the trans-Golgi network to the plasma membrane, where they fuse and release their contents by exocytosis.</obo:IAO_0000115>\n        <oboInOwl:hasExactSynonym>Golgi to plasma membrane vesicle-mediated transport</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasOBONamespace>biological_process</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>GO:0006893</oboInOwl:id>\n        <rdfs:label>Golgi to plasma membrane transport</rdfs:label>\n    </owl:Class>\n",
+        "native_replacement_class_sha256": "3322217722154298ff123c981abd5382579cb1e580928e3f2752de89faa3c725",
+        "native_property_xml": "    <owl:ObjectProperty rdf:about=\"http://purl.obolibrary.org/obo/RO_0002339\">\n        <rdfs:subPropertyOf rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002344\"/>\n        <owl:propertyChainAxiom rdf:parseType=\"Collection\">\n            <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/RO_0002339\"/>\n            <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n        </owl:propertyChainAxiom>\n        <obo:IAO_0000115>This relationship holds between p and l when p is a transport or localization process in which the outcome is to move some cargo c from a an initial location to some destination l.</obo:IAO_0000115>\n        <oboInOwl:inSubset rdf:resource=\"http://purl.obolibrary.org/obo/valid_for_go_annotation_extension\"/>\n        <oboInOwl:inSubset rdf:resource=\"http://purl.obolibrary.org/obo/valid_for_go_ontology\"/>\n        <oboInOwl:inSubset rdf:resource=\"http://purl.obolibrary.org/obo/valid_for_gocam\"/>\n        <rdfs:label xml:lang=\"en\">has target end location</rdfs:label>\n    </owl:ObjectProperty>\n",
+        "native_property_sha256": "178803c9bb67feb1fdce710444df8880b9ec4ed8f9d87bff7cf6f906e222249e"
+      }
+    },
+    {
+      "subject": "GO:0006903",
+      "predicate": "biolink:in_taxon",
+      "object": "NCBITaxon:2759",
+      "relation": "RO:0002162",
+      "primary_knowledge_source": "infores:pato",
+      "replacement": "GO:0016192",
+      "native_class_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/GO_0006903\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000003\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0009987\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0016192\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0051650\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002162\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/NCBITaxon_2759\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <obo:IAO_0000115>The process in which vesicles are directed to specific destination membranes. Targeting involves coordinated interactions among cytoskeletal elements (microtubules or actin filaments), motor proteins, molecules at the vesicle membrane and target membrane surfaces, and vesicle cargo.</obo:IAO_0000115>\n        <oboInOwl:hasOBONamespace>biological_process</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>GO:0006903</oboInOwl:id>\n        <rdfs:label>vesicle targeting</rdfs:label>\n    </owl:Class>\n",
+      "native_class_sha256": "8daea806d1ba05d55e833b9caa2e987e0b776175f42c76eaeafc40184ff8734a",
+      "selected_go_metadata": [
+        {
+          "object": null,
+          "predicate": "IAO:0000115",
+          "subject": "GO:0006903",
+          "value": "OBSOLETE. The process in which vesicles are directed to specific destination membranes. Targeting involves coordinated interactions among cytoskeletal elements (microtubules or actin filaments), motor proteins, molecules at the vesicle membrane and target membrane surfaces, and vesicle cargo."
+        },
+        {
+          "object": null,
+          "predicate": "IAO:0000233",
+          "subject": "GO:0006903",
+          "value": "https://github.com/geneontology/go-ontology/issues/31865"
+        },
+        {
+          "object": "GO:0016192",
+          "predicate": "IAO:0100001",
+          "subject": "GO:0006903",
+          "value": null
+        },
+        {
+          "object": null,
+          "predicate": "oio:hasOBONamespace",
+          "subject": "GO:0006903",
+          "value": "biological_process"
+        },
+        {
+          "object": null,
+          "predicate": "oio:id",
+          "subject": "GO:0006903",
+          "value": "GO:0006903"
+        },
+        {
+          "object": null,
+          "predicate": "owl:deprecated",
+          "subject": "GO:0006903",
+          "value": "true"
+        },
+        {
+          "object": "owl:Class",
+          "predicate": "rdf:type",
+          "subject": "GO:0006903",
+          "value": null
+        },
+        {
+          "object": null,
+          "predicate": "rdfs:comment",
+          "subject": "GO:0006903",
+          "value": "This term was obsoleted because it is redundant with the vesicle-mediated transport term GO:0016192; the distinction between vesicle 'targeting' and vesicle-mediated 'transport' was not applied consistently and the term was not clearly defined."
+        },
+        {
+          "object": null,
+          "predicate": "rdfs:label",
+          "subject": "GO:0006903",
+          "value": "obsolete vesicle targeting"
+        }
+      ],
+      "scientific_context": {
+        "decision": "user_approved_audit_only_unsupported_transfer",
+        "unresolved_question": "unresolved_taxon_constraint",
+        "rationale": "The obsolete term is curator-described as redundant, but the selected replacement definition is taxon-neutral. No selected or separately archived constraint proves or refutes an exclusive eukaryote restriction; absence is not falsity.",
+        "interpretation": "Identifier replacement does not establish the transferred restriction; exclusion is conservative and does not assert biological falsity."
+      }
+    },
+    {
+      "subject": "GO:0048199",
+      "predicate": "biolink:has_input",
+      "object": "GO:0005798",
+      "relation": "RO:0004009",
+      "primary_knowledge_source": "infores:pato",
+      "replacement": "GO:0048193",
+      "native_class_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/GO_0048199\">\n        <owl:equivalentClass>\n            <owl:Class>\n                <owl:intersectionOf rdf:parseType=\"Collection\">\n                    <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/GO_0006903\"/>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002344\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0005794\"/>\n                    </owl:Restriction>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004009\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0005798\"/>\n                    </owl:Restriction>\n                </owl:intersectionOf>\n            </owl:Class>\n        </owl:equivalentClass>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0006903\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0048193\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002344\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0005794\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0004009\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0005798\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <obo:IAO_0000115>The process in which vesicles are directed to specific destination membranes during transport to, from or within the Golgi apparatus; mediated by the addition of specific coat proteins, including COPI and COPII proteins and clathrin, to the membrane during vesicle formation.</obo:IAO_0000115>\n        <oboInOwl:hasExactSynonym>Golgi vesicle targeting</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasNarrowSynonym>dictyosome vesicle targeting</oboInOwl:hasNarrowSynonym>\n        <oboInOwl:hasNarrowSynonym>vesicle targeting, to, from or within dictyosome</oboInOwl:hasNarrowSynonym>\n        <oboInOwl:hasOBONamespace>biological_process</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>GO:0048199</oboInOwl:id>\n        <rdfs:label>vesicle targeting, to, from or within Golgi</rdfs:label>\n    </owl:Class>\n",
+      "native_class_sha256": "6d332e5196022cac88c8a79629906e8f84e0fef0fc793f667b7a66503df9d862",
+      "selected_go_metadata": [
+        {
+          "object": null,
+          "predicate": "IAO:0000115",
+          "subject": "GO:0048199",
+          "value": "OBSOLETE. The process in which vesicles are directed to specific destination membranes during transport to, from or within the Golgi apparatus; mediated by the addition of specific coat proteins, including COPI and COPII proteins and clathrin, to the membrane during vesicle formation."
+        },
+        {
+          "object": null,
+          "predicate": "IAO:0000233",
+          "subject": "GO:0048199",
+          "value": "https://github.com/geneontology/go-ontology/issues/31865"
+        },
+        {
+          "object": "GO:0048193",
+          "predicate": "IAO:0100001",
+          "subject": "GO:0048199",
+          "value": null
+        },
+        {
+          "object": null,
+          "predicate": "oio:hasOBONamespace",
+          "subject": "GO:0048199",
+          "value": "biological_process"
+        },
+        {
+          "object": null,
+          "predicate": "oio:id",
+          "subject": "GO:0048199",
+          "value": "GO:0048199"
+        },
+        {
+          "object": null,
+          "predicate": "owl:deprecated",
+          "subject": "GO:0048199",
+          "value": "true"
+        },
+        {
+          "object": "owl:Class",
+          "predicate": "rdf:type",
+          "subject": "GO:0048199",
+          "value": null
+        },
+        {
+          "object": null,
+          "predicate": "rdfs:comment",
+          "subject": "GO:0048199",
+          "value": "This term was obsoleted because it is redundant with the vesicle-mediated transport term GO:0048193 'Golgi vesicle transport'; the distinction between vesicle 'targeting' and vesicle-mediated 'transport' was not applied consistently and the term was not clearly defined."
+        },
+        {
+          "object": null,
+          "predicate": "rdfs:label",
+          "subject": "GO:0048199",
+          "value": "obsolete vesicle targeting, to, from or within Golgi"
+        }
+      ],
+      "scientific_context": {
+        "decision": "user_approved_audit_only_unsupported_transfer",
+        "unresolved_question": "unresolved_primary_input_role",
+        "rationale": "RO:0004009 requires that modifying/consuming/transforming the input is the process goal. A Golgi-associated vesicle is a carrier in the selected description. This is a role mismatch concern, not a proved disjointness or falsity: budding/fusion may modify the carrier.",
+        "interpretation": "Identifier replacement does not establish the transferred restriction; exclusion is conservative and does not assert biological falsity."
+      }
+    },
+    {
+      "subject": "GO:0055108",
+      "predicate": "biolink:occurs_in",
+      "object": "GO:0005737",
+      "relation": "BFO:0000066",
+      "primary_knowledge_source": "infores:pato",
+      "replacement": "GO:0006893",
+      "native_class_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/GO_0055108\">\n        <owl:equivalentClass>\n            <owl:Class>\n                <owl:intersectionOf rdf:parseType=\"Collection\">\n                    <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/GO_0006810\"/>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000066\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0005737\"/>\n                    </owl:Restriction>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002338\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0005794\"/>\n                    </owl:Restriction>\n                    <owl:Restriction>\n                        <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002339\"/>\n                        <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0030133\"/>\n                    </owl:Restriction>\n                </owl:intersectionOf>\n            </owl:Class>\n        </owl:equivalentClass>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/GO_0046907\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0048193\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000066\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0005737\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002338\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0005794\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002339\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/GO_0030133\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <obo:IAO_0000115>The directed movement of proteins from the Golgi to a transport vesicle. Continuously secreted proteins are sorted into transport vesicles that fuse with the plasma membrane, releasing their contents by exocytosis.</obo:IAO_0000115>\n        <oboInOwl:hasOBONamespace>biological_process</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>GO:0055108</oboInOwl:id>\n        <rdfs:label>Golgi to transport vesicle transport</rdfs:label>\n    </owl:Class>\n",
+      "native_class_sha256": "3a4a6549fe9e13abaa47c4ed1d1a882c50f1630978a7a78b6dd77e6c2a1d5db3",
+      "selected_go_metadata": [
+        {
+          "object": null,
+          "predicate": "IAO:0000115",
+          "subject": "GO:0055108",
+          "value": "OBSOLETE. The directed movement of proteins from the Golgi to a transport vesicle. Continuously secreted proteins are sorted into transport vesicles that fuse with the plasma membrane, releasing their contents by exocytosis."
+        },
+        {
+          "object": null,
+          "predicate": "IAO:0000233",
+          "subject": "GO:0055108",
+          "value": "https://github.com/geneontology/go-ontology/issues/31204"
+        },
+        {
+          "object": "GO:0006893",
+          "predicate": "IAO:0100001",
+          "subject": "GO:0055108",
+          "value": null
+        },
+        {
+          "object": null,
+          "predicate": "oio:hasOBONamespace",
+          "subject": "GO:0055108",
+          "value": "biological_process"
+        },
+        {
+          "object": null,
+          "predicate": "oio:id",
+          "subject": "GO:0055108",
+          "value": "GO:0055108"
+        },
+        {
+          "object": null,
+          "predicate": "owl:deprecated",
+          "subject": "GO:0055108",
+          "value": "true"
+        },
+        {
+          "object": "owl:Class",
+          "predicate": "rdf:type",
+          "subject": "GO:0055108",
+          "value": null
+        },
+        {
+          "object": null,
+          "predicate": "rdfs:comment",
+          "subject": "GO:0055108",
+          "value": "The reason for obsoletion is that this term is equivalent to Golgi to plasma membrane transport."
+        },
+        {
+          "object": null,
+          "predicate": "rdfs:label",
+          "subject": "GO:0055108",
+          "value": "obsolete Golgi to transport vesicle transport"
+        }
+      ],
+      "scientific_context": {
+        "decision": "user_approved_audit_only_unsupported_transfer",
+        "unresolved_question": "unresolved_whole_process_spatial_scope",
+        "rationale": "BFO:0000066 requires spatial containment throughout the process. Cytoplasm excludes plasma membrane, while GO:0006893 reaches that destination and explicitly precedes exocytosis. The selected evidence does not settle the terminal spatial boundary.",
+        "interpretation": "Identifier replacement does not establish the transferred restriction; exclusion is conservative and does not assert biological falsity."
+      }
+    }
+  ],
+  "sources": {
+    "go.db": {
+      "sha256": "a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a"
+    },
+    "pato.owl": {
+      "sha256": "73a80487130a81a3696f1e03c551288f741ed1be5a07639e69e7ecd8b6f0371c"
+    }
+  },
+  "version": 4
+}

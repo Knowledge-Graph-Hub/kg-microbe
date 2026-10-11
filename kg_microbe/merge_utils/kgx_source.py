@@ -11,6 +11,7 @@ import copy
 import csv
 import hashlib
 import json
+import re
 from contextlib import contextmanager
 from contextvars import ContextVar
 from importlib.metadata import PackageNotFoundError, version
@@ -33,6 +34,12 @@ from kg_microbe.transform_utils.constants import (
     RELATION_COLUMN,
     SOURCE_ASSERTION_ID_COLUMN,
     SUBJECT_COLUMN,
+)
+from kg_microbe.transform_utils.rhea_mappings.native_graph import POLYMERIZATION_FIELD
+from kg_microbe.transform_utils.rhea_mappings.reaction_families import (
+    RHEA_DIRECTION_FIELD,
+    RHEA_MASTER_FIELD,
+    RHEA_STATUS_FIELD,
 )
 from kg_microbe.utils.biolink_model import prepare_kgx
 from kg_microbe.utils.graph_canonicalization import compact_identifier
@@ -83,6 +90,7 @@ _MULTIVALUED_NODE_PROPERTIES = _MULTIVALUED_EDGE_PROPERTIES | {PRIMARY_KNOWLEDGE
 _BOOLEAN_NODE_PROPERTIES = {DEPRECATED_COLUMN} | {
     column for column, value_type in column_types.items() if value_type is bool
 }
+_RHEA_NODE_SCALAR_PROPERTIES = {RHEA_DIRECTION_FIELD, RHEA_MASTER_FIELD, RHEA_STATUS_FIELD, POLYMERIZATION_FIELD}
 
 # Independent multiprocessing workers never share this lock. It also makes
 # scoped overrides safe for callers that use a ThreadPool for tiny merges.
@@ -412,6 +420,26 @@ def _canonical_node_boolean(column, value):
     return next(iter(flags), "")
 
 
+def _canonical_rhea_node_scalar(column, value):
+    """Serialize identical native scalars once; reject source conflicts instead of pooling or choosing."""
+    values = value if isinstance(value, (list, tuple, set)) else [value]
+    declarations = set()
+    for item in values:
+        if item is None or item == "":
+            continue
+        if (
+            not isinstance(item, str)
+            or (column == RHEA_DIRECTION_FIELD and item not in {"UN", "LR", "RL", "BI"})
+            or (column == RHEA_MASTER_FIELD and not re.fullmatch(r"RHEA:[1-9][0-9]*", item))
+            or (column == RHEA_STATUS_FIELD and item not in {"Approved", "Preliminary"})
+        ):
+            raise ValueError(f"Invalid Rhea node field {column}={value!r}; reconcile source declarations")
+        declarations.add(item)
+    if len(declarations) > 1:
+        raise ValueError(f"Conflicting Rhea node field {column}={value!r}; reconcile source declarations")
+    return next(iter(declarations), "")
+
+
 class RelationAwareTsvSink(TsvSink):
     """Write the canonical schema once, preserving literal finalized text and extensions."""
 
@@ -472,11 +500,13 @@ class RelationAwareTsvSink(TsvSink):
         writer.writerow(values)
 
     def write_node(self, record):
-        """Preserve provenance and literal text while keeping Boolean flags scalar."""
+        """Preserve provenance and text, validating finite scalar contracts at first serialization."""
         data = {
             column: _canonical_node_boolean(column, value) if column in _BOOLEAN_NODE_PROPERTIES else value
             for column, value in record.items()
         }
+        for column in _RHEA_NODE_SCALAR_PROPERTIES.intersection(data):
+            data[column] = _canonical_rhea_node_scalar(column, data[column])
         description = data.get(DESCRIPTION_COLUMN)
         if isinstance(description, (list, tuple, set)):
             # KGX retains empty scalar contributions during node overlap. They

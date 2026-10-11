@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "issues": [1355, 1356],
+  "decision": "Approved anatomy-first projection of exactly 22 bean-pod classes and two whole lobster-tail classes; not an inference from lost organism ancestry.",
+  "category": "biolink:GrossAnatomicalStructure",
+  "bean_pod_ids": [
+    "FOODON:00002763", "FOODON:00002764", "FOODON:00002765", "FOODON:00002771",
+    "FOODON:00002782", "FOODON:00002811", "FOODON:00002812", "FOODON:00003165",
+    "FOODON:00003308", "FOODON:00003404", "FOODON:00003674", "FOODON:00003902",
+    "FOODON:00004236", "FOODON:03000101", "FOODON:03000102", "FOODON:03000155",
+    "FOODON:03000156", "FOODON:03000212", "FOODON:03305806", "FOODON:03309932",
+    "FOODON:03310435", "FOODON:03311356"
+  ],
+  "whole_tail_ids": ["FOODON:00002894", "FOODON:03308354"],
+  "unchanged_tail_meat_ids": ["FOODON:03303448", "FOODON:03308350"],
+  "unchanged_ambiguous_meat_ids": [
+    "FOODON:03301771", "FOODON:03317630", "FOODON:03308428",
+    "FOODON:03308431", "FOODON:03308442", "FOODON:03309238"
+  ],
+  "native_evidence": {
+    "parent_policy_file": "ontology_parent_dispositions.json",
+    "parent_policy_canonical_sha256": "3ca87a061038361b48541bc33c33ee72c1ed4baf421b891886274dfbc02c1552",
+    "authority": "sources.foodon.json_context and sources.foodon.owl_context: complete selected declarations, definitions, annotations, restrictions, equivalent expressions, incident assertions and descendant scope",
+    "reviewed_context_report_sha256": "ed3e43e2d5fd2b50933ca2ab567180f4302fce11080be9328c004026348eb933",
+    "rationale": "Pods are multicellular fruit/pod structures, not whole plants. The two whole-tail classes describe an anatomical tail; the two tail-meat controls have a separate culinary meaning. This finite primary projection preserves native IDs and all evidence, does not mint taxon identity, and changes no hierarchy assertions."
+  },
+  "separate_kernel_policy": "foodon_kernel_quarantine.json; its exact 22 Food categories and one parent quarantine are unchanged"
+}

@@ -1,0 +1,7916 @@
+{
+  "1414": [
+    {
+      "bacdive_id": 132779,
+      "ccno": "DSM 18336",
+      "domain": "B",
+      "growth": 1,
+      "id": 9731,
+      "species": "Porphyrobacter meromictus"
+    }
+  ],
+  "1706": [
+    {
+      "bacdive_id": null,
+      "ccno": "DSM 110005",
+      "domain": "B",
+      "growth": 1,
+      "id": 28840,
+      "species": "Lentimonas sp."
+    }
+  ],
+  "1c": [
+    {
+      "bacdive_id": 5052,
+      "ccno": "DSM 22387",
+      "domain": "B",
+      "growth": 1,
+      "id": 12488,
+      "species": "Photorhabdus tasmaniensis"
+    },
+    {
+      "bacdive_id": 5204,
+      "ccno": "DSM 17909",
+      "domain": "B",
+      "growth": 1,
+      "id": 9423,
+      "species": "Xenorhabdus doucetiae"
+    },
+    {
+      "bacdive_id": 5207,
+      "ccno": "DSM 18168",
+      "domain": "B",
+      "growth": 1,
+      "id": 9619,
+      "species": "Xenorhabdus koppenhoeferi"
+    },
+    {
+      "bacdive_id": 5050,
+      "ccno": "DSM 22397",
+      "domain": "B",
+      "growth": 1,
+      "id": 12495,
+      "species": "Photorhabdus hainanensis"
+    },
+    {
+      "bacdive_id": 5054,
+      "ccno": "DSM 23513",
+      "domain": "B",
+      "growth": 1,
+      "id": 13203,
+      "species": "Photorhabdus kleinii"
+    },
+    {
+      "bacdive_id": 5047,
+      "ccno": "DSM 19717",
+      "domain": "B",
+      "growth": 1,
+      "id": 10655,
+      "species": "Photorhabdus cinerea"
+    }
+  ],
+  "425": [
+    {
+      "bacdive_id": 16940,
+      "ccno": "DSM 44005",
+      "domain": "B",
+      "growth": 1,
+      "id": 19616,
+      "species": "Actinomadura madurae"
+    },
+    {
+      "bacdive_id": 11095,
+      "ccno": "DSM 46104",
+      "domain": "B",
+      "growth": 1,
+      "id": 21323,
+      "species": "Nocardioides albus"
+    },
+    {
+      "bacdive_id": 11096,
+      "ccno": "DSM 46107",
+      "domain": "B",
+      "growth": 1,
+      "id": 21324,
+      "species": "Nocardioides albus"
+    },
+    {
+      "bacdive_id": 11097,
+      "ccno": "DSM 46108",
+      "domain": "B",
+      "growth": 1,
+      "id": 21325,
+      "species": "Nocardioides albus"
+    },
+    {
+      "bacdive_id": 11103,
+      "ccno": "DSM 46114",
+      "domain": "B",
+      "growth": 1,
+      "id": 21327,
+      "species": "Nocardioides luteus"
+    },
+    {
+      "bacdive_id": 16612,
+      "ccno": "DSM 46134",
+      "domain": "B",
+      "growth": 1,
+      "id": 21340,
+      "species": "Streptosporangium amethystogenes subsp. amethystogenes"
+    },
+    {
+      "bacdive_id": 16962,
+      "ccno": "DSM 46173",
+      "domain": "B",
+      "growth": 1,
+      "id": 21367,
+      "species": "Actinomadura sp."
+    },
+    {
+      "bacdive_id": 16944,
+      "ccno": "DSM 46182",
+      "domain": "B",
+      "growth": 1,
+      "id": 21370,
+      "species": "Actinomadura madurae"
+    },
+    {
+      "bacdive_id": 15383,
+      "ccno": "DSM 46441",
+      "domain": "B",
+      "growth": 1,
+      "id": 21441,
+      "species": "Streptomyces longispororuber"
+    },
+    {
+      "bacdive_id": 15996,
+      "ccno": "DSM 46445",
+      "domain": "B",
+      "growth": 1,
+      "id": 21442,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 15034,
+      "ccno": "DSM 46447",
+      "domain": "B",
+      "growth": 1,
+      "id": 21444,
+      "species": "Kitasatospora aureofaciens"
+    },
+    {
+      "bacdive_id": 11098,
+      "ccno": "DSM 46647",
+      "domain": "B",
+      "growth": 1,
+      "id": 21507,
+      "species": "Nocardioides albus"
+    }
+  ],
+  "474": [
+    {
+      "bacdive_id": 2914,
+      "ccno": "DSM 6781",
+      "domain": "B",
+      "growth": 1,
+      "id": 4099,
+      "species": "Comamonas testosteroni"
+    }
+  ],
+  "701": [
+    {
+      "bacdive_id": 5980,
+      "ccno": "DSM 9569",
+      "domain": "B",
+      "growth": 1,
+      "id": 5112,
+      "species": "Halanaerobacter chitinivorans"
+    }
+  ],
+  "871": [
+    {
+      "bacdive_id": 11215,
+      "ccno": "DSM 44442",
+      "domain": "B",
+      "growth": 1,
+      "id": 19950,
+      "species": "Nocardiopsis aegyptia"
+    },
+    {
+      "bacdive_id": 11211,
+      "ccno": "DSM 44443",
+      "domain": "B",
+      "growth": 1,
+      "id": 19951,
+      "species": "Nocardiopsis halotolerans"
+    },
+    {
+      "bacdive_id": 11212,
+      "ccno": "DSM 44444",
+      "domain": "B",
+      "growth": 1,
+      "id": 19952,
+      "species": "Nocardiopsis halotolerans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "DSM 103924",
+      "domain": "B",
+      "growth": 1,
+      "id": 50152,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 167403,
+      "ccno": "DSM 108616",
+      "domain": "B",
+      "growth": 1,
+      "id": 53576,
+      "species": "Salinispora goodfellowii"
+    },
+    {
+      "bacdive_id": 167407,
+      "ccno": "DSM 108615",
+      "domain": "B",
+      "growth": 1,
+      "id": 53575,
+      "species": "Salinispora cortesiana"
+    },
+    {
+      "bacdive_id": 170384,
+      "ccno": "DSM 114036",
+      "domain": "B",
+      "growth": 1,
+      "id": 57998,
+      "species": "Streptomyces marispadix"
+    },
+    {
+      "bacdive_id": 166286,
+      "ccno": "DSM 114175",
+      "domain": "B",
+      "growth": 1,
+      "id": 58120,
+      "species": "Streptomyces otsuchiensis"
+    },
+    {
+      "bacdive_id": 176326,
+      "ccno": "DSM 114037",
+      "domain": "B",
+      "growth": 1,
+      "id": 57999,
+      "species": "Streptomyces meridianus"
+    },
+    {
+      "bacdive_id": 167405,
+      "ccno": "DSM 108614",
+      "domain": "B",
+      "growth": 1,
+      "id": 53574,
+      "species": "Salinispora fenicalii"
+    },
+    {
+      "bacdive_id": 175505,
+      "ccno": "DSM 115980",
+      "domain": "B",
+      "growth": 1,
+      "id": 62966,
+      "species": "Streptomyces profundus"
+    },
+    {
+      "bacdive_id": 161611,
+      "ccno": "DSM 118746",
+      "domain": "B",
+      "growth": 1,
+      "id": 65732,
+      "species": "Phycicoccus jejuensis"
+    }
+  ],
+  "931": [
+    {
+      "bacdive_id": 1404,
+      "ccno": "DSM 13869",
+      "domain": "B",
+      "growth": 1,
+      "id": 7079,
+      "species": "Pelagirhabdus fermentum"
+    },
+    {
+      "bacdive_id": 1405,
+      "ccno": "DSM 13870",
+      "domain": "B",
+      "growth": 1,
+      "id": 7080,
+      "species": "Amphibacillus tropicus"
+    }
+  ],
+  "J1067": [
+    {
+      "bacdive_id": 159721,
+      "ccno": "JCM 30584",
+      "domain": "B",
+      "growth": 1,
+      "id": 39833,
+      "species": "Ferrigenium kumadai"
+    }
+  ],
+  "J148": [
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 7246",
+      "domain": "F",
+      "growth": 1,
+      "id": 31952,
+      "species": "Conioscypha japonica"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 7247",
+      "domain": "F",
+      "growth": 1,
+      "id": 31953,
+      "species": "Conioscypha japonica"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8367",
+      "domain": "F",
+      "growth": 1,
+      "id": 32583,
+      "species": "Cladosporium"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8373",
+      "domain": "F",
+      "growth": 1,
+      "id": 32588,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8374",
+      "domain": "F",
+      "growth": 1,
+      "id": 32589,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8375",
+      "domain": "F",
+      "growth": 1,
+      "id": 32590,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8376",
+      "domain": "F",
+      "growth": 1,
+      "id": 32591,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8377",
+      "domain": "F",
+      "growth": 1,
+      "id": 32592,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8378",
+      "domain": "F",
+      "growth": 1,
+      "id": 32593,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8379",
+      "domain": "F",
+      "growth": 1,
+      "id": 32594,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8380",
+      "domain": "F",
+      "growth": 1,
+      "id": 32595,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8381",
+      "domain": "F",
+      "growth": 1,
+      "id": 32596,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8382",
+      "domain": "F",
+      "growth": 1,
+      "id": 32597,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8383",
+      "domain": "F",
+      "growth": 1,
+      "id": 32598,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8384",
+      "domain": "F",
+      "growth": 1,
+      "id": 32599,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8385",
+      "domain": "F",
+      "growth": 1,
+      "id": 32600,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8386",
+      "domain": "F",
+      "growth": 1,
+      "id": 32601,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8387",
+      "domain": "F",
+      "growth": 1,
+      "id": 32602,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8388",
+      "domain": "F",
+      "growth": 1,
+      "id": 32603,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8389",
+      "domain": "F",
+      "growth": 1,
+      "id": 32604,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8390",
+      "domain": "F",
+      "growth": 1,
+      "id": 32605,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8391",
+      "domain": "F",
+      "growth": 1,
+      "id": 32606,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8392",
+      "domain": "F",
+      "growth": 1,
+      "id": 32607,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8393",
+      "domain": "F",
+      "growth": 1,
+      "id": 32608,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8394",
+      "domain": "F",
+      "growth": 1,
+      "id": 32609,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8395",
+      "domain": "F",
+      "growth": 1,
+      "id": 32610,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8402",
+      "domain": "F",
+      "growth": 1,
+      "id": 32617,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8403",
+      "domain": "F",
+      "growth": 1,
+      "id": 32618,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8404",
+      "domain": "F",
+      "growth": 1,
+      "id": 32619,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8405",
+      "domain": "F",
+      "growth": 1,
+      "id": 32620,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8406",
+      "domain": "F",
+      "growth": 1,
+      "id": 32621,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8407",
+      "domain": "F",
+      "growth": 1,
+      "id": 32622,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8408",
+      "domain": "F",
+      "growth": 1,
+      "id": 32623,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8409",
+      "domain": "F",
+      "growth": 1,
+      "id": 32624,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8410",
+      "domain": "F",
+      "growth": 1,
+      "id": 32625,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8411",
+      "domain": "F",
+      "growth": 1,
+      "id": 32626,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8412",
+      "domain": "F",
+      "growth": 1,
+      "id": 32627,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8413",
+      "domain": "F",
+      "growth": 1,
+      "id": 32628,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8414",
+      "domain": "F",
+      "growth": 1,
+      "id": 32629,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8415",
+      "domain": "F",
+      "growth": 1,
+      "id": 32630,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8416",
+      "domain": "F",
+      "growth": 1,
+      "id": 32631,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8417",
+      "domain": "F",
+      "growth": 1,
+      "id": 32632,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8418",
+      "domain": "F",
+      "growth": 1,
+      "id": 32633,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8419",
+      "domain": "F",
+      "growth": 1,
+      "id": 32634,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8420",
+      "domain": "F",
+      "growth": 1,
+      "id": 32635,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8809",
+      "domain": "F",
+      "growth": 1,
+      "id": 32901,
+      "species": "Ophiostoma quercus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8815",
+      "domain": "F",
+      "growth": 1,
+      "id": 32902,
+      "species": "Grosmannia cucullata"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 8816",
+      "domain": "F",
+      "growth": 1,
+      "id": 32903,
+      "species": "Grosmannia cucullata"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9284",
+      "domain": "F",
+      "growth": 1,
+      "id": 33142,
+      "species": "Fusarium oxysporum cucumerinum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9285",
+      "domain": "F",
+      "growth": 1,
+      "id": 33143,
+      "species": "Fusarium oxysporum cucumerinum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9286",
+      "domain": "F",
+      "growth": 1,
+      "id": 33144,
+      "species": "Fusarium oxysporum melonis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9287",
+      "domain": "F",
+      "growth": 1,
+      "id": 33145,
+      "species": "Fusarium oxysporum melonis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9288",
+      "domain": "F",
+      "growth": 1,
+      "id": 33146,
+      "species": "Fusarium oxysporum melonis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9289",
+      "domain": "F",
+      "growth": 1,
+      "id": 33147,
+      "species": "Fusarium oxysporum melonis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9290",
+      "domain": "F",
+      "growth": 1,
+      "id": 33148,
+      "species": "Fusarium oxysporum melonis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9291",
+      "domain": "F",
+      "growth": 1,
+      "id": 33149,
+      "species": "Fusarium oxysporum niveum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9292",
+      "domain": "F",
+      "growth": 1,
+      "id": 33150,
+      "species": "Fusarium oxysporum momordicae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9293",
+      "domain": "F",
+      "growth": 1,
+      "id": 33151,
+      "species": "Fusarium oxysporum lagenariae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9356",
+      "domain": "F",
+      "growth": 1,
+      "id": 33181,
+      "species": "Ophiostoma ainoae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9357",
+      "domain": "F",
+      "growth": 1,
+      "id": 33182,
+      "species": "Ophiostoma ainoae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9358",
+      "domain": "F",
+      "growth": 1,
+      "id": 33183,
+      "species": "Ophiostoma bicolor"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9359",
+      "domain": "F",
+      "growth": 1,
+      "id": 33184,
+      "species": "Ophiostoma bicolor"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9360",
+      "domain": "F",
+      "growth": 1,
+      "id": 33185,
+      "species": "Grosmannia europhioides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9361",
+      "domain": "F",
+      "growth": 1,
+      "id": 33186,
+      "species": "Grosmannia europhioides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9362",
+      "domain": "F",
+      "growth": 1,
+      "id": 33187,
+      "species": "Grosmannia penicillata"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9363",
+      "domain": "F",
+      "growth": 1,
+      "id": 33188,
+      "species": "Grosmannia penicillata"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9364",
+      "domain": "F",
+      "growth": 1,
+      "id": 33189,
+      "species": "Ophiostoma piceae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9365",
+      "domain": "F",
+      "growth": 1,
+      "id": 33190,
+      "species": "Ophiostoma piceae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9366",
+      "domain": "F",
+      "growth": 1,
+      "id": 33191,
+      "species": "Ophiostoma japonicum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9367",
+      "domain": "F",
+      "growth": 1,
+      "id": 33192,
+      "species": "Ceratocystiopsis minuta"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9368",
+      "domain": "F",
+      "growth": 1,
+      "id": 33193,
+      "species": "Ceratocystiopsis minuta"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9369",
+      "domain": "F",
+      "growth": 1,
+      "id": 33194,
+      "species": "Ophiostoma polonicum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9370",
+      "domain": "F",
+      "growth": 1,
+      "id": 33195,
+      "species": "Ophiostoma polonicum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9495",
+      "domain": "F",
+      "growth": 1,
+      "id": 33273,
+      "species": "Onychophora coprophila"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9544",
+      "domain": "F",
+      "growth": 1,
+      "id": 33299,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9570",
+      "domain": "F",
+      "growth": 1,
+      "id": 33322,
+      "species": "Synnemasporella aculeans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9676",
+      "domain": "F",
+      "growth": 1,
+      "id": 33387,
+      "species": "Fusarium sacchari subglutinans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9744",
+      "domain": "F",
+      "growth": 1,
+      "id": 33411,
+      "species": "Graphium album"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9745",
+      "domain": "F",
+      "growth": 1,
+      "id": 33412,
+      "species": "Graphium aureum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9747",
+      "domain": "F",
+      "growth": 1,
+      "id": 33413,
+      "species": "Pesotum erubescens"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9748",
+      "domain": "F",
+      "growth": 1,
+      "id": 33414,
+      "species": "Scedosporium apiospermum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9749",
+      "domain": "F",
+      "growth": 1,
+      "id": 33415,
+      "species": "Pesotum fragrans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9750",
+      "domain": "F",
+      "growth": 1,
+      "id": 33416,
+      "species": "Graphium fructicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9751",
+      "domain": "F",
+      "growth": 1,
+      "id": 33417,
+      "species": "Graphium rubrum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9752",
+      "domain": "F",
+      "growth": 1,
+      "id": 33418,
+      "species": "Graphium silanum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9753",
+      "domain": "F",
+      "growth": 1,
+      "id": 33419,
+      "species": "Graphium tectonae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9760",
+      "domain": "F",
+      "growth": 1,
+      "id": 33426,
+      "species": "Pachnocybe ferruginea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9810",
+      "domain": "F",
+      "growth": 1,
+      "id": 33466,
+      "species": "Ceratocystis fujiensis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9811",
+      "domain": "F",
+      "growth": 1,
+      "id": 33467,
+      "species": "Ophiostoma brunneociliatum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9812",
+      "domain": "F",
+      "growth": 1,
+      "id": 33468,
+      "species": "Grosmannia laricis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9814",
+      "domain": "F",
+      "growth": 1,
+      "id": 33469,
+      "species": "Ophiostoma"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9815",
+      "domain": "F",
+      "growth": 1,
+      "id": 33470,
+      "species": "Ophiostoma japonicum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9816",
+      "domain": "F",
+      "growth": 1,
+      "id": 33471,
+      "species": "Ceratocystiopsis minuta"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9873",
+      "domain": "F",
+      "growth": 1,
+      "id": 33512,
+      "species": "Gibberella zeae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9874",
+      "domain": "F",
+      "growth": 1,
+      "id": 33513,
+      "species": "Fusarium crookwellense"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9963",
+      "domain": "F",
+      "growth": 1,
+      "id": 33563,
+      "species": "Everhartia hymenuloides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9971",
+      "domain": "F",
+      "growth": 1,
+      "id": 33564,
+      "species": "Kostermansinda magna"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9995",
+      "domain": "F",
+      "growth": 1,
+      "id": 33569,
+      "species": "Chaetomella raphigera"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 9996",
+      "domain": "F",
+      "growth": 1,
+      "id": 33570,
+      "species": "Tulasnella irregularis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10146",
+      "domain": "F",
+      "growth": 1,
+      "id": 33645,
+      "species": "Monocillium indicum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10147",
+      "domain": "F",
+      "growth": 1,
+      "id": 33646,
+      "species": "Niesslia exosporioides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10148",
+      "domain": "F",
+      "growth": 1,
+      "id": 33647,
+      "species": "Niesslia ilicifolia"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10149",
+      "domain": "F",
+      "growth": 1,
+      "id": 33648,
+      "species": "Penicillium lagena"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10154",
+      "domain": "F",
+      "growth": 1,
+      "id": 33653,
+      "species": "Exophiala calicioides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10160",
+      "domain": "F",
+      "growth": 1,
+      "id": 33657,
+      "species": "Monocillium mucidum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10161",
+      "domain": "F",
+      "growth": 1,
+      "id": 33658,
+      "species": "Monocillium tenue"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10162",
+      "domain": "F",
+      "growth": 1,
+      "id": 33659,
+      "species": "Niesslia exilis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10182",
+      "domain": "F",
+      "growth": 1,
+      "id": 33673,
+      "species": "Niesslia pulchriseta"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10198",
+      "domain": "F",
+      "growth": 1,
+      "id": 33679,
+      "species": "Ophiostoma longicollum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10199",
+      "domain": "F",
+      "growth": 1,
+      "id": 33680,
+      "species": "Ophiostoma longicollum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10259",
+      "domain": "F",
+      "growth": 1,
+      "id": 33725,
+      "species": "Aspergillus nidulans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10460",
+      "domain": "F",
+      "growth": 1,
+      "id": 33825,
+      "species": "Emericellopsis donezkii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10461",
+      "domain": "F",
+      "growth": 1,
+      "id": 33826,
+      "species": "Emericellopsis microspora"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10462",
+      "domain": "F",
+      "growth": 1,
+      "id": 33827,
+      "species": "Emericellopsis pallida"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10463",
+      "domain": "F",
+      "growth": 1,
+      "id": 33828,
+      "species": "Emericellopsis pusilla"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10464",
+      "domain": "F",
+      "growth": 1,
+      "id": 33829,
+      "species": "Emericellopsis robusta"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10465",
+      "domain": "F",
+      "growth": 1,
+      "id": 33830,
+      "species": "Emericellopsis salmosynnemata"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10466",
+      "domain": "F",
+      "growth": 1,
+      "id": 33831,
+      "species": "Emericellopsis stolkiae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10467",
+      "domain": "F",
+      "growth": 1,
+      "id": 33832,
+      "species": "Emericellopsis synnematicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10468",
+      "domain": "F",
+      "growth": 1,
+      "id": 33833,
+      "species": "Emericellopsis synnematicola magna"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10469",
+      "domain": "F",
+      "growth": 1,
+      "id": 33834,
+      "species": "Emericellopsis humicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10470",
+      "domain": "F",
+      "growth": 1,
+      "id": 33835,
+      "species": "Emericellopsis glabra"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10471",
+      "domain": "F",
+      "growth": 1,
+      "id": 33836,
+      "species": "Emericellopsis mirabilis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10472",
+      "domain": "F",
+      "growth": 1,
+      "id": 33837,
+      "species": "Emericellopsis minima"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10473",
+      "domain": "F",
+      "growth": 1,
+      "id": 33838,
+      "species": "Emericellopsis sphaerospora"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10474",
+      "domain": "F",
+      "growth": 1,
+      "id": 33839,
+      "species": "Emericellopsis terricola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10479",
+      "domain": "F",
+      "growth": 1,
+      "id": 33841,
+      "species": "Leptographium pini-densiflorae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10480",
+      "domain": "F",
+      "growth": 1,
+      "id": 33842,
+      "species": "Leptographium pini-densiflorae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10496",
+      "domain": "F",
+      "growth": 1,
+      "id": 33850,
+      "species": "Graphium penicillioides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10497",
+      "domain": "F",
+      "growth": 1,
+      "id": 33851,
+      "species": "Graphium penicillioides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10498",
+      "domain": "F",
+      "growth": 1,
+      "id": 33852,
+      "species": "Graphium penicillioides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10499",
+      "domain": "F",
+      "growth": 1,
+      "id": 33853,
+      "species": "Graphium penicillioides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10547",
+      "domain": "F",
+      "growth": 1,
+      "id": 33880,
+      "species": "Emericellopsis maritima"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10583",
+      "domain": "F",
+      "growth": 1,
+      "id": 33903,
+      "species": "Remersonia thermophila"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10584",
+      "domain": "F",
+      "growth": 1,
+      "id": 33904,
+      "species": "Remersonia thermophila"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10678",
+      "domain": "F",
+      "growth": 1,
+      "id": 33946,
+      "species": "Cladosporium argillaceum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10679",
+      "domain": "F",
+      "growth": 1,
+      "id": 33947,
+      "species": "Cladosporium cladosporioides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10680",
+      "domain": "F",
+      "growth": 1,
+      "id": 33948,
+      "species": "Cladosporium cladosporioides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10681",
+      "domain": "F",
+      "growth": 1,
+      "id": 33949,
+      "species": "Cladosporium colocasiae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10682",
+      "domain": "F",
+      "growth": 1,
+      "id": 33950,
+      "species": "Cladosporium coralloides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10683",
+      "domain": "F",
+      "growth": 1,
+      "id": 33951,
+      "species": "Cladosporium funiculosum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10684",
+      "domain": "F",
+      "growth": 1,
+      "id": 33952,
+      "species": "Cladosporium multigeniculatum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10685",
+      "domain": "F",
+      "growth": 1,
+      "id": 33953,
+      "species": "Hormoconis resinae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10686",
+      "domain": "F",
+      "growth": 1,
+      "id": 33954,
+      "species": "Passalora fulva"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10746",
+      "domain": "F",
+      "growth": 1,
+      "id": 33991,
+      "species": "Clonostachys compactiuscula"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10747",
+      "domain": "F",
+      "growth": 1,
+      "id": 33992,
+      "species": "Clonostachys rosea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10748",
+      "domain": "F",
+      "growth": 1,
+      "id": 33993,
+      "species": "Clonostachys rosea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10749",
+      "domain": "F",
+      "growth": 1,
+      "id": 33994,
+      "species": "Gliocladium catenulatum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10750",
+      "domain": "F",
+      "growth": 1,
+      "id": 33995,
+      "species": "Gliocladium"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10751",
+      "domain": "F",
+      "growth": 1,
+      "id": 33996,
+      "species": "Gliocladium"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10752",
+      "domain": "F",
+      "growth": 1,
+      "id": 33997,
+      "species": "Mariannaea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10753",
+      "domain": "F",
+      "growth": 1,
+      "id": 33998,
+      "species": "Mariannaea elegans punicea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10754",
+      "domain": "F",
+      "growth": 1,
+      "id": 33999,
+      "species": "Cladobotryum verticillatum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10755",
+      "domain": "F",
+      "growth": 1,
+      "id": 34000,
+      "species": "Cladobotryum verticillatum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10756",
+      "domain": "F",
+      "growth": 1,
+      "id": 34001,
+      "species": "Cladobotryum longiramosum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10757",
+      "domain": "F",
+      "growth": 1,
+      "id": 34002,
+      "species": "Hypomyces armeniacus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10758",
+      "domain": "F",
+      "growth": 1,
+      "id": 34003,
+      "species": "Hypomyces laeticolor"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10759",
+      "domain": "F",
+      "growth": 1,
+      "id": 34004,
+      "species": "Hypomyces laeticolor"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10760",
+      "domain": "F",
+      "growth": 1,
+      "id": 34005,
+      "species": "Hypomyces stephanomatis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10817",
+      "domain": "F",
+      "growth": 1,
+      "id": 34058,
+      "species": "Passalora fulva"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10818",
+      "domain": "F",
+      "growth": 1,
+      "id": 34059,
+      "species": "Passalora fulva"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10819",
+      "domain": "F",
+      "growth": 1,
+      "id": 34060,
+      "species": "Passalora fulva"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10820",
+      "domain": "F",
+      "growth": 1,
+      "id": 34061,
+      "species": "Passalora fulva"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10821",
+      "domain": "F",
+      "growth": 1,
+      "id": 34062,
+      "species": "Passalora fulva"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10823",
+      "domain": "F",
+      "growth": 1,
+      "id": 34063,
+      "species": "Cladosporium colocasiae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10824",
+      "domain": "F",
+      "growth": 1,
+      "id": 34064,
+      "species": "Cladosporium echinulatum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 10951",
+      "domain": "F",
+      "growth": 1,
+      "id": 34134,
+      "species": "Rogersiomyces okefenokeensis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11061",
+      "domain": "F",
+      "growth": 1,
+      "id": 34175,
+      "species": "Podosporium beccarianum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11064",
+      "domain": "F",
+      "growth": 1,
+      "id": 34177,
+      "species": "Cladosporium colocasiae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11065",
+      "domain": "F",
+      "growth": 1,
+      "id": 34178,
+      "species": "Cladosporium colocasiae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11066",
+      "domain": "F",
+      "growth": 1,
+      "id": 34179,
+      "species": "Passalora fulva"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11070",
+      "domain": "F",
+      "growth": 1,
+      "id": 34180,
+      "species": "Botryosporium longibrachiatum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11073",
+      "domain": "F",
+      "growth": 1,
+      "id": 34183,
+      "species": "Arthrinium"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11118",
+      "domain": "F",
+      "growth": 1,
+      "id": 34197,
+      "species": "Fusarium"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11126",
+      "domain": "F",
+      "growth": 1,
+      "id": 34198,
+      "species": "Ramichloridium obovoideum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11310",
+      "domain": "F",
+      "growth": 1,
+      "id": 34272,
+      "species": "Albophoma yamanashiensis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11381",
+      "domain": "F",
+      "growth": 1,
+      "id": 34297,
+      "species": "Fusarium solani"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11382",
+      "domain": "F",
+      "growth": 1,
+      "id": 34298,
+      "species": "Fusarium oxysporum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11383",
+      "domain": "F",
+      "growth": 1,
+      "id": 34299,
+      "species": "Fusarium solani"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11384",
+      "domain": "F",
+      "growth": 1,
+      "id": 34300,
+      "species": "Fusarium solani"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11449",
+      "domain": "F",
+      "growth": 1,
+      "id": 34320,
+      "species": "Amorphotheca resinae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11450",
+      "domain": "F",
+      "growth": 1,
+      "id": 34321,
+      "species": "Botryosporium diffusum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11451",
+      "domain": "F",
+      "growth": 1,
+      "id": 34322,
+      "species": "Botryosporium pulchrum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11488",
+      "domain": "F",
+      "growth": 1,
+      "id": 34331,
+      "species": "Fusarium falciforme"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11497",
+      "domain": "F",
+      "growth": 1,
+      "id": 34337,
+      "species": "Amorphotheca resinae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11498",
+      "domain": "F",
+      "growth": 1,
+      "id": 34338,
+      "species": "Amorphotheca resinae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11499",
+      "domain": "F",
+      "growth": 1,
+      "id": 34339,
+      "species": "Zasmidium cellare"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11502",
+      "domain": "F",
+      "growth": 1,
+      "id": 34342,
+      "species": "Fusarium commune"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11532",
+      "domain": "F",
+      "growth": 1,
+      "id": 34353,
+      "species": "Mycosphaerella tassiana"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11616",
+      "domain": "F",
+      "growth": 1,
+      "id": 34375,
+      "species": "Pesotum fragrans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11617",
+      "domain": "F",
+      "growth": 1,
+      "id": 34376,
+      "species": "Pesotum fragrans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11618",
+      "domain": "F",
+      "growth": 1,
+      "id": 34377,
+      "species": "Pesotum fragrans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11698",
+      "domain": "F",
+      "growth": 1,
+      "id": 34418,
+      "species": "Cladosporium colocasiae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11699",
+      "domain": "F",
+      "growth": 1,
+      "id": 34419,
+      "species": "Zasmidium cellare"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11702",
+      "domain": "F",
+      "growth": 1,
+      "id": 34420,
+      "species": "Sporothrix nigrograna"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11703",
+      "domain": "F",
+      "growth": 1,
+      "id": 34421,
+      "species": "Sporothrix nigrograna"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11704",
+      "domain": "F",
+      "growth": 1,
+      "id": 34422,
+      "species": "Ophiostoma pusillum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11705",
+      "domain": "F",
+      "growth": 1,
+      "id": 34423,
+      "species": "Ophiostoma pusillum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11706",
+      "domain": "F",
+      "growth": 1,
+      "id": 34424,
+      "species": "Ophiostoma botuliforme"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11707",
+      "domain": "F",
+      "growth": 1,
+      "id": 34425,
+      "species": "Ophiostoma botuliforme"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11716",
+      "domain": "F",
+      "growth": 1,
+      "id": 34429,
+      "species": "Ophiostoma subalpinum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11717",
+      "domain": "F",
+      "growth": 1,
+      "id": 34430,
+      "species": "Ophiostoma subalpinum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11718",
+      "domain": "F",
+      "growth": 1,
+      "id": 34431,
+      "species": "Ophiostoma subalpinum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11719",
+      "domain": "F",
+      "growth": 1,
+      "id": 34432,
+      "species": "Ophiostoma"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11720",
+      "domain": "F",
+      "growth": 1,
+      "id": 34433,
+      "species": "Ophiostoma"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11721",
+      "domain": "F",
+      "growth": 1,
+      "id": 34434,
+      "species": "Grosmannia europhioides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11722",
+      "domain": "F",
+      "growth": 1,
+      "id": 34435,
+      "species": "Grosmannia europhioides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11723",
+      "domain": "F",
+      "growth": 1,
+      "id": 34436,
+      "species": "Grosmannia davidsonii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11724",
+      "domain": "F",
+      "growth": 1,
+      "id": 34437,
+      "species": "Grosmannia davidsonii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11725",
+      "domain": "F",
+      "growth": 1,
+      "id": 34438,
+      "species": "Grosmannia abieticola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11726",
+      "domain": "F",
+      "growth": 1,
+      "id": 34439,
+      "species": "Grosmannia abieticola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11727",
+      "domain": "F",
+      "growth": 1,
+      "id": 34440,
+      "species": "Grosmannia abieticola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11728",
+      "domain": "F",
+      "growth": 1,
+      "id": 34441,
+      "species": "Ophiostoma nikkoense"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11729",
+      "domain": "F",
+      "growth": 1,
+      "id": 34442,
+      "species": "Ophiostoma nikkoense"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11730",
+      "domain": "F",
+      "growth": 1,
+      "id": 34443,
+      "species": "Graphilbum microcarpum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11731",
+      "domain": "F",
+      "growth": 1,
+      "id": 34444,
+      "species": "Graphilbum microcarpum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11782",
+      "domain": "F",
+      "growth": 1,
+      "id": 34468,
+      "species": "Cladosporium herbarum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11783",
+      "domain": "F",
+      "growth": 1,
+      "id": 34469,
+      "species": "Cladosporium herbarum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11784",
+      "domain": "F",
+      "growth": 1,
+      "id": 34470,
+      "species": "Cladosporium macrocarpum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11786",
+      "domain": "F",
+      "growth": 1,
+      "id": 34471,
+      "species": "Cladosporium oxysporum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11787",
+      "domain": "F",
+      "growth": 1,
+      "id": 34472,
+      "species": "Cladosporium sphaerospermum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11788",
+      "domain": "F",
+      "growth": 1,
+      "id": 34473,
+      "species": "Cladosporium sphaerospermum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11801",
+      "domain": "F",
+      "growth": 1,
+      "id": 34474,
+      "species": "Trichothecium ovalisporum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11802",
+      "domain": "F",
+      "growth": 1,
+      "id": 34475,
+      "species": "Trichothecium ovalisporum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11815",
+      "domain": "F",
+      "growth": 1,
+      "id": 34481,
+      "species": "Alysidium resinae microsporum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11873",
+      "domain": "F",
+      "growth": 1,
+      "id": 34493,
+      "species": "Grosmannia yunnanensis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11874",
+      "domain": "F",
+      "growth": 1,
+      "id": 34494,
+      "species": "Grosmannia yunnanensis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11876",
+      "domain": "F",
+      "growth": 1,
+      "id": 34495,
+      "species": "Ophiostoma subalpinum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11877",
+      "domain": "F",
+      "growth": 1,
+      "id": 34496,
+      "species": "Ophiostoma subalpinum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11878",
+      "domain": "F",
+      "growth": 1,
+      "id": 34497,
+      "species": "Ophiostoma subalpinum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11879",
+      "domain": "F",
+      "growth": 1,
+      "id": 34498,
+      "species": "Grosmannia davidsonii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11880",
+      "domain": "F",
+      "growth": 1,
+      "id": 34499,
+      "species": "Grosmannia davidsonii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11974",
+      "domain": "F",
+      "growth": 1,
+      "id": 34512,
+      "species": "Ceratocystis fujiensis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11975",
+      "domain": "F",
+      "growth": 1,
+      "id": 34513,
+      "species": "Ceratocystis fujiensis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11980",
+      "domain": "F",
+      "growth": 1,
+      "id": 34514,
+      "species": "Ophiostoma breviusculum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11981",
+      "domain": "F",
+      "growth": 1,
+      "id": 34515,
+      "species": "Hypocrea albofulva"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11982",
+      "domain": "F",
+      "growth": 1,
+      "id": 34516,
+      "species": "Hypocrea ampulliformis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11983",
+      "domain": "F",
+      "growth": 1,
+      "id": 34517,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11984",
+      "domain": "F",
+      "growth": 1,
+      "id": 34518,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11985",
+      "domain": "F",
+      "growth": 1,
+      "id": 34519,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11986",
+      "domain": "F",
+      "growth": 1,
+      "id": 34520,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11987",
+      "domain": "F",
+      "growth": 1,
+      "id": 34521,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11988",
+      "domain": "F",
+      "growth": 1,
+      "id": 34522,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11989",
+      "domain": "F",
+      "growth": 1,
+      "id": 34523,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11990",
+      "domain": "F",
+      "growth": 1,
+      "id": 34524,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11991",
+      "domain": "F",
+      "growth": 1,
+      "id": 34525,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11992",
+      "domain": "F",
+      "growth": 1,
+      "id": 34526,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11993",
+      "domain": "F",
+      "growth": 1,
+      "id": 34527,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11994",
+      "domain": "F",
+      "growth": 1,
+      "id": 34528,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11995",
+      "domain": "F",
+      "growth": 1,
+      "id": 34529,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11996",
+      "domain": "F",
+      "growth": 1,
+      "id": 34530,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11997",
+      "domain": "F",
+      "growth": 1,
+      "id": 34531,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11998",
+      "domain": "F",
+      "growth": 1,
+      "id": 34532,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 11999",
+      "domain": "F",
+      "growth": 1,
+      "id": 34533,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12000",
+      "domain": "F",
+      "growth": 1,
+      "id": 34534,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12001",
+      "domain": "F",
+      "growth": 1,
+      "id": 34535,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12002",
+      "domain": "F",
+      "growth": 1,
+      "id": 34536,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12003",
+      "domain": "F",
+      "growth": 1,
+      "id": 34537,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12004",
+      "domain": "F",
+      "growth": 1,
+      "id": 34538,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12005",
+      "domain": "F",
+      "growth": 1,
+      "id": 34539,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12006",
+      "domain": "F",
+      "growth": 1,
+      "id": 34540,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12007",
+      "domain": "F",
+      "growth": 1,
+      "id": 34541,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12008",
+      "domain": "F",
+      "growth": 1,
+      "id": 34542,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12009",
+      "domain": "F",
+      "growth": 1,
+      "id": 34543,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12010",
+      "domain": "F",
+      "growth": 1,
+      "id": 34544,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12011",
+      "domain": "F",
+      "growth": 1,
+      "id": 34545,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12012",
+      "domain": "F",
+      "growth": 1,
+      "id": 34546,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12013",
+      "domain": "F",
+      "growth": 1,
+      "id": 34547,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12014",
+      "domain": "F",
+      "growth": 1,
+      "id": 34548,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12015",
+      "domain": "F",
+      "growth": 1,
+      "id": 34549,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12016",
+      "domain": "F",
+      "growth": 1,
+      "id": 34550,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12017",
+      "domain": "F",
+      "growth": 1,
+      "id": 34551,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12018",
+      "domain": "F",
+      "growth": 1,
+      "id": 34552,
+      "species": "Hypocrea mikurajimensis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12019",
+      "domain": "F",
+      "growth": 1,
+      "id": 34553,
+      "species": "Hypocrea mikurajimensis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12020",
+      "domain": "F",
+      "growth": 1,
+      "id": 34554,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12021",
+      "domain": "F",
+      "growth": 1,
+      "id": 34555,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12022",
+      "domain": "F",
+      "growth": 1,
+      "id": 34556,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12023",
+      "domain": "F",
+      "growth": 1,
+      "id": 34557,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12024",
+      "domain": "F",
+      "growth": 1,
+      "id": 34558,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12025",
+      "domain": "F",
+      "growth": 1,
+      "id": 34559,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12026",
+      "domain": "F",
+      "growth": 1,
+      "id": 34560,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12027",
+      "domain": "F",
+      "growth": 1,
+      "id": 34561,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12028",
+      "domain": "F",
+      "growth": 1,
+      "id": 34562,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12029",
+      "domain": "F",
+      "growth": 1,
+      "id": 34563,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12030",
+      "domain": "F",
+      "growth": 1,
+      "id": 34564,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12031",
+      "domain": "F",
+      "growth": 1,
+      "id": 34565,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12032",
+      "domain": "F",
+      "growth": 1,
+      "id": 34566,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12033",
+      "domain": "F",
+      "growth": 1,
+      "id": 34567,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12034",
+      "domain": "F",
+      "growth": 1,
+      "id": 34568,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12035",
+      "domain": "F",
+      "growth": 1,
+      "id": 34569,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12036",
+      "domain": "F",
+      "growth": 1,
+      "id": 34570,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12037",
+      "domain": "F",
+      "growth": 1,
+      "id": 34571,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12038",
+      "domain": "F",
+      "growth": 1,
+      "id": 34572,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12039",
+      "domain": "F",
+      "growth": 1,
+      "id": 34573,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12040",
+      "domain": "F",
+      "growth": 1,
+      "id": 34574,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12041",
+      "domain": "F",
+      "growth": 1,
+      "id": 34575,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12042",
+      "domain": "F",
+      "growth": 1,
+      "id": 34576,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12043",
+      "domain": "F",
+      "growth": 1,
+      "id": 34577,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12044",
+      "domain": "F",
+      "growth": 1,
+      "id": 34578,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12045",
+      "domain": "F",
+      "growth": 1,
+      "id": 34579,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12046",
+      "domain": "F",
+      "growth": 1,
+      "id": 34580,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12047",
+      "domain": "F",
+      "growth": 1,
+      "id": 34581,
+      "species": "Hypocrea nigricans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12048",
+      "domain": "F",
+      "growth": 1,
+      "id": 34582,
+      "species": "Hypocrea pallida"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12049",
+      "domain": "F",
+      "growth": 1,
+      "id": 34583,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12050",
+      "domain": "F",
+      "growth": 1,
+      "id": 34584,
+      "species": "Trichoderma saturnisporum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12051",
+      "domain": "F",
+      "growth": 1,
+      "id": 34585,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12052",
+      "domain": "F",
+      "growth": 1,
+      "id": 34586,
+      "species": "Trichoderma saturnisporum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12053",
+      "domain": "F",
+      "growth": 1,
+      "id": 34587,
+      "species": "Trichoderma reesei"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12054",
+      "domain": "F",
+      "growth": 1,
+      "id": 34588,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12055",
+      "domain": "F",
+      "growth": 1,
+      "id": 34589,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12056",
+      "domain": "F",
+      "growth": 1,
+      "id": 34590,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12057",
+      "domain": "F",
+      "growth": 1,
+      "id": 34591,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12058",
+      "domain": "F",
+      "growth": 1,
+      "id": 34592,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12059",
+      "domain": "F",
+      "growth": 1,
+      "id": 34593,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12060",
+      "domain": "F",
+      "growth": 1,
+      "id": 34594,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12061",
+      "domain": "F",
+      "growth": 1,
+      "id": 34595,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12062",
+      "domain": "F",
+      "growth": 1,
+      "id": 34596,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12063",
+      "domain": "F",
+      "growth": 1,
+      "id": 34597,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12064",
+      "domain": "F",
+      "growth": 1,
+      "id": 34598,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12065",
+      "domain": "F",
+      "growth": 1,
+      "id": 34599,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12066",
+      "domain": "F",
+      "growth": 1,
+      "id": 34600,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12067",
+      "domain": "F",
+      "growth": 1,
+      "id": 34601,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12068",
+      "domain": "F",
+      "growth": 1,
+      "id": 34602,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12069",
+      "domain": "F",
+      "growth": 1,
+      "id": 34603,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12500",
+      "domain": "F",
+      "growth": 1,
+      "id": 34710,
+      "species": "Ophiostoma breviusculum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12501",
+      "domain": "F",
+      "growth": 1,
+      "id": 34711,
+      "species": "Ophiostoma breviusculum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12502",
+      "domain": "F",
+      "growth": 1,
+      "id": 34712,
+      "species": "Ophiostoma floccosum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12503",
+      "domain": "F",
+      "growth": 1,
+      "id": 34713,
+      "species": "Ophiostoma floccosum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12504",
+      "domain": "F",
+      "growth": 1,
+      "id": 34714,
+      "species": "Hypomyces pseudocorticiicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12505",
+      "domain": "F",
+      "growth": 1,
+      "id": 34715,
+      "species": "Hypomyces sympodiophorus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12506",
+      "domain": "F",
+      "growth": 1,
+      "id": 34716,
+      "species": "Hypomyces sympodiophorus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12575",
+      "domain": "F",
+      "growth": 1,
+      "id": 34731,
+      "species": "Fusarium oxysporum lycopersici"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12701",
+      "domain": "F",
+      "growth": 1,
+      "id": 34757,
+      "species": "Lindgomyces breviappendiculatus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12702",
+      "domain": "F",
+      "growth": 1,
+      "id": 34758,
+      "species": "Lindgomyces breviappendiculatus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12703",
+      "domain": "F",
+      "growth": 1,
+      "id": 34759,
+      "species": "Lentithecium clioninum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12704",
+      "domain": "F",
+      "growth": 1,
+      "id": 34760,
+      "species": "Massariosphaeria maxima"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12802",
+      "domain": "F",
+      "growth": 1,
+      "id": 34838,
+      "species": "Talaromyces leycettanus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12804",
+      "domain": "F",
+      "growth": 1,
+      "id": 34840,
+      "species": "Byssochlamys fulva"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12805",
+      "domain": "F",
+      "growth": 1,
+      "id": 34841,
+      "species": "Byssochlamys nivea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12806",
+      "domain": "F",
+      "growth": 1,
+      "id": 34842,
+      "species": "Byssochlamys lagunculariae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12807",
+      "domain": "F",
+      "growth": 1,
+      "id": 34843,
+      "species": "Byssochlamys verrucosa"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12808",
+      "domain": "F",
+      "growth": 1,
+      "id": 34844,
+      "species": "Byssochlamys zollerniae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12809",
+      "domain": "F",
+      "growth": 1,
+      "id": 34845,
+      "species": "Paecilomyces variotii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12810",
+      "domain": "F",
+      "growth": 1,
+      "id": 34846,
+      "species": "Paecilomyces variotii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12811",
+      "domain": "F",
+      "growth": 1,
+      "id": 34847,
+      "species": "Paecilomyces variotii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12813",
+      "domain": "F",
+      "growth": 1,
+      "id": 34848,
+      "species": "Rasamsonia byssochlamydoides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12814",
+      "domain": "F",
+      "growth": 1,
+      "id": 34849,
+      "species": "Talaromyces leycettanus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12815",
+      "domain": "F",
+      "growth": 1,
+      "id": 34850,
+      "species": "Byssochlamys spectabilis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12816",
+      "domain": "F",
+      "growth": 1,
+      "id": 34851,
+      "species": "Thermoascus aurantiacus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12817",
+      "domain": "F",
+      "growth": 1,
+      "id": 34852,
+      "species": "Thermoascus crustaceus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12818",
+      "domain": "F",
+      "growth": 1,
+      "id": 34853,
+      "species": "Thermoascus aurantiacus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12828",
+      "domain": "F",
+      "growth": 1,
+      "id": 34856,
+      "species": "Ceratocystis fujiensis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12829",
+      "domain": "F",
+      "growth": 1,
+      "id": 34857,
+      "species": "Ceratocystis fujiensis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12836",
+      "domain": "F",
+      "growth": 1,
+      "id": 34860,
+      "species": "Discostroma botan"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12837",
+      "domain": "F",
+      "growth": 1,
+      "id": 34861,
+      "species": "Seimatosporium botan"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12838",
+      "domain": "F",
+      "growth": 1,
+      "id": 34862,
+      "species": "Synnemapestaloides rhododendri"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12839",
+      "domain": "F",
+      "growth": 1,
+      "id": 34863,
+      "species": "Pleomassaria swidae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12840",
+      "domain": "F",
+      "growth": 1,
+      "id": 34864,
+      "species": "Pleomassaria swidae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12841",
+      "domain": "F",
+      "growth": 1,
+      "id": 34865,
+      "species": "Pleomassaria siparia"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12842",
+      "domain": "F",
+      "growth": 1,
+      "id": 34866,
+      "species": "Pleomassaria maxima"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12843",
+      "domain": "F",
+      "growth": 1,
+      "id": 34867,
+      "species": "Asteromassaria macroconidica"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12844",
+      "domain": "F",
+      "growth": 1,
+      "id": 34868,
+      "species": "Asteromassaria macroconidica"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12845",
+      "domain": "F",
+      "growth": 1,
+      "id": 34869,
+      "species": "Asteromassaria pulchra"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12846",
+      "domain": "F",
+      "growth": 1,
+      "id": 34870,
+      "species": "Splanchnonema mori"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12847",
+      "domain": "F",
+      "growth": 1,
+      "id": 34871,
+      "species": "Splanchnonema argus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12848",
+      "domain": "F",
+      "growth": 1,
+      "id": 34872,
+      "species": "Trematosphaeria crassiseptata"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12849",
+      "domain": "F",
+      "growth": 1,
+      "id": 34873,
+      "species": "Trematosphaeria biappendiculata"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12850",
+      "domain": "F",
+      "growth": 1,
+      "id": 34874,
+      "species": "Trematosphaeria biappendiculata"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12851",
+      "domain": "F",
+      "growth": 1,
+      "id": 34875,
+      "species": "Neokalmusia scabrispora"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12852",
+      "domain": "F",
+      "growth": 1,
+      "id": 34876,
+      "species": "Pseudotetraploa curviappendiculata"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12853",
+      "domain": "F",
+      "growth": 1,
+      "id": 34877,
+      "species": "Pseudotetraploa longissima"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12854",
+      "domain": "F",
+      "growth": 1,
+      "id": 34878,
+      "species": "Pseudotetraploa javanica"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 12855",
+      "domain": "F",
+      "growth": 1,
+      "id": 34879,
+      "species": "Flagelloscypha japonica"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13073",
+      "domain": "F",
+      "growth": 1,
+      "id": 34965,
+      "species": "Leptosphaeria collinsoniae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13075",
+      "domain": "F",
+      "growth": 1,
+      "id": 34966,
+      "species": "Leptosphaeria galiorum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13076",
+      "domain": "F",
+      "growth": 1,
+      "id": 34967,
+      "species": "Leptosphaeria"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13080",
+      "domain": "F",
+      "growth": 1,
+      "id": 34968,
+      "species": "Ophiobolus anguillides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13081",
+      "domain": "F",
+      "growth": 1,
+      "id": 34969,
+      "species": "Ophiobolus anguillides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13087",
+      "domain": "F",
+      "growth": 1,
+      "id": 34970,
+      "species": "Crassiclypeus aquaticus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13089",
+      "domain": "F",
+      "growth": 1,
+      "id": 34971,
+      "species": "Leptoparies palmarum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13090",
+      "domain": "F",
+      "growth": 1,
+      "id": 34972,
+      "species": "Pseudolophiotrema elymicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13091",
+      "domain": "F",
+      "growth": 1,
+      "id": 34973,
+      "species": "Lindgomyces apiculatus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13092",
+      "domain": "F",
+      "growth": 1,
+      "id": 34974,
+      "species": "Lindgomyces apiculatus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13094",
+      "domain": "F",
+      "growth": 1,
+      "id": 34975,
+      "species": "Helminthosporium massarinum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13095",
+      "domain": "F",
+      "growth": 1,
+      "id": 34976,
+      "species": "Helminthosporium massarinum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13096",
+      "domain": "F",
+      "growth": 1,
+      "id": 34977,
+      "species": "Crassimassarina macrospora"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13097",
+      "domain": "F",
+      "growth": 1,
+      "id": 34978,
+      "species": "Stagonospora pseudoperfecta"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13098",
+      "domain": "F",
+      "growth": 1,
+      "id": 34979,
+      "species": "Stagonospora"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13099",
+      "domain": "F",
+      "growth": 1,
+      "id": 34980,
+      "species": "Stagonospora perfecta"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13100",
+      "domain": "F",
+      "growth": 1,
+      "id": 34981,
+      "species": "Periconia homothallica"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13101",
+      "domain": "F",
+      "growth": 1,
+      "id": 34982,
+      "species": "Sulcatispora berchemiae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13104",
+      "domain": "F",
+      "growth": 1,
+      "id": 34983,
+      "species": "Fuscostagonospora sasae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13112",
+      "domain": "F",
+      "growth": 1,
+      "id": 34984,
+      "species": "Caryospora langloisii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13115",
+      "domain": "F",
+      "growth": 1,
+      "id": 34985,
+      "species": "Caryospora langloisii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13119",
+      "domain": "F",
+      "growth": 1,
+      "id": 34986,
+      "species": "Karstenula multiseptata"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13123",
+      "domain": "F",
+      "growth": 1,
+      "id": 34987,
+      "species": "Karstenula straminis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13124",
+      "domain": "F",
+      "growth": 1,
+      "id": 34988,
+      "species": "Melanomma japonicum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13125",
+      "domain": "F",
+      "growth": 1,
+      "id": 34989,
+      "species": "Platystomum actinidiae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13126",
+      "domain": "F",
+      "growth": 1,
+      "id": 34990,
+      "species": "Roussoella hysterioides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13127",
+      "domain": "F",
+      "growth": 1,
+      "id": 34991,
+      "species": "Roussoella pustulans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13128",
+      "domain": "F",
+      "growth": 1,
+      "id": 34992,
+      "species": "Roussoellopsis tosaensis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13131",
+      "domain": "F",
+      "growth": 1,
+      "id": 34993,
+      "species": "Katumotoa bambusicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13134",
+      "domain": "F",
+      "growth": 1,
+      "id": 34994,
+      "species": "Neoophiosphaerella sasicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13136",
+      "domain": "F",
+      "growth": 1,
+      "id": 34995,
+      "species": "Phaeosphaeria caricis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13137",
+      "domain": "F",
+      "growth": 1,
+      "id": 34996,
+      "species": "Phaeosphaeria elongata"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13140",
+      "domain": "F",
+      "growth": 1,
+      "id": 34997,
+      "species": "Phaeosphaeria fuckelioides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13152",
+      "domain": "F",
+      "growth": 1,
+      "id": 34998,
+      "species": "Splanchnonema argus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13153",
+      "domain": "F",
+      "growth": 1,
+      "id": 34999,
+      "species": "Splanchnonema argus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13156",
+      "domain": "F",
+      "growth": 1,
+      "id": 35000,
+      "species": "Pleospora herbarum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13164",
+      "domain": "F",
+      "growth": 1,
+      "id": 35001,
+      "species": "Periconia pseudodigitata"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13165",
+      "domain": "F",
+      "growth": 1,
+      "id": 35002,
+      "species": "Periconia pseudodigitata"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13166",
+      "domain": "F",
+      "growth": 1,
+      "id": 35003,
+      "species": "Periconia pseudodigitata"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13167",
+      "domain": "F",
+      "growth": 1,
+      "id": 35004,
+      "species": "Tetraplosphaeria sasicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13168",
+      "domain": "F",
+      "growth": 1,
+      "id": 35005,
+      "species": "Tetraplosphaeria nagasakiensis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13169",
+      "domain": "F",
+      "growth": 1,
+      "id": 35006,
+      "species": "Triplosphaeria cylindrica"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13171",
+      "domain": "F",
+      "growth": 1,
+      "id": 35007,
+      "species": "Triplosphaeria acuta"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13172",
+      "domain": "F",
+      "growth": 1,
+      "id": 35008,
+      "species": "Triplosphaeria maxima"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13173",
+      "domain": "F",
+      "growth": 1,
+      "id": 35009,
+      "species": "Polyplosphaeria fusca"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13175",
+      "domain": "F",
+      "growth": 1,
+      "id": 35010,
+      "species": "Polyplosphaeria fusca"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13176",
+      "domain": "F",
+      "growth": 1,
+      "id": 35011,
+      "species": "Polyplosphaeria fusca"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13177",
+      "domain": "F",
+      "growth": 1,
+      "id": 35012,
+      "species": "Polyplosphaeria fusca"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13424",
+      "domain": "F",
+      "growth": 1,
+      "id": 35085,
+      "species": "Sclerographium fuligineum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13642",
+      "domain": "F",
+      "growth": 1,
+      "id": 35157,
+      "species": "Cladosporium colocasiae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 13644",
+      "domain": "F",
+      "growth": 1,
+      "id": 35158,
+      "species": "Penicilliopsis clavariiformis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14126",
+      "domain": "F",
+      "growth": 1,
+      "id": 35407,
+      "species": "Bactrodesmium cubense"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14127",
+      "domain": "F",
+      "growth": 1,
+      "id": 35408,
+      "species": "Berkleasmium micronesiacum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14128",
+      "domain": "F",
+      "growth": 1,
+      "id": 35409,
+      "species": "Monodictys putredinis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14129",
+      "domain": "F",
+      "growth": 1,
+      "id": 35410,
+      "species": "Monodictys putredinis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14130",
+      "domain": "F",
+      "growth": 1,
+      "id": 35411,
+      "species": "Petrakia echinata"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14132",
+      "domain": "F",
+      "growth": 1,
+      "id": 35412,
+      "species": "Lophiostoma nucula"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14133",
+      "domain": "F",
+      "growth": 1,
+      "id": 35413,
+      "species": "Lophiostoma quadrinucleatum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14134",
+      "domain": "F",
+      "growth": 1,
+      "id": 35414,
+      "species": "Lophiostoma winteri"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14135",
+      "domain": "F",
+      "growth": 1,
+      "id": 35415,
+      "species": "Lophiostoma winteri"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14136",
+      "domain": "F",
+      "growth": 1,
+      "id": 35416,
+      "species": "Lophiotrema boreale"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14137",
+      "domain": "F",
+      "growth": 1,
+      "id": 35417,
+      "species": "Lophiotrema nucula"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14138",
+      "domain": "F",
+      "growth": 1,
+      "id": 35418,
+      "species": "Lophiotrema vagabundum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14139",
+      "domain": "F",
+      "growth": 1,
+      "id": 35419,
+      "species": "Lentistoma bipolare"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14140",
+      "domain": "F",
+      "growth": 1,
+      "id": 35420,
+      "species": "Massarina cisti"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14141",
+      "domain": "F",
+      "growth": 1,
+      "id": 35421,
+      "species": "Massarina corticola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14142",
+      "domain": "F",
+      "growth": 1,
+      "id": 35422,
+      "species": "Periconia igniaria"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14144",
+      "domain": "F",
+      "growth": 1,
+      "id": 35423,
+      "species": "Massarina microspora"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14145",
+      "domain": "F",
+      "growth": 1,
+      "id": 35424,
+      "species": "Massarina phragmiticola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14146",
+      "domain": "F",
+      "growth": 1,
+      "id": 35425,
+      "species": "Massarina rubi"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14147",
+      "domain": "F",
+      "growth": 1,
+      "id": 35426,
+      "species": "Helicascus thalassioideus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14166",
+      "domain": "F",
+      "growth": 1,
+      "id": 35429,
+      "species": "Polystigma fulvum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14257",
+      "domain": "F",
+      "growth": 1,
+      "id": 35474,
+      "species": "Bactrodesmium spilomeum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14258",
+      "domain": "F",
+      "growth": 1,
+      "id": 35475,
+      "species": "Massarina brunaudii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14517",
+      "domain": "F",
+      "growth": 1,
+      "id": 35564,
+      "species": "Sclerographium fuligineum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14938",
+      "domain": "F",
+      "growth": 1,
+      "id": 35676,
+      "species": "Grosmannia yunnanensis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14939",
+      "domain": "F",
+      "growth": 1,
+      "id": 35677,
+      "species": "Grosmannia yunnanensis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14940",
+      "domain": "F",
+      "growth": 1,
+      "id": 35678,
+      "species": "Grosmannia yunnanensis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 14941",
+      "domain": "F",
+      "growth": 1,
+      "id": 35679,
+      "species": "Grosmannia yunnanensis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 15536",
+      "domain": "F",
+      "growth": 1,
+      "id": 35885,
+      "species": "Grosmannia yunnanensis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 15565",
+      "domain": "F",
+      "growth": 1,
+      "id": 35894,
+      "species": "Sphaerulina myriadea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 15682",
+      "domain": "F",
+      "growth": 1,
+      "id": 35920,
+      "species": "Raffaelea quercivora"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 15683",
+      "domain": "F",
+      "growth": 1,
+      "id": 35921,
+      "species": "Raffaelea quercivora"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 15684",
+      "domain": "F",
+      "growth": 1,
+      "id": 35922,
+      "species": "Raffaelea quercivora"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 15685",
+      "domain": "F",
+      "growth": 1,
+      "id": 35923,
+      "species": "Raffaelea quercivora"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 15686",
+      "domain": "F",
+      "growth": 1,
+      "id": 35924,
+      "species": "Raffaelea quercivora"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16197",
+      "domain": "F",
+      "growth": 1,
+      "id": 36141,
+      "species": "Fusarium solani"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16198",
+      "domain": "F",
+      "growth": 1,
+      "id": 36142,
+      "species": "Fusarium"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16685",
+      "domain": "F",
+      "growth": 1,
+      "id": 36355,
+      "species": "Sphaerostilbella lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16686",
+      "domain": "F",
+      "growth": 1,
+      "id": 36356,
+      "species": "Sphaerostilbella lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16687",
+      "domain": "F",
+      "growth": 1,
+      "id": 36357,
+      "species": "Sphaerostilbella aureonitens"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16688",
+      "domain": "F",
+      "growth": 1,
+      "id": 36358,
+      "species": "Sphaerostilbella aureonitens"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16689",
+      "domain": "F",
+      "growth": 1,
+      "id": 36359,
+      "species": "Sphaerostilbella micropori"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16690",
+      "domain": "F",
+      "growth": 1,
+      "id": 36360,
+      "species": "Sphaerostilbella micropori"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16691",
+      "domain": "F",
+      "growth": 1,
+      "id": 36361,
+      "species": "Hypomyces"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16692",
+      "domain": "F",
+      "growth": 1,
+      "id": 36362,
+      "species": "Hypomyces"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16693",
+      "domain": "F",
+      "growth": 1,
+      "id": 36363,
+      "species": "Hypomyces"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16694",
+      "domain": "F",
+      "growth": 1,
+      "id": 36364,
+      "species": "Hypomyces"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16695",
+      "domain": "F",
+      "growth": 1,
+      "id": 36365,
+      "species": "Hypomyces"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16778",
+      "domain": "F",
+      "growth": 1,
+      "id": 36405,
+      "species": "Raffaelea quercivora"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16779",
+      "domain": "F",
+      "growth": 1,
+      "id": 36406,
+      "species": "Raffaelea quercivora"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16786",
+      "domain": "F",
+      "growth": 1,
+      "id": 36413,
+      "species": "Ophiostoma"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16787",
+      "domain": "F",
+      "growth": 1,
+      "id": 36414,
+      "species": "Ophiostoma"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16795",
+      "domain": "F",
+      "growth": 1,
+      "id": 36422,
+      "species": "Trichoderma"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16962",
+      "domain": "F",
+      "growth": 1,
+      "id": 36465,
+      "species": "Asterosporium asterospermum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16963",
+      "domain": "F",
+      "growth": 1,
+      "id": 36466,
+      "species": "Asterosporium asterospermum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16964",
+      "domain": "F",
+      "growth": 1,
+      "id": 36467,
+      "species": "Prosthemium orientale"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16965",
+      "domain": "F",
+      "growth": 1,
+      "id": 36468,
+      "species": "Prosthemium orientale"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16966",
+      "domain": "F",
+      "growth": 1,
+      "id": 36469,
+      "species": "Prosthemium canba"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16967",
+      "domain": "F",
+      "growth": 1,
+      "id": 36470,
+      "species": "Prosthemium canba"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16968",
+      "domain": "F",
+      "growth": 1,
+      "id": 36471,
+      "species": "Prosthemium canba"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16969",
+      "domain": "F",
+      "growth": 1,
+      "id": 36472,
+      "species": "Prosthemium canba"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16970",
+      "domain": "F",
+      "growth": 1,
+      "id": 36473,
+      "species": "Prosthemium canba"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16971",
+      "domain": "F",
+      "growth": 1,
+      "id": 36474,
+      "species": "Prosthemium canba"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16972",
+      "domain": "F",
+      "growth": 1,
+      "id": 36475,
+      "species": "Prosthemium intermedium"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16973",
+      "domain": "F",
+      "growth": 1,
+      "id": 36476,
+      "species": "Prosthemium intermedium"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16974",
+      "domain": "F",
+      "growth": 1,
+      "id": 36477,
+      "species": "Prosthemium intermedium"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16975",
+      "domain": "F",
+      "growth": 1,
+      "id": 36478,
+      "species": "Prosthemium intermedium"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16976",
+      "domain": "F",
+      "growth": 1,
+      "id": 36479,
+      "species": "Prosthemium intermedium"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 16977",
+      "domain": "F",
+      "growth": 1,
+      "id": 36480,
+      "species": "Prosthemium intermedium"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 17044",
+      "domain": "F",
+      "growth": 1,
+      "id": 36508,
+      "species": "Zygosporium echinosporum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 17045",
+      "domain": "F",
+      "growth": 1,
+      "id": 36509,
+      "species": "Zygosporium masonii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 17047",
+      "domain": "F",
+      "growth": 1,
+      "id": 36510,
+      "species": "Zygosporium mycophilum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 17048",
+      "domain": "F",
+      "growth": 1,
+      "id": 36511,
+      "species": "Zygosporium parasiticum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 17056",
+      "domain": "F",
+      "growth": 1,
+      "id": 36513,
+      "species": "Zygosporium chartarum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 17057",
+      "domain": "F",
+      "growth": 1,
+      "id": 36514,
+      "species": "Zygosporium echinosporum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 17058",
+      "domain": "F",
+      "growth": 1,
+      "id": 36515,
+      "species": "Zygosporium masonii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 17060",
+      "domain": "F",
+      "growth": 1,
+      "id": 36516,
+      "species": "Zygosporium oscheoides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 17147",
+      "domain": "F",
+      "growth": 1,
+      "id": 36568,
+      "species": "Fusarium solani"
+    },
+    {
+      "bacdive_id": 131262,
+      "ccno": "DSM 102235",
+      "domain": "B",
+      "growth": 1,
+      "id": 26229,
+      "species": "Sagittula marina"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 17959",
+      "domain": "F",
+      "growth": 1,
+      "id": 36919,
+      "species": "Pleurotus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18027",
+      "domain": "F",
+      "growth": 1,
+      "id": 36947,
+      "species": "Kendrickiella phycomyces"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18028",
+      "domain": "F",
+      "growth": 1,
+      "id": 36948,
+      "species": "Kendrickiella phycomyces"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18029",
+      "domain": "F",
+      "growth": 1,
+      "id": 36949,
+      "species": "Kendrickiella phycomyces"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18030",
+      "domain": "F",
+      "growth": 1,
+      "id": 36950,
+      "species": "Kendrickiella phycomyces"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18031",
+      "domain": "F",
+      "growth": 1,
+      "id": 36951,
+      "species": "Kendrickiella phycomyces"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18032",
+      "domain": "F",
+      "growth": 1,
+      "id": 36952,
+      "species": "Kendrickiella phycomyces"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18167",
+      "domain": "F",
+      "growth": 1,
+      "id": 36987,
+      "species": "Simplicillium aogashimaense"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18168",
+      "domain": "F",
+      "growth": 1,
+      "id": 36988,
+      "species": "Simplicillium aogashimaense"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18169",
+      "domain": "F",
+      "growth": 1,
+      "id": 36989,
+      "species": "Simplicillium cylindrosporum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18170",
+      "domain": "F",
+      "growth": 1,
+      "id": 36990,
+      "species": "Simplicillium cylindrosporum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18171",
+      "domain": "F",
+      "growth": 1,
+      "id": 36991,
+      "species": "Simplicillium cylindrosporum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18172",
+      "domain": "F",
+      "growth": 1,
+      "id": 36992,
+      "species": "Simplicillium cylindrosporum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18173",
+      "domain": "F",
+      "growth": 1,
+      "id": 36993,
+      "species": "Simplicillium cylindrosporum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18174",
+      "domain": "F",
+      "growth": 1,
+      "id": 36994,
+      "species": "Simplicillium cylindrosporum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18175",
+      "domain": "F",
+      "growth": 1,
+      "id": 36995,
+      "species": "Simplicillium cylindrosporum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18176",
+      "domain": "F",
+      "growth": 1,
+      "id": 36996,
+      "species": "Simplicillium minatense"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18177",
+      "domain": "F",
+      "growth": 1,
+      "id": 36997,
+      "species": "Simplicillium minatense"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18178",
+      "domain": "F",
+      "growth": 1,
+      "id": 36998,
+      "species": "Simplicillium minatense"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18179",
+      "domain": "F",
+      "growth": 1,
+      "id": 36999,
+      "species": "Simplicillium obclavatum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18180",
+      "domain": "F",
+      "growth": 1,
+      "id": 37000,
+      "species": "Simplicillium subtropicum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18181",
+      "domain": "F",
+      "growth": 1,
+      "id": 37001,
+      "species": "Simplicillium subtropicum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18182",
+      "domain": "F",
+      "growth": 1,
+      "id": 37002,
+      "species": "Simplicillium subtropicum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18183",
+      "domain": "F",
+      "growth": 1,
+      "id": 37003,
+      "species": "Simplicillium subtropicum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18184",
+      "domain": "F",
+      "growth": 1,
+      "id": 37004,
+      "species": "Simplicillium sympodiophorum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18224",
+      "domain": "F",
+      "growth": 1,
+      "id": 37022,
+      "species": "Koorchaloma madreeya"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18225",
+      "domain": "F",
+      "growth": 1,
+      "id": 37023,
+      "species": "Pseudocercospora cladrastidis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18226",
+      "domain": "F",
+      "growth": 1,
+      "id": 37024,
+      "species": "Pseudocercospora cladrastidis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18227",
+      "domain": "F",
+      "growth": 1,
+      "id": 37025,
+      "species": "Pseudocercospora cladrastidis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18231",
+      "domain": "F",
+      "growth": 1,
+      "id": 37028,
+      "species": "Muscodor oryzae"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18233",
+      "domain": "F",
+      "growth": 1,
+      "id": 37029,
+      "species": "Muscodor equiseti"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18234",
+      "domain": "F",
+      "growth": 1,
+      "id": 37030,
+      "species": "Nodulisporium"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18339",
+      "domain": "F",
+      "growth": 1,
+      "id": 37070,
+      "species": "Exophiala spinifera"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18341",
+      "domain": "F",
+      "growth": 1,
+      "id": 37071,
+      "species": "Scolecobasidium humicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18342",
+      "domain": "F",
+      "growth": 1,
+      "id": 37072,
+      "species": "Scolecobasidium humicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18343",
+      "domain": "F",
+      "growth": 1,
+      "id": 37073,
+      "species": "Scolecobasidium humicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18344",
+      "domain": "F",
+      "growth": 1,
+      "id": 37074,
+      "species": "Scolecobasidium humicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18345",
+      "domain": "F",
+      "growth": 1,
+      "id": 37075,
+      "species": "Scolecobasidium humicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18346",
+      "domain": "F",
+      "growth": 1,
+      "id": 37076,
+      "species": "Scolecobasidium humicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18347",
+      "domain": "F",
+      "growth": 1,
+      "id": 37077,
+      "species": "Scolecobasidium humicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18348",
+      "domain": "F",
+      "growth": 1,
+      "id": 37078,
+      "species": "Scolecobasidium humicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18349",
+      "domain": "F",
+      "growth": 1,
+      "id": 37079,
+      "species": "Scolecobasidium humicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18350",
+      "domain": "F",
+      "growth": 1,
+      "id": 37080,
+      "species": "Scolecobasidium humicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18351",
+      "domain": "F",
+      "growth": 1,
+      "id": 37081,
+      "species": "Scolecobasidium humicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18352",
+      "domain": "F",
+      "growth": 1,
+      "id": 37082,
+      "species": "Scolecobasidium"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18353",
+      "domain": "F",
+      "growth": 1,
+      "id": 37083,
+      "species": "Scolecobasidium"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18354",
+      "domain": "F",
+      "growth": 1,
+      "id": 37084,
+      "species": "Scolecobasidium humicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18355",
+      "domain": "F",
+      "growth": 1,
+      "id": 37085,
+      "species": "Scolecobasidium humicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18525",
+      "domain": "F",
+      "growth": 1,
+      "id": 37148,
+      "species": "Lecanicillium primulinum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18526",
+      "domain": "F",
+      "growth": 1,
+      "id": 37149,
+      "species": "Lecanicillium primulinum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 18527",
+      "domain": "F",
+      "growth": 1,
+      "id": 37150,
+      "species": "Lecanicillium primulinum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 19978",
+      "domain": "F",
+      "growth": 1,
+      "id": 37723,
+      "species": "Hypomyces stephanomatis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 19979",
+      "domain": "F",
+      "growth": 1,
+      "id": 37724,
+      "species": "Hypomyces stephanomatis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 19980",
+      "domain": "F",
+      "growth": 1,
+      "id": 37725,
+      "species": "Hypomyces cervinigenus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 19981",
+      "domain": "F",
+      "growth": 1,
+      "id": 37726,
+      "species": "Hypomyces cervinigenus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 19982",
+      "domain": "F",
+      "growth": 1,
+      "id": 37727,
+      "species": "Hypomyces cervinigenus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22443",
+      "domain": "F",
+      "growth": 1,
+      "id": 38616,
+      "species": "Fusarium"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22447",
+      "domain": "F",
+      "growth": 1,
+      "id": 38619,
+      "species": "Fusarium moniliforme"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "DSM 1962",
+      "domain": "F",
+      "growth": 1,
+      "id": 1405,
+      "species": "Chaetomium globosum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22675",
+      "domain": "F",
+      "growth": 1,
+      "id": 38757,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22684",
+      "domain": "F",
+      "growth": 1,
+      "id": 38760,
+      "species": "Hypoxylon hypomiltum hypomiltum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22685",
+      "domain": "F",
+      "growth": 1,
+      "id": 38761,
+      "species": "Hypoxylon hypomiltum microsporum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22687",
+      "domain": "F",
+      "growth": 1,
+      "id": 38762,
+      "species": "Hypoxylon truncatum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22688",
+      "domain": "F",
+      "growth": 1,
+      "id": 38763,
+      "species": "Hypoxylon truncatum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22689",
+      "domain": "F",
+      "growth": 1,
+      "id": 38764,
+      "species": "Hypoxylon truncatum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22690",
+      "domain": "F",
+      "growth": 1,
+      "id": 38765,
+      "species": "Hypoxylon howeanum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22691",
+      "domain": "F",
+      "growth": 1,
+      "id": 38766,
+      "species": "Hypoxylon howeanum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22692",
+      "domain": "F",
+      "growth": 1,
+      "id": 38767,
+      "species": "Hypoxylon howeanum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22693",
+      "domain": "F",
+      "growth": 1,
+      "id": 38768,
+      "species": "Hypoxylon howeanum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22695",
+      "domain": "F",
+      "growth": 1,
+      "id": 38769,
+      "species": "Hypoxylon fuscum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22696",
+      "domain": "F",
+      "growth": 1,
+      "id": 38770,
+      "species": "Hypoxylon fuscum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22723",
+      "domain": "F",
+      "growth": 1,
+      "id": 38790,
+      "species": "Rasamsonia byssochlamydoides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22733",
+      "domain": "F",
+      "growth": 1,
+      "id": 38794,
+      "species": "Chaetomium funicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22840",
+      "domain": "F",
+      "growth": 1,
+      "id": 38891,
+      "species": "Penicillium camemberti"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22988",
+      "domain": "F",
+      "growth": 1,
+      "id": 38941,
+      "species": "Hypocrea jecorina"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 22989",
+      "domain": "F",
+      "growth": 1,
+      "id": 38942,
+      "species": "Hypocrea schweinitzii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23023",
+      "domain": "F",
+      "growth": 1,
+      "id": 38963,
+      "species": "Hypocrea lutea"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23025",
+      "domain": "F",
+      "growth": 1,
+      "id": 38965,
+      "species": "Bionectria aureofulva"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23026",
+      "domain": "F",
+      "growth": 1,
+      "id": 38966,
+      "species": "Nectria cinnabarina"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23027",
+      "domain": "F",
+      "growth": 1,
+      "id": 38967,
+      "species": "Bionectria ochroleuca"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23028",
+      "domain": "F",
+      "growth": 1,
+      "id": 38968,
+      "species": "Bionectria ochroleuca"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23103",
+      "domain": "F",
+      "growth": 1,
+      "id": 39027,
+      "species": "Epichloe typhina"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23105",
+      "domain": "F",
+      "growth": 1,
+      "id": 39029,
+      "species": "Fusarium proliferatum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23106",
+      "domain": "F",
+      "growth": 1,
+      "id": 39030,
+      "species": "Fusarium subglutinans"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23107",
+      "domain": "F",
+      "growth": 1,
+      "id": 39031,
+      "species": "Fusarium verticillioides"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23120",
+      "domain": "F",
+      "growth": 1,
+      "id": 39039,
+      "species": "Sagenomella griseoviridis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23127",
+      "domain": "F",
+      "growth": 1,
+      "id": 39045,
+      "species": "Nectria inventa"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23144",
+      "domain": "F",
+      "growth": 1,
+      "id": 39058,
+      "species": "Aphanoascus durus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23145",
+      "domain": "F",
+      "growth": 1,
+      "id": 39059,
+      "species": "Aphanoascus hispanicus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23146",
+      "domain": "F",
+      "growth": 1,
+      "id": 39060,
+      "species": "Aphanoascus mephitalis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23147",
+      "domain": "F",
+      "growth": 1,
+      "id": 39061,
+      "species": "Aphanoascus multiporus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23148",
+      "domain": "F",
+      "growth": 1,
+      "id": 39062,
+      "species": "Aphanoascus saturnoideus"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23152",
+      "domain": "F",
+      "growth": 1,
+      "id": 39063,
+      "species": "Sagenomella oligospora"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23154",
+      "domain": "F",
+      "growth": 1,
+      "id": 39064,
+      "species": "Sagenomella oligospora"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23159",
+      "domain": "F",
+      "growth": 1,
+      "id": 39067,
+      "species": "Sagenomella alba"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23162",
+      "domain": "F",
+      "growth": 1,
+      "id": 39068,
+      "species": "Sagenomella diversispora"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23163",
+      "domain": "F",
+      "growth": 1,
+      "id": 39069,
+      "species": "Sagenomella griseoviridis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23164",
+      "domain": "F",
+      "growth": 1,
+      "id": 39070,
+      "species": "Sagenomella humicola"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23166",
+      "domain": "F",
+      "growth": 1,
+      "id": 39071,
+      "species": "Sagenomella striatispora"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23168",
+      "domain": "F",
+      "growth": 1,
+      "id": 39072,
+      "species": "Sagenoma viride"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23174",
+      "domain": "F",
+      "growth": 1,
+      "id": 39074,
+      "species": "Sagenomella griseoviridis"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23187",
+      "domain": "F",
+      "growth": 1,
+      "id": 39081,
+      "species": "Fusarium graminearum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 23188",
+      "domain": "F",
+      "growth": 1,
+      "id": 39082,
+      "species": "Fusarium venenatum"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 32139",
+      "domain": "F",
+      "growth": 1,
+      "id": 40558,
+      "species": "Mycosylva clarkii"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 32140",
+      "domain": "F",
+      "growth": 1,
+      "id": 40559,
+      "species": "Mycosylva reticulata"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 32141",
+      "domain": "F",
+      "growth": 1,
+      "id": 40560,
+      "species": "Mycosylva setosa"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 33284",
+      "domain": "F",
+      "growth": 1,
+      "id": 40988,
+      "species": "Metarhizium aciculare"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 33285",
+      "domain": "F",
+      "growth": 1,
+      "id": 40989,
+      "species": "Metarhizium aciculare"
+    },
+    {
+      "bacdive_id": null,
+      "ccno": "JCM 33286",
+      "domain": "F",
+      "growth": 1,
+      "id": 40990,
+      "species": "Metarhizium aciculare"
+    }
+  ],
+  "J492": [
+    {
+      "bacdive_id": 18094,
+      "ccno": "DSM 17441",
+      "domain": "B",
+      "growth": 1,
+      "id": 9110,
+      "species": "Thermosulfidibacter takaii"
+    }
+  ],
+  "J493": [
+    {
+      "bacdive_id": 510,
+      "ccno": "DSM 17378",
+      "domain": "B",
+      "growth": 1,
+      "id": 9081,
+      "species": "Hydrogenivirga okinawensis"
+    },
+    {
+      "bacdive_id": 130815,
+      "ccno": "DSM 23672",
+      "domain": "B",
+      "growth": 1,
+      "id": 13319,
+      "species": "Thiolapillus brandeum"
+    }
+  ],
+  "J494": [
+    {
+      "bacdive_id": 17043,
+      "ccno": "DSM 17373",
+      "domain": "B",
+      "growth": 1,
+      "id": 9077,
+      "species": "Marinitoga okinawensis"
+    }
+  ],
+  "J495": [
+    {
+      "bacdive_id": 4041,
+      "ccno": "DSM 17375",
+      "domain": "B",
+      "growth": 1,
+      "id": 9079,
+      "species": "Desulfothermus okinawensis"
+    }
+  ],
+  "J50": [
+    {
+      "bacdive_id": 16515,
+      "ccno": "DSM 43164",
+      "domain": "B",
+      "growth": 1,
+      "id": 18996,
+      "species": "Microbispora rosea subsp. rosea"
+    },
+    {
+      "bacdive_id": 16517,
+      "ccno": "DSM 43837",
+      "domain": "B",
+      "growth": 1,
+      "id": 19477,
+      "species": "Microbispora rosea subsp. rosea"
+    },
+    {
+      "bacdive_id": 16599,
+      "ccno": "DSM 43802",
+      "domain": "B",
+      "growth": 1,
+      "id": 19447,
+      "species": "Streptosporangium vulgare"
+    },
+    {
+      "bacdive_id": 15159,
+      "ccno": "DSM 43153",
+      "domain": "B",
+      "growth": 1,
+      "id": 18986,
+      "species": "Streptomyces flaveus"
+    },
+    {
+      "bacdive_id": 7798,
+      "ccno": "DSM 43031",
+      "domain": "B",
+      "growth": 1,
+      "id": 18876,
+      "species": "Actinoplanes auranticolor"
+    },
+    {
+      "bacdive_id": 163796,
+      "ccno": "JCM 3044",
+      "domain": "B",
+      "growth": 1,
+      "id": 30410,
+      "species": "Streptomyces anthocyanicus"
+    },
+    {
+      "bacdive_id": 16132,
+      "ccno": "DSM 43167",
+      "domain": "B",
+      "growth": 1,
+      "id": 18999,
+      "species": "Streptomyces yerevanensis"
+    },
+    {
+      "bacdive_id": 7803,
+      "ccno": "DSM 43149",
+      "domain": "B",
+      "growth": 1,
+      "id": 18983,
+      "species": "Actinoplanes digitatus "
+    },
+    {
+      "bacdive_id": 7812,
+      "ccno": "DSM 43151",
+      "domain": "B",
+      "growth": 1,
+      "id": 18985,
+      "species": "Actinoplanes regularis"
+    },
+    {
+      "bacdive_id": 15004,
+      "ccno": "DSM 43125",
+      "domain": "B",
+      "growth": 1,
+      "id": 18962,
+      "species": "Streptomyces armeniacus"
+    },
+    {
+      "bacdive_id": 15507,
+      "ccno": "DSM 43156",
+      "domain": "B",
+      "growth": 1,
+      "id": 18988,
+      "species": "Streptomyces purpurogeneiscleroticus"
+    },
+    {
+      "bacdive_id": 15057,
+      "ccno": "DSM 43159",
+      "domain": "B",
+      "growth": 1,
+      "id": 18991,
+      "species": "Streptomyces brasiliensis"
+    },
+    {
+      "bacdive_id": 16513,
+      "ccno": "DSM 43840",
+      "domain": "B",
+      "growth": 1,
+      "id": 19480,
+      "species": "Microbispora aerata"
+    },
+    {
+      "bacdive_id": 7964,
+      "ccno": "DSM 43171",
+      "domain": "B",
+      "growth": 1,
+      "id": 19003,
+      "species": "Micromonospora halophytica"
+    },
+    {
+      "bacdive_id": 13295,
+      "ccno": "DSM 43851",
+      "domain": "B",
+      "growth": 1,
+      "id": 19489,
+      "species": "Kutzneria kofuensis"
+    },
+    {
+      "bacdive_id": 7889,
+      "ccno": "DSM 43143",
+      "domain": "B",
+      "growth": 1,
+      "id": 18978,
+      "species": "Micromonospora coerulea"
+    },
+    {
+      "bacdive_id": 16604,
+      "ccno": "DSM 44095",
+      "domain": "B",
+      "growth": 1,
+      "id": 19648,
+      "species": "Streptosporangium rubrum"
+    },
+    {
+      "bacdive_id": 13297,
+      "ccno": "DSM 43885",
+      "domain": "B",
+      "growth": 1,
+      "id": 19520,
+      "species": "Lentzea flava"
+    },
+    {
+      "bacdive_id": 7874,
+      "ccno": "DSM 43823",
+      "domain": "B",
+      "growth": 1,
+      "id": 19465,
+      "species": "Dactylosporangium vinaceum"
+    },
+    {
+      "bacdive_id": 16405,
+      "ccno": "DSM 43887",
+      "domain": "B",
+      "growth": 1,
+      "id": 19522,
+      "species": "Streptomyces yanii"
+    },
+    {
+      "bacdive_id": 14855,
+      "ccno": "DSM 43859",
+      "domain": "B",
+      "growth": 1,
+      "id": 19497,
+      "species": "Kitasatospora griseola"
+    },
+    {
+      "bacdive_id": 16216,
+      "ccno": "DSM 41424",
+      "domain": "B",
+      "growth": 1,
+      "id": 18223,
+      "species": "Streptomyces chrysomallus subsp. fumigatus"
+    },
+    {
+      "bacdive_id": 16312,
+      "ccno": "DSM 41651",
+      "domain": "B",
+      "growth": 1,
+      "id": 18391,
+      "species": "Streptomyces cinerochromogenes"
+    },
+    {
+      "bacdive_id": 164707,
+      "ccno": "JCM 3400",
+      "domain": "B",
+      "growth": 1,
+      "id": 30466,
+      "species": "Streptomyces"
+    },
+    {
+      "bacdive_id": 164920,
+      "ccno": "JCM 4003",
+      "domain": "B",
+      "growth": 1,
+      "id": 30859,
+      "species": "Streptomyces"
+    },
+    {
+      "bacdive_id": 15111,
+      "ccno": "DSM 40220",
+      "domain": "B",
+      "growth": 1,
+      "id": 17292,
+      "species": "Streptomyces corchorusii"
+    },
+    {
+      "bacdive_id": 15938,
+      "ccno": "DSM 41483",
+      "domain": "B",
+      "growth": 1,
+      "id": 18276,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 164923,
+      "ccno": "JCM 4033",
+      "domain": "B",
+      "growth": 1,
+      "id": 30862,
+      "species": "Streptomyces"
+    },
+    {
+      "bacdive_id": 164926,
+      "ccno": "JCM 4037",
+      "domain": "B",
+      "growth": 1,
+      "id": 30865,
+      "species": "Streptomyces fradiae"
+    },
+    {
+      "bacdive_id": 15458,
+      "ccno": "DSM 40348",
+      "domain": "B",
+      "growth": 1,
+      "id": 17393,
+      "species": "Streptomyces parvus"
+    },
+    {
+      "bacdive_id": 16034,
+      "ccno": "DSM 40195",
+      "domain": "B",
+      "growth": 1,
+      "id": 17272,
+      "species": "Streptomyces tanashiensis"
+    },
+    {
+      "bacdive_id": 16171,
+      "ccno": "DSM 40250",
+      "domain": "B",
+      "growth": 1,
+      "id": 17317,
+      "species": "Streptomyces olivoverticillatus"
+    },
+    {
+      "bacdive_id": 15470,
+      "ccno": "DSM 40285",
+      "domain": "B",
+      "growth": 1,
+      "id": 17349,
+      "species": "Streptomyces griseorubiginosus"
+    },
+    {
+      "bacdive_id": 15623,
+      "ccno": "DSM 40020",
+      "domain": "B",
+      "growth": 1,
+      "id": 17128,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 164942,
+      "ccno": "JCM 4124",
+      "domain": "B",
+      "growth": 1,
+      "id": 30881,
+      "species": "Streptomyces omiyaensis"
+    },
+    {
+      "bacdive_id": 15625,
+      "ccno": "DSM 40030",
+      "domain": "B",
+      "growth": 1,
+      "id": 17137,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 15255,
+      "ccno": "DSM 40324",
+      "domain": "B",
+      "growth": 1,
+      "id": 17375,
+      "species": "Streptomyces diastaticus subsp. diastaticus"
+    },
+    {
+      "bacdive_id": 15635,
+      "ccno": "DSM 40096",
+      "domain": "B",
+      "growth": 1,
+      "id": 17196,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 164945,
+      "ccno": "JCM 4151",
+      "domain": "B",
+      "growth": 1,
+      "id": 30884,
+      "species": "Kitasatospora indigofera"
+    },
+    {
+      "bacdive_id": 15498,
+      "ccno": "DSM 40283",
+      "domain": "B",
+      "growth": 1,
+      "id": 17347,
+      "species": "Kitasatospora purpeofusca"
+    },
+    {
+      "bacdive_id": 164946,
+      "ccno": "JCM 4160",
+      "domain": "B",
+      "growth": 1,
+      "id": 30885,
+      "species": "Streptomyces viridans"
+    },
+    {
+      "bacdive_id": 164948,
+      "ccno": "JCM 4175",
+      "domain": "B",
+      "growth": 1,
+      "id": 30887,
+      "species": "Streptomyces"
+    },
+    {
+      "bacdive_id": 15306,
+      "ccno": "DSM 40095",
+      "domain": "B",
+      "growth": 1,
+      "id": 17195,
+      "species": "Streptomyces hirsutus"
+    },
+    {
+      "bacdive_id": 14889,
+      "ccno": "DSM 40001",
+      "domain": "B",
+      "growth": 1,
+      "id": 17114,
+      "species": "Streptomyces albidoflavus"
+    },
+    {
+      "bacdive_id": 15329,
+      "ccno": "DSM 40372",
+      "domain": "B",
+      "growth": 1,
+      "id": 17405,
+      "species": "Streptomyces intermedius"
+    },
+    {
+      "bacdive_id": 15276,
+      "ccno": "DSM 40281",
+      "domain": "B",
+      "growth": 1,
+      "id": 17345,
+      "species": "Streptomyces griseoruber"
+    },
+    {
+      "bacdive_id": 15068,
+      "ccno": "DSM 40017",
+      "domain": "B",
+      "growth": 1,
+      "id": 17126,
+      "species": "Streptomyces canus"
+    },
+    {
+      "bacdive_id": 15152,
+      "ccno": "DSM 40218",
+      "domain": "B",
+      "growth": 1,
+      "id": 17290,
+      "species": "Streptomyces finlayi"
+    },
+    {
+      "bacdive_id": 15062,
+      "ccno": "DSM 40084",
+      "domain": "B",
+      "growth": 1,
+      "id": 17185,
+      "species": "Streptomyces caelestis"
+    },
+    {
+      "bacdive_id": 15114,
+      "ccno": "DSM 40107",
+      "domain": "B",
+      "growth": 1,
+      "id": 17206,
+      "species": "Streptomyces curacoi"
+    },
+    {
+      "bacdive_id": 16170,
+      "ccno": "DSM 40237",
+      "domain": "B",
+      "growth": 1,
+      "id": 17309,
+      "species": "Streptomyces olivoverticillatus"
+    },
+    {
+      "bacdive_id": 164953,
+      "ccno": "JCM 4224",
+      "domain": "B",
+      "growth": 1,
+      "id": 30892,
+      "species": "Streptomyces setonii"
+    },
+    {
+      "bacdive_id": 15752,
+      "ccno": "DSM 40856",
+      "domain": "B",
+      "growth": 1,
+      "id": 17776,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 15397,
+      "ccno": "DSM 40188",
+      "domain": "B",
+      "growth": 1,
+      "id": 17266,
+      "species": "Streptomyces matensis"
+    },
+    {
+      "bacdive_id": 164969,
+      "ccno": "JCM 4278",
+      "domain": "B",
+      "growth": 1,
+      "id": 30909,
+      "species": "Streptomyces"
+    },
+    {
+      "bacdive_id": 16174,
+      "ccno": "DSM 40813",
+      "domain": "B",
+      "growth": 1,
+      "id": 17737,
+      "species": "Streptomyces glaucus"
+    },
+    {
+      "bacdive_id": 15072,
+      "ccno": "DSM 40300",
+      "domain": "B",
+      "growth": 1,
+      "id": 17355,
+      "species": "Streptomyces cavourensis subsp. cavourensis"
+    },
+    {
+      "bacdive_id": 15373,
+      "ccno": "DSM 40555",
+      "domain": "B",
+      "growth": 1,
+      "id": 17523,
+      "species": "Streptomyces libani subsp. libani"
+    },
+    {
+      "bacdive_id": 15375,
+      "ccno": "DSM 41229",
+      "domain": "B",
+      "growth": 1,
+      "id": 18051,
+      "species": "Streptomyces libani subsp. libani"
+    },
+    {
+      "bacdive_id": 15564,
+      "ccno": "DSM 40173",
+      "domain": "B",
+      "growth": 1,
+      "id": 17254,
+      "species": "Streptomyces roseolilacinus"
+    },
+    {
+      "bacdive_id": 14886,
+      "ccno": "DSM 40228",
+      "domain": "B",
+      "growth": 1,
+      "id": 17300,
+      "species": "Streptomyces afghaniensis"
+    },
+    {
+      "bacdive_id": 15628,
+      "ccno": "DSM 40197",
+      "domain": "B",
+      "growth": 1,
+      "id": 17274,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 15104,
+      "ccno": "DSM 40144",
+      "domain": "B",
+      "growth": 1,
+      "id": 17232,
+      "species": "Streptomyces coeruleofuscus"
+    },
+    {
+      "bacdive_id": 14994,
+      "ccno": "DSM 40203",
+      "domain": "B",
+      "growth": 1,
+      "id": 17280,
+      "species": "Streptomyces anulatus"
+    },
+    {
+      "bacdive_id": 15216,
+      "ccno": "DSM 40064",
+      "domain": "B",
+      "growth": 1,
+      "id": 17167,
+      "species": "Streptomyces gardneri"
+    },
+    {
+      "bacdive_id": 15275,
+      "ccno": "DSM 40160",
+      "domain": "B",
+      "growth": 1,
+      "id": 17244,
+      "species": "Streptomyces griseorubens"
+    },
+    {
+      "bacdive_id": 16218,
+      "ccno": "DSM 40275",
+      "domain": "B",
+      "growth": 1,
+      "id": 17339,
+      "species": "Streptomyces canus"
+    },
+    {
+      "bacdive_id": 15418,
+      "ccno": "DSM 40169",
+      "domain": "B",
+      "growth": 1,
+      "id": 17252,
+      "species": "Streptomyces mutabilis"
+    },
+    {
+      "bacdive_id": 15513,
+      "ccno": "DSM 40133",
+      "domain": "B",
+      "growth": 1,
+      "id": 17223,
+      "species": "Streptomyces resistomycificus"
+    },
+    {
+      "bacdive_id": 15567,
+      "ccno": "DSM 40175",
+      "domain": "B",
+      "growth": 1,
+      "id": 17256,
+      "species": "Streptomyces roseoviridis"
+    },
+    {
+      "bacdive_id": 15569,
+      "ccno": "DSM 40177",
+      "domain": "B",
+      "growth": 1,
+      "id": 17258,
+      "species": "Streptomyces rubiginosus"
+    },
+    {
+      "bacdive_id": 16102,
+      "ccno": "DSM 40183",
+      "domain": "B",
+      "growth": 1,
+      "id": 17262,
+      "species": "Streptomyces violascens"
+    },
+    {
+      "bacdive_id": 15670,
+      "ccno": "DSM 40422",
+      "domain": "B",
+      "growth": 1,
+      "id": 17429,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 15673,
+      "ccno": "DSM 40426",
+      "domain": "B",
+      "growth": 1,
+      "id": 17432,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 15145,
+      "ccno": "DSM 40322",
+      "domain": "B",
+      "growth": 1,
+      "id": 17373,
+      "species": "Streptomyces griseus subsp. griseus"
+    },
+    {
+      "bacdive_id": 15165,
+      "ccno": "DSM 40323",
+      "domain": "B",
+      "growth": 1,
+      "id": 17374,
+      "species": "Streptomyces flavovirens"
+    },
+    {
+      "bacdive_id": 15386,
+      "ccno": "DSM 40317",
+      "domain": "B",
+      "growth": 1,
+      "id": 17368,
+      "species": "Streptomyces lucensis"
+    },
+    {
+      "bacdive_id": 15657,
+      "ccno": "DSM 40338",
+      "domain": "B",
+      "growth": 1,
+      "id": 17387,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 15298,
+      "ccno": "DSM 40436",
+      "domain": "B",
+      "growth": 1,
+      "id": 17442,
+      "species": "Streptomyces hiroshimensis"
+    },
+    {
+      "bacdive_id": 15639,
+      "ccno": "DSM 40201",
+      "domain": "B",
+      "growth": 1,
+      "id": 17278,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 15412,
+      "ccno": "DSM 40553",
+      "domain": "B",
+      "growth": 1,
+      "id": 17521,
+      "species": "Streptomyces mirabilis"
+    },
+    {
+      "bacdive_id": 15139,
+      "ccno": "DSM 40022",
+      "domain": "B",
+      "growth": 1,
+      "id": 17130,
+      "species": "Streptomyces filamentosus"
+    },
+    {
+      "bacdive_id": 15476,
+      "ccno": "DSM 40019",
+      "domain": "B",
+      "growth": 1,
+      "id": 17127,
+      "species": "Streptomyces pluricolorescens"
+    },
+    {
+      "bacdive_id": 15571,
+      "ccno": "DSM 40077",
+      "domain": "B",
+      "growth": 1,
+      "id": 17178,
+      "species": "Streptomyces diastaticus subsp. diastaticus"
+    },
+    {
+      "bacdive_id": 16148,
+      "ccno": "DSM 40005",
+      "domain": "B",
+      "growth": 1,
+      "id": 17118,
+      "species": "Streptomyces cinnamoneus subsp. cinnamoneus"
+    },
+    {
+      "bacdive_id": 15328,
+      "ccno": "DSM 40124",
+      "domain": "B",
+      "growth": 1,
+      "id": 17216,
+      "species": "Kitasatospora indigofera"
+    },
+    {
+      "bacdive_id": 16135,
+      "ccno": "DSM 40038",
+      "domain": "B",
+      "growth": 1,
+      "id": 17145,
+      "species": "Streptomyces abikoensis"
+    },
+    {
+      "bacdive_id": 16449,
+      "ccno": "DSM 40292",
+      "domain": "B",
+      "growth": 1,
+      "id": 17350,
+      "species": "Streptomyces niveus"
+    },
+    {
+      "bacdive_id": 15346,
+      "ccno": "DSM 40558",
+      "domain": "B",
+      "growth": 1,
+      "id": 17525,
+      "species": "Streptomyces netropsis"
+    },
+    {
+      "bacdive_id": 15455,
+      "ccno": "DSM 40722",
+      "domain": "B",
+      "growth": 1,
+      "id": 17658,
+      "species": "Streptomyces parvulus"
+    },
+    {
+      "bacdive_id": 164991,
+      "ccno": "JCM 4686",
+      "domain": "B",
+      "growth": 1,
+      "id": 30936,
+      "species": "Streptomyces hazeliensis"
+    },
+    {
+      "bacdive_id": 164997,
+      "ccno": "JCM 4699",
+      "domain": "B",
+      "growth": 1,
+      "id": 30942,
+      "species": "Streptomyces"
+    },
+    {
+      "bacdive_id": 15395,
+      "ccno": "DSM 40896",
+      "domain": "B",
+      "growth": 1,
+      "id": 17810,
+      "species": "Streptomyces mashuensis"
+    },
+    {
+      "bacdive_id": 15702,
+      "ccno": "DSM 40557",
+      "domain": "B",
+      "growth": 1,
+      "id": 17524,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 15040,
+      "ccno": "DSM 40526",
+      "domain": "B",
+      "growth": 1,
+      "id": 17501,
+      "species": "Streptomyces avidinii"
+    },
+    {
+      "bacdive_id": 16147,
+      "ccno": "DSM 40603",
+      "domain": "B",
+      "growth": 1,
+      "id": 17563,
+      "species": "Streptomyces ardus"
+    },
+    {
+      "bacdive_id": 15661,
+      "ccno": "DSM 40384",
+      "domain": "B",
+      "growth": 1,
+      "id": 17409,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 15685,
+      "ccno": "DSM 40485",
+      "domain": "B",
+      "growth": 1,
+      "id": 17476,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 13444,
+      "ccno": "DSM 40517",
+      "domain": "B",
+      "growth": 1,
+      "id": 17498,
+      "species": "Saccharopolyspora erythraea"
+    },
+    {
+      "bacdive_id": 15295,
+      "ccno": "DSM 40086",
+      "domain": "B",
+      "growth": 1,
+      "id": 17187,
+      "species": "Streptomyces hiroshimensis"
+    },
+    {
+      "bacdive_id": 15206,
+      "ccno": "DSM 40593",
+      "domain": "B",
+      "growth": 1,
+      "id": 17554,
+      "species": "Streptomyces microflavus"
+    },
+    {
+      "bacdive_id": 16150,
+      "ccno": "DSM 40507",
+      "domain": "B",
+      "growth": 1,
+      "id": 17492,
+      "species": "Streptomyces cinnamoneus subsp. cinnamoneus"
+    },
+    {
+      "bacdive_id": 15291,
+      "ccno": "DSM 40431",
+      "domain": "B",
+      "growth": 1,
+      "id": 17437,
+      "species": "Streptomyces helvaticus"
+    },
+    {
+      "bacdive_id": 15691,
+      "ccno": "DSM 40511",
+      "domain": "B",
+      "growth": 1,
+      "id": 17495,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 15698,
+      "ccno": "DSM 40537",
+      "domain": "B",
+      "growth": 1,
+      "id": 17511,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 15259,
+      "ccno": "DSM 40577",
+      "domain": "B",
+      "growth": 1,
+      "id": 17542,
+      "species": "Streptomyces griseocarneus"
+    },
+    {
+      "bacdive_id": 15707,
+      "ccno": "DSM 40585",
+      "domain": "B",
+      "growth": 1,
+      "id": 17546,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 16075,
+      "ccno": "DSM 40515",
+      "domain": "B",
+      "growth": 1,
+      "id": 17497,
+      "species": "Streptomyces vinaceus"
+    },
+    {
+      "bacdive_id": 165000,
+      "ccno": "JCM 4865",
+      "domain": "B",
+      "growth": 1,
+      "id": 30946,
+      "species": "Streptomyces"
+    },
+    {
+      "bacdive_id": 165016,
+      "ccno": "JCM 4893",
+      "domain": "B",
+      "growth": 1,
+      "id": 30962,
+      "species": "Streptomyces aurantiacogriseus"
+    },
+    {
+      "bacdive_id": 165019,
+      "ccno": "JCM 4896",
+      "domain": "B",
+      "growth": 1,
+      "id": 30965,
+      "species": "Streptomyces flavomacrosporus"
+    },
+    {
+      "bacdive_id": 165025,
+      "ccno": "JCM 4903",
+      "domain": "B",
+      "growth": 1,
+      "id": 30971,
+      "species": "Streptomyces microsporus"
+    },
+    {
+      "bacdive_id": 165043,
+      "ccno": "JCM 4927",
+      "domain": "B",
+      "growth": 1,
+      "id": 30989,
+      "species": "Streptomyces humidus antitumoris"
+    },
+    {
+      "bacdive_id": 15614,
+      "ccno": "DSM 924",
+      "domain": "B",
+      "growth": 1,
+      "id": 645,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 165045,
+      "ccno": "JCM 4930",
+      "domain": "B",
+      "growth": 1,
+      "id": 30991,
+      "species": "Streptomyces croceus"
+    },
+    {
+      "bacdive_id": 165054,
+      "ccno": "JCM 4943",
+      "domain": "B",
+      "growth": 1,
+      "id": 31001,
+      "species": "Streptomyces achromogenes streptozoticus"
+    },
+    {
+      "bacdive_id": 15117,
+      "ccno": "DSM 41423",
+      "domain": "B",
+      "growth": 1,
+      "id": 18222,
+      "species": "Streptomyces cyaneofuscatus"
+    },
+    {
+      "bacdive_id": 165068,
+      "ccno": "JCM 4991",
+      "domain": "B",
+      "growth": 1,
+      "id": 31015,
+      "species": "Streptomyces"
+    },
+    {
+      "bacdive_id": 165070,
+      "ccno": "JCM 4993",
+      "domain": "B",
+      "growth": 1,
+      "id": 31017,
+      "species": "Streptomyces"
+    },
+    {
+      "bacdive_id": 165071,
+      "ccno": "JCM 4994",
+      "domain": "B",
+      "growth": 1,
+      "id": 31018,
+      "species": "Streptomyces"
+    },
+    {
+      "bacdive_id": 16248,
+      "ccno": "DSM 40931",
+      "domain": "B",
+      "growth": 1,
+      "id": 17838,
+      "species": "Streptomyces griseus subsp. griseus"
+    },
+    {
+      "bacdive_id": 165088,
+      "ccno": "JCM 5026",
+      "domain": "B",
+      "growth": 1,
+      "id": 31036,
+      "species": "Streptomyces piloviolofuscus"
+    },
+    {
+      "bacdive_id": 165089,
+      "ccno": "JCM 5027",
+      "domain": "B",
+      "growth": 1,
+      "id": 31037,
+      "species": "Streptomyces amagasakensis"
+    },
+    {
+      "bacdive_id": 165091,
+      "ccno": "JCM 5029",
+      "domain": "B",
+      "growth": 1,
+      "id": 31039,
+      "species": "Streptomyces gangtokensis"
+    },
+    {
+      "bacdive_id": 165099,
+      "ccno": "JCM 5037",
+      "domain": "B",
+      "growth": 1,
+      "id": 31047,
+      "species": "Streptomyces miharaensis"
+    },
+    {
+      "bacdive_id": 165100,
+      "ccno": "JCM 5038",
+      "domain": "B",
+      "growth": 1,
+      "id": 31048,
+      "species": "Streptomyces misawanensis"
+    },
+    {
+      "bacdive_id": 165103,
+      "ccno": "JCM 5041",
+      "domain": "B",
+      "growth": 1,
+      "id": 31051,
+      "species": "Streptomyces owasiensis"
+    },
+    {
+      "bacdive_id": 165107,
+      "ccno": "JCM 5045",
+      "domain": "B",
+      "growth": 1,
+      "id": 31055,
+      "species": "Streptomyces setonensis"
+    },
+    {
+      "bacdive_id": 165108,
+      "ccno": "JCM 5046",
+      "domain": "B",
+      "growth": 1,
+      "id": 31056,
+      "species": "Streptomyces triostinicus"
+    },
+    {
+      "bacdive_id": 165109,
+      "ccno": "JCM 5047",
+      "domain": "B",
+      "growth": 1,
+      "id": 31057,
+      "species": "Streptomyces varius"
+    },
+    {
+      "bacdive_id": 165113,
+      "ccno": "JCM 5055",
+      "domain": "B",
+      "growth": 1,
+      "id": 31062,
+      "species": "Streptomyces fulvoviolaceus"
+    },
+    {
+      "bacdive_id": 16328,
+      "ccno": "DSM 41685",
+      "domain": "B",
+      "growth": 1,
+      "id": 18423,
+      "species": "Streptomyces rameus"
+    },
+    {
+      "bacdive_id": 16324,
+      "ccno": "DSM 41679",
+      "domain": "B",
+      "growth": 1,
+      "id": 18417,
+      "species": "Streptomyces sulfonofaciens"
+    },
+    {
+      "bacdive_id": 16214,
+      "ccno": "DSM 46492",
+      "domain": "B",
+      "growth": 1,
+      "id": 21480,
+      "species": "Streptomyces avermitilis"
+    },
+    {
+      "bacdive_id": 165116,
+      "ccno": "JCM 5072",
+      "domain": "B",
+      "growth": 1,
+      "id": 31065,
+      "species": "Streptomyces paulus"
+    },
+    {
+      "bacdive_id": 165117,
+      "ccno": "JCM 5073",
+      "domain": "B",
+      "growth": 1,
+      "id": 31066,
+      "species": "Streptomyces woolensis"
+    },
+    {
+      "bacdive_id": 16155,
+      "ccno": "DSM 41501",
+      "domain": "B",
+      "growth": 1,
+      "id": 18289,
+      "species": "Streptomyces cinnamoneus subsp. cinnamoneus"
+    },
+    {
+      "bacdive_id": 24850,
+      "ccno": "DSM 43888",
+      "domain": "B",
+      "growth": 1,
+      "id": 19523,
+      "species": "Parvopolyspora pallida"
+    },
+    {
+      "bacdive_id": 16310,
+      "ccno": "DSM 41644",
+      "domain": "B",
+      "growth": 1,
+      "id": 18384,
+      "species": "Streptomyces aculeolatus"
+    },
+    {
+      "bacdive_id": 165356,
+      "ccno": "JCM 6196",
+      "domain": "B",
+      "growth": 1,
+      "id": 31700,
+      "species": "Streptomyces lieskei"
+    },
+    {
+      "bacdive_id": 16201,
+      "ccno": "DSM 41467",
+      "domain": "B",
+      "growth": 1,
+      "id": 18261,
+      "species": "Streptomyces atrovirens"
+    },
+    {
+      "bacdive_id": 16205,
+      "ccno": "DSM 41472",
+      "domain": "B",
+      "growth": 1,
+      "id": 18266,
+      "species": "Streptomyces coeruleoprunus"
+    },
+    {
+      "bacdive_id": 16175,
+      "ccno": "DSM 41456",
+      "domain": "B",
+      "growth": 1,
+      "id": 18250,
+      "species": "Streptomyces glaucus"
+    },
+    {
+      "bacdive_id": 16208,
+      "ccno": "DSM 41477",
+      "domain": "B",
+      "growth": 1,
+      "id": 18271,
+      "species": "Streptomyces rubrogriseus"
+    },
+    {
+      "bacdive_id": 16007,
+      "ccno": "DSM 46484",
+      "domain": "B",
+      "growth": 1,
+      "id": 21474,
+      "species": "Streptomyces sp."
+    },
+    {
+      "bacdive_id": 7980,
+      "ccno": "DSM 44100",
+      "domain": "B",
+      "growth": 1,
+      "id": 19653,
+      "species": "Micromonospora matsumotoensis"
+    },
+    {
+      "bacdive_id": 13288,
+      "ccno": "DSM 44230",
+      "domain": "B",
+      "growth": 1,
+      "id": 19770,
+      "species": "Crossiella cryophila"
+    },
+    {
+      "bacdive_id": 16552,
+      "ccno": "DSM 44170",
+      "domain": "B",
+      "growth": 1,
+      "id": 19717,
+      "species": "Nonomuraea roseoviolacea subsp. carminata"
+    },
+    {
+      "bacdive_id": 15102,
+      "ccno": "DSM 41826",
+      "domain": "B",
+      "growth": 1,
+      "id": 18556,
+      "species": "Streptomyces clavuligerus"
+    },
+    {
+      "bacdive_id": 130713,
+      "ccno": "DSM 42136",
+      "domain": "B",
+      "growth": 1,
+      "id": 18812,
+      "species": "Streptomyces lactacystinicus"
+    },
+    {
+      "bacdive_id": 16976,
+      "ccno": "DSM 44137",
+      "domain": "B",
+      "growth": 1,
+      "id": 19689,
+      "species": "Actinomadura nitritigenes"
+    },
+    {
+      "bacdive_id": 160881,
+      "ccno": "JCM 10159",
+      "domain": "B",
+      "growth": 1,
+      "id": 33656,
+      "species": "Streptomyces albulus"
+    },
+    {
+      "bacdive_id": 160935,
+      "ccno": "JCM 10372",
+      "domain": "B",
+      "growth": 1,
+      "id": 33795,
+      "species": "Kitasatospora"
+    },
+    {
+      "bacdive_id": 16349,
+      "ccno": "DSM 41697",
+      "domain": "B",
+      "growth": 1,
+      "id": 18434,
+      "species": "Streptomyces malaysiensis"
+    },
+    {
+      "bacdive_id": 16613,
+      "ccno": "DSM 44662",
+      "domain": "B",
+      "growth": 1,
+      "id": 20156,
+      "species": "Streptosporangium subroseum"
+    },
+    {
+      "bacdive_id": 161224,
+      "ccno": "JCM 12415",
+      "domain": "B",
+      "growth": 1,
+      "id": 34670,
+      "species": "Kitasatospora phosalacinea"
+    },
+    {
+      "bacdive_id": 15038,
+      "ccno": "DSM 41785",
+      "domain": "B",
+      "growth": 1,
+      "id": 18516,
+      "species": "Streptomyces aureus"
+    },
+    {
+      "bacdive_id": 16364,
+      "ccno": "DSM 41796",
+      "domain": "B",
+      "growth": 1,
+      "id": 18526,
+      "species": "Streptomyces mexicanus"
+    },
+    {
+      "bacdive_id": 16384,
+      "ccno": "DSM 41797",
+      "domain": "B",
+      "growth": 1,
+      "id": 18527,
+      "species": "Streptomyces speibonae"
+    },
+    {
+      "bacdive_id": 13242,
+      "ccno": "DSM 44409",
+      "domain": "B",
+      "growth": 1,
+      "id": 19928,
+      "species": "Amycolatopsis keratiniphila subsp. keratiniphila"
+    },
+    {
+      "bacdive_id": 14863,
+      "ccno": "DSM 44788",
+      "domain": "B",
+      "growth": 1,
+      "id": 20274,
+      "species": "Kitasatospora paranensis"
+    },
+    {
+      "bacdive_id": 16985,
+      "ccno": "DSM 44485",
+      "domain": "B",
+      "growth": 1,
+      "id": 19992,
+      "species": "Actinomadura mexicana"
+    },
+    {
+      "bacdive_id": 16986,
+      "ccno": "DSM 44197",
+      "domain": "B",
+      "growth": 1,
+      "id": 19741,
+      "species": "Actinomadura namibiensis"
+    },
+    {
+      "bacdive_id": 16914,
+      "ccno": "DSM 45040",
+      "domain": "B",
+      "growth": 1,
+      "id": 20497,
+      "species": "Actinocorallia cavernae"
+    },
+    {
+      "bacdive_id": 161405,
+      "ccno": "JCM 13849",
+      "domain": "B",
+      "growth": 1,
+      "id": 35318,
+      "species": "Streptomyces"
+    },
+    {
+      "bacdive_id": 16561,
+      "ccno": "DSM 44753",
+      "domain": "B",
+      "growth": 1,
+      "id": 20240,
+      "species": "Nonomuraea kuesteri"
+    },
+    {
+      "bacdive_id": 16402,
+      "ccno": "DSM 41856",
+      "domain": "B",
+      "growth": 1,
+      "id": 18584,
+      "species": "Streptomyces pharetrae"
+    },
+    {
+      "bacdive_id": 16337,
+      "ccno": "DSM 41703",
+      "domain": "B",
+      "growth": 1,
+      "id": 18440,
+      "species": "Streptomyces tricolor"
+    },
+    {
+      "bacdive_id": 161494,
+      "ccno": "JCM 14559",
+      "domain": "B",
+      "growth": 1,
+      "id": 35573,
+      "species": "Kitasatospora saccharophila"
+    },
+    {
+      "bacdive_id": 161495,
+      "ccno": "JCM 14560",
+      "domain": "B",
+      "growth": 1,
+      "id": 35574,
+      "species": "Kitasatospora kazusensis"
+    },
+    {
+      "bacdive_id": 16453,
+      "ccno": "DSM 42036",
+      "domain": "B",
+      "growth": 1,
+      "id": 18727,
+      "species": "Streptomyces alni"
+    },
+    {
+      "bacdive_id": 16454,
+      "ccno": "DSM 41903",
+      "domain": "B",
+      "growth": 1,
+      "id": 18627,
+      "species": "Streptomyces xiamenensis"
+    },
+    {
+      "bacdive_id": 161729,
+      "ccno": "JCM 16141",
+      "domain": "B",
+      "growth": 1,
+      "id": 36121,
+      "species": "Streptomyces"
+    },
+    {
+      "bacdive_id": 133585,
+      "ccno": "JCM 16142",
+      "domain": "B",
+      "growth": 1,
+      "id": 36122,
+      "species": "Thermosporothrix hazakensis"
+    },
+    {
+      "bacdive_id": 132886,
+      "ccno": "DSM 104449",
+      "domain": "B",
+      "growth": 1,
+      "id": 27382,
+      "species": "Streptomyces nanshensis"
+    },
+    {
+      "bacdive_id": 11163,
+      "ccno": "DSM 22891",
+      "domain": "B",
+      "growth": 1,
+      "id": 12807,
+      "species": "Thermasporomyces composti"
+    },
+    {
+      "bacdive_id": 23316,
+      "ccno": "DSM 42092",
+      "domain": "B",
+      "growth": 1,
+      "id": 18774,
+      "species": "Streptomyces chiangmaiensis"
+    },
+    {
+      "bacdive_id": 23317,
+      "ccno": "DSM 42093",
+      "domain": "B",
+      "growth": 1,
+      "id": 18775,
+      "species": "Streptomyces lannensis"
+    },
+    {
+      "bacdive_id": 16447,
+      "ccno": "DSM 41924",
+      "domain": "B",
+      "growth": 1,
+      "id": 18639,
+      "species": "Streptomyces specialis"
+    },
+    {
+      "bacdive_id": 133428,
+      "ccno": "JCM 16702",
+      "domain": "B",
+      "growth": 1,
+      "id": 36367,
+      "species": "Actinomadura miaoliensis"
+    },
+    {
+      "bacdive_id": 16460,
+      "ccno": "DSM 41943",
+      "domain": "B",
+      "growth": 1,
+      "id": 18653,
+      "species": "Streptomyces avicenniae"
+    },
+    {
+      "bacdive_id": 16509,
+      "ccno": "DSM 45214",
+      "domain": "B",
+      "growth": 1,
+      "id": 20654,
+      "species": "Herbidospora cretacea"
+    },
+    {
+      "bacdive_id": 16456,
+      "ccno": "DSM 42046",
+      "domain": "B",
+      "growth": 1,
+      "id": 18735,
+      "species": "Streptomyces plumbiresistens"
+    },
+    {
+      "bacdive_id": 160670,
+      "ccno": "DSM 112709",
+      "domain": "B",
+      "growth": 1,
+      "id": 29266,
+      "species": "Streptomyces mayteni"
+    },
+    {
+      "bacdive_id": 16463,
+      "ccno": "DSM 41918",
+      "domain": "B",
+      "growth": 1,
+      "id": 18633,
+      "species": "Streptomyces marokkonensis"
+    },
+    {
+      "bacdive_id": 16471,
+      "ccno": "DSM 41954",
+      "domain": "B",
+      "growth": 1,
+      "id": 18664,
+      "species": "Streptomyces iranensis"
+    },
+    {
+      "bacdive_id": 16510,
+      "ccno": "DSM 45652",
+      "domain": "B",
+      "growth": 1,
+      "id": 21001,
+      "species": "Herbidospora sakaeratensis"
+    },
+    {
+      "bacdive_id": 133559,
+      "ccno": "JCM 18061",
+      "domain": "B",
+      "growth": 1,
+      "id": 36963,
+      "species": "Herbidospora daliensis"
+    },
+    {
+      "bacdive_id": 133560,
+      "ccno": "JCM 18062",
+      "domain": "B",
+      "growth": 1,
+      "id": 36964,
+      "species": "Herbidospora yilanensis"
+    },
+    {
+      "bacdive_id": 16480,
+      "ccno": "DSM 41920",
+      "domain": "B",
+      "growth": 1,
+      "id": 18635,
+      "species": "Streptomyces youssoufiensis"
+    },
+    {
+      "bacdive_id": 162325,
+      "ccno": "JCM 18897",
+      "domain": "B",
+      "growth": 1,
+      "id": 37279,
+      "species": "Streptomyces"
+    },
+    {
+      "bacdive_id": 131435,
+      "ccno": "DSM 42121",
+      "domain": "B",
+      "growth": 1,
+      "id": 18799,
+      "species": "Streptomyces lushanensis"
+    },
+    {
+      "bacdive_id": 23318,
+      "ccno": "DSM 42079",
+      "domain": "B",
+      "growth": 1,
+      "id": 18762,
+      "species": "Streptomyces chlorus"
+    },
+    {
+      "bacdive_id": 16024,
+      "ccno": "DSM 42073",
+      "domain": "B",
+      "growth": 1,
+      "id": 18758,
+      "species": "Streptomyces heilongjiangensis"
+    },
+    {
+      "bacdive_id": 23309,
+      "ccno": "DSM 42062",
+      "domain": "B",
+      "growth": 1,
+      "id": 18750,
+      "species": "Streptomyces incanus"
+    },
+    {
+      "bacdive_id": 16498,
+      "ccno": "DSM 42061",
+      "domain": "B",
+      "growth": 1,
+      "id": 18749,
+      "species": "Streptomyces pratens"
+    },
+    {
+      "bacdive_id": 162597,
+      "ccno": "JCM 19738",
+      "domain": "B",
+      "growth": 1,
+      "id": 37641,
+      "species": "Streptomyces"
+    },
+    {
+      "bacdive_id": 16494,
+      "ccno": "DSM 41926",
+      "domain": "B",
+      "growth": 1,
+      "id": 18641,
+      "species": "Streptomyces nanhaiensis"
+    },
+    {
+      "bacdive_id": 140909,
+      "ccno": "DSM 111118",
+      "domain": "B",
+      "growth": 1,
+      "id": 29063,
+      "species": "Streptomyces daqingensis"
+    },
+    {
+      "bacdive_id": 133232,
+      "ccno": "DSM 111125",
+      "domain": "B",
+      "growth": 1,
+      "id": 29070,
+      "species": "Streptomyces lacrimifluminis"
+    },
+    {
+      "bacdive_id": 164410,
+      "ccno": "JCM 32897",
+      "domain": "B",
+      "growth": 1,
+      "id": 40874,
+      "species": "Streptomyces cadmiisoli"
+    },
+    {
+      "bacdive_id": 164472,
+      "ccno": "JCM 33171",
+      "domain": "B",
+      "growth": 1,
+      "id": 40959,
+      "species": "Streptomyces corynorhini"
+    },
+    {
+      "bacdive_id": 164566,
+      "ccno": "JCM 33461",
+      "domain": "B",
+      "growth": 1,
+      "id": 41057,
+      "species": "Nonomuraea typhae"
+    }
+  ],
+  "J52": [
+    {
+      "bacdive_id": 16589,
+      "ccno": "DSM 43021",
+      "domain": "B",
+      "growth": 1,
+      "id": 18867,
+      "species": "Streptosporangium roseum"
+    },
+    {
+      "bacdive_id": 16519,
+      "ccno": "DSM 43839",
+      "domain": "B",
+      "growth": 1,
+      "id": 19479,
+      "species": "Microbispora rosea subsp. rosea"
+    },
+    {
+      "bacdive_id": 16517,
+      "ccno": "DSM 43837",
+      "domain": "B",
+      "growth": 1,
+      "id": 19477,
+      "species": "Microbispora rosea subsp. rosea"
+    },
+    {
+      "bacdive_id": 16630,
+      "ccno": "DSM 43186",
+      "domain": "B",
+      "growth": 1,
+      "id": 19017,
+      "species": "Thermopolyspora flexuosa"
+    },
+    {
+      "bacdive_id": 163869,
+      "ccno": "JCM 3075",
+      "domain": "B",
+      "growth": 1,
+      "id": 30415,
+      "species": "Streptosporangium rubrum"
+    },
+    {
+      "bacdive_id": 16512,
+      "ccno": "DSM 43176",
+      "domain": "B",
+      "growth": 1,
+      "id": 19008,
+      "species": "Microbispora aerata"
+    },
+    {
+      "bacdive_id": 13494,
+      "ccno": "DSM 43038",
+      "domain": "B",
+      "growth": 1,
+      "id": 18882,
+      "species": "Thermobispora bispora"
+    },
+    {
+      "bacdive_id": 16574,
+      "ccno": "DSM 43041",
+      "domain": "B",
+      "growth": 1,
+      "id": 18885,
+      "species": "Planobispora longispora"
+    },
+    {
+      "bacdive_id": 16576,
+      "ccno": "DSM 43177",
+      "domain": "B",
+      "growth": 1,
+      "id": 19009,
+      "species": "Planomonospora parontospora subsp. parontospora"
+    },
+    {
+      "bacdive_id": 16921,
+      "ccno": "DSM 43183",
+      "domain": "B",
+      "growth": 1,
+      "id": 19014,
+      "species": "Thermomonospora curvata"
+    },
+    {
+      "bacdive_id": 16587,
+      "ccno": "DSM 43180",
+      "domain": "B",
+      "growth": 1,
+      "id": 19012,
+      "species": "Streptosporangium longisporum"
+    },
+    {
+      "bacdive_id": 16513,
+      "ccno": "DSM 43840",
+      "domain": "B",
+      "growth": 1,
+      "id": 19480,
+      "species": "Microbispora aerata"
+    },
+    {
+      "bacdive_id": 16588,
+      "ccno": "DSM 43181",
+      "domain": "B",
+      "growth": 1,
+      "id": 19013,
+      "species": "Streptosporangium pseudovulgare"
+    },
+    {
+      "bacdive_id": 16622,
+      "ccno": "DSM 46131",
+      "domain": "B",
+      "growth": 1,
+      "id": 21337,
+      "species": "Sphaerisporangium viridialbum"
+    },
+    {
+      "bacdive_id": 16539,
+      "ccno": "DSM 43357",
+      "domain": "B",
+      "growth": 1,
+      "id": 19149,
+      "species": "Nonomuraea pusilla"
+    },
+    {
+      "bacdive_id": 16557,
+      "ccno": "DSM 43144",
+      "domain": "B",
+      "growth": 1,
+      "id": 18979,
+      "species": "Nonomuraea roseoviolacea subsp. roseoviolacea"
+    },
+    {
+      "bacdive_id": 16526,
+      "ccno": "DSM 43048",
+      "domain": "B",
+      "growth": 1,
+      "id": 18892,
+      "species": "Sphaerimonospora mesophila"
+    },
+    {
+      "bacdive_id": 16504,
+      "ccno": "DSM 43316",
+      "domain": "B",
+      "growth": 1,
+      "id": 19125,
+      "species": "Acrocarpospora corrugata"
+    },
+    {
+      "bacdive_id": 16533,
+      "ccno": "DSM 43841",
+      "domain": "B",
+      "growth": 1,
+      "id": 19481,
+      "species": "Microtetraspora fusca"
+    },
+    {
+      "bacdive_id": 11090,
+      "ccno": "DSM 43109",
+      "domain": "B",
+      "growth": 1,
+      "id": 18946,
+      "species": "Nocardioides albus"
+    },
+    {
+      "bacdive_id": 7799,
+      "ccno": "DSM 43805",
+      "domain": "B",
+      "growth": 1,
+      "id": 19450,
+      "species": "Actinoplanes brasiliensis"
+    },
+    {
+      "bacdive_id": 7827,
+      "ccno": "DSM 46145",
+      "domain": "B",
+      "growth": 1,
+      "id": 21349,
+      "species": "Actinoplanes sp."
+    },
+    {
+      "bacdive_id": 7818,
+      "ccno": "DSM 43866",
+      "domain": "B",
+      "growth": 1,
+      "id": 19503,
+      "species": "Actinoplanes teichomyceticus"
+    },
+    {
+      "bacdive_id": 164307,
+      "ccno": "JCM 3262",
+      "domain": "B",
+      "growth": 1,
+      "id": 30436,
+      "species": "Actinoplanes pyriformis"
+    },
+    {
+      "bacdive_id": 13492,
+      "ccno": "DSM 44523",
+      "domain": "B",
+      "growth": 1,
+      "id": 20027,
+      "species": "Streptoalloteichus hindustanus"
+    },
+    {
+      "bacdive_id": 7804,
+      "ccno": "DSM 43807",
+      "domain": "B",
+      "growth": 1,
+      "id": 19452,
+      "species": "Actinoplanes ferrugineus"
+    },
+    {
+      "bacdive_id": 16946,
+      "ccno": "DSM 43462",
+      "domain": "B",
+      "growth": 1,
+      "id": 19222,
+      "species": "Actinomadura viridis"
+    },
+    {
+      "bacdive_id": 16531,
+      "ccno": "DSM 43311",
+      "domain": "B",
+      "growth": 1,
+      "id": 19120,
+      "species": "Microtetraspora glauca"
+    },
+    {
+      "bacdive_id": 11103,
+      "ccno": "DSM 46114",
+      "domain": "B",
+      "growth": 1,
+      "id": 21327,
+      "species": "Nocardioides luteus"
+    },
+    {
+      "bacdive_id": 164557,
+      "ccno": "JCM 3344",
+      "domain": "B",
+      "growth": 1,
+      "id": 30452,
+      "species": "Kitasatospora phosalacinea"
+    },
+    {
+      "bacdive_id": 164620,
+      "ccno": "JCM 3365",
+      "domain": "B",
+      "growth": 1,
+      "id": 30460,
+      "species": "Microbispora rosea rosea"
+    },
+    {
+      "bacdive_id": 164652,
+      "ccno": "JCM 3379",
+      "domain": "B",
+      "growth": 1,
+      "id": 30463,
+      "species": "Actinophytocola"
+    },
+    {
+      "bacdive_id": 15399,
+      "ccno": "DSM 40318",
+      "domain": "B",
+      "growth": 1,
+      "id": 17369,
+      "species": "Streptomyces melanosporofaciens"
+    },
+    {
+      "bacdive_id": 16171,
+      "ccno": "DSM 40250",
+      "domain": "B",
+      "growth": 1,
+      "id": 17317,
+      "species": "Streptomyces olivoverticillatus"
+    },
+    {
+      "bacdive_id": 15087,
+      "ccno": "DSM 40002",
+      "domain": "B",
+      "growth": 1,
+      "id": 17115,
+      "species": "Streptomyces chattanoogensis"
+    },
+    {
+      "bacdive_id": 11095,
+      "ccno": "DSM 46104",
+      "domain": "B",
+      "growth": 1,
+      "id": 21323,
+      "species": "Nocardioides albus"
+    },
+    {
+      "bacdive_id": 100035,
+      "ccno": "JCM 5853",
+      "domain": "B",
+      "growth": 1,
+      "id": 31505,
+      "species": "Nocardioides albus"
+    },
+    {
+      "bacdive_id": 165347,
+      "ccno": "JCM 6112",
+      "domain": "B",
+      "growth": 1,
+      "id": 31656,
+      "species": "Actinoplanes awajinensis mycoplanecinus"
+    },
+    {
+      "bacdive_id": 16987,
+      "ccno": "DSM 44770",
+      "domain": "B",
+      "growth": 1,
+      "id": 20257,
+      "species": "Actinomadura glauciflava"
+    },
+    {
+      "bacdive_id": 16601,
+      "ccno": "DSM 43847",
+      "domain": "B",
+      "growth": 1,
+      "id": 19485,
+      "species": "Streptosporangium fragile"
+    },
+    {
+      "bacdive_id": 16551,
+      "ccno": "DSM 43937",
+      "domain": "B",
+      "growth": 1,
+      "id": 19563,
+      "species": "Nonomuraea recticatena"
+    },
+    {
+      "bacdive_id": 16550,
+      "ccno": "DSM 43926",
+      "domain": "B",
+      "growth": 1,
+      "id": 19554,
+      "species": "Nonomuraea turkmeniaca"
+    },
+    {
+      "bacdive_id": 7825,
+      "ccno": "DSM 46142",
+      "domain": "B",
+      "growth": 1,
+      "id": 21346,
+      "species": "Actinoplanes sp."
+    },
+    {
+      "bacdive_id": 7854,
+      "ccno": "DSM 44097",
+      "domain": "B",
+      "growth": 1,
+      "id": 19650,
+      "species": "Catellatospora citrea subsp. citrea"
+    },
+    {
+      "bacdive_id": 7833,
+      "ccno": "DSM 43938",
+      "domain": "B",
+      "growth": 1,
+      "id": 19564,
+      "species": "Actinoplanes humidus"
+    },
+    {
+      "bacdive_id": 7831,
+      "ccno": "DSM 43941",
+      "domain": "B",
+      "growth": 1,
+      "id": 19567,
+      "species": "Actinoplanes derwentensis"
+    },
+    {
+      "bacdive_id": 7830,
+      "ccno": "DSM 43942",
+      "domain": "B",
+      "growth": 1,
+      "id": 19568,
+      "species": "Actinoplanes consettensis"
+    },
+    {
+      "bacdive_id": 7832,
+      "ccno": "DSM 43939",
+      "domain": "B",
+      "growth": 1,
+      "id": 19565,
+      "species": "Actinoplanes durhamensis"
+    },
+    {
+      "bacdive_id": 7834,
+      "ccno": "DSM 43940",
+      "domain": "B",
+      "growth": 1,
+      "id": 19566,
+      "species": "Actinoplanes palleronii"
+    },
+    {
+      "bacdive_id": 165810,
+      "ccno": "JCM 8548",
+      "domain": "B",
+      "growth": 1,
+      "id": 32715,
+      "species": "Herbidospora cretacea"
+    },
+    {
+      "bacdive_id": 165811,
+      "ccno": "JCM 8549",
+      "domain": "B",
+      "growth": 1,
+      "id": 32716,
+      "species": "Herbidospora cretacea"
+    },
+    {
+      "bacdive_id": 165812,
+      "ccno": "JCM 8550",
+      "domain": "B",
+      "growth": 1,
+      "id": 32717,
+      "species": "Herbidospora cretacea"
+    },
+    {
+      "bacdive_id": 165813,
+      "ccno": "JCM 8551",
+      "domain": "B",
+      "growth": 1,
+      "id": 32718,
+      "species": "Herbidospora cretacea"
+    },
+    {
+      "bacdive_id": 165814,
+      "ccno": "JCM 8552",
+      "domain": "B",
+      "growth": 1,
+      "id": 32719,
+      "species": "Herbidospora cretacea"
+    },
+    {
+      "bacdive_id": 16507,
+      "ccno": "DSM 44071",
+      "domain": "B",
+      "growth": 1,
+      "id": 19635,
+      "species": "Herbidospora cretacea"
+    },
+    {
+      "bacdive_id": 165815,
+      "ccno": "JCM 8554",
+      "domain": "B",
+      "growth": 1,
+      "id": 32720,
+      "species": "Herbidospora cretacea"
+    },
+    {
+      "bacdive_id": 165816,
+      "ccno": "JCM 8555",
+      "domain": "B",
+      "growth": 1,
+      "id": 32721,
+      "species": "Herbidospora cretacea"
+    },
+    {
+      "bacdive_id": 165983,
+      "ccno": "JCM 8971",
+      "domain": "B",
+      "growth": 1,
+      "id": 33000,
+      "species": "Microbispora rosea rosea"
+    },
+    {
+      "bacdive_id": 165984,
+      "ccno": "JCM 8972",
+      "domain": "B",
+      "growth": 1,
+      "id": 33001,
+      "species": "Microbispora rosea rosea"
+    },
+    {
+      "bacdive_id": 7816,
+      "ccno": "DSM 46137",
+      "domain": "B",
+      "growth": 1,
+      "id": 21343,
+      "species": "Actinoplanes cyaneus"
+    },
+    {
+      "bacdive_id": 7860,
+      "ccno": "DSM 44102",
+      "domain": "B",
+      "growth": 1,
+      "id": 19655,
+      "species": "Catenuloplanes japonicus"
+    },
+    {
+      "bacdive_id": 16581,
+      "ccno": "DSM 44359",
+      "domain": "B",
+      "growth": 1,
+      "id": 19885,
+      "species": "Planotetraspora mira"
+    },
+    {
+      "bacdive_id": 16508,
+      "ccno": "DSM 44127",
+      "domain": "B",
+      "growth": 1,
+      "id": 19680,
+      "species": "Herbidospora cretacea"
+    },
+    {
+      "bacdive_id": 166024,
+      "ccno": "JCM 9333",
+      "domain": "B",
+      "growth": 1,
+      "id": 33166,
+      "species": "Actinoplanes deccanensis azaserinus"
+    },
+    {
+      "bacdive_id": 166025,
+      "ccno": "JCM 9334",
+      "domain": "B",
+      "growth": 1,
+      "id": 33167,
+      "species": "Actinoplanes awajinensis"
+    },
+    {
+      "bacdive_id": 166026,
+      "ccno": "JCM 9335",
+      "domain": "B",
+      "growth": 1,
+      "id": 33168,
+      "species": "Actinoplanes nirasakinensis"
+    },
+    {
+      "bacdive_id": 7814,
+      "ccno": "DSM 44322",
+      "domain": "B",
+      "growth": 1,
+      "id": 19852,
+      "species": "Actinoplanes regularis"
+    },
+    {
+      "bacdive_id": 16912,
+      "ccno": "DSM 44360",
+      "domain": "B",
+      "growth": 1,
+      "id": 19886,
+      "species": "Actinocorallia glomerata"
+    },
+    {
+      "bacdive_id": 16913,
+      "ccno": "DSM 44361",
+      "domain": "B",
+      "growth": 1,
+      "id": 19887,
+      "species": "Actinocorallia longicatena"
+    },
+    {
+      "bacdive_id": 7866,
+      "ccno": "DSM 44711",
+      "domain": "B",
+      "growth": 1,
+      "id": 20203,
+      "species": "Catenuloplanes niger"
+    },
+    {
+      "bacdive_id": 7864,
+      "ccno": "DSM 44709",
+      "domain": "B",
+      "growth": 1,
+      "id": 20201,
+      "species": "Catenuloplanes indicus"
+    },
+    {
+      "bacdive_id": 7862,
+      "ccno": "DSM 44707",
+      "domain": "B",
+      "growth": 1,
+      "id": 20199,
+      "species": "Catenuloplanes atrovinosus"
+    },
+    {
+      "bacdive_id": 7865,
+      "ccno": "DSM 44710",
+      "domain": "B",
+      "growth": 1,
+      "id": 20202,
+      "species": "Catenuloplanes nepalensis"
+    },
+    {
+      "bacdive_id": 7863,
+      "ccno": "DSM 44708",
+      "domain": "B",
+      "growth": 1,
+      "id": 20200,
+      "species": "Catenuloplanes castaneus"
+    },
+    {
+      "bacdive_id": 16911,
+      "ccno": "DSM 44254",
+      "domain": "B",
+      "growth": 1,
+      "id": 19790,
+      "species": "Actinocorallia herbida"
+    },
+    {
+      "bacdive_id": 166049,
+      "ccno": "JCM 9648",
+      "domain": "B",
+      "growth": 1,
+      "id": 33382,
+      "species": "Actinoplanes arizonaensis"
+    },
+    {
+      "bacdive_id": 166081,
+      "ccno": "JCM 9916",
+      "domain": "B",
+      "growth": 1,
+      "id": 33542,
+      "species": "Actinoplanes deccanensis salmoneus"
+    },
+    {
+      "bacdive_id": 13292,
+      "ccno": "DSM 44226",
+      "domain": "B",
+      "growth": 1,
+      "id": 19766,
+      "species": "Kibdelosporangium philippinense"
+    },
+    {
+      "bacdive_id": 13204,
+      "ccno": "DSM 44260",
+      "domain": "B",
+      "growth": 1,
+      "id": 19796,
+      "species": "Actinokineospora terrae"
+    },
+    {
+      "bacdive_id": 24854,
+      "ccno": "DSM 44125",
+      "domain": "B",
+      "growth": 1,
+      "id": 19678,
+      "species": "Streptosporangium carneum"
+    },
+    {
+      "bacdive_id": 16552,
+      "ccno": "DSM 44170",
+      "domain": "B",
+      "growth": 1,
+      "id": 19717,
+      "species": "Nonomuraea roseoviolacea subsp. carminata"
+    },
+    {
+      "bacdive_id": 16954,
+      "ccno": "DSM 43932",
+      "domain": "B",
+      "growth": 1,
+      "id": 19558,
+      "species": "Actinomadura sp."
+    },
+    {
+      "bacdive_id": 16953,
+      "ccno": "DSM 43766",
+      "domain": "B",
+      "growth": 1,
+      "id": 19415,
+      "species": "Actinomadura sp."
+    },
+    {
+      "bacdive_id": 160875,
+      "ccno": "JCM 10122",
+      "domain": "B",
+      "growth": 1,
+      "id": 33631,
+      "species": "Microbispora amethystogenes"
+    },
+    {
+      "bacdive_id": 109270,
+      "ccno": "JCM 10123",
+      "domain": "B",
+      "growth": 1,
+      "id": 33632,
+      "species": "Streptomyces"
+    },
+    {
+      "bacdive_id": 109271,
+      "ccno": "JCM 10124",
+      "domain": "B",
+      "growth": 1,
+      "id": 33633,
+      "species": "Streptomyces"
+    },
+    {
+      "bacdive_id": 7837,
+      "ccno": "DSM 44859",
+      "domain": "B",
+      "growth": 1,
+      "id": 20339,
+      "species": "Actinoplanes capillaceus"
+    },
+    {
+      "bacdive_id": 11076,
+      "ccno": "DSM 17836",
+      "domain": "B",
+      "growth": 1,
+      "id": 9369,
+      "species": "Kribbella flavida"
+    },
+    {
+      "bacdive_id": 11070,
+      "ccno": "DSM 15626",
+      "domain": "B",
+      "growth": 1,
+      "id": 8012,
+      "species": "Kribbella sandramycini"
+    },
+    {
+      "bacdive_id": 16560,
+      "ccno": "DSM 44817",
+      "domain": "B",
+      "growth": 1,
+      "id": 20301,
+      "species": "Nonomuraea longicatena"
+    },
+    {
+      "bacdive_id": 16535,
+      "ccno": "DSM 44579",
+      "domain": "B",
+      "growth": 1,
+      "id": 20079,
+      "species": "Microtetraspora malaysiensis"
+    },
+    {
+      "bacdive_id": 161147,
+      "ccno": "JCM 11279",
+      "domain": "B",
+      "growth": 1,
+      "id": 34262,
+      "species": "Microtetraspora malaysiensis"
+    },
+    {
+      "bacdive_id": 161148,
+      "ccno": "JCM 11280",
+      "domain": "B",
+      "growth": 1,
+      "id": 34263,
+      "species": "Microtetraspora malaysiensis"
+    },
+    {
+      "bacdive_id": 7881,
+      "ccno": "DSM 44784",
+      "domain": "B",
+      "growth": 1,
+      "id": 20270,
+      "species": "Longispora albida"
+    },
+    {
+      "bacdive_id": 11073,
+      "ccno": "DSM 17305",
+      "domain": "B",
+      "growth": 1,
+      "id": 9031,
+      "species": "Kribbella jejuensis"
+    },
+    {
+      "bacdive_id": 11072,
+      "ccno": "DSM 17294",
+      "domain": "B",
+      "growth": 1,
+      "id": 9021,
+      "species": "Kribbella solani"
+    },
+    {
+      "bacdive_id": 7795,
+      "ccno": "DSM 44816",
+      "domain": "B",
+      "growth": 1,
+      "id": 20300,
+      "species": "Actinocatenispora thailandica"
+    },
+    {
+      "bacdive_id": 161217,
+      "ccno": "JCM 12344",
+      "domain": "B",
+      "growth": 1,
+      "id": 34660,
+      "species": "Actinocatenispora thailandica"
+    },
+    {
+      "bacdive_id": 13386,
+      "ccno": "DSM 44698",
+      "domain": "B",
+      "growth": 1,
+      "id": 20190,
+      "species": "Pseudonocardia chloroethenivorans"
+    },
+    {
+      "bacdive_id": 16986,
+      "ccno": "DSM 44197",
+      "domain": "B",
+      "growth": 1,
+      "id": 19741,
+      "species": "Actinomadura namibiensis"
+    },
+    {
+      "bacdive_id": 16990,
+      "ccno": "DSM 44846",
+      "domain": "B",
+      "growth": 1,
+      "id": 20329,
+      "species": "Actinomadura napierensis"
+    },
+    {
+      "bacdive_id": 16565,
+      "ccno": "DSM 45163",
+      "domain": "B",
+      "growth": 1,
+      "id": 20608,
+      "species": "Nonomuraea maheshkhaliensis"
+    },
+    {
+      "bacdive_id": 16996,
+      "ccno": "DSM 45347",
+      "domain": "B",
+      "growth": 1,
+      "id": 20764,
+      "species": "Actinomadura bangladeshensis"
+    },
+    {
+      "bacdive_id": 11071,
+      "ccno": "DSM 16683",
+      "domain": "B",
+      "growth": 1,
+      "id": 8659,
+      "species": "Kribbella lupini"
+    },
+    {
+      "bacdive_id": 11074,
+      "ccno": "DSM 17344",
+      "domain": "B",
+      "growth": 1,
+      "id": 9055,
+      "species": "Kribbella karoonensis"
+    },
+    {
+      "bacdive_id": 11075,
+      "ccno": "DSM 17345",
+      "domain": "B",
+      "growth": 1,
+      "id": 9056,
+      "species": "Kribbella swartbergensis"
+    },
+    {
+      "bacdive_id": 11068,
+      "ccno": "DSM 15500",
+      "domain": "B",
+      "growth": 1,
+      "id": 7928,
+      "species": "Kribbella alba"
+    },
+    {
+      "bacdive_id": 11081,
+      "ccno": "DSM 19601",
+      "domain": "B",
+      "growth": 1,
+      "id": 10573,
+      "species": "Kribbella catacumbae"
+    },
+    {
+      "bacdive_id": 7796,
+      "ccno": "DSM 45336",
+      "domain": "B",
+      "growth": 1,
+      "id": 20756,
+      "species": "Actinocatenispora sera"
+    },
+    {
+      "bacdive_id": 8037,
+      "ccno": "DSM 44991",
+      "domain": "B",
+      "growth": 1,
+      "id": 36077,
+      "species": "Planosporangium flavigriseum"
+    },
+    {
+      "bacdive_id": 16583,
+      "ccno": "DSM 45400",
+      "domain": "B",
+      "growth": 1,
+      "id": 20804,
+      "species": "Planotetraspora thailandica"
+    },
+    {
+      "bacdive_id": 7842,
+      "ccno": "DSM 45183",
+      "domain": "B",
+      "growth": 1,
+      "id": 20628,
+      "species": "Actinoplanes sichuanensis"
+    },
+    {
+      "bacdive_id": 7843,
+      "ccno": "DSM 45184",
+      "domain": "B",
+      "growth": 1,
+      "id": 20629,
+      "species": "Actinoplanes xinjiangensis"
+    },
+    {
+      "bacdive_id": 17823,
+      "ccno": "DSM 45237",
+      "domain": "B",
+      "growth": 1,
+      "id": 20674,
+      "species": "Jiangella alba"
+    },
+    {
+      "bacdive_id": 16566,
+      "ccno": "DSM 45220",
+      "domain": "B",
+      "growth": 1,
+      "id": 20658,
+      "species": "Nonomuraea antimicrobica"
+    },
+    {
+      "bacdive_id": 16627,
+      "ccno": "DSM 45172",
+      "domain": "B",
+      "growth": 1,
+      "id": 20617,
+      "species": "Sphaerisporangium album"
+    },
+    {
+      "bacdive_id": 140490,
+      "ccno": "JCM 16995",
+      "domain": "B",
+      "growth": 1,
+      "id": 36488,
+      "species": "Actinomadura montaniterrae"
+    },
+    {
+      "bacdive_id": 161893,
+      "ccno": "JCM 16996",
+      "domain": "B",
+      "growth": 1,
+      "id": 36489,
+      "species": "Actinomadura decatromicini"
+    },
+    {
+      "bacdive_id": 17014,
+      "ccno": "DSM 45503",
+      "domain": "B",
+      "growth": 1,
+      "id": 20885,
+      "species": "Actinoallomurus acaciae"
+    },
+    {
+      "bacdive_id": 23320,
+      "ccno": "DSM 45498",
+      "domain": "B",
+      "growth": 1,
+      "id": 20882,
+      "species": "Microbispora siamensis"
+    },
+    {
+      "bacdive_id": 16998,
+      "ccno": "DSM 45195",
+      "domain": "B",
+      "growth": 1,
+      "id": 20638,
+      "species": "Actinomadura keratinilytica"
+    },
+    {
+      "bacdive_id": 132121,
+      "ccno": "DSM 45550",
+      "domain": "B",
+      "growth": 1,
+      "id": 20922,
+      "species": "Streptosporangium oxazolinicum"
+    },
+    {
+      "bacdive_id": 16631,
+      "ccno": "DSM 45614",
+      "domain": "B",
+      "growth": 1,
+      "id": 20973,
+      "species": "Thermoactinospora rubra"
+    },
+    {
+      "bacdive_id": 16632,
+      "ccno": "DSM 45615",
+      "domain": "B",
+      "growth": 1,
+      "id": 20974,
+      "species": "Thermocatellispora tengchongensis"
+    },
+    {
+      "bacdive_id": 23114,
+      "ccno": "DSM 45850",
+      "domain": "B",
+      "growth": 1,
+      "id": 21150,
+      "species": "Actinoplanes atraurantiacus"
+    },
+    {
+      "bacdive_id": 16530,
+      "ccno": "DSM 45428",
+      "domain": "B",
+      "growth": 1,
+      "id": 20830,
+      "species": "Microbispora hainanensis"
+    },
+    {
+      "bacdive_id": 24255,
+      "ccno": "DSM 45355",
+      "domain": "B",
+      "growth": 1,
+      "id": 20772,
+      "species": "Flindersiella endophytica"
+    }
+  ],
+  "J755": [
+    {
+      "bacdive_id": 17072,
+      "ccno": "DSM 22549",
+      "domain": "B",
+      "growth": 1,
+      "id": 12593,
+      "species": "Kosmotoga arenicorallina"
+    }
+  ]
+}

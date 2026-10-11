@@ -1,0 +1,610 @@
+[
+  {
+    "line": 15132,
+    "member": "nodes.tsv",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C66725",
+      "name": "Ginger",
+      "provided_by": "infores:mediadive",
+      "same_as": "",
+      "synonym": "Ginger Rhizome|Ginger Root",
+      "xref": ""
+    },
+    "source": "mediadive"
+  },
+  {
+    "line": 15133,
+    "member": "nodes.tsv",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C71932",
+      "name": "Beef",
+      "provided_by": "infores:mediadive",
+      "same_as": "",
+      "synonym": "",
+      "xref": "MIM:Beef"
+    },
+    "source": "mediadive"
+  },
+  {
+    "line": 15134,
+    "member": "nodes.tsv",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C71971",
+      "name": "Fig",
+      "provided_by": "infores:mediadive",
+      "same_as": "",
+      "synonym": "",
+      "xref": ""
+    },
+    "source": "mediadive"
+  },
+  {
+    "line": 15135,
+    "member": "nodes.tsv",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C72000",
+      "name": "Carrot",
+      "provided_by": "infores:mediadive",
+      "same_as": "",
+      "synonym": "",
+      "xref": "MIM:Carrot"
+    },
+    "source": "mediadive"
+  },
+  {
+    "line": 15136,
+    "member": "nodes.tsv",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C72005",
+      "name": "Lemon",
+      "provided_by": "infores:mediadive",
+      "same_as": "",
+      "synonym": "",
+      "xref": "MIM:Lemon"
+    },
+    "source": "mediadive"
+  },
+  {
+    "line": 15139,
+    "member": "nodes.tsv",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C84877",
+      "name": "White wine",
+      "provided_by": "infores:mediadive",
+      "same_as": "",
+      "synonym": "",
+      "xref": ""
+    },
+    "source": "mediadive"
+  },
+  {
+    "line": 38192,
+    "member": "foodon_nodes.tsv",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "The domesticated feline mammal, Felis catus, which is kept as a house pet.",
+      "id": "NCIT:C14191",
+      "name": "Cat",
+      "provided_by": "foodon.json",
+      "same_as": "",
+      "synonym": "feline",
+      "xref": ""
+    },
+    "source": "ontologies"
+  },
+  {
+    "line": 38193,
+    "member": "foodon_nodes.tsv",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "Any member of four genera of the rodent family Cricetidae; short-tailed Old World burrowing rodents with large cheek pouches.",
+      "id": "NCIT:C14212",
+      "name": "Hamster",
+      "provided_by": "foodon.json",
+      "same_as": "",
+      "synonym": "",
+      "xref": ""
+    },
+    "source": "ontologies"
+  },
+  {
+    "line": 181,
+    "member": "ncit_nodes.tsv",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C66725",
+      "name": "Ginger",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "GINGER|Ginger Rhizome|Ginger Root",
+      "xref": "cas:84696-15-1"
+    },
+    "source": "ontologies_stubs"
+  },
+  {
+    "line": 192,
+    "member": "ncit_nodes.tsv",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C71932",
+      "name": "Beef",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "BEEF",
+      "xref": ""
+    },
+    "source": "ontologies_stubs"
+  },
+  {
+    "line": 195,
+    "member": "ncit_nodes.tsv",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C71971",
+      "name": "Fig",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "FIG",
+      "xref": "cas:90028-74-3"
+    },
+    "source": "ontologies_stubs"
+  },
+  {
+    "line": 198,
+    "member": "ncit_nodes.tsv",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C72000",
+      "name": "Carrot",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "CARROT",
+      "xref": ""
+    },
+    "source": "ontologies_stubs"
+  },
+  {
+    "line": 199,
+    "member": "ncit_nodes.tsv",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C72005",
+      "name": "Lemon",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "LEMON|lemon",
+      "xref": "cas:84929-31-7"
+    },
+    "source": "ontologies_stubs"
+  },
+  {
+    "line": 226,
+    "member": "ncit_nodes.tsv",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C84877",
+      "name": "White Wine",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "",
+      "xref": ""
+    },
+    "source": "ontologies_stubs"
+  },
+  {
+    "file": "transformed/mediadive/nodes.tsv",
+    "line": 15126,
+    "literal_row_sha256": "4ca63734e958d40134c51f0520c913c60fda1553dc9cdf24b638f4920adc51c5",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C113696",
+      "name": "Fetal bovine serum",
+      "provided_by": "infores:mediadive",
+      "same_as": "",
+      "synonym": "FBS|FCS|Fetal Calf Serum",
+      "xref": ""
+    }
+  },
+  {
+    "file": "transformed/mediadive/nodes.tsv",
+    "line": 15127,
+    "literal_row_sha256": "6b89931dc19bc70ae3ff9d44b67741bfdcf29c9623ec816a9b05654a453c4a01",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C120264",
+      "name": "Substrate",
+      "provided_by": "infores:mediadive",
+      "same_as": "",
+      "synonym": "",
+      "xref": ""
+    }
+  },
+  {
+    "file": "transformed/mediadive/nodes.tsv",
+    "line": 15128,
+    "literal_row_sha256": "19afb21b894fdd8545af7cf3d081b14b417068238901685ce351c146e71da6d8",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C120561",
+      "name": "Sodium glycerophosphate",
+      "provided_by": "infores:mediadive",
+      "same_as": "",
+      "synonym": "",
+      "xref": "MIM:Sodium_glycerophosphate"
+    }
+  },
+  {
+    "file": "transformed/mediadive/nodes.tsv",
+    "line": 15129,
+    "literal_row_sha256": "2ce51e619b799d03ddbe3166fae4fae916131ecbb11efa0851d05bc661b73159",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C29298",
+      "name": "Oatmeal",
+      "provided_by": "infores:mediadive",
+      "same_as": "",
+      "synonym": "Aveeno|Oatmeal (Quaker White Oats)|Oatmeal Powder",
+      "xref": "MIM:Oatmeal"
+    }
+  },
+  {
+    "file": "transformed/mediadive/nodes.tsv",
+    "line": 15130,
+    "literal_row_sha256": "7bdb200321f7c78365c58ac54d4b1f425ac22cca718120fc78493a75a5d87bae",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C29321",
+      "name": "Phosphate buffer",
+      "provided_by": "infores:mediadive",
+      "same_as": "",
+      "synonym": "",
+      "xref": "MIM:Phosphate_Buffer"
+    }
+  },
+  {
+    "file": "transformed/mediadive/nodes.tsv",
+    "line": 15137,
+    "literal_row_sha256": "5607da66708364023ab2639c19f475a10c27c2e83753220fe5ced607c45d7463",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C77500",
+      "name": "Sodium pyrophosphate",
+      "provided_by": "infores:mediadive",
+      "same_as": "",
+      "synonym": "",
+      "xref": ""
+    }
+  },
+  {
+    "file": "transformed/mediadive/nodes.tsv",
+    "line": 15138,
+    "literal_row_sha256": "620685522fe741cddee57b7c69b647937553385dfb8c9cc1d2cb49e66117c245",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C77524",
+      "name": "Activated charcoal",
+      "provided_by": "infores:mediadive",
+      "same_as": "",
+      "synonym": "Activated Carbon|Activated Coal|Charcoal, Activated|Medicinal Carbon",
+      "xref": "MIM:Activated_Charcoal"
+    }
+  },
+  {
+    "file": "transformed/mediadive/nodes.tsv",
+    "line": 15140,
+    "literal_row_sha256": "34e50366b7abc41a6ef0db0650d4d931cbcfd72b22d94c7fe8afc6bf1f0e7525",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C85253",
+      "name": "Bovine serum albumin",
+      "provided_by": "infores:mediadive",
+      "same_as": "",
+      "synonym": "ALBUMIN BOVINE|BSA",
+      "xref": "MIM:Bovine_Serum_Albumin|cas:9048-46-8"
+    }
+  },
+  {
+    "file": "transformed/mediadive/nodes.tsv",
+    "line": 15141,
+    "literal_row_sha256": "94311f3e878ac020c6ff9fa2486adbd2ee0ad825a0fc97e3c4f76b95e2308833",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C85509",
+      "name": "Middlebrook 7H10 agar",
+      "provided_by": "infores:mediadive",
+      "same_as": "",
+      "synonym": "Middlebrook 7H10 Agar (Difco)|Middlebrook 7H10 Growth Medium",
+      "xref": "MIM:Middlebrook_7H10_Agar"
+    }
+  },
+  {
+    "file": "transformed/mediadive/nodes.tsv",
+    "line": 15142,
+    "literal_row_sha256": "c203fb5fecfe4d266fa3cf0f65f3a56e985f455cc01f336e9880d2a01207f4b1",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C87343",
+      "name": "Potassium Aspartate",
+      "provided_by": "infores:mediadive",
+      "same_as": "",
+      "synonym": "L-Aspartate Potassium",
+      "xref": "MIM:Potassium_Aspartate"
+    }
+  },
+  {
+    "file": "transformed/ontologies_stubs/ncit_nodes.tsv",
+    "line": 5,
+    "literal_row_sha256": "3e394b397cec0332281e7bc39dca29593ed423cdb2025dc395f32ec454a1d8be",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C113696",
+      "name": "Fetal Bovine Serum",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "FBS|FCS|Fetal Calf Serum",
+      "xref": ""
+    }
+  },
+  {
+    "file": "transformed/ontologies_stubs/ncit_nodes.tsv",
+    "line": 6,
+    "literal_row_sha256": "98ecdbccb1f9e3db82189093690c2758ef1b295db935e87312e4540e5c4e523b",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C120264",
+      "name": "Substrate",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "",
+      "xref": ""
+    }
+  },
+  {
+    "file": "transformed/ontologies_stubs/ncit_nodes.tsv",
+    "line": 7,
+    "literal_row_sha256": "9ec2a7d7a8893e48c3fad9443d1478802c4da8d6bb7378b511581fcb55f7a4ce",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C120561",
+      "name": "Sodium Glycerophosphate",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "1,2,3-Propanetriol, Mono(dihydrogen Phosphate), Disodium Salt, Hydrate|SODIUM GLYCEROPHOSPHATE",
+      "xref": "cas:55073-41-1"
+    }
+  },
+  {
+    "file": "transformed/ontologies_stubs/ncit_nodes.tsv",
+    "line": 14,
+    "literal_row_sha256": "dce74eac4a75e184224e6699ed32d28d874f04274925278ff07b63fae4254f01",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C13347",
+      "name": "Aspirate",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "ASPIRATE|aspirate",
+      "xref": ""
+    }
+  },
+  {
+    "file": "transformed/ontologies_stubs/ncit_nodes.tsv",
+    "line": 119,
+    "literal_row_sha256": "16be25bd0b19f6598a37746662084f9b00e578096d0db2f2ea1c579c02df62c1",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C28176",
+      "name": "Parasite",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "Parasites|parasite|parasitic",
+      "xref": ""
+    }
+  },
+  {
+    "file": "transformed/ontologies_stubs/ncit_nodes.tsv",
+    "line": 122,
+    "literal_row_sha256": "2e555567c98807b0e037a8d36fabe450564d904928082d496623284ca7a63baa",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C29298",
+      "name": "Oatmeal Powder",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "Aveeno|OATMEAL",
+      "xref": "cas:134134-86-4"
+    }
+  },
+  {
+    "file": "transformed/ontologies_stubs/ncit_nodes.tsv",
+    "line": 123,
+    "literal_row_sha256": "78792c1f93a3b8fee60710a6cf797243204702d6963f58ab0a48f59a00b5c7c4",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C29321",
+      "name": "Phosphate Buffer",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "",
+      "xref": ""
+    }
+  },
+  {
+    "file": "transformed/ontologies_stubs/ncit_nodes.tsv",
+    "line": 140,
+    "literal_row_sha256": "e7559c1cfcb6923a2205fc8637bf95e8286e2e381d8bf082e6fb401fd2571c49",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C3824",
+      "name": "Lesion",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "GROSS LESION|LESION|Visible Lesion|lesion",
+      "xref": ""
+    }
+  },
+  {
+    "file": "transformed/ontologies_stubs/ncit_nodes.tsv",
+    "line": 210,
+    "literal_row_sha256": "a8b7306667ef757ee6bed0a7273a7bf87622ade348bca70a0cd14dee875a80e8",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C77500",
+      "name": "Sodium Pyrophosphate",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "SODIUM PYROPHOSPHATE",
+      "xref": "cas:7722-88-5"
+    }
+  },
+  {
+    "file": "transformed/ontologies_stubs/ncit_nodes.tsv",
+    "line": 211,
+    "literal_row_sha256": "dad8753928109882249b767b9b1a5078b5e938d7eed5c67f315df6e83b085e1b",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C77524",
+      "name": "Activated Charcoal",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "ACTIVATED CHARCOAL|Activated Carbon|Activated Coal|Charcoal, Activated|Medicinal Carbon",
+      "xref": "cas:7440-44-0"
+    }
+  },
+  {
+    "file": "transformed/ontologies_stubs/ncit_nodes.tsv",
+    "line": 213,
+    "literal_row_sha256": "bbd479264a6234084de0b9fc1f1e1f3ac90b3fffcab4087564a26250ff7e76c0",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C77916",
+      "name": "Protozoa",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "Protozoan",
+      "xref": ""
+    }
+  },
+  {
+    "file": "transformed/ontologies_stubs/ncit_nodes.tsv",
+    "line": 229,
+    "literal_row_sha256": "8524d1c740655b32ac4824692f5c6d57ba8307a0541bb9a3dd79aa7b684a4351",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C85253",
+      "name": "Bovine Serum Albumin",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "ALBUMIN BOVINE|Albumin Bovine|BSA",
+      "xref": "cas:9048-46-8"
+    }
+  },
+  {
+    "file": "transformed/ontologies_stubs/ncit_nodes.tsv",
+    "line": 231,
+    "literal_row_sha256": "9fcb0fbb6b9dd6764af48d38fb45aec8cd269c746066f056a949013f2cfebec7",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C85509",
+      "name": "Middlebrook 7H10 Growth Medium",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "MIDDLEBROOK 7H10 AGAR",
+      "xref": ""
+    }
+  },
+  {
+    "file": "transformed/ontologies_stubs/ncit_nodes.tsv",
+    "line": 233,
+    "literal_row_sha256": "01dabd2f83f584bf41cb433105e04a2051f3e28f73cbbb7d48db6b3966823874",
+    "row": {
+      "category": "biolink:OntologyClass",
+      "deprecated": "",
+      "description": "",
+      "id": "NCIT:C87343",
+      "name": "Potassium Aspartate",
+      "provided_by": "ontologies_stubs",
+      "same_as": "",
+      "synonym": "L-Aspartate Potassium|Monopotassium Aspartate Hemihydrate|POTASSIUM ASPARTATE",
+      "xref": "cas:7259-25-8"
+    }
+  }
+]

@@ -35,6 +35,7 @@ def test_late_added_curated_xrefs_have_metadata_and_keep_other_edges(tmp_path):
     assert row["subject"] == "GO:0000025"
     assert row["object"] == "UPA:UPA00150"
     assert row["predicate"] == "biolink:related_to"
+    assert row["relation"] == "biolink:related_to"
     assert row["primary_knowledge_source"] == "infores:upa"
     assert row["knowledge_level"] == "knowledge_assertion"
     assert row["agent_type"] == "manual_agent"
@@ -53,3 +54,36 @@ def test_no_go_pathway_xrefs_produces_header_only_frame():
     added = transform._make_upa_go_xref_edges({"UPA:UCR00014": "GO:0004739"})
     assert added.empty
     assert {"knowledge_level", "agent_type"} <= set(added.columns)
+
+
+def test_upa_weak_xref_fix_does_not_rewrite_native_characteristic_relations(tmp_path):
+    """Repair only generated UPA xrefs; preserve explicit unrelated native metadata."""
+    from kg_microbe.transform_utils.constants import RELATED_TO_RELATION
+
+    assert RELATED_TO_RELATION == "RO:0000052"
+    transform = OntologiesTransform.__new__(OntologiesTransform)
+    native = {
+        "subject": "PATO:0000001",
+        "predicate": "biolink:related_to",
+        "object": "NCBITaxon:2",
+        "relation": "RO:0000052",
+        "primary_knowledge_source": "infores:fixture",
+        "knowledge_level": "knowledge_assertion",
+        "agent_type": "manual_agent",
+    }
+    added = transform._make_upa_go_xref_edges({"UPA:UPA00150": "GO:0000025"})
+    output = tmp_path / "upa_edges.tsv"
+    pd.concat([pd.DataFrame([native]), added], ignore_index=True).to_csv(output, sep="\t", index=False)
+    transform._add_kgx_metadata_to_edges(output)
+    with output.open() as stream:
+        rows = list(csv.DictReader(stream, delimiter="\t"))
+    assert rows[0] == native
+    assert rows[1] == {
+        "subject": "GO:0000025",
+        "predicate": "biolink:related_to",
+        "object": "UPA:UPA00150",
+        "relation": "biolink:related_to",
+        "primary_knowledge_source": "infores:upa",
+        "knowledge_level": "knowledge_assertion",
+        "agent_type": "manual_agent",
+    }

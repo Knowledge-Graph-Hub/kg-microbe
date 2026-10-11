@@ -1,0 +1,45 @@
+{
+  "transformed/bacdive/edges.tsv": [
+    "subject",
+    "predicate",
+    "object",
+    "relation",
+    "primary_knowledge_source",
+    "knowledge_level",
+    "agent_type",
+    "go_reference_context",
+    "original_object",
+    "original_subject",
+    "publications",
+    "unit",
+    "value"
+  ],
+  "transformed/mediadive/edges.tsv": [
+    "subject",
+    "predicate",
+    "object",
+    "relation",
+    "primary_knowledge_source",
+    "knowledge_level",
+    "agent_type",
+    "g_l",
+    "mmol_l",
+    "publications",
+    "source_assertion_id",
+    "source_record",
+    "unit",
+    "value"
+  ],
+  "transformed/ontologies_stubs/ncit_edges.tsv": [
+    "subject",
+    "predicate",
+    "object",
+    "relation",
+    "primary_knowledge_source",
+    "knowledge_level",
+    "agent_type",
+    "original_object",
+    "original_subject",
+    "publications"
+  ]
+}

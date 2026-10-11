@@ -15,6 +15,7 @@ from pathlib import Path
 from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
     DESCRIPTION_COLUMN,
+    GOLD,
     ID_COLUMN,
     NAME_COLUMN,
     OBJECT_COLUMN,
@@ -28,6 +29,11 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.graph_canonicalization import canonical_node_category, compact_identifier
 from kg_microbe.utils.graph_schema import canonical_header, validate_canonical_tsv
+from kg_microbe.utils.ontology_metadata import (
+    annotation_property_ids,
+    is_chebi_metadata_identifier,
+    metadata_identifier,
+)
 from kg_microbe.utils.optional_consumed_inputs import has_optional_inputs
 from kg_microbe.utils.producer_audits import verify_producer_audits, verify_recorded_producer_audits
 from kg_microbe.utils.provenance import primary_source_and_publications, serialize_knowledge_sources
@@ -98,6 +104,29 @@ def verify_consumed_inputs(transform, *, native_output_dir=None):
         raise SourceFinalizationRequired(f"Required consumed inputs were not read: {', '.join(sorted(missing))}")
     for name, snapshot in snapshots.items():
         _verify_input_snapshot(name, snapshot)
+    restriction_guard = getattr(transform, "_go_imported_restriction_guard", None)
+    if restriction_guard is not None:
+        restriction_guard.verify_bindings(snapshots)
+        restriction_guard.verify_output(native_output_dir if native_output_dir is not None else transform.output_dir)
+    ncit_guard = getattr(transform, "_ncit_eight_category_guard", None)
+    if ncit_guard is not None:
+        ncit_guard.verify(
+            snapshots, output_dir=native_output_dir if native_output_dir is not None else transform.output_dir
+        )
+    finite_envo_po_guard = getattr(transform, "_finite_envo_po_category_guard", None)
+    if finite_envo_po_guard is not None:
+        finite_envo_po_guard.verify(snapshots, output_dir=native_output_dir)
+    mesh_guard = getattr(transform, "_mesh_finite_category_guard", None)
+    if mesh_guard is not None:
+        mesh_guard.verify(
+            snapshots, output_dir=native_output_dir if native_output_dir is not None else transform.output_dir
+        )
+    gold_guard = getattr(transform, "_gold_declaration_guard", None)
+    if gold_guard is not None:
+        gold_guard.verify(
+            output_dir=native_output_dir if native_output_dir is not None else transform.output_dir,
+            metadata_only=True,
+        )
     if has_optional_inputs(type(transform)):
         from kg_microbe.utils.optional_consumed_inputs import verify_optional_inputs
 
@@ -206,6 +235,22 @@ def _verify_recorded_consumed_inputs(report, *, report_path=None, admission=None
             raise SourceFinalizationRequired(f"Consumed input {name!r} changed; rerun the producer")
     if native_verifier is not None:
         native_verifier(report, report_path, admission=admission)
+    from kg_microbe.utils.go_imported_restrictions import verify_recorded_restriction_inputs
+
+    if report_path is not None:
+        admission = verify_recorded_restriction_inputs(report, report_path, admission=admission)
+        from kg_microbe.utils.ncit_eight_categories import verify_recorded_inputs as verify_ncit_categories
+
+        admission = verify_ncit_categories(report, report_path, admission=admission)
+        from kg_microbe.utils.finite_envo_po_categories import verify_recorded_inputs as verify_envo_po_categories
+
+        admission = verify_envo_po_categories(report, report_path, admission=admission)
+        from kg_microbe.utils.mesh_finite_categories import verify_recorded_inputs as verify_mesh_categories
+
+        admission = verify_mesh_categories(report, report_path, admission=admission)
+        from kg_microbe.transform_utils.gold.taxon_dispositions import verify_recorded_gold_declarations
+
+        admission = verify_recorded_gold_declarations(report, report_path, admission=admission)
     from kg_microbe.utils.optional_consumed_inputs import verify_recorded_optional_inputs
 
     verify_recorded_optional_inputs(producer, report, report_path=report_path, admission=admission)
@@ -226,9 +271,13 @@ def validate_node_representation(identifier, category):
         raise SourceFinalizationRequired(f"Unfinalized imported category for {identifier}: {category}")
 
 
-def validate_graph_bundle(node_paths, edge_paths, *, require_closure=False, require_contract=False):
+def validate_graph_bundle(
+    node_paths, edge_paths, *, require_closure=False, require_contract=False, native_declarations=None
+):
     """Check already finalized records; never remap identities, categories or assertions."""
     nodes, counts = set(), Counter()
+    if native_declarations is not None:
+        native_declarations.verify(metadata_only=True)
     if require_contract:
         for paths, is_node in ((node_paths, True), (edge_paths, False)):
             for path in paths:
@@ -243,7 +292,10 @@ def validate_graph_bundle(node_paths, edge_paths, *, require_closure=False, requ
                 ("NCBITaxon:", "GO:", "CHEBI:", "MICRO:", "OBI:", "gold:")
             ):
                 if not row.get(NAME_COLUMN) and row.get(CATEGORY_COLUMN, "") in ("", "biolink:NamedThing"):
-                    raise SourceFinalizationRequired(f"{path}: unresolved authoritative endpoint {row[ID_COLUMN]}")
+                    proof = native_declarations.declaration_for(row[ID_COLUMN]) if native_declarations else None
+                    if proof is None or not proof.matches(row, merged=True):
+                        raise SourceFinalizationRequired(f"{path}: unresolved authoritative endpoint {row[ID_COLUMN]}")
+                    counts["audited_native_nameless_nodes"] += 1
             nodes.add(row[ID_COLUMN])
             counts["nodes"] += 1
     for path in edge_paths:
@@ -259,6 +311,8 @@ def validate_graph_bundle(node_paths, edge_paths, *, require_closure=False, requ
                     if row[column] not in nodes:
                         raise SourceFinalizationRequired(f"{path}: undeclared endpoint {row[column]}")
             counts["edges"] += 1
+    if native_declarations is not None:
+        native_declarations.verify(metadata_only=True)
     return dict(counts)
 
 
@@ -270,13 +324,15 @@ def _producer_lines(stream, source):
         yield line
 
 
-def _producer_rows(source, quoting):
+def _producer_rows(source, quoting, *, required_fields=()):
     """Coalesce only nonconflicting duplicate fields while preserving positional audit evidence."""
     with source.open(encoding="utf-8", newline="") as stream:
         reader = csv.reader(_producer_lines(stream, source), delimiter="\t", quoting=quoting)
         header = next(reader, [])
         if not header or any(not column for column in header):
             raise SourceFinalizationRequired(f"{source}: missing TSV header")
+        if not set(required_fields).issubset(header):
+            raise SourceFinalizationRequired(f"{source}: missing required producer TSV fields: {required_fields}")
         duplicates = len(header) != len(set(header))
         for line, values in enumerate(reader, 2):
             if len(values) != len(header):
@@ -288,6 +344,12 @@ def _producer_rows(source, quoting):
                 row[column] = row.get(column) or value
             evidence = {"original_header": header, "original_values": values} if duplicates else row
             yield line, row, evidence
+
+
+def _producer_reference_rows(source, fields, *, quoting):
+    """Discover references with producer syntax while leaving positional audit generation unchanged."""
+    for _, row, _ in _producer_rows(Path(source), quoting, required_fields=fields):
+        yield {"row": row}
 
 
 def _normalize_source_provenance(row):
@@ -314,7 +376,17 @@ def _normalize_source_provenance(row):
     row.pop(ID_COLUMN, None)
 
 
-def _stage_representation(source, destination, is_node, quoting, foodon_path, audit, used_inputs):
+def _stage_representation(
+    source,
+    destination,
+    is_node,
+    quoting,
+    foodon_path,
+    audit,
+    used_inputs,
+    metadata_candidates,
+    category_authority=None,
+):
     """Normalize producer syntax explicitly, retaining every changed source row in an audit."""
     with source.open(encoding="utf-8", newline="") as stream:
         original_header = next(csv.reader(_producer_lines(stream, source), delimiter="\t", quoting=quoting), [])
@@ -348,15 +420,24 @@ def _stage_representation(source, destination, is_node, quoting, foodon_path, au
             columns = (ID_COLUMN,) if is_node else (SUBJECT_COLUMN, PREDICATE_COLUMN, OBJECT_COLUMN)
             for column in columns:
                 row[column] = compact_identifier(row[column])
+            # Collect only entity endpoints, never legitimate annotation
+            # relation/synonym/xref fields. No additional graph-wide pass is
+            # needed when no source route emits a ChEBI metadata identifier.
+            for column in (ID_COLUMN,) if is_node else (SUBJECT_COLUMN, OBJECT_COLUMN):
+                if is_chebi_metadata_identifier(row[column]):
+                    metadata_candidates.add(metadata_identifier(row[column]))
             if is_node:
                 identifier = row[ID_COLUMN]
                 if identifier.startswith("FOODON:") or identifier in {"COB:0000022", "PO:0000003", "OBO:COB_0000022"}:
                     if not foodon_path.is_file():
                         raise FileNotFoundError(f"Required FOODON category authority is missing: {foodon_path}")
                     used_inputs.add(foodon_path)
-                row[CATEGORY_COLUMN] = canonical_node_category(
-                    identifier, row[CATEGORY_COLUMN], foodon_path=foodon_path
-                )
+                if category_authority is None:
+                    row[CATEGORY_COLUMN] = canonical_node_category(
+                        identifier, row[CATEGORY_COLUMN], foodon_path=foodon_path
+                    )
+                else:
+                    category_authority.normalize(row)
             elif RELATION_COLUMN in row:
                 relations = {compact_identifier(value) for value in row[RELATION_COLUMN].split("|") if value}
                 if len(relations) > 1:
@@ -381,6 +462,98 @@ def _stage_representation(source, destination, is_node, quoting, foodon_path, au
                     }
                 )
             writer.writerow(row)
+
+
+def _exclude_imported_metadata(transform, node_paths, edge_paths, candidates, report_path, used_inputs):
+    """Stop importer/fallback metadata nodes upstream, with exact selected authority and row audits."""
+    import ijson
+
+    annotations = set()
+    native_entities = {}
+    authority = Path(transform.input_base_dir) / "chebi.json"
+    authority_sha256 = ""
+    if candidates:
+        # Missing or malformed infrastructure is an error, not permission to
+        # publish unclassified metadata. Snapshot consumption binds this
+        # authority before parsing and rechecks it before final publication.
+        with transform.consume_input("source_metadata_chebi", authority) as stream:
+            seen = False
+
+            def declarations():
+                """Stream authority declarations while retaining the required nonempty-input check."""
+                nonlocal seen
+                for node in ijson.items(stream.buffer, "graphs.item.nodes.item"):
+                    seen = True
+                    yield node
+
+            annotations = annotation_property_ids(declarations()) & candidates
+            if not seen:
+                raise SourceFinalizationRequired(f"No node declarations in ChEBI metadata authority: {authority}")
+        used_inputs.add(authority)
+        authority_sha256 = transform.consumed_input_snapshots["source_metadata_chebi"]["sha256"]
+
+    def annotations_for_member(path):
+        """Preserve only explicit semantic declarations in a native member's consumed authority."""
+        from kg_microbe.transform_utils.ontologies.ontologies_transform import OntologiesTransform
+        from kg_microbe.utils.ontology_metadata import metadata_declaration_ids
+
+        if not isinstance(transform, OntologiesTransform):
+            return annotations
+        name = path.name.removesuffix("_nodes.tsv").removesuffix("_edges.tsv")
+        consumed_name = f"ontology_metadata_{name}"
+        if consumed_name not in native_entities:
+            expected = transform.consumed_input_snapshots.get(consumed_name)
+            if expected is None:
+                raise SourceFinalizationRequired(f"Native metadata authority was not consumed: {consumed_name}")
+            native_path = Path(expected["path"])
+            # Reuse the original logical snapshot name so changed bytes are
+            # rejected, never certified as a new finalizer authority epoch.
+            with transform.consume_input(consumed_name, native_path) as stream:
+                _, entities = metadata_declaration_ids(ijson.items(stream.buffer, "graphs.item.nodes.item"))
+            native_entities[consumed_name] = entities
+            used_inputs.add(native_path)
+        # Absence/untyped reader stubs confer no protection. Retain the ChEBI
+        # fallback guard for metadata that native normalization did not see.
+        return annotations - native_entities[consumed_name]
+
+    columns = ["file", "line", "reason", "authority", "authority_sha256", "original_row_json"]
+    counts = {"nodes": 0, "edges": 0}
+    with report_path.open("w", encoding="utf-8", newline="") as report:
+        audit = tsv_dict_writer(report, fieldnames=columns)
+        audit.writeheader()
+        if not annotations:
+            return counts
+        for paths, fields, kind in (
+            (node_paths, (ID_COLUMN,), "nodes"),
+            (edge_paths, (SUBJECT_COLUMN, OBJECT_COLUMN), "edges"),
+        ):
+            for path in paths:
+                member_annotations = annotations_for_member(path)
+                if not member_annotations:
+                    continue
+                with path.open(encoding="utf-8", newline="") as source:
+                    header = next(csv.reader(source, delimiter="\t", quoting=csv.QUOTE_NONE))
+                with atomic_write(path, encoding="utf-8", newline="") as destination:
+                    writer = _writer(destination, header)
+                    writer.writeheader()
+                    for line, row in enumerate(graph_rows(path), 2):
+                        if any(metadata_identifier(row[field]) in member_annotations for field in fields):
+                            counts[kind] += 1
+                            audit.writerow(
+                                {
+                                    "file": path.name,
+                                    "line": line,
+                                    "reason": "declared_annotation_property"
+                                    if kind == "nodes"
+                                    else "annotation_only_endpoint",
+                                    "authority": str(authority.resolve()),
+                                    "authority_sha256": authority_sha256,
+                                    "original_row_json": json.dumps(row, sort_keys=True),
+                                }
+                            )
+                        else:
+                            writer.writerow(row)
+    return counts
 
 
 def _order_finalized_schema(path, is_node):
@@ -457,6 +630,21 @@ def _repeat_finalization(transform, file_prefix):
         transform._optional_input_states = {name: dict(state) for name, state in recorded_optional["inputs"].items()}
     if getattr(transform, "verify_native_inputs", None) is not None:
         transform.producer_native_inputs = report.get("producer_native_inputs")
+    from kg_microbe.utils.ncit_eight_categories import restore_recorded_guard as restore_ncit_category_guard
+
+    restore_ncit_category_guard(transform, report, report_path)
+    verify_consumed_inputs(transform)
+    from kg_microbe.utils.finite_envo_po_categories import restore_recorded_guard as restore_envo_po_guard
+
+    restore_envo_po_guard(transform, report, report_path)
+    verify_consumed_inputs(transform)
+    from kg_microbe.utils.mesh_finite_categories import restore_recorded_guard as restore_mesh_category_guard
+
+    restore_mesh_category_guard(transform, report, report_path)
+    verify_consumed_inputs(transform)
+    from kg_microbe.transform_utils.gold.taxon_dispositions import restore_gold_declarations
+
+    restore_gold_declarations(transform, report, report_path)
     verify_consumed_inputs(transform)
     transform.finalization_inputs = tuple(item["path"] for item in report.get("inputs", []))
     return report
@@ -531,6 +719,32 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
         for declaration in (*declared_data_inputs(type(transform), repo_root), *SHARED_DATA_INPUTS)
     }
     used_inputs.update(Path(snapshot["path"]) for snapshot in consumed.values())
+    from kg_microbe.utils.source_category_authority import SourceCategoryAuthority
+
+    def category_opener(path):
+        """Bind selected category authorities to producer-consumed immutable bytes."""
+        authority_path = Path(path)
+        suffix = "_owl" if authority_path.suffix == ".owl" else ""
+        return snapshot_consumed_input(transform, f"category_authority_{authority_path.stem}{suffix}", path)
+
+    from kg_microbe.transform_utils.gold.taxon_dispositions import gold_reference_requests, load_gold_declarations
+
+    gold_requests = gold_reference_requests(
+        node_paths,
+        edge_paths,
+        own_gold=transform.source_name == GOLD,
+        quoting=getattr(transform, "TSV_QUOTING", csv.QUOTE_MINIMAL),
+        row_reader=_producer_reference_rows,
+    )
+    gold_guard = load_gold_declarations(transform, gold_requests)
+    gold_guard.bind_members(node_paths, edge_paths)
+    category_authority = SourceCategoryAuthority(raw_dir, opener=category_opener, gold_declarations=gold_guard)
+    transform._ncit_eight_category_guard = category_authority.ncit_eight
+    category_authority.ncit_eight.bind_members(path.name for path in node_paths)
+    transform._finite_envo_po_category_guard = category_authority._finite_envo_po
+    category_authority._finite_envo_po.bind_output_members(path.name for path in node_paths)
+    transform._mesh_finite_category_guard = category_authority.mesh_finite
+    category_authority.mesh_finite.bind_node_members(node_paths)
     with tempfile.TemporaryDirectory(prefix=".finalize-", dir=output_dir) as temporary:
         staging = Path(temporary)
         for name in producer_audits:
@@ -540,6 +754,7 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
         staged_nodes = [staging / path.name for path in node_paths]
         staged_edges = [staging / path.name for path in edge_paths]
         audit_path = staging / f"{file_prefix}source_canonicalization.tsv"
+        metadata_candidates = set()
         with audit_path.open("w", encoding="utf-8", newline="") as stream:
             audit = tsv_dict_writer(stream, fieldnames=_AUDIT_COLUMNS)
             audit.writeheader()
@@ -553,7 +768,14 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
                         raw_dir / "foodon.json",
                         audit,
                         used_inputs,
+                        metadata_candidates,
+                        category_authority=category_authority,
                     )
+        used_inputs.update(category_authority.source_paths)
+        metadata_report = staging / f"{file_prefix}source_metadata_exclusions.tsv"
+        metadata_summary = _exclude_imported_metadata(
+            transform, staged_nodes, staged_edges, metadata_candidates, metadata_report, used_inputs
+        )
         go_present = any(row[ID_COLUMN].startswith("GO:") for path in staged_nodes for row in graph_rows(path))
         if not go_present:
             go_present = any(
@@ -564,7 +786,7 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
             )
         from kg_microbe.utils.go_authority import load_go_authority, normalize_go_bundle
 
-        summaries = {}
+        summaries = {"metadata": metadata_summary}
         authority = None
         if go_present:
             authority = load_go_authority(raw_dir)
@@ -589,13 +811,52 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
             quoting=csv.QUOTE_NONE,
             known_declarations=known_declarations,
             consumed_authorities=used_inputs,
+            gold_declarations=gold_guard,
         )
         for row in graph_rows(external_report, quoting=csv.QUOTE_MINIMAL):
             if row["authority"]:
                 used_inputs.add(raw_dir / row["authority"])
         # GO's audit checkpoints describe the final bundle, not intermediate
         # bytes which external declaration/enrichment subsequently changes.
-        summaries["go"] = normalize_go_bundle(staged_nodes, staged_edges, authority, go_report)
+        # External reference declaration/enrichment can introduce new node rows.
+        # Apply the same source-owned policy after closure, before fingerprinting;
+        # merge never runs this resolver or modifies a finalized category.
+        with audit_path.open("a", encoding="utf-8", newline="") as stream:
+            audit = tsv_dict_writer(stream, fieldnames=_AUDIT_COLUMNS)
+            for path in staged_nodes:
+                projected = path.with_suffix(".category.tsv")
+                _stage_representation(
+                    path,
+                    projected,
+                    True,
+                    csv.QUOTE_NONE,
+                    raw_dir / "foodon.json",
+                    audit,
+                    used_inputs,
+                    metadata_candidates,
+                    category_authority=category_authority,
+                )
+                os.replace(projected, path)
+        used_inputs.update(category_authority.source_paths)
+        # GO records whole-bundle checkpoints. No category/label change may
+        # follow this point or the recorded output identity would be stale.
+        from kg_microbe.utils.go_imported_restrictions import (
+            INVENTORY_KEY,
+            ORIGINAL_INPUT_DIRECTORY,
+            ImportedGoRestrictionGuard,
+        )
+
+        restriction_guard = ImportedGoRestrictionGuard(
+            authority,
+            consume_input=transform.consume_input,
+            normalization_input_dir=output_dir / ORIGINAL_INPUT_DIRECTORY,
+        )
+        transform._go_imported_restriction_guard = restriction_guard
+        summaries["go"] = normalize_go_bundle(
+            staged_nodes, staged_edges, authority, go_report, restriction_guard=restriction_guard
+        )
+        restriction_inventory = restriction_guard.bind_audit(go_report)
+        used_inputs.update(Path(identity["path"]) for identity in restriction_guard.identities.values())
         for paths, is_node in ((staged_nodes, True), (staged_edges, False)):
             for path in paths:
                 _order_finalized_schema(path, is_node)
@@ -603,6 +864,8 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
         verify_consumed_inputs(transform, native_output_dir=staging)
         verify_producer_audits(transform)
         verify_producer_audits(transform, output_dir=staging)
+        consumed = getattr(transform, "consumed_input_snapshots", {})
+        used_inputs.update(Path(snapshot["path"]) for snapshot in consumed.values())
         consumed_hashes = {snapshot["path"]: snapshot["sha256"] for snapshot in consumed.values()}
         report = {
             "version": FINALIZATION_VERSION,
@@ -610,6 +873,11 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
             "raw_input_directory": str(raw_dir.resolve()),
             "tsv_quoting": "none",
             "summaries": summaries,
+            INVENTORY_KEY: restriction_inventory,
+            "ncit_eight_category_authority": category_authority.ncit_eight.contract(),
+            "finite_envo_po_category_authority": category_authority._finite_envo_po.contract(),
+            "mesh_finite_category_authority": category_authority.mesh_finite.contract(),
+            "gold_reference_declarations": gold_guard.contract(),
             "finalizer_code": shared_code_fingerprint(repo_root),
             "members": {
                 path.name: {"bytes": path.stat().st_size, "sha256": _sha256(path)}
@@ -617,7 +885,13 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
             },
             "audit_members": {
                 path.name: {"bytes": path.stat().st_size, "sha256": _sha256(path)}
-                for path in (audit_path, external_report, go_report, *(staging / name for name in producer_audits))
+                for path in (
+                    audit_path,
+                    external_report,
+                    go_report,
+                    metadata_report,
+                    *(staging / name for name in producer_audits),
+                )
             },
             "producer_audit_members": producer_audits,
             "consumed_inputs": consumed,
@@ -807,13 +1081,22 @@ def verify_finalized_source_files(paths):
         admission.verify(metadata_only=True)
 
 
-def write_merge_validation_report(node_path, edge_path, report_path):
+def write_merge_validation_report(node_path, edge_path, report_path, *, native_declarations=None):
     """Validate a merged pair without semantic edits; keep the legacy audit member name explicit."""
-    counts = validate_graph_bundle([node_path], [edge_path], require_closure=True, require_contract=True)
+    counts = validate_graph_bundle(
+        [node_path], [edge_path], require_closure=True, require_contract=True, native_declarations=native_declarations
+    )
     with atomic_write(report_path, encoding="utf-8", newline="") as stream:
-        writer = tsv_dict_writer(stream, fieldnames=["check", "status", "nodes", "edges"])
+        writer = tsv_dict_writer(
+            stream, fieldnames=["check", "status", "nodes", "edges", "audited_native_nameless_nodes"]
+        )
         writer.writeheader()
         writer.writerow(
-            {"check": "canonical_representation_and_endpoint_closure_no_semantic_rewrites", "status": "pass", **counts}
+            {
+                "check": "canonical_representation_and_endpoint_closure_no_semantic_rewrites",
+                "status": "pass",
+                "audited_native_nameless_nodes": 0,
+                **counts,
+            }
         )
     return counts

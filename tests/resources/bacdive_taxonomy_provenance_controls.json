@@ -1,0 +1,9 @@
+{
+  "purpose": "Synthetic execution controls, not biological authority: one direct taxid, two identical-name fallbacks, one later direct taxid.",
+  "records": [
+    {"General": {"BacDive-ID": 1, "keywords": ["fixture_keyword"], "NCBI tax id": {"NCBI tax id": 11}}, "Name and taxonomic classification": {"full scientific name": "Fixture species", "species": "Fixture species"}},
+    {"General": {"BacDive-ID": 2, "keywords": ["fixture_keyword"]}, "Name and taxonomic classification": {"full scientific name": "Fixture species", "species": "Fixture species"}},
+    {"General": {"BacDive-ID": 3, "keywords": ["fixture_keyword"]}, "Name and taxonomic classification": {"full scientific name": "Fixture species", "species": "Fixture species"}},
+    {"General": {"BacDive-ID": 4, "keywords": ["fixture_keyword"], "NCBI tax id": [{"Matching level": "species", "NCBI tax id": 11}]}, "Name and taxonomic classification": {"full scientific name": "Fixture species", "species": "Fixture species"}}
+  ]
+}

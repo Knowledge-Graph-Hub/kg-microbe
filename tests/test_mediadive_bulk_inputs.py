@@ -69,6 +69,11 @@ def test_declares_all_five_actual_json_reads_and_existing_lookup():
         "bacdive_taxon_lookup",
         mod.REVIEWED_ROLE,
         mod.POLICY_ROLE,
+        mod.INGREDIENT_CONTEXT_ROLE,
+        mod.INGREDIENT_NATIVE_ROLE,
+        mod.CATALASE_HISTORICAL_ROLE,
+        mod.RECIPE_POLICY_ROLE,
+        mod.RECIPE_EVIDENCE_ROLE,
     }
 
 
@@ -191,8 +196,9 @@ def test_caught_bulk_parser_interruption_remains_sticky(tmp_path, monkeypatch, b
     write_bulk_inputs(raw)
     value = bulk_build(raw)
 
-    def interrupted(reader):
+    def interrupted(reader, **kwargs):
         """Exercise the snapshot's BaseException branch, including an empty error string."""
+        assert callable(kwargs.get("object_pairs_hook"))
         reader.read(1)
         raise KeyboardInterrupt()
 

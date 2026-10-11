@@ -23,6 +23,7 @@ def required_producer_audits(producer):
                     "source_canonicalization.tsv",
                     "source_reference_resolution.tsv",
                     "go_reference_resolution.tsv",
+                    "source_metadata_exclusions.tsv",
                 )
             )
             for name in names

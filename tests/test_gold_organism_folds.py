@@ -1,4 +1,4 @@
-"""GOLD exports its exact fold decisions so downstream crosswalks retain identity."""
+"""Historical lexical folds are audited but cannot replace source-owned GOLD identity."""
 
 import csv
 import io
@@ -13,9 +13,11 @@ from kg_microbe.transform_utils.constants import (
     GOLD_ORGANISM_FOLD_HEADER,
     MICROBEDECODER_KNOWLEDGE_SOURCE,
 )
+from kg_microbe.transform_utils.gold.fold_restoration import AUDIT_FILE as RESTORATION_AUDIT_FILE
 from kg_microbe.transform_utils.gold.gold import GOLDTransform
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
 from kg_microbe.utils.transform_fingerprint import upstream_fingerprint, write_fingerprint
+from tests.microbedecoder_inactive_join_fixtures import bind_inactive_join_policy, write_empty_join_gss
 from tests.microbedecoder_quarantine_fixtures import write_fixture_quarantine_policy
 
 FIXTURES = Path(__file__).parent / "resources" / "gold_folds"
@@ -48,7 +50,7 @@ def _read(path):
         return list(csv.DictReader(handle, delimiter="\t"))
 
 
-def _microbedecoder(gold):
+def _microbedecoder(gold, *, monkeypatch):
     """Supply immutable GTDB/METPO authorities and build the consumer in the temporary output tree."""
     gtdb_dir = gold.output_base_dir / "gtdb"
     gtdb_dir.mkdir(parents=True, exist_ok=True)
@@ -58,7 +60,8 @@ def _microbedecoder(gold):
     shutil.copyfile(FIXTURES.parent / "microbedecoder" / "metpo_nodes.tsv", ontology_dir / "metpo_nodes.tsv")
     shutil.copyfile(FIXTURES.parent / "microbedecoder" / "go_nodes.tsv", ontology_dir / "go_nodes.tsv")
     shutil.copyfile(FIXTURES.parent / "microbedecoder" / "chebi_record_nodes.tsv", ontology_dir / "chebi_nodes.tsv")
-    return MicrobeDecoderTransform(
+    gold.finalize(fresh_run=True)
+    consumer = MicrobeDecoderTransform(
         input_dir=gold.input_base_dir,
         output_dir=gold.output_base_dir,
         chemical_loader=object(),  # fixture contains only identity crosswalks
@@ -66,50 +69,71 @@ def _microbedecoder(gold):
             gold.input_base_dir / "database.csv", gold.output_base_dir / "fixture-crosswalk-policy"
         ),
     )
+    write_empty_join_gss(consumer.input_base_dir)
+    bind_inactive_join_policy(consumer, consumer.input_base_dir / "database.csv", monkeypatch)
+    return consumer
 
 
-def test_report_contains_only_actual_folds_with_final_taxids(transformed_gold):
-    """Neither trim drops, retained strains nor multi-parent organisms become aliases."""
+def test_legacy_report_is_empty_and_all_historical_records_are_restored(transformed_gold):
+    """Equality and a retired parent ID cannot silently remove native source referents."""
     report = transformed_gold.output_dir / GOLD_ORGANISM_FOLD_FILE
-    assert _read(report) == [
-        {"original_id": "gold:Go1", "canonical_id": "NCBITaxon:10"},
-        {"original_id": "gold:Go4", "canonical_id": "NCBITaxon:10"},
-        {"original_id": "gold:Go7", "canonical_id": "NCBITaxon:20"},
-    ]
+    assert _read(report) == []
+    assert {
+        row["id"]: row["historical_fold_target"] for row in _read(transformed_gold.output_dir / RESTORATION_AUDIT_FILE)
+    } == {"gold:Go1": "NCBITaxon:10", "gold:Go4": "NCBITaxon:10", "gold:Go7": "NCBITaxon:20"}
     assert b"\r" not in report.read_bytes()
     nodes = {row["id"] for row in _read(transformed_gold.output_node_file)}
-    assert "gold:Go1" not in nodes
-    assert "gold:Go4" not in nodes
+    assert "gold:Go1" in nodes
+    assert "gold:Go4" in nodes
     assert "gold:Go2" in nodes
     assert "gold:Go5" in nodes
     assert "gold:Go6" in nodes
 
 
-def test_consumer_repoints_known_folds_without_hiding_unknowns(transformed_gold):
-    """Normalize uppercase IDs first, then apply only the producer's explicit decisions."""
-    consumer = _microbedecoder(transformed_gold)
+def test_actual_consumer_finalization_rejoins_retained_gold_audit(monkeypatch, transformed_gold):
+    """Exercise the registered producer and finalizer on a labelled synthetic routing fixture."""
+    raw = transformed_gold.input_base_dir / "database.csv"
+    raw.write_text("LPSN_ID,GOLD_Organism_ID,BacDive_ID\n102,Go2,\n", encoding="utf-8")
+    consumer = _microbedecoder(transformed_gold, monkeypatch=monkeypatch)
+    consumer.run()
+    consumer.finalize(fresh_run=True)
+    from kg_microbe.utils.source_finalization import verify_finalized_source_files
+
+    verify_finalized_source_files([consumer.output_node_file, consumer.output_edge_file])
+    audit = _read(consumer.output_dir / "gold_crosswalk_dispositions.tsv")
+    assert len(audit) == 1
+    assert {row["category"] for row in _read(consumer.output_node_file)} == {"biolink:NamedThing"}
+
+
+def test_consumer_retains_original_gold_ids_without_hiding_unknowns(monkeypatch, transformed_gold):
+    """No lexical alias may replace the original CSV's declared GOLD field."""
+    consumer = _microbedecoder(transformed_gold, monkeypatch=monkeypatch)
     consumer.run()
     edges = _read(consumer.output_edge_file)
     assert {row["subject"]: row["object"] for row in edges} == {
-        "lpsn:101": "NCBITaxon:10",  # folded
-        "lpsn:102": "gold:Go2",  # retained strain
+        "lpsn:101": "gold:Go1",  # historically folded, now source-owned
+        "lpsn:102": "gold:Go2",  # unresolved native referent
         "lpsn:103": "gold:Go3",  # trimmed organism remains a reportable gap
-        "lpsn:104": "NCBITaxon:10",  # folded after retired-taxid remapping
+        "lpsn:104": "gold:Go4",  # parent remap does not replace the source ID
         "lpsn:105": "gold:Go5",  # multiple parents: producer refused to fold
         "lpsn:106": "gold:Go404",  # no source record: do not infer
     }
-    assert {row["predicate"] for row in edges} == {"biolink:close_match"}
+    admitted = {"gold:Go1", "gold:Go2", "gold:Go4", "gold:Go5"}
+    assert {row["predicate"] for row in edges if row["object"] in admitted} == {"biolink:related_to"}
+    assert {row["predicate"] for row in edges if row["object"] not in admitted} == {"biolink:close_match"}
     assert {row["primary_knowledge_source"] for row in edges} == {MICROBEDECODER_KNOWLEDGE_SOURCE}
-    assert not _read(consumer.output_node_file)
+    assert {row["id"] for row in _read(consumer.output_node_file)} == admitted
 
 
-def test_missing_report_fails_before_overwriting_outputs(transformed_gold):
-    """An old GOLD output cannot silently reintroduce the folded-ID stubs (#1051)."""
-    consumer = _microbedecoder(transformed_gold)
+def test_missing_report_fails_before_overwriting_outputs(monkeypatch, transformed_gold):
+    """A missing mandatory native restoration audit rejects before consumer emission."""
+    consumer = _microbedecoder(transformed_gold, monkeypatch=monkeypatch)
     consumer.output_node_file.write_text("previous nodes\n")
     consumer.output_edge_file.write_text("previous edges\n")
-    (transformed_gold.output_dir / GOLD_ORGANISM_FOLD_FILE).unlink()
-    with pytest.raises(FileNotFoundError, match="poetry run kg transform -s gold"):
+    (transformed_gold.output_dir / RESTORATION_AUDIT_FILE).unlink()
+    from kg_microbe.utils.source_finalization import SourceFinalizationRequired
+
+    with pytest.raises((FileNotFoundError, SourceFinalizationRequired)):
         consumer.run()
     assert consumer.output_node_file.read_text() == "previous nodes\n"
     assert consumer.output_edge_file.read_text() == "previous edges\n"
@@ -126,29 +150,41 @@ def test_missing_report_fails_before_overwriting_outputs(transformed_gold):
         "original_id\tcanonical_id\ngold:Go1\tNCBITaxon:10\ngold:Go1\tNCBITaxon:20\n",
     ],
 )
-def test_malformed_fold_report_is_rejected(transformed_gold, body):
-    """A corrupt sidecar must not manufacture or ambiguously choose identity mappings."""
+def test_retired_fold_report_cannot_redirect_native_gold_ids(monkeypatch, transformed_gold, body):
+    """The retired identity table is no longer consumed, regardless of its stale contents."""
     (transformed_gold.output_dir / GOLD_ORGANISM_FOLD_FILE).write_text(body)
-    with pytest.raises(ValueError):
-        _microbedecoder(transformed_gold).run()
-
-
-def test_empty_fold_run_replaces_previous_report(transformed_gold, monkeypatch):
-    """A legitimate zero-fold run publishes a header rather than leaving stale aliases."""
-    monkeypatch.setattr(transformed_gold, "_organism_collapse", lambda *args: {})
-    transformed_gold.run()
-    report = transformed_gold.output_dir / GOLD_ORGANISM_FOLD_FILE
-    assert report.read_text() == "\t".join(GOLD_ORGANISM_FOLD_HEADER) + "\n"
-    consumer = _microbedecoder(transformed_gold)
+    consumer = _microbedecoder(transformed_gold, monkeypatch=monkeypatch)
     consumer.run()
     assert all(row["object"].startswith("gold:") for row in _read(consumer.output_edge_file))
 
 
-def test_consumer_reloads_report_on_a_second_run(transformed_gold):
-    """Reusing a transform instance must not retain mappings from a prior GOLD run."""
-    consumer = _microbedecoder(transformed_gold)
+def test_empty_fold_run_replaces_previous_report(monkeypatch, transformed_gold):
+    """A legitimate zero-fold run publishes a header rather than leaving stale aliases."""
+    # This synthetic routing fixture changes the actual selected labels, rather
+    # than bypassing the emitter while its independently audited policy still folds.
+    labels = transformed_gold.output_base_dir / "ontologies/ncbitaxon_nodes.tsv"
+    rows = _read(labels)
+    for row in rows:
+        row["name"] += " synthetic authority label changed"
+    with labels.open("w", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), delimiter="\t", lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+    transformed_gold.run()
+    report = transformed_gold.output_dir / GOLD_ORGANISM_FOLD_FILE
+    assert report.read_text() == "\t".join(GOLD_ORGANISM_FOLD_HEADER) + "\n"
+    consumer = _microbedecoder(transformed_gold, monkeypatch=monkeypatch)
     consumer.run()
-    (transformed_gold.output_dir / GOLD_ORGANISM_FOLD_FILE).write_text("\t".join(GOLD_ORGANISM_FOLD_HEADER) + "\n")
+    assert all(row["object"].startswith("gold:") for row in _read(consumer.output_edge_file))
+
+
+def test_consumer_never_reloads_retired_aliases_on_a_second_run(monkeypatch, transformed_gold):
+    """Reusing a transform instance must not acquire mappings from a stale legacy table."""
+    consumer = _microbedecoder(transformed_gold, monkeypatch=monkeypatch)
+    consumer.run()
+    (transformed_gold.output_dir / GOLD_ORGANISM_FOLD_FILE).write_text(
+        "\t".join(GOLD_ORGANISM_FOLD_HEADER) + "\ngold:Go1\tNCBITaxon:10\n"
+    )
     consumer.run()
     assert all(row["object"].startswith("gold:") for row in _read(consumer.output_edge_file))
 

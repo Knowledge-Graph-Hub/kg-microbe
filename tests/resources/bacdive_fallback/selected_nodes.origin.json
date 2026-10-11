@@ -1,0 +1,277 @@
+{
+  "literal_excerpt_sha256": "ad031ecd8496179e9a15ed6da88b7dd06774a3c7c888f3f8080d2dec5c3cdd0d",
+  "literal_rows": [
+    {
+      "identifier": "NCBITaxon:1",
+      "literal_row_sha256": "9de74e15c5ea0af31f9385f92f47a0fcac8c95ac9774f120ecc58aea2fdd29d4",
+      "physical_line": 2
+    },
+    {
+      "identifier": "NCBITaxon:114378",
+      "literal_row_sha256": "fe2202b7b1abf56f6c4420a15cb60bac3bd0e65c7d3964f2a66543ac3ca57b63",
+      "physical_line": 56178
+    },
+    {
+      "identifier": "NCBITaxon:117743",
+      "literal_row_sha256": "e9ee76e814d569d5a9f1223d8447a0585b11b0b9d7f482124c755e3ac2386b78",
+      "physical_line": 73546
+    },
+    {
+      "identifier": "NCBITaxon:1224",
+      "literal_row_sha256": "525d5cd6c763bcdc64e97145f1d4efb43ba1ac9927676a4adb6366a45643d099",
+      "physical_line": 97327
+    },
+    {
+      "identifier": "NCBITaxon:1236",
+      "literal_row_sha256": "14d98ffbc4cfa864cc349eebf1ef1e3d6d3efc5bf5b4bff7b278c7f3ae901b52",
+      "physical_line": 103693
+    },
+    {
+      "identifier": "NCBITaxon:131567",
+      "literal_row_sha256": "ad4c01a3aafa2b74363c7a0703c224101cf4e0f1d03c8c179fa718de3f4f89dc",
+      "physical_line": 146656
+    },
+    {
+      "identifier": "NCBITaxon:135619",
+      "literal_row_sha256": "be0631128bec0fe96b40438be8b5cdf90eaea6ebf666e14fb32f584074cc8635",
+      "physical_line": 167664
+    },
+    {
+      "identifier": "NCBITaxon:1760",
+      "literal_row_sha256": "6c124d1445f27b4794092478e8bbc7318a669124b99d7f391d6d8deca1c89717",
+      "physical_line": 353997
+    },
+    {
+      "identifier": "NCBITaxon:1783257",
+      "literal_row_sha256": "d11081569ad5f920d599176eabbcf5c7229912cc16ceec816387d627a4b71653",
+      "physical_line": 361995
+    },
+    {
+      "identifier": "NCBITaxon:1783270",
+      "literal_row_sha256": "2859acbe9086fdcaf02fb49e4703920501e2c0227e64f6447799b515d041bb46",
+      "physical_line": 362002
+    },
+    {
+      "identifier": "NCBITaxon:1783272",
+      "literal_row_sha256": "d71701a6b1f75fd09228eed6baa547bf037b272a25ae00be9e5b4a6d0ed59e63",
+      "physical_line": 362004
+    },
+    {
+      "identifier": "NCBITaxon:1783275",
+      "literal_row_sha256": "0ea12b5cc1a576d687f3b6adf8781e22b4fafeaf88062520c3b6fa1d6063ae33",
+      "physical_line": 362007
+    },
+    {
+      "identifier": "NCBITaxon:183924",
+      "literal_row_sha256": "3d803ec4b091492a2514c6e4c8d632377fb9d42e493ad84732ec7eaef65d4909",
+      "physical_line": 383548
+    },
+    {
+      "identifier": "NCBITaxon:196137",
+      "literal_row_sha256": "a8fe019fcdcffb585998252a376d7f06bc1f00ee4c67c4ab98b476aa81847c66",
+      "physical_line": 421679
+    },
+    {
+      "identifier": "NCBITaxon:2",
+      "literal_row_sha256": "7488eeb4b84f59913ae7f551498a71b808259a9690088715a09fbd048902a768",
+      "physical_line": 429145
+    },
+    {
+      "identifier": "NCBITaxon:200644",
+      "literal_row_sha256": "da2dcb995ce8d177bbc9bce5fc02370c3f3d21f7788d85b3aea5417acd05995c",
+      "physical_line": 430061
+    },
+    {
+      "identifier": "NCBITaxon:201174",
+      "literal_row_sha256": "8d83be670de4bbef422d5c27388674b6e67631828cd9b8951a48b7cd656e41e0",
+      "physical_line": 431611
+    },
+    {
+      "identifier": "NCBITaxon:203682",
+      "literal_row_sha256": "2ccea1c916a46227986d9894529ecd9c4f5b709c0909bbc3637da62a15f30918",
+      "physical_line": 438072
+    },
+    {
+      "identifier": "NCBITaxon:203683",
+      "literal_row_sha256": "37abd974a646f1bc040ae31967764982ac246c8e6b3123521c3ace30e1e25a0f",
+      "physical_line": 438075
+    },
+    {
+      "identifier": "NCBITaxon:2037",
+      "literal_row_sha256": "5cf0f1355455288bcf37a234a557e9dcf3b18c4fab95e7a90d6ddf7e612a1062",
+      "physical_line": 438126
+    },
+    {
+      "identifier": "NCBITaxon:204432",
+      "literal_row_sha256": "3e78a7dbab232a1f0ab8799450c39091b94872a70eed962b721d75b5209d3357",
+      "physical_line": 439761
+    },
+    {
+      "identifier": "NCBITaxon:204433",
+      "literal_row_sha256": "fb806c308f74aaa89e35a4224ec853c0ee134c194187f642da7186a0e318214f",
+      "physical_line": 439762
+    },
+    {
+      "identifier": "NCBITaxon:204434",
+      "literal_row_sha256": "4211381a3ed14af3fba956e2a549b5f30f11a40229e2622a3b4f76943d6aaadb",
+      "physical_line": 439763
+    },
+    {
+      "identifier": "NCBITaxon:204441",
+      "literal_row_sha256": "37acca47fc87820a8813a9d6447472819012e6bc323310c513ee0ac6e4fedcb8",
+      "physical_line": 439765
+    },
+    {
+      "identifier": "NCBITaxon:2157",
+      "literal_row_sha256": "20ea9ff311a21ac999f926d41c0590107ebb1ffc0215391a2fe4277ddb8f43aa",
+      "physical_line": 454614
+    },
+    {
+      "identifier": "NCBITaxon:2191",
+      "literal_row_sha256": "f6246523c84e476ccca6e3ba7604dee7cec05f045d6080e33f1d4e708485ddb1",
+      "physical_line": 458829
+    },
+    {
+      "identifier": "NCBITaxon:2202",
+      "literal_row_sha256": "f66ffe1860b3c500636a67a714690b2f0098cb8d5bddebdfd106fb111671c943",
+      "physical_line": 459363
+    },
+    {
+      "identifier": "NCBITaxon:2206",
+      "literal_row_sha256": "760b1931e334a03bd263fdf5920cfbff5a32bae1ad1c6cda9329ed44543d0ef5",
+      "physical_line": 459926
+    },
+    {
+      "identifier": "NCBITaxon:224756",
+      "literal_row_sha256": "0d44b880c75c82401fc264079b0d2257751a4b5863eb9292955633a256ced495",
+      "physical_line": 462332
+    },
+    {
+      "identifier": "NCBITaxon:2268",
+      "literal_row_sha256": "1ed5823058b34d6e88e569c889912bcfde5e7b5892cc2cc4bab22cc2a74df921",
+      "physical_line": 463693
+    },
+    {
+      "identifier": "NCBITaxon:2290931",
+      "literal_row_sha256": "bac7afdf07a2a75f5fef3d03c43f72065e082335b86a85af7ee0bda9542be51e",
+      "physical_line": 465371
+    },
+    {
+      "identifier": "NCBITaxon:2745",
+      "literal_row_sha256": "46c21f67aa2c1ef0a978d73cb4ba94106fed467fd122b305362ea4d33ee41679",
+      "physical_line": 532507
+    },
+    {
+      "identifier": "NCBITaxon:2759",
+      "literal_row_sha256": "c9bdfb512d1e4855c76c1007f11fee0ebedf3e79ba381260e765f76241212731",
+      "physical_line": 534986
+    },
+    {
+      "identifier": "NCBITaxon:2818505",
+      "literal_row_sha256": "09e7ad9b3b4758c99aabb6c0d17373473be87d50e73a5969683e6f75ba20f095",
+      "physical_line": 550812
+    },
+    {
+      "identifier": "NCBITaxon:28211",
+      "literal_row_sha256": "ef60dd1960e717328324e02336f46a7a8e6ca08e2383ae5c9c92076bf2bc103b",
+      "physical_line": 552134
+    },
+    {
+      "identifier": "NCBITaxon:28256",
+      "literal_row_sha256": "6e179099f389a8a7b0ae0c2653768463bcc68f7ab80c721c96e9731f8782dc15",
+      "physical_line": 553432
+    },
+    {
+      "identifier": "NCBITaxon:2834276",
+      "literal_row_sha256": "b653836f2f99f35621f63a4473c63f8e653f6662a4a04fca5e880838140fa0b2",
+      "physical_line": 555074
+    },
+    {
+      "identifier": "NCBITaxon:2856582",
+      "literal_row_sha256": "3d4e11e63636d82fe505cc234f9e21f49faccf48879a7b03953eb0fee7b9db35",
+      "physical_line": 560828
+    },
+    {
+      "identifier": "NCBITaxon:28889",
+      "literal_row_sha256": "fac7298dcfd87b86a514901385da7e47f19559f7211cb71ae471bec94a312e68",
+      "physical_line": 567880
+    },
+    {
+      "identifier": "NCBITaxon:28890",
+      "literal_row_sha256": "13da6b783147138856788e8eb035d383bd3cbf8f2fc60a3969114556c2f82c25",
+      "physical_line": 567897
+    },
+    {
+      "identifier": "NCBITaxon:29",
+      "literal_row_sha256": "87865348ffdc06b67ff26e4dc169159f2546b57bd8b94bc4276d2d9dabc2e393",
+      "physical_line": 570046
+    },
+    {
+      "identifier": "NCBITaxon:2907517",
+      "literal_row_sha256": "450bc315e4c20a4fd09fc5f2fafbbb7f4cde5e197c4c027790d41bf77739267e",
+      "physical_line": 571956
+    },
+    {
+      "identifier": "NCBITaxon:32015",
+      "literal_row_sha256": "5c9e7ea56676da4149af4aee48d4723a6939144846ac30afd67e2d612598080a",
+      "physical_line": 648822
+    },
+    {
+      "identifier": "NCBITaxon:33154",
+      "literal_row_sha256": "927f9293124c3d94fbbd70f1788e5eded08135dbf30ca6d4559223720c566466",
+      "physical_line": 658378
+    },
+    {
+      "identifier": "NCBITaxon:3366610",
+      "literal_row_sha256": "3825310fbf6fc74f03c124e1fa0a7d0e1635370affabeefc8c588d67b6e5be57",
+      "physical_line": 666444
+    },
+    {
+      "identifier": "NCBITaxon:3379134",
+      "literal_row_sha256": "56e761c2f4f49881b7bc36e82397ee20b994ef32f2588ee3bcb0ba4e6545c68c",
+      "physical_line": 669570
+    },
+    {
+      "identifier": "NCBITaxon:356",
+      "literal_row_sha256": "b569f3373e2d2e0af8e0d3da2fa7bc71efb0aa6224f1d16b22e8693ec6f811a5",
+      "physical_line": 703975
+    },
+    {
+      "identifier": "NCBITaxon:41295",
+      "literal_row_sha256": "cfb5905bb0d5a2a9552005e2ec42078f23e9d674b73ee1e05f5d22ce5b78cb7a",
+      "physical_line": 741578
+    },
+    {
+      "identifier": "NCBITaxon:49546",
+      "literal_row_sha256": "fbcdf88e8eb8838f227df35624c4e30b15c03e917a9e5647eae190bf3fadb83a",
+      "physical_line": 775897
+    },
+    {
+      "identifier": "NCBITaxon:57723",
+      "literal_row_sha256": "d978d116a2f531e8eb8f07247e71a1cc62c5b9f0e475690ee111ccbc35dc847a",
+      "physical_line": 810645
+    },
+    {
+      "identifier": "NCBITaxon:68336",
+      "literal_row_sha256": "c87eeb28356197fb988c5fba6c5c01f8043a0b505718a7eb2de9d1dea48efaab",
+      "physical_line": 846248
+    },
+    {
+      "identifier": "NCBITaxon:82115",
+      "literal_row_sha256": "69ad52a962c3ea43c3364e78e30000b657938863575efa728b9304c79a082c5a",
+      "physical_line": 877439
+    },
+    {
+      "identifier": "NCBITaxon:94695",
+      "literal_row_sha256": "b76f839ff98ef296f037ee75dcc9a7d68f525fd39dc4ecbcb87095cd34cc787b",
+      "physical_line": 914331
+    },
+    {
+      "identifier": "NCBITaxon:976",
+      "literal_row_sha256": "52c76fde4ba737a0b6a44e9d0ee195279d8ab456115e485d8a2a67d43136eb0f",
+      "physical_line": 917017
+    }
+  ],
+  "not_a_complete_native_database": true,
+  "whole_input_sha256": "e847c7d291320ed80785976e4a7eadbfadde5456245bc77a88bf291fe87eb3fb"
+}

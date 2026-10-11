@@ -1,5 +1,6 @@
 """Record-local citations survive keyword/enzyme processing in the actual run path (#1173)."""
 
+import gzip
 import json
 from pathlib import Path
 
@@ -20,6 +21,8 @@ def _run_fixture(tmp_path, monkeypatch, records, native_context=False):
     raw = tmp_path / "raw"
     raw.mkdir()
     (raw / "bacdive_strains.json").write_text(json.dumps(records))
+    native_mesh = FIXTURE.parent.parent / "bacdive_clinical_mesh/mesh2026-clinical-excerpt.nt"
+    (raw / "mesh2026.nt.gz").write_bytes(gzip.compress(native_mesh.read_bytes(), mtime=0))
     scratch = tmp_path / "scratch"
     scratch.mkdir()
     (scratch / module.BACDIVE_MAPPING_FILE).write_text("EC_ID\tCHEBI_ID\tsubstrate\n")

@@ -1,0 +1,21 @@
+{
+  "full_sources": {
+    "upa.json": "cff92938a092dcc2e4e2e1a17266417edeacba8e7b9f51b3f183066a80fdb8bd",
+    "upa.owl": "1ea0465c2222592bdeea3197a687ba26c74818263e1e6c5e8838baafcb6838ce",
+    "go.db": "a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a"
+  },
+  "reviewed_policy_semantic_sha256": "72388c7fff376f7d88950bd203c1d6dd7b51aea8e6cb1c5407867e4b80be08a9",
+  "fixtures": {
+    "upa.json": "ff3fb37e265cc64a805427e468521b4f79cab2eb1f2d9f197a9cba8b17dca2a8",
+    "upa.owl": "47c5870dc8560608a48454f69e6a2eeafd04e424c3d605feb4519154aba5baef",
+    "go_statements.json": "da439d71011074ff5c35e182e716d1e615bd62682840ad64b2d4d949ca9dd282",
+    "positive_route_origins.json": "12b38ea2504fc75521917954c6ec13dc8e27d8e10732a32280fb12dbd47479f1"
+  },
+  "finite_native_nodes": 21,
+  "finite_native_path_occurrences": 14,
+  "sql_statement_occurrences": 1157,
+  "additional_positive_native_routes": 2,
+  "interpretation": "Immutable decoded JSON/SQL and literal XML excerpts; not full native artifact bytes or historical consumption receipts",
+  "coordinates": "Policy retains full-input zero-based JSON positions plus original evidence's explicitly one-based edge ordinal; fixture positions are independently recalculated",
+  "historical_round01_material_receipt": "native-material.json retains its historical 726629fc preimage, superseded only for integration by rebase-receipt.json"
+}

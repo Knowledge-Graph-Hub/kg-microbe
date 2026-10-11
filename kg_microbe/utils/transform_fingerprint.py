@@ -47,6 +47,11 @@ SHARED_CODE = (
     Path("kg_microbe") / "transform.py",
     Path("kg_microbe") / "merge_utils" / "external_node_closure.py",
     Path("kg_microbe") / "merge_utils" / "local_context.py",
+    # Imported by kg_microbe/utils for every source's finalization, admission or
+    # shared category canonicalization, so they change every source's output too.
+    Path("kg_microbe") / "merge_utils" / "source_admission.py",
+    Path("kg_microbe") / "transform_utils" / "gold" / "taxon_dispositions.py",
+    Path("kg_microbe") / "transform_utils" / "ontologies_stubs" / "ncit_category_projection.py",
 )
 
 # Shared canonicalization is used by source transforms and merge ingestion.

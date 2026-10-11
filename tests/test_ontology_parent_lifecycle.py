@@ -13,6 +13,7 @@ import pytest
 
 from kg_microbe.utils import ontology_parent_quarantine as native
 from kg_microbe.utils.source_finalization import graph_rows, verify_finalized_source_files
+from tests.native_ro_fixtures import bind_native_ro_fixture_policy, stage_native_ro_envo
 
 FIXTURE = Path(__file__).parent / "resources/ontology_parent_dispositions"
 
@@ -27,6 +28,7 @@ def finalized_seed(tmp_path_factory, request):
     for name in ("foodon.json", "envo.json", "po.owl"):
         shutil.copyfile(FIXTURE / "lifecycle" / name, raw / name)
     shutil.copyfile(FIXTURE / "foodon.owl", raw / "foodon.owl")
+    stage_native_ro_envo(raw)
     script = r"""
 import csv, hashlib, importlib, json, socket, sys
 from pathlib import Path
@@ -42,6 +44,8 @@ from kg_microbe.merge_utils.merge_kg import _assert_sources_finalized
 from kg_microbe.utils.source_finalization import verify_finalized_source_files
 from kg_microbe.utils import ontology_parent_quarantine as native
 raw, output, scope = Path(sys.argv[1]), Path(sys.argv[2]), sys.argv[3]
+from tests.native_ro_fixtures import bind_native_ro_fixture_policy
+bind_native_ro_fixture_policy(raw)
 schemas = tuple(Path(value) for value in sys.argv[4:6])
 fingerprints.SCHEMA_FILES = source_freshness.SCHEMA_FILES = schemas
 module.ONTOLOGIES_MAP = {"foodon": "foodon.json", "envo": "envo.json"}
@@ -127,9 +131,10 @@ print(report_path)
 
 
 @pytest.fixture
-def public_candidate(finalized_seed, tmp_path):
+def public_candidate(finalized_seed, tmp_path, monkeypatch):
     """Keep primary authority receipts immutable while changing only a disposable published candidate."""
     source, prefix, scope = finalized_seed
+    bind_native_ro_fixture_policy(source.parents[1] / "raw", monkeypatch)
     directory = tmp_path / "published"
     shutil.copytree(source, directory)
     report_path = directory / (prefix + "source_finalization.json")

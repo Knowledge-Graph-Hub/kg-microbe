@@ -34,7 +34,14 @@ FIXTURE = Path(__file__).parent / "resources" / "ontology_canonicalization.json"
 )
 def test_categories_follow_node_namespace(identifier, category, expected):
     """Importer identity cannot add an OntologyClass category back to FOODON/PATO."""
-    assert canonical_node_category(identifier, category) == expected
+    # An explicit FOODON authority keeps this hermetic: the default reads
+    # data/raw/foodon.json when present and rejects classes it does not declare.
+    foodon_categories = {
+        "FOODON:03301710": "biolink:Food",
+        "FOODON:03315426": "biolink:Food",
+        "FOODON:03420174": "biolink:Food",
+    }
+    assert canonical_node_category(identifier, category, foodon_categories=foodon_categories) == expected
 
 
 @pytest.mark.parametrize(

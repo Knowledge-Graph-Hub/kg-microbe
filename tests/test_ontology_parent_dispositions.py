@@ -16,6 +16,7 @@ import pytest
 from kg_microbe.transform_utils.ontologies.ontologies_transform import OntologiesTransform
 from kg_microbe.utils import ontology_parent_quarantine as native
 from kg_microbe.utils.source_finalization import graph_rows
+from tests.native_ro_fixtures import stage_native_ro_envo
 
 FIXTURE = Path(__file__).parent / "resources/ontology_parent_dispositions"
 POLICY = json.loads(native.POLICY_FILE.read_text())
@@ -107,6 +108,7 @@ def producer_seed(tmp_path_factory):
     raw.mkdir()
     for filename in ("foodon.json", "foodon.owl", "envo.json"):
         shutil.copyfile(FIXTURE / filename, raw / filename)
+    stage_native_ro_envo(raw)
     script = r"""
 import csv, json, socket, sys
 from collections import Counter
@@ -138,6 +140,8 @@ def measured(self, name, frame, originals):
     }
     return result
 native.OntologyParentQuarantine.project = measured
+from tests.native_ro_fixtures import bind_native_ro_fixture_policy
+bind_native_ro_fixture_policy(Path(sys.argv[1]))
 transform = module.OntologiesTransform(Path(sys.argv[1]), Path(sys.argv[2]))
 transform.run()
 transform.verify_consumed_inputs()

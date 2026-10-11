@@ -16,6 +16,7 @@ from kg_microbe.transform_utils.ontologies.ontologies_transform import Ontologie
 from kg_microbe.utils import foodon_kernel_quarantine as native
 from kg_microbe.utils.foodon_kernel_producer import MEMBERS, verify_kernel_audit_bindings
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, graph_rows, verify_finalized_source_files
+from tests.native_ro_fixtures import bind_native_ro_fixture_policy, stage_native_ro_envo
 from tests.test_foodon_kernel_quarantine import prepare, publish
 from tests.test_merge_source_freshness import prepare_source
 
@@ -80,8 +81,15 @@ def test_zero_cannot_publish_selected_foodon_and_failure_is_sticky(tmp_path, res
         transform.verify_native_inputs()
 
 
+@pytest.fixture
+def shared_directory_seed(shared_directory_run, monkeypatch):
+    """Admit the module's actual run under the fixture-only native RO pin it was produced with."""
+    bind_native_ro_fixture_policy(shared_directory_run / "raw", monkeypatch)
+    return shared_directory_run
+
+
 @pytest.fixture(scope="module")
-def shared_directory_seed(tmp_path_factory):
+def shared_directory_run(tmp_path_factory):
     """Run the actual dispatcher twice with pinned full native excerpts and the local model."""
     root = tmp_path_factory.mktemp("foodon-envo-selected-scope")
     raw = root / "raw"
@@ -89,6 +97,7 @@ def shared_directory_seed(tmp_path_factory):
     for name in ("foodon.json", "envo.json", "po.owl"):
         shutil.copyfile(FIXTURE / "lifecycle" / name, raw / name)
     shutil.copyfile(FIXTURE / "foodon.owl", raw / "foodon.owl")
+    stage_native_ro_envo(raw)
     script = r"""
 import importlib, json, shutil, socket, sys
 from pathlib import Path
@@ -100,6 +109,8 @@ dispatcher = importlib.import_module("kg_microbe.transform")
 from kg_microbe.transform_utils.ontologies import ontologies_transform as module
 from kg_microbe.utils.source_finalization import verify_finalized_source_files, SourceFinalizationRequired
 raw, output, snapshot = map(Path, sys.argv[1:4])
+from tests.native_ro_fixtures import bind_native_ro_fixture_policy
+bind_native_ro_fixture_policy(raw)
 module.ONTOLOGIES_MAP = {"foodon": "foodon.json", "envo": "envo.json"}
 dispatcher._run_one("foodon", raw, output, False)
 directory = output / "ontologies"

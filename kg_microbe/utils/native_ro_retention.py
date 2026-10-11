@@ -383,8 +383,17 @@ class NativeROPredicateRetention:
                 raise SourceFinalizationRequired(f"Native RO consumed-input binding missing or changed: {role}")
 
 
-def verify_audit_input_bindings(directory, snapshots, *, admission=None):
-    """At finalization/admission, bind every audited supplier to its original native read."""
+def verify_audit_input_bindings(directory, snapshots, *, members=None, admission=None):
+    """
+    At finalization/admission, bind every audited supplier to its original native read.
+
+    ``members`` names the record's graph files. Supplier edge files outside it
+    belong to other records in a shared ontologies directory (for example a
+    full build beside a later scoped ``-s ec`` run) and are not this record's
+    claims. A supplier file that is a member is always checked, so an empty
+    audit can never admit protected rows the record publishes. ``None`` keeps
+    the whole-directory scan.
+    """
     from kg_microbe.merge_utils.source_admission import SourceAdmission
     from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 
@@ -497,6 +506,8 @@ def verify_audit_input_bindings(directory, snapshots, *, admission=None):
     emitted = Counter()
     for name in sorted(_SUPPLIERS):
         path = Path(directory) / (name + "_edges.tsv")
+        if members is not None and path.name not in members:
+            continue
         if not path.is_file():
             continue
         guard.capture(path)

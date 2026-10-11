@@ -585,6 +585,13 @@ def _dependency_declarations(transform, used_inputs):
     return found
 
 
+def _bind_finalization_members(transform, names):
+    """Tell a producer sharing its output directory which graph files this record covers."""
+    binder = getattr(transform, "bind_finalization_members", None)
+    if binder is not None:
+        binder(names)
+
+
 def _repeat_finalization(transform, file_prefix):
     """Reuse exact already-finalized bytes without overwriting the original disposition evidence."""
     output_dir = Path(transform.output_dir)
@@ -630,6 +637,7 @@ def _repeat_finalization(transform, file_prefix):
         transform._optional_input_states = {name: dict(state) for name, state in recorded_optional["inputs"].items()}
     if getattr(transform, "verify_native_inputs", None) is not None:
         transform.producer_native_inputs = report.get("producer_native_inputs")
+    _bind_finalization_members(transform, report["members"])
     from kg_microbe.utils.ncit_eight_categories import restore_recorded_guard as restore_ncit_category_guard
 
     restore_ncit_category_guard(transform, report, report_path)
@@ -711,6 +719,7 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
     if not node_paths or not edge_paths:
         raise SourceFinalizationRequired(f"{output_dir}: source finalization requires node and edge TSV files")
     repo_root = Path(__file__).resolve().parents[2]
+    _bind_finalization_members(transform, (path.name for path in (*node_paths, *edge_paths)))
     verify_consumed_inputs(transform)
     producer_audits = verify_producer_audits(transform)
     consumed = getattr(transform, "consumed_input_snapshots", {})

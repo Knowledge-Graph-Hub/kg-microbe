@@ -409,16 +409,35 @@ class OntologiesTransform(Transform):
         self._ontology_parent_published = True
         return report
 
+    def bind_finalization_members(self, names):
+        """Record the graph files of the record being finalized; the directory may hold others."""
+        self._finalization_members = tuple(sorted(names))
+
     def verify_native_inputs(self, *, byte_verified=False, output_dir=None):
         """Preserve native RO role identities after run completion and during finalization."""
-        from kg_microbe.utils.native_ro_retention import AUDIT_FILE, verify_audit_input_bindings
+        from kg_microbe.utils import native_ro_retention
         from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 
         contract = getattr(self, "_native_relation_input_contract", None)
         if contract is not None:
             contract.verify_bindings()
-        if AUDIT_FILE in self.producer_audit_snapshots:
-            verify_audit_input_bindings(output_dir or self.output_dir, self.consumed_input_snapshots)
+        if native_ro_retention.AUDIT_FILE in self.producer_audit_snapshots:
+            # A staging directory holds exactly this record's members. The shared
+            # ontologies directory may also hold other records' supplier files.
+            members = (
+                tuple(
+                    sorted(
+                        path.name
+                        for path in Path(output_dir).iterdir()
+                        if path.name.endswith(("nodes.tsv", "edges.tsv"))
+                    )
+                )
+                if output_dir is not None
+                else getattr(self, "_finalization_members", None)
+            )
+            native_ro_retention.verify_audit_input_bindings(
+                output_dir or self.output_dir, self.consumed_input_snapshots, members=members
+            )
         from kg_microbe.utils.foodon_kernel_producer import verify_kernel_audit_bindings
         from kg_microbe.utils.foodon_kernel_quarantine import AUDIT_FILE as KERNEL_AUDIT
 
@@ -515,7 +534,9 @@ class OntologiesTransform(Transform):
             raw_dir=report.get("raw_input_locator") or report.get("raw_input_directory"),
             admission=admission,
         )
-        verify_audit_input_bindings(Path(report_path).parent, report.get("consumed_inputs", {}), admission=admission)
+        verify_audit_input_bindings(
+            Path(report_path).parent, report.get("consumed_inputs", {}), members=member_names, admission=admission
+        )
         from kg_microbe.utils.foodon_kernel_producer import verify_kernel_audit_bindings
 
         verify_kernel_audit_bindings(

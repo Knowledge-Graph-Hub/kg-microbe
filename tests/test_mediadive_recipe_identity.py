@@ -365,6 +365,18 @@ def test_fresh_instance_checkpoint_reconsumes_native_evidence(produced):
 
 
 @pytest.mark.usefixtures("local_source_schema")
+def test_rerun_over_previous_finalization_writes_and_refinalizes(produced, monkeypatch):
+    """A previous run's report must not switch a new writer's TSVs to the canonical reader."""
+    first = produced.finalize(fresh_run=True)
+    rerun = _fresh_instance(produced)
+    monkeypatch.setattr(rerun, "_get_mediadive_json", lambda *args: pytest.fail("network fallback"))
+    rerun.run(show_status=False)
+    second = rerun.finalize(fresh_run=True)
+    assert second["members"] == first["members"]
+    verify_finalized_source_files([rerun.output_node_file, rerun.output_edge_file])
+
+
+@pytest.mark.usefixtures("local_source_schema")
 @pytest.mark.parametrize("mutation", ["cached_native", "role", "source_file", "deleted_audit"])
 def test_fresh_checkpoint_never_erases_existing_conflicts(produced, mutation):
     """Original constructor state, native bytes and mandatory evidence remain authoritative."""

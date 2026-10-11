@@ -339,6 +339,15 @@ def _verify_graph(index, directory, members, *, canonical):
     require(set(material_nodes) == set(materials), "source-owned material declaration missing")
 
 
+def _report_identity(directory):
+    """Identify the finalization report present now; publication always replaces it."""
+    try:
+        status = (Path(directory) / "source_finalization.json").stat()
+    except FileNotFoundError:
+        return None
+    return status.st_dev, status.st_ino, status.st_size, status.st_mtime_ns
+
+
 def _check_audits(directory, rows):
     """Check full native-derived evidence, including partial loss and same-count rewrites."""
     for cohort, name in AUDITS.items():
@@ -376,6 +385,8 @@ class RecipeIdentityGuard:
         self.members = {"nodes": Path(transform.output_node_file).name, "edges": Path(transform.output_edge_file).name}
         self.observed = {}
         self._sealed = False
+        # A previous run's report seen when this guard wrote; it does not certify our TSVs.
+        self._prior_report = None
         self._contract = {
             "version": 1,
             "members": self.members,
@@ -449,12 +460,17 @@ class RecipeIdentityGuard:
         self.admission.verify(metadata_only=byte_verified)
         if self.sealed:
             directory = Path(output_dir) if output_dir is not None else self.transform.output_dir
-            canonical = output_dir is not None or (directory / "source_finalization.json").is_file()
+            # Only a report published after this guard's own write certifies the
+            # canonical dialect. A previous run's report still sits beside freshly
+            # written, writer-quoted TSVs until finalization replaces it.
+            report = _report_identity(directory)
+            canonical = output_dir is not None or (report is not None and report != self._prior_report)
             _verify_graph(self.index, directory, self.members, canonical=canonical)
             _check_audits(directory, self.rows)
 
     def write(self):
         """Seal complete writer output and mandatory audits before generic finalization."""
+        self._prior_report = _report_identity(self.transform.output_dir)
         self.verify()
         require(
             set(self.observed) == set(self.index["occurrences"]),

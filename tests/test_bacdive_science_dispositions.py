@@ -201,8 +201,9 @@ def test_actual_agriculture_all_ten_combinations_preserve_other_assertions(tmp_p
     candidate_dir, baseline_dir = tmp_path / "candidate", tmp_path / "baseline"
     candidate_dir.mkdir()
     baseline_dir.mkdir()
-    _, before_edges, before_nodes, _ = produce(baseline_dir, monkeypatch, baseline, gss=False)
-    monkeypatch.undo()
+    # Scope each arm's patches; a bare undo() would also remove conftest's network guard.
+    with monkeypatch.context() as baseline_patch:
+        _, before_edges, before_nodes, _ = produce(baseline_dir, baseline_patch, baseline, gss=False)
     transform, edges, nodes, audit = produce(candidate_dir, monkeypatch, records, gss=False)
     selected = [row for row in audit if row["raw_value"] == "#Agriculture"]
     assert len(selected) == len(positions)

@@ -82,8 +82,9 @@ def test_actual_run_retains_each_heading_and_all_other_assertions(tmp_path, monk
     baseline_dir, candidate_dir = tmp_path / "baseline", tmp_path / "candidate"
     baseline_dir.mkdir()
     candidate_dir.mkdir()
-    _, baseline_edges, baseline_nodes, baseline_audit = _run(baseline_dir, monkeypatch, stripped)
-    monkeypatch.undo()
+    # Scope each arm's patches; a bare undo() would also remove conftest's network guard.
+    with monkeypatch.context() as baseline_patch:
+        _, baseline_edges, baseline_nodes, baseline_audit = _run(baseline_dir, baseline_patch, stripped)
     transform, edges, nodes, audit = _run(candidate_dir, monkeypatch, records)
     assert records == before
     assert not baseline_audit
@@ -133,8 +134,8 @@ def test_repeated_positions_and_distinct_records_have_stable_distinct_identity(t
     first, second = tmp_path / "first", tmp_path / "second"
     first.mkdir()
     second.mkdir()
-    _, edges1, nodes1, audit1 = _run(first, monkeypatch, [record, other])
-    monkeypatch.undo()
+    with monkeypatch.context() as first_patch:
+        _, edges1, nodes1, audit1 = _run(first, first_patch, [record, other])
     _, edges2, nodes2, audit2 = _run(second, monkeypatch, [other, record])
     assert len({row["attribute_id"] for row in audit1}) == 4
     assert _counter(edges1) == _counter(edges2) and _counter(nodes1) == _counter(nodes2)

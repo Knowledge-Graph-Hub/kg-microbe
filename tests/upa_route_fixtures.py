@@ -81,20 +81,26 @@ requests.sessions.Session.request = reject_network
 from kg_microbe.transform_utils.ontologies.ontologies_transform import _run_kgx_transform
 _run_kgx_transform(inputs=[sys.argv[1]], input_format="obojson", output=sys.argv[2], output_format="tsv")
 """
-    subprocess.run(  # noqa: S603 - fixed local interpreter/script and immutable local fixture schema
-        [sys.executable, "-c", script, str(inputs[0]), str(output)],
-        cwd=Path(__file__).resolve().parents[1],
-        env={
-            **os.environ,
-            "KG_MICROBE_BIOLINK_MODEL": str((native / "biolink-model.yaml").resolve()),
-            "KG_MICROBE_BIOLINK_PREDICATE_MAP": str((native / "predicate_mapping.yaml").resolve()),
-            "PYTHONDONTWRITEBYTECODE": "1",
-        },
-        check=True,
-        timeout=90,
-        capture_output=True,
-        text=True,
-    )
+    try:
+        result = subprocess.run(  # noqa: S603 - fixed local interpreter/script and immutable local fixture schema
+            [sys.executable, "-c", script, str(inputs[0]), str(output)],
+            cwd=Path(__file__).resolve().parents[1],
+            env={
+                **os.environ,
+                "KG_MICROBE_BIOLINK_MODEL": str((native / "biolink-model.yaml").resolve()),
+                "KG_MICROBE_BIOLINK_PREDICATE_MAP": str((native / "predicate_mapping.yaml").resolve()),
+                "PYTHONDONTWRITEBYTECODE": "1",
+            },
+            check=False,
+            timeout=90,
+            capture_output=True,
+            text=True,
+        )
+    except subprocess.TimeoutExpired as exc:
+        # Keep the child's partial output: a bare timeout says nothing about where it stalled.
+        partial = f"{exc.stdout or ''}\n{exc.stderr or ''}"
+        raise AssertionError(f"Native UPA fixture conversion timed out\n{partial}") from exc
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
 def prepare(tmp_path, monkeypatch):

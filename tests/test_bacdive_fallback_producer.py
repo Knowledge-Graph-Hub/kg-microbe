@@ -54,7 +54,9 @@ def test_full_native_moorella_preserves_records_deposits_and_other_observations(
     """Reject only the wasp inference and dependent parents, without inventing a bacterial substitute."""
     native = records_by_id()["175523"]["record"]
     original = copy.deepcopy(native)
-    transform, edges, nodes, _ = produce(tmp_path, monkeypatch, [native])
+    # Scope each arm's patches; a bare undo() would also remove conftest's network guard.
+    with monkeypatch.context() as native_patch:
+        transform, edges, nodes, _ = produce(tmp_path, native_patch, [native])
     assert native == original
     subjects = {"kgmicrobe.strain:bacdive_175523", "kgmicrobe.strain:DSM-116161", "kgmicrobe.strain:CCOS-2103"}
     assert subjects <= {row["id"] for row in nodes}
@@ -82,7 +84,6 @@ def test_full_native_moorella_preserves_records_deposits_and_other_observations(
     synthetic["General"]["NCBI tax id"] = {"NCBI tax id": 2}
     other = tmp_path / "synthetic-direct-control"
     other.mkdir()
-    monkeypatch.undo()
     _, baseline, _, _ = produce(other, monkeypatch, [synthetic])
 
     def independent(row):

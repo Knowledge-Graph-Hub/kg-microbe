@@ -3,6 +3,7 @@
 import hashlib
 import sqlite3
 from pathlib import Path
+from urllib.parse import unquote, urlparse
 
 import pytest
 
@@ -170,7 +171,11 @@ def test_only_read_only_immutable_snapshots_are_opened_by_sqlite(tmp_path, monke
     def checked_connect(database, **kwargs):
         """Inspect the real connection mode without replacing any SQLite query behavior."""
         assert database.endswith("?mode=ro&immutable=1") and kwargs == {"uri": True}
-        assert str(transform.input_base_dir) not in database
+        # Compare decoded paths: the URI percent-encodes the space in "selected raw",
+        # so a substring test against the raw root could never fail.
+        opened_path = Path(unquote(urlparse(database).path))
+        assert not opened_path.is_relative_to(transform.input_base_dir)
+        assert opened_path.is_relative_to(transform.output_dir)
         connection = real_connect(database, **kwargs)
         with pytest.raises(sqlite3.OperationalError, match="readonly"):
             connection.execute("INSERT INTO statements VALUES ('bad','bad',NULL,'bad')")

@@ -2,7 +2,7 @@
 
 import shutil
 from pathlib import Path
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 import yaml
 
@@ -99,6 +99,36 @@ class Transform:
     #: Named optional reads relative to the effective input_base_dir, including explicit absence.
     #: Kept separate so repository-relative optional inputs never silently relocate.
     OPTIONAL_RAW_CONSUMED_INPUTS: tuple = ()
+
+    @classmethod
+    def missing_optional_input(cls, input_dir: Optional[Path] = None) -> Optional[str]:
+        """
+        Return why an optional source has nothing to transform, or None to run it.
+
+        An optional source (Bakta) has no download and is excluded from the
+        standard merge, so a machine without its data is a normal machine. The
+        default batch skips such a source instead of letting ``run`` return
+        early into a finalization error that fails the whole batch; an explicit
+        ``-s`` request still fails, because requested output was not created.
+        Required sources keep this default and always run.
+
+        :param input_dir: Effective raw input directory; ``None`` means the default.
+        """
+        return None
+
+    @classmethod
+    def missing_prerequisites(cls, input_dir: Optional[Path] = None) -> List[str]:
+        """
+        Return a message for each external prerequisite this transform needs but cannot find.
+
+        Covers what ``DATA_INPUTS`` cannot: executables, and raw downloads that
+        are not git-tracked curation. Checked before any source runs, so a
+        missing prerequisite fails in seconds instead of after hours of
+        upstream work.
+
+        :param input_dir: Effective raw input directory; ``None`` means the default.
+        """
+        return []
 
     def __init__(
         self,

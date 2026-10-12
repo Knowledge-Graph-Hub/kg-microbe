@@ -169,6 +169,84 @@ def _missing_declared_inputs(sources: List[str], repo_root: Path, input_dir: Opt
     return missing
 
 
+def _absent_optional_inputs(sources: List[str], input_dir: Optional[Path] = None) -> dict:
+    """Return ``{source: reason}`` for each selected optional source that has nothing to transform."""
+    absent = {}
+    for source in sources:
+        check = getattr(DATA_SOURCES.get(source), "missing_optional_input", None)
+        try:
+            reason = check(input_dir) if check is not None else None
+        except OSError:
+            # Cannot tell (an unreadable raw directory, a file where a
+            # directory belongs): run the source, so the error fails it in
+            # isolation rather than stopping the whole batch here.
+            continue
+        if isinstance(reason, str) and reason:
+            absent[source] = reason
+    return absent
+
+
+def _not_applicable(sources: List[str], absent_optional: dict) -> dict:
+    """
+    Return ``{source: reason}`` for every selected source with nothing to build.
+
+    That is each optional source with no input and, transitively and in any
+    order, whatever declares one of those in ``TRANSFORM_INPUTS``. Computed
+    before preflight, so these are neither held to their inputs nor run
+    against upstream output that does not exist.
+    """
+    roots = {source: {source} for source in absent_optional}
+    reasons = {source: f"optional source has no input ({reason})" for source, reason in absent_optional.items()}
+    changed = True
+    while changed:
+        changed = False
+        for source in sources:
+            if source in reasons:
+                continue
+            upstream = [u for u in getattr(DATA_SOURCES.get(source), "TRANSFORM_INPUTS", ()) if u in reasons]
+            if upstream:
+                roots[source] = set().union(*(roots[u] for u in upstream))
+                reasons[source] = (
+                    f"needs {', '.join(upstream)}; optional {', '.join(sorted(roots[source]))} has no input"
+                )
+                changed = True
+    return reasons
+
+
+def _withdraw_success_claim(source: str, output_dir: Optional[Path]) -> bool:
+    """
+    Remove a skipped source's earlier fingerprint, as running it would have; return whether one existed.
+
+    The merge admits a source only with a current producer fingerprint, and a
+    run removes it before the producer starts. A skip has to as well, or output
+    built from raw data that is no longer there is merged as if this run had
+    produced it. By path: constructing the transform would create its output
+    directory. Assumes the output directory is named after the source, as it is
+    for every optional source (PREGO's ``prego_habitat`` is not).
+    """
+    base = output_dir if output_dir is not None else getattr(DATA_SOURCES.get(source), "DEFAULT_OUTPUT_DIR", None)
+    if base is None:
+        return False
+    marker = Path(base) / source / FINGERPRINT_FILE
+    if not marker.is_file():
+        return False
+    marker.unlink()
+    return True
+
+
+def _missing_prerequisites(sources: List[str], input_dir: Optional[Path] = None) -> List[str]:
+    """Return ``"source: message"`` for every external prerequisite a selected source needs but cannot find."""
+    missing = []
+    for source in sources:
+        check = getattr(DATA_SOURCES.get(source), "missing_prerequisites", None)
+        problems = check(input_dir) if check is not None else ()
+        if isinstance(problems, str):
+            # Iterating it would report one problem per character.
+            raise TypeError(f"{source}.missing_prerequisites must return messages, not a string")
+        missing += [f"{source}: {problem}" for problem in problems]
+    return missing
+
+
 def _run_one(source: str, input_dir: Optional[Path], output_dir: Optional[Path], show_status: bool) -> None:
     """Run one registered source, or one ontology by name, and report what it wrote."""
     if source in DATA_SOURCES:
@@ -233,13 +311,22 @@ def transform(
         to refresh that ontology alone (#690).
     :raises ValueError: If a requested source is not registered in DATA_SOURCES.
     :raises FileNotFoundError: If a selected source declares a curation input
-        that is not on disk; nothing runs (#685).
+        that is not on disk, or is an optional source with no input named in
+        ``sources``; nothing runs (#685).
     :raises TransformBatchError: After the batch, if any source failed. A
         failure is isolated to its source: later sources still run unless
         they declare the failed one in ``TRANSFORM_INPUTS``, in which case they
         are skipped rather than built on stale upstream output (#685).
         ``BaseException`` (``FatalOntologyError``, Ctrl-C) still aborts at once.
+
+    In the default batch an optional source with no input
+    (``missing_optional_input``) is skipped, not failed, and so is anything
+    that depends on it through ``TRANSFORM_INPUTS``. Their earlier fingerprints
+    are withdrawn, as a run would have, so the merge refuses what a previous run
+    left; named with ``-s``, the source fails preflight and its fingerprint is
+    withdrawn too. (A Bakta dataset left over inside a later run is #1458.)
     """
+    explicit = bool(sources)
     if not sources:
         # run all sources
         sources = [source for source in DATA_SOURCES if source not in EXPLICIT_ONLY_SOURCES]
@@ -260,9 +347,26 @@ def transform(
             f"single ontologies: {', '.join(ontology_names)}"
         )
 
-    missing = _missing_declared_inputs(sources, Path(__file__).resolve().parent.parent, input_dir)
+    absent_optional = _absent_optional_inputs(sources, input_dir)
+    missing: List[str] = []
+    if explicit:
+        # Named on the command line: absent input means the requested output
+        # cannot be created, which is a failure, not a skip. Withdraw the
+        # earlier success claim first, as a run of the source would have.
+        for source, reason in absent_optional.items():
+            try:
+                _withdraw_success_claim(source, output_dir)
+            except OSError as exc:
+                reason += f"; its earlier fingerprint could not be withdrawn: {exc}"
+            missing.append(f"{source}: {reason}")
+        absent_optional = {}
+    not_applicable = _not_applicable(sources, absent_optional)
+    # A skipped source reads nothing; check only what will run.
+    runnable = [s for s in sources if s not in not_applicable]
+    missing += _missing_declared_inputs(runnable, Path(__file__).resolve().parent.parent, input_dir)
+    missing += _missing_prerequisites(runnable, input_dir)
     if missing:
-        raise FileNotFoundError("Declared curation input(s) missing; nothing was run: " + "; ".join(missing))
+        raise FileNotFoundError("Required input(s) missing; nothing was run: " + "; ".join(missing))
 
     failed: dict = {}
     skipped: dict = {}
@@ -271,6 +375,21 @@ def transform(
     # gold and prego declare the directory, not the ontology inside it.
     unavailable: set = set()
     for source in sources:
+        if source in not_applicable:
+            # Nothing to build: not a failure, so kept out of `skipped`, which
+            # means an upstream failed.
+            unavailable.add(source)
+            try:
+                withdrawn = _withdraw_success_claim(source, output_dir)
+            except OSError as exc:
+                failed[source] = exc
+                print(f"[transform] {source}: FAILED — {type(exc).__name__}: {exc}", flush=True)
+                continue
+            note = "; earlier output no longer marked current" if withdrawn else ""
+            print(f"[transform] {source}: skipped — {not_applicable[source]}{note}", flush=True)
+            continue
+        # Every source downstream of a not-applicable one is itself not
+        # applicable, so what remains here failed or was skipped after a failure.
         upstream = [u for u in getattr(DATA_SOURCES.get(source), "TRANSFORM_INPUTS", ()) if u in unavailable]
         if upstream:
             skipped[source] = upstream

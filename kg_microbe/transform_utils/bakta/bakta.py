@@ -96,6 +96,27 @@ class BaktaTransform(Transform):
         # Knowledge source
         self.knowledge_source = "infores:bakta"
 
+    @classmethod
+    def missing_optional_input(cls, input_dir: Optional[Path] = None) -> Optional[str]:
+        """
+        Bakta is optional: say why there is nothing to transform, or return None to run it.
+
+        Mirrors ``run``'s own discovery: a dataset counts only if it holds
+        ``bakta/SAMN*`` genome directories. An empty or stray directory
+        (``.ipynb_checkpoints``, ``__MACOSX``) otherwise passes, and ``run``
+        writes nothing and then fails finalization. A path that exists but
+        cannot be listed (a file named ``bakta``, no permission) raises, so the
+        source runs and fails rather than being skipped.
+        """
+        bakta_raw_dir = (Path(input_dir) if input_dir else cls.DEFAULT_INPUT_DIR) / "bakta"
+        if not bakta_raw_dir.exists():
+            return f"{bakta_raw_dir} does not exist"
+        datasets = sorted(d for d in bakta_raw_dir.iterdir() if d.is_dir())
+        if any((d / "bakta").is_dir() and get_all_samn_directories(d / "bakta") for d in datasets):
+            return None
+        found = ", ".join(d.name for d in datasets) or "no subdirectories"
+        return f"no dataset in {bakta_raw_dir} has bakta/SAMN* genome directories (found: {found})"
+
     def run(self, data_file: Optional[Path] = None, show_status: bool = True) -> None:
         """
         Run the Bakta transform.

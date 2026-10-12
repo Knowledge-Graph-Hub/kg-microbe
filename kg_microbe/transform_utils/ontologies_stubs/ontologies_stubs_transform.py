@@ -57,12 +57,16 @@ import json
 import re
 import shutil
 import subprocess
+import tempfile
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Set, Tuple
+from xml.sax.saxutils import quoteattr
 
 from kg_microbe.transform_utils.constants import (
     AUTOMATED_AGENT,
     KNOWLEDGE_ASSERTION,
+    MICRO_IMPORT_MODULES,
+    MICRO_IMPORTS_DIR,
     RDFS_SUBCLASS_OF,
     SUBCLASS_PREDICATE,
 )
@@ -75,6 +79,7 @@ from kg_microbe.transform_utils.ontologies_stubs.ncit_category_projection import
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.isolation_source_mapping_utils import STUB_ONTOLOGY_CATEGORY
+from kg_microbe.utils.robot_utils import initialize_robot, missing_robot, offline_robot_env
 from kg_microbe.utils.stub_curie_collection import (
     DEFAULT_MAPPING_PATHS,
     collect_stub_curies,
@@ -141,6 +146,14 @@ from kg_microbe.utils.tsv_io import tsv_writer
 #   * ``nt_filename`` (mesh_nt_rdf only) — local filename of the gzipped
 #     N-Triples RDF under ``input_base_dir``. Must be declared in
 #     ``download.yaml``.
+#   * ``imports_dir`` / ``import_modules`` (owl_mireot only) — directory under
+#     ``input_base_dir`` holding a pinned local copy of every ``owl:imports``
+#     module the OWL declares, and the file names the pin downloads there (all
+#     in ``download.yaml`` at the OWL's own pin). ROBOT resolves the imports
+#     through a catalog mapping each to its copy and runs with network access
+#     refused, so an unmapped import fails instead of being fetched. Preflight
+#     fails if a module is missing or the OWL's imports differ from the list.
+#     Without these ROBOT fetches imports live (PO, for now).
 STUB_ONTOLOGY_SOURCES: Dict[str, Dict[str, Any]] = {
     "NCIT": {
         # NCI Thesaurus. ~73 stubs spanning drugs/antibiotics, foods,
@@ -222,8 +235,13 @@ STUB_ONTOLOGY_SOURCES: Dict[str, Dict[str, Any]] = {
         #   http://purl.obolibrary.org/obo/MicrO.owl/MICRO_xxxx  (legacy)
         # `_run_mireot_extract` passes both forms to ROBOT for every lower
         # term so neither shape is silently dropped.
+        #
+        # MicrO.owl imports 20 modules from MicrO's master branch by IRI; they
+        # are pinned with it (MICRO_COMMIT) and resolved offline.
         "source_type": "owl_mireot",
         "owl_filename": "micro.owl",
+        "imports_dir": MICRO_IMPORTS_DIR,
+        "import_modules": MICRO_IMPORT_MODULES,
         "upper_term": "MICRO:0000031",
         "knowledge_source": "infores:micro",
     },
@@ -265,6 +283,22 @@ class OntologiesStubsTransform(Transform):
             if path.is_relative_to(_STUB_REPO_ROOT)
         )
     )
+
+    @classmethod
+    def missing_prerequisites(cls, input_dir: Optional[Path] = None) -> List[str]:
+        """
+        Report a missing pinned ROBOT, java or pinned import module before the batch starts.
+
+        ROBOT builds the PO and MICRO hierarchies, and MICRO's imports must be
+        on disk because they are no longer fetched; either missing used to fail
+        only after the hours-long ontologies source.
+        """
+        raw_dir = Path(input_dir) if input_dir else cls.DEFAULT_INPUT_DIR
+        problems = missing_robot(raw_dir)
+        for prefix, cfg in STUB_ONTOLOGY_SOURCES.items():
+            if "imports_dir" in cfg:
+                problems += _pinned_import_problems(prefix, cfg, raw_dir)
+        return problems
 
     def __init__(
         self,
@@ -324,6 +358,7 @@ class OntologiesStubsTransform(Transform):
                     owl_path=self.input_base_dir / cfg["owl_filename"],
                     upper_term=cfg["upper_term"],
                     knowledge_source=cfg["knowledge_source"],
+                    imports_dir=self.input_base_dir / cfg["imports_dir"] if "imports_dir" in cfg else None,
                 )
             elif source_type == "semsql_mireot":
                 self._write_stub_module_from_semsql_walk(
@@ -424,6 +459,7 @@ class OntologiesStubsTransform(Transform):
         owl_path: Path,
         upper_term: str,
         knowledge_source: str,
+        imports_dir: Optional[Path],
     ) -> None:
         """
         Build a MIREOT module under ``upper_term`` and emit its nodes + subClassOf edges.
@@ -463,6 +499,7 @@ class OntologiesStubsTransform(Transform):
             lower_curies=curies,
             upper_curie=upper_term,
             owl_path=owl_path,
+            imports_dir=imports_dir,
         )
 
         node_rows, edge_rows, foreign_targets, dropped_lower = self._parse_mireot_module(
@@ -493,20 +530,25 @@ class OntologiesStubsTransform(Transform):
         lower_curies: List[str],
         upper_curie: str,
         owl_path: Path,
+        imports_dir: Optional[Path],
     ) -> Path:
         """
         Run ``robot extract --method MIREOT`` and convert the result to OBO Graph JSON.
 
         Writes intermediate ``.owl`` (RDF/XML) and ``.json`` files into ``self.output_dir``
-        so they're available for inspection if the module needs auditing.
+        so they're available for inspection if the module needs auditing. With
+        ``imports_dir`` the OWL's imports resolve through a local catalog
+        (:func:`_write_import_catalog`), and ROBOT runs with network access
+        refused, so an import the catalog misses fails instead of being fetched.
+        ``imports_dir`` has no default: leaving it out must not quietly bring the
+        network back.
         """
-        robot_bin = shutil.which("robot")
-        if not robot_bin:
-            raise RuntimeError(
-                f"ROBOT binary not on PATH but required to build the {prefix} "
-                "stub hierarchy via MIREOT. Install robot "
-                "(http://robot.obolibrary.org/) and ensure it is on PATH."
-            )
+        # The pinned ROBOT from the raw directory, as the ontologies transform
+        # runs it; a PATH `robot` may be another version (#986 was 1.9.6).
+        problems = missing_robot(self.input_base_dir)
+        if problems:
+            raise FileNotFoundError(f"Required to build the {prefix} stub hierarchy via MIREOT: {' '.join(problems)}")
+        robot_file, env = initialize_robot(str(self.input_base_dir))
 
         lower_iris: List[str] = []
         for c in lower_curies:
@@ -527,7 +569,8 @@ class OntologiesStubsTransform(Transform):
         module_owl.with_suffix(".ofn").unlink(missing_ok=True)
 
         extract_cmd: List[str] = [
-            robot_bin,
+            "bash",
+            robot_file,
             "extract",
             "--method",
             "MIREOT",
@@ -539,21 +582,28 @@ class OntologiesStubsTransform(Transform):
         for iri in upper_iris:
             extract_cmd += ["--upper-term", iri]
         extract_cmd += ["--output", str(module_owl)]
-        subprocess.run(extract_cmd, check=True)  # noqa: S603
+        if imports_dir is not None:
+            env = offline_robot_env(env)
+        # The catalog holds absolute paths on this machine: keep it out of the
+        # published output directory.
+        with tempfile.TemporaryDirectory() as catalog_dir:
+            if imports_dir is not None:
+                catalog = _write_import_catalog(owl_path, imports_dir, Path(catalog_dir) / "catalog-v001.xml")
+                extract_cmd += ["--catalog", str(catalog)]
+            subprocess.run(extract_cmd, check=True, env=env)  # noqa: S603
 
-        subprocess.run(  # noqa: S603
-            [
-                robot_bin,
-                "convert",
-                "--input",
-                str(module_owl),
-                "--output",
-                str(module_json),
-                "-f",
-                "json",
-            ],
-            check=True,
-        )
+        convert_cmd: List[str] = [
+            "bash",
+            robot_file,
+            "convert",
+            "--input",
+            str(module_owl),
+            "--output",
+            str(module_json),
+            "-f",
+            "json",
+        ]
+        subprocess.run(convert_cmd, check=True, env=env)  # noqa: S603
         return module_json
 
     def _parse_mireot_module(
@@ -1108,6 +1158,113 @@ def _retag_curie(curie: str, from_prefix: str, to_prefix: str) -> str:
 # quirky ``http://purl.obolibrary.org/obo/MicrO.owl/MICRO_0003152`` variant
 # (both fall out of the trailing ``..._<local>`` match).
 _OBO_LOCAL_ID_RE = re.compile(r"/([A-Za-z][A-Za-z0-9]*)_([A-Za-z0-9]+)$")
+
+
+_OWL_IMPORT = re.compile(r"<owl:imports\s+rdf:resource=\"([^\"]*)\"")
+# Any `imports` element, whatever prefix it is written with (none = default namespace).
+_ANY_IMPORT = re.compile(r"<([A-Za-z_][\w.-]*:)?imports[\s/>]")
+_ABSOLUTE_IRI = re.compile(r"[A-Za-z][A-Za-z0-9+.-]*:")
+
+
+def _declared_imports(owl_path: Path) -> List[str]:
+    """
+    Return the ``owl:imports`` IRIs of an RDF/XML ontology, refusing spellings this cannot read.
+
+    A text scan, not an RDF parse, so it refuses what it might misread: a file
+    that is not RDF/XML, an import not written as ``owl:imports rdf:resource``
+    (another prefix bound to OWL, OWL as the default namespace, a nested
+    form), an IRI spelled with an XML entity or with no scheme (relative to an
+    ``xml:base``); a catalog keyed on any of these would not match what OWLAPI
+    requests. It gives early, specific errors; the guarantee that nothing is
+    fetched comes from running ROBOT offline.
+
+    :param owl_path: RDF/XML ontology.
+    :return: Sorted distinct import IRIs.
+    """
+    text = owl_path.read_text(encoding="utf-8")
+    if "<rdf:RDF" not in text:
+        raise ValueError(f"{owl_path} is not RDF/XML, so its imports cannot be resolved offline")
+    declared = _OWL_IMPORT.findall(text)
+    other_prefixes = sorted({prefix for prefix in _ANY_IMPORT.findall(text) if prefix != "owl:"})
+    if other_prefixes or text.count("<owl:imports") != len(declared):
+        raise ValueError(
+            f"{owl_path} declares imports in a form other than owl:imports rdf:resource "
+            f"(prefixes seen: {other_prefixes or ['owl:']}); cannot resolve offline"
+        )
+    iris = sorted(set(declared))
+    entity_iris = [iri for iri in iris if "&" in iri]
+    if entity_iris:
+        raise ValueError(f"{owl_path} spells imports with XML entities, which the catalog cannot match: {entity_iris}")
+    relative = [iri for iri in iris if not _ABSOLUTE_IRI.match(iri)]
+    if relative:
+        raise ValueError(f"{owl_path} has relative import IRIs, which the catalog cannot match: {relative}")
+    return iris
+
+
+def _import_file_name(iri: str) -> str:
+    """Name the local copy of an import: the last path segment of its IRI, as ``download.yaml`` saves it."""
+    return iri.rstrip("/").rsplit("/", 1)[-1]
+
+
+def _pinned_import_problems(prefix: str, cfg: Dict[str, Any], raw_dir: Path) -> List[str]:
+    """
+    Check one source's pinned imports before the batch: the OWL, every module, and that the two lists agree.
+
+    The run maps whatever the OWL declares; preflight checks the pinned list.
+    If they drift, an import added by a new pin would pass preflight and fail
+    only after the hours-long ontologies source.
+    """
+    owl_path = raw_dir / cfg["owl_filename"]
+    imports_dir = raw_dir / cfg["imports_dir"]
+    fetch = "Run `poetry run kg download -t ontologies` to fetch them."
+    if not owl_path.is_file():
+        return [f"{prefix} ontology missing: {owl_path}. {fetch}"]
+    problems = []
+    absent = [name for name in cfg["import_modules"] if not (imports_dir / name).is_file()]
+    if absent:
+        problems.append(f"{prefix} import modules missing from {imports_dir}: {', '.join(absent)}. {fetch}")
+    try:
+        declared = {_import_file_name(iri) for iri in _declared_imports(owl_path)}
+    except ValueError as exc:
+        return problems + [f"{prefix}: {exc}"]
+    pinned = set(cfg["import_modules"])
+    if declared != pinned:
+        problems.append(
+            f"{prefix} imports and pin disagree: {owl_path.name} imports {sorted(declared - pinned)} "
+            f"that the pin does not download, and the pin downloads {sorted(pinned - declared)} it does not import"
+        )
+    return problems
+
+
+def _write_import_catalog(owl_path: Path, imports_dir: Path, catalog_path: Path) -> Path:
+    """
+    Write a ROBOT catalog mapping every ``owl:imports`` IRI in ``owl_path`` to its local copy.
+
+    Without one, OWLAPI fetches each import from its IRI on every run, so an
+    unpinned upstream branch decides what the module contains. Each IRI maps to
+    the file named by its last path segment under ``imports_dir``; an import
+    with no local copy, or one :func:`_declared_imports` cannot read, raises.
+
+    :param owl_path: RDF/XML ontology whose imports are resolved.
+    :param imports_dir: Directory holding the pinned import modules.
+    :param catalog_path: Where to write the catalog.
+    :return: ``catalog_path``.
+    """
+    local = {iri: imports_dir / _import_file_name(iri) for iri in _declared_imports(owl_path)}
+    absent = [f"{iri} -> {path}" for iri, path in local.items() if not path.is_file()]
+    if absent:
+        raise FileNotFoundError(
+            f"{owl_path.name} imports modules with no local copy (ROBOT would fetch them): {absent}. "
+            "Pin and download them, or run `poetry run kg download -t ontologies`."
+        )
+    lines = [
+        '<?xml version="1.0" encoding="UTF-8" standalone="no"?>',
+        '<catalog prefer="public" xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">',
+        *(f"  <uri name={quoteattr(iri)} uri={quoteattr(path.resolve().as_uri())}/>" for iri, path in local.items()),
+        "</catalog>",
+    ]
+    catalog_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    return catalog_path
 
 
 def _curie_to_iris(curie: str) -> List[str]:

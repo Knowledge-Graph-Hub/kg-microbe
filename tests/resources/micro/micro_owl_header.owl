@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+
+
+<!DOCTYPE rdf:RDF [
+    <!ENTITY owl "http://www.w3.org/2002/07/owl#" >
+    <!ENTITY obo "http://purl.obolibrary.org/obo/" >
+    <!ENTITY dc "http://purl.org/dc/elements/1.1/" >
+    <!ENTITY xsd "http://www.w3.org/2001/XMLSchema#" >
+    <!ENTITY po "http://purl.obolibrary.org/obo/po#" >
+    <!ENTITY envo "http://purl.obolibrary.org/obo/envo#" >
+    <!ENTITY rdfs "http://www.w3.org/2000/01/rdf-schema#" >
+    <!ENTITY rdf "http://www.w3.org/1999/02/22-rdf-syntax-ns#" >
+    <!ENTITY oboInOwl "http://www.geneontology.org/formats/oboInOwl#" >
+    <!ENTITY untitled-ontology-15 "http://www.semanticweb.org/geomicro/ontologies/2013/7/untitled-ontology-15#" >
+]>
+
+
+<rdf:RDF xmlns="http://www.semanticweb.org/geomicro/ontologies/2013/7/untitled-ontology-15#"
+     xml:base="http://www.semanticweb.org/geomicro/ontologies/2013/7/untitled-ontology-15"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:po="&obo;po#"
+     xmlns:envo="&obo;envo#"
+     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#"
+     xmlns:untitled-ontology-15="http://www.semanticweb.org/geomicro/ontologies/2013/7/untitled-ontology-15#">
+    <owl:Ontology rdf:about="&obo;MicrO.owl">
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/BFO_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/BSPO_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/CHMO_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/CL_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/ChEBI_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/DRON_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/ENVO_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/FMA_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/GO_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/IAO_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/IDO_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/NCBITax_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/NDF-RT_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/OBI_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/PATO_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/PO_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/PR_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/REO_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/RO_imports.owl"/>
+        <owl:imports rdf:resource="https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/Uberon_imports.owl"/>
+    </owl:Ontology>
+</rdf:RDF>

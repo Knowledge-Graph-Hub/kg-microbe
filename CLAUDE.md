@@ -21,6 +21,16 @@ network access or modify `data/raw`; put small immutable inputs under
 `tests/resources` and use `tmp_path` for output. Mark intentional live-service
 coverage with `@pytest.mark.integration`.
 
+The ontology transforms run the ROBOT pinned in `download.yaml`
+(`kg download -t tools` puts `robot` and `robot.jar` in the raw directory)
+rather than one from `PATH`, and need a working `java`; `kg transform` checks
+both before running `ontologies_stubs`. SemSQL builds, whose Makefile calls
+`robot` from `PATH`, get the pinned wrapper through a `PATH` shim
+(`robot_utils.pinned_robot_on_path`). Every such call gets
+`robot_utils.robot_java_args()`, which restores the seven JAXP limits JDK 24
+lowered (they reject ChEBI and MicrO's imports, #325) unless the user sets them.
+`rdftab` and `relation-graph`, which SemSQL also runs, are separate prerequisites.
+
 Supported Python versions are 3.10 through 3.12. Python 3.13 is blocked by the
 KGX/pyarrow dependency chain; see issue #871.
 
@@ -42,6 +52,13 @@ running anything, isolates a failure to its source (later sources still run;
 those that declare the failed one in `TRANSFORM_INPUTS` are skipped rather
 than built on stale upstream output), and exits non-zero with a per-source
 summary. `FatalOntologyError` and Ctrl-C still abort at once. See #685, #690.
+An optional source with no input (Bakta without a `bakta/SAMN*` dataset under
+`data/raw/bakta/`) is skipped in the default batch, along with anything that
+depends on it through `TRANSFORM_INPUTS`, and its earlier fingerprint is
+withdrawn so the merge refuses what a previous run left. Named with `-s`, it
+fails preflight, since the requested output cannot be created, and its
+fingerprint is withdrawn too. A raw directory that cannot be read is not a
+skip: the source runs and fails in isolation.
 
 `kg download` skips existing files, but a pin change now takes effect on its own: the URL behind each artifact is recorded in `data/raw/.download_manifest.json`, and a file whose declared URL has moved is re-fetched. A file with no record is left alone — unknown provenance is not wrong provenance (#911). `-i` still invalidates every selected entry, so always combine it with one or more `-t` tags. MediaDive invalidation also clears
 its response cache and can trigger an approximately one-hour crawl.
@@ -265,6 +282,15 @@ Never fetch METPO from `refs/heads/main`: an upstream obsoletion then arrives
 with a download and changes nothing observable, which is how a deprecated
 predicate reached 706,765 shipped edges. `tests/test_metpo_version_pin.py`
 enforces this against `download.yaml`. See issues #900 and #909.
+
+MicrO has no releases, so it is pinned to a commit (`MICRO_COMMIT` in
+`constants.py`) together with the 20 modules `MicrO.owl` imports.
+`ontologies_stubs` resolves those imports through a generated ROBOT catalog
+and runs ROBOT with HTTP(S) and SOCKS sent to a closed local port (no host
+exempt, `_JAVA_OPTIONS` folded in first), so an unmapped import fails rather
+than being fetched; preflight checks the modules are present and match what
+`micro.owl` imports. `tests/test_micro_version_pin.py` checks `download.yaml`
+against the constant. PO still fetches its imports live.
 
 ## Operational references
 

@@ -43,6 +43,7 @@ from kg_microbe.utils.ontology_resolution import (
     replace_deprecated_category_names,
     uberon_category,
 )
+from kg_microbe.utils.robot_utils import pinned_robot_on_path
 
 _GO_NAMESPACE_CACHE: Optional[Dict[str, str]] = None
 
@@ -1992,11 +1993,15 @@ def _run_semsql_build(
     kept = _clear_build_target(db_path, min_size, ontology=ontology, require_content=require_content)
     print(f"Building {db_path} from {owl_source} via `semsql make`.\n  {cost_note}")
     try:
-        subprocess.run(  # noqa: S603
-            ["semsql", "make", os.path.basename(db_path)],  # noqa: S607
-            cwd=str(owl_source.parent),
-            check=True,
-        )
+        # SemSQL runs `robot` from PATH: make that the pinned ROBOT with the
+        # JDK 24+ JAXP limits restored, or ChEBI fails to build (#325).
+        with pinned_robot_on_path(owl_source.parent) as env:
+            subprocess.run(  # noqa: S603
+                ["semsql", "make", os.path.basename(db_path)],  # noqa: S607
+                cwd=str(owl_source.parent),
+                check=True,
+                env=env,
+            )
     except (subprocess.CalledProcessError, OSError) as e:
         # Expected build failures degrade: restore the old DB and report on it.
         print(f"Warning: failed to build {db_path}: {e}")

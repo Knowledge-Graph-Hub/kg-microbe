@@ -248,6 +248,7 @@ def test_ingredient_candidate_is_explicit_only(tmp_path, monkeypatch):
 
     selected = []
     monkeypatch.setattr(dispatcher, "_missing_declared_inputs", lambda *args: [])
+    monkeypatch.setattr(dispatcher, "_missing_prerequisites", lambda *args: [])
     monkeypatch.setattr(dispatcher, "_run_one", lambda source, *args: selected.append(source))
     dispatcher.transform(input_dir=tmp_path, output_dir=tmp_path)
     assert "mim_ingredients" not in selected

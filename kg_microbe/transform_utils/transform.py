@@ -2,7 +2,7 @@
 
 import shutil
 from pathlib import Path
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 import yaml
 
@@ -115,6 +115,20 @@ class Transform:
         :param input_dir: Effective raw input directory; ``None`` means the default.
         """
         return None
+
+    @classmethod
+    def missing_prerequisites(cls, input_dir: Optional[Path] = None) -> List[str]:
+        """
+        Return a message for each external prerequisite this transform needs but cannot find.
+
+        Covers what ``DATA_INPUTS`` cannot: executables, and raw downloads that
+        are not git-tracked curation. Checked before any source runs, so a
+        missing prerequisite fails in seconds instead of after hours of
+        upstream work.
+
+        :param input_dir: Effective raw input directory; ``None`` means the default.
+        """
+        return []
 
     def __init__(
         self,

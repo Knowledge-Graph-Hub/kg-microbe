@@ -240,6 +240,7 @@ class FiniteNcitCategoryAuthority:
         self._admission = None
         self._seen = set()
         self._members = None
+        self._release_json = None
 
     def bind_members(self, names):
         """Bind only the selected source bundle, never all nearby ontology files."""
@@ -320,6 +321,7 @@ class FiniteNcitCategoryAuthority:
         self._policy_json = canonical(policy)
         self._evidence_json = canonical(statements)
         self._contract_json = canonical(contract)
+        self._release_json = canonical(release)
         self._admission = admission
 
     def category_for(self, identifier):
@@ -390,7 +392,7 @@ class FiniteNcitCategoryAuthority:
                 "policy": expected_policy,
                 "model": expected_model,
                 "native_evidence_sha256": digest(self._evidence_json.encode()),
-                "native_release": contract["native_release"],
+                "native_release": json.loads(self._release_json),
                 "node_members": list(self._members) if self._members is not None else None,
             }
             or not self._seen <= FINITE_IDS
@@ -487,6 +489,11 @@ def verify_recorded_inputs(report, report_path, *, admission=None):
                 raise ValueError("finite native binding changed")
             if snapshots.get(NATIVE_ROLE) != {"path": authority["resolved_path"], "sha256": authority["sha256"]}:
                 raise ValueError("finite native consumed snapshot changed")
+            # The recorded release is provenance, but it must be the bound database's (#1531).
+            database = Path(authority["resolved_path"]).as_uri() + "?mode=ro&immutable=1"
+            with sqlite3.connect(database, uri=True) as connection:
+                if semsql_release(connection, "ncit") != contract["native_release"]:
+                    raise ValueError("finite native release provenance changed")
             model_path = Path(report["raw_input_directory"]) / policy["model_file"]
             model = {"path": str(model_path.resolve()), "sha256": policy["model_sha256"]}
             if contract["model"] != model or snapshots.get(MODEL_ROLE) != model:

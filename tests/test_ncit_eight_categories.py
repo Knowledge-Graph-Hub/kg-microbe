@@ -307,6 +307,18 @@ def test_module_admission_compares_the_database_this_run_read(tmp_path, monkeypa
 
 
 @pytest.mark.usefixtures("local_source_schema")
+def test_recorded_release_must_be_the_bound_databases(tmp_path, monkeypatch):
+    """The receipt's release is provenance, but a rewritten value is refused at admission (#1531)."""
+    _, transform, _, _ = prepare_source(tmp_path, monkeypatch)
+    report = transform.finalize(fresh_run=True)
+    report_path = transform.output_dir / "source_finalization.json"
+    report[finite.CONTRACT_KEY]["native_release"] = "99.99z"
+    with pytest.raises(SourceFinalizationRequired, match="Invalid finite NCIT") as info:
+        finite.verify_recorded_inputs(report, report_path)
+    assert "release provenance changed" in str(info.value.__cause__)
+
+
+@pytest.mark.usefixtures("local_source_schema")
 def test_truthfully_empty_source_has_no_ncit_native_dependency(tmp_path, monkeypatch):
     """No finite target must not consult, require or fabricate a native NCIT authority."""
     raw, _, _, transform, _ = prepare(tmp_path, monkeypatch)

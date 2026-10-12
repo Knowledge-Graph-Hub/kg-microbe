@@ -221,6 +221,19 @@ def test_selected_go_statements_compare_blank_nodes_by_content(tmp_path, monkeyp
             normalize_go_bundle([nodes], [edges], load_go_authority(raw), audit)
 
 
+def test_blank_node_entries_are_required_for_every_reachable_node():
+    """A nested blank node needs its own reviewed entry; an unreachable entry is refused (#1530)."""
+    policy = copy.deepcopy(FULL_POLICY)
+    assert restrictions._valid_blank_nodes(policy)
+    label = sorted(policy["blank_nodes"])[0]
+    policy["blank_nodes"][label].append({"predicate": "owl:annotatedSource", "object": "_:nested", "value": None})
+    assert not restrictions._valid_blank_nodes(policy)
+    policy["blank_nodes"]["_:nested"] = [{"predicate": "rdf:type", "object": "owl:Axiom", "value": None}]
+    assert restrictions._valid_blank_nodes(policy)
+    policy["blank_nodes"]["_:unreached"] = [{"predicate": "rdf:type", "object": "owl:Axiom", "value": None}]
+    assert not restrictions._valid_blank_nodes(policy)
+
+
 def test_a_database_of_another_go_release_is_refused(tmp_path, monkeypatch):
     """A rebuilt database must still record the reviewed GO release."""
     raw, nodes, edges, audit, _ = prepare(tmp_path, monkeypatch)

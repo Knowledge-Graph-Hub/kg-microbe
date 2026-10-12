@@ -280,7 +280,9 @@ enforces this against `download.yaml`. See issues #900 and #909.
 
 MicrO has no releases, so it is pinned to a commit (`MICRO_COMMIT` in
 `constants.py`) together with the 20 modules `MicrO.owl` imports. PO is
-pinned to a dated release (`PO_RELEASE`) together with its two modules.
+pinned to a dated release (`PO_RELEASE`), downloaded with its two modules from
+the commit the release tag points at (`PO_COMMIT`), and preflight checks that
+`po.owl` declares that release.
 `ontologies_stubs` resolves those imports through a generated ROBOT catalog
 and runs ROBOT with HTTP(S) and SOCKS sent to a closed local port (no host
 exempt, `_JAVA_OPTIONS` folded in first), so an unmapped import fails rather

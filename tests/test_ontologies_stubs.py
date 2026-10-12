@@ -14,7 +14,7 @@ from kg_microbe.transform_utils.constants import (
     MICRO_IMPORTS_DIR,
     PO_IMPORT_MODULES,
     PO_IMPORTS_DIR,
-    PO_RELEASE_URL,
+    PO_VERSION_IRI,
 )
 from kg_microbe.transform_utils.ontologies_stubs import ontologies_stubs_transform as stubs_module
 from kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform import (
@@ -509,7 +509,7 @@ def test_the_pinned_po_owl_imports_exactly_the_pinned_modules():
     """The same check for po.owl, whose header also names the release it was cut from."""
     declared = [iri.rsplit("/", 1)[-1] for iri in _declared_imports(PO_OWL_HEADER)]
     assert sorted(declared) == sorted(PO_IMPORT_MODULES)
-    version_iri = f'<owl:versionIRI rdf:resource="{PO_RELEASE_URL}/po.owl"/>'
+    version_iri = f'<owl:versionIRI rdf:resource="{PO_VERSION_IRI}"/>'
     assert version_iri in PO_OWL_HEADER.read_text(encoding="utf-8")
 
 
@@ -536,6 +536,33 @@ def test_a_missing_pinned_ontology_fails_preflight(tmp_path, monkeypatch, prefix
     (tmp_path / PINNED_IMPORTS[prefix][0]).unlink()
     (problem,) = OntologiesStubsTransform.missing_prerequisites(tmp_path)
     assert problem.startswith(f"{prefix} ontology missing")
+
+
+@pytest.mark.parametrize(
+    "replacement, found",
+    [
+        ('<owl:versionIRI rdf:resource="http://purl.obolibrary.org/obo/po/releases/2025-10-31/po.owl"/>', "2025-10-31"),
+        ("", "versionIRI none"),
+    ],
+)
+def test_a_po_owl_from_another_release_fails_preflight(tmp_path, monkeypatch, replacement, found):
+    """
+    An older release imports the same two modules, so only its versionIRI tells it apart.
+
+    `kg download` leaves a po.owl it has no record of in place, and then records
+    the pinned URL against it; the stub hierarchy would be built from it silently.
+    """
+    monkeypatch.setattr(robot_utils, "_java_runs", lambda: True)
+    _pinned_robot(tmp_path)
+    _pinned_imports(tmp_path)
+    owl = tmp_path / "po.owl"
+    pinned = f'<owl:versionIRI rdf:resource="{PO_VERSION_IRI}"/>'
+    owl.write_text(owl.read_text(encoding="utf-8").replace(pinned, replacement), encoding="utf-8")
+    (problem,) = OntologiesStubsTransform.missing_prerequisites(tmp_path)
+    assert problem.startswith("PO ontology is not the pinned release")
+    assert found in problem
+    assert PO_VERSION_IRI in problem
+    assert "kg download -t ontologies" in problem
 
 
 @pytest.mark.parametrize(
@@ -723,6 +750,9 @@ def test_every_owl_mireot_source_resolves_its_imports_offline():
     for prefix, (owl_name, imports_name, _, modules) in PINNED_IMPORTS.items():
         cfg = owl_sources[prefix]
         assert (cfg["owl_filename"], cfg["imports_dir"], cfg["import_modules"]) == (owl_name, imports_name, modules)
+    # PO publishes releases, so preflight can also check which one is on disk; MicrO has none.
+    assert owl_sources["PO"]["version_iri"] == PO_VERSION_IRI
+    assert "version_iri" not in owl_sources["MICRO"]
 
 
 # ---------------------------------------------------------------------------

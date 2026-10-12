@@ -891,17 +891,22 @@ MICRO_IMPORT_MODULES = tuple(
     )
 )
 
-# PO publishes dated releases, so it is pinned to one, as MicrO is to a commit.
-# The unversioned po.owl PURL always serves the latest release, and po.owl
-# imports two modules by unversioned IRI, which ROBOT fetched from PO's master
-# branch on every run. The release PURL serves the ontology and the modules
-# from the same tag; ontologies_stubs resolves the imports through a local
-# catalog. `mappings/finite_envo_po_category_dispositions.json` was reviewed
-# against this release (its versionIRI and sha256), and a test asserts the two
-# agree, so a PO bump re-opens that review. Pinning changed no content: the
-# release is byte-identical to the latest po.owl at the time.
+# PO publishes dated releases, so it is pinned to one. The unversioned po.owl
+# PURL serves po.owl from PO's master branch (the latest release only because PO
+# commits it when releasing), and po.owl imports two modules by unversioned IRI,
+# which ROBOT also fetched from master on every run. The ontology and both
+# modules are downloaded from the commit the release tag points at, since a tag
+# can be moved and a commit cannot; ontologies_stubs resolves the imports
+# through a local catalog, and preflight checks that po.owl names the release.
+# `mappings/finite_envo_po_category_dispositions.json` was reviewed against the
+# same release (its versionIRI and sha256), and a test asserts the two agree,
+# so a PO bump re-opens that review. Pinning changed no content: the release is
+# byte-identical to the po.owl master served at the time.
 PO_RELEASE = "2026-01-09"
-PO_RELEASE_URL = f"http://purl.obolibrary.org/obo/po/releases/{PO_RELEASE}"
+PO_VERSION_IRI = f"http://purl.obolibrary.org/obo/po/releases/{PO_RELEASE}/po.owl"
+# The commit PO's tag v2026-01-09 points at.
+PO_COMMIT = "fb1d146b95d6bfe141992d6a219b891fdef2dc54"
+PO_RAW_URL = f"https://raw.githubusercontent.com/Planteome/plant-ontology/{PO_COMMIT}"
 PO_IMPORTS_DIR = "po_imports"
 PO_IMPORT_MODULES = ("ncbitaxon_import.owl", "ro_import.owl")
 

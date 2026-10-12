@@ -72,6 +72,7 @@ from kg_microbe.transform_utils.constants import (
     MICRO_IMPORTS_DIR,
     PO_IMPORT_MODULES,
     PO_IMPORTS_DIR,
+    PO_VERSION_IRI,
     RDFS_SUBCLASS_OF,
     SUBCLASS_PREDICATE,
 )
@@ -160,6 +161,9 @@ from kg_microbe.utils.tsv_io import tsv_writer
 #     fails if a module is missing or the OWL's imports differ from the list.
 #     Without these ROBOT would fetch imports live, so every owl_mireot source
 #     sets them (a test checks).
+#   * ``version_iri`` (owl_mireot only, optional) — the ``owl:versionIRI`` the
+#     pinned OWL must declare. Preflight fails on any other, so a file left
+#     from an earlier release is not used just because it is on disk.
 STUB_ONTOLOGY_SOURCES: Dict[str, Dict[str, Any]] = {
     "NCIT": {
         # NCI Thesaurus. ~73 stubs spanning drugs/antibiotics, foods,
@@ -225,11 +229,13 @@ STUB_ONTOLOGY_SOURCES: Dict[str, Dict[str, Any]] = {
         # subtree rooted at the upper term.
         #
         # po.owl imports two modules by unversioned IRI; they are pinned with
-        # it to one release (PO_RELEASE) and resolved offline.
+        # it to one release (PO_RELEASE) and resolved offline, and preflight
+        # checks po.owl is that release.
         "source_type": "owl_mireot",
         "owl_filename": "po.owl",
         "imports_dir": PO_IMPORTS_DIR,
         "import_modules": PO_IMPORT_MODULES,
+        "version_iri": PO_VERSION_IRI,
         "upper_term": "PO:0025131",
         "knowledge_source": "infores:po",
     },
@@ -1172,6 +1178,7 @@ _OBO_LOCAL_ID_RE = re.compile(r"/([A-Za-z][A-Za-z0-9]*)_([A-Za-z0-9]+)$")
 
 
 _OWL_IMPORT = re.compile(r"<owl:imports\s+rdf:resource=\"([^\"]*)\"")
+_OWL_VERSION_IRI = re.compile(r"<owl:versionIRI\s+rdf:resource=\"([^\"]*)\"")
 # Any `imports` element, whatever prefix it is written with (none = default namespace).
 _ANY_IMPORT = re.compile(r"<([A-Za-z_][\w.-]*:)?imports[\s/>]")
 _ABSOLUTE_IRI = re.compile(r"[A-Za-z][A-Za-z0-9+.-]*:")
@@ -1212,6 +1219,11 @@ def _declared_imports(owl_path: Path) -> List[str]:
     return iris
 
 
+def _declared_version_iris(owl_path: Path) -> List[str]:
+    """Return every ``owl:versionIRI`` an RDF/XML ontology declares (one, for a released ontology)."""
+    return _OWL_VERSION_IRI.findall(owl_path.read_text(encoding="utf-8"))
+
+
 def _import_file_name(iri: str) -> str:
     """Name the local copy of an import: the last path segment of its IRI, as ``download.yaml`` saves it."""
     return iri.rstrip("/").rsplit("/", 1)[-1]
@@ -1219,11 +1231,14 @@ def _import_file_name(iri: str) -> str:
 
 def _pinned_import_problems(prefix: str, cfg: Dict[str, Any], raw_dir: Path) -> List[str]:
     """
-    Check one source's pinned imports before the batch: the OWL, every module, and that the two lists agree.
+    Check one source's pinned imports before the batch: the OWL, its release, every module, and the import list.
 
     The run maps whatever the OWL declares; preflight checks the pinned list.
     If they drift, an import added by a new pin would pass preflight and fail
-    only after the hours-long ontologies source.
+    only after the hours-long ontologies source. An OWL from another release
+    can import the same modules, so where the pin names a release
+    (``version_iri``) the OWL must declare it: `kg download` leaves a file it
+    has no record of in place.
     """
     owl_path = raw_dir / cfg["owl_filename"]
     imports_dir = raw_dir / cfg["imports_dir"]
@@ -1236,8 +1251,15 @@ def _pinned_import_problems(prefix: str, cfg: Dict[str, Any], raw_dir: Path) -> 
         problems.append(f"{prefix} import modules missing from {imports_dir}: {', '.join(absent)}. {fetch}")
     try:
         declared = {_import_file_name(iri) for iri in _declared_imports(owl_path)}
+        versions = _declared_version_iris(owl_path) if "version_iri" in cfg else None
     except ValueError as exc:
         return problems + [f"{prefix}: {exc}"]
+    if versions is not None and versions != [cfg["version_iri"]]:
+        problems.append(
+            f"{prefix} ontology is not the pinned release: {owl_path} declares versionIRI "
+            f"{', '.join(versions) or 'none'}, not {cfg['version_iri']}. "
+            "Delete it and run `poetry run kg download -t ontologies`."
+        )
     pinned = set(cfg["import_modules"])
     if declared != pinned:
         problems.append(

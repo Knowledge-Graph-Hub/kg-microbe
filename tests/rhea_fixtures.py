@@ -70,8 +70,15 @@ def prepare_rhea_native_inputs(transform):
     for name, payload in payloads.items():
         _stage(raw / name, payload)
     policy = {
-        "schema_version": 1,
+        "schema_version": 2,
         "snapshot_id": "hermetic-merge-admission-inputs",
+        "archive": {
+            "url": "https://example.org/rhea/fixture.tar.bz2",
+            "members": {
+                "rhea-directions.tsv": "fixture/tsv/rhea-directions.tsv",
+                "rhea.rdf.gz": "fixture/rdf/rhea.rdf.gz",
+            },
+        },
         "files": {
             name: {"sha256": hashlib.sha256(payload).hexdigest(), "bytes": len(payload)}
             for name, payload in payloads.items()

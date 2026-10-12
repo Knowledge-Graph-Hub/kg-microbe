@@ -52,10 +52,10 @@ def write_inactive_join_policy(source, gss, directory):
     }
     evidence_payload = _json(evidence).encode()
     policy = {
-        "version": 1,
+        "version": 2,
         "source_sha256": _sha(source.read_bytes()),
         "source_records": len(records),
-        "lpsn_gss_sha256": _sha(gss.read_bytes()),
+        "lpsn_gss_reviewed_sha256": _sha(gss.read_bytes()),
         "evidence_file": evidence_path.name,
         "evidence_sha256": _sha(evidence_payload),
         "decisions": [],

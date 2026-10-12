@@ -56,7 +56,10 @@ Fetches the 2025-12-18 upload of `Shiny/MicrobeDecoder/data/database/database.zi
 pinned to commit `ff90e9aa` in `download.yaml`, into
 `data/raw/microbedecoder_database.zip`. The reviewed join and crosswalk policies
 bind that upload's `database.csv`; upstream `main` changed on 2026-09-08 and
-fails them (#1420). On first `kg transform`
+fails them (#1420). The join policy binds the account-gated `lpsn_gss.csv`
+only through the six accepted records its decisions name, each compared with
+its complete reviewed row, so a later monthly GSS passes while those rows are
+unchanged. On first `kg transform`
 run the transform extracts the archive into
 `data/raw/microbedecoder/database.csv` (~57 MB, ~27 K rows).
 

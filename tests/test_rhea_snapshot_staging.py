@@ -1,7 +1,9 @@
 """Native Rhea acquisition is explicit, pinned, coherent and non-destructive."""
 
 import hashlib
+import io
 import json
+import tarfile
 from pathlib import Path
 
 import pytest
@@ -168,11 +170,83 @@ def test_policy_drift_before_publication_is_refused(tmp_path, monkeypatch):
     assert not (raw / "rhea").exists()
 
 
-def test_rolling_downloads_are_quarantined_not_transform_inputs():
-    """Generic URL-only downloads cannot overwrite the hash-admitted native pair."""
+def test_release_archive_download_is_quarantined_not_a_transform_input():
+    """The download is the archived release the policy names, never the admitted pair itself (#1420)."""
     with (Path(__file__).parents[1] / "download.yaml").open() as stream:
         selected = [row for row in yaml.safe_load(stream) if row.get("tag") == "rhea"]
-    assert {row["local_name"] for row in selected} == {
-        "rhea_download/rhea-directions.tsv",
-        "rhea_download/rhea.rdf.gz",
-    }
+    policy = json.loads(module.POLICY_PATH.read_text())
+    assert [(row["url"], row["local_name"]) for row in selected] == [
+        (policy["archive"]["url"], "rhea_download/" + policy["archive"]["url"].rsplit("/", 1)[1])
+    ]
+
+
+def _archive(tmp_path, source, policy, *, damage=None):
+    """Pack the pair under the policy's member paths, beside an unrelated release member."""
+    members = dict(policy["archive"]["members"])
+    path = tmp_path / "release.tar.bz2"
+    with tarfile.open(path, "w:bz2") as bundle:
+
+        def add(name, payload, kind=tarfile.REGTYPE):
+            """Add one member: a regular file with its payload, or a symlink."""
+            info = tarfile.TarInfo(name)
+            info.type = kind
+            if kind == tarfile.SYMTYPE:
+                info.linkname = "elsewhere"
+                bundle.addfile(info)
+            else:
+                info.size = len(payload)
+                bundle.addfile(info, io.BytesIO(payload))
+
+        add("fixture/tsv/rhea2ec.tsv", b"unrelated release member\n")
+        for name, member in members.items():
+            payload = (source / name).read_bytes()
+            if damage == "missing" and name == "rhea.rdf.gz":
+                continue
+            if damage == "symlink" and name == "rhea.rdf.gz":
+                add(member, b"", tarfile.SYMTYPE)
+                continue
+            if damage == "wrong" and name == "rhea.rdf.gz":
+                payload = b"?" + payload[1:]
+            if damage == "long" and name == "rhea.rdf.gz":
+                payload += b"!"
+            add(member, payload)
+            if damage == "duplicate" and name == "rhea.rdf.gz":
+                add(member, payload)
+    return path
+
+
+def test_release_archive_pair_is_extracted_through_its_pins(tmp_path):
+    """Only the two named members are written, under their fixed names, after the same validation."""
+    source, raw, policy_path, policy = _staging_inputs(tmp_path)
+    archive = _archive(tmp_path, source, policy)
+    receipt = module.stage_snapshot(None, raw, policy_path=policy_path, source_archive=archive)
+    assert receipt["disposition"] == "staged"
+    assert receipt["acquisition_method"] == "release_archive_extract"
+    assert receipt["source_archive"] == str(archive.resolve()) and receipt["source_directory"] is None
+    assert sorted(p.name for p in (raw / "rhea").iterdir()) == sorted([*policy["files"], "snapshot_receipt.json"])
+    for name in policy["files"]:
+        assert (source / name).read_bytes() == (raw / "rhea" / name).read_bytes()
+    assert module.stage_snapshot(None, raw, policy_path=policy_path, source_archive=archive)["disposition"] == (
+        "already_matching"
+    )
+
+
+@pytest.mark.parametrize("damage", ["missing", "duplicate", "symlink", "wrong", "long"])
+def test_damaged_release_archive_never_publishes(tmp_path, damage):
+    """A missing, repeated, linked or different member is refused before anything is published."""
+    source, raw, policy_path, policy = _staging_inputs(tmp_path)
+    archive = _archive(tmp_path, source, policy, damage=damage)
+    with pytest.raises(ValueError, match="Rhea archive|pin mismatch"):
+        module.stage_snapshot(None, raw, policy_path=policy_path, source_archive=archive)
+    assert not (raw / "rhea").exists()
+    assert list(raw.glob(".rhea-stage-*")) == []
+
+
+def test_exactly_one_source_is_selected(tmp_path):
+    """A directory and an archive together, or neither, is not a source selection."""
+    source, raw, policy_path, policy = _staging_inputs(tmp_path)
+    archive = _archive(tmp_path, source, policy)
+    for chosen in ((source, archive), (None, None)):
+        with pytest.raises(ValueError, match="exactly one"):
+            module.stage_snapshot(chosen[0], raw, policy_path=policy_path, source_archive=chosen[1])
+    assert not raw.exists()

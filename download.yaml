@@ -250,21 +250,18 @@
   local_name: upa.owl
   tag: ontologies
 
-# Native Rhea acquisition quarantine. These URLs are rolling locations, NOT
-# immutable release pins. Nothing here writes the admitted raw/rhea inputs.
-# After download, explicitly verify/promote the pair against mappings/rhea_release.json:
+# Native Rhea acquisition quarantine. The archived release 142 tarball is an
+# immutable location: its two reviewed members are byte-identical to the pins in
+# mappings/rhea_release.json (#1420), unlike the rolling tsv/ and rdf/ paths,
+# which move with every Rhea release. Nothing here writes the admitted raw/rhea
+# inputs. After download, explicitly extract and promote the pair:
 # poetry run python -m kg_microbe.transform_utils.rhea_mappings.stage_snapshot \
-#   --source-dir data/raw/rhea_download --input-dir data/raw
-# If upstream bytes have moved, this fails closed. Use an explicitly selected
-# local matching export instead, or review a new snapshot before changing pins.
+#   --source-archive data/raw/rhea_download/142.tar.bz2 --input-dir data/raw
+# A member that differs from its pin fails closed; review a new snapshot before
+# changing pins.
 - 
-  url: https://ftp.expasy.org/databases/rhea/tsv/rhea-directions.tsv
-  local_name: rhea_download/rhea-directions.tsv
-  tag: rhea
-
--
-  url: https://ftp.expasy.org/databases/rhea/rdf/rhea.rdf.gz
-  local_name: rhea_download/rhea.rdf.gz
+  url: https://ftp.expasy.org/databases/rhea/old_releases/142.tar.bz2
+  local_name: rhea_download/142.tar.bz2
   tag: rhea
 
 #

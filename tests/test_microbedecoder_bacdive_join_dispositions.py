@@ -102,10 +102,33 @@ def test_preflight_drift_does_not_replace_previous_source_members(tmp_path, monk
         path.write_text("previous output bytes\n")
     targets = {"raw": raw, "gss": gss, "policy": policy, "evidence": policy.parent / "evidence.json"}
     target = targets[member]
-    target.write_bytes(target.read_bytes() + b"\n")
+    if member == "gss":
+        # GSS bytes alone are no longer bound (#1420); a change to a reviewed accepted row is.
+        text = target.read_text(encoding="utf-8")
+        assert text.count("101,,correct name") == 1
+        target.write_text(text.replace("101,,correct name", "101,,correct name; emended"), encoding="utf-8")
+    else:
+        target.write_bytes(target.read_bytes() + b"\n")
     with pytest.raises((SourceFinalizationRequired, ValueError)):
         transform.run(raw)
     assert all(path.read_text() == "previous output bytes\n" for path in protected)
+
+
+def test_new_gss_snapshot_with_reviewed_rows_unchanged_is_accepted(tmp_path, monkeypatch):
+    """No GSS byte pin (#1420): a later snapshot passes on its reviewed rows, and its read is recorded."""
+    transform, raw, gss, policy, _ = prepare(tmp_path, monkeypatch)
+    with gss.open("a", encoding="utf-8", newline="") as stream:
+        stream.write("999,,correct name\r\n")
+    transform.run(raw)
+    snapshot = transform.consumed_input_snapshots[joins.ROLE_GSS]
+    assert snapshot["sha256"] == hashlib.sha256(gss.read_bytes()).hexdigest()
+    assert json.loads(policy.read_text())["lpsn_gss_reviewed_sha256"] != snapshot["sha256"]
+    report = _native_report(transform)
+    assert (
+        report["producer_native_inputs"][joins.CONTRACT_KEY]["bindings"][joins.ROLE_GSS]["sha256"]
+        == (snapshot["sha256"])
+    )
+    joins.verify_recorded_inputs(report, transform.output_dir / "source_finalization.json")
 
 
 @pytest.mark.parametrize("role", joins.REQUIRED_INPUTS)

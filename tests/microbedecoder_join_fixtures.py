@@ -109,10 +109,10 @@ def prepare(tmp_path, monkeypatch, *, selected=(1,), empty=False, native_cases=N
     }
     evidence_path.write_text(_json(evidence))
     policy = {
-        "version": 1,
+        "version": 2,
         "source_sha256": _hash(source.read_bytes()),
         "source_records": len(rows),
-        "lpsn_gss_sha256": _hash(gss.read_bytes()),
+        "lpsn_gss_reviewed_sha256": _hash(gss.read_bytes()),
         "evidence_file": evidence_path.name,
         "evidence_sha256": _hash(evidence_path.read_bytes()),
         "decisions": decisions,

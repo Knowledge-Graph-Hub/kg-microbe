@@ -52,6 +52,11 @@ def prepare(tmp_path, monkeypatch, *, selected=(1,), empty=False, native_cases=N
     ]
     if native_cases is not None:
         gss_rows = [{"record_no": row["LPSN_ID"], "record_lnk": "", "status": "correct name"} for row in rows]
+    # Each reviewed decision rests on a distinct correct name on the BacDive side (#1525).
+    bacdive_sides = {
+        ordinal: {"record_no": f"9{ordinal:06d}", "record_lnk": "", "status": "correct name"} for ordinal in selected
+    }
+    gss_rows.extend(bacdive_sides.values())
     gss = raw / "lpsn_gss.csv"
     with gss.open("w", encoding="utf-8", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=list(gss_rows[0]))
@@ -92,6 +97,7 @@ def prepare(tmp_path, monkeypatch, *, selected=(1,), empty=False, native_cases=N
                 "ordinal": ordinal,
                 "native_md_row": row,
                 "md_accepted_gss_row": {"full_row": gss_row},
+                "bacdive_accepted_gss_row": {"full_row": bacdive_sides[ordinal]},
                 "bacdive_complete_decoded_record": {
                     "bacdive_id": int(bacdive_id),
                     "record": record,

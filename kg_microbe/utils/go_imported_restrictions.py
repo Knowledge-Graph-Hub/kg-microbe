@@ -251,13 +251,30 @@ def load_policy(stream):
     return policy
 
 
+def _reachable_blank_nodes(policy, blank_nodes):
+    """Return every blank node the selected rows reach, directly or through recorded blank-node statements."""
+    pending = [row["object"] for row in _metadata_rows(policy) if _is_blank(row["object"])]
+    reached = set()
+    while pending:
+        label = pending.pop()
+        if label not in reached:
+            reached.add(label)
+            statements = blank_nodes.get(label)
+            if isinstance(statements, list):
+                pending.extend(
+                    statement["object"]
+                    for statement in statements
+                    if isinstance(statement, dict) and _is_blank(statement.get("object"))
+                )
+    return reached
+
+
 def _valid_blank_nodes(policy):
-    """Require the reviewed statements of exactly the blank nodes the selected rows reference."""
+    """Require the reviewed statements of exactly the blank nodes the selected rows reach, nested ones included."""
     blank_nodes = policy.get("blank_nodes")
-    referenced = {row["object"] for row in _metadata_rows(policy) if _is_blank(row["object"])}
     return (
         isinstance(blank_nodes, dict)
-        and set(blank_nodes) == referenced
+        and set(blank_nodes) == _reachable_blank_nodes(policy, blank_nodes)
         and all(
             isinstance(statements, list)
             and statements
@@ -536,6 +553,8 @@ class ImportedGoRestrictionGuard:
 
                 def recorded(label):
                     """Return a blank node's statements as the policy recorded them."""
+                    if label not in reviewed:
+                        raise ValueError(f"Unreviewed GO blank node: {label}")
                     return [(row["predicate"], row["object"], row["value"]) for row in reviewed[label]]
 
                 # Blank nodes compare by what they state, not their build-local labels (#1514).

@@ -34,6 +34,6 @@
       "upa.owl": "1ea0465c2222592bdeea3197a687ba26c74818263e1e6c5e8838baafcb6838ce",
       "go.db": "a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a"
     },
-    "note": "Version 2 pinned upa.json and the locally built go.db by whole-file SHA-256; version 3 binds their releases and go.owl instead (#1420)."
+    "note": "Version 2 pinned upa.json and the locally built go.db by whole-file SHA-256. Version 3 binds go.db by its release and the go.owl it was built from (#1420), and keeps the upa.json byte pin, which the pinned ROBOT reproduces from the pinned upa.owl, alongside its release (#1516)."
   }
 }

@@ -113,3 +113,41 @@ class RobotJavaArgsTest(TestCase):
             _, env = robot_utils.initialize_robot("robot-dir")
             self.assertEqual(env["ROBOT_JAVA_ARGS"], robot_utils.robot_java_args())
         self.assertTrue(env["PATH"].endswith(os.pathsep + "robot-dir"))
+
+    def test_a_limit_set_in_another_jvm_option_variable_is_left_alone(self):
+        """The appended -D flags outrank JAVA_TOOL_OPTIONS and JDK_JAVA_OPTIONS, so set there means set."""
+        for variable in robot_utils.USER_JVM_OPTION_VARIABLES:
+            env = {variable: "-Djdk.xml.totalEntitySizeLimit=0"}
+            with mock.patch.dict(os.environ, env, clear=True):
+                args = robot_utils.robot_java_args()
+            self.assertNotIn("-Djdk.xml.totalEntitySizeLimit=", args, variable)
+            self.assertIn("-Djdk.xml.maxElementDepth=0", args, variable)
+
+    def test_a_user_jaxp_configuration_file_governs_every_limit(self):
+        """The JDK reads java.xml.config.file only where no system property is set; append none."""
+        env = {"ROBOT_JAVA_ARGS": "-Xmx8G -Djava.xml.config.file=/etc/jaxp-site.properties"}
+        with mock.patch.dict(os.environ, env, clear=True):
+            self.assertEqual(robot_utils.robot_java_args(), env["ROBOT_JAVA_ARGS"])
+
+
+class MissingRobotTest(TestCase):
+    """The ontology transforms run the ROBOT pinned into the raw directory, not one from PATH."""
+
+    def test_absent_files_and_java_are_each_reported(self):
+        """Both the pinned files and a JDK are needed; each absence says how to fix it."""
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.object(robot_utils.shutil, "which", return_value=None):
+            problems = robot_utils.missing_robot(tmp)
+        self.assertEqual(len(problems), 2)
+        self.assertIn("robot, robot.jar", problems[0])
+        self.assertIn("kg download -t tools", problems[0])
+        self.assertIn("java not on PATH", problems[1])
+
+    def test_the_pinned_files_and_a_java_are_enough(self):
+        """Nothing is required of PATH except java."""
+        with (
+            tempfile.TemporaryDirectory() as tmp,
+            mock.patch.object(robot_utils.shutil, "which", return_value="/usr/bin/java"),
+        ):
+            for name in ("robot", "robot.jar"):
+                Path(tmp, name).write_text("stand-in", encoding="utf-8")
+            self.assertEqual(robot_utils.missing_robot(tmp), [])

@@ -205,9 +205,11 @@ def _missing_prerequisites(sources: List[str], input_dir: Optional[Path] = None)
     missing = []
     for source in sources:
         check = getattr(DATA_SOURCES.get(source), "missing_prerequisites", None)
-        problems = check(input_dir) if check is not None else []
-        if isinstance(problems, list):  # registry test doubles may be mocks
-            missing += [f"{source}: {problem}" for problem in problems]
+        problems = check(input_dir) if check is not None else ()
+        if isinstance(problems, str):
+            # Iterating it would report one problem per character.
+            raise TypeError(f"{source}.missing_prerequisites must return messages, not a string")
+        missing += [f"{source}: {problem}" for problem in problems]
     return missing
 
 

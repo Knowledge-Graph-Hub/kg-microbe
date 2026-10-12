@@ -517,6 +517,27 @@ class BatchIsolationTest(TestCase):
         self.assertEqual(self.log, [])
         self.assertIn("a: ROBOT binary not on PATH", str(excinfo.value))
 
+    def test_a_skipped_optional_source_is_not_held_to_its_prerequisites(self):
+        """It runs nothing, so a tool it would need must not stop the whole default batch."""
+        fake = self._optional_without_input("opt")
+        fake.missing_prerequisites = classmethod(lambda cls, input_dir=None: ["needs a tool"])
+        registry = {"opt": fake, "b": _fake_source("b", self.log, self.base)}
+        with mock.patch.dict(DATA_SOURCES, registry, clear=True):
+            transform(None, None, sources=None)
+        self.assertEqual(self.log, ["b"])
+
+    def test_prerequisite_messages_may_come_as_any_iterable_but_not_a_string(self):
+        """A tuple must count; a bare string would be reported one character at a time."""
+        from kg_microbe.transform import _missing_prerequisites
+
+        fake = _fake_source("a", self.log, self.base)
+        fake.missing_prerequisites = classmethod(lambda cls, input_dir=None: ("needs a tool",))
+        with mock.patch.dict(DATA_SOURCES, {"a": fake}, clear=True):
+            self.assertEqual(_missing_prerequisites(["a"]), ["a: needs a tool"])
+            fake.missing_prerequisites = classmethod(lambda cls, input_dir=None: "needs a tool")
+            with pytest.raises(TypeError):
+                _missing_prerequisites(["a"])
+
     def test_alternate_raw_declaration_does_not_require_repository_default(self):
         """CLI -i determines the raw authority preflight path, not an unrelated repo file."""
         from kg_microbe.transform import _missing_declared_inputs

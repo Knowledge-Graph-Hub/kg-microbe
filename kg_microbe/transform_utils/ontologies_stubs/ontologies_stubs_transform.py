@@ -75,7 +75,7 @@ from kg_microbe.transform_utils.ontologies_stubs.ncit_category_projection import
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.isolation_source_mapping_utils import STUB_ONTOLOGY_CATEGORY
-from kg_microbe.utils.robot_utils import robot_env
+from kg_microbe.utils.robot_utils import initialize_robot, missing_robot
 from kg_microbe.utils.stub_curie_collection import (
     DEFAULT_MAPPING_PATHS,
     collect_stub_curies,
@@ -238,10 +238,6 @@ STUB_ONTOLOGY_SOURCES: Dict[str, Dict[str, Any]] = {
 _MAX_CELL_LEN = 500
 
 ONTOLOGIES_STUBS_SOURCE_NAME = "ontologies_stubs"
-ROBOT_MISSING = (
-    "ROBOT binary not on PATH. Install robot (http://robot.obolibrary.org/) with a JDK "
-    "and ensure it is on PATH; poetry install does not provide it."
-)
 NCIT_CATEGORY_DISPOSITIONS = _STUB_REPO_ROOT / "mappings/ncit_category_dispositions.tsv"
 
 
@@ -273,8 +269,8 @@ class OntologiesStubsTransform(Transform):
 
     @classmethod
     def missing_prerequisites(cls, input_dir: Optional[Path] = None) -> List[str]:
-        """ROBOT builds the PO and MICRO hierarchies; without it the run fails only after the ontologies source."""
-        return [] if shutil.which("robot") else [ROBOT_MISSING]
+        """Report a missing pinned ROBOT or java, which the PO and MICRO hierarchies need, before the batch starts."""
+        return missing_robot(Path(input_dir) if input_dir else cls.DEFAULT_INPUT_DIR)
 
     def __init__(
         self,
@@ -510,10 +506,12 @@ class OntologiesStubsTransform(Transform):
         Writes intermediate ``.owl`` (RDF/XML) and ``.json`` files into ``self.output_dir``
         so they're available for inspection if the module needs auditing.
         """
-        robot_bin = shutil.which("robot")
-        if not robot_bin:
-            raise RuntimeError(f"Required to build the {prefix} stub hierarchy via MIREOT: {ROBOT_MISSING}")
-        env = robot_env()
+        # The pinned ROBOT from the raw directory, as the ontologies transform
+        # runs it; a PATH `robot` may be another version (#986 was 1.9.6).
+        problems = missing_robot(self.input_base_dir)
+        if problems:
+            raise FileNotFoundError(f"Required to build the {prefix} stub hierarchy via MIREOT: {' '.join(problems)}")
+        robot_file, env = initialize_robot(str(self.input_base_dir))
 
         lower_iris: List[str] = []
         for c in lower_curies:
@@ -534,7 +532,8 @@ class OntologiesStubsTransform(Transform):
         module_owl.with_suffix(".ofn").unlink(missing_ok=True)
 
         extract_cmd: List[str] = [
-            robot_bin,
+            "bash",
+            robot_file,
             "extract",
             "--method",
             "MIREOT",
@@ -548,20 +547,18 @@ class OntologiesStubsTransform(Transform):
         extract_cmd += ["--output", str(module_owl)]
         subprocess.run(extract_cmd, check=True, env=env)  # noqa: S603
 
-        subprocess.run(  # noqa: S603
-            [
-                robot_bin,
-                "convert",
-                "--input",
-                str(module_owl),
-                "--output",
-                str(module_json),
-                "-f",
-                "json",
-            ],
-            check=True,
-            env=env,
-        )
+        convert_cmd: List[str] = [
+            "bash",
+            robot_file,
+            "convert",
+            "--input",
+            str(module_owl),
+            "--output",
+            str(module_json),
+            "-f",
+            "json",
+        ]
+        subprocess.run(convert_cmd, check=True, env=env)  # noqa: S603
         return module_json
 
     def _parse_mireot_module(

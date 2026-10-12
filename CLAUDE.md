@@ -21,11 +21,12 @@ network access or modify `data/raw`; put small immutable inputs under
 `tests/resources` and use `tmp_path` for output. Mark intentional live-service
 coverage with `@pytest.mark.integration`.
 
-`ontologies_stubs` (and so `gold` and `microbedecoder`) needs ROBOT on
-`PATH` with a JDK; `poetry install` does not provide it, and `kg transform`
-fails preflight without it. ROBOT calls get JAXP entity limits from
-`robot_utils.robot_java_args()`, because recent JDKs reject real ontology
-imports at their lowered defaults.
+The ontology transforms run the ROBOT pinned in `download.yaml`
+(`kg download -t tools` puts `robot` and `robot.jar` in the raw directory),
+never one from `PATH`, and need `java` on `PATH`; `kg transform` checks both
+before running `ontologies_stubs`. `robot_utils.robot_java_args()` restores the
+seven JAXP limits JDK 24 lowered, which reject real ontology imports, unless
+the user sets them.
 
 Supported Python versions are 3.10 through 3.12. Python 3.13 is blocked by the
 KGX/pyarrow dependency chain; see issue #871.

@@ -9,7 +9,6 @@ from typing import Dict, List, Set
 import pytest
 
 from kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform import (
-    ROBOT_MISSING,
     STUB_ONTOLOGY_SOURCES,
     OntologiesStubsTransform,
     _curie_to_iris,
@@ -21,6 +20,7 @@ from kg_microbe.utils.isolation_source_mapping_utils import (
     STUB_ONTOLOGY_CATEGORY,
     STUB_ONTOLOGY_PREFIXES,
 )
+from kg_microbe.utils.robot_utils import ROBOT_JAXP_LIMITS
 from kg_microbe.utils.stub_curie_collection import collect_stub_curies
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -353,8 +353,9 @@ def test_mireot_intermediate_is_rdfxml_not_functional_syntax(tmp_path, monkeypat
         calls.append(list(cmd))
         return None
 
-    monkeypatch.setattr("shutil.which", lambda _name: "/fake/robot")
+    monkeypatch.setattr("shutil.which", lambda _name: "/usr/bin/java")
     monkeypatch.setattr(subprocess, "run", fake_run)
+    _pinned_robot(tmp_path / "raw")
     transform = OntologiesStubsTransform(input_dir=tmp_path / "raw", output_dir=tmp_path / "out")
     transform.output_dir.mkdir(parents=True, exist_ok=True)
     stale = transform.output_dir / "micro_mireot_module.ofn"
@@ -366,11 +367,13 @@ def test_mireot_intermediate_is_rdfxml_not_functional_syntax(tmp_path, monkeypat
         owl_path=tmp_path / "raw" / "micro.owl",
     )
     extract, convert = calls
-    assert extract[1] == "extract"
+    # The pinned ROBOT from the raw directory, not whatever `robot` is on PATH.
+    assert extract[:2] == convert[:2] == ["bash", str(tmp_path / "raw" / "robot")]
+    assert extract[2] == "extract"
     written = extract[extract.index("--output") + 1]
     assert written.endswith("_mireot_module.owl"), written
     assert not written.endswith(".ofn")
-    assert convert[1] == "convert"
+    assert convert[2] == "convert"
     assert convert[convert.index("--input") + 1] == written
     assert convert[convert.index("--output") + 1] == str(module_json)
     assert module_json.suffix == ".json"
@@ -394,9 +397,11 @@ def test_mireot_robot_calls_carry_the_jaxp_limits(tmp_path, monkeypatch):
         envs.append(env)
         return None
 
-    monkeypatch.delenv("ROBOT_JAVA_ARGS", raising=False)
-    monkeypatch.setattr("shutil.which", lambda _name: "/fake/robot")
+    for name in ("ROBOT_JAVA_ARGS", "JAVA_TOOL_OPTIONS", "JDK_JAVA_OPTIONS"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setattr("shutil.which", lambda _name: "/usr/bin/java")
     monkeypatch.setattr(subprocess, "run", fake_run)
+    _pinned_robot(tmp_path / "raw")
     transform = OntologiesStubsTransform(input_dir=tmp_path / "raw", output_dir=tmp_path / "out")
     transform.output_dir.mkdir(parents=True, exist_ok=True)
     transform._run_mireot_extract(
@@ -407,15 +412,36 @@ def test_mireot_robot_calls_carry_the_jaxp_limits(tmp_path, monkeypatch):
     )
     assert len(envs) == 2
     for env in envs:
-        assert "-Djdk.xml.totalEntitySizeLimit=50000000" in env["ROBOT_JAVA_ARGS"]
+        for name, value in ROBOT_JAXP_LIMITS:
+            assert f"-D{name}={value}" in env["ROBOT_JAVA_ARGS"]
 
 
-def test_missing_robot_is_a_prerequisite_failure(monkeypatch):
-    """Without ROBOT the source used to fail mid-batch, after the ontologies transform."""
+def _pinned_robot(raw_dir: Path) -> None:
+    """Lay out the pinned ROBOT under ``raw_dir``, as `kg download -t tools` does."""
+    raw_dir.mkdir(parents=True, exist_ok=True)
+    for name in ("robot", "robot.jar"):
+        (raw_dir / name).write_text("stand-in", encoding="utf-8")
+
+
+def test_missing_pinned_robot_is_a_prerequisite_failure(tmp_path, monkeypatch):
+    """
+    Without ROBOT the source used to fail mid-batch, after the ontologies transform.
+
+    The check is for the pinned copy in the raw directory that `kg download`
+    provides and the run uses, not for a `robot` on PATH.
+    """
+    monkeypatch.setattr("shutil.which", lambda _name: "/usr/bin/java")
+    (problem,) = OntologiesStubsTransform.missing_prerequisites(tmp_path)
+    assert problem.startswith(f"pinned ROBOT missing from {tmp_path}: robot, robot.jar")
+    _pinned_robot(tmp_path)
+    assert OntologiesStubsTransform.missing_prerequisites(tmp_path) == []
+
+
+def test_missing_java_is_a_prerequisite_failure(tmp_path, monkeypatch):
+    """The ROBOT wrapper execs `java`; a host without one fails every ROBOT call."""
+    _pinned_robot(tmp_path)
     monkeypatch.setattr("shutil.which", lambda _name: None)
-    assert OntologiesStubsTransform.missing_prerequisites() == [ROBOT_MISSING]
-    monkeypatch.setattr("shutil.which", lambda _name: "/fake/robot")
-    assert OntologiesStubsTransform.missing_prerequisites() == []
+    assert OntologiesStubsTransform.missing_prerequisites(tmp_path) == ["java not on PATH; ROBOT needs a JDK."]
 
 
 # ---------------------------------------------------------------------------

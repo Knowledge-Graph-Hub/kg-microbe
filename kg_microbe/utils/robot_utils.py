@@ -2,6 +2,7 @@
 
 import itertools
 import os
+import shutil
 import subprocess
 from pathlib import Path
 from typing import List, Optional, Union
@@ -13,19 +14,27 @@ from kg_microbe.transform_utils.constants import (
 
 DEFAULT_ROBOT_JAVA_ARGS = "-Xmx12g -XX:+UseG1GC"
 
-# Recent JDKs ship far lower JAXP entity limits; Temurin 27 rejects MicrO's
-# ChEBI import module with "accumulated size of entities is 100,009 that
-# exceeded the 100,000 limit set by jdk.xml.totalEntitySizeLimit", which fails
-# ontologies_stubs and skips gold and microbedecoder behind it. These are the
-# limits older JDKs applied by default: still bounded, so a pathological file
-# fails rather than exhausting memory, but large enough for real ontologies.
-# A value the user already sets in ROBOT_JAVA_ARGS wins.
+# JDK 24 lowered seven JAXP processing limits (CSR JDK-8343006); Temurin 27
+# rejects MicrO's ChEBI import module with "accumulated size of entities is
+# 100,009 that exceeded the 100,000 limit set by jdk.xml.totalEntitySizeLimit",
+# which fails ontologies_stubs and skips gold and microbedecoder behind it.
+# These are the JDK 23 defaults for all seven: still bounded, so a pathological
+# file fails rather than exhausting memory, but large enough for real
+# ontologies. (OWLAPI sets its own entityExpansionLimit, which outranks this
+# one; it is restored for completeness.) A limit the user sets wins.
 ROBOT_JAXP_LIMITS = (
     ("jdk.xml.totalEntitySizeLimit", "50000000"),
     ("jdk.xml.entityExpansionLimit", "64000"),
     ("jdk.xml.maxGeneralEntitySizeLimit", "0"),
     ("jdk.xml.maxParameterEntitySizeLimit", "1000000"),
+    ("jdk.xml.entityReplacementLimit", "3000000"),
+    ("jdk.xml.elementAttributeLimit", "10000"),
+    ("jdk.xml.maxElementDepth", "0"),
 )
+
+# Where else a user configures the ROBOT JVM. The appended -D flags outrank
+# both, so a limit set there is treated as set.
+USER_JVM_OPTION_VARIABLES = ("JAVA_TOOL_OPTIONS", "JDK_JAVA_OPTIONS")
 
 
 def robot_java_args(base: Optional[str] = None) -> str:
@@ -36,7 +45,11 @@ def robot_java_args(base: Optional[str] = None) -> str:
         :data:`DEFAULT_ROBOT_JAVA_ARGS` when that is unset.
     """
     args = base if base is not None else os.environ.get("ROBOT_JAVA_ARGS", DEFAULT_ROBOT_JAVA_ARGS)
-    extra = [f"-D{name}={value}" for name, value in ROBOT_JAXP_LIMITS if f"-D{name}=" not in args]
+    configured = " ".join([args, *(os.environ.get(name, "") for name in USER_JVM_OPTION_VARIABLES)])
+    if "-Djava.xml.config.file=" in configured:
+        # The user's JAXP configuration file governs; a -D flag would override it.
+        return args
+    extra = [f"-D{name}={value}" for name, value in ROBOT_JAXP_LIMITS if f"-D{name}=" not in configured]
     return " ".join([args, *extra]).strip()
 
 
@@ -45,6 +58,29 @@ def robot_env() -> dict:
     env = dict(os.environ)
     env["ROBOT_JAVA_ARGS"] = robot_java_args()
     return env
+
+
+def missing_robot(path: Union[str, Path]) -> List[str]:
+    """
+    Return what the pinned ROBOT under ``path`` needs but lacks: its files, or a ``java``.
+
+    ``download.yaml`` pins ROBOT into the raw directory (tag ``tools``), and the
+    ontology transforms run that copy rather than whatever ``robot`` is on PATH,
+    so the version is the one this repository was tested with.
+
+    :param path: Raw directory that ``kg download`` writes ROBOT into.
+    :return: One message per problem; empty when ROBOT can run.
+    """
+    root = Path(path)
+    problems = []
+    absent = [name for name in ("robot", "robot.jar") if not (root / name).is_file()]
+    if absent:
+        problems.append(
+            f"pinned ROBOT missing from {root}: {', '.join(absent)}. Run `poetry run kg download -t tools`."
+        )
+    if shutil.which("java") is None:
+        problems.append("java not on PATH; ROBOT needs a JDK.")
+    return problems
 
 
 def initialize_robot(path: str) -> list:

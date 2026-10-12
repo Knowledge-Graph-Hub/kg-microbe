@@ -267,6 +267,12 @@ with a download and changes nothing observable, which is how a deprecated
 predicate reached 706,765 shipped edges. `tests/test_metpo_version_pin.py`
 enforces this against `download.yaml`. See issues #900 and #909.
 
+MicrO has no releases, so it is pinned to a commit (`MICRO_COMMIT` in
+`constants.py`) together with the 20 modules `MicrO.owl` imports.
+`ontologies_stubs` resolves those imports through a generated ROBOT catalog
+and refuses to run rather than fetch one; `tests/test_micro_version_pin.py`
+checks `download.yaml` against the constant. PO still fetches its imports live.
+
 ## Operational references
 
 - [Data hosting and ontology build costs](docs/DATA_HOSTING.md)

@@ -402,8 +402,114 @@
 # point at MICRO terms; loading provides labels/categories for them.
 #
 -
-  url: https://raw.githubusercontent.com/carrineblank/MicrO/master/MicrOandImportModules/MicrO.owl
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/MicrO.owl
   local_name: micro.owl
+  tag: ontologies
+
+#
+# MicrO's owl:imports modules, pinned to the same commit as MicrO.owl
+# (MICRO_COMMIT in constants.py). ontologies_stubs resolves MicrO's imports
+# through a local ROBOT catalog built from these files instead of fetching them
+# from MicrO's master branch on every run.
+#
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/BFO_imports.owl
+  local_name: micro_imports/BFO_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/BSPO_imports.owl
+  local_name: micro_imports/BSPO_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/ChEBI_imports.owl
+  local_name: micro_imports/ChEBI_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/CHMO_imports.owl
+  local_name: micro_imports/CHMO_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/CL_imports.owl
+  local_name: micro_imports/CL_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/DRON_imports.owl
+  local_name: micro_imports/DRON_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/ENVO_imports.owl
+  local_name: micro_imports/ENVO_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/FMA_imports.owl
+  local_name: micro_imports/FMA_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/GO_imports.owl
+  local_name: micro_imports/GO_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/IAO_imports.owl
+  local_name: micro_imports/IAO_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/IDO_imports.owl
+  local_name: micro_imports/IDO_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/NCBITax_imports.owl
+  local_name: micro_imports/NCBITax_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/NDF-RT_imports.owl
+  local_name: micro_imports/NDF-RT_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/OBI_imports.owl
+  local_name: micro_imports/OBI_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/PATO_imports.owl
+  local_name: micro_imports/PATO_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/PO_imports.owl
+  local_name: micro_imports/PO_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/PR_imports.owl
+  local_name: micro_imports/PR_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/REO_imports.owl
+  local_name: micro_imports/REO_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/RO_imports.owl
+  local_name: micro_imports/RO_imports.owl
+  tag: ontologies
+
+-
+  url: https://raw.githubusercontent.com/carrineblank/MicrO/73963269d9a681157d710f272f8e65e4f7e8897e/MicrOandImportModules/Uberon_imports.owl
+  local_name: micro_imports/Uberon_imports.owl
   tag: ontologies
 
 #

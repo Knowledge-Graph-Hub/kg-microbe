@@ -838,6 +838,43 @@ METPO_JSON_URL = f"{_METPO_RAW}/metpo.json"
 METPO_CLASSES_ROBOT_TEMPLATE_URL = f"{_METPO_RAW}/src/templates/metpo_sheet.tsv"
 METPO_PROPERTIES_ROBOT_TEMPLATE_URL = f"{_METPO_RAW}/src/templates/metpo-properties.tsv"
 
+# MicrO has no releases: `master` is its only channel, and MicrO.owl imports 20
+# modules from that same branch by IRI, so ROBOT fetched them over the network on
+# every ontologies_stubs run and the stub hierarchy could change with no change
+# here. The ontology and every module are pinned to one commit and downloaded;
+# ontologies_stubs resolves the imports through a local catalog and refuses to
+# run if one is missing. `download.yaml` repeats the URLs and cannot import them;
+# a test asserts they agree. MicrO's master has not moved since this commit
+# (2018-06-14), so pinning changed no content.
+MICRO_COMMIT = "73963269d9a681157d710f272f8e65e4f7e8897e"
+MICRO_RAW_URL = f"https://raw.githubusercontent.com/carrineblank/MicrO/{MICRO_COMMIT}/MicrOandImportModules"
+MICRO_IMPORTS_DIR = "micro_imports"
+MICRO_IMPORT_MODULES = tuple(
+    f"{name}_imports.owl"
+    for name in (
+        "BFO",
+        "BSPO",
+        "ChEBI",
+        "CHMO",
+        "CL",
+        "DRON",
+        "ENVO",
+        "FMA",
+        "GO",
+        "IAO",
+        "IDO",
+        "NCBITax",
+        "NDF-RT",
+        "OBI",
+        "PATO",
+        "PO",
+        "PR",
+        "REO",
+        "RO",
+        "Uberon",
+    )
+)
+
 # Report of every culture-collection deposit number claimed by more than one
 # BacDive record with a different parent taxon, and what became of it: `collapsed`
 # rows were given the ancestor every claimant entails, `suppressed` rows were given

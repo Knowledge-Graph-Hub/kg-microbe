@@ -8,6 +8,7 @@ from typing import Dict, List, Set
 
 import pytest
 
+from kg_microbe.transform_utils.constants import MICRO_IMPORT_MODULES, MICRO_IMPORTS_DIR
 from kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform import (
     STUB_ONTOLOGY_SOURCES,
     OntologiesStubsTransform,
@@ -15,6 +16,7 @@ from kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform impo
     _iri_to_curie,
     _retag_curie,
     _sanitize,
+    _write_import_catalog,
 )
 from kg_microbe.utils.isolation_source_mapping_utils import (
     STUB_ONTOLOGY_CATEGORY,
@@ -431,6 +433,7 @@ def test_missing_pinned_robot_is_a_prerequisite_failure(tmp_path, monkeypatch):
     provides and the run uses, not for a `robot` on PATH.
     """
     monkeypatch.setattr("shutil.which", lambda _name: "/usr/bin/java")
+    _pinned_micro_imports(tmp_path)
     (problem,) = OntologiesStubsTransform.missing_prerequisites(tmp_path)
     assert problem.startswith(f"pinned ROBOT missing from {tmp_path}: robot, robot.jar")
     _pinned_robot(tmp_path)
@@ -440,8 +443,137 @@ def test_missing_pinned_robot_is_a_prerequisite_failure(tmp_path, monkeypatch):
 def test_missing_java_is_a_prerequisite_failure(tmp_path, monkeypatch):
     """The ROBOT wrapper execs `java`; a host without one fails every ROBOT call."""
     _pinned_robot(tmp_path)
+    _pinned_micro_imports(tmp_path)
     monkeypatch.setattr("shutil.which", lambda _name: None)
     assert OntologiesStubsTransform.missing_prerequisites(tmp_path) == ["java not on PATH; ROBOT needs a JDK."]
+
+
+def _pinned_micro_imports(raw_dir: Path) -> Path:
+    """Lay out every pinned MicrO import module under ``raw_dir``, as `kg download` does."""
+    imports_dir = raw_dir / MICRO_IMPORTS_DIR
+    imports_dir.mkdir(parents=True)
+    for name in MICRO_IMPORT_MODULES:
+        (imports_dir / name).write_text("<rdf:RDF/>", encoding="utf-8")
+    return imports_dir
+
+
+def test_a_missing_pinned_micro_import_is_a_prerequisite_failure(tmp_path, monkeypatch):
+    """
+    MicrO's imports are no longer fetched, so an absent module must stop the batch up front.
+
+    Every machine that downloaded data before the pin lacks them; finding out
+    after the ontologies source would cost hours.
+    """
+    monkeypatch.setattr("shutil.which", lambda _name: "/usr/bin/java")
+    _pinned_robot(tmp_path)
+    imports_dir = _pinned_micro_imports(tmp_path)
+    (imports_dir / "ChEBI_imports.owl").unlink()
+    (problem,) = OntologiesStubsTransform.missing_prerequisites(tmp_path)
+    assert problem.startswith("MICRO import modules missing")
+    assert "ChEBI_imports.owl" in problem
+    assert "GO_imports.owl" not in problem
+
+
+_TWO_IMPORTS = """<?xml version="1.0"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:owl="http://www.w3.org/2002/07/owl#">
+    <owl:Ontology rdf:about="http://example.org/m.owl">
+        <owl:imports rdf:resource="https://example.org/branch/A_imports.owl"/>
+        <owl:imports rdf:resource="https://example.org/branch/B_imports.owl"/>
+    </owl:Ontology>
+</rdf:RDF>
+"""
+
+
+def test_import_catalog_maps_every_import_to_its_local_copy(tmp_path):
+    """The catalog is what keeps ROBOT from fetching MicrO's imports from a moving branch."""
+    owl = tmp_path / "m.owl"
+    owl.write_text(_TWO_IMPORTS, encoding="utf-8")
+    imports_dir = tmp_path / "imports"
+    imports_dir.mkdir()
+    for name in ("A_imports.owl", "B_imports.owl"):
+        (imports_dir / name).write_text("<rdf:RDF/>", encoding="utf-8")
+    catalog = _write_import_catalog(owl, imports_dir, tmp_path / "catalog-v001.xml")
+    text = catalog.read_text(encoding="utf-8")
+    for name in ("A", "B"):
+        iri = f"https://example.org/branch/{name}_imports.owl"
+        local = (imports_dir / f"{name}_imports.owl").resolve().as_uri()
+        assert f'<uri name="{iri}" uri="{local}"/>' in text
+
+
+def test_an_import_with_no_local_copy_raises_instead_of_being_fetched(tmp_path):
+    """Falling back to the network would reintroduce exactly the unpinned fetch the catalog removes."""
+    owl = tmp_path / "m.owl"
+    owl.write_text(_TWO_IMPORTS, encoding="utf-8")
+    imports_dir = tmp_path / "imports"
+    imports_dir.mkdir()
+    (imports_dir / "A_imports.owl").write_text("<rdf:RDF/>", encoding="utf-8")
+    with pytest.raises(FileNotFoundError, match="B_imports.owl"):
+        _write_import_catalog(owl, imports_dir, tmp_path / "catalog-v001.xml")
+    assert not (tmp_path / "catalog-v001.xml").exists()
+
+
+@pytest.mark.parametrize(
+    "body",
+    [
+        # Nested form: the rdf:resource pattern does not see it.
+        '<rdf:RDF><owl:Ontology><owl:imports><owl:Ontology rdf:about="https://x/A.owl"/></owl:imports>'
+        "</owl:Ontology></rdf:RDF>",
+        # Entity-spelled IRI: the catalog name would not match what OWLAPI requests.
+        '<rdf:RDF><owl:Ontology><owl:imports rdf:resource="&obo;A.owl"/></owl:Ontology></rdf:RDF>',
+        # Not RDF/XML at all: imports cannot be enumerated.
+        "Ontology(<https://x/m.owl> Import(<https://x/A.owl>))",
+    ],
+)
+def test_imports_that_cannot_be_enumerated_are_refused(tmp_path, body):
+    """An import this helper cannot read would be fetched live by ROBOT; refuse rather than guess."""
+    owl = tmp_path / "m.owl"
+    owl.write_text(body, encoding="utf-8")
+    (tmp_path / "imports").mkdir()
+    (tmp_path / "imports" / "A.owl").write_text("<rdf:RDF/>", encoding="utf-8")
+    with pytest.raises(ValueError):
+        _write_import_catalog(owl, tmp_path / "imports", tmp_path / "catalog-v001.xml")
+
+
+def test_micro_extract_runs_with_the_catalog(tmp_path, monkeypatch):
+    """MICRO's extract must name the catalog, or OWLAPI goes to the network for its imports."""
+    import subprocess
+
+    calls = []
+
+    def fake_run(cmd, check, env=None):
+        """Capture the ROBOT command without launching it."""
+        calls.append(list(cmd))
+        return None
+
+    monkeypatch.setattr("shutil.which", lambda _name: "/usr/bin/java")
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    raw = tmp_path / "raw"
+    _pinned_robot(raw)
+    (raw / "micro.owl").write_text(_TWO_IMPORTS, encoding="utf-8")
+    imports_dir = raw / "imports"
+    imports_dir.mkdir()
+    for name in ("A_imports.owl", "B_imports.owl"):
+        (imports_dir / name).write_text("<rdf:RDF/>", encoding="utf-8")
+    transform = OntologiesStubsTransform(input_dir=raw, output_dir=tmp_path / "out")
+    transform.output_dir.mkdir(parents=True, exist_ok=True)
+    transform._run_mireot_extract(
+        prefix="MICRO",
+        lower_curies=["MICRO:0000082"],
+        upper_curie="MICRO:0000031",
+        owl_path=raw / "micro.owl",
+        imports_dir=imports_dir,
+    )
+    extract = calls[0]
+    catalog = Path(extract[extract.index("--catalog") + 1])
+    assert catalog.name == "micro_catalog-v001.xml"
+    assert "https://example.org/branch/A_imports.owl" in catalog.read_text(encoding="utf-8")
+
+
+def test_micro_is_configured_for_offline_imports():
+    """The pin is only effective while MICRO's config routes its extract through the catalog."""
+    cfg = STUB_ONTOLOGY_SOURCES["MICRO"]
+    assert cfg["imports_dir"] == MICRO_IMPORTS_DIR
+    assert cfg["import_modules"] == MICRO_IMPORT_MODULES
 
 
 # ---------------------------------------------------------------------------

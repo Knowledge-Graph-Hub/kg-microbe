@@ -2,6 +2,7 @@
 
 import copy
 import hashlib
+import json
 
 import pytest
 
@@ -66,6 +67,20 @@ def test_changed_reviewed_content_is_refused(tmp_path, monkeypatch, name):
     transform, authority, _ = staged(tmp_path, monkeypatch, policy=policy)
     with pytest.raises(ValueError, match="reviewed release content"):
         authority.prepare_source("pato", transform.input_base_dir / "pato.json")
+
+
+def test_a_changed_reviewed_assertion_in_the_native_json_is_refused(tmp_path, monkeypatch):
+    """With no byte pin left, the selected-content digest alone catches a changed reviewed assertion (#1517)."""
+    transform, authority, _ = staged(tmp_path, monkeypatch)
+    path = transform.input_base_dir / "pato.json"
+    document = json.loads(path.read_text())
+    edge = next(
+        edge for edge in document["graphs"][0]["edges"] if native.compact_identifier(edge["pred"]) in native._RELATIONS
+    )
+    edge.setdefault("meta", {})["comments"] = ["same triple, changed axiom annotation"]
+    path.write_text(json.dumps(document))
+    with pytest.raises(ValueError, match="differ from the reviewed release content: pato"):
+        authority.prepare_source("pato", path)
 
 
 @pytest.mark.parametrize("damage", ["dropped", "rebound", "changed"])

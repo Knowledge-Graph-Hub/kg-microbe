@@ -471,6 +471,7 @@
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.consume_optional_input"><code class="docutils literal notranslate"><span class="pre">Transform.consume_optional_input()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.consumed_input_snapshots"><code class="docutils literal notranslate"><span class="pre">Transform.consumed_input_snapshots</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.finalize"><code class="docutils literal notranslate"><span class="pre">Transform.finalize()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.missing_optional_input"><code class="docutils literal notranslate"><span class="pre">Transform.missing_optional_input()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.optional_consumed_inputs"><code class="docutils literal notranslate"><span class="pre">Transform.optional_consumed_inputs</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.pass_through"><code class="docutils literal notranslate"><span class="pre">Transform.pass_through()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform.producer_audit_snapshots"><code class="docutils literal notranslate"><span class="pre">Transform.producer_audit_snapshots</span></code></a></li>
@@ -1610,7 +1611,8 @@ to refresh that ontology alone (#690).</p></li>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>ValueError</strong> – If a requested source is not registered in DATA_SOURCES.</p></li>
 <li><p><strong>FileNotFoundError</strong> – If a selected source declares a curation input
-that is not on disk; nothing runs (#685).</p></li>
+that is not on disk, or is an optional source with no input named in
+<code class="docutils literal notranslate"><span class="pre">sources</span></code>; nothing runs (#685).</p></li>
 <li><p><a class="reference internal" href="#kg_microbe.transform.TransformBatchError" title="kg_microbe.transform.TransformBatchError"><strong>TransformBatchError</strong></a> – After the batch, if any source failed. A
 failure is isolated to its source: later sources still run unless
 they declare the failed one in <code class="docutils literal notranslate"><span class="pre">TRANSFORM_INPUTS</span></code>, in which case they
@@ -1622,6 +1624,12 @@ are skipped rather than built on stale upstream output (#685).
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 </dl>
+<p>In the default batch an optional source with no input
+(<code class="docutils literal notranslate"><span class="pre">missing_optional_input</span></code>) is skipped, not failed, and so is anything
+that depends on it through <code class="docutils literal notranslate"><span class="pre">TRANSFORM_INPUTS</span></code>. Their earlier fingerprints
+are withdrawn, as a run would have, so the merge refuses what a previous run
+left; named with <code class="docutils literal notranslate"><span class="pre">-s</span></code>, the source fails preflight and its fingerprint is
+withdrawn too. (A Bakta dataset left over inside a later run is #1458.)</p>
 </dd></dl>
 
 </section>

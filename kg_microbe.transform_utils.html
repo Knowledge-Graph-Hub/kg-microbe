@@ -332,6 +332,7 @@
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bakta.html#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.add_protein_node"><code class="docutils literal notranslate"><span class="pre">BaktaTransform.add_protein_node()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bakta.html#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.get_ncbitaxon_id"><code class="docutils literal notranslate"><span class="pre">BaktaTransform.get_ncbitaxon_id()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bakta.html#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.get_organism_id"><code class="docutils literal notranslate"><span class="pre">BaktaTransform.get_organism_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bakta.html#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.missing_optional_input"><code class="docutils literal notranslate"><span class="pre">BaktaTransform.missing_optional_input()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bakta.html#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.process_gene"><code class="docutils literal notranslate"><span class="pre">BaktaTransform.process_gene()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bakta.html#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.process_genome"><code class="docutils literal notranslate"><span class="pre">BaktaTransform.process_genome()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bakta.html#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.run"><code class="docutils literal notranslate"><span class="pre">BaktaTransform.run()</span></code></a></li>
@@ -375,6 +376,7 @@
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bakta.html#kg_microbe.transform_utils.bakta.BaktaTransform.add_protein_node"><code class="docutils literal notranslate"><span class="pre">BaktaTransform.add_protein_node()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bakta.html#kg_microbe.transform_utils.bakta.BaktaTransform.get_ncbitaxon_id"><code class="docutils literal notranslate"><span class="pre">BaktaTransform.get_ncbitaxon_id()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bakta.html#kg_microbe.transform_utils.bakta.BaktaTransform.get_organism_id"><code class="docutils literal notranslate"><span class="pre">BaktaTransform.get_organism_id()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bakta.html#kg_microbe.transform_utils.bakta.BaktaTransform.missing_optional_input"><code class="docutils literal notranslate"><span class="pre">BaktaTransform.missing_optional_input()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bakta.html#kg_microbe.transform_utils.bakta.BaktaTransform.process_gene"><code class="docutils literal notranslate"><span class="pre">BaktaTransform.process_gene()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bakta.html#kg_microbe.transform_utils.bakta.BaktaTransform.process_genome"><code class="docutils literal notranslate"><span class="pre">BaktaTransform.process_genome()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bakta.html#kg_microbe.transform_utils.bakta.BaktaTransform.run"><code class="docutils literal notranslate"><span class="pre">BaktaTransform.run()</span></code></a></li>
@@ -1578,6 +1580,26 @@ version of this contract was opt-in and was forgotten (#812, #839, #876).</p>
 <p>The CLI invokes this after <code class="docutils literal notranslate"><span class="pre">run</span></code> and before writing the source
 fingerprint. Direct Python callers must invoke it explicitly after
 <code class="docutils literal notranslate"><span class="pre">run</span></code>; producer writes themselves are not a bundle transaction.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.transform.Transform.missing_optional_input">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">missing_optional_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.transform.Transform.missing_optional_input" title="Link to this definition"></a></dt>
+<dd><p>Return why an optional source has nothing to transform, or None to run it.</p>
+<p>An optional source (Bakta) has no download and is excluded from the
+standard merge, so a machine without its data is a normal machine. The
+default batch skips such a source instead of letting <code class="docutils literal notranslate"><span class="pre">run</span></code> return
+early into a finalization error that fails the whole batch; an explicit
+<code class="docutils literal notranslate"><span class="pre">-s</span></code> request still fails, because requested output was not created.
+Required sources keep this default and always run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Effective raw input directory; <code class="docutils literal notranslate"><span class="pre">None</span></code> means the default.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py property">

@@ -302,6 +302,23 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.bakta.BaktaTransform.missing_optional_input">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">missing_optional_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.missing_optional_input" title="Link to this definition"></a></dt>
+<dd><p>Bakta is optional: say why there is nothing to transform, or return None to run it.</p>
+<p>Mirrors <code class="docutils literal notranslate"><span class="pre">run</span></code>’s own discovery: a dataset counts only if it holds
+<code class="docutils literal notranslate"><span class="pre">bakta/SAMN*</span></code> genome directories. An empty or stray directory
+(<code class="docutils literal notranslate"><span class="pre">.ipynb_checkpoints</span></code>, <code class="docutils literal notranslate"><span class="pre">__MACOSX</span></code>) otherwise passes, and <code class="docutils literal notranslate"><span class="pre">run</span></code>
+writes nothing and then fails finalization. A path that exists but
+cannot be listed (a file named <code class="docutils literal notranslate"><span class="pre">bakta</span></code>, no permission) raises, so the
+source runs and fails rather than being skipped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.bakta.BaktaTransform.process_gene">
 <span class="sig-name descname"><span class="pre">process_gene</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gene_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">samn_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">organism_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.bakta.BaktaTransform.process_gene" title="Link to this definition"></a></dt>
 <dd><p>Process a single gene annotation.</p>
@@ -881,6 +898,23 @@ which is intentionally not catchable as <code class="docutils literal notranslat
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>SAMN organism ID (e.g., ‘SAMN:00139461’)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bakta.BaktaTransform.missing_optional_input">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">missing_optional_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bakta.BaktaTransform.missing_optional_input" title="Link to this definition"></a></dt>
+<dd><p>Bakta is optional: say why there is nothing to transform, or return None to run it.</p>
+<p>Mirrors <code class="docutils literal notranslate"><span class="pre">run</span></code>’s own discovery: a dataset counts only if it holds
+<code class="docutils literal notranslate"><span class="pre">bakta/SAMN*</span></code> genome directories. An empty or stray directory
+(<code class="docutils literal notranslate"><span class="pre">.ipynb_checkpoints</span></code>, <code class="docutils literal notranslate"><span class="pre">__MACOSX</span></code>) otherwise passes, and <code class="docutils literal notranslate"><span class="pre">run</span></code>
+writes nothing and then fails finalization. A path that exists but
+cannot be listed (a file named <code class="docutils literal notranslate"><span class="pre">bakta</span></code>, no permission) raises, so the
+source runs and fails rather than being skipped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
 </dd>
 </dl>
 </dd></dl>

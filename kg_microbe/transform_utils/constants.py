@@ -891,6 +891,30 @@ MICRO_IMPORT_MODULES = tuple(
     )
 )
 
+# PO publishes dated releases, so it is pinned to one. The unversioned po.owl
+# PURL serves po.owl from PO's master branch (the latest release only because PO
+# commits it when releasing), and po.owl imports two modules by unversioned IRI,
+# which ROBOT also fetched from master on every run. The ontology and both
+# modules are downloaded from the commit the release tag points at, since a tag
+# can be moved and a commit cannot; ontologies_stubs resolves the imports
+# through a local catalog, and preflight checks that po.owl names the release.
+# `mappings/finite_envo_po_category_dispositions.json` was reviewed against the
+# same release (its versionIRI and sha256), and a test asserts the two agree,
+# so a PO bump re-opens that review. Pinning changed no content: the release is
+# byte-identical to the po.owl master served at the time.
+PO_RELEASE = "2026-01-09"
+PO_VERSION_IRI = f"http://purl.obolibrary.org/obo/po/releases/{PO_RELEASE}/po.owl"
+# PO names its release tags by hand (V2023-07-13, v2019-06-5), so the tag is
+# recorded rather than derived. PO_COMMIT is the commit it points at; an
+# integration test resolves the tag and checks. CI does not run it, so a PO
+# bump must: KG_MICROBE_RUN_INTEGRATION=1 poetry run pytest -m integration
+# tests/test_po_version_pin.py
+PO_RELEASE_TAG = "v2026-01-09"
+PO_COMMIT = "fb1d146b95d6bfe141992d6a219b891fdef2dc54"
+PO_RAW_URL = f"https://raw.githubusercontent.com/Planteome/plant-ontology/{PO_COMMIT}"
+PO_IMPORTS_DIR = "po_imports"
+PO_IMPORT_MODULES = ("ncbitaxon_import.owl", "ro_import.owl")
+
 # Report of every culture-collection deposit number claimed by more than one
 # BacDive record with a different parent taxon, and what became of it: `collapsed`
 # rows were given the ancestor every claimant entails, `suppressed` rows were given

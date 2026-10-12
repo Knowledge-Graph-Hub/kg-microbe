@@ -28,6 +28,7 @@ REVIEWED_RELEASE_URLS = {
     ),
     "ro.owl": "http://purl.obolibrary.org/obo/ro/releases/2025-12-17/ro.owl",
     "po.owl": "http://purl.obolibrary.org/obo/po/releases/2026-01-09/po.owl",
+    "mondo.json": "http://purl.obolibrary.org/obo/mondo/releases/2026-07-06/mondo.json",
 }
 
 # A dated release directory or tag, or a 40-hex commit, identifies one release.

@@ -8,7 +8,9 @@ module, policy, role and completion-contract names retain `ncit_eight` for
 compatibility; the finite set is explicitly eight plus thirteen plus Lesion.
 
 - Full selected `data/raw/ncit.db` SHA-256:
-  `7d1245d10a80ab29ba02e7eab03b37dd9940cdd18f92855d44c95578584f6eb5`.
+  `7d1245d10a80ab29ba02e7eab03b37dd9940cdd18f92855d44c95578584f6eb5`, NCIT
+  release `26.02d` (`owl:versionInfo` of `obo:ncit.owl`). Both are provenance:
+  since policy version 2 (#1420) nothing compares a database against them.
 - Full selected Biolink 4.4.2 SHA-256:
   `b6a1320772a92d69e84b8c700cd6386dffe45ed635c8197d61e22b6a6fa3b35e`.
 - `biolink.json` preserves the exact eight selected class records and version,
@@ -26,9 +28,12 @@ Independent review artifacts are
 `data/resolve93-20260930.2qMze1/ncit-extension-independent-01.json` and
 `data/resolve93-20260930.2qMze1/ncit13-categories-independent-round01.json`.
 Test setup creates a real readonly-consumed SQLite database from these literal
-statements and explicitly repins a private test policy to its excerpt bytes.
-No fixture claims to have the full database digest. The production policy uses
-the full native and model digests and is separately pinned in source code.
+statements, stamped with the reviewed release as a SemSQL build is. Since policy
+version 2 (#1420) the production policy binds these selected statements rather
+than the database's bytes, so the excerpt needs no repin; the test policy repins
+only the Biolink model digest to the excerpt model. No fixture claims to have the
+full database digest. Each run's receipt records the database bytes and release
+it actually read, and admission compares against that record.
 
 The original six food decisions and two conservative CellularOrganism decisions
 are unchanged. The new thirteen decisions distinguish nine ChemicalEntity

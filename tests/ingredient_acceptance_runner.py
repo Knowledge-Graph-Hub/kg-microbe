@@ -106,8 +106,9 @@ def run(output, synthetic=False, reverse=False, ncit_fault=None):
     from tests.ncit_eight_fixtures import seed_native_authority
 
     # Reuse complete selected primary statements, not invented node categories.
-    # Only this subprocess's private SQLite hash is repinned; the exact existing
-    # full model and every native statement/path witness remain authoritative.
+    # The NCIT policy binds those statements, not the database bytes (#1420), so the
+    # excerpt database needs no repin; the exact existing full model and every native
+    # statement/path witness remain authoritative.
     fixture_patches = MonkeyPatch()
     _, _, ncit_policy = seed_native_authority(output, fixture_patches, model_path=native / "biolink-model.yaml")
     assert ncit_policy["model_sha256"] == origin["members"]["biolink-model.yaml"]["sha256"]

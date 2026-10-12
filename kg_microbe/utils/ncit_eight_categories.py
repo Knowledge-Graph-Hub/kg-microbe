@@ -22,9 +22,10 @@ from kg_microbe.transform_utils.constants import (
     SOLUTION_CATEGORY,
 )
 from kg_microbe.transform_utils.ontologies_stubs.ncit_category_projection import native_contract
+from kg_microbe.utils.release_binding import semsql_release
 
 POLICY_FILE = Path(__file__).resolve().parents[2] / "mappings/ncit_eight_categories.json"
-POLICY_SHA256 = "138f7c0e4552859dd6dc323f810a98f6136bf416475fd4f503ef75139e1d2c04"
+POLICY_SHA256 = "aeee20a68b51a94353eb86fa0a97d422cfe4f39b0fce3a288e9cffeee5fd2b8e"
 CONTRACT_KEY = "ncit_eight_category_authority"
 NATIVE_ROLE = "category_authority_ncit"
 POLICY_ROLE = "category_authority_ncit_eight_categories"
@@ -117,7 +118,7 @@ def load_policy(stream):
         raise ValueError("Unreviewed finite NCIT category policy")
     if (
         type(policy["version"]) is not int
-        or policy["version"] != 1
+        or policy["version"] != 2
         or {key: value["category"] for key, value in policy["records"].items()} != _CATEGORIES
         or policy["native_file"] != "ncit.db"
         or policy["model_file"] != "biolink-model.yaml"
@@ -267,9 +268,11 @@ class FiniteNcitCategoryAuthority:
         if consumed.encode() != policy_bytes:
             raise ValueError("Finite NCIT policy changed while consuming it")
         policy = load_policy(io.StringIO(consumed))
+        # Policy version 2 binds the reviewed statements, not ncit.db's bytes (#1420).
+        # SemanticSQL republishes ncit.db.gz at one URL, so any release whose reviewed
+        # statements are unchanged is accepted. The bytes and the release actually read
+        # are recorded in the receipt, and every later check compares against that record.
         authority = _select_native(self.raw_dir, admission)
-        if authority["sha256"] != policy["native_sha256"]:
-            raise ValueError("Finite NCIT selected native bytes differ from the reviewed pin")
         selected = Path(authority["selected_path"])
         with self.opener(selected) as stream:
             if Path(stream.name).resolve() == selected.resolve():
@@ -294,6 +297,7 @@ class FiniteNcitCategoryAuthority:
                     )
                     for identifier in policy["native_statements"]
                 }
+                release = semsql_release(connection, "ncit")
         validate_statements(statements, policy)
         model_path = self.raw_dir / policy["model_file"]
         model_identity = admission.capture(model_path)
@@ -309,6 +313,7 @@ class FiniteNcitCategoryAuthority:
             "policy": {"path": str(POLICY_FILE.resolve()), "sha256": digest(policy_bytes)},
             "model": {"path": str(model_path.resolve()), "sha256": digest(model_bytes)},
             "native_evidence_sha256": digest(canonical(statements).encode()),
+            "native_release": release,
             "node_members": list(self._members) if self._members is not None else None,
         }
         self.source_paths.update((POLICY_FILE, selected, model_path))
@@ -366,7 +371,8 @@ class FiniteNcitCategoryAuthority:
         _verify_sqlite_state(canonical(contract["authority"]), self._admission)
         self._admission.verify(metadata_only=True)
         selected = self.raw_dir.absolute() / "ncit.db"
-        if contract["authority"] != native_contract(selected, selected.resolve(), policy["native_sha256"])["authority"]:
+        native_sha256 = self._admission.identities.get(selected.resolve(), {}).get("sha256")
+        if contract["authority"] != native_contract(selected, selected.resolve(), native_sha256)["authority"]:
             raise ValueError("Finite NCIT original native binding changed")
         expected_policy = {
             "path": str(POLICY_FILE.resolve()),
@@ -380,17 +386,18 @@ class FiniteNcitCategoryAuthority:
             contract
             != {
                 "version": 1,
-                "authority": native_contract(selected, selected.resolve(), policy["native_sha256"])["authority"],
+                "authority": native_contract(selected, selected.resolve(), native_sha256)["authority"],
                 "policy": expected_policy,
                 "model": expected_model,
                 "native_evidence_sha256": digest(self._evidence_json.encode()),
+                "native_release": contract["native_release"],
                 "node_members": list(self._members) if self._members is not None else None,
             }
             or not self._seen <= FINITE_IDS
         ):
             raise ValueError("Finite NCIT interpreted evidence or original receipt changed")
         expected = {
-            NATIVE_ROLE: {"path": contract["authority"]["resolved_path"], "sha256": policy["native_sha256"]},
+            NATIVE_ROLE: {"path": contract["authority"]["resolved_path"], "sha256": native_sha256},
             POLICY_ROLE: contract["policy"],
             MODEL_ROLE: contract["model"],
         }
@@ -439,11 +446,22 @@ def verify_recorded_inputs(report, report_path, *, admission=None):
         try:
             if (
                 set(contract)
-                != {"version", "authority", "policy", "model", "native_evidence_sha256", "identifiers", "node_members"}
+                != {
+                    "version",
+                    "authority",
+                    "policy",
+                    "model",
+                    "native_evidence_sha256",
+                    "native_release",
+                    "identifiers",
+                    "node_members",
+                }
                 or contract["identifiers"] != sorted(observed)
                 or not observed
             ):
                 raise ValueError("finite identifier inventory changed")
+            if contract["native_release"] is not None and not isinstance(contract["native_release"], str):
+                raise ValueError("finite native release provenance is malformed")
             if contract["node_members"] != sorted(name for name in report["members"] if name.endswith("nodes.tsv")):
                 raise ValueError("finite node-member selection changed")
             policy_identity = contract["policy"]
@@ -465,7 +483,7 @@ def verify_recorded_inputs(report, report_path, *, admission=None):
             ):
                 raise ValueError("finite native selected locator changed")
             authority = _select_native(selected.parent, guard)
-            if authority != contract["authority"] or authority["sha256"] != policy["native_sha256"]:
+            if authority != contract["authority"]:
                 raise ValueError("finite native binding changed")
             if snapshots.get(NATIVE_ROLE) != {"path": authority["resolved_path"], "sha256": authority["sha256"]}:
                 raise ValueError("finite native consumed snapshot changed")

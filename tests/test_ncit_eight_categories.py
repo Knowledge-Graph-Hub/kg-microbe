@@ -56,9 +56,9 @@ def test_conflicting_substantive_categories_fail_closed(existing):
 
 
 @pytest.mark.parametrize("damage", ["definition", "parent", "duplicate", "property", "deprecated", "missing"])
-def test_changed_live_native_statements_refuse_even_with_explicit_test_repin(tmp_path, monkeypatch, damage):
-    """A correct DB receipt cannot replace the independently pinned complete statement witness."""
-    raw, policy_path, policy, _, authority = prepare(tmp_path, monkeypatch)
+def test_changed_live_native_statements_refuse_without_any_database_pin(tmp_path, monkeypatch, damage):
+    """No database pin is left to repin (#1420); the complete statement witness alone refuses."""
+    raw, _, _, _, authority = prepare(tmp_path, monkeypatch)
     with sqlite3.connect(raw / "ncit.db") as connection:
         if damage == "definition":
             connection.execute(
@@ -84,11 +84,37 @@ def test_changed_live_native_statements_refuse_even_with_explicit_test_repin(tmp
             )
         else:
             connection.execute("DELETE FROM statements WHERE subject='NCIT:C72005'")
-    policy["native_sha256"] = finite.digest((raw / "ncit.db").read_bytes())
-    policy_path.write_text(json.dumps(policy))
-    monkeypatch.setattr(finite, "POLICY_SHA256", finite.digest(finite.canonical(policy).encode()))
     with pytest.raises(ValueError, match="native statements changed"):
         authority.category_for("NCIT:C72005")
+
+
+@pytest.mark.parametrize("release", ["26.08e", None])
+def test_any_release_with_reviewed_statements_is_accepted_and_recorded(tmp_path, monkeypatch, release):
+    """No database pin (#1420): a later or unstamped release passes on its statements and is recorded."""
+    raw, _, policy, transform, authority = prepare(tmp_path, monkeypatch)
+    assert "native_sha256" not in policy
+    with sqlite3.connect(raw / "ncit.db") as connection:
+        connection.execute("DELETE FROM statements WHERE subject='obo:ncit.owl'")
+        if release is not None:
+            connection.execute(
+                "INSERT INTO statements VALUES(?,?,?,?,?,?)",
+                ("obo:ncit.owl", "owl:versionInfo", None, release, None, None),
+            )
+        connection.execute(
+            "INSERT INTO statements VALUES(?,?,?,?,?,?)", ("NCIT:C999999", "rdfs:label", None, "unrelated", None, None)
+        )
+    assert authority.category_for("NCIT:C72005") == policy["records"]["NCIT:C72005"]["category"]
+    authority.verify(transform.consumed_input_snapshots)
+    contract = authority.contract()
+    assert contract["native_release"] == release != policy["native_reviewed_release"]
+    assert contract["authority"]["sha256"] == finite.digest((raw / "ncit.db").read_bytes())
+
+
+def test_fixture_database_records_the_reviewed_release(tmp_path, monkeypatch):
+    """The receipt records the release the run read, here the reviewed one."""
+    _, _, policy, _, authority = prepare(tmp_path, monkeypatch)
+    authority.category_for("NCIT:C72005")
+    assert authority.contract()["native_release"] == policy["native_reviewed_release"] == "26.02d"
 
 
 @pytest.mark.parametrize("suffix", ["-wal", "-shm", "-journal"])
@@ -210,7 +236,20 @@ def test_actual_finalizer_all38_importer_declarations_repeat_and_admission(tmp_p
 
 @pytest.mark.usefixtures("local_source_schema")
 @pytest.mark.parametrize(
-    "damage", ["missing", "null", "sidecars", "role", "policy", "native", "model", "inventory", "late_sidecar"]
+    "damage",
+    [
+        "missing",
+        "null",
+        "sidecars",
+        "role",
+        "policy",
+        "native",
+        "model",
+        "inventory",
+        "late_sidecar",
+        "release",
+        "new_database",
+    ],
 )
 def test_recorded_public_admission_requires_complete_finite_contract(tmp_path, monkeypatch, damage):
     """A syntactically valid ordinary finalization receipt cannot drop the finite native proof."""
@@ -233,11 +272,38 @@ def test_recorded_public_admission_requires_complete_finite_contract(tmp_path, m
         contract["model"]["path"] += ".replacement"
     elif damage == "inventory":
         contract["identifiers"].pop()
+    elif damage == "release":
+        contract["native_release"] = 26
+    elif damage == "new_database":
+        # Same reviewed statements, but not the database this run read and recorded.
+        with sqlite3.connect(raw / "ncit.db") as connection:
+            connection.execute(
+                "INSERT INTO statements VALUES(?,?,?,?,?,?)",
+                ("NCIT:C999999", "rdfs:label", None, "unrelated", None, None),
+            )
     else:
         (raw / "ncit.db-wal").write_bytes(b"late")
     (transform.output_dir / "source_finalization.json").write_text(json.dumps(report))
     with pytest.raises(SourceFinalizationRequired):
         verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+
+
+@pytest.mark.usefixtures("local_source_schema")
+def test_module_admission_compares_the_database_this_run_read(tmp_path, monkeypatch):
+    """The recorded database, not a reviewed pin, is admitted; a later replacement is refused."""
+    raw, transform, _, _ = prepare_source(tmp_path, monkeypatch)
+    report = transform.finalize(fresh_run=True)
+    report_path = transform.output_dir / "source_finalization.json"
+    assert report[finite.CONTRACT_KEY]["native_release"] == POLICY["native_reviewed_release"]
+    finite.verify_recorded_inputs(report, report_path)
+    # Same reviewed statements, but not the database this run read and recorded.
+    with sqlite3.connect(raw / "ncit.db") as connection:
+        connection.execute(
+            "INSERT INTO statements VALUES(?,?,?,?,?,?)", ("NCIT:C999999", "rdfs:label", None, "unrelated", None, None)
+        )
+    with pytest.raises(SourceFinalizationRequired, match="Invalid finite NCIT") as info:
+        finite.verify_recorded_inputs(report, report_path)
+    assert "native binding changed" in str(info.value.__cause__)
 
 
 @pytest.mark.usefixtures("local_source_schema")

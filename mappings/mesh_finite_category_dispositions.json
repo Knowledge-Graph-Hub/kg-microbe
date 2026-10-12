@@ -274,10 +274,12 @@
   "model_file": "biolink-model.yaml",
   "model_sha256": "b6a1320772a92d69e84b8c700cd6386dffe45ed635c8197d61e22b6a6fa3b35e",
   "model_version": "4.4.2",
-  "native_bytes": 120696702,
   "native_file": "mesh2026.nt.gz",
   "native_namespace": "http://id.nlm.nih.gov/mesh/2026/",
-  "native_sha256": "6997c24530cfbc698690e3d85ba5436e5ee56708f7f77073cbf8f502f3de7c5e",
+  "native_reviewed_export": {
+    "bytes": 120696702,
+    "sha256": "6997c24530cfbc698690e3d85ba5436e5ee56708f7f77073cbf8f502f3de7c5e"
+  },
   "native_statement_count": 522,
   "native_statements_sha256": "0dfb343a0073357ba55a7e09f968a503379135780bd3de9c83413ef96bd1ba0a",
   "records": {
@@ -463,5 +465,5 @@
       "rationale": "Discarded solid, semi-solid, or contained material, without uniform chemical composition."
     }
   },
-  "version": 1
+  "version": 2
 }

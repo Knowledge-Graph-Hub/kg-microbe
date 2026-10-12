@@ -89,7 +89,8 @@ def test_ingredient_finalization_refuses_missing_or_wrong_native_ncit(unfinalize
                 ("deliberate native fixture corruption", "NCIT:C85253", "rdfs:label"),
             ).rowcount
         assert changed == 1
-        message = "Finite NCIT selected native bytes differ"
+        # The reviewed statements, not the database bytes, are bound since #1420.
+        message = "Finite NCIT native statements changed"
     with pytest.raises(ValueError, match=message):
         source.finalize(fresh_run=True)
     assert (source.output_node_file.read_bytes(), source.output_edge_file.read_bytes()) == before

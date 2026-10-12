@@ -61,9 +61,10 @@ next to the zip, as `data/raw/database.csv`, and extracts it again whenever the
 existing file is not the zip's copy, so re-fetching the zip refreshes it. A zip
 downloaded before the pin, with no record in `data/raw/.download_manifest.json`,
 is not re-fetched on its own: delete it and run `kg download -t microbedecoder`.
-The join policy binds the account-gated `lpsn_gss.csv` only through the six
-accepted records its decisions name, each compared with its complete reviewed
-row, so a later monthly GSS passes while those rows are unchanged.
+The join policy binds the account-gated `lpsn_gss.csv` only through the two
+accepted records each of its six decisions names (the MicrobeDecoder side and
+the distinct BacDive side), each compared with its complete reviewed row, so a
+later monthly GSS passes while those rows are unchanged.
 
 ### LPSN dependency
 

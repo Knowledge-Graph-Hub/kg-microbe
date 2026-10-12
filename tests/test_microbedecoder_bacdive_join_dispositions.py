@@ -320,6 +320,26 @@ def test_genuine_zero_source_requires_all_native_reads_and_header_only_audit(tmp
     admission.verify()
 
 
+@pytest.mark.parametrize("change", ["synonym_of_md_side", "row_edited"])
+def test_the_bacdive_side_accepted_row_is_bound_too(tmp_path, monkeypatch, change):
+    """A refusal rests on two distinct correct names, so the BacDive side's row is compared as well (#1525)."""
+    transform, raw, gss, _, _ = prepare(tmp_path, monkeypatch)
+    text = gss.read_text(encoding="utf-8")
+    assert text.count("9000001,,correct name") == 1
+    replacement = "9000001,101,synonym" if change == "synonym_of_md_side" else "9000001,,correct name; emended"
+    gss.write_text(text.replace("9000001,,correct name", replacement), encoding="utf-8")
+    with pytest.raises(SourceFinalizationRequired, match="accepted-name witness drift"):
+        transform.run(raw)
+
+
+def test_a_gss_that_is_not_utf8_is_refused_cleanly(tmp_path, monkeypatch):
+    """Undecodable bytes are a refusal through the guard, not a bare UnicodeDecodeError (#1532)."""
+    transform, raw, gss, _, _ = prepare(tmp_path, monkeypatch)
+    gss.write_bytes(gss.read_bytes() + b"9000002,,caf\xe9\r\n")
+    with pytest.raises(SourceFinalizationRequired, match="not valid UTF-8"):
+        transform.run(raw)
+
+
 def test_contract_deletion_and_late_gss_drift_cannot_pass(tmp_path, monkeypatch):
     """Required contract membership and original authority locators survive admission."""
     transform, raw, gss, _, _ = prepare(tmp_path, monkeypatch)

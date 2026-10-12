@@ -12,6 +12,7 @@ No test runs a real `semsql make`: the build is mocked and size thresholds
 shrunk.
 """
 
+import os
 import sqlite3
 import subprocess
 from pathlib import Path
@@ -190,6 +191,36 @@ class TestChebiBuild:
         assert ou._ensure_chebi_db(str(db))
         assert calls == [(["semsql", "make", "chebi.db"], str(source.parent))]
         assert "drifted" in capsys.readouterr().out
+
+    def test_semsql_runs_the_pinned_robot_with_the_jaxp_limits(self, tmp_path, monkeypatch):
+        """
+        SemSQL's Makefile calls `robot` from PATH; #325 recurred whenever chebi.db had to be built.
+
+        The build must see the pinned wrapper first on PATH, run through bash
+        because the download is not executable, with the JDK 24+ limits restored.
+        """
+        monkeypatch.setattr(ou, "_CHEBI_DB_MIN_SIZE", 8)
+        monkeypatch.delenv("ROBOT_JAVA_ARGS", raising=False)
+        source = _write_owl(tmp_path, monkeypatch, OWL_VERSION_IRI.format(v=253))
+        (tmp_path / "robot").write_text("#!/bin/sh\n", encoding="utf-8")
+        db = tmp_path / "chebi.db"
+        _make_db(tmp_path, 251)
+        seen = {}
+
+        def run(cmd, **kwargs):
+            """Inspect the environment and the shim while the build is running."""
+            env = kwargs["env"]
+            shim = Path(env["PATH"].split(os.pathsep)[0]) / "robot"
+            seen.update(java_args=env["ROBOT_JAVA_ARGS"], shim=shim.read_text(encoding="utf-8"))
+            seen["executable"] = os.access(shim, os.X_OK)
+            db.write_bytes(valid_db_bytes(pad=16))
+
+        monkeypatch.setattr(ou.shutil, "which", lambda _: "/usr/bin/semsql")
+        monkeypatch.setattr(ou.subprocess, "run", run)
+        assert ou._ensure_chebi_db(str(db))
+        assert f"bash {(source.parent / 'robot').resolve()}" in seen["shim"]
+        assert seen["executable"]
+        assert "-Djdk.xml.maxGeneralEntitySizeLimit=0" in seen["java_args"]
 
     def test_decompresses_archive_when_owl_absent(self, tmp_path, monkeypatch):
         """Semsql needs chebi.owl; the download only ships chebi.owl.gz."""

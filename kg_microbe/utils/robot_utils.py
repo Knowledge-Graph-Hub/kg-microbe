@@ -2,10 +2,15 @@
 
 import itertools
 import os
+import re
+import shlex
 import shutil
 import subprocess
+import tempfile
+import zipfile
+from contextlib import contextmanager
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import Iterator, List, Optional, Set, Union
 
 from kg_microbe.transform_utils.constants import (
     ROBOT_EXTRACT_SUFFIX,
@@ -20,8 +25,9 @@ DEFAULT_ROBOT_JAVA_ARGS = "-Xmx12g -XX:+UseG1GC"
 # which fails ontologies_stubs and skips gold and microbedecoder behind it.
 # These are the JDK 23 defaults for all seven: still bounded, so a pathological
 # file fails rather than exhausting memory, but large enough for real
-# ontologies. (OWLAPI sets its own entityExpansionLimit, which outranks this
-# one; it is restored for completeness.) A limit the user sets wins.
+# ontologies. (OWLAPI sets its own entityExpansionLimit for its RDF/XML
+# parser, but the parsers it falls back to use the JDK's.) A limit the user
+# sets wins.
 ROBOT_JAXP_LIMITS = (
     ("jdk.xml.totalEntitySizeLimit", "50000000"),
     ("jdk.xml.entityExpansionLimit", "64000"),
@@ -39,9 +45,40 @@ ROBOT_OFFLINE_JAVA_ARGS = (
     "-Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=9 -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=9"
 )
 
+# Older spellings the JDK still honours for two of the limits.
+LEGACY_JAXP_NAMES = {
+    "jdk.xml.entityExpansionLimit": "entityExpansionLimit",
+    "jdk.xml.elementAttributeLimit": "elementAttributeLimit",
+}
+
 # Where else a user configures the ROBOT JVM. The appended -D flags outrank
 # both, so a limit set there is treated as set.
 USER_JVM_OPTION_VARIABLES = ("JAVA_TOOL_OPTIONS", "JDK_JAVA_OPTIONS")
+
+
+def _configured_jaxp_limits(configured: str) -> Set[str]:
+    """
+    Return which of :data:`ROBOT_JAXP_LIMITS` the user already sets.
+
+    Counts a ``-D`` flag under either spelling and a key in a JAXP
+    configuration file named by ``-Djava.xml.config.file``. The JDK reads such
+    a file only for limits no system property sets, so only those it leaves
+    out are appended; a file that cannot be read sets nothing.
+    """
+    keys = set()
+    match = re.search(r"-Djava\.xml\.config\.file=(\S+)", configured)
+    if match:
+        try:
+            lines = Path(match.group(1)).read_text(encoding="utf-8").splitlines()
+        except OSError:
+            lines = []
+        keys = {line.split("=", 1)[0].strip() for line in lines if "=" in line and not line.lstrip().startswith("#")}
+    names = set()
+    for name, _ in ROBOT_JAXP_LIMITS:
+        spellings = (name, LEGACY_JAXP_NAMES[name]) if name in LEGACY_JAXP_NAMES else (name,)
+        if any(f"-D{spelling}=" in configured or spelling in keys for spelling in spellings):
+            names.add(name)
+    return names
 
 
 def robot_java_args(base: Optional[str] = None) -> str:
@@ -53,10 +90,8 @@ def robot_java_args(base: Optional[str] = None) -> str:
     """
     args = base if base is not None else os.environ.get("ROBOT_JAVA_ARGS", DEFAULT_ROBOT_JAVA_ARGS)
     configured = " ".join([args, *(os.environ.get(name, "") for name in USER_JVM_OPTION_VARIABLES)])
-    if "-Djava.xml.config.file=" in configured:
-        # The user's JAXP configuration file governs; a -D flag would override it.
-        return args
-    extra = [f"-D{name}={value}" for name, value in ROBOT_JAXP_LIMITS if f"-D{name}=" not in configured]
+    preset = _configured_jaxp_limits(configured)
+    extra = [f"-D{name}={value}" for name, value in ROBOT_JAXP_LIMITS if name not in preset]
     return " ".join([args, *extra]).strip()
 
 
@@ -80,14 +115,58 @@ def missing_robot(path: Union[str, Path]) -> List[str]:
     """
     root = Path(path)
     problems = []
+    fetch = f"Run `poetry run kg download -t tools -o {root}`."
     absent = [name for name in ("robot", "robot.jar") if not (root / name).is_file()]
     if absent:
-        problems.append(
-            f"pinned ROBOT missing from {root}: {', '.join(absent)}. Run `poetry run kg download -t tools`."
-        )
-    if shutil.which("java") is None:
-        problems.append("java not on PATH; ROBOT needs a JDK.")
+        problems.append(f"pinned ROBOT missing from {root}: {', '.join(absent)}. {fetch}")
+    elif not zipfile.is_zipfile(root / "robot.jar"):
+        # A truncated download or an HTML error page saved under the jar's name.
+        problems.append(f"{root / 'robot.jar'} is not a jar. {fetch}")
+    if not _java_runs():
+        problems.append("java on PATH does not run (no JDK installed?); ROBOT needs one.")
     return problems
+
+
+def _java_runs() -> bool:
+    """
+    Say whether ``java -version`` succeeds.
+
+    Finding ``java`` is not enough: macOS ships ``/usr/bin/java`` as a stub that
+    exists whether or not a JDK is installed.
+    """
+    java = shutil.which("java")
+    if java is None:
+        return False
+    try:
+        return subprocess.run([java, "-version"], capture_output=True, timeout=60).returncode == 0  # noqa: S603
+    except (OSError, subprocess.SubprocessError):
+        return False
+
+
+@contextmanager
+def pinned_robot_on_path(path: Union[str, Path]) -> Iterator[dict]:
+    """
+    Yield an environment in which ``robot`` on PATH is the pinned ROBOT, run with :func:`robot_java_args`.
+
+    For tools that call ROBOT themselves: SemSQL's Makefile runs ``robot`` from
+    PATH, so without this a database build used whatever ``robot`` was there
+    (or none) with the JDK's own limits, and failed on ChEBI under JDK 24+
+    (#325). The downloaded wrapper is not executable, so the shim calls it
+    through ``bash``. Without the pinned files PATH is left as it is.
+
+    :param path: Raw directory that ``kg download`` writes ROBOT into.
+    """
+    env = robot_env()
+    wrapper = Path(path).resolve() / "robot"
+    if not wrapper.is_file():
+        yield env
+        return
+    with tempfile.TemporaryDirectory() as shim_dir:
+        shim = Path(shim_dir) / "robot"
+        shim.write_text(f'#!/bin/sh\nexec bash {shlex.quote(str(wrapper))} "$@"\n', encoding="utf-8")
+        shim.chmod(0o755)
+        env["PATH"] = shim_dir + os.pathsep + env.get("PATH", "")
+        yield env
 
 
 def initialize_robot(path: str) -> list:

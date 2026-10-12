@@ -22,11 +22,14 @@ network access or modify `data/raw`; put small immutable inputs under
 coverage with `@pytest.mark.integration`.
 
 The ontology transforms run the ROBOT pinned in `download.yaml`
-(`kg download -t tools` puts `robot` and `robot.jar` in the raw directory),
-never one from `PATH`, and need `java` on `PATH`; `kg transform` checks both
-before running `ontologies_stubs`. `robot_utils.robot_java_args()` restores the
-seven JAXP limits JDK 24 lowered, which reject real ontology imports, unless
-the user sets them.
+(`kg download -t tools` puts `robot` and `robot.jar` in the raw directory)
+rather than one from `PATH`, and need a working `java`; `kg transform` checks
+both before running `ontologies_stubs`. SemSQL builds, whose Makefile calls
+`robot` from `PATH`, get the pinned wrapper through a `PATH` shim
+(`robot_utils.pinned_robot_on_path`). Every such call gets
+`robot_utils.robot_java_args()`, which restores the seven JAXP limits JDK 24
+lowered (they reject ChEBI and MicrO's imports, #325) unless the user sets them.
+`rdftab` and `relation-graph`, which SemSQL also runs, are separate prerequisites.
 
 Supported Python versions are 3.10 through 3.12. Python 3.13 is blocked by the
 KGX/pyarrow dependency chain; see issue #871.

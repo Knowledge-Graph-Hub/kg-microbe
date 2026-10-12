@@ -171,6 +171,31 @@ def test_native_input_drift_is_not_a_silent_quarantine(tmp_path, monkeypatch, fi
         normalize_go_bundle([nodes], [edges], authority, audit)
 
 
+@pytest.mark.parametrize("damage", ["changed", "missing"])
+def test_go_release_file_drift_is_refused(tmp_path, monkeypatch, damage):
+    """The go.owl release behind the locally built database is bound, not the database bytes (#1420)."""
+    raw, nodes, edges, audit, authority = prepare(tmp_path, monkeypatch)
+    if damage == "changed":
+        (raw / "go.owl").write_bytes((raw / "go.owl").read_bytes() + b"<!-- another release -->\n")
+    else:
+        (raw / "go.owl").unlink()
+    with pytest.raises((ValueError, FileNotFoundError)):
+        normalize_go_bundle([nodes], [edges], authority, audit)
+
+
+def test_a_database_of_another_go_release_is_refused(tmp_path, monkeypatch):
+    """A rebuilt database must still record the reviewed GO release."""
+    raw, nodes, edges, audit, _ = prepare(tmp_path, monkeypatch)
+    with sqlite3.connect(raw / "go.db") as connection:
+        connection.execute(
+            "UPDATE statements SET value='2099-01-01' WHERE subject='obo:go.owl' AND predicate='owl:versionInfo'"
+        )
+    from kg_microbe.utils.go_authority import load_go_authority
+
+    with pytest.raises(ValueError, match="reviewed GO release"):
+        normalize_go_bundle([nodes], [edges], load_go_authority(raw), audit)
+
+
 def test_old_checkpoint_rechecks_policy_and_preserves_original_audits(tmp_path, monkeypatch):
     """A legacy v2 authority fingerprint is invalidated without discarding its original rows."""
     _, nodes, edges, audit, authority = prepare(tmp_path, monkeypatch)
@@ -201,7 +226,9 @@ def test_old_checkpoint_rechecks_policy_and_preserves_original_audits(tmp_path, 
     assert before == (nodes.read_bytes(), edges.read_bytes(), audit.read_bytes())
 
 
-@pytest.mark.parametrize("role", [restrictions.POLICY_ROLE, restrictions.OWL_ROLE, restrictions.GO_ROLE])
+@pytest.mark.parametrize(
+    "role", [restrictions.POLICY_ROLE, restrictions.OWL_ROLE, restrictions.GO_ROLE, restrictions.GO_SOURCE_ROLE]
+)
 def test_original_consumed_bindings_cannot_be_removed(tmp_path, monkeypatch, role):
     """The live helper retains the original roles independently of mutable receipts."""
     raw, nodes, edges, audit, authority = prepare(tmp_path, monkeypatch)
@@ -337,16 +364,14 @@ def test_unrelated_observations_do_not_load_finite_native_evidence(tmp_path, mon
 
 @pytest.mark.parametrize("table", ["edge", "entailed_edge"])
 def test_new_authority_support_requires_review_not_automatic_quarantine(tmp_path, monkeypatch, table):
-    """Even explicitly repinned fixture input cannot contradict the finite disposition premise."""
+    """
+    A rebuilt database of the reviewed release cannot contradict the finite disposition premise.
+
+    The database bytes are not pinned (#1420), so new support reaches the content check directly.
+    """
     raw, nodes, edges, audit, _ = prepare(tmp_path, monkeypatch)
     with sqlite3.connect(raw / "go.db") as connection:
         connection.execute(f"INSERT INTO {table} VALUES(?,?,?)", ("GO:0008152", "RO:0004007", "CHEBI:64709"))
-    policy = json.loads(restrictions.POLICY_FILE.read_text())
-    policy["sources"]["go.db"]["sha256"] = hashlib.sha256((raw / "go.db").read_bytes()).hexdigest()
-    restrictions.POLICY_FILE.write_text(json.dumps(policy))
-    monkeypatch.setattr(
-        restrictions, "REVIEWED_POLICY_SHA256", restrictions._digest(restrictions._json(policy).encode())
-    )
     from kg_microbe.utils.go_authority import load_go_authority
 
     authority = load_go_authority(raw)

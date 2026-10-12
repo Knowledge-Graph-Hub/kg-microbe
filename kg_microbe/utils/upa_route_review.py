@@ -24,20 +24,33 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.go_authority import GoAuthority, GoReferenceError
+from kg_microbe.utils.release_binding import graph_release, is_release_source, semsql_go_release
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 
 POLICY_FILE = Path(__file__).resolve().parents[2] / "mappings/upa_reaction_projection_dispositions.json"
-POLICY_SHA256 = "72388c7fff376f7d88950bd203c1d6dd7b51aea8e6cb1c5407867e4b80be08a9"
+POLICY_SHA256 = "a7ad1447938400845c27b2fb08eec542a8b63b5f2dd018706f3d144595a347a6"
 AUDIT_FILE = "upa_route_review.tsv"
 POLICY_ROLE = "upa_route_policy"
 JSON_ROLE = "upa_route_native_json"
 OWL_ROLE = "upa_route_native_owl"
 GO_ROLE = "upa_route_go_database"
+# The go.owl release the locally built go.db comes from; its bytes are pinned, the database's are not (#1420).
+GO_SOURCE_ROLE = "upa_route_go_release"
 PROCESSED_ROLE = "ontology_metadata_upa"
 INTERMEDIATE_ROLE = "upa_route_intermediate_rows"
 GENERATED_ROLE = "upa_route_generated_rows"
 GRAPH_ROLE = "upa_route_pre_finalization_rows"
-ROLES = (POLICY_ROLE, JSON_ROLE, OWL_ROLE, GO_ROLE, PROCESSED_ROLE, INTERMEDIATE_ROLE, GENERATED_ROLE, GRAPH_ROLE)
+ROLES = (
+    POLICY_ROLE,
+    JSON_ROLE,
+    OWL_ROLE,
+    GO_ROLE,
+    GO_SOURCE_ROLE,
+    PROCESSED_ROLE,
+    INTERMEDIATE_ROLE,
+    GENERATED_ROLE,
+    GRAPH_ROLE,
+)
 AUDIT_FIELDS = ("record_kind", "evidence_json")
 MEMBERS = ("upa_nodes.tsv", "upa_edges.tsv")
 RULE_KEYS = frozenset(
@@ -103,10 +116,21 @@ def load_policy(payload):
     policy = decode(payload)
     if (
         digest(policy) != POLICY_SHA256
-        or policy.get("version") != 2
+        or policy.get("version") != 3
         or policy.get("computed_projection_disposition") != "audit_only_unverified_xref_substitution"
     ):
         raise SourceFinalizationRequired("UPA reviewed policy changed")
+    sources = policy.get("sources")
+    if (
+        not isinstance(sources, dict)
+        or set(sources) != {"upa.json", "upa.owl", "go.db"}
+        or set(sources["upa.json"]) != {"release"}
+        or not isinstance(sources["upa.owl"], str)
+        or set(sources["go.db"]) != {"release", "source"}
+        or not is_release_source(sources["go.db"]["source"])
+        or sources["go.db"]["source"]["file"] != "go.owl"
+    ):
+        raise SourceFinalizationRequired("UPA reviewed source bindings changed")
     keys = [(rule["reaction"], rule["step"], rule["pathway"], rule["canonical_go"]) for rule in policy["rules"]]
     if len(keys) != 7 or set(keys) != RULE_KEYS:
         raise SourceFinalizationRequired("UPA reviewed seven-rule cohort changed")
@@ -511,9 +535,17 @@ class UPARouteReview:
             payload = self._read(JSON_ROLE, path)
             self._document = decode(payload)
             owl = self._read(OWL_ROLE, self.transform.input_base_dir / "upa.owl")
-            for role, filename in ((JSON_ROLE, "upa.json"), (OWL_ROLE, "upa.owl")):
-                if self.identities[role]["sha256"] != self.policy["sources"][filename]:
-                    raise SourceFinalizationRequired("UPA selected native source epoch changed")
+            # upa.json is converted from the pinned upa.owl, so it must declare the reviewed
+            # release; its own bytes are not pinned (#1420).
+            if (
+                self.identities[OWL_ROLE]["sha256"] != self.policy["sources"]["upa.owl"]
+                or graph_release(self._document["graphs"][0]) != self.policy["sources"]["upa.json"]["release"]
+            ):
+                raise SourceFinalizationRequired("UPA selected native source epoch changed")
+            go_source = self.policy["sources"]["go.db"]["source"]
+            release = self._read(GO_SOURCE_ROLE, self.transform.input_base_dir / go_source["file"])
+            if digest(release) != go_source["sha256"]:
+                raise SourceFinalizationRequired("UPA GO release file differs from the reviewed release")
             database = self.transform.input_base_dir / "go.db"
             database_identity = self._admission.capture(database)
             for suffix in ("-wal", "-shm", "-journal"):
@@ -523,12 +555,11 @@ class UPARouteReview:
                 self._admission.capture(sidecar, optional=True)
             with self.transform.consume_input(GO_ROLE, database) as stream:
                 self.identities[GO_ROLE] = dict(self.transform.consumed_input_snapshots[GO_ROLE])
-                if (
-                    self.identities[GO_ROLE]["sha256"] != self.policy["sources"]["go.db"]
-                    or database_identity["sha256"] != self.identities[GO_ROLE]["sha256"]
-                ):
+                if database_identity["sha256"] != self.identities[GO_ROLE]["sha256"]:
                     raise SourceFinalizationRequired("UPA selected GO epoch changed")
                 with sqlite3.connect(Path(stream.name).as_uri() + "?mode=ro&immutable=1", uri=True) as connection:
+                    if semsql_go_release(connection) != self.policy["sources"]["go.db"]["release"]:
+                        raise SourceFinalizationRequired("UPA selected GO database is not the reviewed release")
                     self._authority = _authority(connection, self.identities[GO_ROLE])
                     _verify_finite(self.policy, self._document, owl, connection, self._authority)
             self._candidate_records = enumerate_candidates(self._document, self._authority, self.policy)
@@ -706,14 +737,19 @@ def verify_audit_bindings(directory, snapshots, *, members, raw_dir, admission=N
     if selected:
         if raw_dir is None:
             raise SourceFinalizationRequired("UPA admission requires the selected raw directory")
-        for role, filename in ((JSON_ROLE, "upa.json"), (OWL_ROLE, "upa.owl"), (GO_ROLE, "go.db")):
-            locator = Path(raw_dir) / filename
-            if (
-                str(guard.bind_path(locator)) != owned[role]["path"]
-                or owned[role]["sha256"] != policy["sources"][filename]
-            ):
+        roles = ((JSON_ROLE, "upa.json"), (OWL_ROLE, "upa.owl"), (GO_ROLE, "go.db"), (GO_SOURCE_ROLE, "go.owl"))
+        for role, filename in roles:
+            if str(guard.bind_path(Path(raw_dir) / filename)) != owned[role]["path"]:
                 raise SourceFinalizationRequired("UPA original native locator/epoch changed")
+        if (
+            owned[OWL_ROLE]["sha256"] != policy["sources"]["upa.owl"]
+            or owned[GO_SOURCE_ROLE]["sha256"] != policy["sources"]["go.db"]["source"]["sha256"]
+            or guard.capture(owned[GO_SOURCE_ROLE]["path"])["sha256"] != owned[GO_SOURCE_ROLE]["sha256"]
+        ):
+            raise SourceFinalizationRequired("UPA original native locator/epoch changed")
         document = decode(read(JSON_ROLE))
+        if graph_release(document["graphs"][0]) != policy["sources"]["upa.json"]["release"]:
+            raise SourceFinalizationRequired("UPA admitted native JSON is not the reviewed release")
         owl = read(OWL_ROLE)
         _processed_locator(owned[PROCESSED_ROLE], owned[JSON_ROLE]["sha256"])
         decode(read(PROCESSED_ROLE))
@@ -726,6 +762,8 @@ def verify_audit_bindings(directory, snapshots, *, members, raw_dir, admission=N
             guard.capture(sidecar, optional=True)
         # The original file remains bound before and after this read-only SQL operation.
         with sqlite3.connect(database.as_uri() + "?mode=ro&immutable=1", uri=True) as connection:
+            if semsql_go_release(connection) != policy["sources"]["go.db"]["release"]:
+                raise SourceFinalizationRequired("UPA admitted GO database is not the reviewed release")
             authority = _authority(connection, owned[GO_ROLE])
             _verify_finite(policy, document, owl, connection, authority)
         candidates = enumerate_candidates(document, authority, policy)

@@ -18,6 +18,10 @@ from kg_microbe.utils import upa_route_review as upa
 FIXTURE = Path(__file__).parent / "resources/upa_route_review"
 
 
+# Only the go.owl release file's bytes are checked, so a stand-in exercises the real path.
+GO_OWL_STAND_IN = b'<?xml version="1.0"?>\n<!-- stand-in for the pinned go.owl release -->\n'
+
+
 def rows(path, *, quoted=False):
     """Read a tiny literal graph or explicitly quoted producer audit."""
     with Path(path).open(newline="", encoding="utf-8") as stream:
@@ -116,14 +120,18 @@ def prepare(tmp_path, monkeypatch):
     for filename in ("upa.json", "upa.owl"):
         shutil.copyfile(FIXTURE / filename, raw / filename)
     statements = json.loads((FIXTURE / "go_statements.json").read_text())
+    # A real SemSQL build records the GO release on the ontology node; the policy binds that
+    # release and the go.owl it was built from, not the database bytes (#1420).
+    statements.append(["obo:go.owl", "owl:versionInfo", None, policy["sources"]["go.db"]["release"]])
+    (raw / "go.owl").write_bytes(GO_OWL_STAND_IN)
     with sqlite3.connect(raw / "go.db") as connection:
         connection.execute("CREATE TABLE statements(subject,predicate,object,value)")
         connection.execute("CREATE TABLE edge(subject,predicate,object)")
         connection.execute("CREATE TABLE entailed_edge(subject,predicate,object)")
         connection.executemany("INSERT INTO statements VALUES(?,?,?,?)", statements)
     fixture_policy = copy.deepcopy(policy)
-    for filename in fixture_policy["sources"]:
-        fixture_policy["sources"][filename] = hashlib.sha256((raw / filename).read_bytes()).hexdigest()
+    fixture_policy["sources"]["upa.owl"] = hashlib.sha256((raw / "upa.owl").read_bytes()).hexdigest()
+    fixture_policy["sources"]["go.db"]["source"]["sha256"] = hashlib.sha256(GO_OWL_STAND_IN).hexdigest()
     policy_path = tmp_path / "upa-fixture-policy.json"
     policy_path.write_text(json.dumps(fixture_policy), encoding="utf-8")
     monkeypatch.setattr(upa, "POLICY_FILE", policy_path)

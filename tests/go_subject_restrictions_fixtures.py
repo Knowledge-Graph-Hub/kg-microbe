@@ -19,6 +19,11 @@ POLICY = {**FULL_POLICY, "records": FULL_POLICY["records"][:2]}
 ORIGIN = json.loads((FIXTURE / "origin.json").read_text())
 
 
+# The policy binds go.db through the go.owl release it was built from. Only that
+# file's bytes are checked, so a stand-in exercises the same path as the real release.
+GO_OWL_STAND_IN = b'<?xml version="1.0"?>\n<!-- stand-in for the pinned go.owl release -->\n'
+
+
 def rows(path, *, quoted=False):
     """Read only tiny fixture graphs or quoted diagnostic evidence."""
     with path.open(newline="") as stream:
@@ -72,6 +77,17 @@ def prepare(tmp_path, monkeypatch, *, all_claims=False, additional_go_statements
     # A sibling-only control can add separately sourced native context before
     # constructing and hashing the actual fixture database and authority.
     statements.extend(additional_go_statements)
+    # A real SemSQL build records the GO release on the ontology node; the policy
+    # binds that release and the go.owl it was built from, not the database bytes.
+    statements.append(
+        {
+            "subject": "obo:go.owl",
+            "predicate": "owl:versionInfo",
+            "object": None,
+            "value": FULL_POLICY["sources"]["go.db"]["release"],
+        }
+    )
+    (raw / "go.owl").write_bytes(GO_OWL_STAND_IN)
     with sqlite3.connect(raw / "go.db") as connection:
         connection.execute("CREATE TABLE statements(subject,predicate,object,value)")
         connection.execute("CREATE TABLE edge(subject,predicate,object)")
@@ -81,8 +97,8 @@ def prepare(tmp_path, monkeypatch, *, all_claims=False, additional_go_statements
             [tuple(row[column] for column in ("subject", "predicate", "object", "value")) for row in statements],
         )
     policy = copy.deepcopy(FULL_POLICY)
-    for filename in policy["sources"]:
-        policy["sources"][filename]["sha256"] = hashlib.sha256((raw / filename).read_bytes()).hexdigest()
+    policy["sources"]["pato.owl"]["sha256"] = hashlib.sha256((raw / "pato.owl").read_bytes()).hexdigest()
+    policy["sources"]["go.db"]["source"]["sha256"] = hashlib.sha256(GO_OWL_STAND_IN).hexdigest()
     path = tmp_path / "fixture-policy.json"
     path.write_text(json.dumps(policy, sort_keys=True))
     monkeypatch.setattr(restrictions, "POLICY_FILE", path)

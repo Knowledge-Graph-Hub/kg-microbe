@@ -73,3 +73,20 @@ def read_bound_authority(raw_dir, filename, source, opener, source_paths):
     if hashlib.sha256(release).hexdigest() != source["sha256"]:
         raise ValueError(f"Unreviewed release file behind {filename}: {source['file']}")
     return payload
+
+
+def semsql_go_release(connection):
+    """
+    Return the single GO release a SemSQL database records, or None.
+
+    SemSQL stamps the ontology node (``obo:go.owl owl:versionInfo 2026-06-15``); the
+    subject spelling varies across builds, so every known spelling is accepted.
+    """
+    values = {
+        row[0]
+        for row in connection.execute(
+            "SELECT value FROM statements WHERE predicate='owl:versionInfo' "
+            "AND subject IN ('obo:go.owl', 'obo:go', 'http://purl.obolibrary.org/obo/go.owl')"
+        )
+    }
+    return next(iter(values)) if len(values) == 1 else None

@@ -2,6 +2,9 @@
   "graphs": [
     {
       "id": "http://purl.obolibrary.org/obo/upa.owl",
+      "meta": {
+        "version": "http://purl.obolibrary.org/obo/upa/releases/2024-03-06/upa.owl"
+      },
       "nodes": [
         {
           "id": "http://purl.obolibrary.org/obo/UPa_UER00134",

@@ -221,16 +221,32 @@ def test_unverified_projection_audit_preserves_repeated_rows_and_qualifiers(tmp_
     assert all(row["witnesses"] == selected["witnesses"] for row in audit)
 
 
-@pytest.mark.parametrize("damage", ["policy", "json", "owl", "go", "sidecar", "duplicate_json_key"])
+@pytest.mark.parametrize(
+    "damage", ["policy", "json_release", "owl", "go_release", "go_owl", "sidecar", "duplicate_json_key"]
+)
 def test_original_native_evidence_failures_abort_the_actual_run(tmp_path, monkeypatch, damage):
-    """A later hash or malformed native object cannot stand in for the reviewed input epoch."""
+    """
+    A different release or malformed native object cannot stand in for the reviewed input epoch.
+
+    The converted upa.json and the locally built go.db are bound by release and content, not
+    bytes (#1420), so the damage here changes what is bound: a release or a release file.
+    """
     transform, _, policy_path = prepare(tmp_path, monkeypatch)
     if damage == "policy":
         policy_path.write_text("{}")
     elif damage == "sidecar":
         (transform.input_base_dir / "go.db-wal").write_bytes(b"unexpected")
+    elif damage == "json_release":
+        path = transform.input_base_dir / "upa.json"
+        path.write_bytes(path.read_bytes().replace(b"releases/2024-03-06", b"releases/2099-01-01", 1))
+    elif damage == "go_release":
+        with sqlite3.connect(transform.input_base_dir / "go.db") as connection:
+            connection.execute("UPDATE statements SET value='2099-01-01' WHERE predicate='owl:versionInfo'")
+    elif damage == "go_owl":
+        path = transform.input_base_dir / "go.owl"
+        path.write_bytes(path.read_bytes() + b"<!-- another release -->\n")
     else:
-        filename = {"json": "upa.json", "owl": "upa.owl", "go": "go.db", "duplicate_json_key": "upa.json"}[damage]
+        filename = {"owl": "upa.owl", "duplicate_json_key": "upa.json"}[damage]
         path = transform.input_base_dir / filename
         payload = path.read_bytes()
         path.write_bytes(

@@ -75,18 +75,29 @@ def read_bound_authority(raw_dir, filename, source, opener, source_paths):
     return payload
 
 
-def semsql_go_release(connection):
+def semsql_release(connection, ontology):
     """
-    Return the single GO release a SemSQL database records, or None.
+    Return the single release a SemSQL database records for ``ontology``, or None.
 
-    SemSQL stamps the ontology node (``obo:go.owl owl:versionInfo 2026-06-15``); the
-    subject spelling varies across builds, so every known spelling is accepted.
+    SemSQL stamps the ontology node (``obo:go.owl owl:versionInfo 2026-06-15``). Builds
+    spell the subject ``obo:<name>.owl``, ``obo:<name>`` or as a full IRI ending in
+    ``/<name>.owl``; all three are matched, as ``ontology_utils`` already does when it
+    reads a release. Exactly one distinct value must be recorded.
+
+    :param connection: An open connection to the SemSQL database.
+    :param ontology: The OBO ontology name, such as ``go`` or ``ncit``.
     """
     values = {
         row[0]
         for row in connection.execute(
-            "SELECT value FROM statements WHERE predicate='owl:versionInfo' "
-            "AND subject IN ('obo:go.owl', 'obo:go', 'http://purl.obolibrary.org/obo/go.owl')"
+            "SELECT value FROM statements WHERE predicate='owl:versionInfo' AND value IS NOT NULL "
+            "AND (subject IN (?, ?) OR subject LIKE ?)",
+            (f"obo:{ontology}.owl", f"obo:{ontology}", f"%/{ontology}.owl"),
         )
     }
     return next(iter(values)) if len(values) == 1 else None
+
+
+def semsql_go_release(connection):
+    """Return the single GO release a SemSQL database records, or None."""
+    return semsql_release(connection, "go")

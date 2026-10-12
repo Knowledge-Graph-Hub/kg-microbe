@@ -5,7 +5,8 @@
   "decision": "User-approved conservative disposition: retain all computed reaction/step/pathway GO-substitution candidates and original writer rows in audit evidence, not graph assertions. Seven contradicted routes keep their distinct exclusion reason; direct weak pathway xrefs and unrelated native paths are unchanged. The 449 historically retained distinct projections are not established false.",
   "sources": {
     "upa.json": {
-      "release": "http://purl.obolibrary.org/obo/upa/releases/2024-03-06/upa.owl"
+      "release": "http://purl.obolibrary.org/obo/upa/releases/2024-03-06/upa.owl",
+      "sha256": "cff92938a092dcc2e4e2e1a17266417edeacba8e7b9f51b3f183066a80fdb8bd"
     },
     "upa.owl": "1ea0465c2222592bdeea3197a687ba26c74818263e1e6c5e8838baafcb6838ce",
     "go.db": {

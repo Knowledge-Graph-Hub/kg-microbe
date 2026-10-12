@@ -4,6 +4,7 @@ import csv
 import hashlib
 import io
 import json
+import re
 import sqlite3
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -28,7 +29,7 @@ from kg_microbe.utils.release_binding import graph_release, is_release_source, s
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 
 POLICY_FILE = Path(__file__).resolve().parents[2] / "mappings/upa_reaction_projection_dispositions.json"
-POLICY_SHA256 = "a7ad1447938400845c27b2fb08eec542a8b63b5f2dd018706f3d144595a347a6"
+POLICY_SHA256 = "6cffa6d569ae82f4c5f4ea3aaf4bca5b495e2915ebf89ddff8fa98343a6bedf2"
 AUDIT_FILE = "upa_route_review.tsv"
 POLICY_ROLE = "upa_route_policy"
 JSON_ROLE = "upa_route_native_json"
@@ -124,9 +125,19 @@ def load_policy(payload):
     if (
         not isinstance(sources, dict)
         or set(sources) != {"upa.json", "upa.owl", "go.db"}
-        or set(sources["upa.json"]) != {"release"}
+        or set(sources["upa.json"]) != {"release", "sha256"}
+        or not isinstance(sources["upa.json"]["release"], str)
+        or re.fullmatch(
+            r"http://purl\.obolibrary\.org/obo/upa/releases/\d{4}-\d{2}-\d{2}/upa\.owl", sources["upa.json"]["release"]
+        )
+        is None
+        or not isinstance(sources["upa.json"]["sha256"], str)
+        or re.fullmatch(r"[0-9a-f]{64}", sources["upa.json"]["sha256"]) is None
         or not isinstance(sources["upa.owl"], str)
+        or re.fullmatch(r"[0-9a-f]{64}", sources["upa.owl"]) is None
         or set(sources["go.db"]) != {"release", "source"}
+        or not isinstance(sources["go.db"]["release"], str)
+        or re.fullmatch(r"\d{4}-\d{2}-\d{2}", sources["go.db"]["release"]) is None
         or not is_release_source(sources["go.db"]["source"])
         or sources["go.db"]["source"]["file"] != "go.owl"
     ):
@@ -535,10 +546,11 @@ class UPARouteReview:
             payload = self._read(JSON_ROLE, path)
             self._document = decode(payload)
             owl = self._read(OWL_ROLE, self.transform.input_base_dir / "upa.owl")
-            # upa.json is converted from the pinned upa.owl, so it must declare the reviewed
-            # release; its own bytes are not pinned (#1420).
+            # upa.json is converted from the pinned upa.owl by the pinned ROBOT, which reproduces
+            # it byte for byte, so its bytes stay pinned as well as its release (#1420, #1516).
             if (
                 self.identities[OWL_ROLE]["sha256"] != self.policy["sources"]["upa.owl"]
+                or self.identities[JSON_ROLE]["sha256"] != self.policy["sources"]["upa.json"]["sha256"]
                 or graph_release(self._document["graphs"][0]) != self.policy["sources"]["upa.json"]["release"]
             ):
                 raise SourceFinalizationRequired("UPA selected native source epoch changed")
@@ -743,6 +755,7 @@ def verify_audit_bindings(directory, snapshots, *, members, raw_dir, admission=N
                 raise SourceFinalizationRequired("UPA original native locator/epoch changed")
         if (
             owned[OWL_ROLE]["sha256"] != policy["sources"]["upa.owl"]
+            or owned[JSON_ROLE]["sha256"] != policy["sources"]["upa.json"]["sha256"]
             or owned[GO_SOURCE_ROLE]["sha256"] != policy["sources"]["go.db"]["source"]["sha256"]
             or guard.capture(owned[GO_SOURCE_ROLE]["path"])["sha256"] != owned[GO_SOURCE_ROLE]["sha256"]
         ):

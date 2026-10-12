@@ -33,7 +33,7 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.utils.release_binding import is_release_source, semsql_go_release
 
 POLICY_FILE = Path(__file__).resolve().parents[2] / "mappings/go_imported_subject_restrictions.json"
-REVIEWED_POLICY_SHA256 = "7d7e2c5bfab83ae73505c4dc6d4784ce8e9a3d5822878bddddad158290d45cb1"
+REVIEWED_POLICY_SHA256 = "f8d02767086a378f3d983070ad0f4627614d3cda5dc399b94ab21d98574d2579"
 # Version 5 binds go.db to its GO release and selected content, not its file bytes (#1420).
 POLICY_VERSION = 5
 RUNTIME_VERSION = 6
@@ -245,9 +245,32 @@ def load_policy(stream):
         or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(policy["sources"]["go.db"]["release"]))
         or not is_release_source(policy["sources"]["go.db"]["source"])
         or policy["sources"]["go.db"]["source"]["file"] != "go.owl"
+        or not _valid_blank_nodes(policy)
     ):
         raise ValueError("Invalid finite imported GO subject-restriction policy")
     return policy
+
+
+def _valid_blank_nodes(policy):
+    """Require the reviewed statements of exactly the blank nodes the selected rows reference."""
+    blank_nodes = policy.get("blank_nodes")
+    referenced = {row["object"] for row in _metadata_rows(policy) if _is_blank(row["object"])}
+    return (
+        isinstance(blank_nodes, dict)
+        and set(blank_nodes) == referenced
+        and all(
+            isinstance(statements, list)
+            and statements
+            and all(
+                isinstance(statement, dict)
+                and set(statement) == {"predicate", "object", "value"}
+                and isinstance(statement["predicate"], str)
+                and all(statement[field] is None or isinstance(statement[field], str) for field in ("object", "value"))
+                for statement in statements
+            )
+            for statements in blank_nodes.values()
+        )
+    )
 
 
 def identify(row):
@@ -350,6 +373,45 @@ def expected_candidate(row, original, style, go_identity):
         history.append(_history_event(column, row[column], canonical, chain, go_identity))
         candidate[GO_REFERENCE_CONTEXT_COLUMN] = _json(history)
     return candidate
+
+
+def _is_blank(value):
+    """Return whether a statement object is an RDF blank node, as rdftab writes one (``_:riog00055663``)."""
+    return isinstance(value, str) and value.startswith("_:")
+
+
+def _blank_node_key(label, describe, seen=()):
+    """
+    Name a blank node by what it states, not by its label.
+
+    rdftab numbers blank nodes as it reads (``_:riog00055663``), so a label belongs to one
+    local build of go.db, not to GO. The key digests the node's own statements, with each
+    nested blank node replaced by its key in turn, so every build of the same release
+    gives the same key and a different restriction gives a different one (#1514).
+
+    :param label: The blank node's label in one database or in the policy.
+    :param describe: Returns that node's ``(predicate, object, value)`` statements.
+    :param seen: Blank nodes already being keyed, to refuse a cycle.
+    :return: A label-free ``_:``-prefixed key.
+    :raises ValueError: When the node states nothing or is part of a cycle.
+    """
+    if label in seen:
+        raise ValueError(f"Cyclic GO blank node: {label}")
+    statements = describe(label)
+    if not statements:
+        raise ValueError(f"GO blank node has no statements: {label}")
+    keyed = [
+        [predicate, _blank_node_key(obj, describe, (*seen, label)) if _is_blank(obj) else obj, value]
+        for predicate, obj, value in statements
+    ]
+    return "_:" + _digest(_json(sorted(keyed, key=_json)).encode())
+
+
+def _label_free(rows, describe):
+    """Replace each blank-node object with its key, so rows compare by content."""
+    return [
+        {**row, "object": _blank_node_key(row["object"], describe)} if _is_blank(row["object"]) else row for row in rows
+    ]
 
 
 def _metadata_rows(policy):
@@ -464,7 +526,22 @@ class ImportedGoRestrictionGuard:
                         identifiers,
                     )
                 ]
-                if sorted(map(_json, actual)) != sorted(map(_json, expected)):
+                reviewed = policy["blank_nodes"]
+
+                def stored(label):
+                    """Return a blank node's statements in this database."""
+                    return connection.execute(
+                        "SELECT predicate,object,value FROM statements WHERE subject=?", (label,)
+                    ).fetchall()
+
+                def recorded(label):
+                    """Return a blank node's statements as the policy recorded them."""
+                    return [(row["predicate"], row["object"], row["value"]) for row in reviewed[label]]
+
+                # Blank nodes compare by what they state, not their build-local labels (#1514).
+                if sorted(map(_json, _label_free(actual, stored))) != sorted(
+                    map(_json, _label_free(expected, recorded))
+                ):
                     raise ValueError("Imported GO replacement metadata differs from native evidence")
                 for table in ("edge", "entailed_edge"):
                     for (_, relation, obj), (_, replacement) in _CLAIMS.items():

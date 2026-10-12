@@ -240,8 +240,17 @@ review cohorts; they are not counts from a newly rebuilt merged graph.
 | FOODON: 22 pod classes and two whole-tail classes | `biolink:GrossAnatomicalStructure` for native and imported declarations | Exact native identity and sound hierarchy; separate kernel and meat controls are unchanged |
 | UPA: 449 historically retained unverified computed GO projections | Audit only, not `part_of` assertions | Complete candidate witnesses and original selected rows, including multiplicity; the seven contradicted routes retain their distinct reason and direct weak xrefs remain |
 | MicrobeDecoder: 195 snapshot values behind six rejected joins | Five source-record `InformationContentEntity` nodes; no node for the zero-value record | Original records/values, former subject association and dependent phenotype audits; independent FAPROTAX evidence stays on its original subject |
-| BacDive: 97 reviewed ambiguous taxid sets | Withhold their taxonomic parent proposals; the candidates still contest shared deposits, which keep a parent only if every candidate lies beneath it (#1421) | Every supplied taxid and former selection; independently supported deposit contributors remain, and contested deposits are listed in the deposit-claims report |
+| BacDive: 97 reviewed ambiguous taxid sets | Withhold their taxonomic parent proposals | Every supplied taxid and former selection; independently supported deposit contributors remain |
 | Three additional imported GO restrictions | Withhold the exact transferred assertions, extending the finite policy from 12 to 15 | Original row, would-be candidate row, native restriction and identifier history |
+
+**Follow-up rule, added 2026-10-12 (#1421), after the approval above.** The
+withheld candidates of these 97 BacDive records still contest the parent of any
+deposit a withheld record shares with another record:
+
+- The deposit keeps a parent only if every candidate is, or lies beneath, the
+  parent its other records support.
+- Otherwise it gets no parent and no record links, and it is listed in the
+  deposit-claims report as `suppressed_withheld_unresolved`.
 
 The three additional GO decisions are `GO:0006903 / RO:0002162 / NCBITaxon:2759`,
 `GO:0048199 / RO:0004009 / GO:0005798`, and

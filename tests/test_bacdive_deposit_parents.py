@@ -9,6 +9,7 @@ from kg_microbe.transform_utils.bacdive.emission import (
     RESOLUTION_COLLAPSED,
     RESOLUTION_SUPPRESSED,
     RESOLUTION_SUPPRESSED_NO_ANCESTRY,
+    RESOLUTION_SUPPRESSED_WITHHELD,
     contested_deposit_description,
     deposit_conflict_rows,
     is_contested,
@@ -88,6 +89,7 @@ def test_the_report_records_what_was_suppressed():
             "NCBITaxon:1915061|NCBITaxon:272240",
             "3081|7476",
             RESOLUTION_SUPPRESSED,
+            "",
             "",
             "",
         ]
@@ -277,6 +279,7 @@ def test_a_collapsed_deposit_is_reported_not_just_counted():
             "1|2",
             RESOLUTION_COLLAPSED,
             "NCBITaxon:41276",
+            "",
             "",
         ]
     ]
@@ -516,7 +519,7 @@ def test_a_withheld_record_contests_the_deposit_it_shares(deposit, claims, withh
         {deposit: claims}, ancestors_of=_withheld_ancestors, withheld={deposit: withheld}
     )
     assert resolved == []
-    assert contested == [(deposit, claims, RESOLUTION_SUPPRESSED, "", withheld)]
+    assert contested == [(deposit, claims, RESOLUTION_SUPPRESSED_WITHHELD, "", withheld)]
     assert resolution_asserts_a_parent(contested[0][2]) is False
 
 
@@ -546,7 +549,7 @@ def test_a_withheld_candidate_never_becomes_the_parent():
         withheld={deposit: {"2": ["NCBITaxon:2901164", "NCBITaxon:316"]}},
     )
     assert resolved == []
-    assert [entry[2:4] for entry in contested] == [(RESOLUTION_SUPPRESSED, "")]
+    assert [entry[2:4] for entry in contested] == [(RESOLUTION_SUPPRESSED_WITHHELD, "")]
 
 
 def test_a_deposit_only_its_withheld_record_cites_is_not_contested():
@@ -565,7 +568,7 @@ def test_two_withheld_records_alone_contest_their_deposit():
     withheld = {"131009": _STUTZERIMONAS, "161188": ["NCBITaxon:1678136", "NCBITaxon:418211"]}
     resolved, contested = resolve_deposit_parents({}, ancestors_of=_withheld_ancestors, withheld={deposit: withheld})
     assert resolved == []
-    assert contested == [(deposit, {}, RESOLUTION_SUPPRESSED, "", withheld)]
+    assert contested == [(deposit, {}, RESOLUTION_SUPPRESSED_WITHHELD, "", withheld)]
 
 
 def test_without_ancestry_a_withheld_contest_suppresses():
@@ -575,7 +578,7 @@ def test_without_ancestry_a_withheld_contest_suppresses():
         {deposit: {"NCBITaxon:316": ["1"]}}, withheld={deposit: {"2": ["NCBITaxon:203192", "NCBITaxon:316"]}}
     )
     assert resolved == []
-    assert [entry[2] for entry in contested] == [RESOLUTION_SUPPRESSED]
+    assert [entry[2] for entry in contested] == [RESOLUTION_SUPPRESSED_WITHHELD]
 
 
 def test_unreadable_candidate_ancestry_is_not_blamed_on_bacdive():
@@ -598,7 +601,7 @@ def test_the_report_and_node_name_the_withheld_candidates():
         ancestors_of=_withheld_ancestors,
         withheld={deposit: {"131912": _STUTZERIMONAS}},
     )
-    rows = deposit_conflict_rows(contested)
+    rows = deposit_conflict_rows(contested, {deposit: ["10"]})
     assert len(DEPOSIT_CONFLICT_HEADER) == len(rows[0])
     assert rows == [
         [
@@ -606,15 +609,72 @@ def test_the_report_and_node_name_the_withheld_candidates():
             1,
             "NCBITaxon:157592",
             "13907",
-            RESOLUTION_SUPPRESSED,
+            RESOLUTION_SUPPRESSED_WITHHELD,
             "",
             "131912=NCBITaxon:1211807,NCBITaxon:203192,NCBITaxon:316",
+            "10",
         ]
     ]
-    text = contested_deposit_description(contested[0][1], contested[0][4])
+    text = contested_deposit_description(contested[0][1], contested[0][4], ["10"], contested[0][2])
     assert "NCBITaxon:157592 (BacDive 13907)" in text
     assert (
         "NCBITaxon:1211807 or NCBITaxon:203192 or NCBITaxon:316 "
         "(BacDive 131912, which supplied these as equal-priority alternatives)"
     ) in text
-    assert "does not identify a single organism" in text
+    assert "it is also cited by BacDive 10" in text
+    # Not a proven disagreement, so the node does not claim one (#1482).
+    assert "could not be shown to identify a single organism" in text
+    assert "disagree" not in text
+
+
+def test_a_later_disjoint_candidate_suppresses_the_parent():
+    """Every candidate is checked, not only the first one in sorted order (#1497)."""
+    deposit = "kgmicrobe.strain:X-1"
+    resolved, contested = resolve_deposit_parents(
+        {deposit: {"NCBITaxon:2901164": ["1"]}},
+        ancestors_of=_withheld_ancestors,
+        withheld={deposit: {"2": ["NCBITaxon:1211807", "NCBITaxon:157592"]}},
+    )
+    assert resolved == []
+    assert [entry[2] for entry in contested] == [RESOLUTION_SUPPRESSED_WITHHELD]
+
+
+def test_a_later_disjoint_withheld_record_suppresses_the_parent():
+    """Every withheld record is checked, not only the first one in sorted order (#1497)."""
+    deposit = "kgmicrobe.strain:X-1"
+    resolved, contested = resolve_deposit_parents(
+        {deposit: {"NCBITaxon:2901164": ["1"]}},
+        ancestors_of=_withheld_ancestors,
+        withheld={deposit: {"2": _STUTZERIMONAS, "3": ["NCBITaxon:157592", "NCBITaxon:1931"]}},
+    )
+    assert resolved == []
+    assert [entry[2] for entry in contested] == [RESOLUTION_SUPPRESSED_WITHHELD]
+
+
+def test_a_co_citer_without_a_claim_still_contests_a_withheld_deposit():
+    """
+    A record whose parent came only from a late, name-derived route claims nothing (#1481).
+
+    Counting only claims would leave the deposit uncontested and link both records to
+    it, equating a withheld record with an organism nobody showed to be the same.
+    """
+    deposit = "kgmicrobe.strain:X-1"
+    withheld = {"4427": ["NCBITaxon:1236527", "NCBITaxon:1322345"]}
+    assert is_contested({}, withheld, ["4427"]) is False
+    assert is_contested({}, withheld, ["10", "4427"]) is True
+    resolved, contested = resolve_deposit_parents(
+        {}, ancestors_of=_withheld_ancestors, withheld={deposit: withheld}, citing={deposit: ["10", "4427"]}
+    )
+    assert resolved == []
+    assert contested == [(deposit, {}, RESOLUTION_SUPPRESSED_WITHHELD, "", withheld)]
+
+
+def test_disjoint_supporting_claims_stay_a_plain_suppression():
+    """A disagreement among supporting claims is a proven conflict, withheld record or not."""
+    deposit = "kgmicrobe.strain:X-1"
+    _, contested = resolve_deposit_parents(
+        {deposit: {"NCBITaxon:157592": ["1"], "NCBITaxon:1931": ["2"]}},
+        ancestors_of=_withheld_ancestors,
+        withheld={deposit: {"3": _STUTZERIMONAS}},
+    )
+    assert [entry[2] for entry in contested] == [RESOLUTION_SUPPRESSED]

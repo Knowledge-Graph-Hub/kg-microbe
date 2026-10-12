@@ -130,10 +130,12 @@ where the deposit kept a parent. `close_match` is symmetric and maps to
 `SEMMEDDB:same_as`, so on a deposit whose claimants proved to be unrelated
 organisms it would assert an equivalence between them; those citations stay in
 the claims report, and the node carries a description saying so. See issues
-#892, #894, #899 and #907. A BacDive record whose ambiguous supplied taxids were
-withheld claims no parent, but its candidates still contest one: a deposit it
-shares keeps a parent only if every candidate lies beneath that parent, and is
-otherwise treated as disjoint (#1421).
+#892, #894, #899 and #907. A deposit cited by a single record keeps that record's
+link even with no parent, because one citer cannot equate two organisms. A
+BacDive record whose ambiguous supplied taxids were withheld claims no parent, but
+its candidates still contest one. A deposit it shares with any other record keeps
+a parent only if every candidate is that taxon or lies beneath it. Otherwise the
+deposit gets no parent and no record links (#1421).
 
 ## Operational traps
 

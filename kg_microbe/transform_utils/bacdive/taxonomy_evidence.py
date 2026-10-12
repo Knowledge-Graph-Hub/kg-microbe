@@ -26,6 +26,7 @@ from kg_microbe.transform_utils.bacdive.emission import (
     RESOLUTION_COLLAPSED,
     RESOLUTION_SUPPRESSED,
     RESOLUTION_SUPPRESSED_NO_ANCESTRY,
+    RESOLUTION_SUPPRESSED_WITHHELD,
     is_contested,
     resolve_deposit_parents,
 )
@@ -76,6 +77,8 @@ AUDIT_FIELDS = (
     "consumed_inputs_json",
 )
 _MEMBERS = {"nodes.tsv", "edges.tsv"}
+# Version 3 adds withheld candidates to every contested deposit entry (#1421).
+CONTRACT_VERSION = 3
 _RAW_FILE = "bacdive_strains.json"
 _PREFIX = "kgmicrobe.strain:bacdive_"
 
@@ -315,6 +318,7 @@ class TaxonomyEvidence:
         self._choice_seals = {}
         self.lookup_seen = set()
         self.deposit_rows = {}
+        self._contested_entries = {}
         self._contract = None
         self._ancestry = None
         self._ancestry_owner = None
@@ -527,6 +531,19 @@ class TaxonomyEvidence:
                 contests[token["deposit"]][entry["record_id"]] = candidates
         return {deposit: dict(records) for deposit, records in contests.items()}
 
+    def _citing_records(self, subject):
+        """Return every BacDive record ID that cites a deposit, from the sealed occurrence inventory."""
+        if not callable(self._deposit_occurrence_binding) or self._deposit_occurrence_binding() != (True, True):
+            _fail("original native deposit occurrence binding was lost")
+        occurrences = self._deposit_occurrences.get(subject)
+        if occurrences is None or _sha(occurrences) != self._deposit_occurrence_seals.get(subject):
+            _fail("native deposit occurrence inventory missing or changed")
+        return sorted({self._entry(ordinal)["record_id"] for ordinal, _ in occurrences})
+
+    def _withheld_citing(self, withheld):
+        """Every citing record of each deposit a withheld record cites; contests count all of them."""
+        return {deposit: self._citing_records(deposit) for deposit in withheld}
+
     def _claim_occurrences(self, subject, claims):
         """Join exact legacy claim lists to every sealed source-record/token occurrence."""
         if not callable(self._deposit_occurrence_binding) or self._deposit_occurrence_binding() != (True, True):
@@ -591,11 +608,13 @@ class TaxonomyEvidence:
             return cached[identifier]
 
         try:
+            withheld = self.withheld_deposit_contests()
             result = resolve_deposit_parents(
                 claims,
                 ancestors_of=ancestors,
                 ancestry_failed=lambda _id: False,
-                withheld=self.withheld_deposit_contests(),
+                withheld=withheld,
+                citing=self._withheld_citing(withheld),
             )
             witness = owner.finish() if owner is not None else None
             # Rejoin demand to completed queries, retaining both callback and
@@ -711,6 +730,7 @@ class TaxonomyEvidence:
                     "consumed_inputs_json": self._bindings,
                 }
             )
+        rows.extend(self._withheld_contest_rows())
         for entry in self.records:
             block = entry["classification"].get("LPSN")
             lookup = self.gss.lookup(block)
@@ -772,6 +792,48 @@ class TaxonomyEvidence:
                         [_edge(left, right, inferred=True) for left, right in plan["parent_pairs"]]
                     ),
                     "consumed_inputs_json": _json({**json.loads(self._bindings), **self._fallback.selected_roles}),
+                }
+            )
+        return rows
+
+    def _withheld_contest_rows(self):
+        """
+        Audit every deposit a withheld record contested, kept or suppressed (#1421).
+
+        The row binds the decision to its evidence: the supporting claims, the
+        withheld candidates, every citing record and the ancestry queries that
+        decided whether each candidate lies beneath the supported parent.
+        """
+        queries = []
+        if self._ancestry is not None:
+            witness = json.loads(self._ancestry)["actual_queries"]
+            queries = witness["computed_queries"] if witness else []
+        rows = []
+        for subject, (_, claims, resolution, target, withheld) in sorted(self._contested_entries.items()):
+            if not withheld:
+                continue
+            taxa = set(claims) | {candidate for candidates in withheld.values() for candidate in candidates}
+            occurrences = self._claim_occurrences(subject, claims) if claims else {}
+            rows.append(
+                {
+                    "kind": "withheld_deposit_contest",
+                    "status": resolution,
+                    "subject": subject,
+                    "object": target,
+                    "native_evidence_json": _json(
+                        {
+                            "claims": [witness for parent in sorted(occurrences) for witness in occurrences[parent]],
+                            "withheld_candidates": withheld,
+                            "citing_records": self._citing_records(subject),
+                            "computed_queries": [row for row in queries if row["subject"] in taxa],
+                        }
+                    ),
+                    "lookup_evidence_json": "",
+                    "original_edge_json": "null",
+                    "emitted_edge_json": (
+                        _json(self.deposit_rows[subject]["row"]) if subject in self.deposit_rows else "null"
+                    ),
+                    "consumed_inputs_json": self._bindings,
                 }
             )
         return rows
@@ -841,10 +903,11 @@ class TaxonomyEvidence:
         if len(contested) != len(contested_rows):
             _fail("duplicate contested deposit disposition")
         withheld = self.withheld_deposit_contests()
+        citing = self._withheld_citing(withheld)
         expected_contested = {
             key
             for key in set(buffered_claims) | set(withheld)
-            if is_contested(buffered_claims.get(key, {}), withheld.get(key, {}))
+            if is_contested(buffered_claims.get(key, {}), withheld.get(key, {}), citing.get(key))
         }
         if set(contested) != expected_contested:
             _fail("contested deposit inventory differs from native multiple-parent and withheld claims")
@@ -858,17 +921,21 @@ class TaxonomyEvidence:
             elif resolution in (RESOLUTION_SUPPRESSED, RESOLUTION_SUPPRESSED_NO_ANCESTRY):
                 if target or key in resolved:
                     _fail("suppressed deposit gained a parent")
+            elif resolution == RESOLUTION_SUPPRESSED_WITHHELD:
+                if target or key in resolved or not entry[4]:
+                    _fail("withheld-contested deposit gained a parent or lost its contest")
             else:
                 _fail("unknown deposit resolution status")
         if set(resolved) | set(contested) != set(buffered_claims) | expected_contested:
             _fail("resolved/suppressed deposit accounting is incomplete")
+        self._contested_entries = {key: list(entry) for key, entry in contested.items()}
         audits = self._audit_rows()
         if audit_writer is not None:
             for row in audits:
                 audit_writer.writerow([row[field] for field in AUDIT_FIELDS])
         self.require_fallback()
         contract = {
-            "version": 2,
+            "version": CONTRACT_VERSION,
             "raw_locator": str(self.raw_dir),
             "consumed_inputs": json.loads(self._bindings),
             "optional_gss": json.loads(self._optional_state),
@@ -1234,7 +1301,20 @@ def verify_recorded(contract, snapshots, raw_dir, output_dir, *, optional_state,
     """
     admission = admission or SourceAdmission()
     raw_dir = Path(raw_dir).absolute()
-    if not isinstance(contract, dict) or contract.get("version") != 2 or contract.get("raw_locator") != str(raw_dir):
+    if (
+        isinstance(contract, dict)
+        and isinstance(contract.get("version"), int)
+        and contract["version"] < CONTRACT_VERSION
+    ):
+        _fail(
+            f"taxonomy contract version {contract['version']} predates withheld deposit contests (#1421); "
+            "rerun kg transform -s bacdive"
+        )
+    if (
+        not isinstance(contract, dict)
+        or contract.get("version") != CONTRACT_VERSION
+        or contract.get("raw_locator") != str(raw_dir)
+    ):
         _fail("mandatory taxonomy contract or original raw locator missing")
     if members is not None and set(members) != _MEMBERS:
         _fail("recorded taxonomy graph member scope changed")

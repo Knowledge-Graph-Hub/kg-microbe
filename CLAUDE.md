@@ -270,8 +270,10 @@ enforces this against `download.yaml`. See issues #900 and #909.
 MicrO has no releases, so it is pinned to a commit (`MICRO_COMMIT` in
 `constants.py`) together with the 20 modules `MicrO.owl` imports.
 `ontologies_stubs` resolves those imports through a generated ROBOT catalog
-and refuses to run rather than fetch one; `tests/test_micro_version_pin.py`
-checks `download.yaml` against the constant. PO still fetches its imports live.
+and runs ROBOT with network access refused, so an unmapped import fails rather
+than being fetched; preflight checks the modules are present and match what
+`micro.owl` imports. `tests/test_micro_version_pin.py` checks `download.yaml`
+against the constant. PO still fetches its imports live.
 
 ## Operational references
 

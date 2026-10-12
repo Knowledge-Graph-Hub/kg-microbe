@@ -32,6 +32,13 @@ ROBOT_JAXP_LIMITS = (
     ("jdk.xml.maxElementDepth", "0"),
 )
 
+# For a ROBOT run whose imports must all resolve locally (through a catalog):
+# send any HTTP(S) request to a closed local port, so an import the catalog
+# does not map fails instead of being fetched from a moving upstream branch.
+ROBOT_OFFLINE_JAVA_ARGS = (
+    "-Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=9 -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=9"
+)
+
 # Where else a user configures the ROBOT JVM. The appended -D flags outrank
 # both, so a limit set there is treated as set.
 USER_JVM_OPTION_VARIABLES = ("JAVA_TOOL_OPTIONS", "JDK_JAVA_OPTIONS")

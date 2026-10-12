@@ -9,10 +9,12 @@ from typing import Dict, List, Set
 import pytest
 
 from kg_microbe.transform_utils.constants import MICRO_IMPORT_MODULES, MICRO_IMPORTS_DIR
+from kg_microbe.transform_utils.ontologies_stubs import ontologies_stubs_transform as stubs_module
 from kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform import (
     STUB_ONTOLOGY_SOURCES,
     OntologiesStubsTransform,
     _curie_to_iris,
+    _declared_imports,
     _iri_to_curie,
     _retag_curie,
     _sanitize,
@@ -22,10 +24,13 @@ from kg_microbe.utils.isolation_source_mapping_utils import (
     STUB_ONTOLOGY_CATEGORY,
     STUB_ONTOLOGY_PREFIXES,
 )
-from kg_microbe.utils.robot_utils import ROBOT_JAXP_LIMITS
+from kg_microbe.utils.robot_utils import ROBOT_JAXP_LIMITS, ROBOT_OFFLINE_JAVA_ARGS
 from kg_microbe.utils.stub_curie_collection import collect_stub_curies
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+# The head of the pinned MicrO.owl (MICRO_COMMIT): its DOCTYPE, namespaces and
+# 20 owl:imports, without the ontology annotations.
+MICRO_OWL_HEADER = REPO_ROOT / "tests" / "resources" / "micro" / "micro_owl_header.owl"
 
 
 # ---------------------------------------------------------------------------
@@ -333,6 +338,7 @@ def test_transform_raises_when_mireot_owl_missing(tmp_path):
             owl_path=tmp_path / "raw" / "micro.owl",
             upper_term="MICRO:0000031",
             knowledge_source="infores:micro",
+            imports_dir=tmp_path / "raw" / MICRO_IMPORTS_DIR,
         )
 
 
@@ -367,6 +373,7 @@ def test_mireot_intermediate_is_rdfxml_not_functional_syntax(tmp_path, monkeypat
         lower_curies=["MICRO:0000082"],
         upper_curie="MICRO:0000031",
         owl_path=tmp_path / "raw" / "micro.owl",
+        imports_dir=None,
     )
     extract, convert = calls
     # The pinned ROBOT from the raw directory, not whatever `robot` is on PATH.
@@ -411,11 +418,14 @@ def test_mireot_robot_calls_carry_the_jaxp_limits(tmp_path, monkeypatch):
         lower_curies=["MICRO:0000082"],
         upper_curie="MICRO:0000031",
         owl_path=tmp_path / "raw" / "micro.owl",
+        imports_dir=None,
     )
     assert len(envs) == 2
     for env in envs:
         for name, value in ROBOT_JAXP_LIMITS:
             assert f"-D{name}={value}" in env["ROBOT_JAVA_ARGS"]
+        # Without pinned imports the network stays available (PO still needs it).
+        assert ROBOT_OFFLINE_JAVA_ARGS not in env["ROBOT_JAVA_ARGS"]
 
 
 def _pinned_robot(raw_dir: Path) -> None:
@@ -449,12 +459,48 @@ def test_missing_java_is_a_prerequisite_failure(tmp_path, monkeypatch):
 
 
 def _pinned_micro_imports(raw_dir: Path) -> Path:
-    """Lay out every pinned MicrO import module under ``raw_dir``, as `kg download` does."""
+    """Lay out the pinned MicrO and every import module under ``raw_dir``, as `kg download` does."""
     imports_dir = raw_dir / MICRO_IMPORTS_DIR
     imports_dir.mkdir(parents=True)
+    (raw_dir / "micro.owl").write_text(MICRO_OWL_HEADER.read_text(encoding="utf-8"), encoding="utf-8")
     for name in MICRO_IMPORT_MODULES:
         (imports_dir / name).write_text("<rdf:RDF/>", encoding="utf-8")
     return imports_dir
+
+
+def test_the_pinned_micro_owl_imports_exactly_the_pinned_modules():
+    """
+    Preflight checks the pinned list while the run maps what micro.owl declares.
+
+    Checked against the real file's import lines, so the constant cannot
+    drift from the ontology it was written for.
+    """
+    declared = [iri.rsplit("/", 1)[-1] for iri in _declared_imports(MICRO_OWL_HEADER)]
+    assert sorted(declared) == sorted(MICRO_IMPORT_MODULES)
+    assert len(declared) == 20
+
+
+def test_imports_that_disagree_with_the_pin_fail_preflight(tmp_path, monkeypatch):
+    """An import a new pin adds would otherwise pass preflight and fail only after the ontologies source."""
+    monkeypatch.setattr("shutil.which", lambda _name: "/usr/bin/java")
+    _pinned_robot(tmp_path)
+    _pinned_micro_imports(tmp_path)
+    owl = tmp_path / "micro.owl"
+    extra = '        <owl:imports rdf:resource="https://example.org/branch/NEW_imports.owl"/>\n    </owl:Ontology>'
+    owl.write_text(owl.read_text(encoding="utf-8").replace("    </owl:Ontology>", extra), encoding="utf-8")
+    (problem,) = OntologiesStubsTransform.missing_prerequisites(tmp_path)
+    assert problem.startswith("MICRO imports and pin disagree")
+    assert "NEW_imports.owl" in problem
+
+
+def test_a_missing_micro_owl_fails_preflight(tmp_path, monkeypatch):
+    """Without the ontology there is nothing to check the imports against, and the run would fail late."""
+    monkeypatch.setattr("shutil.which", lambda _name: "/usr/bin/java")
+    _pinned_robot(tmp_path)
+    _pinned_micro_imports(tmp_path)
+    (tmp_path / "micro.owl").unlink()
+    (problem,) = OntologiesStubsTransform.missing_prerequisites(tmp_path)
+    assert problem.startswith("MICRO ontology missing")
 
 
 def test_a_missing_pinned_micro_import_is_a_prerequisite_failure(tmp_path, monkeypatch):
@@ -541,8 +587,9 @@ def test_micro_extract_runs_with_the_catalog(tmp_path, monkeypatch):
     calls = []
 
     def fake_run(cmd, check, env=None):
-        """Capture the ROBOT command without launching it."""
-        calls.append(list(cmd))
+        """Capture the ROBOT command, its environment and the catalog it names, without launching it."""
+        catalog = cmd[cmd.index("--catalog") + 1] if "--catalog" in cmd else None
+        calls.append((list(cmd), env, Path(catalog).read_text(encoding="utf-8") if catalog else None))
         return None
 
     monkeypatch.setattr("shutil.which", lambda _name: "/usr/bin/java")
@@ -563,10 +610,55 @@ def test_micro_extract_runs_with_the_catalog(tmp_path, monkeypatch):
         owl_path=raw / "micro.owl",
         imports_dir=imports_dir,
     )
-    extract = calls[0]
+    (extract, extract_env, catalog_text), (_, convert_env, _) = calls
+    assert "https://example.org/branch/A_imports.owl" in catalog_text
+    # An import the catalog misses must fail, not be fetched: the JVM has no network.
+    assert ROBOT_OFFLINE_JAVA_ARGS in extract_env["ROBOT_JAVA_ARGS"]
+    assert ROBOT_OFFLINE_JAVA_ARGS in convert_env["ROBOT_JAVA_ARGS"]
+    # The catalog holds this machine's absolute paths; it must not land in the published output.
     catalog = Path(extract[extract.index("--catalog") + 1])
-    assert catalog.name == "micro_catalog-v001.xml"
-    assert "https://example.org/branch/A_imports.owl" in catalog.read_text(encoding="utf-8")
+    assert not catalog.exists()
+    assert not catalog.is_relative_to(transform.output_dir)
+
+
+def test_run_routes_micro_through_the_catalog_and_po_without(tmp_path, monkeypatch):
+    """
+    Drive the configuration wiring from `run`, not just the extract helper.
+
+    Dropping the `imports_dir` pass-through anywhere between `run` and the
+    extract used to leave every test passing while ROBOT went back to MicrO's
+    master branch for all 20 modules.
+    """
+    import subprocess
+
+    extracts = {}
+
+    def fake_run(cmd, check, env=None):
+        """Record each extract by its input ontology."""
+        if "extract" in cmd:
+            extracts[Path(cmd[cmd.index("--input") + 1]).name] = (list(cmd), env)
+        return None
+
+    monkeypatch.setattr("shutil.which", lambda _name: "/usr/bin/java")
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    monkeypatch.setattr(
+        stubs_module, "collect_stub_curies", lambda prefixes: {"PO": {"PO:0009046"}, "MICRO": {"MICRO:0000082"}}
+    )
+    monkeypatch.setattr(OntologiesStubsTransform, "_parse_mireot_module", lambda self, **kwargs: ([], [], set(), []))
+    raw = tmp_path / "raw"
+    _pinned_robot(raw)
+    (raw / "po.owl").write_text("<rdf:RDF/>", encoding="utf-8")
+    (raw / "micro.owl").write_text(_TWO_IMPORTS, encoding="utf-8")
+    (raw / MICRO_IMPORTS_DIR).mkdir()
+    for name in ("A_imports.owl", "B_imports.owl"):
+        (raw / MICRO_IMPORTS_DIR / name).write_text("<rdf:RDF/>", encoding="utf-8")
+    OntologiesStubsTransform(input_dir=raw, output_dir=tmp_path / "out").run()
+    micro_cmd, micro_env = extracts["micro.owl"]
+    po_cmd, po_env = extracts["po.owl"]
+    assert "--catalog" in micro_cmd
+    assert ROBOT_OFFLINE_JAVA_ARGS in micro_env["ROBOT_JAVA_ARGS"]
+    assert "--catalog" not in po_cmd
+    assert ROBOT_OFFLINE_JAVA_ARGS not in po_env["ROBOT_JAVA_ARGS"]
 
 
 def test_micro_is_configured_for_offline_imports():

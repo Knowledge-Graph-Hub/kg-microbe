@@ -26,13 +26,21 @@ from kg_microbe.utils.isolation_source_mapping_utils import (
     STUB_ONTOLOGY_CATEGORY,
     STUB_ONTOLOGY_PREFIXES,
 )
-from kg_microbe.utils.robot_utils import ROBOT_JAXP_LIMITS, ROBOT_OFFLINE_JAVA_ARGS
+from kg_microbe.utils.robot_utils import ROBOT_JAXP_LIMITS
 from kg_microbe.utils.stub_curie_collection import collect_stub_curies
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 # The head of the pinned MicrO.owl (MICRO_COMMIT): its DOCTYPE, namespaces and
 # 20 owl:imports, without the ontology annotations.
 MICRO_OWL_HEADER = REPO_ROOT / "tests" / "resources" / "micro" / "micro_owl_header.owl"
+# The concrete settings that keep a catalog run offline, spelled out rather than
+# compared with the constant, so trimming the constant cannot pass unnoticed.
+OFFLINE_FLAGS = (
+    "-Dhttps.proxyHost=127.0.0.1",
+    "-Dhttp.proxyHost=127.0.0.1",
+    "-Dhttp.nonProxyHosts=",
+    "-DsocksProxyHost=127.0.0.1",
+)
 
 
 # ---------------------------------------------------------------------------
@@ -427,7 +435,7 @@ def test_mireot_robot_calls_carry_the_jaxp_limits(tmp_path, monkeypatch):
         for name, value in ROBOT_JAXP_LIMITS:
             assert f"-D{name}={value}" in env["ROBOT_JAVA_ARGS"]
         # Without pinned imports the network stays available (PO still needs it).
-        assert ROBOT_OFFLINE_JAVA_ARGS not in env["ROBOT_JAVA_ARGS"]
+        assert not any(flag in env["ROBOT_JAVA_ARGS"] for flag in OFFLINE_FLAGS)
 
 
 def _pinned_robot(raw_dir: Path) -> None:
@@ -572,6 +580,15 @@ def test_an_import_with_no_local_copy_raises_instead_of_being_fetched(tmp_path):
         '<rdf:RDF><owl:Ontology><owl:imports rdf:resource="&obo;A.owl"/></owl:Ontology></rdf:RDF>',
         # Not RDF/XML at all: imports cannot be enumerated.
         "Ontology(<https://x/m.owl> Import(<https://x/A.owl>))",
+        # OWL bound to another prefix: the owl: pattern would see no imports at all.
+        '<rdf:RDF xmlns:o="http://www.w3.org/2002/07/owl#"><o:Ontology><o:imports rdf:resource="https://x/A.owl"/>'
+        "</o:Ontology></rdf:RDF>",
+        # OWL as the default namespace.
+        '<rdf:RDF xmlns="http://www.w3.org/2002/07/owl#"><Ontology><imports rdf:resource="https://x/A.owl"/>'
+        "</Ontology></rdf:RDF>",
+        # Relative to xml:base: OWLAPI requests the resolved IRI, never the bare name.
+        '<rdf:RDF xml:base="https://x/base/"><owl:Ontology><owl:imports rdf:resource="A.owl"/>'
+        "</owl:Ontology></rdf:RDF>",
     ],
 )
 def test_imports_that_cannot_be_enumerated_are_refused(tmp_path, body):
@@ -593,7 +610,9 @@ def test_micro_extract_runs_with_the_catalog(tmp_path, monkeypatch):
     def fake_run(cmd, check, env=None):
         """Capture the ROBOT command, its environment and the catalog it names, without launching it."""
         catalog = cmd[cmd.index("--catalog") + 1] if "--catalog" in cmd else None
-        calls.append((list(cmd), env, Path(catalog).read_text(encoding="utf-8") if catalog else None))
+        # A copy: the extract and convert calls may share one dict, and only the
+        # extract's environment at the moment it ran shows whether it was offline.
+        calls.append((list(cmd), dict(env), Path(catalog).read_text(encoding="utf-8") if catalog else None))
         return None
 
     monkeypatch.setattr(robot_utils, "_java_runs", lambda: True)
@@ -617,8 +636,9 @@ def test_micro_extract_runs_with_the_catalog(tmp_path, monkeypatch):
     (extract, extract_env, catalog_text), (_, convert_env, _) = calls
     assert "https://example.org/branch/A_imports.owl" in catalog_text
     # An import the catalog misses must fail, not be fetched: the JVM has no network.
-    assert ROBOT_OFFLINE_JAVA_ARGS in extract_env["ROBOT_JAVA_ARGS"]
-    assert ROBOT_OFFLINE_JAVA_ARGS in convert_env["ROBOT_JAVA_ARGS"]
+    for flag in OFFLINE_FLAGS:
+        assert flag in extract_env["ROBOT_JAVA_ARGS"], flag
+        assert flag in convert_env["ROBOT_JAVA_ARGS"], flag
     # The catalog holds this machine's absolute paths; it must not land in the published output.
     catalog = Path(extract[extract.index("--catalog") + 1])
     assert not catalog.exists()
@@ -640,7 +660,7 @@ def test_run_routes_micro_through_the_catalog_and_po_without(tmp_path, monkeypat
     def fake_run(cmd, check, env=None):
         """Record each extract by its input ontology."""
         if "extract" in cmd:
-            extracts[Path(cmd[cmd.index("--input") + 1]).name] = (list(cmd), env)
+            extracts[Path(cmd[cmd.index("--input") + 1]).name] = (list(cmd), dict(env))
         return None
 
     monkeypatch.setattr(robot_utils, "_java_runs", lambda: True)
@@ -660,9 +680,9 @@ def test_run_routes_micro_through_the_catalog_and_po_without(tmp_path, monkeypat
     micro_cmd, micro_env = extracts["micro.owl"]
     po_cmd, po_env = extracts["po.owl"]
     assert "--catalog" in micro_cmd
-    assert ROBOT_OFFLINE_JAVA_ARGS in micro_env["ROBOT_JAVA_ARGS"]
+    assert all(flag in micro_env["ROBOT_JAVA_ARGS"] for flag in OFFLINE_FLAGS)
     assert "--catalog" not in po_cmd
-    assert ROBOT_OFFLINE_JAVA_ARGS not in po_env["ROBOT_JAVA_ARGS"]
+    assert not any(flag in po_env["ROBOT_JAVA_ARGS"] for flag in OFFLINE_FLAGS)
 
 
 def test_micro_is_configured_for_offline_imports():

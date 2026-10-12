@@ -79,7 +79,7 @@ from kg_microbe.transform_utils.ontologies_stubs.ncit_category_projection import
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.isolation_source_mapping_utils import STUB_ONTOLOGY_CATEGORY
-from kg_microbe.utils.robot_utils import ROBOT_OFFLINE_JAVA_ARGS, initialize_robot, missing_robot
+from kg_microbe.utils.robot_utils import initialize_robot, missing_robot, offline_robot_env
 from kg_microbe.utils.stub_curie_collection import (
     DEFAULT_MAPPING_PATHS,
     collect_stub_curies,
@@ -583,7 +583,7 @@ class OntologiesStubsTransform(Transform):
             extract_cmd += ["--upper-term", iri]
         extract_cmd += ["--output", str(module_owl)]
         if imports_dir is not None:
-            env["ROBOT_JAVA_ARGS"] = f"{env['ROBOT_JAVA_ARGS']} {ROBOT_OFFLINE_JAVA_ARGS}"
+            env = offline_robot_env(env)
         # The catalog holds absolute paths on this machine: keep it out of the
         # published output directory.
         with tempfile.TemporaryDirectory() as catalog_dir:
@@ -1161,6 +1161,9 @@ _OBO_LOCAL_ID_RE = re.compile(r"/([A-Za-z][A-Za-z0-9]*)_([A-Za-z0-9]+)$")
 
 
 _OWL_IMPORT = re.compile(r"<owl:imports\s+rdf:resource=\"([^\"]*)\"")
+# Any `imports` element, whatever prefix it is written with (none = default namespace).
+_ANY_IMPORT = re.compile(r"<([A-Za-z_][\w.-]*:)?imports[\s/>]")
+_ABSOLUTE_IRI = re.compile(r"[A-Za-z][A-Za-z0-9+.-]*:")
 
 
 def _declared_imports(owl_path: Path) -> List[str]:
@@ -1168,10 +1171,12 @@ def _declared_imports(owl_path: Path) -> List[str]:
     Return the ``owl:imports`` IRIs of an RDF/XML ontology, refusing spellings this cannot read.
 
     A text scan, not an RDF parse, so it refuses what it might misread: a file
-    that is not RDF/XML, an import not written as ``owl:imports rdf:resource``,
-    and an IRI spelled with an XML entity (a catalog keyed on it would not match
-    what OWLAPI requests). It gives early, specific errors; the guarantee that
-    nothing is fetched comes from running ROBOT offline.
+    that is not RDF/XML, an import not written as ``owl:imports rdf:resource``
+    (another prefix bound to OWL, OWL as the default namespace, a nested
+    form), an IRI spelled with an XML entity or with no scheme (relative to an
+    ``xml:base``); a catalog keyed on any of these would not match what OWLAPI
+    requests. It gives early, specific errors; the guarantee that nothing is
+    fetched comes from running ROBOT offline.
 
     :param owl_path: RDF/XML ontology.
     :return: Sorted distinct import IRIs.
@@ -1180,12 +1185,19 @@ def _declared_imports(owl_path: Path) -> List[str]:
     if "<rdf:RDF" not in text:
         raise ValueError(f"{owl_path} is not RDF/XML, so its imports cannot be resolved offline")
     declared = _OWL_IMPORT.findall(text)
-    if text.count("<owl:imports") != len(declared):
-        raise ValueError(f"{owl_path} declares owl:imports in a form other than rdf:resource; cannot resolve offline")
+    other_prefixes = sorted({prefix for prefix in _ANY_IMPORT.findall(text) if prefix != "owl:"})
+    if other_prefixes or text.count("<owl:imports") != len(declared):
+        raise ValueError(
+            f"{owl_path} declares imports in a form other than owl:imports rdf:resource "
+            f"(prefixes seen: {other_prefixes or ['owl:']}); cannot resolve offline"
+        )
     iris = sorted(set(declared))
     entity_iris = [iri for iri in iris if "&" in iri]
     if entity_iris:
         raise ValueError(f"{owl_path} spells imports with XML entities, which the catalog cannot match: {entity_iris}")
+    relative = [iri for iri in iris if not _ABSOLUTE_IRI.match(iri)]
+    if relative:
+        raise ValueError(f"{owl_path} has relative import IRIs, which the catalog cannot match: {relative}")
     return iris
 
 

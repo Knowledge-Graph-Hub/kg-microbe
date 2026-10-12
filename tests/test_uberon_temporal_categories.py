@@ -14,6 +14,7 @@ import yaml
 
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils import uberon_temporal_categories as temporal
+from kg_microbe.utils.graph_canonicalization import compact_identifier
 from kg_microbe.utils.ontology_resolution import uberon_category
 from kg_microbe.utils.source_category_authority import SourceCategoryAuthority
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, graph_rows, verify_finalized_source_files
@@ -130,6 +131,41 @@ def test_invalid_or_contradictory_native_evidence_aborts(change):
             }
         )
     with pytest.raises(ValueError, match="ancestry|class|witness"):
+        _decisions(policy, json.dumps(native))
+
+
+OBO = "http://purl.obolibrary.org/obo/"
+
+
+@pytest.mark.parametrize("change", ["dropped_parent", "gained_parent", "new_life_stage", "second_graph_release"])
+def test_native_changes_within_the_release_are_refused(change):
+    """Only the reviewed native closures and life-stage inventory pass, not just the decisions (#1515)."""
+    policy = _policy()
+    native = json.loads((FIXTURE / "uberon.json").read_text())
+    graph = native["graphs"][0]
+    if change == "dropped_parent":
+        # UBERON:0035943 is asserted but on no reviewed witness path, so only the closure binds it.
+        required = {parent for path in policy["records"]["UBERON:0035944"]["required_paths"] for parent in path[1:]}
+        unneeded = [
+            edge
+            for edge in graph["edges"]
+            if edge["sub"] == OBO + "UBERON_0035944"
+            and edge["pred"] == "is_a"
+            and compact_identifier(edge["obj"]) not in required
+        ]
+        assert [compact_identifier(edge["obj"]) for edge in unneeded] == ["UBERON:0035943"]
+        graph["edges"] = [edge for edge in graph["edges"] if edge not in unneeded]
+    elif change == "gained_parent":
+        graph["edges"].append({"sub": OBO + "UBERON_0000068", "pred": "is_a", "obj": OBO + "UBERON_0000066"})
+    elif change == "new_life_stage":
+        graph["nodes"].append({"id": OBO + "UBERON_9999999", "type": "CLASS", "lbl": "unreviewed life stage"})
+        graph["edges"].append({"sub": OBO + "UBERON_9999999", "pred": "is_a", "obj": OBO + "UBERON_0000105"})
+    else:
+        native["graphs"].append(
+            {"id": OBO + "uberon/other.owl", "meta": {"version": OBO + "uberon/releases/2099-01-01/uberon.owl"}}
+        )
+    message = "release" if change == "second_graph_release" else "native ancestry differs from the reviewed"
+    with pytest.raises(ValueError, match=message):
         _decisions(policy, json.dumps(native))
 
 

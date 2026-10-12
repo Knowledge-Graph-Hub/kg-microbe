@@ -74,6 +74,8 @@ def prepare(tmp_path, monkeypatch, *, all_claims=False, additional_go_statements
             else:
                 by_subject[subject] = values
     statements = [row for values in by_subject.values() for row in values]
+    # Two selected rows point at rdftab blank nodes; a real build stores what they state.
+    statements.extend({"subject": label, **row} for label, rows in FULL_POLICY["blank_nodes"].items() for row in rows)
     # A sibling-only control can add separately sourced native context before
     # constructing and hashing the actual fixture database and authority.
     statements.extend(additional_go_statements)

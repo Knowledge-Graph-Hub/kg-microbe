@@ -130,6 +130,7 @@ def prepare(tmp_path, monkeypatch):
         connection.execute("CREATE TABLE entailed_edge(subject,predicate,object)")
         connection.executemany("INSERT INTO statements VALUES(?,?,?,?)", statements)
     fixture_policy = copy.deepcopy(policy)
+    fixture_policy["sources"]["upa.json"]["sha256"] = hashlib.sha256((raw / "upa.json").read_bytes()).hexdigest()
     fixture_policy["sources"]["upa.owl"] = hashlib.sha256((raw / "upa.owl").read_bytes()).hexdigest()
     fixture_policy["sources"]["go.db"]["source"]["sha256"] = hashlib.sha256(GO_OWL_STAND_IN).hexdigest()
     policy_path = tmp_path / "upa-fixture-policy.json"

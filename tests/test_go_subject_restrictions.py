@@ -183,6 +183,44 @@ def test_go_release_file_drift_is_refused(tmp_path, monkeypatch, damage):
         normalize_go_bundle([nodes], [edges], authority, audit)
 
 
+@pytest.mark.parametrize("change", ["renumbered", "filler", "extra_statement", "missing_statement"])
+def test_selected_go_statements_compare_blank_nodes_by_content(tmp_path, monkeypatch, change):
+    """
+    A rebuilt go.db may number its blank nodes differently, but what they state cannot change.
+
+    rdftab's labels belong to one build (#1514). With no go.db byte pin, the selected
+    statements alone must catch a changed restriction or a missing statement (#1517).
+    """
+    from kg_microbe.utils.go_authority import load_go_authority
+
+    raw, nodes, edges, audit, _ = prepare(tmp_path, monkeypatch)
+    with sqlite3.connect(raw / "go.db") as connection:
+        if change == "renumbered":
+            for index, label in enumerate(sorted(FULL_POLICY["blank_nodes"])):
+                connection.execute("UPDATE statements SET subject=? WHERE subject=?", (f"_:rebuilt{index}", label))
+                connection.execute("UPDATE statements SET object=? WHERE object=?", (f"_:rebuilt{index}", label))
+        elif change == "filler":
+            connection.execute(
+                "UPDATE statements SET object='GO:0005737' "
+                "WHERE subject='_:riog00055663' AND predicate='owl:someValuesFrom'"
+            )
+        elif change == "extra_statement":
+            connection.execute("INSERT INTO statements VALUES('_:riog00055663', 'rdfs:comment', NULL, 'added')")
+        else:
+            row = restrictions._metadata_rows(FULL_POLICY)[0]
+            rowid = connection.execute(
+                "SELECT rowid FROM statements WHERE subject=? AND predicate=? LIMIT 1",
+                (row["subject"], row["predicate"]),
+            ).fetchone()[0]
+            connection.execute("DELETE FROM statements WHERE rowid=?", (rowid,))
+    if change == "renumbered":
+        result = normalize_go_bundle([nodes], [edges], load_go_authority(raw), audit)
+        assert result["quarantined_imported_subject_restrictions"] == len(POLICY["records"])
+    else:
+        with pytest.raises(ValueError, match="replacement metadata differs from native evidence"):
+            normalize_go_bundle([nodes], [edges], load_go_authority(raw), audit)
+
+
 def test_a_database_of_another_go_release_is_refused(tmp_path, monkeypatch):
     """A rebuilt database must still record the reviewed GO release."""
     raw, nodes, edges, audit, _ = prepare(tmp_path, monkeypatch)

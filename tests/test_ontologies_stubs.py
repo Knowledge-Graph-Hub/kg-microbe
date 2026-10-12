@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import zipfile
 from pathlib import Path
 from typing import Dict, List, Set
 
@@ -16,6 +17,7 @@ from kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform impo
     _retag_curie,
     _sanitize,
 )
+from kg_microbe.utils import robot_utils
 from kg_microbe.utils.isolation_source_mapping_utils import (
     STUB_ONTOLOGY_CATEGORY,
     STUB_ONTOLOGY_PREFIXES,
@@ -353,7 +355,7 @@ def test_mireot_intermediate_is_rdfxml_not_functional_syntax(tmp_path, monkeypat
         calls.append(list(cmd))
         return None
 
-    monkeypatch.setattr("shutil.which", lambda _name: "/usr/bin/java")
+    monkeypatch.setattr(robot_utils, "_java_runs", lambda: True)
     monkeypatch.setattr(subprocess, "run", fake_run)
     _pinned_robot(tmp_path / "raw")
     transform = OntologiesStubsTransform(input_dir=tmp_path / "raw", output_dir=tmp_path / "out")
@@ -399,7 +401,7 @@ def test_mireot_robot_calls_carry_the_jaxp_limits(tmp_path, monkeypatch):
 
     for name in ("ROBOT_JAVA_ARGS", "JAVA_TOOL_OPTIONS", "JDK_JAVA_OPTIONS"):
         monkeypatch.delenv(name, raising=False)
-    monkeypatch.setattr("shutil.which", lambda _name: "/usr/bin/java")
+    monkeypatch.setattr(robot_utils, "_java_runs", lambda: True)
     monkeypatch.setattr(subprocess, "run", fake_run)
     _pinned_robot(tmp_path / "raw")
     transform = OntologiesStubsTransform(input_dir=tmp_path / "raw", output_dir=tmp_path / "out")
@@ -419,8 +421,8 @@ def test_mireot_robot_calls_carry_the_jaxp_limits(tmp_path, monkeypatch):
 def _pinned_robot(raw_dir: Path) -> None:
     """Lay out the pinned ROBOT under ``raw_dir``, as `kg download -t tools` does."""
     raw_dir.mkdir(parents=True, exist_ok=True)
-    for name in ("robot", "robot.jar"):
-        (raw_dir / name).write_text("stand-in", encoding="utf-8")
+    (raw_dir / "robot").write_text("#!/bin/sh\n", encoding="utf-8")
+    zipfile.ZipFile(raw_dir / "robot.jar", "w").close()
 
 
 def test_missing_pinned_robot_is_a_prerequisite_failure(tmp_path, monkeypatch):
@@ -430,7 +432,7 @@ def test_missing_pinned_robot_is_a_prerequisite_failure(tmp_path, monkeypatch):
     The check is for the pinned copy in the raw directory that `kg download`
     provides and the run uses, not for a `robot` on PATH.
     """
-    monkeypatch.setattr("shutil.which", lambda _name: "/usr/bin/java")
+    monkeypatch.setattr(robot_utils, "_java_runs", lambda: True)
     (problem,) = OntologiesStubsTransform.missing_prerequisites(tmp_path)
     assert problem.startswith(f"pinned ROBOT missing from {tmp_path}: robot, robot.jar")
     _pinned_robot(tmp_path)
@@ -440,8 +442,10 @@ def test_missing_pinned_robot_is_a_prerequisite_failure(tmp_path, monkeypatch):
 def test_missing_java_is_a_prerequisite_failure(tmp_path, monkeypatch):
     """The ROBOT wrapper execs `java`; a host without one fails every ROBOT call."""
     _pinned_robot(tmp_path)
-    monkeypatch.setattr("shutil.which", lambda _name: None)
-    assert OntologiesStubsTransform.missing_prerequisites(tmp_path) == ["java not on PATH; ROBOT needs a JDK."]
+    monkeypatch.setattr(robot_utils, "_java_runs", lambda: False)
+    assert OntologiesStubsTransform.missing_prerequisites(tmp_path) == [
+        "java on PATH does not run (no JDK installed?); ROBOT needs one."
+    ]
 
 
 # ---------------------------------------------------------------------------

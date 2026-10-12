@@ -526,6 +526,16 @@ class BatchIsolationTest(TestCase):
             transform(None, None, sources=None)
         self.assertEqual(self.log, ["b"])
 
+    def test_the_prerequisite_hook_checks_the_cli_input_directory(self):
+        """`-i` moves the raw directory, and with it the pinned ROBOT the hook must look for."""
+        seen = []
+        fake = _fake_source("a", self.log, self.base)
+        fake.missing_prerequisites = classmethod(lambda cls, input_dir=None: seen.append(input_dir) or [])
+        raw = self.base / "alternate-raw"
+        with mock.patch.dict(DATA_SOURCES, {"a": fake}, clear=True):
+            transform(raw, None, sources=["a"])
+        self.assertEqual(seen, [raw])
+
     def test_prerequisite_messages_may_come_as_any_iterable_but_not_a_string(self):
         """A tuple must count; a bare string would be reported one character at a time."""
         from kg_microbe.transform import _missing_prerequisites

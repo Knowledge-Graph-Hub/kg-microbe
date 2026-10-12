@@ -464,8 +464,7 @@ class MicrobeDecoderTransform(Transform):
             raise FileNotFoundError(
                 f"MicrobeDecoder database not found at {csv_path}. "
                 "Run `poetry run kg download -t microbedecoder` to fetch it "
-                "(fetches https://github.com/thackmann/MicrobeDecoder/raw/main/"
-                "Shiny/MicrobeDecoder/data/database/database.zip; CC BY 4.0)."
+                "(fetches the database.zip upload pinned in download.yaml; CC BY 4.0)."
             )
 
         assembly_nodes = self.output_dir.parent / "gtdb" / "nodes.tsv"

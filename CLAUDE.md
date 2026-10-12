@@ -287,6 +287,13 @@ than being fetched; preflight checks the modules are present and match what
 `micro.owl` imports. `tests/test_micro_version_pin.py` checks `download.yaml`
 against the constant. PO still fetches its imports live.
 
+Inputs bound by reviewed policies are pinned the same way. Each one is fetched
+from a URL that names exactly one release: a dated release directory, a release
+asset or a commit, never a rolling PURL or branch. `tests/test_reviewed_release_urls.py`
+lists them, and each listed URL was verified byte-identical to the reviewed
+input. Moving one to a newer release means re-reviewing every policy that binds
+it. See #1420.
+
 ## Operational references
 
 - [Data hosting and ontology build costs](docs/DATA_HOSTING.md)

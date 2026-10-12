@@ -79,7 +79,9 @@
 # ENVO
 #
 -
-  url: http://purl.obolibrary.org/obo/envo.json
+  # Pinned to the release that the reviewed policies were checked against (#1420).
+  # The rolling URL serves whatever is newest, and a newer release fails the pins.
+  url: http://purl.obolibrary.org/obo/envo/releases/2026-06-26/envo.json
   local_name: envo.json
   tag: ontologies
 
@@ -105,7 +107,11 @@
 # different GO releases. Do NOT re-add a standalone go.json download.
 #
 -
-  url: http://purl.obolibrary.org/obo/go.owl
+  # Pinned to the release that the reviewed policies were checked against (#1420).
+  # The rolling URL serves whatever is newest, and a newer release fails the pins.
+  # GO's release archive folder 2026-06-19 holds the go.owl whose versionIRI is 2026-06-15;
+  # the PURL release IRI for 2026-06-15 does not resolve.
+  url: https://release.geneontology.org/2026-06-19/ontology/go.owl
   local_name: go.owl
   tag: ontologies
 
@@ -136,7 +142,11 @@
 # UBERON (Uber Anatomy Ontology)
 #
 -
-  url: https://purl.obolibrary.org/obo/uberon.owl
+  # Pinned to the release that the reviewed policies were checked against (#1420).
+  # The rolling URL serves whatever is newest, and a newer release fails the pins.
+  # The v2026-06-23 GitHub release carries the uberon.owl whose versionIRI is 2026-06-19;
+  # the PURL release IRI for 2026-06-19 does not resolve.
+  url: https://github.com/obophenotype/uberon/releases/download/v2026-06-23/uberon.owl
   local_name: uberon.owl
   tag: ontologies
 
@@ -144,7 +154,10 @@
 # FOODON
 #
 -
-  url: https://purl.obolibrary.org/obo/foodon.owl
+  # Pinned to the release that the reviewed policies were checked against (#1420).
+  # The rolling URL serves whatever is newest, and a newer release fails the pins.
+  # FOODON published its 2025-12-30 release as a commit without a tag, so pin that commit.
+  url: https://raw.githubusercontent.com/FoodOntology/foodon/68e46c14599d24b531fb4dac984659fb3c9fdb72/foodon.owl
   local_name: foodon.owl
   tag: ontologies
 
@@ -152,7 +165,9 @@
 # PATO (Phenotype And Trait Ontology)
 #
 -
-  url: http://purl.obolibrary.org/obo/pato.owl
+  # Pinned to the release that the reviewed policies were checked against (#1420).
+  # The rolling URL serves whatever is newest, and a newer release fails the pins.
+  url: http://purl.obolibrary.org/obo/pato/releases/2025-05-14/pato.owl
   local_name: pato.owl
   tag: ontologies
 
@@ -228,7 +243,10 @@
 # Unipathways
 # 
 -
-  url: https://github.com/geneontology/unipathway/raw/master/upa.owl
+  # Pinned to the release that the reviewed policies were checked against (#1420).
+  # The rolling URL serves whatever is newest, and a newer release fails the pins.
+  # The commit that published the upa.owl whose versionIRI is 2024-03-06.
+  url: https://raw.githubusercontent.com/geneontology/unipathway/2094080b928bd0af5346e37a4f0071c687bba7e2/upa.owl
   local_name: upa.owl
   tag: ontologies
 
@@ -297,7 +315,9 @@
 # `database.csv`; extraction happens once in MicrobeDecoderTransform.run().
 #
 -
-  url: https://github.com/thackmann/MicrobeDecoder/raw/main/Shiny/MicrobeDecoder/data/database/database.zip
+  # Pinned to the 2025-12-18 upload whose database.csv the reviewed MicrobeDecoder join and
+  # crosswalk policies bind (#1420). `main` was replaced on 2026-09-08 and fails those pins.
+  url: https://github.com/thackmann/MicrobeDecoder/raw/ff90e9aa63ae7c9c54b6e010feba3c0424d35a37/Shiny/MicrobeDecoder/data/database/database.zip
   local_name: microbedecoder_database.zip
   tag: microbedecoder
 
@@ -370,7 +390,9 @@
 # Standard ontology for biological and biomedical relations
 #
 -
-  url: http://purl.obolibrary.org/obo/ro.owl
+  # Pinned to the release that the reviewed policies were checked against (#1420).
+  # The rolling URL serves whatever is newest, and a newer release fails the pins.
+  url: http://purl.obolibrary.org/obo/ro/releases/2025-12-17/ro.owl
   local_name: ro.owl
   tag: ontologies
 
@@ -384,7 +406,9 @@
 # stub-import section below.
 #
 -
-  url: http://purl.obolibrary.org/obo/po.owl
+  # Pinned to the release that the reviewed policies were checked against (#1420).
+  # The rolling URL serves whatever is newest, and a newer release fails the pins.
+  url: http://purl.obolibrary.org/obo/po/releases/2026-01-09/po.owl
   local_name: po.owl
   tag: ontologies
 

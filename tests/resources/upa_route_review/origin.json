@@ -1,7 +1,8 @@
 {
   "full_sources": {
     "upa.json": {
-      "release": "http://purl.obolibrary.org/obo/upa/releases/2024-03-06/upa.owl"
+      "release": "http://purl.obolibrary.org/obo/upa/releases/2024-03-06/upa.owl",
+      "sha256": "cff92938a092dcc2e4e2e1a17266417edeacba8e7b9f51b3f183066a80fdb8bd"
     },
     "upa.owl": "1ea0465c2222592bdeea3197a687ba26c74818263e1e6c5e8838baafcb6838ce",
     "go.db": {
@@ -12,7 +13,7 @@
       }
     }
   },
-  "reviewed_policy_semantic_sha256": "a7ad1447938400845c27b2fb08eec542a8b63b5f2dd018706f3d144595a347a6",
+  "reviewed_policy_semantic_sha256": "6cffa6d569ae82f4c5f4ea3aaf4bca5b495e2915ebf89ddff8fa98343a6bedf2",
   "fixtures": {
     "upa.json": "8880cbcc1535d1d376b3b3ea058592e6ea662b65452078ddd30a36cce6bbd665",
     "upa.owl": "47c5870dc8560608a48454f69e6a2eeafd04e424c3d605feb4519154aba5baef",

@@ -27,7 +27,7 @@
     "GO:0006903": "8daea806d1ba05d55e833b9caa2e987e0b776175f42c76eaeafc40184ff8734a",
     "GO:0048199": "6d332e5196022cac88c8a79629906e8f84e0fef0fc793f667b7a66503df9d862"
   },
-  "reviewed_policy_sha256": "7d7e2c5bfab83ae73505c4dc6d4784ce8e9a3d5822878bddddad158290d45cb1",
+  "reviewed_policy_sha256": "f8d02767086a378f3d983070ad0f4627614d3cda5dc399b94ab21d98574d2579",
   "fixture_sha256": "09f6e75f5d96fde0321a70395ec51d59574b71279dec5070c48afbb4a8bb63c4",
   "note": "Fifteen finite claims on fourteen complete native class stanzas, plus replacement-class/property context for #1357. Two byte-preserved stanzas are added for the user-approved residual-three audit-only decision; GO:0055108 already supplied the third. All twelve prior policy records are unchanged. Test SQL inputs retain each complete subject statement multiset once; excerpts are not full ontology releases.",
   "independent_disposition_proof_sha256": "ab8884f5ac13456ab0a19cf985e18c716e7c58dd410f3ffd0090691138a28d2d",

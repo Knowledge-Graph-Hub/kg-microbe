@@ -1,0 +1,55 @@
+id	category	name	description	xref	provided_by	synonym	deprecated	same_as
+NCBITaxon:1	biolink:OrganismTaxon	root		GC_ID:1|PMID:30365038|PMID:32761142	ncbitaxon_removed_subset.json	all		
+NCBITaxon:114378	biolink:OrganismTaxon	Thermofilaceae		GC_ID:11|PMID:9226896	ncbitaxon_removed_subset.json			
+NCBITaxon:117743	biolink:OrganismTaxon	Flavobacteriia		GC_ID:11|PMID:11837318	ncbitaxon_removed_subset.json			
+NCBITaxon:1224	biolink:OrganismTaxon	Pseudomonadota		GC_ID:11|PMID:11321122|PMID:11837318	ncbitaxon_removed_subset.json	Alphaproteobacteriota Whitman et al. 2018|Alphaproteobacteriota|Proteobacteria|Proteobacteriota|proteobacteria|purple photosynthetic bacteria and relatives		
+NCBITaxon:1236	biolink:OrganismTaxon	Gammaproteobacteria		GC_ID:11|PMID:23334881	ncbitaxon_removed_subset.json	Proteobacteria gamma subdivision|Pseudomonadia|Purple bacteria, gamma subdivision|g-proteobacteria|gamma proteobacteria|gamma subdivision|gamma subgroup		
+NCBITaxon:131567	biolink:OrganismTaxon	cellular organisms		GC_ID:1	ncbitaxon_removed_subset.json	biota		
+NCBITaxon:135619	biolink:OrganismTaxon	Oceanospirillales		GC_ID:11	ncbitaxon_removed_subset.json	Oceanospirillum/Halomonas group		
+NCBITaxon:1760	biolink:OrganismTaxon	Actinomycetes		GC_ID:11|PMID:10028260|PMID:11155976|PMID:11321122|PMID:19244447|PMID:28840812	ncbitaxon_removed_subset.json	Actinobacteria Stackebrandt et al. 1997|Actinomycetia|high G+C Gram-positive bacteria		
+NCBITaxon:1783257	biolink:OrganismTaxon	PVC group		GC_ID:11|PMID:16704931|PMID:23851394|PMID:24185849|PMID:28824586	ncbitaxon_removed_subset.json			
+NCBITaxon:1783270	biolink:OrganismTaxon	FCB group		GC_ID:11	ncbitaxon_removed_subset.json	Fibrobacter/Acidobacteria group|Fibrobacteres-Chlorobi-Bacteroidetes superphylum|Fibrobacteres/Acidobacteria group		
+NCBITaxon:1783272	biolink:OrganismTaxon	Bacillati		GC_ID:11|PMID:18988685	ncbitaxon_removed_subset.json	Firmacutes|Firmicuteota|Firmicutes|Firmicutes corrig. Gibbons and Murray 1978 (Approved Lists 1980)|Terrabacteria|Terrabacteria group|Terrabacterida		
+NCBITaxon:1783275	biolink:OrganismTaxon	Thermoproteati		GC_ID:11|PMID:23851394	ncbitaxon_removed_subset.json	Crenarchaeida|TACK group		
+NCBITaxon:183924	biolink:OrganismTaxon	Thermoprotei		GC_ID:11|PMID:11837318|PMID:12054225|PMID:25288668|PMID:26654112	ncbitaxon_removed_subset.json	Crenarchaeota|Thermoprotea		
+NCBITaxon:196137	biolink:OrganismTaxon	Methanospirillaceae		GC_ID:11|PMID:12054225	ncbitaxon_removed_subset.json			
+NCBITaxon:2	biolink:OrganismTaxon	Bacteria		GC_ID:11|PMID:10425795|PMID:10425796|PMID:10425797|PMID:10490293|PMID:10843050|PMID:10939651|PMID:10939673|PMID:10939677|PMID:11211268|PMID:11321083|PMID:11321113|PMID:11411719|PMID:11540071|PMID:11542017|PMID:11542087|PMID:11760965|PMID:12054223|PMID:270744|PMID:32628106|PMID:36748408|PMID:7520741|PMID:8123559|PMID:8186100|PMID:8590690|PMID:9103655|PMID:9336922	ncbitaxon_removed_subset.json	Bacteria (ex Cavalier-Smith 1987)|Bacteria Woese et al. 2024|Bacteriobiota|Monera|Procaryotae|Prokaryota|Prokaryotae|bacteria|eubacteria|prokaryote|prokaryotes		
+NCBITaxon:200644	biolink:OrganismTaxon	Flavobacteriales		GC_ID:11	ncbitaxon_removed_subset.json			
+NCBITaxon:201174	biolink:OrganismTaxon	Actinomycetota		GC_ID:11|PMID:11837318|PMID:16280504|PMID:29458499	ncbitaxon_removed_subset.json	Actinobacteraeota|Actinobacteria|Actinobacteriota|actinobacteria		
+NCBITaxon:203682	biolink:OrganismTaxon	Planctomycetota		GC_ID:11|PMID:15143026|PMID:15280311|PMID:25780503	ncbitaxon_removed_subset.json	Planctobacteria (Cavalier-Smith 1987) Cavalier-Smith 2002|"Planctomycetes" Garrity and Holt 2001|"Planctomycetota" Whitman et al. 2018|Planctobacteria|Planctomycetes|planctomycetes		
+NCBITaxon:203683	biolink:OrganismTaxon	Planctomycetia		GC_ID:11|PMID:25288668	ncbitaxon_removed_subset.json	Planctomycea|Planctomycetacia|Planctomycetes|Planctomycetia Ward 2020		
+NCBITaxon:2037	biolink:OrganismTaxon	Actinomycetales		GC_ID:11|PMID:10028252|PMID:16558735|PMID:19244447|PMID:28840812	ncbitaxon_removed_subset.json			
+NCBITaxon:204432	biolink:OrganismTaxon	Terriglobia		GC_ID:11|PMID:11837318|PMID:25288668	ncbitaxon_removed_subset.json	Acidobacteriae|Acidobacteriia|Acidobacteriia corrig. (Cavalier-Smith 2002) Thrash and Coates 2011|Solibacteres		
+NCBITaxon:204433	biolink:OrganismTaxon	Terriglobales		GC_ID:11|PMID:11837318	ncbitaxon_removed_subset.json	Acidobacteria subdivision 1|Acidobacteriales		
+NCBITaxon:204434	biolink:OrganismTaxon	Acidobacteriaceae		GC_ID:11	ncbitaxon_removed_subset.json	Acidobacteriaceae Thrash and Coates 2012		
+NCBITaxon:204441	biolink:OrganismTaxon	Rhodospirillales		GC_ID:11	ncbitaxon_removed_subset.json	Kiloniellales		
+NCBITaxon:2157	biolink:OrganismTaxon	Archaea		GC_ID:11|PMID:10425795|PMID:10425796|PMID:10425797|PMID:10490293|PMID:10843050|PMID:10939651|PMID:10939673|PMID:10939677|PMID:11211268|PMID:11321083|PMID:11321113|PMID:11411719|PMID:11540071|PMID:11541975|PMID:11542064|PMID:11542149|PMID:11760965|PMID:12054223|PMID:25527841|PMID:270744|PMID:32628106|PMID:36748408|PMID:8123559|PMID:8590690|PMID:9103655|PMID:9336922	ncbitaxon_removed_subset.json	Archaebacteria|Archaebiota|Mendosicutes|Metabacteria|Monera|Procaryotae|Prokaryota|Prokaryotae|archaea|prokaryote|prokaryotes		
+NCBITaxon:2191	biolink:OrganismTaxon	Methanomicrobiales		GC_ID:11|PMID:11321122|PMID:11540078|PMID:15653928|PMID:390357	ncbitaxon_removed_subset.json			
+NCBITaxon:2202	biolink:OrganismTaxon	Methanospirillum		GC_ID:11	ncbitaxon_removed_subset.json	Methanospirillum Ferry et al. 1974 (Approved Lists 1980)		
+NCBITaxon:2206	biolink:OrganismTaxon	Methanosarcinaceae		GC_ID:11|PMID:390357|PMID:8590683	ncbitaxon_removed_subset.json			
+NCBITaxon:224756	biolink:OrganismTaxon	Methanomicrobia		GC_ID:11	ncbitaxon_removed_subset.json			
+NCBITaxon:2268	biolink:OrganismTaxon	Thermofilum		GC_ID:11	ncbitaxon_removed_subset.json			
+NCBITaxon:2290931	biolink:OrganismTaxon	Stenosarchaea group		GC_ID:11|PMID:29684598	ncbitaxon_removed_subset.json	Stenosarchaea		
+NCBITaxon:2745	biolink:OrganismTaxon	Halomonas		GC_ID:11|PMID:16449462|PMID:8240950	ncbitaxon_removed_subset.json	Deleya|Volcaniella		
+NCBITaxon:2759	biolink:OrganismTaxon	Eukaryota		GC_ID:1|PMID:23020233|PMID:30257078	ncbitaxon_removed_subset.json	Eucarya|Eucaryotae|Eukarya|Eukaryotae|eukaryotes		
+NCBITaxon:2818505	biolink:OrganismTaxon	Myxococcota		GC_ID:11	ncbitaxon_removed_subset.json			
+NCBITaxon:28211	biolink:OrganismTaxon	Alphaproteobacteria		GC_ID:11|PMID:11541974|PMID:11837318|PMID:16166687|PMID:16403855|PMID:19060069	ncbitaxon_removed_subset.json	Alphabacteria|Proteobacteria alpha subdivision|Purple bacteria, alpha subdivision|a-proteobacteria|alpha proteobacteria|alpha subdivision|alpha subgroup		
+NCBITaxon:28256	biolink:OrganismTaxon	Halomonadaceae		GC_ID:11|PMID:11837309|PMID:17911321|PMID:19656941|PMID:21478390|PMID:38456846	ncbitaxon_removed_subset.json	Alcanivorax/Fundibacter group|Halomonadaceae Franzmann et al. 1989|gamma-3 proteobacteria		
+NCBITaxon:2834276	biolink:OrganismTaxon	Methanospirillum purgamenti		GC_ID:11	ncbitaxon_removed_subset.json			
+NCBITaxon:2856582	biolink:OrganismTaxon	Thermofilales		GC_ID:11	ncbitaxon_removed_subset.json			
+NCBITaxon:28889	biolink:OrganismTaxon	Thermoproteota		GC_ID:11|PMID:11541975|PMID:11837318|PMID:2112744|PMID:7510403|PMID:7857801|PMID:8123559|PMID:8799176|PMID:9039908|PMID:9226896	ncbitaxon_removed_subset.json	Candidatus Marsarchaeota Jay et al. 2018|"Candidatus Verstraetearchaeota" Vanwonterghem et al. 2016|Candidatus Korarchaeota|Candidatus Martarchaeota|Candidatus Methanomethylicota|Crenarchaeota|Eocyta|Korarchaeota|Methanomethylicota|Thermoproteaeota|Thermoproteota corrig. Garrity and Holt 2021|Xenarchaea|Xenarchaeota|crenarchaeotes		
+NCBITaxon:28890	biolink:OrganismTaxon	Methanobacteriota		GC_ID:11|PMID:11837318|PMID:12054225|PMID:2112744	ncbitaxon_removed_subset.json	Euryarchaeota|Methanobacteraeota|euryarchaeotes		
+NCBITaxon:29	biolink:OrganismTaxon	Myxococcales		GC_ID:11|PMID:10425789	ncbitaxon_removed_subset.json	Myxobacteria|The Myxobacteria|fruiting gliding bacteria		
+NCBITaxon:2907517	biolink:OrganismTaxon	Halomethanococcus		GC_ID:11|PMID:16346919	ncbitaxon_removed_subset.json			
+NCBITaxon:32015	biolink:OrganismTaxon	Myxococcia		GC_ID:11	ncbitaxon_removed_subset.json	Myxococcia Cavalier-Smith 2020		
+NCBITaxon:33154	biolink:OrganismTaxon	Opisthokonta		GC_ID:1	ncbitaxon_removed_subset.json	Fungi/Metazoa group|opisthokonts		
+NCBITaxon:3366610	biolink:OrganismTaxon	Methanobacteriati		GC_ID:11	ncbitaxon_removed_subset.json	Euryarchaeida		
+NCBITaxon:3379134	biolink:OrganismTaxon	Pseudomonadati		GC_ID:11	ncbitaxon_removed_subset.json			
+NCBITaxon:356	biolink:OrganismTaxon	Hyphomicrobiales		GC_ID:11|PMID:1854635	ncbitaxon_removed_subset.json	Rhizobiales|alpha-2 proteobacteria|rhizobacteria		
+NCBITaxon:41295	biolink:OrganismTaxon	Rhodospirillaceae		GC_ID:11	ncbitaxon_removed_subset.json	alpha-1 proteobacteria|purple nonsulfur bacteria		
+NCBITaxon:49546	biolink:OrganismTaxon	Flavobacteriaceae		GC_ID:11|PMID:12054224	ncbitaxon_removed_subset.json			
+NCBITaxon:57723	biolink:OrganismTaxon	Acidobacteriota		GC_ID:11	ncbitaxon_removed_subset.json	Acidobacteria|Acidobacteriota corrig. Thrash and Coates 2021|Acidobacterium group|Fibrobacter/Acidobacteria group|Fibrobacteres/Acidobacteria group		
+NCBITaxon:68336	biolink:OrganismTaxon	Bacteroidota/Chlorobiota group		GC_ID:11	ncbitaxon_removed_subset.json	Bacteroidetes/Chlorobi group|CFB/Chlorobi group|CFB/Green sulfur bacteria group|Cytophagales/Green sulfur bacteria group		
+NCBITaxon:82115	biolink:OrganismTaxon	Rhizobiaceae		GC_ID:11	ncbitaxon_removed_subset.json			
+NCBITaxon:94695	biolink:OrganismTaxon	Methanosarcinales		GC_ID:11|PMID:11837318|PMID:12054225|PMID:2431320	ncbitaxon_removed_subset.json	Halomebacteria		
+NCBITaxon:976	biolink:OrganismTaxon	Bacteroidota		GC_ID:11|PMID:11541229|PMID:11542017|PMID:28066339	ncbitaxon_removed_subset.json	Bacteroidota Whitman et al. 2018|BCF group|Bacteroides-Cytophaga-Flexibacter group|Bacteroidetes|CFB group|CFB group bacteria|Cytophaga-Flexibacter-Bacteroides phylum|Sphingobacteria		

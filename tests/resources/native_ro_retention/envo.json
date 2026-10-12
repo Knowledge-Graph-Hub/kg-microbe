@@ -1,0 +1,131 @@
+{
+  "graphs": [
+    {
+      "edges": [
+        {
+          "obj": "http://purl.obolibrary.org/obo/ENVO_02500018",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002229",
+          "sub": "http://purl.obolibrary.org/obo/ENVO_02500021"
+        },
+        {
+          "obj": "http://purl.obolibrary.org/obo/ENVO_03000010",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002229",
+          "sub": "http://purl.obolibrary.org/obo/ENVO_03000036"
+        }
+      ],
+      "id": "http://purl.obolibrary.org/obo/envo.json",
+      "nodes": [
+        {
+          "id": "http://geneontology.org/foo/applies-pattern",
+          "propertyType": "ANNOTATION",
+          "type": "PROPERTY"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_00000018",
+          "lbl": "obsolete dry river",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0100001",
+                "val": "ENVO:01000995"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "ENVO"
+              }
+            ],
+            "definition": {
+              "val": "A river that has either permanently or temporally lost its water.",
+              "xrefs": [
+                "MA:ma"
+              ]
+            },
+            "deprecated": true
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_02500018",
+          "lbl": "algal bloom process",
+          "meta": {
+            "comments": [
+              "This class is under development. Note that cyanobacterial blooms are often confused with algal blooms. There is no globally recognised threshold beyond which community density enters a bloom state."
+            ],
+            "definition": {
+              "val": "A process during which the populations in a community of algae in a marine or freshwater ecosystem undergo rapid growth, resulting in high concentrations of algal cells that occur only periodically and briefly in that ecosystem, relative to their concentrations through the majority of the planetary orbital period.",
+              "xrefs": [
+                "https://en.wikipedia.org/wiki/Algal_bloom"
+              ]
+            },
+            "subsets": [
+              "\"envoPolar\""
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_02500021",
+          "lbl": "algal bloom collapse",
+          "meta": {
+            "definition": {
+              "val": "A process during which the rapid growth of algal populations that result in an algal bloom ceases, and cell densities begin to fall due to death, predation, and transport.",
+              "xrefs": [
+                "https://en.wikipedia.org/wiki/Algal_bloom"
+              ]
+            }
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_03000010",
+          "lbl": "material transport process",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-4366-3088"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "http://orcid.org/0000-0002-3410-4655"
+              }
+            ],
+            "comments": [
+              "Experimental class for structural purposes not recommended for annotation."
+            ],
+            "definition": {
+              "val": "A process during which material is displaced from its original location and transported either to a new location or back to the original location."
+            },
+            "subsets": [
+              "\"envoPolar\""
+            ]
+          },
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_03000036",
+          "lbl": "sedimentation in a water body",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-4366-3088"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "http://orcid.org/0000-0002-3410-4655"
+              }
+            ],
+            "definition": {
+              "val": "A material accumulation process during which solid particles are pulled through a water body by gravitation or centrifugal force and which ends when they settle on a solid surface."
+            },
+            "subsets": [
+              "\"envoPolar\""
+            ]
+          },
+          "type": "CLASS"
+        }
+      ]
+    }
+  ]
+}

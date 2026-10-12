@@ -12,7 +12,7 @@ from kg_microbe.transform_utils.gold.gold import GOLDTransform
 
 NODES = [
     ["id", "category", "name"],
-    ["gold.organism:1", "biolink:IndividualOrganism", "Org 1"],
+    ["gold:organism1", "biolink:IndividualOrganism", "Org 1"],
     # Retired row deliberately first: a naive first-wins dedup would emit
     # NCBITaxon:4914 carrying this row's stale name.
     ["NCBITaxon:262981", "biolink:OrganismTaxon", "stale retired name"],
@@ -23,10 +23,10 @@ NODES = [
 ]
 EDGES = [
     ["subject", "predicate", "object", "relation"],
-    ["gold.organism:1", "biolink:in_taxon", "NCBITaxon:262981", "RO:0002162"],
-    ["gold.organism:1", "biolink:occurs_in", "gold.ecosystem:1", "RO:0002451"],
-    ["gold.organism:1", "biolink:related_to", "gold.study:1", "RO:0002610"],
-    ["gold.organism:1", "biolink:derives_from", "gold.sample:1", "RO:0001000"],
+    ["gold:organism1", "biolink:in_taxon", "NCBITaxon:262981", "RO:0002162"],
+    ["gold:organism1", "biolink:occurs_in", "gold.ecosystem:1", "RO:0002451"],
+    ["gold:organism1", "biolink:related_to", "gold.study:1", "RO:0002610"],
+    ["gold:organism1", "biolink:derives_from", "gold.sample:1", "RO:0001000"],
 ]
 
 
@@ -83,7 +83,7 @@ class DropSamplesAndStudiesTest(TestCase):
     def test_edges_touching_them_go_too(self):
         """Dropping the node while keeping the edge would create a dangling reference."""
         preds = {r[1] for r in _rows(_build() / "edges.tsv")}
-        self.assertNotIn("biolink:related_to", preds)
+        self.assertFalse(any(row[2].startswith("gold.study:") for row in _rows(_build() / "edges.tsv")))
         self.assertNotIn("biolink:derives_from", preds)
 
     def test_the_organism_to_environment_edge_survives(self):
@@ -113,13 +113,12 @@ class TaxidRemapTest(TestCase):
         """
         `262981` was merged into `4914` (Lachancea waltii).
 
-        The organism-to-taxon edge is emitted as `subclass_of`, not the
-        upstream `in_taxon` — see `_SUBCLASS_OF` in gold.py. What this test
-        pins is the remap, which the re-predication did not change.
+        The unresolved referent retains an audited `related_to` association,
+        preserving the existing retired-ID remap rather than taxon inheritance.
         """
         rows = _rows(_build() / "edges.tsv")
         taxon_edges = [r for r in rows if r[2].startswith("NCBITaxon:")]
-        self.assertEqual([r[1] for r in taxon_edges], ["biolink:subclass_of"])
+        self.assertEqual([r[1] for r in taxon_edges], ["biolink:related_to"])
         self.assertEqual(taxon_edges[0][2], "NCBITaxon:4914")
 
     def test_the_retired_node_collapses_onto_its_replacement(self):
@@ -142,7 +141,7 @@ class TaxidRemapTest(TestCase):
     def test_non_taxon_ids_pass_through_untouched(self):
         """A merge table keyed on bare integers must not collide with other prefixes."""
         rows = _rows(_build() / "edges.tsv")
-        self.assertTrue(any(r[0] == "gold.organism:1" for r in rows))
+        self.assertTrue(any(r[0] == "gold:organism1" for r in rows))
 
     def test_the_surviving_node_keeps_the_current_name_not_the_retired_one(self):
         """

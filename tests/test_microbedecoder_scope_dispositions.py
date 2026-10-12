@@ -5,6 +5,7 @@ import pytest
 from kg_microbe.transform_utils.microbedecoder.source_annotations import (
     is_reported_metabolism_annotation,
 )
+from tests.microbedecoder_inactive_join_fixtures import bind_inactive_join_policy, write_empty_join_gss
 from tests.microbedecoder_quarantine_fixtures import bind_fixture_quarantine_policy
 from tests.test_microbedecoder_curation_integration import _rows, _transform, _write_source
 
@@ -23,11 +24,13 @@ REVIEWED = (
 
 
 @pytest.mark.parametrize("literal", REVIEWED)
-def test_compound_group_keeps_full_literal_prediction_and_no_native_type(tmp_path, literal):
+def test_compound_group_keeps_full_literal_prediction_and_no_native_type(monkeypatch, tmp_path, literal):
     """Changing representation is not permission to add an exact phenotype grounding."""
     transform = _transform(tmp_path)
     quarantine_source = _write_source(tmp_path, [{"LPSN_ID": "101", "FAPROTAX_Type_of_metabolism": literal}])
     bind_fixture_quarantine_policy(transform, quarantine_source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, quarantine_source, monkeypatch)
     transform.run(data_file=quarantine_source)
     edges = _rows(transform.output_edge_file)
     assert len(edges) == 1

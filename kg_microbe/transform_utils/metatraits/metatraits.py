@@ -35,6 +35,7 @@ from kg_microbe.transform_utils.constants import (  # noqa: E402
     NCBITAXON_NODES_FILE,
     NCBITAXON_SOURCE,
     OBSERVATION,
+    PREDICTION,
     PROVISIONAL_SPECIES_PREFIX,
     RAW_DATA_DIR,
     STRAIN_PREFIX,
@@ -2436,6 +2437,13 @@ class MetaTraitsTransform(Transform):
             _StreamingRowWriter(temp_edges_file, self.edge_header) as edge_writer,
             temp_indeterminate_file.open("w", encoding="utf-8") as indeterminate_writer,
         ):
+
+            def emit_taxon_if_needed(taxon_id: str, taxon_name: str) -> None:
+                """Declare a subject when an assertion is emitted, including numeric-only taxa."""
+                if taxon_id not in seen_taxon_nodes:
+                    seen_taxon_nodes.add(taxon_id)
+                    node_writer.write_row(self._create_node_row(taxon_id, NCBI_CATEGORY, taxon_name))
+
             with _open_jsonl(input_file) as f:
                 line_iter = tqdm(f, desc=f"  {input_file.name}", leave=False) if show_status else f
                 for line in line_iter:
@@ -2476,7 +2484,7 @@ class MetaTraitsTransform(Transform):
                                 if species_id:
                                     # strain → NCBITaxon:species
                                     parent_id = species_id
-                                    relation = "rdfs:subClassOf"
+                                    relation = INFERRED_SUBCLASS_RELATION
                                 else:
                                     # Create provisional species → search genus
                                     parent_id = self._create_provisional_species_node(genus, species, node_writer)
@@ -2492,7 +2500,7 @@ class MetaTraitsTransform(Transform):
                                                 genus_id,
                                                 INFERRED_SUBCLASS_RELATION,
                                                 self.knowledge_source,
-                                                OBSERVATION,
+                                                PREDICTION,
                                                 AUTOMATED_AGENT,
                                             ]
                                         )
@@ -2507,7 +2515,7 @@ class MetaTraitsTransform(Transform):
                                                     higher_rank[0],
                                                     INFERRED_SUBCLASS_RELATION,
                                                     self.knowledge_source,
-                                                    OBSERVATION,
+                                                    PREDICTION,
                                                     AUTOMATED_AGENT,
                                                 ]
                                             )
@@ -2536,7 +2544,7 @@ class MetaTraitsTransform(Transform):
                                     parent_id,
                                     relation,
                                     self.knowledge_source,
-                                    OBSERVATION,
+                                    PREDICTION,
                                     AUTOMATED_AGENT,
                                 ]
                             )
@@ -2556,7 +2564,7 @@ class MetaTraitsTransform(Transform):
                                         genus_id,
                                         INFERRED_SUBCLASS_RELATION,
                                         self.knowledge_source,
-                                        OBSERVATION,
+                                        PREDICTION,
                                         AUTOMATED_AGENT,
                                     ]
                                 )
@@ -2570,7 +2578,7 @@ class MetaTraitsTransform(Transform):
                                             higher_rank[0],
                                             INFERRED_SUBCLASS_RELATION,
                                             self.knowledge_source,
-                                            OBSERVATION,
+                                            PREDICTION,
                                             AUTOMATED_AGENT,
                                         ]
                                     )
@@ -2628,6 +2636,7 @@ class MetaTraitsTransform(Transform):
                     # Temperature optimum bin
                     temp_opt_bin = self._classify_temperature_optimum_bin(quant_data["temp_growth"])
                     if temp_opt_bin:
+                        emit_taxon_if_needed(tax_id, tax_name)
                         curie = temp_opt_bin["curie"]
                         if curie not in seen_trait_nodes:
                             seen_trait_nodes.add(curie)
@@ -2652,6 +2661,7 @@ class MetaTraitsTransform(Transform):
                     # NaCl optimum bin
                     nacl_opt_bin = self._classify_nacl_optimum_bin(quant_data["sal_growth"])
                     if nacl_opt_bin:
+                        emit_taxon_if_needed(tax_id, tax_name)
                         curie = nacl_opt_bin["curie"]
                         if curie not in seen_trait_nodes:
                             seen_trait_nodes.add(curie)
@@ -2676,6 +2686,7 @@ class MetaTraitsTransform(Transform):
                     # pH optimum bin
                     ph_opt_bin = self._classify_ph_optimum_bin(quant_data["ph_growth"])
                     if ph_opt_bin:
+                        emit_taxon_if_needed(tax_id, tax_name)
                         curie = ph_opt_bin["curie"]
                         if curie not in seen_trait_nodes:
                             seen_trait_nodes.add(curie)
@@ -2702,6 +2713,7 @@ class MetaTraitsTransform(Transform):
                         quant_data["temp_min"], quant_data["temp_max"]
                     )
                     for phenotype in temp_phenotypes:
+                        emit_taxon_if_needed(tax_id, tax_name)
                         curie = phenotype["curie"]
                         if curie not in seen_trait_nodes:
                             seen_trait_nodes.add(curie)
@@ -2725,6 +2737,7 @@ class MetaTraitsTransform(Transform):
 
                     sal_phenotypes = self._classify_salinity_phenotypes(quant_data["sal_min"], quant_data["sal_max"])
                     for phenotype in sal_phenotypes:
+                        emit_taxon_if_needed(tax_id, tax_name)
                         curie = phenotype["curie"]
                         if curie not in seen_trait_nodes:
                             seen_trait_nodes.add(curie)
@@ -2748,6 +2761,7 @@ class MetaTraitsTransform(Transform):
 
                     ph_phenotypes = self._classify_ph_phenotypes(quant_data["ph_min"], quant_data["ph_max"])
                     for phenotype in ph_phenotypes:
+                        emit_taxon_if_needed(tax_id, tax_name)
                         curie = phenotype["curie"]
                         if curie not in seen_trait_nodes:
                             seen_trait_nodes.add(curie)
@@ -2983,15 +2997,7 @@ class MetaTraitsTransform(Transform):
                                     )
                                 continue
 
-                        if tax_id not in seen_taxon_nodes:
-                            seen_taxon_nodes.add(tax_id)
-                            node_writer.write_row(
-                                self._create_node_row(
-                                    tax_id,
-                                    NCBI_CATEGORY,
-                                    tax_name,
-                                )
-                            )
+                        emit_taxon_if_needed(tax_id, tax_name)
 
                         if curie not in seen_trait_nodes:
                             seen_trait_nodes.add(curie)
@@ -3353,7 +3359,7 @@ class MetaTraitsTransform(Transform):
                                     if species_id:
                                         # strain → NCBITaxon:species
                                         parent_id = species_id
-                                        relation = "rdfs:subClassOf"
+                                        relation = INFERRED_SUBCLASS_RELATION
                                     else:
                                         # Create provisional species → search genus
                                         parent_id = self._create_provisional_species_node(genus, species, node_writer)
@@ -3369,7 +3375,7 @@ class MetaTraitsTransform(Transform):
                                                     genus_id,
                                                     INFERRED_SUBCLASS_RELATION,
                                                     self.knowledge_source,
-                                                    OBSERVATION,
+                                                    PREDICTION,
                                                     AUTOMATED_AGENT,
                                                 ]
                                             )
@@ -3384,7 +3390,7 @@ class MetaTraitsTransform(Transform):
                                                         higher_rank[0],
                                                         INFERRED_SUBCLASS_RELATION,
                                                         self.knowledge_source,
-                                                        OBSERVATION,
+                                                        PREDICTION,
                                                         AUTOMATED_AGENT,
                                                     ]
                                                 )
@@ -3413,7 +3419,7 @@ class MetaTraitsTransform(Transform):
                                         parent_id,
                                         relation,
                                         self.knowledge_source,
-                                        OBSERVATION,
+                                        PREDICTION,
                                         AUTOMATED_AGENT,
                                     ]
                                 )
@@ -3433,7 +3439,7 @@ class MetaTraitsTransform(Transform):
                                             genus_id,
                                             INFERRED_SUBCLASS_RELATION,
                                             self.knowledge_source,
-                                            OBSERVATION,
+                                            PREDICTION,
                                             AUTOMATED_AGENT,
                                         ]
                                     )
@@ -3447,7 +3453,7 @@ class MetaTraitsTransform(Transform):
                                                 higher_rank[0],
                                                 INFERRED_SUBCLASS_RELATION,
                                                 self.knowledge_source,
-                                                OBSERVATION,
+                                                PREDICTION,
                                                 AUTOMATED_AGENT,
                                             ]
                                         )

@@ -94,6 +94,10 @@ ipython_config.py
 /data/pfas_bakta/
 /data/pfas_bakta_transform/
 /data/processed/
+# Local rebuild-driver state (caches, raw staging, lock); not produced by repository code.
+/data/runtime-cache/
+/data/.raw-stage.*/
+/data/.rebuild.lock
 /data/bacdive_media_links__crbip.txt
 /data_bak/
 /data_merged.**

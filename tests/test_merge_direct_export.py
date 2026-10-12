@@ -270,8 +270,8 @@ def add_normalized_duplicate(graph):
     graph.add_edge(duplicate["subject"], duplicate["object"], edge_key="operation-created-copy", **duplicate)
 
 
-def test_earlier_mutating_operation_keeps_real_intermediate_dedup(tmp_path, monkeypatch):
-    """Normalizing distinct graph keys is observable work, so mutated graphs take the old path."""
+def test_earlier_mutating_operation_is_rejected_before_merge(tmp_path, monkeypatch):
+    """Release merges cannot use arbitrary operations to bypass upstream finalization."""
     config = configuration(tmp_path)
     content = yaml.safe_load(config.read_text())
     content["merged_graph"]["operations"] = [{"name": f"{__name__}.add_normalized_duplicate", "args": {}}]
@@ -283,10 +283,9 @@ def test_earlier_mutating_operation_keeps_real_intermediate_dedup(tmp_path, monk
         pytest.fail("mutated graph used direct export")
 
     monkeypatch.setattr(kgx_source.ProvenancePreservingTransformer, "_export_completed_graph", forbidden_direct)
-    graph = merge_kg.load_and_merge(str(config))
-    assert graph.number_of_edges() == 5  # Returned pre-export graph deliberately retains the operation.
-    _, rows = archive_rows(tmp_path / "out/result.tar.gz")
-    assert len(rows["result_edges.tsv"]) == 4  # Existing GraphSink canonicalizes/deduplicates it.
+    with pytest.raises(ValueError, match="only graph-level read-only statistics"):
+        merge_kg.load_and_merge(str(config))
+    assert not (tmp_path / "out/result.tar.gz").exists()
 
 
 @pytest.mark.parametrize(

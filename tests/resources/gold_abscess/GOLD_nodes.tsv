@@ -1,0 +1,84 @@
+id	category	name	provided_by	xref
+gold:Go0027541	biolink:IndividualOrganism	Mycobacterium lacus DSM 44577	infores:gold	NCBITaxon:169765
+gold:Go0032278	biolink:IndividualOrganism	Staphylococcus aureus aureus USA300	infores:gold	NCBITaxon:367830
+gold:Go0000388	biolink:IndividualOrganism	Staphylococcus aureus aureus USA300_FPR3757	infores:gold	NCBITaxon:451515
+gold:Go0000369	biolink:IndividualOrganism	Odoribacter splanchnicus 1651/6, DSM 20712	infores:gold	NCBITaxon:709991
+gold:Go0030708	biolink:IndividualOrganism	Peptoniphilus gorbachii ATCC BAA-1383	infores:gold	NCBITaxon:411567
+gold:Go0003555	biolink:IndividualOrganism	Hallella bergensis DSM 17361	infores:gold	NCBITaxon:585502
+gold:Go0001180	biolink:IndividualOrganism	Dialister pneumosintes ATCC 33048	infores:gold	NCBITaxon:39950
+gold:Go0624835	biolink:IndividualOrganism	Bacteroides pneumosintes CCUG 21025	infores:gold	NCBITaxon:39950
+gold:Go0003374	biolink:IndividualOrganism	Prescottella equi ATCC 33707	infores:gold	NCBITaxon:525370
+gold:Go0012480	biolink:IndividualOrganism	Corynebacterium pyruviciproducens ATCC BAA-1742	infores:gold	NCBITaxon:1125779
+gold:Go0624834	biolink:IndividualOrganism	Bacteroides pneumosintes DSM 11619	infores:gold	NCBITaxon:39950
+gold:Go0012968	biolink:IndividualOrganism	Alistipes onderdonkii WAL 8169, DSM 19147	infores:gold	NCBITaxon:1203611
+gold:Go0023479	biolink:IndividualOrganism	Nocardia abscessus NBRC 100374	infores:gold	NCBITaxon:1206723
+gold:Go0013011	biolink:IndividualOrganism	Dysgonomonas capnocytophagoides DSM 22835	infores:gold	NCBITaxon:1121485
+gold:Go0032583	biolink:IndividualOrganism	Pasteurella multocida septica CIP A125	infores:gold	NCBITaxon:115545
+gold:Go0014180	biolink:IndividualOrganism	Varibaculum cambriense DSM 15806	infores:gold	NCBITaxon:1123488
+gold:Go0624833	biolink:IndividualOrganism	Bacteroides pneumosintes VPI 9415	infores:gold	NCBITaxon:39950
+gold:Go0375798	biolink:IndividualOrganism	Staphylococcus aureus USA300-SUR22	infores:gold	NCBITaxon:1280
+gold:Go0012223	biolink:IndividualOrganism	Pseudomonas aeruginosa STH_PA147	infores:gold	NCBITaxon:287
+gold:Go0615263	biolink:IndividualOrganism	Lawsonella clevelandensis DSM 45743	infores:gold	NCBITaxon:1528099
+gold:Go0624836	biolink:IndividualOrganism	Bacteroides pneumosintes Cal 4692-1-74	infores:gold	NCBITaxon:39950
+gold:Go0615264	biolink:IndividualOrganism	Lawsonella clevelandensis CCUG 66657	infores:gold	NCBITaxon:1528099
+gold:Go0013936	biolink:IndividualOrganism	Actinomyces israelii DSM 43320	infores:gold	NCBITaxon:1120944
+gold:Go0021502	biolink:IndividualOrganism	Cutibacterium avidum 44067	infores:gold	NCBITaxon:1170318
+gold:Go0615266	biolink:IndividualOrganism	Lawsonella clevelandensis CC2884	infores:gold	NCBITaxon:1528099
+gold:Go0020784	biolink:IndividualOrganism	Cutibacterium acnes PRP-38	infores:gold	NCBITaxon:1136877
+gold:Go0070874	biolink:IndividualOrganism	Parvimonas micra A293	infores:gold	NCBITaxon:1408286
+gold:Go0125711	biolink:IndividualOrganism	Aeromonas schubertii ATCC 43700	infores:gold	NCBITaxon:652
+gold:Go0375807	biolink:IndividualOrganism	Staphylococcus aureus USA300-SUR13	infores:gold	NCBITaxon:1280
+gold:Go0036871	biolink:IndividualOrganism	Phocaeicola abscessus CCUG 55929	infores:gold	NCBITaxon:1204719
+gold:Go0012758	biolink:IndividualOrganism	Cutibacterium acnes ATCC 11828	infores:gold	NCBITaxon:1091045
+gold:Go0013953	biolink:IndividualOrganism	Staphylococcus aureus aureus 11819-97	infores:gold	NCBITaxon:1123523
+gold:Go0031965	biolink:IndividualOrganism	Morococcus cerebrosus ATCC 33486	infores:gold	NCBITaxon:1056807
+gold:Go0615265	biolink:IndividualOrganism	Lawsonella clevelandensis CCF-01	infores:gold	NCBITaxon:1528099
+gold.ecosystem:4495	biolink:EnvironmentalFeature	Brain	infores:gold	
+gold.ecosystem:1	biolink:EnvironmentalFeature	root	infores:gold	
+gold.ecosystem:4	biolink:EnvironmentalFeature	Host-associated	infores:gold	
+gold.ecosystem:5035	biolink:EnvironmentalFeature	Abdominal/Peritoneal cavity	infores:gold	
+gold.ecosystem:5211	biolink:EnvironmentalFeature	Skeletal system	infores:gold	
+gold.ecosystem:3592	biolink:EnvironmentalFeature	Respiratory system	infores:gold	
+gold.ecosystem:3595	biolink:EnvironmentalFeature	Nervous system	infores:gold	
+gold.ecosystem:3381	biolink:EnvironmentalFeature	Mammals: Human	infores:gold	
+gold.ecosystem:6113	biolink:EnvironmentalFeature	Integumentary system	infores:gold	
+gold.ecosystem:6114	biolink:EnvironmentalFeature	Skin	infores:gold	
+gold.ecosystem:6320	biolink:EnvironmentalFeature	Joint capsule	infores:gold	
+gold.ecosystem:6344	biolink:EnvironmentalFeature	Abscess	infores:gold	
+gold.ecosystem:6357	biolink:EnvironmentalFeature	Multisystem conditions	infores:gold	
+gold.ecosystem:6544	biolink:EnvironmentalFeature	Spinal cord	infores:gold	
+gold.ecosystem:6338	biolink:EnvironmentalFeature	Abscess	infores:gold	
+gold.ecosystem:6342	biolink:EnvironmentalFeature	Abscess	infores:gold	
+gold.ecosystem:6343	biolink:EnvironmentalFeature	Abscess	infores:gold	
+gold.ecosystem:6346	biolink:EnvironmentalFeature	Abscess	infores:gold	
+gold.ecosystem:6347	biolink:EnvironmentalFeature	Unclassified	infores:gold	
+gold.ecosystem:6090	biolink:EnvironmentalFeature	Nasal cavity	infores:gold	
+gold.ecosystem:7007	biolink:EnvironmentalFeature	Abscess	infores:gold	
+gold.ecosystem:7037	biolink:EnvironmentalFeature	Soft tissues	infores:gold	
+gold.ecosystem:7038	biolink:EnvironmentalFeature	Abscess	infores:gold	
+NCBITaxon:1056807	biolink:OrganismTaxon	Morococcus cerebrosus	infores:gold	
+NCBITaxon:1091045	biolink:OrganismTaxon	Cutibacterium acnes subsp. defendens ATCC 11828	infores:gold	
+NCBITaxon:1120944	biolink:OrganismTaxon	Actinomyces israelii DSM 43320	infores:gold	
+NCBITaxon:1121485	biolink:OrganismTaxon	Indolivaga capnocytophagoides DSM 22835	infores:gold	
+NCBITaxon:1123488	biolink:OrganismTaxon	Varibaculum cambriense DSM 15806	infores:gold	
+NCBITaxon:1123523	biolink:OrganismTaxon	Staphylococcus aureus subsp. aureus 11819-97	infores:gold	
+NCBITaxon:1125779	biolink:OrganismTaxon	Corynebacterium pyruviciproducens ATCC BAA-1742	infores:gold	
+NCBITaxon:1136877	biolink:OrganismTaxon	Cutibacterium acnes PRP-38	infores:gold	
+NCBITaxon:115545	biolink:OrganismTaxon	Pasteurella multocida subsp. septica	infores:gold	
+NCBITaxon:1170318	biolink:OrganismTaxon	Cutibacterium avidum 44067	infores:gold	
+NCBITaxon:1203611	biolink:OrganismTaxon	Alistipes onderdonkii WAL 8169 = DSM 19147	infores:gold	
+NCBITaxon:1204719	biolink:OrganismTaxon	Phocaeicola abscessus CCUG 55929	infores:gold	
+NCBITaxon:1206723	biolink:OrganismTaxon	Nocardia abscessus NBRC 100374	infores:gold	
+NCBITaxon:1280	biolink:OrganismTaxon	Staphylococcus aureus	infores:gold	
+NCBITaxon:1408286	biolink:OrganismTaxon	Parvimonas micra A293	infores:gold	
+NCBITaxon:1528099	biolink:OrganismTaxon	Lawsonella clevelandensis	infores:gold	
+NCBITaxon:169765	biolink:OrganismTaxon	Mycobacterium lacus	infores:gold	
+NCBITaxon:287	biolink:OrganismTaxon	Pseudomonas aeruginosa	infores:gold	
+NCBITaxon:367830	biolink:OrganismTaxon	Staphylococcus aureus subsp. aureus USA300	infores:gold	
+NCBITaxon:39950	biolink:OrganismTaxon	Dialister pneumosintes	infores:gold	
+NCBITaxon:411567	biolink:OrganismTaxon	Peptoniphilus gorbachii	infores:gold	
+NCBITaxon:451515	biolink:OrganismTaxon	Staphylococcus aureus subsp. aureus USA300_FPR3757	infores:gold	
+NCBITaxon:525370	biolink:OrganismTaxon	Prescottella equi ATCC 33707	infores:gold	
+NCBITaxon:585502	biolink:OrganismTaxon	Hallella bergensis DSM 17361	infores:gold	
+NCBITaxon:652	biolink:OrganismTaxon	Aeromonas schubertii	infores:gold	
+NCBITaxon:709991	biolink:OrganismTaxon	Odoribacter splanchnicus DSM 20712	infores:gold	

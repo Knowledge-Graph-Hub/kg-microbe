@@ -1,0 +1,661 @@
+{
+  "files": {
+    "mappings/kgxval_reference_dispositions_v1.json": {
+      "edits": [
+        {
+          "container": [
+            "evidence_join",
+            "inputs"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "af16a4e99de06d1f59463e14e3b5146de901c949c4be2db515abd5361c786713",
+          "published_locator": "source-repository/data/remediation-microbedecoder-20260914.afqqwh/fresh-1408e709-candidate-20260930-01/members/merged-kg_edges.tsv"
+        },
+        {
+          "container": [
+            "evidence_join",
+            "inputs"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "0494ef53112e05e66a5417b617c7ad95dfa69e517bc0d8f976a638cd463a994a",
+          "published_locator": "source-repository/data/remediation-microbedecoder-20260914.afqqwh/fresh-1408e709-candidate-20260930-01/members/merged-kg_nodes.tsv"
+        },
+        {
+          "container": [
+            "evidence_join",
+            "inputs"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "1764c25b3557d720fdf0564374076f27bd4ba59396c1fe84ab96580a6c29a0db",
+          "published_locator": "source-repository/data/remediation-microbedecoder-20260914.afqqwh/fresh-1408e709-candidate-20260930-01/model/model-kgxval-errors.csv"
+        },
+        {
+          "container": [
+            "evidence_join",
+            "inputs"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "e6c036d736969a290877ea25cef80e9b941b6f11b40ddcf45c6b98b4ce557988",
+          "published_locator": "source-repository/data/validation-upstream-20260930.DbltzT/join_saved_kgxval.py"
+        },
+        {
+          "container": [
+            "evidence_join",
+            "inputs"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "57c8f872db005a70124fe5cd1ceb6d0c2a517ca4e5624c5b49af1b1610590414",
+          "published_locator": "candidate-worktree/.claude/skills/kg-model-review/kg_model_review.py"
+        },
+        {
+          "container": [
+            "evidence_join",
+            "inputs"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "dbb48f33d96fd80fc53c87210cd9a4a61758abd154183ca5ada6963b85290c06",
+          "published_locator": "candidate-worktree/mappings/kgxval_dispositions_v1.json"
+        }
+      ],
+      "historical_string_projections": [],
+      "original_file_sha256": "b17ffbe83bcfcd1f4d63da24c7619a7f166feba60dc2b8bd44dba673733be3c4",
+      "published_file_sha256": "1a1ad86759ad2f51e9ddba2c9303b164eb354bfb25441b4734ff514ec40b7169",
+      "scientific_remainder_canonical_sha256": "a937b92890a2e50467887ca25591a2066a843dc9114224f0a119289629ccf1d8"
+    },
+    "mappings/mediadive_recipe_identity_evidence.json": {
+      "edits": [
+        {
+          "container": [
+            "historical_input_pins"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "50d37ba4a3ee27413bfc80a51962f9876359cfb60a7c783ea682293a39f08646",
+          "published_locator": "source-repository/data/mim-finalize-20260925.Wj4qvb/new-upstream/ci-sssom-1848b0fe/ingredient_mappings.sssom.tsv"
+        },
+        {
+          "container": [
+            "historical_input_pins"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "bfa2abb022bbf64fbe7a5dd8ce306e71ec676035fc893a00efba1ef16f184c5e",
+          "published_locator": "source-repository/data/mim-finalize-20260925.Wj4qvb/new-upstream/ci-sssom-1848b0fe/mapping-dispositions.tsv"
+        },
+        {
+          "container": [
+            "historical_input_pins"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "001e5b878a12c4f501cb9ce1957a6fe5f247ddbf70549ef0bf73c21d1d2df426",
+          "published_locator": "source-repository/data/mim-finalize-20260925.Wj4qvb/new-upstream/ci-sssom-1848b0fe/withheld_mappings.sssom.tsv"
+        },
+        {
+          "container": [
+            "historical_input_pins"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "c507509a30096075426cd40b70d1cec7c71e8a508e328af0f2ebfb7d4580052e",
+          "published_locator": "source-repository/data/raw/mediadive/compounds.json"
+        },
+        {
+          "container": [
+            "historical_input_pins"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "d99fe8235d383d5c759da32a163dc253f05935a6df173215691b652db4f9b2b7",
+          "published_locator": "source-repository/data/raw/mediadive/media_detailed.json"
+        },
+        {
+          "container": [
+            "historical_input_pins"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "662fd6de6c00e9d73ae1d5c3c35924355699484b759a04c300fec45af67f8de4",
+          "published_locator": "source-repository/data/raw/mediadive/solutions.json"
+        },
+        {
+          "container": [
+            "historical_input_pins"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "d0c4fb9b9910c365ee65e88251c3698c0f41fe4bbda507a07f799d0127f749ac",
+          "published_locator": "source-repository/data/raw/ncit.db"
+        },
+        {
+          "container": [
+            "historical_input_pins"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "b269b8b0ec63631e70c0ad1767fa95a6d765541e80eb591c00a4e50b9d6bfc41",
+          "published_locator": "source-repository/data/transformed/mediadive/edges.tsv"
+        },
+        {
+          "container": [
+            "historical_input_pins"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "c7db5d0093e5b21d8ce4082eab6572a0b52b61e1102079487592c33c82d6ead0",
+          "published_locator": "candidate-worktree/kg_microbe/transform_utils/mediadive/mediadive.py"
+        },
+        {
+          "container": [
+            "historical_input_pins"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "44eeb0b215cf4b2b1fc1155c223bedf29be4a52462f45234587315fb0bdc1a94",
+          "published_locator": "candidate-worktree/kg_microbe/utils/chemical_mapping_utils.py"
+        },
+        {
+          "container": [
+            "historical_input_pins"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "5059bc9b2285c6598a34b0b9c75ff8bc1a7f29bc976b830ef3ca8799c51df6b4",
+          "published_locator": "candidate-worktree/kg_microbe/utils/ingredient_context.py"
+        },
+        {
+          "container": [
+            "historical_input_pins"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "f8584be7f79ae5239625d7a84f29231e05e51035a8f597f552e026860ff8f9bb",
+          "published_locator": "candidate-worktree/kg_microbe/utils/ingredient_identity.py"
+        },
+        {
+          "container": [
+            "historical_input_pins"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "27e5fd3aaf7ab1fb46d00467692e7542be83b4b2222c67529c44615b29fc0dc9",
+          "published_locator": "candidate-worktree/mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz"
+        },
+        {
+          "container": [
+            "historical_input_pins"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "ebdac6493dd210a190743c1c1824a0a71236e4b55a49db1ad81fb0e000721bb6",
+          "published_locator": "candidate-worktree/scripts/consolidate_chemical_mappings.py"
+        },
+        {
+          "container": [
+            "historical_input_pins"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "4f06b607b4445322f45e791448eceabb612b5eb783843062e8f6414fc34674b4",
+          "published_locator": "candidate-worktree/scripts/mim_conservative_refresh.py"
+        }
+      ],
+      "historical_string_projections": [],
+      "original_file_sha256": "0a01869d5d46cacbf67ecdcc33f3a44d580f914ac6dd58f584276aac5d602da9",
+      "published_file_sha256": "5ec6fc063a5c0c10a77392b20e9f3fe70272479d1ba0a3396dd49a472645ab92",
+      "scientific_remainder_canonical_sha256": "cd740cb9b06e871da782978d85416bfa66a962fc7482fe307646cb726fb9924c"
+    },
+    "tests/resources/gold_selected_taxon_aliases/native_evidence.json": {
+      "edits": [
+        {
+          "container": [
+            "inputs",
+            "gold_edges"
+          ],
+          "field": "path",
+          "kind": "value",
+          "original_locator_sha256": "0039123fca49e4b9271ebd2b67dd66590b75c4e57b962e3e14ad9c9468aaebc5",
+          "published_locator": "source-repository/data/raw/gold/GOLD_edges.tsv"
+        },
+        {
+          "container": [
+            "inputs",
+            "gold_nodes"
+          ],
+          "field": "path",
+          "kind": "value",
+          "original_locator_sha256": "66c54bec35ecc94d22594d2753a5c15c9219cc922464c6f792291aaedd0d66be",
+          "published_locator": "source-repository/data/raw/gold/GOLD_nodes.tsv"
+        },
+        {
+          "container": [
+            "inputs",
+            "md_edges"
+          ],
+          "field": "path",
+          "kind": "value",
+          "original_locator_sha256": "c3a12c0e31a9a800ef29e09769406f93052af80ed092f976916f6307837fe77c",
+          "published_locator": "source-repository/data/transformed/microbedecoder/edges.tsv"
+        },
+        {
+          "container": [
+            "inputs",
+            "md_raw"
+          ],
+          "field": "path",
+          "kind": "value",
+          "original_locator_sha256": "5e9f0bbe458c36dcef0c831ff8a631e13c56cb86e034853fc61b9a1875d4703d",
+          "published_locator": "source-repository/data/raw/database.csv"
+        },
+        {
+          "container": [
+            "inputs",
+            "ncbi_db"
+          ],
+          "field": "path",
+          "kind": "value",
+          "original_locator_sha256": "dc6bd11f7f8064a79172c4b56b14d8fade3e121630b9a7defb8dbe1f94ce8d01",
+          "published_locator": "source-repository/data/raw/ncbitaxon.db"
+        },
+        {
+          "container": [
+            "inputs",
+            "selected_json"
+          ],
+          "field": "path",
+          "kind": "value",
+          "original_locator_sha256": "1742d474eb71912a552a13498987aec31d86f8597edc2e2444b9e500503b9c9f",
+          "published_locator": "source-repository/data/raw/ncbitaxon_removed_subset.json"
+        },
+        {
+          "container": [
+            "inputs",
+            "selected_nodes"
+          ],
+          "field": "path",
+          "kind": "value",
+          "original_locator_sha256": "e37b67009f46bfb0f6da59c302944817a3d7d1641fa1c07f5f6f15e179d20440",
+          "published_locator": "source-repository/data/transformed/ontologies/ncbitaxon_nodes.tsv"
+        },
+        {
+          "container": [
+            "inputs",
+            "taxdump"
+          ],
+          "field": "path",
+          "kind": "value",
+          "original_locator_sha256": "ff45f2d046e6f8f8dab14d7c8fd3ea58c44c2023ac8e622f9f44a1cc2cf4f2e4",
+          "published_locator": "source-repository/data/raw/taxdump.tar.gz"
+        }
+      ],
+      "historical_string_projections": [],
+      "original_file_sha256": "069fd57c7ef9367cfdbff8f4ec6f287026d521058eb7950f15288388a0115a6f",
+      "published_file_sha256": "7941533fac837d2e3b06e7b1d55f5eacd7d26f7e337c14e8965d7407ce89cba8",
+      "scientific_remainder_canonical_sha256": "8cd06cb38da8a9976f20c39998e3e3490414b0c6c70e233dcb808f8134cc85e0"
+    },
+    "tests/resources/gold_selected_taxon_aliases/producer_contexts.json": {
+      "edits": [
+        {
+          "container": [
+            "full_source_sha256"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "66c54bec35ecc94d22594d2753a5c15c9219cc922464c6f792291aaedd0d66be",
+          "published_locator": "source-repository/data/raw/gold/GOLD_nodes.tsv"
+        },
+        {
+          "container": [
+            "full_source_sha256"
+          ],
+          "kind": "key",
+          "original_locator_sha256": "0039123fca49e4b9271ebd2b67dd66590b75c4e57b962e3e14ad9c9468aaebc5",
+          "published_locator": "source-repository/data/raw/gold/GOLD_edges.tsv"
+        }
+      ],
+      "historical_string_projections": [],
+      "original_file_sha256": "2b8e81d06669e2ee2586abf25590f9cd99cfe5378afc759eb7acd933d2ef53ed",
+      "published_file_sha256": "48232c91e25aa97b5bcac631eccd41c702d6369ecec7cd484ba9deb89c3bf1e0",
+      "scientific_remainder_canonical_sha256": "7f10c5f0d143a9f7828549df9804d51bc8db29c691c95803502546b85298cce9"
+    },
+    "tests/resources/gold_taxonomy/microbedecoder_native_context.json": {
+      "edits": [
+        {
+          "container": [
+            "gold_source_bindings",
+            "native_nodes"
+          ],
+          "field": "path",
+          "kind": "value",
+          "original_locator_sha256": "66c54bec35ecc94d22594d2753a5c15c9219cc922464c6f792291aaedd0d66be",
+          "published_locator": "source-repository/data/raw/gold/GOLD_nodes.tsv"
+        },
+        {
+          "container": [
+            "gold_source_bindings",
+            "native_edges"
+          ],
+          "field": "path",
+          "kind": "value",
+          "original_locator_sha256": "0039123fca49e4b9271ebd2b67dd66590b75c4e57b962e3e14ad9c9468aaebc5",
+          "published_locator": "source-repository/data/raw/gold/GOLD_edges.tsv"
+        },
+        {
+          "container": [
+            "gold_source_bindings",
+            "current_nodes"
+          ],
+          "field": "path",
+          "kind": "value",
+          "original_locator_sha256": "c08e4475dc84d2acaffe451d280238d57cafb559c1a90f6f6850103e7e412900",
+          "published_locator": "source-repository/data/transformed/gold/nodes.tsv"
+        },
+        {
+          "container": [
+            "gold_source_bindings",
+            "current_edges"
+          ],
+          "field": "path",
+          "kind": "value",
+          "original_locator_sha256": "4453c825c6cdca1832533d4282a8cd3755d863454435475d26d833b0817ec96f",
+          "published_locator": "source-repository/data/transformed/gold/edges.tsv"
+        }
+      ],
+      "historical_string_projections": [],
+      "original_file_sha256": "84a0e948fb5c48f927428c1f5e850f26cbdb98215220c59c10614d05ea9ede3c",
+      "published_file_sha256": "c92039bb5a1d772e03064a62d9fcb36c4ab41aa7d8de8581e893ad16c5c9c0e6",
+      "scientific_remainder_canonical_sha256": "5199827eb09b8d1588d63e12ad3ed9eaa8729eb2d7a5e23307af55babf2756e3"
+    },
+    "tests/resources/gold_taxonomy/native_contexts.json": {
+      "edits": [
+        {
+          "container": [
+            "bindings",
+            "native_nodes"
+          ],
+          "field": "path",
+          "kind": "value",
+          "original_locator_sha256": "66c54bec35ecc94d22594d2753a5c15c9219cc922464c6f792291aaedd0d66be",
+          "published_locator": "source-repository/data/raw/gold/GOLD_nodes.tsv"
+        },
+        {
+          "container": [
+            "bindings",
+            "native_edges"
+          ],
+          "field": "path",
+          "kind": "value",
+          "original_locator_sha256": "0039123fca49e4b9271ebd2b67dd66590b75c4e57b962e3e14ad9c9468aaebc5",
+          "published_locator": "source-repository/data/raw/gold/GOLD_edges.tsv"
+        },
+        {
+          "container": [
+            "bindings",
+            "current_nodes"
+          ],
+          "field": "path",
+          "kind": "value",
+          "original_locator_sha256": "c08e4475dc84d2acaffe451d280238d57cafb559c1a90f6f6850103e7e412900",
+          "published_locator": "source-repository/data/transformed/gold/nodes.tsv"
+        },
+        {
+          "container": [
+            "bindings",
+            "current_edges"
+          ],
+          "field": "path",
+          "kind": "value",
+          "original_locator_sha256": "4453c825c6cdca1832533d4282a8cd3755d863454435475d26d833b0817ec96f",
+          "published_locator": "source-repository/data/transformed/gold/edges.tsv"
+        }
+      ],
+      "historical_string_projections": [],
+      "original_file_sha256": "f3af2d4857fc4d55a3e79236916517908187e9f250d72545bb18231b129950be",
+      "published_file_sha256": "d86cdc298718d8463b6429d68fa4b2b7104dbf9c0d3ca4bd84534f42aa5f27d0",
+      "scientific_remainder_canonical_sha256": "9299b3524057f0b1dbda582a559cc3d037d8f2a5ff39fb84c680b903e5a09bcb"
+    },
+    "tests/resources/native_ro_retention/temporal62_native.json": {
+      "edits": [
+        {
+          "container": [
+            "assertions",
+            12,
+            "literal_owl_restrictions",
+            0,
+            "complete_native_restriction"
+          ],
+          "field": "literal_file",
+          "kind": "value",
+          "original_locator_sha256": "fa6cdd984c16fe1865e1b4bf11d9f2b774131e4e81ef2722535b4bd8afe69192",
+          "published_locator": "review-evidence/temporal62-native-plan-eudll9dp/uberon/genid83901.xml"
+        },
+        {
+          "container": [
+            "assertions",
+            30,
+            "literal_owl_restrictions",
+            0,
+            "complete_native_restriction"
+          ],
+          "field": "literal_file",
+          "kind": "value",
+          "original_locator_sha256": "d35cc84128a317a3d182537846d9032e57eb0319448f4e43a533a7c198859f09",
+          "published_locator": "review-evidence/temporal62-native-plan-eudll9dp/uberon/genid84275.xml"
+        },
+        {
+          "container": [
+            "native_axiom_annotations",
+            "uberon:genid83901",
+            0
+          ],
+          "field": "literal_file",
+          "kind": "value",
+          "original_locator_sha256": "c33f3ad25d7a42d23b1a74388b73d6ea9de61407706a87732dd9ee99fc15f3d7",
+          "published_locator": "review-evidence/temporal62-native-plan-eudll9dp/uberon/genid83901-annotation-0.xml"
+        },
+        {
+          "container": [
+            "native_axiom_annotations",
+            "uberon:genid84275",
+            0
+          ],
+          "field": "literal_file",
+          "kind": "value",
+          "original_locator_sha256": "6352977a83c62e62f71880cb7327c23cc5ef70f0cda97c7f118d22b9289dcd6d",
+          "published_locator": "review-evidence/temporal62-native-plan-eudll9dp/uberon/genid84275-annotation-0.xml"
+        },
+        {
+          "container": [
+            "property_evidence",
+            "BFO:0000062",
+            "literal_stanza"
+          ],
+          "field": "literal_file",
+          "kind": "value",
+          "original_locator_sha256": "20f27be64f45313b8c56aed423c111fe1a1a472b77068824510ce8948f8d4ea2",
+          "published_locator": "review-evidence/temporal62-native-plan-eudll9dp/ro/BFO_0000062.xml"
+        },
+        {
+          "container": [
+            "property_evidence",
+            "BFO:0000063",
+            "literal_stanza"
+          ],
+          "field": "literal_file",
+          "kind": "value",
+          "original_locator_sha256": "cda54f60452c551a085309b96a41be57f26004627bb4bf0d28effde2250dec55",
+          "published_locator": "review-evidence/temporal62-native-plan-eudll9dp/ro/BFO_0000063.xml"
+        },
+        {
+          "container": [
+            "property_evidence",
+            "RO:0002081",
+            "literal_stanza"
+          ],
+          "field": "literal_file",
+          "kind": "value",
+          "original_locator_sha256": "19bba09530953dbc1750939bed555f648e23a096e120418ffac1f46d4d3ccfb8",
+          "published_locator": "review-evidence/temporal62-native-plan-eudll9dp/ro/RO_0002081.xml"
+        },
+        {
+          "container": [
+            "property_evidence",
+            "RO:0002082",
+            "literal_stanza"
+          ],
+          "field": "literal_file",
+          "kind": "value",
+          "original_locator_sha256": "389c2e39d5690ee9d6c51c61b860095302432a6a21fbb7ba1db2af6bc2e9cdc8",
+          "published_locator": "review-evidence/temporal62-native-plan-eudll9dp/ro/RO_0002082.xml"
+        },
+        {
+          "container": [
+            "property_evidence",
+            "RO:0002086",
+            "literal_stanza"
+          ],
+          "field": "literal_file",
+          "kind": "value",
+          "original_locator_sha256": "72779f30769a57e64f337fa1db5f79558cfdea620c505600f0f6f5f5f6d3e9f4",
+          "published_locator": "review-evidence/temporal62-native-plan-eudll9dp/ro/RO_0002086.xml"
+        },
+        {
+          "container": [
+            "property_evidence",
+            "RO:0002087",
+            "literal_stanza"
+          ],
+          "field": "literal_file",
+          "kind": "value",
+          "original_locator_sha256": "7beb17dd291e5bf6415cae9d720f7aeb4f30371b184974400d4665c15c678110",
+          "published_locator": "review-evidence/temporal62-native-plan-eudll9dp/ro/RO_0002087.xml"
+        },
+        {
+          "container": [
+            "property_evidence",
+            "RO:0002090",
+            "literal_stanza"
+          ],
+          "field": "literal_file",
+          "kind": "value",
+          "original_locator_sha256": "dd2f9540acf89b2b992f1ef694698f05ab6df64ef4e0c5aa7a1fa2bce770da6e",
+          "published_locator": "review-evidence/temporal62-native-plan-eudll9dp/ro/RO_0002090.xml"
+        },
+        {
+          "container": [
+            "property_evidence",
+            "RO:0002222",
+            "literal_stanza"
+          ],
+          "field": "literal_file",
+          "kind": "value",
+          "original_locator_sha256": "94c6867fbea931893b50a6ed3fdad0f14e728274e9699f2aa90960c96bfebe89",
+          "published_locator": "review-evidence/temporal62-native-plan-eudll9dp/ro/RO_0002222.xml"
+        },
+        {
+          "container": [
+            "property_evidence",
+            "RO:0002223",
+            "literal_stanza"
+          ],
+          "field": "literal_file",
+          "kind": "value",
+          "original_locator_sha256": "b0c630ed0c34524262dba06272ebd7db10567d632606276b5f44341213876262",
+          "published_locator": "review-evidence/temporal62-native-plan-eudll9dp/ro/RO_0002223.xml"
+        },
+        {
+          "container": [
+            "property_evidence",
+            "RO:0002224",
+            "literal_stanza"
+          ],
+          "field": "literal_file",
+          "kind": "value",
+          "original_locator_sha256": "1ca229e07413b4363ec4e38d5cbb15d94fcfc9e67d815b89198575d3f43b98a7",
+          "published_locator": "review-evidence/temporal62-native-plan-eudll9dp/ro/RO_0002224.xml"
+        },
+        {
+          "container": [
+            "property_evidence",
+            "RO:0002229",
+            "literal_stanza"
+          ],
+          "field": "literal_file",
+          "kind": "value",
+          "original_locator_sha256": "ff543b68aeb4bfaabc37834f3869d499989071d72e7839bf80cd3f797eea89d3",
+          "published_locator": "review-evidence/temporal62-native-plan-eudll9dp/ro/RO_0002229.xml"
+        },
+        {
+          "container": [
+            "property_evidence",
+            "RO:0002230",
+            "literal_stanza"
+          ],
+          "field": "literal_file",
+          "kind": "value",
+          "original_locator_sha256": "ec122fe6bef79b6b5fe9aba91fda82f87bf8257da7f758cf49d5276718c30947",
+          "published_locator": "review-evidence/temporal62-native-plan-eudll9dp/ro/RO_0002230.xml"
+        }
+      ],
+      "historical_string_projections": [],
+      "original_file_sha256": "c19f4d0348e16b73511a81feed3f647bc0bfbda20cb6a5a5253375ef1d2daf27",
+      "published_file_sha256": "d6a5bf58b80114861739f7f9714836d419d9b9ed96eb50a56ea61c20c9e303bb",
+      "scientific_remainder_canonical_sha256": "f016c9432894f0c6a19601820513948a7552e62afb924dad54dbfd98b3d82e8e"
+    },
+    "tests/resources/participation_disposition/historical_claims.json": {
+      "edits": [
+        {
+          "container": [
+            8,
+            "historical_nonempty_fields"
+          ],
+          "field": "go_reference_context",
+          "kind": "historical_json_string",
+          "original_locator_sha256": "3509cc9a39ad4311174845447d385e0eb120c6e7f8885e167350c05db086bec0",
+          "published_locator": "source-repository/data/raw/go.db"
+        },
+        {
+          "container": [
+            9,
+            "historical_nonempty_fields"
+          ],
+          "field": "go_reference_context",
+          "kind": "historical_json_string",
+          "original_locator_sha256": "3509cc9a39ad4311174845447d385e0eb120c6e7f8885e167350c05db086bec0",
+          "published_locator": "source-repository/data/raw/go.db"
+        }
+      ],
+      "historical_string_projections": [
+        {
+          "field": "go_reference_context",
+          "historical_merged_line": 14084753,
+          "index": 8,
+          "original_context_utf8_sha256": "7cc712c4bfc7360b21afa30459d4744f2e26865c656cf5123992ca6b2552f36f",
+          "original_native_triple": [
+            "GO:0006082",
+            "RO:0004007",
+            "CHEBI:64709"
+          ],
+          "original_nonempty_fields_canonical_sha256": "43d03d1ad877a907604daacf13953348d1961692ab9f145a76db95b2b4c720ff",
+          "published_context_utf8_sha256": "d03c301af18a0a2dec9d10714c0e51c76a39e01e2181156978b65ef92feb22eb",
+          "published_nonempty_fields_canonical_sha256": "5aef9629b4a3fe52cb832b9fef11f9f2ea5de9b454a91ce23744220c8928d555",
+          "scope": "publication_locator_projection_not_byte_identical_original",
+          "supplier": "pato"
+        },
+        {
+          "field": "go_reference_context",
+          "historical_merged_line": 14084755,
+          "index": 9,
+          "original_context_utf8_sha256": "ba8c55cc43cd52f38efecf101321258e168b4046453da845302824739aba9db0",
+          "original_native_triple": [
+            "GO:0043603",
+            "RO:0004007",
+            "CHEBI:32988"
+          ],
+          "original_nonempty_fields_canonical_sha256": "7243e44b49bbd61077eca1f7b72423a9b100af595bd5ea9eb43e12715d5ec3e9",
+          "published_context_utf8_sha256": "ccc1f99d04a0f1b357336a7277045ad82e8dffadbd51021af8dda47a6bf96164",
+          "published_nonempty_fields_canonical_sha256": "07a5815abb4dd8cbc92a739b27d35f229566d6592a5be44fcc0bbff92edd8c4c",
+          "scope": "publication_locator_projection_not_byte_identical_original",
+          "supplier": "pato"
+        }
+      ],
+      "original_file_sha256": "dfffd127b651b44a12537c20d2f33c3b8749206bfc8364e2084fc4933e03ea2b",
+      "published_file_sha256": "8a02904b8bc418950a8ac398d7f21bb3e5874eb1ba3bc9473212575a5ecc9460",
+      "scientific_remainder_canonical_sha256": "32d0e5d9e1af947d751d68584a52a317f39960ec841e392bf7a97fed0e91a99a"
+    }
+  },
+  "historical_string_projections": 2,
+  "metadata_locator_edits": 55,
+  "original_snapshots": "Retained separately in local review evidence; private absolute locators are not distributed.",
+  "roots": {
+    "candidate-worktree": "Historical separately reviewed candidate worktree root; an evidence locator, not the active runtime root.",
+    "review-evidence": "Historical local review-evidence root; content hashes identify evidence, not public availability.",
+    "source-repository": "Historical original source repository root; an evidence locator, not the active runtime root."
+  },
+  "scope": "finite_publication_locator_projection_only_not_scientific_or_runtime_path_resolution",
+  "version": 1
+}

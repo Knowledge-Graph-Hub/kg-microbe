@@ -85,7 +85,7 @@ def test_export_provenance_override_is_restored_on_failure(tmp_path, monkeypatch
     # Eligibility now inspects a real config before invoking KGX. Keep the
     # injected KGX failure (and every restoration assertion) as the test seam.
     config = tmp_path / "merge.yaml"
-    config.write_text("merged_graph: {}\n")
+    config.write_text("merged_graph:\n  source: {}\n  destination:\n    fixture: {format: tsv, filename: fixture}\n")
     with pytest.raises(RuntimeError, match="failed merge"):
         merge(str(config))
     assert cli_utils.Transformer is original

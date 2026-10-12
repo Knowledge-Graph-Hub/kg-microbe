@@ -12,6 +12,10 @@
       "bytes": 20276,
       "sha256": "6cac0742e5a9d9f36dc4fb82b4d996a3efe4f3b904c90ef28c8da9aa02c55c34"
     },
+    "micro-authority.owl": {
+      "bytes": 19438,
+      "sha256": "890168b29e54b3072b2f11cbaf80c10bc9442a16d80a10de569c00f41eac572c"
+    },
     "native-edges.json": {
       "bytes": 767,
       "sha256": "5adb19b1a22d89c92c841bb790e1e9357b1435cabdc465c0b88f9db82948e495"
@@ -49,6 +53,32 @@
       ],
       "sha256": "a5d40380ab78bde0e8b5a704dbee3cba2bcaa7608be46eebc2f4a92932516c9b",
       "version": "http://purl.obolibrary.org/obo/chebi/253/chebi.owl"
+    },
+    "data/raw/micro.owl": {
+      "bytes": 10328426,
+      "complete_named_ancestor_declaration_iris": [
+        "http://purl.obolibrary.org/obo/CHEBI_60004",
+        "http://purl.obolibrary.org/obo/MICRO_0000116",
+        "http://purl.obolibrary.org/obo/MICRO_0000164",
+        "http://purl.obolibrary.org/obo/MICRO_0000167",
+        "http://purl.obolibrary.org/obo/MICRO_0000172",
+        "http://purl.obolibrary.org/obo/MICRO_0000174",
+        "http://purl.obolibrary.org/obo/MICRO_0000180",
+        "http://purl.obolibrary.org/obo/MICRO_0000463",
+        "http://purl.obolibrary.org/obo/MICRO_0001227",
+        "http://purl.obolibrary.org/obo/MICRO_0001236",
+        "http://purl.obolibrary.org/obo/MicrO.owl/MICRO_0002250",
+        "http://purl.obolibrary.org/obo/MicrO.owl/MICRO_0002392",
+        "http://purl.obolibrary.org/obo/MicrO.owl/MICRO_0002393"
+      ],
+      "projection": "Exact native class IRIs, labels, deprecated annotations, rdfs:subClassOf and owl:equivalentClass subtrees for the complete upward named subclass/intersection-genus closure. Other annotations omitted; restriction fillers are preserved but never traversed as ancestors. No IRI alias repair is inferred.",
+      "selected_seed_iris": [
+        "http://purl.obolibrary.org/obo/MicrO.owl/MICRO_0002250",
+        "http://purl.obolibrary.org/obo/MicrO.owl/MICRO_0002392",
+        "http://purl.obolibrary.org/obo/MicrO.owl/MICRO_0002393"
+      ],
+      "sha256": "ef21dbfab755143a9c390ad274d4e1405f344f6a8dbfbd749de09af0b4b54910",
+      "version": "MicrO 1.5.1 released 2018-06-14"
     },
     "data/raw/predicate_mapping.yaml": {
       "bytes": 17706,

@@ -1,0 +1,5 @@
+[
+  {"medium": "mediadive.medium:1672", "growth": "yes", "predicate": "METPO:2000517"},
+  {"medium": "mediadive.medium:1674", "growth": "no", "predicate": "METPO:2000518"},
+  {"medium": "mediadive.medium:1676", "growth": "inconsistent", "predicate": null}
+]

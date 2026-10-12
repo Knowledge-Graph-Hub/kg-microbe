@@ -1,0 +1,746 @@
+{
+  "scope": "Complete native incident and ancestor context for eleven reviewed GOLD alias records; record and ending_physical_line below are original full-source coordinates; emitted test excerpts receive separate local coordinates.",
+  "full_source_sha256": {
+    "source-repository/data/raw/gold/GOLD_nodes.tsv": "c13c21bdd04619c75ce16e63b05e51577b0cefec5b61765d383313f654ab3fae",
+    "source-repository/data/raw/gold/GOLD_edges.tsv": "54982c25de9d2c820eeebc1452aeac0b034595921d04d55b810bf1d2b1e127e0"
+  },
+  "node_header": [
+    "id",
+    "category",
+    "name",
+    "provided_by",
+    "xref"
+  ],
+  "edge_header": [
+    "id",
+    "subject",
+    "predicate",
+    "object",
+    "relation",
+    "primary_knowledge_source"
+  ],
+  "selected_source_ids": [
+    "gold:Go0028995",
+    "gold:Go0605404",
+    "gold:Go0605405",
+    "gold:Go0605406",
+    "gold:Go0605407",
+    "gold:Go0605408",
+    "gold:Go0605409",
+    "gold:Go0679921",
+    "gold:Go0680943",
+    "gold:Go0698482",
+    "gold:Go0705252"
+  ],
+  "native_declarations": {
+    "gold:Gs0165221": {
+      "row": {
+        "id": "gold:Gs0165221",
+        "category": "biolink:Study",
+        "name": "Y1000+ Saccharomycotina yeasts genome sequencing and assembly",
+        "provided_by": "infores:gold",
+        "xref": ""
+      },
+      "record": 209,
+      "ending_physical_line": 210
+    },
+    "gold:Gs0165895": {
+      "row": {
+        "id": "gold:Gs0165895",
+        "category": "biolink:Study",
+        "name": "Dactylosporangium matsuzakiense NRRL B-16293 genome sequencing",
+        "provided_by": "infores:gold",
+        "xref": ""
+      },
+      "record": 1918,
+      "ending_physical_line": 1919
+    },
+    "gold:Gs0164761": {
+      "row": {
+        "id": "gold:Gs0164761",
+        "category": "biolink:Study",
+        "name": "Aurantimonas sp. VKM B-3413 genome sequencing",
+        "provided_by": "infores:gold",
+        "xref": ""
+      },
+      "record": 7461,
+      "ending_physical_line": 7462
+    },
+    "gold:Gs0165669": {
+      "row": {
+        "id": "gold:Gs0165669",
+        "category": "biolink:Study",
+        "name": "Saccharothrix yanglingensis Hhs.015 genome sequencing",
+        "provided_by": "infores:gold",
+        "xref": ""
+      },
+      "record": 24611,
+      "ending_physical_line": 24612
+    },
+    "gold:Gs0151912": {
+      "row": {
+        "id": "gold:Gs0151912",
+        "category": "biolink:Study",
+        "name": "The Global Catalogue of Microorganisms (GCM) 10K type strain sequencing project",
+        "provided_by": "infores:gold",
+        "xref": ""
+      },
+      "record": 42250,
+      "ending_physical_line": 42251
+    },
+    "gold:Go0680943": {
+      "row": {
+        "id": "gold:Go0680943",
+        "category": "biolink:IndividualOrganism",
+        "name": "Dactylosporangium matsuzakiense NRRL B-16293",
+        "provided_by": "infores:gold",
+        "xref": "NCBITaxon:53360"
+      },
+      "record": 924286,
+      "ending_physical_line": 924287
+    },
+    "gold:Go0605406": {
+      "row": {
+        "id": "gold:Go0605406",
+        "category": "biolink:IndividualOrganism",
+        "name": "Dactylosporangium matsuzakiense IFO 14259",
+        "provided_by": "infores:gold",
+        "xref": "NCBITaxon:53360"
+      },
+      "record": 952804,
+      "ending_physical_line": 952805
+    },
+    "gold:Go0605407": {
+      "row": {
+        "id": "gold:Go0605407",
+        "category": "biolink:IndividualOrganism",
+        "name": "Dactylosporangium matsuzakiense JCM 3311",
+        "provided_by": "infores:gold",
+        "xref": "NCBITaxon:53360"
+      },
+      "record": 952905,
+      "ending_physical_line": 952906
+    },
+    "gold:Go0605405": {
+      "row": {
+        "id": "gold:Go0605405",
+        "category": "biolink:IndividualOrganism",
+        "name": "Dactylosporangium matsuzakiense FERM P-4670",
+        "provided_by": "infores:gold",
+        "xref": "NCBITaxon:53360"
+      },
+      "record": 953670,
+      "ending_physical_line": 953671
+    },
+    "gold:Go0028995": {
+      "row": {
+        "id": "gold:Go0028995",
+        "category": "biolink:IndividualOrganism",
+        "name": "Dactylosporangium matsuzakiense DSM 43810",
+        "provided_by": "infores:gold",
+        "xref": "NCBITaxon:53360"
+      },
+      "record": 953694,
+      "ending_physical_line": 953695
+    },
+    "gold:Go0698482": {
+      "row": {
+        "id": "gold:Go0698482",
+        "category": "biolink:IndividualOrganism",
+        "name": "Dactylosporangium matsuzakiense VKM Ac-1321",
+        "provided_by": "infores:gold",
+        "xref": "NCBITaxon:53360"
+      },
+      "record": 953808,
+      "ending_physical_line": 953809
+    },
+    "gold:Go0605408": {
+      "row": {
+        "id": "gold:Go0605408",
+        "category": "biolink:IndividualOrganism",
+        "name": "Dactylosporangium matsuzakiense KCC A-0311",
+        "provided_by": "infores:gold",
+        "xref": "NCBITaxon:53360"
+      },
+      "record": 953866,
+      "ending_physical_line": 953867
+    },
+    "gold:Go0605409": {
+      "row": {
+        "id": "gold:Go0605409",
+        "category": "biolink:IndividualOrganism",
+        "name": "Dactylosporangium matsuzakiense NBRC 14259",
+        "provided_by": "infores:gold",
+        "xref": "NCBITaxon:53360"
+      },
+      "record": 954861,
+      "ending_physical_line": 954862
+    },
+    "gold:Go0705252": {
+      "row": {
+        "id": "gold:Go0705252",
+        "category": "biolink:IndividualOrganism",
+        "name": "Wickerhamomyces subpelliculosus NRRL Y-1683",
+        "provided_by": "infores:gold",
+        "xref": "NCBITaxon:1194211"
+      },
+      "record": 955562,
+      "ending_physical_line": 955563
+    },
+    "gold:Go0679921": {
+      "row": {
+        "id": "gold:Go0679921",
+        "category": "biolink:IndividualOrganism",
+        "name": "Saccharothrix yanglingensis Hhs.015",
+        "provided_by": "infores:gold",
+        "xref": "NCBITaxon:659496"
+      },
+      "record": 957119,
+      "ending_physical_line": 957120
+    },
+    "gold:Go0605404": {
+      "row": {
+        "id": "gold:Go0605404",
+        "category": "biolink:IndividualOrganism",
+        "name": "Dactylosporangium matsuzakiense ATCC 31570",
+        "provided_by": "infores:gold",
+        "xref": "NCBITaxon:53360"
+      },
+      "record": 957322,
+      "ending_physical_line": 957323
+    },
+    "NCBITaxon:1194211": {
+      "row": {
+        "id": "NCBITaxon:1194211",
+        "category": "biolink:OrganismTaxon",
+        "name": "Wickerhamomyces subpelliculosus",
+        "provided_by": "infores:gold",
+        "xref": ""
+      },
+      "record": 968808,
+      "ending_physical_line": 968809
+    },
+    "NCBITaxon:53360": {
+      "row": {
+        "id": "NCBITaxon:53360",
+        "category": "biolink:OrganismTaxon",
+        "name": "Dactylosporangium matsuzakiense",
+        "provided_by": "infores:gold",
+        "xref": ""
+      },
+      "record": 1068596,
+      "ending_physical_line": 1068597
+    },
+    "NCBITaxon:659496": {
+      "row": {
+        "id": "NCBITaxon:659496",
+        "category": "biolink:OrganismTaxon",
+        "name": "Saccharothrix yanglingensis",
+        "provided_by": "infores:gold",
+        "xref": ""
+      },
+      "record": 1072931,
+      "ending_physical_line": 1072932
+    },
+    "gold.ecosystem:2882": {
+      "row": {
+        "id": "gold.ecosystem:2882",
+        "category": "biolink:EnvironmentalFeature",
+        "name": "Terrestrial",
+        "provided_by": "infores:gold",
+        "xref": ""
+      },
+      "record": 1082847,
+      "ending_physical_line": 1082848
+    },
+    "gold.ecosystem:4212": {
+      "row": {
+        "id": "gold.ecosystem:4212",
+        "category": "biolink:EnvironmentalFeature",
+        "name": "Unclassified",
+        "provided_by": "infores:gold",
+        "xref": ""
+      },
+      "record": 1082932,
+      "ending_physical_line": 1082933
+    },
+    "gold.ecosystem:1": {
+      "row": {
+        "id": "gold.ecosystem:1",
+        "category": "biolink:EnvironmentalFeature",
+        "name": "root",
+        "provided_by": "infores:gold",
+        "xref": ""
+      },
+      "record": 1083320,
+      "ending_physical_line": 1083321
+    },
+    "gold.ecosystem:3": {
+      "row": {
+        "id": "gold.ecosystem:3",
+        "category": "biolink:EnvironmentalFeature",
+        "name": "Environmental",
+        "provided_by": "infores:gold",
+        "xref": ""
+      },
+      "record": 1083322,
+      "ending_physical_line": 1083323
+    },
+    "gold.ecosystem:3496": {
+      "row": {
+        "id": "gold.ecosystem:3496",
+        "category": "biolink:EnvironmentalFeature",
+        "name": "Soil",
+        "provided_by": "infores:gold",
+        "xref": ""
+      },
+      "record": 1084257,
+      "ending_physical_line": 1084258
+    },
+    "gold.ecosystem:3810": {
+      "row": {
+        "id": "gold.ecosystem:3810",
+        "category": "biolink:EnvironmentalFeature",
+        "name": "Unclassified",
+        "provided_by": "infores:gold",
+        "xref": ""
+      },
+      "record": 1084382,
+      "ending_physical_line": 1084383
+    },
+    "gold.ecosystem:5774": {
+      "row": {
+        "id": "gold.ecosystem:5774",
+        "category": "biolink:EnvironmentalFeature",
+        "name": "Unclassified",
+        "provided_by": "infores:gold",
+        "xref": ""
+      },
+      "record": 1084702,
+      "ending_physical_line": 1084703
+    },
+    "gold.ecosystem:5773": {
+      "row": {
+        "id": "gold.ecosystem:5773",
+        "category": "biolink:EnvironmentalFeature",
+        "name": "Garden",
+        "provided_by": "infores:gold",
+        "xref": ""
+      },
+      "record": 1084857,
+      "ending_physical_line": 1084858
+    }
+  },
+  "native_incident_assertions": [
+    {
+      "row": {
+        "id": "gold:Go0680943-in_taxon-NCBITaxon:53360",
+        "subject": "gold:Go0680943",
+        "predicate": "biolink:in_taxon",
+        "object": "NCBITaxon:53360",
+        "relation": "gold:organism_v2.ncbi_taxonomy_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 903164,
+      "ending_physical_line": 903165
+    },
+    {
+      "row": {
+        "id": "gold:Go0680943-occurs_in-gold.ecosystem:1",
+        "subject": "gold:Go0680943",
+        "predicate": "biolink:occurs_in",
+        "object": "gold.ecosystem:1",
+        "relation": "gold:organism_v2.ecosystem_path_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 903165,
+      "ending_physical_line": 903166
+    },
+    {
+      "row": {
+        "id": "gold:Go0605406-in_taxon-NCBITaxon:53360",
+        "subject": "gold:Go0605406",
+        "predicate": "biolink:in_taxon",
+        "object": "NCBITaxon:53360",
+        "relation": "gold:organism_v2.ncbi_taxonomy_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 942494,
+      "ending_physical_line": 942495
+    },
+    {
+      "row": {
+        "id": "gold:Go0605406-occurs_in-gold.ecosystem:5774",
+        "subject": "gold:Go0605406",
+        "predicate": "biolink:occurs_in",
+        "object": "gold.ecosystem:5774",
+        "relation": "gold:organism_v2.ecosystem_path_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 942495,
+      "ending_physical_line": 942496
+    },
+    {
+      "row": {
+        "id": "gold:Go0605407-in_taxon-NCBITaxon:53360",
+        "subject": "gold:Go0605407",
+        "predicate": "biolink:in_taxon",
+        "object": "NCBITaxon:53360",
+        "relation": "gold:organism_v2.ncbi_taxonomy_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 942668,
+      "ending_physical_line": 942669
+    },
+    {
+      "row": {
+        "id": "gold:Go0605407-occurs_in-gold.ecosystem:5774",
+        "subject": "gold:Go0605407",
+        "predicate": "biolink:occurs_in",
+        "object": "gold.ecosystem:5774",
+        "relation": "gold:organism_v2.ecosystem_path_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 942669,
+      "ending_physical_line": 942670
+    },
+    {
+      "row": {
+        "id": "gold:Go0605405-in_taxon-NCBITaxon:53360",
+        "subject": "gold:Go0605405",
+        "predicate": "biolink:in_taxon",
+        "object": "NCBITaxon:53360",
+        "relation": "gold:organism_v2.ncbi_taxonomy_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 944002,
+      "ending_physical_line": 944003
+    },
+    {
+      "row": {
+        "id": "gold:Go0605405-occurs_in-gold.ecosystem:5774",
+        "subject": "gold:Go0605405",
+        "predicate": "biolink:occurs_in",
+        "object": "gold.ecosystem:5774",
+        "relation": "gold:organism_v2.ecosystem_path_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 944003,
+      "ending_physical_line": 944004
+    },
+    {
+      "row": {
+        "id": "gold:Go0028995-in_taxon-NCBITaxon:53360",
+        "subject": "gold:Go0028995",
+        "predicate": "biolink:in_taxon",
+        "object": "NCBITaxon:53360",
+        "relation": "gold:organism_v2.ncbi_taxonomy_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 944043,
+      "ending_physical_line": 944044
+    },
+    {
+      "row": {
+        "id": "gold:Go0028995-occurs_in-gold.ecosystem:4212",
+        "subject": "gold:Go0028995",
+        "predicate": "biolink:occurs_in",
+        "object": "gold.ecosystem:4212",
+        "relation": "gold:organism_v2.ecosystem_path_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 944044,
+      "ending_physical_line": 944045
+    },
+    {
+      "row": {
+        "id": "gold:Go0698482-in_taxon-NCBITaxon:53360",
+        "subject": "gold:Go0698482",
+        "predicate": "biolink:in_taxon",
+        "object": "NCBITaxon:53360",
+        "relation": "gold:organism_v2.ncbi_taxonomy_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 944241,
+      "ending_physical_line": 944242
+    },
+    {
+      "row": {
+        "id": "gold:Go0698482-occurs_in-gold.ecosystem:1",
+        "subject": "gold:Go0698482",
+        "predicate": "biolink:occurs_in",
+        "object": "gold.ecosystem:1",
+        "relation": "gold:organism_v2.ecosystem_path_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 944242,
+      "ending_physical_line": 944243
+    },
+    {
+      "row": {
+        "id": "gold:Go0605408-in_taxon-NCBITaxon:53360",
+        "subject": "gold:Go0605408",
+        "predicate": "biolink:in_taxon",
+        "object": "NCBITaxon:53360",
+        "relation": "gold:organism_v2.ncbi_taxonomy_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 944342,
+      "ending_physical_line": 944343
+    },
+    {
+      "row": {
+        "id": "gold:Go0605408-occurs_in-gold.ecosystem:5774",
+        "subject": "gold:Go0605408",
+        "predicate": "biolink:occurs_in",
+        "object": "gold.ecosystem:5774",
+        "relation": "gold:organism_v2.ecosystem_path_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 944343,
+      "ending_physical_line": 944344
+    },
+    {
+      "row": {
+        "id": "gold:Go0605409-in_taxon-NCBITaxon:53360",
+        "subject": "gold:Go0605409",
+        "predicate": "biolink:in_taxon",
+        "object": "NCBITaxon:53360",
+        "relation": "gold:organism_v2.ncbi_taxonomy_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 945750,
+      "ending_physical_line": 945751
+    },
+    {
+      "row": {
+        "id": "gold:Go0605409-occurs_in-gold.ecosystem:5774",
+        "subject": "gold:Go0605409",
+        "predicate": "biolink:occurs_in",
+        "object": "gold.ecosystem:5774",
+        "relation": "gold:organism_v2.ecosystem_path_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 945751,
+      "ending_physical_line": 945752
+    },
+    {
+      "row": {
+        "id": "gold:Go0705252-in_taxon-NCBITaxon:1194211",
+        "subject": "gold:Go0705252",
+        "predicate": "biolink:in_taxon",
+        "object": "NCBITaxon:1194211",
+        "relation": "gold:organism_v2.ncbi_taxonomy_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 946725,
+      "ending_physical_line": 946726
+    },
+    {
+      "row": {
+        "id": "gold:Go0705252-occurs_in-gold.ecosystem:1",
+        "subject": "gold:Go0705252",
+        "predicate": "biolink:occurs_in",
+        "object": "gold.ecosystem:1",
+        "relation": "gold:organism_v2.ecosystem_path_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 946726,
+      "ending_physical_line": 946727
+    },
+    {
+      "row": {
+        "id": "gold:Go0679921-in_taxon-NCBITaxon:659496",
+        "subject": "gold:Go0679921",
+        "predicate": "biolink:in_taxon",
+        "object": "NCBITaxon:659496",
+        "relation": "gold:organism_v2.ncbi_taxonomy_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 948652,
+      "ending_physical_line": 948653
+    },
+    {
+      "row": {
+        "id": "gold:Go0679921-occurs_in-gold.ecosystem:1",
+        "subject": "gold:Go0679921",
+        "predicate": "biolink:occurs_in",
+        "object": "gold.ecosystem:1",
+        "relation": "gold:organism_v2.ecosystem_path_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 948653,
+      "ending_physical_line": 948654
+    },
+    {
+      "row": {
+        "id": "gold:Go0605404-in_taxon-NCBITaxon:53360",
+        "subject": "gold:Go0605404",
+        "predicate": "biolink:in_taxon",
+        "object": "NCBITaxon:53360",
+        "relation": "gold:organism_v2.ncbi_taxonomy_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 948956,
+      "ending_physical_line": 948957
+    },
+    {
+      "row": {
+        "id": "gold:Go0605404-occurs_in-gold.ecosystem:5774",
+        "subject": "gold:Go0605404",
+        "predicate": "biolink:occurs_in",
+        "object": "gold.ecosystem:5774",
+        "relation": "gold:organism_v2.ecosystem_path_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 948957,
+      "ending_physical_line": 948958
+    },
+    {
+      "row": {
+        "id": "gold:Go0698482-related_to-gold:Gs0164761",
+        "subject": "gold:Go0698482",
+        "predicate": "biolink:related_to",
+        "object": "gold:Gs0164761",
+        "relation": "gold:project.organism_id+master_study_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 976734,
+      "ending_physical_line": 976735
+    },
+    {
+      "row": {
+        "id": "gold:Go0680943-related_to-gold:Gs0165895",
+        "subject": "gold:Go0680943",
+        "predicate": "biolink:related_to",
+        "object": "gold:Gs0165895",
+        "relation": "gold:project.organism_id+master_study_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 1221682,
+      "ending_physical_line": 1221683
+    },
+    {
+      "row": {
+        "id": "gold:Go0679921-related_to-gold:Gs0165669",
+        "subject": "gold:Go0679921",
+        "predicate": "biolink:related_to",
+        "object": "gold:Gs0165669",
+        "relation": "gold:project.organism_id+master_study_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 1239610,
+      "ending_physical_line": 1239611
+    },
+    {
+      "row": {
+        "id": "gold:Go0605407-related_to-gold:Gs0151912",
+        "subject": "gold:Go0605407",
+        "predicate": "biolink:related_to",
+        "object": "gold:Gs0151912",
+        "relation": "gold:project.organism_id+master_study_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 1271502,
+      "ending_physical_line": 1271503
+    },
+    {
+      "row": {
+        "id": "gold:Go0705252-related_to-gold:Gs0165221",
+        "subject": "gold:Go0705252",
+        "predicate": "biolink:related_to",
+        "object": "gold:Gs0165221",
+        "relation": "gold:project.organism_id+master_study_id",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 1305466,
+      "ending_physical_line": 1305467
+    }
+  ],
+  "complete_ecosystem_parent_assertions": [
+    {
+      "row": {
+        "id": "gold.ecosystem:2882-subclass_of-gold.ecosystem:3",
+        "subject": "gold.ecosystem:2882",
+        "predicate": "biolink:subclass_of",
+        "object": "gold.ecosystem:3",
+        "relation": "gold:ecosystem_classification_2.parent",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 949151,
+      "ending_physical_line": 949152
+    },
+    {
+      "row": {
+        "id": "gold.ecosystem:4212-subclass_of-gold.ecosystem:3810",
+        "subject": "gold.ecosystem:4212",
+        "predicate": "biolink:subclass_of",
+        "object": "gold.ecosystem:3810",
+        "relation": "gold:ecosystem_classification_2.parent",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 949231,
+      "ending_physical_line": 949232
+    },
+    {
+      "row": {
+        "id": "gold.ecosystem:3-subclass_of-gold.ecosystem:1",
+        "subject": "gold.ecosystem:3",
+        "predicate": "biolink:subclass_of",
+        "object": "gold.ecosystem:1",
+        "relation": "gold:ecosystem_classification_2.parent",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 949620,
+      "ending_physical_line": 949621
+    },
+    {
+      "row": {
+        "id": "gold.ecosystem:3496-subclass_of-gold.ecosystem:2882",
+        "subject": "gold.ecosystem:3496",
+        "predicate": "biolink:subclass_of",
+        "object": "gold.ecosystem:2882",
+        "relation": "gold:ecosystem_classification_2.parent",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 950555,
+      "ending_physical_line": 950556
+    },
+    {
+      "row": {
+        "id": "gold.ecosystem:3810-subclass_of-gold.ecosystem:3496",
+        "subject": "gold.ecosystem:3810",
+        "predicate": "biolink:subclass_of",
+        "object": "gold.ecosystem:3496",
+        "relation": "gold:ecosystem_classification_2.parent",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 950680,
+      "ending_physical_line": 950681
+    },
+    {
+      "row": {
+        "id": "gold.ecosystem:5774-subclass_of-gold.ecosystem:5773",
+        "subject": "gold.ecosystem:5774",
+        "predicate": "biolink:subclass_of",
+        "object": "gold.ecosystem:5773",
+        "relation": "gold:ecosystem_classification_2.parent",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 951000,
+      "ending_physical_line": 951001
+    },
+    {
+      "row": {
+        "id": "gold.ecosystem:5773-subclass_of-gold.ecosystem:3496",
+        "subject": "gold.ecosystem:5773",
+        "predicate": "biolink:subclass_of",
+        "object": "gold.ecosystem:3496",
+        "relation": "gold:ecosystem_classification_2.parent",
+        "primary_knowledge_source": "infores:gold"
+      },
+      "record": 951155,
+      "ending_physical_line": 951156
+    }
+  ]
+}

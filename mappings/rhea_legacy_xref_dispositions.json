@@ -1,0 +1,327 @@
+{
+  "schema_version": 1,
+  "expected_count": 6,
+  "scope_note": "Six reviewed historical exclusions only. Local snapshot labels are not independently verified tagged releases. Runtime validates selected indexed labels, statuses, cross-references and explicit variant side roles, not historical comments, subclass axioms or a global EC/GO retirement rule.",
+  "historical_snapshot": {
+    "snapshot_id": "rhea-local-cache-141",
+    "rdf": {
+      "bytes": 8690178,
+      "sha256": "c5ece10984a2f7c4c95c241cde134b108f0dc865335b232bdd77e67e5f074078"
+    }
+  },
+  "selected_snapshot": {
+    "snapshot_id": "rhea-cache-142-20260907",
+    "rdf": {
+      "bytes": 8718726,
+      "sha256": "8ee48d7044cf3eef1001fa730dae2a491902ab25b259b519d6826796bb8acedf"
+    }
+  },
+  "legacy_sources": {
+    "data/raw/rhea2ec.tsv": {
+      "bytes": 193992,
+      "sha256": "2b449ac148ab155880fd0c751ba5a76b0448f05e42a5079e1877392304a7055a"
+    },
+    "data/raw/rhea2go.tsv": {
+      "bytes": 180913,
+      "sha256": "1a4b90336c6ba0e96bff8bb363544693e0dff51335b15a04fc684817aa3b3158"
+    }
+  },
+  "exclusions": [
+    {
+      "subject": "RHEA:15929",
+      "native_predicate": "http://rdf.rhea-db.org/ec",
+      "original_object": "EC:3.5.3.21",
+      "normalized_object": "EC:3.5.3.21",
+      "legacy_locator": "data/raw/rhea2ec.tsv",
+      "legacy_line": 1419,
+      "reason": "reaction_definition_and_annotation_changed",
+      "historical_label": "methylenediurea + 2 H2O + 2 H(+) = N-(hydroxymethyl)urea + 2 NH4(+) + CO2",
+      "historical_context": "141 native comment: Multi-step reaction: RHEA:22240 + RHEA:11704 + RHEA:13901.",
+      "selected_context": "142 adds RHEA:87283 to that native multistep comment and changes the reaction product and EC annotation. This is not a global EC identifier replacement.",
+      "required_native_assertions": [
+        {
+          "subject": "RHEA:15929",
+          "predicate": "http://rdf.rhea-db.org/status",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "subject": "RHEA:15929",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "value": "methylenediurea + 2 H2O + 2 H(+) = urea + formaldehyde + 2 NH4(+) + CO2"
+        },
+        {
+          "subject": "RHEA:15929",
+          "predicate": "http://rdf.rhea-db.org/ec",
+          "value": "http://purl.uniprot.org/enzyme/3.5.1.141"
+        },
+        {
+          "subject": "RHEA:15929",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "value": "http://purl.obolibrary.org/obo/GO_0047424"
+        }
+      ],
+      "normalization_evidence": null
+    },
+    {
+      "subject": "RHEA:19441",
+      "native_predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+      "original_object": "GO:0018581",
+      "normalized_object": "GO:0047074",
+      "legacy_locator": "data/raw/rhea2go.tsv",
+      "legacy_line": 2020,
+      "reason": "subreaction_annotation_removed",
+      "historical_label": "benzene-1,2,4-triol + O2 = 3-hydroxy-cis,cis-muconate + 2 H(+)",
+      "historical_context": "141 explicitly annotates the subreaction with GO:0018581, not GO:0047074. Both RDF snapshots comment: RHEA:19441 part of RHEA:35595. GO:0018581 is deprecated with exact replacement GO:0047074; prior finalization applied that separate GO authority decision.",
+      "selected_context": "142 has no GO annotation on RHEA:19441. Complete reaction RHEA:35595 retains GO:0047074; its native comment names the multistep composition RHEA:19441 + RHEA:42432. Do not replace the reaction subject or invalidate the independent GO retirement decision.",
+      "required_native_assertions": [
+        {
+          "subject": "RHEA:19441",
+          "predicate": "http://rdf.rhea-db.org/status",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "subject": "RHEA:19441",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "value": "benzene-1,2,4-triol + O2 = 3-hydroxy-cis,cis-muconate + 2 H(+)"
+        },
+        {
+          "subject": "RHEA:35595",
+          "predicate": "http://rdf.rhea-db.org/status",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "subject": "RHEA:35595",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "value": "benzene-1,2,4-triol + O2 = maleylacetate + 2 H(+)"
+        },
+        {
+          "subject": "RHEA:35595",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "value": "http://purl.obolibrary.org/obo/GO_0047074"
+        }
+      ],
+      "normalization_evidence": {
+        "authority_locator": "data/raw/go.db",
+        "authority_sha256": "a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a",
+        "predicate": "IAO:0100001",
+        "audit_locator": "data/transformed/rhea_mappings/go_reference_resolution.tsv",
+        "audit_sha256": "338d57c6250634ca2688f8e8d32b3b6dddc9ee0bb665216c562866e4bd90df74",
+        "audit_line": 4749
+      }
+    },
+    {
+      "subject": "RHEA:22140",
+      "native_predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+      "original_object": "GO:0008252",
+      "normalized_object": "GO:0008252",
+      "legacy_locator": "data/raw/rhea2go.tsv",
+      "legacy_line": 2600,
+      "reason": "more_specific_native_annotation",
+      "historical_label": "a nucleoside 5'-phosphate + H2O = a nucleoside + phosphate",
+      "historical_context": "141 asserts the generic nucleotidase GO:0008252 annotation.",
+      "selected_context": "142 explicitly asserts GO:0008253 (5'-nucleotidase activity). Reviewed local GO authority has GO:0008253 subclass_of GO:0008252 and exact match RHEA:22140. The broader biological relationship is not declared false; no new direct annotation is inferred from hierarchy.",
+      "required_native_assertions": [
+        {
+          "subject": "RHEA:22140",
+          "predicate": "http://rdf.rhea-db.org/status",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "subject": "RHEA:22140",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "value": "a nucleoside 5'-phosphate + H2O = a nucleoside + phosphate"
+        },
+        {
+          "subject": "RHEA:22140",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "value": "http://purl.obolibrary.org/obo/GO_0008253"
+        }
+      ],
+      "normalization_evidence": null
+    },
+    {
+      "subject": "RHEA:28338",
+      "native_predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+      "original_object": "GO:0008735",
+      "normalized_object": "GO:0008735",
+      "legacy_locator": "data/raw/rhea2go.tsv",
+      "legacy_line": 3488,
+      "reason": "different_activity_annotation",
+      "historical_label": "(R)-carnitinyl-CoA = crotonobetainyl-CoA + H2O",
+      "historical_context": "141 asserts GO:0008735 (L-carnitine CoA-transferase activity) on this EC:4.2.1.149 reaction.",
+      "selected_context": "142 instead asserts GO:0140427 (crotonobetainyl-CoA hydratase activity). RHEA:28526 retains the CoA-transferase annotation GO:0008735 and EC:2.8.3.21. No general GO identifier replacement is inferred.",
+      "required_native_assertions": [
+        {
+          "subject": "RHEA:28338",
+          "predicate": "http://rdf.rhea-db.org/status",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "subject": "RHEA:28338",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "value": "(R)-carnitinyl-CoA = crotonobetainyl-CoA + H2O"
+        },
+        {
+          "subject": "RHEA:28338",
+          "predicate": "http://rdf.rhea-db.org/ec",
+          "value": "http://purl.uniprot.org/enzyme/4.2.1.149"
+        },
+        {
+          "subject": "RHEA:28338",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "value": "http://purl.obolibrary.org/obo/GO_0140427"
+        },
+        {
+          "subject": "RHEA:28526",
+          "predicate": "http://rdf.rhea-db.org/status",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "subject": "RHEA:28526",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "value": "crotonobetainyl-CoA + (R)-carnitine = crotonobetaine + (R)-carnitinyl-CoA"
+        },
+        {
+          "subject": "RHEA:28526",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "value": "http://purl.obolibrary.org/obo/GO_0008735"
+        },
+        {
+          "subject": "RHEA:28526",
+          "predicate": "http://rdf.rhea-db.org/ec",
+          "value": "http://purl.uniprot.org/enzyme/2.8.3.21"
+        }
+      ],
+      "normalization_evidence": null
+    },
+    {
+      "subject": "RHEA:47152",
+      "native_predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+      "original_object": "GO:0004029",
+      "normalized_object": "GO:0004029",
+      "legacy_locator": "data/raw/rhea2go.tsv",
+      "legacy_line": 5079,
+      "reason": "more_specific_native_annotation",
+      "historical_label": "2,5-dioxopentanoate + NAD(+) + H2O = 2-oxoglutarate + NADH + 2 H(+)",
+      "historical_context": "141 asserts generic aldehyde dehydrogenase GO:0004029. Both RDF snapshots have RHEA:47152 subClassOf RHEA:16185.",
+      "selected_context": "142 asserts GO:0044104 for the specific substrate. Reviewed GO authority has GO:0044104 subclass_of GO:0004029. Generic parent reaction RHEA:16185 retains GO:0004029; neither reaction identity nor a new direct annotation is inferred.",
+      "required_native_assertions": [
+        {
+          "subject": "RHEA:47152",
+          "predicate": "http://rdf.rhea-db.org/status",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "subject": "RHEA:47152",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "value": "2,5-dioxopentanoate + NAD(+) + H2O = 2-oxoglutarate + NADH + 2 H(+)"
+        },
+        {
+          "subject": "RHEA:47152",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "value": "http://purl.obolibrary.org/obo/GO_0044104"
+        },
+        {
+          "subject": "RHEA:16185",
+          "predicate": "http://rdf.rhea-db.org/status",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "subject": "RHEA:16185",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "value": "an aldehyde + NAD(+) + H2O = a carboxylate + NADH + 2 H(+)"
+        },
+        {
+          "subject": "RHEA:16185",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "value": "http://purl.obolibrary.org/obo/GO_0004029"
+        }
+      ],
+      "normalization_evidence": null
+    },
+    {
+      "subject": "RHEA:58872",
+      "native_predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+      "original_object": "GO:0102177",
+      "normalized_object": "GO:0102177",
+      "legacy_locator": "data/raw/rhea2go.tsv",
+      "legacy_line": 5686,
+      "reason": "subreaction_annotation_removed",
+      "historical_label": "24-methylidenelophenol + 2 Fe(II)-[cytochrome b5] + O2 + 2 H(+) = 4alpha-hydroxymethyl-ergosta-7,24(24(1))-dien-3beta-ol + 2 Fe(III)-[cytochrome b5] + H2O",
+      "historical_context": "141 asserts GO:0102177 on RHEA:58872, not RHEA:58868. Both snapshots comment: RHEA:58872 part of RHEA:58868; complete-reaction composition is RHEA:58872 + RHEA:58876 + RHEA:58880.",
+      "selected_context": "142 asserts GO:0102177 on complete reaction RHEA:58868, not subreaction RHEA:58872. The complete reaction consumes six Fe(II)-cytochromes and three O2 and produces the carboxy product. Do not collapse the two native reaction identities.",
+      "required_native_assertions": [
+        {
+          "subject": "RHEA:58872",
+          "predicate": "http://rdf.rhea-db.org/status",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "subject": "RHEA:58872",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "value": "24-methylidenelophenol + 2 Fe(II)-[cytochrome b5] + O2 + 2 H(+) = 4alpha-hydroxymethyl-ergosta-7,24(24(1))-dien-3beta-ol + 2 Fe(III)-[cytochrome b5] + H2O"
+        },
+        {
+          "subject": "RHEA:58868",
+          "predicate": "http://rdf.rhea-db.org/status",
+          "value": "http://rdf.rhea-db.org/Approved"
+        },
+        {
+          "subject": "RHEA:58868",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#label",
+          "value": "24-methylidenelophenol + 6 Fe(II)-[cytochrome b5] + 3 O2 + 5 H(+) = 4alpha-carboxy-ergosta-7,24(24(1))-dien-3beta-ol + 6 Fe(III)-[cytochrome b5] + 4 H2O"
+        },
+        {
+          "subject": "RHEA:58868",
+          "predicate": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+          "value": "http://purl.obolibrary.org/obo/GO_0102177"
+        }
+      ],
+      "normalization_evidence": null
+    }
+  ],
+  "preserved_directional_go_annotations": [
+    {
+      "subject": "RHEA:25075",
+      "master": "RHEA:25074",
+      "direction": "LR",
+      "object": "GO:0009978"
+    },
+    {
+      "subject": "RHEA:33752",
+      "master": "RHEA:33751",
+      "direction": "LR",
+      "object": "GO:0008962"
+    },
+    {
+      "subject": "RHEA:42305",
+      "master": "RHEA:42304",
+      "direction": "LR",
+      "object": "GO:0008962"
+    },
+    {
+      "subject": "RHEA:57721",
+      "master": "RHEA:57720",
+      "direction": "LR",
+      "object": "GO:0046961"
+    },
+    {
+      "subject": "RHEA:57722",
+      "master": "RHEA:57720",
+      "direction": "RL",
+      "object": "GO:0046933"
+    },
+    {
+      "subject": "RHEA:58157",
+      "master": "RHEA:58156",
+      "direction": "LR",
+      "object": "GO:0046962"
+    },
+    {
+      "subject": "RHEA:58158",
+      "master": "RHEA:58156",
+      "direction": "RL",
+      "object": "GO:0046932"
+    }
+  ]
+}

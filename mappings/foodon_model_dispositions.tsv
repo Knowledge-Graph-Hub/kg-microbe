@@ -1,4 +1,7 @@
 id	disposition	evidence
+FOODON:00001301	schema_object_property	FOODON release 2025-12-30: native foodon.json declares PROPERTY/OBJECT (has food substance analog); foodon.owl declares owl:ObjectProperty. Exclude schema entity rows only after declaration verification; preserve predicate/relation usage and class/individual punning.
+FOODON:00001563	schema_object_property	FOODON release 2025-12-30: native foodon.json declares PROPERTY/OBJECT (has defining ingredient); foodon.owl declares owl:ObjectProperty. Exclude schema entity rows only after declaration verification; preserve predicate/relation usage and class/individual punning.
+FOODON:00002420	schema_object_property	FOODON release 2025-12-30: native foodon.json declares PROPERTY/OBJECT (has ingredient); foodon.owl declares owl:ObjectProperty. Exclude schema entity rows only after declaration verification; preserve predicate/relation usage and class/individual punning.
 FOODON:03411744	organism_class	data/raw/foodon.json: kelp has synonym laminariales; pinned NCBITaxon:2886 preferred label Laminariales. Category evidence only; no identity assertion.
 FOODON:00003662	invalid_in_taxon_target	data/raw/foodon.json definition: A rosette of two cultivar groups (Brassica rapa, subspecies pekinensis and chinensis) of a chinese cabbage plant.
 FOODON:00003673	invalid_in_taxon_target	data/raw/foodon.json definition: A pepo fruit of a watermelon plant (Citrullus lanatus). The fruit itself has in_taxon NCBITaxon:3654.

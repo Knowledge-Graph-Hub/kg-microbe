@@ -42,6 +42,8 @@ Deferred to a follow-up PR (issue #484):
 """
 
 import csv
+import hashlib
+import json
 import re
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
@@ -66,7 +68,7 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.atomic_io import atomic_write
-from kg_microbe.utils.tsv_io import tsv_writer
+from kg_microbe.utils.tsv_io import tsv_dict_writer, tsv_writer
 
 LPSN_PREFIX = "lpsn:"
 LPSN_KNOWLEDGE_SOURCE = "infores:lpsn"
@@ -82,6 +84,23 @@ COL_ADDRESS = "address"
 COL_NOMENCLATURAL_TYPE = "nomenclatural_type"
 COL_RECORD_NO = "record_no"
 COL_RECORD_LNK = "record_lnk"
+
+GSS_NATIVE_INPUT = "lpsn_gss_native"
+PARENT_DISPOSITIONS_FILE = "lpsn_parent_dispositions.tsv"
+PARENT_DISPOSITION_COLUMNS = (
+    "subject",
+    "disposition",
+    "reason",
+    "parent_name_key_json",
+    "candidate_ids_json",
+    "source_path",
+    "source_sha256",
+    "child_record_json",
+    "candidate_records_json",
+    "candidate_projections_json",
+    "legacy_projection_json",
+    "legacy_projection_basis",
+)
 
 # Split ``nomenclatural_type`` on the standard separators used across
 # culture-collection deposit lists in LPSN. Real strings look like
@@ -253,6 +272,8 @@ class LPSNTransform(Transform):
 
     #: Reads this transform's output; see Transform.TRANSFORM_INPUTS (#845).
     TRANSFORM_INPUTS = ("gtdb",)
+    REQUIRED_CONSUMED_INPUTS = (GSS_NATIVE_INPUT,)
+    REQUIRED_AUDIT_FILES = (PARENT_DISPOSITIONS_FILE,)
 
     def __init__(
         self,
@@ -428,8 +449,8 @@ class LPSNTransform(Transform):
         # so we can wire subclass_of edges without a second read.
         rows_by_id = self._parse_csv(input_file)
 
-        # Build a (genus_name, sp_epithet, subsp_epithet) -> record_no
-        # lookup so subspecies/species can find their parent record.
+        # Retain every candidate; row order and nomenclatural status must
+        # never decide which homonymous native parent was intended (#1292).
         parent_lookup = self._build_parent_lookup(rows_by_id)
 
         # Emit nodes + edges.
@@ -441,15 +462,22 @@ class LPSNTransform(Transform):
         with (
             atomic_write(self.output_node_file, newline="") as node_fh,
             atomic_write(self.output_edge_file, newline="") as edge_fh,
+            atomic_write(self.output_dir / PARENT_DISPOSITIONS_FILE, newline="") as audit_fh,
         ):
             node_writer = tsv_writer(node_fh)
             edge_writer = tsv_writer(edge_fh)
+            audit_writer = tsv_dict_writer(audit_fh, fieldnames=PARENT_DISPOSITION_COLUMNS)
 
             node_writer.writerow(self.node_header)
             edge_writer.writerow(self.edge_header)
+            audit_writer.writeheader()
 
             for record_no, row in rows_by_id.items():
                 node_writer.writerow(self._make_node_row(record_no, row))
+                parent_key = self._parent_name_key(row)
+                candidates = parent_lookup.get(parent_key, ())
+                if len(candidates) > 1:
+                    audit_writer.writerow(self._parent_ambiguity_record(record_no, parent_key, candidates))
                 parent_id = self._find_parent(row, parent_lookup)
                 if parent_id and parent_id != record_no:
                     edge_writer.writerow(self._make_subclass_edge(record_no, parent_id))
@@ -506,6 +534,12 @@ class LPSNTransform(Transform):
             for strain_curie, deposit_label in sorted(deposits.items()):
                 node_writer.writerow(self._make_deposit_node_row(strain_curie, deposit_label))
 
+            # No new output is committed after native input drift. A graph
+            # bundle becomes admissible only after finalization/completion,
+            # not merely because its individual files were atomically written.
+            self.verify_consumed_inputs()
+        self.record_producer_audit(PARENT_DISPOSITIONS_FILE)
+
         # End-of-run summary — useful diff signal when NCBI / GTDB
         # dumps are refreshed and match rates shift.
         print(
@@ -528,45 +562,90 @@ class LPSNTransform(Transform):
         """
         Read the LPSN GSS CSV into a dict keyed by ``record_no``.
 
-        Rows missing ``record_no`` or ``genus_name`` are skipped with a
-        warning printed to stdout (consistent with other transforms).
+        Fail closed before parent lookup: discarding malformed candidates
+        could make a genuinely ambiguous key appear unique. Keep the full
+        literal CSV record and coordinates, not only a normalized label.
         """
         rows: Dict[str, dict] = {}
-        with open(input_file, newline="") as fh:
-            reader = csv.DictReader(fh)
-            for row in reader:
+        self._native_gss_records = {}
+        required = {
+            COL_GENUS,
+            COL_SP_EPITHET,
+            COL_SUBSP_EPITHET,
+            COL_RECORD_NO,
+            COL_RECORD_LNK,
+            COL_STATUS,
+            COL_REFERENCE,
+            COL_AUTHORS,
+            COL_ADDRESS,
+            COL_NOMENCLATURAL_TYPE,
+        }
+        with self.consume_input(GSS_NATIVE_INPUT, input_file) as fh:
+            literal_lines = []
+
+            def native_lines():
+                """Preserve the exact physical lines consumed for each CSV record."""
+                for line in fh:
+                    literal_lines.append(line)
+                    yield line
+
+            reader = csv.DictReader(native_lines(), strict=True)
+            header = reader.fieldnames
+            if (
+                not header
+                or any(not field for field in header)
+                or len(set(header)) != len(header)
+                or not required <= set(header)
+            ):
+                raise ValueError("Malformed LPSN GSS header")
+            literal_lines.clear()
+            physical_start = reader.line_num + 1
+            for ordinal, row in enumerate(reader, start=1):
+                if None in row or any(value is None for value in row.values()):
+                    raise ValueError(f"Malformed LPSN GSS row width at line {reader.line_num}")
                 record_no = (row.get(COL_RECORD_NO) or "").strip()
                 genus = (row.get(COL_GENUS) or "").strip()
-                if not record_no:
-                    print(f"[lpsn] skipping row without record_no: {row}")
-                    continue
-                if not genus:
-                    print(f"[lpsn] skipping row {record_no} without genus_name")
-                    continue
+                if not re.fullmatch(r"[1-9][0-9]*", record_no) or not genus:
+                    raise ValueError(f"Invalid LPSN GSS record identity/name at line {reader.line_num}")
+                if (row.get(COL_SUBSP_EPITHET) or "").strip() and not (row.get(COL_SP_EPITHET) or "").strip():
+                    raise ValueError(f"LPSN GSS subspecies without species at line {reader.line_num}")
+                if record_no in rows:
+                    raise ValueError(f"Duplicate LPSN GSS record_no {record_no!r}")
                 rows[record_no] = row
+                literal = "".join(literal_lines)
+                self._native_gss_records[record_no] = {
+                    "record_ordinal": ordinal,
+                    "starting_physical_line": physical_start,
+                    "ending_physical_line": reader.line_num,
+                    "row": dict(row),
+                    "literal_csv": literal,
+                    "literal_sha256": hashlib.sha256(literal.encode("utf-8")).hexdigest(),
+                }
+                literal_lines.clear()
+                physical_start = reader.line_num + 1
         return rows
 
-    def _build_parent_lookup(self, rows_by_id: Dict[str, dict]) -> Dict[tuple, str]:
+    def _build_parent_lookup(self, rows_by_id: Dict[str, dict]) -> Dict[tuple, tuple]:
         """
-        Return a ``(genus, sp_epithet, subsp_epithet)`` → record_no lookup.
+        Return every distinct native candidate for each scientific-name tuple.
 
         The lookup key is normalized so a species row keys as
         ``(genus, sp_epithet, "")`` and a genus row keys as
         ``(genus, "", "")``.
         """
-        lookup: Dict[tuple, str] = {}
+        lookup = {}
         for record_no, row in rows_by_id.items():
             key = (
                 (row.get(COL_GENUS) or "").strip(),
                 (row.get(COL_SP_EPITHET) or "").strip(),
                 (row.get(COL_SUBSP_EPITHET) or "").strip(),
             )
-            lookup[key] = record_no
-        return lookup
+            lookup.setdefault(key, set()).add(record_no)
+        return {key: tuple(sorted(candidates)) for key, candidates in lookup.items()}
 
-    def _find_parent(self, row: dict, parent_lookup: Dict[tuple, str]) -> Optional[str]:
+    def _find_parent(self, row: dict, parent_lookup: Dict[tuple, tuple]) -> Optional[str]:
         """
-        Return the LPSN record_no of ``row``'s immediate parent, or None.
+        Return the uniquely resolved parent record ID, never a row-order choice.
 
         A subspecies row's parent is the species row with the same
         genus + sp_epithet and empty subsp_epithet. A species row's
@@ -578,10 +657,50 @@ class LPSNTransform(Transform):
         subsp = (row.get(COL_SUBSP_EPITHET) or "").strip()
 
         if subsp:
-            return parent_lookup.get((genus, sp, ""))
-        if sp:
-            return parent_lookup.get((genus, "", ""))
+            candidates = parent_lookup.get((genus, sp, ""), ())
+        elif sp:
+            candidates = parent_lookup.get((genus, "", ""), ())
+        else:
+            candidates = ()
+        return candidates[0] if len(candidates) == 1 else None
+
+    @staticmethod
+    def _parent_name_key(row):
+        """Distinguish an expected parent-name tuple from a genus with no GSS parent."""
+        genus = row[COL_GENUS].strip()
+        species = row[COL_SP_EPITHET].strip()
+        if row[COL_SUBSP_EPITHET].strip():
+            return (genus, species, "")
+        if species:
+            return (genus, "", "")
         return None
+
+    def _parent_ambiguity_record(self, record_no, parent_key, candidates):
+        """Retain all rejected choices and exact native evidence without asserting a parent."""
+        native = self._native_gss_records
+        identity = self.consumed_input_snapshots[GSS_NATIVE_INPUT]
+        previous_choice = max(candidates, key=lambda candidate: native[candidate]["record_ordinal"])
+        legacy_edge = dict(zip(self.edge_header, self._make_subclass_edge(record_no, previous_choice), strict=True))
+        proposals = [
+            dict(zip(self.edge_header, self._make_subclass_edge(record_no, candidate), strict=True))
+            for candidate in candidates
+        ]
+        return {
+            "subject": f"{LPSN_PREFIX}{record_no}",
+            "disposition": "quarantined_ambiguous_parent_name",
+            "reason": "Multiple native record IDs share the required parent-name tuple; no tie-break evidence",
+            "parent_name_key_json": json.dumps(parent_key, ensure_ascii=False),
+            "candidate_ids_json": json.dumps([f"{LPSN_PREFIX}{candidate}" for candidate in candidates]),
+            "source_path": identity["path"],
+            "source_sha256": identity["sha256"],
+            "child_record_json": json.dumps(native[record_no], sort_keys=True, ensure_ascii=False),
+            "candidate_records_json": json.dumps(
+                {key: native[key] for key in candidates}, sort_keys=True, ensure_ascii=False
+            ),
+            "candidate_projections_json": json.dumps(proposals, sort_keys=True, ensure_ascii=False),
+            "legacy_projection_json": json.dumps(legacy_edge, sort_keys=True, ensure_ascii=False),
+            "legacy_projection_basis": "calculated_legacy_last_row_wins; not an explicit native parent-ID claim",
+        }
 
     def _make_node_row(self, record_no: str, row: dict) -> list:
         """

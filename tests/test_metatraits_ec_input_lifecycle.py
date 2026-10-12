@@ -64,10 +64,65 @@ def _child(root):
         Transform.__init__(value, name, raw, root / "data/transformed")
         for kind in ("nodes", "edges"):
             shutil.copyfile(root / "fixture" / (kind + ".tsv"), value.output_dir / (kind + ".tsv"))
+        if name == "ontologies":
+            # Bind the copied zero-cohort audit rather than bypassing the new
+            # producer requirement in this isolated two-node graph fixture.
+            audit_name = "ontology_metadata_exclusions.tsv"
+            require(
+                cls.REQUIRED_AUDIT_FILES
+                == (
+                    audit_name,
+                    "native_relation_dispositions.tsv",
+                    "foodon_kernel_quarantine.tsv",
+                    "ontology_parent_dispositions.tsv",
+                    "upa_route_review.tsv",
+                ),
+                "Unexpected ontology audit contract",
+            )
+            fixture_audit = root / "fixture" / audit_name
+            require(len(fixture_audit.read_bytes().splitlines()) == 1, "Expected empty fixture audit")
+            shutil.copyfile(fixture_audit, value.output_dir / audit_name)
+            value.record_producer_audit(audit_name)
+            from kg_microbe.utils.foodon_kernel_producer import FoodonKernelQuarantine
+            from kg_microbe.utils.foodon_kernel_quarantine import AUDIT_FILE as FOODON_AUDIT
+            from kg_microbe.utils.native_ro_retention import AUDIT_FILE, NativeROPredicateRetention
+
+            with (value.output_dir / FOODON_AUDIT).open("w", encoding="utf-8", newline="") as foodon_stream:
+                foodon = FoodonKernelQuarantine(value, foodon_stream)
+                assert not foodon.prepared and foodon.evidence is None
+            value.record_producer_audit(FOODON_AUDIT)
+
+            from kg_microbe.utils.ontology_parent_quarantine import AUDIT_FILE as PARENT_AUDIT
+            from kg_microbe.utils.ontology_parent_quarantine import OntologyParentQuarantine
+
+            with (value.output_dir / PARENT_AUDIT).open("w", encoding="utf-8", newline="") as parent_stream:
+                parents = OntologyParentQuarantine(value, parent_stream)
+                assert parents.member_names() == ()
+            value.record_producer_audit(PARENT_AUDIT)
+
+            from kg_microbe.utils.upa_route_review import AUDIT_FILE as UPA_AUDIT
+            from kg_microbe.utils.upa_route_review import UPARouteReview
+
+            with (value.output_dir / UPA_AUDIT).open("w", encoding="utf-8", newline="") as upa_stream:
+                upa = UPARouteReview(value, upa_stream)
+                assert upa.member_names() == ()
+                upa.verify_complete()
+            value.record_producer_audit(UPA_AUDIT)
+
+            with (value.output_dir / AUDIT_FILE).open("w", encoding="utf-8", newline="") as audit_stream:
+                NativeROPredicateRetention(value, audit_stream).verify_complete()
+            value.record_producer_audit(AUDIT_FILE)
         if name in NAMES and read:
             value.ec_to_go = value._load_ec_to_go()
             value.enzyme_name_to_go = {}
             value.metpo_pattern_to_predicate = {}
+        if name == "metatraits_gtdb":
+            value.knowledge_source = "infores:gtdb-metatraits"
+            value.accession_to_gtdb_species = {}
+            value.accession_to_ncbi = {}
+            # Exercise the actual producer, even without GTDB subjects;
+            # keep the separate optional-EC read controls independent.
+            value._create_hierarchical_edges()
         value.finalize(fresh_run=True)
         dispatcher._record_fingerprint(value, name)
         require((value.output_dir / fingerprint.FINGERPRINT_FILE).is_file(), "completion marker absent")
@@ -395,11 +450,17 @@ def _child(root):
 def lifecycle(tmp_path_factory, record_testsuite_property):
     """Run one offline real registered-source matrix, with no production raw or graph access."""
     root = tmp_path_factory.mktemp("ec-lifecycle").resolve()
-    shutil.copytree(ROOT / "kg_microbe", root / "kg_microbe", ignore=shutil.ignore_patterns("__pycache__"))
+    shutil.copytree(ROOT / "kg_microbe", root / "kg_microbe", ignore=shutil.ignore_patterns("__pycache__", "tmp"))
     shutil.copytree(ROOT / "tests/resources/metatraits_dependency_inputs/canonical", root / "mappings/canonical")
     from kg_microbe.utils.transform_fingerprint import SHARED_DATA_INPUTS
 
-    for relative in (*SHARED_DATA_INPUTS, "mappings/ontology_self_loop_exclusions.tsv"):
+    for relative in (
+        *SHARED_DATA_INPUTS,
+        "mappings/ontology_self_loop_exclusions.tsv",
+        "mappings/native_ro_predicate_dispositions.json",
+        "mappings/ontology_parent_dispositions.json",
+        "mappings/upa_reaction_projection_dispositions.json",
+    ):
         destination = root / relative
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / relative, destination)

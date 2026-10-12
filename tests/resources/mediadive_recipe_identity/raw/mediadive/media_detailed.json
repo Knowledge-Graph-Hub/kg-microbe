@@ -1,0 +1,5188 @@
+{
+  "1376": {
+    "medium": {
+      "complex_medium": "no",
+      "id": 1376,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium1376.pdf",
+      "max_pH": 6.7,
+      "min_pH": 6.7,
+      "name": "METHYLOCOCCUS MEDIUM",
+      "source": "DSMZ"
+    },
+    "solutions": [
+      {
+        "id": 2780,
+        "name": "Main sol. 1376",
+        "recipe": [
+          {
+            "amount": 0.1,
+            "compound": "KNO3",
+            "compound_id": 191,
+            "g_l": 0.1,
+            "mmol_l": 0.98909,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "MgSO4 x 7 H2O",
+            "compound_id": 8,
+            "g_l": 0.1,
+            "mmol_l": 0.405719,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.02,
+            "compound": "CaCl2 x 2 H2O",
+            "compound_id": 7,
+            "g_l": 0.02,
+            "mmol_l": 0.136041,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "KBr",
+            "compound_id": 174,
+            "g_l": 0.01,
+            "mmol_l": 0.0840336,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "optional": 0,
+            "recipe_order": 5,
+            "solution": "Trace Element Solution",
+            "solution_id": 2781,
+            "unit": "ml"
+          },
+          {
+            "amount": 0.1,
+            "optional": 0,
+            "recipe_order": 6,
+            "solution": "Vitamin solution",
+            "solution_id": 2791,
+            "unit": "ml"
+          },
+          {
+            "amount": 0.1,
+            "optional": 0,
+            "recipe_order": 7,
+            "solution": "Selenite-tungstate solution",
+            "solution_id": 4172,
+            "unit": "ml"
+          },
+          {
+            "amount": 0.1,
+            "attribute": "",
+            "optional": 0,
+            "recipe_order": 8,
+            "solution": "FeNa-EDTA",
+            "solution_id": 5695,
+            "unit": "ml"
+          },
+          {
+            "amount": 2,
+            "optional": 0,
+            "recipe_order": 9,
+            "solution": "Phosphate Buffer, pH 6.7",
+            "solution_id": 2793,
+            "unit": "ml"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Prepare the medium without the vitamin solution and the phosphate buffer. Dispense the medium into the growth vessels. If using sealed vessels it is appropriate to add 50% methane to the gas phase and autoclave at 121°C for 15 minutes. Autoclave the phosphate buffer separately. When the growth medium is cool add 0.1 ml/l of vitamin solution (filter sterilized) and 2 ml/l of the phosphate buffer - if too warm the phosphate will precipitate. Liquid cultures should be grown with shaking."
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 2781,
+        "name": "Trace Element Solution",
+        "recipe": [
+          {
+            "amount": 0.25,
+            "compound": "Na2-EDTA",
+            "compound_id": 34,
+            "g_l": 0.25,
+            "mmol_l": 0.743592,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.4,
+            "compound": "ZnSO4 x 7 H2O",
+            "compound_id": 35,
+            "g_l": 0.4,
+            "mmol_l": 1.39101,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.02,
+            "compound": "MnCl2 x 4 H2O",
+            "compound_id": 36,
+            "g_l": 0.02,
+            "mmol_l": 0.101059,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 0.02,
+            "compound": "H3BO3",
+            "compound_id": 37,
+            "g_l": 0.02,
+            "mmol_l": 0.323415,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 0.04,
+            "compound": "Na2 MoO4 x 2 H2O",
+            "compound_id": 1503,
+            "g_l": 0.04,
+            "mmol_l": 0.165323,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "NiCl2 x 2 H2O",
+            "compound_id": 981,
+            "g_l": 0.01,
+            "mmol_l": 0.0771611,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "g"
+          },
+          {
+            "amount": 0.2,
+            "compound": "CuSO4 x 5 H2O",
+            "compound_id": 121,
+            "g_l": 0.2,
+            "mmol_l": 0.801006,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "g"
+          },
+          {
+            "amount": 0.05,
+            "compound": "CoCl2 x 6 H2O",
+            "compound_id": 38,
+            "g_l": 0.05,
+            "mmol_l": 0.385092,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "ml"
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 2791,
+        "name": "Vitamin solution",
+        "recipe": [
+          {
+            "amount": 10,
+            "compound": "Thiamine-HCl x 2 H2O",
+            "compound_id": 77,
+            "g_l": 0.01,
+            "mmol_l": 0.026788,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "mg"
+          },
+          {
+            "amount": 20,
+            "compound": "Nicotinic acid",
+            "compound_id": 139,
+            "g_l": 0.02,
+            "mmol_l": 0.162456,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "mg"
+          },
+          {
+            "amount": 10,
+            "compound": "Pyridoxamine hydrochloride",
+            "compound_id": 1513,
+            "g_l": 0.01,
+            "mmol_l": 0.048863,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "mg"
+          },
+          {
+            "amount": 10,
+            "compound": "p-Aminobenzoic acid",
+            "compound_id": 47,
+            "g_l": 0.01,
+            "mmol_l": 0.0729182,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "mg"
+          },
+          {
+            "amount": 20,
+            "compound": "Riboflavin",
+            "compound_id": 136,
+            "g_l": 0.02,
+            "mmol_l": 0.053135,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "mg"
+          },
+          {
+            "amount": 1,
+            "compound": "Biotin",
+            "compound_id": 46,
+            "g_l": 0.001,
+            "mmol_l": 0.00409316,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Vitamin B12",
+            "compound_id": 18,
+            "g_l": 0.005,
+            "mmol_l": 0.00368895,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "mg"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "ml"
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 4172,
+        "name": "Selenite-tungstate solution",
+        "recipe": [
+          {
+            "amount": 0.4,
+            "compound": "NaOH",
+            "compound_id": 256,
+            "g_l": 0.4,
+            "mmol_l": 10.0007,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 6,
+            "compound": "Na2SeO3 x 5 H2O",
+            "compound_id": 107,
+            "g_l": 0.006,
+            "mmol_l": 0.0228125,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "mg"
+          },
+          {
+            "amount": 8,
+            "compound": "Na2WO4 x 2 H2O",
+            "compound_id": 249,
+            "g_l": 0.008,
+            "mmol_l": 0.0242534,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "mg"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "ml"
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "equipment": {
+          "1385": "Autoclave"
+        },
+        "id": 2793,
+        "name": "Phosphate Buffer, pH 6.7",
+        "recipe": [
+          {
+            "amount": 37.425,
+            "compound": "KH2PO4",
+            "compound_id": 11,
+            "g_l": 37.425,
+            "mmol_l": 275.012,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 48.95,
+            "compound": "Na2HPO4",
+            "compound_id": 233,
+            "g_l": 48.95,
+            "mmol_l": 344.818,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "pH 6.7"
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 5695,
+        "name": "FeNa-EDTA",
+        "recipe": [
+          {
+            "amount": 4.5,
+            "compound": "FeNa-EDTA",
+            "compound_id": 1230,
+            "g_l": 4.5,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "ml"
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "equipment": {
+          "5054": "Autoclave"
+        },
+        "id": 5920,
+        "name": "Phosphate Buffer, pH 8-9",
+        "recipe": [
+          {
+            "amount": 11.87,
+            "compound": "Na2HPO4",
+            "compound_id": 233,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "After the disodium phosphate has been dissolved in distilled water, pH should be between 8-9 without adjustment."
+          },
+          {
+            "step": "Autoclave at 121 °C for 15 min."
+          }
+        ],
+        "volume": 1000
+      }
+    ]
+  },
+  "1414": {
+    "medium": {
+      "complex_medium": "yes",
+      "id": 1414,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium1414.pdf",
+      "max_pH": 8.5,
+      "min_pH": 8,
+      "name": "PORPHYROBACTER MEDIUM",
+      "source": "DSMZ"
+    },
+    "solutions": [
+      {
+        "id": 2879,
+        "name": "Main sol. 1414",
+        "recipe": [
+          {
+            "amount": 2,
+            "compound": "MgSO4 x 7 H2O",
+            "compound_id": 8,
+            "g_l": 2,
+            "mmol_l": 8.11438,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 0.3,
+            "compound": "NH4Cl",
+            "compound_id": 42,
+            "g_l": 0.3,
+            "mmol_l": 5.60852,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.3,
+            "compound": "KCl",
+            "compound_id": 61,
+            "g_l": 0.3,
+            "mmol_l": 4.02414,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 15,
+            "compound": "Na2SO4",
+            "compound_id": 110,
+            "g_l": 15,
+            "mmol_l": 105.604,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "Na acetate",
+            "compound_id": 401,
+            "g_l": 1,
+            "mmol_l": 12.1901,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "Malic acid",
+            "compound_id": 640,
+            "g_l": 1,
+            "mmol_l": 7.45768,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "Yeast extract",
+            "compound_id": 16,
+            "g_l": 1,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "Bacto peptone",
+            "compound_id": 19,
+            "g_l": 0.5,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "g"
+          },
+          {
+            "amount": 2,
+            "optional": 0,
+            "recipe_order": 9,
+            "solution": "Trace Element Solution",
+            "solution_id": 2880,
+            "unit": "ml"
+          },
+          {
+            "amount": 2,
+            "optional": 0,
+            "recipe_order": 10,
+            "solution": "Vitamine Solution",
+            "solution_id": 2881,
+            "unit": "ml"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 11,
+            "unit": "ml"
+          },
+          {
+            "amount": 5,
+            "attribute": "10% w/v",
+            "compound": "NaHCO3",
+            "compound_id": 55,
+            "g_l": 0.5,
+            "mmol_l": 5.95188,
+            "optional": 0,
+            "recipe_order": 12,
+            "unit": "ml/l"
+          },
+          {
+            "amount": 20,
+            "attribute": "10% w/v",
+            "compound": "CaCl2",
+            "compound_id": 81,
+            "g_l": 2,
+            "mmol_l": 18.0213,
+            "optional": 0,
+            "recipe_order": 13,
+            "unit": "ml/l"
+          },
+          {
+            "amount": 3,
+            "attribute": "10% w/v",
+            "compound": "KH2PO4",
+            "compound_id": 11,
+            "g_l": 0.3,
+            "mmol_l": 2.2045,
+            "optional": 0,
+            "recipe_order": 14,
+            "unit": "ml/l"
+          },
+          {
+            "amount": 2,
+            "optional": 0,
+            "recipe_order": 15,
+            "solution": "Vitamine Solution",
+            "solution_id": 2881,
+            "unit": "ml/l"
+          }
+        ],
+        "steps": [
+          {
+            "recipe_order": 12,
+            "step": "Adjust to pH 5.9 before autoclaving"
+          },
+          {
+            "recipe_order": 12,
+            "step": "Prepare the liquid medium. Before inoculation add from sterile stock solutions: "
+          },
+          {
+            "step": "Adjust to pH 8.0 - 8.5 with 0.5 N NaOH."
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 2880,
+        "name": "Trace Element Solution",
+        "recipe": [
+          {
+            "amount": 300,
+            "compound": "FeSO4 x 7 H2O",
+            "compound_id": 12,
+            "g_l": 0.3,
+            "mmol_l": 1.07908,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "mg"
+          },
+          {
+            "amount": 3,
+            "compound": "MnCl2 x 4 H2O",
+            "compound_id": 36,
+            "g_l": 0.003,
+            "mmol_l": 0.0151588,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "CoCl2 x 6 H2O",
+            "compound_id": 38,
+            "g_l": 0.005,
+            "mmol_l": 0.0385092,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "mg"
+          },
+          {
+            "amount": 1,
+            "compound": "CuCl2 x 2 H2O",
+            "compound_id": 39,
+            "g_l": 0.001,
+            "mmol_l": 0.00586569,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "mg"
+          },
+          {
+            "amount": 2,
+            "compound": "NiCl2 x 6 H2O",
+            "compound_id": 40,
+            "g_l": 0.002,
+            "mmol_l": 0.0154322,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "mg"
+          },
+          {
+            "amount": 3,
+            "compound": "Na2MoO4 x 2 H2O",
+            "compound_id": 9,
+            "g_l": 0.003,
+            "mmol_l": 0.0123993,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "ZnSO4 x 7 H2O",
+            "compound_id": 35,
+            "g_l": 0.005,
+            "mmol_l": 0.0173876,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "mg"
+          },
+          {
+            "amount": 2,
+            "compound": "H3BO3",
+            "compound_id": 37,
+            "g_l": 0.002,
+            "mmol_l": 0.0323415,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "mg"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Adjust to pH 3.0"
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "equipment": {
+          "2622": "Filter"
+        },
+        "id": 2881,
+        "name": "Vitamine Solution",
+        "recipe": [
+          {
+            "amount": 400,
+            "compound": "Nicotinic acid",
+            "compound_id": 139,
+            "g_l": 0.4,
+            "mmol_l": 3.24913,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "mg"
+          },
+          {
+            "amount": 400,
+            "compound": "Thiamine",
+            "compound_id": 666,
+            "g_l": 0.4,
+            "mmol_l": 1.50739,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "mg"
+          },
+          {
+            "amount": 80,
+            "compound": "Biotine",
+            "compound_id": 899,
+            "g_l": 0.08,
+            "mmol_l": 0.327453,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "mg"
+          },
+          {
+            "amount": 20,
+            "compound": "Vitamin B12",
+            "compound_id": 18,
+            "g_l": 0.02,
+            "mmol_l": 0.0147558,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "mg"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Filtersterilized"
+          }
+        ],
+        "volume": 1000
+      }
+    ]
+  },
+  "1706": {
+    "medium": {
+      "complex_medium": "no",
+      "id": 1706,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium1706.pdf",
+      "max_pH": 7.8,
+      "min_pH": 7.8,
+      "name": "LENTIMONAS MEDIUM",
+      "source": "DSMZ"
+    },
+    "solutions": [
+      {
+        "equipment": {
+          "3420": "Autoclave"
+        },
+        "id": 3532,
+        "name": "Main sol. 1706",
+        "recipe": [
+          {
+            "amount": 500,
+            "optional": 0,
+            "recipe_order": 1,
+            "solution": "Solution 1",
+            "solution_id": 5795,
+            "unit": "ml"
+          },
+          {
+            "amount": 100,
+            "optional": 0,
+            "recipe_order": 2,
+            "solution": "Solution 2",
+            "solution_id": 5796,
+            "unit": "ml"
+          },
+          {
+            "amount": 400,
+            "optional": 0,
+            "recipe_order": 3,
+            "solution": "Solution 3",
+            "solution_id": 6420,
+            "unit": "ml"
+          },
+          {
+            "amount": 1,
+            "attribute": "final concentration 0.015 g/l",
+            "compound": "FeSO4 x 7 H2O",
+            "compound_id": 12,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "ml"
+          },
+          {
+            "amount": 1,
+            "attribute": "final concentration 0.005 g/l",
+            "compound": "Na2MoO4 x 2 H2O",
+            "compound_id": 9,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "ml"
+          },
+          {
+            "amount": 1,
+            "attribute": "",
+            "optional": 0,
+            "recipe_order": 7,
+            "solution": "Vitamin solution",
+            "solution_id": 3534,
+            "unit": "ml"
+          },
+          {
+            "amount": 1,
+            "attribute": "",
+            "optional": 0,
+            "recipe_order": 8,
+            "solution": "Trace metal solution",
+            "solution_id": 3533,
+            "unit": "ml"
+          },
+          {
+            "amount": 2,
+            "attribute": "Fucoidan or Mannose or Galactose",
+            "compound": "Carbon source solution",
+            "compound_id": 1552,
+            "g_l": 2,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "g"
+          }
+        ],
+        "steps": [
+          {
+            "recipe_order": 4,
+            "step": "For 1 l of medium combine 500 ml of solution I, 100 ml of solution II and 400 ml of solution III and add the following additives:"
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "equipment": {
+          "5291": "Filter"
+        },
+        "id": 3533,
+        "name": "Trace metal solution",
+        "recipe": [
+          {
+            "amount": 2.86,
+            "compound": "H3BO3",
+            "compound_id": 37,
+            "g_l": 2.86,
+            "mmol_l": 46.2484,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 1.81,
+            "compound": "MnCl2 x 4 H2O",
+            "compound_id": 36,
+            "g_l": 1.81,
+            "mmol_l": 9.1458,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.222,
+            "compound": "ZnSO4 x 7 H2O",
+            "compound_id": 35,
+            "g_l": 0.222,
+            "mmol_l": 0.77201,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.079,
+            "compound": "CuSO4 x 5 H2O",
+            "compound_id": 121,
+            "g_l": 0.079,
+            "mmol_l": 0.316397,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 0.0494,
+            "compound": "Co(NO3)2 x 6 H2O",
+            "compound_id": 541,
+            "g_l": 0.0494,
+            "mmol_l": 0.169739,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 0.005,
+            "compound": "NiCl2 x 6 H2O",
+            "compound_id": 40,
+            "g_l": 0.005,
+            "mmol_l": 0.0385805,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Filtrate (0.22 µm)."
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "equipment": {
+          "5290": "Filter"
+        },
+        "id": 3534,
+        "name": "Vitamin solution",
+        "recipe": [
+          {
+            "amount": 0.04,
+            "compound": "4-Aminobenzoic Acid",
+            "compound_id": 1237,
+            "g_l": 0.04,
+            "mmol_l": 0.291673,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "D-(+)-biotin",
+            "compound_id": 1359,
+            "g_l": 0.01,
+            "mmol_l": 0.0409316,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.03,
+            "compound": "Folic acid",
+            "compound_id": 138,
+            "g_l": 0.03,
+            "mmol_l": 0.0679656,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "Lipoic acid",
+            "compound_id": 368,
+            "g_l": 0.01,
+            "mmol_l": 0.048466,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "Nicotinic acid",
+            "compound_id": 139,
+            "g_l": 0.1,
+            "mmol_l": 0.812282,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 0.05,
+            "compound": "Hemicalcium D-(+)-pantothenate",
+            "compound_id": 1123,
+            "g_l": 0.05,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 0.11,
+            "compound": "Pyridoxamine Dihydrochloride",
+            "compound_id": 1240,
+            "g_l": 0.11,
+            "mmol_l": 0.456223,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "Thiamine hydrochloride",
+            "compound_id": 1147,
+            "g_l": 0.1,
+            "mmol_l": 0.296472,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "g"
+          },
+          {
+            "amount": 0.05,
+            "compound": "Vitamin B12",
+            "compound_id": 18,
+            "g_l": 0.05,
+            "mmol_l": 0.0368895,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Filtrate (0.22 µm)."
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 5795,
+        "name": "Solution 1",
+        "recipe": [
+          {
+            "amount": 24.95,
+            "compound": "NaCl",
+            "compound_id": 43,
+            "g_l": 49.9,
+            "mmol_l": 853.867,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 3,
+            "compound": "MgSO4 x 7 H2O",
+            "compound_id": 8,
+            "g_l": 6,
+            "mmol_l": 24.3431,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 2,
+            "compound": "MgCl2 x 6 H2O",
+            "compound_id": 79,
+            "g_l": 4,
+            "mmol_l": 19.6751,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.75,
+            "compound": "KCl",
+            "compound_id": 61,
+            "g_l": 1.5,
+            "mmol_l": 20.1207,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 0.12,
+            "compound": "CaCl2 x 2 H2O",
+            "compound_id": 7,
+            "g_l": 0.24,
+            "mmol_l": 1.63249,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 6,
+            "compound": "Tris",
+            "compound_id": 73,
+            "g_l": 12,
+            "mmol_l": 99.0589,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 0.001,
+            "compound": "Na2-EDTA",
+            "compound_id": 34,
+            "g_l": 0.002,
+            "mmol_l": 0.00594873,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "g"
+          },
+          {
+            "amount": 500,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Adjust pH to 7.8. Autoclave solutions to sterilize."
+          }
+        ],
+        "volume": 500
+      },
+      {
+        "id": 5796,
+        "name": "Solution 2",
+        "recipe": [
+          {
+            "amount": 0.8,
+            "compound": "K2HPO4",
+            "compound_id": 10,
+            "g_l": 1.6,
+            "mmol_l": 9.18611,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "g"
+          },
+          {
+            "amount": 0.2,
+            "compound": "KH2PO4",
+            "compound_id": 11,
+            "g_l": 0.4,
+            "mmol_l": 2.93934,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "g"
+          },
+          {
+            "amount": 100,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 11,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Adjust pH to 7.8. Autoclave solutions to sterilize."
+          }
+        ],
+        "volume": 500
+      },
+      {
+        "id": 6419,
+        "name": "Solution 3",
+        "recipe": [
+          {
+            "amount": 0.01,
+            "compound": "Yeast extract",
+            "compound_id": 16,
+            "g_l": 0.01,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 400,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Adjust pH to 7.8. Autoclave solutions to sterilize."
+          }
+        ]
+      }
+    ]
+  },
+  "1885": {
+    "medium": {
+      "complex_medium": "yes",
+      "description": "Medium for cultivation of PC 794, PC 1182, PC 1188 and PC 1189 plant cell lines.\r\nMedium modified after GAMBORG, O.L., R.A. MILLER and K. OJIMA: Exp. Cell Res., 50, 151-158, (1968)",
+      "id": 1885,
+      "max_pH": 5.6,
+      "min_pH": 5.6,
+      "name": "4X Plant Cell Medium",
+      "source": "DSMZ"
+    },
+    "solutions": [
+      {
+        "equipment": {
+          "5451": "Autoclave"
+        },
+        "id": 6608,
+        "name": "Main Solution 1885",
+        "recipe": [
+          {
+            "amount": 3.163,
+            "attribute": "Duchefa G0210",
+            "compound": "Gamborg B5 Medium incl. Vitamins",
+            "compound_id": 2428,
+            "g_l": 3.163,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 2,
+            "optional": 0,
+            "recipe_order": 2,
+            "solution": "2,4-Dichlorophenoxyacetic Acid Stock Solution",
+            "solution_id": 6592,
+            "unit": "ml"
+          },
+          {
+            "amount": 0.5,
+            "optional": 0,
+            "recipe_order": 3,
+            "solution": "1-Naphtylacetic Acid Stock Solution",
+            "solution_id": 6607,
+            "unit": "ml"
+          },
+          {
+            "amount": 0.5,
+            "optional": 0,
+            "recipe_order": 4,
+            "solution": "Indole-3-Acetic Acid",
+            "solution_id": 6612,
+            "unit": "ml"
+          },
+          {
+            "amount": 0.4,
+            "optional": 0,
+            "recipe_order": 5,
+            "solution": "Kinetin Stock Solution",
+            "solution_id": 6609,
+            "unit": "ml"
+          },
+          {
+            "amount": 20,
+            "attribute": "Duchefa S0809",
+            "compound": "Sucrose",
+            "compound_id": 108,
+            "g_l": 20,
+            "mmol_l": 58.4283,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 2,
+            "attribute": "Sigma C7290",
+            "compound": "N-Z-Amine® A",
+            "compound_id": 2439,
+            "g_l": 2,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "g"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Make up to <span class='amount' data-volume='1000'>1000</span> ml with MilliQ water."
+          },
+          {
+            "step": "Adjust pH to 5.6."
+          },
+          {
+            "step": "For solid medium, use 8.0 g Plant Agar (Duchefa P1001)"
+          },
+          {
+            "step": "Autoclave at 121 °C for 20 min."
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 6592,
+        "name": "2,4-Dichlorophenoxyacetic Acid Stock Solution",
+        "recipe": [
+          {
+            "amount": 100,
+            "attribute": "Duchefa D0911",
+            "compound": "2,4-Dichlorophenoxyacetic Acid",
+            "compound_id": 2102,
+            "g_l": 1,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "mg"
+          },
+          {
+            "amount": 100,
+            "compound": "Ethanol absolute",
+            "compound_id": 89,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Store in a glass bottle with a ground glass stopper at 4 °C."
+          }
+        ],
+        "volume": 100
+      },
+      {
+        "id": 6607,
+        "name": "1-Naphtylacetic Acid Stock Solution",
+        "recipe": [
+          {
+            "amount": 100,
+            "attribute": "Duchefa N0903",
+            "compound": "1-Naphtylacetic Acid",
+            "compound_id": 2436,
+            "g_l": 1,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "mg"
+          },
+          {
+            "amount": 100,
+            "compound": "Ethanol absolute",
+            "compound_id": 89,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "To prepare a 100 mg/ml stock solution, dissolve 100 mg of 1-Naphthylacetic Acid (NAA) in a few millilitres of 1 M NaOH, then fill up to 100 ml with absolute ethanol."
+          },
+          {
+            "step": "Store in a glass bottle with a ground glass stopper at 4 °C."
+          }
+        ],
+        "volume": 100
+      },
+      {
+        "id": 6609,
+        "name": "Kinetin Stock Solution",
+        "recipe": [
+          {
+            "amount": 50,
+            "attribute": "Duchefa K0905",
+            "compound": "Kinetin",
+            "compound_id": 2437,
+            "g_l": 0.5,
+            "mmol_l": 2.32342,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "mg"
+          },
+          {
+            "amount": 100,
+            "compound": "Ethanol absolute",
+            "compound_id": 89,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "To prepare a 0.5 mg/ml stock solution, dissolve 50 mg of Kinetin in a few millilitres of 1 M HCl, then fill up to 100 ml with absolute ethanol."
+          },
+          {
+            "step": "Store in a glass bottle with a ground glass stopper at 4 °C."
+          }
+        ],
+        "volume": 100
+      },
+      {
+        "id": 6612,
+        "name": "Indole-3-Acetic Acid",
+        "recipe": [
+          {
+            "amount": 100,
+            "attribute": "Duchefa I0901",
+            "compound": "3-Indolyl acetic acid",
+            "compound_id": 1548,
+            "g_l": 1,
+            "mmol_l": 5.70841,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "mg"
+          },
+          {
+            "amount": 100,
+            "compound": "Ethanol absolute",
+            "compound_id": 89,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Store in a glass bottle with a ground glass stopper at 4 °C."
+          }
+        ],
+        "volume": 100
+      }
+    ]
+  },
+  "1c": {
+    "medium": {
+      "complex_medium": "yes",
+      "description": "Nutrient agar with bromothymol blue to differtiate phase I and II variants (distinct physiological states in vitro) among Xenorhabdus strains.",
+      "id": "1c",
+      "name": "Nutrient bromothymol blue agar NBTA",
+      "source": "DSMZ"
+    },
+    "solutions": [
+      {
+        "equipment": {
+          "5430": "Autoclave",
+          "5431": "sterile filter"
+        },
+        "id": 6571,
+        "name": "Main sol. 1c",
+        "recipe": [
+          {
+            "amount": 5,
+            "compound": "Peptone",
+            "compound_id": 1,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 3,
+            "compound": "Meat extract",
+            "compound_id": 2,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 15,
+            "compound": "Agar",
+            "compound_id": 3,
+            "condition": "for solid medium",
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "ml"
+          },
+          {
+            "amount": 25,
+            "compound": "Bromothymol blue",
+            "compound_id": 254,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "mg"
+          },
+          {
+            "amount": 4,
+            "optional": 0,
+            "recipe_order": 6,
+            "solution": "2,3,5-triphenyltetrazolium chloride stock solution",
+            "solution_id": 6572,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Autoclave at 121 °C for 21 min."
+          },
+          {
+            "step": "After autoclavation add 4 mL from a sterile 2,3,5-triphenyltetrazolium chloride stock solution (1% w/v)."
+          }
+        ],
+        "volume": 1000
+      }
+    ]
+  },
+  "425": {
+    "medium": {
+      "complex_medium": "yes",
+      "id": 425,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium425.pdf",
+      "max_pH": 7.2,
+      "min_pH": 7,
+      "name": "OATMEAL AGAR",
+      "source": "DSMZ"
+    },
+    "solutions": [
+      {
+        "id": 855,
+        "name": "Main sol. 425",
+        "recipe": [
+          {
+            "amount": 10,
+            "compound": "Oat flakes",
+            "compound_id": 292,
+            "g_l": 10,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 10,
+            "compound": "Oatmeal",
+            "compound_id": 471,
+            "g_l": 10,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 20,
+            "compound": "Agar",
+            "compound_id": 3,
+            "g_l": 15,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Adjust pH to 7.0 - 7.2."
+          }
+        ],
+        "volume": 1000
+      }
+    ]
+  },
+  "474": {
+    "medium": {
+      "complex_medium": "no",
+      "id": 474,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium474.pdf",
+      "name": "MEDIUM WITH POLYHYDROXYBUTYRIC ACID AS CARBON SOURCE",
+      "source": "DSMZ"
+    },
+    "solutions": [
+      {
+        "equipment": {
+          "2541": "Autoclave"
+        },
+        "id": 974,
+        "name": "Main sol. 474",
+        "recipe": [
+          {
+            "amount": 1000,
+            "optional": 0,
+            "recipe_order": 1,
+            "solution": "Main sol. 457",
+            "solution_id": 913,
+            "unit": "ml"
+          },
+          {
+            "amount": 16,
+            "compound": "Agar",
+            "compound_id": 3,
+            "g_l": 16,
+            "mmol_l": 47.5723,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g/l"
+          },
+          {
+            "amount": 6.6,
+            "optional": 0,
+            "recipe_order": 3,
+            "solution": "Poly-ß-hydroxybutyric acid solution 3%(w/v)",
+            "solution_id": 5634,
+            "unit": "ml"
+          },
+          {
+            "amount": 100,
+            "optional": 0,
+            "recipe_order": 4,
+            "solution": "Main sol. 457",
+            "solution_id": 913,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Prepare a suspension of 3.0 g poly-ß-hydroxybutyric acid (PHB) in 100 ml distilled water, stir over night and sonicate until a white homogenous suspension is obtained. Autoclave for 5 minutes at 121°C. Prepare double layer agar plates. First layer: medium 457 with 16.0 g agar per l."
+          },
+          {
+            "recipe_order": 3,
+            "step": "Second layer: medium 457 with agar, supplemented with 6.6 ml sterile PHB-suspension per 100 ml."
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 5634,
+        "name": "Poly-ß-hydroxybutyric acid solution 3%(w/v)",
+        "recipe": [
+          {
+            "amount": 3,
+            "compound": "poly-ß-hydroxybutyric acid",
+            "compound_id": 2121,
+            "g_l": 30,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 100,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "ml"
+          }
+        ],
+        "volume": 100
+      },
+      {
+        "equipment": {
+          "1215": "Autoclave"
+        },
+        "id": 913,
+        "name": "Main sol. 457",
+        "recipe": [
+          {
+            "amount": 2.44,
+            "compound": "Na2HPO4",
+            "compound_id": 233,
+            "g_l": 2.44,
+            "mmol_l": 17.1881,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 1.52,
+            "compound": "KH2PO4",
+            "compound_id": 11,
+            "g_l": 1.52,
+            "mmol_l": 11.1695,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "(NH4)2SO4",
+            "compound_id": 27,
+            "g_l": 0.5,
+            "mmol_l": 3.78387,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.2,
+            "compound": "MgSO4 x 7 H2O",
+            "compound_id": 8,
+            "g_l": 0.2,
+            "mmol_l": 0.811438,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 0.05,
+            "compound": "CaCl2 x 2 H2O",
+            "compound_id": 7,
+            "g_l": 0.05,
+            "mmol_l": 0.340101,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 10,
+            "optional": 0,
+            "recipe_order": 6,
+            "solution": "Trace element solution SL-4",
+            "solution_id": 4059,
+            "unit": "ml"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Adjust pH to 6.9."
+          },
+          {
+            "step": "Prepare a separate solution of the phosphates and autoclave separately. Combine the two solutions after cooling."
+          },
+          {
+            "step": "Rehydrate and cultivate lyophilized cells in complex medium (e.g. medium 1, 220 or 535). After this reactivation, cultivate in mineral medium 457 with the appropriate carbon source."
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 4059,
+        "name": "Trace element solution SL-4",
+        "recipe": [
+          {
+            "amount": 0.5,
+            "compound": "EDTA",
+            "compound_id": 271,
+            "g_l": 0.5,
+            "mmol_l": 1.71092,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 0.2,
+            "compound": "FeSO4 x 7 H2O",
+            "compound_id": 12,
+            "g_l": 0.2,
+            "mmol_l": 0.719386,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 100,
+            "optional": 0,
+            "recipe_order": 3,
+            "solution": "Trace element solution SL-6",
+            "solution_id": 25,
+            "unit": "ml"
+          },
+          {
+            "amount": 900,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "ml"
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 25,
+        "name": "Trace element solution SL-6",
+        "recipe": [
+          {
+            "amount": 0.1,
+            "compound": "ZnSO4 x 7 H2O",
+            "compound_id": 35,
+            "g_l": 0.1,
+            "mmol_l": 0.347752,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 0.03,
+            "compound": "MnCl2 x 4 H2O",
+            "compound_id": 36,
+            "g_l": 0.03,
+            "mmol_l": 0.151588,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.3,
+            "compound": "H3BO3",
+            "compound_id": 37,
+            "g_l": 0.3,
+            "mmol_l": 4.85123,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.2,
+            "compound": "CoCl2 x 6 H2O",
+            "compound_id": 38,
+            "g_l": 0.2,
+            "mmol_l": 1.54037,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "CuCl2 x 2 H2O",
+            "compound_id": 39,
+            "g_l": 0.01,
+            "mmol_l": 0.0586569,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 0.02,
+            "compound": "NiCl2 x 6 H2O",
+            "compound_id": 40,
+            "g_l": 0.02,
+            "mmol_l": 0.154322,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 0.03,
+            "compound": "Na2MoO4 x 2 H2O",
+            "compound_id": 9,
+            "g_l": 0.03,
+            "mmol_l": 0.123993,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "ml"
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 1,
+        "name": "Main sol. 1",
+        "recipe": [
+          {
+            "amount": 5,
+            "compound": "Peptone",
+            "compound_id": 1,
+            "g_l": 5,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 3,
+            "compound": "Meat extract",
+            "compound_id": 2,
+            "g_l": 3,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 15,
+            "compound": "Agar",
+            "compound_id": 3,
+            "condition": "for solid medium",
+            "g_l": 15,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Adjust pH to 7.0."
+          },
+          {
+            "step": "For Bacillus strains the addition of 10.0 mg MnSO4 x H2O is recommended for sporulation."
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 477,
+        "name": "Main sol. 220",
+        "recipe": [
+          {
+            "amount": 15,
+            "compound": "Casein peptone",
+            "compound_id": 21,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 5,
+            "compound": "Soy peptone",
+            "compound_id": 75,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 5,
+            "compound": "NaCl",
+            "compound_id": 43,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 15,
+            "compound": "Agar",
+            "compound_id": 3,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Adjust pH to 7.3. Medium is identical with Tryptone Soya Agar (Oxoid CM 131)."
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "equipment": {
+          "2366": "Autoclave"
+        },
+        "id": 1181,
+        "name": "Main sol. 535",
+        "recipe": [
+          {
+            "amount": 30,
+            "attribute": "BBL 11768, Oxoid CM129 or Merck 5459",
+            "compound": "Trypticase soy broth",
+            "compound_id": 99,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 20,
+            "compound": "Agar",
+            "compound_id": 3,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "pH 7.3"
+          },
+          {
+            "step": "Autoclave at 121°C for 15 min."
+          }
+        ],
+        "volume": 1000
+      }
+    ]
+  },
+  "609": {
+    "medium": {
+      "complex_medium": "yes",
+      "id": 609,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium609.pdf",
+      "max_pH": 7.2,
+      "min_pH": 7.2,
+      "name": "OATMEAL AGAR (A) (ISP-3)",
+      "source": "DSMZ"
+    },
+    "solutions": [
+      {
+        "equipment": {
+          "31": "Filter"
+        },
+        "id": 1308,
+        "name": "Main sol. 609",
+        "recipe": [
+          {
+            "amount": 20,
+            "attribute": "Quaker White Oats",
+            "compound": "Oatmeal",
+            "compound_id": 471,
+            "g_l": 20,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 18,
+            "attribute": "Difco",
+            "compound": "Agar",
+            "compound_id": 3,
+            "g_l": 18,
+            "mmol_l": 53.5189,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "ml"
+          },
+          {
+            "amount": 1,
+            "optional": 0,
+            "recipe_order": 4,
+            "solution": "Trace salt solution",
+            "solution_id": 1209,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Adjust pH to 7.2. Cook or steam 20.0 g in 1000.0 ml distilled water for 20 min. Filter through cheese cloth. Add 18.0 g agar and make up to 1000.0 ml. Add 1 ml of trace salts solution (see below)."
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 1209,
+        "name": "Trace salt solution",
+        "recipe": [
+          {
+            "amount": 0.1,
+            "compound": "FeSO4 x 7 H2O",
+            "compound_id": 12,
+            "g_l": 1,
+            "mmol_l": 3.59693,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "MnCl2 x 4 H2O",
+            "compound_id": 36,
+            "g_l": 1,
+            "mmol_l": 5.05293,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "ZnSO4 x 7 H2O",
+            "compound_id": 35,
+            "g_l": 1,
+            "mmol_l": 3.47752,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 100,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "ml"
+          }
+        ],
+        "volume": 100
+      }
+    ]
+  },
+  "701": {
+    "medium": {
+      "complex_medium": "yes",
+      "id": 701,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium701.pdf",
+      "max_pH": 7.2,
+      "min_pH": 7.2,
+      "name": "HALOANAEROBACTER CHITINOVORANS MEDIUM",
+      "source": "DSMZ"
+    },
+    "solutions": [
+      {
+        "equipment": {
+          "1765": "Autoclave"
+        },
+        "id": 1452,
+        "name": "Main sol. 701",
+        "recipe": [
+          {
+            "amount": 1,
+            "compound": "NH4Cl",
+            "compound_id": 42,
+            "g_l": 1,
+            "mmol_l": 18.6951,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 7,
+            "compound": "MgCl2 x 6 H2O",
+            "compound_id": 79,
+            "g_l": 7,
+            "mmol_l": 34.4314,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 9.6,
+            "compound": "MgSO4 x 7 H2O",
+            "compound_id": 8,
+            "g_l": 9.6,
+            "mmol_l": 38.949,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "CaCl2 x 2 H2O",
+            "compound_id": 7,
+            "g_l": 0.5,
+            "mmol_l": 3.40101,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 3.8,
+            "compound": "KCl",
+            "compound_id": 61,
+            "g_l": 3.8,
+            "mmol_l": 50.9725,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 0.4,
+            "compound": "K2HPO4 x 3 H2O",
+            "compound_id": 244,
+            "g_l": 0.4,
+            "mmol_l": 2.29653,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 10,
+            "compound": "NaCl",
+            "compound_id": 43,
+            "g_l": 10,
+            "mmol_l": 171.116,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "g"
+          },
+          {
+            "amount": 3,
+            "compound": "NaHCO3",
+            "compound_id": 55,
+            "g_l": 3,
+            "mmol_l": 35.7113,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "Na2CO3",
+            "compound_id": 32,
+            "g_l": 1,
+            "mmol_l": 9.43503,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "Na2S x 9 H2O",
+            "compound_id": 54,
+            "g_l": 0.5,
+            "mmol_l": 2.08175,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "Yeast extract",
+            "compound_id": 16,
+            "g_l": 1,
+            "optional": 0,
+            "recipe_order": 11,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "L-Cysteine",
+            "compound_id": 671,
+            "g_l": 0.5,
+            "mmol_l": 4.12677,
+            "optional": 0,
+            "recipe_order": 12,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "Resazurin",
+            "compound_id": 25,
+            "g_l": 0.001,
+            "mmol_l": 0.00436319,
+            "optional": 0,
+            "recipe_order": 13,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "attribute": "glucose, chitin etc.",
+            "compound": "Substrate",
+            "compound_id": 672,
+            "g_l": 5,
+            "optional": 0,
+            "recipe_order": 14,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "optional": 0,
+            "recipe_order": 15,
+            "solution": "Modified Wolin's mineral solution II",
+            "solution_id": 5902,
+            "unit": "ml"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 16,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "pH 7.2"
+          },
+          {
+            "step": "Prepare the medium without the Na2S, Na2CO3, NaHCO3, L-cysteine and substrate. Boil the medium and cool under a stream of nitrogen. Add the Na2CO3 and NaHCO3 . Adjust the pH to 7.2. If chitin is used as the substrate it must be added before autoclaving. Autoclave the medium and add the Na2S (from a sterile, neutralized stock solution prepared under nitrogen), L-cysteine (from a stock solution prepared under nitrogen), and the glucose or N-acetylglucosamine (if used as substrate) from sterile stock solution prepared under nitrogen. Check the final pH."
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 5902,
+        "name": "Modified Wolin's mineral solution II",
+        "recipe": [
+          {
+            "amount": 1.5,
+            "compound": "Nitrilotriacetic acid",
+            "compound_id": 189,
+            "g_l": 1.5,
+            "mmol_l": 7.84765,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 3,
+            "compound": "MgSO4 x 7 H2O",
+            "compound_id": 8,
+            "g_l": 3,
+            "mmol_l": 12.1716,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "MnSO4 x H2O",
+            "compound_id": 14,
+            "g_l": 0.5,
+            "mmol_l": 2.9583,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "NaCl",
+            "compound_id": 43,
+            "g_l": 1,
+            "mmol_l": 17.1116,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "FeSO4 x 7 H2O",
+            "compound_id": 12,
+            "g_l": 0.1,
+            "mmol_l": 0.359693,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 0.18,
+            "compound": "CoSO4 x 7 H2O",
+            "compound_id": 198,
+            "g_l": 0.18,
+            "mmol_l": 1.16132,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "CaCl2 x 2 H2O",
+            "compound_id": 7,
+            "g_l": 0.1,
+            "mmol_l": 0.680203,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "g"
+          },
+          {
+            "amount": 0.18,
+            "compound": "ZnSO4 x 7 H2O",
+            "compound_id": 35,
+            "g_l": 0.18,
+            "mmol_l": 0.625954,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "CuSO4 x 5 H2O",
+            "compound_id": 121,
+            "g_l": 0.01,
+            "mmol_l": 0.0400503,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "g"
+          },
+          {
+            "amount": 0.02,
+            "compound": "AlK(SO4)2 x 12 H2O",
+            "compound_id": 908,
+            "g_l": 0.02,
+            "mmol_l": 0.0421596,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "H3BO3",
+            "compound_id": 37,
+            "g_l": 0.01,
+            "mmol_l": 0.161708,
+            "optional": 0,
+            "recipe_order": 11,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "Na2MoO4 x 2 H2O",
+            "compound_id": 9,
+            "g_l": 0.01,
+            "mmol_l": 0.0413309,
+            "optional": 0,
+            "recipe_order": 12,
+            "unit": "g"
+          },
+          {
+            "amount": 0.025,
+            "compound": "NiCl2 x 6 H2O",
+            "compound_id": 40,
+            "g_l": 0.025,
+            "mmol_l": 0.192903,
+            "optional": 0,
+            "recipe_order": 13,
+            "unit": "g"
+          },
+          {
+            "amount": 0.3,
+            "compound": "Na2SeO3 x 5 H2O",
+            "compound_id": 107,
+            "g_l": 0.0003,
+            "mmol_l": 0.00114062,
+            "optional": 0,
+            "recipe_order": 14,
+            "unit": "mg"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 16,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "First dissolve nitrilotriacetic acid and adjust pH to 6.5 with KOH, then add minerals. Adjust final to pH 7.0 with KOH."
+          }
+        ],
+        "volume": 1000
+      }
+    ]
+  },
+  "871": {
+    "medium": {
+      "complex_medium": "yes",
+      "id": 871,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium871.pdf",
+      "max_pH": 7.4,
+      "min_pH": 7,
+      "name": "GYM + SEAWATER",
+      "source": "DSMZ"
+    },
+    "solutions": [
+      {
+        "id": 1800,
+        "name": "Main sol. 871",
+        "recipe": [
+          {
+            "amount": 4,
+            "compound": "Glucose",
+            "compound_id": 5,
+            "g_l": 4,
+            "mmol_l": 22.2025,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 4,
+            "compound": "Yeast extract",
+            "compound_id": 16,
+            "g_l": 4,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 10,
+            "compound": "Malt extract",
+            "compound_id": 116,
+            "g_l": 10,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 2,
+            "compound": "CaCO3",
+            "compound_id": 13,
+            "g_l": 2,
+            "mmol_l": 19.982,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 20,
+            "compound": "Agar",
+            "compound_id": 3,
+            "g_l": 15,
+            "mmol_l": 44.5991,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "optional": 0,
+            "recipe_order": 6,
+            "solution": "Seawater",
+            "solution_id": 1801,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "pH should be between 7.0 - 7.4."
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 1801,
+        "name": "Seawater",
+        "recipe": [
+          {
+            "amount": 32,
+            "compound": "Sea Salt",
+            "compound_id": 423,
+            "g_l": 32,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "32 g seasalt in 1000 ml distilled water."
+          }
+        ],
+        "volume": 1000
+      }
+    ]
+  },
+  "931": {
+    "medium": {
+      "complex_medium": "yes",
+      "id": 931,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium931.pdf",
+      "max_pH": 10,
+      "min_pH": 9.5,
+      "name": "ALCALIPHILIC AMPHIBACILLUS STRAINS MEDIUM",
+      "source": "DSMZ"
+    },
+    "solutions": [
+      {
+        "equipment": {
+          "2401": "Filter",
+          "559": "Autoclave",
+          "823": "Anaerobic workbench"
+        },
+        "id": 1920,
+        "name": "Main sol. 931",
+        "recipe": [
+          {
+            "amount": 0.2,
+            "compound": "KH2PO4",
+            "compound_id": 11,
+            "g_l": 0.2,
+            "mmol_l": 1.46967,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "MgCl2",
+            "compound_id": 453,
+            "g_l": 0.1,
+            "mmol_l": 1.05031,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "NH4Cl",
+            "compound_id": 42,
+            "g_l": 0.5,
+            "mmol_l": 9.34754,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.2,
+            "compound": "KCl",
+            "compound_id": 61,
+            "g_l": 0.2,
+            "mmol_l": 2.68276,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 63.6,
+            "compound": "Na2CO3",
+            "compound_id": 32,
+            "g_l": 63.6,
+            "mmol_l": 600.068,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 50.4,
+            "compound": "NaHCO3",
+            "compound_id": 55,
+            "g_l": 50.4,
+            "mmol_l": 599.95,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 0.7,
+            "compound": "Na2S x 9 H2O",
+            "compound_id": 54,
+            "g_l": 0.7,
+            "mmol_l": 2.91446,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "g"
+          },
+          {
+            "amount": 0.2,
+            "compound": "Yeast extract",
+            "compound_id": 16,
+            "g_l": 0.2,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "g"
+          },
+          {
+            "amount": 5,
+            "compound": "Sucrose",
+            "compound_id": 108,
+            "g_l": 5,
+            "mmol_l": 14.6071,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "optional": 0,
+            "recipe_order": 10,
+            "solution": "Modified Wolin's mineral solution",
+            "solution_id": 241,
+            "unit": "ml"
+          },
+          {
+            "amount": 10,
+            "optional": 0,
+            "recipe_order": 11,
+            "solution": "Modified Wolin's mineral solution",
+            "solution_id": 241,
+            "unit": "ml"
+          },
+          {
+            "amount": 1,
+            "compound": "Resazurin",
+            "compound_id": 25,
+            "g_l": 0.001,
+            "mmol_l": 0.00436319,
+            "optional": 0,
+            "recipe_order": 12,
+            "unit": "mg"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 13,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Final pH 9.5-10.0"
+          },
+          {
+            "step": "Prepare the medium without adding the vitamins, sucrose, yeast extract, NH4Cl, Na2CO3, and NaHCO3 using anaerobic conditions, under nitrogen. If the medium has been boiled to remove oxygen add the NH4Cl, Na2CO3, and NaHCO3 after the medium had cooled. Dispense into tubes stopper with rubber stoppers (serum tubes or bottles, or screw capped tubes). Autoclave, and to the cooled medium add the vitamins (filter sterilised under N2), sucrose, yeast extract, and Na2S x 9 H2O from anaerobic, sterile stock solutions."
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 241,
+        "name": "Modified Wolin's mineral solution",
+        "recipe": [
+          {
+            "amount": 1.5,
+            "compound": "Nitrilotriacetic acid",
+            "compound_id": 189,
+            "g_l": 1.5,
+            "mmol_l": 7.84765,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 3,
+            "compound": "MgSO4 x 7 H2O",
+            "compound_id": 8,
+            "g_l": 3,
+            "mmol_l": 12.1716,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "MnSO4 x H2O",
+            "compound_id": 14,
+            "g_l": 0.5,
+            "mmol_l": 2.9583,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "NaCl",
+            "compound_id": 43,
+            "g_l": 1,
+            "mmol_l": 17.1116,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "FeSO4 x 7 H2O",
+            "compound_id": 12,
+            "g_l": 0.1,
+            "mmol_l": 0.359693,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 0.18,
+            "compound": "CoSO4 x 7 H2O",
+            "compound_id": 198,
+            "g_l": 0.18,
+            "mmol_l": 1.16132,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "CaCl2 x 2 H2O",
+            "compound_id": 7,
+            "g_l": 0.1,
+            "mmol_l": 0.680203,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "g"
+          },
+          {
+            "amount": 0.18,
+            "compound": "ZnSO4 x 7 H2O",
+            "compound_id": 35,
+            "g_l": 0.18,
+            "mmol_l": 0.625954,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "CuSO4 x 5 H2O",
+            "compound_id": 121,
+            "g_l": 0.01,
+            "mmol_l": 0.0400503,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "g"
+          },
+          {
+            "amount": 0.02,
+            "compound": "AlK(SO4)2 x 12 H2O",
+            "compound_id": 908,
+            "g_l": 0.02,
+            "mmol_l": 0.0421596,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "H3BO3",
+            "compound_id": 37,
+            "g_l": 0.01,
+            "mmol_l": 0.161708,
+            "optional": 0,
+            "recipe_order": 11,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "Na2MoO4 x 2 H2O",
+            "compound_id": 9,
+            "g_l": 0.01,
+            "mmol_l": 0.0413309,
+            "optional": 0,
+            "recipe_order": 12,
+            "unit": "g"
+          },
+          {
+            "amount": 0.03,
+            "compound": "NiCl2 x 6 H2O",
+            "compound_id": 40,
+            "g_l": 0.03,
+            "mmol_l": 0.231483,
+            "optional": 0,
+            "recipe_order": 13,
+            "unit": "g"
+          },
+          {
+            "amount": 0.3,
+            "compound": "Na2SeO3 x 5 H2O",
+            "compound_id": 107,
+            "g_l": 0.0003,
+            "mmol_l": 0.00114062,
+            "optional": 0,
+            "recipe_order": 14,
+            "unit": "mg"
+          },
+          {
+            "amount": 0.4,
+            "compound": "Na2WO4 x 2 H2O",
+            "compound_id": 249,
+            "g_l": 0.0004,
+            "mmol_l": 0.00121267,
+            "optional": 0,
+            "recipe_order": 15,
+            "unit": "mg"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 16,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "First dissolve nitrilotriacetic acid and adjust pH to 6.5 with KOH, then add minerals. Adjust final to pH 7.0 with KOH."
+          }
+        ],
+        "volume": 1000
+      }
+    ]
+  },
+  "J1067": {
+    "medium": {
+      "complex_medium": "yes",
+      "id": "J1067",
+      "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=1067",
+      "name": "FRESHWATER IRON-OXIDIZING BACTERIA MEDIUM-II",
+      "source": "JCM"
+    },
+    "solutions": [
+      {
+        "equipment": {
+          "2230": "Filter",
+          "2964": "Autoclave"
+        },
+        "id": 5132,
+        "name": "Main sol. J1067",
+        "recipe": [
+          {
+            "amount": 50,
+            "optional": 0,
+            "recipe_order": 1,
+            "solution": "FeS solution",
+            "solution_id": 4499,
+            "unit": "ml"
+          },
+          {
+            "amount": 50,
+            "optional": 0,
+            "recipe_order": 2,
+            "solution": "Modified Wolfe's mineral solution",
+            "solution_id": 4500,
+            "unit": "ml"
+          },
+          {
+            "amount": 1.5,
+            "attribute": "BD-Difco",
+            "compound": "Agar",
+            "compound_id": 3,
+            "condition": " Noble",
+            "g_l": 1.33333,
+            "mmol_l": 3.96436,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "optional": 0,
+            "recipe_order": 4,
+            "solution": "Modified Wolfe's mineral solution",
+            "solution_id": 4500,
+            "unit": "ml"
+          },
+          {
+            "amount": 10,
+            "optional": 0,
+            "recipe_order": 5,
+            "solution": "Trace minerals",
+            "solution_id": 3804,
+            "unit": "ml"
+          },
+          {
+            "amount": 10,
+            "optional": 0,
+            "recipe_order": 6,
+            "solution": "Trace vitamins",
+            "solution_id": 3861,
+            "unit": "ml"
+          },
+          {
+            "amount": 5.25,
+            "attribute": "8%",
+            "compound": "NaHCO3",
+            "compound_id": 55,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Bottom layer:"
+          },
+          {
+            "recipe_order": 4,
+            "step": "Top layer: "
+          },
+          {
+            "step": "Autoclave both layer solutions. Shortly after autoclaving, pipette the bottom layer into each culture vessel (typically 5 ml in 60 ml glass vials, use pipette tips that have been cut to enlarge the opening). The bottom layer is allowed to cool for at least 30 min to ensure its solidification."
+          },
+          {
+            "recipe_order": 6,
+            "step": "After cooling of the top layer solution, add per liter the following solutions (filter-sterilized): "
+          },
+          {
+            "step": "Add the top layer solution in 5 to 6 times the volume of the bottom layer to the culture vessels containing the bottom layer (e.g., 25 to 30 ml in 60 ml glass vials with 5 ml of the bottom layer)."
+          },
+          {
+            "step": "Then, cap the culture vessels with silicone rubber stoppers, and replace the gas phase with a N2-CO2 (4:1, v/v) gas mixture."
+          },
+          {
+            "step": "Comment: The medium can be stored in culture vessels for a certain time by capping with butyl rubber stoppers, instead of silicon rubber stoppers and keeping anoxic in the vessels. Silicone rubber stopper is O2 permeable and creates a mircoaerophilic condition in the culture vessels."
+          }
+        ],
+        "volume": 1125
+      },
+      {
+        "id": 4499,
+        "name": "FeS solution",
+        "recipe": [
+          {
+            "amount": 46.2,
+            "compound": "FeSO4 x 7 H2O",
+            "compound_id": 12,
+            "g_l": 154,
+            "mmol_l": 553.927,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 39.6,
+            "compound": "Na2S x 9 H2O",
+            "compound_id": 54,
+            "g_l": 132,
+            "mmol_l": 549.583,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 300,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Prewarm distilled water at 50C in a beaker with a stir bar. While rapidly starring the water, add FeSO4 x 7H2O, followed immediately by Na2S x 9H2O. A thick black precipitate will form instantly. Stir continuously for 2 to 3 min. Remove the mixture to a narrow-mouthed glass bottle (500 ml) that can be tightly stopped. The bottle is filled to the top with distilled water and capped. Allow to settle for several hours, decant and replace the overlaying water. Repeat this procedure at least five times to wash the FeS precipitate. Check pH to be close to neutral. To stock the FeS solution, fill the bottle with distilled water and cap. Remove the overlaying water when prepare the bottom layer."
+          }
+        ],
+        "volume": 300
+      },
+      {
+        "id": 4500,
+        "name": "Modified Wolfe's mineral solution",
+        "recipe": [
+          {
+            "amount": 1,
+            "compound": "NH4Cl",
+            "compound_id": 42,
+            "g_l": 1,
+            "mmol_l": 18.6951,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 0.2,
+            "compound": "MgSO4 x 7 H2O",
+            "compound_id": 8,
+            "g_l": 0.2,
+            "mmol_l": 0.811438,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "CaCl2 x 2 H2O",
+            "compound_id": 7,
+            "g_l": 0.1,
+            "mmol_l": 0.680203,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.05,
+            "compound": "KH2PO4",
+            "compound_id": 11,
+            "g_l": 0.05,
+            "mmol_l": 0.367415,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "ml"
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 3804,
+        "name": "Trace minerals",
+        "recipe": [
+          {
+            "amount": 1.5,
+            "compound": "Nitrilotriacetic acid",
+            "compound_id": 189,
+            "g_l": 1.5,
+            "mmol_l": 7.84765,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 3,
+            "compound": "MgSO4 x 7 H2O",
+            "compound_id": 8,
+            "g_l": 3,
+            "mmol_l": 12.1716,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "MnSO4 x n H2O",
+            "compound_id": 1000,
+            "g_l": 0.5,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "NaCl",
+            "compound_id": 43,
+            "g_l": 1,
+            "mmol_l": 17.1116,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "FeSO4 x 7 H2O",
+            "compound_id": 12,
+            "g_l": 0.1,
+            "mmol_l": 0.359693,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "CoSO4 x 7 H2O",
+            "compound_id": 198,
+            "g_l": 0.1,
+            "mmol_l": 0.645178,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "CaCl2 x 2 H2O",
+            "compound_id": 7,
+            "g_l": 0.1,
+            "mmol_l": 0.680203,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "ZnSO4 x 7 H2O",
+            "compound_id": 35,
+            "g_l": 0.1,
+            "mmol_l": 0.347752,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "CuSO4 x 5 H2O",
+            "compound_id": 121,
+            "g_l": 0.01,
+            "mmol_l": 0.0400503,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "AlK(SO4)2",
+            "compound_id": 1015,
+            "g_l": 0.01,
+            "mmol_l": 0.0387289,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "H3BO3",
+            "compound_id": 37,
+            "g_l": 0.01,
+            "mmol_l": 0.161708,
+            "optional": 0,
+            "recipe_order": 11,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "Na2MoO4 x 2 H2O",
+            "compound_id": 9,
+            "g_l": 0.01,
+            "mmol_l": 0.0413309,
+            "optional": 0,
+            "recipe_order": 12,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 13,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Dissolve nitrilotriacetic acid and adjust pH to 6.5 with KOH solution. Then proceed to add minerals. Adjust final pH to 7.0."
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 3861,
+        "name": "Trace vitamins",
+        "recipe": [
+          {
+            "amount": 2,
+            "compound": "Biotin",
+            "compound_id": 46,
+            "g_l": 0.002,
+            "mmol_l": 0.00818632,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "mg"
+          },
+          {
+            "amount": 2,
+            "compound": "Folic acid",
+            "compound_id": 138,
+            "g_l": 0.002,
+            "mmol_l": 0.00453104,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "mg"
+          },
+          {
+            "amount": 10,
+            "compound": "Pyridoxine hydrochloride",
+            "compound_id": 519,
+            "g_l": 0.01,
+            "mmol_l": 0.0486287,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Thiamine HCl",
+            "compound_id": 1207,
+            "g_l": 0.005,
+            "mmol_l": 0.0148236,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Riboflavin",
+            "compound_id": 136,
+            "g_l": 0.005,
+            "mmol_l": 0.0132837,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Nicotinic acid",
+            "compound_id": 139,
+            "g_l": 0.005,
+            "mmol_l": 0.0406141,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Calcium pantothenate",
+            "compound_id": 518,
+            "g_l": 0.005,
+            "mmol_l": 0.0104925,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "mg"
+          },
+          {
+            "amount": 0.1,
+            "compound": "Vitamin B12",
+            "compound_id": 18,
+            "g_l": 0.0001,
+            "mmol_l": 7.3779e-05,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "p-Aminobenzoic acid",
+            "compound_id": 47,
+            "g_l": 0.005,
+            "mmol_l": 0.0364591,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Lipoic acid",
+            "compound_id": 368,
+            "g_l": 0.005,
+            "mmol_l": 0.024233,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "mg"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 11,
+            "unit": "ml"
+          }
+        ],
+        "volume": 1000
+      }
+    ]
+  },
+  "J148": {
+    "medium": {
+      "complex_medium": "yes",
+      "id": "J148",
+      "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=148",
+      "name": "OATMEAL AGAR",
+      "source": "JCM"
+    },
+    "solutions": [
+      {
+        "equipment": {
+          "217": "Filter"
+        },
+        "id": 3796,
+        "name": "Main sol. J148",
+        "recipe": [
+          {
+            "amount": 30,
+            "attribute": "Quaker White Oats",
+            "compound": "Oatmeal",
+            "compound_id": 471,
+            "g_l": 30,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 20,
+            "compound": "Agar",
+            "compound_id": 3,
+            "g_l": 20,
+            "mmol_l": 59.4654,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Boil 30.0 g of oatmeal with 1.0 L of distilled water over water bath, stirring occasionally, for 1 hr. Filter through cloth, make up to 1.0 L, add agar and boil till dissolved."
+          }
+        ],
+        "volume": 1000
+      }
+    ]
+  },
+  "J492": {
+    "medium": {
+      "complex_medium": "no",
+      "id": "J492",
+      "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=492",
+      "max_pH": 7,
+      "min_pH": 7,
+      "name": "MMJ-TL MEDIUM",
+      "source": "JCM"
+    },
+    "solutions": [
+      {
+        "equipment": {
+          "1626": "Autoclave",
+          "858": "Filter"
+        },
+        "id": 4250,
+        "name": "Main sol. J492",
+        "recipe": [
+          {
+            "amount": 1000,
+            "optional": 0,
+            "recipe_order": 1,
+            "solution": "Modified MJ synthetic seawater",
+            "solution_id": 4251,
+            "unit": "ml"
+          },
+          {
+            "amount": 10,
+            "optional": 0,
+            "recipe_order": 2,
+            "solution": "Trace vitamins",
+            "solution_id": 3861,
+            "unit": "ml"
+          },
+          {
+            "amount": 1,
+            "compound": "NaHCO3",
+            "compound_id": 55,
+            "g_l": 0.990099,
+            "mmol_l": 11.7859,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 3,
+            "attribute": "powder",
+            "compound": "Sulfur",
+            "compound_id": 80,
+            "g_l": 2.9703,
+            "mmol_l": 92.6192,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "Resazurin",
+            "compound_id": 25,
+            "g_l": 0.000990099,
+            "mmol_l": 0.00431999,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "mg"
+          },
+          {
+            "amount": 0.5,
+            "compound": "Na2S x 9 H2O",
+            "compound_id": 54,
+            "g_l": 0.49505,
+            "mmol_l": 2.06114,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Mix ingredients except NaHCO3, sulfur and Na2S x 9H2O, adjust pH to 7.0 with NaOH and autoclave under a N2 atmosphere. Filter-sterilize 8% NaHCO3 solution and add to the medium. Steam sulfur for 3 hr on each of 3 successive days. Distribute the medium into culture vessels (e.g., 20 ml in 120 ml serum bottles) containing sulfur under a stream of a H2-CO2 (4:1, v/v) gas mixture and seal with butyl rubber stoppers. Prior to inoculation, add 5% Na2S x 9H2O (autoclaved and stocked under a N2 atmosphere) to the medium. Pressurize the inoculated bottles to 200 kPa H2-CO2 (4:1, v/v)."
+          }
+        ],
+        "volume": 1010
+      },
+      {
+        "id": 4251,
+        "name": "Modified MJ synthetic seawater",
+        "recipe": [
+          {
+            "amount": 30,
+            "compound": "NaCl",
+            "compound_id": 43,
+            "g_l": 30,
+            "mmol_l": 513.347,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 0.14,
+            "compound": "K2HPO4",
+            "compound_id": 10,
+            "g_l": 0.14,
+            "mmol_l": 0.803785,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "CaCl2 x 2 H2O",
+            "compound_id": 7,
+            "g_l": 0.5,
+            "mmol_l": 3.40101,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "NH4Cl",
+            "compound_id": 42,
+            "g_l": 0.5,
+            "mmol_l": 9.34754,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 3.4,
+            "compound": "MgSO4 x 7 H2O",
+            "compound_id": 8,
+            "g_l": 3.4,
+            "mmol_l": 13.7944,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 4.18,
+            "compound": "MgCl2 x 6 H2O",
+            "compound_id": 79,
+            "g_l": 4.18,
+            "mmol_l": 20.5604,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 0.33,
+            "compound": "KCl",
+            "compound_id": 61,
+            "g_l": 0.33,
+            "mmol_l": 4.42656,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "FeSO4 x 7 H2O",
+            "compound_id": 12,
+            "g_l": 0.01,
+            "mmol_l": 0.0359693,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "NiCl2 x 6 H2O",
+            "compound_id": 40,
+            "g_l": 0.001,
+            "mmol_l": 0.00771611,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "mg"
+          },
+          {
+            "amount": 1,
+            "compound": "Na2SeO3 x 5 H2O",
+            "compound_id": 107,
+            "g_l": 0.001,
+            "mmol_l": 0.00380208,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "mg"
+          },
+          {
+            "amount": 10,
+            "optional": 0,
+            "recipe_order": 11,
+            "solution": "Trace element solution",
+            "solution_id": 2269,
+            "unit": "ml"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 12,
+            "unit": "ml"
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 3861,
+        "name": "Trace vitamins",
+        "recipe": [
+          {
+            "amount": 2,
+            "compound": "Biotin",
+            "compound_id": 46,
+            "g_l": 0.002,
+            "mmol_l": 0.00818632,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "mg"
+          },
+          {
+            "amount": 2,
+            "compound": "Folic acid",
+            "compound_id": 138,
+            "g_l": 0.002,
+            "mmol_l": 0.00453104,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "mg"
+          },
+          {
+            "amount": 10,
+            "compound": "Pyridoxine hydrochloride",
+            "compound_id": 519,
+            "g_l": 0.01,
+            "mmol_l": 0.0486287,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Thiamine HCl",
+            "compound_id": 1207,
+            "g_l": 0.005,
+            "mmol_l": 0.0148236,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Riboflavin",
+            "compound_id": 136,
+            "g_l": 0.005,
+            "mmol_l": 0.0132837,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Nicotinic acid",
+            "compound_id": 139,
+            "g_l": 0.005,
+            "mmol_l": 0.0406141,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Calcium pantothenate",
+            "compound_id": 518,
+            "g_l": 0.005,
+            "mmol_l": 0.0104925,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "mg"
+          },
+          {
+            "amount": 0.1,
+            "compound": "Vitamin B12",
+            "compound_id": 18,
+            "g_l": 0.0001,
+            "mmol_l": 7.3779e-05,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "p-Aminobenzoic acid",
+            "compound_id": 47,
+            "g_l": 0.005,
+            "mmol_l": 0.0364591,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Lipoic acid",
+            "compound_id": 368,
+            "g_l": 0.005,
+            "mmol_l": 0.024233,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "mg"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 11,
+            "unit": "ml"
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 3804,
+        "name": "Trace minerals",
+        "recipe": [
+          {
+            "amount": 1.5,
+            "compound": "Nitrilotriacetic acid",
+            "compound_id": 189,
+            "g_l": 1.5,
+            "mmol_l": 7.84765,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 3,
+            "compound": "MgSO4 x 7 H2O",
+            "compound_id": 8,
+            "g_l": 3,
+            "mmol_l": 12.1716,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "MnSO4 x n H2O",
+            "compound_id": 1000,
+            "g_l": 0.5,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "NaCl",
+            "compound_id": 43,
+            "g_l": 1,
+            "mmol_l": 17.1116,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "FeSO4 x 7 H2O",
+            "compound_id": 12,
+            "g_l": 0.1,
+            "mmol_l": 0.359693,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "CoSO4 x 7 H2O",
+            "compound_id": 198,
+            "g_l": 0.1,
+            "mmol_l": 0.645178,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "CaCl2 x 2 H2O",
+            "compound_id": 7,
+            "g_l": 0.1,
+            "mmol_l": 0.680203,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "ZnSO4 x 7 H2O",
+            "compound_id": 35,
+            "g_l": 0.1,
+            "mmol_l": 0.347752,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "CuSO4 x 5 H2O",
+            "compound_id": 121,
+            "g_l": 0.01,
+            "mmol_l": 0.0400503,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "AlK(SO4)2",
+            "compound_id": 1015,
+            "g_l": 0.01,
+            "mmol_l": 0.0387289,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "H3BO3",
+            "compound_id": 37,
+            "g_l": 0.01,
+            "mmol_l": 0.161708,
+            "optional": 0,
+            "recipe_order": 11,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "Na2MoO4 x 2 H2O",
+            "compound_id": 9,
+            "g_l": 0.01,
+            "mmol_l": 0.0413309,
+            "optional": 0,
+            "recipe_order": 12,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 13,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Dissolve nitrilotriacetic acid and adjust pH to 6.5 with KOH solution. Then proceed to add minerals. Adjust final pH to 7.0."
+          }
+        ],
+        "volume": 1000
+      }
+    ]
+  },
+  "J493": {
+    "medium": {
+      "complex_medium": "no",
+      "id": "J493",
+      "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=493",
+      "max_pH": 7,
+      "min_pH": 7,
+      "name": "MMJ-HO MEDIUM",
+      "source": "JCM"
+    },
+    "solutions": [
+      {
+        "equipment": {
+          "1320": "Autoclave",
+          "3137": "Filter"
+        },
+        "id": 4252,
+        "name": "Main sol. J493",
+        "recipe": [
+          {
+            "amount": 1000,
+            "optional": 0,
+            "recipe_order": 1,
+            "solution": "Modified MJ synthetic seawater",
+            "solution_id": 4251,
+            "unit": "ml"
+          },
+          {
+            "amount": 10,
+            "optional": 0,
+            "recipe_order": 2,
+            "solution": "Trace vitamins",
+            "solution_id": 3861,
+            "unit": "ml"
+          },
+          {
+            "amount": 1,
+            "compound": "NaNO3",
+            "compound_id": 187,
+            "g_l": 0.990099,
+            "mmol_l": 11.6489,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "NaHCO3",
+            "compound_id": 55,
+            "g_l": 0.990099,
+            "mmol_l": 11.7859,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 3,
+            "attribute": "powder",
+            "compound": "Sulfur",
+            "compound_id": 80,
+            "g_l": 2.9703,
+            "mmol_l": 92.6192,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Mix ingredients except NaHCO3 and sulfur, adjust pH to 7.0 with NaOH and autoclave under a N2 atmosphere. Filter-sterilize 8% NaHCO3 solution and add to the medium. Steam sulfur for 3 hr on each of 3 successive days. Distribute the medium into culture vessels (e.g., 20 ml in 120 ml serum bottles) containing sulfur under a stream of a N2-CO2 (4:1, v/v) gas mixture and seal with butyl rubber stoppers. Pressurize the inoculated bottles to 200 kPa N2-CO2 (4:1, v/v)."
+          }
+        ],
+        "volume": 1010
+      },
+      {
+        "id": 4251,
+        "name": "Modified MJ synthetic seawater",
+        "recipe": [
+          {
+            "amount": 30,
+            "compound": "NaCl",
+            "compound_id": 43,
+            "g_l": 30,
+            "mmol_l": 513.347,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 0.14,
+            "compound": "K2HPO4",
+            "compound_id": 10,
+            "g_l": 0.14,
+            "mmol_l": 0.803785,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "CaCl2 x 2 H2O",
+            "compound_id": 7,
+            "g_l": 0.5,
+            "mmol_l": 3.40101,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "NH4Cl",
+            "compound_id": 42,
+            "g_l": 0.5,
+            "mmol_l": 9.34754,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 3.4,
+            "compound": "MgSO4 x 7 H2O",
+            "compound_id": 8,
+            "g_l": 3.4,
+            "mmol_l": 13.7944,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 4.18,
+            "compound": "MgCl2 x 6 H2O",
+            "compound_id": 79,
+            "g_l": 4.18,
+            "mmol_l": 20.5604,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 0.33,
+            "compound": "KCl",
+            "compound_id": 61,
+            "g_l": 0.33,
+            "mmol_l": 4.42656,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "FeSO4 x 7 H2O",
+            "compound_id": 12,
+            "g_l": 0.01,
+            "mmol_l": 0.0359693,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "NiCl2 x 6 H2O",
+            "compound_id": 40,
+            "g_l": 0.001,
+            "mmol_l": 0.00771611,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "mg"
+          },
+          {
+            "amount": 1,
+            "compound": "Na2SeO3 x 5 H2O",
+            "compound_id": 107,
+            "g_l": 0.001,
+            "mmol_l": 0.00380208,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "mg"
+          },
+          {
+            "amount": 10,
+            "optional": 0,
+            "recipe_order": 11,
+            "solution": "Trace element solution",
+            "solution_id": 2269,
+            "unit": "ml"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 12,
+            "unit": "ml"
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 3861,
+        "name": "Trace vitamins",
+        "recipe": [
+          {
+            "amount": 2,
+            "compound": "Biotin",
+            "compound_id": 46,
+            "g_l": 0.002,
+            "mmol_l": 0.00818632,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "mg"
+          },
+          {
+            "amount": 2,
+            "compound": "Folic acid",
+            "compound_id": 138,
+            "g_l": 0.002,
+            "mmol_l": 0.00453104,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "mg"
+          },
+          {
+            "amount": 10,
+            "compound": "Pyridoxine hydrochloride",
+            "compound_id": 519,
+            "g_l": 0.01,
+            "mmol_l": 0.0486287,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Thiamine HCl",
+            "compound_id": 1207,
+            "g_l": 0.005,
+            "mmol_l": 0.0148236,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Riboflavin",
+            "compound_id": 136,
+            "g_l": 0.005,
+            "mmol_l": 0.0132837,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Nicotinic acid",
+            "compound_id": 139,
+            "g_l": 0.005,
+            "mmol_l": 0.0406141,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Calcium pantothenate",
+            "compound_id": 518,
+            "g_l": 0.005,
+            "mmol_l": 0.0104925,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "mg"
+          },
+          {
+            "amount": 0.1,
+            "compound": "Vitamin B12",
+            "compound_id": 18,
+            "g_l": 0.0001,
+            "mmol_l": 7.3779e-05,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "p-Aminobenzoic acid",
+            "compound_id": 47,
+            "g_l": 0.005,
+            "mmol_l": 0.0364591,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Lipoic acid",
+            "compound_id": 368,
+            "g_l": 0.005,
+            "mmol_l": 0.024233,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "mg"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 11,
+            "unit": "ml"
+          }
+        ],
+        "volume": 1000
+      }
+    ]
+  },
+  "J494": {
+    "medium": {
+      "complex_medium": "yes",
+      "id": "J494",
+      "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=494",
+      "max_pH": 5,
+      "min_pH": 5,
+      "name": "MMJ-MH MEDIUM",
+      "source": "JCM"
+    },
+    "solutions": [
+      {
+        "equipment": {
+          "3573": "Autoclave"
+        },
+        "id": 4253,
+        "name": "Main sol. J494",
+        "recipe": [
+          {
+            "amount": 1000,
+            "optional": 0,
+            "recipe_order": 1,
+            "solution": "Modified MJ synthetic seawater",
+            "solution_id": 4251,
+            "unit": "ml"
+          },
+          {
+            "amount": 1,
+            "attribute": "BD-Difco",
+            "compound": "Yeast extract",
+            "compound_id": 16,
+            "g_l": 1,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "attribute": "BD-Difco",
+            "compound": "Tryptone",
+            "compound_id": 71,
+            "g_l": 1,
+            "mmol_l": 14.0687,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 3,
+            "attribute": "powder",
+            "compound": "Sulfur",
+            "compound_id": 80,
+            "g_l": 3,
+            "mmol_l": 93.5454,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "Resazurin",
+            "compound_id": 25,
+            "g_l": 0.001,
+            "mmol_l": 0.00436319,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "mg"
+          },
+          {
+            "amount": 0.5,
+            "compound": "Na2S x 9 H2O",
+            "compound_id": 54,
+            "g_l": 0.5,
+            "mmol_l": 2.08175,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Mix ingredients except sulfur and Na2S x 9H2O, adjust pH to 5.0 and autoclave under a N2 atmosphere. Steam sulfur for 3 hr on each of 3 successive days. Distribute the medium into culture vessels (e.g., 20 ml in 120 ml serum bottles) containing sulfur under a stream of a H2-CO2 (4:1, v/v) gas mixture and seal with butyl rubber stoppers. Prior to inoculation, add 5% Na2S x 9H2O (autoclaved and stocked under a N2 atmosphere) to the medium. Readjust pH to 5.0 - 5.3. Pressurize the inoculated bottles to 200 kPa H2-CO2 (4:1, v/v)."
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 4251,
+        "name": "Modified MJ synthetic seawater",
+        "recipe": [
+          {
+            "amount": 30,
+            "compound": "NaCl",
+            "compound_id": 43,
+            "g_l": 30,
+            "mmol_l": 513.347,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 0.14,
+            "compound": "K2HPO4",
+            "compound_id": 10,
+            "g_l": 0.14,
+            "mmol_l": 0.803785,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "CaCl2 x 2 H2O",
+            "compound_id": 7,
+            "g_l": 0.5,
+            "mmol_l": 3.40101,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "NH4Cl",
+            "compound_id": 42,
+            "g_l": 0.5,
+            "mmol_l": 9.34754,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 3.4,
+            "compound": "MgSO4 x 7 H2O",
+            "compound_id": 8,
+            "g_l": 3.4,
+            "mmol_l": 13.7944,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 4.18,
+            "compound": "MgCl2 x 6 H2O",
+            "compound_id": 79,
+            "g_l": 4.18,
+            "mmol_l": 20.5604,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 0.33,
+            "compound": "KCl",
+            "compound_id": 61,
+            "g_l": 0.33,
+            "mmol_l": 4.42656,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "FeSO4 x 7 H2O",
+            "compound_id": 12,
+            "g_l": 0.01,
+            "mmol_l": 0.0359693,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "NiCl2 x 6 H2O",
+            "compound_id": 40,
+            "g_l": 0.001,
+            "mmol_l": 0.00771611,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "mg"
+          },
+          {
+            "amount": 1,
+            "compound": "Na2SeO3 x 5 H2O",
+            "compound_id": 107,
+            "g_l": 0.001,
+            "mmol_l": 0.00380208,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "mg"
+          },
+          {
+            "amount": 10,
+            "optional": 0,
+            "recipe_order": 11,
+            "solution": "Trace element solution",
+            "solution_id": 2269,
+            "unit": "ml"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 12,
+            "unit": "ml"
+          }
+        ],
+        "volume": 1000
+      }
+    ]
+  },
+  "J495": {
+    "medium": {
+      "complex_medium": "yes",
+      "id": "J495",
+      "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=495",
+      "max_pH": 7,
+      "min_pH": 7,
+      "name": "MMJ-DO MEDIUM",
+      "source": "JCM"
+    },
+    "solutions": [
+      {
+        "equipment": {
+          "3220": "Filter",
+          "97": "Autoclave"
+        },
+        "id": 4254,
+        "name": "Main sol. J495",
+        "recipe": [
+          {
+            "amount": 1000,
+            "optional": 0,
+            "recipe_order": 1,
+            "solution": "Modified MJ synthetic seawater",
+            "solution_id": 4251,
+            "unit": "ml"
+          },
+          {
+            "amount": 0.1,
+            "compound": "Yeast extract",
+            "compound_id": 16,
+            "g_l": 0.1,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "Sodium pyruvate",
+            "compound_id": 438,
+            "g_l": 0.5,
+            "mmol_l": 4.5438,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "Sodium lactate",
+            "compound_id": 1392,
+            "g_l": 0.5,
+            "mmol_l": 4.4619,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "Sodium ascorbate",
+            "compound_id": 1773,
+            "g_l": 0.1,
+            "mmol_l": 0.50477,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "NaHCO3",
+            "compound_id": 55,
+            "g_l": 1,
+            "mmol_l": 11.9038,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "Resazurin",
+            "compound_id": 25,
+            "g_l": 0.001,
+            "mmol_l": 0.00436319,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "mg"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Mix ingredients except NaHCO3, adjust pH to 7.0 with NaOH and autoclave under a H2-CO2 (4:1, v/v) gas mixture. Filter-sterilize 8% NaHCO3 solution and add to the medium. Pressurize the inoculated bottles to 200 kPa H2-CO2 (4:1, v/v)."
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 4251,
+        "name": "Modified MJ synthetic seawater",
+        "recipe": [
+          {
+            "amount": 30,
+            "compound": "NaCl",
+            "compound_id": 43,
+            "g_l": 30,
+            "mmol_l": 513.347,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 0.14,
+            "compound": "K2HPO4",
+            "compound_id": 10,
+            "g_l": 0.14,
+            "mmol_l": 0.803785,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "CaCl2 x 2 H2O",
+            "compound_id": 7,
+            "g_l": 0.5,
+            "mmol_l": 3.40101,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "NH4Cl",
+            "compound_id": 42,
+            "g_l": 0.5,
+            "mmol_l": 9.34754,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 3.4,
+            "compound": "MgSO4 x 7 H2O",
+            "compound_id": 8,
+            "g_l": 3.4,
+            "mmol_l": 13.7944,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 4.18,
+            "compound": "MgCl2 x 6 H2O",
+            "compound_id": 79,
+            "g_l": 4.18,
+            "mmol_l": 20.5604,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 0.33,
+            "compound": "KCl",
+            "compound_id": 61,
+            "g_l": 0.33,
+            "mmol_l": 4.42656,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "FeSO4 x 7 H2O",
+            "compound_id": 12,
+            "g_l": 0.01,
+            "mmol_l": 0.0359693,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "NiCl2 x 6 H2O",
+            "compound_id": 40,
+            "g_l": 0.001,
+            "mmol_l": 0.00771611,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "mg"
+          },
+          {
+            "amount": 1,
+            "compound": "Na2SeO3 x 5 H2O",
+            "compound_id": 107,
+            "g_l": 0.001,
+            "mmol_l": 0.00380208,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "mg"
+          },
+          {
+            "amount": 10,
+            "optional": 0,
+            "recipe_order": 11,
+            "solution": "Trace element solution",
+            "solution_id": 2269,
+            "unit": "ml"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 12,
+            "unit": "ml"
+          }
+        ],
+        "volume": 1000
+      }
+    ]
+  },
+  "J50": {
+    "medium": {
+      "complex_medium": "yes",
+      "id": "J50",
+      "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=50",
+      "max_pH": 7.2,
+      "min_pH": 7.2,
+      "name": "OATMEAL AGAR (ISP-3)",
+      "source": "JCM"
+    },
+    "solutions": [
+      {
+        "equipment": {
+          "3486": "Filter"
+        },
+        "id": 3672,
+        "name": "Main sol. J50",
+        "recipe": [
+          {
+            "amount": 20,
+            "attribute": "Quaker White Oats",
+            "compound": "Oatmeal",
+            "compound_id": 471,
+            "g_l": 19.98,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "optional": 0,
+            "recipe_order": 2,
+            "solution": "Trace salt solution",
+            "solution_id": 1209,
+            "unit": "ml"
+          },
+          {
+            "amount": 18,
+            "compound": "Agar",
+            "compound_id": 3,
+            "g_l": 17.982,
+            "mmol_l": 53.4654,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Cook or steam 20.0 g of oatmeal in 1.0 L of distilled water for 20 min. Filter through cheesecloth. Bring volume back up to 1.0 L and add 1.0 ml of Trace salt solution."
+          },
+          {
+            "step": "Adjust pH to 7.2."
+          }
+        ],
+        "volume": 1001
+      },
+      {
+        "id": 1209,
+        "name": "Trace salt solution",
+        "recipe": [
+          {
+            "amount": 0.1,
+            "compound": "FeSO4 x 7 H2O",
+            "compound_id": 12,
+            "g_l": 1,
+            "mmol_l": 3.59693,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "MnCl2 x 4 H2O",
+            "compound_id": 36,
+            "g_l": 1,
+            "mmol_l": 5.05293,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.1,
+            "compound": "ZnSO4 x 7 H2O",
+            "compound_id": 35,
+            "g_l": 1,
+            "mmol_l": 3.47752,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 100,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "ml"
+          }
+        ],
+        "volume": 100
+      }
+    ]
+  },
+  "J52": {
+    "medium": {
+      "complex_medium": "yes",
+      "id": "J52",
+      "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=52",
+      "max_pH": 7,
+      "min_pH": 7,
+      "name": "OATMEAL-NITRATE AGAR",
+      "source": "JCM"
+    },
+    "solutions": [
+      {
+        "id": 3675,
+        "name": "Main sol. J52",
+        "recipe": [
+          {
+            "amount": 3,
+            "attribute": "Quaker White Oats",
+            "compound": "Oatmeal",
+            "compound_id": 471,
+            "condition": " powdered",
+            "g_l": 3,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 0.2,
+            "compound": "KNO3",
+            "compound_id": 191,
+            "g_l": 0.2,
+            "mmol_l": 1.97818,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "K2HPO4",
+            "compound_id": 10,
+            "g_l": 0.5,
+            "mmol_l": 2.87066,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.2,
+            "compound": "MgSO4 x 7 H2O",
+            "compound_id": 8,
+            "g_l": 0.2,
+            "mmol_l": 0.811438,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 15,
+            "compound": "Agar",
+            "compound_id": 3,
+            "g_l": 15,
+            "mmol_l": 44.5991,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Adjust pH to 7.0."
+          }
+        ],
+        "volume": 1000
+      }
+    ]
+  },
+  "J755": {
+    "medium": {
+      "complex_medium": "yes",
+      "id": "J755",
+      "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=755",
+      "max_pH": 6.2,
+      "min_pH": 6.2,
+      "name": "MMJ-S304 MEDIUM",
+      "source": "JCM"
+    },
+    "solutions": [
+      {
+        "equipment": {
+          "1588": "Autoclave",
+          "3088": "Anaerobic workbench",
+          "3403": "Filter"
+        },
+        "id": 4694,
+        "name": "Main sol. J755",
+        "recipe": [
+          {
+            "amount": 1000,
+            "optional": 0,
+            "recipe_order": 1,
+            "solution": "Modified MJ synthetic seawater",
+            "solution_id": 4251,
+            "unit": "ml"
+          },
+          {
+            "amount": 1,
+            "compound": "Yeast extract",
+            "compound_id": 16,
+            "g_l": 0.492126,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 10,
+            "optional": 0,
+            "recipe_order": 3,
+            "solution": "Trace vitamins",
+            "solution_id": 3861,
+            "unit": "ml"
+          },
+          {
+            "amount": 1,
+            "compound": "Resazurin",
+            "compound_id": 25,
+            "g_l": 0.000492126,
+            "mmol_l": 0.00214724,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "mg"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "ml"
+          },
+          {
+            "amount": 12.5,
+            "attribute": "*, 8%",
+            "compound": "NaHCO3",
+            "compound_id": 55,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "ml"
+          },
+          {
+            "amount": 10,
+            "attribute": "5%",
+            "compound": "Na2S x 9 H2O",
+            "compound_id": 54,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "recipe_order": 6,
+            "step": "Mix components and adjust pH to 6.5 with NaOH. Bring to a boil for a few seconds and cool down under a stream of a N2-CO2 (4:1, v/v) gas mixture. Distribute the medium into culture vessels (e.g., 20 ml in 120 ml serum bottles) under the same gas mixture, seal with butyl rubber stoppers and autoclave. Add per liter the following solutions (autoclaved or *filter-sterilize) from anaerobic stocks: "
+          },
+          {
+            "step": "Adjust pH of the medium to 6.0 - 6.5, if necessary. Pressurize the inoculated bottles to 200 kPa N2-CO2 (4:1, v/v)."
+          }
+        ],
+        "volume": 2032
+      },
+      {
+        "id": 4251,
+        "name": "Modified MJ synthetic seawater",
+        "recipe": [
+          {
+            "amount": 30,
+            "compound": "NaCl",
+            "compound_id": 43,
+            "g_l": 30,
+            "mmol_l": 513.347,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 0.14,
+            "compound": "K2HPO4",
+            "compound_id": 10,
+            "g_l": 0.14,
+            "mmol_l": 0.803785,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "CaCl2 x 2 H2O",
+            "compound_id": 7,
+            "g_l": 0.5,
+            "mmol_l": 3.40101,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "NH4Cl",
+            "compound_id": 42,
+            "g_l": 0.5,
+            "mmol_l": 9.34754,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 3.4,
+            "compound": "MgSO4 x 7 H2O",
+            "compound_id": 8,
+            "g_l": 3.4,
+            "mmol_l": 13.7944,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 4.18,
+            "compound": "MgCl2 x 6 H2O",
+            "compound_id": 79,
+            "g_l": 4.18,
+            "mmol_l": 20.5604,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 0.33,
+            "compound": "KCl",
+            "compound_id": 61,
+            "g_l": 0.33,
+            "mmol_l": 4.42656,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "g"
+          },
+          {
+            "amount": 0.01,
+            "compound": "FeSO4 x 7 H2O",
+            "compound_id": 12,
+            "g_l": 0.01,
+            "mmol_l": 0.0359693,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "NiCl2 x 6 H2O",
+            "compound_id": 40,
+            "g_l": 0.001,
+            "mmol_l": 0.00771611,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "mg"
+          },
+          {
+            "amount": 1,
+            "compound": "Na2SeO3 x 5 H2O",
+            "compound_id": 107,
+            "g_l": 0.001,
+            "mmol_l": 0.00380208,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "mg"
+          },
+          {
+            "amount": 10,
+            "optional": 0,
+            "recipe_order": 11,
+            "solution": "Trace element solution",
+            "solution_id": 2269,
+            "unit": "ml"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 12,
+            "unit": "ml"
+          }
+        ],
+        "volume": 1000
+      },
+      {
+        "id": 3861,
+        "name": "Trace vitamins",
+        "recipe": [
+          {
+            "amount": 2,
+            "compound": "Biotin",
+            "compound_id": 46,
+            "g_l": 0.002,
+            "mmol_l": 0.00818632,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "mg"
+          },
+          {
+            "amount": 2,
+            "compound": "Folic acid",
+            "compound_id": 138,
+            "g_l": 0.002,
+            "mmol_l": 0.00453104,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "mg"
+          },
+          {
+            "amount": 10,
+            "compound": "Pyridoxine hydrochloride",
+            "compound_id": 519,
+            "g_l": 0.01,
+            "mmol_l": 0.0486287,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Thiamine HCl",
+            "compound_id": 1207,
+            "g_l": 0.005,
+            "mmol_l": 0.0148236,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Riboflavin",
+            "compound_id": 136,
+            "g_l": 0.005,
+            "mmol_l": 0.0132837,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Nicotinic acid",
+            "compound_id": 139,
+            "g_l": 0.005,
+            "mmol_l": 0.0406141,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Calcium pantothenate",
+            "compound_id": 518,
+            "g_l": 0.005,
+            "mmol_l": 0.0104925,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "mg"
+          },
+          {
+            "amount": 0.1,
+            "compound": "Vitamin B12",
+            "compound_id": 18,
+            "g_l": 0.0001,
+            "mmol_l": 7.3779e-05,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "p-Aminobenzoic acid",
+            "compound_id": 47,
+            "g_l": 0.005,
+            "mmol_l": 0.0364591,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "compound": "Lipoic acid",
+            "compound_id": 368,
+            "g_l": 0.005,
+            "mmol_l": 0.024233,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "mg"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 11,
+            "unit": "ml"
+          }
+        ],
+        "volume": 1000
+      }
+    ]
+  }
+}

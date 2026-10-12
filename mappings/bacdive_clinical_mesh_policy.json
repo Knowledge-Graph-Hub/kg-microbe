@@ -1,0 +1,116 @@
+{
+  "version": 1,
+  "review_issue": 270,
+  "native_file": "mesh2026.nt.gz",
+  "native_namespace": "http://id.nlm.nih.gov/mesh/2026/",
+  "native_url": "https://nlmpubs.nlm.nih.gov/projects/mesh/rdf/2026/mesh2026.nt.gz",
+  "reviewed_full_file_sha256": "6997c24530cfbc698690e3d85ba5436e5ee56708f7f77073cbf8f502f3de7c5e",
+  "selected_native_statements_sha256": "b24b583e924202be000211b0727638c41b08100fffb89d296b7a71c42c49c761",
+  "selected_native_statement_count": 228,
+  "scope": "Four exact BacDive classification paths; two manually reviewed denotational category projections, not native OWL category axioms or strict Biolink waivers.",
+  "rules": [
+    {
+      "category": {
+        "Cat1": "#Host Body-Site",
+        "Cat2": "#Other",
+        "Cat3": "#Abscess"
+      },
+      "field": "Cat3",
+      "action": "retain_source_site",
+      "projection": "biolink:PhysicalEntity",
+      "concept": "M0000059",
+      "reason": "Native definition denotes an accumulation of purulent material; finite native BacDive body-site path supports broad physical site classification, not specimen/pus identity or disease diagnosis.",
+      "original_mapping": {
+        "confidence": "high",
+        "curator": "family_mismatch_fix",
+        "mapping_justification": "semapv:ManualMappingCuration",
+        "notes": "fix(family-mismatch): was HP:0025615 (HP is a phenotype ontology — disallowed for isolation source per validator); mesh:D000038 is the canonical MeSH Subject Heading for 'Abscess' as a clinical sample type",
+        "object_id": "mesh:D000038",
+        "object_label": "Abscess",
+        "object_source": "mesh",
+        "predicate_id": "skos:exactMatch",
+        "source_dataset": "bacdive",
+        "subject_label": "Abscess",
+        "subject_label_normalized": "abscess",
+        "verified_date": "2026-05-02"
+      }
+    },
+    {
+      "category": {
+        "Cat1": "#Infection",
+        "Cat2": "#Inflammation"
+      },
+      "field": "Cat2",
+      "action": "retain_unresolved_source_category",
+      "projection": null,
+      "concept": "M0011307",
+      "reason": "Native definition is a process; the original infection classification does not establish a physical isolation site or a clinical diagnosis.",
+      "original_mapping": {
+        "confidence": "high",
+        "curator": "kg_review_lit_check",
+        "mapping_justification": "semapv:ManualMappingCuration",
+        "notes": "lit-audit: was NCIT:C3137; mesh consistency with Abscess→mesh:D000038 pattern for clinical-state isolation sources",
+        "object_id": "mesh:D007249",
+        "object_label": "Inflammation",
+        "object_source": "mesh",
+        "predicate_id": "skos:exactMatch",
+        "source_dataset": "bacdive",
+        "subject_label": "Inflammation",
+        "subject_label_normalized": "inflammation",
+        "verified_date": "2026-05-02"
+      }
+    },
+    {
+      "category": {
+        "Cat1": "#Host Body-Site",
+        "Cat2": "#Oral cavity and airways",
+        "Cat3": "#Periodontal pocket"
+      },
+      "field": "Cat3",
+      "action": "retain_source_site",
+      "projection": "biolink:PathologicalAnatomicalStructure",
+      "concept": "M0016336",
+      "reason": "Native abnormal gingival-sulcus structure definition and finite native oral-site classification support pathological anatomy without a human-only or specimen-identity assertion.",
+      "original_mapping": {
+        "confidence": "high",
+        "curator": "kg_review_lit_check",
+        "mapping_justification": "semapv:ManualMappingCuration",
+        "notes": "lit-audit: was NCIT:C62547 (pathological condition); UBERON has no entry; mesh is the canonical isolation-site for this | issue #779: was mesh:D010520, which is 'Aggressive Periodontitis' (a disease) — 59 bacdive edges. D010514 is the real MeSH id for Periodontal Pocket.",
+        "object_id": "mesh:D010514",
+        "object_label": "Periodontal Pocket",
+        "object_source": "mesh",
+        "predicate_id": "skos:exactMatch",
+        "source_dataset": "bacdive",
+        "subject_label": "Periodontal-pocket",
+        "subject_label_normalized": "periodontal pocket",
+        "verified_date": "2026-05-02"
+      }
+    },
+    {
+      "category": {
+        "Cat1": "#Host Body-Site",
+        "Cat2": "#Other",
+        "Cat3": "#Wound"
+      },
+      "field": "Cat3",
+      "action": "retain_unresolved_source_category",
+      "projection": null,
+      "concept": "M0023019",
+      "reason": "Broad generic injury descriptor is not an established exact identity for all source Wound tags, including reviewed plant-lesion contexts.",
+      "original_mapping": {
+        "confidence": "high",
+        "curator": "kg_review_promote",
+        "mapping_justification": "semapv:ManualMappingCuration",
+        "notes": "fix: UBERON:0006988 does not exist; UBERON has no 'wound' term. mesh:D014947 'Wounds and Injuries' is the closest standard cross-domain term; kg-review-promote: 'Wound' = Wounds and Injuries (mesh's canonical term)",
+        "object_id": "mesh:D014947",
+        "object_label": "Wounds and Injuries",
+        "object_source": "mesh",
+        "predicate_id": "skos:exactMatch",
+        "source_dataset": "bacdive",
+        "subject_label": "Wound",
+        "subject_label_normalized": "wound",
+        "verified_date": "2026-05-02"
+      }
+    }
+  ]
+}

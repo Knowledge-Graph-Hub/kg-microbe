@@ -1,0 +1,3775 @@
+{
+  "authorities": {
+    "envo.json": {
+      "graph_id": "http://purl.obolibrary.org/obo/envo.json",
+      "sha256": "c3c288b9d95cf1e62b0146bcb2a365bdbd294b0072bbf2efab8819e5db8fff2b"
+    },
+    "mondo.json": {
+      "graph_id": "http://purl.obolibrary.org/obo/mondo.owl",
+      "sha256": "f3d7ab708cd17cba5477383c78026bfa7f0248fd36d52929087066527e9b3d6c"
+    },
+    "pato.json": {
+      "graph_id": "http://purl.obolibrary.org/obo/pato.owl",
+      "sha256": "b129f5f5e968e4a8675bb9d6cb3a40668f1c5a2783bef81b30c86c563ce5d46d"
+    },
+    "ro.json": {
+      "graph_id": "http://purl.obolibrary.org/obo/ro.owl",
+      "sha256": "1ed089b1cb33d5ac9d5afee10ba98f79689af9e3b40e9940658625c09785748c"
+    },
+    "uberon.json": {
+      "graph_id": "http://purl.obolibrary.org/obo/uberon.owl",
+      "sha256": "87a892da0544a82f41f0a8b2b52f7ee705ec6d5ca2c102e7d439a7086d79f428"
+    }
+  },
+  "finite_cohort_sha256": "782027979cacfca38d615321ae8849d094e06fe2c03b4f024e988d3bf8fecde7",
+  "records": [
+    {
+      "object": "GO:0009566",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "CL:0000586"
+    },
+    {
+      "object": "GO:0007601",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "CL:0008028"
+    },
+    {
+      "object": "GO:0006412",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "GO:0005840"
+    },
+    {
+      "object": "GO:0035735",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "GO:0030990"
+    },
+    {
+      "object": "PATO:0000146",
+      "ontology": "pato",
+      "prior_predicate": "biolink:actively_involved_in",
+      "relation": "RO:0002503",
+      "subject": "PATO:0001304"
+    },
+    {
+      "object": "PATO:0000161",
+      "ontology": "pato",
+      "prior_predicate": "biolink:actively_involved_in",
+      "relation": "RO:0002503",
+      "subject": "PATO:0001586"
+    },
+    {
+      "object": "PATO:0000014",
+      "ontology": "pato",
+      "prior_predicate": "biolink:actively_involved_in",
+      "relation": "RO:0002503",
+      "subject": "PATO:0001611"
+    },
+    {
+      "object": "PATO:0000052",
+      "ontology": "pato",
+      "prior_predicate": "biolink:actively_involved_in",
+      "relation": "RO:0002503",
+      "subject": "PATO:0001929"
+    },
+    {
+      "object": "PATO:0000117",
+      "ontology": "pato",
+      "prior_predicate": "biolink:actively_involved_in",
+      "relation": "RO:0002503",
+      "subject": "PATO:0001956"
+    },
+    {
+      "object": "PATO:0000070",
+      "ontology": "pato",
+      "prior_predicate": "biolink:actively_involved_in",
+      "relation": "RO:0002503",
+      "subject": "PATO:0005001"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0000019"
+    },
+    {
+      "object": "GO:0060361",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000023"
+    },
+    {
+      "object": "UBERON:0000071",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002497",
+      "subject": "UBERON:0000061"
+    },
+    {
+      "object": "GO:0009790",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000068"
+    },
+    {
+      "object": "UBERON:0000104",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002229",
+      "subject": "UBERON:0000071"
+    },
+    {
+      "object": "UBERON:0000107",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0000085"
+    },
+    {
+      "object": "UBERON:0000107",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0000085"
+    },
+    {
+      "object": "GO:0009791",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000092"
+    },
+    {
+      "object": "UBERON:0000071",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002230",
+      "subject": "UBERON:0000104"
+    },
+    {
+      "object": "UBERON:0000104",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002223",
+      "subject": "UBERON:0000106"
+    },
+    {
+      "object": "GO:0040016",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000107"
+    },
+    {
+      "object": "UBERON:0000106",
+      "ontology": "pato",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "UBERON:0000107"
+    },
+    {
+      "object": "GO:0007369",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000109"
+    },
+    {
+      "object": "GO:0001841",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000110"
+    },
+    {
+      "object": "GO:0048513",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000111"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002489",
+      "subject": "UBERON:0000922"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002493",
+      "subject": "UBERON:0000922"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0000949"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0000955"
+    },
+    {
+      "object": "GO:0007613",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000956"
+    },
+    {
+      "object": "GO:0022414",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000990"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0000990"
+    },
+    {
+      "object": "UBERON:0003055",
+      "ontology": "pato",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002285",
+      "subject": "UBERON:0001003"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001004"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001007"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001009"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001016"
+    },
+    {
+      "object": "GO:0007600",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001032"
+    },
+    {
+      "object": "GO:0050912",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001033"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001033"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001434"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0001530"
+    },
+    {
+      "object": "GO:0008015",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001981"
+    },
+    {
+      "object": "GO:0007601",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002104"
+    },
+    {
+      "object": "GO:0007605",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002105"
+    },
+    {
+      "object": "GO:0040011",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002204"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0002204"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0002328"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0002330"
+    },
+    {
+      "object": "UBERON:0000110",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0002342"
+    },
+    {
+      "object": "GO:0060048",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002351"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0002405"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0002416"
+    },
+    {
+      "object": "UBERON:0002418",
+      "ontology": "pato",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002285",
+      "subject": "UBERON:0002513"
+    },
+    {
+      "object": "UBERON:0000109",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0003077"
+    },
+    {
+      "object": "GO:0022414",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0003133"
+    },
+    {
+      "object": "GO:0050912",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0003212"
+    },
+    {
+      "object": "UBERON:0000109",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0003886"
+    },
+    {
+      "object": "UBERON:0000111",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0003886"
+    },
+    {
+      "object": "GO:0019233",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0003942"
+    },
+    {
+      "object": "GO:0050975",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0003942"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0004456"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002489",
+      "subject": "UBERON:0004716"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002493",
+      "subject": "UBERON:0004716"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0004770"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0005409"
+    },
+    {
+      "object": "UBERON:0000107",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002489",
+      "subject": "UBERON:0007010"
+    },
+    {
+      "object": "UBERON:0000107",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002493",
+      "subject": "UBERON:0007010"
+    },
+    {
+      "object": "UBERON:0000109",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0007026"
+    },
+    {
+      "object": "UBERON:0000092",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002489",
+      "subject": "UBERON:0009953"
+    },
+    {
+      "object": "GO:0071626",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0011648"
+    },
+    {
+      "object": "GO:0007585",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0014398"
+    },
+    {
+      "object": "UBERON:0000111",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002496",
+      "subject": "UBERON:0016880"
+    },
+    {
+      "object": "GO:0001659",
+      "ontology": "pato",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0035549"
+    },
+    {
+      "object": "GO:0007283",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "CL:0000015"
+    },
+    {
+      "object": "GO:0007596",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "CL:0000233"
+    },
+    {
+      "object": "GO:0009566",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "CL:0000586"
+    },
+    {
+      "object": "GO:0007601",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "CL:0008028"
+    },
+    {
+      "object": "UBERON:0000092",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "CL:0009098"
+    },
+    {
+      "object": "UBERON:0007221",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "CL:0009098"
+    },
+    {
+      "object": "GO:0031507",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "GO:0005677"
+    },
+    {
+      "object": "GO:0006412",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "GO:0005840"
+    },
+    {
+      "object": "GO:0035735",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "GO:0030990"
+    },
+    {
+      "object": "GO:0006906",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "GO:0031201"
+    },
+    {
+      "object": "GO:0098609",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "GO:0098635"
+    },
+    {
+      "object": "GO:0007155",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "GO:0098636"
+    },
+    {
+      "object": "GO:0098664",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "GO:0098666"
+    },
+    {
+      "object": "GO:0007608",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000004"
+    },
+    {
+      "object": "GO:0007276",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000007"
+    },
+    {
+      "object": "GO:0007586",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000017"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0000019"
+    },
+    {
+      "object": "GO:0060361",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000023"
+    },
+    {
+      "object": "GO:0060073",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000057"
+    },
+    {
+      "object": "UBERON:0000071",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002497",
+      "subject": "UBERON:0000061"
+    },
+    {
+      "object": "GO:0009790",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000068"
+    },
+    {
+      "object": "GO:0002164",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000069"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "UBERON:0000069"
+    },
+    {
+      "object": "GO:0035209",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000070"
+    },
+    {
+      "object": "UBERON:0000069",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "UBERON:0000070"
+    },
+    {
+      "object": "UBERON:0000104",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002229",
+      "subject": "UBERON:0000071"
+    },
+    {
+      "object": "UBERON:0000080",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002285",
+      "subject": "UBERON:0000081"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0000081"
+    },
+    {
+      "object": "UBERON:0000107",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0000085"
+    },
+    {
+      "object": "UBERON:0000107",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0000085"
+    },
+    {
+      "object": "GO:0009791",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000092"
+    },
+    {
+      "object": "UBERON:0000071",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002230",
+      "subject": "UBERON:0000104"
+    },
+    {
+      "object": "UBERON:0000104",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002223",
+      "subject": "UBERON:0000106"
+    },
+    {
+      "object": "GO:0040016",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000107"
+    },
+    {
+      "object": "UBERON:0000106",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "UBERON:0000107"
+    },
+    {
+      "object": "GO:0007369",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000109"
+    },
+    {
+      "object": "GO:0001841",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000110"
+    },
+    {
+      "object": "GO:0048513",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000111"
+    },
+    {
+      "object": "GO:0007625",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000212"
+    },
+    {
+      "object": "NBO:0000451",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000212"
+    },
+    {
+      "object": "GO:0070295",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000362"
+    },
+    {
+      "object": "GO:0060073",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000381"
+    },
+    {
+      "object": "GO:0007601",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000411"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002489",
+      "subject": "UBERON:0000922"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002493",
+      "subject": "UBERON:0000922"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0000949"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0000955"
+    },
+    {
+      "object": "GO:0007613",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000956"
+    },
+    {
+      "object": "GO:0022414",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000990"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0000990"
+    },
+    {
+      "object": "GO:0042713",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000999"
+    },
+    {
+      "object": "UBERON:0003055",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002285",
+      "subject": "UBERON:0001003"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001004"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001007"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001008"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001009"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001016"
+    },
+    {
+      "object": "GO:0007600",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001032"
+    },
+    {
+      "object": "GO:0050912",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001033"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001033"
+    },
+    {
+      "object": "GO:0007613",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001058"
+    },
+    {
+      "object": "GO:0008355",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001058"
+    },
+    {
+      "object": "GO:0055074",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001132"
+    },
+    {
+      "object": "GO:0003094",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001230"
+    },
+    {
+      "object": "GO:0055127",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001352"
+    },
+    {
+      "object": "GO:0007605",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001393"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001434"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0001530"
+    },
+    {
+      "object": "GO:0071626",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001597"
+    },
+    {
+      "object": "GO:0071626",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001598"
+    },
+    {
+      "object": "GO:0003039",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001629"
+    },
+    {
+      "object": "GO:0019230",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001718"
+    },
+    {
+      "object": "GO:0071625",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001734"
+    },
+    {
+      "object": "GO:0007586",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001836"
+    },
+    {
+      "object": "GO:0055127",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001852"
+    },
+    {
+      "object": "NBO:0000339",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001947"
+    },
+    {
+      "object": "GO:0007613",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001954"
+    },
+    {
+      "object": "GO:0007586",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001970"
+    },
+    {
+      "object": "GO:0008015",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001981"
+    },
+    {
+      "object": "GO:0050911",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001997"
+    },
+    {
+      "object": "GO:0055074",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002046"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0002101"
+    },
+    {
+      "object": "GO:0007601",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002104"
+    },
+    {
+      "object": "GO:0007605",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002105"
+    },
+    {
+      "object": "GO:0045058",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002123"
+    },
+    {
+      "object": "GO:0003019",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002126"
+    },
+    {
+      "object": "GO:0007613",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002129"
+    },
+    {
+      "object": "GO:0019230",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002131"
+    },
+    {
+      "object": "GO:0019230",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002161"
+    },
+    {
+      "object": "GO:0007613",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002191"
+    },
+    {
+      "object": "GO:0040011",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002204"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0002204"
+    },
+    {
+      "object": "GO:0019230",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002256"
+    },
+    {
+      "object": "GO:0019230",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002261"
+    },
+    {
+      "object": "GO:0009590",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002280"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0002328"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0002330"
+    },
+    {
+      "object": "UBERON:0000110",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0002342"
+    },
+    {
+      "object": "GO:0060048",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002351"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0002405"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0002416"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0002423"
+    },
+    {
+      "object": "GO:0007601",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002436"
+    },
+    {
+      "object": "GO:0030432",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002439"
+    },
+    {
+      "object": "UBERON:0002418",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002285",
+      "subject": "UBERON:0002513"
+    },
+    {
+      "object": "GO:0060007",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002518"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0002529"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0002529"
+    },
+    {
+      "object": "GO:0019230",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002597"
+    },
+    {
+      "object": "GO:0001659",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002634"
+    },
+    {
+      "object": "GO:0019230",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002719"
+    },
+    {
+      "object": "GO:0007613",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002728"
+    },
+    {
+      "object": "GO:0007613",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002739"
+    },
+    {
+      "object": "GO:0007601",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002751"
+    },
+    {
+      "object": "GO:0019230",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002753"
+    },
+    {
+      "object": "GO:0019230",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002819"
+    },
+    {
+      "object": "GO:0019233",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002944"
+    },
+    {
+      "object": "GO:0007613",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002961"
+    },
+    {
+      "object": "GO:0007613",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002973"
+    },
+    {
+      "object": "GO:0019230",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002987"
+    },
+    {
+      "object": "UBERON:0000109",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0003077"
+    },
+    {
+      "object": "GO:0022414",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0003133"
+    },
+    {
+      "object": "GO:0050912",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0003212"
+    },
+    {
+      "object": "GO:0071625",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0003706"
+    },
+    {
+      "object": "UBERON:0000109",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0003886"
+    },
+    {
+      "object": "UBERON:0000111",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0003886"
+    },
+    {
+      "object": "GO:0071626",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0003913"
+    },
+    {
+      "object": "GO:0019233",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0003942"
+    },
+    {
+      "object": "GO:0050975",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0003942"
+    },
+    {
+      "object": "UBERON:0005625",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002285",
+      "subject": "UBERON:0004114"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0004122"
+    },
+    {
+      "object": "GO:0019233",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0004171"
+    },
+    {
+      "object": "GO:0070295",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0004196"
+    },
+    {
+      "object": "GO:0070295",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0004197"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0004456"
+    },
+    {
+      "object": "GO:0060005",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0004681"
+    },
+    {
+      "object": "GO:0043084",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0004713"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002489",
+      "subject": "UBERON:0004716"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002493",
+      "subject": "UBERON:0004716"
+    },
+    {
+      "object": "GO:0040011",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0004720"
+    },
+    {
+      "object": "NBO:0000355",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0004720"
+    },
+    {
+      "object": "GO:0002117",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0004728"
+    },
+    {
+      "object": "GO:0002119",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0004729"
+    },
+    {
+      "object": "GO:0002168",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0004730"
+    },
+    {
+      "object": "UBERON:0000106",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0004749"
+    },
+    {
+      "object": "UBERON:0000108",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0004749"
+    },
+    {
+      "object": "UBERON:0000108",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0004750"
+    },
+    {
+      "object": "UBERON:0000109",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0004750"
+    },
+    {
+      "object": "UBERON:0002418",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002285",
+      "subject": "UBERON:0004763"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0004770"
+    },
+    {
+      "object": "GO:0030421",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0004916"
+    },
+    {
+      "object": "GO:0070295",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0005211"
+    },
+    {
+      "object": "GO:0070293",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0005272"
+    },
+    {
+      "object": "GO:0019230",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0005373"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0005409"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0005725"
+    },
+    {
+      "object": "GO:0003094",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0005749"
+    },
+    {
+      "object": "GO:0008217",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0005807"
+    },
+    {
+      "object": "GO:0019230",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0005821"
+    },
+    {
+      "object": "GO:0007585",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0005928"
+    },
+    {
+      "object": "UBERON:0009672",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002285",
+      "subject": "UBERON:0006272"
+    },
+    {
+      "object": "GO:0050975",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0006378"
+    },
+    {
+      "object": "GO:0048240",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0006530"
+    },
+    {
+      "object": "GO:1902093",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0006530"
+    },
+    {
+      "object": "GO:0009590",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0006582"
+    },
+    {
+      "object": "GO:0031413",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0006860"
+    },
+    {
+      "object": "UBERON:0000107",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002489",
+      "subject": "UBERON:0007010"
+    },
+    {
+      "object": "UBERON:0000107",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002493",
+      "subject": "UBERON:0007010"
+    },
+    {
+      "object": "UBERON:0000112",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002489",
+      "subject": "UBERON:0007021"
+    },
+    {
+      "object": "UBERON:0000112",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002493",
+      "subject": "UBERON:0007021"
+    },
+    {
+      "object": "UBERON:0000113",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002489",
+      "subject": "UBERON:0007023"
+    },
+    {
+      "object": "UBERON:0000113",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002493",
+      "subject": "UBERON:0007023"
+    },
+    {
+      "object": "UBERON:0000109",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0007026"
+    },
+    {
+      "object": "UBERON:0000106",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "UBERON:0007232"
+    },
+    {
+      "object": "UBERON:0007232",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "UBERON:0007233"
+    },
+    {
+      "object": "UBERON:0007233",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "UBERON:0007236"
+    },
+    {
+      "object": "GO:0006885",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0007622"
+    },
+    {
+      "object": "GO:0030421",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0007627"
+    },
+    {
+      "object": "GO:0043084",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0007627"
+    },
+    {
+      "object": "GO:0060073",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0007627"
+    },
+    {
+      "object": "UBERON:0007116",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002285",
+      "subject": "UBERON:0007774"
+    },
+    {
+      "object": "GO:0007625",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0007802"
+    },
+    {
+      "object": "NBO:0000451",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0007802"
+    },
+    {
+      "object": "GO:0007625",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0007803"
+    },
+    {
+      "object": "NBO:0000451",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0007803"
+    },
+    {
+      "object": "GO:0007626",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0007812"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0008251"
+    },
+    {
+      "object": "GO:0001659",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0008291"
+    },
+    {
+      "object": "GO:0071625",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0008577"
+    },
+    {
+      "object": "GO:0007620",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0008811"
+    },
+    {
+      "object": "GO:0007631",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0008815"
+    },
+    {
+      "object": "NBO:0000308",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0008930"
+    },
+    {
+      "object": "GO:0050959",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0008960"
+    },
+    {
+      "object": "GO:0071625",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0009074"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0009671"
+    },
+    {
+      "object": "UBERON:0005625",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002285",
+      "subject": "UBERON:0009692"
+    },
+    {
+      "object": "GO:0002027",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0009835"
+    },
+    {
+      "object": "UBERON:0000092",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002489",
+      "subject": "UBERON:0009953"
+    },
+    {
+      "object": "GO:0050959",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0010053"
+    },
+    {
+      "object": "GO:0046692",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0010148"
+    },
+    {
+      "object": "UBERON:0000113",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0010229"
+    },
+    {
+      "object": "GO:0050975",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0010415"
+    },
+    {
+      "object": "GO:0043084",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0011183"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0011288"
+    },
+    {
+      "object": "GO:0042713",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0011388"
+    },
+    {
+      "object": "GO:0043084",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0011388"
+    },
+    {
+      "object": "NBO:0000445",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0011472"
+    },
+    {
+      "object": "GO:0007585",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0011495"
+    },
+    {
+      "object": "GO:0060361",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0011604"
+    },
+    {
+      "object": "GO:0071626",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0011648"
+    },
+    {
+      "object": "GO:0060361",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0011793"
+    },
+    {
+      "object": "GO:0007625",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0012115"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0012125"
+    },
+    {
+      "object": "GO:0007620",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0012243"
+    },
+    {
+      "object": "UBERON:0000106",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0012286"
+    },
+    {
+      "object": "GO:0050959",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0013175"
+    },
+    {
+      "object": "GO:0050959",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0013176"
+    },
+    {
+      "object": "GO:0050959",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0013188"
+    },
+    {
+      "object": "GO:0016048",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0013208"
+    },
+    {
+      "object": "GO:0043695",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0013208"
+    },
+    {
+      "object": "GO:0001659",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0013658"
+    },
+    {
+      "object": "GO:0001659",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0013719"
+    },
+    {
+      "object": "GO:0007585",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0014398"
+    },
+    {
+      "object": "NBO:0000412",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0014450"
+    },
+    {
+      "object": "GO:0042048",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0014479"
+    },
+    {
+      "object": "GO:0071625",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0014479"
+    },
+    {
+      "object": "GO:0060209",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0014481"
+    },
+    {
+      "object": "NBO:0000361",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0014642"
+    },
+    {
+      "object": "GO:0071625",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0014916"
+    },
+    {
+      "object": "GO:0043084",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0015174"
+    },
+    {
+      "object": "UBERON:0000111",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002496",
+      "subject": "UBERON:0016880"
+    },
+    {
+      "object": "GO:0019230",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0018237"
+    },
+    {
+      "object": "GO:0030432",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0018261"
+    },
+    {
+      "object": "GO:0035188",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0018276"
+    },
+    {
+      "object": "GO:0035188",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0018277"
+    },
+    {
+      "object": "UBERON:0007233",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0019250"
+    },
+    {
+      "object": "UBERON:0007236",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0019250"
+    },
+    {
+      "object": "GO:0007601",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0022232"
+    },
+    {
+      "object": "GO:0071625",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0034681"
+    },
+    {
+      "object": "GO:0007601",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0034750"
+    },
+    {
+      "object": "UBERON:0007221",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "UBERON:0034920"
+    },
+    {
+      "object": "GO:0001659",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0035549"
+    },
+    {
+      "object": "GO:0060361",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0035561"
+    },
+    {
+      "object": "GO:0098583",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0035785"
+    },
+    {
+      "object": "UBERON:0000104",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002229",
+      "subject": "UBERON:0035944"
+    },
+    {
+      "object": "UBERON:0000104",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002223",
+      "subject": "UBERON:0035945"
+    },
+    {
+      "object": "UBERON:0007221",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002223",
+      "subject": "UBERON:0035946"
+    },
+    {
+      "object": "GO:0055074",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:2001200"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:8410003"
+    },
+    {
+      "object": "UBERON:0007220",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:8410003"
+    },
+    {
+      "object": "GO:0007601",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:8440010"
+    },
+    {
+      "object": "GO:0007601",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:8440011"
+    },
+    {
+      "object": "ENVO:02500018",
+      "ontology": "envo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002229",
+      "subject": "ENVO:02500021"
+    },
+    {
+      "object": "ENVO:03000010",
+      "ontology": "envo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002229",
+      "subject": "ENVO:03000036"
+    },
+    {
+      "object": "GO:0007283",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "CL:0000015"
+    },
+    {
+      "object": "GO:0007596",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "CL:0000233"
+    },
+    {
+      "object": "GO:0009566",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "CL:0000586"
+    },
+    {
+      "object": "GO:0007601",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "CL:0008028"
+    },
+    {
+      "object": "ENVO:03000010",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002229",
+      "subject": "ENVO:03000036"
+    },
+    {
+      "object": "HsapDv:0000002",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000037"
+    },
+    {
+      "object": "HsapDv:0000096",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000097"
+    },
+    {
+      "object": "HsapDv:0000097",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000098"
+    },
+    {
+      "object": "HsapDv:0000098",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000099"
+    },
+    {
+      "object": "HsapDv:0000099",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000100"
+    },
+    {
+      "object": "HsapDv:0000100",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000101"
+    },
+    {
+      "object": "HsapDv:0000101",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000102"
+    },
+    {
+      "object": "HsapDv:0000102",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000103"
+    },
+    {
+      "object": "HsapDv:0000103",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000104"
+    },
+    {
+      "object": "HsapDv:0000104",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000105"
+    },
+    {
+      "object": "HsapDv:0000105",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000106"
+    },
+    {
+      "object": "HsapDv:0000106",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000107"
+    },
+    {
+      "object": "HsapDv:0000107",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000108"
+    },
+    {
+      "object": "HsapDv:0000108",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000109"
+    },
+    {
+      "object": "HsapDv:0000109",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000110"
+    },
+    {
+      "object": "HsapDv:0000110",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000111"
+    },
+    {
+      "object": "HsapDv:0000111",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000112"
+    },
+    {
+      "object": "HsapDv:0000112",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000113"
+    },
+    {
+      "object": "HsapDv:0000113",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000114"
+    },
+    {
+      "object": "HsapDv:0000114",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000115"
+    },
+    {
+      "object": "HsapDv:0000115",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000116"
+    },
+    {
+      "object": "HsapDv:0000116",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000117"
+    },
+    {
+      "object": "HsapDv:0000117",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000118"
+    },
+    {
+      "object": "HsapDv:0000118",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000119"
+    },
+    {
+      "object": "HsapDv:0000119",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000120"
+    },
+    {
+      "object": "HsapDv:0000120",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000121"
+    },
+    {
+      "object": "HsapDv:0000121",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000122"
+    },
+    {
+      "object": "HsapDv:0000122",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000123"
+    },
+    {
+      "object": "HsapDv:0000123",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000124"
+    },
+    {
+      "object": "HsapDv:0000124",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000125"
+    },
+    {
+      "object": "HsapDv:0000125",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000126"
+    },
+    {
+      "object": "HsapDv:0000126",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000127"
+    },
+    {
+      "object": "HsapDv:0000127",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000128"
+    },
+    {
+      "object": "HsapDv:0000128",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000129"
+    },
+    {
+      "object": "HsapDv:0000129",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000130"
+    },
+    {
+      "object": "HsapDv:0000130",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000131"
+    },
+    {
+      "object": "HsapDv:0000131",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000132"
+    },
+    {
+      "object": "HsapDv:0000132",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000133"
+    },
+    {
+      "object": "HsapDv:0000133",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000134"
+    },
+    {
+      "object": "HsapDv:0000134",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000135"
+    },
+    {
+      "object": "HsapDv:0000135",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000136"
+    },
+    {
+      "object": "HsapDv:0000136",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000137"
+    },
+    {
+      "object": "HsapDv:0000137",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000138"
+    },
+    {
+      "object": "HsapDv:0000138",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000139"
+    },
+    {
+      "object": "HsapDv:0000139",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000140"
+    },
+    {
+      "object": "HsapDv:0000140",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000141"
+    },
+    {
+      "object": "HsapDv:0000141",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000142"
+    },
+    {
+      "object": "HsapDv:0000142",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000143"
+    },
+    {
+      "object": "HsapDv:0000143",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000144"
+    },
+    {
+      "object": "HsapDv:0000268",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000237"
+    },
+    {
+      "object": "HsapDv:0000237",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000238"
+    },
+    {
+      "object": "HsapDv:0000238",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000239"
+    },
+    {
+      "object": "HsapDv:0000239",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000240"
+    },
+    {
+      "object": "HsapDv:0000264",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000258"
+    },
+    {
+      "object": "HsapDv:0000262",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000261"
+    },
+    {
+      "object": "HsapDv:0000045",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000264"
+    },
+    {
+      "object": "HsapDv:0000261",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000265"
+    },
+    {
+      "object": "HsapDv:0000266",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000267"
+    },
+    {
+      "object": "HsapDv:0000246",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000270"
+    },
+    {
+      "object": "HsapDv:0000265",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0000271"
+    },
+    {
+      "object": "HsapDv:0000045",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "HsapDv:0010000"
+    },
+    {
+      "object": "GO:0007608",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000004"
+    },
+    {
+      "object": "GO:0007276",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000007"
+    },
+    {
+      "object": "GO:0007586",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000017"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0000019"
+    },
+    {
+      "object": "GO:0060073",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000057"
+    },
+    {
+      "object": "UBERON:0000071",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002497",
+      "subject": "UBERON:0000061"
+    },
+    {
+      "object": "GO:0009790",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000068"
+    },
+    {
+      "object": "GO:0002164",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000069"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "UBERON:0000069"
+    },
+    {
+      "object": "UBERON:0000104",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002229",
+      "subject": "UBERON:0000071"
+    },
+    {
+      "object": "UBERON:0000080",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002285",
+      "subject": "UBERON:0000081"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0000081"
+    },
+    {
+      "object": "UBERON:0000107",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0000085"
+    },
+    {
+      "object": "UBERON:0000107",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0000085"
+    },
+    {
+      "object": "GO:0009791",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000092"
+    },
+    {
+      "object": "UBERON:0000071",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002230",
+      "subject": "UBERON:0000104"
+    },
+    {
+      "object": "UBERON:0000104",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002223",
+      "subject": "UBERON:0000106"
+    },
+    {
+      "object": "GO:0040016",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000107"
+    },
+    {
+      "object": "UBERON:0000106",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002087",
+      "subject": "UBERON:0000107"
+    },
+    {
+      "object": "GO:0007369",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000109"
+    },
+    {
+      "object": "GO:0001841",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000110"
+    },
+    {
+      "object": "GO:0048513",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0000111"
+    },
+    {
+      "object": "GO:0070295",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000362"
+    },
+    {
+      "object": "GO:0007601",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000411"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002489",
+      "subject": "UBERON:0000922"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002493",
+      "subject": "UBERON:0000922"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0000949"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0000955"
+    },
+    {
+      "object": "GO:0007613",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000956"
+    },
+    {
+      "object": "GO:0022414",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000990"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0000990"
+    },
+    {
+      "object": "GO:0042713",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0000999"
+    },
+    {
+      "object": "UBERON:0003055",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002285",
+      "subject": "UBERON:0001003"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001004"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001007"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001008"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001009"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001016"
+    },
+    {
+      "object": "GO:0007600",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001032"
+    },
+    {
+      "object": "GO:0050912",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001033"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001033"
+    },
+    {
+      "object": "GO:0055074",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001132"
+    },
+    {
+      "object": "GO:0003094",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001230"
+    },
+    {
+      "object": "GO:0055127",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001352"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0001434"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0001530"
+    },
+    {
+      "object": "GO:0003039",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001629"
+    },
+    {
+      "object": "GO:0071625",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001734"
+    },
+    {
+      "object": "GO:0007586",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001836"
+    },
+    {
+      "object": "GO:0007613",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001954"
+    },
+    {
+      "object": "GO:0007586",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001970"
+    },
+    {
+      "object": "GO:0008015",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001981"
+    },
+    {
+      "object": "GO:0050911",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0001997"
+    },
+    {
+      "object": "GO:0055074",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002046"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0002101"
+    },
+    {
+      "object": "GO:0007601",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002104"
+    },
+    {
+      "object": "GO:0007605",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002105"
+    },
+    {
+      "object": "GO:0045058",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002123"
+    },
+    {
+      "object": "GO:0007613",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002129"
+    },
+    {
+      "object": "GO:0007613",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002191"
+    },
+    {
+      "object": "GO:0040011",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002204"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0002204"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0002328"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0002330"
+    },
+    {
+      "object": "UBERON:0000110",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0002342"
+    },
+    {
+      "object": "GO:0060048",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0002351"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0002405"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0002416"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0002423"
+    },
+    {
+      "object": "UBERON:0002418",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002285",
+      "subject": "UBERON:0002513"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0002529"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0002529"
+    },
+    {
+      "object": "UBERON:0000109",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0003077"
+    },
+    {
+      "object": "GO:0022414",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0003133"
+    },
+    {
+      "object": "GO:0050912",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0003212"
+    },
+    {
+      "object": "GO:0071625",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0003706"
+    },
+    {
+      "object": "UBERON:0000109",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0003886"
+    },
+    {
+      "object": "UBERON:0000111",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0003886"
+    },
+    {
+      "object": "GO:0071626",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0003913"
+    },
+    {
+      "object": "GO:0019233",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0003942"
+    },
+    {
+      "object": "GO:0050975",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0003942"
+    },
+    {
+      "object": "UBERON:0005625",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002285",
+      "subject": "UBERON:0004114"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0004122"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0004456"
+    },
+    {
+      "object": "GO:0060005",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0004681"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002489",
+      "subject": "UBERON:0004716"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002493",
+      "subject": "UBERON:0004716"
+    },
+    {
+      "object": "GO:0040011",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0004720"
+    },
+    {
+      "object": "NBO:0000355",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0004720"
+    },
+    {
+      "object": "GO:0002119",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002082",
+      "subject": "UBERON:0004729"
+    },
+    {
+      "object": "UBERON:0002418",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002285",
+      "subject": "UBERON:0004763"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0004770"
+    },
+    {
+      "object": "GO:0030421",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0004916"
+    },
+    {
+      "object": "GO:0070295",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0005211"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0005409"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0005725"
+    },
+    {
+      "object": "GO:0003094",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0005749"
+    },
+    {
+      "object": "GO:0007585",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0005928"
+    },
+    {
+      "object": "UBERON:0009672",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002285",
+      "subject": "UBERON:0006272"
+    },
+    {
+      "object": "GO:0048240",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0006530"
+    },
+    {
+      "object": "GO:1902093",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0006530"
+    },
+    {
+      "object": "UBERON:0000107",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002489",
+      "subject": "UBERON:0007010"
+    },
+    {
+      "object": "UBERON:0000107",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002493",
+      "subject": "UBERON:0007010"
+    },
+    {
+      "object": "UBERON:0000112",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002489",
+      "subject": "UBERON:0007021"
+    },
+    {
+      "object": "UBERON:0000112",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002493",
+      "subject": "UBERON:0007021"
+    },
+    {
+      "object": "UBERON:0000113",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002489",
+      "subject": "UBERON:0007023"
+    },
+    {
+      "object": "UBERON:0000113",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002493",
+      "subject": "UBERON:0007023"
+    },
+    {
+      "object": "UBERON:0000109",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002488",
+      "subject": "UBERON:0007026"
+    },
+    {
+      "object": "GO:0007626",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0007812"
+    },
+    {
+      "object": "GO:0007620",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0008811"
+    },
+    {
+      "object": "UBERON:0000068",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0009671"
+    },
+    {
+      "object": "UBERON:0005625",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:preceded_by",
+      "relation": "RO:0002285",
+      "subject": "UBERON:0009692"
+    },
+    {
+      "object": "UBERON:0000092",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002489",
+      "subject": "UBERON:0009953"
+    },
+    {
+      "object": "GO:0071626",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0011648"
+    },
+    {
+      "object": "UBERON:0000066",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002492",
+      "subject": "UBERON:0012125"
+    },
+    {
+      "object": "GO:0001659",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0013719"
+    },
+    {
+      "object": "GO:0007585",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0014398"
+    },
+    {
+      "object": "UBERON:0000111",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002496",
+      "subject": "UBERON:0016880"
+    },
+    {
+      "object": "GO:0030432",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0018261"
+    },
+    {
+      "object": "GO:0071625",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0034681"
+    },
+    {
+      "object": "GO:0001659",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:0035549"
+    },
+    {
+      "object": "GO:0007601",
+      "ontology": "mondo",
+      "prior_predicate": "biolink:participates_in",
+      "relation": "RO:0002216",
+      "subject": "UBERON:8440011"
+    }
+  ],
+  "relations": {
+    "RO:0002082": {
+      "label": "simultaneous with",
+      "native_node_sha256": "211de6babb5837f5a0ec871beb1ab9709a6575485e6234e5ced7c0ee5424256a",
+      "prior_predicate": "biolink:temporally_related_to"
+    },
+    "RO:0002087": {
+      "label": "immediately preceded by",
+      "native_node_sha256": "28d08861951577a5505e9c2121904f635ba1bc22f53837ed4e14f87995014075",
+      "prior_predicate": "biolink:preceded_by"
+    },
+    "RO:0002216": {
+      "label": "capable of part of",
+      "native_node_sha256": "268a58e4b8342969d9d82170064afb135d0753cff850567ab7e64b95db4ab479",
+      "prior_predicate": "biolink:participates_in"
+    },
+    "RO:0002223": {
+      "label": "starts",
+      "native_node_sha256": "bc47a9344175e14ccc5409f5f05a4882cdd28872e4ca8d90a763364ae04afb0d",
+      "prior_predicate": "biolink:temporally_related_to"
+    },
+    "RO:0002229": {
+      "label": "ends",
+      "native_node_sha256": "8b9ace081d26c697d0c2669bff426881d26c48d6def282145772fbea3d88fad3",
+      "prior_predicate": "biolink:temporally_related_to"
+    },
+    "RO:0002230": {
+      "label": "ends with",
+      "native_node_sha256": "b85a0766af04f260aa81525b195fd4e72bc1f814e056e4a763d7f454d42cf043",
+      "prior_predicate": "biolink:temporally_related_to"
+    },
+    "RO:0002285": {
+      "label": "developmentally replaces",
+      "native_node_sha256": "8f1a4835c8f734771a45be9b4939cfa5dd4d8ca98be3d9fe2a1f3f4f0c528e8a",
+      "prior_predicate": "biolink:preceded_by"
+    },
+    "RO:0002488": {
+      "label": "existence starts during",
+      "native_node_sha256": "be6686c8f87b35997d884a993343a25a05ee882aa30cbc3e05448a9df9974eaf",
+      "prior_predicate": "biolink:temporally_related_to"
+    },
+    "RO:0002489": {
+      "label": "existence starts with",
+      "native_node_sha256": "65f0ed7c7f0dfa0daadf7ca8cd4f5c46086ac482bc45bf2064d4ec3a49a583c2",
+      "prior_predicate": "biolink:temporally_related_to"
+    },
+    "RO:0002492": {
+      "label": "existence ends during",
+      "native_node_sha256": "30de34008e12e980dc49536b55168fcd2824afd178453bbfcba00fcf22494445",
+      "prior_predicate": "biolink:temporally_related_to"
+    },
+    "RO:0002493": {
+      "label": "existence ends with",
+      "native_node_sha256": "1ba0e854c68f8d22160d9330bd9f9d58f6a83c4b73447c11a206ced82091869d",
+      "prior_predicate": "biolink:temporally_related_to"
+    },
+    "RO:0002496": {
+      "label": "existence starts during or after",
+      "native_node_sha256": "c7ec810541a1570bdfc5a0ceb84b9a95b889ec5d57d3b09fd80cfb76de806116",
+      "prior_predicate": "biolink:temporally_related_to"
+    },
+    "RO:0002497": {
+      "label": "existence ends during or before",
+      "native_node_sha256": "6332232c1f9b61be15b051878345a9a5d9a8577cd4a71162ef08456ae88d8545",
+      "prior_predicate": "biolink:temporally_related_to"
+    },
+    "RO:0002503": {
+      "label": "towards",
+      "native_node_sha256": "cd88fe33a115db4612507662d5acf4b04239791026cd7d186592d73af1c5f41a",
+      "prior_predicate": "biolink:actively_involved_in"
+    }
+  },
+  "reviewed_model": {
+    "sha256": "b6a1320772a92d69e84b8c700cd6386dffe45ed635c8197d61e22b6a6fa3b35e",
+    "version": "4.4.2"
+  },
+  "strict_biolink_disposition": "native_predicate_retained_not_strict_biolink_conformant",
+  "unchanged_records": [
+    {
+      "object": "GO:0006415",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002230",
+      "subject": "GO:0006412"
+    },
+    {
+      "object": "GO:0097194",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002230",
+      "subject": "GO:0006915"
+    },
+    {
+      "object": "GO:0006887",
+      "ontology": "pato",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002230",
+      "subject": "GO:0098876"
+    },
+    {
+      "object": "GO:0006415",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002230",
+      "subject": "GO:0006412"
+    },
+    {
+      "object": "GO:0097194",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002230",
+      "subject": "GO:0006915"
+    },
+    {
+      "object": "GO:0033696",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002230",
+      "subject": "GO:0031507"
+    },
+    {
+      "object": "GO:0007562",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002230",
+      "subject": "GO:0035209"
+    },
+    {
+      "object": "GO:0006887",
+      "ontology": "uberon",
+      "prior_predicate": "biolink:temporally_related_to",
+      "relation": "RO:0002230",
+      "subject": "GO:0098876"
+    }
+  ],
+  "version": 2
+}

@@ -7,6 +7,7 @@ Uses GTDB metadata files to map GTDB species names to NCBITaxon IDs.
 
 import csv
 import gzip
+import json
 from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Dict, Optional, Set, Tuple, Union
@@ -37,6 +38,7 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.transform_utils.gtdb.utils import clean_taxon_name
 from kg_microbe.transform_utils.metatraits.metatraits import MetaTraitsTransform
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.external_identifiers import load_taxid_merges
 from kg_microbe.utils.mapping_file_utils import load_metpo_mappings
@@ -51,14 +53,40 @@ METATRAITS_GTDB_INPUT_FILES = [
     # "gtdb_family_summary.jsonl.gz",
 ]
 
+HISTORICAL_BRIDGE_AUDIT = "historical_taxonomy_dispositions.tsv"
+CANONICAL_MAPPING_INPUT = "metatraits_gtdb_canonical_mappings"
+BRIDGE_AUDIT_COLUMNS = (
+    "subject",
+    "original_node_json",
+    "accession_hint",
+    "candidate_species_json",
+    "candidate_ncbi_json",
+    "proposed_edges_json",
+    "canonical_evidence_json",
+    "disposition",
+    "reason",
+)
+
+
+def _register_numeric_candidate(lookup, conflicts, token, value):
+    """Keep conflicting hint values unresolved, never choose by input row order."""
+    if token in conflicts:
+        conflicts[token].add(value)
+    elif token in lookup and lookup[token] != value:
+        conflicts[token] = {lookup.pop(token), value}
+    else:
+        lookup[token] = value
+
 
 class MetaTraitsGTDBTransform(MetaTraitsTransform):
     """Transform GTDB metatraits summary JSONL files into KGX nodes and edges."""
 
-    # Synthetic crosswalks reuse GTDB's whole-release fan-in decisions (#1053).
+    # Only identical current subjects may reuse canonical mappings (#1285).
     TRANSFORM_INPUTS = (*MetaTraitsTransform.TRANSFORM_INPUTS, GTDB)
     DATA_INPUTS = (*MetaTraitsTransform.DATA_INPUTS, "data/raw/taxdump.tar.gz")
     CODE_INPUTS = ("kg_microbe/transform_utils/metatraits",)
+    REQUIRED_CONSUMED_INPUTS = (*MetaTraitsTransform.REQUIRED_CONSUMED_INPUTS, CANONICAL_MAPPING_INPUT)
+    REQUIRED_AUDIT_FILES = (*MetaTraitsTransform.REQUIRED_AUDIT_FILES, HISTORICAL_BRIDGE_AUDIT)
 
     def __init__(
         self,
@@ -138,6 +166,8 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         self.accession_to_ncbi: Dict[str, str] = {}
         # Genome accession -> current GTDB species name (for hierarchical links)
         self.accession_to_gtdb_species: Dict[str, str] = {}
+        self.accession_ncbi_conflicts = {}
+        self.accession_species_conflicts = {}
         # Track synthetic nodes that need hierarchical edges
         self.synthetic_nodes_metadata: Dict[str, Dict[str, str]] = {}
         self._load_gtdb_to_ncbi_mapping()
@@ -186,6 +216,9 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         raw_dir = Path(getattr(self, "input_base_dir", RAW_DATA_DIR))
         gtdb_dir = raw_dir / "gtdb"
         taxid_merges = load_taxid_merges(raw_dir)
+        self.gtdb_to_ncbi = defaultdict(Counter)
+        self.accession_to_ncbi = {}
+        self.accession_ncbi_conflicts = {}
 
         # Process both bacterial and archaeal metadata
         for metadata_file in ["bac120_metadata.tsv.gz", "ar53_metadata.tsv.gz"]:
@@ -250,7 +283,12 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
                                 # Remove prefix (GB_GCA_ or RS_GCF_) and version (.1)
                                 acc_parts = accession.replace("GB_GCA_", "").replace("RS_GCF_", "").split(".")[0]
                                 # Store with 'sp' prefix for matching metatraits format
-                                self.accession_to_ncbi[f"sp{acc_parts}"] = ncbi_id
+                                _register_numeric_candidate(
+                                    self.accession_to_ncbi,
+                                    self.accession_ncbi_conflicts,
+                                    f"sp{acc_parts}",
+                                    ncbi_id,
+                                )
 
         ambiguous = sum(1 for counts in self.gtdb_to_ncbi.values() if len(counts) > 1)
         print(f"  Loaded {len(self.gtdb_to_ncbi)} unique GTDB → NCBITaxon name mappings")
@@ -269,6 +307,8 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         # Keep taxonomy and metadata in the same explicitly selected release.
         raw_dir = Path(getattr(self, "input_base_dir", RAW_DATA_DIR))
         gtdb_dir = raw_dir / "gtdb"
+        self.accession_to_gtdb_species = {}
+        self.accession_species_conflicts = {}
 
         # Process both bacterial and archaeal taxonomy
         for taxonomy_file in ["bac120_taxonomy.tsv", "ar53_taxonomy.tsv"]:
@@ -294,7 +334,12 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
                             if species:
                                 # Extract numeric accession: GB_GCA_001788565.1 → sp001788565
                                 acc_parts = accession.replace("GB_GCA_", "").replace("RS_GCF_", "").split(".")[0]
-                                self.accession_to_gtdb_species[f"sp{acc_parts}"] = species
+                                _register_numeric_candidate(
+                                    self.accession_to_gtdb_species,
+                                    self.accession_species_conflicts,
+                                    f"sp{acc_parts}",
+                                    species,
+                                )
 
         print(f"  Loaded {len(self.accession_to_gtdb_species)} unique accession → GTDB species mappings")
 
@@ -355,12 +400,12 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
 
     def _search_ncbitaxon_by_label(self, search_name: str) -> Optional[str]:
         """
-        Create GTDB synthetic node and track metadata for hierarchical linking.
+        Retain unmatched source taxon names without asserting historical containment.
 
         Overrides parent class method. Instead of returning NCBITaxon IDs,
-        creates synthetic GTDB: nodes and stores metadata for creating:
-        - rdfs:subClassOf edges to GTDB taxonomy (via genome accession)
-        - canonical GTDB close_match/broad_match links to NCBITaxon (when available)
+        creates synthetic GTDB: nodes and stores candidate correspondence hints.
+        A numeric hint does not prove historical containment or authorize copying
+        a current taxon's canonical crosswalk to a distinct historical subject.
 
         Strategy:
         1. Try direct lookup by current taxonomy name → use if matches
@@ -423,8 +468,6 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
 
         The edge file is streamed and only requested pairs are retained.
         """
-        if not pairs:
-            return {}
         edge_file = self.output_base_dir / GTDB / "edges.tsv"
         if not edge_file.is_file():
             raise FileNotFoundError(
@@ -435,8 +478,19 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
             BROAD_MATCH_PREDICATE: BROAD_MATCH_RELATION,
         }
         mappings = {}
-        with edge_file.open(encoding="utf-8", newline="") as handle:
-            for edge in csv.DictReader(handle, delimiter="\t"):
+        self._canonical_mapping_evidence = {}
+        with self.consume_input(CANONICAL_MAPPING_INPUT, edge_file) as handle:
+            reader = csv.DictReader(handle, delimiter="\t", quoting=csv.QUOTE_NONE)
+            required = {SUBJECT_COLUMN, PREDICATE_COLUMN, OBJECT_COLUMN, RELATION_COLUMN}
+            if (
+                not reader.fieldnames
+                or len(reader.fieldnames) != len(set(reader.fieldnames))
+                or not required <= set(reader.fieldnames)
+            ):
+                raise ValueError("Malformed canonical GTDB mapping header")
+            for edge in reader:
+                if None in edge or None in edge.values():
+                    raise ValueError("Malformed canonical GTDB mapping row")
                 pair = (edge[SUBJECT_COLUMN], edge[OBJECT_COLUMN])
                 if pair not in pairs:
                     continue
@@ -448,25 +502,23 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
                 if pair in mappings and mappings[pair] != mapping:
                     raise ValueError(f"Conflicting canonical GTDB mappings for {pair}")
                 mappings[pair] = mapping
+                self._canonical_mapping_evidence.setdefault(pair, []).append(dict(edge))
         return mappings
 
     def _create_hierarchical_edges(self) -> None:
         """
-        Create hierarchical edges for synthetic GTDB nodes.
+        Audit unproven historical bridges; retain only exact-current crosswalks.
 
-        For each synthetic node, creates:
-        1. rdfs:subClassOf edge to current GTDB species (via genome accession)
-        2. Canonical close_match/broad_match edge to NCBITaxon (if available)
-
-        These edges enable graph traversal from historical taxonomy to current
-        taxonomy and cross-database integration.
+        A numeric accession hint establishes neither taxon containment nor a
+        portable SKOS match. Preserve proposed inferences as producer audit rows,
+        not graph edges. Existing trait observations and declarations are untouched.
 
         Note: Reads synthetic nodes from output file since worker metadata is not
         available in main process after multiprocessing.
         """
         import re
 
-        print("\n  Creating hierarchical edges for synthetic GTDB nodes...")
+        print("\n  Reviewing historical GTDB correspondence hints...")
 
         # Read synthetic nodes from output file (since worker metadata not available)
         synthetic_nodes = []
@@ -477,16 +529,13 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
                 if node_id.startswith("GTDB:"):
                     # Extract original name from node
                     name = row.get(NAME_COLUMN, node_id.replace("GTDB:", "").replace("_", " "))
-                    synthetic_nodes.append({"id": node_id, "name": name})
-
-        if not synthetic_nodes:
-            print("  No synthetic nodes found (all resolved to current taxonomy)")
-            return
+                    synthetic_nodes.append({"id": node_id, "name": name, "row": dict(row)})
 
         print(f"  Found {len(synthetic_nodes)} synthetic GTDB nodes")
 
         hierarchical_edges = []
         mapping_candidates = []
+        audit_rows = {}
         provenance = {
             PRIMARY_KNOWLEDGE_SOURCE_COLUMN: self.knowledge_source,
             KNOWLEDGE_LEVEL_COLUMN: KNOWLEDGE_ASSERTION,
@@ -497,10 +546,23 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
         for node_info in synthetic_nodes:
             node_id = node_info["id"]
             name = node_info["name"]
+            if node_id in audit_rows:
+                raise ValueError(f"Duplicate source GTDB node in historical bridge input: {node_id}")
 
             # Extract accession from name
             accession_match = re.search(r"\bsp\d{9}\b", name)
             if not accession_match:
+                audit_rows[node_id] = {
+                    "subject": node_id,
+                    "original_node_json": json.dumps(node_info["row"], sort_keys=True),
+                    "accession_hint": "",
+                    "candidate_species_json": "[]",
+                    "candidate_ncbi_json": "[]",
+                    "proposed_edges_json": "[]",
+                    "canonical_evidence_json": "[]",
+                    "disposition": "unresolved_no_numeric_hint",
+                    "reason": "Source observations retained; no historical correspondence evidence.",
+                }
                 continue
 
             accession = accession_match.group(0)
@@ -508,29 +570,70 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
             # Look up current GTDB species and NCBITaxon
             current_species = self.accession_to_gtdb_species.get(accession)
             ncbi_taxon = self.accession_to_ncbi.get(accession)
+            species_conflicts = getattr(self, "accession_species_conflicts", {}).get(accession, set())
+            ncbi_conflicts = getattr(self, "accession_ncbi_conflicts", {}).get(accession, set())
+            proposed = []
+            audit = {
+                "subject": node_id,
+                "original_node_json": json.dumps(node_info["row"], sort_keys=True),
+                "accession_hint": accession,
+                "candidate_species_json": json.dumps(
+                    sorted(species_conflicts or ([current_species] if current_species else []))
+                ),
+                "candidate_ncbi_json": json.dumps(sorted(ncbi_conflicts or ([ncbi_taxon] if ncbi_taxon else []))),
+                "proposed_edges_json": "[]",
+                "canonical_evidence_json": "[]",
+                "disposition": "quarantined_ambiguous_numeric_hint"
+                if species_conflicts or ncbi_conflicts
+                else "unresolved_no_current_species",
+                "reason": "A numeric name token is not an assembly identity or a taxon-containment assertion.",
+            }
+            audit_rows[node_id] = audit
 
-            # Edge 1: rdfs:subClassOf to current GTDB species
+            # Preserve the formerly invented subclass proposal only in the audit.
             if current_species:
                 current_id = f"GTDB:s__{clean_taxon_name(current_species)}"
-                hierarchical_edges.append(
-                    {
-                        SUBJECT_COLUMN: node_id,
-                        PREDICATE_COLUMN: SUBCLASS_PREDICATE,
-                        # s__ prefix matches the canonical gtdb-transform CURIE
-                        # scheme (GTDB:s__<species>) so this subClassOf edge lands
-                        # on a real GTDB taxonomy node in the merged graph.
-                        OBJECT_COLUMN: current_id,
-                        RELATION_COLUMN: RDFS_SUBCLASS_OF,
-                        **provenance,
-                    }
-                )
+                # A missing direct NCBI mapping does not establish that the
+                # source GTDB name is historical. Retain its declaration and
+                # observations without asserting a reflexive subclass route.
+                if node_id != current_id:
+                    proposed.append(
+                        {
+                            SUBJECT_COLUMN: node_id,
+                            PREDICATE_COLUMN: SUBCLASS_PREDICATE,
+                            # s__ prefix matches the canonical gtdb-transform CURIE
+                            # scheme (GTDB:s__<species>) so this subClassOf edge lands
+                            # on a real GTDB taxonomy node in the merged graph.
+                            OBJECT_COLUMN: current_id,
+                            RELATION_COLUMN: RDFS_SUBCLASS_OF,
+                            **provenance,
+                        }
+                    )
+                    if not (species_conflicts or ncbi_conflicts):
+                        audit["disposition"] = "quarantined_unsupported_historical_bridge"
+                elif not (species_conflicts or ncbi_conflicts):
+                    audit["disposition"] = "exact_current_subject_no_self_hierarchy"
+                audit["proposed_edges_json"] = json.dumps(proposed, sort_keys=True)
+                # Inspect canonical evidence, but it cannot authorize substituting
+                # a distinct source subject for the canonical assertion's subject.
                 if ncbi_taxon:
                     mapping_candidates.append((node_id, current_id, ncbi_taxon))
 
-        # Edge 2: preserve GTDB's whole-release fan-in decision, never identity.
-        mappings = self._load_canonical_ncbi_mappings(
-            {(current_id, ncbi_taxon) for _, current_id, ncbi_taxon in mapping_candidates}
-        )
+        # Preserve GTDB's whole-release fan-in decision only for the identical subject.
+        # Ambiguous numeric hints must retain canonical candidate evidence too.
+        # These combinations are lookup requests, not newly asserted matches.
+        audit_pairs = {
+            subject: {
+                (f"GTDB:s__{clean_taxon_name(species)}", ncbi)
+                for species in json.loads(audit["candidate_species_json"])
+                for ncbi in json.loads(audit["candidate_ncbi_json"])
+            }
+            for subject, audit in audit_rows.items()
+        }
+        mappings = self._load_canonical_ncbi_mappings(set().union(*audit_pairs.values()))
+        for subject, pairs in audit_pairs.items():
+            evidence = [row for pair in sorted(pairs) for row in self._canonical_mapping_evidence.get(pair, [])]
+            audit_rows[subject]["canonical_evidence_json"] = json.dumps(evidence, sort_keys=True)
         missing_mappings = 0
         for node_id, current_id, ncbi_taxon in mapping_candidates:
             mapping = mappings.get((current_id, ncbi_taxon))
@@ -538,20 +641,37 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
                 missing_mappings += 1
                 continue
             predicate, relation = mapping
-            hierarchical_edges.append(
-                {
-                    SUBJECT_COLUMN: node_id,
-                    PREDICATE_COLUMN: predicate,
-                    OBJECT_COLUMN: ncbi_taxon,
-                    RELATION_COLUMN: relation,
-                    **provenance,
-                    # GTDB's fan-in-derived similarity is a prediction. A
-                    # historical subject supplies no stronger direct evidence.
-                    KNOWLEDGE_LEVEL_COLUMN: PREDICTION,
-                }
-            )
+            proposed_mapping = {
+                SUBJECT_COLUMN: node_id,
+                PREDICATE_COLUMN: predicate,
+                OBJECT_COLUMN: ncbi_taxon,
+                RELATION_COLUMN: relation,
+                **provenance,
+                # GTDB's fan-in-derived similarity is a prediction. A
+                # historical subject supplies no stronger direct evidence.
+                KNOWLEDGE_LEVEL_COLUMN: PREDICTION,
+            }
+            audit = audit_rows[node_id]
+            if node_id == current_id:
+                hierarchical_edges.append(proposed_mapping)
+                audit["disposition"] = "retained_exact_current_subject_mapping"
+                audit["reason"] = (
+                    "Canonical GTDB assertion has the same subject and object; no historical substitution."
+                )
+            else:
+                proposed = json.loads(audit["proposed_edges_json"])
+                proposed.append(proposed_mapping)
+                audit["proposed_edges_json"] = json.dumps(proposed, sort_keys=True)
 
-        print(f"  Created {len(hierarchical_edges)} hierarchical edges:")
+        audit_file = self.output_dir / HISTORICAL_BRIDGE_AUDIT
+        with atomic_write(audit_file, encoding="utf-8", newline="") as handle:
+            writer = tsv_dict_writer(handle, fieldnames=BRIDGE_AUDIT_COLUMNS)
+            writer.writeheader()
+            writer.writerows(audit_rows.values())
+        self.record_producer_audit(HISTORICAL_BRIDGE_AUDIT)
+        print(
+            f"  Audited {len(audit_rows)} GTDB source nodes; retained {len(hierarchical_edges)} exact-current mappings:"
+        )
         print(f"    - {sum(1 for e in hierarchical_edges if 'subClassOf' in e[RELATION_COLUMN])} subClassOf edges")
         for predicate in (CLOSE_MATCH_PREDICATE, BROAD_MATCH_PREDICATE):
             print(f"    - {sum(e[PREDICATE_COLUMN] == predicate for e in hierarchical_edges)} {predicate} edges")
@@ -571,7 +691,7 @@ class MetaTraitsGTDBTransform(MetaTraitsTransform):
 
             print(f"  ✅ Appended {len(hierarchical_edges)} edges to {self.output_edge_file.name}")
         else:
-            print("  No hierarchical edges created (no accessions found)")
+            print("  No additional canonical mappings; unsupported historical bridges are audit-only")
 
     def run(
         self,

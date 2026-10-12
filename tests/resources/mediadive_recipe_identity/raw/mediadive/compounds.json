@@ -1,0 +1,988 @@
+{
+  "1": {
+    "amount": 5,
+    "compound": "Peptone",
+    "compound_id": 1,
+    "g_l": 5,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "g"
+  },
+  "10": {
+    "amount": 0.9,
+    "compound": "K2HPO4",
+    "compound_id": 10,
+    "g_l": 0.9,
+    "mmol_l": 5.16719,
+    "optional": 0,
+    "recipe_order": 6,
+    "unit": "g"
+  },
+  "1000": {
+    "amount": 0.5,
+    "compound": "MnSO4 x n H2O",
+    "compound_id": 1000,
+    "g_l": 0.5,
+    "optional": 0,
+    "recipe_order": 2,
+    "unit": "g"
+  },
+  "1015": {
+    "amount": 0.01,
+    "compound": "AlK(SO4)2",
+    "compound_id": 1015,
+    "g_l": 0.01,
+    "mmol_l": 0.0387289,
+    "optional": 0,
+    "recipe_order": 10,
+    "unit": "g"
+  },
+  "107": {
+    "amount": 3,
+    "compound": "Na2SeO3 x 5 H2O",
+    "compound_id": 107,
+    "g_l": 0.003,
+    "mmol_l": 0.0114062,
+    "optional": 0,
+    "recipe_order": 2,
+    "unit": "mg"
+  },
+  "108": {
+    "amount": 10,
+    "compound": "Sucrose",
+    "compound_id": 108,
+    "g_l": 10,
+    "mmol_l": 29.2141,
+    "optional": 0,
+    "recipe_order": 5,
+    "unit": "g"
+  },
+  "11": {
+    "amount": 0.1,
+    "compound": "KH2PO4",
+    "compound_id": 11,
+    "g_l": 0.1,
+    "mmol_l": 0.734829,
+    "optional": 0,
+    "recipe_order": 7,
+    "unit": "g"
+  },
+  "110": {
+    "amount": 1,
+    "compound": "Na2SO4",
+    "compound_id": 110,
+    "g_l": 1.02041,
+    "mmol_l": 7.18395,
+    "optional": 0,
+    "recipe_order": 3,
+    "unit": "g"
+  },
+  "1123": {
+    "amount": 17,
+    "compound": "Hemicalcium D-(+)-pantothenate",
+    "compound_id": 1123,
+    "g_l": 0.017,
+    "optional": 0,
+    "recipe_order": 5,
+    "unit": "mg"
+  },
+  "1147": {
+    "amount": 25,
+    "compound": "Thiamine hydrochloride",
+    "compound_id": 1147,
+    "g_l": 0.025,
+    "mmol_l": 0.074118,
+    "optional": 0,
+    "recipe_order": 7,
+    "unit": "mg"
+  },
+  "116": {
+    "amount": 10,
+    "compound": "Malt extract",
+    "compound_id": 116,
+    "g_l": 10,
+    "optional": 0,
+    "recipe_order": 3,
+    "unit": "g"
+  },
+  "12": {
+    "amount": 0.01,
+    "compound": "FeSO4 x 7 H2O",
+    "compound_id": 12,
+    "g_l": 0.01,
+    "mmol_l": 0.0359693,
+    "optional": 0,
+    "recipe_order": 8,
+    "unit": "g"
+  },
+  "1207": {
+    "amount": 50,
+    "compound": "Thiamine HCl",
+    "compound_id": 1207,
+    "g_l": 0.05,
+    "mmol_l": 0.148236,
+    "optional": 0,
+    "recipe_order": 4,
+    "unit": "mg"
+  },
+  "121": {
+    "amount": 1.57,
+    "compound": "CuSO4 x 5 H2O",
+    "compound_id": 121,
+    "g_l": 1.57,
+    "mmol_l": 6.2879,
+    "optional": 0,
+    "recipe_order": 7,
+    "unit": "g"
+  },
+  "1230": {
+    "amount": 4.5,
+    "compound": "FeNa-EDTA",
+    "compound_id": 1230,
+    "g_l": 4.5,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "g"
+  },
+  "1237": {
+    "amount": 4,
+    "compound": "4-Aminobenzoic Acid",
+    "compound_id": 1237,
+    "g_l": 0.04,
+    "mmol_l": 0.291673,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "mg"
+  },
+  "1240": {
+    "amount": 0.01,
+    "compound": "Pyridoxamine Dihydrochloride",
+    "compound_id": 1240,
+    "g_l": 0.1,
+    "mmol_l": 0.414748,
+    "optional": 0,
+    "recipe_order": 6,
+    "unit": "g"
+  },
+  "13": {
+    "amount": 5,
+    "compound": "CaCO3",
+    "compound_id": 13,
+    "g_l": 5,
+    "mmol_l": 49.955,
+    "optional": 0,
+    "recipe_order": 9,
+    "unit": "g"
+  },
+  "1359": {
+    "amount": 20,
+    "compound": "D-(+)-biotin",
+    "compound_id": 1359,
+    "g_l": 0.02,
+    "mmol_l": 0.0818632,
+    "optional": 0,
+    "recipe_order": 3,
+    "unit": "mg"
+  },
+  "136": {
+    "amount": 5,
+    "compound": "Riboflavin",
+    "compound_id": 136,
+    "g_l": 0.005,
+    "mmol_l": 0.0132837,
+    "optional": 0,
+    "recipe_order": 5,
+    "unit": "mg"
+  },
+  "138": {
+    "amount": 2,
+    "compound": "Folic acid",
+    "compound_id": 138,
+    "g_l": 0.002,
+    "mmol_l": 0.00453104,
+    "optional": 0,
+    "recipe_order": 2,
+    "unit": "mg"
+  },
+  "139": {
+    "amount": 5,
+    "compound": "Nicotinic acid",
+    "compound_id": 139,
+    "g_l": 0.005,
+    "mmol_l": 0.0406141,
+    "optional": 0,
+    "recipe_order": 6,
+    "unit": "mg"
+  },
+  "1392": {
+    "amount": 0.25,
+    "compound": "Sodium lactate",
+    "compound_id": 1392,
+    "g_l": 0.25,
+    "mmol_l": 2.23095,
+    "optional": 0,
+    "recipe_order": 11,
+    "unit": "g"
+  },
+  "14": {
+    "amount": 1,
+    "compound": "MnSO4 x H2O",
+    "compound_id": 14,
+    "g_l": 0.001,
+    "mmol_l": 0.0059166,
+    "optional": 0,
+    "recipe_order": 6,
+    "unit": "mg"
+  },
+  "1503": {
+    "amount": 0.04,
+    "compound": "Na2 MoO4 x 2 H2O",
+    "compound_id": 1503,
+    "g_l": 0.04,
+    "mmol_l": 0.165323,
+    "optional": 0,
+    "recipe_order": 6,
+    "unit": "g"
+  },
+  "1513": {
+    "amount": 10,
+    "compound": "Pyridoxamine hydrochloride",
+    "compound_id": 1513,
+    "g_l": 0.01,
+    "mmol_l": 0.048863,
+    "optional": 0,
+    "recipe_order": 4,
+    "unit": "mg"
+  },
+  "1548": {
+    "amount": 88,
+    "compound": "3-Indolyl acetic acid",
+    "compound_id": 1548,
+    "g_l": 0.0246154,
+    "mmol_l": 0.140515,
+    "optional": 0,
+    "recipe_order": 4,
+    "unit": "mg"
+  },
+  "1552": {
+    "amount": 2,
+    "attribute": "Fucoidan or Mannose or Galactose",
+    "compound": "Carbon source solution",
+    "compound_id": 1552,
+    "g_l": 2,
+    "optional": 0,
+    "recipe_order": 9,
+    "unit": "g"
+  },
+  "16": {
+    "amount": 1,
+    "compound": "Yeast extract",
+    "compound_id": 16,
+    "g_l": 1,
+    "optional": 0,
+    "recipe_order": 3,
+    "unit": "g"
+  },
+  "174": {
+    "amount": 0.1,
+    "compound": "KBr",
+    "compound_id": 174,
+    "g_l": 0.1,
+    "mmol_l": 0.840336,
+    "optional": 0,
+    "recipe_order": 6,
+    "unit": "g"
+  },
+  "1773": {
+    "amount": 0.5,
+    "compound": "Sodium ascorbate",
+    "compound_id": 1773,
+    "g_l": 0.5,
+    "mmol_l": 2.52385,
+    "optional": 0,
+    "recipe_order": 7,
+    "unit": "g"
+  },
+  "18": {
+    "amount": 0.5,
+    "compound": "Vitamin B12",
+    "compound_id": 18,
+    "g_l": 0.0005,
+    "mmol_l": 0.000368895,
+    "optional": 0,
+    "recipe_order": 3,
+    "unit": "mg"
+  },
+  "187": {
+    "amount": 3,
+    "compound": "NaNO3",
+    "compound_id": 187,
+    "g_l": 3,
+    "mmol_l": 35.2962,
+    "optional": 0,
+    "recipe_order": 2,
+    "unit": "g"
+  },
+  "189": {
+    "amount": 100,
+    "attribute": "Titriplex I",
+    "compound": "Nitrilotriacetic acid",
+    "compound_id": 189,
+    "g_l": 0.1,
+    "mmol_l": 0.523177,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "mg"
+  },
+  "19": {
+    "amount": 10,
+    "compound": "Bacto peptone",
+    "compound_id": 19,
+    "g_l": 10,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "g"
+  },
+  "191": {
+    "amount": 103,
+    "compound": "KNO3",
+    "compound_id": 191,
+    "g_l": 0.103,
+    "mmol_l": 1.01876,
+    "optional": 0,
+    "recipe_order": 5,
+    "unit": "mg"
+  },
+  "198": {
+    "amount": 1,
+    "compound": "CoSO4 x 7 H2O",
+    "compound_id": 198,
+    "g_l": 0.001,
+    "mmol_l": 0.00645178,
+    "optional": 0,
+    "recipe_order": 7,
+    "unit": "mg"
+  },
+  "2": {
+    "amount": 3,
+    "compound": "Meat extract",
+    "compound_id": 2,
+    "g_l": 3,
+    "optional": 0,
+    "recipe_order": 2,
+    "unit": "g"
+  },
+  "21": {
+    "amount": 10,
+    "attribute": "tryptic digest",
+    "compound": "Casein peptone",
+    "compound_id": 21,
+    "condition": "",
+    "g_l": 10,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "g"
+  },
+  "2102": {
+    "amount": 0.05,
+    "compound": "2,4-Dichlorophenoxyacetic Acid",
+    "compound_id": 2102,
+    "g_l": 0.5,
+    "optional": 0,
+    "recipe_order": 2,
+    "unit": "%"
+  },
+  "2121": {
+    "amount": 3,
+    "compound": "poly-ß-hydroxybutyric acid",
+    "compound_id": 2121,
+    "g_l": 30,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "g"
+  },
+  "233": {
+    "amount": 0.23,
+    "compound": "Na2HPO4",
+    "compound_id": 233,
+    "g_l": 0.23,
+    "mmol_l": 1.62019,
+    "optional": 0,
+    "recipe_order": 4,
+    "unit": "g"
+  },
+  "2428": {
+    "amount": 3.163,
+    "attribute": "Duchefa G0210",
+    "compound": "Gamborg B5 Medium incl. Vitamins",
+    "compound_id": 2428,
+    "g_l": 3.163,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "g"
+  },
+  "2436": {
+    "amount": 100,
+    "attribute": "Duchefa N0903",
+    "compound": "1-Naphtylacetic Acid",
+    "compound_id": 2436,
+    "g_l": 1,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "mg"
+  },
+  "2437": {
+    "amount": 50,
+    "attribute": "Duchefa K0905",
+    "compound": "Kinetin",
+    "compound_id": 2437,
+    "g_l": 0.5,
+    "mmol_l": 2.32342,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "mg"
+  },
+  "2439": {
+    "amount": 2,
+    "attribute": "Sigma C7290",
+    "compound": "N-Z-Amine® A",
+    "compound_id": 2439,
+    "g_l": 2,
+    "optional": 0,
+    "recipe_order": 7,
+    "unit": "g"
+  },
+  "244": {
+    "amount": 1.13,
+    "compound": "K2HPO4 x 3 H2O",
+    "compound_id": 244,
+    "g_l": 1.13,
+    "mmol_l": 6.48769,
+    "optional": 0,
+    "recipe_order": 2,
+    "unit": "g"
+  },
+  "249": {
+    "amount": 4,
+    "compound": "Na2WO4 x 2 H2O",
+    "compound_id": 249,
+    "g_l": 0.004,
+    "mmol_l": 0.0121267,
+    "optional": 0,
+    "recipe_order": 3,
+    "unit": "mg"
+  },
+  "25": {
+    "amount": 1,
+    "compound": "Resazurin",
+    "compound_id": 25,
+    "g_l": 0.001,
+    "mmol_l": 0.00436319,
+    "optional": 0,
+    "recipe_order": 6,
+    "unit": "mg"
+  },
+  "254": {
+    "amount": 25,
+    "compound": "Bromothymol blue",
+    "compound_id": 254,
+    "optional": 0,
+    "recipe_order": 5,
+    "unit": "mg"
+  },
+  "256": {
+    "amount": 0.5,
+    "compound": "NaOH",
+    "compound_id": 256,
+    "g_l": 0.5,
+    "mmol_l": 12.5009,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "g"
+  },
+  "27": {
+    "amount": 0.2,
+    "compound": "(NH4)2SO4",
+    "compound_id": 27,
+    "g_l": 0.4,
+    "mmol_l": 3.02709,
+    "optional": 0,
+    "recipe_order": 2,
+    "unit": "g"
+  },
+  "271": {
+    "amount": 0.2,
+    "compound": "EDTA",
+    "compound_id": 271,
+    "g_l": 0.2,
+    "mmol_l": 0.684369,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "g"
+  },
+  "292": {
+    "amount": 30,
+    "compound": "Oat flakes",
+    "compound_id": 292,
+    "g_l": 30,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "g"
+  },
+  "3": {
+    "amount": 15,
+    "compound": "Agar",
+    "compound_id": 3,
+    "condition": "for solid medium",
+    "g_l": 15,
+    "optional": 0,
+    "recipe_order": 3,
+    "unit": "g"
+  },
+  "32": {
+    "amount": 1,
+    "compound": "Na2CO3",
+    "compound_id": 32,
+    "g_l": 0.98912,
+    "mmol_l": 9.33237,
+    "optional": 0,
+    "recipe_order": 7,
+    "unit": "g"
+  },
+  "34": {
+    "amount": 0.5,
+    "compound": "Na2-EDTA",
+    "compound_id": 34,
+    "g_l": 0.5,
+    "mmol_l": 1.48718,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "g"
+  },
+  "35": {
+    "amount": 0.1,
+    "compound": "ZnSO4 x 7 H2O",
+    "compound_id": 35,
+    "g_l": 0.1,
+    "mmol_l": 0.347752,
+    "optional": 0,
+    "recipe_order": 3,
+    "unit": "g"
+  },
+  "36": {
+    "amount": 0.03,
+    "compound": "MnCl2 x 4 H2O",
+    "compound_id": 36,
+    "g_l": 0.03,
+    "mmol_l": 0.151588,
+    "optional": 0,
+    "recipe_order": 4,
+    "unit": "g"
+  },
+  "368": {
+    "amount": 5,
+    "compound": "Lipoic acid",
+    "compound_id": 368,
+    "g_l": 0.005,
+    "mmol_l": 0.024233,
+    "optional": 0,
+    "recipe_order": 10,
+    "unit": "mg"
+  },
+  "37": {
+    "amount": 0.3,
+    "compound": "H3BO3",
+    "compound_id": 37,
+    "g_l": 0.3,
+    "mmol_l": 4.85123,
+    "optional": 0,
+    "recipe_order": 5,
+    "unit": "g"
+  },
+  "38": {
+    "amount": 0.2,
+    "compound": "CoCl2 x 6 H2O",
+    "compound_id": 38,
+    "g_l": 0.2,
+    "mmol_l": 1.54037,
+    "optional": 0,
+    "recipe_order": 6,
+    "unit": "g"
+  },
+  "39": {
+    "amount": 0.01,
+    "compound": "CuCl2 x 2 H2O",
+    "compound_id": 39,
+    "g_l": 0.01,
+    "mmol_l": 0.0586569,
+    "optional": 0,
+    "recipe_order": 7,
+    "unit": "g"
+  },
+  "4": {
+    "amount": 1000,
+    "compound": "Distilled water",
+    "compound_id": 4,
+    "optional": 0,
+    "recipe_order": 4,
+    "unit": "ml"
+  },
+  "40": {
+    "amount": 0.02,
+    "compound": "NiCl2 x 6 H2O",
+    "compound_id": 40,
+    "g_l": 0.02,
+    "mmol_l": 0.154322,
+    "optional": 0,
+    "recipe_order": 8,
+    "unit": "g"
+  },
+  "401": {
+    "amount": 0.82,
+    "compound": "Na acetate",
+    "compound_id": 401,
+    "g_l": 0.82,
+    "mmol_l": 9.99588,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "g"
+  },
+  "42": {
+    "amount": 0.4,
+    "compound": "NH4Cl",
+    "compound_id": 42,
+    "g_l": 0.4,
+    "mmol_l": 7.47803,
+    "optional": 0,
+    "recipe_order": 6,
+    "unit": "g"
+  },
+  "423": {
+    "amount": 33,
+    "attribute": "aquarium water",
+    "compound": "Sea Salt",
+    "compound_id": 423,
+    "g_l": 33,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "g"
+  },
+  "43": {
+    "amount": 0.4,
+    "compound": "NaCl",
+    "compound_id": 43,
+    "g_l": 0.4,
+    "mmol_l": 6.84463,
+    "optional": 0,
+    "recipe_order": 7,
+    "unit": "g"
+  },
+  "438": {
+    "amount": 10,
+    "compound": "Sodium pyruvate",
+    "compound_id": 438,
+    "g_l": 10,
+    "mmol_l": 90.876,
+    "optional": 0,
+    "recipe_order": 8,
+    "unit": "g"
+  },
+  "453": {
+    "amount": 5,
+    "attribute": "1M",
+    "compound": "MgCl2",
+    "compound_id": 453,
+    "g_l": 0.47605,
+    "mmol_l": 5,
+    "optional": 0,
+    "recipe_order": 5,
+    "unit": "ml"
+  },
+  "46": {
+    "amount": 2,
+    "compound": "Biotin",
+    "compound_id": 46,
+    "g_l": 0.002,
+    "mmol_l": 0.00818632,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "mg"
+  },
+  "47": {
+    "amount": 1,
+    "compound": "p-Aminobenzoic acid",
+    "compound_id": 47,
+    "g_l": 0.001,
+    "mmol_l": 0.00729182,
+    "optional": 0,
+    "recipe_order": 8,
+    "unit": "mg"
+  },
+  "471": {
+    "amount": 10,
+    "compound": "Oatmeal",
+    "compound_id": 471,
+    "g_l": 10,
+    "optional": 0,
+    "recipe_order": 2,
+    "unit": "g"
+  },
+  "5": {
+    "amount": 5,
+    "compound": "Glucose",
+    "compound_id": 5,
+    "g_l": 5,
+    "mmol_l": 27.7531,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "g"
+  },
+  "518": {
+    "amount": 5,
+    "compound": "Calcium pantothenate",
+    "compound_id": 518,
+    "g_l": 0.005,
+    "mmol_l": 0.0104925,
+    "optional": 0,
+    "recipe_order": 7,
+    "unit": "mg"
+  },
+  "519": {
+    "amount": 10,
+    "compound": "Pyridoxine hydrochloride",
+    "compound_id": 519,
+    "g_l": 0.01,
+    "mmol_l": 0.0486287,
+    "optional": 0,
+    "recipe_order": 3,
+    "unit": "mg"
+  },
+  "54": {
+    "amount": 2,
+    "compound": "Na2S x 9 H2O",
+    "compound_id": 54,
+    "g_l": 14.8148,
+    "mmol_l": 61.6816,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "g"
+  },
+  "541": {
+    "amount": 0.03,
+    "compound": "Co(NO3)2 x 6 H2O",
+    "compound_id": 541,
+    "g_l": 0.0493421,
+    "mmol_l": 0.16954,
+    "optional": 0,
+    "recipe_order": 7,
+    "unit": "g"
+  },
+  "55": {
+    "amount": 1.5,
+    "compound": "NaHCO3",
+    "compound_id": 55,
+    "g_l": 30,
+    "mmol_l": 357.113,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "g"
+  },
+  "61": {
+    "amount": 0.35,
+    "compound": "KCl",
+    "compound_id": 61,
+    "g_l": 13.4615,
+    "mmol_l": 180.571,
+    "optional": 0,
+    "recipe_order": 6,
+    "unit": "g"
+  },
+  "640": {
+    "amount": 2.5,
+    "compound": "Malic acid",
+    "compound_id": 640,
+    "g_l": 2.5,
+    "mmol_l": 18.6442,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "g"
+  },
+  "666": {
+    "amount": 0.001,
+    "compound": "Thiamine",
+    "compound_id": 666,
+    "g_l": 0.01,
+    "mmol_l": 0.0376847,
+    "optional": 0,
+    "recipe_order": 5,
+    "unit": "%"
+  },
+  "671": {
+    "amount": 0.3,
+    "compound": "L-Cysteine",
+    "compound_id": 671,
+    "g_l": 0.3,
+    "mmol_l": 2.47606,
+    "optional": 0,
+    "recipe_order": 2,
+    "unit": "g"
+  },
+  "672": {
+    "amount": 5,
+    "attribute": "glucose, chitin etc.",
+    "compound": "Substrate",
+    "compound_id": 672,
+    "g_l": 5,
+    "optional": 0,
+    "recipe_order": 14,
+    "unit": "g"
+  },
+  "7": {
+    "amount": 0.1,
+    "compound": "CaCl2 x 2 H2O",
+    "compound_id": 7,
+    "g_l": 0.1,
+    "mmol_l": 0.680203,
+    "optional": 0,
+    "recipe_order": 3,
+    "unit": "g"
+  },
+  "71": {
+    "amount": 5,
+    "compound": "Tryptone",
+    "compound_id": 71,
+    "g_l": 5,
+    "mmol_l": 70.3433,
+    "optional": 0,
+    "recipe_order": 3,
+    "unit": "g"
+  },
+  "73": {
+    "amount": 6,
+    "compound": "Tris",
+    "compound_id": 73,
+    "g_l": 6,
+    "mmol_l": 49.5295,
+    "optional": 0,
+    "recipe_order": 5,
+    "unit": "g"
+  },
+  "75": {
+    "amount": 2,
+    "compound": "Soy peptone",
+    "compound_id": 75,
+    "g_l": 2,
+    "optional": 0,
+    "recipe_order": 3,
+    "unit": "g"
+  },
+  "77": {
+    "amount": 5,
+    "compound": "Thiamine-HCl x 2 H2O",
+    "compound_id": 77,
+    "g_l": 0.005,
+    "mmol_l": 0.013394,
+    "optional": 0,
+    "recipe_order": 4,
+    "unit": "mg"
+  },
+  "79": {
+    "amount": 0.1,
+    "compound": "MgCl2 x 6 H2O",
+    "compound_id": 79,
+    "g_l": 1,
+    "mmol_l": 4.91877,
+    "optional": 0,
+    "recipe_order": 3,
+    "unit": "%"
+  },
+  "8": {
+    "amount": 0.1,
+    "compound": "MgSO4 x 7 H2O",
+    "compound_id": 8,
+    "g_l": 0.1,
+    "mmol_l": 0.405719,
+    "optional": 0,
+    "recipe_order": 4,
+    "unit": "g"
+  },
+  "80": {
+    "amount": 10,
+    "attribute": "powdered",
+    "compound": "Sulfur",
+    "compound_id": 80,
+    "condition": "",
+    "g_l": 10,
+    "mmol_l": 311.818,
+    "optional": 0,
+    "recipe_order": 5,
+    "unit": "g"
+  },
+  "81": {
+    "amount": 0.1,
+    "compound": "CaCl2",
+    "compound_id": 81,
+    "g_l": 0.1,
+    "mmol_l": 0.901063,
+    "optional": 0,
+    "recipe_order": 5,
+    "unit": "g"
+  },
+  "89": {
+    "amount": 20,
+    "compound": "Ethanol absolute",
+    "compound_id": 89,
+    "optional": 0,
+    "recipe_order": 10,
+    "unit": "ml"
+  },
+  "899": {
+    "amount": 2,
+    "compound": "Biotine",
+    "compound_id": 899,
+    "g_l": 0.002,
+    "mmol_l": 0.00818632,
+    "optional": 0,
+    "recipe_order": 2,
+    "unit": "mg"
+  },
+  "9": {
+    "amount": 5,
+    "compound": "Na2MoO4 x 2 H2O",
+    "compound_id": 9,
+    "g_l": 0.005,
+    "mmol_l": 0.0206654,
+    "optional": 0,
+    "recipe_order": 5,
+    "unit": "mg"
+  },
+  "908": {
+    "amount": 0.02,
+    "compound": "AlK(SO4)2 x 12 H2O",
+    "compound_id": 908,
+    "g_l": 0.02,
+    "mmol_l": 0.0421596,
+    "optional": 0,
+    "recipe_order": 10,
+    "unit": "g"
+  },
+  "981": {
+    "amount": 0.02,
+    "compound": "NiCl2 x 2 H2O",
+    "compound_id": 981,
+    "g_l": 0.02,
+    "mmol_l": 0.154322,
+    "optional": 0,
+    "recipe_order": 8,
+    "unit": "g"
+  },
+  "99": {
+    "amount": 30,
+    "compound": "Trypticase soy broth",
+    "compound_id": 99,
+    "g_l": 30,
+    "optional": 0,
+    "recipe_order": 1,
+    "unit": "g"
+  }
+}

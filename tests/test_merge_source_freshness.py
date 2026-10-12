@@ -1,10 +1,13 @@
 """The public merge gate rejects stale prepared dependencies before KGX (#1092)."""
 
+import gzip
+import hashlib
 import inspect
 import json
 import shutil
 from pathlib import Path
 
+import pandas as pd
 import pytest
 import yaml
 from click.testing import CliRunner
@@ -12,8 +15,20 @@ from click.testing import CliRunner
 from kg_microbe.merge_utils import merge_kg
 from kg_microbe.run import main
 from kg_microbe.transform import DATA_SOURCES
-from kg_microbe.transform_utils.bacdive import ec_substrate_corrections
+from kg_microbe.transform_utils.bacdive import (
+    clinical_categories,
+    ec_substrate_corrections,
+    isolation_categories,
+    ncit_category_claims,
+    supplied_taxid_policy,
+    taxonomy_evidence,
+)
 from kg_microbe.transform_utils.constants import DATA_KEY
+from kg_microbe.transform_utils.madin_etal.madin_etal import (
+    ENVIRONMENT_ID_CORRECTIONS_FILE,
+    _apply_environment_id_corrections,
+)
+from kg_microbe.transform_utils.mediadive.bulk_inputs import load_bulk_payload
 from kg_microbe.transform_utils.mediadive.material_scope_audit import (
     AUDIT_FILENAME,
     AUDIT_HEADER,
@@ -21,9 +36,30 @@ from kg_microbe.transform_utils.mediadive.material_scope_audit import (
     REVIEWED_ROLE,
     MaterialScopeAudit,
 )
+from kg_microbe.transform_utils.mediadive.recipe_identity import (
+    EVIDENCE_ROLE as RECIPE_EVIDENCE_ROLE,
+)
+from kg_microbe.transform_utils.mediadive.recipe_identity import (
+    POLICY_ROLE as RECIPE_POLICY_ROLE,
+)
+from kg_microbe.transform_utils.mediadive.recipe_identity import RecipeIdentityGuard
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.ingredient_context import (
+    CONTEXT_ROLE as INGREDIENT_CONTEXT_ROLE,
+)
+from kg_microbe.utils.ingredient_context import (
+    HISTORICAL_ROLE as CATALASE_HISTORICAL_ROLE,
+)
+from kg_microbe.utils.ingredient_context import (
+    NATIVE_ROLE as INGREDIENT_NATIVE_ROLE,
+)
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, verify_finalized_source_files
 from kg_microbe.utils.transform_fingerprint import upstream_fingerprint, write_fingerprint
+from kg_microbe.utils.tsv_io import tsv_dict_writer, tsv_writer
+from tests.gold_fixtures import prepare_empty_gold_crosswalk_inputs
+from tests.native_ro_fixtures import prepare_empty_native_ro_contract
+from tests.prego_identity_fixtures import IDENTITY_FIXTURES, prepare_prego_empty_archive_inputs
+from tests.rhea_fixtures import prepare_rhea_native_inputs
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = Path(__file__).parent / "resources/merge_source_freshness"
@@ -48,27 +84,89 @@ def read_mediadive_bulk_inputs(transform, *, create=False):
             path.parent.mkdir(parents=True, exist_ok=True)
             if not path.exists():
                 path.write_text(json.dumps(payloads[role], sort_keys=True) + "\n")
+    loaded = {}
     for role, relative in paths.items():
-        with transform.consume_bulk_input(role, transform.input_base_dir / relative) as reader:
-            assert json.load(reader) == payloads[role]
+        loaded[role] = load_bulk_payload(transform, role, transform.input_base_dir / relative)
+        assert loaded[role] == payloads[role]
     assert payloads["mediadive_media_list"][DATA_KEY] == []
-    transform._material_scope_audit = MaterialScopeAudit(transform, payloads["mediadive_media_list"])
-    return (*paths, REVIEWED_ROLE, POLICY_ROLE)
+    transform.media_detailed = loaded["mediadive_media_detailed"]
+    transform.media_strains = loaded["mediadive_media_strains"]
+    transform.solutions_data = loaded["mediadive_solutions"]
+    transform.compounds_data = loaded["mediadive_compounds"]
+    transform._material_scope_audit = MaterialScopeAudit(transform, loaded["mediadive_media_list"])
+    transform._recipe_identity_guard = RecipeIdentityGuard(transform, loaded["mediadive_media_list"])
+    transform._recipe_identity_prepared = True
+    assert transform._recipe_identity_guard.index["occurrences"] == {}
+    return (
+        *paths,
+        REVIEWED_ROLE,
+        POLICY_ROLE,
+        INGREDIENT_CONTEXT_ROLE,
+        INGREDIENT_NATIVE_ROLE,
+        CATALASE_HISTORICAL_ROLE,
+        RECIPE_POLICY_ROLE,
+        RECIPE_EVIDENCE_ROLE,
+    )
 
 
 def write_empty_mediadive_audit(transform):
     """Run the actual audit writer only for the consumed immutable zero-cohort fixture."""
     payloads = json.loads((FIXTURES.parent / "mediadive_bulk_inputs.json").read_text())
-    with transform.consume_bulk_input("mediadive_media_list", transform.input_base_dir / "mediadive.json") as reader:
-        media_list = json.load(reader)
+    media_list = load_bulk_payload(transform, "mediadive_media_list", transform.input_base_dir / "mediadive.json")
     assert media_list == payloads["mediadive_media_list"]
     assert media_list[DATA_KEY] == [], "Nonempty media require the actual producer's occurrence processing"
     transform._material_scope_audit = MaterialScopeAudit(transform, media_list)
     transform._material_scope_audit.write()
+    assert transform._recipe_identity_guard.index["occurrences"] == {}
+    transform._recipe_identity_guard.write()
 
 
 def prepare_bacdive_ec_correction_inputs(transform):
     """Bind a zero-cohort fixture through real policy/read/audit contracts, without claiming a producer run."""
+    isolation_categories.prepare_policy(transform)
+    native_mesh = transform.input_base_dir / "mesh2026.nt.gz"
+    excerpt = FIXTURES.parent / "bacdive_clinical_mesh/mesh2026-clinical-excerpt.nt"
+    expected = gzip.compress(excerpt.read_bytes(), mtime=0)
+    if not native_mesh.exists():
+        native_mesh.write_bytes(expected)
+    assert native_mesh.read_bytes() == expected, "Do not replace an already selected native authority"
+    clinical_categories.prepare_policy(transform)
+    raw = transform.input_base_dir / "bacdive_strains.json"
+    empty = FIXTURES / "bacdive_empty_records.json"
+    if not raw.exists():
+        shutil.copyfile(empty, raw)
+    assert raw.read_bytes() == empty.read_bytes(), "Nonempty native records require actual producer emission"
+    taxonomy_guard = taxonomy_evidence.prepare(transform)
+    claim_guard, native = ncit_category_claims.prepare(
+        transform,
+        native_observer=lambda payload: taxonomy_guard.capture_native(payload, transform.consumed_input_snapshots),
+    )
+    assert native == []
+    taxonomy_evidence.prepare_fallback(
+        transform,
+        transform.input_base_dir / "never-read-selected-ncbitaxon.tsv",
+        lambda: pytest.fail("empty native source must not select a fallback authority"),
+    )
+    with (transform.output_dir / isolation_categories.AUDIT_FILE).open("w", encoding="utf-8", newline="") as stream:
+        tsv_dict_writer(stream, fieldnames=isolation_categories.AUDIT_FIELDS).writeheader()
+    transform.record_producer_audit(isolation_categories.AUDIT_FILE)
+    with (transform.output_dir / clinical_categories.AUDIT_FILE).open("w", encoding="utf-8", newline="") as stream:
+        tsv_dict_writer(stream, fieldnames=clinical_categories.AUDIT_FIELDS).writeheader()
+    transform.record_producer_audit(clinical_categories.AUDIT_FILE)
+    with (transform.output_dir / ncit_category_claims.AUDIT_FILE).open("w", encoding="utf-8", newline="") as stream:
+        tsv_dict_writer(stream, fieldnames=ncit_category_claims.AUDIT_FIELDS).writeheader()
+    transform.record_producer_audit(ncit_category_claims.AUDIT_FILE)
+    claim_guard.finish(transform.consumed_input_snapshots)
+    claim_guard.mark_output_ready(transform.consumed_input_snapshots)
+    transform._ncit_claim_output_ready = True
+    resolved, contested = taxonomy_guard.resolve_deposits({})
+    assert resolved == [] and contested == []
+    with (transform.output_dir / taxonomy_evidence.AUDIT_FILE).open("w", encoding="utf-8", newline="") as stream:
+        writer = tsv_writer(stream)
+        writer.writerow(taxonomy_evidence.AUDIT_FIELDS)
+        taxonomy_guard.complete({}, resolved, contested, writer)
+    taxonomy_guard.mark_output_ready(transform.consumed_input_snapshots)
+    transform.record_producer_audit(taxonomy_evidence.AUDIT_FILE)
     legacy = transform.input_base_dir / "bacdive_ec_substrates.tsv"
     original = FIXTURES / "bacdive_ec_substrates.tsv"
     if not legacy.exists():
@@ -83,7 +181,50 @@ def prepare_bacdive_ec_correction_inputs(transform):
     transform.record_producer_audit(ec_substrate_corrections.AUDIT_FILE)
     admission.verify()
     transform.verify_consumed_inputs()
-    return ec_substrate_corrections.REQUIRED_INPUTS
+    return (
+        ec_substrate_corrections.REQUIRED_INPUTS
+        + isolation_categories.REQUIRED_INPUTS
+        + clinical_categories.REQUIRED_INPUTS
+        + (supplied_taxid_policy.ROLE,)
+        + ncit_category_claims.REQUIRED_INPUTS
+        + (isolation_categories.RAW_INPUT,)
+    )
+
+
+def prepare_madin_environment_correction_input(transform):
+    """Parse real correction authority against an explicit zero-row native environment fixture."""
+    role = "madin_environment_id_corrections"
+    assert role in type(transform).REQUIRED_CONSUMED_INPUTS
+    environments = pd.read_csv(FIXTURES.parent / "madin_foodon_retirement" / "environments.csv", nrows=0)
+    expected = environments.copy(deep=True)
+    with transform.consume_input(role, ENVIRONMENT_ID_CORRECTIONS_FILE) as reader:
+        corrected = _apply_environment_id_corrections(environments, corrections_stream=reader)
+    pd.testing.assert_frame_equal(corrected, expected)
+    assert corrected.empty, "Nonempty source cohorts require actual producer emission"
+    return (role,)
+
+
+def prepare_prego_identity_inputs(transform):
+    """Bind native authority and the real zero-observation producer audit without bypassing contracts."""
+    from kg_microbe.transform_utils.prego.envo_identity import AUDIT_COLUMNS
+
+    for name in ("envo.json", "foodon.json"):
+        target = transform.input_base_dir / name
+        source = IDENTITY_FIXTURES / name
+        if not target.exists():
+            shutil.copyfile(source, target)
+        assert target.read_bytes() == source.read_bytes(), "Do not rewrite an already selected native authority"
+    transform._prepare_identity_decisions()
+    assert len(transform._identity_decisions) == 10
+    prepare_prego_empty_archive_inputs(transform)
+    audit_name = "prego_envo_identity.tsv"
+    assert type(transform).REQUIRED_AUDIT_FILES == (audit_name,)
+    # The graph fixture contains only fixture:1/fixture:2, never a PREGO source
+    # observation. Its audit is deliberately empty, not a fake accepted cohort.
+    with (transform.output_dir / audit_name).open("w", encoding="utf-8", newline="") as stream:
+        tsv_dict_writer(stream, fieldnames=AUDIT_COLUMNS).writeheader()
+    transform.record_producer_audit(audit_name)
+    return ("prego_envo_policy", "prego_native_envo", "prego_native_foodon")
 
 
 def record_source(transform):
@@ -111,8 +252,21 @@ def prepare_source(tmp_path, source, *, prefix="", marker=True, output_name=None
         shutil.copyfile(FIXTURES / f"{kind}.tsv", transform.output_dir / f"{prefix}{kind}.tsv")
     bulk_roles = read_mediadive_bulk_inputs(transform, create=True) if source == "mediadive" else ()
     correction_roles = prepare_bacdive_ec_correction_inputs(transform) if source == "bacdive" else ()
+    madin_roles = prepare_madin_environment_correction_input(transform) if source == "madin_etal" else ()
+    prego_roles = prepare_prego_identity_inputs(transform) if source == "prego" else ()
+    ontology_roles = prepare_empty_native_ro_contract(transform) if source == "ontologies" else ()
+    gold_roles = prepare_empty_gold_crosswalk_inputs(transform) if source == "gold" else ()
+    rhea_roles = prepare_rhea_native_inputs(transform) if source == "rhea_mappings" else ()
     for role in getattr(cls, "REQUIRED_CONSUMED_INPUTS", ()):
-        if role in (*bulk_roles, *correction_roles):
+        if role in (
+            *bulk_roles,
+            *correction_roles,
+            *madin_roles,
+            *prego_roles,
+            *ontology_roles,
+            *gold_roles,
+            *rhea_roles,
+        ):
             continue
         assert role == "bacdive_taxon_lookup", f"Fixture needs an explicit immutable input for {role}"
         lookup = tmp_path / f"{source}-bacdive-lookup.tsv"
@@ -125,10 +279,95 @@ def prepare_source(tmp_path, source, *, prefix="", marker=True, output_name=None
                 reader.read()
     if source == "mediadive":
         write_empty_mediadive_audit(transform)
+    if source == "ontologies":
+        # This helper finalizes only the immutable fixture:1/fixture:2 graph,
+        # not a native ontology parse. Its metadata exclusion cohort is empty;
+        # bind that explicit fixture audit, never weaken producer requirements.
+        audit_name = "ontology_metadata_exclusions.tsv"
+        assert cls.REQUIRED_AUDIT_FILES == (
+            audit_name,
+            "native_relation_dispositions.tsv",
+            "foodon_kernel_quarantine.tsv",
+            "ontology_parent_dispositions.tsv",
+            "upa_route_review.tsv",
+        )
+        assert (FIXTURES / "nodes.tsv").read_text().count("fixture:") == 2
+        shutil.copyfile(FIXTURES / audit_name, transform.output_dir / audit_name)
+        transform.record_producer_audit(audit_name)
     transform.finalize(file_prefix=prefix, fresh_run=True)
     if marker:
         record_source(transform)
     return transform
+
+
+def test_inert_rhea_fixture_binds_real_native_cohort_and_explicit_input_audit(tmp_path):
+    """Generic merge fixtures consume native evidence without claiming to test Rhea graph emission."""
+    from kg_microbe.transform_utils.rhea_mappings.rhea_mappings import REACTION_AUDIT, RheaMappingsTransform
+    from kg_microbe.utils.source_finalization import graph_rows
+
+    transform = prepare_source(tmp_path, "rhea_mappings", marker=False)
+    report = json.loads((transform.output_dir / "source_finalization.json").read_text())
+    assert set(report["consumed_inputs"]) == set(RheaMappingsTransform.REQUIRED_CONSUMED_INPUTS)
+    assert report["consumed_inputs"] == transform.consumed_input_snapshots
+    for identity in report["consumed_inputs"].values():
+        assert identity in report["inputs"]
+        assert Path(identity["path"]).is_relative_to(tmp_path)
+        assert hashlib.sha256(Path(identity["path"]).read_bytes()).hexdigest() == identity["sha256"]
+    audit = list(graph_rows(transform.output_dir / REACTION_AUDIT))
+    assert {(row["reaction_id"], row["direction"]) for row in audit} == {
+        ("RHEA:100", "UN"),
+        ("RHEA:101", "LR"),
+        ("RHEA:102", "RL"),
+        ("RHEA:103", "BI"),
+    }
+    assert {row["disposition"] for row in audit} == {"fixture_validated_input_only"}
+    assert {row["native_status"] for row in audit} == {"Approved"}
+    assert report["producer_audit_members"][REACTION_AUDIT] == transform.producer_audit_snapshots[REACTION_AUDIT]
+    assert {row["id"] for row in graph_rows(transform.output_node_file)} == {"fixture:1", "fixture:2"}
+    verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+
+
+@pytest.mark.parametrize("changed", ["rhea_release_manifest", "rhea_directions", "rhea_rdf", "audit"])
+def test_inert_rhea_fixture_drift_is_rejected_at_merge_admission(tmp_path, changed):
+    """Neither generic output rows nor a prior marker exempt required native inputs or the producer audit."""
+    from kg_microbe.transform_utils.rhea_mappings.rhea_mappings import REACTION_AUDIT
+
+    transform = prepare_source(tmp_path, "rhea_mappings")
+    paths = [transform.output_node_file, transform.output_edge_file]
+    verify_finalized_source_files(paths)
+    if changed == "audit":
+        target = transform.output_dir / REACTION_AUDIT
+    else:
+        target = Path(transform.consumed_input_snapshots[changed]["path"])
+    target.write_bytes(target.read_bytes() + b"\n")
+    with pytest.raises(SourceFinalizationRequired):
+        verify_finalized_source_files(paths)
+
+
+def test_empty_madin_fixture_binds_real_correction_table(tmp_path):
+    """The inert graph fixture obeys the registered producer's required immutable correction read."""
+    transform = prepare_source(tmp_path, "madin_etal", marker=False)
+    identity = {
+        "path": str(ENVIRONMENT_ID_CORRECTIONS_FILE.resolve()),
+        "sha256": hashlib.sha256(ENVIRONMENT_ID_CORRECTIONS_FILE.read_bytes()).hexdigest(),
+    }
+    report = json.loads((transform.output_dir / "source_finalization.json").read_text())
+    assert report["consumed_inputs"] == {"madin_environment_id_corrections": identity}
+    assert transform.consumed_input_snapshots == report["consumed_inputs"]
+    assert identity in report["inputs"]
+    verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+
+
+def test_empty_ontology_fixture_binds_mandatory_metadata_audit(tmp_path):
+    """The hermetic ontology fixture obeys registered mandatory evidence at finalization and admission."""
+    transform = prepare_source(tmp_path, "ontologies", marker=False)
+    filename = "ontology_metadata_exclusions.tsv"
+    path = transform.output_dir / filename
+    assert path.read_bytes() == (FIXTURES / filename).read_bytes()
+    report = json.loads((transform.output_dir / "source_finalization.json").read_text())
+    assert report["producer_audit_members"][filename] == transform.producer_audit_snapshots[filename]
+    assert report["audit_members"][filename] == transform.producer_audit_snapshots[filename]
+    verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
 
 
 def test_empty_bacdive_fixture_has_real_correction_input_and_audit_contract(tmp_path):
@@ -139,10 +378,50 @@ def test_empty_bacdive_fixture_has_real_correction_input_and_audit_contract(tmp_
     assert path.read_bytes() == (FIXTURES / filename).read_bytes()
     identity = transform.producer_audit_snapshots[filename]
     report = json.loads((transform.output_dir / "source_finalization.json").read_text())
-    assert set(report["consumed_inputs"]) == set(ec_substrate_corrections.REQUIRED_INPUTS)
+    assert set(report["consumed_inputs"]) == set(type(transform).REQUIRED_CONSUMED_INPUTS)
     assert report["producer_audit_members"][filename] == identity
     assert report["audit_members"][filename] == identity
     verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+
+
+@pytest.mark.parametrize("gss_present", [False, True])
+def test_empty_bacdive_fixture_obeys_real_taxonomy_lifecycle(tmp_path, gss_present):
+    """An empty graph fixture consumes real source bytes without inventing ancestry queries."""
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    gss = raw / "lpsn_gss.csv"
+    if gss_present:
+        shutil.copyfile(FIXTURES.parent / "bacdive_taxonomy_evidence/lpsn_gss.csv", gss)
+    transform = prepare_source(tmp_path, "bacdive", marker=False)
+    report = json.loads((transform.output_dir / "source_finalization.json").read_text())
+    contract = report["producer_native_inputs"]["taxonomy"]
+    assert contract["native_records"] == 0
+    fallback = contract["fallback_native_evidence"]
+    assert fallback["eligible_record_count"] == 0
+    assert fallback["plans"] == {}
+    assert fallback["native_queries"] is None and fallback["selected_input"] is None
+    assert fallback["raw_role"]["name"] in report["consumed_inputs"]
+    assert contract["audit_rows"] == 0
+    assert contract["resolved_deposit_count"] == 0
+    assert contract["ancestry"]["actual_queries"] is None
+    assert contract["ancestry"]["callback_demand_counts"] == []
+    assert report["consumed_inputs"][supplied_taxid_policy.ROLE] == {
+        "path": str(supplied_taxid_policy.POLICY_PATH.resolve()),
+        "sha256": supplied_taxid_policy.POLICY_SHA256,
+    }
+    assert (taxonomy_evidence.GSS_ROLE in report["consumed_inputs"]) == gss_present
+    if gss_present:
+        assert contract["optional_gss"]["sha256"] == hashlib.sha256(gss.read_bytes()).hexdigest()
+    else:
+        assert contract["optional_gss"]["sha256"] is None
+    audit = transform.output_dir / taxonomy_evidence.AUDIT_FILE
+    assert audit.read_bytes() == ("\t".join(taxonomy_evidence.AUDIT_FIELDS) + "\n").encode()
+    assert report["producer_audit_members"][audit.name] == transform.producer_audit_snapshots[audit.name]
+    verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+    fresh = type(transform).__new__(type(transform))
+    Transform.__init__(fresh, "bacdive", transform.input_base_dir, transform.output_base_dir)
+    assert fresh.finalize() == report
+    fresh.verify_native_inputs()
 
 
 @pytest.mark.parametrize("damage", ["missing", "unrecorded", "changed"])

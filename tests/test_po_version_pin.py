@@ -1,6 +1,7 @@
 """Every PO artifact must be pinned to one release commit: the release its reviewed category policy names."""
 
 import json
+import os
 import re
 import subprocess
 from pathlib import Path
@@ -13,10 +14,12 @@ from kg_microbe.transform_utils.constants import (
     PO_IMPORT_MODULES,
     PO_IMPORTS_DIR,
     PO_RAW_URL,
+    PO_RELEASE,
     PO_RELEASE_TAG,
     PO_VERSION_IRI,
 )
 from kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform import _declared_imports
+from tests.download_destinations import download_destination
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DOWNLOAD_YAML = REPO_ROOT / "download.yaml"
@@ -34,18 +37,15 @@ def _po_entries():
     """
     Every download.yaml entry that saves a PO file or fetches from PO.
 
-    :return: List of download entries.
+    :return: ``(destination, url)`` pairs, the destination as the file written
+        (``./po.owl`` is ``po.owl``).
     """
     entries = yaml.safe_load(DOWNLOAD_YAML.read_text(encoding="utf-8"))
+    pairs = [(download_destination(e), str(e.get("url", ""))) for e in entries if isinstance(e, dict)]
     return [
-        e
-        for e in entries
-        if isinstance(e, dict)
-        and (
-            _PO_LOCAL.match(str(e.get("local_name", "")))
-            or str(e.get("local_name", "")).startswith(f"{PO_IMPORTS_DIR}/")
-            or _PO_URL.search(str(e.get("url", "")))
-        )
+        (name, url)
+        for name, url in pairs
+        if _PO_LOCAL.match(name) or name.startswith(f"{PO_IMPORTS_DIR}/") or _PO_URL.search(url)
     ]
 
 
@@ -58,7 +58,7 @@ def test_po_and_its_imports_are_downloaded_at_the_release_commit():
     `kg download` fetched. Any other PO download, unpinned, fails this too:
     compared as a list, so a duplicate entry for a pinned file cannot hide.
     """
-    entries = sorted((e["local_name"], e["url"]) for e in _po_entries())
+    entries = sorted(_po_entries())
     expected = [("po.owl", f"{PO_RAW_URL}/po.owl")]
     expected += [(f"{PO_IMPORTS_DIR}/{name}", f"{PO_RAW_URL}/imports/{name}") for name in PO_IMPORT_MODULES]
     assert entries == sorted(expected)
@@ -70,6 +70,17 @@ def test_the_pin_is_a_commit_not_a_tag_or_branch():
     assert PO_RAW_URL == f"https://raw.githubusercontent.com/Planteome/plant-ontology/{PO_COMMIT}"
 
 
+def test_the_release_tag_names_the_release():
+    """
+    PO spells its tags by hand (V2023-07-13, v2016_5-19), but their numbers are the release date.
+
+    Without this, the tag, the commit and download.yaml could move to another
+    release together while PO_RELEASE stayed, and only preflight, after merge,
+    would notice.
+    """
+    assert [int(n) for n in re.findall(r"\d+", PO_RELEASE_TAG)] == [int(n) for n in PO_RELEASE.split("-")]
+
+
 @pytest.mark.integration
 def test_the_commit_is_the_one_the_release_tag_points_at():
     """
@@ -79,15 +90,20 @@ def test_the_commit_is_the_one_the_release_tag_points_at():
     carry no version. A bump that copied a later master commit instead of the
     tag's would pin modules nobody reviewed, and every offline check would pass.
     """
+    # Ask for the peeled ref too: for an annotated tag, `<tag>` alone lists only
+    # the tag object, and `<tag>^{}` is the line that names the commit.
+    patterns = [PO_RELEASE_TAG, f"{PO_RELEASE_TAG}^{{}}"]
     listing = subprocess.run(  # noqa: S603
-        ["git", "ls-remote", "--tags", "https://github.com/Planteome/plant-ontology", PO_RELEASE_TAG],  # noqa: S607
+        ["git", "ls-remote", "--tags", "https://github.com/Planteome/plant-ontology", *patterns],  # noqa: S607
         capture_output=True,
         text=True,
         timeout=120,
         check=True,
+        stdin=subprocess.DEVNULL,
+        # A missing or private repository asks for credentials; fail instead of waiting.
+        env={**os.environ, "GIT_TERMINAL_PROMPT": "0"},
     ).stdout
     refs = {ref: sha for sha, ref in (line.split("\t") for line in listing.splitlines())}
-    # An annotated tag lists its own object too; the peeled ref names the commit.
     tag = f"refs/tags/{PO_RELEASE_TAG}"
     assert refs.get(f"{tag}^{{}}", refs.get(tag)) == PO_COMMIT
 
@@ -110,7 +126,7 @@ def test_each_import_is_fetched_from_the_release_at_its_own_path():
     The catalog matches a module by file name alone, so a module fetched from
     another path under the release would be accepted without complaint.
     """
-    downloaded = {e["url"] for e in _po_entries()}
+    downloaded = {url for _, url in _po_entries()}
     declared = _declared_imports(PO_OWL_HEADER)
     assert len(declared) == len(PO_IMPORT_MODULES)
     for iri in declared:

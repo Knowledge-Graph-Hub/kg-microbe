@@ -38,6 +38,33 @@ ROBOT_JAXP_LIMITS = (
     ("jdk.xml.maxElementDepth", "0"),
 )
 
+# For a ROBOT run whose imports must all resolve locally (through a catalog):
+# send HTTP, HTTPS and SOCKS traffic to a closed local port, with no host
+# exempt, so an import the catalog does not map fails instead of being fetched
+# from a moving upstream branch. See offline_robot_env for _JAVA_OPTIONS.
+ROBOT_OFFLINE_JAVA_ARGS = (
+    "-Dhttp.proxyHost=127.0.0.1 -Dhttp.proxyPort=9 -Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=9 "
+    "-Dhttp.nonProxyHosts= -DsocksProxyHost=127.0.0.1 -DsocksProxyPort=9"
+)
+
+
+def offline_robot_env(env: dict) -> dict:
+    """
+    Return a copy of a ROBOT environment whose JVM cannot reach the network.
+
+    The JVM applies ``_JAVA_OPTIONS`` after the command line, so a proxy set
+    there would undo :data:`ROBOT_OFFLINE_JAVA_ARGS`; it is moved into
+    ``ROBOT_JAVA_ARGS`` ahead of the offline flags, which then win.
+
+    :param env: Environment from :func:`robot_env` or :func:`initialize_robot`.
+    """
+    env = dict(env)
+    java_options = env.pop("_JAVA_OPTIONS", "")
+    parts = (env.get("ROBOT_JAVA_ARGS", ""), java_options, ROBOT_OFFLINE_JAVA_ARGS)
+    env["ROBOT_JAVA_ARGS"] = " ".join(part for part in parts if part)
+    return env
+
+
 # Older spellings the JDK still honours for two of the limits.
 LEGACY_JAXP_NAMES = {
     "jdk.xml.entityExpansionLimit": "entityExpansionLimit",

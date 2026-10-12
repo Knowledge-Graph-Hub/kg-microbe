@@ -235,3 +235,48 @@ class PinnedRobotOnPathTest(TestCase):
             with robot_utils.pinned_robot_on_path(tmp) as env:
                 self.assertEqual(env["PATH"], "/usr/bin")
                 self.assertIn("-Djdk.xml.totalEntitySizeLimit=50000000", env["ROBOT_JAVA_ARGS"])
+
+
+class OfflineRobotEnvTest(TestCase):
+    """A catalog run must not be able to fetch an import the catalog misses."""
+
+    def test_java_options_cannot_undo_the_offline_flags(self):
+        """The JVM applies _JAVA_OPTIONS after the command line, so a proxy there used to win."""
+        env = {"ROBOT_JAVA_ARGS": "-Xmx8G", "_JAVA_OPTIONS": "-Dhttps.proxyHost=proxy.corp -Dhttps.proxyPort=3128"}
+        offline = robot_utils.offline_robot_env(env)
+        self.assertNotIn("_JAVA_OPTIONS", offline)
+        args = offline["ROBOT_JAVA_ARGS"]
+        self.assertLess(args.index("-Dhttps.proxyHost=proxy.corp"), args.rindex("-Dhttps.proxyHost=127.0.0.1"))
+        for flag in ("-Dhttp.nonProxyHosts=", "-DsocksProxyHost=127.0.0.1"):
+            self.assertIn(flag, args)
+        self.assertEqual(env["_JAVA_OPTIONS"], "-Dhttps.proxyHost=proxy.corp -Dhttps.proxyPort=3128", "input untouched")
+
+    def test_the_pinned_robot_refuses_an_unmapped_import(self):
+        """
+        Run the real pinned ROBOT: an import with no catalog entry must fail, not be fetched.
+
+        Needs the ROBOT that `kg download -t tools` puts in data/raw and a JDK;
+        skipped without them. No network is used: the request goes to a
+        closed local port.
+        """
+        raw = Path(__file__).resolve().parents[1] / "data" / "raw"
+        if robot_utils.missing_robot(raw):
+            self.skipTest("pinned ROBOT or a working java is not available")
+        with tempfile.TemporaryDirectory() as tmp:
+            owl = Path(tmp, "m.owl")
+            owl.write_text(
+                '<?xml version="1.0"?>\n<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" '
+                'xmlns:owl="http://www.w3.org/2002/07/owl#"><owl:Ontology rdf:about="https://example.invalid/m.owl">'
+                '<owl:imports rdf:resource="https://example.invalid/A_imports.owl"/></owl:Ontology></rdf:RDF>\n',
+                encoding="utf-8",
+            )
+            robot_file, env = robot_utils.initialize_robot(str(raw))
+            result = subprocess.run(  # noqa: S603
+                ["bash", robot_file, "-vvv", "convert", "--input", str(owl), "--output", str(Path(tmp, "m.json"))],  # noqa: S607
+                env=robot_utils.offline_robot_env(env),
+                capture_output=True,
+                text=True,
+                timeout=300,
+            )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Connection refused", result.stdout + result.stderr)

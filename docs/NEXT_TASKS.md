@@ -1,8 +1,9 @@
 # Next tasks
 
 Snapshot of the work remaining on 2026-10-12, after PR [#1401] (the
-validation-upstream candidate) merged to `master` as `bac582f4e`. It covers what
-is needed to rebuild and accept that candidate.
+validation-upstream candidate) merged to `master` as `bac582f4e`. Master has
+since moved to `82c083a83` with [#1442], [#1443] and [#1444]. This page covers what is
+needed to rebuild and accept the candidate.
 
 GitHub issues are the authoritative status. Update this page, or retire it, as
 items close. The root [`NEXT_TASKS.md`](../NEXT_TASKS.md) is the older curated
@@ -10,15 +11,17 @@ backlog, last reconciled on 2026-08-16.
 
 ## Decisions
 
-- **[#1420]: pin strategy (decided 2026-10-12).**
+- **[#1420]: pin strategy (decided 2026-10-12;
+  [decision and plan](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1420#issuecomment-6129515541)).**
   - Re-bind each policy to its ontology release plus a canonical digest of only
     the content it reviewed.
-  - Pin `download.yaml` to the dated release URLs.
+  - Pin `download.yaml` to stable release URLs. Use a dated release directory
+    where one resolves, and otherwise a release asset or a commit.
   - Check every pinned input before NCBITaxon and ChEBI processing starts.
 - **[#1427], [#1428], [#1429]: category modeling (open).** Decide these before the
   rebuild candidate is frozen (section 1).
-- **[#1431], [#1433] (open).** Fix these before acceptance, or accept them
-  explicitly as known deviations in the merged review.
+- **[#1431], [#1433] (open).** Fix these before the freeze, or accept them explicitly
+  as known deviations in the merged review.
 
 ## 1. Before freezing the rebuild candidate
 
@@ -34,54 +37,50 @@ changes output after the freeze means rebuilding again.
   - some pins are of files the transform used to rewrite in place, with no
     pristine copy kept: `ro.json`, `pato.json`, `uberon.json`, `mondo.json`,
     `foodon.json`;
-  - some files are built locally, such as `go.db` and ROBOT-converted JSON;
+  - some files are built locally: `go.db`, `ncit.db`, and ROBOT-converted JSON
+    such as `upa.json`;
   - `lpsn_gss.csv` is account-gated, so `kg download` cannot fetch it;
-  - the rest come from rolling URLs, which serve whatever the current release
-    is. Examples are `envo.json`, Rhea's `rhea-directions.tsv` and
-    `rhea.rdf.gz`, `pato.owl` and `mesh2026.nt.gz`.
+  - the rest come from rolling URLs, which serve whatever is current:
+    - `envo.json`, `pato.owl` and `mesh2026.nt.gz`;
+    - Rhea's `rhea-directions.tsv` and `rhea.rdf.gz`;
+    - MicrobeDecoder's `database.zip`. Its upstream changed on 2026-09-08, so a
+      fresh download fails today.
 
   Even `kg download -i` cannot reproduce them.
   - **Where it fails.** Outside the staged worktree, each affected producer
     fails closed at its first mismatched input.
-  - **Skipped sources.** In a multi-source batch, every source that depends on
-    the ontologies transform, directly or transitively, is then skipped.
+  - **Skipped sources.** In a multi-source batch, every source that declares the
+    ontologies transform in `TRANSFORM_INPUTS`, directly or transitively, is then
+    skipped.
   - **When it fails.** Most pins are checked only when their ontology is parsed,
     so the main checkout aborts at ENVO after hours of NCBITaxon and ChEBI work.
 
   The decided fix re-binds the policies one at a time, each with its own
-  independent review. [#1440] and [#1441] belong to the same work: MicrO, PO and
-  their imports are fetched live and unpinned. PR [#1444] pins MicrO's imports.
+  independent review; the plan lists the steps. [#1441] belongs to the same work:
+  PO's imports are still fetched live, so `ontologies_stubs` needs the network
+  during the rebuild.
 - **[#1421]: BacDive withheld supplied-taxid records drop out of deposit
   resolution.** As a result, the deposits `Chol-1`, `SN-1` and `ATCC-15578` would
   equate unrelated organisms through `close_match`. The fix is in review as
   PR [#1467].
 
-### Open pull requests that change shared code
+### Landed after [#1401]
 
-PRs [#1442] → [#1443] → [#1444] are stacked:
+[#1442], [#1443] and [#1444] merged on 2026-10-12. Together they:
 
-- [#1442] skips optional Bakta when it has no input ([#1438]).
-- [#1443] runs `ontologies_stubs` on the pinned ROBOT and restores the JDK 24+ XML
-  limits ([#1439]). Without it, `ontologies_stubs` fails on JDK 24+, which also
-  skips `gold` and `microbedecoder`.
-- [#1444] pins MicrO and its 20 import modules ([#1440]).
+- skip optional Bakta when it has no input;
+- run `ontologies_stubs` and the SemSQL builds on the ROBOT pinned in
+  `download.yaml` (jar and wrapper), restoring the XML limits JDK 24 lowered;
+- pin MicrO and its 20 import modules.
 
-Together they change `kg_microbe/transform.py`,
-`kg_microbe/transform_utils/transform.py`, `constants.py` and
-`kg_microbe/utils/robot_utils.py`. All four are shared code that every
-producer's fingerprint covers. If any of these PRs lands after the rebuild,
-every rebuilt producer becomes stale at merge admission, so land them or defer
-them explicitly before the freeze.
+They closed [#325], [#1438], [#1439] and [#1440] and most of their review findings.
+Still open:
 
-Related issues:
+- PO's imports are fetched live ([#1441]).
+- KEGG fails the default batch ([#1448]).
+- Stale Bakta per-dataset outputs can be merged ([#1458]).
 
-- **Review findings on [#1442]:** [#1445], [#1446], [#1447], [#1448], [#1449],
-  [#1456], [#1457] and [#1459]. [#1448] reports that KEGG also fails the
-  default batch, and [#1458] reports stale Bakta per-dataset outputs.
-- **On [#1443]:** [#1450], [#1451], [#1452], [#1464], [#1465] and [#1466].
-- **On [#1444]:** [#1453], [#1454], [#1455], [#1461], [#1462] and [#1463].
-- The ROBOT jar is already pinned at v1.9.8, but the `robot` wrapper script
-  still comes from ROBOT's `master` branch ([#1452]).
+KEGG and Bakta are outside the 15 standard-merge producers.
 
 ### Also before the freeze
 
@@ -89,11 +88,15 @@ Related issues:
   the tracked `mondo_xrefs.tsv` and `unipathways_xrefs.tsv` non-atomically. That
   includes the staged worktree, whose delivery files must stay unchanged. Fix
   this first, or restore and account for both tables after the run.
-- **Modeling decisions.** Decide [#1427], [#1428], [#1429], [#1431] and
-  [#1433] as listed above. Any decision that changes emitted categories must be
-  implemented before the freeze.
-- **Triage the other open candidate issues** (section 4). Some describe
-  themselves as acceptance blockers.
+- **Modeling decisions.** Decide [#1427], [#1428], [#1429], [#1431] and [#1433] as listed
+  above. Any decision that changes emitted output (categories, predicates or
+  edges) must be implemented before the freeze.
+- **The other [#1401] review findings** (section 3). Each fix changes producer
+  inputs or shared code, so it lands before the freeze or waits until after
+  acceptance.
+- **Source-contract review.** Independently review each changed source contract
+  and its negative controls, including [#1467] and each [#1420] re-binding.
+- **Triage the other open candidate issues** (section 4).
 
 ## 2. Freeze, gate and rebuild
 
@@ -102,12 +105,24 @@ Related issues:
    `python scripts/generate_merge_configs.py --check`.
 2. **Move the staged worktree.** The staged worktree
    (`data/validation-upstream-20260930.DbltzT/worktree`, detached at `845f2add1`)
-   holds the receipt-bound `data/raw` for the rebuild. Move it to the frozen head
-   without disturbing `data/raw`. Clean up the [#1413] leftovers first (section 5).
-3. **Rebuild the 15 standard-merge producers**, naming each one explicitly. The
-   default `kg transform` batch has 18 sources, including `bakta`, `cog` and
-   `kegg`, which are outside the standard merge. Rebuild in these dependency
-   phases, and never reuse or relabel earlier outputs as fresh:
+   holds the receipt-bound `data/raw` for the rebuild.
+   - Clean up the [#1413] leftovers first (section 5).
+   - Move the worktree to the frozen head without disturbing its staged inputs.
+   - Stage the inputs the frozen head newly pins, and record them in the staging
+     receipt. These include at least MicrO's 20 `micro_imports/` modules,
+     `micro.owl` at its pinned commit if its bytes differ, and anything the
+     [#1420] work re-pins.
+   - Do not run a blanket `kg download -i`.
+3. **Rebuild the 15 standard-merge producers.**
+   - **Where to run.** Run inside the staged worktree with its default
+     `data/raw` and `data/transformed`, without `-i` or `-o`. Some producers
+     resolve paths relative to the code checkout (`RAW_DATA_DIR` in
+     `transform_utils/constants.py`).
+   - **Which sources.** Name each producer explicitly. The default
+     `kg transform` batch has 18 sources, including `bakta`, `cog` and `kegg`,
+     which are outside the standard merge.
+   - **No reuse.** Rebuild in these dependency phases, and never reuse or
+     relabel earlier outputs as fresh:
 
    | Phase | Producers |
    | --- | --- |
@@ -147,10 +162,15 @@ gives the current 516-assertion scope.
 
 ## 3. Open findings from the [#1401] review
 
-Each finding was verified against the code and filed as an issue. [#1402]–[#1419]
-were fixed in [#1401], and [#1420] and [#1421] are the blockers above. These remain.
-[#1422], [#1427], [#1428], [#1429], [#1431] and [#1433] also appear in
-section 1, because they affect the rebuild.
+Each finding was verified against the code and filed as an issue. The 18 issues
+[#1402] to [#1419] were fixed in [#1401] and are all closed. [#1420] and [#1421] are the
+blockers above. The rest remain open.
+
+Each fix below changes producer inputs or shared code. For example, [#1424]
+regenerates a mapping file that six producers declare as an input, and [#1426]
+and [#1430] change shared code. So each one lands before the freeze or waits until
+after acceptance. [#1422], [#1427], [#1428], [#1429], [#1431] and [#1433] also appear in
+section 1.
 
 | Kind | Issue | Finding |
 | --- | --- | --- |
@@ -191,20 +211,25 @@ the 42 above, 83 come from the same candidate work and were not referenced by
 - belongs with the held set;
 - stays open as work.
 
-Start with these:
+Start with these, which are probably fixed in the candidate and so should be held
+like the 42 once verified:
 
-- **Probably fixed in the candidate, so hold them like the 42:**
-  - [#1306] and [#1314], whose packages
-    [Remaining 93 diagnostics](REMAINING_93_UPSTREAM_WORK.md) records as
-    cleared;
-  - [#1320], which says its implementation is in the candidate;
-  - the older [#270], that page's "Clinical BacDive tags" package.
-- **Self-described acceptance blockers:** [#1335], [#1336] and [#1343].
+- [#1306] and [#1314], whose packages
+  [Remaining 93 diagnostics](REMAINING_93_UPSTREAM_WORK.md) records as cleared;
+- [#1320], which says its implementation is in the candidate;
+- [#1335], [#1336] and [#1337], whose author recorded the bounded implementation
+  review as clear. Master has the [#1335] guard and cites [#1337];
+- [#1343], whose two failing tests now exist and pass;
+- the older [#270], that page's "Clinical BacDive tags" package.
+
+Many of the other 76 record that implementation and independent review are
+complete and that rebuild acceptance is pending, for example [#1275], [#1331],
+[#1374] and [#1384]. Most of them will probably join the held set.
 
 <details>
-<summary>The other 77 open candidate issues</summary>
+<summary>The other 76 open candidate issues</summary>
 
-[#1275], [#1276], [#1278], [#1279], [#1280], [#1281], [#1282], [#1283], [#1284], [#1285], [#1286], [#1287], [#1288], [#1289], [#1293], [#1298], [#1304], [#1321], [#1324], [#1325], [#1326], [#1328], [#1329], [#1331], [#1332], [#1333], [#1334], [#1337], [#1339], [#1340], [#1341], [#1345], [#1346], [#1347], [#1348], [#1349], [#1350], [#1351], [#1352], [#1355], [#1356], [#1357], [#1358], [#1359], [#1360], [#1362], [#1363], [#1364], [#1365], [#1366], [#1367], [#1368], [#1369], [#1370], [#1371], [#1372], [#1373], [#1374], [#1375], [#1376], [#1377], [#1378], [#1379], [#1380], [#1381], [#1382], [#1383], [#1384], [#1385], [#1386], [#1387], [#1388], [#1389], [#1390], [#1391], [#1392], [#1393].
+[#1275], [#1276], [#1278], [#1279], [#1280], [#1281], [#1282], [#1283], [#1284], [#1285], [#1286], [#1287], [#1288], [#1289], [#1293], [#1298], [#1304], [#1321], [#1324], [#1325], [#1326], [#1328], [#1329], [#1331], [#1332], [#1333], [#1334], [#1339], [#1340], [#1341], [#1345], [#1346], [#1347], [#1348], [#1349], [#1350], [#1351], [#1352], [#1355], [#1356], [#1357], [#1358], [#1359], [#1360], [#1362], [#1363], [#1364], [#1365], [#1366], [#1367], [#1368], [#1369], [#1370], [#1371], [#1372], [#1373], [#1374], [#1375], [#1376], [#1377], [#1378], [#1379], [#1380], [#1381], [#1382], [#1383], [#1384], [#1385], [#1386], [#1387], [#1388], [#1389], [#1390], [#1391], [#1392], [#1393].
 
 </details>
 
@@ -224,9 +249,10 @@ checkout where that happened:
 
 The staged worktree (`data/validation-upstream-20260930.DbltzT/worktree`) has
 both stray files. Its `data/raw` is receipt-bound, so remove only those two
-files and keep everything else exactly as staged.
+files, and record any later additions in the staging receipt.
 
 [#270]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/270
+[#325]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/325
 [#633]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/633
 [#1275]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1275
 [#1276]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1276
@@ -382,25 +408,6 @@ files and keep everything else exactly as staged.
 [#1442]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1442
 [#1443]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1443
 [#1444]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1444
-[#1445]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1445
-[#1446]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1446
-[#1447]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1447
 [#1448]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1448
-[#1449]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1449
-[#1450]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1450
-[#1451]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1451
-[#1452]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1452
-[#1453]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1453
-[#1454]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1454
-[#1455]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1455
-[#1456]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1456
-[#1457]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1457
 [#1458]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1458
-[#1459]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1459
-[#1461]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1461
-[#1462]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1462
-[#1463]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1463
-[#1464]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1464
-[#1465]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1465
-[#1466]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1466
 [#1467]: https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1467

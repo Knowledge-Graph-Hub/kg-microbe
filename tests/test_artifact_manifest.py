@@ -11,6 +11,27 @@ import pytest
 import yaml
 
 from kg_microbe.merge_utils.artifact_manifest import MANIFEST_MEMBER, write_graph_archive, write_loose_manifest
+from kg_microbe.transform_utils.transform import Transform
+
+
+def _finalize_fixture(output_dir, raw_dir):
+    """Use the real producer lifecycle without inventing native reads for NCBI-only fixtures (#1293)."""
+    producer = Transform(output_dir.name, input_dir=raw_dir, output_dir=output_dir.parent)
+    report = producer.finalize()
+    producer.verify_consumed_inputs()
+    assert report["go_imported_restriction_inventory"]["quarantined_occurrences"] == 0
+    for name in ("ncit_eight_category_authority", "mesh_finite_category_authority"):
+        assert report[name] == {"version": 1, "authority": None}
+    finite = report["finite_envo_po_category_authority"]
+    assert finite == {
+        "version": 1,
+        "identifiers": [],
+        "node_members": sorted(name for name in report["members"] if name.endswith("nodes.tsv")),
+        "occurrences": {},
+        "bindings": {},
+    }
+    assert report["consumed_inputs"] == {}
+    return report
 
 
 def _pair(tmp_path):
@@ -183,10 +204,7 @@ def test_merge_does_not_report_success_when_required_publication_fails(tmp_path,
 @pytest.mark.parametrize("compression", [None, "tar.gz"])
 def test_source_reconciliation_precedes_merge_diagnostics_and_manifest(tmp_path, monkeypatch, compression):
     """Repairs happen in explicit source finalization, never implicitly inside merge."""
-    from types import SimpleNamespace
-
     from kg_microbe.merge_utils import merge_kg
-    from kg_microbe.utils.source_finalization import finalize_source
 
     raw = tmp_path / "data" / "raw"
     raw.mkdir(parents=True)
@@ -210,9 +228,7 @@ def test_source_reconciliation_precedes_merge_diagnostics_and_manifest(tmp_path,
         "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\n"
         "NCBITaxon:33\tbiolink:related_to\tNCBITaxon:2\tro:fixture\tinfores:test\n"
     )
-    finalize_source(
-        SimpleNamespace(output_dir=tmp_path, output_base_dir=tmp_path.parent, input_base_dir=raw, source_name="fixture")
-    )
+    _finalize_fixture(tmp_path, raw)
     config = tmp_path / "merge.yaml"
     config.write_text(
         yaml.safe_dump(
@@ -287,13 +303,7 @@ def test_public_merge_stages_real_kgx_before_publishing(tmp_path, monkeypatch, f
         "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\tknowledge_level\tagent_type\n"
         "NCBITaxon:1\tbiolink:related_to\tNCBITaxon:1\tro:fixture\tinfores:fixture\tknowledge_assertion\tmanual_agent\n"
     )
-    from types import SimpleNamespace
-
-    from kg_microbe.utils.source_finalization import finalize_source
-
-    finalize_source(
-        SimpleNamespace(output_dir=inputs, output_base_dir=config_dir, input_base_dir=tmp_path, source_name="fixture")
-    )
+    _finalize_fixture(inputs, tmp_path)
     output = config_dir / "published"
     output.mkdir()
     final_graph = output / ("merged-kg.tar.gz" if compression else "merged-kg_nodes.tsv")
@@ -390,7 +400,9 @@ def test_staged_config_preserves_kgx_cwd_precedence_and_relative_stats(tmp_path,
                 "merged_graph": {
                     "source": {"a": {"input": {"filename": ["same.tsv"], "format": "tsv"}}},
                     "destination": {"tsv": {"format": "tsv", "filename": "graph"}},
-                    "operations": [{"name": STATS_OPERATION, "args": {"filename": "stats.yaml"}}],
+                    "operations": [
+                        {"name": STATS_OPERATION, "args": {"graph_name": "fixture", "filename": "stats.yaml"}}
+                    ],
                 },
             }
         )

@@ -1,0 +1,51 @@
+{
+  "original_inputs": {
+    "cohort": {
+      "path": "resolve93-20260930.2qMze1/remaining-native-relations-plan-evidence.json",
+      "sha256": "124220a181d6c0b232586bf3cca257ede49707b8d2b9992793f6f102976a428d"
+    },
+    "foodon_json": {
+      "path": "raw/foodon.json",
+      "sha256": "8dfba179356a84d8ddad4087dc1fa89a76f6511456c298b9dd7b09df9eb6d853"
+    },
+    "foodon_owl": {
+      "path": "raw/foodon.owl",
+      "sha256": "1e11fc50283c6498697a7aca9606c9d914f1cda71cc5510e006d949c32df7db0"
+    },
+    "model": {
+      "path": "raw/biolink-model.yaml",
+      "sha256": "b6a1320772a92d69e84b8c700cd6386dffe45ed635c8197d61e22b6a6fa3b35e"
+    },
+    "ro_json": {
+      "path": "raw/ro.json",
+      "sha256": "1ed089b1cb33d5ac9d5afee10ba98f79689af9e3b40e9940658625c09785748c"
+    }
+  },
+  "review_proof_sha256": "c7d95274d5e2b286508c18dc74ec01e7ecb2fd878ba7f290d9d52b8b8d77f5da",
+  "scope": "Finite documentation/test evidence only; no runtime validator waiver.",
+  "sha256": {
+    "claims.json": "33698f16b1c5537e5fa08def65989e904c8ebdea726f0b9a6a8b95473790997d",
+    "model.json": "b16180f9e79e4ef7b6cff2fd93171924285db697d56bc31c715c93ef536e9e97",
+    "native.json": "03e31cfd812116db3bf018cdae9e38d54d0915eee58809519529500c928f9dfc",
+    "owl.json": "d8d81bad4f07e915120327cd85aa8eb25d5e1b7493b44662c973c2831ffa5dd2"
+  },
+  "summary": {
+    "assertions": 1679,
+    "owl_matching_quantifiers": {
+      "someValuesFrom": 1714
+    },
+    "owl_placements": {
+      "equivalent_intersection": 35,
+      "subclass": 1679
+    },
+    "owl_subjects": 1679,
+    "same_target_separately_asserted_subclass": 15,
+    "subjects": 1679,
+    "target_prefixes": {
+      "FOODON": 16,
+      "NCBITaxon": 1663
+    },
+    "unique_triples": 1679,
+    "unresolved_logical_references": 0
+  }
+}

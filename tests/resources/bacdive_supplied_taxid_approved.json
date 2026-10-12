@@ -1,0 +1,638 @@
+{
+  "scope": "Literal saved General/classification/deposit/reference excerpts; unrelated source sections omitted. Ordered taxid claims and deposit contributors retained. 12996 is an ambiguity control, not an independent resolution of its stronger type evidence.",
+  "saved_evidence_sha256_or_prefix": "b2bd43defa96a62b96db94db21a2054ac6657c6be44007bec66b6c493542cc3b",
+  "records": [
+    {
+      "bacdive_id": 4427,
+      "canonical_record_sha256": "f6f9c85bbef56635eccb619e1e7ea92061bd0af496eacf3ebc951622b8c35568",
+      "native_array_index": 4373,
+      "record": {
+        "General": {
+          "@ref": 552,
+          "BacDive-ID": 4427,
+          "DSM-Number": 1103,
+          "NCBI tax id": [
+            {
+              "Matching level": "strain",
+              "NCBI tax id": 1322345
+            },
+            {
+              "Matching level": "strain",
+              "NCBI tax id": 1236527
+            },
+            {
+              "Matching level": "species",
+              "NCBI tax id": 562
+            }
+          ],
+          "description": "Escherichia coli Seattle 1946 is a mesophilic, Gram-negative human pathogen that has multiple antibiotic resistances and was isolated from clinical isolate.",
+          "doi": "10.13145/bacdive4427.20241212.9.2",
+          "keywords": [
+            "genome sequence",
+            "16S sequence",
+            "Bacteria",
+            "mesophilic",
+            "Gram-negative",
+            "antibiotic resistance",
+            "human pathogen"
+          ],
+          "strain history": [
+            {
+              "@ref": 552,
+              "history": "<- ATCC; ATCC 25922 <- U.S. Food and Drug Administration (FDA), Washington, D.C., USA; Seattle 1946 <- F. D. Schoenknecht;"
+            },
+            {
+              "@ref": 67770,
+              "history": "Y. Kosako <-- R. Sakazaki <-- ATCC 25922 <-- FDA strain Seattle 1946 <-- F. Schoenknecht."
+            }
+          ]
+        },
+        "Name and taxonomic classification": {
+          "@ref": 552,
+          "LPSN": {
+            "@ref": 20215,
+            "class": "Gammaproteobacteria",
+            "description": "domain/bacteria",
+            "domain": "Bacteria",
+            "family": "Enterobacteriaceae",
+            "full scientific name": "<I>Escherichia</I> <I>coli</I> (Migula 1895) Castellani and Chalmers 1919 (Approved Lists 1980)",
+            "genus": "Escherichia",
+            "keyword": "phylum/pseudomonadota",
+            "order": "Enterobacterales",
+            "phylum": "Pseudomonadota",
+            "species": "Escherichia coli",
+            "synonyms": {
+              "@ref": 20215,
+              "synonym": "Bacillus coli"
+            }
+          },
+          "class": "Gammaproteobacteria",
+          "domain": "Bacteria",
+          "family": "Enterobacteriaceae",
+          "full scientific name": "Escherichia coli (Migula 1895) Castellani and Chalmers 1919",
+          "genus": "Escherichia",
+          "order": "Enterobacteriales, not validated",
+          "phylum": "Proteobacteria",
+          "species": "Escherichia coli",
+          "strain designation": "Seattle 1946",
+          "type strain": "no"
+        },
+        "External links": {
+          "@ref": 552,
+          "culture collection no.": "DSM 1103, ATCC 25922, NCIB 12210, WDCM 00013, CCUG 17620, CCUG 7736, CCUG 21456, JCM 5491, CCM 3954, CIP 76.24, IFO 15034, KCTC 1682, LMG 8223, NBRC 15034, NCIMB 12110",
+          "straininfo link": {
+            "@ref": 73917,
+            "straininfo": 2805
+          }
+        },
+        "Reference": [
+          {
+            "@id": 552,
+            "authors": "Curators of the DSMZ",
+            "catalogue": "Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen GmbH (DSM 1103)",
+            "doi/url": "https://www.dsmz.de/collection/catalogue/details/culture/DSM-1103"
+          },
+          {
+            "@id": 20215,
+            "authors": "Parte, A.C., Sardà Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C. and Göker, M.",
+            "doi/url": "10.1099/ijsem.0.004332",
+            "title": "List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the DSMZ"
+          },
+          {
+            "@id": 20218,
+            "authors": "Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.",
+            "doi/url": "10.1016/j.syapm.2013.11.002",
+            "journal": "Syst Appl Microbiol. 37: 42-50 2014",
+            "pubmed": 24321274,
+            "title": "StrainInfo introduces electronic passports for microorganisms."
+          },
+          {
+            "@id": 41789,
+            "authors": "Curators of the CIP",
+            "doi/url": "https://brclims.pasteur.fr/brcWeb/souche/detail/1/10794\r"
+          },
+          {
+            "@id": 46634,
+            "authors": "Curators of the CCUG",
+            "catalogue": "Culture Collection University of Gothenburg (CCUG) (CCUG 17620)",
+            "doi/url": "https://www.ccug.se/strain?id=17620"
+          },
+          {
+            "@id": 66792,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Automatically annotated for the DiASPora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 67770,
+            "authors": "Curators of the JCM",
+            "doi/url": "https://jcm.brc.riken.jp/en/"
+          },
+          {
+            "@id": 68368,
+            "title": "Automatically annotated from API 20E"
+          },
+          {
+            "@id": 69479,
+            "authors": "João F Matias Rodrigues, Janko Tackmann,Gregor Rot, Thomas SB Schmidt, Lukas Malfertheiner, Mihai Danaila,Marija Dmitrijeva, Daniela Gaio, Nicolas Näpflin and Christian von Mering. University of Zurich.",
+            "doi/url": "https://microbeatlas.org/",
+            "title": "MicrobeAtlas 1.0 beta"
+          },
+          {
+            "@id": 69480,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Predictions based on genome sequence made in the Diaspora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 69481,
+            "authors": "Xiao-Yin To, René Mreches, Martin Binder, Alice C. McHardy, Philipp C. Münch",
+            "doi/url": "10.21203/rs.3.rs-2527258/v1",
+            "title": "Predictions based on the model GenomeNet Sporulation v. 1"
+          },
+          {
+            "@id": 73917,
+            "authors": "Reimer, L.C., Lissin, A.,Schober, I., Witte,J.F., Podstawka, A., Lüken, H., Bunk, B.,Overmann, J.",
+            "doi/url": "10.60712/SI-ID2805.1",
+            "title": "StrainInfo: A central database for resolving microbial strain identifiers"
+          },
+          {
+            "@id": 124043,
+            "authors": "Dr. Isabel Schober, Dr. Julia Koblitz",
+            "title": "Data extracted from sequence databases, automatically matched based on designation and taxonomy"
+          }
+        ]
+      }
+    },
+    {
+      "bacdive_id": 12996,
+      "canonical_record_sha256": "63a8b5657dbe9965247186acbaf0f46ba7a6245a296568b701f567049f5e5eb2",
+      "native_array_index": 12764,
+      "record": {
+        "General": {
+          "@ref": 1954,
+          "BacDive-ID": 12996,
+          "DSM-Number": 5190,
+          "NCBI tax id": [
+            {
+              "Matching level": "species",
+              "NCBI tax id": 1211807
+            },
+            {
+              "Matching level": "species",
+              "NCBI tax id": 316
+            },
+            {
+              "Matching level": "species",
+              "NCBI tax id": 203192
+            }
+          ],
+          "description": "Stutzerimonas stutzeri 221 is an obligate aerobe, mesophilic, Gram-negative bacterium that was isolated from spinal fluid.",
+          "doi": "10.13145/bacdive12996.20241212.9.2",
+          "keywords": [
+            "genome sequence",
+            "16S sequence",
+            "Bacteria",
+            "obligate aerobe",
+            "mesophilic",
+            "Gram-negative",
+            "motile",
+            "rod-shaped"
+          ],
+          "strain history": [
+            {
+              "@ref": 1954,
+              "history": "<- ATCC <- R.Y. Stanier; 221 <- H. Lautrop; AB201"
+            },
+            {
+              "@ref": 67770,
+              "history": "Y. Kosako 85006 <-- Nissui Pharm.Co., Ltd. <-- ATCC 17588 <-- R. Y. Stanier 220 <-- H. Lautrop AB 180."
+            },
+            {
+              "@ref": 123339,
+              "history": "CIP <- 1987, NCIB <- ATCC <- R.Y. Stanier, Inst. Pasteur, Paris, France: strain 221 <- H. Lautrop : strain AB 201"
+            }
+          ]
+        },
+        "Name and taxonomic classification": {
+          "@ref": 1954,
+          "LPSN": {
+            "@ref": 20215,
+            "class": "Gammaproteobacteria",
+            "description": "domain/bacteria",
+            "domain": "Bacteria",
+            "family": "Pseudomonadaceae",
+            "full scientific name": "<I>Stutzerimonas</I> <I>stutzeri</I> (Lehmann and Neumann 1896) Lalucat et al. 2022",
+            "genus": "Stutzerimonas",
+            "keyword": "phylum/pseudomonadota",
+            "order": "Pseudomonadales",
+            "phylum": "Pseudomonadota",
+            "species": "Stutzerimonas stutzeri",
+            "synonyms": [
+              {
+                "@ref": 20215,
+                "synonym": "Stutzerimonas kunmingensis"
+              },
+              {
+                "@ref": 20215,
+                "synonym": "Pseudomonas perfectomarinus"
+              },
+              {
+                "@ref": 20215,
+                "synonym": "Stutzerimonas perfectomarina"
+              },
+              {
+                "@ref": 20215,
+                "synonym": "Pseudomonas perfectomarina"
+              },
+              {
+                "@ref": 20215,
+                "synonym": "Stutzerimonas chloritidismutans"
+              },
+              {
+                "@ref": 20215,
+                "synonym": "Bacterium stutzeri"
+              },
+              {
+                "@ref": 20215,
+                "synonym": "Pseudomonas stutzeri"
+              },
+              {
+                "@ref": 20215,
+                "synonym": "Pseudomonas kunmingensis"
+              },
+              {
+                "@ref": 20215,
+                "synonym": "Pseudomonas chloritidismutans"
+              }
+            ]
+          },
+          "class": "Gammaproteobacteria",
+          "domain": "Bacteria",
+          "family": "Pseudomonadaceae",
+          "full scientific name": "Pseudomonas stutzeri (Lehmann and Neumann 1896) Sijderius 1946",
+          "genus": "Pseudomonas",
+          "order": "Pseudomonadales",
+          "phylum": "Proteobacteria",
+          "species": "Pseudomonas stutzeri",
+          "strain designation": "221, AB 201",
+          "type strain": "yes"
+        },
+        "External links": {
+          "@ref": 1954,
+          "culture collection no.": "DSM 5190, ATCC 17588, NCIB 11358, NCPPB 1973, CCUG 11256, LMG 2333, CCM 4557, JCM 5965, CECT 930, CGMCC 1.1803, CIP 103022, IAM 12668, IFO 14165, LMG 11199, NBRC 14165, NCIMB 11358, NCTC 12262, VKM B-975",
+          "literature": [
+            {
+              "DOI": "10.1021/bi00151a030",
+              "Pubmed-ID": "1327105",
+              "authors": "Cai M, Bradford EG, Timkovich R",
+              "journal": "Biochemistry",
+              "mesh": "Amino Acid Sequence, *Bacterial Proteins, Cytochrome c Group/*chemistry, Ferrous Compounds/chemistry, Heme/chemistry, Hydrogen Bonding, Magnetic Resonance Spectroscopy, Models, Molecular, Molecular Sequence Data, Protein Conformation, Protons, Pseudomonas/*chemistry, Sequence Homology",
+              "title": "Investigation of the solution conformation of cytochrome c-551 from Pseudomonas stutzeri.",
+              "topic": "Genetics",
+              "year": 1992
+            },
+            {
+              "DOI": "10.1007/BF01570078",
+              "Pubmed-ID": "1369188",
+              "authors": "Pemberton JM, Penfold RJ",
+              "journal": "Curr Microbiol",
+              "mesh": "*Bacteriocin Plasmids, *Bacteriological Techniques, Carotenoids/biosynthesis, Cloning, Molecular/*methods, DNA, Bacterial/*genetics, *Electrochemistry, *Genetic Vectors, Pseudomonas/*genetics, Replicon, *Transformation, Bacterial",
+              "title": "High-frequency electroporation and maintenance of pUC- and pBR-based cloning vectors in Pseudomonas stutzeri.",
+              "topic": "Enzymology",
+              "year": 1992
+            },
+            {
+              "DOI": "10.1099/00207713-46-1-200",
+              "Pubmed-ID": "8573496",
+              "authors": "Bennasar A, Rossello-Mora R, Lalucat J, Moore ER",
+              "journal": "Int J Syst Bacteriol",
+              "mesh": "Base Sequence, DNA, Bacterial/genetics, Molecular Sequence Data, Nucleic Acid Conformation, Phylogeny, Pseudomonas/*classification/genetics, RNA, Bacterial/genetics, RNA, Ribosomal, 16S/*genetics",
+              "title": "16S rRNA gene sequence analysis relative to genomovars of Pseudomonas stutzeri and proposal of Pseudomonas balearica sp. nov.",
+              "topic": "Phylogeny",
+              "topic2": "Genetics",
+              "year": 1996
+            },
+            {
+              "DOI": "10.1099/00207713-47-1-132",
+              "Pubmed-ID": "8995815",
+              "authors": "Ginard M, Lalucat J, Tummler B, Romling U",
+              "journal": "Int J Syst Bacteriol",
+              "mesh": "Blotting, Southern, Chromosome Mapping, Chromosomes/genetics, DNA, Bacterial/analysis, Electrophoresis, Gel, Pulsed-Field, Genes, Bacterial, *Genome, Bacterial, Nucleic Acid Hybridization, Operon/genetics, Plasmids, Polymorphism, Restriction Fragment Length, Pseudomonas/*classification/*genetics, RNA, Ribosomal, 16S/genetics, RNA, Ribosomal, 23S/genetics, *Restriction Mapping",
+              "title": "Genome organization of Pseudomonas stutzeri and resulting taxonomic and evolutionary considerations.",
+              "topic": "Phylogeny",
+              "topic2": "Enzymology",
+              "year": 1997
+            },
+            {
+              "DOI": "10.1023/a:1000399219144",
+              "Pubmed-ID": "9403102",
+              "authors": "West TP",
+              "journal": "Antonie Van Leeuwenhoek",
+              "mesh": "Aspartate Carbamoyltransferase/deficiency/genetics/metabolism, Bacterial Proteins/genetics/metabolism, Culture Media/pharmacology, Cytosine/biosynthesis, Dihydroorotase/metabolism, Dihydroorotate Dehydrogenase, Glucose/pharmacology, Orotate Phosphoribosyltransferase/metabolism, Orotidine-5'-Phosphate Decarboxylase/metabolism, Oxidoreductases/metabolism, *Oxidoreductases Acting on CH-CH Group Donors, Pseudomonas/drug effects/enzymology/*metabolism, Pyrimidines/*biosynthesis, Species Specificity, Succinic Acid/pharmacology, Uracil/biosynthesis",
+              "title": "Pyrimidine biosynthesis in Pseudomonas stutzeri ATCC 17588.",
+              "topic": "Metabolism",
+              "topic2": "Enzymology",
+              "year": 1997
+            },
+            {
+              "DOI": "10.1016/S0723-2020(99)80068-X",
+              "Pubmed-ID": "10390872",
+              "authors": "Vermeiren H, Willems A, Schoofs G, de Mot R, Keijers V, Hai W, Vanderleyden J",
+              "journal": "Syst Appl Microbiol",
+              "mesh": "Alcaligenes/*classification/genetics, Base Sequence, DNA, Bacterial/genetics, DNA, Ribosomal/genetics, Fatty Acids/analysis, Genes, Bacterial/genetics, Molecular Sequence Data, Nitrogen Fixation/genetics, Nucleic Acid Hybridization, Open Reading Frames/genetics, Oryza/microbiology, Phenotype, Phylogeny, Pseudomonas/chemistry/*classification/genetics, RNA, Ribosomal, 16S/analysis",
+              "title": "The rice inoculant strain Alcaligenes faecalis A15 is a nitrogen-fixing Pseudomonas stutzeri.",
+              "topic": "Phylogeny",
+              "topic2": "Genetics",
+              "year": 1999
+            },
+            {
+              "DOI": "10.1099/00207713-52-6-2183",
+              "Pubmed-ID": "12508887",
+              "authors": "Wolterink AFWM, Jonker AB, Kengen SWM, Stams AJM",
+              "journal": "Int J Syst Evol Microbiol",
+              "mesh": "Bioreactors, Chlorates/metabolism, DNA, Bacterial/genetics, DNA, Ribosomal/genetics, Microscopy, Electron, Molecular Sequence Data, Oxidation-Reduction, Phenotype, Phylogeny, Pseudomonas/*classification/genetics/isolation & purification/metabolism, RNA, Bacterial/genetics, RNA, Ribosomal, 16S/genetics, Species Specificity",
+              "title": "Pseudomonas chloritidismutans sp. nov., a non-denitrifying, chlorate-reducing bacterium.",
+              "topic": "Phylogeny",
+              "topic2": "Metabolism",
+              "year": 2002
+            },
+            {
+              "DOI": "10.1007/s00253-003-1346-z",
+              "Pubmed-ID": "12774178",
+              "authors": "Dijk JA, Stams AJ, Schraa G, Ballerstedt H, de Bont JA, Gerritse J",
+              "journal": "Appl Microbiol Biotechnol",
+              "mesh": "Anaerobiosis, Base Sequence, DNA, Bacterial/chemistry/genetics, Ethylene Chlorohydrin/*metabolism, Molecular Sequence Data, Nitrates/*metabolism, Oxidation-Reduction, Polymerase Chain Reaction, Pseudomonas stutzeri/genetics/*metabolism, RNA, Ribosomal, 16S/chemistry/genetics",
+              "title": "Anaerobic oxidation of 2-chloroethanol under denitrifying conditions by Pseudomonas stutzeri strain JJ.",
+              "topic": "Metabolism",
+              "topic2": "Genetics",
+              "year": 2003
+            },
+            {
+              "DOI": "10.1016/S1389-1723(04)70163-2",
+              "Pubmed-ID": "16233587",
+              "authors": "Kariminiaae-Hamedaani HR, Kanda K, Kato F",
+              "journal": "J Biosci Bioeng",
+              "title": "Denitrification activity of the bacterium Pseudomonas sp. ASM-2-3 isolated from the Ariake Sea tideland.",
+              "year": 2004
+            },
+            {
+              "Pubmed-ID": "16871797",
+              "authors": "Grigor'eva NV, Kondrat'eva TF, Krasil'nikova EN, Karavaiko GI",
+              "journal": "Mikrobiologiia",
+              "mesh": "Ammonia/metabolism, Biodegradation, Environmental, Carbon-Nitrogen Lyases/metabolism, Chemical Industry, Cyanates/metabolism, Cyanides/*metabolism, Pseudomonas putida/*metabolism, Pseudomonas stutzeri/*metabolism, Soil Microbiology, Soil Pollutants, Species Specificity, Thiocyanates/*metabolism",
+              "title": "[Mechanism of cyanide and thiocyanate decomposition by an association of Pseudomonas putida and Pseudomonas stutzeri strains].",
+              "topic": "Metabolism",
+              "topic2": "Phylogeny",
+              "year": 2006
+            },
+            {
+              "DOI": "10.2323/jgam.55.81",
+              "Pubmed-ID": "19436124",
+              "authors": "Mishima M, Iwata K, Nara K, Matsui T, Shigeno T, Omori T",
+              "journal": "J Gen Appl Microbiol",
+              "mesh": "Bacillaceae/*classification/genetics/isolation & purification/*metabolism, Bacterial Typing Techniques, DNA, Bacterial/genetics, *Hot Temperature, Nitrates/*metabolism, Nitrous Oxide/metabolism, RNA, Ribosomal, 16S/genetics, *Soil Microbiology, Time Factors",
+              "title": "Cultivation characteristics of denitrification by thermophilic Geobacillus sp. strain TDN01.",
+              "topic": "Phylogeny",
+              "topic2": "Metabolism",
+              "year": 2009
+            },
+            {
+              "DOI": "10.1128/AEM.02124-10",
+              "Pubmed-ID": "21169432",
+              "authors": "Seip B, Galinski EA, Kurz M",
+              "journal": "Appl Environ Microbiol",
+              "mesh": "Amino Acids, Diamino/*biosynthesis/*genetics, Betaine/metabolism/pharmacology, Escherichia coli/*genetics/metabolism, Gene Expression Regulation, Bacterial, *Genes, Bacterial, *Industrial Microbiology, Molecular Sequence Data, Multigene Family, Polymerase Chain Reaction, Promoter Regions, Genetic, Pseudomonas stutzeri/*genetics/*metabolism, Salinity, Trehalose/metabolism",
+              "title": "Natural and engineered hydroxyectoine production based on the Pseudomonas stutzeri ectABCD-ask gene cluster.",
+              "topic": "Metabolism",
+              "topic2": "Biotechnology",
+              "year": 2010
+            },
+            {
+              "DOI": "10.1128/JB.06061-11",
+              "Pubmed-ID": "21994926",
+              "authors": "Chen M, Yan Y, Zhang W, Lu W, Wang J, Ping S, Lin M",
+              "journal": "J Bacteriol",
+              "mesh": "Chemotaxis, Chromosomes, Bacterial, DNA, Bacterial/*chemistry/*genetics, DNA, Circular/chemistry/genetics, Genes, Bacterial, *Genome, Bacterial, Metabolic Networks and Pathways/genetics, Molecular Sequence Data, Open Reading Frames, Pseudomonas stutzeri/*genetics/metabolism/physiology, Sequence Analysis, DNA",
+              "title": "Complete genome sequence of the type strain Pseudomonas stutzeri CGMCC 1.1803.",
+              "topic": "Genetics",
+              "topic2": "Transcriptome",
+              "year": 2011
+            },
+            {
+              "DOI": "10.1016/j.chemosphere.2011.10.012",
+              "Pubmed-ID": "22055314",
+              "authors": "Moscoso F, Deive FJ, Villar P, Pena R, Herrero L, Longo MA, Sanroman MA",
+              "journal": "Chemosphere",
+              "mesh": "Biodegradation, Environmental, Metallurgy, Metals/analysis/*metabolism, Microbial Consortia/*physiology, Pseudomonas stutzeri/*metabolism, Water Pollutants, Chemical/analysis/*metabolism",
+              "title": "Assessment of a process to degrade metal working fluids using Pseudomonas stutzeri CECT 930 and indigenous microbial consortia.",
+              "topic": "Metabolism",
+              "year": 2011
+            },
+            {
+              "DOI": "10.1016/j.biortech.2011.10.053",
+              "Pubmed-ID": "22074903",
+              "authors": "Moscoso F, Deive FJ, Longo MA, Sanroman MA",
+              "journal": "Bioresour Technol",
+              "mesh": "Batch Cell Culture Techniques/*economics/*instrumentation, Biodegradation, Environmental, Bioreactors/*economics/microbiology, Computer Simulation, Models, Biological, *Models, Economic, Phenanthrenes/*economics/*metabolism, Pseudomonas stutzeri/*metabolism, Spain",
+              "title": "Technoeconomic assessment of phenanthrene degradation by Pseudomonas stutzeri CECT 930 in a batch bioreactor.",
+              "topic": "Metabolism",
+              "year": 2011
+            },
+            {
+              "DOI": "10.1099/ijs.0.055632-0",
+              "Pubmed-ID": "24225026",
+              "authors": "Xie F, Ma H, Quan S, Liu D, Chen G, Chao Y, Qian S",
+              "journal": "Int J Syst Evol Microbiol",
+              "mesh": "Bacterial Typing Techniques, Base Composition, China, DNA, Bacterial/genetics, Fatty Acids/chemistry, *Mining, Molecular Sequence Data, Nucleic Acid Hybridization, Phosphates, *Phylogeny, Pseudomonas/*classification/genetics/isolation & purification, RNA, Ribosomal, 16S/genetics, Sequence Analysis, DNA, *Soil Microbiology, Ubiquinone/chemistry",
+              "title": "Pseudomonas kunmingensis sp. nov., an exopolysaccharide-producing bacterium isolated from a phosphate mine.",
+              "topic": "Phylogeny",
+              "topic2": "Genetics",
+              "year": 2013
+            },
+            {
+              "DOI": "10.1016/j.marpolbul.2014.07.059",
+              "Pubmed-ID": "25139301",
+              "authors": "El-Sheshtawy HS, Khalil NM, Ahmed W, Abdallah RI",
+              "journal": "Mar Pollut Bull",
+              "mesh": "Bays/*chemistry, *Biodegradation, Environmental, Ecosystem, Egypt, Indian Ocean, Petroleum/*analysis, Petroleum Pollution/*analysis, RNA, Ribosomal, 16S/genetics",
+              "title": "Monitoring of oil pollution at Gemsa Bay and bioremediation capacity of bacterial isolates with biosurfactants and nanoparticles.",
+              "topic": "Phylogeny",
+              "year": 2014
+            },
+            {
+              "DOI": "10.1007/s10482-014-0365-3",
+              "Pubmed-ID": "25550067",
+              "authors": "Zhang L, Pan Y, Wang K, Zhang X, Zhang S, Fu X, Zhang C, Jiang J",
+              "journal": "Antonie Van Leeuwenhoek",
+              "mesh": "Aerobiosis, Alkalies, Bacterial Typing Techniques, China, Cluster Analysis, Cytosol/chemistry, DNA Gyrase/genetics, DNA, Bacterial/chemistry/genetics, DNA, Ribosomal/chemistry/genetics, DNA-Directed RNA Polymerases/genetics, Fatty Acids/analysis, Flagella/physiology, Locomotion, Molecular Sequence Data, Nucleic Acid Hybridization, Phospholipids/analysis, Phylogeny, Pigments, Biological/metabolism, Pseudomonas/*classification/genetics/*isolation & purification/physiology, Quinones/analysis, RNA, Ribosomal, 16S/genetics, Salinity, Sequence Analysis, DNA, Sigma Factor/genetics, Soil/chemistry, *Soil Microbiology",
+              "title": "Pseudomonas songnenensis sp. nov., isolated from saline and alkaline soils in Songnen Plain, China.",
+              "topic": "Phylogeny",
+              "topic2": "Genetics",
+              "year": 2014
+            },
+            {
+              "DOI": "10.1099/ijs.0.000057",
+              "Pubmed-ID": "25574037",
+              "authors": "Zhang L, Pan Y, Wang K, Zhang X, Zhang C, Zhang S, Fu X, Jiang J",
+              "journal": "Int J Syst Evol Microbiol",
+              "mesh": "Bacterial Typing Techniques, Base Composition, China, DNA, Bacterial/genetics, Fatty Acids/chemistry, Genes, Bacterial, Hydrogen-Ion Concentration, Molecular Sequence Data, Nucleic Acid Hybridization, Phospholipids/chemistry, *Phylogeny, Pigmentation, Pseudomonas/*classification/genetics/isolation & purification, RNA, Ribosomal, 16S/genetics, Salinity, Sequence Analysis, DNA, Soil/chemistry, *Soil Microbiology, Ubiquinone/chemistry",
+              "title": "Pseudomonas zhaodongensis sp. nov., isolated from saline and alkaline soils.",
+              "topic": "Phylogeny",
+              "topic2": "Genetics",
+              "year": 2015
+            },
+            {
+              "DOI": "10.1002/bit.27654",
+              "Pubmed-ID": "33305820",
+              "authors": "Zhou Y, Suenaga T, Qi C, Riya S, Hosomi M, Terada A",
+              "journal": "Biotechnol Bioeng",
+              "mesh": "Nitrous Oxide/*metabolism, Paracoccus denitrificans/*metabolism, Pseudomonas stutzeri/*metabolism, Rhodocyclaceae/*metabolism, *Temperature",
+              "title": "Temperature and oxygen level determine N2 O respiration activities of heterotrophic N2 O-reducing bacteria: Biokinetic study.",
+              "topic": "Metabolism",
+              "year": 2020
+            },
+            {
+              "DOI": "10.1007/s10482-021-01524-8",
+              "Pubmed-ID": "33587227",
+              "authors": "Mamtimin T, Anwar N, Abdurahman M, Kurban M, Rozahon M, Mamtimin H, Hamood B, Rahman E, Wu M",
+              "journal": "Antonie Van Leeuwenhoek",
+              "mesh": "Bacterial Typing Techniques, DNA, Bacterial/genetics, Phospholipids/analysis, Phylogeny, *Populus, Pseudomonas/genetics, RNA, Ribosomal, 16S/genetics, Rivers, Sequence Analysis, DNA",
+              "title": "Pseudomonas lopnurensis sp. nov., an endophytic bacterium isolated from Populus euphratica at the ancient Ugan river.",
+              "topic": "Phylogeny",
+              "topic2": "Transcriptome",
+              "year": 2021
+            },
+            {
+              "DOI": "10.1007/s00203-022-02912-y",
+              "Pubmed-ID": "35567652",
+              "authors": "Kujur RRA, Das SK",
+              "journal": "Arch Microbiol",
+              "mesh": "Bacterial Typing Techniques, DNA, Bacterial/genetics, Fatty Acids/chemistry, Nucleic Acid Hybridization, *Phenol, Phylogeny, *Pseudomonas, RNA, Ribosomal, 16S/genetics, Sequence Analysis, DNA",
+              "title": "Pseudomonas phenolilytica sp. nov., a novel phenol-degrading bacterium.",
+              "topic": "Phylogeny",
+              "topic2": "Transcriptome",
+              "year": 2022
+            },
+            {
+              "DOI": "10.1021/acs.est.2c02119",
+              "Pubmed-ID": "35917165",
+              "authors": "Oba K, Suenaga T, Kuroiwa M, Riya S, Terada A",
+              "journal": "Environ Sci Technol",
+              "mesh": "Bacteria, Denitrification, Gene Expression Profiling, Nitrites, *Nitrogen Dioxide, *Nitrous Oxide",
+              "title": "Exploring the Functions of Efficient Canonical Denitrifying Bacteria as N(2)O Sinks: Implications from (15)N Tracer and Transcriptome Analyses.",
+              "topic": "Transcriptome",
+              "year": 2022
+            },
+            {
+              "DOI": "10.1007/s00203-022-03250-9",
+              "Pubmed-ID": "36131209",
+              "authors": "Yang Y, Gao Y, Liu Y, Liu B, Wang D, Xu Y, Wei Y",
+              "journal": "Arch Microbiol",
+              "mesh": "Ancitabine, Bacterial Typing Techniques, DNA, Bacterial/chemistry/genetics, Fatty Acids/analysis, Glycolipids/chemistry, Nucleotides, Phosphatidylcholines, *Phosphatidylethanolamines, Phosphatidylglycerols, Phospholipids/analysis, Phylogeny, Pseudomonas, RNA, Ribosomal, 16S/genetics, Sequence Analysis, DNA, *Sodium Chloride, Ubiquinone/chemistry",
+              "title": "Pseudomonas marianensis sp. nov., a marine bacterium isolated from deep-sea sediments of the Mariana Trench.",
+              "topic": "Phylogeny",
+              "topic2": "Transcriptome",
+              "year": 2022
+            }
+          ],
+          "straininfo link": {
+            "@ref": 82206,
+            "straininfo": 4592
+          }
+        },
+        "Reference": [
+          {
+            "@id": 1954,
+            "authors": "Curators of the DSMZ",
+            "catalogue": "Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen GmbH (DSM 5190)",
+            "doi/url": "https://www.dsmz.de/collection/catalogue/details/culture/DSM-5190"
+          },
+          {
+            "@id": 20215,
+            "authors": "Parte, A.C., Sardà Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C. and Göker, M.",
+            "doi/url": "10.1099/ijsem.0.004332",
+            "title": "List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the DSMZ"
+          },
+          {
+            "@id": 20218,
+            "authors": "Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.",
+            "doi/url": "10.1016/j.syapm.2013.11.002",
+            "journal": "Syst Appl Microbiol. 37: 42-50 2014",
+            "pubmed": 24321274,
+            "title": "StrainInfo introduces electronic passports for microorganisms."
+          },
+          {
+            "@id": 40511,
+            "authors": "Curators of the CIP",
+            "doi/url": "https://brclims.pasteur.fr/brcWeb/souche/detail/1/14773\r"
+          },
+          {
+            "@id": 45406,
+            "authors": "Curators of the CCUG",
+            "catalogue": "Culture Collection University of Gothenburg (CCUG) (CCUG 11256)",
+            "doi/url": "https://www.ccug.se/strain?id=11256"
+          },
+          {
+            "@id": 66792,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Automatically annotated for the DiASPora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 67770,
+            "authors": "Curators of the JCM",
+            "doi/url": "https://jcm.brc.riken.jp/en/"
+          },
+          {
+            "@id": 68369,
+            "title": "Automatically annotated from API 20NE"
+          },
+          {
+            "@id": 68371,
+            "title": "Automatically annotated from API 50CH acid"
+          },
+          {
+            "@id": 68382,
+            "title": "Automatically annotated from API zym"
+          },
+          {
+            "@id": 69479,
+            "authors": "João F Matias Rodrigues, Janko Tackmann,Gregor Rot, Thomas SB Schmidt, Lukas Malfertheiner, Mihai Danaila,Marija Dmitrijeva, Daniela Gaio, Nicolas Näpflin and Christian von Mering. University of Zurich.",
+            "doi/url": "https://microbeatlas.org/",
+            "title": "MicrobeAtlas 1.0 beta"
+          },
+          {
+            "@id": 69480,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Predictions based on genome sequence made in the Diaspora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 69481,
+            "authors": "Xiao-Yin To, René Mreches, Martin Binder, Alice C. McHardy, Philipp C. Münch",
+            "doi/url": "10.21203/rs.3.rs-2527258/v1",
+            "title": "Predictions based on the model GenomeNet Sporulation v. 1"
+          },
+          {
+            "@id": 82206,
+            "authors": "Reimer, L.C., Lissin, A.,Schober, I., Witte,J.F., Podstawka, A., Lüken, H., Bunk, B.,Overmann, J.",
+            "doi/url": "10.60712/SI-ID4592.1",
+            "title": "StrainInfo: A central database for resolving microbial strain identifiers"
+          },
+          {
+            "@id": 123339,
+            "authors": "Curators of the CIP",
+            "catalogue": "Collection of Institut Pasteur (CIP 103022)",
+            "doi/url": "https://catalogue-crbip.pasteur.fr/fiche_catalogue.xhtml?crbip=CIP%20103022"
+          },
+          {
+            "@id": 124043,
+            "authors": "Dr. Isabel Schober, Dr. Julia Koblitz",
+            "title": "Data extracted from sequence databases, automatically matched based on designation and taxonomy"
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,4487 @@
+{
+  "cohort": [
+    "FOODON:00005106",
+    "FOODON:00005107",
+    "FOODON:00005108",
+    "FOODON:00005109",
+    "FOODON:00005119",
+    "FOODON:00005120",
+    "FOODON:00005121",
+    "FOODON:00005122",
+    "FOODON:00005123",
+    "FOODON:00005124",
+    "FOODON:00005125",
+    "FOODON:00005126",
+    "FOODON:00005127",
+    "FOODON:00005128",
+    "FOODON:00005129",
+    "FOODON:00005130",
+    "FOODON:00005131",
+    "FOODON:00005132",
+    "FOODON:00005133",
+    "FOODON:00005134",
+    "FOODON:00005135",
+    "FOODON:00005136"
+  ],
+  "controls": [
+    "FOODON:00003424",
+    "FOODON:00005088",
+    "FOODON:00005105"
+  ],
+  "disposition": "quarantine_only_contradictory_named_parent",
+  "expected_category_changes": {
+    "FOODON:00005106": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005107": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005108": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005109": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005119": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005120": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005121": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005122": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005123": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005124": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005125": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005126": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005127": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005128": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005129": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005130": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005131": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005132": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005133": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005134": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005135": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ],
+    "FOODON:00005136": [
+      "biolink:OrganismTaxon",
+      "biolink:Food"
+    ]
+  },
+  "full_native_source_sha256": {
+    "foodon.json": "8dfba179356a84d8ddad4087dc1fa89a76f6511456c298b9dd7b09df9eb6d853",
+    "foodon.owl": "1e11fc50283c6498697a7aca9606c9d914f1cda71cc5510e006d949c32df7db0"
+  },
+  "issue": 1296,
+  "json_evidence": {
+    "incident_edges": [
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00003424",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005106"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00004348",
+        "pred": "http://purl.obolibrary.org/obo/RO_0000086",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005108"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00004348",
+        "pred": "http://purl.obolibrary.org/obo/RO_0000086",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005120"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00004348",
+        "pred": "http://purl.obolibrary.org/obo/RO_0000086",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005123"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00004348",
+        "pred": "http://purl.obolibrary.org/obo/RO_0000086",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005126"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00004348",
+        "pred": "http://purl.obolibrary.org/obo/RO_0000086",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005129"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00004348",
+        "pred": "http://purl.obolibrary.org/obo/RO_0000086",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005132"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00004348",
+        "pred": "http://purl.obolibrary.org/obo/RO_0000086",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005135"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005088",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005106"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005105",
+        "pred": "http://purl.obolibrary.org/obo/RO_0002162",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005106"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005106",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005107"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005106",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005119"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005106",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005122"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005106",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005125"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005106",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005128"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005106",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005131"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005106",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005134"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005107",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005108"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005107",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005109"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005119",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005120"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005119",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005121"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005122",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005123"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005122",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005124"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005125",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005126"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005125",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005127"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005128",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005129"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005128",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005130"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005131",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005132"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005131",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005133"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005134",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005135"
+      },
+      {
+        "obj": "http://purl.obolibrary.org/obo/FOODON_00005134",
+        "pred": "is_a",
+        "sub": "http://purl.obolibrary.org/obo/FOODON_00005136"
+      }
+    ],
+    "logical_definition_axioms": [
+      {
+        "definedClassId": "http://purl.obolibrary.org/obo/FOODON_00005106",
+        "genusIds": [
+          "http://purl.obolibrary.org/obo/FOODON_00003424"
+        ],
+        "restrictions": [
+          {
+            "fillerId": "http://purl.obolibrary.org/obo/FOODON_00005105",
+            "propertyId": "http://purl.obolibrary.org/obo/RO_0002162"
+          }
+        ]
+      },
+      {
+        "definedClassId": "http://purl.obolibrary.org/obo/FOODON_00005108",
+        "genusIds": [
+          "http://purl.obolibrary.org/obo/FOODON_00005107"
+        ],
+        "restrictions": [
+          {
+            "fillerId": "http://purl.obolibrary.org/obo/FOODON_00004348",
+            "propertyId": "http://purl.obolibrary.org/obo/RO_0000086"
+          }
+        ]
+      },
+      {
+        "definedClassId": "http://purl.obolibrary.org/obo/FOODON_00005120",
+        "genusIds": [
+          "http://purl.obolibrary.org/obo/FOODON_00005119"
+        ],
+        "restrictions": [
+          {
+            "fillerId": "http://purl.obolibrary.org/obo/FOODON_00004348",
+            "propertyId": "http://purl.obolibrary.org/obo/RO_0000086"
+          }
+        ]
+      },
+      {
+        "definedClassId": "http://purl.obolibrary.org/obo/FOODON_00005123",
+        "genusIds": [
+          "http://purl.obolibrary.org/obo/FOODON_00005122"
+        ],
+        "restrictions": [
+          {
+            "fillerId": "http://purl.obolibrary.org/obo/FOODON_00004348",
+            "propertyId": "http://purl.obolibrary.org/obo/RO_0000086"
+          }
+        ]
+      },
+      {
+        "definedClassId": "http://purl.obolibrary.org/obo/FOODON_00005126",
+        "genusIds": [
+          "http://purl.obolibrary.org/obo/FOODON_00005125"
+        ],
+        "restrictions": [
+          {
+            "fillerId": "http://purl.obolibrary.org/obo/FOODON_00004348",
+            "propertyId": "http://purl.obolibrary.org/obo/RO_0000086"
+          }
+        ]
+      },
+      {
+        "definedClassId": "http://purl.obolibrary.org/obo/FOODON_00005129",
+        "genusIds": [
+          "http://purl.obolibrary.org/obo/FOODON_00005128"
+        ],
+        "restrictions": [
+          {
+            "fillerId": "http://purl.obolibrary.org/obo/FOODON_00004348",
+            "propertyId": "http://purl.obolibrary.org/obo/RO_0000086"
+          }
+        ]
+      },
+      {
+        "definedClassId": "http://purl.obolibrary.org/obo/FOODON_00005132",
+        "genusIds": [
+          "http://purl.obolibrary.org/obo/FOODON_00005131"
+        ],
+        "restrictions": [
+          {
+            "fillerId": "http://purl.obolibrary.org/obo/FOODON_00004348",
+            "propertyId": "http://purl.obolibrary.org/obo/RO_0000086"
+          }
+        ]
+      },
+      {
+        "definedClassId": "http://purl.obolibrary.org/obo/FOODON_00005135",
+        "genusIds": [
+          "http://purl.obolibrary.org/obo/FOODON_00005134"
+        ],
+        "restrictions": [
+          {
+            "fillerId": "http://purl.obolibrary.org/obo/FOODON_00004348",
+            "propertyId": "http://purl.obolibrary.org/obo/RO_0000086"
+          }
+        ]
+      }
+    ],
+    "nodes": [
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00003424",
+        "lbl": "soft white wheat kernel",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2020-09-09T16:32:05Z"
+            }
+          ],
+          "definition": {
+            "val": "A caryopsis fruit of a soft white wheat plant."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005088",
+        "lbl": "winter wheat plant",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A winter wheat plant."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005105",
+        "lbl": "soft white winter wheat plant",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://grainscanada.gc.ca/en/grain-quality/grain-grading/wheat-classes.html"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A soft winter wheat plant."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005106",
+        "lbl": "soft white winter wheat kernel",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A caryopsis fruit of a soft white winter wheat plant."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005107",
+        "lbl": "Piranha soft white winter wheat kernel",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://varietyselection.cahnrs.wsu.edu/Home/VarietyDetails/1321"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A caryopsis fruit of a Piranha soft white winter wheat plant."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005108",
+        "lbl": "Piranha soft white winter wheat kernel (raw)",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://varietyselection.cahnrs.wsu.edu/Home/VarietyDetails/1321"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A raw Piranha soft white wheat kernel."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005109",
+        "lbl": "Piranha soft white winter wheat kernel (dried raw)",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://varietyselection.cahnrs.wsu.edu/Home/VarietyDetails/1321"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A raw Piranha soft white kernel that has been dried."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005119",
+        "lbl": "Artdedo soft white winter wheat kernel",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://limagraincerealseeds.com/pacific-northwest/soft-white-winter-wheat-seed/lcs-artdeco/"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A caryopsis fruit of an Artdedo soft white winter plant."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005120",
+        "lbl": "Artdedo soft white winter wheat kernel (raw)",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://limagraincerealseeds.com/pacific-northwest/soft-white-winter-wheat-seed/lcs-artdeco/"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A raw Artdedo soft white winter wheat kernel."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005121",
+        "lbl": "Artdedo soft white winter wheat kernel (dried raw)",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://limagraincerealseeds.com/pacific-northwest/soft-white-winter-wheat-seed/lcs-artdeco/"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A raw Artdedo soft white winter wheat kernel that has been dried."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005122",
+        "lbl": "Shine soft white winter wheat kernel",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://limagraincerealseeds.com/lcs-shine/"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A caryopsis fruit of a Shine soft white winter wheat plant."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005123",
+        "lbl": "Shine soft white winter wheat kernel (raw)",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://limagraincerealseeds.com/lcs-shine/"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A raw Shine soft white winter wheat kernel."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005124",
+        "lbl": "Shine soft white winter wheat kernel (dried raw)",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://limagraincerealseeds.com/lcs-shine/"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A raw Shine soft white winter kernel that has been dried."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005125",
+        "lbl": "Mela soft white winter wheat kernel",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://s3.wp.wsu.edu/uploads/sites/3122/2022/09/Mela-CL-rack-card.pdf"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A caryopsis fruit of a Mela soft winter wheat plant."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005126",
+        "lbl": "Mela soft white winter wheat kernel (raw)",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://s3.wp.wsu.edu/uploads/sites/3122/2022/09/Mela-CL-rack-card.pdf"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A raw Mela soft white winter kernel."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005127",
+        "lbl": "Mela soft white winter wheat kernel (dried raw)",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://s3.wp.wsu.edu/uploads/sites/3122/2022/09/Mela-CL-rack-card.pdf"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A raw Mela soft white winter kernel that has been dried."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005128",
+        "lbl": "Stingray soft white winter wheat kernel",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://wsu.technologypublisher.com/technology/35312"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A caryopsis fruit of a Stingray soft white winter wheat plant."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005129",
+        "lbl": "Stingray soft white winter wheat kernel (raw)",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://wsu.technologypublisher.com/technology/35312"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A raw Stingray soft white winter kernel."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005130",
+        "lbl": "Stingray soft white winter wheat kernel (dried raw)",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://wsu.technologypublisher.com/technology/35312"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A raw Stingray soft white winter kernel that has been dried."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005131",
+        "lbl": "Tandem soft white winter wheat kernel",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://limagraincerealseeds.com/pacific-northwest/soft-white-winter-wheat-seed/norwest-tandem/"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A caryopsis fruit of a Tandem soft white winter wheat plant."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005132",
+        "lbl": "Tandem soft white winter wheat kernel (raw)",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://limagraincerealseeds.com/pacific-northwest/soft-white-winter-wheat-seed/norwest-tandem/"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A raw Tandem soft white winter wheat kernel."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005133",
+        "lbl": "Tandem soft white winter wheat kernel (dried raw)",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://limagraincerealseeds.com/pacific-northwest/soft-white-winter-wheat-seed/norwest-tandem/"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A raw Tandem soft white winter wheat kernel that has been dried."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005134",
+        "lbl": "Hailey soft white winter wheat kernel",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://washingtoncrop.com/soft-white-winter-wheat/v/PNW%20Hailey"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A caryopsis fruit of a Hailey soft white winter wheat plant."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005135",
+        "lbl": "Hailey soft white winter wheat kernel (raw)",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://washingtoncrop.com/soft-white-winter-wheat/v/PNW%20Hailey"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A raw Hailey soft white winter kernel."
+          }
+        },
+        "type": "CLASS"
+      },
+      {
+        "id": "http://purl.obolibrary.org/obo/FOODON_00005136",
+        "lbl": "Hailey soft white winter wheat kernel (dried raw)",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "https://washingtoncrop.com/soft-white-winter-wheat/v/PNW%20Hailey"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0001-5275-8866"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-0995-0278"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8461-9745"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0002-8844-9165"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/contributor",
+              "val": "https://orcid.org/0000-0003-3653-3805"
+            },
+            {
+              "pred": "http://purl.org/dc/terms/date",
+              "val": "2024-06-16T13:14:52Z"
+            }
+          ],
+          "definition": {
+            "val": "A raw Hailey soft white winter kernel  that has been dried."
+          }
+        },
+        "type": "CLASS"
+      }
+    ]
+  },
+  "json_evidence_sha256": "6b3ad72929810b9aa978d8890da81bb9aee08842281223002ae4c30d94ccca6a",
+  "kernel_parent": "FOODON:00003424",
+  "original_transformed_parent_rows": [
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005088",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005106"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    }
+  ],
+  "owl_class_witnesses": {
+    "FOODON:00003424": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00003424"
+      },
+      "children": [
+        {
+          "attributes": {},
+          "children": [
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}parseType": "Collection"
+                  },
+                  "children": [
+                    {
+                      "attributes": {
+                        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005092"
+                      },
+                      "children": [],
+                      "tag": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}Description",
+                      "text": ""
+                    },
+                    {
+                      "attributes": {},
+                      "children": [
+                        {
+                          "attributes": {
+                            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0002162"
+                          },
+                          "children": [],
+                          "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                          "text": ""
+                        },
+                        {
+                          "attributes": {
+                            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005093"
+                          },
+                          "children": [],
+                          "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                          "text": ""
+                        }
+                      ],
+                      "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+                      "text": ""
+                    }
+                  ],
+                  "tag": "{http://www.w3.org/2002/07/owl#}intersectionOf",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2002/07/owl#}Class",
+              "text": ""
+            }
+          ],
+          "tag": "{http://www.w3.org/2002/07/owl#}equivalentClass",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005092"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {},
+          "children": [
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0002162"
+                  },
+                  "children": [],
+                  "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                  "text": ""
+                },
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005093"
+                  },
+                  "children": [],
+                  "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+              "text": ""
+            }
+          ],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A caryopsis fruit of a soft white wheat plant."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2020-09-09T16:32:05Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "soft white wheat kernel"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005088": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005088"
+      },
+      "children": [
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_03413507"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/NCBITaxon_4565"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A winter wheat plant."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "winter wheat plant"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005105": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005105"
+      },
+      "children": [
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005088"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005093"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A soft winter wheat plant."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://grainscanada.gc.ca/en/grain-quality/grain-grading/wheat-classes.html"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "soft white winter wheat plant"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005106": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005106"
+      },
+      "children": [
+        {
+          "attributes": {},
+          "children": [
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}parseType": "Collection"
+                  },
+                  "children": [
+                    {
+                      "attributes": {
+                        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00003424"
+                      },
+                      "children": [],
+                      "tag": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}Description",
+                      "text": ""
+                    },
+                    {
+                      "attributes": {},
+                      "children": [
+                        {
+                          "attributes": {
+                            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0002162"
+                          },
+                          "children": [],
+                          "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                          "text": ""
+                        },
+                        {
+                          "attributes": {
+                            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005105"
+                          },
+                          "children": [],
+                          "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                          "text": ""
+                        }
+                      ],
+                      "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+                      "text": ""
+                    }
+                  ],
+                  "tag": "{http://www.w3.org/2002/07/owl#}intersectionOf",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2002/07/owl#}Class",
+              "text": ""
+            }
+          ],
+          "tag": "{http://www.w3.org/2002/07/owl#}equivalentClass",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00003424"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005088"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {},
+          "children": [
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0002162"
+                  },
+                  "children": [],
+                  "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                  "text": ""
+                },
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005105"
+                  },
+                  "children": [],
+                  "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+              "text": ""
+            }
+          ],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A caryopsis fruit of a soft white winter wheat plant."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "soft white winter wheat kernel"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005107": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005107"
+      },
+      "children": [
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005106"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A caryopsis fruit of a Piranha soft white winter wheat plant."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://varietyselection.cahnrs.wsu.edu/Home/VarietyDetails/1321"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Piranha soft white winter wheat kernel"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005108": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005108"
+      },
+      "children": [
+        {
+          "attributes": {},
+          "children": [
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}parseType": "Collection"
+                  },
+                  "children": [
+                    {
+                      "attributes": {
+                        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005107"
+                      },
+                      "children": [],
+                      "tag": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}Description",
+                      "text": ""
+                    },
+                    {
+                      "attributes": {},
+                      "children": [
+                        {
+                          "attributes": {
+                            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0000086"
+                          },
+                          "children": [],
+                          "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                          "text": ""
+                        },
+                        {
+                          "attributes": {
+                            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00004348"
+                          },
+                          "children": [],
+                          "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                          "text": ""
+                        }
+                      ],
+                      "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+                      "text": ""
+                    }
+                  ],
+                  "tag": "{http://www.w3.org/2002/07/owl#}intersectionOf",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2002/07/owl#}Class",
+              "text": ""
+            }
+          ],
+          "tag": "{http://www.w3.org/2002/07/owl#}equivalentClass",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005107"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {},
+          "children": [
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0000086"
+                  },
+                  "children": [],
+                  "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                  "text": ""
+                },
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00004348"
+                  },
+                  "children": [],
+                  "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+              "text": ""
+            }
+          ],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A raw Piranha soft white wheat kernel."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://varietyselection.cahnrs.wsu.edu/Home/VarietyDetails/1321"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Piranha soft white winter wheat kernel (raw)"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005109": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005109"
+      },
+      "children": [
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005107"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A raw Piranha soft white kernel that has been dried."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://varietyselection.cahnrs.wsu.edu/Home/VarietyDetails/1321"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Piranha soft white winter wheat kernel (dried raw)"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005119": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005119"
+      },
+      "children": [
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005106"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A caryopsis fruit of an Artdedo soft white winter plant."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://limagraincerealseeds.com/pacific-northwest/soft-white-winter-wheat-seed/lcs-artdeco/"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Artdedo soft white winter wheat kernel"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005120": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005120"
+      },
+      "children": [
+        {
+          "attributes": {},
+          "children": [
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}parseType": "Collection"
+                  },
+                  "children": [
+                    {
+                      "attributes": {
+                        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005119"
+                      },
+                      "children": [],
+                      "tag": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}Description",
+                      "text": ""
+                    },
+                    {
+                      "attributes": {},
+                      "children": [
+                        {
+                          "attributes": {
+                            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0000086"
+                          },
+                          "children": [],
+                          "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                          "text": ""
+                        },
+                        {
+                          "attributes": {
+                            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00004348"
+                          },
+                          "children": [],
+                          "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                          "text": ""
+                        }
+                      ],
+                      "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+                      "text": ""
+                    }
+                  ],
+                  "tag": "{http://www.w3.org/2002/07/owl#}intersectionOf",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2002/07/owl#}Class",
+              "text": ""
+            }
+          ],
+          "tag": "{http://www.w3.org/2002/07/owl#}equivalentClass",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005119"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {},
+          "children": [
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0000086"
+                  },
+                  "children": [],
+                  "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                  "text": ""
+                },
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00004348"
+                  },
+                  "children": [],
+                  "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+              "text": ""
+            }
+          ],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A raw Artdedo soft white winter wheat kernel."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://limagraincerealseeds.com/pacific-northwest/soft-white-winter-wheat-seed/lcs-artdeco/"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Artdedo soft white winter wheat kernel (raw)"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005121": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005121"
+      },
+      "children": [
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005119"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A raw Artdedo soft white winter wheat kernel that has been dried."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://limagraincerealseeds.com/pacific-northwest/soft-white-winter-wheat-seed/lcs-artdeco/"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Artdedo soft white winter wheat kernel (dried raw)"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005122": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005122"
+      },
+      "children": [
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005106"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A caryopsis fruit of a Shine soft white winter wheat plant."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://limagraincerealseeds.com/lcs-shine/"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Shine soft white winter wheat kernel"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005123": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005123"
+      },
+      "children": [
+        {
+          "attributes": {},
+          "children": [
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}parseType": "Collection"
+                  },
+                  "children": [
+                    {
+                      "attributes": {
+                        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005122"
+                      },
+                      "children": [],
+                      "tag": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}Description",
+                      "text": ""
+                    },
+                    {
+                      "attributes": {},
+                      "children": [
+                        {
+                          "attributes": {
+                            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0000086"
+                          },
+                          "children": [],
+                          "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                          "text": ""
+                        },
+                        {
+                          "attributes": {
+                            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00004348"
+                          },
+                          "children": [],
+                          "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                          "text": ""
+                        }
+                      ],
+                      "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+                      "text": ""
+                    }
+                  ],
+                  "tag": "{http://www.w3.org/2002/07/owl#}intersectionOf",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2002/07/owl#}Class",
+              "text": ""
+            }
+          ],
+          "tag": "{http://www.w3.org/2002/07/owl#}equivalentClass",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005122"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {},
+          "children": [
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0000086"
+                  },
+                  "children": [],
+                  "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                  "text": ""
+                },
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00004348"
+                  },
+                  "children": [],
+                  "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+              "text": ""
+            }
+          ],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A raw Shine soft white winter wheat kernel."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://limagraincerealseeds.com/lcs-shine/"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Shine soft white winter wheat kernel (raw)"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005124": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005124"
+      },
+      "children": [
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005122"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A raw Shine soft white winter kernel that has been dried."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://limagraincerealseeds.com/lcs-shine/"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Shine soft white winter wheat kernel (dried raw)"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005125": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005125"
+      },
+      "children": [
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005106"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A caryopsis fruit of a Mela soft winter wheat plant."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://s3.wp.wsu.edu/uploads/sites/3122/2022/09/Mela-CL-rack-card.pdf"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Mela soft white winter wheat kernel"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005126": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005126"
+      },
+      "children": [
+        {
+          "attributes": {},
+          "children": [
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}parseType": "Collection"
+                  },
+                  "children": [
+                    {
+                      "attributes": {
+                        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005125"
+                      },
+                      "children": [],
+                      "tag": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}Description",
+                      "text": ""
+                    },
+                    {
+                      "attributes": {},
+                      "children": [
+                        {
+                          "attributes": {
+                            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0000086"
+                          },
+                          "children": [],
+                          "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                          "text": ""
+                        },
+                        {
+                          "attributes": {
+                            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00004348"
+                          },
+                          "children": [],
+                          "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                          "text": ""
+                        }
+                      ],
+                      "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+                      "text": ""
+                    }
+                  ],
+                  "tag": "{http://www.w3.org/2002/07/owl#}intersectionOf",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2002/07/owl#}Class",
+              "text": ""
+            }
+          ],
+          "tag": "{http://www.w3.org/2002/07/owl#}equivalentClass",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005125"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {},
+          "children": [
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0000086"
+                  },
+                  "children": [],
+                  "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                  "text": ""
+                },
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00004348"
+                  },
+                  "children": [],
+                  "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+              "text": ""
+            }
+          ],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A raw Mela soft white winter kernel."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://s3.wp.wsu.edu/uploads/sites/3122/2022/09/Mela-CL-rack-card.pdf"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Mela soft white winter wheat kernel (raw)"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005127": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005127"
+      },
+      "children": [
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005125"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A raw Mela soft white winter kernel that has been dried."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://s3.wp.wsu.edu/uploads/sites/3122/2022/09/Mela-CL-rack-card.pdf"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Mela soft white winter wheat kernel (dried raw)"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005128": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005128"
+      },
+      "children": [
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005106"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A caryopsis fruit of a Stingray soft white winter wheat plant."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://wsu.technologypublisher.com/technology/35312"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Stingray soft white winter wheat kernel"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005129": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005129"
+      },
+      "children": [
+        {
+          "attributes": {},
+          "children": [
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}parseType": "Collection"
+                  },
+                  "children": [
+                    {
+                      "attributes": {
+                        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005128"
+                      },
+                      "children": [],
+                      "tag": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}Description",
+                      "text": ""
+                    },
+                    {
+                      "attributes": {},
+                      "children": [
+                        {
+                          "attributes": {
+                            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0000086"
+                          },
+                          "children": [],
+                          "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                          "text": ""
+                        },
+                        {
+                          "attributes": {
+                            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00004348"
+                          },
+                          "children": [],
+                          "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                          "text": ""
+                        }
+                      ],
+                      "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+                      "text": ""
+                    }
+                  ],
+                  "tag": "{http://www.w3.org/2002/07/owl#}intersectionOf",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2002/07/owl#}Class",
+              "text": ""
+            }
+          ],
+          "tag": "{http://www.w3.org/2002/07/owl#}equivalentClass",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005128"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {},
+          "children": [
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0000086"
+                  },
+                  "children": [],
+                  "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                  "text": ""
+                },
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00004348"
+                  },
+                  "children": [],
+                  "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+              "text": ""
+            }
+          ],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A raw Stingray soft white winter kernel."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://wsu.technologypublisher.com/technology/35312"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Stingray soft white winter wheat kernel (raw)"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005130": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005130"
+      },
+      "children": [
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005128"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A raw Stingray soft white winter kernel that has been dried."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://wsu.technologypublisher.com/technology/35312"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Stingray soft white winter wheat kernel (dried raw)"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005131": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005131"
+      },
+      "children": [
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005106"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A caryopsis fruit of a Tandem soft white winter wheat plant."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://limagraincerealseeds.com/pacific-northwest/soft-white-winter-wheat-seed/norwest-tandem/"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Tandem soft white winter wheat kernel"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005132": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005132"
+      },
+      "children": [
+        {
+          "attributes": {},
+          "children": [
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}parseType": "Collection"
+                  },
+                  "children": [
+                    {
+                      "attributes": {
+                        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005131"
+                      },
+                      "children": [],
+                      "tag": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}Description",
+                      "text": ""
+                    },
+                    {
+                      "attributes": {},
+                      "children": [
+                        {
+                          "attributes": {
+                            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0000086"
+                          },
+                          "children": [],
+                          "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                          "text": ""
+                        },
+                        {
+                          "attributes": {
+                            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00004348"
+                          },
+                          "children": [],
+                          "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                          "text": ""
+                        }
+                      ],
+                      "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+                      "text": ""
+                    }
+                  ],
+                  "tag": "{http://www.w3.org/2002/07/owl#}intersectionOf",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2002/07/owl#}Class",
+              "text": ""
+            }
+          ],
+          "tag": "{http://www.w3.org/2002/07/owl#}equivalentClass",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005131"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {},
+          "children": [
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0000086"
+                  },
+                  "children": [],
+                  "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                  "text": ""
+                },
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00004348"
+                  },
+                  "children": [],
+                  "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+              "text": ""
+            }
+          ],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A raw Tandem soft white winter wheat kernel."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://limagraincerealseeds.com/pacific-northwest/soft-white-winter-wheat-seed/norwest-tandem/"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Tandem soft white winter wheat kernel (raw)"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005133": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005133"
+      },
+      "children": [
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005131"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A raw Tandem soft white winter wheat kernel that has been dried."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://limagraincerealseeds.com/pacific-northwest/soft-white-winter-wheat-seed/norwest-tandem/"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Tandem soft white winter wheat kernel (dried raw)"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005134": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005134"
+      },
+      "children": [
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005106"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A caryopsis fruit of a Hailey soft white winter wheat plant."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://washingtoncrop.com/soft-white-winter-wheat/v/PNW%20Hailey"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Hailey soft white winter wheat kernel"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005135": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005135"
+      },
+      "children": [
+        {
+          "attributes": {},
+          "children": [
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}parseType": "Collection"
+                  },
+                  "children": [
+                    {
+                      "attributes": {
+                        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005134"
+                      },
+                      "children": [],
+                      "tag": "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}Description",
+                      "text": ""
+                    },
+                    {
+                      "attributes": {},
+                      "children": [
+                        {
+                          "attributes": {
+                            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0000086"
+                          },
+                          "children": [],
+                          "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                          "text": ""
+                        },
+                        {
+                          "attributes": {
+                            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00004348"
+                          },
+                          "children": [],
+                          "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                          "text": ""
+                        }
+                      ],
+                      "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+                      "text": ""
+                    }
+                  ],
+                  "tag": "{http://www.w3.org/2002/07/owl#}intersectionOf",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2002/07/owl#}Class",
+              "text": ""
+            }
+          ],
+          "tag": "{http://www.w3.org/2002/07/owl#}equivalentClass",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005134"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {},
+          "children": [
+            {
+              "attributes": {},
+              "children": [
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/RO_0000086"
+                  },
+                  "children": [],
+                  "tag": "{http://www.w3.org/2002/07/owl#}onProperty",
+                  "text": ""
+                },
+                {
+                  "attributes": {
+                    "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00004348"
+                  },
+                  "children": [],
+                  "tag": "{http://www.w3.org/2002/07/owl#}someValuesFrom",
+                  "text": ""
+                }
+              ],
+              "tag": "{http://www.w3.org/2002/07/owl#}Restriction",
+              "text": ""
+            }
+          ],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A raw Hailey soft white winter kernel."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://washingtoncrop.com/soft-white-winter-wheat/v/PNW%20Hailey"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Hailey soft white winter wheat kernel (raw)"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    },
+    "FOODON:00005136": {
+      "attributes": {
+        "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}about": "http://purl.obolibrary.org/obo/FOODON_00005136"
+      },
+      "children": [
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}resource": "http://purl.obolibrary.org/obo/FOODON_00005134"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}subClassOf",
+          "text": ""
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000115",
+          "text": "A raw Hailey soft white winter kernel  that has been dried."
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.obolibrary.org/obo/}IAO_0000119",
+          "text": "https://washingtoncrop.com/soft-white-winter-wheat/v/PNW%20Hailey"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0001-5275-8866"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-0995-0278"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8461-9745"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0002-8844-9165"
+        },
+        {
+          "attributes": {},
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}contributor",
+          "text": "https://orcid.org/0000-0003-3653-3805"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/1999/02/22-rdf-syntax-ns#}datatype": "http://www.w3.org/2001/XMLSchema#dateTime"
+          },
+          "children": [],
+          "tag": "{http://purl.org/dc/terms/}date",
+          "text": "2024-06-16T13:14:52Z"
+        },
+        {
+          "attributes": {
+            "{http://www.w3.org/XML/1998/namespace}lang": "en"
+          },
+          "children": [],
+          "tag": "{http://www.w3.org/2000/01/rdf-schema#}label",
+          "text": "Hailey soft white winter wheat kernel (dried raw)"
+        }
+      ],
+      "tag": "{http://www.w3.org/2002/07/owl#}Class",
+      "text": ""
+    }
+  },
+  "owl_evidence_sha256": "ed16d92d6161720ab25aefb5d0330967f80d37e160cd5bef423407c301d2944d",
+  "rationale": "Native definition and logical definition establish a caryopsis fruit/kernel. The named whole winter wheat plant parent contradicts that identity; retain the kernel parent and in_taxon source-plant restrictions without replacement or identity assertion.",
+  "rejected_parent": "FOODON:00005088",
+  "root": "FOODON:00005106",
+  "source_incidence": [
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00003424",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005106"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005088",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005106"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005105",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:in_taxon",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "RO:0002162",
+        "subject": "FOODON:00005106"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005106",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005107"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005107",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005108"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00004348",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:has_attribute",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "RO:0000086",
+        "subject": "FOODON:00005108"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005107",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005109"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005106",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005119"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005119",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005120"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00004348",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:has_attribute",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "RO:0000086",
+        "subject": "FOODON:00005120"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005119",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005121"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005106",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005122"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005122",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005123"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00004348",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:has_attribute",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "RO:0000086",
+        "subject": "FOODON:00005123"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005122",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005124"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005106",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005125"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005125",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005126"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00004348",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:has_attribute",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "RO:0000086",
+        "subject": "FOODON:00005126"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005125",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005127"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005106",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005128"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005128",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005129"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00004348",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:has_attribute",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "RO:0000086",
+        "subject": "FOODON:00005129"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005128",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005130"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005106",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005131"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005131",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005132"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00004348",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:has_attribute",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "RO:0000086",
+        "subject": "FOODON:00005132"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005131",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005133"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005106",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005134"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005134",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005135"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00004348",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:has_attribute",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "RO:0000086",
+        "subject": "FOODON:00005135"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    },
+    {
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "FOODON:00005134",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:foodon",
+        "publications": "",
+        "relation": "rdfs:subClassOf",
+        "subject": "FOODON:00005136"
+      },
+      "source": "transformed/ontologies/foodon_edges.tsv"
+    }
+  ],
+  "source_plant": "FOODON:00005105",
+  "version": 1
+}

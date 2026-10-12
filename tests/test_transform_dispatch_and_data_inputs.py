@@ -445,7 +445,113 @@ class BatchIsolationTest(TestCase):
         self.assertEqual(list(excinfo.value.failed), ["bad"])
         self.assertEqual(excinfo.value.skipped, {})
         lines = [" ".join(map(str, call.args)) for call in printed.call_args_list]
-        self.assertIn("[transform] uses_opt: skipped — optional upstream opt has no input", lines)
+        self.assertIn("[transform] uses_opt: skipped — needs opt; optional opt has no input", lines)
+
+    def _marker(self, out, source):
+        """Plant an earlier run's success marker for ``source`` under ``out``."""
+        from kg_microbe.utils.transform_fingerprint import FINGERPRINT_FILE
+
+        marker = out / source / FINGERPRINT_FILE
+        marker.parent.mkdir(parents=True, exist_ok=True)
+        marker.write_text("{}", encoding="utf-8")
+        return marker
+
+    def test_an_explicit_request_without_input_withdraws_the_earlier_marker(self):
+        """
+        `-s bakta` used to leave the old marker while failing preflight.
+
+        On master the run removed it before failing, so `merge_bakta.yaml`
+        refused the stale output; the preflight failure must keep that.
+        """
+        out = self.base / "out"
+        marker = self._marker(out, "opt")
+        with mock.patch.dict(DATA_SOURCES, {"opt": self._optional_without_input("opt")}, clear=True):
+            with pytest.raises(FileNotFoundError):
+                transform(None, out, sources=["opt"])
+        self.assertFalse(marker.exists())
+
+    def test_an_unreadable_optional_input_runs_the_source_in_isolation(self):
+        """An input check that cannot list the raw directory must not stop the whole batch at preflight."""
+
+        def unreadable(cls, input_dir=None):
+            """Fail the way an unreadable data/raw/bakta does."""
+            raise PermissionError("data/raw/bakta")
+
+        fake = _fake_source("opt", self.log, self.base)
+        fake.missing_optional_input = classmethod(unreadable)
+        registry = {"opt": fake, "b": _fake_source("b", self.log, self.base)}
+        with mock.patch.dict(DATA_SOURCES, registry, clear=True):
+            transform(None, None, sources=None)
+        self.assertEqual(self.log, ["opt", "b"])
+
+    def test_a_marker_that_cannot_be_withdrawn_fails_only_that_source(self):
+        """An unwritable output directory used to abort the batch with a bare traceback."""
+        registry = {"opt": self._optional_without_input("opt"), "b": _fake_source("b", self.log, self.base)}
+        with (
+            mock.patch.dict(DATA_SOURCES, registry, clear=True),
+            mock.patch("kg_microbe.transform._withdraw_success_claim", side_effect=PermissionError("read-only")),
+        ):
+            with pytest.raises(TransformBatchError) as excinfo:
+                transform(None, None, sources=None)
+        self.assertEqual(list(excinfo.value.failed), ["opt"])
+        self.assertEqual(self.log, ["b"])
+
+    def test_a_dependent_listed_before_its_optional_upstream_is_skipped_and_not_held_to_its_inputs(self):
+        """The skip set is computed before preflight, so registry order and DATA_INPUTS cannot defeat it."""
+        dep = _fake_source("dep", self.log, self.base, inputs=("opt",))
+        dep.DATA_INPUTS = ("mappings/this-file-does-not-exist.tsv",)
+        registry = {"dep": dep, "opt": self._optional_without_input("opt"), "b": _fake_source("b", self.log, self.base)}
+        with mock.patch.dict(DATA_SOURCES, registry, clear=True):
+            transform(None, None, sources=None)
+        self.assertEqual(self.log, ["b"])
+
+    def test_a_chain_names_the_optional_root(self):
+        """dep2 is skipped because opt has no input; dep1 is neither optional nor missing input."""
+        registry = {
+            "opt": self._optional_without_input("opt"),
+            "dep1": _fake_source("dep1", self.log, self.base, inputs=("opt",)),
+            "dep2": _fake_source("dep2", self.log, self.base, inputs=("dep1",)),
+        }
+        with mock.patch.dict(DATA_SOURCES, registry, clear=True), mock.patch("builtins.print") as printed:
+            transform(None, None, sources=None)
+        lines = [" ".join(map(str, call.args)) for call in printed.call_args_list]
+        self.assertIn("[transform] dep2: skipped — needs dep1; optional opt has no input", lines)
+        self.assertEqual(self.log, [])
+
+    def test_mixed_upstreams_report_only_the_real_failure(self):
+        """A dependent of both an optional skip and a failure is not built, and only the failure is reported."""
+        registry = {
+            "opt": self._optional_without_input("opt"),
+            "bad": _fake_source("bad", self.log, self.base, raises=RuntimeError("boom")),
+            "dep": _fake_source("dep", self.log, self.base, inputs=("opt", "bad")),
+        }
+        with mock.patch.dict(DATA_SOURCES, registry, clear=True):
+            with pytest.raises(TransformBatchError) as excinfo:
+                transform(None, None, sources=None)
+        self.assertEqual(list(excinfo.value.failed), ["bad"])
+        self.assertEqual(excinfo.value.skipped, {})
+        self.assertNotIn("dep", self.log)
+
+    def test_dependents_markers_are_withdrawn_too(self):
+        """A dependent skipped for want of its optional upstream has no current output either."""
+        out = self.base / "out"
+        markers = [self._marker(out, "opt"), self._marker(out, "dep")]
+        registry = {
+            "opt": self._optional_without_input("opt"),
+            "dep": _fake_source("dep", self.log, self.base, inputs=("opt",)),
+        }
+        with mock.patch.dict(DATA_SOURCES, registry, clear=True):
+            transform(None, out, sources=None)
+        self.assertEqual([m.exists() for m in markers], [False, False])
+
+    def test_the_default_output_directory_is_used_without_an_explicit_one(self):
+        """With no output directory given, the marker is found where the transform writes by default."""
+        fake = self._optional_without_input("opt")
+        fake.DEFAULT_OUTPUT_DIR = self.base / "defaults"
+        marker = self._marker(fake.DEFAULT_OUTPUT_DIR, "opt")
+        with mock.patch.dict(DATA_SOURCES, {"opt": fake}, clear=True):
+            transform(None, None, sources=None)
+        self.assertFalse(marker.exists())
 
     def test_a_skip_withdraws_an_earlier_success_marker(self):
         """

@@ -127,6 +127,9 @@ def test_compressed_merge_provenance_names_a_surviving_artifact(tmp_path):
         "tsv": {"format": "tsv", "filename": "merged-kg", "compression": "tar.gz"}
     }
     settings["merged_graph"]["operations"][0]["args"]["filename"] = str(stats)
+    settings["merged_graph"]["operations"][0]["args"]["graph_name"] = "fixture"
+    for source in settings["merged_graph"]["source"].values():
+        source["input"]["format"] = "tsv"
     config.write_text(yaml.safe_dump(settings), encoding="utf-8")
 
     _cleanup_merged_outputs(str(config))

@@ -73,48 +73,33 @@ def _run(nodes=None, edges=None):
     return node_rows, edge_rows
 
 
-class HouseConventionTest(TestCase):
-    """One graph, one way of saying "this named entity sits under this taxon"."""
+class UnverifiedReferentTest(TestCase):
+    """A plausible strain-like label is not independent native strain evidence."""
 
     def setUp(self):
         """Run the fixture once."""
         self.nodes, self.edges = _run()
 
-    def test_the_taxon_link_is_subclass_of_not_in_taxon(self):
-        """
-        GOLD was the lone dialect: 531,324 `in_taxon` against 1,177,321 `subclass_of`.
-
-        NCBITaxon's own hierarchy (925,219), bacdive's strains (251,916) and
-        metatraits (186) all use `subclass_of`. A query walking `subclass_of`
-        down from a species found bacdive's strains and silently missed every
-        GOLD organism — the concrete cost of the split, and the reason this is
-        a correctness fix rather than a cosmetic one.
-        """
+    def test_the_taxon_link_is_related_to_without_class_inheritance(self):
+        """The source taxonomy field cannot establish universal taxon-class inheritance."""
         taxon_edges = [e for e in self.edges if e["object"].startswith("NCBITaxon:")]
         self.assertTrue(taxon_edges)
-        self.assertEqual({e["predicate"] for e in taxon_edges}, {"biolink:subclass_of"})
-        self.assertEqual({e["relation"] for e in taxon_edges}, {"rdfs:subClassOf"})
+        self.assertEqual({e["predicate"] for e in taxon_edges}, {"biolink:related_to"})
+        self.assertEqual({e["relation"] for e in taxon_edges}, {"gold:organism_v2.ncbi_taxonomy_id"})
 
     def test_no_in_taxon_edge_survives(self):
         """The upstream predicate must not leak through any path."""
         self.assertEqual([e for e in self.edges if e["predicate"] == "biolink:in_taxon"], [])
 
     def test_organism_nodes_are_retyped_to_match(self):
-        """
-        The category has to move with the predicate.
-
-        `biolink:IndividualOrganism` is the honest type for an isolate read on
-        its own, but an individual cannot be the subject of `subclass_of`
-        without inventing a fourth dialect. bacdive types its 251,404 strains
-        `biolink:OrganismTaxon` for the same reason.
-        """
+        """A strain-like name is not independently verified strain evidence."""
         strain = next(n for n in self.nodes if n["id"] == "gold:strain")
-        self.assertEqual(strain["category"], "biolink:OrganismTaxon")
+        self.assertEqual(strain["category"], "biolink:NamedThing")
         self.assertNotIn("biolink:IndividualOrganism", {n["category"] for n in self.nodes})
 
 
 class OrganismFoldTest(TestCase):
-    """An organism node has to earn its place by carrying a name the taxon lacks."""
+    """Retain source records and observations despite historical lexical equality."""
 
     def setUp(self):
         """Run the fixture once."""
@@ -122,44 +107,25 @@ class OrganismFoldTest(TestCase):
         self.ids = {n["id"] for n in self.nodes}
 
     def test_an_organism_naming_a_strain_keeps_its_node(self):
-        """
-        88.8% of the real payload is this case, and it is the layer's whole value.
-
-        "Methanococcoides sp. FTZ1" under the genus `NCBITaxon:2225` is
-        strain-level identity the taxon cannot carry.
-        """
+        """A differing literal source name remains without asserting strain identity."""
         self.assertIn("gold:strain", self.ids)
 
-    def test_an_organism_named_as_its_taxon_folds_into_it(self):
-        """
-        11.2% of the payload is a second identifier for a thing already present.
+    def test_an_organism_named_as_its_taxon_keeps_its_source_id(self):
+        """Equal labels do not establish source referent identity."""
+        self.assertIn("gold:same", self.ids)
 
-        It contributes an id and an edge and nothing a query can use.
-        """
-        self.assertNotIn("gold:same", self.ids)
-
-    def test_the_folded_organism_donates_its_environment_to_the_taxon(self):
-        """
-        Folding must move the evidence, not discard it.
-
-        This is the difference between the fold and a plain drop: GOLD observed
-        that organism in soil, and after the fold the taxon says so.
-        """
+    def test_original_source_referent_owns_its_environment(self):
+        """The record's native observation does not become a general taxon-level statement."""
         located = [e for e in self.edges if e["predicate"] == "biolink:located_in"]
-        self.assertIn(("NCBITaxon:2225", "gold.ecosystem:soil"), {(e["subject"], e["object"]) for e in located})
+        self.assertIn(("gold:same", "gold.ecosystem:soil"), {(e["subject"], e["object"]) for e in located})
+        self.assertNotIn(("NCBITaxon:2225", "gold.ecosystem:soil"), {(e["subject"], e["object"]) for e in located})
 
     def test_folding_creates_no_self_referential_edge(self):
-        """`X subclass_of X` is what the organism's own taxon edge becomes."""
+        """Keeping source identifiers distinct does not create identity self-edges."""
         self.assertEqual([e for e in self.edges if e["subject"] == e["object"]], [])
 
     def test_re_pointing_does_not_duplicate_a_triple(self):
-        """
-        Two isolates of one taxon in one environment collapse to one statement.
-
-        The upstream export carries no duplicate triples at all, so any
-        duplicate in the output would be ours — on the real payload the fold
-        creates 604 and this removes them.
-        """
+        """Distinct source IDs conserve observations without producing duplicate triples."""
         triples = [(e["subject"], e["predicate"], e["object"]) for e in self.edges]
         self.assertEqual(len(triples), len(set(triples)))
 
@@ -173,37 +139,22 @@ class OrganismFoldTest(TestCase):
         """
         self.assertIn("gold:nameless", self.ids)
 
-    def test_a_taxon_left_with_nothing_to_say_stops_being_emitted(self):
-        """
-        Second-order effect, and a desirable one.
-
-        `NCBITaxon:999`'s only tie to GOLD was a redundant organism carrying no
-        environment. Once folded, GOLD asserts nothing about that taxon, so
-        emitting a row for it duplicates what the ontologies transform already
-        supplies. On the real payload this is 25,288 rows, none of which carried
-        an xref, description or synonym, and all of which are in the trimmed
-        NCBITaxon extract — so nothing is lost.
-        """
-        self.assertNotIn("NCBITaxon:999", self.ids)
+    def test_restored_source_association_keeps_its_native_taxon_endpoint(self):
+        """A record with no habitat still carries a native taxon association requiring closure."""
+        self.assertIn("NCBITaxon:999", self.ids)
         self.assertIn("NCBITaxon:2225", self.ids)
 
-    def test_the_fold_is_decided_on_the_name_not_the_rank(self):
-        """
-        An organism named for its genus is as redundant as one named for a species.
-
-        Keying on rank or id shape instead would keep `gold:same` — named
-        exactly "Methanococcoides", a genus — while the name is the only thing
-        the organism layer contributes.
-        """
-        self.assertNotIn("gold:same", self.ids)
+    def test_neither_name_nor_rank_proves_identity(self):
+        """A genus-like source label is still not evidence that the source ID is the taxon."""
+        self.assertIn("gold:same", self.ids)
         self.assertIn("gold:strain", self.ids)
 
-    def test_case_and_whitespace_alone_do_not_block_the_fold(self):
-        """A label differing only in spacing names the same thing."""
+    def test_case_and_whitespace_do_not_authorize_a_fold(self):
+        """Lexical normalization cannot establish semantic identity."""
         nodes = [r[:] for r in NODES]
         nodes[2] = ["gold:same", "biolink:IndividualOrganism", "  methanococcoides "]
         ids = {n["id"] for n in _run(nodes=nodes)[0]}
-        self.assertNotIn("gold:same", ids)
+        self.assertIn("gold:same", ids)
 
 
 class MultiTaxonGuardTest(TestCase):

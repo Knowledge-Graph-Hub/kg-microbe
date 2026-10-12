@@ -1,0 +1,81 @@
+{
+  "authorities": {
+    "envo.json": {
+      "evidence_sha256": "621468efa1f7e0e26a86c0549dbdab7b30962377b0fdd6eeccd1529cdc693048",
+      "ontology_id": "http://purl.obolibrary.org/obo/envo.json",
+      "selected_ids": [
+        "BFO:0000003",
+        "ENVO:01000906",
+        "ENVO:01001254",
+        "ENVO:01001255",
+        "ENVO:01001436"
+      ],
+      "sha256": "c3c288b9d95cf1e62b0146bcb2a365bdbd294b0072bbf2efab8819e5db8fff2b",
+      "version": "http://purl.obolibrary.org/obo/envo/releases/2026-06-26/envo.json"
+    },
+    "po.owl": {
+      "evidence_sha256": "884a50fb5dcb9837292d7b5b390df580cf35b6e138b61a66ac8a59e478fac584",
+      "ontology_id": "http://purl.obolibrary.org/obo/po.owl",
+      "selected_ids": [
+        "PO:0000003",
+        "PO:0007033",
+        "PO:0009011",
+        "PO:0009012"
+      ],
+      "sha256": "a066a2091b96dc6c960683a67936ccda4926afd96e4edb22df9e30feec16e9e0",
+      "version": "http://purl.obolibrary.org/obo/po/releases/2026-01-09/po.owl"
+    }
+  },
+  "records": {
+    "ENVO:01001254": {
+      "authority": "envo.json",
+      "category": "biolink:EnvironmentalProcess",
+      "disposition": "finite_definition_backed_environmental_process",
+      "named_path": [
+        "ENVO:01001254",
+        "ENVO:01000906",
+        "ENVO:01001436",
+        "BFO:0000003"
+      ],
+      "native_definition": "An aquaculture process during which humans rear animals.",
+      "native_label": "animal aquaculture process",
+      "rationale": "Reviewed aquaculture in bodies of water and planned use of ecosystem resources supports EnvironmentalProcess by definition; no asserted ENVO:02500000 ancestry is claimed."
+    },
+    "ENVO:01001255": {
+      "authority": "envo.json",
+      "category": "biolink:EnvironmentalProcess",
+      "disposition": "finite_definition_backed_environmental_process",
+      "named_path": [
+        "ENVO:01001255",
+        "ENVO:01000906",
+        "ENVO:01001436",
+        "BFO:0000003"
+      ],
+      "native_definition": "An aquaculture process during which humans rear plants.",
+      "native_label": "plant aquaculture process",
+      "rationale": "Reviewed aquaculture in bodies of water and planned use of ecosystem resources supports EnvironmentalProcess by definition; no asserted ENVO:02500000 ancestry is claimed."
+    },
+    "PO:0007033": {
+      "authority": "po.owl",
+      "category": "biolink:LifeStage",
+      "disposition": "finite_definition_backed_whole_organism_stage",
+      "named_path": [
+        "PO:0007033",
+        "PO:0009012",
+        "BFO:0000015"
+      ],
+      "native_definition": "A plant structure development stage (PO:0009012) that has as primary participant a whole plant (PO:0000003).",
+      "native_label": "whole plant development stage",
+      "rationale": "Primary PO definition and existential restriction specify a development stage of a whole plant. Do not generalize to stages of plant parts or imply complete BFO declaration ancestry in this file.",
+      "required_restriction": [
+        "RO:0000057",
+        "PO:0000003"
+      ]
+    }
+  },
+  "reviewed_model": {
+    "sha256": "b6a1320772a92d69e84b8c700cd6386dffe45ed635c8197d61e22b6a6fa3b35e",
+    "version": "4.4.2"
+  },
+  "version": 1
+}

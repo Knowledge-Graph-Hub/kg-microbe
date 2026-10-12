@@ -1,0 +1,107 @@
+{
+  "native_input": {
+    "bytes": 915078003,
+    "encoding": "plain UTF-8 JSONL despite .gz suffix",
+    "path": "data/raw/ncbi_species_summary.jsonl.gz",
+    "sha256": "1881360fb0ae1f28bdbd7d307ed0f7815044b0aa8ad0d769e0ee68f64d431ce7",
+    "stat_unchanged": true
+  },
+  "native_records_total": 54654,
+  "historical_scope": {
+    "inferred_assertions": 195,
+    "rdfs_subclass_assertions": 0
+  },
+  "fixture": {
+    "path": "native_records.jsonl",
+    "format": "Exact complete native JSONL records, concatenated in original source order; no summary pruning or field rewriting"
+  },
+  "records": [
+    {
+      "fixture_line": 1,
+      "lexical_derivation": "genus_strain",
+      "native_line_bytes": 220,
+      "native_line_sha256": "6a74b3b01b2e6bae2d73b108973ab153e770359639515f43f8a4620a1a5609f2",
+      "native_record_keys": [
+        "summaries",
+        "tax_name"
+      ],
+      "physical_line": 4676,
+      "summary_count": 1,
+      "tax_name": "Arthrobacter sp. VKM Ac-2550",
+      "historical_assertion": {
+        "agent_type": "automated_agent",
+        "has_percentage": "",
+        "knowledge_level": "observation",
+        "object": "NCBITaxon:1663",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:metatraits",
+        "publications": "",
+        "relation": "kgmicrobe:inferred_subClassOf",
+        "subject": "kgmicrobe.strain:Arthrobacter_sp_VKM_Ac-2550",
+        "unit": "",
+        "value": ""
+      },
+      "historical_edge_physical_line": 369697
+    },
+    {
+      "fixture_line": 2,
+      "lexical_derivation": "binomial_strain",
+      "native_line_bytes": 593,
+      "native_line_sha256": "7e9a8a371018cb719826257cb660b3dfc167cb5e6d5bdd002f9badf39fcbe9dd",
+      "native_record_keys": [
+        "summaries",
+        "tax_name"
+      ],
+      "physical_line": 9556,
+      "summary_count": 3,
+      "tax_name": "Candidatus Altiarchaeales archaeon WOR_SM1_79",
+      "historical_assertion": {
+        "agent_type": "automated_agent",
+        "has_percentage": "",
+        "knowledge_level": "observation",
+        "object": "kgmicrobe.species:Altiarchaeales_archaeon",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:metatraits",
+        "publications": "",
+        "relation": "kgmicrobe:inferred_subClassOf",
+        "subject": "kgmicrobe.strain:Altiarchaeales_archaeon_WOR_SM1_79",
+        "unit": "",
+        "value": ""
+      },
+      "historical_edge_physical_line": 739086
+    },
+    {
+      "fixture_line": 3,
+      "lexical_derivation": "binomial_species",
+      "native_line_bytes": 212,
+      "native_line_sha256": "9e38fbd0dc49b512e67a6f716cbaf30270ec1daa3c260a9b75b4180d41c6e6ed",
+      "native_record_keys": [
+        "summaries",
+        "tax_name"
+      ],
+      "physical_line": 17218,
+      "summary_count": 1,
+      "tax_name": "Dokdonia diaphoros",
+      "historical_assertion": {
+        "agent_type": "automated_agent",
+        "has_percentage": "",
+        "knowledge_level": "observation",
+        "object": "NCBITaxon:326319",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:metatraits",
+        "publications": "",
+        "relation": "kgmicrobe:inferred_subClassOf",
+        "subject": "kgmicrobe.species:Dokdonia_diaphoros",
+        "unit": "",
+        "value": ""
+      },
+      "historical_edge_physical_line": 1374059
+    }
+  ]
+}

@@ -1,0 +1,665 @@
+{
+  "complete_ecosystem_parent_assertions": [
+    {
+      "physical_end_line": 949232,
+      "row": {
+        "id": "gold.ecosystem:4212-subclass_of-gold.ecosystem:3810",
+        "object": "gold.ecosystem:3810",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:ecosystem_classification_2.parent",
+        "subject": "gold.ecosystem:4212"
+      }
+    },
+    {
+      "physical_end_line": 951079,
+      "row": {
+        "id": "gold.ecosystem:6116-subclass_of-gold.ecosystem:6114",
+        "object": "gold.ecosystem:6114",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:ecosystem_classification_2.parent",
+        "subject": "gold.ecosystem:6116"
+      }
+    },
+    {
+      "physical_end_line": 950681,
+      "row": {
+        "id": "gold.ecosystem:3810-subclass_of-gold.ecosystem:3496",
+        "object": "gold.ecosystem:3496",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:ecosystem_classification_2.parent",
+        "subject": "gold.ecosystem:3810"
+      }
+    },
+    {
+      "physical_end_line": 951220,
+      "row": {
+        "id": "gold.ecosystem:6114-subclass_of-gold.ecosystem:6113",
+        "object": "gold.ecosystem:6113",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:ecosystem_classification_2.parent",
+        "subject": "gold.ecosystem:6114"
+      }
+    },
+    {
+      "physical_end_line": 950556,
+      "row": {
+        "id": "gold.ecosystem:3496-subclass_of-gold.ecosystem:2882",
+        "object": "gold.ecosystem:2882",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:ecosystem_classification_2.parent",
+        "subject": "gold.ecosystem:3496"
+      }
+    },
+    {
+      "physical_end_line": 951077,
+      "row": {
+        "id": "gold.ecosystem:6113-subclass_of-gold.ecosystem:3381",
+        "object": "gold.ecosystem:3381",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:ecosystem_classification_2.parent",
+        "subject": "gold.ecosystem:6113"
+      }
+    },
+    {
+      "physical_end_line": 949152,
+      "row": {
+        "id": "gold.ecosystem:2882-subclass_of-gold.ecosystem:3",
+        "object": "gold.ecosystem:3",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:ecosystem_classification_2.parent",
+        "subject": "gold.ecosystem:2882"
+      }
+    },
+    {
+      "physical_end_line": 949621,
+      "row": {
+        "id": "gold.ecosystem:3-subclass_of-gold.ecosystem:1",
+        "object": "gold.ecosystem:1",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:ecosystem_classification_2.parent",
+        "subject": "gold.ecosystem:3"
+      }
+    },
+    {
+      "physical_end_line": 950758,
+      "row": {
+        "id": "gold.ecosystem:3381-subclass_of-gold.ecosystem:4",
+        "object": "gold.ecosystem:4",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:ecosystem_classification_2.parent",
+        "subject": "gold.ecosystem:3381"
+      }
+    },
+    {
+      "physical_end_line": 949622,
+      "row": {
+        "id": "gold.ecosystem:4-subclass_of-gold.ecosystem:1",
+        "object": "gold.ecosystem:1",
+        "predicate": "biolink:subclass_of",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:ecosystem_classification_2.parent",
+        "subject": "gold.ecosystem:4"
+      }
+    }
+  ],
+  "edge_header": [
+    "id",
+    "subject",
+    "predicate",
+    "object",
+    "relation",
+    "primary_knowledge_source"
+  ],
+  "inputs": {
+    "native_edges": {
+      "path": "raw/gold/GOLD_edges.tsv",
+      "sha256": "54982c25de9d2c820eeebc1452aeac0b034595921d04d55b810bf1d2b1e127e0"
+    },
+    "native_nodes": {
+      "path": "raw/gold/GOLD_nodes.tsv",
+      "sha256": "c13c21bdd04619c75ce16e63b05e51577b0cefec5b61765d383313f654ab3fae"
+    },
+    "selected_ncbi": {
+      "path": "transformed/ontologies/ncbitaxon_nodes.tsv",
+      "sha256": "e847c7d291320ed80785976e4a7eadbfadde5456245bc77a88bf291fe87eb3fb"
+    },
+    "taxdump": {
+      "path": "raw/taxdump.tar.gz",
+      "sha256": "2e9675bdb2c353aae185316319c23c06955eec1bbf9efed4e39875661ee8d2d1"
+    }
+  },
+  "native_declarations": {
+    "NCBITaxon:2777964": {
+      "physical_end_line": 1043384,
+      "row": {
+        "category": "biolink:OrganismTaxon",
+        "id": "NCBITaxon:2777964",
+        "name": "Phormidium sp. LEGE 05292",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    },
+    "NCBITaxon:282217": {
+      "physical_end_line": 1046788,
+      "row": {
+        "category": "biolink:OrganismTaxon",
+        "id": "NCBITaxon:282217",
+        "name": "Variovorax sp. SRS16",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    },
+    "NCBITaxon:5011": {
+      "physical_end_line": 1067428,
+      "row": {
+        "category": "biolink:OrganismTaxon",
+        "id": "NCBITaxon:5011",
+        "name": "Taphrina deformans",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    },
+    "NCBITaxon:562": {
+      "physical_end_line": 1069829,
+      "row": {
+        "category": "biolink:OrganismTaxon",
+        "id": "NCBITaxon:562",
+        "name": "Escherichia coli",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    },
+    "gold.ecosystem:1": {
+      "physical_end_line": 1083321,
+      "row": {
+        "category": "biolink:EnvironmentalFeature",
+        "id": "gold.ecosystem:1",
+        "name": "root",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    },
+    "gold.ecosystem:2882": {
+      "physical_end_line": 1082848,
+      "row": {
+        "category": "biolink:EnvironmentalFeature",
+        "id": "gold.ecosystem:2882",
+        "name": "Terrestrial",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    },
+    "gold.ecosystem:3": {
+      "physical_end_line": 1083323,
+      "row": {
+        "category": "biolink:EnvironmentalFeature",
+        "id": "gold.ecosystem:3",
+        "name": "Environmental",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    },
+    "gold.ecosystem:3381": {
+      "physical_end_line": 1084460,
+      "row": {
+        "category": "biolink:EnvironmentalFeature",
+        "id": "gold.ecosystem:3381",
+        "name": "Mammals: Human",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    },
+    "gold.ecosystem:3496": {
+      "physical_end_line": 1084258,
+      "row": {
+        "category": "biolink:EnvironmentalFeature",
+        "id": "gold.ecosystem:3496",
+        "name": "Soil",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    },
+    "gold.ecosystem:3810": {
+      "physical_end_line": 1084383,
+      "row": {
+        "category": "biolink:EnvironmentalFeature",
+        "id": "gold.ecosystem:3810",
+        "name": "Unclassified",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    },
+    "gold.ecosystem:4": {
+      "physical_end_line": 1083324,
+      "row": {
+        "category": "biolink:EnvironmentalFeature",
+        "id": "gold.ecosystem:4",
+        "name": "Host-associated",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    },
+    "gold.ecosystem:4212": {
+      "physical_end_line": 1082933,
+      "row": {
+        "category": "biolink:EnvironmentalFeature",
+        "id": "gold.ecosystem:4212",
+        "name": "Unclassified",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    },
+    "gold.ecosystem:6113": {
+      "physical_end_line": 1084779,
+      "row": {
+        "category": "biolink:EnvironmentalFeature",
+        "id": "gold.ecosystem:6113",
+        "name": "Integumentary system",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    },
+    "gold.ecosystem:6114": {
+      "physical_end_line": 1084922,
+      "row": {
+        "category": "biolink:EnvironmentalFeature",
+        "id": "gold.ecosystem:6114",
+        "name": "Skin",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    },
+    "gold.ecosystem:6116": {
+      "physical_end_line": 1084781,
+      "row": {
+        "category": "biolink:EnvironmentalFeature",
+        "id": "gold.ecosystem:6116",
+        "name": "Unclassified",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    },
+    "gold:Go0000022": {
+      "physical_end_line": 870143,
+      "row": {
+        "category": "biolink:IndividualOrganism",
+        "id": "gold:Go0000022",
+        "name": "Taphrina deformans",
+        "provided_by": "infores:gold",
+        "xref": "NCBITaxon:5011"
+      }
+    },
+    "gold:Go0001810": {
+      "physical_end_line": 750745,
+      "row": {
+        "category": "biolink:IndividualOrganism",
+        "id": "gold:Go0001810",
+        "name": "Escherichia coli",
+        "provided_by": "infores:gold",
+        "xref": "NCBITaxon:562"
+      }
+    },
+    "gold:Go0002137": {
+      "physical_end_line": 739896,
+      "row": {
+        "category": "biolink:IndividualOrganism",
+        "id": "gold:Go0002137",
+        "name": "Escherichia coli",
+        "provided_by": "infores:gold",
+        "xref": "NCBITaxon:562"
+      }
+    },
+    "gold:Go0460627": {
+      "physical_end_line": 570588,
+      "row": {
+        "category": "biolink:IndividualOrganism",
+        "id": "gold:Go0460627",
+        "name": "Variovorax sp. SRS16",
+        "provided_by": "infores:gold",
+        "xref": "NCBITaxon:282217"
+      }
+    },
+    "gold:Go0460628": {
+      "physical_end_line": 353419,
+      "row": {
+        "category": "biolink:IndividualOrganism",
+        "id": "gold:Go0460628",
+        "name": "Variovorax sp. SRS16",
+        "provided_by": "infores:gold",
+        "xref": "NCBITaxon:282217"
+      }
+    },
+    "gold:Go0568577": {
+      "physical_end_line": 953287,
+      "row": {
+        "category": "biolink:IndividualOrganism",
+        "id": "gold:Go0568577",
+        "name": "Phormidium sp. LEGE 05292",
+        "provided_by": "infores:gold",
+        "xref": "NCBITaxon:2777964"
+      }
+    },
+    "gold:Gs0016050": {
+      "physical_end_line": 35980,
+      "row": {
+        "category": "biolink:Study",
+        "id": "gold:Gs0016050",
+        "name": "Human Microbiome Project (HMP) Reference Genomes",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    },
+    "gold:Gs0033865": {
+      "physical_end_line": 8466,
+      "row": {
+        "category": "biolink:Study",
+        "id": "gold:Gs0033865",
+        "name": "Taphrina deformans",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    },
+    "gold:Gs0135883": {
+      "physical_end_line": 49952,
+      "row": {
+        "category": "biolink:Study",
+        "id": "gold:Gs0135883",
+        "name": "Linuron-degrading Variovorax spp.",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    },
+    "gold:Gs0151689": {
+      "physical_end_line": 5892,
+      "row": {
+        "category": "biolink:Study",
+        "id": "gold:Gs0151689",
+        "name": "LEGE strains genome sequencing project",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    }
+  },
+  "native_incident_assertions": [
+    {
+      "physical_end_line": 2623,
+      "row": {
+        "id": "gold:Go0460628-in_taxon-NCBITaxon:282217",
+        "object": "NCBITaxon:282217",
+        "predicate": "biolink:in_taxon",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:organism_v2.ncbi_taxonomy_id",
+        "subject": "gold:Go0460628"
+      }
+    },
+    {
+      "physical_end_line": 2624,
+      "row": {
+        "id": "gold:Go0460628-occurs_in-gold.ecosystem:4212",
+        "object": "gold.ecosystem:4212",
+        "predicate": "biolink:occurs_in",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:organism_v2.ecosystem_path_id",
+        "subject": "gold:Go0460628"
+      }
+    },
+    {
+      "physical_end_line": 372135,
+      "row": {
+        "id": "gold:Go0460627-in_taxon-NCBITaxon:282217",
+        "object": "NCBITaxon:282217",
+        "predicate": "biolink:in_taxon",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:organism_v2.ncbi_taxonomy_id",
+        "subject": "gold:Go0460627"
+      }
+    },
+    {
+      "physical_end_line": 372136,
+      "row": {
+        "id": "gold:Go0460627-occurs_in-gold.ecosystem:4212",
+        "object": "gold.ecosystem:4212",
+        "predicate": "biolink:occurs_in",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:organism_v2.ecosystem_path_id",
+        "subject": "gold:Go0460627"
+      }
+    },
+    {
+      "physical_end_line": 638706,
+      "row": {
+        "id": "gold:Go0002137-in_taxon-NCBITaxon:562",
+        "object": "NCBITaxon:562",
+        "predicate": "biolink:in_taxon",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:organism_v2.ncbi_taxonomy_id",
+        "subject": "gold:Go0002137"
+      }
+    },
+    {
+      "physical_end_line": 638707,
+      "row": {
+        "id": "gold:Go0002137-occurs_in-gold.ecosystem:6116",
+        "object": "gold.ecosystem:6116",
+        "predicate": "biolink:occurs_in",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:organism_v2.ecosystem_path_id",
+        "subject": "gold:Go0002137"
+      }
+    },
+    {
+      "physical_end_line": 654959,
+      "row": {
+        "id": "gold:Go0001810-in_taxon-NCBITaxon:562",
+        "object": "NCBITaxon:562",
+        "predicate": "biolink:in_taxon",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:organism_v2.ncbi_taxonomy_id",
+        "subject": "gold:Go0001810"
+      }
+    },
+    {
+      "physical_end_line": 654960,
+      "row": {
+        "id": "gold:Go0001810-occurs_in-gold.ecosystem:6116",
+        "object": "gold.ecosystem:6116",
+        "predicate": "biolink:occurs_in",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:organism_v2.ecosystem_path_id",
+        "subject": "gold:Go0001810"
+      }
+    },
+    {
+      "physical_end_line": 828971,
+      "row": {
+        "id": "gold:Go0000022-in_taxon-NCBITaxon:5011",
+        "object": "NCBITaxon:5011",
+        "predicate": "biolink:in_taxon",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:organism_v2.ncbi_taxonomy_id",
+        "subject": "gold:Go0000022"
+      }
+    },
+    {
+      "physical_end_line": 943352,
+      "row": {
+        "id": "gold:Go0568577-in_taxon-NCBITaxon:2777964",
+        "object": "NCBITaxon:2777964",
+        "predicate": "biolink:in_taxon",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:organism_v2.ncbi_taxonomy_id",
+        "subject": "gold:Go0568577"
+      }
+    },
+    {
+      "physical_end_line": 943353,
+      "row": {
+        "id": "gold:Go0568577-occurs_in-gold.ecosystem:1",
+        "object": "gold.ecosystem:1",
+        "predicate": "biolink:occurs_in",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:organism_v2.ecosystem_path_id",
+        "subject": "gold:Go0568577"
+      }
+    },
+    {
+      "physical_end_line": 1048704,
+      "row": {
+        "id": "gold:Go0001810-related_to-gold:Gs0016050",
+        "object": "gold:Gs0016050",
+        "predicate": "biolink:related_to",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:project.organism_id+master_study_id",
+        "subject": "gold:Go0001810"
+      }
+    },
+    {
+      "physical_end_line": 1167422,
+      "row": {
+        "id": "gold:Go0002137-related_to-gold:Gs0016050",
+        "object": "gold:Gs0016050",
+        "predicate": "biolink:related_to",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:project.organism_id+master_study_id",
+        "subject": "gold:Go0002137"
+      }
+    },
+    {
+      "physical_end_line": 1210576,
+      "row": {
+        "id": "gold:Go0568577-related_to-gold:Gs0151689",
+        "object": "gold:Gs0151689",
+        "predicate": "biolink:related_to",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:project.organism_id+master_study_id",
+        "subject": "gold:Go0568577"
+      }
+    },
+    {
+      "physical_end_line": 1295009,
+      "row": {
+        "id": "gold:Go0460628-related_to-gold:Gs0135883",
+        "object": "gold:Gs0135883",
+        "predicate": "biolink:related_to",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:project.organism_id+master_study_id",
+        "subject": "gold:Go0460628"
+      }
+    },
+    {
+      "physical_end_line": 1295530,
+      "row": {
+        "id": "gold:Go0000022-related_to-gold:Gs0033865",
+        "object": "gold:Gs0033865",
+        "predicate": "biolink:related_to",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:project.organism_id+master_study_id",
+        "subject": "gold:Go0000022"
+      }
+    }
+  ],
+  "native_taxdump_remaps": [
+    {
+      "literal": "2777964\t|\t767427\t|\n",
+      "member": "merged.dmp",
+      "old": "NCBITaxon:2777964",
+      "physical_line": 85412,
+      "target": "NCBITaxon:767427"
+    }
+  ],
+  "node_header": [
+    "id",
+    "category",
+    "name",
+    "provided_by",
+    "xref"
+  ],
+  "scope": "complete actual selected native statements for six fold-restoration regressions; no positive strain proof",
+  "selected_ncbi_declarations": {
+    "NCBITaxon:282217": {
+      "physical_end_line": 552447,
+      "row": {
+        "category": "biolink:OrganismTaxon",
+        "deprecated": "",
+        "description": "",
+        "id": "NCBITaxon:282217",
+        "name": "Variovorax sp. SRS16",
+        "provided_by": "ncbitaxon_removed_subset.json",
+        "same_as": "",
+        "synonym": "",
+        "xref": "GC_ID:11"
+      }
+    },
+    "NCBITaxon:5011": {
+      "physical_end_line": 777612,
+      "row": {
+        "category": "biolink:OrganismTaxon",
+        "deprecated": "",
+        "description": "",
+        "id": "NCBITaxon:5011",
+        "name": "Taphrina deformans",
+        "provided_by": "ncbitaxon_removed_subset.json",
+        "same_as": "",
+        "synonym": "Ascomyces deformans|Lalaria deformans|peach leaf curl fungus",
+        "xref": "GC_ID:1"
+      }
+    },
+    "NCBITaxon:562": {
+      "physical_end_line": 803790,
+      "row": {
+        "category": "biolink:OrganismTaxon",
+        "deprecated": "",
+        "description": "",
+        "id": "NCBITaxon:562",
+        "name": "Escherichia coli",
+        "provided_by": "ncbitaxon_removed_subset.json",
+        "same_as": "",
+        "synonym": "Bacillus coli|Bacterium coli|Bacterium coli commune|E. coli|Enterococcus coli|Escherichia/Shigella coli",
+        "xref": "GC_ID:11|PMID:10319482"
+      }
+    },
+    "NCBITaxon:767427": {
+      "physical_end_line": 873159,
+      "row": {
+        "category": "biolink:OrganismTaxon",
+        "deprecated": "",
+        "description": "",
+        "id": "NCBITaxon:767427",
+        "name": "[Phormidium] sp. LEGE 05292",
+        "provided_by": "ncbitaxon_removed_subset.json",
+        "same_as": "",
+        "synonym": "Oscillatoria sp. LEGE 05292",
+        "xref": "GC_ID:11"
+      }
+    }
+  },
+  "selected_ncbi_header": [
+    "id",
+    "category",
+    "name",
+    "description",
+    "xref",
+    "provided_by",
+    "synonym",
+    "deprecated",
+    "same_as"
+  ],
+  "selected_source_ids": [
+    "gold:Go0000022",
+    "gold:Go0001810",
+    "gold:Go0002137",
+    "gold:Go0460627",
+    "gold:Go0460628",
+    "gold:Go0568577"
+  ]
+}
+

@@ -1,0 +1,102 @@
+{
+  "finite_cohort_sha256": "782027979cacfca38d615321ae8849d094e06fe2c03b4f024e988d3bf8fecde7",
+  "inventory_sha256": "549e4742696385193a35c3edf359e90d6f6026f394fe547e00b7cacee1c818f7",
+  "go_metadata_fixture": {
+    "fixture_sha256": "7dce292e29a57f89d98cec73cda6164ab1b3ad7ab4266cde75c62d4f396b64fb",
+    "full_source_sha256": "a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a",
+    "full_source_bytes": 402669568,
+    "identifiers": 45,
+    "statements": 142,
+    "scope": "Exact selected go.db metadata rows for MONDO excerpt imports; test-only authority, not a full producer snapshot"
+  },
+  "native_files": {
+    "envo.json": {
+      "annotation_control": "http://geneontology.org/foo/applies-pattern",
+      "edges": 2,
+      "fixture_sha256": "bac6b20b3d8604d445245416ff1d5caa8fdd71095bd6b00aeb27aaf2afa831e5",
+      "full_source_bytes": 6818650,
+      "full_source_sha256": "c3c288b9d95cf1e62b0146bcb2a365bdbd294b0072bbf2efab8819e5db8fff2b",
+      "graph_id": "http://purl.obolibrary.org/obo/envo.json",
+      "nodes": 6,
+      "obsolete_control": "http://purl.obolibrary.org/obo/ENVO_00000018"
+    },
+    "mondo.json": {
+      "annotation_control": "http://protege.stanford.edu/plugins/owl/protege#defaultLanguage",
+      "edges": 188,
+      "fixture_sha256": "2a40c8554a7cfffb987b4867fcd741d07fb2bac9ae9b64bfeec55a13c967dad3",
+      "full_source_bytes": 79540107,
+      "full_source_sha256": "f3d7ab708cd17cba5477383c78026bfa7f0248fd36d52929087066527e9b3d6c",
+      "graph_id": "http://purl.obolibrary.org/obo/mondo.owl",
+      "nodes": 234,
+      "obsolete_control": null
+    },
+    "pato.json": {
+      "edges": 86,
+      "fixture_sha256": "3e721264730158077ec5046d81abeeaea366aacaede00c7444f71145d3404439",
+      "full_source_bytes": 10075199,
+      "full_source_sha256": "b129f5f5e968e4a8675bb9d6cb3a40668f1c5a2783bef81b30c86c563ce5d46d",
+      "nodes": 105
+    },
+    "ro.json": {
+      "edges": 0,
+      "fixture_sha256": "7952cc69ac2d0cf71a958a4cc21b4fda80b875ba8524ec2cfc52f3ff4c12eb38",
+      "full_source_bytes": 874317,
+      "full_source_sha256": "1ed089b1cb33d5ac9d5afee10ba98f79689af9e3b40e9940658625c09785748c",
+      "nodes": 14
+    },
+    "uberon.json": {
+      "edges": 278,
+      "fixture_sha256": "d0f8eaf20deccd8faa68f8a8a861e973fb196dd3a93767cf92abfd0847049fe8",
+      "full_source_bytes": 39224568,
+      "full_source_sha256": "87a892da0544a82f41f0a8b2b52f7ee705ec6d5ca2c102e7d439a7086d79f428",
+      "nodes": 337
+    }
+  },
+  "negative_controls": [
+    {
+      "native_assertion": {
+        "obj": "http://purl.obolibrary.org/obo/GO_0007143",
+        "pred": "http://purl.obolibrary.org/obo/RO_0000056",
+        "sub": "http://purl.obolibrary.org/obo/CL_0000023"
+      },
+      "ontology": "pato"
+    },
+    {
+      "native_assertion": {
+        "obj": "http://purl.obolibrary.org/obo/GO_0007143",
+        "pred": "http://purl.obolibrary.org/obo/RO_0000056",
+        "sub": "http://purl.obolibrary.org/obo/CL_0000023"
+      },
+      "ontology": "uberon"
+    }
+  ],
+  "note": "Verbatim native JSON records; fixture hashes identify excerpts, never whole production inputs.",
+  "ordering_extension": {
+    "plan_evidence_sha256": "7c69241bc0cf90fb500e405b0bfa8e5c681630a788228626b4cd929fe0984c58",
+    "prior292_policy_sha256": "a7780c79d0a5cf01d55f9629465fe35aa7bf43bb6576b77f1e4e41060fd7370b",
+    "prior292_records_sha256": "eb4722a3a35388fd5dc4d5308004e59a1210d7d9e834f0d0398df53d87196d8d",
+    "science_fixture_sha256": "d6a5bf58b80114861739f7f9714836d419d9b9ed96eb50a56ea61c20c9e303bb",
+    "supplier_assertions": 34,
+    "unchanged_exact_bfo": 28,
+    "unchanged_outside_go": 8
+  },
+  "supplier_extension": {
+    "envo": 2,
+    "issue": "1400",
+    "mondo": 188,
+    "prior326_policy_sha256": "a0ed9d62792f7f2479b1f2a0cb8e3f7f6f91e6f3e38e381945400535916349a3",
+    "prior326_records_sha256": "93b0ba1b3859c6a4c00a9e5f54e7dfcb45fd7ed4b1900c5f3fb4f68245a465bf",
+    "relations_sha256": "4968d7eeb0c4a579d865ab6635e29e3e30927692fcb6776a9157076a8d681d1f",
+    "scope": "full ontology producer supplier rows; canonical merge configuration excludes MONDO",
+    "supplier_assertions": 190,
+    "unchanged_records_sha256": "502164cc0c6a928f3df147a1e3e89d90924e74d3c9e872ad939b3e8e56c4d27a"
+  },
+  "temporal_extension": {
+    "developmental_replacement": 10,
+    "direction_preserved": true,
+    "evidence_sha256": "124220a181d6c0b232586bf3cca257ede49707b8d2b9992793f6f102976a428d",
+    "existence_boundary": 98,
+    "prior184_policy_sha256": "7d64ae9e1d053c2e86f05602f902e03d4b6280315d7d3e1b6d375f78ebaee1c6",
+    "supplier_assertions": 108
+  }
+}

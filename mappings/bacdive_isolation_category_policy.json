@@ -1,0 +1,306 @@
+{
+  "version": 1,
+  "disposition": "retain_record_scoped_source_category_attribute",
+  "reason": "BacDive Cat1 values are source classification headings, not external ontology identities. PRIDE's host-body terms belong to human anatomical/gut metadata contexts, whereas the BacDive categories also include plant and nonhuman animal observations. Preserve the literal category observation without asserting a physical location or a replacement ontology identity.",
+  "native_authority": {
+    "url": "https://raw.githubusercontent.com/PRIDE-Archive/pride-ontology/342b05f38fad5d9b680ef7af80ebf3ff5fa15ace/pride_cv.obo",
+    "commit": "342b05f38fad5d9b680ef7af80ebf3ff5fa15ace",
+    "data_version": "releases/2026-09-22",
+    "sha256": "11a3d2ad9bf36221b3329b4d9abd633f1f4dcd9be79d1a800ab45e0d3bff4001",
+    "bytes": 224700,
+    "license": "CC-BY-4.0",
+    "selection": "Complete native Term stanzas for both rejected mapping targets and their two direct parents; no closure or cross-release merge is claimed.",
+    "stanzas": {
+      "NCIT:C12219": "[Term]\nid: NCIT:C12219\nname: Anatomic Structure, System, or Substance\ndef: \"A human biological structure, fluid or other substance; excludes single molecular entities.\" [] {http://purl.obolibrary.org/obo/NCIT_P378=\"NCI\"}\n\n",
+      "PRIDE:0000674": "[Term]\nid: PRIDE:0000674\nname: human gut\ndef: \"A collection of terms appropriate when collecting samples and sequencing samples obtained from a person to examine their gut-associated microbiome.\" [PRIDE:PRIDE]\nis_a: PRIDE:0000904 ! metaproteomics sample\nis_a: UBERON:0005409 ! gastrointestinal system\n\n",
+      "PRIDE:0000685": "[Term]\nid: PRIDE:0000685\nname: host body site\ndef: \"Name of body site where the sample was obtained from, such as a specific organ or tissue (tongue, lung etc.).  MIXS:0000867\" [PRIDE:PRIDE]\nis_a: NCIT:C12219 ! Anatomic Structure, System, or Substance\nis_a: PRIDE:0000674 ! Human gut\n\n",
+      "PRIDE:0000686": "[Term]\nid: PRIDE:0000686\nname: host body product\ndef: \"Substance produced by the body, e.g. Stool, mucus, where the sample was obtained from.  MIXS:0000888\" [PRIDE:PRIDE]\nis_a: NCIT:C12219 ! Anatomic Structure, System, or Substance\nis_a: PRIDE:0000674 ! Human gut\n\n"
+    }
+  },
+  "rules": [
+    {
+      "raw_field": "Cat1",
+      "raw_value": "#Host Body Product",
+      "rejected_mapping": {
+        "subject_label": "Host-Body-Product",
+        "subject_label_normalized": "host body product",
+        "object_id": "PRIDE:0000686",
+        "object_label": "host body product",
+        "object_source": "PRIDE",
+        "predicate_id": "skos:exactMatch",
+        "confidence": "high",
+        "mapping_justification": "semapv:LexicalMatching",
+        "curator": "ols4_search_synonym",
+        "source_dataset": "bacdive",
+        "notes": "matched via variant='host body product'",
+        "verified_date": "2026-05-01"
+      }
+    },
+    {
+      "raw_field": "Cat1",
+      "raw_value": "#Host Body-Site",
+      "rejected_mapping": {
+        "subject_label": "Host-Body-Site",
+        "subject_label_normalized": "host body site",
+        "object_id": "PRIDE:0000685",
+        "object_label": "host body site",
+        "object_source": "PRIDE",
+        "predicate_id": "skos:exactMatch",
+        "confidence": "high",
+        "mapping_justification": "semapv:LexicalMatching",
+        "curator": "ols4_search_synonym",
+        "source_dataset": "bacdive",
+        "notes": "matched via variant='host body site'",
+        "verified_date": "2026-05-01"
+      }
+    },
+    {
+      "raw_field": "Cat2",
+      "raw_value": "#Agriculture",
+      "required_context": {
+        "Cat1": "#Engineered"
+      },
+      "disposition": "retain_record_scoped_source_category_attribute",
+      "reason": "The literal BacDive Agriculture isolation-context category does not establish a physical site or identity with ENVO's agriculture process. Retain this record/path-scoped categorization observation, with source context and citations at their actual scope.",
+      "rejected_mapping": {
+        "confidence": "high",
+        "curator": "ols4_auto",
+        "mapping_justification": "semapv:LexicalMatching",
+        "notes": "A land use process during which terrestrial environments are modified such that they can grow crop plants or allow the r",
+        "object_id": "ENVO:01001442",
+        "object_label": "agriculture",
+        "object_source": "ENVO",
+        "predicate_id": "skos:exactMatch",
+        "source_dataset": "bacdive",
+        "subject_label": "Agriculture",
+        "subject_label_normalized": "agriculture",
+        "verified_date": "2026-05-01"
+      },
+      "native_authority": {
+        "url": "http://purl.obolibrary.org/obo/envo/releases/2026-06-26/envo.json",
+        "sha256": "c3c288b9d95cf1e62b0146bcb2a365bdbd294b0072bbf2efab8819e5db8fff2b",
+        "proof": {
+          "all_asserted_parent_edges": [
+            {
+              "obj": "http://purl.obolibrary.org/obo/BFO_0000001",
+              "pred": "is_a",
+              "sub": "http://purl.obolibrary.org/obo/BFO_0000003"
+            },
+            {
+              "obj": "http://purl.obolibrary.org/obo/ENVO_01001436",
+              "pred": "is_a",
+              "sub": "http://purl.obolibrary.org/obo/ENVO_01001431"
+            },
+            {
+              "obj": "http://purl.obolibrary.org/obo/BFO_0000003",
+              "pred": "is_a",
+              "sub": "http://purl.obolibrary.org/obo/ENVO_01001436"
+            },
+            {
+              "obj": "http://purl.obolibrary.org/obo/OBI_0000011",
+              "pred": "is_a",
+              "sub": "http://purl.obolibrary.org/obo/ENVO_01001436"
+            },
+            {
+              "obj": "http://purl.obolibrary.org/obo/ENVO_01001431",
+              "pred": "is_a",
+              "sub": "http://purl.obolibrary.org/obo/ENVO_01001442"
+            },
+            {
+              "obj": "http://www.geneontology.org/formats/oboInOwl#ObsoleteClass",
+              "pred": "is_a",
+              "sub": "http://purl.obolibrary.org/obo/OBI_0000011"
+            }
+          ],
+          "graph_id": "http://purl.obolibrary.org/obo/envo.json",
+          "graph_meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.org/dc/elements/1.1/contributor",
+                "val": "https://orcid.org/0000-0002-2996-719X"
+              },
+              {
+                "pred": "http://purl.org/dc/elements/1.1/creator",
+                "val": "https://orcid.org/0000-0002-4366-3088"
+              },
+              {
+                "pred": "http://purl.org/dc/elements/1.1/creator",
+                "val": "http://orcid.org/0000-0002-6601-2165"
+              },
+              {
+                "pred": "http://purl.org/dc/elements/1.1/creator",
+                "val": "http://orcid.org/0000-0002-8343-612X"
+              },
+              {
+                "pred": "http://purl.org/dc/elements/1.1/creator",
+                "val": "http://orcid.org/0000-0003-1604-1512"
+              },
+              {
+                "pred": "http://purl.org/dc/elements/1.1/description",
+                "val": "ENVO is an ontology which represents knowledge about environments,environmental processes, ecosystems, habitats, and related entities"
+              },
+              {
+                "pred": "http://purl.org/dc/elements/1.1/title",
+                "val": "The Environment Ontology"
+              },
+              {
+                "pred": "http://purl.org/dc/terms/license",
+                "val": "https://creativecommons.org/publicdomain/zero/1.0/"
+              },
+              {
+                "pred": "http://usefulinc.com/ns/doap#GitRepository",
+                "val": "https://github.com/EnvironmentOntology/envo/"
+              },
+              {
+                "pred": "http://usefulinc.com/ns/doap#bug-database",
+                "val": "https://github.com/EnvironmentOntology/envo/issues/"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#default-namespace",
+                "val": "ENVO"
+              },
+              {
+                "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+                "val": "Includes Ontology(OntologyID(OntologyIRI(<http://purl.obolibrary.org/obo/envo/modules/chemical_concentration.owl>) VersionIRI(<null>))) [Axioms: 679 Logical Axioms: 119]"
+              },
+              {
+                "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+                "val": "Includes Ontology(OntologyID(OntologyIRI(<http://purl.obolibrary.org/obo/envo/modules/entity_attribute.owl>) VersionIRI(<null>))) [Axioms: 206 Logical Axioms: 34]"
+              },
+              {
+                "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+                "val": "Includes Ontology(OntologyID(OntologyIRI(<http://purl.obolibrary.org/obo/envo/modules/entity_attribute_location.owl>) VersionIRI(<null>))) [Axioms: 168 Logical Axioms: 29]"
+              },
+              {
+                "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+                "val": "Includes Ontology(OntologyID(OntologyIRI(<http://purl.obolibrary.org/obo/envo/modules/entity_quality_location.owl>) VersionIRI(<null>))) [Axioms: 40 Logical Axioms: 6]"
+              },
+              {
+                "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+                "val": "Includes Ontology(OntologyID(OntologyIRI(<http://purl.obolibrary.org/obo/envo/modules/process_attribute.owl>) VersionIRI(<null>))) [Axioms: 21 Logical Axioms: 2]"
+              },
+              {
+                "pred": "http://www.w3.org/2002/07/owl#versionInfo",
+                "val": "2026-06-26"
+              },
+              {
+                "pred": "http://xmlns.com/foaf/0.1/homepage",
+                "val": "http://environmentontology.org/"
+              }
+            ],
+            "version": "http://purl.obolibrary.org/obo/envo/releases/2026-06-26/envo.json"
+          },
+          "interpretation_limit": "Includes obsolete ancestor declarations literally; obsolete ancestry is not a live category justification or an automatic replacement decision.",
+          "missing_declarations": [],
+          "nodes": [
+            {
+              "id": "http://purl.obolibrary.org/obo/BFO_0000001",
+              "lbl": "entity",
+              "type": "CLASS"
+            },
+            {
+              "id": "http://purl.obolibrary.org/obo/BFO_0000003",
+              "lbl": "occurrent",
+              "meta": {
+                "definition": {
+                  "val": "An entity that has temporal parts and that happens, unfolds or develops through time."
+                }
+              },
+              "type": "CLASS"
+            },
+            {
+              "id": "http://purl.obolibrary.org/obo/ENVO_01001431",
+              "lbl": "land use process",
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.geneontology.org/formats/oboInOwl#created_by",
+                    "val": "https://orcid.org/0000-0002-4366-3088"
+                  }
+                ],
+                "comments": [
+                  "There are multiple systems of land use classification. This hierarchy aims to be generally applicable, but national systems can be added on request."
+                ],
+                "definition": {
+                  "val": "An anthropogenic environmental process which includes all human activities undertaken in a natural, semi-natural, or anthropised environment.",
+                  "xrefs": [
+                    "https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/11493/144275.pdf",
+                    "https://en.wikipedia.org/wiki/Land_use"
+                  ]
+                }
+              },
+              "type": "CLASS"
+            },
+            {
+              "id": "http://purl.obolibrary.org/obo/ENVO_01001436",
+              "lbl": "planned environmental usage process",
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.geneontology.org/formats/oboInOwl#created_by",
+                    "val": "https://orcid.org/0000-0002-4366-3088"
+                  }
+                ],
+                "definition": {
+                  "val": "A planned process during which humans access and obtain resources, benefits, or services from a natural or anthropised ecosystem."
+                }
+              },
+              "type": "CLASS"
+            },
+            {
+              "id": "http://purl.obolibrary.org/obo/ENVO_01001442",
+              "lbl": "agriculture",
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.geneontology.org/formats/oboInOwl#created_by",
+                    "val": "https://orcid.org/0000-0002-4366-3088"
+                  }
+                ],
+                "comments": [
+                  "\"Agriculture includes horticulture, fruit growing, seed growing, dairy farming, the breeding and keeping of livestock (including any creature kept for the production of food, wool, skins or fur), the use of land as grazing land, meadow land, osier land, market gardens and nursery grounds, and the use of woodlands where that use is ancillary to the farming of land for other agricultural purposes.\""
+                ],
+                "definition": {
+                  "val": "A land use process during which terrestrial environments are modified such that they can grow crop plants or allow the rearing of animals to provide food, fiber, medicines, or other products used by humans.",
+                  "xrefs": [
+                    "https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/11493/144275.pdf",
+                    "https://en.wikipedia.org/wiki/Agriculture",
+                    "https://en.wikipedia.org/wiki/Land_use"
+                  ]
+                }
+              },
+              "type": "CLASS"
+            },
+            {
+              "id": "http://purl.obolibrary.org/obo/OBI_0000011",
+              "lbl": "obsolete planned process",
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://purl.obolibrary.org/obo/IAO_0100001",
+                    "val": "http://purl.obolibrary.org/obo/COB_0000035"
+                  }
+                ],
+                "definition": {
+                  "val": "A process that realizes a plan which is the concretization of a plan specification."
+                },
+                "deprecated": true
+              },
+              "type": "CLASS"
+            },
+            {
+              "id": "http://www.geneontology.org/formats/oboInOwl#ObsoleteClass",
+              "lbl": "Obsolete Class",
+              "type": "CLASS"
+            }
+          ]
+        }
+      },
+      "reviewed_source_counts": {
+        "positions": 1148,
+        "records": 1147,
+        "other_category_occurrences": 8006
+      }
+    }
+  ]
+}

@@ -225,7 +225,7 @@ def test_actual_run_retains_assay_observations_and_full_audit(tmp_path, monkeypa
     for row in audit:
         assert row["source_sha256"] == hashlib.sha256(Path(row["source_file"]).read_bytes()).hexdigest()
         assert row["policy_sha256"] == hashlib.sha256(Path(row["policy_file"]).read_bytes()).hexdigest()
-    assert set(transform.consumed_input_snapshots) == set(correction.REQUIRED_INPUTS)
+    assert set(transform.consumed_input_snapshots) == set(producer.BacDiveTransform.REQUIRED_CONSUMED_INPUTS)
     verify_producer_audits(transform)
 
 
@@ -234,7 +234,7 @@ def test_absent_cohort_still_binds_policy_source_and_header_only_audit(tmp_path,
     transform, edges, nodes = _run(tmp_path, monkeypatch, [])
     assert not edges and not nodes
     assert list(graph_rows(transform.output_dir / correction.AUDIT_FILE)) == []
-    assert set(transform.consumed_input_snapshots) == set(correction.REQUIRED_INPUTS)
+    assert set(transform.consumed_input_snapshots) == set(producer.BacDiveTransform.REQUIRED_CONSUMED_INPUTS)
     verify_producer_audits(transform)
 
 
@@ -288,7 +288,7 @@ def test_actual_finalization_repeat_and_public_admission_require_original_audit(
         report["producer_audit_members"][correction.AUDIT_FILE]
         == transform.producer_audit_snapshots[correction.AUDIT_FILE]
     )
-    assert set(report["consumed_inputs"]) == set(correction.REQUIRED_INPUTS)
+    assert set(report["consumed_inputs"]) == set(producer.BacDiveTransform.REQUIRED_CONSUMED_INPUTS)
     assert transform.finalize() == report
     verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
     assert audit.read_bytes() == before

@@ -1,0 +1,27 @@
+id	category	name	description	xref	provided_by	synonym	deprecated	same_as
+NCBITaxon:1056807	biolink:OrganismTaxon	Morococcus cerebrosus		GC_ID:11	ncbitaxon_removed_subset.json			
+NCBITaxon:1091045	biolink:OrganismTaxon	Cutibacterium acnes subsp. defendens ATCC 11828		GC_ID:11	ncbitaxon_removed_subset.json	Propionibacterium acnes ATCC 11828|Propionibacterium acnes subsp. defendens ATCC 11828|Propionibacterium acnes subsp. defendens CCUG 6369|Propionibacterium acnes subsp. defendens JCM 6473		
+NCBITaxon:1120944	biolink:OrganismTaxon	Actinomyces israelii DSM 43320		GC_ID:11	ncbitaxon_removed_subset.json			
+NCBITaxon:1121485	biolink:OrganismTaxon	Indolivaga capnocytophagoides DSM 22835		GC_ID:11	ncbitaxon_removed_subset.json	Dysgonomonas capnocytophagoides DSM 22835		
+NCBITaxon:1123488	biolink:OrganismTaxon	Varibaculum cambriense DSM 15806		GC_ID:11	ncbitaxon_removed_subset.json			
+NCBITaxon:1123523	biolink:OrganismTaxon	Staphylococcus aureus subsp. aureus 11819-97		GC_ID:11|PMID:22374956	ncbitaxon_removed_subset.json	Staphylococcus aureus 11819-97|Staphylococcus aureus subsp. aureus str. 11819-97|Staphylococcus aureus subsp. aureus strain 11819-97		
+NCBITaxon:1125779	biolink:OrganismTaxon	Corynebacterium pyruviciproducens ATCC BAA-1742		GC_ID:11	ncbitaxon_removed_subset.json	Corynebacterium pyruviciproducens 06-1773O|Corynebacterium pyruviciproducens WAL06|Corynebacterium sp. 06-1773O|Corynebacterium sp. ATCC BAA-1742		
+NCBITaxon:1136877	biolink:OrganismTaxon	Cutibacterium acnes PRP-38		GC_ID:11	ncbitaxon_removed_subset.json	Propionibacterium acnes PRP-38|Propionibacterium acnes str. PRP-38|Propionibacterium acnes strain PRP-38		
+NCBITaxon:115545	biolink:OrganismTaxon	Pasteurella multocida subsp. septica		GC_ID:11	ncbitaxon_removed_subset.json			
+NCBITaxon:1170318	biolink:OrganismTaxon	Cutibacterium avidum 44067		GC_ID:11	ncbitaxon_removed_subset.json	Propionibacterium avidum 44067		
+NCBITaxon:1203611	biolink:OrganismTaxon	Alistipes onderdonkii WAL 8169 = DSM 19147		GC_ID:11	ncbitaxon_removed_subset.json	Alistipes onderdonkii DSM 19147|Alistipes onderdonkii DSM 19147 = WAL 8169|Alistipes onderdonkii WAL 8169		
+NCBITaxon:1204719	biolink:OrganismTaxon	Phocaeicola abscessus CCUG 55929		GC_ID:11	ncbitaxon_removed_subset.json	Bacteroidales bacterium CCUG 55929|Phocaeicola abscessus JCM 16570|Phocaeicola abscessus str. CCUG 55929|Phocaeicola abscessus strain CCUG 55929		
+NCBITaxon:1206723	biolink:OrganismTaxon	Nocardia abscessus NBRC 100374		GC_ID:11	ncbitaxon_removed_subset.json	Nocardia abscessus ATCC BAA-279|Nocardia abscessus CGMCC 4.1723|Nocardia abscessus DSM 44432|Nocardia abscessus IFM 10029|Nocardia abscessus JCM 10984		
+NCBITaxon:1280	biolink:OrganismTaxon	Staphylococcus aureus		GC_ID:11|PMID:31023808|PMID:8573498	ncbitaxon_removed_subset.json	Micrococcus aureus|Micrococcus pyogenes|Staphylococcus aureus subsp. anaerobius|Staphylococcus pyogenes aureus|Staphylococcus pyogenes citreus		
+NCBITaxon:1408286	biolink:OrganismTaxon	Parvimonas micra A293		GC_ID:11	ncbitaxon_removed_subset.json			
+NCBITaxon:1528099	biolink:OrganismTaxon	Lawsonella clevelandensis		GC_ID:11|PMID:26659691|PMID:27130323	ncbitaxon_removed_subset.json			
+NCBITaxon:169765	biolink:OrganismTaxon	Mycobacterium lacus		GC_ID:11|PMID:12508880	ncbitaxon_removed_subset.json			
+NCBITaxon:287	biolink:OrganismTaxon	Pseudomonas aeruginosa		GC_ID:11	ncbitaxon_removed_subset.json	Bacillus aeruginosus|Bacillus pyocyaneus|Bacterium aeruginosum|Bacterium pyocyaneum|Micrococcus pyocyaneus|Pseudomonas aeruginosa (Schroeter 1872) Migula 1900 (Approved Lists 1980)|Pseudomonas polycolor|Pseudomonas pyocyanea|probable synonym or variety: "Pseudomonas polycolor" Clara 1930		
+NCBITaxon:367830	biolink:OrganismTaxon	Staphylococcus aureus subsp. aureus USA300		GC_ID:11	ncbitaxon_removed_subset.json	Staphylococcus aureus subsp. aureus str. USA300|Staphylococcus aureus subsp. aureus strain USA300		
+NCBITaxon:39950	biolink:OrganismTaxon	Dialister pneumosintes		GC_ID:11|PMID:7537075	ncbitaxon_removed_subset.json	Bacillus pneumosintes|Bacteroides pneumosintes (Olitsky and Gates 1921) Holdeman and Moore 1970 (Approved Lists 1980)|Dialister pneumosintes (Olitsky and Gates 1921) Moore and Moore 1994|Dialister pneumosintes var. septicemiae		
+NCBITaxon:411567	biolink:OrganismTaxon	Peptoniphilus gorbachii		GC_ID:11|PMID:17428937	ncbitaxon_removed_subset.json			
+NCBITaxon:451515	biolink:OrganismTaxon	Staphylococcus aureus subsp. aureus USA300_FPR3757		GC_ID:11	ncbitaxon_removed_subset.json			
+NCBITaxon:525370	biolink:OrganismTaxon	Prescottella equi ATCC 33707		GC_ID:11|PMID:12781482	ncbitaxon_removed_subset.json	Rhodococcus equi ATCC 33707|Rhodococcus hoagii ATCC 33707		
+NCBITaxon:585502	biolink:OrganismTaxon	Hallella bergensis DSM 17361		GC_ID:11	ncbitaxon_removed_subset.json	Prevotella bergensis DSM 17361		
+NCBITaxon:652	biolink:OrganismTaxon	Aeromonas schubertii		GC_ID:11|PMID:3139706	ncbitaxon_removed_subset.json	Aeromonas hybridization group 12|Enteric Group 501		
+NCBITaxon:709991	biolink:OrganismTaxon	Odoribacter splanchnicus DSM 20712		GC_ID:11	ncbitaxon_removed_subset.json	Odoribacter splanchnicus str. DSM 20712|Odoribacter splanchnicus strain DSM 20712		

@@ -1,0 +1,6 @@
+subject	predicate	object	relation	primary_knowledge_source	knowledge_level	agent_type
+RHEA:12345	rheav:directionalReaction	RHEA:12346	rheav:directionalReaction	infores:rhea	knowledge_assertion	manual_agent
+RHEA:12345	rheav:bidirectionalReaction	RHEA:12348	rheav:bidirectionalReaction	infores:rhea	knowledge_assertion	manual_agent
+rheav:Compound_123	rheav:reactivePart	rheav:ReactivePart_123	rheav:reactivePart	infores:rhea	knowledge_assertion	manual_agent
+rheav:Compound_456	rheav:underlyingChebi	CHEBI:123	rheav:underlyingChebi	infores:rhea	knowledge_assertion	manual_agent
+rheav:Compound_123	rheav:chebi	CHEBI:456	rheav:chebi	infores:rhea	knowledge_assertion	manual_agent

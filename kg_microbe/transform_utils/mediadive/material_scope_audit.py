@@ -32,6 +32,31 @@ from kg_microbe.transform_utils.constants import (
     SOURCE_RECORD_COLUMN,
 )
 from kg_microbe.utils.chemical_mapping_utils import normalize_name
+from kg_microbe.utils.ingredient_context import (
+    CONTEXT_POLICY as INGREDIENT_CONTEXT_POLICY,
+)
+from kg_microbe.utils.ingredient_context import (
+    CONTEXT_ROLE as INGREDIENT_CONTEXT_ROLE,
+)
+from kg_microbe.utils.ingredient_context import (
+    HISTORICAL_CLAIMS as CATALASE_HISTORICAL_CLAIMS,
+)
+from kg_microbe.utils.ingredient_context import (
+    HISTORICAL_ROLE as CATALASE_HISTORICAL_ROLE,
+)
+from kg_microbe.utils.ingredient_context import (
+    HISTORICAL_SHA256 as CATALASE_HISTORICAL_SHA256,
+)
+from kg_microbe.utils.ingredient_context import (
+    NATIVE_AUTHORITY as INGREDIENT_NATIVE_AUTHORITY,
+)
+from kg_microbe.utils.ingredient_context import (
+    NATIVE_ROLE as INGREDIENT_NATIVE_ROLE,
+)
+from kg_microbe.utils.ingredient_context import (
+    catalase_material,
+    validate_context_bytes,
+)
 from kg_microbe.utils.ingredient_identity import (
     IDENTITY_POLICY,
     _policy_target_key,
@@ -142,6 +167,8 @@ def sugar_material(raw, name=None):
 
 def _profile(raw):
     """Give explicit product evidence priority over a possibly contradictory display name."""
+    if catalase_material(raw):
+        return "catalase"
     if p3556_material(raw):
         return "p3556"
     if sugar_material(raw):
@@ -289,6 +316,21 @@ class MaterialScopeAudit:
         self.guard = SourceAdmission()
         self.claims = []
         self.rows = {}
+        self.catalase_occurrences = {}
+        with self._consume(INGREDIENT_CONTEXT_ROLE, INGREDIENT_CONTEXT_POLICY) as stream:
+            context_bytes = stream.buffer.read()
+        with self._consume(INGREDIENT_NATIVE_ROLE, INGREDIENT_NATIVE_AUTHORITY) as stream:
+            native_bytes = stream.buffer.read()
+        self.catalase_decision = validate_context_bytes(context_bytes, native_bytes)
+        with self._consume(CATALASE_HISTORICAL_ROLE, CATALASE_HISTORICAL_CLAIMS) as stream:
+            historical_bytes = stream.buffer.read()
+        if hashlib.sha256(historical_bytes).hexdigest() != CATALASE_HISTORICAL_SHA256:
+            raise SourceFinalizationRequired("Historical Catalase grounding evidence changed")
+        self.catalase_historical = json.loads(historical_bytes)["claims"]
+        if "270" in transform.compounds_data:
+            # Catalog and occurrence evidence are validated independently;
+            # the catalog's first-seen qualifier must not override a recipe.
+            catalase_material(transform.compounds_data["270"], native_id="270")
         with self._consume(REVIEWED_ROLE, _repo_root() / REVIEWED_PATH) as stream:
             self.reviewed_catalogue, self.reviewed_names = _reviewed_catalogue(stream)
         with self._consume(POLICY_ROLE, IDENTITY_POLICY) as stream:
@@ -300,7 +342,14 @@ class MaterialScopeAudit:
             for medium in media_list[DATA_KEY]
             for solution in transform.media_detailed[str(medium[ID_COLUMN])].get(SOLUTIONS_KEY, [])
         }
-        self.names = {"potato": set(), "p3556": set(), "sugar": set(), "peptone": set(), "reviewed": set()}
+        self.names = {
+            "potato": set(),
+            "p3556": set(),
+            "sugar": set(),
+            "peptone": set(),
+            "reviewed": set(),
+            "catalase": set(),
+        }
         for identifier in solutions:
             recipe = transform.solutions_data[identifier].get(RECIPE_KEY)
             # Match the existing producer's absent/non-list recipe behavior.
@@ -379,6 +428,16 @@ class MaterialScopeAudit:
                             f"historical-baseline-sha256={baseline['sha256']};data-record={claim['data_row_ordinal']}"
                         )
                         self._claim("reviewed", name, REVIEWED_ROLE, locator, claim["row"]["object_id"], claim["row"])
+        if self.names["catalase"]:
+            for ordinal, claim in enumerate(self.catalase_historical, 1):
+                self._claim(
+                    "catalase",
+                    None,
+                    CATALASE_HISTORICAL_ROLE,
+                    f"record={ordinal}",
+                    "NCIT:C61062",
+                    claim,
+                )
         unified = _repo_root() / transform.DATA_INPUTS[0]
         with self._consume(UNIFIED_ROLE, unified) as snapshot:
             with gzip.GzipFile(fileobj=snapshot.buffer) as compressed:
@@ -403,7 +462,7 @@ class MaterialScopeAudit:
                         and _policy_target_key(row["mapped"]) == TARGET
                     ):
                         self._claim("potato", None, role, locator, row["mapped"], row)
-                    for profile in ("p3556", "sugar"):
+                    for profile in ("p3556", "sugar", "catalase"):
                         for name in self.names[profile]:
                             if name and name.lower().strip() == row["original"].lower().strip():
                                 self._claim(profile, name, role, locator, row["mapped"], row)
@@ -464,6 +523,13 @@ class MaterialScopeAudit:
     def _mapping_claims(self, role, locator, row):
         """Select only reader-eligible lexical or exact imported claims for the actual spelling."""
         route = classify_mapping_row(row)[0]
+        if route in {"identity", "attribute", "canonical_name", "synonym", "authority_metadata"}:
+            for name in self.names["catalase"]:
+                if normalize_name(name) == normalize_name(row.get("object_label", "")) or (
+                    route in {"synonym", "authority_metadata"}
+                    and normalize_name(name) == normalize_name(row.get("subject_label", ""))
+                ):
+                    self._claim("catalase", name, role, locator, row["object_id"], row)
         if route in {"canonical_name", "synonym"}:
             if (
                 self.names["potato"]
@@ -529,7 +595,7 @@ class MaterialScopeAudit:
             raise SourceFinalizationRequired("Held Potato extract identity escaped source resolution")
         if profile == "peptone" and _policy_target_key(occurrence[ID_COLUMN]) == PEPTONE_TARGET:
             raise SourceFinalizationRequired("Held peptone structural identity escaped source resolution")
-        if profile in {"p3556", "sugar"}:
+        if profile in {"p3556", "sugar", "catalase"}:
             local = (
                 MEDIADIVE_INGREDIENT_PREFIX + str(raw[COMPOUND_ID_KEY])
                 if raw.get(COMPOUND_ID_KEY) is not None
@@ -542,6 +608,19 @@ class MaterialScopeAudit:
         if reviewed and _policy_target_key(occurrence[ID_COLUMN]) == _policy_target_key(reviewed["target_id"]):
             raise SourceFinalizationRequired("Held reviewed material name/target pair escaped source resolution")
         candidates = [claim for group, spelling, claim in self.claims if group == profile and spelling in (None, name)]
+        if profile == "catalase":
+            assertion = occurrence.get(SOURCE_ASSERTION_ID_COLUMN, "")
+            match = re.fullmatch(r"mediadive\.solution:([1-9][0-9]*)#recipe/([1-9][0-9]*)", assertion)
+            if match is None:
+                raise SourceFinalizationRequired("Catalase observation lacks an unambiguous native assertion ID")
+            original = self.transform.solutions_data.get(match[1], {}).get(RECIPE_KEY, [])
+            position = int(match[2]) - 1
+            if position >= len(original) or original[position] != raw or _json(raw) != occurrence[SOURCE_RECORD_COLUMN]:
+                raise SourceFinalizationRequired("Catalase observation differs from its native recipe position")
+            if self.catalase_occurrences.setdefault(assertion, _json(occurrence)) != _json(occurrence):
+                raise SourceFinalizationRequired("Catalase assertion ID reused with conflicting evidence")
+            source_snapshot = self.transform.consumed_input_snapshots["mediadive_solutions"]
+            candidates.append(("source_identity_retention", source_snapshot, assertion, "", _json(raw)))
         identifier = raw.get(COMPOUND_ID_KEY)
         if identifier is not None:
             embedded = self.transform.compounds_data.get(str(identifier), {})
@@ -569,7 +648,9 @@ class MaterialScopeAudit:
                     )
                 )
         source = self.transform.consumed_input_snapshots["mediadive_solutions"]
-        policy_role = CONTEXT_ROLE if profile == "sugar" else POLICY_ROLE
+        policy_role = (
+            INGREDIENT_CONTEXT_ROLE if profile == "catalase" else CONTEXT_ROLE if profile == "sugar" else POLICY_ROLE
+        )
         policy = self.transform.consumed_input_snapshots[policy_role]
         reason, qualifiers = (
             ("whole_product_not_molecular_identity", _json({"attribute": raw["attribute"]}))
@@ -590,6 +671,10 @@ class MaterialScopeAudit:
         elif reviewed:
             reason = reviewed["reason"]
             authority_label, authority_uri = reviewed["authority_label"], reviewed["evidence_uri"]
+        elif profile == "catalase":
+            reason = self.catalase_decision["reason"]
+            authority_label = self.catalase_decision["authority_label"]
+            authority_uri = self.catalase_decision["authority_uri"]
         payload = occurrence[SOURCE_RECORD_COLUMN]
         for route, snapshot, locator, target, candidate in candidates:
             row = (
@@ -599,8 +684,12 @@ class MaterialScopeAudit:
                 source["path"],
                 source["sha256"],
                 occurrence[ID_COLUMN],
-                "historical_quarantined_grounding_claim"
-                if route == REVIEWED_ROLE
+                "source_owned_material_retained"
+                if route == "source_identity_retention"
+                else "historical_quarantined_grounding_claim"
+                if route in {REVIEWED_ROLE, CATALASE_HISTORICAL_ROLE}
+                else "nonidentity_authority_annotation"
+                if profile == "catalase" and json.loads(candidate).get("predicate_id") == "skos:relatedMatch"
                 else "quarantined_grounding_candidate",
                 reason,
                 qualifiers,
@@ -638,6 +727,13 @@ class MaterialScopeAudit:
 def verify_recorded_material_inputs(report, report_path):
     """Require actual canonical evidence origins for the producer-bound candidate sidecar."""
     snapshots = report.get("consumed_inputs", {})
+    for role, origin in (
+        (INGREDIENT_CONTEXT_ROLE, INGREDIENT_CONTEXT_POLICY),
+        (INGREDIENT_NATIVE_ROLE, INGREDIENT_NATIVE_AUTHORITY),
+        (CATALASE_HISTORICAL_ROLE, CATALASE_HISTORICAL_CLAIMS),
+    ):
+        if snapshots.get(role, {}).get("path") != str(origin.resolve()):
+            raise SourceFinalizationRequired(f"Missing or wrong ingredient-context input origin: {role}")
     if snapshots.get(REVIEWED_ROLE, {}).get("path") != str((_repo_root() / REVIEWED_PATH).resolve()):
         raise SourceFinalizationRequired(f"Missing or wrong material-scope input origin: {REVIEWED_ROLE}")
     if snapshots.get(POLICY_ROLE, {}).get("path") != str(IDENTITY_POLICY.resolve()):

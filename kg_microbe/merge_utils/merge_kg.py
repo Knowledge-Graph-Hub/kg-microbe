@@ -13,8 +13,14 @@ from typing import Dict, List, Optional
 import networkx as nx  # type: ignore
 import yaml
 
-from kg_microbe.merge_utils.artifact_manifest import build_provenance, write_graph_archive, write_loose_manifest
+from kg_microbe.merge_utils.artifact_manifest import (
+    build_provenance,
+    file_identity,
+    write_graph_archive,
+    write_loose_manifest,
+)
 from kg_microbe.merge_utils.invariants import check_merged_invariants
+from kg_microbe.merge_utils.merge_contract import validate_merge_semantics
 from kg_microbe.merge_utils.progress import merge_phase
 from kg_microbe.merge_utils.stats_provenance import STATS_OPERATION, annotate_graph_stats, stats_filename_from_config
 from kg_microbe.utils.atomic_io import atomic_write
@@ -24,6 +30,10 @@ from kg_microbe.utils.source_finalization import verify_finalized_source_files, 
 
 def merge(*args, **kwargs):
     """Invoke KGX with local schema and provenance-preserving graph export (#1049)."""
+    config_path = args[0] if args else kwargs["merge_config"]
+    config = parse_load_config(config_path)
+    _validate_release_destinations(config)
+    _validate_publication_paths(config, Path(config_path))
     from kg_microbe.utils.biolink_model import prepare_kgx
 
     prepare_kgx()
@@ -55,7 +65,6 @@ def merge(*args, **kwargs):
     transformer_module.SOURCE_MAP["graph"] = RelationAwareGraphSource
     transformer_module.SINK_MAP.update({name: RelationAwareTsvSink for name in original_tsv_sinks})
     try:
-        config_path = args[0] if args else kwargs["merge_config"]
         selected_sources = args[1] if len(args) > 1 else kwargs.get("source")
         with local_prefix_context(), direct_export_scope(parse_load_config(config_path), selected_sources):
             return cli_utils.merge(*args, **kwargs)
@@ -142,6 +151,7 @@ def _validate_release_destinations(config: Dict) -> Dict:
                 if artifact == previous or artifact in previous.parents or previous in artifact.parents:
                     raise ValueError(f"{prefix}: output path {artifact} conflicts with destination {owner!r}")
             claimed[artifact] = name
+    validate_merge_semantics(config)
     return destinations
 
 
@@ -172,17 +182,50 @@ def load_and_merge(
     :raises KeyError: If a requested source is absent from the config.
     :raises ValueError: If any release destination is unsupported, malformed, or colliding.
     """
-    _validate_release_destinations(parse_load_config(yaml_file))
+    config = parse_load_config(yaml_file)
+    _validate_release_destinations(config)
+    _validate_publication_paths(config, Path(yaml_file))
     if sources:
         _assert_sources_exist(yaml_file, sources)
     admission = _assert_sources_finalized(yaml_file, sources)
+    if admission is not None:
+        # Admission can be expensive. Do not validate destinations from one
+        # configuration epoch and publish paths from another admitted epoch.
+        admission.verify(metadata_only=True)
+        if parse_load_config(yaml_file) != config:
+            raise ValueError("Merge configuration changed during source admission; retry with one configuration")
+        admission.verify(metadata_only=True)
+        _validate_publication_paths(
+            config,
+            Path(yaml_file),
+            protected_paths=(
+                *getattr(admission, "identities", {}),
+                *getattr(admission, "absent", ()),
+                *getattr(admission, "trees", {}),
+            ),
+        )
     # KGX writes the destination before post-processing starts. Never give it
     # a published pathname: a later required failure must preserve the old
     # artifact, not merely propagate after KGX has already overwritten it.
     with _staged_merge_configuration(yaml_file) as (staged_config, staged_output, final_output, stats_outputs):
         merged_graph = merge(str(staged_config), source=list(sources) if sources else None, processes=processes)
+        # Pin ALL first-write pairs before any report runs, including reports
+        # for an earlier destination. Packaging already hashes bytes as it
+        # writes; compare those hashes rather than add another terminal scan.
+        staged_destinations = parse_load_config(str(staged_config))["merged_graph"]["destination"]
+        with merge_phase("serialization-identity", unit="files") as progress:
+            identities = {}
+            for destination in staged_destinations.values():
+                for suffix in ("_nodes.tsv", "_edges.tsv"):
+                    path = staged_output / f"{destination['filename']}{suffix}"
+                    identities[path] = file_identity(path)
+                    progress.advance(1)
         failed_stats = _cleanup_merged_outputs(
-            str(staged_config), original_yaml_file=yaml_file, published_output_dir=final_output
+            str(staged_config),
+            original_yaml_file=yaml_file,
+            published_output_dir=final_output,
+            expected_graph_members=identities,
+            native_declarations=getattr(admission, "gold_native_declarations", None),
         )
         if admission is not None:
             admission.verify()
@@ -236,12 +279,9 @@ def _source_filename_at_original_location(filename: str, config_dir: Path) -> st
     return str((config_dir / path).resolve())
 
 
-@contextmanager
-def _staged_merge_configuration(yaml_file: str):
-    """Redirect file publication into a unique same-filesystem workspace without editing user YAML."""
-    config_file = Path(yaml_file).absolute()
-    config = deepcopy(parse_load_config(str(config_file)))
-    _validate_release_destinations(config)
+def _validate_publication_paths(config: Dict, config_file: Path, *, protected_paths=()) -> Path:
+    """Never publish a report or graph over admitted inputs, configuration, or another output."""
+    config_file = config_file.absolute()
     configured = config.get("configuration", {}).get("output_directory")
     configured_output = Path(configured or "output")
     final_output = (
@@ -249,6 +289,44 @@ def _staged_merge_configuration(yaml_file: str):
         if configured_output.is_absolute() or not configured
         else config_file.parent / configured_output
     ).resolve()
+    protected = [config_file.resolve(), *(Path(path).resolve() for path in protected_paths)]
+    graph = config["merged_graph"]
+    for source in graph.get("source", {}).values():
+        values = source["input"].get("filename", [])
+        values = [values] if isinstance(values, str) else values
+        if not isinstance(values, list) or not all(isinstance(value, str) for value in values):
+            raise ValueError("Source input filename must be a string or list of strings")
+        protected.extend(Path(_source_filename_at_original_location(value, config_file.parent)) for value in values)
+    outputs = []
+    for destination in graph["destination"].values():
+        for suffix in ("_nodes.tsv", "_edges.tsv", "_reference_resolution.tsv", "_manifest.json", ".tar.gz"):
+            outputs.append((final_output / f"{destination['filename']}{suffix}").resolve())
+    stats = [Path(operation["args"]["filename"]).resolve() for operation in graph.get("operations", [])]
+
+    def overlaps(first, second):
+        """Recognize equality and file/directory conflicts across supported platforms."""
+        # Match the destination contract's portability to case-insensitive filesystems.
+        left, right = Path(str(first).casefold()), Path(str(second).casefold())
+        return left == right or left in right.parents or right in left.parents
+
+    for output in (*outputs, *stats):
+        for source in protected:
+            if overlaps(output, source):
+                raise ValueError(f"Merge publication path {output} conflicts with input/configuration {source}")
+    for position, path in enumerate(stats):
+        for other in (*outputs, *stats[:position]):
+            if overlaps(path, other):
+                raise ValueError(f"Statistics publication path {path} conflicts with another output {other}")
+    return final_output
+
+
+@contextmanager
+def _staged_merge_configuration(yaml_file: str):
+    """Redirect file publication into a unique same-filesystem workspace without editing user YAML."""
+    config_file = Path(yaml_file).absolute()
+    config = deepcopy(parse_load_config(str(config_file)))
+    _validate_release_destinations(config)
+    final_output = _validate_publication_paths(config, config_file)
     final_output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=f".{final_output.name}.merge-", dir=final_output.parent) as temporary:
         staging = Path(temporary)
@@ -335,7 +413,11 @@ def _repo_root() -> Path:
 
 
 def _cleanup_merged_outputs(
-    yaml_file: str, original_yaml_file: Optional[str] = None, published_output_dir: Optional[Path] = None
+    yaml_file: str,
+    original_yaml_file: Optional[str] = None,
+    published_output_dir: Optional[Path] = None,
+    expected_graph_members: Optional[Dict] = None,
+    native_declarations=None,
 ) -> set:
     r"""
     Validate canonical KGX serialization and package the result without rewriting it.
@@ -367,6 +449,7 @@ def _cleanup_merged_outputs(
     # report the others' fresh output as stale (#848).
     written: set = set()
     failed_stats: set = set()
+    pending_packages = []
 
     for destination_name, dest in destinations.items():
         compression = requested_destinations.get(destination_name, dest).get("compression")
@@ -398,6 +481,10 @@ def _cleanup_merged_outputs(
 
         if not nodes_file.is_file() or not edges_file.is_file():
             raise FileNotFoundError(f"Merge destination is missing its TSV pair: {nodes_file}, {edges_file}")
+        expected_members = {
+            path.name: expected_graph_members[path] if expected_graph_members is not None else file_identity(path)
+            for path in (nodes_file, edges_file)
+        }
         if edges_file.is_file():
             # Semantic decisions belong to source finalization (#1082).
             # Merge checks the result without consulting live raw authorities
@@ -405,8 +492,11 @@ def _cleanup_merged_outputs(
             # The required report includes schema/provenance validation; do
             # not add a second redundant full-file contract scan here.
             with merge_phase("validation") as progress:
-                validation_counts = write_merge_validation_report(nodes_file, edges_file, reference_report)
-                progress.advance(sum(validation_counts.values()))
+                native_options = {} if native_declarations is None else {"native_declarations": native_declarations}
+                validation_counts = write_merge_validation_report(
+                    nodes_file, edges_file, reference_report, **native_options
+                )
+                progress.advance(validation_counts.get("nodes", 0) + validation_counts.get("edges", 0))
             print(f"[merge-validation] {base}: {validation_counts}; no semantic rewrites", flush=True)
             # Checked here rather than in each transform: a transform can only
             # police the edges it writes, and kgmicrobe.strain is a namespace
@@ -444,6 +534,8 @@ def _cleanup_merged_outputs(
                     # pre-normalization stats as a description of this graph.
                     failed_stats.add(Path(stats_name))
 
+        if not nodes_file.is_file() or not edges_file.is_file():
+            raise FileNotFoundError(f"Post-serialization graph member missing: {nodes_file}, {edges_file}")
         if nodes_file.is_file() and edges_file.is_file():
             stats_name = stats_filename_from_config(config)
             provenance = build_provenance(
@@ -451,22 +543,47 @@ def _cleanup_merged_outputs(
             )
             diagnostic = config.get("configuration", {}).get("allow_unfinalized_sources", False)
             provenance["source_finalization"] = {"required": not diagnostic, "diagnostic_opt_out": diagnostic}
-            if compression == "tar.gz":
-                with merge_phase("packaging", unit="members") as progress:
-                    _rewrite_tarball(archive, [nodes_file, edges_file, reference_report], provenance=provenance)
-                    progress.advance(3)
-                # Private transport files are not independent published
-                # artifacts for an archive-only destination.
-                nodes_file.unlink(missing_ok=True)
-                edges_file.unlink(missing_ok=True)
-            else:
-                manifest_file = output_dir / f"{base}_manifest.json"
-                with merge_phase("manifest", unit="members") as progress:
-                    write_loose_manifest(manifest_file, [nodes_file, edges_file, reference_report], provenance)
-                    progress.advance(3)
-                written.add(manifest_file)
+            pending_packages.append(
+                (base, compression, nodes_file, edges_file, reference_report, archive, provenance, expected_members)
+            )
 
         written |= {nodes_file, edges_file, reference_report, archive}
+
+    # Finish EVERY report before packaging ANY destination. Otherwise a later
+    # optional callback could edit an earlier loose pair after its manifest
+    # had already passed the first-write comparison.
+    for (
+        base,
+        compression,
+        nodes_file,
+        edges_file,
+        reference_report,
+        archive,
+        provenance,
+        expected_members,
+    ) in pending_packages:
+        if compression == "tar.gz":
+            with merge_phase("packaging", unit="members") as progress:
+                _rewrite_tarball(
+                    archive,
+                    [nodes_file, edges_file, reference_report],
+                    provenance=provenance,
+                    expected_members=expected_members,
+                )
+                progress.advance(3)
+            nodes_file.unlink(missing_ok=True)
+            edges_file.unlink(missing_ok=True)
+        else:
+            manifest_file = output_dir / f"{base}_manifest.json"
+            with merge_phase("manifest", unit="members") as progress:
+                write_loose_manifest(
+                    manifest_file,
+                    [nodes_file, edges_file, reference_report],
+                    provenance,
+                    expected_members=expected_members,
+                )
+                progress.advance(3)
+            written.add(manifest_file)
 
     _warn_about_stale_siblings(output_dir, written)
     return failed_stats
@@ -518,6 +635,8 @@ def _normalize_edges_tsv(path: Path) -> None:
     validate_canonical_tsv(path, is_node=False)
 
 
-def _rewrite_tarball(archive: Path, files: List[Path], provenance: Optional[Dict] = None) -> None:
+def _rewrite_tarball(
+    archive: Path, files: List[Path], provenance: Optional[Dict] = None, *, expected_members: Optional[Dict] = None
+) -> None:
     """Atomically archive validated TSVs once with a portable manifest (#1075)."""
-    write_graph_archive(archive, files, provenance)
+    write_graph_archive(archive, files, provenance, expected_members=expected_members)

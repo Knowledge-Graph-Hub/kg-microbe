@@ -1123,7 +1123,10 @@ class TestOntologyIdentityAndServing:
         """
         db = write_single_ontology_db(tmp_path / "go.db", "go")
         monkeypatch.setattr(ou, "_GO_NAMESPACE_CACHE", None)
-        with pytest.raises(ou.FatalOntologyError):
+        # The fixture is deliberately below the size floor. Never let the ensure
+        # step "repair" it with a real `semsql make` against data/raw/go.owl.
+        monkeypatch.setattr(ou, "_ensure_go_db", lambda _: True)
+        with pytest.raises(ou.FatalOntologyError, match="hasOBONamespace"):
             ou._load_go_namespace_map(str(db))
 
     def test_identity_arguments_cannot_be_passed_positionally(self):

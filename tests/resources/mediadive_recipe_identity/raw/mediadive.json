@@ -1,0 +1,226 @@
+{
+  "count": 3338,
+  "data": [
+    {
+      "complex_medium": 1,
+      "description": "Nutrient agar with bromothymol blue to differtiate phase I and II variants (distinct physiological states in vitro) among Xenorhabdus strains.",
+      "id": "1c",
+      "link": null,
+      "max_pH": null,
+      "min_pH": null,
+      "name": "Nutrient bromothymol blue agar NBTA",
+      "reference": "doi.org/10.1099/00221287-121-2-303",
+      "source": "DSMZ"
+    },
+    {
+      "complex_medium": 1,
+      "description": null,
+      "id": 425,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium425.pdf",
+      "max_pH": 7.2,
+      "min_pH": 7,
+      "name": "OATMEAL AGAR",
+      "reference": null,
+      "source": "DSMZ"
+    },
+    {
+      "complex_medium": 0,
+      "description": null,
+      "id": 474,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium474.pdf",
+      "max_pH": null,
+      "min_pH": null,
+      "name": "MEDIUM WITH POLYHYDROXYBUTYRIC ACID AS CARBON SOURCE",
+      "reference": null,
+      "source": "DSMZ"
+    },
+    {
+      "complex_medium": 1,
+      "description": null,
+      "id": 609,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium609.pdf",
+      "max_pH": 7.2,
+      "min_pH": 7.2,
+      "name": "OATMEAL AGAR (A) (ISP-3)",
+      "reference": null,
+      "source": "DSMZ"
+    },
+    {
+      "complex_medium": 1,
+      "description": null,
+      "id": 701,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium701.pdf",
+      "max_pH": 7.2,
+      "min_pH": 7.2,
+      "name": "HALOANAEROBACTER CHITINOVORANS MEDIUM",
+      "reference": null,
+      "source": "DSMZ"
+    },
+    {
+      "complex_medium": 1,
+      "description": null,
+      "id": 871,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium871.pdf",
+      "max_pH": 7.4,
+      "min_pH": 7,
+      "name": "GYM + SEAWATER",
+      "reference": null,
+      "source": "DSMZ"
+    },
+    {
+      "complex_medium": 1,
+      "description": null,
+      "id": 931,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium931.pdf",
+      "max_pH": 10,
+      "min_pH": 9.5,
+      "name": "ALCALIPHILIC AMPHIBACILLUS STRAINS MEDIUM",
+      "reference": null,
+      "source": "DSMZ"
+    },
+    {
+      "complex_medium": 0,
+      "description": null,
+      "id": 1376,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium1376.pdf",
+      "max_pH": 6.7,
+      "min_pH": 6.7,
+      "name": "METHYLOCOCCUS MEDIUM",
+      "reference": null,
+      "source": "DSMZ"
+    },
+    {
+      "complex_medium": 1,
+      "description": null,
+      "id": 1414,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium1414.pdf",
+      "max_pH": 8.5,
+      "min_pH": 8,
+      "name": "PORPHYROBACTER MEDIUM",
+      "reference": null,
+      "source": "DSMZ"
+    },
+    {
+      "complex_medium": 0,
+      "description": null,
+      "id": 1706,
+      "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium1706.pdf",
+      "max_pH": 7.8,
+      "min_pH": 7.8,
+      "name": "LENTIMONAS MEDIUM",
+      "reference": null,
+      "source": "DSMZ"
+    },
+    {
+      "complex_medium": 1,
+      "description": "Medium for cultivation of PC 794, PC 1182, PC 1188 and PC 1189 plant cell lines.\r\nMedium modified after GAMBORG, O.L., R.A. MILLER and K. OJIMA: Exp. Cell Res., 50, 151-158, (1968)",
+      "id": 1885,
+      "link": null,
+      "max_pH": 5.6,
+      "min_pH": 5.6,
+      "name": "4X Plant Cell Medium",
+      "reference": null,
+      "source": "DSMZ"
+    },
+    {
+      "complex_medium": 1,
+      "description": null,
+      "id": "J50",
+      "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=50",
+      "max_pH": 7.2,
+      "min_pH": 7.2,
+      "name": "OATMEAL AGAR (ISP-3)",
+      "reference": null,
+      "source": "JCM"
+    },
+    {
+      "complex_medium": 1,
+      "description": null,
+      "id": "J52",
+      "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=52",
+      "max_pH": 7,
+      "min_pH": 7,
+      "name": "OATMEAL-NITRATE AGAR",
+      "reference": null,
+      "source": "JCM"
+    },
+    {
+      "complex_medium": 1,
+      "description": null,
+      "id": "J148",
+      "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=148",
+      "max_pH": null,
+      "min_pH": null,
+      "name": "OATMEAL AGAR",
+      "reference": null,
+      "source": "JCM"
+    },
+    {
+      "complex_medium": 0,
+      "description": null,
+      "id": "J492",
+      "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=492",
+      "max_pH": 7,
+      "min_pH": 7,
+      "name": "MMJ-TL MEDIUM",
+      "reference": null,
+      "source": "JCM"
+    },
+    {
+      "complex_medium": 0,
+      "description": null,
+      "id": "J493",
+      "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=493",
+      "max_pH": 7,
+      "min_pH": 7,
+      "name": "MMJ-HO MEDIUM",
+      "reference": null,
+      "source": "JCM"
+    },
+    {
+      "complex_medium": 1,
+      "description": null,
+      "id": "J494",
+      "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=494",
+      "max_pH": 5,
+      "min_pH": 5,
+      "name": "MMJ-MH MEDIUM",
+      "reference": null,
+      "source": "JCM"
+    },
+    {
+      "complex_medium": 1,
+      "description": null,
+      "id": "J495",
+      "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=495",
+      "max_pH": 7,
+      "min_pH": 7,
+      "name": "MMJ-DO MEDIUM",
+      "reference": null,
+      "source": "JCM"
+    },
+    {
+      "complex_medium": 1,
+      "description": null,
+      "id": "J755",
+      "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=755",
+      "max_pH": 6.2,
+      "min_pH": 6.2,
+      "name": "MMJ-S304 MEDIUM",
+      "reference": null,
+      "source": "JCM"
+    },
+    {
+      "complex_medium": 1,
+      "description": null,
+      "id": "J1067",
+      "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=1067",
+      "max_pH": null,
+      "min_pH": null,
+      "name": "FRESHWATER IRON-OXIDIZING BACTERIA MEDIUM-II",
+      "reference": null,
+      "source": "JCM"
+    }
+  ],
+  "status": 200
+}

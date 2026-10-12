@@ -1,0 +1,166 @@
+{
+  "source": {
+    "file": "data/raw/go.db",
+    "sha256": "a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a"
+  },
+  "selection": "All statements-table occurrences with subject GO:0005794; no blank-node closure or full-ontology claim.",
+  "row_count": 26,
+  "statements": [
+    {
+      "subject": "GO:0005794",
+      "predicate": "IAO:0000115",
+      "object": null,
+      "value": "A membrane-bound cytoplasmic organelle of the endomembrane system that further processes the core oligosaccharides (e.g. N-glycans) added to proteins in the endoplasmic reticulum and packages them into membrane-bound vesicles. The Golgi apparatus operates at the intersection of the secretory, lysosomal, and endocytic pathways."
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "IAO:0000233",
+      "object": null,
+      "value": "https://github.com/geneontology/go-ontology/issues/14798"
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "oio:hasBroadSynonym",
+      "object": null,
+      "value": "Golgi"
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "oio:hasDbXref",
+      "object": null,
+      "value": "NIF_Subcellular:sao451912436"
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "oio:hasDbXref",
+      "object": null,
+      "value": "Wikipedia:Golgi_apparatus"
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "oio:hasExactSynonym",
+      "object": null,
+      "value": "Golgi complex"
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "oio:hasNarrowSynonym",
+      "object": null,
+      "value": "Golgi ribbon"
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "oio:hasOBONamespace",
+      "object": null,
+      "value": "cellular_component"
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "oio:id",
+      "object": null,
+      "value": "GO:0005794"
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_yeast",
+      "value": null
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_plant_ribbon",
+      "value": null
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_plant",
+      "value": null
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_pir",
+      "value": null
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_mouse",
+      "value": null
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_generic",
+      "value": null
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_euk_cellular_processes_ribbon",
+      "value": null
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_drosophila",
+      "value": null
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_chembl",
+      "value": null
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_candida",
+      "value": null
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "oio:inSubset",
+      "object": "obo:go#goslim_agr",
+      "value": null
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "rdf:type",
+      "object": "owl:Class",
+      "value": null
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "rdfs:comment",
+      "object": null,
+      "value": "Note that the Golgi apparatus can be located in various places in the cytoplasm. In plants and lower animal cells, the Golgi apparatus exists as many copies of discrete stacks dispersed throughout the cytoplasm, while the Golgi apparatus of interphase mammalian cells is a juxtanuclear, often pericentriolar reticulum, where the discrete Golgi stacks are stitched together to form a compact and interconnected ribbon, sometimes called the Golgi ribbon."
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "rdfs:label",
+      "object": null,
+      "value": "Golgi apparatus"
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "rdfs:subClassOf",
+      "object": "_:riog00023882",
+      "value": null
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "rdfs:subClassOf",
+      "object": "_:riog00023881",
+      "value": null
+    },
+    {
+      "subject": "GO:0005794",
+      "predicate": "rdfs:subClassOf",
+      "object": "GO:0043231",
+      "value": null
+    }
+  ]
+}

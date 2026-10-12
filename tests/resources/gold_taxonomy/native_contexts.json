@@ -1,0 +1,711 @@
+{
+  "bindings": {
+    "native_nodes": {
+      "path": "source-repository/data/raw/gold/GOLD_nodes.tsv",
+      "sha256": "c13c21bdd04619c75ce16e63b05e51577b0cefec5b61765d383313f654ab3fae",
+      "bytes": 121818977
+    },
+    "native_edges": {
+      "path": "source-repository/data/raw/gold/GOLD_edges.tsv",
+      "sha256": "54982c25de9d2c820eeebc1452aeac0b034595921d04d55b810bf1d2b1e127e0",
+      "bytes": 184164126
+    },
+    "current_nodes": {
+      "path": "source-repository/data/transformed/gold/nodes.tsv",
+      "sha256": "9f758cef6a4390ff7f7582c66263d909b7e01cff498c0968eaead06810b4ae06",
+      "bytes": 55804794
+    },
+    "current_edges": {
+      "path": "source-repository/data/transformed/gold/edges.tsv",
+      "sha256": "9bea76461e45761a44f6c24e3ac261d00dcd0baa3e1928f8c66f26c6a117cc14",
+      "bytes": 84240957
+    }
+  },
+  "source_schema_limit": "Native organism declarations contain id/category/name/provided_by/xref only; xref is the taxon, not independent strain evidence.",
+  "selected": {
+    "gold:Go0531699": {
+      "review": "Reviewed: native name is empty; it cannot satisfy a named-strain evidence rule.",
+      "native_incident_edges": [
+        {
+          "line": 205604,
+          "row": {
+            "id": "gold:Go0531699-in_taxon-NCBITaxon:32008",
+            "subject": "gold:Go0531699",
+            "predicate": "biolink:in_taxon",
+            "object": "NCBITaxon:32008",
+            "relation": "gold:organism_v2.ncbi_taxonomy_id",
+            "primary_knowledge_source": "infores:gold"
+          }
+        },
+        {
+          "line": 205605,
+          "row": {
+            "id": "gold:Go0531699-occurs_in-gold.ecosystem:4137",
+            "subject": "gold:Go0531699",
+            "predicate": "biolink:occurs_in",
+            "object": "gold.ecosystem:4137",
+            "relation": "gold:organism_v2.ecosystem_path_id",
+            "primary_knowledge_source": "infores:gold"
+          }
+        },
+        {
+          "line": 1296743,
+          "row": {
+            "id": "gold:Go0531699-related_to-gold:Gs0145282",
+            "subject": "gold:Go0531699",
+            "predicate": "biolink:related_to",
+            "object": "gold:Gs0145282",
+            "relation": "gold:project.organism_id+master_study_id",
+            "primary_knowledge_source": "infores:gold"
+          }
+        }
+      ],
+      "current_incident_edges": [
+        {
+          "line": 162840,
+          "row": {
+            "subject": "gold:Go0531699",
+            "predicate": "biolink:subclass_of",
+            "object": "NCBITaxon:32008",
+            "relation": "rdfs:subClassOf",
+            "primary_knowledge_source": "infores:gold",
+            "knowledge_level": "knowledge_assertion",
+            "agent_type": "manual_agent",
+            "original_object": "",
+            "publications": ""
+          }
+        },
+        {
+          "line": 162841,
+          "row": {
+            "subject": "gold:Go0531699",
+            "predicate": "biolink:located_in",
+            "object": "gold.ecosystem:3592",
+            "relation": "RO:0001025",
+            "primary_knowledge_source": "infores:gold",
+            "knowledge_level": "knowledge_assertion",
+            "agent_type": "manual_agent",
+            "original_object": "gold.ecosystem:4137",
+            "publications": ""
+          }
+        }
+      ],
+      "native_declarations": {
+        "gold:Gs0145282": {
+          "line": 41692,
+          "row": {
+            "id": "gold:Gs0145282",
+            "category": "biolink:Study",
+            "name": "Burkholderia cepacia complex in Mexico",
+            "provided_by": "infores:gold",
+            "xref": ""
+          }
+        },
+        "gold:Go0531699": {
+          "line": 474743,
+          "row": {
+            "id": "gold:Go0531699",
+            "category": "biolink:IndividualOrganism",
+            "name": "",
+            "provided_by": "infores:gold",
+            "xref": "NCBITaxon:32008"
+          }
+        },
+        "NCBITaxon:32008": {
+          "line": 1057602,
+          "row": {
+            "id": "NCBITaxon:32008",
+            "category": "biolink:OrganismTaxon",
+            "name": "Burkholderia",
+            "provided_by": "infores:gold",
+            "xref": ""
+          }
+        },
+        "gold.ecosystem:4137": {
+          "line": 1082862,
+          "row": {
+            "id": "gold.ecosystem:4137",
+            "category": "biolink:EnvironmentalFeature",
+            "name": "Unclassified",
+            "provided_by": "infores:gold",
+            "xref": ""
+          }
+        }
+      },
+      "current_declaration": {
+        "line": 98876,
+        "row": {
+          "id": "gold:Go0531699",
+          "category": "biolink:OrganismTaxon",
+          "name": "",
+          "description": "",
+          "xref": "NCBITaxon:32008",
+          "provided_by": "infores:gold",
+          "synonym": "",
+          "deprecated": "",
+          "same_as": ""
+        }
+      }
+    },
+    "gold:Go0039676": {
+      "review": "Reviewed: source label explicitly names a metagenome; plural difference is not strain evidence.",
+      "native_incident_edges": [
+        {
+          "line": 182599,
+          "row": {
+            "id": "gold:Go0039676-in_taxon-NCBITaxon:1263854",
+            "subject": "gold:Go0039676",
+            "predicate": "biolink:in_taxon",
+            "object": "NCBITaxon:1263854",
+            "relation": "gold:organism_v2.ncbi_taxonomy_id",
+            "primary_knowledge_source": "infores:gold"
+          }
+        },
+        {
+          "line": 1307563,
+          "row": {
+            "id": "gold:Go0039676-related_to-gold:Gs0090653",
+            "subject": "gold:Go0039676",
+            "predicate": "biolink:related_to",
+            "object": "gold:Gs0090653",
+            "relation": "gold:project.organism_id+master_study_id",
+            "primary_knowledge_source": "infores:gold"
+          }
+        }
+      ],
+      "current_incident_edges": [
+        {
+          "line": 145848,
+          "row": {
+            "subject": "gold:Go0039676",
+            "predicate": "biolink:subclass_of",
+            "object": "NCBITaxon:1263854",
+            "relation": "rdfs:subClassOf",
+            "primary_knowledge_source": "infores:gold",
+            "knowledge_level": "knowledge_assertion",
+            "agent_type": "manual_agent",
+            "original_object": "",
+            "publications": ""
+          }
+        }
+      ],
+      "native_declarations": {
+        "gold:Gs0090653": {
+          "line": 10069,
+          "row": {
+            "id": "gold:Gs0090653",
+            "category": "biolink:Study",
+            "name": "Anaerobic digesters metagenome",
+            "provided_by": "infores:gold",
+            "xref": ""
+          }
+        },
+        "gold:Go0039676": {
+          "line": 462170,
+          "row": {
+            "id": "gold:Go0039676",
+            "category": "biolink:IndividualOrganism",
+            "name": "Anaerobic digesters metagenome",
+            "provided_by": "infores:gold",
+            "xref": "NCBITaxon:1263854"
+          }
+        },
+        "NCBITaxon:1263854": {
+          "line": 973735,
+          "row": {
+            "id": "NCBITaxon:1263854",
+            "category": "biolink:OrganismTaxon",
+            "name": "anaerobic digester metagenome",
+            "provided_by": "infores:gold",
+            "xref": ""
+          }
+        }
+      },
+      "current_declaration": {
+        "line": 89649,
+        "row": {
+          "id": "gold:Go0039676",
+          "category": "biolink:OrganismTaxon",
+          "name": "Anaerobic digesters metagenome",
+          "description": "",
+          "xref": "NCBITaxon:1263854",
+          "provided_by": "infores:gold",
+          "synonym": "",
+          "deprecated": "",
+          "same_as": ""
+        }
+      }
+    },
+    "gold:Go0325233": {
+      "review": "Reviewed: source label explicitly names an extracted genome, not a named strain.",
+      "native_incident_edges": [
+        {
+          "line": 61429,
+          "row": {
+            "id": "gold:Go0325233-in_taxon-NCBITaxon:832",
+            "subject": "gold:Go0325233",
+            "predicate": "biolink:in_taxon",
+            "object": "NCBITaxon:832",
+            "relation": "gold:organism_v2.ncbi_taxonomy_id",
+            "primary_knowledge_source": "infores:gold"
+          }
+        }
+      ],
+      "current_incident_edges": [
+        {
+          "line": 51122,
+          "row": {
+            "subject": "gold:Go0325233",
+            "predicate": "biolink:subclass_of",
+            "object": "NCBITaxon:832",
+            "relation": "rdfs:subClassOf",
+            "primary_knowledge_source": "infores:gold",
+            "knowledge_level": "knowledge_assertion",
+            "agent_type": "manual_agent",
+            "original_object": "",
+            "publications": ""
+          }
+        }
+      ],
+      "native_declarations": {
+        "gold:Go0325233": {
+          "line": 391650,
+          "row": {
+            "id": "gold:Go0325233",
+            "category": "biolink:IndividualOrganism",
+            "name": "Genome extracted from metagenome",
+            "provided_by": "infores:gold",
+            "xref": "NCBITaxon:832"
+          }
+        },
+        "NCBITaxon:832": {
+          "line": 1077599,
+          "row": {
+            "id": "NCBITaxon:832",
+            "category": "biolink:OrganismTaxon",
+            "name": "Fibrobacter",
+            "provided_by": "infores:gold",
+            "xref": ""
+          }
+        }
+      },
+      "current_declaration": {
+        "line": 34341,
+        "row": {
+          "id": "gold:Go0325233",
+          "category": "biolink:OrganismTaxon",
+          "name": "Genome extracted from metagenome",
+          "description": "",
+          "xref": "NCBITaxon:832",
+          "provided_by": "infores:gold",
+          "synonym": "",
+          "deprecated": "",
+          "same_as": ""
+        }
+      }
+    },
+    "gold:Go0326743": {
+      "review": "Reviewed: source label explicitly names a binned genome from a non-axenic culture metagenome.",
+      "native_incident_edges": [
+        {
+          "line": 246713,
+          "row": {
+            "id": "gold:Go0326743-in_taxon-NCBITaxon:200666",
+            "subject": "gold:Go0326743",
+            "predicate": "biolink:in_taxon",
+            "object": "NCBITaxon:200666",
+            "relation": "gold:organism_v2.ncbi_taxonomy_id",
+            "primary_knowledge_source": "infores:gold"
+          }
+        }
+      ],
+      "current_incident_edges": [
+        {
+          "line": 194008,
+          "row": {
+            "subject": "gold:Go0326743",
+            "predicate": "biolink:subclass_of",
+            "object": "NCBITaxon:200666",
+            "relation": "rdfs:subClassOf",
+            "primary_knowledge_source": "infores:gold",
+            "knowledge_level": "knowledge_assertion",
+            "agent_type": "manual_agent",
+            "original_object": "",
+            "publications": ""
+          }
+        }
+      ],
+      "native_declarations": {
+        "gold:Go0326743": {
+          "line": 497804,
+          "row": {
+            "id": "gold:Go0326743",
+            "category": "biolink:IndividualOrganism",
+            "name": "Sphingobacteriales genome binned from the metagenome of a non-axenic Nostocales culture",
+            "provided_by": "infores:gold",
+            "xref": "NCBITaxon:200666"
+          }
+        },
+        "NCBITaxon:200666": {
+          "line": 1017773,
+          "row": {
+            "id": "NCBITaxon:200666",
+            "category": "biolink:OrganismTaxon",
+            "name": "Sphingobacteriales",
+            "provided_by": "infores:gold",
+            "xref": ""
+          }
+        }
+      },
+      "current_declaration": {
+        "line": 116486,
+        "row": {
+          "id": "gold:Go0326743",
+          "category": "biolink:OrganismTaxon",
+          "name": "Sphingobacteriales genome binned from the metagenome of a non-axenic Nostocales culture",
+          "description": "",
+          "xref": "NCBITaxon:200666",
+          "provided_by": "infores:gold",
+          "synonym": "",
+          "deprecated": "",
+          "same_as": ""
+        }
+      }
+    },
+    "gold:Go0325413": {
+      "review": "Reviewed: source label explicitly names a metagenome bin.",
+      "native_incident_edges": [
+        {
+          "line": 2037,
+          "row": {
+            "id": "gold:Go0325413-in_taxon-NCBITaxon:1224",
+            "subject": "gold:Go0325413",
+            "predicate": "biolink:in_taxon",
+            "object": "NCBITaxon:1224",
+            "relation": "gold:organism_v2.ncbi_taxonomy_id",
+            "primary_knowledge_source": "infores:gold"
+          }
+        }
+      ],
+      "current_incident_edges": [
+        {
+          "line": 1565,
+          "row": {
+            "subject": "gold:Go0325413",
+            "predicate": "biolink:subclass_of",
+            "object": "NCBITaxon:1224",
+            "relation": "rdfs:subClassOf",
+            "primary_knowledge_source": "infores:gold",
+            "knowledge_level": "knowledge_assertion",
+            "agent_type": "manual_agent",
+            "original_object": "",
+            "publications": ""
+          }
+        }
+      ],
+      "native_declarations": {
+        "gold:Go0325413": {
+          "line": 352977,
+          "row": {
+            "id": "gold:Go0325413",
+            "category": "biolink:IndividualOrganism",
+            "name": "Dpulchra_bleached_metagenome_bin171",
+            "provided_by": "infores:gold",
+            "xref": "NCBITaxon:1224"
+          }
+        },
+        "NCBITaxon:1224": {
+          "line": 970969,
+          "row": {
+            "id": "NCBITaxon:1224",
+            "category": "biolink:OrganismTaxon",
+            "name": "Pseudomonadota",
+            "provided_by": "infores:gold",
+            "xref": ""
+          }
+        }
+      },
+      "current_declaration": {
+        "line": 1235,
+        "row": {
+          "id": "gold:Go0325413",
+          "category": "biolink:OrganismTaxon",
+          "name": "Dpulchra_bleached_metagenome_bin171",
+          "description": "",
+          "xref": "NCBITaxon:1224",
+          "provided_by": "infores:gold",
+          "synonym": "",
+          "deprecated": "",
+          "same_as": ""
+        }
+      }
+    },
+    "gold:Go0460832": {
+      "review": "Candidate only: MAG acronym does not by itself justify a replacement category.",
+      "native_incident_edges": [
+        {
+          "line": 366,
+          "row": {
+            "id": "gold:Go0460832-in_taxon-NCBITaxon:2",
+            "subject": "gold:Go0460832",
+            "predicate": "biolink:in_taxon",
+            "object": "NCBITaxon:2",
+            "relation": "gold:organism_v2.ncbi_taxonomy_id",
+            "primary_knowledge_source": "infores:gold"
+          }
+        }
+      ],
+      "current_incident_edges": [
+        {
+          "line": 365,
+          "row": {
+            "subject": "gold:Go0460832",
+            "predicate": "biolink:subclass_of",
+            "object": "NCBITaxon:2",
+            "relation": "rdfs:subClassOf",
+            "primary_knowledge_source": "infores:gold",
+            "knowledge_level": "knowledge_assertion",
+            "agent_type": "manual_agent",
+            "original_object": "",
+            "publications": ""
+          }
+        }
+      ],
+      "native_declarations": {
+        "gold:Go0460832": {
+          "line": 351663,
+          "row": {
+            "id": "gold:Go0460832",
+            "category": "biolink:IndividualOrganism",
+            "name": "Unclassified Bacteria MAG 53",
+            "provided_by": "infores:gold",
+            "xref": "NCBITaxon:2"
+          }
+        },
+        "NCBITaxon:2": {
+          "line": 1017600,
+          "row": {
+            "id": "NCBITaxon:2",
+            "category": "biolink:OrganismTaxon",
+            "name": "Bacteria",
+            "provided_by": "infores:gold",
+            "xref": ""
+          }
+        }
+      },
+      "current_declaration": {
+        "line": 197,
+        "row": {
+          "id": "gold:Go0460832",
+          "category": "biolink:OrganismTaxon",
+          "name": "Unclassified Bacteria MAG 53",
+          "description": "",
+          "xref": "NCBITaxon:2",
+          "provided_by": "infores:gold",
+          "synonym": "",
+          "deprecated": "",
+          "same_as": ""
+        }
+      }
+    },
+    "gold:Go0109786": {
+      "review": "Candidate only: single-cell wording does not establish a strain class or exclude an isolate interpretation.",
+      "native_incident_edges": [
+        {
+          "line": 756,
+          "row": {
+            "id": "gold:Go0109786-in_taxon-NCBITaxon:1236",
+            "subject": "gold:Go0109786",
+            "predicate": "biolink:in_taxon",
+            "object": "NCBITaxon:1236",
+            "relation": "gold:organism_v2.ncbi_taxonomy_id",
+            "primary_knowledge_source": "infores:gold"
+          }
+        },
+        {
+          "line": 1294701,
+          "row": {
+            "id": "gold:Go0109786-related_to-gold:Gs0113753",
+            "subject": "gold:Go0109786",
+            "predicate": "biolink:related_to",
+            "object": "gold:Gs0113753",
+            "relation": "gold:project.organism_id+master_study_id",
+            "primary_knowledge_source": "infores:gold"
+          }
+        },
+        {
+          "line": 1305529,
+          "row": {
+            "id": "gold:Go0109786-related_to-gold:Gs0118716",
+            "subject": "gold:Go0109786",
+            "predicate": "biolink:related_to",
+            "object": "gold:Gs0118716",
+            "relation": "gold:project.organism_id+master_study_id",
+            "primary_knowledge_source": "infores:gold"
+          }
+        }
+      ],
+      "current_incident_edges": [
+        {
+          "line": 692,
+          "row": {
+            "subject": "gold:Go0109786",
+            "predicate": "biolink:subclass_of",
+            "object": "NCBITaxon:1236",
+            "relation": "rdfs:subClassOf",
+            "primary_knowledge_source": "infores:gold",
+            "knowledge_level": "knowledge_assertion",
+            "agent_type": "manual_agent",
+            "original_object": "",
+            "publications": ""
+          }
+        }
+      ],
+      "native_declarations": {
+        "gold:Gs0118716": {
+          "line": 56790,
+          "row": {
+            "id": "gold:Gs0118716",
+            "category": "biolink:Study",
+            "name": "Reddy's test study for help doc examples",
+            "provided_by": "infores:gold",
+            "xref": ""
+          }
+        },
+        "gold:Gs0113753": {
+          "line": 71488,
+          "row": {
+            "id": "gold:Gs0113753",
+            "category": "biolink:Study",
+            "name": "Reddy's Test Study",
+            "provided_by": "infores:gold",
+            "xref": ""
+          }
+        },
+        "gold:Go0109786": {
+          "line": 352009,
+          "row": {
+            "id": "gold:Go0109786",
+            "category": "biolink:IndividualOrganism",
+            "name": "Gammaproteobacterium single cell #123",
+            "provided_by": "infores:gold",
+            "xref": "NCBITaxon:1236"
+          }
+        },
+        "NCBITaxon:1236": {
+          "line": 971932,
+          "row": {
+            "id": "NCBITaxon:1236",
+            "category": "biolink:OrganismTaxon",
+            "name": "Gammaproteobacteria",
+            "provided_by": "infores:gold",
+            "xref": ""
+          }
+        }
+      },
+      "current_declaration": {
+        "line": 506,
+        "row": {
+          "id": "gold:Go0109786",
+          "category": "biolink:OrganismTaxon",
+          "name": "Gammaproteobacterium single cell #123",
+          "description": "",
+          "xref": "NCBITaxon:1236",
+          "provided_by": "infores:gold",
+          "synonym": "",
+          "deprecated": "",
+          "same_as": ""
+        }
+      }
+    },
+    "gold:Go0014619": {
+      "review": "Candidate only: SAG acronym requires source metadata; do not assume its expansion.",
+      "native_incident_edges": [
+        {
+          "line": 346,
+          "row": {
+            "id": "gold:Go0014619-in_taxon-NCBITaxon:2",
+            "subject": "gold:Go0014619",
+            "predicate": "biolink:in_taxon",
+            "object": "NCBITaxon:2",
+            "relation": "gold:organism_v2.ncbi_taxonomy_id",
+            "primary_knowledge_source": "infores:gold"
+          }
+        },
+        {
+          "line": 1232812,
+          "row": {
+            "id": "gold:Go0014619-related_to-gold:Gs0017625",
+            "subject": "gold:Go0014619",
+            "predicate": "biolink:related_to",
+            "object": "gold:Gs0017625",
+            "relation": "gold:project.organism_id+master_study_id",
+            "primary_knowledge_source": "infores:gold"
+          }
+        }
+      ],
+      "current_incident_edges": [
+        {
+          "line": 345,
+          "row": {
+            "subject": "gold:Go0014619",
+            "predicate": "biolink:subclass_of",
+            "object": "NCBITaxon:2",
+            "relation": "rdfs:subClassOf",
+            "primary_knowledge_source": "infores:gold",
+            "knowledge_level": "knowledge_assertion",
+            "agent_type": "manual_agent",
+            "original_object": "",
+            "publications": ""
+          }
+        }
+      ],
+      "native_declarations": {
+        "gold:Gs0017625": {
+          "line": 44851,
+          "row": {
+            "id": "gold:Gs0017625",
+            "category": "biolink:Study",
+            "name": "Metagenomic and metatranscriptomic analysis of forest soil communities across North America",
+            "provided_by": "infores:gold",
+            "xref": ""
+          }
+        },
+        "gold:Go0014619": {
+          "line": 351643,
+          "row": {
+            "id": "gold:Go0014619",
+            "category": "biolink:IndividualOrganism",
+            "name": "SAG sp. TBD07",
+            "provided_by": "infores:gold",
+            "xref": "NCBITaxon:2"
+          }
+        },
+        "NCBITaxon:2": {
+          "line": 1017600,
+          "row": {
+            "id": "NCBITaxon:2",
+            "category": "biolink:OrganismTaxon",
+            "name": "Bacteria",
+            "provided_by": "infores:gold",
+            "xref": ""
+          }
+        }
+      },
+      "current_declaration": {
+        "line": 177,
+        "row": {
+          "id": "gold:Go0014619",
+          "category": "biolink:OrganismTaxon",
+          "name": "SAG sp. TBD07",
+          "description": "",
+          "xref": "NCBITaxon:2",
+          "provided_by": "infores:gold",
+          "synonym": "",
+          "deprecated": "",
+          "same_as": ""
+        }
+      }
+    }
+  }
+}

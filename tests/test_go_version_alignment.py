@@ -297,6 +297,7 @@ def _stub_go_transform(tmp_path, monkeypatch):
     t = tf_mod.OntologiesTransform.__new__(tf_mod.OntologiesTransform)
     t.input_base_dir = tmp_path
     t.output_dir = tmp_path
+    t.begin_consumed_inputs()
     monkeypatch.setattr(t, "_sanitize_obograph_synonyms", lambda p: None, raising=False)
     monkeypatch.setattr(t, "_drop_deprecated_terms", lambda p: None, raising=False)
     monkeypatch.setattr(t, "post_process", lambda n: None, raising=False)

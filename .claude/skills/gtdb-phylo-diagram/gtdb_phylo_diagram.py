@@ -188,13 +188,15 @@ def stream_edges(
                         stats.close_match_edges += 1
                 continue
 
-            # subclass_of with one taxon endpoint is a classification edge,
-            # not metadata -- e.g. ncbi.assembly:<accession> --subclass_of--> GTDB:<species>
-            # (~732K of these, one per GTDB genome). Excluding them keeps the
-            # circle size meaning "biologically interesting edges" (phenotype,
-            # isolation source, growth media, METPO traits) rather than
-            # "how many genomes GTDB has for this clade".
-            if pred == "biolink:subclass_of":
+            # subclass_of with one taxon endpoint, and a genome's assignment to its
+            # taxon, are classification edges, not metadata -- e.g.
+            # ncbi.assembly:<accession> --in_taxon--> GTDB:<species> (one per GTDB
+            # genome; emitted as subclass_of before the RO:0002162 correction).
+            # Excluding them keeps the circle size meaning "biologically
+            # interesting edges" (phenotype, isolation source, growth media, METPO
+            # traits) rather than "how many genomes GTDB has for this clade".
+            # Other in_taxon edges (for example food sources) remain metadata.
+            if pred == "biolink:subclass_of" or (pred == "biolink:in_taxon" and subj.startswith("ncbi.assembly:")):
                 stats.classification_edges_skipped += 1
                 continue
 
@@ -682,7 +684,7 @@ def write_report(
     lines.append("|---|---|")
     lines.append(f"| Total edges in merged KG | {stats.edges_total:,} |")
     lines.append(f"| Taxon-to-taxon edges (skipped) | {stats.taxon_taxon_edges_skipped:,} |")
-    lines.append(f"| Classification subclass_of (skipped, e.g. genome->species) | {stats.classification_edges_skipped:,} |")
+    lines.append(f"| Classification subclass_of / genome in_taxon (skipped, e.g. genome->species) | {stats.classification_edges_skipped:,} |")
     lines.append(f"| Non-taxon edges counted (sizes the circles) | {stats.non_taxon_edges_counted:,} |")
     lines.append(f"| GTDB subclass_of (tree) | {stats.gtdb_subclass_edges:,} |")
     lines.append(f"| GTDB <-> NCBITaxon close_match | {stats.close_match_edges:,} |")

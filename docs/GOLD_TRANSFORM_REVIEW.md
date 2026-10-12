@@ -11,6 +11,9 @@ Biolink domain/range per edge signature.
 > 2026-08-10. KG-Microbe now pins Biolink 4.4.2. The assumptions relevant to
 > GOLD were checked again against that exact schema; see
 > [BIOLINK_4_4_2_REVALIDATION.md](BIOLINK_4_4_2_REVALIDATION.md).
+> The later whole-cohort unresolved-referent decision supersedes any assumption
+> that differing GOLD names prove strains; see
+> [GOLD_UNRESOLVED_REFERENTS.md](GOLD_UNRESOLVED_REFERENTS.md).
 
 GOLD arrives already in KGX shape rather than as a source to parse, so this review treats
 the TSVs as a transform's *output* and asks the question we would ask of any transform

@@ -14,6 +14,8 @@ that the selection actually reaches KGX and that a bad key fails fast —
 rather than running a real merge, which needs the full data tree.
 """
 
+import shutil
+from pathlib import Path
 from unittest import mock
 
 import pytest
@@ -48,8 +50,19 @@ def _merged_sources(mock_merge):
     return mock_merge.call_args.kwargs.get("source")
 
 
+def _serialized_merge(config_path, **kwargs):
+    """Model successful serialization with immutable tiny graph files for the identity boundary."""
+    config = yaml_lib.safe_load(Path(config_path).read_text())
+    output = Path(config["configuration"]["output_directory"])
+    for kind in ("nodes", "edges"):
+        shutil.copyfile(
+            Path(__file__).parent / "resources" / f"validation_contract_{kind}.tsv",
+            output / f"merged-kg_{kind}.tsv",
+        )
+
+
 @mock.patch("kg_microbe.merge_utils.merge_kg._cleanup_merged_outputs")
-@mock.patch("kg_microbe.merge_utils.merge_kg.merge")
+@mock.patch("kg_microbe.merge_utils.merge_kg.merge", side_effect=_serialized_merge)
 def test_subset_is_passed_through_to_kgx(mock_merge, _cleanup, config_path):
     """The selected subset must reach KGX, not just be accepted by the CLI."""
     load_and_merge(config_path, sources=["alpha", "gamma"])
@@ -57,7 +70,7 @@ def test_subset_is_passed_through_to_kgx(mock_merge, _cleanup, config_path):
 
 
 @mock.patch("kg_microbe.merge_utils.merge_kg._cleanup_merged_outputs")
-@mock.patch("kg_microbe.merge_utils.merge_kg.merge")
+@mock.patch("kg_microbe.merge_utils.merge_kg.merge", side_effect=_serialized_merge)
 def test_no_subset_merges_everything(mock_merge, _cleanup, config_path):
     """Omitting the subset must merge all sources, i.e. pass source=None."""
     load_and_merge(config_path)
@@ -65,7 +78,7 @@ def test_no_subset_merges_everything(mock_merge, _cleanup, config_path):
 
 
 @mock.patch("kg_microbe.merge_utils.merge_kg._cleanup_merged_outputs")
-@mock.patch("kg_microbe.merge_utils.merge_kg.merge")
+@mock.patch("kg_microbe.merge_utils.merge_kg.merge", side_effect=_serialized_merge)
 def test_empty_subset_is_treated_as_all(mock_merge, _cleanup, config_path):
     """An empty tuple from click must not mean 'merge nothing'."""
     load_and_merge(config_path, sources=[])
@@ -73,7 +86,7 @@ def test_empty_subset_is_treated_as_all(mock_merge, _cleanup, config_path):
 
 
 @mock.patch("kg_microbe.merge_utils.merge_kg._cleanup_merged_outputs")
-@mock.patch("kg_microbe.merge_utils.merge_kg.merge")
+@mock.patch("kg_microbe.merge_utils.merge_kg.merge", side_effect=_serialized_merge)
 def test_unknown_source_fails_before_kgx_runs(mock_merge, _cleanup, config_path):
     """
     A typo must abort before any parsing starts.
@@ -92,7 +105,7 @@ def test_unknown_source_fails_before_kgx_runs(mock_merge, _cleanup, config_path)
 
 
 @mock.patch("kg_microbe.merge_utils.merge_kg._cleanup_merged_outputs")
-@mock.patch("kg_microbe.merge_utils.merge_kg.merge")
+@mock.patch("kg_microbe.merge_utils.merge_kg.merge", side_effect=_serialized_merge)
 def test_processes_still_defaults_to_one(mock_merge, _cleanup, config_path):
     """
     Each concurrent process holds its own source graph.

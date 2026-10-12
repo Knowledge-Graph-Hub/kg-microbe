@@ -1,0 +1,65 @@
+{
+  "evidence": {
+    "source": "data/raw/uberon.json",
+    "sha256": "87a892da0544a82f41f0a8b2b52f7ee705ec6d5ca2c102e7d439a7086d79f428",
+    "version": "http://purl.obolibrary.org/obo/uberon/releases/2026-06-19/uberon.owl",
+    "selection": "Exact native imported gene declarations and expressing cell declaration, with original RO:0002292 assertions."
+  },
+  "graphs": [
+    {
+      "id": "http://purl.obolibrary.org/obo/uberon.owl",
+      "nodes": [
+        {
+          "id": "http://identifiers.org/ncbigene/26468",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://identifiers.org/ncbigene/55553",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/CL_4023063",
+          "lbl": "medial ganglionic eminence derived interneuron",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "An interneuron that is derived from the medial ganglionic eminence. In mice and humans, it expresses LHX6 and SOX6.",
+              "xrefs": [
+                "DOI:10.1101/2022.10.12.511898",
+                "PMID:19709629"
+              ]
+            },
+            "subsets": [
+              "http://purl.obolibrary.org/obo/cl#cellxgene_subset",
+              "http://purl.obolibrary.org/obo/uberon/core#human_reference_atlas"
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "MGE interneuron"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.org/dc/terms/contributor",
+                "val": "http://orcid.org/0000-0001-7258-9596"
+              }
+            ]
+          }
+        }
+      ],
+      "edges": [
+        {
+          "sub": "http://purl.obolibrary.org/obo/CL_4023063",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002292",
+          "obj": "http://identifiers.org/ncbigene/26468"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/CL_4023063",
+          "pred": "http://purl.obolibrary.org/obo/RO_0002292",
+          "obj": "http://identifiers.org/ncbigene/55553"
+        }
+      ]
+    }
+  ]
+}

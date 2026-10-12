@@ -14,11 +14,16 @@
 # untyped phantom node, which is the defect fixed for NCBITaxon in #790/#815.
 # Registering the path in DEFAULT_MAPPING_PATHS is what makes the stub appear.
 #
-# Keyed on the `Type` column of environments.csv (the habitat key), because
-# that is what identifies the row independently of the value being corrected.
+# Keyed on the exact `Type` column and exact comma-delimited wrong_object_id
+# token. Companion identifiers and aligned labels retain their order; labels
+# alone are never identity authority. Keep object_id a single CURIE so the
+# registered stub collector can discover every corrected target.
 #
-# Report these upstream. Both are id/label pairs that agree with each other
+# Report these upstream. The first two id/label pairs agree with each other
 # while matching neither the row's own key (#796, reported from HabitatMech).
+# The FOODON retirement is instead an explicit native IAO:0100001 replacement;
+# immutable source and authority excerpts: tests/resources/madin_foodon_retirement/.
 environment_type	wrong_object_id	wrong_object_label	object_id	object_label	notes
 host_plant_root-associated	NCBITaxon:1	root	PO:0009005	root	NCBITaxon:1 is the root of the TAXONOMY, matched on the label "root"; the row describes a plant root. Live effect before the fix: 628 merged edges asserting `NCBITaxon:1 biolink:location_of <organism>` — the root of the tree of life as a habitat. HabitatMech drops these by refusing taxa as habitats; kg-microbe did not, so it asserted them.
 host_animal_endotherm_nasopharyngeal	UBERON:0000065	respiratory tract	UBERON:0001728	nasopharynx	The row is specifically nasopharyngeal; UBERON:0000065 is the whole respiratory tract, so bands measured in the nasopharynx (Gradients high, Structural high) were asserted about trachea, bronchi and alveoli too. 735 edges before the fix.
+host_plant_vasculature	FOODON:03420174	part of plant	PO:0009011	plant structure	Pinned FOODON 2025-12-30 foodon.owl SHA256 1e11fc50283c6498697a7aca9606c9d914f1cda71cc5510e006d949c32df7db0 lines 511496-511501 declares deprecated owl:Class FOODON:03420174 with unique IAO:0100001 replacement PO:0009011. Pinned PO 2026-01-09 declares active plant structure. Preserve companion UBERON:0002049 and four Madin location_of observations. See tests/resources/madin_foodon_retirement/README.md; no label-based equivalence.

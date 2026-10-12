@@ -1,0 +1,37 @@
+{
+  "graphs": [
+    {
+      "id": "http://purl.obolibrary.org/obo/foodon.owl",
+      "nodes": [
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00001002",
+          "lbl": "food product",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "Food material for humans and animals which is processed with the intention that it be consumable as a whole or added to other food products."
+            },
+            "comments": [
+              "The FoodOn \"food product\"class is provided as a branch under which new food product categories and food products themselves can be placed. Here classes are provided to differentiate a food product by its food composition, processing and/or consumption characteristics. This avoids brand name products but it may include generic food dish categories. It has a much greater depth and polyhierarchy than other agency product type schemes have in an effort to group related products together.  The upper level basis of this tree originated in the environment ontology (ENVO) and from the US Code of Federal Regulations."
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "Damion Dooley"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+                "val": "Foodon product type"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "https://en.wikipedia.org/wiki/Food"
+              }
+            ]
+          }
+        }
+      ],
+      "edges": []
+    }
+  ]
+}

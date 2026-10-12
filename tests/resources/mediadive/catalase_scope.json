@@ -1,0 +1,259 @@
+{
+  "catalog": {
+    "amount": 35000,
+    "attribute": "filter-sterilized, 15000 - 35000 units/1000 ml",
+    "compound": "Catalase",
+    "compound_id": 270,
+    "condition": "",
+    "optional": 0,
+    "recipe_order": 9,
+    "unit": "Units"
+  },
+  "historical_companion_rows": [
+    {
+      "line": 452,
+      "row": {
+        "cas_rn": "",
+        "chebi_id": "",
+        "culturemech_term_id": "",
+        "example_media": "CultureMech:001112; CultureMech:004177; CultureMech:005582",
+        "ingredient_name": "Catalase",
+        "kg_microbe_node_id": "",
+        "mapping_status": "MAPPED",
+        "mim_id": "NCIT:C61062",
+        "occurrence_count": "26",
+        "synonyms": "Catalase (Sigma C--10)"
+      }
+    },
+    {
+      "line": 1563,
+      "row": {
+        "cas_rn": "",
+        "chebi_id": "",
+        "culturemech_term_id": "",
+        "example_media": "CultureMech:008986; CultureMech:008914; CultureMech:008978",
+        "ingredient_name": "Catalase (beef)",
+        "kg_microbe_node_id": "",
+        "mapping_status": "UNMAPPED",
+        "mim_id": "",
+        "occurrence_count": "3",
+        "synonyms": ""
+      }
+    },
+    {
+      "line": 1579,
+      "row": {
+        "cas_rn": "",
+        "chebi_id": "",
+        "culturemech_term_id": "",
+        "example_media": "CultureMech:008980; CultureMech:008985; CultureMech:008987",
+        "ingredient_name": "Catalase (beef) (Sigma C-9322)",
+        "kg_microbe_node_id": "",
+        "mapping_status": "UNMAPPED",
+        "mim_id": "",
+        "occurrence_count": "3",
+        "synonyms": ""
+      }
+    },
+    {
+      "line": 2560,
+      "row": {
+        "cas_rn": "",
+        "chebi_id": "",
+        "culturemech_term_id": "",
+        "example_media": "CultureMech:007617",
+        "ingredient_name": "Catalase (Sigma C--10)",
+        "kg_microbe_node_id": "",
+        "mapping_status": "MAPPED",
+        "mim_id": "NCIT:C61062",
+        "occurrence_count": "1",
+        "synonyms": "Catalase (Sigma C--10)"
+      }
+    }
+  ],
+  "native_mapping_rows": [
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-24",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:OntologyClass",
+      "object_formula": "",
+      "object_id": "NCIT:C61062",
+      "object_label": "Catalase",
+      "object_source": "obo:ncit.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "native_ontology:ncit",
+      "subject_id": "kgm.name:cat",
+      "subject_label": "CAT"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-24",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:OntologyClass",
+      "object_formula": "",
+      "object_id": "NCIT:C61062",
+      "object_label": "Catalase",
+      "object_source": "obo:ncit.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "native_ontology:ncit",
+      "subject_id": "kgm.name:cat_protein",
+      "subject_label": "CAT Protein"
+    },
+    {
+      "comment": "canonical_name",
+      "confidence": "",
+      "mapping_date": "2026-09-24",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:OntologyClass",
+      "object_formula": "",
+      "object_id": "NCIT:C61062",
+      "object_label": "Catalase",
+      "object_source": "obo:ncit.owl",
+      "predicate_id": "skos:exactMatch",
+      "source": "native_ontology:ncit",
+      "subject_id": "kgm.name:catalase",
+      "subject_label": "Catalase"
+    },
+    {
+      "comment": "synonym",
+      "confidence": "",
+      "mapping_date": "2026-09-24",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_category": "biolink:OntologyClass",
+      "object_formula": "",
+      "object_id": "NCIT:C61062",
+      "object_label": "Catalase",
+      "object_source": "obo:ncit.owl",
+      "predicate_id": "skos:closeMatch",
+      "source": "native_ontology:ncit",
+      "subject_id": "kgm.name:ec_11116",
+      "subject_label": "EC 1.11.1.6"
+    }
+  ],
+  "occurrences": [
+    {
+      "raw": {
+        "amount": 35000,
+        "attribute": "filter-sterilized, 15000 - 35000 units/1000 ml",
+        "compound": "Catalase",
+        "compound_id": 270,
+        "condition": "",
+        "optional": 0,
+        "recipe_order": 9,
+        "unit": "Units"
+      },
+      "source_assertion_id": "mediadive.solution:269#recipe/9"
+    },
+    {
+      "raw": {
+        "amount": 60,
+        "attribute": "Sigma C-10",
+        "compound": "Catalase",
+        "compound_id": 270,
+        "g_l": 0.06,
+        "optional": 0,
+        "recipe_order": 6,
+        "unit": "mg"
+      },
+      "source_assertion_id": "mediadive.solution:961#recipe/6"
+    },
+    {
+      "raw": {
+        "amount": 4,
+        "attribute": "beef",
+        "compound": "Catalase",
+        "compound_id": 270,
+        "g_l": 0.04,
+        "optional": 0,
+        "recipe_order": 4,
+        "unit": "mg"
+      },
+      "source_assertion_id": "mediadive.solution:1371#recipe/4"
+    },
+    {
+      "raw": {
+        "amount": 1,
+        "attribute": "2000 U/ml",
+        "compound": "Catalase",
+        "compound_id": 270,
+        "optional": 0,
+        "recipe_order": 10,
+        "unit": "ml"
+      },
+      "source_assertion_id": "mediadive.solution:1732#recipe/10"
+    },
+    {
+      "raw": {
+        "amount": 0.3,
+        "attribute": "Beef",
+        "compound": "Catalase",
+        "compound_id": 270,
+        "g_l": 0.003,
+        "optional": 0,
+        "recipe_order": 3,
+        "unit": "mg"
+      },
+      "source_assertion_id": "mediadive.solution:1750#recipe/3"
+    },
+    {
+      "raw": {
+        "amount": 4,
+        "attribute": "beef",
+        "compound": "Catalase",
+        "compound_id": 270,
+        "g_l": 0.04,
+        "optional": 0,
+        "recipe_order": 4,
+        "unit": "mg"
+      },
+      "source_assertion_id": "mediadive.solution:5668#recipe/4"
+    },
+    {
+      "raw": {
+        "amount": 2.5,
+        "attribute": "SIGMA C1345) (0.10% w/v",
+        "compound": "Catalase",
+        "compound_id": 270,
+        "g_l": 0.0025,
+        "optional": 0,
+        "recipe_order": 13,
+        "unit": "ml"
+      },
+      "source_assertion_id": "mediadive.solution:3386#recipe/13"
+    },
+    {
+      "raw": {
+        "amount": 60,
+        "attribute": "Sigma C-10",
+        "compound": "Catalase",
+        "compound_id": 270,
+        "g_l": 0.06,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "mg"
+      },
+      "source_assertion_id": "mediadive.solution:3755#recipe/2"
+    }
+  ],
+  "source_inputs": {
+    "compounds.json": {
+      "bytes": 228306,
+      "sha256": "ccc1130355354a55729d31618b152d1c340d75379dfea49352e9075f3419cea1"
+    },
+    "media_detailed.json": {
+      "bytes": 20777670,
+      "sha256": "755a05753d42b0dcd46dd0564f101faf7f59b1ba4d1b226dee0ed6cedf35f8e2"
+    },
+    "media_strains.json": {
+      "bytes": 12275436,
+      "sha256": "6c5c81db8bcea45643c60516d620941ee4d86be516f9e3ca63bd14f17d2480e5"
+    },
+    "solutions.json": {
+      "bytes": 10447742,
+      "sha256": "9ab0fbf72c2e5ac25ecab3ada268dfe524db971daa86d67532dea6a5412a5c44"
+    }
+  }
+}

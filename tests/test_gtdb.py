@@ -290,7 +290,8 @@ class TestGTDBTransform(unittest.TestCase):
         self.assertEqual(len(self.transform.edges), 1)
         genome_edge = self.transform.edges[0]
         self.assertEqual(genome_edge["subject"], "ncbi.assembly:GCF_000005845.2")
-        self.assertEqual(genome_edge["predicate"], "biolink:subclass_of")
+        self.assertEqual(genome_edge["predicate"], "biolink:in_taxon")
+        self.assertEqual(genome_edge["relation"], "RO:0002162")
         self.assertEqual(genome_edge["object"], "GTDB:s__Escherichia_coli")
         self.assertEqual(genome_edge["knowledge_level"], "knowledge_assertion")
         self.assertEqual(genome_edge["agent_type"], "not_provided")
@@ -315,7 +316,8 @@ class TestGTDBTransform(unittest.TestCase):
         # Should only have 1 edge: genome->taxon (no NCBI mapping)
         self.transform._emit_ncbi_mapping_edges()
         self.assertEqual(len(self.transform.edges), 1)
-        self.assertEqual(self.transform.edges[0]["predicate"], "biolink:subclass_of")
+        self.assertEqual(self.transform.edges[0]["predicate"], "biolink:in_taxon")
+        self.assertEqual(self.transform.edges[0]["relation"], "RO:0002162")
 
     def test_build_taxonomy_hierarchy(self):
         """Test building taxonomy hierarchy."""

@@ -1,0 +1,8 @@
+{
+  "scope": "Reviewed historical excerpts; two go_reference_context authority locators are publication projections, not byte-identical original field strings. Original and published hashes are in ../publication_locator_projection.json. Upstream byte identities and native coordinates remain in properties.json.",
+  "sha256": {
+    "historical_claims.json": "8a02904b8bc418950a8ac398d7f21bb3e5874eb1ba3bc9473212575a5ecc9460",
+    "properties.json": "6de901f92f4e790a9b7358ad6b510e68bfd1067d8c186b037e520822110a962c",
+    "quantifier_examples.json": "04ef2d6fab75ebb9eb2b1e06d0e19c330159b34188a36669ab5e83d85833d6c8"
+  }
+}

@@ -241,15 +241,23 @@ def iter_database_pairs(path: Path) -> Iterator[Tuple[list, Optional[str]]]:
     files are pure tab-delimited, no embedded quotes.
     """
     with path.open("r", encoding="utf-8", errors="replace") as fh:
-        for lineno, line in enumerate(fh, start=1):
-            line = line.rstrip("\n\r")
-            if not line:
-                continue
-            row = line.split("\t")
-            if len(row) != DATABASE_PAIRS_NCOL:
-                yield row, f"malformed line {lineno}: got {len(row)} cols, want {DATABASE_PAIRS_NCOL}"
-                continue
-            yield row, None
+        for row, error, _lineno in iter_database_pair_lines(fh):
+            yield row, error
+
+
+def iter_database_pair_lines(stream):
+    """Yield parsed rows plus true physical line numbers from the caller's immutable stream."""
+    for lineno, line in enumerate(stream, start=1):
+        line = line.rstrip("\n\r")
+        if not line:
+            continue
+        row = line.split("\t")
+        error = (
+            None
+            if len(row) == DATABASE_PAIRS_NCOL
+            else (f"malformed line {lineno}: got {len(row)} cols, want {DATABASE_PAIRS_NCOL}")
+        )
+        yield row, error, lineno
 
 
 # ---------------------------------------------------------------------------

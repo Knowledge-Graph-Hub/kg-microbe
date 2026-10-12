@@ -24,7 +24,7 @@
 #    bacdive     BacDive strains + assay-kit metadata
 #    mediadive   MediaDive basic media list (also triggers the bulk API download)
 #    madin       Madin et al. condensed traits + environment conversion table
-#    rhea        Rhea reaction mappings (to GO and EC)
+#    rhea        Native Rhea candidate download (explicit hash-pinned staging required)
 #    cog         Clusters of Orthologous Groups definitions
 #    kegg        KEGG KO list (see the KEGG section for the manual cache step)
 #    gtdb        GTDB taxonomy + metadata
@@ -232,15 +232,21 @@
   local_name: upa.owl
   tag: ontologies
 
-# RHEA mappings
+# Native Rhea acquisition quarantine. These URLs are rolling locations, NOT
+# immutable release pins. Nothing here writes the admitted raw/rhea inputs.
+# After download, explicitly verify/promote the pair against mappings/rhea_release.json:
+# poetry run python -m kg_microbe.transform_utils.rhea_mappings.stage_snapshot \
+#   --source-dir data/raw/rhea_download --input-dir data/raw
+# If upstream bytes have moved, this fails closed. Use an explicitly selected
+# local matching export instead, or review a new snapshot before changing pins.
 - 
-  url: https://ftp.expasy.org/databases/rhea/tsv/rhea2go.tsv
-  local_name: rhea2go.tsv
+  url: https://ftp.expasy.org/databases/rhea/tsv/rhea-directions.tsv
+  local_name: rhea_download/rhea-directions.tsv
   tag: rhea
 
 -
-  url: https://ftp.expasy.org/databases/rhea/tsv/rhea2ec.tsv
-  local_name: rhea2ec.tsv
+  url: https://ftp.expasy.org/databases/rhea/rdf/rhea.rdf.gz
+  local_name: rhea_download/rhea.rdf.gz
   tag: rhea
 
 #

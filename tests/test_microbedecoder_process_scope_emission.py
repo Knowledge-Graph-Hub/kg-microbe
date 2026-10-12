@@ -5,12 +5,13 @@ import csv
 import pytest
 
 from kg_microbe.transform_utils.microbedecoder.process_scopes import ProcessScopeCuration
+from tests.microbedecoder_inactive_join_fixtures import bind_inactive_join_policy, write_empty_join_gss
 from tests.microbedecoder_quarantine_fixtures import bind_fixture_quarantine_policy
 from tests.test_microbedecoder_curation_integration import _rows, _transform, _write_source
 from tests.test_microbedecoder_curation_inventory import inventory
 
 
-def test_all_scopes_emit_separate_ids_complete_definitions_and_original_assertions(tmp_path):
+def test_all_scopes_emit_separate_ids_complete_definitions_and_original_assertions(monkeypatch, tmp_path):
     """Source-local definitions neither leak across sources nor invent native class identities."""
     scopes = ProcessScopeCuration().rules
     transform = _transform(tmp_path)
@@ -27,6 +28,8 @@ def test_all_scopes_emit_separate_ids_complete_definitions_and_original_assertio
         ],
     )
     bind_fixture_quarantine_policy(transform, source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, source, monkeypatch)
     transform.run(data_file=source)
     nodes = {row["id"]: row for row in _rows(transform.output_node_file)}
     edges = _rows(transform.output_edge_file)
@@ -61,11 +64,13 @@ def test_all_scopes_emit_separate_ids_complete_definitions_and_original_assertio
 
 
 @pytest.mark.parametrize("literal", ["fermentation", "chemoheterotrophy"])
-def test_conflicting_native_and_source_scope_policies_abort_before_outputs(tmp_path, literal):
+def test_conflicting_native_and_source_scope_policies_abort_before_outputs(monkeypatch, tmp_path, literal):
     """Do not silently choose table precedence when curated meanings conflict."""
     transform = _transform(tmp_path)
     quarantine_source = _write_source(tmp_path, [{"LPSN_ID": "101", "FAPROTAX_Type_of_metabolism": "nitrification"}])
     bind_fixture_quarantine_policy(transform, quarantine_source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, quarantine_source, monkeypatch)
     transform.run(data_file=quarantine_source)
     before = {path: path.read_bytes() for path in (transform.output_node_file, transform.output_edge_file)}
     rows = _rows(transform.process_scopes)
@@ -76,6 +81,8 @@ def test_conflicting_native_and_source_scope_policies_abort_before_outputs(tmp_p
         writer.writerows(rows)
     with pytest.raises(ValueError, match="Conflicting process scope"):
         bind_fixture_quarantine_policy(transform, tmp_path / "source.csv")
+        write_empty_join_gss(transform.input_base_dir)
+        bind_inactive_join_policy(transform, tmp_path / "source.csv", monkeypatch)
         transform.run(data_file=tmp_path / "source.csv")
     assert {path: path.read_bytes() for path in before} == before
 
@@ -84,11 +91,13 @@ def test_conflicting_native_and_source_scope_policies_abort_before_outputs(tmp_p
     "mutation",
     [None, "description", "provided_by", "name", "category", "original_object", "source_column", "value", "orphan"],
 )
-def test_inventory_requires_complete_scoped_declaration_and_source_use(tmp_path, mutation):
+def test_inventory_requires_complete_scoped_declaration_and_source_use(monkeypatch, tmp_path, mutation):
     """A declared process meaning cannot validate mutated ownership or unrelated assertions."""
     transform = _transform(tmp_path)
     quarantine_source = _write_source(tmp_path, [{"LPSN_ID": "101", "FAPROTAX_Type_of_metabolism": "nitrification"}])
     bind_fixture_quarantine_policy(transform, quarantine_source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, quarantine_source, monkeypatch)
     transform.run(data_file=quarantine_source)
     if mutation is not None:
         node_fields = {"description", "provided_by", "name", "category"}

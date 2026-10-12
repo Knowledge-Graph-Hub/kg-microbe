@@ -18,13 +18,20 @@ import logging
 import os
 import re
 from collections import Counter
-from functools import cached_property
+from functools import cached_property, partial
 from pathlib import Path
 from typing import Dict, List, Optional, Union
 
 import yaml
 from tqdm import tqdm
 
+from kg_microbe.transform_utils.bacdive import (
+    clinical_categories,
+    isolation_categories,
+    ncit_category_claims,
+    supplied_taxid_policy,
+    taxonomy_evidence,
+)
 from kg_microbe.transform_utils.bacdive.ec_substrate_corrections import (
     AUDIT_FIELDS as EC_SUBSTRATE_AUDIT_FIELDS,
 )
@@ -48,7 +55,6 @@ from kg_microbe.transform_utils.bacdive.emission import (
     contested_deposit_description,
     deposit_conflict_rows,
     resolution_asserts_a_parent,
-    resolve_deposit_parents,
 )
 from kg_microbe.transform_utils.bacdive.emission import StrainProvenanceWriter as _StrainProvenanceWriter
 from kg_microbe.transform_utils.bacdive.references import item_publications, reference_dois
@@ -62,6 +68,7 @@ from kg_microbe.transform_utils.constants import (
     ASSAY_PREFIX,
     ASSOCIATED_WITH,
     ATTRIBUTE_CATEGORY,
+    AUTOMATED_AGENT,
     BACDIVE,
     BACDIVE_API_BASE_URL,
     BACDIVE_ASSAY_PREDICATE,
@@ -188,6 +195,7 @@ from kg_microbe.transform_utils.constants import (
     PHYSIOLOGY_AND_METABOLISM,
     PIGMENTATION,
     PREDICATE_COLUMN,
+    PREDICTION,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PRODUCTION_KEY,
     PROVIDED_BY_COLUMN,
@@ -283,9 +291,145 @@ class BacDiveTransform(Transform):
         "mappings/isolation_source_to_ontology.tsv",
         "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
         EC_SUBSTRATE_POLICY,
+        isolation_categories.POLICY_RELATIVE,
+        clinical_categories.POLICY_RELATIVE,
+        ncit_category_claims.POLICY_RELATIVE,
+        supplied_taxid_policy.POLICY_RELATIVE,
     )
-    REQUIRED_CONSUMED_INPUTS = EC_SUBSTRATE_INPUTS
-    REQUIRED_AUDIT_FILES = (EC_SUBSTRATE_AUDIT_FILE,)
+    REQUIRED_CONSUMED_INPUTS = (
+        EC_SUBSTRATE_INPUTS
+        + isolation_categories.REQUIRED_INPUTS
+        + clinical_categories.REQUIRED_INPUTS
+        + ncit_category_claims.REQUIRED_INPUTS
+        + (isolation_categories.RAW_INPUT,)
+        + (supplied_taxid_policy.ROLE,)
+    )
+    REQUIRED_AUDIT_FILES = (
+        EC_SUBSTRATE_AUDIT_FILE,
+        isolation_categories.AUDIT_FILE,
+        clinical_categories.AUDIT_FILE,
+        ncit_category_claims.AUDIT_FILE,
+        taxonomy_evidence.AUDIT_FILE,
+    )
+    OPTIONAL_RAW_CONSUMED_INPUTS = taxonomy_evidence.OPTIONAL_RAW_INPUTS
+
+    def begin_consumed_inputs(self):
+        """Reset source-local claim state only when starting a genuine producer run."""
+        super().begin_consumed_inputs()
+        self._ncit_category_claim_guard = None
+        self.ncbitaxon_fallback_cache = {}
+        self._taxonomy_evidence_guard = None
+        self._lpsn_stats = {"matched": 0, "unmatched": 0, "ambiguous": 0}
+        self._ncbitaxon_ancestor_cache = {}
+        self._ncbitaxon_ancestry_failures = set()
+        self._ncit_claim_output_ready = False
+        self._ncit_claim_graph_quoting = csv.QUOTE_MINIMAL
+
+    def finalize(self, *, file_prefix="", fresh_run=False):
+        """Record the canonical TSV dialect only after successful source publication."""
+        result = super().finalize(file_prefix=file_prefix, fresh_run=fresh_run)
+        self._ncit_claim_graph_quoting = csv.QUOTE_NONE
+        return result
+
+    @property
+    def producer_native_inputs(self):
+        """Retain mandatory native claim evidence even for genuinely zero-target runs."""
+        if self._ncit_category_claim_guard is None:
+            raise ValueError("BacDive finite NCIT claims were not prepared")
+        if self._taxonomy_evidence_guard is None:
+            raise ValueError("BacDive taxonomy evidence was not prepared")
+        return {**self._ncit_category_claim_guard.contract, "taxonomy": self._taxonomy_evidence_guard.contract}
+
+    @producer_native_inputs.setter
+    def producer_native_inputs(self, recorded):
+        """Restore a fresh-instance repeat only after an actual native/audit/graph rejoin."""
+        if self._ncit_category_claim_guard is not None and self.producer_native_inputs != recorded:
+            raise ValueError("BacDive finite NCIT claims differ from the original producer run")
+        if self._ncit_category_claim_guard is not None:
+            self.verify_native_inputs()
+        ncit_contract, taxonomy_contract = taxonomy_evidence.split_native_contract(recorded)
+        self._ncit_category_claim_guard = ncit_category_claims.verify_recorded(
+            ncit_contract, self.consumed_input_snapshots, self.input_base_dir, self.output_dir
+        )
+        self._taxonomy_evidence_guard = taxonomy_evidence.verify_recorded(
+            taxonomy_contract,
+            self.consumed_input_snapshots,
+            self.input_base_dir,
+            self.output_dir,
+            optional_state=self.optional_consumed_inputs["inputs"].get(taxonomy_evidence.GSS_ROLE),
+            admission=self._ncit_category_claim_guard.admission,
+        )
+        self._ncit_claim_output_ready = True
+        self._ncit_claim_graph_quoting = csv.QUOTE_NONE
+
+    def verify_native_inputs(self, *, byte_verified=False, output_dir=None):
+        """Keep native roles and lossless source-claim dispositions fixed through publication."""
+        del byte_verified
+        if self._ncit_category_claim_guard is None:
+            raise ValueError("BacDive finite NCIT claims were not prepared")
+        self._ncit_category_claim_guard.verify(
+            self.consumed_input_snapshots,
+            output_dir=(output_dir or self.output_dir) if self._ncit_claim_output_ready else None,
+            quoting=csv.QUOTE_NONE if output_dir is not None else self._ncit_claim_graph_quoting,
+            output_ready=self._ncit_claim_output_ready,
+        )
+        if self._taxonomy_evidence_guard is None:
+            raise ValueError("BacDive taxonomy evidence was not prepared")
+        self._taxonomy_evidence_guard.verify(
+            self.consumed_input_snapshots,
+            output_dir=(output_dir or self.output_dir) if self._taxonomy_evidence_guard.outputs_ready else None,
+            quoting=csv.QUOTE_NONE if output_dir is not None else self._ncit_claim_graph_quoting,
+            finalized=output_dir is not None or self._ncit_claim_graph_quoting == csv.QUOTE_NONE,
+        )
+
+    @classmethod
+    def verify_recorded_native_inputs(cls, report, report_path, *, admission=None):
+        """Enforce native cohort conservation during read-only merge admission."""
+        if report_path is None or not report.get("raw_input_directory"):
+            raise ValueError("BacDive finite NCIT claims require their completion location and raw directory")
+        contract = report.get("producer_native_inputs")
+        raw = contract.get("raw_locator") if isinstance(contract, dict) else None
+        if (
+            not isinstance(raw, str)
+            or not Path(raw).is_absolute()
+            or str(Path(raw).resolve()) != report["raw_input_directory"]
+        ):
+            raise ValueError("BacDive finite NCIT claims require their original raw locator")
+        ncit_contract, taxonomy_contract = taxonomy_evidence.split_native_contract(contract)
+        ncit_guard = ncit_category_claims.verify_recorded(
+            ncit_contract,
+            report.get("consumed_inputs", {}),
+            raw,
+            Path(report_path).parent,
+            members=report.get("members", {}),
+            admission=admission,
+        )
+        return taxonomy_evidence.verify_recorded(
+            taxonomy_contract,
+            report.get("consumed_inputs", {}),
+            raw,
+            Path(report_path).parent,
+            optional_state=report.get("optional_consumed_inputs", {}).get("inputs", {}).get(taxonomy_evidence.GSS_ROLE),
+            members=report.get("members", {}),
+            admission=ncit_guard.admission,
+        ).admission
+
+    def _scoped_isolation_leaf(self, index, category, field, value, *, record, ncit_audit_writer, **clinical):
+        """Compose finite leaf rules without filtering or renumbering PRIDE/clinical source groups."""
+        if self._ncit_category_claim_guard.emit(
+            self,
+            index,
+            category,
+            field,
+            value,
+            record=record,
+            organism_id=clinical["organism_id"],
+            node_writer=clinical["node_writer"],
+            edge_writer=clinical["edge_writer"],
+            audit_writer=ncit_audit_writer,
+        ):
+            return True
+        return clinical_categories.emit_occurrence(self, index, category, field, value, **clinical)
 
     def __init__(
         self,
@@ -344,7 +488,7 @@ class BacDiveTransform(Transform):
         self.ncbitaxon_labels: Dict[str, str] = {}  # {ncbitaxon_id: label}
         self.ncbitaxon_name_to_id: Dict[str, str] = {}  # {label: ncbitaxon_id} for reverse lookup
         self.ncbitaxon_synonyms: Dict[str, frozenset] = {}  # {ncbitaxon_id: frozenset(lowercased synonyms)}
-        self.ncbitaxon_fallback_cache: Dict[str, Optional[str]] = {}  # Cache for fallback lookups
+        self.ncbitaxon_fallback_cache: Dict[tuple, Optional[str]] = {}  # Exact rank-selector inputs per run
         self._ncbitaxon_rank_cache: Dict[str, Optional[str]] = {}  # {ncbitaxon_id: rank_name}
         self._ncbitaxon_ancestor_cache: Dict[str, frozenset] = {}  # {ncbitaxon_id: proper is_a ancestors}
         self._ncbitaxon_ancestry_failures: set = set()  # taxa whose ancestry could not be read (#897)
@@ -577,7 +721,7 @@ class BacDiveTransform(Transform):
         for full_name, record_nos in name_index.items():
             remapped = [accepted.get(no, no) for no in record_nos]
             repointed += sum(1 for before, after in zip(record_nos, remapped, strict=True) if before != after)
-            name_index[full_name] = remapped
+            name_index[full_name] = list(dict.fromkeys(remapped))
         logger.info(
             "LPSN name index loaded: %d distinct names for BacDive cross-refs "
             "(%d re-pointed from a synonym to its accepted name)",
@@ -600,17 +744,25 @@ class BacDiveTransform(Transform):
         """
         return STRAIN_PREFIX + BACDIVE_PREFIX.replace(":", "_") + bacdive_key
 
-    def _lookup_lpsn(self, lpsn_block: dict) -> Optional[str]:
+    def _lookup_lpsn(self, lpsn_block: dict, *, ordinal=None) -> Optional[str]:
         """
         Return the LPSN ``record_no`` for ``lpsn_block``, or None.
 
         BacDive's LPSN block reports the species-rank name in the
         ``species`` field (e.g. ``"Moraxella canis"``); subspecies rows
         add the epithet at the end. We match on ``species`` first
-        because it's the cleanest form; if that fails we fall back to
-        the first three tokens of ``full scientific name`` (stripping
+        because it's the cleanest form; only when it is blank do we use
+        the first two tokens of ``full scientific name`` (stripping
         the HTML italics tags LPSN wraps around genus/species).
         """
+        if ordinal is not None:
+            guard = self._taxonomy_evidence_guard
+            target = guard.lookup(ordinal, lpsn_block)
+            lookup = guard.gss.lookup(lpsn_block)
+            if guard.gss._names and lookup["candidate"]:
+                status = "matched" if target else "ambiguous" if lookup["distinct_resolved_ids"] else "unmatched"
+                self._lpsn_stats[status] += 1
+            return target
         if not lpsn_block or not self.lpsn_name_index:
             return None
         # Prefer the plain species field.
@@ -626,7 +778,7 @@ class BacDiveTransform(Transform):
         if not candidate:
             return None
 
-        hits = self.lpsn_name_index.get(candidate, [])
+        hits = list(dict.fromkeys(self.lpsn_name_index.get(candidate, [])))
         if len(hits) == 1:
             self._lpsn_stats["matched"] += 1
             return hits[0]
@@ -672,6 +824,38 @@ class BacDiveTransform(Transform):
         node_row[self.node_header.index(SYNONYM_COLUMN)] = synonym
         node_row[self.node_header.index(SAME_AS_COLUMN)] = same_as
         return node_row
+
+    def _write_medium_edges(self, organism_id, medium_id, growth, edge_writer):
+        """
+        Emit BacDive's recipe-class assertion separately from observed growth.
+
+        A catalogue recipe denotes a medium class, not a particular culture batch.
+        BacDive supplies this assertion; METPO supplies only the parent class.
+        Keep positive/negative growth predicates and their metadata unchanged.
+        """
+        edge_writer.writerow(
+            [
+                medium_id,
+                SUBCLASS_PREDICATE,
+                BACDIVE_GROWTH_MEDIUM_CLASS,
+                RDFS_SUBCLASS_OF,
+                self.knowledge_source,
+                KNOWLEDGE_ASSERTION,
+                MANUAL_AGENT,
+            ]
+        )
+        if not isinstance(growth, str):
+            return
+        if growth.lower() == "yes":
+            predicate, relation = NCBI_TO_MEDIUM_EDGE, IS_GROWN_IN
+        elif growth.lower() == "no":
+            predicate, relation = NCBI_TO_MEDIUM_NEGATIVE_EDGE, DOES_NOT_GROW_IN
+        else:
+            return
+        knowledge_level, agent_type = self._add_edge_metadata(predicate, relation, medium_id)
+        edge_writer.writerow(
+            [organism_id, predicate, medium_id, relation, self.knowledge_source, knowledge_level, agent_type]
+        )
 
     def _load_ncbitaxon_labels(self):
         """
@@ -808,8 +992,8 @@ class BacDiveTransform(Transform):
         """
         Return appropriate knowledge_level and agent_type for an edge.
 
-        All BacDive edges are observations from manual curation, including:
-        - Taxonomic assignments (curated lookups in NCBITaxon)
+        Direct BacDive observations retain manual-curation metadata, including:
+        - Taxonomic assignments explicitly supplied in the native record
         - Phenotype data (experimental observations)
         - Growth media (observed growth conditions)
         - Metabolites (observed interactions)
@@ -825,7 +1009,10 @@ class BacDiveTransform(Transform):
             Tuple of (knowledge_level, agent_type)
 
         """
-        # All edges are observations with manual curation
+        # A computational fallback is not a directly reported native taxid.
+        # Match the explicit derivation relation, not all subclass assertions.
+        if relation == INFERRED_SUBCLASS_RELATION:
+            return PREDICTION, AUTOMATED_AGENT
         return OBSERVATION, MANUAL_AGENT
 
     def _get_ncbitaxon_label(self, ncbitaxon_id: str) -> Optional[str]:
@@ -851,6 +1038,16 @@ class BacDiveTransform(Transform):
         from kg_microbe.utils.oak_utils import get_label
 
         return get_label(self.ncbi_impl, ncbitaxon_id)
+
+    @staticmethod
+    def _ncbitaxon_fallback_key(classification: dict) -> tuple:
+        """Key the actual ordered rank searches, preserving missing/null/empty inputs (#1365)."""
+        selectors = []
+        for field in (SPECIES, GENUS, FAMILY, ORDER, CLASS, PHYLUM, DOMAIN):
+            # Do not validate unused later ranks before an earlier successful lookup.
+            value = json.dumps(classification.get(field), sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+            selectors.append((field, field in classification, value))
+        return tuple(selectors)
 
     def _search_ncbitaxon_by_label(self, search_name: str) -> Optional[str]:
         """
@@ -2041,15 +2238,24 @@ class BacDiveTransform(Transform):
         # complete nodes/edges truncated to whatever had been flushed. Failing
         # before the truncation costs a run; failing after costs the outputs.
         resolve_adapter(self.ncbi_impl)
+        # Prepare the complete node schema before materializing assay rows.
+        isolation_category_policy = isolation_categories.prepare_policy(self)
+        clinical_category_policy = clinical_categories.prepare_policy(self)
         self._prepare_assay_outputs()
+        # The finite source policy owns the real immutable JSON read and seals
+        # its eligible records before any graph/audit output is opened.
+        taxonomy_evidence.prepare(self)
+        _, input_json = ncit_category_claims.prepare(
+            self,
+            native_observer=lambda payload: self._taxonomy_evidence_guard.capture_native(
+                payload, self.consumed_input_snapshots
+            ),
+        )
+        taxonomy_evidence.prepare_fallback(self, NCBITAXON_NODES_FILE, lambda: resolve_adapter(self.ncbi_impl))
+        self.lpsn_name_index = self._taxonomy_evidence_guard.gss.preview_index()
         ec_substrate_rows, ec_substrate_audit, ec_substrate_admission = prepare_corrections(
             self, BACDIVE_TMP_DIR / BACDIVE_MAPPING_FILE
         )
-        # replace with downloaded data filename for this source
-        input_file = os.path.join(self.input_base_dir, "bacdive_strains.json")  # must exist already
-        # Read the JSON file into the variable input_json
-        with open(input_file, "r") as f:
-            input_json = json.load(f)
 
         # Detect format and convert to consistent format
         # Old format: dict with string keys, New format: list of dicts
@@ -2155,6 +2361,10 @@ class BacDiveTransform(Transform):
             atomic_write(self.output_node_file, newline="") as node,
             atomic_write(self.output_edge_file, newline="") as edge,
             atomic_write(Path(self.output_dir) / EC_SUBSTRATE_AUDIT_FILE, newline="") as ec_audit,
+            atomic_write(Path(self.output_dir) / isolation_categories.AUDIT_FILE, newline="") as isolation_audit,
+            atomic_write(Path(self.output_dir) / clinical_categories.AUDIT_FILE, newline="") as clinical_audit,
+            atomic_write(Path(self.output_dir) / ncit_category_claims.AUDIT_FILE, newline="") as ncit_audit,
+            atomic_write(Path(self.output_dir) / taxonomy_evidence.AUDIT_FILE, newline="") as taxonomy_audit,
             # This source-local diagnostic is not covered by the ordinary graph
             # receipt: postbuild acceptance must hash/admit it explicitly (#1185).
             atomic_write(Path(self.output_dir) / CHEMICAL_IDENTITY_CONFLICTS_FILE) as chemical_conflicts,
@@ -2172,6 +2382,14 @@ class BacDiveTransform(Transform):
             ec_audit_writer.writerows(
                 [entry[column] for column in EC_SUBSTRATE_AUDIT_FIELDS] for entry in ec_substrate_audit
             )
+            isolation_audit_writer = tsv_writer(isolation_audit, quoting=csv.QUOTE_NONE, quotechar=None)
+            isolation_audit_writer.writerow(isolation_categories.AUDIT_FIELDS)
+            clinical_audit_writer = tsv_writer(clinical_audit, quoting=csv.QUOTE_NONE, quotechar=None)
+            clinical_audit_writer.writerow(clinical_categories.AUDIT_FIELDS)
+            ncit_audit_writer = tsv_writer(ncit_audit, quoting=csv.QUOTE_NONE, quotechar=None)
+            ncit_audit_writer.writerow(ncit_category_claims.AUDIT_FIELDS)
+            taxonomy_audit_writer = tsv_writer(taxonomy_audit, quoting=csv.QUOTE_NONE, quotechar=None)
+            taxonomy_audit_writer.writerow(taxonomy_evidence.AUDIT_FIELDS)
 
             node_writer = tsv_writer(node)
             node_writer.writerow(self.node_header)
@@ -2378,6 +2596,7 @@ class BacDiveTransform(Transform):
                     ncbitaxon_id = None
                     ncbi_label = None
                     ncbi_description = None
+                    inferred_ncbi_parent = False
 
                     if NCBITAXON_ID in general_info:
                         if isinstance(general_info[NCBITAXON_ID], list):
@@ -2414,34 +2633,24 @@ class BacDiveTransform(Transform):
                         # have a name" check while being unusable. The sentence goes to
                         # the description slot at the write sites instead (#919).
 
-                    # If no NCBITaxon ID from BacDive JSON, try searching by name
-                    if ncbitaxon_id is None and name_tax_classification:
-                        full_name = name_tax_classification.get(FULL_SCIENTIFIC_NAME, "unknown")
-
-                        # Check cache first
-                        if full_name in self.ncbitaxon_fallback_cache:
-                            ncbitaxon_id = self.ncbitaxon_fallback_cache[full_name]
-                            if ncbitaxon_id:
-                                ncbi_label = self._get_ncbitaxon_label(ncbitaxon_id)
-                        else:
-                            # Try ranks in order: species → genus → family → order → class → phylum → domain
-                            rank_fields = [SPECIES, GENUS, FAMILY, ORDER, CLASS, PHYLUM, DOMAIN]
-
-                            for rank_field in rank_fields:
-                                search_name = name_tax_classification.get(rank_field)
-                                if search_name:
-                                    ncbitaxon_id = self._search_ncbitaxon_by_label(search_name)
-                                    if ncbitaxon_id:
-                                        ncbi_label = self._get_ncbitaxon_label(ncbitaxon_id)
-                                        break
-
-                            # Cache result (even if None) to avoid repeated searches
-                            self.ncbitaxon_fallback_cache[full_name] = ncbitaxon_id
-
-                        if ncbitaxon_id is None:
-                            print(f"WARNING: BacDive {key} - no NCBITaxon match found for: {full_name}")
+                    # Native input, selected label tier and owned actual native
+                    # authority determine fallback choices before any parent is
+                    # cached, named, or supplied to deposit-resolution buffers.
+                    supplied_parent_withheld = self._taxonomy_evidence_guard.supplied_parent_withheld(index, record)
+                    if supplied_parent_withheld:
+                        ncbitaxon_id = None
+                        ncbi_label = None
+                    if ncbitaxon_id is None and not supplied_parent_withheld:
+                        ncbitaxon_id, ncbi_label, inferred_ncbi_parent = self._taxonomy_evidence_guard.fallback_choice(
+                            index, self.ncbitaxon_fallback_cache
+                        )
 
                     # Create strain node for every BacDive record
+                    # Keep the early parent choice separate from later special
+                    # inference paths, which do not populate deposit parents.
+                    self._taxonomy_evidence_guard.observe_parent_choice(
+                        index, record, ncbitaxon_id, inferred_ncbi_parent
+                    )
                     # Extract strain designation
                     strain_designation = None
                     if name_tax_classification:
@@ -2474,282 +2683,27 @@ class BacDiveTransform(Transform):
 
                     # Write subClassOf edge to NCBITaxon (if available) or infer taxonomic hierarchy
                     if ncbitaxon_id:
-                        # Direct NCBITaxon match found - create standard edge
+                        # Cached and uncached label/rank fallbacks have the
+                        # same inferred status; only a supplied taxid is direct.
+                        parent_relation = INFERRED_SUBCLASS_RELATION if inferred_ncbi_parent else RDFS_SUBCLASS_OF
                         knowledge_level, agent_type = self._add_edge_metadata(
-                            SUBCLASS_PREDICATE, RDFS_SUBCLASS_OF, ncbitaxon_id
+                            SUBCLASS_PREDICATE, parent_relation, ncbitaxon_id
                         )
                         edge_writer.writerow(
                             [
                                 organism_id,
                                 SUBCLASS_PREDICATE,
                                 ncbitaxon_id,
-                                RDFS_SUBCLASS_OF,
+                                parent_relation,
                                 self.knowledge_source,
                                 knowledge_level,
                                 agent_type,
                             ]
                         )
-                    elif name_tax_classification:
-                        # No NCBITaxon match - attempt taxonomic inference
-                        full_name = name_tax_classification.get(FULL_SCIENTIFIC_NAME, "unknown")
-                        print(f"  Attempting taxonomic inference for: {full_name}")
-
-                        # Check for special patterns first (e.g., "(not further classified)", "Unidentified")
-                        normalized_name, is_special = self._normalize_special_taxon_names(full_name)
-                        if is_special:
-                            print(f"  Using normalized name for lookup: {normalized_name}")
-                            full_name = normalized_name
-
-                        # Higher-rank direct-lookup shortcut for special patterns
-                        # ("Unidentified actinobacterium", "Rhizobiales (not further classified)", ...).
-                        # The extracted token is itself a class/order/phylum, not a binomial.
-                        # Try NCBITaxon directly before genus parsing, which rejects lowercase
-                        # higher-rank tokens like "actinobacterium".
-                        higher_rank_ncbitaxon_id = None
-                        if is_special:
-                            higher_rank_ncbitaxon_id = self._resolve_special_taxon_parent(full_name)
-                            if higher_rank_ncbitaxon_id:
-                                print(f"  Higher-rank match for '{full_name}': {higher_rank_ncbitaxon_id}")
-                                knowledge_level, agent_type = self._add_edge_metadata(
-                                    SUBCLASS_PREDICATE,
-                                    INFERRED_SUBCLASS_RELATION,
-                                    higher_rank_ncbitaxon_id,
-                                )
-                                edge_writer.writerow(
-                                    [
-                                        organism_id,
-                                        SUBCLASS_PREDICATE,
-                                        higher_rank_ncbitaxon_id,
-                                        INFERRED_SUBCLASS_RELATION,
-                                        self.knowledge_source,
-                                        knowledge_level,
-                                        agent_type,
-                                    ]
-                                )
-
-                        # Step 1: Parse genus from scientific name (skipped if higher-rank matched)
-                        # An unclassified order/class token is not a genus even
-                        # when its authoritative resolution is absent or ambiguous.
-                        genus = self._genus_for_unmatched_name(full_name, is_special)
-
-                        if genus:
-                            print(f"  Extracted genus: {genus}")
-
-                            # Step 2: Search for genus in NCBITaxon
-                            genus_ncbitaxon_id = self._search_ncbitaxon_by_label(genus)
-
-                            if genus_ncbitaxon_id:
-                                # CASE 1: Genus exists in NCBITaxon
-                                print(f"  Genus '{genus}' found in NCBITaxon: {genus_ncbitaxon_id}")
-
-                                # Parse species epithet (second word)
-                                words = full_name.strip().split()
-                                if len(words) >= 2:
-                                    species_epithet = words[1]
-
-                                    # Create provisional species node
-                                    provisional_species_id = self._create_provisional_species_node(
-                                        genus, species_epithet, node_writer
-                                    )
-
-                                    # Edge: strain -> provisional species (INFERRED)
-                                    knowledge_level, agent_type = self._add_edge_metadata(
-                                        SUBCLASS_PREDICATE,
-                                        INFERRED_SUBCLASS_RELATION,
-                                        provisional_species_id,
-                                    )
-                                    edge_writer.writerow(
-                                        [
-                                            organism_id,
-                                            SUBCLASS_PREDICATE,
-                                            provisional_species_id,
-                                            INFERRED_SUBCLASS_RELATION,
-                                            self.knowledge_source,
-                                            knowledge_level,
-                                            agent_type,
-                                        ]
-                                    )
-
-                                    # Edge: provisional species -> NCBITaxon genus (INFERRED)
-                                    knowledge_level, agent_type = self._add_edge_metadata(
-                                        SUBCLASS_PREDICATE,
-                                        INFERRED_SUBCLASS_RELATION,
-                                        genus_ncbitaxon_id,
-                                    )
-                                    edge_writer.writerow(
-                                        [
-                                            provisional_species_id,
-                                            SUBCLASS_PREDICATE,
-                                            genus_ncbitaxon_id,
-                                            INFERRED_SUBCLASS_RELATION,
-                                            self.knowledge_source,
-                                            knowledge_level,
-                                            agent_type,
-                                        ]
-                                    )
-                                    print(
-                                        f"  Created edges: {organism_id} -> "
-                                        f"{provisional_species_id} -> {genus_ncbitaxon_id}"
-                                    )
-                                else:
-                                    # Single-word name (genus only)
-                                    knowledge_level, agent_type = self._add_edge_metadata(
-                                        SUBCLASS_PREDICATE,
-                                        INFERRED_SUBCLASS_RELATION,
-                                        genus_ncbitaxon_id,
-                                    )
-                                    edge_writer.writerow(
-                                        [
-                                            organism_id,
-                                            SUBCLASS_PREDICATE,
-                                            genus_ncbitaxon_id,
-                                            INFERRED_SUBCLASS_RELATION,
-                                            self.knowledge_source,
-                                            knowledge_level,
-                                            agent_type,
-                                        ]
-                                    )
-                                    print(f"  Created edge (genus-only): {organism_id} -> {genus_ncbitaxon_id}")
-                            else:
-                                # CASE 2: Genus NOT in NCBITaxon - search higher ranks
-                                print(f"  Genus '{genus}' NOT found in NCBITaxon")
-                                print("  Searching higher taxonomic ranks...")
-
-                                higher_rank_result = self._search_higher_ranks_in_ncbitaxon(name_tax_classification)
-
-                                if higher_rank_result:
-                                    # Found family/order/class/phylum/domain
-                                    higher_ncbitaxon_id, rank_name = higher_rank_result
-
-                                    # Create provisional genus node
-                                    provisional_genus_id = self._create_provisional_genus_node(genus, node_writer)
-
-                                    # Parse species if available
-                                    words = full_name.strip().split()
-                                    if len(words) >= 2:
-                                        species_epithet = words[1]
-
-                                        # Create provisional species node
-                                        provisional_species_id = self._create_provisional_species_node(
-                                            genus, species_epithet, node_writer
-                                        )
-
-                                        # Chain: strain -> species -> genus -> higher rank
-                                        knowledge_level, agent_type = self._add_edge_metadata(
-                                            SUBCLASS_PREDICATE,
-                                            INFERRED_SUBCLASS_RELATION,
-                                            provisional_species_id,
-                                        )
-                                        edge_writer.writerow(
-                                            [
-                                                organism_id,
-                                                SUBCLASS_PREDICATE,
-                                                provisional_species_id,
-                                                INFERRED_SUBCLASS_RELATION,
-                                                self.knowledge_source,
-                                                knowledge_level,
-                                                agent_type,
-                                            ]
-                                        )
-                                        knowledge_level, agent_type = self._add_edge_metadata(
-                                            SUBCLASS_PREDICATE,
-                                            INFERRED_SUBCLASS_RELATION,
-                                            provisional_genus_id,
-                                        )
-                                        edge_writer.writerow(
-                                            [
-                                                provisional_species_id,
-                                                SUBCLASS_PREDICATE,
-                                                provisional_genus_id,
-                                                INFERRED_SUBCLASS_RELATION,
-                                                self.knowledge_source,
-                                                knowledge_level,
-                                                agent_type,
-                                            ]
-                                        )
-                                        knowledge_level, agent_type = self._add_edge_metadata(
-                                            SUBCLASS_PREDICATE,
-                                            INFERRED_SUBCLASS_RELATION,
-                                            higher_ncbitaxon_id,
-                                        )
-                                        edge_writer.writerow(
-                                            [
-                                                provisional_genus_id,
-                                                SUBCLASS_PREDICATE,
-                                                higher_ncbitaxon_id,
-                                                INFERRED_SUBCLASS_RELATION,
-                                                self.knowledge_source,
-                                                knowledge_level,
-                                                agent_type,
-                                            ]
-                                        )
-                                        print(
-                                            f"  Created chain: {organism_id} -> species -> genus -> "
-                                            f"{higher_ncbitaxon_id}"
-                                        )
-                                    else:
-                                        # Genus-only: strain -> genus -> higher rank
-                                        knowledge_level, agent_type = self._add_edge_metadata(
-                                            SUBCLASS_PREDICATE,
-                                            INFERRED_SUBCLASS_RELATION,
-                                            provisional_genus_id,
-                                        )
-                                        edge_writer.writerow(
-                                            [
-                                                organism_id,
-                                                SUBCLASS_PREDICATE,
-                                                provisional_genus_id,
-                                                INFERRED_SUBCLASS_RELATION,
-                                                self.knowledge_source,
-                                                knowledge_level,
-                                                agent_type,
-                                            ]
-                                        )
-                                        knowledge_level, agent_type = self._add_edge_metadata(
-                                            SUBCLASS_PREDICATE,
-                                            INFERRED_SUBCLASS_RELATION,
-                                            higher_ncbitaxon_id,
-                                        )
-                                        edge_writer.writerow(
-                                            [
-                                                provisional_genus_id,
-                                                SUBCLASS_PREDICATE,
-                                                higher_ncbitaxon_id,
-                                                INFERRED_SUBCLASS_RELATION,
-                                                self.knowledge_source,
-                                                knowledge_level,
-                                                agent_type,
-                                            ]
-                                        )
-                                        print(f"  Created chain: {organism_id} -> genus -> {higher_ncbitaxon_id}")
-                                else:
-                                    # FALLBACK: No higher ranks found
-                                    print("  No higher ranks found in NCBITaxon")
-
-                                    # Create provisional genus (orphaned)
-                                    provisional_genus_id = self._create_provisional_genus_node(genus, node_writer)
-
-                                    # Link: strain -> provisional genus
-                                    knowledge_level, agent_type = self._add_edge_metadata(
-                                        SUBCLASS_PREDICATE,
-                                        INFERRED_SUBCLASS_RELATION,
-                                        provisional_genus_id,
-                                    )
-                                    edge_writer.writerow(
-                                        [
-                                            organism_id,
-                                            SUBCLASS_PREDICATE,
-                                            provisional_genus_id,
-                                            INFERRED_SUBCLASS_RELATION,
-                                            self.knowledge_source,
-                                            knowledge_level,
-                                            agent_type,
-                                        ]
-                                    )
-                                    print(f"  Created edge (orphaned): {organism_id} -> {provisional_genus_id}")
-                        elif not higher_rank_ncbitaxon_id:
-                            print(f"  Unresolved {'higher-rank taxon' if is_special else 'genus'}: {full_name}")
-                            print("  Strain will remain unmapped")
+                    elif name_tax_classification and not supplied_parent_withheld:
+                        # Reuse the exact existing provisional node writers;
+                        # rejected native identities cannot start another route.
+                        self._taxonomy_evidence_guard.emit_fallback_hierarchy(index, self, node_writer, edge_writer)
 
                     # All feature edges now target the strain node directly (organism_id)
                     # NCBITaxon relationship is preserved via subclass edge (strain -> NCBITaxon)
@@ -2881,13 +2835,13 @@ class BacDiveTransform(Transform):
 
                     lpsn = name_tax_classification.get(LPSN)
                     # BacDive → LPSN cross-ref via name-match against the
-                    # LPSN GSS index loaded in __init__. No-op when the CSV
+                    # LPSN GSS index actually consumed by this run. No-op when the CSV
                     # isn't on disk, or when the LPSN block is absent /
                     # ambiguous. Emitted per strain so the merge step
                     # naturally reconciles kgmicrobe.strain:bacdive_<id> with
                     # the LPSN transform's lpsn:<record_no> nodes when both
                     # sources ingest the same taxonomy.
-                    lpsn_record_no = self._lookup_lpsn(lpsn) if lpsn else None
+                    lpsn_record_no = self._lookup_lpsn(lpsn, ordinal=index) if lpsn else None
                     if lpsn_record_no:
                         # Subject must be the strain node this transform
                         # actually emits (``kgmicrobe.strain:bacdive_NNN``).
@@ -2982,47 +2936,7 @@ class BacDiveTransform(Transform):
 
                             node_writer.writerows(nodes_data_to_write)
 
-                            # Create type/class edge from medium to METPO:1004005 concept
-                            # This makes explicit that the medium is an instance of the "growth medium" ontology class
-                            medium_type_edge = [
-                                mid,  # subject: the medium node
-                                SUBCLASS_PREDICATE,  # predicate: instance/subclass of ontology class
-                                BACDIVE_GROWTH_MEDIUM_CLASS,  # object: growth medium ontology class
-                                "rdf:type",  # relation: RDF semantics
-                                "infores:metpo",  # knowledge source: METPO ontology
-                                KNOWLEDGE_ASSERTION,  # knowledge_level: definitional assertion
-                                MANUAL_AGENT,  # agent_type: manually curated ontology
-                            ]
-                            edge_writer.writerow(medium_type_edge)
-
-                            # Create edge from organism to medium based on growth value
-                            # Only create edges for clear yes/no growth results
-                            if growth and isinstance(growth, str):
-                                growth_lower = growth.lower()
-                                if growth_lower == "yes":
-                                    # Positive growth: organism grows in this medium
-                                    predicate = NCBI_TO_MEDIUM_EDGE
-                                    relation = IS_GROWN_IN
-                                elif growth_lower == "no":
-                                    # Negative growth: organism does not grow in this medium
-                                    predicate = NCBI_TO_MEDIUM_NEGATIVE_EDGE
-                                    relation = DOES_NOT_GROW_IN
-                                else:
-                                    # Skip ambiguous cases (inconsistent, etc.)
-                                    continue
-
-                                knowledge_level, agent_type = self._add_edge_metadata(predicate, relation, mid)
-                                edge_writer.writerow(
-                                    [
-                                        organism_id,
-                                        predicate,
-                                        mid,
-                                        relation,
-                                        self.knowledge_source,
-                                        knowledge_level,
-                                        agent_type,
-                                    ]
-                                )
+                            self._write_medium_edges(organism_id, mid, growth, edge_writer)
 
                     if nodes_from_keywords:
                         # Convert to manual CHEBI ID for keywords (cache lookups to avoid duplicates)
@@ -3466,14 +3380,30 @@ class BacDiveTransform(Transform):
 
                     # REPLACEMENT: simple approach — each Cat1, Cat2, Cat3 becomes a node + edge to organism
 
-                    all_values = []
-
-                    if isinstance(isolation_source_categories, list):
-                        for category in isolation_source_categories:
-                            # collect all Cat1, Cat2, Cat3, etc.
-                            all_values.extend(category.values())
-                    elif isinstance(isolation_source_categories, dict):
-                        all_values.extend(isolation_source_categories.values())
+                    all_values = isolation_categories.emit_category_attributes(
+                        self,
+                        isolation_source_categories,
+                        isolation_dict,
+                        organism_id,
+                        node_writer,
+                        edge_writer,
+                        isolation_audit_writer,
+                        isolation_category_policy,
+                        native_record_id=general_info.get("BacDive-ID"),
+                        native_record=record,
+                        clinical_handler=partial(
+                            self._scoped_isolation_leaf,
+                            record=record,
+                            ncit_audit_writer=ncit_audit_writer,
+                            isolation=isolation_dict,
+                            organism_id=organism_id,
+                            native_record_id=general_info.get("BacDive-ID"),
+                            node_writer=node_writer,
+                            edge_writer=edge_writer,
+                            audit_writer=clinical_audit_writer,
+                            policy=clinical_category_policy,
+                        ),
+                    )
 
                     # Normalize strings (strip + translate)
                     all_values = [val.strip().translate(translation_table_for_ids) for val in all_values]
@@ -3671,10 +3601,9 @@ class BacDiveTransform(Transform):
 
                 # Resolve the buffered culture-collection deposit claims: assert a
                 # parent only where every record citing the deposit supports it (#892).
-                resolved_deposits, contested_deposits = resolve_deposit_parents(
+                resolved_deposits, contested_deposits = self._taxonomy_evidence_guard.resolve_deposits(
                     deposit_parent_claims,
-                    ancestors_of=self._ncbitaxon_ancestors,
-                    ancestry_failed=self._ncbitaxon_ancestry_failures.__contains__,
+                    lambda: resolve_adapter(self.ncbi_impl),
                 )
                 # A deposit whose claimants are taxonomically disjoint is a designation
                 # two unrelated organisms happen to share, not one identifier. Linking a
@@ -3720,20 +3649,10 @@ class BacDiveTransform(Transform):
                     )
 
                 for strain_curie, deposit_parent_id in resolved_deposits:
-                    knowledge_level, agent_type = self._add_edge_metadata(
-                        SUBCLASS_PREDICATE, RDFS_SUBCLASS_OF, deposit_parent_id
+                    fields = self._taxonomy_evidence_guard.classify_deposit(
+                        strain_curie, deposit_parent_id, deposit_parent_claims[strain_curie]
                     )
-                    edge_writer.writerow(
-                        [
-                            strain_curie,
-                            SUBCLASS_PREDICATE,
-                            deposit_parent_id,
-                            RDFS_SUBCLASS_OF,
-                            self.knowledge_source,
-                            knowledge_level,
-                            agent_type,
-                        ]
-                    )
+                    edge_writer.writerow([fields.get(column, "") for column in self.edge_header])
 
                 # Write metabolite_map to a file
                 if len(METABOLITE_MAP) > 0 and not Path(METABOLITE_MAPPING_FILE).is_file():
@@ -3741,9 +3660,20 @@ class BacDiveTransform(Transform):
                         json.dump(METABOLITE_MAP, f, indent=4)
 
             ec_substrate_admission.verify()
+            self._ncit_category_claim_guard.finish(self.consumed_input_snapshots)
+            self._taxonomy_evidence_guard.complete(
+                deposit_parent_claims, resolved_deposits, contested_deposits, taxonomy_audit_writer
+            )
             self.verify_consumed_inputs()
 
+        self._ncit_category_claim_guard.mark_output_ready(self.consumed_input_snapshots)
+        self._taxonomy_evidence_guard.mark_output_ready(self.consumed_input_snapshots)
+        self._ncit_claim_output_ready = True
         self.record_producer_audit(EC_SUBSTRATE_AUDIT_FILE)
+        self.record_producer_audit(isolation_categories.AUDIT_FILE)
+        self.record_producer_audit(clinical_categories.AUDIT_FILE)
+        self.record_producer_audit(ncit_category_claims.AUDIT_FILE)
+        self.record_producer_audit(taxonomy_evidence.AUDIT_FILE)
 
         # Write non-matching media links to a file
         media_links_file = os.path.join(self.output_dir, "bacdive_media_links.txt")

@@ -131,8 +131,11 @@ from kg_microbe.transform_utils.mediadive.bulk_inputs import (
     BULK_INPUTS,
     MEDIA_LIST_INPUT,
     REQUIRED_BULK_INPUTS,
+    load_bulk_payload,
     snapshot_bulk_input,
     verify_bulk_inputs,
+    verify_bulk_payloads,
+    verify_bulk_record,
     verify_recorded_bulk_inputs,
 )
 from kg_microbe.transform_utils.mediadive.material_scope_audit import (
@@ -145,9 +148,37 @@ from kg_microbe.transform_utils.mediadive.material_scope_audit import (
     sugar_material,
     verify_recorded_material_inputs,
 )
+from kg_microbe.transform_utils.mediadive.recipe_identity import (
+    AUDITS as RECIPE_IDENTITY_AUDITS,
+)
+from kg_microbe.transform_utils.mediadive.recipe_identity import (
+    EVIDENCE_ROLE as RECIPE_EVIDENCE_ROLE,
+)
+from kg_microbe.transform_utils.mediadive.recipe_identity import (
+    POLICY_ROLE as RECIPE_POLICY_ROLE,
+)
+from kg_microbe.transform_utils.mediadive.recipe_identity import (
+    RecipeIdentityGuard,
+    nested_identifier,
+    restore_recipe_checkpoint,
+    verify_recorded_recipe_identity,
+)
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.dummy_tqdm import DummyTqdm
+from kg_microbe.utils.ingredient_context import (
+    CONTEXT_ROLE as INGREDIENT_CONTEXT_ROLE,
+)
+from kg_microbe.utils.ingredient_context import (
+    HISTORICAL_ROLE as CATALASE_HISTORICAL_ROLE,
+)
+from kg_microbe.utils.ingredient_context import (
+    NATIVE_ROLE as INGREDIENT_NATIVE_ROLE,
+)
+from kg_microbe.utils.ingredient_context import (
+    catalase_material,
+    ingredient_context_allowed,
+)
 from kg_microbe.utils.ingredient_identity import (
     ingredient_authority_label,
     ingredient_hydration_compatible,
@@ -168,10 +199,28 @@ class MediaDiveTransform(Transform):
     #: via constants.py (#1035), plus BacDive's intermediate strain-taxid TSV (#1091).
     TRANSFORM_INPUTS = ("ontologies", BACDIVE)
     DEFAULT_INPUT_DIR = RAW_DATA_DIR
-    REQUIRED_AUDIT_FILES = (AUDIT_FILENAME,)
-    REQUIRED_CONSUMED_INPUTS = ("bacdive_taxon_lookup", *REQUIRED_BULK_INPUTS, REVIEWED_ROLE, POLICY_ROLE)
+    REQUIRED_AUDIT_FILES = (AUDIT_FILENAME, *RECIPE_IDENTITY_AUDITS.values())
+    REQUIRED_CONSUMED_INPUTS = (
+        "bacdive_taxon_lookup",
+        *REQUIRED_BULK_INPUTS,
+        REVIEWED_ROLE,
+        POLICY_ROLE,
+        INGREDIENT_CONTEXT_ROLE,
+        INGREDIENT_NATIVE_ROLE,
+        CATALASE_HISTORICAL_ROLE,
+        RECIPE_POLICY_ROLE,
+        RECIPE_EVIDENCE_ROLE,
+    )
 
-    DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz", REVIEWED_PATH)
+    DATA_INPUTS = (
+        "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
+        REVIEWED_PATH,
+        "mappings/ingredient_context_dispositions.json",
+        "mappings/catalase_native_authority.json",
+        "mappings/catalase_historical_groundings.json",
+        "mappings/mediadive_recipe_identity_policy.json",
+        "mappings/mediadive_recipe_identity_evidence.json",
+    )
     OPTIONAL_RAW_CONSUMED_INPUTS = (
         ("micromediaparam_strict", MICROMEDIAPARAM_COMPOUND_MAPPINGS_FILE),
         ("micromediaparam_hydrate", MICROMEDIAPARAM_HYDRATE_MAPPINGS_FILE),
@@ -239,10 +288,24 @@ class MediaDiveTransform(Transform):
         """Consume a required JSON from the original lexical path and immutable bytes."""
         return snapshot_bulk_input(self, name, path)
 
+    def finalize(self, *, file_prefix="", fresh_run=False):
+        """Reconstruct a fresh instance's native guards only from fully validated evidence."""
+        report_path = self.output_dir / f"{file_prefix}source_finalization.json"
+        if not fresh_run and report_path.is_file() and getattr(self, "_recipe_identity_guard", None) is None:
+            if getattr(self, "_recipe_identity_prepared", False):
+                raise SourceFinalizationRequired("MediaDive prepared recipe identity guard was removed")
+            restore_recipe_checkpoint(self, report_path)
+        return super().finalize(file_prefix=file_prefix, fresh_run=fresh_run)
+
     @property
     def producer_native_inputs(self):
         """Serialize original reads, never substitute current files at finalization."""
-        return {"version": 1, "inputs": {name: dict(state) for name, state in self._bulk_input_states.items()}}
+        guard = getattr(self, "_recipe_identity_guard", None)
+        return {
+            "version": 2,
+            "inputs": {name: dict(state) for name, state in self._bulk_input_states.items()},
+            "recipe_identity": guard.contract() if guard is not None else None,
+        }
 
     @producer_native_inputs.setter
     def producer_native_inputs(self, recorded):
@@ -256,12 +319,19 @@ class MediaDiveTransform(Transform):
         material_audit = getattr(self, "_material_scope_audit", None)
         if material_audit is not None:
             material_audit.guard.verify(metadata_only=byte_verified)
+        recipe_guard = getattr(self, "_recipe_identity_guard", None)
+        if recipe_guard is None:
+            raise SourceFinalizationRequired("MediaDive recipe identity guard is missing; run the producer")
+        if output_dir is not None and not recipe_guard.sealed:
+            raise SourceFinalizationRequired("MediaDive recipe identity evidence was not completed by the producer")
+        recipe_guard.verify(output_dir=output_dir, byte_verified=byte_verified)
 
     @classmethod
     def verify_recorded_native_inputs(cls, report, report_path, *, admission=None):
         """Admit the original raw JSON identities with the public source validator."""
         guard = verify_recorded_bulk_inputs(report, report_path, admission=admission)
         verify_recorded_material_inputs(report, report_path)
+        verify_recorded_recipe_identity(report, report_path, admission=guard)
         return guard
 
     def _create_node_row(
@@ -307,10 +377,7 @@ class MediaDiveTransform(Transform):
             print(f"Loading bulk MediaDive data from {self.bulk_data_dir}/")
             loaded = {}
             for name, filename in BULK_INPUTS.items():
-                with self.consume_bulk_input(name, self.bulk_data_dir / filename) as reader:
-                    loaded[name] = json.load(reader)
-                    if not isinstance(loaded[name], dict):
-                        raise ValueError(f"MediaDive {filename} must contain an object keyed by record ID")
+                loaded[name] = load_bulk_payload(self, name, self.bulk_data_dir / filename)
             # Publish only one complete set of dictionaries, all read in this
             # instance's original epoch. A partial/retried read cannot mix epochs.
             self.media_detailed = loaded["mediadive_media_detailed"]
@@ -742,6 +809,7 @@ class MediaDiveTransform(Transform):
         """
         # Check bulk downloaded data first
         if self.using_bulk_data:
+            verify_bulk_record(self, "mediadive_solutions", id)
             if id not in self.solutions_data:
                 raise FileNotFoundError(
                     f"Missing MediaDive bulk solution {id!r} in {self.bulk_data_dir / 'solutions.json'}. "
@@ -768,7 +836,10 @@ class MediaDiveTransform(Transform):
                     else item[COMPOUND_KEY]
                 )
                 ingredient_id = self.standardize_compound_id(
-                    str(item[COMPOUND_ID_KEY]), source_name, source_record=item
+                    str(item[COMPOUND_ID_KEY]),
+                    source_name,
+                    source_record=item,
+                    source_assertion_id=f"{MEDIADIVE_SOLUTION_PREFIX}{id}#recipe/{position}",
                 )
             elif SOLUTION_ID_KEY in item and item[SOLUTION_ID_KEY] is not None:
                 # Resolve the original scope; normalize only the display key.
@@ -780,28 +851,10 @@ class MediaDiveTransform(Transform):
                 else:
                     source_name = solution_name = ""
 
-                solution_name_normalized = source_name.lower().strip()
-
-                # Check if solution name can be mapped to ontology via unified or legacy mappings
-                candidates = (
-                    []
-                    if p3556_material(item) or sugar_material(item)
-                    else [
-                        self.chemical_loader.find_chebi_by_name(source_name),
-                        self.compound_mappings.get(solution_name_normalized),
-                    ]
-                )
-                solution_id = next(
-                    (
-                        candidate
-                        for candidate in candidates
-                        if candidate and self._ingredient_identity_allowed(source_name, candidate)
-                    ),
-                    MEDIADIVE_SOLUTION_PREFIX + str(item[SOLUTION_ID_KEY]),
-                )
-
-                display_name = solution_name
-                ingredient_id = solution_id
+                # This identifies a particular source recipe, not whatever
+                # chemical concept happens to share its display name (#1319).
+                ingredient_id = nested_identifier(item)
+                display_name = source_name if str(item[SOLUTION_ID_KEY]) not in self.solutions_data else solution_name
             else:
                 continue
             occurrences.append(
@@ -821,11 +874,14 @@ class MediaDiveTransform(Transform):
             material_audit = getattr(self, "_material_scope_audit", None)
             if material_audit is not None:
                 material_audit.observe(occurrences[-1], item)
+            recipe_guard = getattr(self, "_recipe_identity_guard", None)
+            if recipe_guard is not None:
+                recipe_guard.observe(occurrences[-1], item)
         return occurrences
 
     def _ingredient_identity_allowed(self, name: str, target: str) -> bool:
         """Check every fallback against explicit hydration scope and curated identity policy."""
-        if not ingredient_mapping_allowed(name, target):
+        if not ingredient_context_allowed(target) or not ingredient_mapping_allowed(name, target):
             return False
         # Prefer native ChEBI names over possibly stale source-derived labels.
         label = getattr(self, "chebi_labels", {}).get(target, "") or ingredient_authority_label(target)
@@ -834,7 +890,9 @@ class MediaDiveTransform(Transform):
             label = getter(target) if getter else ""
         return ingredient_hydration_compatible(name, label, getattr(self, "chebi_hydrate_names", {}).get(target, ()))
 
-    def standardize_compound_id(self, id: str, compound_name: str = None, *, source_record: dict = None):
+    def standardize_compound_id(
+        self, id: str, compound_name: str = None, *, source_record: dict = None, source_assertion_id: str = None
+    ):
         """
         Get standardized IDs via unified chemical mappings, bulk data, or legacy mappings.
 
@@ -852,6 +910,13 @@ class MediaDiveTransform(Transform):
         # A whole supplier product is not a pure molecular species. The actual
         # occurrence wins over another recipe's cached embedded record (#1241).
         evidence = source_record if source_record is not None else getattr(self, "compounds_data", {}).get(id, {})
+        if str(id) in {"471", "672"}:
+            guard = getattr(self, "_recipe_identity_guard", None)
+            if guard is None:
+                raise SourceFinalizationRequired("Reviewed MediaDive compound requires admitted recipe context")
+            return guard.compound_target(id, compound_name, source_record, source_assertion_id)
+        if catalase_material(evidence, compound_name, id):
+            return MEDIADIVE_INGREDIENT_PREFIX + id
         if p3556_material(evidence) or sugar_material(evidence, compound_name):
             return MEDIADIVE_INGREDIENT_PREFIX + id
         if compound_name:
@@ -876,6 +941,8 @@ class MediaDiveTransform(Transform):
         # Compound mappings are extracted from embedded recipe data in media_detailed.json
         # No API call path - endpoint doesn't exist, so we always use embedded data or fallback
 
+        if self.using_bulk_data:
+            verify_bulk_record(self, "mediadive_compounds", id)
         if id in self.compounds_data:
             # Only count as avoided API call when data is actually found in bulk data
             if self.using_bulk_data:
@@ -918,6 +985,17 @@ class MediaDiveTransform(Transform):
 
         """
         from kg_microbe.transform_utils.constants import COMPLEX_INGREDIENT_CATEGORY
+
+        # A retained nested solution is still the source-owned recipe mixture,
+        # even when encountered as another recipe's ingredient. Otherwise its
+        # generic chemical declaration can win node deduplication over the
+        # solution's own ChemicalMixture declaration.
+        if ingredient_id.startswith(MEDIADIVE_SOLUTION_PREFIX):
+            if ingredient_id.removeprefix(MEDIADIVE_SOLUTION_PREFIX) not in self.solutions_data:
+                from kg_microbe.transform_utils.constants import NAMED_THING_CATEGORY
+
+                return NAMED_THING_CATEGORY
+            return SOLUTION_CATEGORY
 
         # If mapped to ontology, derive the category from the unified
         # mapping's `category` data column — no prefix routing in code.
@@ -1107,12 +1185,14 @@ class MediaDiveTransform(Transform):
         input_file = Path(data_file) if data_file is not None else Path("mediadive.json")
         if not input_file.is_absolute():
             input_file = self.input_base_dir / input_file
-        with self.consume_bulk_input(MEDIA_LIST_INPUT, input_file) as reader:
-            input_json = json.load(reader)
+        input_json = load_bulk_payload(self, MEDIA_LIST_INPUT, input_file)
+        verify_bulk_payloads(self)
         bacdive_input_file = BACDIVE_TMP_DIR / "bacdive.tsv"
         with self.consume_input("bacdive_taxon_lookup", bacdive_input_file) as bacdive_file:
             bacdive_df = pd.read_csv(bacdive_file, sep="\t", usecols=[BACDIVE_ID_COLUMN, NCBITAXON_ID_COLUMN])
         self._preflight_bulk_records(input_json)
+        self._recipe_identity_guard = RecipeIdentityGuard(self, input_json)
+        self._recipe_identity_prepared = True
         self._material_scope_audit = MaterialScopeAudit(self, input_json)
         self.verify_consumed_inputs()
 
@@ -1171,7 +1251,10 @@ class MediaDiveTransform(Transform):
                         ),
                     ]
                 )
-                for dictionary in input_json[DATA_KEY]:
+                for native_medium in input_json[DATA_KEY]:
+                    # Display normalization must not mutate the admitted raw
+                    # media-list record kept by the immutable payload guard.
+                    dictionary = dict(native_medium)
                     id = str(dictionary[ID_COLUMN])
                     dictionary[NAME_COLUMN] = (
                         dictionary[NAME_COLUMN].translate(self.translation_table).replace('""', "").strip()
@@ -1292,7 +1375,10 @@ class MediaDiveTransform(Transform):
                                             ]
                                         )
 
-                                        edge_writer.writerows(medium_strain_edge)
+                        # Write each native observation once. Writing the accumulated
+                        # list inside the loop repeats every earlier strain and grows
+                        # quadratically, without adding any graph assertions.
+                        edge_writer.writerows(medium_strain_edge)
 
                     if SOLUTIONS_KEY not in json_obj:
                         continue
@@ -1353,7 +1439,16 @@ class MediaDiveTransform(Transform):
                     ingredient_subclass_edges = []
                     for (_, k), v in ingredient_declarations.items():
                         ingredient_id = v[ID_COLUMN]
-                        enrichment = self.chemical_loader.get_node_enrichment(ingredient_id)
+                        native_solution = ingredient_id.startswith(MEDIADIVE_SOLUTION_PREFIX)
+                        source_material = ingredient_id in {
+                            MEDIADIVE_INGREDIENT_PREFIX + "471",
+                            MEDIADIVE_INGREDIENT_PREFIX + "672",
+                        }
+                        enrichment = (
+                            {"xref": "", "synonym": ""}
+                            if native_solution or source_material
+                            else self.chemical_loader.get_node_enrichment(ingredient_id)
+                        )
                         ingredient_nodes.append(
                             self._create_node_row(
                                 ingredient_id,
@@ -1373,7 +1468,11 @@ class MediaDiveTransform(Transform):
                         # solution or racemate of it, which ChEBI models with
                         # has-part, not is_a -- so emit biolink:broad_match,
                         # never biolink:subclass_of, one edge per parent.
-                        for parent_id in self.chemical_loader.get_parents(ingredient_id):
+                        for parent_id in (
+                            ()
+                            if native_solution or source_material
+                            else self.chemical_loader.get_parents(ingredient_id)
+                        ):
                             ingredient_subclass_edges.append(
                                 [
                                     ingredient_id,
@@ -1483,6 +1582,7 @@ class MediaDiveTransform(Transform):
         )
         drop_duplicates(self.output_edge_file)
         self.verify_consumed_inputs()
+        self._recipe_identity_guard.write()
         self._material_scope_audit.write()
 
         # Print data source and API call statistics

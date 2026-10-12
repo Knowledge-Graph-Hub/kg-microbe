@@ -1,0 +1,30 @@
+{
+  "full_sources": {
+    "go.db": {
+      "sha256": "a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a"
+    },
+    "pato.owl": {
+      "sha256": "73a80487130a81a3696f1e03c551288f741ed1be5a07639e69e7ecd8b6f0371c"
+    }
+  },
+  "native_class_sha256": {
+    "GO:0006082": "5fa8c286f33d4760b6b434f9bed62a3a3eebf2f578681b23c2491fc6f49d6d32",
+    "GO:0043603": "cfa1929b0ff1489c8ea330850af1263c1f69fbd8f02431ad58fefadc02131d7a",
+    "GO:0006643": "03414b767121a1cdee44ba6c464e6fffcac561bb3cf5ed9716cdc7f8d923777d",
+    "GO:0015695": "d950a11a70da1e933433089c7c904e20a7af618e796291deb42d14807b8b9547",
+    "GO:0015711": "c17f3052982d58536effbac3993bbbb6ff2f9d4663131cfa7f2662d0b5edbd0d",
+    "GO:0016053": "e956c6ec4d43f96b3ab5d3f2f611d8e4e4dc090898ec8af11ca98792dcb22c53",
+    "GO:0042886": "7a11b9f35f33239771576bb1dd39574b49251a39471d6110dfcda0520b09214d",
+    "GO:0043604": "95784864b9892803e6b72f4b180ef5a9d03e11e0132776d0111ba9c72d8f6a63",
+    "GO:0062023": "9648e8502617e41ad29e91cb750197865309c8d44791df400d795a0a56757f82",
+    "GO:0098660": "759fc1c3fc0a0e78bb795af9eabfa8ef79ef86527bc32c363dd17fa7c0c782bd",
+    "GO:0098662": "ee8c85ceda05caea1df5abf76e3aa8c4b82fbcb920f18014881bc7323905eec8",
+    "GO:0055108": "3a4a6549fe9e13abaa47c4ed1d1a882c50f1630978a7a78b6dd77e6c2a1d5db3",
+    "GO:0006903": "8daea806d1ba05d55e833b9caa2e987e0b776175f42c76eaeafc40184ff8734a",
+    "GO:0048199": "6d332e5196022cac88c8a79629906e8f84e0fef0fc793f667b7a66503df9d862"
+  },
+  "reviewed_policy_sha256": "4400d3628339a19fbda344c5fc4b5761fd89bbc1a8d2ad32e2898f3c7fc75498",
+  "fixture_sha256": "09f6e75f5d96fde0321a70395ec51d59574b71279dec5070c48afbb4a8bb63c4",
+  "note": "Fifteen finite claims on fourteen complete native class stanzas, plus replacement-class/property context for #1357. Two byte-preserved stanzas are added for the user-approved residual-three audit-only decision; GO:0055108 already supplied the third. All twelve prior policy records are unchanged. Test SQL inputs retain each complete subject statement multiset once; excerpts are not full ontology releases.",
+  "independent_disposition_proof_sha256": "ab8884f5ac13456ab0a19cf985e18c716e7c58dd410f3ffd0090691138a28d2d"
+}

@@ -5,6 +5,14 @@ reviewed full PATO, UBERON, ENVO, MONDO and RO exports. `origin.json` records bo
 and excerpt SHA-256 hashes separately. Tests explicitly substitute excerpt
 hashes; they never claim an excerpt is the full production authority.
 
+Since policy version 3 (#1420), each excerpt also carries its graph's
+`meta.version`, the release the policy binds. Each excerpt contains exactly the
+reviewed selected content, so its content digest equals production's. Fixture
+policies therefore substitute only the upstream release-file binding, naming the
+excerpt itself. The `full_source_sha256` values are the whole-file pins that
+policies before version 3 carried. The history tests still rebuild those earlier
+policies from them.
+
 The original fixtures contain every one of the first 326 approved assertions, their native
 class endpoints and all 14 complete RO property declarations. The original
 184 capability/towards assertions are joined by 98 existence-boundary and

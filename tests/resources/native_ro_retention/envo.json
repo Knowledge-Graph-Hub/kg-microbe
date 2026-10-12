@@ -14,6 +14,9 @@
         }
       ],
       "id": "http://purl.obolibrary.org/obo/envo.json",
+      "meta": {
+        "version": "http://purl.obolibrary.org/obo/envo/releases/2026-06-26/envo.json"
+      },
       "nodes": [
         {
           "id": "http://geneontology.org/foo/applies-pattern",

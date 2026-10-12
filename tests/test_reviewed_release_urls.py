@@ -28,6 +28,7 @@ REVIEWED_RELEASE_URLS = {
     ),
     "ro.owl": "http://purl.obolibrary.org/obo/ro/releases/2025-12-17/ro.owl",
     "po.owl": "http://purl.obolibrary.org/obo/po/releases/2026-01-09/po.owl",
+    "mondo.json": "http://purl.obolibrary.org/obo/mondo/releases/2026-07-06/mondo.json",
     # The archive itself is not pinned: its two members are, byte for byte, by
     # mappings/rhea_release.json, and stage_snapshot extracts only those.
     "rhea_download/142.tar.bz2": "https://ftp.expasy.org/databases/rhea/old_releases/142.tar.bz2",

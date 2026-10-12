@@ -183,12 +183,8 @@ class TestBaktaTransform(unittest.TestCase):
         self.assertEqual(edge["relation"], "RO:0002205")
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class TestBaktaOptionalInput(unittest.TestCase):
-    """Bakta is optional: report absent or empty input instead of running into finalization."""
+    """Bakta is optional: report absent or unusable input instead of running into finalization."""
 
     def setUp(self):
         """Make a scratch raw directory."""
@@ -207,9 +203,32 @@ class TestBaktaOptionalInput(unittest.TestCase):
         """An empty directory holds no datasets either."""
         (self.raw / "bakta").mkdir()
         (self.raw / "bakta" / "README").write_text("not a dataset directory")
-        self.assertIn("no dataset directories", BaktaTransform.missing_optional_input(self.raw))
+        reason = BaktaTransform.missing_optional_input(self.raw)
+        self.assertIn("no dataset", reason)
+        self.assertIn("found: no subdirectories", reason)
 
-    def test_a_dataset_directory_means_bakta_runs(self):
-        """Once a dataset directory exists, the source runs and its own validation applies."""
+    def test_directories_without_genomes_are_reported_by_name(self):
+        """
+        `run` writes nothing for these, and finalization then fails late and cryptically.
+
+        An empty dataset, a dataset without its `bakta/` level, and archive or
+        notebook debris all count as no input; naming them explains the skip.
+        """
         (self.raw / "bakta" / "pfas_bakta").mkdir(parents=True)
+        (self.raw / "bakta" / "cmm_bakta" / "bakta").mkdir(parents=True)
+        (self.raw / "bakta" / "__MACOSX").mkdir()
+        (self.raw / "bakta" / ".ipynb_checkpoints").mkdir()
+        reason = BaktaTransform.missing_optional_input(self.raw)
+        self.assertIn("bakta/SAMN*", reason)
+        for name in ("pfas_bakta", "cmm_bakta", "__MACOSX", ".ipynb_checkpoints"):
+            self.assertIn(name, reason)
+
+    def test_a_dataset_with_genome_directories_runs(self):
+        """The same discovery `run` uses: a dataset counts once it holds `bakta/SAMN*` directories."""
+        (self.raw / "bakta" / "pfas_bakta" / "bakta" / "SAMN00139461").mkdir(parents=True)
+        (self.raw / "bakta" / "cmm_bakta").mkdir()
         self.assertIsNone(BaktaTransform.missing_optional_input(self.raw))
+
+
+if __name__ == "__main__":
+    unittest.main()

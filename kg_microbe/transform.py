@@ -180,6 +180,26 @@ def _absent_optional_inputs(sources: List[str], input_dir: Optional[Path] = None
     return absent
 
 
+def _withdraw_success_claim(source: str, output_dir: Optional[Path]) -> bool:
+    """
+    Remove a skipped source's earlier fingerprint, as running it would have; return whether one existed.
+
+    The merge admits a source only with a current producer fingerprint, and a
+    run removes it before the producer starts. A skip has to as well, or output
+    built from raw data that is no longer there is merged as if this run had
+    produced it. By path: constructing the transform would create its output
+    directory.
+    """
+    base = output_dir if output_dir is not None else getattr(DATA_SOURCES.get(source), "DEFAULT_OUTPUT_DIR", None)
+    if base is None:
+        return False
+    marker = Path(base) / source / FINGERPRINT_FILE
+    if not marker.is_file():
+        return False
+    marker.unlink()
+    return True
+
+
 def _run_one(source: str, input_dir: Optional[Path], output_dir: Optional[Path], show_status: bool) -> None:
     """Run one registered source, or one ontology by name, and report what it wrote."""
     if source in DATA_SOURCES:
@@ -244,14 +264,18 @@ def transform(
         to refresh that ontology alone (#690).
     :raises ValueError: If a requested source is not registered in DATA_SOURCES.
     :raises FileNotFoundError: If a selected source declares a curation input
-        that is not on disk; nothing runs (#685).
+        that is not on disk, or is an optional source with no input named in
+        ``sources``; nothing runs (#685).
     :raises TransformBatchError: After the batch, if any source failed. A
         failure is isolated to its source: later sources still run unless
         they declare the failed one in ``TRANSFORM_INPUTS``, in which case they
         are skipped rather than built on stale upstream output (#685).
         ``BaseException`` (``FatalOntologyError``, Ctrl-C) still aborts at once.
-        An optional source with no input (``missing_optional_input``) is
-        skipped in the default batch but fails preflight when named with ``-s``.
+
+    In the default batch an optional source with no input
+    (``missing_optional_input``) is skipped, not failed, and so is any source
+    that declares it in ``TRANSFORM_INPUTS``; their earlier fingerprints are
+    withdrawn so the merge cannot admit stale output.
     """
     explicit = bool(sources)
     if not sources:
@@ -274,13 +298,16 @@ def transform(
             f"single ontologies: {', '.join(ontology_names)}"
         )
 
-    missing = _missing_declared_inputs(sources, Path(__file__).resolve().parent.parent, input_dir)
     absent_optional = _absent_optional_inputs(sources, input_dir)
+    missing: List[str] = []
     if explicit:
         # Named on the command line: absent input means the requested output
         # cannot be created, which is a failure, not a skip.
         missing += [f"{source}: {reason}" for source, reason in absent_optional.items()]
         absent_optional = {}
+    # A skipped optional source reads nothing; check only what will run.
+    runnable = [s for s in sources if s not in absent_optional]
+    missing += _missing_declared_inputs(runnable, Path(__file__).resolve().parent.parent, input_dir)
     if missing:
         raise FileNotFoundError("Required input(s) missing; nothing was run: " + "; ".join(missing))
 
@@ -290,17 +317,25 @@ def transform(
     # complete. A single ontology failing counts as `ontologies` failing:
     # gold and prego declare the directory, not the ontology inside it.
     unavailable: set = set()
+    # Skipped because there is nothing to build: an optional source with no
+    # input, and whatever depends only on such sources. Not a failure, so
+    # kept apart from `skipped`, which means an upstream failed.
+    not_applicable: dict = {}
     for source in sources:
-        if source in absent_optional:
-            unavailable.add(source)
-            reason = absent_optional[source]
-            print(f"[transform] {source}: skipped — optional source has no input ({reason})", flush=True)
-            continue
         upstream = [u for u in getattr(DATA_SOURCES.get(source), "TRANSFORM_INPUTS", ()) if u in unavailable]
-        if upstream:
-            skipped[source] = upstream
+        if source in absent_optional or (upstream and all(u in not_applicable for u in upstream)):
+            if source in absent_optional:
+                not_applicable[source] = f"optional source has no input ({absent_optional[source]})"
+            else:
+                not_applicable[source] = f"optional upstream {', '.join(upstream)} has no input"
             unavailable.add(source)
-            print(f"[transform] {source}: skipped — upstream {', '.join(upstream)} did not complete", flush=True)
+            note = "; earlier output no longer marked current" if _withdraw_success_claim(source, output_dir) else ""
+            print(f"[transform] {source}: skipped — {not_applicable[source]}{note}", flush=True)
+            continue
+        if upstream:
+            skipped[source] = [u for u in upstream if u not in not_applicable]
+            unavailable.add(source)
+            print(f"[transform] {source}: skipped — upstream {', '.join(skipped[source])} did not complete", flush=True)
             continue
         # print, not logging.info: the CLI does not configure a handler that
         # shows INFO, so the old log line was invisible and a run that produced

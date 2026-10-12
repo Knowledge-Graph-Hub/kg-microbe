@@ -42,9 +42,11 @@ running anything, isolates a failure to its source (later sources still run;
 those that declare the failed one in `TRANSFORM_INPUTS` are skipped rather
 than built on stale upstream output), and exits non-zero with a per-source
 summary. `FatalOntologyError` and Ctrl-C still abort at once. See #685, #690.
-An optional source with no input (Bakta without a dataset directory under
-`data/raw/bakta/`) is skipped in the default batch, and fails preflight when
-named with `-s`, since the requested output cannot be created.
+An optional source with no input (Bakta without a `bakta/SAMN*` dataset under
+`data/raw/bakta/`) is skipped in the default batch, along with anything that
+declares it in `TRANSFORM_INPUTS`, and its earlier fingerprint is withdrawn so
+the merge cannot admit stale output. Named with `-s`, it fails preflight,
+since the requested output cannot be created.
 
 `kg download` skips existing files, but a pin change now takes effect on its own: the URL behind each artifact is recorded in `data/raw/.download_manifest.json`, and a file whose declared URL has moved is re-fetched. A file with no record is left alone — unknown provenance is not wrong provenance (#911). `-i` still invalidates every selected entry, so always combine it with one or more `-t` tags. MediaDive invalidation also clears
 its response cache and can trigger an approximately one-hour crawl.

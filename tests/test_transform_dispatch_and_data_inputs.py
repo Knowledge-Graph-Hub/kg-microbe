@@ -427,6 +427,65 @@ class BatchIsolationTest(TestCase):
             transform(None, None, sources=None)
         self.assertEqual(self.log, ["b"])
 
+    def test_a_skipped_optional_dependency_is_not_reported_as_a_failure(self):
+        """
+        `skipped` means an upstream failed; an optional skip must not borrow that wording.
+
+        With another source failing, the summary used to say the dependent's
+        upstream "did not complete" although nothing it needed had failed.
+        """
+        registry = {
+            "opt": self._optional_without_input("opt"),
+            "uses_opt": _fake_source("uses_opt", self.log, self.base, inputs=("opt",)),
+            "bad": _fake_source("bad", self.log, self.base, raises=RuntimeError("boom")),
+        }
+        with mock.patch.dict(DATA_SOURCES, registry, clear=True), mock.patch("builtins.print") as printed:
+            with pytest.raises(TransformBatchError) as excinfo:
+                transform(None, None, sources=None)
+        self.assertEqual(list(excinfo.value.failed), ["bad"])
+        self.assertEqual(excinfo.value.skipped, {})
+        lines = [" ".join(map(str, call.args)) for call in printed.call_args_list]
+        self.assertIn("[transform] uses_opt: skipped — optional upstream opt has no input", lines)
+
+    def test_a_skip_withdraws_an_earlier_success_marker(self):
+        """
+        A run removes the marker before producing; a skip must too.
+
+        Otherwise Bakta output built from raw data that has since gone keeps a
+        current fingerprint, and `merge_bakta.yaml` admits it without a word.
+        """
+        from kg_microbe.utils.transform_fingerprint import FINGERPRINT_FILE
+
+        out = self.base / "out"
+        marker = out / "opt" / FINGERPRINT_FILE
+        marker.parent.mkdir(parents=True)
+        marker.write_text("{}", encoding="utf-8")
+        with mock.patch.dict(DATA_SOURCES, {"opt": self._optional_without_input("opt")}, clear=True):
+            transform(None, out, sources=None)
+        self.assertFalse(marker.exists())
+
+    def test_a_skipped_optional_source_is_not_held_to_its_declared_inputs(self):
+        """It reads nothing this run, so a missing declaration must not stop the whole batch."""
+        fake = self._optional_without_input("opt")
+        fake.DATA_INPUTS = ("mappings/this-file-does-not-exist.tsv",)
+        registry = {"opt": fake, "b": _fake_source("b", self.log, self.base)}
+        with mock.patch.dict(DATA_SOURCES, registry, clear=True):
+            transform(None, None, sources=None)
+        self.assertEqual(self.log, ["b"])
+
+    def test_the_registered_bakta_is_skipped_without_input(self):
+        """Drive the real LazyTransform -> BaktaTransform.missing_optional_input path, not a fake."""
+        raw = self.base / "raw"
+        raw.mkdir()
+        ran = []
+        with (
+            mock.patch.dict(DATA_SOURCES, {"bakta": DATA_SOURCES["bakta"]}, clear=True),
+            mock.patch("kg_microbe.transform._run_one", lambda source, *args: ran.append(source)),
+        ):
+            transform(raw, self.base / "out", sources=None)
+        self.assertEqual(ran, [])
+        self.assertFalse((self.base / "out" / "bakta").exists(), "a skip must not create the output directory")
+
     def test_an_explicitly_requested_optional_source_without_input_fails_before_anything_runs(self):
         """`-s bakta` with no data asked for output that cannot be created: fail early and say why."""
         registry = {"early": _fake_source("early", self.log, self.base), "opt": self._optional_without_input("opt")}

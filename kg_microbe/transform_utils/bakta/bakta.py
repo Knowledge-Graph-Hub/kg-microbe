@@ -98,13 +98,22 @@ class BaktaTransform(Transform):
 
     @classmethod
     def missing_optional_input(cls, input_dir: Optional[Path] = None) -> Optional[str]:
-        """Bakta is optional: no ``bakta/`` dataset directories means nothing to transform."""
+        """
+        Bakta is optional: say why there is nothing to transform, or return None to run it.
+
+        Mirrors ``run``'s own discovery: a dataset counts only if it holds
+        ``bakta/SAMN*`` genome directories. An empty or stray directory
+        (``.ipynb_checkpoints``, ``__MACOSX``) otherwise passes, and ``run``
+        writes nothing and then fails finalization.
+        """
         bakta_raw_dir = (Path(input_dir) if input_dir else cls.DEFAULT_INPUT_DIR) / "bakta"
         if not bakta_raw_dir.is_dir():
             return f"{bakta_raw_dir} does not exist"
-        if not any(d.is_dir() for d in bakta_raw_dir.iterdir()):
-            return f"no dataset directories in {bakta_raw_dir}"
-        return None
+        datasets = sorted(d for d in bakta_raw_dir.iterdir() if d.is_dir())
+        if any((d / "bakta").is_dir() and get_all_samn_directories(d / "bakta") for d in datasets):
+            return None
+        found = ", ".join(d.name for d in datasets) or "no subdirectories"
+        return f"no dataset in {bakta_raw_dir} has bakta/SAMN* genome directories (found: {found})"
 
     def run(self, data_file: Optional[Path] = None, show_status: bool = True) -> None:
         """

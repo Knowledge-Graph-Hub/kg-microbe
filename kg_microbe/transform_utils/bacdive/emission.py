@@ -45,6 +45,8 @@ class StrainProvenanceWriter:
 
 
 #: Header of the deposit-claim report written alongside nodes.tsv / edges.tsv.
+#: ``withheld_supplied_taxids`` lists citing records whose ambiguous supplied
+#: taxids were withheld, as ``<BacDive key>=<CURIE>,<CURIE>`` joined by ``|`` (#1421).
 DEPOSIT_CONFLICT_HEADER = [
     "strain_id",
     "parent_count",
@@ -52,6 +54,7 @@ DEPOSIT_CONFLICT_HEADER = [
     "bacdive_ids",
     "resolution",
     "asserted_parent",
+    "withheld_supplied_taxids",
 ]
 
 #: The claims sat on one lineage; the shared ancestor was asserted (#898).
@@ -65,7 +68,7 @@ RESOLUTION_SUPPRESSED = "suppressed"
 RESOLUTION_SUPPRESSED_NO_ANCESTRY = "suppressed_ancestry_unavailable"
 
 
-def contested_deposit_description(parents):
+def contested_deposit_description(parents, withheld=None):
     """
     Explain, on the node itself, why a contested deposit has no edges (#907).
 
@@ -81,9 +84,16 @@ def contested_deposit_description(parents):
     and should not try to -- it states only what it did itself.
 
     :param parents: ``{NCBITaxon CURIE: [BacDive record key, ...]}`` for the deposit.
+    :param withheld: ``{BacDive record key: [NCBITaxon CURIE, ...]}`` for citing
+        records whose ambiguous supplied taxids were withheld (#1421).
     :return: One-sentence description naming the conflicting claims.
     """
-    claims = ", ".join(f"{taxon} (BacDive {', '.join(sorted(keys))})" for taxon, keys in sorted(parents.items()))
+    claims = [f"{taxon} (BacDive {', '.join(sorted(keys))})" for taxon, keys in sorted(parents.items())]
+    claims += [
+        f"{' or '.join(sorted(taxa))} (BacDive {key}, which supplied these as equal-priority alternatives)"
+        for key, taxa in sorted((withheld or {}).items())
+    ]
+    claims = ", ".join(claims)
     return (
         "Culture-collection designation claimed by BacDive records that disagree on "
         f"the organism: {claims}. BacDive asserts no parent taxon and no record link "
@@ -136,7 +146,30 @@ def entailed_by_every_claim(parents, ancestors_of):
     return None
 
 
-def resolve_deposit_parents(claims, ancestors_of=None, ancestry_failed=None):
+def is_contested(parents, withheld=None):
+    """
+    Report whether a deposit's claimants must be resolved rather than trusted.
+
+    Two claimed parents always must. A record whose ambiguous supplied taxids
+    were withheld claims no parent, but its candidates are still evidence about
+    the organism (#1421). It contests the deposit whenever any other record
+    cites it with taxon evidence; cited by that record alone, it has nothing to
+    contradict.
+
+    :param parents: ``{NCBITaxon CURIE: [BacDive record key, ...]}`` for the deposit.
+    :param withheld: ``{BacDive record key: [NCBITaxon CURIE, ...]}`` for the deposit.
+    :return: True when the deposit belongs in the claims report.
+    """
+    withheld = withheld or {}
+    return len(parents) > 1 or (bool(withheld) and len(parents) + len(withheld) > 1)
+
+
+def _entails(candidate, parent, ancestors_of):
+    """Return whether a taxon is the parent itself or lies beneath it."""
+    return candidate == parent or (ancestors_of is not None and parent in ancestors_of(candidate))
+
+
+def resolve_deposit_parents(claims, ancestors_of=None, ancestry_failed=None, withheld=None):
     """
     Decide which culture-collection deposits may assert a parent taxon (#892).
 
@@ -150,9 +183,15 @@ def resolve_deposit_parents(claims, ancestors_of=None, ancestry_failed=None):
     only in depth along one lineage -- there the shared ancestor is asserted, per
     :func:`entailed_by_every_claim`. Genuinely disjoint claims get no edge.
 
-    Every deposit with more than one claim is reported, whichever way it went, so
-    the report answers "what happened here and why" rather than listing only the
-    half that lost its edge (#898).
+    A record whose ambiguous supplied taxids were withheld supports no parent,
+    but its candidates contest one: the claimed parent survives only if every
+    candidate is that taxon or lies beneath it, so the record belongs to it
+    whichever candidate is right. Otherwise the deposit gets no parent, exactly
+    as if the record had claimed a disjoint taxon (#1421).
+
+    Every contested deposit is reported, whichever way it went, so the report
+    answers "what happened here and why" rather than listing only the half that
+    lost its edge (#898).
 
     :param claims: ``{strain CURIE: {NCBITaxon CURIE: [BacDive record key, ...]}}``.
     :param ancestors_of: Callable mapping an NCBITaxon CURIE to its proper ``is_a``
@@ -160,26 +199,37 @@ def resolve_deposit_parents(claims, ancestors_of=None, ancestry_failed=None):
     :param ancestry_failed: Callable reporting whether a CURIE's ancestry could not
         be read, used to mark a suppression that is a precaution rather than a
         verdict (#897). When None, no suppression is marked that way.
+    :param withheld: ``{strain CURIE: {BacDive record key: [NCBITaxon CURIE, ...]}}``
+        for citing records whose ambiguous supplied taxids were withheld.
     :return: ``(resolved, contested)``. ``resolved`` is a sorted list of
         ``(strain CURIE, NCBITaxon CURIE)`` pairs to emit. ``contested`` is a sorted
-        list of ``(strain CURIE, claims, resolution, asserted parent)`` for every
-        deposit with more than one claim; ``asserted parent`` is empty when none was.
+        list of ``(strain CURIE, claims, resolution, asserted parent, withheld)`` for
+        every deposit :func:`is_contested` selects; ``asserted parent`` is empty when
+        none was, and ``withheld`` is empty when no withheld record cited it.
     """
+    withheld = withheld or {}
     resolved = []
     contested = []
-    for strain_curie in sorted(claims):
-        parents = claims[strain_curie]
-        if len(parents) == 1:
-            resolved.append((strain_curie, next(iter(parents))))
+    for strain_curie in sorted(set(claims) | set(withheld)):
+        parents = claims.get(strain_curie, {})
+        contests = withheld.get(strain_curie, {})
+        if not is_contested(parents, contests):
+            if parents:
+                resolved.append((strain_curie, next(iter(parents))))
             continue
-        agreed = entailed_by_every_claim(parents, ancestors_of)
+        agreed = next(iter(parents)) if len(parents) == 1 else entailed_by_every_claim(parents, ancestors_of)
+        if agreed is not None and not all(
+            _entails(candidate, agreed, ancestors_of) for key in sorted(contests) for candidate in contests[key]
+        ):
+            agreed = None
         if agreed is None:
-            degraded = ancestry_failed is not None and any(ancestry_failed(parent) for parent in parents)
+            evidence = set(parents) | {candidate for taxa in contests.values() for candidate in taxa}
+            degraded = ancestry_failed is not None and any(ancestry_failed(taxon) for taxon in sorted(evidence))
             resolution = RESOLUTION_SUPPRESSED_NO_ANCESTRY if degraded else RESOLUTION_SUPPRESSED
-            contested.append((strain_curie, parents, resolution, ""))
+            contested.append((strain_curie, parents, resolution, "", contests))
         else:
             resolved.append((strain_curie, agreed))
-            contested.append((strain_curie, parents, RESOLUTION_COLLAPSED, agreed))
+            contested.append((strain_curie, parents, RESOLUTION_COLLAPSED, agreed, contests))
     return resolved, contested
 
 
@@ -202,6 +252,7 @@ def deposit_conflict_rows(contested):
             "|".join(sorted({key for keys in parents.values() for key in keys})),
             resolution,
             asserted,
+            "|".join(f"{key}={','.join(sorted(taxa))}" for key, taxa in sorted(withheld.items())),
         ]
-        for strain_curie, parents, resolution, asserted in contested
+        for strain_curie, parents, resolution, asserted, withheld in contested
     ]

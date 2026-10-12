@@ -240,7 +240,7 @@ review cohorts; they are not counts from a newly rebuilt merged graph.
 | FOODON: 22 pod classes and two whole-tail classes | `biolink:GrossAnatomicalStructure` for native and imported declarations | Exact native identity and sound hierarchy; separate kernel and meat controls are unchanged |
 | UPA: 449 historically retained unverified computed GO projections | Audit only, not `part_of` assertions | Complete candidate witnesses and original selected rows, including multiplicity; the seven contradicted routes retain their distinct reason and direct weak xrefs remain |
 | MicrobeDecoder: 195 snapshot values behind six rejected joins | Five source-record `InformationContentEntity` nodes; no node for the zero-value record | Original records/values, former subject association and dependent phenotype audits; independent FAPROTAX evidence stays on its original subject |
-| BacDive: 97 reviewed ambiguous taxid sets | Withhold their taxonomic parent proposals | Every supplied taxid and former selection; independently supported deposit contributors remain |
+| BacDive: 97 reviewed ambiguous taxid sets | Withhold their taxonomic parent proposals; the candidates still contest shared deposits, which keep a parent only if every candidate lies beneath it (#1421) | Every supplied taxid and former selection; independently supported deposit contributors remain, and contested deposits are listed in the deposit-claims report |
 | Three additional imported GO restrictions | Withhold the exact transferred assertions, extending the finite policy from 12 to 15 | Original row, would-be candidate row, native restriction and identifier history |
 
 The three additional GO decisions are `GO:0006903 / RO:0002162 / NCBITaxon:2759`,

@@ -26,6 +26,7 @@ from kg_microbe.transform_utils.bacdive.emission import (
     RESOLUTION_COLLAPSED,
     RESOLUTION_SUPPRESSED,
     RESOLUTION_SUPPRESSED_NO_ANCESTRY,
+    is_contested,
     resolve_deposit_parents,
 )
 from kg_microbe.transform_utils.bacdive.fallback_evidence import (
@@ -295,7 +296,7 @@ def _row_key(row):
 
 
 class TaxonomyEvidence:
-    """Retain source-local support classifications without changing parent-resolution policy."""
+    """Retain source-local support classifications; withheld candidates contest deposit parents, never support them."""
 
     def __init__(self, raw_dir, gss, bindings, optional_state, *, supplied_policy, admission=None):
         """Start before the existing immutable BacDive native read observer is invoked."""
@@ -502,6 +503,30 @@ class TaxonomyEvidence:
                 claims[token["deposit"]][choice["target"]].append(entry["record_id"])
         return {deposit: dict(parents) for deposit, parents in claims.items()}
 
+    def withheld_deposit_contests(self):
+        """
+        Return the candidates of withheld records per cited deposit, for contest only.
+
+        A record whose same-priority supplied taxids were withheld supports no
+        deposit parent. Its normalized candidates still say which organism it
+        is, so they contest the parent of every deposit it cites; dropping them
+        made a deposit shared with an unrelated organism look uncontested (#1421).
+
+        :return: ``{deposit CURIE: {BacDive record ID: [sorted candidate CURIEs]}}``.
+        """
+        contests = defaultdict(dict)
+        for ordinal in range(len(self.records)):
+            entry = self._entry(ordinal)
+            disposition = entry.get("supplied_taxid_disposition")
+            if disposition is None:
+                continue
+            if self._choice(ordinal)["target"] is not None:
+                _fail("withheld supplied-taxid record contributed a deposit parent")
+            candidates = sorted(set(disposition["normalized_priority_ids"]))
+            for token in entry["deposits"]:
+                contests[token["deposit"]][entry["record_id"]] = candidates
+        return {deposit: dict(records) for deposit, records in contests.items()}
+
     def _claim_occurrences(self, subject, claims):
         """Join exact legacy claim lists to every sealed source-record/token occurrence."""
         if not callable(self._deposit_occurrence_binding) or self._deposit_occurrence_binding() != (True, True):
@@ -566,7 +591,12 @@ class TaxonomyEvidence:
             return cached[identifier]
 
         try:
-            result = resolve_deposit_parents(claims, ancestors_of=ancestors, ancestry_failed=lambda _id: False)
+            result = resolve_deposit_parents(
+                claims,
+                ancestors_of=ancestors,
+                ancestry_failed=lambda _id: False,
+                withheld=self.withheld_deposit_contests(),
+            )
             witness = owner.finish() if owner is not None else None
             # Rejoin demand to completed queries, retaining both callback and
             # physical-query multiplicities without relying on Python set order.
@@ -810,13 +840,18 @@ class TaxonomyEvidence:
         contested = {entry[0]: entry for entry in contested_rows}
         if len(contested) != len(contested_rows):
             _fail("duplicate contested deposit disposition")
-        expected_contested = {key for key, parents in buffered_claims.items() if len(parents) > 1}
+        withheld = self.withheld_deposit_contests()
+        expected_contested = {
+            key
+            for key in set(buffered_claims) | set(withheld)
+            if is_contested(buffered_claims.get(key, {}), withheld.get(key, {}))
+        }
         if set(contested) != expected_contested:
-            _fail("contested deposit inventory differs from native multiple-parent claims")
+            _fail("contested deposit inventory differs from native multiple-parent and withheld claims")
         for key, entry in contested.items():
-            if len(entry) != 4 or entry[1] != buffered_claims[key]:
+            if len(entry) != 5 or entry[1] != buffered_claims.get(key, {}) or entry[4] != withheld.get(key, {}):
                 _fail("contested deposit lost its complete native claims")
-            resolution, target = entry[2:]
+            resolution, target = entry[2:4]
             if resolution == RESOLUTION_COLLAPSED:
                 if not target or resolved.get(key) != target or target not in entry[1]:
                     _fail("collapsed deposit differs from the unchanged resolution result")
@@ -825,7 +860,7 @@ class TaxonomyEvidence:
                     _fail("suppressed deposit gained a parent")
             else:
                 _fail("unknown deposit resolution status")
-        if set(resolved) | set(contested) != set(buffered_claims):
+        if set(resolved) | set(contested) != set(buffered_claims) | expected_contested:
             _fail("resolved/suppressed deposit accounting is incomplete")
         audits = self._audit_rows()
         if audit_writer is not None:

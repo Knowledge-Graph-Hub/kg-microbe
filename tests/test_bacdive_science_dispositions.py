@@ -13,6 +13,7 @@ from kg_microbe.transform_utils.bacdive import isolation_categories as categorie
 from kg_microbe.transform_utils.bacdive import supplied_taxid_policy as supplied
 from kg_microbe.transform_utils.bacdive import taxonomy_evidence as taxonomy
 from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
+from kg_microbe.transform_utils.constants import BACDIVE_DEPOSIT_CLAIMS_FILE
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 from tests.test_bacdive_isolation_categories import CATEGORIES, SECTION, _counter
@@ -131,29 +132,91 @@ def test_policy_near_misses_do_not_expand_reviewed_cohort():
         supplied.load_policy(io.StringIO(supplied.POLICY_PATH.read_text() + "\n"))
 
 
-def test_actual_deposit_parent_keeps_only_independent_contributor(tmp_path, monkeypatch):
-    """Withheld record claims are audited separately from independent deposit support."""
+def _shared_deposit_records(parent):
+    """Withheld record 4427 and an independent record both cite TEST SHARED; only 4427 cites TEST ONLY."""
     ambiguous = tax_record()
     ambiguous["External links"] = {"culture collection no.": "TEST SHARED, TEST ONLY, TEST SHARED"}
     other = {
-        "General": {"BacDive-ID": 999999, "NCBI tax id": {"NCBI tax id": 20, "Matching level": "strain"}},
+        "General": {"BacDive-ID": 999999, "NCBI tax id": {"NCBI tax id": parent, "Matching level": "strain"}},
         "Name and taxonomic classification": {"species": "Fixture child"},
         "External links": {"culture collection no.": "TEST SHARED"},
     }
-    transform, _, _, _ = produce(tmp_path, monkeypatch, [ambiguous, other], gss=False)
+    return [ambiguous, other]
+
+
+def _deposit_claims_report(transform):
+    """Read the emitted deposit-claims report."""
+    with (Path(transform.output_dir) / BACDIVE_DEPOSIT_CLAIMS_FILE).open(newline="") as stream:
+        return list(csv.DictReader(stream, delimiter="\t"))
+
+
+def test_withheld_candidates_contest_an_independently_claimed_deposit(tmp_path, monkeypatch):
+    """
+    Withheld claims support no deposit parent, but they still contest one (#1421).
+
+    The fixture authority gives 4427's candidates no ancestry, so neither lies
+    beneath the independent record's NCBITaxon:20. Asserting it would equate
+    two possibly unrelated organisms through close_match. Instead the deposit gets
+    no parent, neither record links to it, and the claims report and the node
+    say why. TEST ONLY, cited by 4427 alone, keeps its record link.
+    """
+    transform, _, nodes, _ = produce(tmp_path, monkeypatch, _shared_deposit_records(20), gss=False)
     rows = scoped_rows(transform)
     parents = {row["subject"]: row for row in rows if row["predicate"] == "biolink:subclass_of"}
-    assert parents["kgmicrobe.strain:TEST-SHARED"]["object"] == "NCBITaxon:20"
-    assert parents["kgmicrobe.strain:TEST-SHARED"]["knowledge_level"] == "observation"
+    assert "kgmicrobe.strain:TEST-SHARED" not in parents
     assert "kgmicrobe.strain:TEST-ONLY" not in parents
     assert "kgmicrobe.strain:bacdive_4427" not in parents
-    assert transform._taxonomy_evidence_guard.deposit_rows["kgmicrobe.strain:TEST-SHARED"]["claims"] == {
-        "NCBITaxon:20": ["999999"]
-    }
+    links = {(row["subject"], row["object"]) for row in rows if row["predicate"] == "biolink:close_match"}
+    assert ("kgmicrobe.strain:bacdive_4427", "kgmicrobe.strain:TEST-ONLY") in links
+    assert not [pair for pair in links if pair[1] == "kgmicrobe.strain:TEST-SHARED"]
+    assert transform._taxonomy_evidence_guard.deposit_rows == {}
+    assert _deposit_claims_report(transform) == [
+        {
+            "strain_id": "kgmicrobe.strain:TEST-SHARED",
+            "parent_count": "1",
+            "parents": "NCBITaxon:20",
+            "bacdive_ids": "999999",
+            "resolution": "suppressed",
+            "asserted_parent": "",
+            "withheld_supplied_taxids": "4427=NCBITaxon:1236527,NCBITaxon:1322345",
+        }
+    ]
+    [shared] = [node for node in nodes if node["id"] == "kgmicrobe.strain:TEST-SHARED"]
+    assert "NCBITaxon:20 (BacDive 999999)" in shared["description"]
+    assert "NCBITaxon:1236527 or NCBITaxon:1322345 (BacDive 4427" in shared["description"]
+    [only] = [node for node in nodes if node["id"] == "kgmicrobe.strain:TEST-ONLY"]
+    assert not only.get("description")
     [audit] = tax_audit(transform)
     withheld = json.loads(audit["native_evidence_json"])["withheld_deposit_contributions"]
     assert len(withheld) == 3
     assert sum(row["native_token"]["deposit"] == "kgmicrobe.strain:TEST-SHARED" for row in withheld) == 2
+
+
+def test_withheld_candidates_beneath_the_claim_leave_it_standing(tmp_path, monkeypatch):
+    """
+    When every candidate lies beneath the claimed parent, the record belongs to it either way.
+
+    The parent is still supported only by the independent record, and the
+    collapse is reported because the claimants differed.
+    """
+    edges = [("NCBITaxon:1322345", "NCBITaxon:10"), ("NCBITaxon:1236527", "NCBITaxon:10")]
+    transform, _, _, _ = produce(tmp_path, monkeypatch, _shared_deposit_records(10), gss=False, extra_edges=edges)
+    rows = scoped_rows(transform)
+    parents = {row["subject"]: row for row in rows if row["predicate"] == "biolink:subclass_of"}
+    assert parents["kgmicrobe.strain:TEST-SHARED"]["object"] == "NCBITaxon:10"
+    assert parents["kgmicrobe.strain:TEST-SHARED"]["knowledge_level"] == "observation"
+    assert "kgmicrobe.strain:bacdive_4427" not in parents
+    links = {(row["subject"], row["object"]) for row in rows if row["predicate"] == "biolink:close_match"}
+    assert {
+        ("kgmicrobe.strain:bacdive_4427", "kgmicrobe.strain:TEST-SHARED"),
+        ("kgmicrobe.strain:bacdive_999999", "kgmicrobe.strain:TEST-SHARED"),
+    } <= links
+    assert transform._taxonomy_evidence_guard.deposit_rows["kgmicrobe.strain:TEST-SHARED"]["claims"] == {
+        "NCBITaxon:10": ["999999"]
+    }
+    [row] = _deposit_claims_report(transform)
+    assert (row["resolution"], row["asserted_parent"]) == ("collapsed", "NCBITaxon:10")
+    assert row["withheld_supplied_taxids"] == "4427=NCBITaxon:1236527,NCBITaxon:1322345"
 
 
 def test_withheld_parent_reintroduction_and_lost_policy_role_are_rejected(tmp_path, monkeypatch):
@@ -168,6 +231,38 @@ def test_withheld_parent_reintroduction_and_lost_policy_role_are_rejected(tmp_pa
     snapshots.pop(supplied.ROLE)
     with pytest.raises(SourceFinalizationRequired, match="consumed input role"):
         transform._taxonomy_evidence_guard.verify_native(snapshots)
+
+
+def test_withheld_contest_replays_and_cannot_be_dropped_from_the_record(tmp_path, monkeypatch, local_source_schema):
+    """
+    Recorded admission reconstructs the withheld contest from native evidence (#1421).
+
+    The contest needs an ancestry query for a withheld candidate, so the
+    recorded demand must include it. A report whose contest was dropped, which
+    would let the deposit look uncontested on replay, is refused.
+    """
+    transform, _, _, _ = produce(tmp_path, monkeypatch, _shared_deposit_records(20), gss=False)
+    report = transform.finalize()
+    native = report["producer_native_inputs"]["taxonomy"]
+    assert native["ancestry"]["callback_demand_counts"] == [["NCBITaxon:1236527", 1]]
+    assert native["contested"] == [
+        [
+            "kgmicrobe.strain:TEST-SHARED",
+            {"NCBITaxon:20": ["999999"]},
+            "suppressed",
+            "",
+            {"4427": ["NCBITaxon:1236527", "NCBITaxon:1322345"]},
+        ]
+    ]
+    fresh = BacDiveTransform.__new__(BacDiveTransform)
+    Transform.__init__(fresh, "bacdive", transform.input_base_dir, transform.output_base_dir)
+    assert fresh.finalize() == report
+    fresh.verify_native_inputs()
+    BacDiveTransform.verify_recorded_native_inputs(report, transform.output_dir / "source_finalization.json")
+    forged = copy.deepcopy(report)
+    forged["producer_native_inputs"]["taxonomy"]["contested"][0][4] = {}
+    with pytest.raises(SourceFinalizationRequired):
+        BacDiveTransform.verify_recorded_native_inputs(forged, transform.output_dir / "source_finalization.json")
 
 
 def test_withholding_replays_through_fresh_finalization(tmp_path, monkeypatch, local_source_schema):

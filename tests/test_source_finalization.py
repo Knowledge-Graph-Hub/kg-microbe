@@ -18,6 +18,7 @@ from kg_microbe.utils.source_finalization import (
     verify_finalized_source_files,
 )
 from kg_microbe.utils.transform_fingerprint import finalization_inputs_current, write_fingerprint
+from tests.rhea_fixtures import prepare_rhea_native_inputs
 
 FIXTURES = Path(__file__).parent / "resources"
 
@@ -46,7 +47,9 @@ def _pair(transform, *, target="fixture:2", value="plain"):
 def test_representation_finalization_is_upstream_and_audited(tmp_path):
     """Known identity aliases and imported categories are resolved before KGX ingestion."""
     transform = _transform(tmp_path)
-    (transform.input_base_dir / "foodon.json").write_text('{"graphs": []}')
+    (transform.input_base_dir / "foodon.json").write_text(
+        '{"graphs": [{"nodes": [{"id": "FOODON:1", "type": "CLASS"}], "edges": []}]}'
+    )
     for kind in ("nodes", "edges"):
         shutil.copyfile(FIXTURES / "relation_aware_merge" / f"alpha_{kind}.tsv", transform.output_dir / f"{kind}.tsv")
     report = transform.finalize()
@@ -249,6 +252,7 @@ def test_public_merge_gate_requires_exact_prepared_inputs(tmp_path, monkeypatch)
     monkeypatch.setattr(merge_kg, "merge", lambda *args, **kwargs: pytest.fail("must reject before KGX writes"))
     with pytest.raises(SourceFinalizationRequired, match="absent/stale"):
         merge_kg.load_and_merge(str(config))
+    prepare_rhea_native_inputs(transform)
     transform.finalize()
     record_source(transform)
     merge_kg._assert_sources_finalized(str(config))
@@ -291,7 +295,7 @@ def test_diagnostic_opt_out_is_conspicuous_and_written_in_manifest(tmp_path, mon
             {
                 "configuration": {"allow_unfinalized_sources": True, "output_directory": str(transform.output_dir)},
                 "merged_graph": {
-                    "source": {"fixture": {"input": {"filename": [str(transform.output_node_file)]}}},
+                    "source": {"fixture": {"input": {"format": "tsv", "filename": [str(transform.output_node_file)]}}},
                     "destination": {"tsv": {"format": "tsv", "filename": "fixture"}},
                 },
             }

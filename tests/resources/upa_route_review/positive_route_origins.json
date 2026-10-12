@@ -1,0 +1,253 @@
+{
+  "biolink:part_of": {
+    "saved_row": {
+      "all_native_witnesses": [
+        {
+          "intermediate": "UPA:ULS00039",
+          "native_edge_positions": [
+            7816,
+            13911
+          ],
+          "node": "UPA:UER00103",
+          "path_selected": true,
+          "route": "enzyme_xref_two_hop",
+          "selected_by_emitter": true,
+          "xref_position": 1,
+          "xref_selected": true
+        }
+      ],
+      "native_route_key": [
+        "GO:0004420",
+        "biolink:part_of",
+        "UPA:UPA00058"
+      ],
+      "physical_line": 110,
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "UPA:UPA00058",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:part_of",
+        "primary_knowledge_source": "infores:upa",
+        "publications": "",
+        "relation": "BFO:0000050",
+        "subject": "GO:0004420"
+      }
+    },
+    "nodes": [
+      {
+        "position": 2563,
+        "record": {
+          "id": "http://purl.obolibrary.org/obo/UPa_UPA00058",
+          "lbl": "(R)-mevalonate biosynthesis",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "Biosynthesis of mevalonic acid, a six-carbon metabolic intermediate. In eukaryotes, it arises from linkage of two acetyl-CoAs in the mitochondrion to form acetaoacetyl-CoA (4 carbons), followed by addition of another acetyl group from a third acetyl-CoA to give 3-hydroxy-3-methylglutaryl-CoA (HMG-CoA). This latter compound is reduced by HMG-CoA reductase in the endoplasmic reticulum, using two NADPHs, with coincident loss of CoASH. HMG-CoA reductase is the most important regulatory enzyme for the cholesterol biosynthetic pathway and other isoprenoids/terpenoids. HMG-CoA reductase is a target for drugs that attempt to lower cholesterol levels in the body. One such drug is lovastatin, which inhibits the enzyme and stops endogenous synthesis of cholesterol.",
+              "xrefs": [
+                "UPa:amorgat"
+              ]
+            },
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "mevalonic acid biosynthesis"
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "KEGG:map00071"
+              },
+              {
+                "val": "KEGG:map00072"
+              },
+              {
+                "val": "KEGG:map00280"
+              },
+              {
+                "val": "KEGG:map00310"
+              },
+              {
+                "val": "KEGG:map00362"
+              },
+              {
+                "val": "KEGG:map00380"
+              },
+              {
+                "val": "KEGG:map00620"
+              },
+              {
+                "val": "KEGG:map00630"
+              },
+              {
+                "val": "KEGG:map00640"
+              },
+              {
+                "val": "KEGG:map00650"
+              },
+              {
+                "val": "KEGG:map00720"
+              },
+              {
+                "val": "KEGG:map00900"
+              },
+              {
+                "val": "KEGG:map01100"
+              },
+              {
+                "val": "KEGG:map01110"
+              },
+              {
+                "val": "KEGG:map01120"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/upa#uniprot_super_pathway",
+                "val": "http://purl.obolibrary.org/obo/UPa_UPA00415"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "pathway"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "position": 1092,
+        "record": {
+          "id": "http://purl.obolibrary.org/obo/UPa_UER00103",
+          "lbl": "(R)-mevalonate from acetyl-CoA: step 3/3",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "1 (S)-3-hydroxy-3-methylglutaryl-CoA + 2 H(+) + 2 NADPH =&gt; 1 (R)-mevalonate + 1 CoA + 2 NADP(+)."
+            },
+            "xrefs": [
+              {
+                "val": "EC:1.1.1.34"
+              },
+              {
+                "val": "GO:0004420"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "enzymatic_reaction"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "position": 2046,
+        "record": {
+          "id": "http://purl.obolibrary.org/obo/UPa_ULS00039",
+          "lbl": "(R)-mevalonate from acetyl-CoA",
+          "type": "CLASS",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "linear_sub_pathway"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "edges": [
+      {
+        "position": 7816,
+        "record": {
+          "sub": "http://purl.obolibrary.org/obo/UPa_UER00103",
+          "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+          "obj": "http://purl.obolibrary.org/obo/UPa_ULS00039"
+        }
+      },
+      {
+        "position": 13911,
+        "record": {
+          "sub": "http://purl.obolibrary.org/obo/UPa_ULS00039",
+          "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+          "obj": "http://purl.obolibrary.org/obo/UPa_UPA00058"
+        }
+      }
+    ]
+  },
+  "biolink:related_to": {
+    "saved_row": {
+      "all_native_witnesses": [
+        {
+          "node": "UPA:UPA00450",
+          "route": "pathway_xref",
+          "selected_by_emitter": true,
+          "xref_position": 0
+        }
+      ],
+      "native_route_key": [
+        "GO:0033353",
+        "biolink:related_to",
+        "UPA:UPA00450"
+      ],
+      "physical_line": 553,
+      "row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "",
+        "knowledge_level": "knowledge_assertion",
+        "object": "UPA:UPA00450",
+        "original_object": "",
+        "original_subject": "",
+        "predicate": "biolink:related_to",
+        "primary_knowledge_source": "infores:upa",
+        "publications": "",
+        "relation": "RO:0000052",
+        "subject": "GO:0033353"
+      }
+    },
+    "nodes": [
+      {
+        "position": 2953,
+        "record": {
+          "id": "http://purl.obolibrary.org/obo/UPa_UPA00450",
+          "lbl": "activated methyl cycle",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "The activated methyl donor involved in most biosynthetic methylation is usually S-adenosylmethionine (SAM). SAM is synthesized by the transfer of an adenosyl group from ATP to the sulfur atom of methionine. The methyl group of the methionine unit is activated by the positive charge on the adjacent sulfur atom, which makes the molecule much more reactive than N5-methyltetrahydrofolate. The synthesis of S-adenosylmethionine is unusual in that the triphosphate group of ATP is split into pyrophosphate and orthophosphate; the pyrophosphate is subsequently hydrolyzed to two molecules of Pi. S-Adenosylhomocysteine is formed when the methyl group of S-adenosylmethionine is transferred to an acceptor. S-Adenosylhomocysteine is then hydrolyzed to homocysteine and adenosine. Methionine can be regenerated by the transfer of a methyl group to homocysteine. [Stryer, Biochemistry, 2002].",
+              "xrefs": [
+                "UPa:amorgat"
+              ]
+            },
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "S-adenosylmethionine cycle"
+              },
+              {
+                "pred": "hasExactSynonym",
+                "val": "SAM cycle"
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "GO:0033353"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "pathway"
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "edges": []
+  }
+}

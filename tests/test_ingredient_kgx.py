@@ -5,6 +5,7 @@ import hashlib
 import io
 import json
 import shutil
+import sqlite3
 import tarfile
 from copy import deepcopy
 from multiprocessing.pool import ThreadPool
@@ -22,6 +23,7 @@ from kg_microbe.utils.chemical_mapping_utils import ChemicalMappingLoader
 from kg_microbe.utils.ingredient_bundle_contract import canonical_json
 from kg_microbe.utils.ingredient_kgx import ingredient_kgx_profile, json_scalar, validate_ingredient_fields
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, graph_rows
+from tests.ncit_eight_fixtures import seed_native_authority
 from tests.test_ingredient_bundle import lookup_bundle as lookup_bundle
 from tests.test_ingredient_bundle import producer_bundle as producer_bundle
 from tests.test_ingredient_bundle import reset_lookup_cache as reset_lookup_cache
@@ -31,9 +33,14 @@ pytestmark = pytest.mark.usefixtures("local_source_schema")
 
 
 @pytest.fixture
-def prepared_ingredients(tmp_path, lookup_bundle):
-    """Run the registered producer over actual MIM export bytes and an explicit lookup selection."""
-    raw = tmp_path / "raw"
+def unfinalized_ingredients(tmp_path, lookup_bundle, monkeypatch):
+    """Run actual MIM bytes with genuine native authority, before source finalization."""
+    native = Path(__file__).parent / "resources/ingredient_bundle/native"
+    model = native / "biolink-model.yaml"
+    model_origin = json.loads((native / "acceptance-native-origin.json").read_text())
+    assert hashlib.sha256(model.read_bytes()).hexdigest() == model_origin["members"][model.name]["sha256"]
+    raw, _, policy = seed_native_authority(tmp_path, monkeypatch, model_path=model)
+    assert policy["model_sha256"] == model_origin["members"][model.name]["sha256"]
     selection_dir = raw / "mim_ingredients"
     selection_dir.mkdir(parents=True)
     authority = Path(__file__).parent / "resources/ingredient_bundle/native/foodon-authority.json"
@@ -49,9 +56,45 @@ def prepared_ingredients(tmp_path, lookup_bundle):
     transform = MIMIngredientsTransform(raw, tmp_path / "transformed")
     counts = transform.run()
     assert counts == {"nodes": 71, "edges": 51, "bundle_sha256": producer_pin()}
-    transform.finalize(fresh_run=True)
+    return transform
+
+
+@pytest.fixture
+def prepared_ingredients(unfinalized_ingredients):
+    """Exercise real finalization and freshness over the native-backed ingredient source."""
+    transform = unfinalized_ingredients
+    report = transform.finalize(fresh_run=True)
+    native = transform.input_base_dir / "ncit.db"
+    assert report["consumed_inputs"]["category_authority_ncit"] == {
+        "path": str(native.resolve()),
+        "sha256": hashlib.sha256(native.read_bytes()).hexdigest(),
+    }
     record_source(transform)
     return transform
+
+
+@pytest.mark.parametrize("fault", ["missing", "wrong"])
+def test_ingredient_finalization_refuses_missing_or_wrong_native_ncit(unfinalized_ingredients, fault):
+    """A native-authority failure cannot publish or alter the prior producer graph."""
+    source = unfinalized_ingredients
+    before = source.output_node_file.read_bytes(), source.output_edge_file.read_bytes()
+    native = source.input_base_dir / "ncit.db"
+    if fault == "missing":
+        native.unlink()
+        message = "ncit.db"
+    else:
+        with sqlite3.connect(native) as connection:
+            changed = connection.execute(
+                "UPDATE statements SET value=? WHERE subject=? AND predicate=?",
+                ("deliberate native fixture corruption", "NCIT:C85253", "rdfs:label"),
+            ).rowcount
+        assert changed == 1
+        message = "Finite NCIT selected native bytes differ"
+    with pytest.raises(ValueError, match=message):
+        source.finalize(fresh_run=True)
+    assert (source.output_node_file.read_bytes(), source.output_edge_file.read_bytes()) == before
+    assert not (source.output_dir / "source_finalization.json").exists()
+    assert not (source.output_dir / "source_fingerprint.json").exists()
 
 
 def producer_pin():

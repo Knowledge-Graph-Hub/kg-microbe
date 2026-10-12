@@ -1,0 +1,1393 @@
+{
+  "evidence_kind": "reviewed_complete_native_records_not_runtime_full_database",
+  "historical_edges": [
+    {
+      "agent_type": "manual_agent",
+      "g_l": "10.0",
+      "knowledge_level": "observation",
+      "mmol_l": "",
+      "object": "NCIT:C29298",
+      "predicate": "biolink:has_part",
+      "primary_knowledge_source": "infores:mediadive",
+      "publications": "",
+      "relation": "BFO:0000051",
+      "source_assertion_id": "mediadive.solution:855#recipe/2",
+      "source_record": "{\"amount\":10,\"compound\":\"Oatmeal\",\"compound_id\":471,\"g_l\":10,\"optional\":0,\"recipe_order\":2,\"unit\":\"g\"}",
+      "subject": "mediadive.solution:855",
+      "unit": "g",
+      "value": "10.0"
+    },
+    {
+      "agent_type": "manual_agent",
+      "g_l": "20.0",
+      "knowledge_level": "observation",
+      "mmol_l": "",
+      "object": "NCIT:C29298",
+      "predicate": "biolink:has_part",
+      "primary_knowledge_source": "infores:mediadive",
+      "publications": "",
+      "relation": "BFO:0000051",
+      "source_assertion_id": "mediadive.solution:1308#recipe/1",
+      "source_record": "{\"amount\":20,\"attribute\":\"Quaker White Oats\",\"compound\":\"Oatmeal\",\"compound_id\":471,\"g_l\":20,\"optional\":0,\"recipe_order\":1,\"unit\":\"g\"}",
+      "subject": "mediadive.solution:1308",
+      "unit": "g",
+      "value": "20.0"
+    },
+    {
+      "agent_type": "manual_agent",
+      "g_l": "5.0",
+      "knowledge_level": "observation",
+      "mmol_l": "",
+      "object": "NCIT:C120264",
+      "predicate": "biolink:has_part",
+      "primary_knowledge_source": "infores:mediadive",
+      "publications": "",
+      "relation": "BFO:0000051",
+      "source_assertion_id": "mediadive.solution:1452#recipe/14",
+      "source_record": "{\"amount\":5,\"attribute\":\"glucose, chitin etc.\",\"compound\":\"Substrate\",\"compound_id\":672,\"g_l\":5,\"optional\":0,\"recipe_order\":14,\"unit\":\"g\"}",
+      "subject": "mediadive.solution:1452",
+      "unit": "g",
+      "value": "5.0"
+    },
+    {
+      "agent_type": "manual_agent",
+      "g_l": "19.98",
+      "knowledge_level": "observation",
+      "mmol_l": "",
+      "object": "NCIT:C29298",
+      "predicate": "biolink:has_part",
+      "primary_knowledge_source": "infores:mediadive",
+      "publications": "",
+      "relation": "BFO:0000051",
+      "source_assertion_id": "mediadive.solution:3672#recipe/1",
+      "source_record": "{\"amount\":20,\"attribute\":\"Quaker White Oats\",\"compound\":\"Oatmeal\",\"compound_id\":471,\"g_l\":19.98,\"optional\":0,\"recipe_order\":1,\"unit\":\"g\"}",
+      "subject": "mediadive.solution:3672",
+      "unit": "g",
+      "value": "20.0"
+    },
+    {
+      "agent_type": "manual_agent",
+      "g_l": "3.0",
+      "knowledge_level": "observation",
+      "mmol_l": "",
+      "object": "NCIT:C29298",
+      "predicate": "biolink:has_part",
+      "primary_knowledge_source": "infores:mediadive",
+      "publications": "",
+      "relation": "BFO:0000051",
+      "source_assertion_id": "mediadive.solution:3675#recipe/1",
+      "source_record": "{\"amount\":3,\"attribute\":\"Quaker White Oats\",\"compound\":\"Oatmeal\",\"compound_id\":471,\"condition\":\" powdered\",\"g_l\":3,\"optional\":0,\"recipe_order\":1,\"unit\":\"g\"}",
+      "subject": "mediadive.solution:3675",
+      "unit": "g",
+      "value": "3.0"
+    },
+    {
+      "agent_type": "manual_agent",
+      "g_l": "30.0",
+      "knowledge_level": "observation",
+      "mmol_l": "",
+      "object": "NCIT:C29298",
+      "predicate": "biolink:has_part",
+      "primary_knowledge_source": "infores:mediadive",
+      "publications": "",
+      "relation": "BFO:0000051",
+      "source_assertion_id": "mediadive.solution:3796#recipe/1",
+      "source_record": "{\"amount\":30,\"attribute\":\"Quaker White Oats\",\"compound\":\"Oatmeal\",\"compound_id\":471,\"g_l\":30,\"optional\":0,\"recipe_order\":1,\"unit\":\"g\"}",
+      "subject": "mediadive.solution:3796",
+      "unit": "g",
+      "value": "30.0"
+    }
+  ],
+  "historical_input_pins": {
+    "source-repository/data/mim-finalize-20260925.Wj4qvb/new-upstream/ci-sssom-1848b0fe/ingredient_mappings.sssom.tsv": "6b52b30e018b369aa322d41dfd4e81fcfae0e895e34d7fe48900abf5835815fb",
+    "source-repository/data/mim-finalize-20260925.Wj4qvb/new-upstream/ci-sssom-1848b0fe/mapping-dispositions.tsv": "87b4a72969681e4b808c526552c84c36daa17c6697970735a4e0ba0270523154",
+    "source-repository/data/mim-finalize-20260925.Wj4qvb/new-upstream/ci-sssom-1848b0fe/withheld_mappings.sssom.tsv": "c37491ed4191889d375b02510137a178ee9b44a341131e42afec07d7953e8405",
+    "source-repository/data/raw/mediadive/compounds.json": "ccc1130355354a55729d31618b152d1c340d75379dfea49352e9075f3419cea1",
+    "source-repository/data/raw/mediadive/media_detailed.json": "755a05753d42b0dcd46dd0564f101faf7f59b1ba4d1b226dee0ed6cedf35f8e2",
+    "source-repository/data/raw/mediadive/solutions.json": "9ab0fbf72c2e5ac25ecab3ada268dfe524db971daa86d67532dea6a5412a5c44",
+    "source-repository/data/raw/ncit.db": "7d1245d10a80ab29ba02e7eab03b37dd9940cdd18f92855d44c95578584f6eb5",
+    "source-repository/data/transformed/mediadive/edges.tsv": "2bc9b5b9fcb9f4bb9f5a849c809b8b2adeeb2b76d60220b4dcff8a469c6b09b8",
+    "candidate-worktree/kg_microbe/transform_utils/mediadive/mediadive.py": "644597467c7b6a296cafd1cb676887af8a7e33bc1bbccff030a546fee1b2579c",
+    "candidate-worktree/kg_microbe/utils/chemical_mapping_utils.py": "3ec59d6123da19eae19e997c63dd455ab25e3bbcc867ddabc82352a5c1a12c19",
+    "candidate-worktree/kg_microbe/utils/ingredient_context.py": "1d41042b05763064820a13098750448628ebe8aa3b86e5321a9cb767c87868ea",
+    "candidate-worktree/kg_microbe/utils/ingredient_identity.py": "2fbf540fcc3a0f62ae855bf38d888246764cd4f0fce2c2ee6ed036ddb0ba4099",
+    "candidate-worktree/mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz": "59464e08017cc907a1240a4378d2462efc9e2c1b9d6c3cf0b08b4344ef695ae8",
+    "candidate-worktree/scripts/consolidate_chemical_mappings.py": "d31267afccaf3a12689600775a3b10d42d8828c00264b29fc67aca185273efbb",
+    "candidate-worktree/scripts/mim_conservative_refresh.py": "ec51a2de8f7c701427ca2b58ce807222e360e15379f51ea5666315eae6d94640"
+  },
+  "independent_review_sha256": "43de879332bd852f1a30176dfa04b74dc8ddb49ec98acc4046c3c08557c756dc",
+  "mim_owners": {
+    "MIM:Oatmeal": {
+      "commit": "1848b0fe521bc2462f165912fcf92d09ad9a8cec",
+      "disposition": {
+        "disposition": "SUPPORTED",
+        "evidence_key": "2146",
+        "object_id": "NCIT:C29298",
+        "owner_record": "data/ingredients/mapped/Oatmeal.yaml",
+        "owner_record_sha256": "c1af211a9887f825f958c80ef5d147330b898f754fa0390eade836530d9b57b6",
+        "predicate_id": "skos:exactMatch",
+        "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+        "review_reason": "Retain the existing explicit scientific approval for the identical owner and complete mapping payload, subject to this review's independent negative findings and relation/alias-scope safeguards. Existing positive review applies to byte-identical source record and assertion payload; not a fresh literature review.",
+        "row_sha256": "766e5f4f9626387743e8a3d2a8e17f812b4ed9ccbbb5a6c4b5bf7fde44594394",
+        "source_position": "2146",
+        "subject_id": "MIM:Oatmeal"
+      },
+      "owner_record_text": "identifier: NCIT:C29298\npreferred_term: Oatmeal\nontology_mapping:\n  ontology_id: NCIT:C29298\n  ontology_label: Oatmeal Powder\n  ontology_source: NCIT\n  mapping_quality: EXACT_MATCH\n  evidence:\n  - evidence_type: DATABASE_MATCH\n    source: OAK/OLS exact audit\n    notes: OLS audit matched the imported surface form Oatmeal to NCIT:C29298 Oatmeal\n      Powder through exact synonym OATMEAL.\nsynonyms:\n- synonym_text: Oatmeal\n  synonym_type: RAW_TEXT\n  source: mim-queue\n- synonym_text: Oatmeal (Quaker White Oats)\n  synonym_type: RAW_TEXT\n  source: culturemech:output/ingredient_occurrences.tsv\nmapping_status: MAPPED\noccurrence_statistics:\n  total_occurrences: 18\n  media_count: 18\ncuration_history:\n- timestamp: '2026-04-30T18:43:03.698454+00:00'\n  curator: audit_import_ingredients[mim-queue]\n  action: CREATED_AS_UNMAPPED\n  changes: Imported from mim-queue (source_id=mediadive.ingredient:471); no CAS-RN\n    or CHEBI/NCIT match. Curator review needed.\n  new_status: UNMAPPED\n  llm_assisted: false\n- timestamp: '2026-05-11T07:50:00Z'\n  curator: mediaingredientmech-agentic-curation\n  action: CURATED_NCIT_EXACT_MATCH\n  changes: Mapped to NCIT:C29298 Oatmeal Powder using OAK/OLS exact synonym evidence\n    for Oatmeal.\n  previous_status: UNMAPPED\n  new_status: MAPPED\n  llm_assisted: true\n- timestamp: '2026-08-27T03:16:39.519648+00:00'\n  curator: refresh_occurrence_statistics\n  action: CORRECTED\n  changes: 'occurrence_statistics 0/0 -> 18/18 (media_count/total_occurrences), derived\n    from distinct CultureMech recipe ids in the #337 occurrence table. The prior values\n    came from the importer retired in #453, whose media_count counted a list truncated\n    to 50 examples (#449). [source=ingredient_occurrences.tsv culturemech_rev=15a4da5c08\n    rows=194137 distinct_recipes=15257]'\n- timestamp: '2026-08-30T04:48:06.233536+00:00'\n  curator: claude_culturemech_alias_backfill\n  action: ADDED_SYNONYMS\n  changes: 'Added 1 CultureMech recipe surface form(s) that folded onto this record''s\n    published label but were absent from MIM''s label index, so CultureMech could\n    not resolve them: ''Oatmeal (Quaker White Oats)'' (x2 CultureMech mentions). Source:\n    culturemech:output/ingredient_occurrences.tsv.'\n  llm_assisted: false\nnotes: Imported from mim-queue (source_id=mediadive.ingredient:471); no CAS-RN or\n  CHEBI/NCIT match. Curated to NCIT:C29298 Oatmeal Powder on 2026-05-11.\nkg_microbe_node_id: NCIT:C29298\ningredient_type: UNDEFINED_MIXTURE\n",
+      "sha256": "c1af211a9887f825f958c80ef5d147330b898f754fa0390eade836530d9b57b6"
+    },
+    "MIM:Substrate": {
+      "commit": "1848b0fe521bc2462f165912fcf92d09ad9a8cec",
+      "disposition": {
+        "disposition": "WITHHOLD",
+        "evidence_key": "2672",
+        "object_id": "NCIT:C120264",
+        "owner_record": "data/ingredients/mapped/Substrate.yaml",
+        "owner_record_sha256": "4b0134fa9b74a3528e74af03437654fe792727760d4c695930b46dccca9f5f70",
+        "predicate_id": "skos:exactMatch",
+        "review_evidence": "reports/sssom_completion_20260921/mapping-evidence.json",
+        "review_reason": "Current row requires resolution of this record-specific mapping/identity/alias/evidence concern: a role-like substrate placeholder is modeled as a SINGLE_INGREDIENT.",
+        "row_sha256": "5a6a4030ac5e3ed23f97142bfdcfd5ad9e260b5c1406db80ca603703b3b1844c",
+        "source_position": "2672",
+        "subject_id": "MIM:Substrate"
+      },
+      "owner_record_text": "identifier: NCIT:C120264\npreferred_term: Substrate\nontology_mapping:\n  ontology_id: NCIT:C120264\n  ontology_label: Substrate\n  ontology_source: NCIT\n  mapping_quality: EXACT_MATCH\n  evidence:\n  - evidence_type: LEXICAL_MATCH\n    source: mim-queue\n    notes: 'Imported from mim-queue via ols-label-exact-ncit. source_id=mediadive.ingredient:672; '\nsynonyms: []\nmapping_status: MAPPED\noccurrence_statistics:\n  total_occurrences: 5\n  media_count: 5\ncuration_history:\n- timestamp: '2026-04-30T18:43:03.698454+00:00'\n  curator: audit_import_ingredients[mim-queue]\n  action: CREATED_FROM_INGREDIENT_IMPORT\n  changes: 'Imported from mim-queue via ols-label-exact-ncit. source_id=mediadive.ingredient:672; '\n  new_status: MAPPED\n  llm_assisted: false\n- timestamp: '2026-05-01T07:35:36.459755+00:00'\n  curator: auto_classify_ingredient_type\n  action: AUTO_CLASSIFY_INGREDIENT_TYPE\n  changes: set ingredient_type=SINGLE_INGREDIENT (NCIT primary (pharmaceutical))\n  llm_assisted: false\n- timestamp: '2026-05-02T03:12:18.641410+00:00'\n  curator: auto_classify_ingredient_type\n  action: AUTO_CLASSIFY_INGREDIENT_TYPE\n  changes: set ingredient_type=SINGLE_INGREDIENT (NCIT primary (pharmaceutical))\n  llm_assisted: false\n- timestamp: '2026-08-27T03:16:39.519912+00:00'\n  curator: refresh_occurrence_statistics\n  action: CORRECTED\n  changes: 'occurrence_statistics 0/0 -> 5/5 (media_count/total_occurrences), derived\n    from distinct CultureMech recipe ids in the #337 occurrence table. The prior values\n    came from the importer retired in #453, whose media_count counted a list truncated\n    to 50 examples (#449). [source=ingredient_occurrences.tsv culturemech_rev=15a4da5c08\n    rows=194137 distinct_recipes=15257]'\ningredient_type: SINGLE_INGREDIENT\n",
+      "sha256": "4b0134fa9b74a3528e74af03437654fe792727760d4c695930b46dccca9f5f70"
+    }
+  },
+  "mim_positive_claims": [
+    {
+      "comment": "",
+      "confidence": "0.99",
+      "mapping_date": "2026-08-30",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_id": "NCIT:C29298",
+      "object_label": "Oatmeal Powder",
+      "object_source": "obo:ncit.owl",
+      "other": "Oatmeal (Quaker White Oats)",
+      "predicate_id": "skos:exactMatch",
+      "source": "MIM:OAK/OLS exact audit|MIM:curator=claude_culturemech_alias_backfill",
+      "subject_id": "MIM:Oatmeal",
+      "subject_label": "Oatmeal",
+      "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+    }
+  ],
+  "mim_withheld_claims": [
+    {
+      "comment": "",
+      "confidence": "0.99",
+      "mapping_date": "2026-08-27",
+      "mapping_justification": "semapv:LexicalMatching",
+      "object_id": "NCIT:C120264",
+      "object_label": "Substrate",
+      "object_source": "obo:ncit.owl",
+      "other": "",
+      "predicate_id": "skos:exactMatch",
+      "source": "MIM:mim-queue|MIM:curator=refresh_occurrence_statistics",
+      "subject_id": "MIM:Substrate",
+      "subject_label": "Substrate",
+      "validation_method": "none|UNKNOWN_TERM|2026-07-07"
+    }
+  ],
+  "native_medium_contexts": [
+    {
+      "medium": {
+        "complex_medium": "yes",
+        "id": 425,
+        "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium425.pdf",
+        "max_pH": 7.2,
+        "min_pH": 7,
+        "name": "OATMEAL AGAR",
+        "source": "DSMZ"
+      },
+      "medium_key": "425",
+      "position": 2,
+      "record": {
+        "amount": 10,
+        "compound": "Oatmeal",
+        "compound_id": 471,
+        "g_l": 10,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "solution": {
+        "id": 855,
+        "name": "Main sol. 425",
+        "recipe": [
+          {
+            "amount": 10,
+            "compound": "Oat flakes",
+            "compound_id": 292,
+            "g_l": 10,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 10,
+            "compound": "Oatmeal",
+            "compound_id": 471,
+            "g_l": 10,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 20,
+            "compound": "Agar",
+            "compound_id": 3,
+            "g_l": 15,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Adjust pH to 7.0 - 7.2."
+          }
+        ],
+        "volume": 1000
+      }
+    },
+    {
+      "medium": {
+        "complex_medium": "yes",
+        "id": 609,
+        "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium609.pdf",
+        "max_pH": 7.2,
+        "min_pH": 7.2,
+        "name": "OATMEAL AGAR (A) (ISP-3)",
+        "source": "DSMZ"
+      },
+      "medium_key": "609",
+      "position": 1,
+      "record": {
+        "amount": 20,
+        "attribute": "Quaker White Oats",
+        "compound": "Oatmeal",
+        "compound_id": 471,
+        "g_l": 20,
+        "optional": 0,
+        "recipe_order": 1,
+        "unit": "g"
+      },
+      "solution": {
+        "equipment": {
+          "31": "Filter"
+        },
+        "id": 1308,
+        "name": "Main sol. 609",
+        "recipe": [
+          {
+            "amount": 20,
+            "attribute": "Quaker White Oats",
+            "compound": "Oatmeal",
+            "compound_id": 471,
+            "g_l": 20,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 18,
+            "attribute": "Difco",
+            "compound": "Agar",
+            "compound_id": 3,
+            "g_l": 18,
+            "mmol_l": 53.5189,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "ml"
+          },
+          {
+            "amount": 1,
+            "optional": 0,
+            "recipe_order": 4,
+            "solution": "Trace salt solution",
+            "solution_id": 1209,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Adjust pH to 7.2. Cook or steam 20.0 g in 1000.0 ml distilled water for 20 min. Filter through cheese cloth. Add 18.0 g agar and make up to 1000.0 ml. Add 1 ml of trace salts solution (see below)."
+          }
+        ],
+        "volume": 1000
+      }
+    },
+    {
+      "medium": {
+        "complex_medium": "yes",
+        "id": 701,
+        "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium701.pdf",
+        "max_pH": 7.2,
+        "min_pH": 7.2,
+        "name": "HALOANAEROBACTER CHITINOVORANS MEDIUM",
+        "source": "DSMZ"
+      },
+      "medium_key": "701",
+      "position": 14,
+      "record": {
+        "amount": 5,
+        "attribute": "glucose, chitin etc.",
+        "compound": "Substrate",
+        "compound_id": 672,
+        "g_l": 5,
+        "optional": 0,
+        "recipe_order": 14,
+        "unit": "g"
+      },
+      "solution": {
+        "equipment": {
+          "1765": "Autoclave"
+        },
+        "id": 1452,
+        "name": "Main sol. 701",
+        "recipe": [
+          {
+            "amount": 1,
+            "compound": "NH4Cl",
+            "compound_id": 42,
+            "g_l": 1,
+            "mmol_l": 18.6951,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 7,
+            "compound": "MgCl2 x 6 H2O",
+            "compound_id": 79,
+            "g_l": 7,
+            "mmol_l": 34.4314,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 9.6,
+            "compound": "MgSO4 x 7 H2O",
+            "compound_id": 8,
+            "g_l": 9.6,
+            "mmol_l": 38.949,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "CaCl2 x 2 H2O",
+            "compound_id": 7,
+            "g_l": 0.5,
+            "mmol_l": 3.40101,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 3.8,
+            "compound": "KCl",
+            "compound_id": 61,
+            "g_l": 3.8,
+            "mmol_l": 50.9725,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 0.4,
+            "compound": "K2HPO4 x 3 H2O",
+            "compound_id": 244,
+            "g_l": 0.4,
+            "mmol_l": 2.29653,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "g"
+          },
+          {
+            "amount": 10,
+            "compound": "NaCl",
+            "compound_id": 43,
+            "g_l": 10,
+            "mmol_l": 171.116,
+            "optional": 0,
+            "recipe_order": 7,
+            "unit": "g"
+          },
+          {
+            "amount": 3,
+            "compound": "NaHCO3",
+            "compound_id": 55,
+            "g_l": 3,
+            "mmol_l": 35.7113,
+            "optional": 0,
+            "recipe_order": 8,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "Na2CO3",
+            "compound_id": 32,
+            "g_l": 1,
+            "mmol_l": 9.43503,
+            "optional": 0,
+            "recipe_order": 9,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "Na2S x 9 H2O",
+            "compound_id": 54,
+            "g_l": 0.5,
+            "mmol_l": 2.08175,
+            "optional": 0,
+            "recipe_order": 10,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "Yeast extract",
+            "compound_id": 16,
+            "g_l": 1,
+            "optional": 0,
+            "recipe_order": 11,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "L-Cysteine",
+            "compound_id": 671,
+            "g_l": 0.5,
+            "mmol_l": 4.12677,
+            "optional": 0,
+            "recipe_order": 12,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "compound": "Resazurin",
+            "compound_id": 25,
+            "g_l": 0.001,
+            "mmol_l": 0.00436319,
+            "optional": 0,
+            "recipe_order": 13,
+            "unit": "mg"
+          },
+          {
+            "amount": 5,
+            "attribute": "glucose, chitin etc.",
+            "compound": "Substrate",
+            "compound_id": 672,
+            "g_l": 5,
+            "optional": 0,
+            "recipe_order": 14,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "optional": 0,
+            "recipe_order": 15,
+            "solution": "Modified Wolin's mineral solution II",
+            "solution_id": 5902,
+            "unit": "ml"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 16,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "pH 7.2"
+          },
+          {
+            "step": "Prepare the medium without the Na2S, Na2CO3, NaHCO3, L-cysteine and substrate. Boil the medium and cool under a stream of nitrogen. Add the Na2CO3 and NaHCO3 . Adjust the pH to 7.2. If chitin is used as the substrate it must be added before autoclaving. Autoclave the medium and add the Na2S (from a sterile, neutralized stock solution prepared under nitrogen), L-cysteine (from a stock solution prepared under nitrogen), and the glucose or N-acetylglucosamine (if used as substrate) from sterile stock solution prepared under nitrogen. Check the final pH."
+          }
+        ],
+        "volume": 1000
+      }
+    },
+    {
+      "medium": {
+        "complex_medium": "yes",
+        "id": "J50",
+        "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=50",
+        "max_pH": 7.2,
+        "min_pH": 7.2,
+        "name": "OATMEAL AGAR (ISP-3)",
+        "source": "JCM"
+      },
+      "medium_key": "J50",
+      "position": 1,
+      "record": {
+        "amount": 20,
+        "attribute": "Quaker White Oats",
+        "compound": "Oatmeal",
+        "compound_id": 471,
+        "g_l": 19.98,
+        "optional": 0,
+        "recipe_order": 1,
+        "unit": "g"
+      },
+      "solution": {
+        "equipment": {
+          "3486": "Filter"
+        },
+        "id": 3672,
+        "name": "Main sol. J50",
+        "recipe": [
+          {
+            "amount": 20,
+            "attribute": "Quaker White Oats",
+            "compound": "Oatmeal",
+            "compound_id": 471,
+            "g_l": 19.98,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 1,
+            "optional": 0,
+            "recipe_order": 2,
+            "solution": "Trace salt solution",
+            "solution_id": 1209,
+            "unit": "ml"
+          },
+          {
+            "amount": 18,
+            "compound": "Agar",
+            "compound_id": 3,
+            "g_l": 17.982,
+            "mmol_l": 53.4654,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Cook or steam 20.0 g of oatmeal in 1.0 L of distilled water for 20 min. Filter through cheesecloth. Bring volume back up to 1.0 L and add 1.0 ml of Trace salt solution."
+          },
+          {
+            "step": "Adjust pH to 7.2."
+          }
+        ],
+        "volume": 1001
+      }
+    },
+    {
+      "medium": {
+        "complex_medium": "yes",
+        "id": "J52",
+        "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=52",
+        "max_pH": 7,
+        "min_pH": 7,
+        "name": "OATMEAL-NITRATE AGAR",
+        "source": "JCM"
+      },
+      "medium_key": "J52",
+      "position": 1,
+      "record": {
+        "amount": 3,
+        "attribute": "Quaker White Oats",
+        "compound": "Oatmeal",
+        "compound_id": 471,
+        "condition": " powdered",
+        "g_l": 3,
+        "optional": 0,
+        "recipe_order": 1,
+        "unit": "g"
+      },
+      "solution": {
+        "id": 3675,
+        "name": "Main sol. J52",
+        "recipe": [
+          {
+            "amount": 3,
+            "attribute": "Quaker White Oats",
+            "compound": "Oatmeal",
+            "compound_id": 471,
+            "condition": " powdered",
+            "g_l": 3,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 0.2,
+            "compound": "KNO3",
+            "compound_id": 191,
+            "g_l": 0.2,
+            "mmol_l": 1.97818,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 0.5,
+            "compound": "K2HPO4",
+            "compound_id": 10,
+            "g_l": 0.5,
+            "mmol_l": 2.87066,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "g"
+          },
+          {
+            "amount": 0.2,
+            "compound": "MgSO4 x 7 H2O",
+            "compound_id": 8,
+            "g_l": 0.2,
+            "mmol_l": 0.811438,
+            "optional": 0,
+            "recipe_order": 4,
+            "unit": "g"
+          },
+          {
+            "amount": 15,
+            "compound": "Agar",
+            "compound_id": 3,
+            "g_l": 15,
+            "mmol_l": 44.5991,
+            "optional": 0,
+            "recipe_order": 5,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 6,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Adjust pH to 7.0."
+          }
+        ],
+        "volume": 1000
+      }
+    },
+    {
+      "medium": {
+        "complex_medium": "yes",
+        "id": "J148",
+        "link": "https://www.jcm.riken.jp/cgi-bin/jcm/jcm_grmd?GRMD=148",
+        "name": "OATMEAL AGAR",
+        "source": "JCM"
+      },
+      "medium_key": "J148",
+      "position": 1,
+      "record": {
+        "amount": 30,
+        "attribute": "Quaker White Oats",
+        "compound": "Oatmeal",
+        "compound_id": 471,
+        "g_l": 30,
+        "optional": 0,
+        "recipe_order": 1,
+        "unit": "g"
+      },
+      "solution": {
+        "equipment": {
+          "217": "Filter"
+        },
+        "id": 3796,
+        "name": "Main sol. J148",
+        "recipe": [
+          {
+            "amount": 30,
+            "attribute": "Quaker White Oats",
+            "compound": "Oatmeal",
+            "compound_id": 471,
+            "g_l": 30,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          {
+            "amount": 20,
+            "compound": "Agar",
+            "compound_id": 3,
+            "g_l": 20,
+            "mmol_l": 59.4654,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          {
+            "amount": 1000,
+            "compound": "Distilled water",
+            "compound_id": 4,
+            "optional": 0,
+            "recipe_order": 3,
+            "unit": "ml"
+          }
+        ],
+        "steps": [
+          {
+            "step": "Boil 30.0 g of oatmeal with 1.0 L of distilled water over water bath, stirring occasionally, for 1 hr. Filter through cloth, make up to 1.0 L, add agar and boil till dissolved."
+          }
+        ],
+        "volume": 1000
+      }
+    }
+  ],
+  "native_ncit_statements": {
+    "NCIT:C120264": [
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "IAO:0000115",
+        "value": "Any chemical that can be modified or consumed during a chemical reaction or biological process."
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "NCIT:NHC0",
+        "value": "C120264"
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "NCIT:P106",
+        "value": "Substance"
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "NCIT:P108",
+        "value": "Substrate"
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "NCIT:P207",
+        "value": "C3891814"
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "oio:hasExactSynonym",
+        "value": "Substrate"
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": "owl:Class",
+        "predicate": "rdf:type",
+        "value": null
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "rdfs:label",
+        "value": "Substrate"
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": "NCIT:C48807",
+        "predicate": "rdfs:subClassOf",
+        "value": null
+      }
+    ],
+    "NCIT:C29298": [
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "IAO:0000115",
+        "value": "Colloidal oatmeal, whole oats milled to a fine powder, with anti-pruritic activity. Oatmeal powder, especially when added to a warm bath, is used to provide temporary relief of itching and irritation caused by insect bites, eczema, sun burns, reactions to poisonous plants and various other skin rashes and allergies."
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "NCIT:NHC0",
+        "value": "C29298"
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "NCIT:P106",
+        "value": "Pharmacologic Substance"
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "NCIT:P108",
+        "value": "Oatmeal Powder"
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "NCIT:P207",
+        "value": "C1248601"
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "NCIT:P210",
+        "value": "134134-86-4"
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "NCIT:P319",
+        "value": "8PI54V663Y"
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "NCIT:P322",
+        "value": "FDA"
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "NCIT:P366",
+        "value": "Oatmeal_Powder"
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "oio:hasExactSynonym",
+        "value": "Aveeno"
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "oio:hasExactSynonym",
+        "value": "OATMEAL"
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "oio:hasExactSynonym",
+        "value": "Oatmeal Powder"
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": "NCIT:C63923",
+        "predicate": "oio:inSubset",
+        "value": null
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": "owl:Class",
+        "predicate": "rdf:type",
+        "value": null
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": null,
+        "predicate": "rdfs:label",
+        "value": "Oatmeal Powder"
+      },
+      {
+        "datatype": null,
+        "language": null,
+        "object": "NCIT:C29639",
+        "predicate": "rdfs:subClassOf",
+        "value": null
+      }
+    ]
+  },
+  "native_parent_solutions": {
+    "1308": {
+      "equipment": {
+        "31": "Filter"
+      },
+      "id": 1308,
+      "name": "Main sol. 609",
+      "recipe": [
+        {
+          "amount": 20,
+          "attribute": "Quaker White Oats",
+          "compound": "Oatmeal",
+          "compound_id": 471,
+          "g_l": 20,
+          "optional": 0,
+          "recipe_order": 1,
+          "unit": "g"
+        },
+        {
+          "amount": 18,
+          "attribute": "Difco",
+          "compound": "Agar",
+          "compound_id": 3,
+          "g_l": 18,
+          "mmol_l": 53.5189,
+          "optional": 0,
+          "recipe_order": 2,
+          "unit": "g"
+        },
+        {
+          "amount": 1000,
+          "compound": "Distilled water",
+          "compound_id": 4,
+          "optional": 0,
+          "recipe_order": 3,
+          "unit": "ml"
+        },
+        {
+          "amount": 1,
+          "optional": 0,
+          "recipe_order": 4,
+          "solution": "Trace salt solution",
+          "solution_id": 1209,
+          "unit": "ml"
+        }
+      ],
+      "steps": [
+        {
+          "step": "Adjust pH to 7.2. Cook or steam 20.0 g in 1000.0 ml distilled water for 20 min. Filter through cheese cloth. Add 18.0 g agar and make up to 1000.0 ml. Add 1 ml of trace salts solution (see below)."
+        }
+      ],
+      "volume": 1000
+    },
+    "1452": {
+      "equipment": {
+        "1765": "Autoclave"
+      },
+      "id": 1452,
+      "name": "Main sol. 701",
+      "recipe": [
+        {
+          "amount": 1,
+          "compound": "NH4Cl",
+          "compound_id": 42,
+          "g_l": 1,
+          "mmol_l": 18.6951,
+          "optional": 0,
+          "recipe_order": 1,
+          "unit": "g"
+        },
+        {
+          "amount": 7,
+          "compound": "MgCl2 x 6 H2O",
+          "compound_id": 79,
+          "g_l": 7,
+          "mmol_l": 34.4314,
+          "optional": 0,
+          "recipe_order": 2,
+          "unit": "g"
+        },
+        {
+          "amount": 9.6,
+          "compound": "MgSO4 x 7 H2O",
+          "compound_id": 8,
+          "g_l": 9.6,
+          "mmol_l": 38.949,
+          "optional": 0,
+          "recipe_order": 3,
+          "unit": "g"
+        },
+        {
+          "amount": 0.5,
+          "compound": "CaCl2 x 2 H2O",
+          "compound_id": 7,
+          "g_l": 0.5,
+          "mmol_l": 3.40101,
+          "optional": 0,
+          "recipe_order": 4,
+          "unit": "g"
+        },
+        {
+          "amount": 3.8,
+          "compound": "KCl",
+          "compound_id": 61,
+          "g_l": 3.8,
+          "mmol_l": 50.9725,
+          "optional": 0,
+          "recipe_order": 5,
+          "unit": "g"
+        },
+        {
+          "amount": 0.4,
+          "compound": "K2HPO4 x 3 H2O",
+          "compound_id": 244,
+          "g_l": 0.4,
+          "mmol_l": 2.29653,
+          "optional": 0,
+          "recipe_order": 6,
+          "unit": "g"
+        },
+        {
+          "amount": 10,
+          "compound": "NaCl",
+          "compound_id": 43,
+          "g_l": 10,
+          "mmol_l": 171.116,
+          "optional": 0,
+          "recipe_order": 7,
+          "unit": "g"
+        },
+        {
+          "amount": 3,
+          "compound": "NaHCO3",
+          "compound_id": 55,
+          "g_l": 3,
+          "mmol_l": 35.7113,
+          "optional": 0,
+          "recipe_order": 8,
+          "unit": "g"
+        },
+        {
+          "amount": 1,
+          "compound": "Na2CO3",
+          "compound_id": 32,
+          "g_l": 1,
+          "mmol_l": 9.43503,
+          "optional": 0,
+          "recipe_order": 9,
+          "unit": "g"
+        },
+        {
+          "amount": 0.5,
+          "compound": "Na2S x 9 H2O",
+          "compound_id": 54,
+          "g_l": 0.5,
+          "mmol_l": 2.08175,
+          "optional": 0,
+          "recipe_order": 10,
+          "unit": "g"
+        },
+        {
+          "amount": 1,
+          "compound": "Yeast extract",
+          "compound_id": 16,
+          "g_l": 1,
+          "optional": 0,
+          "recipe_order": 11,
+          "unit": "g"
+        },
+        {
+          "amount": 0.5,
+          "compound": "L-Cysteine",
+          "compound_id": 671,
+          "g_l": 0.5,
+          "mmol_l": 4.12677,
+          "optional": 0,
+          "recipe_order": 12,
+          "unit": "g"
+        },
+        {
+          "amount": 1,
+          "compound": "Resazurin",
+          "compound_id": 25,
+          "g_l": 0.001,
+          "mmol_l": 0.00436319,
+          "optional": 0,
+          "recipe_order": 13,
+          "unit": "mg"
+        },
+        {
+          "amount": 5,
+          "attribute": "glucose, chitin etc.",
+          "compound": "Substrate",
+          "compound_id": 672,
+          "g_l": 5,
+          "optional": 0,
+          "recipe_order": 14,
+          "unit": "g"
+        },
+        {
+          "amount": 1,
+          "optional": 0,
+          "recipe_order": 15,
+          "solution": "Modified Wolin's mineral solution II",
+          "solution_id": 5902,
+          "unit": "ml"
+        },
+        {
+          "amount": 1000,
+          "compound": "Distilled water",
+          "compound_id": 4,
+          "optional": 0,
+          "recipe_order": 16,
+          "unit": "ml"
+        }
+      ],
+      "steps": [
+        {
+          "step": "pH 7.2"
+        },
+        {
+          "step": "Prepare the medium without the Na2S, Na2CO3, NaHCO3, L-cysteine and substrate. Boil the medium and cool under a stream of nitrogen. Add the Na2CO3 and NaHCO3 . Adjust the pH to 7.2. If chitin is used as the substrate it must be added before autoclaving. Autoclave the medium and add the Na2S (from a sterile, neutralized stock solution prepared under nitrogen), L-cysteine (from a stock solution prepared under nitrogen), and the glucose or N-acetylglucosamine (if used as substrate) from sterile stock solution prepared under nitrogen. Check the final pH."
+        }
+      ],
+      "volume": 1000
+    },
+    "3672": {
+      "equipment": {
+        "3486": "Filter"
+      },
+      "id": 3672,
+      "name": "Main sol. J50",
+      "recipe": [
+        {
+          "amount": 20,
+          "attribute": "Quaker White Oats",
+          "compound": "Oatmeal",
+          "compound_id": 471,
+          "g_l": 19.98,
+          "optional": 0,
+          "recipe_order": 1,
+          "unit": "g"
+        },
+        {
+          "amount": 1,
+          "optional": 0,
+          "recipe_order": 2,
+          "solution": "Trace salt solution",
+          "solution_id": 1209,
+          "unit": "ml"
+        },
+        {
+          "amount": 18,
+          "compound": "Agar",
+          "compound_id": 3,
+          "g_l": 17.982,
+          "mmol_l": 53.4654,
+          "optional": 0,
+          "recipe_order": 3,
+          "unit": "g"
+        },
+        {
+          "amount": 1000,
+          "compound": "Distilled water",
+          "compound_id": 4,
+          "optional": 0,
+          "recipe_order": 4,
+          "unit": "ml"
+        }
+      ],
+      "steps": [
+        {
+          "step": "Cook or steam 20.0 g of oatmeal in 1.0 L of distilled water for 20 min. Filter through cheesecloth. Bring volume back up to 1.0 L and add 1.0 ml of Trace salt solution."
+        },
+        {
+          "step": "Adjust pH to 7.2."
+        }
+      ],
+      "volume": 1001
+    },
+    "3675": {
+      "id": 3675,
+      "name": "Main sol. J52",
+      "recipe": [
+        {
+          "amount": 3,
+          "attribute": "Quaker White Oats",
+          "compound": "Oatmeal",
+          "compound_id": 471,
+          "condition": " powdered",
+          "g_l": 3,
+          "optional": 0,
+          "recipe_order": 1,
+          "unit": "g"
+        },
+        {
+          "amount": 0.2,
+          "compound": "KNO3",
+          "compound_id": 191,
+          "g_l": 0.2,
+          "mmol_l": 1.97818,
+          "optional": 0,
+          "recipe_order": 2,
+          "unit": "g"
+        },
+        {
+          "amount": 0.5,
+          "compound": "K2HPO4",
+          "compound_id": 10,
+          "g_l": 0.5,
+          "mmol_l": 2.87066,
+          "optional": 0,
+          "recipe_order": 3,
+          "unit": "g"
+        },
+        {
+          "amount": 0.2,
+          "compound": "MgSO4 x 7 H2O",
+          "compound_id": 8,
+          "g_l": 0.2,
+          "mmol_l": 0.811438,
+          "optional": 0,
+          "recipe_order": 4,
+          "unit": "g"
+        },
+        {
+          "amount": 15,
+          "compound": "Agar",
+          "compound_id": 3,
+          "g_l": 15,
+          "mmol_l": 44.5991,
+          "optional": 0,
+          "recipe_order": 5,
+          "unit": "g"
+        },
+        {
+          "amount": 1000,
+          "compound": "Distilled water",
+          "compound_id": 4,
+          "optional": 0,
+          "recipe_order": 6,
+          "unit": "ml"
+        }
+      ],
+      "steps": [
+        {
+          "step": "Adjust pH to 7.0."
+        }
+      ],
+      "volume": 1000
+    },
+    "3796": {
+      "equipment": {
+        "217": "Filter"
+      },
+      "id": 3796,
+      "name": "Main sol. J148",
+      "recipe": [
+        {
+          "amount": 30,
+          "attribute": "Quaker White Oats",
+          "compound": "Oatmeal",
+          "compound_id": 471,
+          "g_l": 30,
+          "optional": 0,
+          "recipe_order": 1,
+          "unit": "g"
+        },
+        {
+          "amount": 20,
+          "compound": "Agar",
+          "compound_id": 3,
+          "g_l": 20,
+          "mmol_l": 59.4654,
+          "optional": 0,
+          "recipe_order": 2,
+          "unit": "g"
+        },
+        {
+          "amount": 1000,
+          "compound": "Distilled water",
+          "compound_id": 4,
+          "optional": 0,
+          "recipe_order": 3,
+          "unit": "ml"
+        }
+      ],
+      "steps": [
+        {
+          "step": "Boil 30.0 g of oatmeal with 1.0 L of distilled water over water bath, stirring occasionally, for 1 hr. Filter through cloth, make up to 1.0 L, add agar and boil till dissolved."
+        }
+      ],
+      "volume": 1000
+    },
+    "855": {
+      "id": 855,
+      "name": "Main sol. 425",
+      "recipe": [
+        {
+          "amount": 10,
+          "compound": "Oat flakes",
+          "compound_id": 292,
+          "g_l": 10,
+          "optional": 0,
+          "recipe_order": 1,
+          "unit": "g"
+        },
+        {
+          "amount": 10,
+          "compound": "Oatmeal",
+          "compound_id": 471,
+          "g_l": 10,
+          "optional": 0,
+          "recipe_order": 2,
+          "unit": "g"
+        },
+        {
+          "amount": 20,
+          "compound": "Agar",
+          "compound_id": 3,
+          "g_l": 15,
+          "optional": 0,
+          "recipe_order": 3,
+          "unit": "g"
+        },
+        {
+          "amount": 1000,
+          "compound": "Distilled water",
+          "compound_id": 4,
+          "optional": 0,
+          "recipe_order": 4,
+          "unit": "ml"
+        }
+      ],
+      "steps": [
+        {
+          "step": "Adjust pH to 7.0 - 7.2."
+        }
+      ],
+      "volume": 1000
+    }
+  },
+  "version": 1
+}

@@ -56,7 +56,7 @@ def record_source(transform):
     )
 
 
-def run(output, synthetic=False, reverse=False):
+def run(output, synthetic=False, reverse=False, ncit_fault=None):
     """Verify the original claims against archived output, using independent native declarations."""
     from kg_microbe.utils.biolink_model import prepare_kgx
 
@@ -101,9 +101,33 @@ def run(output, synthetic=False, reverse=False):
     output.mkdir(parents=True, exist_ok=False)
     raw = output / "raw"
     raw.mkdir()
+    from pytest import MonkeyPatch
+
+    from tests.ncit_eight_fixtures import seed_native_authority
+
+    # Reuse complete selected primary statements, not invented node categories.
+    # Only this subprocess's private SQLite hash is repinned; the exact existing
+    # full model and every native statement/path witness remain authoritative.
+    fixture_patches = MonkeyPatch()
+    _, _, ncit_policy = seed_native_authority(output, fixture_patches, model_path=native / "biolink-model.yaml")
+    assert ncit_policy["model_sha256"] == origin["members"]["biolink-model.yaml"]["sha256"]
+    if ncit_fault == "missing":
+        (raw / "ncit.db").unlink()
+    elif ncit_fault == "wrong":
+        import sqlite3
+
+        with sqlite3.connect(raw / "ncit.db") as connection:
+            connection.execute(
+                "UPDATE statements SET value=? WHERE subject=? AND predicate=?",
+                ("deliberate fixture corruption", "NCIT:C85253", "rdfs:label"),
+            )
     foodon_origin = json.loads((native / "foodon-origin.json").read_text())
     assert sha256(native / "foodon-authority.json") == foodon_origin["fixture_sha256"]
     shutil.copyfile(native / "foodon-authority.json", raw / "foodon.json")
+    # Generic MICRO endpoints consult the same immutable native authority as
+    # production finalization. Preserve its original IRIs and ancestry; the
+    # fixture does not invent aliases for its three historical stub CURIEs.
+    shutil.copyfile(native / "micro-authority.owl", raw / "micro.owl")
     fixture = "synthetic-shared-cas" if synthetic else "reviewed-cases"
     bundle_origin = json.loads(
         (RESOURCE / ("synthetic-shared-cas-origin.json" if synthetic else "origin.json")).read_text()
@@ -154,7 +178,33 @@ def run(output, synthetic=False, reverse=False):
     ontology = OntologiesTransform(raw, output / "transformed")
     for kind, rows in (("nodes", native_rows), ("edges", json.loads((native / "native-edges.json").read_text()))):
         write_records(ontology.output_dir / f"{kind}.tsv", rows, kind == "nodes")
-    ontology.finalize(fresh_run=True)
+    # This native excerpt has no excluded metadata, but its manual fixture
+    # emitter must bind the same mandatory empty audit as a successful run.
+    audit_name = "ontology_metadata_exclusions.tsv"
+    shutil.copyfile(RESOURCE.parent / "merge_source_freshness" / audit_name, ontology.output_dir / audit_name)
+    ontology.record_producer_audit(audit_name)
+    from kg_microbe.utils.native_ro_retention import AUDIT_FILE, NativeROPredicateRetention
+    from tests.foodon_kernel_fixtures import prepare_empty_foodon_kernel_contract
+    from tests.ontology_parent_fixtures import prepare_empty_parent_contract
+
+    prepare_empty_foodon_kernel_contract(ontology)
+    prepare_empty_parent_contract(ontology)
+    from tests.upa_route_fixtures import prepare_empty_upa_route_contract
+
+    prepare_empty_upa_route_contract(ontology)
+
+    with (ontology.output_dir / AUDIT_FILE).open("w", encoding="utf-8", newline="") as audit_stream:
+        NativeROPredicateRetention(ontology, audit_stream).verify_complete()
+    ontology.record_producer_audit(AUDIT_FILE)
+    ontology_finalization = ontology.finalize(fresh_run=True)
+    assert ontology_finalization["consumed_inputs"]["category_authority_ncit"] == {
+        "path": str((raw / "ncit.db").resolve()),
+        "sha256": sha256(raw / "ncit.db"),
+    }
+    assert ontology_finalization["consumed_inputs"]["category_authority_micro_owl"] == {
+        "path": str((raw / "micro.owl").resolve()),
+        "sha256": origin["members"]["micro-authority.owl"]["sha256"],
+    }
     record_source(ontology)
     selection_dir = raw / "mim_ingredients"
     selection_dir.mkdir()
@@ -262,6 +312,7 @@ def run(output, synthetic=False, reverse=False):
         "producer_commit": bundle_origin["producer_commit"],
         "synthetic_software_fixture": synthetic,
         "native_input_origin_sha256": sha256(native / "acceptance-native-origin.json"),
+        "micro_authority_sha256": origin["members"]["micro-authority.owl"]["sha256"],
         "biolink_version": "4.4.2",
         "chebi_version": "253",
         "foodon_version": "2025-12-30",
@@ -287,8 +338,9 @@ def main():
     parser.add_argument("output", type=Path)
     parser.add_argument("--synthetic", action="store_true")
     parser.add_argument("--reverse", action="store_true")
+    parser.add_argument("--ncit-fault", choices=("missing", "wrong"))
     args = parser.parse_args()
-    print(json.dumps(run(args.output, args.synthetic, args.reverse), indent=2))
+    print(json.dumps(run(args.output, args.synthetic, args.reverse, args.ncit_fault), indent=2))
 
 
 if __name__ == "__main__":

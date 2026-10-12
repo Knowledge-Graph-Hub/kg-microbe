@@ -1,0 +1,327 @@
+{
+  "graphs": [
+    {
+      "edges": [],
+      "id": "http://purl.obolibrary.org/obo/ro.owl",
+      "nodes": [
+        {
+          "id": "http://purl.obolibrary.org/obo/RO_0002082",
+          "lbl": "simultaneous with",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-7073-9172"
+              }
+            ],
+            "comments": [
+              "t1 simultaneous_with t2 iff:=  t1 before_or_simultaneous_with t2  and not (t1 before t2)"
+            ],
+            "definition": {
+              "val": "x simultaneous with y iff ω(x) = ω(y) and ω(α ) = ω(α), where α is a function that maps a process to a start point, and ω is a function that maps a process to an end point and '=' indicates the same instance in time."
+            },
+            "subsets": [
+              "http://purl.obolibrary.org/obo/ro/subsets#ro-eco"
+            ]
+          },
+          "propertyType": "OBJECT",
+          "type": "PROPERTY"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/RO_0002087",
+          "lbl": "immediately preceded by",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-7073-9172"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+                "val": "starts_at_end_of"
+              }
+            ],
+            "comments": [
+              "X immediately_preceded_by Y iff: end(X) simultaneous_with start(Y)"
+            ]
+          },
+          "propertyType": "OBJECT",
+          "type": "PROPERTY"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/RO_0002216",
+          "lbl": "capable of part of",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-6601-2165"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+                "val": "has function in"
+              },
+              {
+                "pred": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+                "val": "http://purl.obolibrary.org/obo/ro/docs/reflexivity/"
+              }
+            ],
+            "definition": {
+              "val": "c stands in this relationship to p if and only if there exists some p' such that c is capable_of p', and p' is part_of p."
+            }
+          },
+          "propertyType": "OBJECT",
+          "type": "PROPERTY"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/RO_0002223",
+          "lbl": "starts",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000125"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-6601-2165"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "Allen"
+              }
+            ],
+            "definition": {
+              "val": "inverse of starts with"
+            },
+            "subsets": [
+              "http://purl.obolibrary.org/obo/ro/subsets#ro-eco"
+            ]
+          },
+          "propertyType": "OBJECT",
+          "type": "PROPERTY"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/RO_0002229",
+          "lbl": "ends",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000125"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-6601-2165"
+              }
+            ],
+            "definition": {
+              "val": "inverse of ends with"
+            },
+            "subsets": [
+              "http://purl.obolibrary.org/obo/ro/subsets#ro-eco"
+            ]
+          },
+          "propertyType": "OBJECT",
+          "type": "PROPERTY"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/RO_0002230",
+          "lbl": "ends with",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000125"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-6601-2165"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+                "val": "finished by"
+              }
+            ],
+            "definition": {
+              "val": "x ends with y if and only if x has part y and the time point at which x ends is equivalent to the time point at which y ends. Formally: α(y) > α(x) ∧ ω(y) = ω(x), where α is a function that maps a process to a start point, and ω is a function that maps a process to an end point."
+            },
+            "subsets": [
+              "http://purl.obolibrary.org/obo/ro/subsets#ro-eco"
+            ]
+          },
+          "propertyType": "OBJECT",
+          "type": "PROPERTY"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/RO_0002285",
+          "lbl": "developmentally replaces",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                "val": "http://purl.obolibrary.org/obo/IAO_0000125"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "This relation is intended for cases such as when we have a bone element replacing its cartilage element precursor. Currently most AOs represent this using 'develops from'. We need to decide whether 'develops from' will be generic and encompass replacement, or whether we need a new name for a generic relation that encompasses replacement and development-via-cell-lineage"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-6601-2165"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+                "val": "replaces"
+              }
+            ],
+            "definition": {
+              "val": "x developmentally replaces y if and only if there is some developmental process that causes x to move or to cease to exist, and for the site that was occupied by x to become occupied by y, where y either comes into existence in this site or moves to this site from somewhere else"
+            }
+          },
+          "propertyType": "OBJECT",
+          "type": "PROPERTY"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/RO_0002488",
+          "lbl": "existence starts during",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-6601-2165"
+              }
+            ],
+            "definition": {
+              "val": "x existence starts during y if and only if the time point at which x starts is after or equivalent to the time point at which y starts and before or equivalent to the time point at which y ends. Formally: x existence starts during y iff α(x) >= α(y) & α(x) <= ω(y)."
+            }
+          },
+          "propertyType": "OBJECT",
+          "type": "PROPERTY"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/RO_0002489",
+          "lbl": "existence starts with",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-6601-2165"
+              }
+            ],
+            "definition": {
+              "val": "x starts ends with y if and only if the time point at which x starts is equivalent to the time point at which y starts. Formally: x existence starts with y iff α(x) = α(y)."
+            }
+          },
+          "propertyType": "OBJECT",
+          "type": "PROPERTY"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/RO_0002492",
+          "lbl": "existence ends during",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-6601-2165"
+              }
+            ],
+            "comments": [
+              "The relations here were created based on work originally by Fabian Neuhaus and David Osumi-Sutherland. The work has not yet been vetted and errors in definitions may have occurred during transcription."
+            ],
+            "definition": {
+              "val": "x existence ends during y if and only if the time point at which x ends is before or equivalent to the time point at which y ends and after or equivalent to the point at which y starts. Formally: x existence ends during y iff ω(x) <= ω(y) and ω(x) >= α(y)."
+            }
+          },
+          "propertyType": "OBJECT",
+          "type": "PROPERTY"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/RO_0002493",
+          "lbl": "existence ends with",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-6601-2165"
+              }
+            ],
+            "comments": [
+              "The relations here were created based on work originally by Fabian Neuhaus and David Osumi-Sutherland. The work has not yet been vetted and errors in definitions may have occurred during transcription."
+            ],
+            "definition": {
+              "val": "x existence ends with y if and only if the time point at which x ends is equivalent to the time point at which y ends. Formally: x existence ends with y iff ω(x) = ω(y)."
+            }
+          },
+          "propertyType": "OBJECT",
+          "type": "PROPERTY"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/RO_0002496",
+          "lbl": "existence starts during or after",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-6601-2165"
+              }
+            ],
+            "comments": [
+              "The relations here were created based on work originally by Fabian Neuhaus and David Osumi-Sutherland. The work has not yet been vetted and errors in definitions may have occurred during transcription."
+            ],
+            "definition": {
+              "val": "x existence starts during or after y if and only if the time point at which x starts is after or equivalent to the time point at which y starts. Formally: x existence starts during or after y iff α (x) >= α (y)."
+            }
+          },
+          "propertyType": "OBJECT",
+          "type": "PROPERTY"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/RO_0002497",
+          "lbl": "existence ends during or before",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-6601-2165"
+              }
+            ],
+            "comments": [
+              "The relations here were created based on work originally by Fabian Neuhaus and David Osumi-Sutherland. The work has not yet been vetted and errors in definitions may have occurred during transcription."
+            ],
+            "definition": {
+              "val": "x existence ends during or before y if and only if the time point at which x ends is before or equivalent to the time point at which y ends."
+            }
+          },
+          "propertyType": "OBJECT",
+          "type": "PROPERTY"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/RO_0002503",
+          "lbl": "towards",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                "val": "This relation is provided in order to support the use of relational qualities such as 'concentration of'; for example, the concentration of C in V is a quality that inheres in V, but pertains to C."
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "https://orcid.org/0000-0002-6601-2165"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "http://www.ncbi.nlm.nih.gov/pubmed/20064205"
+              }
+            ],
+            "definition": {
+              "val": "q towards e2 if and only if q is a relational quality such that q inheres-in some e, and e != e2 and q is dependent on e2"
+            }
+          },
+          "propertyType": "OBJECT",
+          "type": "PROPERTY"
+        }
+      ]
+    }
+  ]
+}

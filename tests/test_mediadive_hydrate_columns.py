@@ -59,15 +59,28 @@ def resolver(tmp_path, monkeypatch):
 
 @pytest.mark.parametrize("pair", PAIRS)
 @pytest.mark.parametrize("route", ["compound", "solution"])
-def test_supplied_native_backed_hydrates_reach_recipe_identity(resolver, tmp_path, pair, route):
-    """Use an explicitly supplied hydrate, retaining quantitative recipe data."""
+def test_supplied_hydrates_apply_to_compounds_not_nested_solution_identity(
+    resolver, tmp_path, monkeypatch, pair, route
+):
+    """Native-backed hydrate admission does not erase an explicit child recipe identifier."""
     name, _, target, _ = pair
     path = write_tsv(tmp_path / "mappings.tsv", [mapping(pair)])
     resolver.compound_mappings.update(resolver._load_mapping_file(path, "fixture"))
     assert resolver.compound_mappings == {name.lower(): target}
+    original_lookup = resolver.standardize_compound_id
+    lookups = []
+
+    def lookup(identifier, source_name, **kwargs):
+        """Observe chemical lookup calls without changing their resolution."""
+        lookups.append((identifier, source_name))
+        return original_lookup(identifier, source_name, **kwargs)
+
+    monkeypatch.setattr(resolver, "standardize_compound_id", lookup)
     resolver.solutions_data = {"1": {"recipe": [{route + "_id": 99, route: name, "amount": 2, "unit": "g"}]}}
     result = resolver.get_compounds_of_solution("1")[name]
-    assert result == {"id": target, "amount": 2, "unit": "g", "g_l": None, "mmol_l": None}
+    expected_id = target if route == "compound" else "mediadive.solution:99"
+    assert result == {"id": expected_id, "amount": 2, "unit": "g", "g_l": None, "mmol_l": None}
+    assert lookups == ([("99", name)] if route == "compound" else [])
     assert resolver.solutions_data["1"]["recipe"][0][route] == name
 
 

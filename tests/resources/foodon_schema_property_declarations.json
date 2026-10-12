@@ -1,0 +1,99 @@
+{
+  "evidence": {
+    "source": "data/raw/foodon.json",
+    "sha256": "8dfba179356a84d8ddad4087dc1fa89a76f6511456c298b9dd7b09df9eb6d853",
+    "version": "http://purl.obolibrary.org/obo/foodon/releases/2025-12-30/foodon.owl",
+    "selection": "Exact full declarations for the three reviewed PROPERTY/OBJECT IDs; native id/lbl/type/propertyType projections for food-material/root and unrelated object-property controls; native edges retained when both endpoints are selected. Synthetic class/individual punning and endpoint incidences are test-only additions, not source assertions."
+  },
+  "graphs": [
+    {
+      "id": "http://purl.obolibrary.org/obo/foodon.owl",
+      "nodes": [
+        {
+          "id": "http://purl.obolibrary.org/obo/BFO_0000040",
+          "lbl": "material entity",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00002403",
+          "lbl": "food material",
+          "type": "CLASS"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00001301",
+          "lbl": "has food substance analog",
+          "type": "PROPERTY",
+          "propertyType": "OBJECT"
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00001563",
+          "lbl": "has defining ingredient",
+          "type": "PROPERTY",
+          "propertyType": "OBJECT",
+          "meta": {
+            "definition": {
+              "val": "A defining ingredient defines what a food is principally categorized as, rather than an ingredient listed by percentage of weight or volume. A food may have more than one defining ingredient."
+            },
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "Damion Dooley"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "FoodOn"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000600",
+                "val": "For example, 'bean soup' has a defining ingredient of some 'bean'.  Similarly, spicy chicken wings require a defining ingredient of (usually minute) amounts of chilli. \n\nA soup may 'has ingredient' some bean, but that doesn't make it a 'bean soup', i.e. there should be no inference to that category. However, some classes may have that simple ingredient \"necessary and sufficient\"equivalency."
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/FOODON_00002420",
+          "lbl": "has ingredient",
+          "type": "PROPERTY",
+          "propertyType": "OBJECT",
+          "meta": {
+            "definition": {
+              "val": "A relation attaching between a food material and another food material that has been added to it at some point in its history."
+            },
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                "val": "Damion Dooley"
+              },
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+                "val": "FoodOn"
+              },
+              {
+                "pred": "http://www.w3.org/2000/01/rdf-schema#seeAlso",
+                "val": "https://www.fda.gov/food/food-ingredients-packaging/overview-food-ingredients-additives-colors"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/RO_0000086",
+          "lbl": "has quality",
+          "type": "PROPERTY",
+          "propertyType": "OBJECT"
+        }
+      ],
+      "edges": [
+        {
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00002403",
+          "pred": "is_a",
+          "obj": "http://purl.obolibrary.org/obo/BFO_0000040"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/FOODON_00001563",
+          "pred": "subPropertyOf",
+          "obj": "http://purl.obolibrary.org/obo/FOODON_00002420"
+        }
+      ]
+    }
+  ]
+}

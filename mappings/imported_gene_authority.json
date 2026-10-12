@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "authority": "NCBIGene",
+  "retrieved": "2026-09-30",
+  "source_url": "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=gene&id=26468,55553&retmode=json",
+  "source_sha256": "ae1fff68a348d7e53c18d75b045795aa47fa839e3bb7bbfa36f6046bdd273658",
+  "selection": "Exact fields projected from NCBI Gene ESummary records for the two generic UBERON-imported endpoints. This is category and blank-label evidence only; native UBERON expression assertions remain unchanged.",
+  "records": {
+    "NCBIGene:26468": {
+      "record_url": "https://www.ncbi.nlm.nih.gov/gene/26468",
+      "native_record": {
+        "uid": "26468",
+        "name": "LHX6",
+        "description": "LIM homeobox 6",
+        "status": "",
+        "currentid": "",
+        "nomenclaturesymbol": "LHX6",
+        "nomenclaturename": "LIM homeobox 6",
+        "nomenclaturestatus": "Official",
+        "organism": {
+          "scientificname": "Homo sapiens",
+          "commonname": "human",
+          "taxid": 9606
+        }
+      }
+    },
+    "NCBIGene:55553": {
+      "record_url": "https://www.ncbi.nlm.nih.gov/gene/55553",
+      "native_record": {
+        "uid": "55553",
+        "name": "SOX6",
+        "description": "SRY-box transcription factor 6",
+        "status": "",
+        "currentid": "",
+        "nomenclaturesymbol": "SOX6",
+        "nomenclaturename": "SRY-box transcription factor 6",
+        "nomenclaturestatus": "Official",
+        "organism": {
+          "scientificname": "Homo sapiens",
+          "commonname": "human",
+          "taxid": 9606
+        }
+      }
+    }
+  }
+}

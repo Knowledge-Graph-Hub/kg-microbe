@@ -17,17 +17,22 @@ sources KG-Microbe does not otherwise cover:
 - **FAPROTAX** — taxon-based functional predictions joined to source records
 
 Also emits a `biolink:close_match` crosswalk from every `lpsn:<LPSN_ID>`
-row to `NCBITaxon:`, `ncbi.assembly:` (or `GTDB:` taxonomy strings), `gold:`,
-and `IMG:`. BacDive crosswalks use `kgmicrobe.strain:bacdive_*` subsumption.
+row to `NCBITaxon:`, `ncbi.assembly:` (or `GTDB:` taxonomy strings), and
+`IMG:`. Verified unresolved GOLD referents instead retain the original field
+observation as audited `biolink:related_to`, never identity (#1316).
+BacDive crosswalks use `kgmicrobe.strain:bacdive_*` subsumption.
 An LPSN name record is not a strain identity, and its reported traits must not
 be propagated as universal observations about every member of the taxon.
 
 Design decisions locked from the plan-mode Q&A:
 
-1. **Node identity**: attach every edge to the *existing* `lpsn:<LPSN_ID>`
+1. **Node identity**: normally attach edges to the *existing* `lpsn:<LPSN_ID>`
    node emitted by the LPSN transform. This transform emits edges only
    (plus terminal nodes for end-products / cross-refs / provisional
    placeholders); it does not re-emit LPSN taxon nodes.
+   Six contradicted BacDive joins instead preserve nonempty snapshots on
+   record-scoped InformationContentEntity nodes; independent metabolism and
+   FAPROTAX observations retain their LPSN subject (#1363).
 2. **BacDive_* replay**: ingested with `primary_knowledge_source =
    infores:microbedecoder` so the paper's 2024-11-07 BacDive snapshot
    stays reproducible. The fresher `bacdive` transform is authoritative
@@ -69,8 +74,6 @@ from kg_microbe.transform_utils.constants import (
     DESCRIPTION_COLUMN,
     FAPROTAX_KNOWLEDGE_SOURCE,
     GENOME_CATEGORY,
-    GOLD_ORGANISM_FOLD_FILE,
-    GOLD_ORGANISM_FOLD_HEADER,
     GOLD_PREFIX,
     HAS_ATTRIBUTE_PREDICATE,
     HAS_ATTRIBUTE_RELATION,
@@ -91,7 +94,6 @@ from kg_microbe.transform_utils.constants import (
     NCBI_ASSEMBLY_PREFIX,
     NCBI_CATEGORY,
     NCBI_TO_SUBSTRATE_EDGE,
-    NCBITAXON_PREFIX,
     OBJECT_COLUMN,
     ORIGINAL_OBJECT_COLUMN,
     PATHWAY_PREFIX,
@@ -102,6 +104,7 @@ from kg_microbe.transform_utils.constants import (
     PROVIDED_BY_COLUMN,
     PUBLICATIONS_COLUMN,
     RDFS_SUBCLASS_OF,
+    RELATED_TO_PREDICATE,
     RELATION_COLUMN,
     SMALL_MOLECULE_CATEGORY,
     SOURCE_ATTRIBUTE_PREFIX,
@@ -116,6 +119,8 @@ from kg_microbe.transform_utils.constants import (
     VALUE_ENCODING_COLUMN,
     VPI_KNOWLEDGE_SOURCE,
 )
+from kg_microbe.transform_utils.gold.taxon_dispositions import load_gold_declarations
+from kg_microbe.transform_utils.microbedecoder import bacdive_join_dispositions
 from kg_microbe.transform_utils.microbedecoder.chemical_curation import RecordChemicalCuration
 from kg_microbe.transform_utils.microbedecoder.crosswalk_quarantine import (
     DEFAULT_CROSSWALK_QUARANTINE_POLICY,
@@ -233,6 +238,8 @@ class MicrobeDecoderTransform(Transform):
         "mappings/canonical/microbedecoder_crosswalk_quarantine.json",
         "mappings/canonical/microbedecoder_crosswalk_quarantine.tsv",
         "mappings/canonical/microbedecoder_crosswalk_quarantine_evidence.json.gz",
+        "mappings/canonical/microbedecoder_bacdive_join_dispositions.json",
+        "mappings/canonical/microbedecoder_bacdive_join_evidence.json",
     )
     REQUIRED_CONSUMED_INPUTS = (
         "process_mappings",
@@ -244,9 +251,14 @@ class MicrobeDecoderTransform(Transform):
         "crosswalk_policy",
         "crosswalk_decisions",
         "crosswalk_evidence",
-        "crosswalk_raw",
+        *bacdive_join_dispositions.REQUIRED_INPUTS,
     )
-    REQUIRED_AUDIT_FILES = (QUARANTINE_REPORT_FILENAME,)
+    REQUIRED_AUDIT_FILES = (
+        QUARANTINE_REPORT_FILENAME,
+        _PHENOTYPE_REPORT_FILENAME,
+        "gold_crosswalk_dispositions.tsv",
+        bacdive_join_dispositions.AUDIT_FILE,
+    )
 
     def __init__(
         self,
@@ -257,6 +269,7 @@ class MicrobeDecoderTransform(Transform):
         phenotype_mappings: Optional[Union[str, Path]] = None,
         process_scopes: Optional[Union[str, Path]] = None,
         crosswalk_quarantine_policy: Optional[Union[str, Path]] = None,
+        bacdive_join_policy: Optional[Union[str, Path]] = None,
     ) -> None:
         """
         Instantiate.
@@ -291,6 +304,10 @@ class MicrobeDecoderTransform(Transform):
             Exact-snapshot reviewed crosswalk disposition policy. The default
             is mandatory in production; tests may inject a separately pinned
             fixture policy. No missing/changed policy silently disables review.
+        bacdive_join_policy:
+            Finite reviewed BacDive join policy. Its default is mandatory;
+            tests may inject a separately pinned fixture policy. Actual policy,
+            native source and LPSN reads remain bound through finalization.
 
         """
         super().__init__(MICROBEDECODER, input_dir, output_dir)
@@ -338,8 +355,16 @@ class MicrobeDecoderTransform(Transform):
             if crosswalk_quarantine_policy is not None
             else DEFAULT_CROSSWALK_QUARANTINE_POLICY
         )
+        self.bacdive_join_policy = (
+            Path(bacdive_join_policy) if bacdive_join_policy is not None else bacdive_join_dispositions.DEFAULT_POLICY
+        )
+        self._bacdive_join_guard = None
+        self._bacdive_join_writer = None
+        self.producer_native_inputs = {}
         self._crosswalk_quarantine: Optional[CrosswalkQuarantine] = None
         self._quarantine_report_writer = None
+        self._gold_crosswalk_writer = None
+        self._gold_crosswalk_declarations = None
         # Track dedup state so unmatched-label placeholders are emitted
         # once per run. Cross-ref targets (NCBITaxon/GTDB/bacdive/GOLD/IMG)
         # and successfully-resolved CHEBI CURIEs are never stubbed here —
@@ -356,6 +381,7 @@ class MicrobeDecoderTransform(Transform):
             "rows_processed": 0,
             "crosswalk_edges": 0,
             "crosswalk_quarantined": 0,
+            "bacdive_join_quarantined": 0,
             "lpsn_repointed": 0,
             "metabolism_edges": 0,
             "bacdive_snapshot_edges": 0,
@@ -367,7 +393,6 @@ class MicrobeDecoderTransform(Transform):
         self._accepted_lpsn: Optional[Dict[str, str]] = None
         self._lpsn_supplied: Optional[set] = None
         self._stubbed_lpsn: set = set()
-        self._gold_folds: Dict[str, str] = {}
         self._assembly_declared = set()
         self._assembly_aliases = {}
         self._assembly_references = {}
@@ -389,11 +414,29 @@ class MicrobeDecoderTransform(Transform):
         self._record_chemical_curation = None
         self._phenotype_report_writer = None
         self._crosswalk_quarantine = None
+        self._bacdive_join_guard = None
+        self._bacdive_join_writer = None
+        self.producer_native_inputs = {}
         self._quarantine_report_writer = None
+        self._gold_crosswalk_writer = None
+        self._gold_crosswalk_declarations = None
 
     # ------------------------------------------------------------------
     # Public entry point
     # ------------------------------------------------------------------
+    @classmethod
+    def verify_recorded_native_inputs(cls, report, report_path, *, admission=None):
+        """Read-only rejoin of each retained GOLD field observation at source/merge admission."""
+        from kg_microbe.transform_utils.microbedecoder.gold_crosswalk_dispositions import verify_recorded_inputs
+
+        admission = verify_recorded_inputs(report, report_path, admission=admission)
+        return bacdive_join_dispositions.verify_recorded_inputs(report, report_path, admission=admission)
+
+    def verify_native_inputs(self, *, byte_verified=False, output_dir=None):
+        """Retain source-local six-link evidence through finalization and repeat."""
+        del byte_verified
+        bacdive_join_dispositions.verify_transform(self, output_dir=output_dir)
+
     def run(
         self,
         data_file: Union[Optional[Path], Optional[str]] = None,
@@ -425,9 +468,6 @@ class MicrobeDecoderTransform(Transform):
                 "Shiny/MicrobeDecoder/data/database/database.zip; CC BY 4.0)."
             )
 
-        # Validate the upstream report before opening outputs or loading heavy
-        # chemical resources. A bad alias table must not redirect identities.
-        self._gold_folds = self._load_gold_organism_folds()
         assembly_nodes = self.output_dir.parent / "gtdb" / "nodes.tsv"
         if not assembly_nodes.is_file():
             raise FileNotFoundError(f"{assembly_nodes} is missing; run the gtdb transform first (#1064).")
@@ -439,6 +479,11 @@ class MicrobeDecoderTransform(Transform):
         # changed raw path from being stamped with an earlier source digest.
         with self.consume_input("crosswalk_raw", csv_path) as raw_snapshot:
             raw_snapshot.reconfigure(errors="surrogateescape")
+            self._bacdive_join_guard = bacdive_join_dispositions.prepare(
+                self, raw_snapshot, csv_path, self.bacdive_join_policy
+            )
+            # The same actual GSS snapshot supplies accepted IDs to both preflight and emitters.
+            self._accepted_lpsn = dict(self._bacdive_join_guard.accepted)
             with self.consume_input("crosswalk_policy", self.crosswalk_quarantine_policy) as policy_input:
                 policy = QuarantinePolicy.load(policy_input)
             with (
@@ -452,6 +497,16 @@ class MicrobeDecoderTransform(Transform):
                 self._crosswalk_quarantine = CrosswalkQuarantine(policy, decisions, evidence)
             source_fingerprint = self.consumed_input_snapshots["crosswalk_raw"]["sha256"]
             self._crosswalk_quarantine.preflight(raw_snapshot, source_fingerprint, self._accepted_lpsn_records())
+            raw_snapshot.seek(0)
+            requested_gold = set()
+            for native_row in csv.DictReader(raw_snapshot):
+                value = native_row.get("GOLD_Organism_ID")
+                if not is_empty_cell(value):
+                    for token in split_multivalue_comma_only(value):
+                        target = crosswalk_curie(token, GOLD_PREFIX, "")
+                        if target.startswith(GOLD_PREFIX):
+                            requested_gold.add(target)
+            self._gold_crosswalk_declarations = load_gold_declarations(self, requested_gold)
             self._run_snapshot(raw_snapshot, source_fingerprint)
             self.verify_consumed_inputs()
         self._log_summary()
@@ -505,6 +560,12 @@ class MicrobeDecoderTransform(Transform):
             atomic_write(
                 self.output_dir / QUARANTINE_REPORT_FILENAME, "w", newline="", encoding="utf-8"
             ) as quarantine_fh,
+            atomic_write(
+                self.output_dir / "gold_crosswalk_dispositions.tsv", "w", newline="", encoding="utf-8"
+            ) as gold_fh,
+            atomic_write(
+                self.output_dir / bacdive_join_dispositions.AUDIT_FILE, "w", newline="", encoding="utf-8"
+            ) as bacdive_join_fh,
         ):
             # KGX reads TSV with QUOTE_NONE. Escape control characters in
             # literal values explicitly; CSV quotation is not a TSV escape.
@@ -523,6 +584,31 @@ class MicrobeDecoderTransform(Transform):
                 quarantine_fh, fieldnames=QUARANTINE_REPORT_FIELDS, quoting=csv.QUOTE_NONE, quotechar=None
             )
             self._quarantine_report_writer.writeheader()
+            self._gold_crosswalk_writer = tsv_dict_writer(
+                gold_fh,
+                fieldnames=(
+                    "source_record",
+                    "source_column",
+                    "source_cell_json",
+                    "source_token_json",
+                    "native_record_json",
+                    "original_claim_json",
+                    "emitted_claim_json",
+                    "gold_declaration_json",
+                    "gold_native_node_json",
+                    "gold_evidence_sha256",
+                ),
+                quoting=csv.QUOTE_NONE,
+                quotechar=None,
+            )
+            self._gold_crosswalk_writer.writeheader()
+            self._bacdive_join_writer = tsv_dict_writer(
+                bacdive_join_fh,
+                fieldnames=bacdive_join_dispositions.AUDIT_FIELDS,
+                quoting=csv.QUOTE_NONE,
+                quotechar=None,
+            )
+            self._bacdive_join_writer.writeheader()
 
             # CSV strings retain operators, zeros and leading zeros. Record
             # ordinals count CSV records, not physical lines (quoted cells
@@ -533,9 +619,15 @@ class MicrobeDecoderTransform(Transform):
                 self._source_record = f"sha256:{source_fingerprint}#record={ordinal}"
                 self._process_row(row, node_writer, edge_writer)
             self._crosswalk_quarantine.require_complete()
+            self._bacdive_join_guard.require_complete()
         self._phenotype_report_writer = None
         self._quarantine_report_writer = None
+        self._gold_crosswalk_writer = None
         self.record_producer_audit(QUARANTINE_REPORT_FILENAME)
+        self.record_producer_audit(_PHENOTYPE_REPORT_FILENAME)
+        self.record_producer_audit("gold_crosswalk_dispositions.tsv")
+        self._bacdive_join_writer = None
+        self.record_producer_audit(bacdive_join_dispositions.AUDIT_FILE)
 
         # Sorted dedup: keeps the output stable across runs and lets the
         # merged KG collapse duplicates cheaply.
@@ -545,6 +637,7 @@ class MicrobeDecoderTransform(Transform):
         # descending. Matches the metatraits `unmapped_traits.tsv` pattern.
         self._write_unmapped_report()
         self._write_assembly_reference_report()
+        self.producer_native_inputs[bacdive_join_dispositions.CONTRACT_KEY] = self._bacdive_join_guard.finish(self)
 
     @staticmethod
     def _deduplicate_literal_tsv(path: Path, sort_column: str) -> None:
@@ -597,8 +690,8 @@ class MicrobeDecoderTransform(Transform):
             return
         lpsn_id = str(lpsn_id).strip()
         # Anchor on the accepted name, not whatever the source snapshot recorded.
-        # Everything this transform emits — crosswalk, metabolism, BacDive
-        # snapshot — hangs off this one CURIE, so a synonym LPSN_ID drags the
+        # Crosswalk/metabolism and undisputed snapshots use this CURIE. The
+        # reviewed contradicted snapshots use source records instead. A synonym LPSN_ID drags the
         # whole row onto a deprecated record: 5,263 edges, 1.0% (#746). bacdive
         # got this treatment in #684; the resolver is shared so the two agree.
         accepted = self._accepted_lpsn_records()
@@ -650,41 +743,6 @@ class MicrobeDecoderTransform(Transform):
             for original, (canonical, status) in sorted(self._assembly_references.items()):
                 evidence = "gtdb/nodes.tsv:same_as" if status == "gtdb_same_as" else self.knowledge_source
                 writer.writerow([original, canonical, status, evidence])
-
-    def _load_gold_organism_folds(self) -> Dict[str, str]:
-        """
-        Load only GOLD's explicit organism folds; never infer a missing mapping.
-
-        The sibling ``gold/organism_folds.tsv`` records the exact ID replacement
-        already applied by GOLD, including retired-taxid resolution. An absent
-        report requires a GOLD rerun; a valid empty report means no IDs folded.
-        """
-        path = self.output_dir.parent / "gold" / GOLD_ORGANISM_FOLD_FILE
-        if not path.is_file():
-            raise FileNotFoundError(
-                f"{path} is missing; run `poetry run kg transform -s gold` first "
-                "to resolve folded GOLD organism references (#1051)."
-            )
-        folds: Dict[str, str] = {}
-        with path.open(encoding="utf-8", newline="") as handle:
-            reader = csv.reader(handle, delimiter="\t")
-            if next(reader, None) != list(GOLD_ORGANISM_FOLD_HEADER):
-                raise ValueError(f"{path}: expected header {GOLD_ORGANISM_FOLD_HEADER}")
-            for line, row in enumerate(reader, start=2):
-                if len(row) != 2:
-                    raise ValueError(f"{path}:{line}: expected an original and canonical ID")
-                original, canonical = row
-                if (
-                    not original.startswith(GOLD_PREFIX)
-                    or len(original) == len(GOLD_PREFIX)
-                    or not canonical.startswith(NCBITAXON_PREFIX)
-                    or not canonical[len(NCBITAXON_PREFIX) :].isdigit()
-                ):
-                    raise ValueError(f"{path}:{line}: invalid GOLD organism fold {row!r}")
-                if original in folds and folds[original] != canonical:
-                    raise ValueError(f"{path}:{line}: conflicting folds for {original}")
-                folds[original] = canonical
-        return folds
 
     def _accepted_lpsn_records(self) -> Dict[str, str]:
         """
@@ -794,7 +852,7 @@ class MicrobeDecoderTransform(Transform):
         edge_writer: "csv._writer",
     ) -> None:
         """
-        Emit one ``biolink:close_match`` edge per crosswalk local-ID token.
+        Emit source crosswalks with the reviewed BacDive and unresolved-GOLD exceptions.
 
         Multi-value cells are split via :func:`split_multivalue_comma_only`
         before CURIE construction. Without a split the source's
@@ -817,8 +875,8 @@ class MicrobeDecoderTransform(Transform):
             for local_id in split_multivalue_comma_only(raw):
                 object_curie = crosswalk_curie(local_id, prefix, source_prefix)
                 original_object = object_curie
-                # Match the original column/token/target before GOLD folding
-                # or assembly resolution can redirect it or emit a stub.
+                # Match the original column/token/target before declaration
+                # admission or assembly resolution can emit any graph claim.
                 decision = (
                     self._crosswalk_quarantine.match(
                         self._source_record, row, subject, column, local_id, original_object
@@ -843,21 +901,75 @@ class MicrobeDecoderTransform(Transform):
                     continue
                 if object_curie.startswith(NCBI_ASSEMBLY_PREFIX):
                     object_curie = self._resolve_assembly_reference(object_curie, node_writer)
-                if prefix == GOLD_PREFIX:
-                    object_curie = self._gold_folds.get(object_curie, object_curie)
-                if column == BACDIVE_CROSSWALK_COLUMN:
-                    # Strain -> name subsumption, matching what the bacdive
-                    # transform asserts for the same pair. See the note on
-                    # BACDIVE_CROSSWALK_COLUMN: close_match contradicted it.
-                    edge_writer.writerow(
-                        self._make_edge_row(
-                            object_curie,
-                            SUBCLASS_PREDICATE,
-                            subject,
-                            RDFS_SUBCLASS_OF,
-                            self.knowledge_source,
-                        )
+                gold_proof = (
+                    self._gold_crosswalk_declarations.declaration_for(object_curie)
+                    if prefix == GOLD_PREFIX and self._gold_crosswalk_declarations is not None
+                    else None
+                )
+                if gold_proof is not None:
+                    if self._gold_crosswalk_writer is None:
+                        raise ValueError("GOLD crosswalk disposition audit writer is unavailable")
+                    original = self._make_edge_row(
+                        subject, CLOSE_MATCH_PREDICATE, original_object, CLOSE_MATCH_RELATION, self.knowledge_source
                     )
+                    emitted = self._make_edge_row(
+                        subject,
+                        RELATED_TO_PREDICATE,
+                        object_curie,
+                        RELATED_TO_PREDICATE,
+                        self.knowledge_source,
+                        source_column=column,
+                        value=local_id,
+                    )
+
+                    def encode(value):
+                        """Serialize the original source claim deterministically for audit."""
+                        return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=True)
+
+                    self._gold_crosswalk_writer.writerow(
+                        {
+                            "source_record": self._source_record,
+                            "source_column": column,
+                            "source_cell_json": encode(raw),
+                            "source_token_json": encode(local_id),
+                            "native_record_json": encode(row),
+                            "original_claim_json": encode(
+                                dict(zip(self.edge_header, (v or "" for v in original), strict=True))
+                            ),
+                            "emitted_claim_json": encode(
+                                dict(zip(self.edge_header, (v or "" for v in emitted), strict=True))
+                            ),
+                            "gold_declaration_json": encode(gold_proof.declaration),
+                            "gold_native_node_json": encode(gold_proof.original_node),
+                            "gold_evidence_sha256": gold_proof.evidence_sha256,
+                        }
+                    )
+                    edge_writer.writerow(emitted)
+                    if object_curie not in self._seen_nodes:
+                        node_writer.writerow([gold_proof.declaration.get(key, "") for key in self.node_header])
+                        self._seen_nodes.add(object_curie)
+                    self._stats["crosswalk_edges"] += 1
+                    continue
+                if column == BACDIVE_CROSSWALK_COLUMN:
+                    # Keep the actual reversed assertion, except six reviewed record joins.
+                    claim = self._make_edge_row(
+                        object_curie, SUBCLASS_PREDICATE, subject, RDFS_SUBCLASS_OF, self.knowledge_source
+                    )
+                    if self._bacdive_join_guard is not None:
+                        audit = self._bacdive_join_guard.dispatch(
+                            self._source_record,
+                            row,
+                            subject,
+                            local_id,
+                            dict(zip(self.edge_header, claim, strict=True)),
+                        )
+                        if audit is not None:
+                            if self._bacdive_join_writer is None:
+                                raise ValueError("BacDive join disposition audit writer is unavailable")
+                            self._bacdive_join_writer.writerow(audit)
+                            self._stats["bacdive_join_quarantined"] += 1
+                            continue
+                    edge_writer.writerow(claim)
                 else:
                     edge_writer.writerow(
                         self._make_edge_row(
@@ -1048,6 +1160,15 @@ class MicrobeDecoderTransform(Transform):
         Units, incubation periods, isolation categories and undecoded source
         codes remain field values, not biological phenotype assertions.
         """
+        record_node = (
+            self._bacdive_join_guard.snapshot_node(self._source_record, row, subject)
+            if self._bacdive_join_guard is not None
+            else None
+        )
+        if record_node is not None:
+            subject = record_node[ID_COLUMN]
+            node_writer.writerow([record_node.get(key, "") for key in self.node_header])
+            self._seen_nodes.add(subject)
         for column in BACDIVE_SNAPSHOT_COLUMNS:
             raw = row.get(column)
             for label in split_snapshot_values(column, raw):

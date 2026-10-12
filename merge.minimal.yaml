@@ -22,15 +22,15 @@ merged_graph:
         - data/transformed/bacdive/nodes.tsv
         - data/transformed/bacdive/edges.tsv
     madin_etal:
+      name: madin_etal
       input:
-        name: madin_etal
         format: tsv
         filename:
         - data/transformed/madin_etal/nodes.tsv
         - data/transformed/madin_etal/edges.tsv
     metatraits:
+      name: metatraits
       input:
-        name: metatraits
         format: tsv
         filename:
         - data/transformed/metatraits/nodes.tsv

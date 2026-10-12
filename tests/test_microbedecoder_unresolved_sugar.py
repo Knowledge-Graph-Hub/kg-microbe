@@ -5,7 +5,6 @@ import csv
 import hashlib
 import io
 import json
-import shutil
 import tarfile
 from copy import deepcopy
 from multiprocessing.pool import ThreadPool
@@ -14,10 +13,11 @@ from pathlib import Path
 import pytest
 import yaml
 
-from kg_microbe.transform_utils.constants import GOLD_ORGANISM_FOLD_FILE
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
+from tests.microbedecoder_inactive_join_fixtures import bind_inactive_join_policy, write_empty_join_gss
 from tests.microbedecoder_quarantine_fixtures import bind_fixture_quarantine_policy
 from tests.test_chemical_mapping_utils import reset_cache as reset_cache
+from tests.test_microbedecoder_transform import _supply_gold_fold_report
 
 FIXTURES = Path(__file__).parent / "resources/microbedecoder"
 FIXTURE = FIXTURES / "bergey_unresolved_sugar.json"
@@ -61,26 +61,21 @@ def _read(path):
         return list(csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE))
 
 
-def _run(tmp_path, records=None, lookup=None):
+def _run(tmp_path, records=None, lookup=None, *, monkeypatch):
     """Run the unchanged full producer pipeline on a fresh tiny CSV."""
     tmp_path.mkdir(parents=True, exist_ok=True)
     records = _records() if records is None else records
     source = tmp_path / "database.csv"
-    fields = list(dict.fromkeys(field for record in records for field in record))
+    fields = list(dict.fromkeys([*(field for record in records for field in record), "BacDive_ID"]))
     with source.open("w", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=fields)
         writer.writeheader()
         writer.writerows(records)
-    for name, filename in (("gold", GOLD_ORGANISM_FOLD_FILE), ("gtdb", "nodes.tsv")):
-        destination = tmp_path / name
-        destination.mkdir()
-        shutil.copyfile(FIXTURES / (filename if name == "gold" else "gtdb_nodes.tsv"), destination / filename)
+    _supply_gold_fold_report(tmp_path)
     transform = MicrobeDecoderTransform(tmp_path, tmp_path, chemical_loader=lookup or ChemicalLookup())
-    (tmp_path / "ontologies").mkdir()
-    shutil.copyfile(FIXTURES / "metpo_nodes.tsv", tmp_path / "ontologies/metpo_nodes.tsv")
-    shutil.copyfile(FIXTURES / "go_nodes.tsv", tmp_path / "ontologies/go_nodes.tsv")
-    shutil.copyfile(FIXTURES / "chebi_record_nodes.tsv", tmp_path / "ontologies/chebi_nodes.tsv")
     bind_fixture_quarantine_policy(transform, source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, source, monkeypatch)
     transform.run(data_file=source, show_status=False)
     return transform, _read(transform.output_node_file), _read(transform.output_edge_file), source
 
@@ -105,9 +100,9 @@ def _scoped_id(record):
     )
 
 
-def test_two_full_records_keep_exact_observations_and_distinct_local_nodes(tmp_path):
+def test_two_full_records_keep_exact_observations_and_distinct_local_nodes(monkeypatch, tmp_path):
     """Change only the unsupported target plus explicit disposition/original-object evidence."""
-    transform, nodes, edges, source = _run(tmp_path)
+    transform, nodes, edges, source = _run(tmp_path, monkeypatch=monkeypatch)
     selected = _substrates(edges)
     assert len(selected) == 3
     historical = {row["subject"]: row for row in _fixture()["historical_edges"]}
@@ -142,23 +137,23 @@ def test_two_full_records_keep_exact_observations_and_distinct_local_nodes(tmp_p
     assert all(row["source_columns"] == COLUMN and row["occurrences"] == "1" for row in local_queue)
 
 
-def test_row_and_column_reordering_do_not_change_local_material_ids(tmp_path):
+def test_row_and_column_reordering_do_not_change_local_material_ids(monkeypatch, tmp_path):
     """CSV locators follow the new input bytes/positions, but material IDs do not use them."""
     records = _records()
-    _, _, first, _ = _run(tmp_path / "first", records)
+    _, _, first, _ = _run(tmp_path / "first", records, monkeypatch=monkeypatch)
     reversed_records = [dict(reversed(list(record.items()))) for record in reversed(records)]
-    _, _, second, _ = _run(tmp_path / "second", reversed_records)
+    _, _, second, _ = _run(tmp_path / "second", reversed_records, monkeypatch=monkeypatch)
     assert {row["subject"]: row["object"] for row in _substrates(first)} == {
         row["subject"]: row["object"] for row in _substrates(second)
     }
     assert {row["source_record"] for row in first}.isdisjoint({row["source_record"] for row in second})
 
 
-def test_distinct_record_contexts_do_not_pool_and_duplicate_assertions_survive(tmp_path):
+def test_distinct_record_contexts_do_not_pool_and_duplicate_assertions_survive(monkeypatch, tmp_path):
     """Same taxon/field/label can report distinct materials; identical rows keep distinct locators."""
     first = _records()[0]
     changed = {**first, "Bergey_Strain": "independent synthetic strain"}
-    _, nodes, edges, _ = _run(tmp_path, [first, first, changed])
+    _, nodes, edges, _ = _run(tmp_path, [first, first, changed], monkeypatch=monkeypatch)
     selected = _substrates(edges)
     assert len(selected) == 3
     assert len({row["source_record"] for row in selected}) == 3
@@ -183,9 +178,9 @@ def test_distinct_record_contexts_do_not_pool_and_duplicate_assertions_survive(t
         ("LPSN_ID", " 773071"),
     ],
 )
-def test_changed_finite_evidence_aborts_without_replacing_existing_outputs(tmp_path, field, value):
+def test_changed_finite_evidence_aborts_without_replacing_existing_outputs(monkeypatch, tmp_path, field, value):
     """A changed known Sugar claim requires review rather than automatic reuse or unsafe fallback."""
-    transform, _, _, _ = _run(tmp_path)
+    transform, _, _, _ = _run(tmp_path, monkeypatch=monkeypatch)
     before = (transform.output_node_file.read_bytes(), transform.output_edge_file.read_bytes())
     records = _records()
     records[0][field] = value
@@ -196,24 +191,26 @@ def test_changed_finite_evidence_aborts_without_replacing_existing_outputs(tmp_p
         writer.writerows(records)
     with pytest.raises(ValueError, match="Reviewed unresolved Bergey sugar evidence changed"):
         bind_fixture_quarantine_policy(transform, source)
+        write_empty_join_gss(transform.input_base_dir)
+        bind_inactive_join_policy(transform, source, monkeypatch)
         transform.run(data_file=source, show_status=False)
     assert before == (transform.output_node_file.read_bytes(), transform.output_edge_file.read_bytes())
 
 
 @pytest.mark.parametrize("target", [None, "CHEBI:17992", "NCIT:C16883", "kgmicrobe.compound:sugar"])
-def test_changed_mapping_cannot_silently_reinterpret_the_reviewed_disposition(tmp_path, target):
+def test_changed_mapping_cannot_silently_reinterpret_the_reviewed_disposition(monkeypatch, tmp_path, target):
     """The historical target anchor is explicit, not guessed from current output."""
     with pytest.raises(ValueError, match="Reviewed unresolved Bergey sugar mapping evidence changed"):
-        _run(tmp_path, lookup=ChemicalLookup(target))
+        _run(tmp_path, lookup=ChemicalLookup(target), monkeypatch=monkeypatch)
 
 
-def test_missing_whole_bergey_group_cannot_skip_the_finite_guard(tmp_path):
+def test_missing_whole_bergey_group_cannot_skip_the_finite_guard(monkeypatch, tmp_path):
     """Admission precedes even the source-group emptiness filter, not only sugar token handling."""
     with pytest.raises(ValueError, match="Reviewed unresolved Bergey sugar evidence changed"):
-        _run(tmp_path, records=[{"LPSN_ID": "773071"}])
+        _run(tmp_path, records=[{"LPSN_ID": "773071"}], monkeypatch=monkeypatch)
 
 
-def test_infrastructure_failure_is_not_an_unresolved_context_disposition(tmp_path):
+def test_infrastructure_failure_is_not_an_unresolved_context_disposition(monkeypatch, tmp_path):
     """The finite preservation rule cannot swallow a failed mapping authority."""
 
     class BrokenLookup(ChemicalLookup):
@@ -224,10 +221,10 @@ def test_infrastructure_failure_is_not_an_unresolved_context_disposition(tmp_pat
             raise OSError("mapping input unavailable")
 
     with pytest.raises(OSError, match="mapping input unavailable"):
-        _run(tmp_path, lookup=BrokenLookup())
+        _run(tmp_path, lookup=BrokenLookup(), monkeypatch=monkeypatch)
 
 
-def test_other_records_fields_and_native_sugar_resolution_are_unchanged(tmp_path):
+def test_other_records_fields_and_native_sugar_resolution_are_unchanged(monkeypatch, tmp_path):
     """Keep other Sugar uses outside the finite record-field disposition."""
     source = _records()[0]
     other = {**source, "LPSN_ID": "999999"}
@@ -237,7 +234,7 @@ def test_other_records_fields_and_native_sugar_resolution_are_unchanged(tmp_path
         "Literature_Substrates_for_end_products": "sugar",
         "Literature_Citation": "PMID:12345",
     }
-    transform, _, edges, _ = _run(tmp_path, [known, other, _records()[2]])
+    transform, _, edges, _ = _run(tmp_path, [known, other, _records()[2]], monkeypatch=monkeypatch)
     selected = [
         row
         for row in edges
@@ -279,7 +276,7 @@ def test_actual_kgx_archive_retains_scoped_identity_and_full_evidence(tmp_path, 
     prepare_kgx()
     from kgx.cli import cli_utils
 
-    transform, _, before, _ = _run(tmp_path)
+    transform, _, before, _ = _run(tmp_path, monkeypatch=monkeypatch)
     monkeypatch.setattr("kgx.prefix_manager.get_jsonld_context", lambda: {})
     monkeypatch.setattr(cli_utils, "Pool", ThreadPool)
     config = tmp_path / "merge.yaml"

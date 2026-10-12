@@ -1,0 +1,9 @@
+id	category	name	provided_by
+RHEA:12345	biolink:MolecularActivity	Fixture undefined reaction	infores:rhea
+RHEA:12346	biolink:MolecularActivity	Fixture directional reaction	infores:rhea
+RHEA:12348	biolink:MolecularActivity	Fixture bidirectional reaction	infores:rhea
+rheav:Compound_123	biolink:ChemicalEntity	Fixture compound	infores:rhea
+rheav:Compound_456	biolink:ChemicalEntity	Fixture generic compound	infores:rhea
+rheav:ReactivePart_123	biolink:ChemicalEntity	Fixture reactive part	infores:rhea
+CHEBI:123	biolink:ChemicalEntity	Fixture underlying chemical	infores:rhea
+CHEBI:456	biolink:ChemicalEntity	Fixture direct chemical	infores:rhea

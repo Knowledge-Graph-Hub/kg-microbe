@@ -4,7 +4,6 @@ import base64
 import csv
 import io
 import json
-import shutil
 import tarfile
 from multiprocessing.pool import ThreadPool
 from pathlib import Path
@@ -12,8 +11,8 @@ from pathlib import Path
 import pytest
 import yaml
 
-from kg_microbe.transform_utils.constants import GOLD_ORGANISM_FOLD_FILE
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
+from tests.microbedecoder_inactive_join_fixtures import bind_inactive_join_policy, write_empty_join_gss
 from tests.microbedecoder_quarantine_fixtures import bind_fixture_quarantine_policy
 
 FIXTURES = Path(__file__).parent / "resources" / "microbedecoder"
@@ -33,7 +32,7 @@ def read_tsv(path):
         return list(csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE))
 
 
-def run_fixture(tmp_path, fixture="snapshot_context.csv"):
+def run_fixture(tmp_path, fixture="snapshot_context.csv", *, monkeypatch):
     """Execute the actual producer including its final source deduplication."""
     input_path = FIXTURES / fixture
     if input_path.suffix == ".json":
@@ -42,28 +41,24 @@ def run_fixture(tmp_path, fixture="snapshot_context.csv"):
         source_rows = json.loads(input_path.read_text())
         input_path = tmp_path / input_path.with_suffix(".csv").name
         with input_path.open("w", newline="") as stream:
-            writer = csv.DictWriter(stream, fieldnames=["LPSN_ID", *BACDIVE_SNAPSHOT_COLUMNS])
+            writer = csv.DictWriter(stream, fieldnames=["LPSN_ID", *BACDIVE_SNAPSHOT_COLUMNS, "BacDive_ID"])
             writer.writeheader()
             writer.writerows(source_rows)
-    for source, dependency_fixture, target in (
-        ("gold", GOLD_ORGANISM_FOLD_FILE, GOLD_ORGANISM_FOLD_FILE),
-        ("gtdb", "gtdb_nodes.tsv", "nodes.tsv"),
-        ("ontologies", "metpo_nodes.tsv", "metpo_nodes.tsv"),
-        ("ontologies", "go_nodes.tsv", "go_nodes.tsv"),
-        ("ontologies", "chebi_record_nodes.tsv", "chebi_nodes.tsv"),
-    ):
-        destination = tmp_path / source
-        destination.mkdir(exist_ok=True)
-        shutil.copyfile(FIXTURES / dependency_fixture, destination / target)
-    transform = MicrobeDecoderTransform(FIXTURES, tmp_path, chemical_loader=NoChemicals())
+    from tests.test_microbedecoder_transform import _supply_gold_fold_report
+
+    _supply_gold_fold_report(tmp_path)
+    raw = write_empty_join_gss(tmp_path / "raw").parent
+    transform = MicrobeDecoderTransform(raw, tmp_path, chemical_loader=NoChemicals())
     bind_fixture_quarantine_policy(transform, input_path)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, input_path, monkeypatch)
     transform.run(data_file=input_path, show_status=False)
     return transform, read_tsv(transform.output_node_file), read_tsv(transform.output_edge_file)
 
 
-def test_snapshot_preserves_dimensions_operators_and_record_context(tmp_path):
+def test_snapshot_preserves_dimensions_operators_and_record_context(monkeypatch, tmp_path):
     """Motility/spores/temperature and inequalities must not become one generic number."""
-    _, nodes, edges = run_fixture(tmp_path)
+    _, nodes, edges = run_fixture(tmp_path, monkeypatch=monkeypatch)
     snapshots = [edge for edge in edges if edge["predicate"] == "biolink:has_attribute"]
     assert len(snapshots) == 11
     assert all(edge["source_column"] and edge["source_record"] and edge["value"] for edge in snapshots)
@@ -84,12 +79,12 @@ def test_snapshot_preserves_dimensions_operators_and_record_context(tmp_path):
     assert all(edge["value"] in labels[edge["object"]] for edge in salt)
 
 
-def test_all_snapshot_families_are_reported_source_attributes(tmp_path):
+def test_all_snapshot_families_are_reported_source_attributes(monkeypatch, tmp_path):
     """Replay every source field without promoting codes, units or contexts to phenotypes."""
     from kg_microbe.transform_utils.microbedecoder.utils import BACDIVE_SNAPSHOT_COLUMNS
 
     source_rows = json.loads((FIXTURES / "source_attributes.json").read_text())
-    _, nodes, edges = run_fixture(tmp_path, "source_attributes.json")
+    _, nodes, edges = run_fixture(tmp_path, "source_attributes.json", monkeypatch=monkeypatch)
     attributes = [edge for edge in edges if edge["source_column"].startswith("BacDive_")]
     by_id = {node["id"]: node for node in nodes}
     expected = {
@@ -167,48 +162,53 @@ def test_snapshot_signed_field_tokens_do_not_change_generic_missingness(column, 
 
 
 def test_source_attribute_namespace_and_relation_are_registered():
-    """The explicit dynamic namespace and pinned SIO IRI are registered for graph consumers."""
+    """The explicit dynamic namespaces and pinned SIO IRI are registered for graph consumers."""
     root = Path(__file__).resolve().parents[1]
     registry = yaml.safe_load((root / "kg_microbe/transform_utils/custom_curies.yaml").read_text())
     prefixmap = json.loads((root / "kg_microbe/transform_utils/prefixmap.json").read_text())
-    assert "kgmicrobe.source_attribute" in registry
-    assert "kgmicrobe.source_attribute" in prefixmap
+    for namespace in ("kgmicrobe.source_attribute", "kgmicrobe.source_record"):
+        assert namespace in registry
+        assert namespace in prefixmap
     assert prefixmap["SIO"] == "http://semanticscience.org/resource/SIO_"
 
 
-def test_metabolism_citations_and_major_minor_qualifiers_survive_source_dedup(tmp_path):
+def test_metabolism_citations_and_major_minor_qualifiers_survive_source_dedup(monkeypatch, tmp_path):
     """The same producer helper also discarded citations and major/minor qualifiers."""
-    _, _, edges = run_fixture(tmp_path)
+    _, _, edges = run_fixture(tmp_path, monkeypatch=monkeypatch)
     products = [edge for edge in edges if edge["predicate"] == "biolink:produces"]
     assert len(products) == 2
     assert {edge["description"] for edge in products} == {"major", "minor"}
     assert {edge["publications"] for edge in products} == {"PMID:12345"}
 
 
-def test_repeat_run_is_byte_identical(tmp_path):
+def test_repeat_run_is_byte_identical(monkeypatch, tmp_path):
     """Reusing a producer must reset per-run node and context state."""
-    transform, _, _ = run_fixture(tmp_path)
+    transform, _, _ = run_fixture(tmp_path, monkeypatch=monkeypatch)
     before = (transform.output_node_file.read_bytes(), transform.output_edge_file.read_bytes())
     bind_fixture_quarantine_policy(transform, FIXTURES / "snapshot_context.csv")
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, FIXTURES / "snapshot_context.csv", monkeypatch)
     transform.run(data_file=FIXTURES / "snapshot_context.csv", show_status=False)
     assert (transform.output_node_file.read_bytes(), transform.output_edge_file.read_bytes()) == before
 
 
-def test_later_run_without_placeholders_clears_old_curation_rows(tmp_path):
+def test_later_run_without_placeholders_clears_old_curation_rows(monkeypatch, tmp_path):
     """Rerun reset must include the persisted curation queue, not just node caches."""
-    transform, _, _ = run_fixture(tmp_path)
+    transform, _, _ = run_fixture(tmp_path, monkeypatch=monkeypatch)
     report = transform.output_dir / "unmapped_labels.tsv"
     assert read_tsv(report)
     source = tmp_path / "crosswalk_only.csv"
-    source.write_text("LPSN_ID,NCBI_Taxonomy_ID\n101,1\n")
+    source.write_text("LPSN_ID,NCBI_Taxonomy_ID,BacDive_ID\n101,1,\n")
     bind_fixture_quarantine_policy(transform, source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, source, monkeypatch)
     transform.run(data_file=source, show_status=False)
     assert read_tsv(report) == []
 
 
-def test_mapping_lookup_io_failure_is_not_an_unmapped_chemical(tmp_path):
+def test_mapping_lookup_io_failure_is_not_an_unmapped_chemical(monkeypatch, tmp_path):
     """A missing match is None; failed authority infrastructure must abort the source."""
-    transform, _, _ = run_fixture(tmp_path)
+    transform, _, _ = run_fixture(tmp_path, monkeypatch=monkeypatch)
     before = (transform.output_node_file.read_bytes(), transform.output_edge_file.read_bytes())
 
     class BrokenMapping:
@@ -221,6 +221,8 @@ def test_mapping_lookup_io_failure_is_not_an_unmapped_chemical(tmp_path):
     transform.chemical_loader = BrokenMapping()
     with pytest.raises(OSError, match="mapping authority read failed"):
         bind_fixture_quarantine_policy(transform, FIXTURES / "snapshot_context.csv")
+        write_empty_join_gss(transform.input_base_dir)
+        bind_inactive_join_policy(transform, FIXTURES / "snapshot_context.csv", monkeypatch)
         transform.run(data_file=FIXTURES / "snapshot_context.csv", show_status=False)
     assert (transform.output_node_file.read_bytes(), transform.output_edge_file.read_bytes()) == before
 
@@ -229,7 +231,7 @@ def test_required_mapping_initialization_failure_preserves_outputs(tmp_path, mon
     """A broken required map must fail before replacing a previously emitted pair."""
     import kg_microbe.utils.chemical_mapping_utils as mappings
 
-    transform, _, _ = run_fixture(tmp_path)
+    transform, _, _ = run_fixture(tmp_path, monkeypatch=monkeypatch)
     before = (transform.output_node_file.read_bytes(), transform.output_edge_file.read_bytes())
 
     def fail_load():
@@ -240,6 +242,8 @@ def test_required_mapping_initialization_failure_preserves_outputs(tmp_path, mon
     transform.chemical_loader = None
     with pytest.raises(FileNotFoundError, match="required mapping is missing"):
         bind_fixture_quarantine_policy(transform, FIXTURES / "snapshot_context.csv")
+        write_empty_join_gss(transform.input_base_dir)
+        bind_inactive_join_policy(transform, FIXTURES / "snapshot_context.csv", monkeypatch)
         transform.run(data_file=FIXTURES / "snapshot_context.csv", show_status=False)
     assert (transform.output_node_file.read_bytes(), transform.output_edge_file.read_bytes()) == before
 
@@ -255,7 +259,7 @@ def test_actual_kgx_archive_retains_source_context(tmp_path, monkeypatch, fixtur
     prepare_kgx()
     from kgx.cli import cli_utils
 
-    transform, before_nodes, before = run_fixture(tmp_path, fixture)
+    transform, before_nodes, before = run_fixture(tmp_path, fixture, monkeypatch=monkeypatch)
     monkeypatch.setattr("kgx.prefix_manager.get_jsonld_context", lambda: {})
     monkeypatch.setattr(cli_utils, "Pool", ThreadPool)
     config = tmp_path / "merge.yaml"
@@ -313,9 +317,9 @@ def test_actual_kgx_archive_retains_source_context(tmp_path, monkeypatch, fixtur
     assert len(after) == len(before)
 
 
-def test_citation_prose_and_all_recognized_identifiers_survive(tmp_path):
+def test_citation_prose_and_all_recognized_identifiers_survive(monkeypatch, tmp_path):
     """Round-1 review #1083: prose is evidence even when it has no identifier."""
-    _, _, edges = run_fixture(tmp_path, "citation_context.csv")
+    _, _, edges = run_fixture(tmp_path, "citation_context.csv", monkeypatch=monkeypatch)
     assert len(edges) == 4
     keyed = {edge["source_citation"]: edge for edge in edges}
     assert set(keyed) == {
@@ -340,12 +344,16 @@ def test_citation_prose_and_all_recognized_identifiers_survive(tmp_path):
     )
 
 
-def test_non_utf8_citation_bytes_are_recoverable(tmp_path):
+def test_non_utf8_citation_bytes_are_recoverable(monkeypatch, tmp_path):
     """A rare Latin-1 byte in otherwise UTF-8 source text must not erase the citation."""
-    transform, _, _ = run_fixture(tmp_path)
+    transform, _, _ = run_fixture(tmp_path, monkeypatch=monkeypatch)
     source = tmp_path / "mixed_encoding.csv"
-    source.write_bytes(b"LPSN_ID,Literature_Major_end_products,Literature_Citation\n101,acetate,Pr\xe9vot (1989)\n")
+    source.write_bytes(
+        b"LPSN_ID,Literature_Major_end_products,Literature_Citation,BacDive_ID\n101,acetate,Pr\xe9vot (1989),\n"
+    )
     bind_fixture_quarantine_policy(transform, source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, source, monkeypatch)
     transform.run(data_file=source, show_status=False)
     edge = read_tsv(transform.output_edge_file)[0]
     assert edge["source_citation"] == "Pr\ufffdvot (1989)"
@@ -353,9 +361,9 @@ def test_non_utf8_citation_bytes_are_recoverable(tmp_path):
     assert edge["publications"] == ""
 
 
-def test_source_locants_retain_independently_expected_tokens(tmp_path):
+def test_source_locants_retain_independently_expected_tokens(monkeypatch, tmp_path):
     """Real-source locant shapes must not produce chemical fragments as separate assertions."""
-    _, _, edges = run_fixture(tmp_path, "locant_context.csv")
+    _, _, edges = run_fixture(tmp_path, "locant_context.csv", monkeypatch=monkeypatch)
     assert {(edge["source_column"], edge["value"]) for edge in edges} == {
         ("BacDive_Metabolite_utilization", "2,3-butanediol"),
         ("BacDive_Metabolite_utilization", "acetate"),
@@ -385,14 +393,16 @@ def test_literal_context_does_not_use_csv_quoting_or_coerce_numbers(tmp_path, mo
     """Quotes, control characters, zeros and leading zeros remain distinguishable."""
     from kg_microbe.merge_utils.kgx_source import parse_source
 
-    transform, _, _ = run_fixture(tmp_path)
+    transform, _, _ = run_fixture(tmp_path, monkeypatch=monkeypatch)
     source = tmp_path / "literal.csv"
     labels = ['"quoted"', "0", "00", "<1", ">1", "line\nbreak", "tab\there", r"literal\n"]
     with source.open("w", newline="") as stream:
         writer = csv.writer(stream)
-        writer.writerow(["LPSN_ID", "BacDive_Oxygen_tolerance"])
-        writer.writerows([101, value] for value in labels)
+        writer.writerow(["LPSN_ID", "BacDive_Oxygen_tolerance", "BacDive_ID"])
+        writer.writerows([101, value, ""] for value in labels)
     bind_fixture_quarantine_policy(transform, source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, source, monkeypatch)
     transform.run(data_file=source, show_status=False)
     edges = read_tsv(transform.output_edge_file)
     assert len(edges) == len(labels)

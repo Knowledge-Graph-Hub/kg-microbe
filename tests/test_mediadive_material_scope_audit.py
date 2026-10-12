@@ -240,7 +240,7 @@ def test_input_drift_or_repeated_occurrence_drift_never_gets_certified(tmp_path,
     producer.run(show_status=False)
     original = copy.deepcopy(producer.solutions_data["3653"])
     producer.solutions_data["3653"]["recipe"][0]["amount"] = 999
-    with pytest.raises(SourceFinalizationRequired, match="repeated visits"):
+    with pytest.raises(SourceFinalizationRequired, match="cached native record changed"):
         producer.get_solution_recipe_occurrences("3653")
     producer.solutions_data["3653"] = original
     path.write_bytes(path.read_bytes() + b"changed")

@@ -34,7 +34,14 @@ FIXTURE = Path(__file__).parent / "resources" / "ontology_canonicalization.json"
 )
 def test_categories_follow_node_namespace(identifier, category, expected):
     """Importer identity cannot add an OntologyClass category back to FOODON/PATO."""
-    assert canonical_node_category(identifier, category) == expected
+    # An explicit FOODON authority keeps this hermetic: the default reads
+    # data/raw/foodon.json when present and rejects classes it does not declare.
+    foodon_categories = {
+        "FOODON:03301710": "biolink:Food",
+        "FOODON:03315426": "biolink:Food",
+        "FOODON:03420174": "biolink:Food",
+    }
+    assert canonical_node_category(identifier, category, foodon_categories=foodon_categories) == expected
 
 
 @pytest.mark.parametrize(
@@ -45,6 +52,9 @@ def test_categories_follow_node_namespace(identifier, category, expected):
         ("https://www.w3.org/TR/owl-time/#time:unitYear", "time:unitYear"),
         ("http://purl.obolibrary.org/obo/FOODON_03301710", "FOODON:03301710"),
         ("https://w3id.org/metpo/1000059", "METPO:1000059"),
+        ("http://rdf.rhea-db.org/12345", "RHEA:12345"),
+        ("http://rdf.rhea-db.org/Compound_12345", "rheav:Compound_12345"),
+        ("http://rdf.rhea-db.org/directionalReaction", "rheav:directionalReaction"),
         ("FOODON:03301710", "FOODON:03301710"),
         ("http://example.org/Duration", "http://example.org/Duration"),
         ("https://www.w3.org/TR/other/#time:Duration", "https://www.w3.org/TR/other/#time:Duration"),
@@ -61,6 +71,7 @@ def _transform(tmp_path):
     """Build an offline transform with only the state needed by normalization."""
     transform = OntologiesTransform.__new__(OntologiesTransform)
     transform.output_dir = tmp_path
+    transform.begin_consumed_inputs()
     transform.node_header = ["id", "category", "name", "description", "xref", "provided_by"]
     transform.edge_header = [
         "subject",
@@ -75,8 +86,8 @@ def _transform(tmp_path):
 
 
 @pytest.mark.parametrize("importer", ["envo", "uberon", "ro"])
-def test_final_normalization_fixes_imported_categories(tmp_path, importer):
-    """All ontology files share the namespace guard, not just FOODON/PATO files."""
+def test_schema_normalization_defers_foodon_and_keeps_invariant_pato_type(tmp_path, importer):
+    """Native FOODON reads wait for selected-source finalization, not global caches."""
     transform = _transform(tmp_path)
     nodes = tmp_path / f"{importer}_nodes.tsv"
     pd.DataFrame(
@@ -89,7 +100,7 @@ def test_final_normalization_fixes_imported_categories(tmp_path, importer):
     ).to_csv(nodes, sep="\t", index=False)
     transform._normalize_schema(nodes, tmp_path / "absent_edges.tsv")
     categories = pd.read_csv(nodes, sep="\t").set_index("id")["category"].to_dict()
-    assert categories["FOODON:03301710"] == "biolink:Food"
+    assert categories["FOODON:03301710"] == "biolink:OntologyClass"
     assert categories["PATO:0001421"] == "biolink:PhenotypicQuality"
     assert categories["EC:1.1.1.1"] == "biolink:MolecularActivity|biolink:Protein"
 

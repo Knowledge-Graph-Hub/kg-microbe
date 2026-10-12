@@ -1,0 +1,6 @@
+record_no,record_lnk,status,genus_name,sp_epithet,subsp_epithet,nomenclatural_type
+1,2,synonym,Fixture,convergens,,TEST INFERRED
+2,,correct name,Fixture,convergens,,TEST INFERRED
+3,,correct name,Fixture,ambiguous,,TEST AMBIGUOUS ONE
+4,,correct name,Fixture,ambiguous,,TEST AMBIGUOUS TWO
+5,,correct name,Fixture,unique,,TEST DIRECT

@@ -1,0 +1,2289 @@
+{
+  "authorities": {
+    "foodon.json": {
+      "graph_id": "http://purl.obolibrary.org/obo/foodon.owl",
+      "sha256": "8dfba179356a84d8ddad4087dc1fa89a76f6511456c298b9dd7b09df9eb6d853"
+    },
+    "pato.json": {
+      "graph_id": "http://purl.obolibrary.org/obo/pato.owl",
+      "sha256": "b129f5f5e968e4a8675bb9d6cb3a40668f1c5a2783bef81b30c86c563ce5d46d"
+    },
+    "uberon.json": {
+      "graph_id": "http://purl.obolibrary.org/obo/uberon.owl",
+      "sha256": "87a892da0544a82f41f0a8b2b52f7ee705ec6d5ca2c102e7d439a7086d79f428"
+    }
+  },
+  "finite_id_set_sha256": "ae53a95abe9bcf5f9298f02e4f6ae93d7d39233462619e122c873951628d56cb",
+  "records": {
+    "GAZ:00000458": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000458",
+          "http://purl.obolibrary.org/obo/GAZ_00000013",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000458",
+          "http://purl.obolibrary.org/obo/GAZ_00000013",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000013": [
+          "http://purl.obolibrary.org/obo/GAZ_00000458",
+          "http://purl.obolibrary.org/obo/GAZ_00000013"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000458": [
+          "http://purl.obolibrary.org/obo/GAZ_00000458"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000458",
+      "native_label": "North America",
+      "native_node_sha256": "3ce9a3825250fbf47b3dbe041324f22db2f7128b3cf07a2059394a6f175d27c6"
+    },
+    "GAZ:00000459": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000459",
+          "http://purl.obolibrary.org/obo/GAZ_00000013",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000459",
+          "http://purl.obolibrary.org/obo/GAZ_00000013",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000013": [
+          "http://purl.obolibrary.org/obo/GAZ_00000459",
+          "http://purl.obolibrary.org/obo/GAZ_00000013"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000459": [
+          "http://purl.obolibrary.org/obo/GAZ_00000459"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000459",
+      "native_label": "South America",
+      "native_node_sha256": "85dda7151180b7a3153dac40a864473dcce13b62180c25ce186572292ade9a06"
+    },
+    "GAZ:00000553": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000553",
+          "http://purl.obolibrary.org/obo/GAZ_00000457",
+          "http://purl.obolibrary.org/obo/GAZ_00000013",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000553",
+          "http://purl.obolibrary.org/obo/GAZ_00000457",
+          "http://purl.obolibrary.org/obo/GAZ_00000013",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000013": [
+          "http://purl.obolibrary.org/obo/GAZ_00000553",
+          "http://purl.obolibrary.org/obo/GAZ_00000457",
+          "http://purl.obolibrary.org/obo/GAZ_00000013"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000457": [
+          "http://purl.obolibrary.org/obo/GAZ_00000553",
+          "http://purl.obolibrary.org/obo/GAZ_00000457"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000553": [
+          "http://purl.obolibrary.org/obo/GAZ_00000553"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000553",
+      "native_label": "South Africa",
+      "native_node_sha256": "181dd3b9ed53d3def4ce91857c200bc5ec00ea1d00fedde323e153eb322efc31"
+    },
+    "GAZ:00000554": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000554",
+          "http://purl.obolibrary.org/obo/GAZ_00000457",
+          "http://purl.obolibrary.org/obo/GAZ_00000013",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000554",
+          "http://purl.obolibrary.org/obo/GAZ_00000457",
+          "http://purl.obolibrary.org/obo/GAZ_00000013",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000013": [
+          "http://purl.obolibrary.org/obo/GAZ_00000554",
+          "http://purl.obolibrary.org/obo/GAZ_00000457",
+          "http://purl.obolibrary.org/obo/GAZ_00000013"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000457": [
+          "http://purl.obolibrary.org/obo/GAZ_00000554",
+          "http://purl.obolibrary.org/obo/GAZ_00000457"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000554": [
+          "http://purl.obolibrary.org/obo/GAZ_00000554"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000554",
+      "native_label": "West Africa",
+      "native_node_sha256": "754d4727559a20815d596f5ad65fb42564de141eb35d966f0bb5f4516ea97171"
+    },
+    "GAZ:00000555": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000555",
+          "http://purl.obolibrary.org/obo/GAZ_00000457",
+          "http://purl.obolibrary.org/obo/GAZ_00000013",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000555",
+          "http://purl.obolibrary.org/obo/GAZ_00000457",
+          "http://purl.obolibrary.org/obo/GAZ_00000013",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000013": [
+          "http://purl.obolibrary.org/obo/GAZ_00000555",
+          "http://purl.obolibrary.org/obo/GAZ_00000457",
+          "http://purl.obolibrary.org/obo/GAZ_00000013"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000457": [
+          "http://purl.obolibrary.org/obo/GAZ_00000555",
+          "http://purl.obolibrary.org/obo/GAZ_00000457"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000555": [
+          "http://purl.obolibrary.org/obo/GAZ_00000555"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000555",
+      "native_label": "North Africa",
+      "native_node_sha256": "fc79b8059aa5be0b6520ebe588b19f1ef3396b53ca6e404f7acb236c61a46be0"
+    },
+    "GAZ:00000556": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000556",
+          "http://purl.obolibrary.org/obo/GAZ_00000457",
+          "http://purl.obolibrary.org/obo/GAZ_00000013",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000556",
+          "http://purl.obolibrary.org/obo/GAZ_00000457",
+          "http://purl.obolibrary.org/obo/GAZ_00000013",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000013": [
+          "http://purl.obolibrary.org/obo/GAZ_00000556",
+          "http://purl.obolibrary.org/obo/GAZ_00000457",
+          "http://purl.obolibrary.org/obo/GAZ_00000013"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000457": [
+          "http://purl.obolibrary.org/obo/GAZ_00000556",
+          "http://purl.obolibrary.org/obo/GAZ_00000457"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000556": [
+          "http://purl.obolibrary.org/obo/GAZ_00000556"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000556",
+      "native_label": "East Africa",
+      "native_node_sha256": "bfa2b557fdbb4202991b8074ffd58cbe9cec03aaa885432c6bfe392d4bb08d8f"
+    },
+    "GAZ:00000560": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000560",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000560",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000560": [
+          "http://purl.obolibrary.org/obo/GAZ_00000560"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000560",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000560",
+      "native_label": "Sudan",
+      "native_node_sha256": "acf801ceb1f2042061a70d42af3018a65ebc5f210bd51559eca11d9eb70a9a00"
+    },
+    "GAZ:00000562": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000562",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000562",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000562": [
+          "http://purl.obolibrary.org/obo/GAZ_00000562"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000562",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000562",
+      "native_label": "Tunisia",
+      "native_node_sha256": "7081c7f1a6ec33520c7c99e5d104a0bd96f7665ca9d6fc90cc9ff866610d6235"
+    },
+    "GAZ:00000563": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000563",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000563",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000563": [
+          "http://purl.obolibrary.org/obo/GAZ_00000563"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000563",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000563",
+      "native_label": "Algeria",
+      "native_node_sha256": "1c12a6fba5b9a504a3c2aaf6f81e2066ed0fb36d6dfbb324c4ad4ae7d234347c"
+    },
+    "GAZ:00000564": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000564",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000564",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000564": [
+          "http://purl.obolibrary.org/obo/GAZ_00000564"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000564",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000564",
+      "native_label": "Western Sahara",
+      "native_node_sha256": "077de8af5787a70a50915a158a082ef0505da619d9f9e4aeb6cf1636e90a6d85"
+    },
+    "GAZ:00000565": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000565",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000565",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000565": [
+          "http://purl.obolibrary.org/obo/GAZ_00000565"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000565",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000565",
+      "native_label": "Morocco",
+      "native_node_sha256": "2b59bc53105a2431fbadb2e9837f92b45bc0cbd9a9e603c69bbfbd61fc1a426c"
+    },
+    "GAZ:00000566": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000566",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000566",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000566": [
+          "http://purl.obolibrary.org/obo/GAZ_00000566"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000566",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000566",
+      "native_label": "Libya",
+      "native_node_sha256": "cbb4c1d8273b633436214154ad924fcbce5950df3ccc6eb57af7ef457a7cb60e"
+    },
+    "GAZ:00000567": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000567",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000567",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000567": [
+          "http://purl.obolibrary.org/obo/GAZ_00000567"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000567",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000567",
+      "native_label": "Ethiopia",
+      "native_node_sha256": "d700fc861b61700b247b9f48ee4a2e8840890d8b18c789556b8a7f7d9c4829c9"
+    },
+    "GAZ:00000582": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000582",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000582",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000582": [
+          "http://purl.obolibrary.org/obo/GAZ_00000582"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000582",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000582",
+      "native_label": "Djibouti",
+      "native_node_sha256": "3d0ec31fd964d6fe867fd569a912a3651d3f10d1e87c7d7e3d918ee1c30d3e55"
+    },
+    "GAZ:00000583": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000583",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000583",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000583": [
+          "http://purl.obolibrary.org/obo/GAZ_00000583"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000583",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000583",
+      "native_label": "Mauritania",
+      "native_node_sha256": "cea2b4c4f28c6c9cb4f10033f856f0119f5ad541f2888ba599db49ff8ec94c42"
+    },
+    "GAZ:00000584": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000584",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000584",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000584": [
+          "http://purl.obolibrary.org/obo/GAZ_00000584"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000584",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000584",
+      "native_label": "Mali",
+      "native_node_sha256": "60b0827994ba35bbeeb5ac0ea6dcc1a2b76e583ed85c52053ad3095c636067f4"
+    },
+    "GAZ:00000585": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000585",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000585",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000585": [
+          "http://purl.obolibrary.org/obo/GAZ_00000585"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000585",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000585",
+      "native_label": "Niger",
+      "native_node_sha256": "b2bdb6904980f3c23797d3bc5407b790e20d1581210497e75dd298d2da113a94"
+    },
+    "GAZ:00000586": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000586",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000586",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000586": [
+          "http://purl.obolibrary.org/obo/GAZ_00000586"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000586",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000586",
+      "native_label": "Chad",
+      "native_node_sha256": "1e3520cba120c1f11cb5b914a66ae7aa937226f74d8b4c168693aebed37cf717"
+    },
+    "GAZ:00000588": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000588",
+          "http://purl.obolibrary.org/obo/GAZ_00000457",
+          "http://purl.obolibrary.org/obo/GAZ_00000013",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000588",
+          "http://purl.obolibrary.org/obo/GAZ_00000457",
+          "http://purl.obolibrary.org/obo/GAZ_00000013",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000013": [
+          "http://purl.obolibrary.org/obo/GAZ_00000588",
+          "http://purl.obolibrary.org/obo/GAZ_00000457",
+          "http://purl.obolibrary.org/obo/GAZ_00000013"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000457": [
+          "http://purl.obolibrary.org/obo/GAZ_00000588",
+          "http://purl.obolibrary.org/obo/GAZ_00000457"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000588": [
+          "http://purl.obolibrary.org/obo/GAZ_00000588"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000588",
+      "native_label": "Central Africa",
+      "native_node_sha256": "cb067b06a2195f20a7a1615b11a1a2f82b9b3777ea5519bb755a76c8fdcef26a"
+    },
+    "GAZ:00000904": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000904",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000904",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000904": [
+          "http://purl.obolibrary.org/obo/GAZ_00000904"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000904",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000904",
+      "native_label": "Benin",
+      "native_node_sha256": "582f36508db125902d57f56e499a9460db119c106ad323a8ef5323cc3e09469b"
+    },
+    "GAZ:00000905": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000905",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000905",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000905": [
+          "http://purl.obolibrary.org/obo/GAZ_00000905"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000905",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000905",
+      "native_label": "Burkina Faso",
+      "native_node_sha256": "bdf0e20824f9c38792967d02de743c4b5bc2363cab8cb632db699da51b1ebcff"
+    },
+    "GAZ:00000906": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000906",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000906",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000906": [
+          "http://purl.obolibrary.org/obo/GAZ_00000906"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000906",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000906",
+      "native_label": "Cote d'Ivoire",
+      "native_node_sha256": "d75f581a130ff2aca4961cdf538726585d464a3d7772a0a199f7d29427ad4451"
+    },
+    "GAZ:00000907": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000907",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000907",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000907": [
+          "http://purl.obolibrary.org/obo/GAZ_00000907"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000907",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000907",
+      "native_label": "Gambia",
+      "native_node_sha256": "796e36edd02d6cc014a0340f1b9f8252184b313fd467a36bc35586716ac4362a"
+    },
+    "GAZ:00000908": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000908",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000908",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000908": [
+          "http://purl.obolibrary.org/obo/GAZ_00000908"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000908",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000908",
+      "native_label": "Ghana",
+      "native_node_sha256": "78f0f5b1c564199ce453355050b73529fcd107072929ca5f7de94666603df634"
+    },
+    "GAZ:00000909": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000909",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000909",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000909": [
+          "http://purl.obolibrary.org/obo/GAZ_00000909"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000909",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000909",
+      "native_label": "Guinea",
+      "native_node_sha256": "206dba6501bb35fa9432a15876c05b748c8fe40658eb6ec8365efabc922d3f24"
+    },
+    "GAZ:00000910": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000910",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000910",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000910": [
+          "http://purl.obolibrary.org/obo/GAZ_00000910"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000910",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000910",
+      "native_label": "Guinea-Bissau",
+      "native_node_sha256": "206b3c411550ceab7846235e7f083bd94fb75ebce1c58cc367d3da0a63851240"
+    },
+    "GAZ:00000911": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000911",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000911",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000911": [
+          "http://purl.obolibrary.org/obo/GAZ_00000911"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000911",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000911",
+      "native_label": "Liberia",
+      "native_node_sha256": "90f918a3817a99618df5b6afbdfec505e72cff5f0f8c67f5355a6b4a87b21091"
+    },
+    "GAZ:00000912": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000912",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000912",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000912": [
+          "http://purl.obolibrary.org/obo/GAZ_00000912"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000912",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000912",
+      "native_label": "Nigeria",
+      "native_node_sha256": "380ee12f0a2c5b3d446509f9123563a18000422a85d1a05da88e2cc40fcf571f"
+    },
+    "GAZ:00000913": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000913",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000913",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000913": [
+          "http://purl.obolibrary.org/obo/GAZ_00000913"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000913",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000913",
+      "native_label": "Senegal",
+      "native_node_sha256": "8ee23dc09fec7482cffe019b5ff5862ecfcd50fb01da5f07440432f3038cc1b9"
+    },
+    "GAZ:00000914": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000914",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000914",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000914": [
+          "http://purl.obolibrary.org/obo/GAZ_00000914"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000914",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000914",
+      "native_label": "Sierra Leone",
+      "native_node_sha256": "756d680fdcfb052eba48d2dd4c14b64eb3980010c3c00d6a7ca5b5dc98ca27cb"
+    },
+    "GAZ:00000915": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00000915",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00000915",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000915": [
+          "http://purl.obolibrary.org/obo/GAZ_00000915"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00000915",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00000915",
+      "native_label": "Togo",
+      "native_node_sha256": "8a0c12b7e45dde627d4405097fb8131435946231fc83f38f7d7cacd3ab09d02f"
+    },
+    "GAZ:00001086": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001086",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001086",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001086": [
+          "http://purl.obolibrary.org/obo/GAZ_00001086"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001086",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001086",
+      "native_label": "Democratic Republic of the Congo",
+      "native_node_sha256": "d4f609cc84e2d5dfb4bde7b48cc6ba768ecd4213d64455d63654bc121d6c36d3"
+    },
+    "GAZ:00001087": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001087",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001087",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001087": [
+          "http://purl.obolibrary.org/obo/GAZ_00001087"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001087",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001087",
+      "native_label": "Rwanda",
+      "native_node_sha256": "2531c3d704d4470918cff8d43cc6775563ded751235cd5453d91efbffbada53f"
+    },
+    "GAZ:00001088": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001088",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001088",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001088": [
+          "http://purl.obolibrary.org/obo/GAZ_00001088"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001088",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001088",
+      "native_label": "Republic of Congo",
+      "native_node_sha256": "3d3985a579c3428b447d5b064ccc1f1c6e01460e402c3af776b5f30968a40160"
+    },
+    "GAZ:00001089": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001089",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001089",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001089": [
+          "http://purl.obolibrary.org/obo/GAZ_00001089"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001089",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001089",
+      "native_label": "Central African Republic",
+      "native_node_sha256": "9dba7f6ff1fda06fa53512a918359cb0150154a8ba0caf4e242ac405507b9968"
+    },
+    "GAZ:00001090": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001090",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001090",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001090": [
+          "http://purl.obolibrary.org/obo/GAZ_00001090"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001090",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001090",
+      "native_label": "Burundi",
+      "native_node_sha256": "fd84f245e1f3a2bd37d4242a783f74469931dc0bf5f1c6540456846228ce7c86"
+    },
+    "GAZ:00001091": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001091",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001091",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001091": [
+          "http://purl.obolibrary.org/obo/GAZ_00001091"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001091",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001091",
+      "native_label": "Equatorial Guinea",
+      "native_node_sha256": "271aabb842bbcbdf478335e330e0838bbc350fc550eb62826f7b8f67837c80dc"
+    },
+    "GAZ:00001092": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001092",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001092",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001092": [
+          "http://purl.obolibrary.org/obo/GAZ_00001092"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001092",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001092",
+      "native_label": "Gabon",
+      "native_node_sha256": "524b6c8796b08d1307de0cbcbf26f6ef32a8885fec24935dddcba7a1954477e0"
+    },
+    "GAZ:00001093": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001093",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001093",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001093": [
+          "http://purl.obolibrary.org/obo/GAZ_00001093"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001093",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001093",
+      "native_label": "Cameroon",
+      "native_node_sha256": "8add82659a8ed3d9fb14646640b908cad47c9c3f48176cfcad2509503b94db90"
+    },
+    "GAZ:00001094": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001094",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001094",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001094": [
+          "http://purl.obolibrary.org/obo/GAZ_00001094"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001094",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001094",
+      "native_label": "Republic of South Africa",
+      "native_node_sha256": "231f20fffbe37d4ee13b20e83c0cdb004d1755a384902690a02e86e9dd038e75"
+    },
+    "GAZ:00001095": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001095",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001095",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001095": [
+          "http://purl.obolibrary.org/obo/GAZ_00001095"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001095",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001095",
+      "native_label": "Angola",
+      "native_node_sha256": "4adbb221e026435e470a0b6616f286631714291c837f0dc39ed0d8a283615c28"
+    },
+    "GAZ:00001096": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001096",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001096",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001096": [
+          "http://purl.obolibrary.org/obo/GAZ_00001096"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001096",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001096",
+      "native_label": "Namibia",
+      "native_node_sha256": "429db2eca9290d0520e4c1b9605d7da2572988a3e3e242e70d8e4e5aa4cdaa0e"
+    },
+    "GAZ:00001097": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001097",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001097",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001097": [
+          "http://purl.obolibrary.org/obo/GAZ_00001097"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001097",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001097",
+      "native_label": "Botswana",
+      "native_node_sha256": "8d6484222ece96233d62db108962f86d47e7bda6ad2202bdb53871282bfe3364"
+    },
+    "GAZ:00001098": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001098",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001098",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001098": [
+          "http://purl.obolibrary.org/obo/GAZ_00001098"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001098",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001098",
+      "native_label": "Lesotho",
+      "native_node_sha256": "16e29932ad5caee45fbf79f7153c4003e0178fb4d16ad6a3782ef9f74fec1159"
+    },
+    "GAZ:00001099": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001099",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001099",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001099": [
+          "http://purl.obolibrary.org/obo/GAZ_00001099"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001099",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001099",
+      "native_label": "Swaziland",
+      "native_node_sha256": "15f6b9812a7d8686ad0092d003da24faf593307cc27bedddc6548f0becde368f"
+    },
+    "GAZ:00001100": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001100",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001100",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001100": [
+          "http://purl.obolibrary.org/obo/GAZ_00001100"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001100",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001100",
+      "native_label": "Mozambique",
+      "native_node_sha256": "f934f7177636ec7a26045f92379a28d5e00a0286ee3c697725e93e041a763dd3"
+    },
+    "GAZ:00001101": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001101",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001101",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001101": [
+          "http://purl.obolibrary.org/obo/GAZ_00001101"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001101",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001101",
+      "native_label": "Kenya",
+      "native_node_sha256": "4e9f4c8057aaae4f53ae84da107e014f7f861505c46f41563bbf0cff71f11017"
+    },
+    "GAZ:00001102": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001102",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001102",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001102": [
+          "http://purl.obolibrary.org/obo/GAZ_00001102"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001102",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001102",
+      "native_label": "Uganda",
+      "native_node_sha256": "45d3a13ba277dbb5819d0989c16684eb89b79ef34b72794c33a2f61d8dae491c"
+    },
+    "GAZ:00001103": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001103",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001103",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001103": [
+          "http://purl.obolibrary.org/obo/GAZ_00001103"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001103",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001103",
+      "native_label": "Tanzania",
+      "native_node_sha256": "2b312b644e3dd1f39eee19cf70d679fd0ce811bf0737925c12700068f6103e97"
+    },
+    "GAZ:00001104": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001104",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001104",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001104": [
+          "http://purl.obolibrary.org/obo/GAZ_00001104"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001104",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001104",
+      "native_label": "Somalia",
+      "native_node_sha256": "1bcbe781d847b7d1a9fa456928364d634bf5b7aa23e94721939a0d24f1c4d6d4"
+    },
+    "GAZ:00001105": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001105",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001105",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001105": [
+          "http://purl.obolibrary.org/obo/GAZ_00001105"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001105",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001105",
+      "native_label": "Malawi",
+      "native_node_sha256": "d268d0f6f1875d1d88c3bf4e772a04cc460889e460abec23a582a7c291c63312"
+    },
+    "GAZ:00001106": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001106",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001106",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001106": [
+          "http://purl.obolibrary.org/obo/GAZ_00001106"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001106",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001106",
+      "native_label": "Zimbabwe",
+      "native_node_sha256": "c293fddb2de1b6fa15640a014ed5eae9f0235f28b083e45f387be31db10a6f3a"
+    },
+    "GAZ:00001107": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00001107",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00001107",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00001107": [
+          "http://purl.obolibrary.org/obo/GAZ_00001107"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00001107",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00001107",
+      "native_label": "Zambia",
+      "native_node_sha256": "092b7b69c75731a3fe222e370051b74f37f8818cca7325383126025ebaa46bf4"
+    },
+    "GAZ:00002459": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00002459",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00002459",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00002459": [
+          "http://purl.obolibrary.org/obo/GAZ_00002459"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00002459",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00002459",
+      "native_label": "United States of America",
+      "native_node_sha256": "73c40ad571a83ce806ed00359c60636469127c2d4e630221c39140ea8388f148"
+    },
+    "GAZ:00002511": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00002511",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00002511",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00002511": [
+          "http://purl.obolibrary.org/obo/GAZ_00002511"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00002511",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00002511",
+      "native_label": "Bolivia",
+      "native_node_sha256": "831b53c8a985aff3511a73215afd4e64d0b5c70075dd4f0128d27a271fcd6d57"
+    },
+    "GAZ:00002516": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00002516",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00002516",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00002516": [
+          "http://purl.obolibrary.org/obo/GAZ_00002516"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00002516",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00002516",
+      "native_label": "Guyane",
+      "native_node_sha256": "af84ee8d97d775ac054473c75b0db76f10c50cdde2e2e716c27c27a9e0af9314"
+    },
+    "GAZ:00002522": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00002522",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00002522",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00002522": [
+          "http://purl.obolibrary.org/obo/GAZ_00002522"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00002522",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00002522",
+      "native_label": "Guyana",
+      "native_node_sha256": "4c43bd59271d0dba13a2fa36ef0297f9234304df90c70fd6b38963181b580430"
+    },
+    "GAZ:00002560": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00002560",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00002560",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00002560": [
+          "http://purl.obolibrary.org/obo/GAZ_00002560"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00002560",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00002560",
+      "native_label": "Canada",
+      "native_node_sha256": "608d21148cd0ab5234479336e4fb2258663c7fa9c4ff0aa272fe3aed86e27ea8"
+    },
+    "GAZ:00002637": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00002637",
+          "http://purl.obolibrary.org/obo/FOODON_03520359",
+          "http://purl.obolibrary.org/obo/GAZ_00000464",
+          "http://purl.obolibrary.org/obo/GAZ_00000460",
+          "http://purl.obolibrary.org/obo/GAZ_00000013",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00002637",
+          "http://purl.obolibrary.org/obo/FOODON_03520359",
+          "http://purl.obolibrary.org/obo/GAZ_00000464",
+          "http://purl.obolibrary.org/obo/GAZ_00000460",
+          "http://purl.obolibrary.org/obo/GAZ_00000013",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/FOODON_03520359": [
+          "http://purl.obolibrary.org/obo/GAZ_00002637",
+          "http://purl.obolibrary.org/obo/FOODON_03520359"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000013": [
+          "http://purl.obolibrary.org/obo/GAZ_00002637",
+          "http://purl.obolibrary.org/obo/FOODON_03520359",
+          "http://purl.obolibrary.org/obo/GAZ_00000464",
+          "http://purl.obolibrary.org/obo/GAZ_00000460",
+          "http://purl.obolibrary.org/obo/GAZ_00000013"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000460": [
+          "http://purl.obolibrary.org/obo/GAZ_00002637",
+          "http://purl.obolibrary.org/obo/FOODON_03520359",
+          "http://purl.obolibrary.org/obo/GAZ_00000464",
+          "http://purl.obolibrary.org/obo/GAZ_00000460"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000464": [
+          "http://purl.obolibrary.org/obo/GAZ_00002637",
+          "http://purl.obolibrary.org/obo/FOODON_03520359",
+          "http://purl.obolibrary.org/obo/GAZ_00000464"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00002637": [
+          "http://purl.obolibrary.org/obo/GAZ_00002637"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00002637",
+      "native_label": "United Kingdom",
+      "native_node_sha256": "bf9cf1f2637449695de05ee401eada95e81278fd67ad9824905a7ebf586cb6a9"
+    },
+    "GAZ:00002825": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00002825",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00002825",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00002825": [
+          "http://purl.obolibrary.org/obo/GAZ_00002825"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00002825",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00002825",
+      "native_label": "Chile",
+      "native_node_sha256": "ac71868b457e02e013d33b02d0b1d75a642368a61565e28e4b29a06c2acd5938"
+    },
+    "GAZ:00002828": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00002828",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00002828",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00002828": [
+          "http://purl.obolibrary.org/obo/GAZ_00002828"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00002828",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00002828",
+      "native_label": "Brazil",
+      "native_node_sha256": "85ec8b0ef4eec1b9dbe25b743fc07789155408b01c64ce9bd77275b42483bdbd"
+    },
+    "GAZ:00002852": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00002852",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00002852",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00002852": [
+          "http://purl.obolibrary.org/obo/GAZ_00002852"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00002852",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00002852",
+      "native_label": "Mexico",
+      "native_node_sha256": "21ae8f3992e7f9f7753db776f9ef6a16775bb78c414a30df812f90dbbb90305d"
+    },
+    "GAZ:00002912": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00002912",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00002912",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00002912": [
+          "http://purl.obolibrary.org/obo/GAZ_00002912"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00002912",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00002912",
+      "native_label": "Ecuador",
+      "native_node_sha256": "da846df931d199270e0e8c1310edff785b9a693648f30e0b52de2f440f226de4"
+    },
+    "GAZ:00002928": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00002928",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00002928",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00002928": [
+          "http://purl.obolibrary.org/obo/GAZ_00002928"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00002928",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00002928",
+      "native_label": "Argentina",
+      "native_node_sha256": "204555846c3fcb1ef56b5a8b4076ba9e111307bc8fecb01b6ebe53b8402029cc"
+    },
+    "GAZ:00002929": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00002929",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00002929",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00002929": [
+          "http://purl.obolibrary.org/obo/GAZ_00002929"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00002929",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00002929",
+      "native_label": "Colombia",
+      "native_node_sha256": "685077a4014aaff5881292dc1fd4a7819f1479353eb9de4f71b55083e6245e2a"
+    },
+    "GAZ:00002930": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00002930",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00002930",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00002930": [
+          "http://purl.obolibrary.org/obo/GAZ_00002930"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00002930",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00002930",
+      "native_label": "Uruguay",
+      "native_node_sha256": "9931493876ee627c721815712ad568866307c86c4d915b548c2c423b1874901e"
+    },
+    "GAZ:00002931": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00002931",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00002931",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00002931": [
+          "http://purl.obolibrary.org/obo/GAZ_00002931"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00002931",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00002931",
+      "native_label": "Venezuela",
+      "native_node_sha256": "423398e2bf829624f67c5a8a68c2020d1db76407f819594d33af910f96caab25"
+    },
+    "GAZ:00002932": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00002932",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00002932",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00002932": [
+          "http://purl.obolibrary.org/obo/GAZ_00002932"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00002932",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00002932",
+      "native_label": "Peru",
+      "native_node_sha256": "409455fcd2a1313c18be794e2e8170f2d128b80b5d2c3709b441fa0048911ab0"
+    },
+    "GAZ:00002933": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00002933",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00002933",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00002933": [
+          "http://purl.obolibrary.org/obo/GAZ_00002933"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00002933",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00002933",
+      "native_label": "Paraguay",
+      "native_node_sha256": "689c34127129e4dbb40cea08654ccc00dfd1d5e5fd01891e38668f46f6dd8fa9"
+    },
+    "GAZ:00003744": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00003744",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00003744",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000013": [
+          "http://purl.obolibrary.org/obo/GAZ_00003744",
+          "http://purl.obolibrary.org/obo/GAZ_00000559",
+          "http://purl.obolibrary.org/obo/GAZ_00000465",
+          "http://purl.obolibrary.org/obo/GAZ_00000013"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000465": [
+          "http://purl.obolibrary.org/obo/GAZ_00003744",
+          "http://purl.obolibrary.org/obo/GAZ_00000559",
+          "http://purl.obolibrary.org/obo/GAZ_00000465"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00000559": [
+          "http://purl.obolibrary.org/obo/GAZ_00003744",
+          "http://purl.obolibrary.org/obo/GAZ_00000559"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00003744": [
+          "http://purl.obolibrary.org/obo/GAZ_00003744"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00003744",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00003744",
+      "native_label": "Thailand",
+      "native_node_sha256": "25d6b9062c5f9bb72c698173c89a02e4d34705b33d167109e7eb3820a417bbdf"
+    },
+    "GAZ:00003924": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00003924",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00003924",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00003924": [
+          "http://purl.obolibrary.org/obo/GAZ_00003924"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00003924",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00003924",
+      "native_label": "Sri Lanka",
+      "native_node_sha256": "e9dd51943e7e0f38172a5c592bebd60ff12cd3a670b4b3c29996075ef1160e03"
+    },
+    "GAZ:00003934": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00003934",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00003934",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00003934": [
+          "http://purl.obolibrary.org/obo/GAZ_00003934"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00003934",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00003934",
+      "native_label": "Egypt",
+      "native_node_sha256": "b008cce064ee3f1d2cf89fe9eecae8bd2a64f0e271e4945131635e50f008b2a9"
+    },
+    "GAZ:00005820": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00005820",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00005820",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00005820": [
+          "http://purl.obolibrary.org/obo/GAZ_00005820"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00005820",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00005820",
+      "native_label": "Comoros",
+      "native_node_sha256": "fd4787c1f89246f670716ebb4d0e104bf54a509656359c1908d546d2f150348d"
+    },
+    "GAZ:00056925": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00056925",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00056925",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00056925": [
+          "http://purl.obolibrary.org/obo/GAZ_00056925"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00056925",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00056925",
+      "native_label": "Malay Peninsula",
+      "native_node_sha256": "cf442f0b6f7fd03166259cdbc0fb253e83cfd5aeb60d87c8201e38983e896a20"
+    },
+    "GAZ:00233439": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/GAZ_00233439",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/ENVO_01000813": [
+          "http://purl.obolibrary.org/obo/GAZ_00233439",
+          "http://purl.obolibrary.org/obo/NCIT_C25464",
+          "http://purl.obolibrary.org/obo/ENVO_01000813"
+        ],
+        "http://purl.obolibrary.org/obo/GAZ_00233439": [
+          "http://purl.obolibrary.org/obo/GAZ_00233439"
+        ],
+        "http://purl.obolibrary.org/obo/NCIT_C25464": [
+          "http://purl.obolibrary.org/obo/GAZ_00233439",
+          "http://purl.obolibrary.org/obo/NCIT_C25464"
+        ]
+      },
+      "authority_file": "foodon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/GAZ_00233439",
+      "native_label": "South Sudan",
+      "native_node_sha256": "1eaa18f8e8d489854fa286e36bf0ffbf8c1ffaca34f154fee430d4b0a82241cc"
+    },
+    "OBO:COB_0000011": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000001": [
+          "http://purl.obolibrary.org/obo/COB_0000011",
+          "http://purl.obolibrary.org/obo/BFO_0000040",
+          "http://purl.obolibrary.org/obo/BFO_0000004",
+          "http://purl.obolibrary.org/obo/BFO_0000002",
+          "http://purl.obolibrary.org/obo/BFO_0000001"
+        ],
+        "http://purl.obolibrary.org/obo/BFO_0000002": [
+          "http://purl.obolibrary.org/obo/COB_0000011",
+          "http://purl.obolibrary.org/obo/BFO_0000040",
+          "http://purl.obolibrary.org/obo/BFO_0000004",
+          "http://purl.obolibrary.org/obo/BFO_0000002"
+        ],
+        "http://purl.obolibrary.org/obo/BFO_0000004": [
+          "http://purl.obolibrary.org/obo/COB_0000011",
+          "http://purl.obolibrary.org/obo/BFO_0000040",
+          "http://purl.obolibrary.org/obo/BFO_0000004"
+        ],
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/COB_0000011",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/COB_0000011": [
+          "http://purl.obolibrary.org/obo/COB_0000011"
+        ]
+      },
+      "authority_file": "uberon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/COB_0000011",
+      "native_label": "atom",
+      "native_node_sha256": "39a743ee7f8fc21fc2bbe53cc93bdd9a27aaa00032b4cf656bf3189d7407743a"
+    },
+    "OBO:COB_0000013": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000001": [
+          "http://purl.obolibrary.org/obo/COB_0000013",
+          "http://purl.obolibrary.org/obo/BFO_0000040",
+          "http://purl.obolibrary.org/obo/BFO_0000004",
+          "http://purl.obolibrary.org/obo/BFO_0000002",
+          "http://purl.obolibrary.org/obo/BFO_0000001"
+        ],
+        "http://purl.obolibrary.org/obo/BFO_0000002": [
+          "http://purl.obolibrary.org/obo/COB_0000013",
+          "http://purl.obolibrary.org/obo/BFO_0000040",
+          "http://purl.obolibrary.org/obo/BFO_0000004",
+          "http://purl.obolibrary.org/obo/BFO_0000002"
+        ],
+        "http://purl.obolibrary.org/obo/BFO_0000004": [
+          "http://purl.obolibrary.org/obo/COB_0000013",
+          "http://purl.obolibrary.org/obo/BFO_0000040",
+          "http://purl.obolibrary.org/obo/BFO_0000004"
+        ],
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/COB_0000013",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/COB_0000013": [
+          "http://purl.obolibrary.org/obo/COB_0000013"
+        ]
+      },
+      "authority_file": "uberon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/COB_0000013",
+      "native_label": "molecule",
+      "native_node_sha256": "c33dc7b92070f158cafec5d8ea669bb90906190d91e4618ef99e33a9f29982ef"
+    },
+    "OBO:COB_0000080": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000001": [
+          "http://purl.obolibrary.org/obo/COB_0000080",
+          "http://purl.obolibrary.org/obo/BFO_0000040",
+          "http://purl.obolibrary.org/obo/BFO_0000004",
+          "http://purl.obolibrary.org/obo/BFO_0000002",
+          "http://purl.obolibrary.org/obo/BFO_0000001"
+        ],
+        "http://purl.obolibrary.org/obo/BFO_0000002": [
+          "http://purl.obolibrary.org/obo/COB_0000080",
+          "http://purl.obolibrary.org/obo/BFO_0000040",
+          "http://purl.obolibrary.org/obo/BFO_0000004",
+          "http://purl.obolibrary.org/obo/BFO_0000002"
+        ],
+        "http://purl.obolibrary.org/obo/BFO_0000004": [
+          "http://purl.obolibrary.org/obo/COB_0000080",
+          "http://purl.obolibrary.org/obo/BFO_0000040",
+          "http://purl.obolibrary.org/obo/BFO_0000004"
+        ],
+        "http://purl.obolibrary.org/obo/BFO_0000040": [
+          "http://purl.obolibrary.org/obo/COB_0000080",
+          "http://purl.obolibrary.org/obo/BFO_0000040"
+        ],
+        "http://purl.obolibrary.org/obo/COB_0000080": [
+          "http://purl.obolibrary.org/obo/COB_0000080"
+        ]
+      },
+      "authority_file": "uberon.json",
+      "category": "biolink:PhysicalEntity",
+      "native_iri": "http://purl.obolibrary.org/obo/COB_0000080",
+      "native_label": "complex of molecules",
+      "native_node_sha256": "d7ab57e96494a49e3f325d30a2a165b82bab77c115fe3d96607fc15b52aaf1de"
+    },
+    "PCO:0000003": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000020": [
+          "http://purl.obolibrary.org/obo/PCO_0000003",
+          "http://purl.obolibrary.org/obo/PATO_0002003",
+          "http://purl.obolibrary.org/obo/PATO_0001241",
+          "http://purl.obolibrary.org/obo/PATO_0000001",
+          "http://purl.obolibrary.org/obo/BFO_0000020"
+        ],
+        "http://purl.obolibrary.org/obo/PATO_0000001": [
+          "http://purl.obolibrary.org/obo/PCO_0000003",
+          "http://purl.obolibrary.org/obo/PATO_0002003",
+          "http://purl.obolibrary.org/obo/PATO_0001241",
+          "http://purl.obolibrary.org/obo/PATO_0000001"
+        ],
+        "http://purl.obolibrary.org/obo/PATO_0001241": [
+          "http://purl.obolibrary.org/obo/PCO_0000003",
+          "http://purl.obolibrary.org/obo/PATO_0002003",
+          "http://purl.obolibrary.org/obo/PATO_0001241"
+        ],
+        "http://purl.obolibrary.org/obo/PATO_0002003": [
+          "http://purl.obolibrary.org/obo/PCO_0000003",
+          "http://purl.obolibrary.org/obo/PATO_0002003"
+        ],
+        "http://purl.obolibrary.org/obo/PCO_0000003": [
+          "http://purl.obolibrary.org/obo/PCO_0000003"
+        ]
+      },
+      "authority_file": "pato.json",
+      "category": "biolink:Attribute",
+      "native_iri": "http://purl.obolibrary.org/obo/PCO_0000003",
+      "native_label": "quality of a population",
+      "native_node_sha256": "e2baa16d259ece642fecf23e43d037fc2ac8da191f81a5f19a2af199970cce64"
+    },
+    "PCO:0000004": {
+      "ancestor_paths": {
+        "http://purl.obolibrary.org/obo/BFO_0000020": [
+          "http://purl.obolibrary.org/obo/PCO_0000004",
+          "http://purl.obolibrary.org/obo/PATO_0002003",
+          "http://purl.obolibrary.org/obo/PATO_0001241",
+          "http://purl.obolibrary.org/obo/PATO_0000001",
+          "http://purl.obolibrary.org/obo/BFO_0000020"
+        ],
+        "http://purl.obolibrary.org/obo/PATO_0000001": [
+          "http://purl.obolibrary.org/obo/PCO_0000004",
+          "http://purl.obolibrary.org/obo/PATO_0002003",
+          "http://purl.obolibrary.org/obo/PATO_0001241",
+          "http://purl.obolibrary.org/obo/PATO_0000001"
+        ],
+        "http://purl.obolibrary.org/obo/PATO_0001241": [
+          "http://purl.obolibrary.org/obo/PCO_0000004",
+          "http://purl.obolibrary.org/obo/PATO_0002003",
+          "http://purl.obolibrary.org/obo/PATO_0001241"
+        ],
+        "http://purl.obolibrary.org/obo/PATO_0002003": [
+          "http://purl.obolibrary.org/obo/PCO_0000004",
+          "http://purl.obolibrary.org/obo/PATO_0002003"
+        ],
+        "http://purl.obolibrary.org/obo/PCO_0000004": [
+          "http://purl.obolibrary.org/obo/PCO_0000004"
+        ]
+      },
+      "authority_file": "pato.json",
+      "category": "biolink:Attribute",
+      "native_iri": "http://purl.obolibrary.org/obo/PCO_0000004",
+      "native_label": "quality of an ecological community",
+      "native_node_sha256": "654a9c49b1548cad5c07a89f6e432a768c8a2af6812ee45d5ed63e9635181ba5"
+    }
+  },
+  "version": 1
+}

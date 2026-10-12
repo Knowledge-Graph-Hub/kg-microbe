@@ -3,6 +3,7 @@
 import csv
 import json
 import re
+import shutil
 from collections import defaultdict
 from contextlib import ExitStack
 from itertools import chain
@@ -40,7 +41,6 @@ from kg_microbe.transform_utils.constants import (
     PUBLICATIONS_COLUMN,
     RDFS_SUBCLASS_OF,
     RELATED_TO_PREDICATE,
-    RELATED_TO_RELATION,
     RELATION_COLUMN,
     RHEA_NEW_PREFIX,
     ROBOT_REMOVED_SUFFIX,
@@ -60,6 +60,11 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.graph_canonicalization import canonical_node_category, compact_identifier
+from kg_microbe.utils.ontology_metadata import (
+    annotation_property_ids,
+    metadata_identifier,
+    reviewed_foodon_schema_property_ids,
+)
 from kg_microbe.utils.ontology_utils import (
     _decompress_atomically,
     _derived_json_is_stale,
@@ -280,7 +285,27 @@ def _run_kgx_transform(*, inputs, input_format, output, output_format) -> None:
 class OntologiesTransform(Transform):
     """OntologyTransform parses an Obograph JSON form of an Ontology into nodes nad edges."""
 
-    DATA_INPUTS = ("mappings/foodon_model_dispositions.tsv", "mappings/ontology_self_loop_exclusions.tsv")
+    DATA_INPUTS = (
+        "mappings/foodon_model_dispositions.tsv",
+        "mappings/ontology_self_loop_exclusions.tsv",
+        "mappings/native_ro_predicate_dispositions.json",
+        "mappings/foodon_kernel_quarantine.json",
+        "mappings/ontology_parent_dispositions.json",
+        "mappings/upa_reaction_projection_dispositions.json",
+    )
+    REQUIRED_CONSUMED_INPUTS = (
+        "ontology_native_relation_policy",
+        "ontology_foodon_kernel_policy",
+        "ontology_parent_disposition_policy",
+        "upa_route_policy",
+    )
+    REQUIRED_AUDIT_FILES = (
+        "ontology_metadata_exclusions.tsv",
+        "native_relation_dispositions.tsv",
+        "foodon_kernel_quarantine.tsv",
+        "ontology_parent_dispositions.tsv",
+        "upa_route_review.tsv",
+    )
 
     # Mapping of ontology names to InforES standard knowledge sources
     # (po and micro removed — now emitted as per-CURIE stubs via
@@ -307,6 +332,222 @@ class OntologiesTransform(Transform):
         source_name = ONTOLOGIES
         super().__init__(source_name, input_dir, output_dir)
 
+    @property
+    def producer_native_inputs(self):
+        """Expose the versioned audit-driven native contract for source finalization."""
+        from kg_microbe.utils.native_ro_retention import native_input_contract
+        from kg_microbe.utils.ontology_parent_quarantine import native_input_contract as parent_contract
+
+        parents = getattr(self, "_ontology_parent_input_contract", None)
+        members = parents.member_names() if parents is not None else ()
+        from kg_microbe.utils.upa_route_review import contract as upa_contract
+
+        upa = getattr(self, "_upa_route_input_contract", None)
+        upa_members = upa.member_names() if upa is not None else ()
+        return {
+            **native_input_contract(),
+            "ontology_parent_dispositions": parent_contract(members),
+            "upa_route_review": upa_contract(upa_members),
+        }
+
+    @producer_native_inputs.setter
+    def producer_native_inputs(self, recorded):
+        """Do not silently accept missing or changed native contracts on repeat admission."""
+        from kg_microbe.utils.native_ro_retention import native_input_contract
+        from kg_microbe.utils.ontology_parent_quarantine import RecordedParentBinding
+        from kg_microbe.utils.ontology_parent_quarantine import native_input_contract as parent_contract
+        from kg_microbe.utils.source_finalization import SourceFinalizationRequired
+
+        nested = (recorded or {}).get("ontology_parent_dispositions", {})
+        members = nested.get("members", ())
+        from kg_microbe.utils.upa_route_review import RecordedUPABinding
+        from kg_microbe.utils.upa_route_review import contract as upa_contract
+
+        upa_recorded = (recorded or {}).get("upa_route_review", {})
+        upa_members = upa_recorded.get("members", ())
+        if recorded != {
+            **native_input_contract(),
+            "ontology_parent_dispositions": parent_contract(members),
+            "upa_route_review": upa_contract(upa_members),
+        }:
+            raise SourceFinalizationRequired("Native ontology recorded input contract changed")
+        upa = getattr(self, "_upa_route_input_contract", None)
+        if upa is not None:
+            upa.verify_bindings()
+            if list(upa.member_names()) != list(upa_members):
+                raise SourceFinalizationRequired("UPA original selected member scope changed")
+        else:
+            self._upa_route_input_contract = RecordedUPABinding(self, upa_recorded)
+        parents = getattr(self, "_ontology_parent_input_contract", None)
+        if parents is not None:
+            parents.verify_bindings()
+            if list(parents.member_names()) != list(members):
+                raise SourceFinalizationRequired("Ontology parent selected member scope changed")
+        else:
+            self._ontology_parent_input_contract = RecordedParentBinding(self, nested)
+        from kg_microbe.utils.foodon_kernel_producer import RecordedKernelBinding
+
+        kernel = getattr(self, "_foodon_kernel_input_contract", None)
+        if kernel is None:
+            self._foodon_kernel_input_contract = RecordedKernelBinding(self, members)
+        else:
+            kernel.verify_bindings(staged_members=members)
+        self._ontology_parent_published = True
+
+    def finalize(self, *, file_prefix="", fresh_run=False):
+        """Make the successful source-publication dialect boundary explicit for native verification."""
+        from kg_microbe.utils.ontology_parent_quarantine import verify_audit_bindings
+
+        report = super().finalize(file_prefix=file_prefix, fresh_run=fresh_run)
+        published = self.output_dir / f"{file_prefix}source_finalization.json"
+        with published.open(encoding="utf-8") as stream:
+            if json.load(stream) != report:
+                raise ValueError("Ontology parent publication returned a different saved report")
+        if report.get("producer_native_inputs") != self.producer_native_inputs:
+            raise ValueError("Ontology parent publication changed the original native contract")
+        verify_audit_bindings(self.output_dir, self.consumed_input_snapshots, members=report["members"])
+        self._ontology_parent_published = True
+        return report
+
+    def bind_finalization_members(self, names):
+        """Record the graph files of the record being finalized; the directory may hold others."""
+        self._finalization_members = tuple(sorted(names))
+
+    def verify_native_inputs(self, *, byte_verified=False, output_dir=None):
+        """Preserve native RO role identities after run completion and during finalization."""
+        from kg_microbe.utils import native_ro_retention
+        from kg_microbe.utils.source_finalization import SourceFinalizationRequired
+
+        contract = getattr(self, "_native_relation_input_contract", None)
+        if contract is not None:
+            contract.verify_bindings()
+        if native_ro_retention.AUDIT_FILE in self.producer_audit_snapshots:
+            # A staging directory holds exactly this record's members. The shared
+            # ontologies directory may also hold other records' supplier files.
+            members = (
+                tuple(
+                    sorted(
+                        path.name
+                        for path in Path(output_dir).iterdir()
+                        if path.name.endswith(("nodes.tsv", "edges.tsv"))
+                    )
+                )
+                if output_dir is not None
+                else getattr(self, "_finalization_members", None)
+            )
+            native_ro_retention.verify_audit_input_bindings(
+                output_dir or self.output_dir, self.consumed_input_snapshots, members=members
+            )
+        from kg_microbe.utils.foodon_kernel_producer import verify_kernel_audit_bindings
+        from kg_microbe.utils.foodon_kernel_quarantine import AUDIT_FILE as KERNEL_AUDIT
+
+        kernel = getattr(self, "_foodon_kernel_input_contract", None)
+        if kernel is not None:
+            staged_members = (
+                tuple(
+                    path.name for path in Path(output_dir).iterdir() if path.name.endswith(("nodes.tsv", "edges.tsv"))
+                )
+                if output_dir is not None
+                else None
+            )
+            kernel.verify_bindings(staged_members=staged_members)
+        if KERNEL_AUDIT in self.producer_audit_snapshots:
+            if kernel is None:
+                raise SourceFinalizationRequired("Missing original FOODON kernel input/scope binding")
+            verify_kernel_audit_bindings(
+                output_dir or self.output_dir, self.consumed_input_snapshots, members=kernel.member_names()
+            )
+        from kg_microbe.utils.ontology_parent_quarantine import AUDIT_FILE as PARENT_AUDIT
+        from kg_microbe.utils.ontology_parent_quarantine import verify_audit_bindings as verify_parent_bindings
+
+        parents = getattr(self, "_ontology_parent_input_contract", None)
+        if parents is not None:
+            parents.verify_bindings()
+        if PARENT_AUDIT in self.producer_audit_snapshots:
+            if parents is None:
+                raise ValueError("Missing original ontology parent role/scope binding")
+            verify_parent_bindings(
+                output_dir or self.output_dir,
+                self.consumed_input_snapshots,
+                members=parents.member_names(),
+                graph_quoting=csv.QUOTE_NONE
+                if output_dir is not None or getattr(self, "_ontology_parent_published", False)
+                else getattr(self, "TSV_QUOTING", csv.QUOTE_MINIMAL),
+            )
+        from kg_microbe.utils.upa_route_review import AUDIT_FILE as UPA_AUDIT
+        from kg_microbe.utils.upa_route_review import verify_audit_bindings as verify_upa_bindings
+
+        upa = getattr(self, "_upa_route_input_contract", None)
+        if upa is not None:
+            staged_members = (
+                tuple(
+                    path.name for path in Path(output_dir).iterdir() if path.name.endswith(("nodes.tsv", "edges.tsv"))
+                )
+                if output_dir is not None
+                else None
+            )
+            upa.verify_bindings(staged_members=staged_members)
+        if UPA_AUDIT in self.producer_audit_snapshots:
+            if upa is None:
+                raise SourceFinalizationRequired("Missing original UPA route input binding")
+            verify_upa_bindings(
+                output_dir or self.output_dir,
+                self.consumed_input_snapshots,
+                members=upa.member_names(),
+                raw_dir=self.input_base_dir,
+                graph_quoting=csv.QUOTE_NONE
+                if output_dir is not None or getattr(self, "_ontology_parent_published", False)
+                else getattr(self, "TSV_QUOTING", csv.QUOTE_MINIMAL),
+            )
+
+    @classmethod
+    def verify_recorded_native_inputs(cls, report, report_path, *, admission=None):
+        """Validate persisted audit/native bindings; never rewrite graph rows at merge time."""
+        from kg_microbe.utils.native_ro_retention import native_input_contract, verify_audit_input_bindings
+        from kg_microbe.utils.ontology_parent_quarantine import native_input_contract as parent_contract
+        from kg_microbe.utils.ontology_parent_quarantine import verify_audit_bindings as verify_parent_bindings
+        from kg_microbe.utils.source_finalization import SourceFinalizationRequired
+
+        member_names = report.get("members", {})
+        parent_members = sorted(
+            name
+            for name in member_names
+            if name in {f"{supplier}_{kind}.tsv" for supplier in ("foodon", "envo") for kind in ("nodes", "edges")}
+        )
+        from kg_microbe.utils.upa_route_review import contract as upa_contract
+        from kg_microbe.utils.upa_route_review import verify_audit_bindings as verify_upa_bindings
+
+        expected = {
+            **native_input_contract(),
+            "ontology_parent_dispositions": parent_contract(parent_members),
+            "upa_route_review": upa_contract(member_names),
+        }
+        if report.get("producer_native_inputs") != expected:
+            raise SourceFinalizationRequired("Native ontology recorded input contract missing or changed")
+        verify_parent_bindings(
+            Path(report_path).parent, report.get("consumed_inputs", {}), members=member_names, admission=admission
+        )
+        verify_upa_bindings(
+            Path(report_path).parent,
+            report.get("consumed_inputs", {}),
+            members=member_names,
+            raw_dir=report.get("raw_input_locator") or report.get("raw_input_directory"),
+            admission=admission,
+        )
+        # A report without recorded members has an unknown scope: keep the
+        # conservative whole-directory scan rather than an empty member set.
+        verify_audit_input_bindings(
+            Path(report_path).parent,
+            report.get("consumed_inputs", {}),
+            members=report.get("members"),
+            admission=admission,
+        )
+        from kg_microbe.utils.foodon_kernel_producer import verify_kernel_audit_bindings
+
+        verify_kernel_audit_bindings(
+            Path(report_path).parent, report.get("consumed_inputs", {}), members=member_names, admission=admission
+        )
+
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True) -> None:
         """
         Transform an ontology.
@@ -314,15 +555,72 @@ class OntologiesTransform(Transform):
         :param data_file: data file to parse
         :return: None.
         """
-        if data_file:
-            k = str(data_file).split(".")[0]
-            data_file = self.input_base_dir / data_file
-            self.parse(k, data_file, k)
-        else:
-            # load all ontologies
-            for k in ONTOLOGIES_MAP.keys():
-                data_file = self.input_base_dir / ONTOLOGIES_MAP[k]
-                self.parse(k, data_file, k)
+        # One mandatory aggregate covers exactly this invocation's selected
+        # ontologies, including a single --data-file run. Per-file reports are
+        # retained for inspection, but this producer-bound copy is the evidence
+        # that finalization and admission must preserve, even when it is empty.
+        from kg_microbe.utils.foodon_kernel_producer import FoodonKernelQuarantine
+        from kg_microbe.utils.foodon_kernel_quarantine import AUDIT_FILE as KERNEL_AUDIT
+        from kg_microbe.utils.native_ro_retention import AUDIT_FILE, NativeROPredicateRetention
+        from kg_microbe.utils.ontology_parent_quarantine import AUDIT_FILE as PARENT_AUDIT
+        from kg_microbe.utils.ontology_parent_quarantine import OntologyParentQuarantine
+        from kg_microbe.utils.upa_route_review import AUDIT_FILE as UPA_AUDIT
+        from kg_microbe.utils.upa_route_review import UPARouteReview
+
+        audit_name = self.REQUIRED_AUDIT_FILES[0]
+        with (
+            atomic_write(self.output_dir / audit_name, encoding="utf-8", newline="") as stream,
+            atomic_write(self.output_dir / AUDIT_FILE, encoding="utf-8", newline="") as native_audit,
+            atomic_write(self.output_dir / KERNEL_AUDIT, encoding="utf-8", newline="") as kernel_audit,
+            atomic_write(self.output_dir / PARENT_AUDIT, encoding="utf-8", newline="") as parent_audit,
+            atomic_write(self.output_dir / UPA_AUDIT, encoding="utf-8", newline="") as upa_audit,
+        ):
+            self._native_relation_authority = NativeROPredicateRetention(self, native_audit)
+            self._foodon_kernel_authority = FoodonKernelQuarantine(self, kernel_audit)
+            self._ontology_parent_authority = OntologyParentQuarantine(self, parent_audit)
+            self._upa_route_authority = UPARouteReview(self, upa_audit)
+            self._metadata_audit_writer = csv.DictWriter(
+                stream,
+                delimiter="\t",
+                lineterminator="\n",
+                fieldnames=[
+                    "ontology",
+                    "kind",
+                    "source_file",
+                    "audit_file",
+                    "reason",
+                    "authority",
+                    "authority_sha256",
+                    "original_record_json",
+                ],
+            )
+            self._metadata_audit_writer.writeheader()
+            try:
+                if data_file:
+                    k = Path(data_file).name.split(".")[0]
+                    self.parse(k, self.input_base_dir / data_file, k)
+                else:
+                    # Resolve RO's existing OWL/JSON freshness boundary before
+                    # all approved suppliers consume its native property declarations.
+                    # The selected module set is unchanged.
+                    ordered = sorted(ONTOLOGIES_MAP.items(), key=lambda item: item[0] != "ro")
+                    for k, filename in ordered:
+                        self.parse(k, self.input_base_dir / filename, k)
+                self._native_relation_authority.verify_complete()
+                self._foodon_kernel_authority.verify_complete()
+                self._ontology_parent_authority.verify_complete()
+                self._upa_route_authority.verify_complete()
+            finally:
+                self._metadata_audit_writer = None
+                self._native_relation_authority = None
+                self._foodon_kernel_authority = None
+                self._ontology_parent_authority = None
+                self._upa_route_authority = None
+        self.record_producer_audit(audit_name)
+        self.record_producer_audit(AUDIT_FILE)
+        self.record_producer_audit(KERNEL_AUDIT)
+        self.record_producer_audit(PARENT_AUDIT)
+        self.record_producer_audit(UPA_AUDIT)
 
     def parse(self, name: str, data_file: Optional[Path], source: str) -> None:
         """
@@ -397,6 +695,36 @@ class OntologiesTransform(Transform):
             else:
                 raise ValueError(f"Unsupported file format: {data_file}")
 
+        upa_routes = getattr(self, "_upa_route_authority", None)
+        if name == "upa" and upa_routes is not None:
+            data_file = upa_routes.prepare_source(Path(data_file))
+        native_relations = getattr(self, "_native_relation_authority", None)
+        kernel_authority = getattr(self, "_foodon_kernel_authority", None)
+        parent_authority = getattr(self, "_ontology_parent_authority", None)
+        # Independent native roles must retain the pristine selected locator,
+        # never a private copy subsequently sanitized for KGX.
+        native_source = Path(data_file)
+        if name in {"foodon", "envo"} and parent_authority is not None:
+            parent_authority.prepare_source(name, Path(data_file))
+        if name == "foodon" and kernel_authority is not None:
+            data_file = kernel_authority.prepare_source(Path(data_file))
+        if name in {"ro", "pato", "uberon", "envo", "mondo"} and native_relations is not None:
+            # Keep complete original native evidence intact, including its
+            # metadata and obsolete declarations. Sanitization, deprecation
+            # filtering and KGX read only this admitted private copy.
+            data_file = native_relations.prepare_source(name, Path(data_file))
+
+        if name == "envo":
+            # Keep the native retirement declarations available to PREGO.
+            # Always rebuild this derived member from the immutable native
+            # snapshot: no basename/mtime cache can substitute prior bytes.
+            with self.consume_input("ontology_native_envo", native_source) as native:
+                native_hash = self.consumed_input_snapshots["ontology_native_envo"]["sha256"]
+                derived = self.output_dir / ".ontology-inputs" / native_hash / "envo.json"
+                with atomic_write(derived, "w", encoding="utf-8", newline="") as destination:
+                    shutil.copyfileobj(native, destination)
+            data_file = derived
+
         # Drop malformed synonym entries that crash KGX's obograph reader.
         # Some upstream OWL→JSON conversions emit synonym annotations
         # without a literal value (e.g. MICRO:0003152 has a hasRelatedSynonym
@@ -414,15 +742,59 @@ class OntologiesTransform(Transform):
         # any edges touching them reach the output.
         self._drop_deprecated_terms(Path(data_file))
 
-        _run_kgx_transform(
-            inputs=[data_file],
-            input_format="obojson",
-            output=self.output_dir / name,
-            output_format="tsv",
-        )
-        # Apply post-processing for ontologies that need IRI removal and URL conversion
-        # (all ontologies benefit from these cleanups)
-        self.post_process(name)
+        # Bind the actual post-deprecation authority before KGX reads it.
+        # Derive metadata classification from the immutable snapshot too, not
+        # from a previously read version. KGX must retain the original basename
+        # because it supplies literal node provenance (e.g. metpo.json).
+        # consume_input verifies the original bytes on entry and exit, then
+        # finalization verifies them again; never restamp an edited authority.
+        from kg_microbe.utils.foodon_classification import DISPOSITIONS_FILE
+
+        with self.consume_input("foodon_schema_dispositions", DISPOSITIONS_FILE) as dispositions_stream:
+            reviewed_schema_ids = {
+                row["id"]
+                for row in csv.DictReader(dispositions_stream, delimiter="\t")
+                if row["disposition"] == "schema_object_property"
+            }
+        consumed_name = f"ontology_metadata_{name}"
+        with self.consume_input(consumed_name, Path(data_file)) as snapshot:
+            authority = json.load(snapshot)
+            graphs = authority.get("graphs", []) or []
+            self._annotation_property_ids = annotation_property_ids(
+                chain.from_iterable(graph.get("nodes", []) or [] for graph in graphs)
+            )
+            self._foodon_schema_property_ids = reviewed_foodon_schema_property_ids(
+                chain.from_iterable(graph.get("nodes", []) or [] for graph in graphs),
+                reviewed_ids=reviewed_schema_ids,
+            )
+            self._annotation_individual_ids = self._annotation_only_individuals(graphs)
+            del authority, graphs
+            identity = self.consumed_input_snapshots[consumed_name]
+            self._metadata_authority_path = identity["path"]
+            self._metadata_authority_sha256 = identity["sha256"]
+            _run_kgx_transform(
+                inputs=[data_file],
+                input_format="obojson",
+                output=self.output_dir / name,
+                output_format="tsv",
+            )
+            self.post_process(name)
+
+    def _record_metadata_exclusions(self, records, source_file: Path, audit_file: str, kind: str) -> None:
+        """Stream excluded original rows directly into the mandatory run-level audit."""
+        writer = getattr(self, "_metadata_audit_writer", None)
+        if writer is None:
+            return  # Pure normalization tests/direct parse do not certify a completed run.
+        for record in records:
+            writer.writerow(
+                {
+                    "ontology": source_file.stem.removesuffix(f"_{kind}"),
+                    "kind": kind,
+                    "source_file": source_file.name,
+                    "audit_file": audit_file,
+                    **{key: record[key] for key in ("reason", "authority", "authority_sha256", "original_record_json")},
+                }
+            )
 
     def _drop_stale_derived_json(self, source: Path, json_path: Path) -> None:
         """
@@ -605,24 +977,28 @@ class OntologiesTransform(Transform):
         # QUDT's ucumCode and GO's applies-pattern (#1054). Reset per ontology
         # so declarations cannot leak into the next source in a batch.
         self._annotation_property_ids = set()
+        self._foodon_schema_property_ids = set()
         self._annotation_individual_ids = set()
+        self._metadata_authority_path = ""
+        self._metadata_authority_sha256 = ""
         if not json_path.is_file() or json_path.suffix != ".json":
+            if json_path.suffix == ".json":
+                raise FileNotFoundError(json_path)
             return
-        try:
-            with open(json_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-        except (OSError, json.JSONDecodeError):
-            return  # let downstream KGX raise the more informative error
+        with open(json_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
 
+        self._metadata_authority_path = str(json_path.resolve())
         self._annotation_individual_ids = self._annotation_only_individuals(data.get("graphs", []) or [])
+        self._annotation_property_ids = annotation_property_ids(
+            chain.from_iterable(graph.get("nodes", []) or [] for graph in data.get("graphs", []) or [])
+        )
+        self._foodon_schema_property_ids = reviewed_foodon_schema_property_ids(
+            chain.from_iterable(graph.get("nodes", []) or [] for graph in data.get("graphs", []) or [])
+        )
         dropped_nodes = 0
         dropped_edges = 0
         for graph in data.get("graphs", []) or []:
-            self._annotation_property_ids.update(
-                compact_identifier(node["id"])
-                for node in graph.get("nodes", []) or []
-                if node.get("id") and node.get("propertyType") == "ANNOTATION"
-            )
             deprecated_ids = {
                 node["id"] for node in graph.get("nodes", []) or [] if node.get("id") and self._is_deprecated_node(node)
             }
@@ -670,7 +1046,7 @@ class OntologiesTransform(Transform):
 
     def _drop_metamodel_nodes(self, df: pd.DataFrame) -> tuple:
         """
-        Return ``(filtered_df, dropped_count)`` with annotation-only nodes removed.
+        Return ``(filtered_df, dropped_count)`` with reviewed schema-only nodes removed.
 
         Drops declared annotation properties collected from obograph JSON as
         well as ids in :data:`METAMODEL_NODE_PREFIXES` -- the vocabulary an
@@ -685,8 +1061,14 @@ class OntologiesTransform(Transform):
         prefixes = df[ID_COLUMN].astype(str).str.split(":", n=1).str[0]
         annotation_ids = getattr(self, "_annotation_property_ids", set())
         contributor_ids = getattr(self, "_annotation_individual_ids", set())
-        normalized_ids = df[ID_COLUMN].astype(str).map(compact_identifier)
-        df = df[~(prefixes.isin(METAMODEL_NODE_PREFIXES) | normalized_ids.isin(annotation_ids | contributor_ids))]
+        schema_property_ids = getattr(self, "_foodon_schema_property_ids", set())
+        normalized_ids = df[ID_COLUMN].astype(str).map(metadata_identifier)
+        df = df[
+            ~(
+                prefixes.isin(METAMODEL_NODE_PREFIXES)
+                | normalized_ids.isin(annotation_ids | contributor_ids | schema_property_ids)
+            )
+        ]
         return df, before - len(df)
 
     def _add_kgx_metadata_to_edges(self, edges_file_path: Path):
@@ -715,7 +1097,7 @@ class OntologiesTransform(Transform):
         - GO: Apply aspect-based categorization (MF/BP/CC)
         - ChEBI: Detect roles/macromolecules; default small molecules to CHEBI_CATEGORY
           (biolink:ChemicalEntity — KG-Microbe project convention, see constants.py)
-        - UBERON: Ensure all terms are AnatomicalEntity
+        - UBERON: Apply anatomy defaults; defer reviewed temporal categories to source finalization
         - NCBITaxon: Ensure all terms are OrganismTaxon
 
         Args:
@@ -727,7 +1109,6 @@ class OntologiesTransform(Transform):
         from kg_microbe.utils.ontology_utils import (
             assert_go_version_alignment,
             get_chebi_category,
-            get_foodon_category,
             get_go_category_by_aspect,
             get_ncbitaxon_category,
             get_pato_category,
@@ -798,11 +1179,12 @@ class OntologiesTransform(Transform):
             df["category"] = df.apply(fix_chebi_category, axis=1)
 
         elif ontology_name == "uberon":
-            # Fix UBERON categories: all UBERON terms should be AnatomicalEntity
-            print("  Fixing UBERON categories (all terms → AnatomicalEntity)...")
+            # Reviewed temporal IDs deliberately remain generic here until
+            # source finalization checks their selected native authority.
+            print("  Fixing UBERON anatomy defaults; reviewed temporal categories deferred to source finalization...")
 
             def fix_uberon_category(row):
-                """Fix UBERON category (all terms should be AnatomicalEntity)."""
+                """Apply the UBERON policy without claiming temporal terms are anatomy."""
                 uberon_id = row["id"]
                 if pd.notna(uberon_id) and uberon_id.startswith("UBERON:"):
                     return get_uberon_category(uberon_id)
@@ -811,16 +1193,12 @@ class OntologiesTransform(Transform):
             df["category"] = df.apply(fix_uberon_category, axis=1)
 
         elif ontology_name == "foodon":
-            print("  Fixing FOODON categories (asserted organism branches; food material → Food)...")
-
-            def fix_foodon_category(row):
-                """Separate whole-organism classes from food materials."""
-                foodon_id = row["id"]
-                if pd.notna(foodon_id) and foodon_id.startswith("FOODON:"):
-                    return get_foodon_category(foodon_id)
-                return replace_deprecated_categories(str(row["category"]))
-
-            df["category"] = df.apply(fix_foodon_category, axis=1)
+            # Ontology preprocessing can still change the selected native
+            # authority. Resolve FOODON only once that work is complete, in
+            # source finalization's immutable consumed-input snapshot. The
+            # process-global helper may point at a different raw directory.
+            print("  Deferring FOODON native category decisions to source finalization...")
+            df["category"] = df["category"].map(lambda category: replace_deprecated_categories(str(category)))
 
         elif ontology_name == "pato":
             # PATO terms are qualities; madin_etal types them PhenotypicQuality (#1015).
@@ -1130,6 +1508,11 @@ class OntologiesTransform(Transform):
             # First write existing edges to file before establishing transitive relationships
             edges_df.to_csv(edges_file, sep="\t", index=False)
 
+            # Preserve actual pre-GO rows; the legacy helper rewrites this file in place.
+            upa_routes = getattr(self, "_upa_route_authority", None)
+            if upa_routes is not None:
+                upa_routes.capture_intermediate(edges_df.fillna("").to_dict("records"))
+
             # Add edges between GO and pathways using enzymatic reactions GO xrefs
             transitive_df_uer_go = establish_transitive_relationship(
                 edges_file,
@@ -1151,11 +1534,18 @@ class OntologiesTransform(Transform):
             # Only add GO relations, not EC
             transitive_df_uer_go = transitive_df_uer_go[transitive_df_uer_go[SUBJECT_COLUMN].str.contains(GO_PREFIX)]
 
+            # Screen only the existing selected writer rows; complete candidates stay in the audit.
+            if upa_routes is not None:
+                keep = upa_routes.keep_generated(transitive_df_uer_go.fillna("").to_dict("records"), "computed")
+                transitive_df_uer_go = transitive_df_uer_go.iloc[keep]
             # Add the list as a new row to the DataFrame
             edges_df = pd.concat([edges_df, transitive_df_uer_go], ignore_index=True)
 
             # These late-added curated xrefs need their own metadata (#1071).
             upa_go_df = self._make_upa_go_xref_edges(unipathways_xref_dict)
+            if upa_routes is not None:
+                keep = upa_routes.keep_generated(upa_go_df.fillna("").to_dict("records"), "direct")
+                upa_go_df = upa_go_df.iloc[keep]
             # Add the list as a new row to the DataFrame
             edges_df = pd.concat([edges_df, upa_go_df], ignore_index=True)
             # Write existing edges to file before establishing more transitive relationships
@@ -1274,6 +1664,9 @@ class OntologiesTransform(Transform):
 
         # Normalize schema to canonical node_header / edge_header shape
         self._normalize_schema(nodes_file, edges_file)
+        upa_routes = getattr(self, "_upa_route_authority", None)
+        if name == "upa" and upa_routes is not None:
+            upa_routes.finish_source(nodes_file, edges_file)
 
     def _make_upa_go_xref_edges(self, xrefs: dict) -> pd.DataFrame:
         """
@@ -1288,7 +1681,9 @@ class OntologiesTransform(Transform):
         edges = edges.loc[edges[ID_COLUMN].str.contains("UPA:UPA") & edges[XREF_COLUMN].str.contains(GO_PREFIX)].copy()
         edges.rename(columns={XREF_COLUMN: SUBJECT_COLUMN, ID_COLUMN: OBJECT_COLUMN}, inplace=True)
         edges[PREDICATE_COLUMN] = RELATED_TO_PREDICATE
-        edges[RELATION_COLUMN] = RELATED_TO_RELATION
+        # This is a weak xref projection, not native RO:0000052 (inheres in).
+        # Keep the canonical symmetric association without inventing direction.
+        edges[RELATION_COLUMN] = RELATED_TO_PREDICATE
         edges[PRIMARY_KNOWLEDGE_SOURCE_COLUMN] = self.ONTOLOGY_KNOWLEDGE_SOURCES.get("upa", "infores:upa")
         edges[KNOWLEDGE_LEVEL_COLUMN] = KNOWLEDGE_ASSERTION
         edges[AGENT_TYPE_COLUMN] = MANUAL_AGENT
@@ -1332,7 +1727,8 @@ class OntologiesTransform(Transform):
             primary_knowledge_source when only the former is present)
         """
         if nodes_file.is_file():
-            df = pd.read_csv(nodes_file, sep="\t", low_memory=False)
+            df = pd.read_csv(nodes_file, sep="\t", dtype=str, keep_default_na=False)
+            original_nodes = df.copy()
             dropped_node_cols = [c for c in ("subsets", "meta", "iri") if c in df.columns]
             added_node_cols = [c for c in self.node_header if c not in df.columns]
             for extra in dropped_node_cols:
@@ -1340,11 +1736,14 @@ class OntologiesTransform(Transform):
             for col in added_node_cols:
                 df[col] = ""
             df = df[self.node_header]
-            # Apply namespace-owned categories to imported terms too. The
-            # per-file handlers cannot fix FOODON/PATO rows in ENVO, UBERON,
-            # etc., and KGX later unions their stale OntologyClass category.
+            # PATO's invariant type is safe here. FOODON's authority-dependent
+            # decisions, including imported rows, belong to shared finalization
+            # after every native ontology has completed preprocessing.
             df[CATEGORY_COLUMN] = [
-                canonical_node_category(str(identifier), category)
+                category
+                if str(identifier).startswith("FOODON:")
+                or str(identifier) in {"COB:0000022", "OBO:COB_0000022", "PO:0000003"}
+                else canonical_node_category(str(identifier), category)
                 for identifier, category in zip(df[ID_COLUMN], df[CATEGORY_COLUMN], strict=True)
             ]
             before_metadata_filter = df
@@ -1352,30 +1751,43 @@ class OntologiesTransform(Transform):
             excluded = before_metadata_filter.loc[~before_metadata_filter.index.isin(df.index), [ID_COLUMN]].copy()
             individual_ids = getattr(self, "_annotation_individual_ids", set())
             property_ids = getattr(self, "_annotation_property_ids", set())
-            excluded[ID_COLUMN] = excluded[ID_COLUMN].astype(str).map(compact_identifier)
+            schema_property_ids = getattr(self, "_foodon_schema_property_ids", set())
+            excluded[ID_COLUMN] = excluded[ID_COLUMN].astype(str).map(metadata_identifier)
             excluded["reason"] = [
                 "annotation_only_contributor"
                 if identifier in individual_ids
                 else "declared_annotation_property"
                 if identifier in property_ids
+                else "reviewed_foodon_schema_property"
+                if identifier in schema_property_ids
                 else "metamodel_vocabulary"
                 for identifier in excluded[ID_COLUMN]
+            ]
+            excluded["authority"] = getattr(self, "_metadata_authority_path", "")
+            excluded["authority_sha256"] = getattr(self, "_metadata_authority_sha256", "")
+            excluded["original_record_json"] = [
+                json.dumps(original_nodes.loc[index].fillna("").to_dict(), sort_keys=True) for index in excluded.index
             ]
             # Always write the header, so a later clean run cannot leave a
             # stale exclusion report from a previous ontology build.
             report_name = nodes_file.stem.removesuffix("_nodes") + "_metadata_exclusions.tsv"
             with atomic_write(nodes_file.with_name(report_name), encoding="utf-8", newline="") as report:
                 excluded.to_csv(report, sep="\t", index=False, lineterminator="\n")
+            self._record_metadata_exclusions(excluded.to_dict("records"), nodes_file, report_name, "nodes")
             df.to_csv(nodes_file, sep="\t", index=False)
             if dropped_metamodel_nodes:
                 print(
                     f"  [_normalize_schema] {nodes_file.name}: dropped "
-                    f"{dropped_metamodel_nodes} annotation-only node(s) (#1023/#1074); see {report_name}"
+                    f"{dropped_metamodel_nodes} schema/annotation-only node(s) (#1023/#1074); see {report_name}"
                 )
             if dropped_node_cols or added_node_cols:
                 print(f"  [_normalize_schema] {nodes_file.name}: dropped={dropped_node_cols} added={added_node_cols}")
 
         if edges_file.is_file():
+            ontology_name = edges_file.stem.removesuffix("_edges")
+            parent_authority = getattr(self, "_ontology_parent_authority", None)
+            if ontology_name in {"foodon", "envo"} and parent_authority is not None:
+                parent_authority.prepare_normalization(ontology_name, edges_file)
             df = pd.read_csv(edges_file, sep="\t", dtype=str, keep_default_na=False)
             original_edges = df.copy()
             # Backstop against a header line reaching the body. The producer
@@ -1423,8 +1835,22 @@ class OntologiesTransform(Transform):
             # Preserve the exact originating relation and every unrelated edge.
             role_edges = (df[PREDICATE_COLUMN] == "biolink:has_attribute") & (df[RELATION_COLUMN] == "RO:0000087")
             df.loc[role_edges, PREDICATE_COLUMN] = "biolink:has_chemical_role"
+            if ontology_name in {"foodon", "envo"}:
+                from kg_microbe.utils.ontology_parent_quarantine import requires_authority
+
+                if parent_authority is not None:
+                    df = parent_authority.project(ontology_name, df, original_edges)
+                elif requires_authority(ontology_name, df):
+                    raise ValueError("Ontology parent normalization requires a run-owned native authority")
             if ontology_name == "foodon":
                 from kg_microbe.utils.foodon_classification import foodon_dispositions
+                from kg_microbe.utils.foodon_kernel_quarantine import COHORT_IDS
+
+                kernel = getattr(self, "_foodon_kernel_authority", None)
+                if kernel is not None:
+                    df = kernel.project(df, original_edges, edges_file.name)
+                elif df[SUBJECT_COLUMN].isin(COHORT_IDS).any() or df[OBJECT_COLUMN].isin(COHORT_IDS).any():
+                    raise ValueError("FOODON kernel normalization requires a run-owned native quarantine authority")
 
                 dispositions = foodon_dispositions()
                 bad_targets = {
@@ -1478,24 +1904,62 @@ class OntologiesTransform(Transform):
             # their final CURIE form (post the biolink:->rdfs/owl/rdf remap
             # above). These property-level / typing statements are not biolink
             # entity relationships. Nodes are left untouched.
-            df, dropped_metamodel = self._drop_metamodel_edges(df)
+            dropped_metamodel = 0
             annotation_ids = getattr(self, "_annotation_property_ids", set()) | getattr(
                 self, "_annotation_individual_ids", set()
             )
-            if annotation_ids:
+            schema_property_ids = getattr(self, "_foodon_schema_property_ids", set())
+            excluded_endpoint_ids = annotation_ids | schema_property_ids
+            metadata_edge_exclusions = pd.DataFrame(
+                columns=[*original_edges.columns, "reason", "authority", "authority_sha256", "original_record_json"]
+            )
+            if excluded_endpoint_ids:
                 # Annotation *predicates* remain in metadata. Only graph
                 # endpoints purporting to describe an annotation as an
                 # entity are removed with their non-entity node.
                 before = len(df)
-                df = df[
-                    ~(
-                        df[SUBJECT_COLUMN].astype(str).map(compact_identifier).isin(annotation_ids)
-                        | df[OBJECT_COLUMN].astype(str).map(compact_identifier).isin(annotation_ids)
-                    )
+                subject_ids = df[SUBJECT_COLUMN].astype(str).map(metadata_identifier)
+                object_ids = df[OBJECT_COLUMN].astype(str).map(metadata_identifier)
+                excluded = subject_ids.isin(excluded_endpoint_ids) | object_ids.isin(excluded_endpoint_ids)
+                metadata_edge_exclusions = original_edges.loc[df.index[excluded]].copy()
+                metadata_edge_exclusions["reason"] = [
+                    "reviewed_foodon_schema_property_endpoint"
+                    if subject_ids.loc[index] in schema_property_ids or object_ids.loc[index] in schema_property_ids
+                    else "annotation_only_endpoint"
+                    for index in metadata_edge_exclusions.index
                 ]
+                metadata_edge_exclusions["authority"] = getattr(self, "_metadata_authority_path", "")
+                metadata_edge_exclusions["authority_sha256"] = getattr(self, "_metadata_authority_sha256", "")
+                metadata_edge_exclusions["original_record_json"] = [
+                    json.dumps(original_edges.loc[index].to_dict(), sort_keys=True)
+                    for index in metadata_edge_exclusions.index
+                ]
+                df = df[~excluded]
                 dropped_metamodel += before - len(df)
+            with atomic_write(
+                edges_file.with_name(ontology_name + "_metadata_edge_exclusions.tsv"), encoding="utf-8", newline=""
+            ) as report:
+                metadata_edge_exclusions.to_csv(report, sep="\t", index=False, lineterminator="\n")
+            self._record_metadata_exclusions(
+                metadata_edge_exclusions.to_dict("records"),
+                edges_file,
+                ontology_name + "_metadata_edge_exclusions.tsv",
+                "edges",
+            )
+            df, remaining_metamodel = self._drop_metamodel_edges(df)
+            dropped_metamodel += remaining_metamodel
 
             df = self._quarantine_reviewed_self_loops(df, original_edges, edges_file)
+            from kg_microbe.utils.native_ro_retention import has_reviewed_relations
+
+            native_relations = getattr(self, "_native_relation_authority", None)
+            if native_relations is not None:
+                # This is the final ontology projection after all filters.
+                # Audit rows honestly name this stage normalization-input,
+                # not the earlier untouched KGX serialization.
+                df = native_relations.project(ontology_name, df, original_edges, edges_file)
+            elif has_reviewed_relations(df):
+                raise ValueError("Native RO retention requires a prepared ontology run with native evidence")
             df.to_csv(edges_file, sep="\t", index=False)
             if dropped_metamodel:
                 print(

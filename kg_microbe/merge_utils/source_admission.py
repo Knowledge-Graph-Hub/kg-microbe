@@ -104,7 +104,8 @@ class SourceAdmission:
         """Reject drift from original admission; this is not a substitute-current-record freshness check."""
         for resolver, args, selected in self.resolutions:
             if resolver(*args) != selected:
-                raise SourceFinalizationRequired(f"Merge admitted input resolution changed: {args[0]}")
+                context = args[0] if args else getattr(resolver, "__qualname__", type(resolver).__name__)
+                raise SourceFinalizationRequired(f"Merge admitted input resolution changed: {context}")
         for lexical, resolved in self.bindings.items():
             if lexical.resolve() != resolved:
                 raise SourceFinalizationRequired(f"Merge admitted input locator changed: {lexical}")

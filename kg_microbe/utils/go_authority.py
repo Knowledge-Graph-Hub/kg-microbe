@@ -36,6 +36,7 @@ from kg_microbe.transform_utils.constants import (
     SUBJECT_COLUMN,
 )
 from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.go_imported_restrictions import EVIDENCE_COLUMN
 from kg_microbe.utils.graph_schema import canonical_header
 from kg_microbe.utils.provenance import knowledge_source_tokens, serialize_knowledge_sources
 from kg_microbe.utils.tsv_io import tsv_dict_writer
@@ -89,6 +90,7 @@ _REPORT_FIELDS = [
     "consider",
     "original_record_json",
     "candidate_record_json",
+    EVIDENCE_COLUMN,
     "bundle_fingerprint",
 ]
 
@@ -437,6 +439,8 @@ def _bundle_fingerprint(node_paths, edge_paths):
 
 def _authority_fingerprint(authority):
     """Identify exact metadata even for immutable in-memory test authorities with no database path."""
+    from kg_microbe.utils.go_imported_restrictions import POLICY_VERSION, REVIEWED_POLICY_SHA256, RUNTIME_VERSION
+
     digest = hashlib.sha256()
     for identifier in sorted(authority.records):
         digest.update(json.dumps(vars(authority.records[identifier]), sort_keys=True).encode("utf-8"))
@@ -452,6 +456,9 @@ def _authority_fingerprint(authority):
         "metadata_sha256": digest.hexdigest(),
         "structural_edges_sha256": structural_digest,
         "structural_policy_version": _STRUCTURAL_POLICY_VERSION,
+        "imported_subject_restriction_policy_version": POLICY_VERSION,
+        "imported_subject_restriction_policy_sha256": REVIEWED_POLICY_SHA256,
+        "imported_subject_restriction_runtime_version": RUNTIME_VERSION,
     }
 
 
@@ -499,6 +506,7 @@ def normalize_go_bundle(
     report_path: Path,
     *,
     quoting=csv.QUOTE_NONE,
+    restriction_guard=None,
 ) -> dict[str, int]:
     """
     Normalize one source's staged files before publication, preserving observation evidence.
@@ -511,12 +519,31 @@ def normalize_go_bundle(
     asserted-authority support; unsupported candidates are quarantined in the
     audit rather than transferred into a current hierarchy.
     """
+    from kg_microbe.merge_utils.source_admission import SourceAdmission
+    from kg_microbe.utils.go_imported_restrictions import (
+        AUDIT_KIND,
+        DISPOSITION,
+        INPUTS_KEY,
+        INVENTORY_KEY,
+        ImportedGoRestrictionGuard,
+        audit_inventory,
+        inventory_contract,
+    )
+
+    restriction_guard = restriction_guard or ImportedGoRestrictionGuard(authority)
     node_paths, edge_paths = [Path(path) for path in node_paths], [Path(path) for path in edge_paths]
     report_path = Path(report_path)
     if not node_paths:
         raise ValueError("GO normalization requires at least one source node file")
     if len(set([*node_paths, *edge_paths, report_path])) != len(node_paths) + len(edge_paths) + 1:
         raise ValueError("GO bundle file paths must be distinct")
+    preimage = SourceAdmission()
+    input_fingerprint = [
+        {"kind": kind, "file": path.name, "sha256": preimage.capture(path)["sha256"]}
+        for kind, paths in (("nodes", node_paths), ("edges", edge_paths))
+        for path in paths
+    ]
+    active_inputs = set()
     identifiers, referenced = set(), set()
     for path in node_paths:
         for row in _rows(path, quoting):
@@ -524,20 +551,30 @@ def normalize_go_bundle(
                 identifiers.add(row[ID_COLUMN])
     for path in edge_paths:
         for row in _rows(path, quoting):
+            if restriction_guard.inspect(row) is not None:
+                active_inputs.add(path)
             for column in (SUBJECT_COLUMN, OBJECT_COLUMN):
                 if _compact_go(row[column]).startswith("GO:"):
                     identifiers.add(row[column])
                     referenced.add(row[column])
     if not identifiers:
+        preimage.verify(metadata_only=True)
         write_empty_go_report(report_path)
         return {}
     resolutions = {identifier: authority.resolve(identifier) for identifier in sorted(identifiers)}
-    input_fingerprint = _bundle_fingerprint(node_paths, edge_paths)
     authority_fingerprint = _authority_fingerprint(authority)
     previous = _report_checkpoint(report_path)
     retain_audit = bool(
         previous and previous.get("version") in (1, _REPORT_VERSION) and previous.get("bundle") == input_fingerprint
     )
+    if retain_audit:
+        original_inputs = previous.get(INPUTS_KEY)
+        if original_inputs:
+            restriction_guard.restore_original_inputs({"inputs": original_inputs})
+        for row in _rows(report_path, csv.QUOTE_MINIMAL):
+            if row.get("record_kind") == AUDIT_KIND or row.get(EVIDENCE_COLUMN):
+                restriction_guard.restore_original_inputs(json.loads(row[EVIDENCE_COLUMN]))
+        audit_inventory([report_path], restriction_guard.identities)
     # A verified v1 report may preserve historical audit evidence, but cannot
     # bypass v2's final-header ordering. Never inherit an old intermediate
     # checkpoint whose bytes differ from the actual incoming bundle.
@@ -546,9 +583,26 @@ def normalize_go_bundle(
         and previous.get("version") == _REPORT_VERSION
         and previous.get("authority") == authority_fingerprint
         and _canonical_bundle_headers(node_paths, edge_paths, quoting)
+        and not active_inputs
     ):
+        restriction_guard.seal_original_inputs()
+        restriction_guard.verify_files()
+        preimage.verify(metadata_only=True)
         return {"already_normalized": 1}
     report_path.parent.mkdir(parents=True, exist_ok=True)
+    if active_inputs:
+        if len({path.name for path in edge_paths}) != len(edge_paths):
+            raise ValueError("Active GO restriction inputs require unambiguous member basenames")
+        for path in edge_paths:
+            if path in active_inputs:
+                member = next(
+                    item for item in input_fingerprint if item["kind"] == "edges" and item["file"] == path.name
+                )
+                restriction_guard.bind_original_input(
+                    path, {key: member[key] for key in ("file", "sha256")}, quoting, report_path
+                )
+    restriction_guard.seal_original_inputs()
+    preimage.verify(metadata_only=True)
     counts = Counter()
     with TemporaryDirectory(prefix=".go-normalization-", dir=report_path.parent) as stage:
         stage = Path(stage)
@@ -558,14 +612,24 @@ def normalize_go_bundle(
             writer = tsv_dict_writer(report, fieldnames=_REPORT_FIELDS)
             writer.writeheader()
             report_rows = set()
+            finite_digest = hashlib.sha256()
+            finite_count = 0
 
             def emit_report(row):
                 """Stream unique audit records without retaining their large original-row payloads."""
+                nonlocal finite_count
                 normalized = {field: row.get(field, "") for field in _REPORT_FIELDS}
                 fingerprint = hashlib.sha256(json.dumps(normalized, sort_keys=True).encode("utf-8")).digest()
                 if fingerprint not in report_rows:
                     writer.writerow(normalized)
                     report_rows.add(fingerprint)
+                    if normalized["record_kind"] == AUDIT_KIND:
+                        finite_digest.update(
+                            (
+                                json.dumps(normalized, sort_keys=True, separators=(",", ":"), ensure_ascii=False) + "\n"
+                            ).encode()
+                        )
+                        finite_count += 1
 
             if retain_audit:
                 for previous_row in _rows(report_path, csv.QUOTE_MINIMAL):
@@ -656,7 +720,8 @@ def normalize_go_bundle(
                 with target.open("w", encoding="utf-8", newline="") as handle:
                     output = _graph_writer(handle, fields, quoting)
                     output.writeheader()
-                    for original in _rows(path, quoting):
+                    for ordinal, original in enumerate(restriction_guard.original_rows(path, quoting), 1):
+                        restriction = restriction_guard.inspect(original)
                         row = dict(original)
                         for column in (SUBJECT_COLUMN, OBJECT_COLUMN):
                             identifier = original[column]
@@ -682,6 +747,36 @@ def normalize_go_bundle(
                                 )
                                 record(path, "edge", identifier, original)
                                 counts["remapped_endpoints"] += 1
+                        if restriction is not None:
+                            emit_report(
+                                {
+                                    "source_file": path.name,
+                                    "record_kind": AUDIT_KIND,
+                                    "original_id": restriction[0],
+                                    "canonical_id": row[SUBJECT_COLUMN],
+                                    "disposition": DISPOSITION,
+                                    "authority": authority.authority_path,
+                                    "authority_sha256": authority.authority_sha256,
+                                    "original_record_json": json.dumps(original, ensure_ascii=False, sort_keys=True),
+                                    "candidate_record_json": json.dumps(row, ensure_ascii=False, sort_keys=True),
+                                    EVIDENCE_COLUMN: restriction_guard.evidence(
+                                        original,
+                                        row,
+                                        restriction,
+                                        member={
+                                            "file": path.name,
+                                            "sha256": next(
+                                                item["sha256"]
+                                                for item in input_fingerprint
+                                                if item["kind"] == "edges" and item["file"] == path.name
+                                            ),
+                                        },
+                                        ordinal=ordinal,
+                                    ),
+                                }
+                            )
+                            counts["quarantined_imported_subject_restrictions"] += 1
+                            continue
                         axiom = _replacement_structural_axiom(row)
                         if axiom is not None:
                             if authority.structural_edges is None:
@@ -728,12 +823,20 @@ def normalize_go_bundle(
                 {
                     "record_kind": "bundle_checkpoint",
                     "bundle_fingerprint": json.dumps(
-                        {"version": _REPORT_VERSION, "authority": authority_fingerprint, "bundle": output_fingerprint},
+                        {
+                            "version": _REPORT_VERSION,
+                            "authority": authority_fingerprint,
+                            "bundle": output_fingerprint,
+                            INVENTORY_KEY: inventory_contract(finite_count, finite_digest.hexdigest()),
+                            INPUTS_KEY: restriction_guard.identities,
+                        },
                         sort_keys=True,
                     ),
                 }
             )
         replacements.append((staged_report, report_path))
+        restriction_guard.verify_files()
+        preimage.verify(metadata_only=True)
         for staged, final in replacements:
             os.replace(staged, final)
     return dict(counts)

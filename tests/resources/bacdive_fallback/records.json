@@ -1,0 +1,783 @@
+{
+  "origin": {
+    "sha256": "57344e55e5683d168b735b6f186fd239d5637820d0c1559a210945bca883cea2",
+    "source": "data/raw/bacdive_strains.json"
+  },
+  "records": [
+    {
+      "canonical_record_sha256": "54ec4b188094406e8c79a0d2707270ed9d1a3a103d38f0f480d365d3e4a15c34",
+      "native_array_index": 18216,
+      "record": {
+        "Culture and growth conditions": {
+          "culture medium": [
+            {
+              "@ref": 18281,
+              "composition": "Ingredients:\nBaker's yeast 0.5% (based on fresh weight)\nCaCl2 0.1%\nAgar 1.5%\nCyanocobalamin 0.5 g/ml\nAmpicillin 0.05 mg/mL\n\nPreparation / Remarks:\npH 7.2\nautoclaved\nadd Na-salt sterilized by filtration",
+              "growth": "yes",
+              "name": "AMP AGAR"
+            },
+            {
+              "@ref": 18281,
+              "composition": "Ingredients:\n1. Basal agar:\n Casitone (Difco) 0.1%\n Yeast extract (Difco) 0.05%\n MgSO4 x 7H2O 0.1%\n Agar 1.2%\n\nPreparation / Remarks:\npH 7.2\nAfter autoclaving add 30 mL of sterile Chitin suspension (22.5 g/L Chitin in H2O) to 100 mL of the medium\n\n2. Covering agar (thin layer):\n MgSO4 x 7H2O 0.1%\n K2HPO4 0.02%\n Agar 1.5%\n\nPreparation / Remarks:\npH 7.2\nAfter autoclaving add 30 mL of sterile Chitin suspension (22.5 g/L Chitin in H2O) to 100 mL of the medium",
+              "growth": "yes",
+              "name": "CHITIN 6 AGAR"
+            },
+            {
+              "@ref": 18281,
+              "composition": "Covering agar (thin layer):\n MgSO4 x 7H2O 0.1%\n K2HPO4 0.02%\n Agar 1.5%\n\nPreparation / Remarks:\npH 7.2\nAfter autoclaving add 30 mL of sterile Chitin suspension (22.5 g/L Chitin in H2O) to 100 mL of the medium and pour on w-agar plates",
+              "growth": "yes",
+              "name": "CHITIN 7 AGAR"
+            },
+            {
+              "@ref": 18281,
+              "composition": "Ingredients:\nCaCl2 x 2 H2O 1.3g\nAgar (Difco) 15.0g\nDistilled water 1000.0ml\n\nPreparation / Remarks:\npH 7.2 (KOH) \nautoclaved\nPour the plates and streak living E.coli cells",
+              "growth": "yes",
+              "name": "COLE AGAR"
+            },
+            {
+              "@ref": 18281,
+              "composition": "Ingredients:\nBaker's yeast 0.5% (based on fresh weight)\nCaCl2 0.1%\nAgar 1.5%\nVitamin B12 0.05 %\n\nPreparation / Remarks:\npH 7.2\nautoclaved\nCombine with 1 mg/L Kanamycin-sulfate (sterilized by filtration)",
+              "growth": "yes",
+              "name": "KAN 14 AGAR"
+            },
+            {
+              "@ref": 18281,
+              "composition": "Ingredients:\nCaCl2 x 2 H2O1.3g\nAgar (Difco)15.0g\nDistilled water1000.0ml\n\nPreparation / Remarks:\npH 7.2 (KOH)\nautoclaved\nPour the plates and streak autoclaved E.coli cells",
+              "growth": "yes",
+              "name": "TOLI AGAR"
+            },
+            {
+              "@ref": 18281,
+              "composition": "Ingredients:\nBaker's yeast 0.5% (based on fresh weight)\nCaCl2 0.1%\nAgar 1.5%\nVitamin B12 0.05 %\n\nPreparation / Remarks:\npH 7.2\nautoclaved",
+              "growth": "yes",
+              "name": "VY/2 AGAR"
+            },
+            {
+              "@ref": 18281,
+              "composition": "Ingredients:\nXylan (birch) 0.5% \n(NH4)2SO4 0.1%\nAgar 1%\n\nPreparation / Remarks:\npH 7.2\nXylan (Serva pure molecular weight 25000)\nPour after autoclaving as a thin layer on standard cy-agar\nbirch (Fa. Roth, Karlsruhe)",
+              "growth": "yes",
+              "name": "XYLAN 5 AGAR"
+            }
+          ]
+        },
+        "External links": {
+          "@ref": 18281
+        },
+        "General": {
+          "@ref": 18281,
+          "BacDive-ID": 18491,
+          "description": "unclassified Hy m19 is a bacterium that was isolated from soil with plant residues.",
+          "doi": "10.13145/bacdive18491.20230509.8.1"
+        },
+        "Genome-based predictions": {},
+        "Isolation, sampling and environmental information": {
+          "isolation": {
+            "@ref": 18281,
+            "continent": "Asia",
+            "country": "India",
+            "geographic location": "Bangalore, Karnataka",
+            "origin.country": "IND",
+            "sample type": "soil with plant residues",
+            "sampling date": "1999-09-01"
+          },
+          "isolation source categories": [
+            {
+              "Cat1": "#Environmental",
+              "Cat2": "#Terrestrial",
+              "Cat3": "#Soil"
+            },
+            {
+              "Cat1": "#Host",
+              "Cat2": "#Plants"
+            }
+          ]
+        },
+        "Morphology": {},
+        "Name and taxonomic classification": {
+          "@ref": 18281,
+          "class": "unclassified",
+          "domain": "Bacteria",
+          "family": "unclassified",
+          "genus": "Not assigned to family",
+          "order": "unclassified",
+          "phylum": "unclassified",
+          "species": "unclassified",
+          "strain designation": "Hy m19",
+          "type strain": "no"
+        },
+        "Physiology and metabolism": {
+          "antibiotic resistance": [
+            {
+              "@ref": 18281,
+              "ChEBI": 28971,
+              "is antibiotic": "yes",
+              "is resistant": "yes",
+              "metabolite": "ampicillin",
+              "resistance conc.": "50 \u00b5g/mL"
+            },
+            {
+              "@ref": 18281,
+              "ChEBI": 6104,
+              "is antibiotic": "yes",
+              "is resistant": "yes",
+              "metabolite": "kanamycin",
+              "resistance conc.": "1 \u00b5g/mL"
+            }
+          ],
+          "observation": [
+            {
+              "@ref": 18281,
+              "observation": "No ability for chitin degradation"
+            },
+            {
+              "@ref": 18281,
+              "observation": "Ability for Yeast lysis"
+            },
+            {
+              "@ref": 18281,
+              "observation": "Ability for <i>E. coli</i> lysis"
+            }
+          ]
+        },
+        "Reference": [
+          {
+            "@id": 18281,
+            "authors": "Reichenbach, H.",
+            "title": "Collection description and documentation of myxobacteria by H. Reichenbach, HZI (formerly GBF); Collection curr. located at the DSMZ"
+          }
+        ],
+        "Safety information": {},
+        "Sequence information": {},
+        "_id": {
+          "$oid": "688b703116cfda6e49381ab2"
+        }
+      }
+    },
+    {
+      "canonical_record_sha256": "e824641cff9cf0d2ee356d39d2f444fcd44272284bc8c6d303f99a46ce6535dc",
+      "native_array_index": 57606,
+      "record": {
+        "Culture and growth conditions": {
+          "culture medium": [
+            {
+              "@ref": 33258,
+              "composition": "Distilled water make up to (1000.000 ml);Trypto casein soy agar (40.000 g)",
+              "growth": "yes",
+              "name": "MEDIUM 72- for trypto casein soja agar"
+            },
+            {
+              "@ref": 33258,
+              "growth": "yes",
+              "link": "https://catalogue-crbip.pasteur.fr/fiche_milieu.xhtml?crbip=72",
+              "name": "CIP Medium 72"
+            }
+          ],
+          "culture temp": [
+            {
+              "@ref": 33258,
+              "growth": "positive",
+              "temperature": "37",
+              "type": "growth"
+            },
+            {
+              "@ref": 33258,
+              "growth": "positive",
+              "temperature": "25-37",
+              "type": "growth"
+            },
+            {
+              "@ref": 33258,
+              "growth": "no",
+              "temperature": "5",
+              "type": "growth"
+            },
+            {
+              "@ref": 33258,
+              "growth": "no",
+              "temperature": "15",
+              "type": "growth"
+            },
+            {
+              "@ref": 33258,
+              "growth": "no",
+              "temperature": "41",
+              "type": "growth"
+            },
+            {
+              "@ref": 33258,
+              "growth": "no",
+              "temperature": "45",
+              "type": "growth"
+            }
+          ]
+        },
+        "External links": {
+          "@ref": 33258,
+          "culture collection no.": "CIP 108601"
+        },
+        "General": {
+          "@ref": 33258,
+          "BacDive-ID": 134696,
+          "description": "Halomonas phocea 106485 is a mesophilic, Gram-negative, motile prokaryote of the family Not assigned to family.",
+          "doi": "10.13145/bacdive134696.20241212.9.2",
+          "keywords": [
+            "mesophilic",
+            "Gram-negative",
+            "motile",
+            "rod-shaped"
+          ],
+          "strain history": [
+            {
+              "@ref": 33258,
+              "history": "2004, P. Berger, Hosp. La Timone, Marseille, France: strain 106485"
+            },
+            {
+              "@ref": 33258,
+              "history": "CIP <- 2004, P. Berger, Hosp. La Timone, Marseille, France: strain 106485"
+            }
+          ]
+        },
+        "Genome-based predictions": {},
+        "Isolation, sampling and environmental information": {
+          "isolation": [
+            {
+              "@ref": 33258,
+              "continent": "Africa",
+              "country": "Tunisia",
+              "geographic location": "Tunis",
+              "origin.country": "TUN"
+            },
+            {
+              "@ref": 33258,
+              "continent": "Africa",
+              "country": "Tunisia",
+              "geographic location": "Tunis",
+              "isolation date": "1999",
+              "origin.country": "TUN",
+              "sample type": "Human, Blood"
+            }
+          ]
+        },
+        "Morphology": {
+          "cell morphology": {
+            "@ref": 33258,
+            "cell shape": "rod-shaped",
+            "gram stain": "negative",
+            "motility": "yes"
+          }
+        },
+        "Name and taxonomic classification": {
+          "@ref": 33258,
+          "class": "Not assigned to order",
+          "family": "Not assigned to family",
+          "genus": "Halomonas",
+          "order": "Not assigned to order",
+          "phylum": "Not assigned to order",
+          "species": "Halomonas phocea",
+          "strain designation": "106485",
+          "type strain": "no"
+        },
+        "Physiology and metabolism": {
+          "API biotype100": {
+            "2KG": "-",
+            "2KT": "-",
+            "3MDG": "-",
+            "3OBU": "-",
+            "5KG": "-",
+            "@ref": 33258,
+            "ABT": "-",
+            "ADO": "-",
+            "APT": "-",
+            "ARA": "-",
+            "AVT": "-",
+            "BAT": "-",
+            "BET": "-",
+            "CAP": "-",
+            "CATE": "-",
+            "CEL": "-",
+            "CIT": "-",
+            "CMT": "-",
+            "CYT": "-",
+            "DALA": "-",
+            "DARL": "-",
+            "DMLT": "-",
+            "DTAT": "-",
+            "DUL": "-",
+            "ERY": "-",
+            "ESC": "-",
+            "ETN": "-",
+            "FRU": "-",
+            "FUC": "-",
+            "FUM": "-",
+            "GAL": "-",
+            "GAT": "-",
+            "GEN": "-",
+            "GLN": "-",
+            "GLU": "-",
+            "GLY": "-",
+            "GNT": "-",
+            "GRE": "-",
+            "GRT": "-",
+            "GTE": "-",
+            "GTT": "-",
+            "GYT": "-",
+            "HBG": "-",
+            "HIN": "-",
+            "HIS": "-",
+            "INO": "-",
+            "ITA": "-",
+            "LAC": "-",
+            "LALA": "-",
+            "LARL": "-",
+            "LAT": "-",
+            "LMLT": "-",
+            "LTAT": "-",
+            "LTE": "-",
+            "LYX": "-",
+            "MAL": "-",
+            "MAN": "-",
+            "MDG": "-",
+            "MEL": "-",
+            "MLZ": "-",
+            "MNE": "-",
+            "MNT": "-",
+            "MTAT": "-",
+            "MTE": "-",
+            "MTL": "-",
+            "MUC": "-",
+            "MaGa": "-",
+            "MbGa": "-",
+            "MbGu": "-",
+            "NAG": "-",
+            "PAC": "-",
+            "PAT": "+",
+            "PCE": "-",
+            "PLE": "-",
+            "PPAT": "-",
+            "PRO": "-",
+            "PROP": "-",
+            "QAT": "-",
+            "RAF": "-",
+            "RHA": "-",
+            "RIB": "-",
+            "SAC": "-",
+            "SAT": "-",
+            "SBE": "-",
+            "SER": "-",
+            "SOR": "-",
+            "SUC": "-",
+            "TAG": "-",
+            "TATE": "-",
+            "TGE": "-",
+            "TRE": "-",
+            "TRY": "-",
+            "TTE": "-",
+            "TTN": "-",
+            "TUR": "-",
+            "TYR": "+",
+            "XLT": "-",
+            "XYL": "-",
+            "mOBE": "-",
+            "pOBE": "-"
+          },
+          "API zym": {
+            "@ref": 33258,
+            "Acid phosphatase": "-",
+            "Alkaline phosphatase": "-",
+            "Control": "-",
+            "Cystine arylamidase": "-",
+            "Esterase": "+",
+            "Esterase Lipase": "+",
+            "Leucine arylamidase": "+",
+            "Lipase": "-",
+            "N-acetyl-beta- glucosaminidase": "-",
+            "Naphthol-AS-BI-phosphohydrolase": "-",
+            "Trypsin": "-",
+            "Valine arylamidase": "-",
+            "alpha- Chymotrypsin": "-",
+            "alpha- Fucosidase": "-",
+            "alpha- Galactosidase": "-",
+            "alpha- Glucosidase": "-",
+            "alpha- Mannosidase": "-",
+            "beta- Galactosidase": "-",
+            "beta- Glucosidase": "-",
+            "beta- Glucuronidase": "-"
+          },
+          "enzymes": [
+            {
+              "@ref": 68382,
+              "activity": "-",
+              "ec": "3.2.1.51",
+              "value": "alpha-fucosidase"
+            },
+            {
+              "@ref": 68382,
+              "activity": "-",
+              "ec": "3.2.1.24",
+              "value": "alpha-mannosidase"
+            },
+            {
+              "@ref": 68382,
+              "activity": "-",
+              "ec": "3.2.1.21",
+              "value": "beta-glucosidase"
+            },
+            {
+              "@ref": 68382,
+              "activity": "-",
+              "ec": "3.2.1.52",
+              "value": "N-acetyl-beta-glucosaminidase"
+            },
+            {
+              "@ref": 68382,
+              "activity": "-",
+              "ec": "3.2.1.20",
+              "value": "alpha-glucosidase"
+            },
+            {
+              "@ref": 68382,
+              "activity": "-",
+              "ec": "3.2.1.31",
+              "value": "beta-glucuronidase"
+            },
+            {
+              "@ref": 68382,
+              "activity": "-",
+              "ec": "3.2.1.23",
+              "value": "beta-galactosidase"
+            },
+            {
+              "@ref": 68382,
+              "activity": "-",
+              "ec": "3.2.1.22",
+              "value": "alpha-galactosidase"
+            },
+            {
+              "@ref": 68382,
+              "activity": "-",
+              "value": "naphthol-AS-BI-phosphohydrolase"
+            },
+            {
+              "@ref": 68382,
+              "activity": "-",
+              "ec": "3.1.3.2",
+              "value": "acid phosphatase"
+            },
+            {
+              "@ref": 68382,
+              "activity": "-",
+              "ec": "3.4.21.4",
+              "value": "trypsin"
+            },
+            {
+              "@ref": 68382,
+              "activity": "-",
+              "ec": "3.4.21.1",
+              "value": "alpha-chymotrypsin"
+            },
+            {
+              "@ref": 68382,
+              "activity": "-",
+              "ec": "3.4.11.3",
+              "value": "cystine arylamidase"
+            },
+            {
+              "@ref": 68382,
+              "activity": "-",
+              "value": "valine arylamidase"
+            },
+            {
+              "@ref": 68382,
+              "activity": "+",
+              "ec": "3.4.11.1",
+              "value": "leucine arylamidase"
+            },
+            {
+              "@ref": 68382,
+              "activity": "-",
+              "value": "lipase (C 14)"
+            },
+            {
+              "@ref": 68382,
+              "activity": "+",
+              "value": "esterase (C 4)"
+            },
+            {
+              "@ref": 68382,
+              "activity": "+",
+              "value": "esterase lipase (C 8)"
+            },
+            {
+              "@ref": 68382,
+              "activity": "-",
+              "ec": "3.1.3.1",
+              "value": "alkaline phosphatase"
+            },
+            {
+              "@ref": 33258,
+              "activity": "+",
+              "value": "oxidase"
+            },
+            {
+              "@ref": 33258,
+              "activity": "+",
+              "ec": "3.2.1.23",
+              "value": "beta-galactosidase"
+            },
+            {
+              "@ref": 33258,
+              "activity": "-",
+              "ec": "1.1.1.1",
+              "value": "alcohol dehydrogenase"
+            },
+            {
+              "@ref": 33258,
+              "activity": "-",
+              "value": "gelatinase"
+            },
+            {
+              "@ref": 33258,
+              "activity": "-",
+              "value": "amylase"
+            },
+            {
+              "@ref": 33258,
+              "activity": "-",
+              "ec": "3.4.21.50",
+              "value": "caseinase"
+            },
+            {
+              "@ref": 33258,
+              "activity": "+",
+              "ec": "1.11.1.6",
+              "value": "catalase"
+            },
+            {
+              "@ref": 33258,
+              "activity": "-",
+              "value": "tween esterase"
+            },
+            {
+              "@ref": 33258,
+              "activity": "+",
+              "ec": "2.3.2.2",
+              "value": "gamma-glutamyltransferase"
+            },
+            {
+              "@ref": 33258,
+              "activity": "-",
+              "value": "lecithinase"
+            },
+            {
+              "@ref": 33258,
+              "activity": "-",
+              "value": "lipase"
+            },
+            {
+              "@ref": 33258,
+              "activity": "-",
+              "ec": "4.1.1.18",
+              "value": "lysine decarboxylase"
+            },
+            {
+              "@ref": 33258,
+              "activity": "-",
+              "ec": "4.1.1.17",
+              "value": "ornithine decarboxylase"
+            },
+            {
+              "@ref": 33258,
+              "activity": "+",
+              "ec": "4.3.1.24",
+              "value": "phenylalanine ammonia-lyase"
+            },
+            {
+              "@ref": 33258,
+              "activity": "-",
+              "value": "tryptophan deaminase"
+            },
+            {
+              "@ref": 33258,
+              "activity": "+",
+              "ec": "3.5.1.5",
+              "value": "urease"
+            }
+          ],
+          "halophily": [
+            {
+              "@ref": 33258,
+              "concentration": "2-10 %",
+              "growth": "positive",
+              "salt": "NaCl",
+              "tested relation": "growth"
+            },
+            {
+              "@ref": 33258,
+              "concentration": "0 %",
+              "growth": "no",
+              "salt": "NaCl",
+              "tested relation": "growth"
+            }
+          ],
+          "metabolite production": {
+            "@ref": 33258,
+            "Chebi-ID": 35581,
+            "metabolite": "indole",
+            "production": "no"
+          },
+          "metabolite utilization": [
+            {
+              "@ref": 33258,
+              "Chebi-ID": 16947,
+              "kind of utilization tested": "carbon source",
+              "metabolite": "citrate",
+              "utilization activity": "+"
+            },
+            {
+              "@ref": 33258,
+              "Chebi-ID": 4853,
+              "kind of utilization tested": "hydrolysis",
+              "metabolite": "esculin",
+              "utilization activity": "+"
+            },
+            {
+              "@ref": 33258,
+              "Chebi-ID": 606565,
+              "kind of utilization tested": "hydrolysis",
+              "metabolite": "hippurate",
+              "utilization activity": "+"
+            },
+            {
+              "@ref": 33258,
+              "Chebi-ID": 17632,
+              "kind of utilization tested": "reduction",
+              "metabolite": "nitrate",
+              "utilization activity": "+"
+            },
+            {
+              "@ref": 33258,
+              "Chebi-ID": 16301,
+              "kind of utilization tested": "reduction",
+              "metabolite": "nitrite",
+              "utilization activity": "+"
+            },
+            {
+              "@ref": 33258,
+              "Chebi-ID": 15792,
+              "kind of utilization tested": "assimilation",
+              "metabolite": "malonate",
+              "utilization activity": "-"
+            },
+            {
+              "@ref": 33258,
+              "Chebi-ID": 17632,
+              "kind of utilization tested": "respiration",
+              "metabolite": "nitrate",
+              "utilization activity": "-"
+            }
+          ]
+        },
+        "Reference": [
+          {
+            "@id": 33258,
+            "authors": "Curators of the CIP",
+            "catalogue": "Collection of Institut Pasteur (CIP 108601)",
+            "doi/url": "https://catalogue-crbip.pasteur.fr/fiche_catalogue.xhtml?crbip=CIP%20108601"
+          },
+          {
+            "@id": 68382,
+            "title": "Automatically annotated from API zym"
+          }
+        ],
+        "Safety information": {
+          "risk assessment": {
+            "@ref": 33258,
+            "biosafety level": "1",
+            "biosafety level comment": "Risk group (French classification)"
+          }
+        },
+        "Sequence information": {},
+        "_id": {
+          "$oid": "688b703416cfda6e4938b490"
+        }
+      }
+    },
+    {
+      "canonical_record_sha256": "cf87e166b426d920894eb4da745fe196aa1da2e60028d3da252d3118545a7dc3",
+      "native_array_index": 98575,
+      "record": {
+        "Culture and growth conditions": {
+          "culture medium": {
+            "@ref": 125416,
+            "growth": "yes",
+            "link": "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium311c.pdf",
+            "name": "SPOROMUSA ACIDOVORANS MEDIUM (DSMZ Medium 311c)"
+          },
+          "culture temp": {
+            "@ref": 125416,
+            "growth": "positive",
+            "temperature": "60",
+            "type": "growth"
+          }
+        },
+        "External links": {
+          "@ref": 125416,
+          "culture collection no.": "DSM 116161, CCOS 2103"
+        },
+        "General": {
+          "@ref": 125416,
+          "BacDive-ID": 175523,
+          "DSM-Number": 116161,
+          "description": "Moorella carbonis ACPs is a bacterium that was isolated from Soil sample from the side of an active charcoal burning pile.",
+          "doi": "10.13145/bacdive175523.20241212.9.2",
+          "strain history": {
+            "@ref": 125416,
+            "history": "<- T. B\u00f6er, Universit\u00e4t G\u00f6ttingen, Germany; ACPs <- T. B\u00f6er; {2022}"
+          }
+        },
+        "Genome-based predictions": {},
+        "Isolation, sampling and environmental information": {
+          "isolation": {
+            "@ref": 125416,
+            "continent": "Europe",
+            "country": "Germany",
+            "geographic location": "Harz mountains, Stemberg charcoal burning museum",
+            "latitude": 51.7218,
+            "longitude": 10.8968,
+            "origin.country": "DEU",
+            "sample type": "Soil sample from the side of an active charcoal burning pile"
+          }
+        },
+        "Morphology": {},
+        "Name and taxonomic classification": {
+          "@ref": 125416,
+          "class": "Clostridia",
+          "domain": "Bacteria",
+          "family": "Thermoanaerobacteraceae",
+          "full scientific name": "Moorella carbonis B\u00f6er et al. 2024",
+          "genus": "Moorella",
+          "order": "Not assigned to order",
+          "phylum": "Firmicutes",
+          "species": "Moorella carbonis",
+          "strain designation": "ACPs",
+          "type strain": "no"
+        },
+        "Physiology and metabolism": {},
+        "Reference": [
+          {
+            "@id": 125416,
+            "authors": "Curators of the DSMZ",
+            "catalogue": "Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen GmbH (DSM 116161)",
+            "doi/url": "https://www.dsmz.de/collection/catalogue/details/culture/DSM-116161"
+          }
+        ],
+        "Safety information": {},
+        "Sequence information": {},
+        "_id": {
+          "$oid": "688b703a16cfda6e49395499"
+        }
+      }
+    }
+  ],
+  "scope": "Complete verbatim decoded records selected for cache-selector and cross-kingdom controls; no edits to native fields. Literal fullfile/source-coordinate proof remains in the reviewed212 bundle."
+}

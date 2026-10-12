@@ -1,8 +1,9 @@
 """Transform the Madin etal data from NCBI and GTDB."""
 
 import csv
+import re
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Optional, TextIO, Union
 
 import numpy as np
 import pandas as pd
@@ -101,9 +102,11 @@ ENVIRONMENT_ID_CORRECTIONS_FILE = (
 )
 
 
-def _apply_environment_id_corrections(envo_df: "pd.DataFrame") -> "pd.DataFrame":
+def _apply_environment_id_corrections(
+    envo_df: "pd.DataFrame", *, corrections_stream: Optional[TextIO] = None
+) -> "pd.DataFrame":
     """
-    Replace upstream ENVO_ids values that name the wrong term.
+    Replace finite upstream ENVO_ids tokens naming wrong or retired terms.
 
     Two rows in Madin et al's environments.csv carry an id/label pair that agrees
     with itself while matching neither the row's own key (#796):
@@ -116,24 +119,75 @@ def _apply_environment_id_corrections(envo_df: "pd.DataFrame") -> "pd.DataFrame"
       respiratory tract, so nasopharyngeal measurements were asserted about
       trachea, bronchi and alveoli too.
 
-    Corrections are matched on the exact wrong value, not applied blindly: if
-    upstream fixes a row, the correction stops firing instead of overwriting the
-    new value with a stale one. Unapplied rows are reported so the file cannot
-    rot silently.
+    The composite ``host_plant_vasculature`` row also names retired
+    ``FOODON:03420174``. Its pinned native IAO:0100001 replacement is
+    ``PO:0009011``; the companion vasculature identifier must be preserved.
+
+    Corrections require the exact habitat key and exact comma-delimited wrong
+    identifier token, never a label or substring match. Companion identifiers,
+    labels and ordering are preserved. Ambiguous label alignment aborts rather
+    than reassigning a companion label. If upstream fixes a row, the correction
+    stops firing instead of overwriting the new identifier with a stale one.
+    Unapplied rows are reported so the file cannot rot silently.
 
     :param envo_df: Raw environments.csv frame.
+    :param corrections_stream: Already captured immutable production input, if supplied.
     :return: The frame with corrected ids and labels.
     """
-    if not ENVIRONMENT_ID_CORRECTIONS_FILE.is_file():
+    if corrections_stream is None and not ENVIRONMENT_ID_CORRECTIONS_FILE.is_file():
         return envo_df
 
-    corrections = pd.read_csv(ENVIRONMENT_ID_CORRECTIONS_FILE, sep="\t", comment="#", dtype=str).fillna("")
+    corrections = pd.read_csv(
+        corrections_stream if corrections_stream is not None else ENVIRONMENT_ID_CORRECTIONS_FILE,
+        sep="\t",
+        comment="#",
+        dtype=str,
+    ).fillna("")
+    required_columns = {
+        "environment_type",
+        "wrong_object_id",
+        "wrong_object_label",
+        "object_id",
+        "object_label",
+        "notes",
+    }
+    if len(corrections.columns) != len(required_columns) or set(corrections.columns) != required_columns:
+        raise ValueError("Malformed Madin environment correction schema: expected six unique correction columns")
+    # Validate the complete authority before touching source rows. An empty
+    # correctly headed table is explicit evidence; a malformed one is not.
+    for index, row in corrections.iterrows():
+        for column in ("environment_type", "wrong_object_id", "object_id", "object_label"):
+            if not row[column] or row[column] != row[column].strip():
+                raise ValueError(f"Invalid Madin environment correction row {index}: {column} is blank or padded")
+        for column in ("wrong_object_id", "object_id"):
+            if not re.fullmatch(r"[A-Za-z][A-Za-z0-9._-]*:[A-Za-z0-9_.-]+", row[column]):
+                raise ValueError(f"Invalid Madin environment correction row {index}: {column} is not one CURIE")
     applied = 0
     for _, row in corrections.iterrows():
         target = envo_df[TYPE_COLUMN] == row["environment_type"]
-        wrong = envo_df[ENVO_ID_COLUMN].astype(str).str.strip() == row["wrong_object_id"]
-        match = target & wrong
-        hits = int(match.sum())
+        hits = 0
+        for index in envo_df.index[target]:
+            curies = str(envo_df.at[index, ENVO_ID_COLUMN]).split(",")
+            positions = [position for position, curie in enumerate(curies) if curie.strip() == row["wrong_object_id"]]
+            if not positions:
+                continue
+            labels = str(envo_df.at[index, ENVO_TERMS_COLUMN]).split(",")
+            if len(curies) != len(labels):
+                raise ValueError(
+                    f"Cannot align environment correction labels for {row['environment_type']!r}: "
+                    f"{len(curies)} identifiers, {len(labels)} labels"
+                )
+            for position in positions:
+                # Replace only the token content, retaining delimiter whitespace
+                # and every non-target companion byte for byte.
+                for values, replacement in ((curies, row["object_id"]), (labels, row["object_label"])):
+                    token = values[position]
+                    leading = token[: len(token) - len(token.lstrip())]
+                    trailing = token[len(token.rstrip()) :]
+                    values[position] = leading + replacement + trailing
+            envo_df.at[index, ENVO_ID_COLUMN] = ",".join(curies)
+            envo_df.at[index, ENVO_TERMS_COLUMN] = ",".join(labels)
+            hits += 1
         if not hits:
             print(
                 f"  [madin_etal] environment correction not applied: "
@@ -142,8 +196,6 @@ def _apply_environment_id_corrections(envo_df: "pd.DataFrame") -> "pd.DataFrame"
                 f"{ENVIRONMENT_ID_CORRECTIONS_FILE.name}"
             )
             continue
-        envo_df.loc[match, ENVO_ID_COLUMN] = row["object_id"]
-        envo_df.loc[match, ENVO_TERMS_COLUMN] = row["object_label"]
         applied += hits
         print(
             f"  [madin_etal] corrected {row['environment_type']}: "
@@ -205,7 +257,11 @@ class MadinEtAlTransform(Transform):
         -   ROBOT using 'robot_utils' module.
     """
 
-    DATA_INPUTS = ("mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",)
+    DATA_INPUTS = (
+        "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
+        "mappings/madin_environment_id_corrections.tsv",
+    )
+    REQUIRED_CONSUMED_INPUTS = ("madin_environment_id_corrections",)
 
     def __init__(self, input_dir: str, output_dir: str, nlp=True) -> None:
         """
@@ -354,7 +410,8 @@ class MadinEtAlTransform(Transform):
 
         envo_cols = [TYPE_COLUMN, ENVO_TERMS_COLUMN, ENVO_ID_COLUMN]
         envo_df = pd.read_csv(self.environments_file, low_memory=False, usecols=envo_cols).drop_duplicates()
-        envo_df = _apply_environment_id_corrections(envo_df)
+        with self.consume_input("madin_environment_id_corrections", ENVIRONMENT_ID_CORRECTIONS_FILE) as stream:
+            envo_df = _apply_environment_id_corrections(envo_df, corrections_stream=stream)
         envo_mapping = envo_df.set_index(TYPE_COLUMN).T.to_dict()
         traits_columns_of_interest = [
             TAX_ID_COLUMN,

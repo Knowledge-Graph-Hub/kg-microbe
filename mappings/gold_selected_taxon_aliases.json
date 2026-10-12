@@ -1,0 +1,89 @@
+{
+  "issue": "https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1327",
+  "rules": [
+    {
+      "native_taxon_sha256": "9b49271c9b1ca8c9755f5f6d984220b302ae9d203d02be601e68afbe52c4e801",
+      "original_id": "NCBITaxon:1194211",
+      "records": {
+        "gold:Go0705252": {
+          "incident_rows_sha256": "923f57704d11976152786ce74d61d1a2ff7ed6bcaa0b62fcc056546472887758",
+          "node_sha256": "09e358af01bc5cfd792c497885e9a058d4fb5a0259b3daa3c59c7afc0fcfbf9c",
+          "taxon_assertion_sha256": "432ad645db9278236c0c0eedc57694ea18b97fe6d52e11ba26b60210738f005d"
+        }
+      },
+      "selected_node_sha256": "8f257b87365393c21e59e27dadbfd8c4855e80326ade03cb7ef7de8434fc347b",
+      "target": "NCBITaxon:4927",
+      "taxdump_target": "NCBITaxon:36030"
+    },
+    {
+      "native_taxon_sha256": "58d43634a16f87b146e2e2f639d5581b7a26e586d477e201a53a580d04514ea7",
+      "original_id": "NCBITaxon:53360",
+      "records": {
+        "gold:Go0028995": {
+          "incident_rows_sha256": "21f4fd7c94b2d15fa48921214b43fafa6c038e1a3e381ed679e5089dafafbab9",
+          "node_sha256": "b97a5e103f12ddc92cf2d360070274eba6c26bcd7ef9e19364112587ed17a796",
+          "taxon_assertion_sha256": "d513e732b939558d2f9b3c3d3f28641dd51d46475479eba8aa1694d9d448742b"
+        },
+        "gold:Go0605404": {
+          "incident_rows_sha256": "b57bbc7b0604d196db5522178661703d827b01a31d0bc1a6e4ae443a704757db",
+          "node_sha256": "f96f4abbf0277dab5b8e9725e0a5a88633ae6e156f0636143d10599c469dcd0a",
+          "taxon_assertion_sha256": "ddcb935a773a600f23d9172943c3459096bb002d828a188f721f0090da7cbd3c"
+        },
+        "gold:Go0605405": {
+          "incident_rows_sha256": "fd40189e686bcc03268c599b33f44e655661a66efca14ee67e406c24e2c77577",
+          "node_sha256": "422c9b894890fc2bde19dbaea461bba9ecf3e5bd77941cdd835df5b62a42fd6f",
+          "taxon_assertion_sha256": "3df7b16ca7d60872885bb1b7944d1fcad57f73652041063b721b2e89ed76a5fe"
+        },
+        "gold:Go0605406": {
+          "incident_rows_sha256": "27aa919d1c7691f9d55c4a7cf4150624c518493ae4e46758e071db245b9e6c9b",
+          "node_sha256": "c0d122adfdfc5a59a3070d7c8fa21e0e987dc23784d7f2f7e6a06419a067df18",
+          "taxon_assertion_sha256": "8480fbd41c5304e94a0253dd537634bce8fdea6ccfc63761c30012efa8ffc388"
+        },
+        "gold:Go0605407": {
+          "incident_rows_sha256": "545684352bd24ecefbfe0a80b834b13e7624a25fec866249a98c3d6d7b88093d",
+          "node_sha256": "ed695f7a31c9c48688551bdc13d0a05baa8c25d2aa709144475639bff5a88fee",
+          "taxon_assertion_sha256": "597fbb162e63a89eb459025093a0676eb699811f401a15d04e3b4b03c51868b4"
+        },
+        "gold:Go0605408": {
+          "incident_rows_sha256": "3e761570424ab8c4a316b8254a582f31f8cfd65f1c07c2f17e0704e13b937a90",
+          "node_sha256": "71c78465faf2668c57f92846eefac2d214ef9f0605c5903c1d80e9c035fdb871",
+          "taxon_assertion_sha256": "cbf6fa22a24f54b2ac3101b0d3ddccc6f24bd0f4108a8b413de59d72ca639148"
+        },
+        "gold:Go0605409": {
+          "incident_rows_sha256": "ac1d1d2f554434d225d360cdce6283f9260386fc37a864bb5d4507f182b3fc0d",
+          "node_sha256": "29b4ca2f9cf0f8f27a2af71d99f892391bb5c492249e0b0177aca81f19d57f42",
+          "taxon_assertion_sha256": "f763ee7f7f56c0a75b4be88f03c0f07676d18364119c7a92f37aef5f28dbf48f"
+        },
+        "gold:Go0680943": {
+          "incident_rows_sha256": "ae3ed84f76c305c870b69579467c8fbf7a85577152e6888994eb1185b4a2dff9",
+          "node_sha256": "3a0de5b337f83bc743df56c818bfa10fcae7b0571fb96a072ef87a208e54a162",
+          "taxon_assertion_sha256": "6e335580145fec538b98ebad817a5ac641b2ce21fa6375889f75f48291043d60"
+        },
+        "gold:Go0698482": {
+          "incident_rows_sha256": "676ec4aa8de7336c948371285fa41456829c759f18551a1eab4be427fa495698",
+          "node_sha256": "8cc841c9ef1a425fc069f92eef77d42e1062441ca982df3eabef479f3cfce4ba",
+          "taxon_assertion_sha256": "70552c86bea9323e280938e32380407cf3db397ede73b41cd2886ee3082e6d54"
+        }
+      },
+      "selected_node_sha256": "dc4097166dd6fe0fc09a0a9088e208a46cab41e22f961434bceabc0ee891bb01",
+      "target": "NCBITaxon:53362",
+      "taxdump_target": "NCBITaxon:53360"
+    },
+    {
+      "native_taxon_sha256": "42b46ecc8ef804fb971abf386e749b9f24dab360a6c7ef949ac15ffc4a31b7e5",
+      "original_id": "NCBITaxon:659496",
+      "records": {
+        "gold:Go0679921": {
+          "incident_rows_sha256": "7ba3fb8f207edac0614385b31ed3daf733db22890771dfb05b9f6edf7bf29efa",
+          "node_sha256": "e5221a5ac4fc1b02a5fb9be96d488890217b159dc78f4ae87d6d845f55bfa047",
+          "taxon_assertion_sha256": "09703a862a931b6bd6a3fc1d4b0fcecd51f80833a4d1f4651e878c9984a0fca8"
+        }
+      },
+      "selected_node_sha256": "53e5770ca98efdaad6209d3d68fe5db037a89f6aa618148315dedea89304f293",
+      "target": "NCBITaxon:33920",
+      "taxdump_target": "NCBITaxon:659496"
+    }
+  ],
+  "scope": "Finite selected-ontology aliases for eleven reviewed original GOLD referents; source refresh requires re-review. This is no organism identity or excluded-branch waiver.",
+  "version": 1
+}

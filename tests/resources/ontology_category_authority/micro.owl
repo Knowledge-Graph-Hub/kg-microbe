@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<!-- Immutable named-axiom excerpt from data/raw/micro.owl,
+SHA256 ef21dbfab755143a9c390ad274d4e1405f344f6a8dbfbd749de09af0b4b54910.
+The named intersection genus is retained; restriction fillers are not parents. -->
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+ xmlns:owl="http://www.w3.org/2002/07/owl#">
+ <owl:Class rdf:about="http://purl.obolibrary.org/obo/CHEBI_60004"/>
+ <owl:Class rdf:about="http://purl.obolibrary.org/obo/OBI_0000079"/>
+ <owl:Class rdf:about="http://purl.obolibrary.org/obo/MICRO_0000175"><rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/MICRO_0000606"/></owl:Class>
+ <owl:Class rdf:about="http://purl.obolibrary.org/obo/MICRO_0000606"><rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/MICRO_0001366"/></owl:Class>
+ <owl:Class rdf:about="http://purl.obolibrary.org/obo/MICRO_0001366"><rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/MICRO_0000465"/></owl:Class>
+ <owl:Class rdf:about="http://purl.obolibrary.org/obo/MICRO_0000465"><rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/MICRO_0000174"/></owl:Class>
+ <owl:Class rdf:about="http://purl.obolibrary.org/obo/MICRO_0000174"><rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/MICRO_0000172"/></owl:Class>
+ <owl:Class rdf:about="http://purl.obolibrary.org/obo/MICRO_0000172"><rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/MICRO_0000167"/></owl:Class>
+ <owl:Class rdf:about="http://purl.obolibrary.org/obo/MICRO_0000167"><rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/MICRO_0000164"/></owl:Class>
+ <owl:Class rdf:about="http://purl.obolibrary.org/obo/MICRO_0000164">
+  <owl:equivalentClass><owl:Class><owl:intersectionOf rdf:parseType="Collection">
+   <rdf:Description rdf:about="http://purl.obolibrary.org/obo/MICRO_0000116"/>
+   <owl:Restriction><owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/MICRO_0001244"/><owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/CHEBI_50860"/></owl:Restriction>
+  </owl:intersectionOf></owl:Class></owl:equivalentClass>
+ </owl:Class>
+ <owl:Class rdf:about="http://purl.obolibrary.org/obo/MICRO_0000116">
+  <owl:equivalentClass><owl:Class><owl:intersectionOf rdf:parseType="Collection">
+   <rdf:Description rdf:about="http://purl.obolibrary.org/obo/CHEBI_60004"/>
+   <owl:Restriction><owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/MICRO_0001245"/><owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/MICRO_0000067"/></owl:Restriction>
+  </owl:intersectionOf></owl:Class></owl:equivalentClass>
+ </owl:Class>
+ <owl:Class rdf:about="http://purl.obolibrary.org/obo/MICRO_0000067"><rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/OBI_0000079"/></owl:Class>
+ <owl:Class rdf:about="http://purl.obolibrary.org/obo/MICRO_0000082">
+  <owl:equivalentClass><owl:Class><owl:intersectionOf rdf:parseType="Collection">
+   <rdf:Description rdf:about="http://purl.obolibrary.org/obo/MICRO_0000067"/>
+   <owl:Restriction><owl:onProperty rdf:resource="http://purl.obolibrary.org/obo/MICRO_0001244"/><owl:someValuesFrom rdf:resource="http://purl.obolibrary.org/obo/MICRO_0000178"/></owl:Restriction>
+  </owl:intersectionOf></owl:Class></owl:equivalentClass>
+ </owl:Class>
+</rdf:RDF>

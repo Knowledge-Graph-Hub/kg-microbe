@@ -107,10 +107,12 @@ published checksum, and the six ``Saccharomyces`` rows that lose their hybrid
 
 import csv
 import io
+import json
 import os
 import re
 import tarfile
 from collections import Counter
+from contextlib import ExitStack
 from pathlib import Path
 from typing import Optional, Union
 
@@ -122,11 +124,32 @@ from kg_microbe.transform_utils.constants import (
     GOLD_ORGANISM_FOLD_HEADER,
     KNOWLEDGE_ASSERTION,
     MANUAL_AGENT,
-    NCBI_CATEGORY,
-    RDFS_SUBCLASS_OF,
+    NAMED_THING_CATEGORY,
+    RELATED_TO_PREDICATE,
+)
+from kg_microbe.transform_utils.gold import selected_taxon_aliases
+from kg_microbe.transform_utils.gold.crosswalk_quarantine import (
+    AUDIT_FILE,
+    REQUIRED_INPUTS,
+    CrosswalkQuarantine,
+    verify_recorded_inputs,
+)
+from kg_microbe.transform_utils.gold.taxon_dispositions import (
+    AUDIT_FILE as TAXON_AUDIT_FILE,
+)
+from kg_microbe.transform_utils.gold.taxon_dispositions import (
+    CONTRACT_KEY as TAXON_CONTRACT_KEY,
+)
+from kg_microbe.transform_utils.gold.taxon_dispositions import (
+    REQUIRED_INPUTS as TAXON_REQUIRED_INPUTS,
+)
+from kg_microbe.transform_utils.gold.taxon_dispositions import (
+    TaxonDispositions,
+    verify_recorded_taxon_inputs,
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.source_finalization import FINALIZATION_FILE, SourceFinalizationRequired
 from kg_microbe.utils.tsv_io import tsv_writer
 
 #: Upstream filenames inside ``data/raw/gold/``.
@@ -184,38 +207,15 @@ _LOCATED_IN_RELATION = "RO:0001025"
 #: classified as a plant.
 _HOST_TAXON_EDGE_SHAPE = ("biolink:location_of", "RO:0001015")
 
-#: What a GOLD organism's link to its taxon is emitted as, replacing the
-#: upstream ``in_taxon``. A GOLD organism record is a named isolate — the same
-#: kind of thing as a BacDive strain — and the graph already has a convention
-#: for "this named biological entity sits under this taxon":
-#:
-#:   NCBITaxon's own hierarchy   925,219  biolink:subclass_of
-#:   bacdive strains             251,916  biolink:subclass_of
-#:   metatraits                      186  biolink:subclass_of
-#:   gold (before this change)   531,324  biolink:in_taxon   <- lone dialect
-#:
-#: (gtdb / lpsn / microbedecoder use ``close_match``, but that is
-#: cross-identifier equivalence, not containment, so it is not a counterexample.)
-#:
-#: Read against Biolink alone, ``in_taxon`` looks better: its domain is ``thing
-#: with taxon``, which ``IndividualOrganism`` is, whereas ``subclass_of``
-#: requires ``ontology class`` on both ends and ``biolink:OrganismTaxon`` is not
-#: one. But that objection applies just as forcefully to NCBITaxon's own 925k
-#: hierarchy edges. The graph treats OrganismTaxon as class-like throughout;
-#: making GOLD the single source that obeys a rule the taxonomy backbone itself
-#: does not leaves it unreachable instead of correct. A query walking
-#: ``subclass_of`` down from a species finds BacDive's strains and silently
-#: misses every GOLD organism, which is the concrete cost of the split.
-#:
-#: The deviation from Biolink's letter is graph-wide (~1.65M edges) and
-#: deliberate; #834 records it rather than leaving it implicit here.
+#: GOLD's ecosystem hierarchy remains a hierarchy. Its organism_v2 rows are
+#: not all strains: native records also denote metagenomes, binned genomes,
+#: and unnamed referents. A different label is not proof for #834's named-
+#: strain convention. Unverified native referents retain their own identifier
+#: and audited taxon association, without taxonomic inheritance (#1316).
 _SUBCLASS_OF = "biolink:subclass_of"
 
-#: Organism nodes carry the taxon category for the same reason, matching the
-#: 251,404 bacdive strain nodes. ``biolink:IndividualOrganism`` would be the
-#: honest type for an isolate in isolation, but it cannot be the subject of a
-#: ``subclass_of`` edge without inventing a fourth dialect.
-_ORGANISM_CATEGORY = NCBI_CATEGORY
+#: This is the unresolved original source referent, not a newly reified record.
+_ORGANISM_CATEGORY = NAMED_THING_CATEGORY
 
 #: Upstream category for a GOLD organism, used to recognise the rows to retype.
 _INDIVIDUAL_ORGANISM = "biolink:IndividualOrganism"
@@ -296,7 +296,19 @@ class GOLDTransform(Transform):
     #: check notices an edit to it — a transform that reads a curation file
     #: without declaring it is reported fresh while its output is stale, which
     #: is #812, then #839, and would have been this transform next (#876).
-    DATA_INPUTS = (f"mappings/{_MESH_SITE_FILE}",)
+    DATA_INPUTS = (
+        f"mappings/{_MESH_SITE_FILE}",
+        "mappings/gold_abscess_crosswalk_policy.json",
+        "mappings/gold_taxon_dispositions.json",
+        "mappings/gold_selected_taxon_aliases.json",
+    )
+    REQUIRED_CONSUMED_INPUTS = (*REQUIRED_INPUTS, *TAXON_REQUIRED_INPUTS, *selected_taxon_aliases.REQUIRED_INPUTS)
+    REQUIRED_AUDIT_FILES = (
+        AUDIT_FILE,
+        TAXON_AUDIT_FILE,
+        "gold_lexical_fold_restorations.tsv",
+        selected_taxon_aliases.AUDIT_FILE,
+    )
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
         """
@@ -311,6 +323,172 @@ class GOLDTransform(Transform):
         self._envo_nodes_cache: Optional[set] = None
         self._label_index: Optional[dict] = None
         self._mesh_sites: Optional[set] = None
+        self._crosswalk_quarantine = None
+        self._recorded_crosswalk_inputs = None
+        self._recorded_native_guard = None
+        self._recorded_native_admission = None
+        self._native_publication_failed = False
+        self._taxon_dispositions = None
+
+    @property
+    def producer_native_inputs(self):
+        """Retain the reviewed selection contract independently of mutable receipts."""
+        if self._crosswalk_quarantine is not None:
+            return {
+                **self._crosswalk_quarantine.contract(),
+                TAXON_CONTRACT_KEY: self._taxon_dispositions.contract(),
+                selected_taxon_aliases.CONTRACT_KEY: self._taxon_dispositions.aliases.contract(),
+            }
+        return self._recorded_crosswalk_inputs
+
+    @producer_native_inputs.setter
+    def producer_native_inputs(self, recorded):
+        """Allow repeated admission only against the original consumed native inputs."""
+        if self._native_publication_failed:
+            raise SourceFinalizationRequired("GOLD native publication previously failed; rerun the producer")
+        if self._crosswalk_quarantine is not None and recorded != self.producer_native_inputs:
+            raise SourceFinalizationRequired("GOLD crosswalk cohort differs from finalized run")
+        if self._recorded_native_guard is not None:
+            self._recorded_native_guard()
+            if recorded != self._recorded_crosswalk_inputs:
+                raise SourceFinalizationRequired("GOLD recorded native contract was replaced")
+            return
+        if self._crosswalk_quarantine is None:
+            self._restore_native_guard(recorded)
+            return
+        verify_recorded_inputs(
+            {
+                "consumed_inputs": self.consumed_input_snapshots,
+                "producer_native_inputs": recorded,
+                "raw_input_directory": str(self.input_base_dir.resolve()),
+            }
+        )
+        self._recorded_crosswalk_inputs = recorded
+
+    def _restore_native_guard(self, recorded, *, report_path=None):
+        """Rejoin the complete saved producer once and retain exact live state bindings (#1339)."""
+        from kg_microbe.merge_utils.source_admission import SourceAdmission
+
+        report_path = Path(report_path) if report_path is not None else self.output_dir / FINALIZATION_FILE
+        admission = SourceAdmission()
+        report = json.loads(admission.capture(report_path, retain=True))
+        if recorded != report.get("producer_native_inputs"):
+            raise SourceFinalizationRequired("GOLD supplied native contract differs from published report")
+        self.verify_recorded_native_inputs(report, report_path, admission=admission)
+        encode = selected_taxon_aliases._json
+        original_contract = encode(recorded)
+        original_roles = encode(report.get("consumed_inputs"))
+        original_audits = encode(report.get("producer_audit_members"))
+        original_raw = report.get("raw_input_directory")
+        original_output = self.output_dir.absolute()
+        self._recorded_crosswalk_inputs = json.loads(original_contract)
+        failed = False
+
+        def verify_state():
+            """Retain the complete restored state contract independently of the public guard binding."""
+            nonlocal failed
+            try:
+                if (
+                    failed
+                    or self._recorded_native_guard is not verify
+                    or self._recorded_native_admission is not admission
+                    or encode(self._recorded_crosswalk_inputs) != original_contract
+                    or encode(self.consumed_input_snapshots) != original_roles
+                    or encode(self.producer_audit_snapshots) != original_audits
+                    or str(self.input_base_dir.resolve()) != original_raw
+                    or self.output_dir.absolute() != original_output
+                ):
+                    raise SourceFinalizationRequired("GOLD restored native contract or input bindings changed")
+            except Exception:
+                failed = True
+                raise
+            return True
+
+        def verify(*, metadata_only=True, output_dir=None):
+            """Refuse changed restored contracts, roles, artifacts or guard bindings without repair."""
+            nonlocal failed
+            verify_state()
+            if output_dir is not None and Path(output_dir).absolute() != original_output:
+                failed = True
+                raise SourceFinalizationRequired("GOLD restored native output directory changed")
+            admission.verify(metadata_only=metadata_only)
+
+        self._recorded_native_guard = verify
+        self._recorded_native_admission = admission
+        admission.capture_resolution(verify_state)
+        verify(metadata_only=False)
+
+    def verify_native_inputs(self, *, byte_verified=False, output_dir=None):
+        """Verify lexical paths as well as the immutable parser snapshots."""
+        if self._native_publication_failed:
+            raise SourceFinalizationRequired("GOLD native publication previously failed; rerun the producer")
+        if self._recorded_native_admission is not None:
+            self._recorded_native_admission.verify(metadata_only=byte_verified)
+        if self._crosswalk_quarantine is not None:
+            self._crosswalk_quarantine.verify_bindings(byte_verified=byte_verified)
+            if self._taxon_dispositions is not None:
+                self._taxon_dispositions.verify(output_dir=output_dir, metadata_only=byte_verified)
+        elif self._recorded_native_guard is not None:
+            self._recorded_native_guard(metadata_only=byte_verified, output_dir=output_dir)
+        else:
+            raise SourceFinalizationRequired("GOLD native producer guard is missing; rerun or restore finalization")
+
+    @classmethod
+    def verify_recorded_native_inputs(cls, report, report_path, *, admission=None):
+        """Validate persisted cohort/authority bindings; never edit a graph during admission."""
+        verify_recorded_inputs(report, report_path)
+        return verify_recorded_taxon_inputs(report, report_path, admission=admission)
+
+    def finalize(self, *, file_prefix="", fresh_run=False):
+        """Transition legitimate published output replacements without rebasing native inputs (#1342)."""
+        from kg_microbe.merge_utils.source_admission import SourceAdmission
+        from kg_microbe.transform_utils.gold.taxon_dispositions import restore_gold_declarations
+
+        if self._native_publication_failed:
+            raise SourceFinalizationRequired("GOLD native publication previously failed; rerun the producer")
+        if self._crosswalk_quarantine is None:
+            return super().finalize(file_prefix=file_prefix, fresh_run=fresh_run)
+        self.verify_consumed_inputs()
+        original_contract = selected_taxon_aliases._json(self.producer_native_inputs)
+        boundary = SourceAdmission()
+        for snapshot in self.consumed_input_snapshots.values():
+            boundary.capture(snapshot["path"])
+        # Retain selected lexical aliases as well as resolved consumed paths.
+        for role, path in selected_taxon_aliases._locators(self.input_base_dir, self.output_base_dir).items():
+            if role in self.consumed_input_snapshots:
+                boundary.capture(path)
+        for optional in self._taxon_dispositions.optional:
+            boundary.capture(optional["path"], optional=True)
+        original_guards = (boundary, self._crosswalk_quarantine.guard, self._taxon_dispositions.admission)
+        original_directory = self.output_dir.absolute()
+        try:
+            # Base publication still verifies every original live guard before
+            # replacing outputs. The boundary guard was captured before that
+            # check and must remain unchanged afterward, including equal bytes.
+            report = super().finalize(file_prefix=file_prefix, fresh_run=fresh_run)
+            if (
+                self.output_dir.absolute() != original_directory
+                or selected_taxon_aliases._json(report.get("producer_native_inputs")) != original_contract
+            ):
+                raise SourceFinalizationRequired("GOLD published native contract differs from its producer")
+            for guard in original_guards:
+                guard.verify(metadata_only=True)
+            report_path = self.output_dir / f"{file_prefix}{FINALIZATION_FILE}"
+            self._restore_native_guard(json.loads(original_contract), report_path=report_path)
+            admission = self._recorded_native_admission
+            for guard in original_guards:
+                admission.capture_resolution(lambda original=guard: original.verify(metadata_only=True))
+            # Own-GOLD nameless declarations also retained the former producer
+            # output guard. Rejoin their exact published scope using the same
+            # completed admission cache, not a second graph-scale native scan.
+            restore_gold_declarations(self, report, report_path, admission=admission)
+            admission.verify(metadata_only=True)
+            self._crosswalk_quarantine = None
+            self.verify_consumed_inputs()
+            return report
+        except Exception:
+            self._native_publication_failed = True
+            raise
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True) -> None:
         """
@@ -326,6 +504,23 @@ class GOLDTransform(Transform):
             if not path.exists():
                 raise FileNotFoundError(f"{path} is missing; run `poetry run kg download -t gold` first.")
 
+        self.begin_consumed_inputs()
+        self._merges = self._envo_map = self._envo_nodes_cache = self._label_index = self._mesh_sites = None
+        self._crosswalk_quarantine = self._recorded_crosswalk_inputs = None
+        self._recorded_native_guard = None
+        self._recorded_native_admission = None
+        self._native_publication_failed = False
+        self._taxon_dispositions = None
+        with ExitStack() as stack:
+            scope = CrosswalkQuarantine(self, stack, nodes_in, edges_in)
+            self._crosswalk_quarantine = scope
+            self._taxon_dispositions = TaxonDispositions(self, stack, scope)
+            self._run_snapshot(scope.nodes_path, scope.edges_path)
+            scope.finish()
+            self._taxon_dispositions.finish()
+
+    def _run_snapshot(self, nodes_in, edges_in):
+        """Use the same captured native records for every existing GOLD pass."""
         # Order matters: remap retired taxids first, so a taxon NCBI has merged
         # into a current one is judged by the trim on the id it actually means.
         # Judging it on the retired id drops ~950 taxa, many of them bacteria.
@@ -334,18 +529,16 @@ class GOLDTransform(Transform):
         taxon_dropped, seen_before = self._taxon_drop_set(nodes_in, edges_in)
         dropped |= taxon_dropped
         resolution, ecosystem_labels = self._ecosystem_resolution(nodes_in, edges_in)
-        # After the drops, so an organism is never folded onto a taxon the trim
-        # removed — that would resurrect an excluded branch through the back door.
-        collapse = self._organism_collapse(nodes_in, edges_in, dropped)
-        incident = self._write_edges(edges_in, dropped, resolution, ecosystem_labels, collapse)
-        self._write_nodes(nodes_in, dropped, seen_before, incident, collapse)
-        # The fold removes IDs that another source can still reference (#1051).
-        # Publish the actual decision, including retired-taxid remapping, rather
-        # than making consumers repeat name matching or invent same_as edges.
+        # Label equality does not establish record identity. Retain source IDs
+        # and source-owned observations; the complete historical counterfactual
+        # is independently reconstructed in the mandatory restoration audit.
+        incident = self._write_edges(edges_in, dropped, resolution, ecosystem_labels)
+        self._write_nodes(nodes_in, dropped, seen_before, incident)
+        # Retire the old identity table explicitly, including repeated runs.
+        # Historical decisions belong only in the complete restoration audit.
         with atomic_write(self.output_dir / GOLD_ORGANISM_FOLD_FILE, encoding="utf-8", newline="") as handle:
             writer = tsv_writer(handle)
             writer.writerow(GOLD_ORGANISM_FOLD_HEADER)
-            writer.writerows(sorted(collapse.items()))
 
     def _trimmed_taxa(self) -> Optional[set]:
         """
@@ -367,6 +560,8 @@ class GOLDTransform(Transform):
             print(f"[gold] {_APPLY_TRIM_ENV} is off — emitting excluded-branch taxa unfiltered")
             return None
         path = self.output_base_dir / "ontologies" / _NCBITAXON_NODES
+        if self._taxon_dispositions is not None and self._taxon_dispositions.ncbi is not None:
+            path = self._taxon_dispositions.ncbi
         if not path.exists():
             raise FileNotFoundError(
                 f"{path} is missing, so the NCBITaxon trim cannot be applied. Run "
@@ -385,117 +580,6 @@ class GOLDTransform(Transform):
             )
         return taxa
 
-    def _taxon_labels(self) -> dict:
-        """
-        Names for the taxa a GOLD organism can sit under.
-
-        Prefers the trimmed NCBITaxon extract, because that is the row KGX keeps
-        on a merge — ``prepare_data_dict`` takes the first value for a
-        single-valued key, and the ontologies transform sorts ahead of gold, so
-        the OBO name is what a consumer actually sees. Falls back to GOLD's own
-        ``OrganismTaxon`` rows when the extract is absent, which is the
-        ``GOLD_APPLY_TAXON_TRIM=false`` case.
-
-        :return: Taxon CURIE to label.
-        """
-        path = self.output_base_dir / "ontologies" / _NCBITAXON_NODES
-        if path.exists():
-            with path.open(newline="") as handle:
-                return {
-                    row["id"]: row.get("name", "")
-                    for row in csv.DictReader(handle, delimiter="\t")
-                    if row["id"].startswith(_TAXON_PREFIX)
-                }
-        raw = self.input_base_dir / GOLD / GOLD_NODES_FILE
-        with raw.open(newline="") as handle:
-            return {
-                row["id"]: row.get("name", "")
-                for row in csv.DictReader(handle, delimiter="\t")
-                if row["id"].startswith(_TAXON_PREFIX)
-            }
-
-    def _organism_collapse(self, nodes_in: Path, edges_in: Path, dropped: set) -> dict:
-        """
-        Map each organism that adds no name of its own onto its taxon.
-
-        GOLD ships 5.2 organisms per taxon and 88.8% of them carry a strain-level
-        name the taxon cannot ("Methanococcoides sp. FTZ1" under the genus
-        ``NCBITaxon:2225``). Those earn their node. The other 11.2% are named
-        identically to their taxon, so the node is a second identifier for a
-        thing the graph already has — it adds an id, an edge, and nothing a
-        query can use. Those get folded into the taxon, and their environment
-        edges are re-pointed at it.
-
-        The comparison is on the name, not on rank or id shape, because the name
-        is the only thing the organism layer contributes. An organism under a
-        *genus* whose name is just the genus is as redundant as one under a
-        species; an organism under a species with a strain suffix is not.
-
-        :param nodes_in: Upstream ``GOLD_nodes.tsv``.
-        :param edges_in: Upstream ``GOLD_edges.tsv``.
-        :param dropped: IDs already removed, which must not be collapsed onto.
-        :return: Organism CURIE to the taxon CURIE it folds into.
-        """
-        taxon_labels = self._taxon_labels()
-        with nodes_in.open(newline="") as handle:
-            organism_names = {
-                row["id"]: row.get("name", "")
-                for row in csv.DictReader(handle, delimiter="\t")
-                if row.get("category") == _INDIVIDUAL_ORGANISM
-            }
-
-        # Count first, fold second. An organism claimed by two taxa must not be
-        # folded: the fold re-points its edges at the chosen taxon, so its
-        # *other* in_taxon row would be rewritten to `T1 subclass_of T2` — a
-        # taxonomic assertion GOLD never made, landing in the backbone where it
-        # is indistinguishable from the 925,219 real hierarchy edges (#833).
-        # The current export has none, so this is a guard against a change in
-        # someone else's file, and skipping is the honest outcome regardless:
-        # two taxa for one organism is exactly when the organism layer carries
-        # something the taxon does not.
-        taxon_edge_count: Counter = Counter()
-        with edges_in.open(newline="") as handle:
-            for row in csv.DictReader(handle, delimiter="\t"):
-                if row["predicate"] == _IN_TAXON:
-                    taxon_edge_count[row["subject"]] += 1
-
-        collapse: dict = {}
-        considered = multi_taxon = 0
-        with edges_in.open(newline="") as handle:
-            for row in csv.DictReader(handle, delimiter="\t"):
-                if row["predicate"] != _IN_TAXON:
-                    continue
-                organism, taxon = row["subject"], self._remap(row["object"])
-                if organism in dropped or taxon in dropped:
-                    continue
-                considered += 1
-                if taxon_edge_count[organism] > 1:
-                    multi_taxon += 1
-                    continue
-                name, taxon_name = organism_names.get(organism, ""), taxon_labels.get(taxon, "")
-                # A nameless organism is not evidence of redundancy — we cannot
-                # tell whether it duplicates the taxon, so it keeps its node.
-                if not name or not taxon_name:
-                    continue
-                if _normalise_label(name) == _normalise_label(taxon_name):
-                    collapse[organism] = taxon
-        if multi_taxon:
-            print(
-                f"[gold]   {multi_taxon:,} organism(s) claimed by more than one taxon — not folded, "
-                "so no taxon-to-taxon subclass_of is invented (#833)"
-            )
-        if collapse:
-            # Denominator is organisms that survived the drops, not every row in
-            # the upstream file — counting the 74,561 the trim removed as "kept"
-            # would overstate the layer by nine points.
-            kept = considered - len(collapse)
-            print(
-                f"[gold] organism layer: {kept:,} kept ({kept / considered:.1%}, "
-                f"name differs from the taxon's), {len(collapse):,} folded into their taxon "
-                f"({len(collapse) / considered:.1%}, name identical)"
-            )
-        return collapse
-
     def _mesh_site_terms(self) -> set:
         """
         MeSH CURIEs curated as sites.
@@ -503,6 +587,8 @@ class GOLDTransform(Transform):
         :return: The ``SITE`` CURIEs; empty when the curation file is absent,
             which keeps the #821 behaviour of bridging no MeSH at all.
         """
+        if self._crosswalk_quarantine is not None:
+            return self._crosswalk_quarantine.allowed_mesh
         if self._mesh_sites is not None:
             return self._mesh_sites
         path = Path(__file__).resolve().parents[3] / "mappings" / _MESH_SITE_FILE
@@ -548,7 +634,10 @@ class GOLDTransform(Transform):
         # MeSH is indexed so the curated SITE terms are reachable. Everything
         # else it contributes is refused by the per-term gate below, which is
         # why indexing the whole file here is safe.
-        sources.append(self.output_base_dir / "ontologies_stubs" / "mesh_nodes.tsv")
+        mesh = self.output_base_dir / "ontologies_stubs" / "mesh_nodes.tsv"
+        if self._crosswalk_quarantine is not None and self._crosswalk_quarantine.mesh_path is not None:
+            mesh = self._crosswalk_quarantine.mesh_path
+        sources.append(mesh)
         for path in sources:
             if not path.is_file():
                 continue
@@ -607,6 +696,8 @@ class GOLDTransform(Transform):
 
         mapping: dict = {}
         path = self.input_base_dir / _GOLD_ONTOLOGY_FILE
+        if self._crosswalk_quarantine is not None and self._crosswalk_quarantine.ontology_path is not None:
+            path = self._crosswalk_quarantine.ontology_path
         if not path.is_file():
             print(f"[gold] {path} not found — no ENVO crosswalk emitted; run `poetry run kg download -t gold`")
             self._envo_map = mapping
@@ -620,7 +711,7 @@ class GOLDTransform(Transform):
             return mapping
 
         graph = rdflib.Graph()
-        graph.parse(str(path))
+        graph.parse(str(path), format="xml")
         skos_exact = rdflib.URIRef("http://www.w3.org/2004/02/skos/core#exactMatch")
         labels = {s: str(o) for s, o in graph.subject_objects(rdflib.RDFS.label)}
         for subject, obj in graph.subject_objects(skos_exact):
@@ -713,6 +804,8 @@ class GOLDTransform(Transform):
 
         merges: dict = {}
         archive = self.input_base_dir / _TAXDUMP_ARCHIVE
+        if self._taxon_dispositions is not None and self._taxon_dispositions.taxdump is not None:
+            archive = self._taxon_dispositions.taxdump
         if not archive.is_file():
             print(
                 f"[gold] {archive} not found — retired NCBI taxids will not be remapped; "
@@ -743,6 +836,8 @@ class GOLDTransform(Transform):
         :param node_id: Any node id; non-taxon ids pass through untouched.
         :return: The current id, or the input when there is no merge record.
         """
+        if self._taxon_dispositions is not None:
+            return self._taxon_dispositions.aliases.resolve(node_id)
         return self._taxid_merges().get(node_id, node_id)
 
     def _category_drop_set(self, nodes_in: Path) -> set:
@@ -812,7 +907,6 @@ class GOLDTransform(Transform):
         dropped: set,
         resolution: dict,
         ecosystem_labels: dict,
-        collapse: dict,
     ) -> set:
         """
         Write surviving edges, resolving uninformative ecosystem targets upward.
@@ -821,15 +915,13 @@ class GOLDTransform(Transform):
         :param dropped: IDs removed by the trim.
         :param resolution: Ecosystem id to nearest informative ancestor, or None.
         :param ecosystem_labels: Ecosystem id to its label, for the ENVO crosswalk.
-        :param collapse: Organism to taxon, for organisms that add no name.
         :return: IDs incident to at least one surviving edge.
         """
         incident: set = set()
         kept = removed = resolved = uninformative = relabelled = 0
-        retyped = folded = deduped = 0
-        # Re-pointing a collapsed organism's edges at its taxon can land two
-        # isolates of one taxon on the same environment. The upstream export has
-        # no duplicate triples at all, so anything caught here is ours.
+        retyped = deduped = 0
+        # Preserve record ownership. Only duplicate triples within a record,
+        # e.g. resolved environment aliases, can now be deduplicated here.
         seen_triples: set = set()
         with (
             edges_in.open(newline="") as handle,
@@ -852,19 +944,11 @@ class GOLDTransform(Transform):
                 relation = row.get("relation", "")
 
                 if predicate == _IN_TAXON:
-                    if subject in collapse:
-                        # The organism *is* the taxon by every name the graph
-                        # carries, so this edge would say `X subclass_of X`.
-                        folded += 1
-                        continue
-                    # Re-predicate to the graph's convention for "named entity
-                    # sits under this taxon" — see `_SUBCLASS_OF`.
-                    predicate = _SUBCLASS_OF
-                    relation = RDFS_SUBCLASS_OF
+                    # A taxonomy field is source evidence for an association,
+                    # not proof that this heterogeneous referent is a strain.
+                    # Preserve the literal native relation in the graph/audit.
+                    predicate = RELATED_TO_PREDICATE
                     retyped += 1
-
-                subject = collapse.get(subject, subject)
-                obj = collapse.get(obj, obj)
 
                 if predicate == _OCCURS_IN:
                     if obj in resolution:
@@ -894,18 +978,21 @@ class GOLDTransform(Transform):
                 incident.add(subject)
                 incident.add(obj)
                 kept += 1
-                writer.writerow(
-                    [
-                        subject,
-                        predicate,
-                        obj,
-                        relation,
-                        row.get("primary_knowledge_source", "") or f"infores:{GOLD}",
-                        KNOWLEDGE_ASSERTION,
-                        MANUAL_AGENT,
-                        original_object,
-                    ]
-                )
+                emitted = [
+                    subject,
+                    predicate,
+                    obj,
+                    relation,
+                    row.get("primary_knowledge_source", "") or f"infores:{GOLD}",
+                    KNOWLEDGE_ASSERTION,
+                    MANUAL_AGENT,
+                    original_object,
+                ]
+                writer.writerow(emitted)
+                if self._crosswalk_quarantine is not None:
+                    self._crosswalk_quarantine.observe_location(
+                        row, dict(zip([*self.edge_header, _ORIGINAL_OBJECT], emitted, strict=True))
+                    )
             # Bridge the ecosystem vocabulary to ENVO. Emitted as edges rather
             # than by rewriting `occurs_in` targets, so GOLD's own hierarchy
             # survives intact and the crosswalk is inspectable on its own. A
@@ -956,6 +1043,25 @@ class GOLDTransform(Transform):
                 if crosswalk.get(label.strip().lower()):
                     continue  # already bridged by the curated GOLD mapping
                 curie = index.get(_normalise_label(label))
+                if self._crosswalk_quarantine is not None and eco_id in self._crosswalk_quarantine.ecosystem_ids:
+                    proposed = dict(
+                        zip(
+                            [*self.edge_header, _ORIGINAL_OBJECT],
+                            [
+                                eco_id,
+                                EXACT_MATCH_PREDICATE,
+                                curie,
+                                EXACT_MATCH,
+                                f"infores:{GOLD}",
+                                KNOWLEDGE_ASSERTION,
+                                MANUAL_AGENT,
+                                "",
+                            ],
+                            strict=True,
+                        )
+                    )
+                    self._crosswalk_quarantine.intercept(eco_id, label, curie, proposed)
+                    continue
                 if not curie or curie.startswith(_ECOSYSTEM_PREFIX):
                     continue
                 if curie.startswith(_MESH_PREFIX):
@@ -1042,17 +1148,14 @@ class GOLDTransform(Transform):
             )
         if retyped:
             print(
-                f"[gold]   {retyped:,} re-predicated in_taxon -> subclass_of "
-                "(matching bacdive strains and NCBITaxon's own hierarchy)"
+                f"[gold]   {retyped:,} retained in_taxon claims as audited related_to associations "
+                "(native referent identity unresolved; no taxonomic inheritance)"
             )
-        if folded or deduped:
-            print(
-                f"[gold]   {folded:,} in_taxon edges dropped as self-referential after the fold, "
-                f"{deduped:,} duplicate triples removed by re-pointing"
-            )
+        if deduped:
+            print(f"[gold]   {deduped:,} duplicate triples removed after environment resolution")
         return incident
 
-    def _write_nodes(self, nodes_in: Path, dropped: set, seen_before: set, incident: set, collapse: dict) -> None:
+    def _write_nodes(self, nodes_in: Path, dropped: set, seen_before: set, incident: set) -> None:
         """
         Write surviving nodes in the standard column order, adding missing columns.
 
@@ -1065,10 +1168,8 @@ class GOLDTransform(Transform):
         :param dropped: IDs removed by the trim.
         :param seen_before: IDs incident to an edge in the upstream payload.
         :param incident: IDs incident to a surviving edge.
-        :param collapse: Organism to taxon, for organisms folded into their taxon.
         """
         emitted = removed = newly_orphaned = remapped_collisions = 0
-        folded = 0
         pre_existing_orphans: set = set()
         # Which ids the upstream file carries verbatim, so a retired row can
         # defer to its replacement's own row rather than donating a stale name.
@@ -1103,12 +1204,6 @@ class GOLDTransform(Transform):
                 if original_id in dropped or node_id in dropped:
                     removed += 1
                     continue
-                if node_id in collapse:
-                    # Folded into its taxon. Checked before the orphan test, which
-                    # would otherwise catch these too and report them as damage
-                    # the trim did rather than a fold we chose.
-                    folded += 1
-                    continue
                 if node_id in seen_before and node_id not in incident:
                     newly_orphaned += 1
                     removed += 1
@@ -1119,12 +1214,22 @@ class GOLDTransform(Transform):
                 if node_id.startswith(_ECOSYSTEM_PREFIX) and _ONTOLOGY_CLASS not in category:
                     category = f"{category}|{_ONTOLOGY_CLASS}" if category else _ONTOLOGY_CLASS
                 elif category == _INDIVIDUAL_ORGANISM:
-                    # Retyped alongside the subclass_of re-predication: the two
-                    # have to move together or the edge's subject is an
-                    # individual, which no dialect in this graph licenses.
+                    # No native structured strain evidence is supplied here;
+                    # retain the unresolved referent and its literal name.
                     category = _ORGANISM_CATEGORY
                 emitted += 1
                 written.add(node_id)
+                if (
+                    self._taxon_dispositions is not None
+                    and original_id != node_id
+                    and (alias := self._taxon_dispositions.aliases.evidence_for(original_id)) is not None
+                ):
+                    # The finite selected authority supplies a real target
+                    # declaration when GOLD has none; the old taxon's literal
+                    # declaration stays in the alias audit, not on the new ID.
+                    selected = json.loads(alias["selected_declaration_json"])["row"]
+                    writer.writerow([selected.get(column, "") for column in self.node_header])
+                    continue
                 writer.writerow(
                     [
                         node_id,
@@ -1139,10 +1244,8 @@ class GOLDTransform(Transform):
                     ]
                 )
         print(f"[gold] nodes emitted: {emitted:,}" + (f" (dropped {removed:,})" if removed else ""))
-        if folded:
-            print(f"[gold]   {folded:,} organism node(s) folded into their taxon, adding no name of their own")
         if newly_orphaned:
-            print(f"[gold]   of which {newly_orphaned:,} were left edgeless by the trim and cleaned up")
+            print(f"[gold]   {newly_orphaned:,} nodes were left edgeless by the trim and cleaned up")
         if remapped_collisions:
             print(
                 f"[gold]   {remapped_collisions:,} node(s) collapsed onto an existing id after the retired-taxid remap"

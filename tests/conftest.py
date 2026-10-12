@@ -6,6 +6,7 @@ import ipaddress
 import os
 import shutil
 import socket
+import subprocess
 from pathlib import Path
 from typing import Any
 
@@ -100,3 +101,48 @@ def block_external_network(monkeypatch: pytest.MonkeyPatch, request: pytest.Fixt
 
     monkeypatch.setattr(socket, "getaddrinfo", guarded_getaddrinfo)
     monkeypatch.setattr(socket.socket, "connect", guarded_connect)
+
+
+def _tracked_stamps(root: Path) -> dict[str, tuple[int, int] | None]:
+    """Size and mtime of every git-tracked file; empty outside a git checkout."""
+    git = shutil.which("git")
+    if git is None:
+        return {}
+    try:
+        query = [git, "ls-files", "-z"]
+        listing = subprocess.run(query, cwd=root, capture_output=True, check=True).stdout  # noqa: S603 - read-only
+    except (OSError, subprocess.CalledProcessError):
+        return {}
+    stamps: dict[str, tuple[int, int] | None] = {}
+    for name in listing.decode("utf-8").split("\0"):
+        if not name:
+            continue
+        try:
+            status = (root / name).lstat()
+        except FileNotFoundError:
+            stamps[name] = None
+        else:
+            stamps[name] = (status.st_size, status.st_mtime_ns)
+    return stamps
+
+
+@pytest.fixture(scope="session", autouse=True)
+def tracked_files_unchanged():
+    """
+    Fail the session if any test wrote a git-tracked file.
+
+    Tests write only under tmp_path. A real transform run once rewrote the tracked
+    kg_microbe/transform_utils/ontologies/xrefs/mondo_xrefs.tsv on every suite
+    run, and because later runs rewrote identical bytes, content checks could not
+    see it. Size and mtime catch any write, including a byte-identical one.
+    """
+    root = Path(__file__).resolve().parents[1]
+    before = _tracked_stamps(root)
+    yield
+    after = _tracked_stamps(root)
+    changed = sorted(name for name in before if after.get(name) != before[name])
+    if changed:
+        pytest.fail(
+            f"Tests modified {len(changed)} tracked file(s); write only under tmp_path: " + ", ".join(changed[:20]),
+            pytrace=False,
+        )

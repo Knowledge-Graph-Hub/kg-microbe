@@ -194,13 +194,15 @@ def test_actual_compound_fallbacks_and_nested_solutions_keep_source_identity(tar
 
 @pytest.mark.parametrize("target,label,aliases", PAIRS)
 def test_rejected_unified_candidate_does_not_hide_independent_legacy_route(target, label, aliases):
-    """Synthetic positive evidence proves the hold is not an unconditional local-node guard."""
+    """Compound lookup keeps independent candidates; explicit child IDs remain native (#1319)."""
     name = aliases[0]
     resolver = _resolver({"1": {"recipe": [{"solution": name, "solution_id": 17}]}})
     resolver.chemical_loader.find_chebi_by_name = lambda query: target
     resolver.compound_mappings = {name.lower(): INDEPENDENT}
     assert resolver.standardize_compound_id("41", name) == INDEPENDENT
-    assert resolver.get_solution_recipe_occurrences("1")[0][ID_COLUMN] == INDEPENDENT
+    occurrence = resolver.get_solution_recipe_occurrences("1")[0]
+    assert occurrence[ID_COLUMN] == MEDIADIVE_SOLUTION_PREFIX + "17"
+    assert json.loads(occurrence[SOURCE_RECORD_COLUMN]) == {"solution": name, "solution_id": 17}
 
 
 @pytest.mark.parametrize("target,label,aliases", PAIRS)
@@ -220,7 +222,9 @@ def test_cold_reader_can_select_explicit_independent_candidate(tmp_path, target,
     resolver = _resolver({"1": {"recipe": [{"solution": name, "solution_id": 17}]}})
     resolver.chemical_loader = loader
     assert resolver.standardize_compound_id("41", name) == INDEPENDENT
-    assert resolver.get_solution_recipe_occurrences("1")[0][ID_COLUMN] == INDEPENDENT
+    occurrence = resolver.get_solution_recipe_occurrences("1")[0]
+    assert occurrence[ID_COLUMN] == MEDIADIVE_SOLUTION_PREFIX + "17"
+    assert json.loads(occurrence[SOURCE_RECORD_COLUMN]) == {"solution": name, "solution_id": 17}
 
 
 def test_native_identity_writer_removes_only_full_reviewed_claims_and_is_stable(tmp_path):

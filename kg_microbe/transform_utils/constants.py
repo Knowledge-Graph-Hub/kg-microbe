@@ -214,6 +214,8 @@ INGREDIENT_PREFIX = "kgmicrobe.ingredient:"
 TRAIT_PREFIX = "kgmicrobe.trait:"
 # Reported source-field values, not decoded phenotypes or ontology qualities.
 SOURCE_ATTRIBUTE_PREFIX = "kgmicrobe.source_attribute:"
+# Unresolved source observation records, not organism/taxon identities.
+SOURCE_RECORD_PREFIX = "kgmicrobe.source_record:"
 ISOLATION_SOURCE_PREFIX = "bacdive.isolation_source:"
 RHEA_OLD_PREFIX = "OBO:rhea_"
 RHEA_NEW_PREFIX = "RHEA:"
@@ -327,6 +329,7 @@ NCBI_TO_METABOLITE_SENSITIVITY_EDGE = "biolink:associated_with_sensitivity_to"
 
 # Taxonomy and organism categories
 NCBI_CATEGORY = "biolink:OrganismTaxon"
+CELLULAR_ORGANISM_CATEGORY = "biolink:CellularOrganism"
 
 # Growth media categories (Biolink Model v4.3.6)
 # Medium nodes are emitted multi-cat: the KG-Microbe extension `biolink:GrowthMedium`
@@ -371,11 +374,23 @@ CARBON_SUBSTRATE_CATEGORY = "biolink:ChemicalEntity"
 # is the Biolink-recommended replacement.
 METABOLISM_CATEGORY = "biolink:BiologicalProcess"
 PATHWAY_CATEGORY = "biolink:BiologicalProcess"
+# Native ontology processes are not necessarily biological (e.g. food cooking).
+ACTIVITY_CATEGORY = "biolink:Activity"
 
 # Anatomical and environmental categories
 ANATOMICAL_ENTITY_CATEGORY = "biolink:AnatomicalEntity"  # For UBERON anatomical terms
+GROSS_ANATOMICAL_STRUCTURE_CATEGORY = "biolink:GrossAnatomicalStructure"
+PATHOLOGICAL_ANATOMICAL_STRUCTURE_CATEGORY = "biolink:PathologicalAnatomicalStructure"
+LIFE_STAGE_CATEGORY = "biolink:LifeStage"
+ONTOLOGY_CLASS_CATEGORY = "biolink:OntologyClass"
 FOOD_CATEGORY = "biolink:Food"  # FOODON terms (#1015)
 ENVIRONMENT_CATEGORY = "biolink:EnvironmentalFeature"  # "ENVO:01000254"
+ENVIRONMENTAL_PROCESS_CATEGORY = "biolink:EnvironmentalProcess"
+PHYSICAL_ENTITY_CATEGORY = "biolink:PhysicalEntity"
+MATERIAL_SAMPLE_CATEGORY = "biolink:MaterialSample"
+PHENOTYPIC_FEATURE_CATEGORY = "biolink:PhenotypicFeature"
+NAMED_THING_CATEGORY = "biolink:NamedThing"
+POPULATION_CATEGORY = "biolink:PopulationOfIndividualOrganisms"
 
 # Phenotype and attribute categories
 PHENOTYPIC_CATEGORY = "biolink:PhenotypicQuality"
@@ -471,6 +486,7 @@ PROVIDED_BY_COLUMN = "provided_by"
 PRIMARY_KNOWLEDGE_SOURCE_COLUMN = "primary_knowledge_source"
 PUBLICATIONS_COLUMN = "publications"
 SOURCE_ASSERTION_ID_COLUMN = "source_assertion_id"
+ORIGINAL_SUBJECT_COLUMN = "original_subject"
 MIM_INGREDIENTS = "mim_ingredients"
 MIM_KNOWLEDGE_SOURCE = "infores:mediaingredientmech"
 INFORMATION_CONTENT_ENTITY_CATEGORY = "biolink:InformationContentEntity"
@@ -909,6 +925,7 @@ HAS_PARTICIPANT_PREDICATE = "biolink:has_participant"
 ENABLED_BY_PREDICATE = "biolink:enabled_by"
 HAS_INPUT_PREDICATE = "biolink:has_input"
 HAS_OUTPUT_PREDICATE = "biolink:has_output"
+OCCURS_IN_PREDICATE = "biolink:occurs_in"
 IS_INPUT_OF_PREDICATE = "biolink:is_input_of"
 IS_OUTPUT_OF_PREDICATE = "biolink:is_output_of"
 HAS_INPUT_RELATION = "RO:0002233"

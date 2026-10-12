@@ -3,6 +3,7 @@
 from collections.abc import Mapping
 
 from kg_microbe.utils.cas import invalid_cas_identifier
+from kg_microbe.utils.ingredient_context import context_metadata_row
 from kg_microbe.utils.ingredient_scope import validate_scope_row
 
 _ANNOTATION_PREDICATES = frozenset({"oboInOwl:hasDbXref", "biolink:xref", "rdfs:seeAlso"})
@@ -37,6 +38,8 @@ def classify_mapping_row(row: Mapping[str, str], metadata: dict | None = None) -
             return "nonidentity", "identity_not_authorized"
     if predicate in {"skos:broadMatch", "skos:narrowMatch"}:
         return "broader", ""
+    if context_metadata_row(row):
+        return "authority_metadata", "ingredient_identity_not_authorized"
     if predicate in _ANNOTATION_PREDICATES:
         return "annotation", ""
     if subject.startswith("kgm.name:"):

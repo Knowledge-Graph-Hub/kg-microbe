@@ -1,0 +1,196 @@
+{
+  "source_path": "data/raw/ncit.db",
+  "source_sha256": "7d1245d10a80ab29ba02e7eab03b37dd9940cdd18f92855d44c95578584f6eb5",
+  "statements": [
+    {
+      "datatype": null,
+      "language": null,
+      "object": null,
+      "predicate": "IAO:0000115",
+      "value": "Catalase (527 aa, ~60 kDa) is encoded by the human CAT gene. This protein plays a role in the detoxification of hydrogen peroxide."
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": null,
+      "predicate": "NCIT:NHC0",
+      "value": "C61062"
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": null,
+      "predicate": "NCIT:P100",
+      "value": "115500"
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": null,
+      "predicate": "NCIT:P106",
+      "value": "Amino Acid, Peptide, or Protein"
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": null,
+      "predicate": "NCIT:P106",
+      "value": "Enzyme"
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": null,
+      "predicate": "NCIT:P108",
+      "value": "Catalase"
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": null,
+      "predicate": "NCIT:P207",
+      "value": "C0007367"
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": null,
+      "predicate": "NCIT:P210",
+      "value": "9001-05-2"
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": null,
+      "predicate": "NCIT:P366",
+      "value": "Catalase"
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": null,
+      "predicate": "NCIT:P93",
+      "value": "P04040"
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": null,
+      "predicate": "oio:hasExactSynonym",
+      "value": "CAT"
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": null,
+      "predicate": "oio:hasExactSynonym",
+      "value": "CAT Protein"
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": null,
+      "predicate": "oio:hasExactSynonym",
+      "value": "Catalase"
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": null,
+      "predicate": "oio:hasExactSynonym",
+      "value": "EC 1.11.1.6"
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": "_:riog01410252",
+      "predicate": "owl:equivalentClass",
+      "value": null
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": "owl:Class",
+      "predicate": "rdf:type",
+      "value": null
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": null,
+      "predicate": "rdfs:label",
+      "value": "Catalase"
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": "_:riog01410281",
+      "predicate": "rdfs:subClassOf",
+      "value": null
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": "_:riog01410280",
+      "predicate": "rdfs:subClassOf",
+      "value": null
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": "_:riog01410279",
+      "predicate": "rdfs:subClassOf",
+      "value": null
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": "_:riog01410278",
+      "predicate": "rdfs:subClassOf",
+      "value": null
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": "_:riog01410277",
+      "predicate": "rdfs:subClassOf",
+      "value": null
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": "_:riog01410276",
+      "predicate": "rdfs:subClassOf",
+      "value": null
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": "_:riog01410275",
+      "predicate": "rdfs:subClassOf",
+      "value": null
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": "_:riog01410274",
+      "predicate": "rdfs:subClassOf",
+      "value": null
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": "_:riog01410273",
+      "predicate": "rdfs:subClassOf",
+      "value": null
+    },
+    {
+      "datatype": null,
+      "language": null,
+      "object": "NCIT:C16946",
+      "predicate": "rdfs:subClassOf",
+      "value": null
+    }
+  ],
+  "target_id": "NCIT:C61062"
+}

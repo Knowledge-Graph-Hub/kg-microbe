@@ -1,0 +1,522 @@
+<http://id.nlm.nih.gov/mesh/2026/C008328> <http://id.nlm.nih.gov/mesh/vocab#dateIntroduced> "1974-01-01"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/C008328> <http://id.nlm.nih.gov/mesh/vocab#frequency> "6"^^<http://www.w3.org/2001/XMLSchema#int> .
+<http://id.nlm.nih.gov/mesh/2026/C008328> <http://id.nlm.nih.gov/mesh/vocab#identifier> "C008328" .
+<http://id.nlm.nih.gov/mesh/2026/C008328> <http://id.nlm.nih.gov/mesh/vocab#lastUpdated> "1974-01-01"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/C008328> <http://id.nlm.nih.gov/mesh/vocab#note> "commercial yeast extract"@en .
+<http://id.nlm.nih.gov/mesh/2026/C008328> <http://id.nlm.nih.gov/mesh/vocab#preferredConcept> <http://id.nlm.nih.gov/mesh/2026/M0052060> .
+<http://id.nlm.nih.gov/mesh/2026/C008328> <http://id.nlm.nih.gov/mesh/vocab#preferredMappedTo> <http://id.nlm.nih.gov/mesh/2026/D015002> .
+<http://id.nlm.nih.gov/mesh/2026/C008328> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T082063> .
+<http://id.nlm.nih.gov/mesh/2026/C008328> <http://id.nlm.nih.gov/mesh/vocab#source> "Br J Nutr 31(2):167;1974"@en .
+<http://id.nlm.nih.gov/mesh/2026/C008328> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#SCR_Chemical> .
+<http://id.nlm.nih.gov/mesh/2026/C008328> <http://www.w3.org/2000/01/rdf-schema#label> "marmite"@en .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0312114> .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0312115> .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0312116> .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0312117> .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0487668> .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#dateIntroduced> "1976-01-01"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#frequency> "730"^^<http://www.w3.org/2001/XMLSchema#int> .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#identifier> "C013216" .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#indexerConsiderAlso> <http://id.nlm.nih.gov/mesh/2026/D003764> .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#lastUpdated> "2016-08-18"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#note> "used in dental materials and to treat hypophosphatemia; RN given refers to cpd with unspecified MF"@en .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#pharmacologicalAction> <http://id.nlm.nih.gov/mesh/2026/D002021> .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#pharmacologicalAction> <http://id.nlm.nih.gov/mesh/2026/D002327> .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#preferredConcept> <http://id.nlm.nih.gov/mesh/2026/M0060816> .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#preferredMappedTo> <http://id.nlm.nih.gov/mesh/2026/D010710> .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#preferredMappedTo> <http://id.nlm.nih.gov/mesh/2026/D017680> .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T090819> .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#previousIndexing> "*PHOSPHATES(78-80)"@en .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#previousIndexing> "POTASSIUM (78-80)"@en .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#previousIndexing> "*POTASSIUM (81-93)"@en .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#source> "Am J Med 61(2):200;1976"@en .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://id.nlm.nih.gov/mesh/vocab#source> "Gig Tr Prof Zabol 2:168;1978"@en .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#SCR_Chemical> .
+<http://id.nlm.nih.gov/mesh/2026/C013216> <http://www.w3.org/2000/01/rdf-schema#label> "potassium phosphate"@en .
+<http://id.nlm.nih.gov/mesh/2026/C016600> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M000747367> .
+<http://id.nlm.nih.gov/mesh/2026/C016600> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M000747368> .
+<http://id.nlm.nih.gov/mesh/2026/C016600> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M000747369> .
+<http://id.nlm.nih.gov/mesh/2026/C016600> <http://id.nlm.nih.gov/mesh/vocab#dateIntroduced> "1978-01-01"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/C016600> <http://id.nlm.nih.gov/mesh/vocab#frequency> "97"^^<http://www.w3.org/2001/XMLSchema#int> .
+<http://id.nlm.nih.gov/mesh/2026/C016600> <http://id.nlm.nih.gov/mesh/vocab#identifier> "C016600" .
+<http://id.nlm.nih.gov/mesh/2026/C016600> <http://id.nlm.nih.gov/mesh/vocab#lastUpdated> "2021-04-23"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/C016600> <http://id.nlm.nih.gov/mesh/vocab#note> "iron fortificant"@en .
+<http://id.nlm.nih.gov/mesh/2026/C016600> <http://id.nlm.nih.gov/mesh/vocab#pharmacologicalAction> <http://id.nlm.nih.gov/mesh/2026/D014131> .
+<http://id.nlm.nih.gov/mesh/2026/C016600> <http://id.nlm.nih.gov/mesh/vocab#preferredConcept> <http://id.nlm.nih.gov/mesh/2026/M0066717> .
+<http://id.nlm.nih.gov/mesh/2026/C016600> <http://id.nlm.nih.gov/mesh/vocab#preferredMappedTo> <http://id.nlm.nih.gov/mesh/2026/D005296> .
+<http://id.nlm.nih.gov/mesh/2026/C016600> <http://id.nlm.nih.gov/mesh/vocab#preferredMappedTo> <http://id.nlm.nih.gov/mesh/2026/D019343> .
+<http://id.nlm.nih.gov/mesh/2026/C016600> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T096719> .
+<http://id.nlm.nih.gov/mesh/2026/C016600> <http://id.nlm.nih.gov/mesh/vocab#previousIndexing> "CITRATES (78-81)"@en .
+<http://id.nlm.nih.gov/mesh/2026/C016600> <http://id.nlm.nih.gov/mesh/vocab#source> "Br J Nutr 39(3):663;1978"@en .
+<http://id.nlm.nih.gov/mesh/2026/C016600> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#SCR_Chemical> .
+<http://id.nlm.nih.gov/mesh/2026/C016600> <http://www.w3.org/2000/01/rdf-schema#label> "ferrous citrate"@en .
+<http://id.nlm.nih.gov/mesh/2026/C017029> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0067461> .
+<http://id.nlm.nih.gov/mesh/2026/C017029> <http://id.nlm.nih.gov/mesh/vocab#dateIntroduced> "1978-01-01"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/C017029> <http://id.nlm.nih.gov/mesh/vocab#frequency> "442"^^<http://www.w3.org/2001/XMLSchema#int> .
+<http://id.nlm.nih.gov/mesh/2026/C017029> <http://id.nlm.nih.gov/mesh/vocab#identifier> "C017029" .
+<http://id.nlm.nih.gov/mesh/2026/C017029> <http://id.nlm.nih.gov/mesh/vocab#lastUpdated> "2011-06-24"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/C017029> <http://id.nlm.nih.gov/mesh/vocab#note> "the asialo derivative of fetuin, usually from fetal bovine serum"@en .
+<http://id.nlm.nih.gov/mesh/2026/C017029> <http://id.nlm.nih.gov/mesh/vocab#preferredConcept> <http://id.nlm.nih.gov/mesh/2026/M0067462> .
+<http://id.nlm.nih.gov/mesh/2026/C017029> <http://id.nlm.nih.gov/mesh/vocab#preferredMappedTo> <http://id.nlm.nih.gov/mesh/2026/D001212> .
+<http://id.nlm.nih.gov/mesh/2026/C017029> <http://id.nlm.nih.gov/mesh/vocab#preferredMappedTo> <http://id.nlm.nih.gov/mesh/2026/D060748> .
+<http://id.nlm.nih.gov/mesh/2026/C017029> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T097465> .
+<http://id.nlm.nih.gov/mesh/2026/C017029> <http://id.nlm.nih.gov/mesh/vocab#previousIndexing> "*Alpha-Fetoproteins (1978-2011)"@en .
+<http://id.nlm.nih.gov/mesh/2026/C017029> <http://id.nlm.nih.gov/mesh/vocab#source> "Acta Biol Med Ger 36(11-12):1753;1977"@en .
+<http://id.nlm.nih.gov/mesh/2026/C017029> <http://id.nlm.nih.gov/mesh/vocab#source> "BBA 541:372;1978"@en .
+<http://id.nlm.nih.gov/mesh/2026/C017029> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#SCR_Chemical> .
+<http://id.nlm.nih.gov/mesh/2026/C017029> <http://www.w3.org/2000/01/rdf-schema#label> "asialofetuin"@en .
+<http://id.nlm.nih.gov/mesh/2026/C028805> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0317928> .
+<http://id.nlm.nih.gov/mesh/2026/C028805> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0317929> .
+<http://id.nlm.nih.gov/mesh/2026/C028805> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0317930> .
+<http://id.nlm.nih.gov/mesh/2026/C028805> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0317931> .
+<http://id.nlm.nih.gov/mesh/2026/C028805> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0317932> .
+<http://id.nlm.nih.gov/mesh/2026/C028805> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0317933> .
+<http://id.nlm.nih.gov/mesh/2026/C028805> <http://id.nlm.nih.gov/mesh/vocab#dateIntroduced> "1981-04-02"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/C028805> <http://id.nlm.nih.gov/mesh/vocab#frequency> "5"^^<http://www.w3.org/2001/XMLSchema#int> .
+<http://id.nlm.nih.gov/mesh/2026/C028805> <http://id.nlm.nih.gov/mesh/vocab#identifier> "C028805" .
+<http://id.nlm.nih.gov/mesh/2026/C028805> <http://id.nlm.nih.gov/mesh/vocab#lastUpdated> "2016-07-11"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/C028805> <http://id.nlm.nih.gov/mesh/vocab#preferredConcept> <http://id.nlm.nih.gov/mesh/2026/M0092362> .
+<http://id.nlm.nih.gov/mesh/2026/C028805> <http://id.nlm.nih.gov/mesh/vocab#preferredMappedTo> <http://id.nlm.nih.gov/mesh/2026/D001557> .
+<http://id.nlm.nih.gov/mesh/2026/C028805> <http://id.nlm.nih.gov/mesh/vocab#preferredMappedTo> <http://id.nlm.nih.gov/mesh/2026/D001565> .
+<http://id.nlm.nih.gov/mesh/2026/C028805> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T122365> .
+<http://id.nlm.nih.gov/mesh/2026/C028805> <http://id.nlm.nih.gov/mesh/vocab#previousIndexing> "*BENZOATES (81-98)"@en .
+<http://id.nlm.nih.gov/mesh/2026/C028805> <http://id.nlm.nih.gov/mesh/vocab#source> "Food Cosmet Toxicol 1980;18(4):453"@en .
+<http://id.nlm.nih.gov/mesh/2026/C028805> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#SCR_Chemical> .
+<http://id.nlm.nih.gov/mesh/2026/C028805> <http://www.w3.org/2000/01/rdf-schema#label> "2-sulfobenzoic acid"@en .
+<http://id.nlm.nih.gov/mesh/2026/C039460> <http://id.nlm.nih.gov/mesh/vocab#dateIntroduced> "1983-11-16"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/C039460> <http://id.nlm.nih.gov/mesh/vocab#frequency> "23"^^<http://www.w3.org/2001/XMLSchema#int> .
+<http://id.nlm.nih.gov/mesh/2026/C039460> <http://id.nlm.nih.gov/mesh/vocab#identifier> "C039460" .
+<http://id.nlm.nih.gov/mesh/2026/C039460> <http://id.nlm.nih.gov/mesh/vocab#lastUpdated> "2012-11-05"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/C039460> <http://id.nlm.nih.gov/mesh/vocab#preferredConcept> <http://id.nlm.nih.gov/mesh/2026/M0118144> .
+<http://id.nlm.nih.gov/mesh/2026/C039460> <http://id.nlm.nih.gov/mesh/vocab#preferredMappedTo> <http://id.nlm.nih.gov/mesh/2026/D014025> .
+<http://id.nlm.nih.gov/mesh/2026/C039460> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T148148> .
+<http://id.nlm.nih.gov/mesh/2026/C039460> <http://id.nlm.nih.gov/mesh/vocab#source> "Anal Biochem 1983;133(1):116"@en .
+<http://id.nlm.nih.gov/mesh/2026/C039460> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#SCR_Chemical> .
+<http://id.nlm.nih.gov/mesh/2026/C039460> <http://www.w3.org/2000/01/rdf-schema#label> "titanium trichloride"@en .
+<http://id.nlm.nih.gov/mesh/2026/C514290> <http://id.nlm.nih.gov/mesh/vocab#dateIntroduced> "2006-10-23"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/C514290> <http://id.nlm.nih.gov/mesh/vocab#frequency> "155"^^<http://www.w3.org/2001/XMLSchema#int> .
+<http://id.nlm.nih.gov/mesh/2026/C514290> <http://id.nlm.nih.gov/mesh/vocab#identifier> "C514290" .
+<http://id.nlm.nih.gov/mesh/2026/C514290> <http://id.nlm.nih.gov/mesh/vocab#indexerConsiderAlso> <http://id.nlm.nih.gov/mesh/2026/D000925> .
+<http://id.nlm.nih.gov/mesh/2026/C514290> <http://id.nlm.nih.gov/mesh/vocab#lastUpdated> "2006-10-23"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/C514290> <http://id.nlm.nih.gov/mesh/vocab#note> "antimicrobial and local anticoagulant; was indexed to sodium citrate;"@en .
+<http://id.nlm.nih.gov/mesh/2026/C514290> <http://id.nlm.nih.gov/mesh/vocab#preferredConcept> <http://id.nlm.nih.gov/mesh/2026/M0443286> .
+<http://id.nlm.nih.gov/mesh/2026/C514290> <http://id.nlm.nih.gov/mesh/vocab#preferredMappedTo> <http://id.nlm.nih.gov/mesh/2026/D002951> .
+<http://id.nlm.nih.gov/mesh/2026/C514290> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T528028> .
+<http://id.nlm.nih.gov/mesh/2026/C514290> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#SCR_Chemical> .
+<http://id.nlm.nih.gov/mesh/2026/C514290> <http://www.w3.org/2000/01/rdf-schema#label> "trisodium citrate"@en .
+<http://id.nlm.nih.gov/mesh/2026/C521980> <http://id.nlm.nih.gov/mesh/vocab#dateIntroduced> "2007-08-14"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/C521980> <http://id.nlm.nih.gov/mesh/vocab#frequency> "10"^^<http://www.w3.org/2001/XMLSchema#int> .
+<http://id.nlm.nih.gov/mesh/2026/C521980> <http://id.nlm.nih.gov/mesh/vocab#identifier> "C521980" .
+<http://id.nlm.nih.gov/mesh/2026/C521980> <http://id.nlm.nih.gov/mesh/vocab#lastUpdated> "2007-08-14"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/C521980> <http://id.nlm.nih.gov/mesh/vocab#preferredConcept> <http://id.nlm.nih.gov/mesh/2026/M0512454> .
+<http://id.nlm.nih.gov/mesh/2026/C521980> <http://id.nlm.nih.gov/mesh/vocab#preferredMappedTo> <http://id.nlm.nih.gov/mesh/2026/D004987> .
+<http://id.nlm.nih.gov/mesh/2026/C521980> <http://id.nlm.nih.gov/mesh/vocab#preferredMappedTo> <http://id.nlm.nih.gov/mesh/2026/D014753> .
+<http://id.nlm.nih.gov/mesh/2026/C521980> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T703930> .
+<http://id.nlm.nih.gov/mesh/2026/C521980> <http://id.nlm.nih.gov/mesh/vocab#source> "Phys Chem A 2006 Jun 15;110(23):7386-92"@en .
+<http://id.nlm.nih.gov/mesh/2026/C521980> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#SCR_Chemical> .
+<http://id.nlm.nih.gov/mesh/2026/C521980> <http://www.w3.org/2000/01/rdf-schema#label> "butyl vinyl ether"@en .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000145> .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000191> .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000266> .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000331> .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000458> .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000523> .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000592> .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000600> .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000639> .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000706> .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000941> .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#broaderDescriptor> <http://id.nlm.nih.gov/mesh/2026/D004779> .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#dateIntroduced> "2019-01-01"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#historyNote> "2019"@en .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#identifier> "D000076624" .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#lastUpdated> "2020-05-27"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#preferredConcept> <http://id.nlm.nih.gov/mesh/2026/M000622402> .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T000908693> .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#publicMeSHNote> "2019"@en .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/N06.230.145.500> .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#TopicalDescriptor> .
+<http://id.nlm.nih.gov/mesh/2026/D000076624> <http://www.w3.org/2000/01/rdf-schema#label> "Built Environment"@en .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000187> .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000235> .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000276> .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000502> .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000528> .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://id.nlm.nih.gov/mesh/vocab#broaderDescriptor> <http://id.nlm.nih.gov/mesh/2026/D064307> .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M000679118> .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://id.nlm.nih.gov/mesh/vocab#dateIntroduced> "2021-01-01"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://id.nlm.nih.gov/mesh/vocab#historyNote> "2021"@en .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://id.nlm.nih.gov/mesh/vocab#identifier> "D000083422" .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://id.nlm.nih.gov/mesh/vocab#lastUpdated> "2021-01-01"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://id.nlm.nih.gov/mesh/vocab#preferredConcept> <http://id.nlm.nih.gov/mesh/2026/M000679117> .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T001005285> .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://id.nlm.nih.gov/mesh/vocab#publicMeSHNote> "2021"@en .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/G06.591.968> .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/G16.500.275.157.049.100.500.968> .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/N06.230.124.049.100.500.937> .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#TopicalDescriptor> .
+<http://id.nlm.nih.gov/mesh/2026/D000083422> <http://www.w3.org/2000/01/rdf-schema#label> "Virome"@en .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000009> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000032> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000145> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000191> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000266> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000382> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000469> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000506> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000528> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000592> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000600> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000633> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000706> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000821> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#annotation> "differentiate from OVUM; eggs as food (chicken, duck, quail, etc. eggs); fish roe & reptile eggs as food go here but if physiol or anat, use OVUM; /adv eff consider also EGG HYPERSENSITIVITY"@en .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#broaderDescriptor> <http://id.nlm.nih.gov/mesh/2026/D005502> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#dateIntroduced> "1966-01-01"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#identifier> "D004531" .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#lastUpdated> "2014-10-14"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#preferredConcept> <http://id.nlm.nih.gov/mesh/2026/M0007130> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T013868> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/G07.203.300.470> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/J02.500.470> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#TopicalDescriptor> .
+<http://id.nlm.nih.gov/mesh/2026/D004531> <http://www.w3.org/2000/01/rdf-schema#label> "Eggs"@en .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000008> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000009> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000032> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000138> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000145> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000191> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000266> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000302> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000378> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000493> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000494> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000506> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000528> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000592> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000600> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000627> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000633> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000737> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#broaderDescriptor> <http://id.nlm.nih.gov/mesh/2026/D011092> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0017251> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0017252> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0017254> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0017255> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0017256> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0017257> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0017258> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0017259> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0017260> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#dateIntroduced> "1981-01-01"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#historyNote> "81(75); was see under POLYETHYLENE GLYCOLS 1975-80; TWEENS was see under SURFACE-ACTIVE AGENTS 1963-74"@en .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#identifier> "D011136" .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#lastUpdated> "2020-05-27"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#onlineNote> "to search TWEENS use SURFACE-ACTIVE AGENTS 1966-74"@en .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#pharmacologicalAction> <http://id.nlm.nih.gov/mesh/2026/D005079> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#pharmacologicalAction> <http://id.nlm.nih.gov/mesh/2026/D013501> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#preferredConcept> <http://id.nlm.nih.gov/mesh/2026/M0017253> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T032762> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#previousIndexing> "Fatty Acids (1966-1973)"@en .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#previousIndexing> "Glycols (1966-1973)"@en .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#previousIndexing> "Hexoses (1966-1973)"@en .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#previousIndexing> "Polyethylene Glycols (1974)"@en .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#previousIndexing> "Polyethylenes (1966-1973)"@en .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#previousIndexing> "Polymers (1966-1973)"@en .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#previousIndexing> "specific fatty acid (1966-1973)"@en .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#publicMeSHNote> "81; was see under POLYETHYLENE GLYCOLS 1975-80; TWEENS was see under SURFACE-ACTIVE AGENTS 1963-74"@en .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/D02.033.455.250.700.690> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/D05.750.741.700> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/D25.720.741.700> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/J01.637.051.720.741.700> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#TopicalDescriptor> .
+<http://id.nlm.nih.gov/mesh/2026/D011136> <http://www.w3.org/2000/01/rdf-schema#label> "Polysorbates"@en .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000009> .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000032> .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000382> .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000469> .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000737> .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000821> .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://id.nlm.nih.gov/mesh/vocab#broaderDescriptor> <http://id.nlm.nih.gov/mesh/2026/D000068357> .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://id.nlm.nih.gov/mesh/vocab#dateIntroduced> "1974-01-01"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://id.nlm.nih.gov/mesh/vocab#historyNote> "74(69)"@en .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://id.nlm.nih.gov/mesh/vocab#identifier> "D012623" .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://id.nlm.nih.gov/mesh/vocab#lastUpdated> "2015-06-16"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://id.nlm.nih.gov/mesh/vocab#preferredConcept> <http://id.nlm.nih.gov/mesh/2026/M0019579> .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T037374> .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://id.nlm.nih.gov/mesh/vocab#previousIndexing> "Water (1966-1968)"@en .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://id.nlm.nih.gov/mesh/vocab#publicMeSHNote> "74"@en .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://id.nlm.nih.gov/mesh/vocab#seeAlso> <http://id.nlm.nih.gov/mesh/2026/D013790> .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://id.nlm.nih.gov/mesh/vocab#seeAlso> <http://id.nlm.nih.gov/mesh/2026/D019015> .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/G16.500.275.725.500> .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#TopicalDescriptor> .
+<http://id.nlm.nih.gov/mesh/2026/D012623> <http://www.w3.org/2000/01/rdf-schema#label> "Seawater"@en .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000008> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000009> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000032> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000037> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000097> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000134> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000138> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000145> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000172> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000191> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000266> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000276> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000302> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000378> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000493> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000494> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000506> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000528> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000592> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000600> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000627> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000633> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000652> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000737> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000819> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#annotation> "do not confuse with \"tracers\" used for detection or with trace amounts of substances in tissue, food, etc."@en .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#broaderDescriptor> <http://id.nlm.nih.gov/mesh/2026/D004602> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#broaderDescriptor> <http://id.nlm.nih.gov/mesh/2026/D018977> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M000611552> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M000611553> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#dateIntroduced> "1966-01-01"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#identifier> "D014131" .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#lastUpdated> "2019-07-05"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#preferredConcept> <http://id.nlm.nih.gov/mesh/2026/M0021742> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T041391> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/D01.268.811> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/D27.505.696.494.555> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/G07.203.300.681.500.555> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/J02.500.681.500.555> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#TopicalDescriptor> .
+<http://id.nlm.nih.gov/mesh/2026/D014131> <http://www.w3.org/2000/01/rdf-schema#label> "Trace Elements"@en .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000145> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000166> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000187> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000201> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000235> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000254> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000276> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000302> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000378> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000382> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000469> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000472> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000502> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000528> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000648> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000737> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000821> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#annotation> "live in almost all natural waters"@en .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#broaderDescriptor> <http://id.nlm.nih.gov/mesh/2026/D010933> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#dateIntroduced> "1991-01-01"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#historyNote> "91(71); was see under PLANKTON 1971-90"@en .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#identifier> "D015048" .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#lastUpdated> "2012-07-03"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#preferredConcept> <http://id.nlm.nih.gov/mesh/2026/M0023157> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T043895> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#previousIndexing> "Plankton (1966-1970)"@en .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#publicMeSHNote> "91; was see under PLANKTON 1971-90"@en .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/B05.080.500.980> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#TopicalDescriptor> .
+<http://id.nlm.nih.gov/mesh/2026/D015048> <http://www.w3.org/2000/01/rdf-schema#label> "Zooplankton"@en .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000009> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000033> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000145> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000166> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000187> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000196> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000201> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000235> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000254> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000276> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000378> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000382> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000469> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000502> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000506> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000528> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000633> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000648> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000737> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000821> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#broaderDescriptor> <http://id.nlm.nih.gov/mesh/2026/D044002> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#concept> <http://id.nlm.nih.gov/mesh/2026/M0028465> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#dateIntroduced> "2004-01-01"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#historyNote> "2004; for SPHAGNUM use BRYOPSIDA 1996-2003, use PLANTS 1986-1995"@en .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#identifier> "D044003" .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#lastUpdated> "2021-06-30"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#preferredConcept> <http://id.nlm.nih.gov/mesh/2026/M0444134> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T529337> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#previousIndexing> "Bryopsida (1995-2003)"@en .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#publicMeSHNote> "2004; for SPHAGNUM see BRYOPSIDA 1996-2003; see PLANTS 1986-1995"@en .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/B01.875.800.575.137.750> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#TopicalDescriptor> .
+<http://id.nlm.nih.gov/mesh/2026/D044003> <http://www.w3.org/2000/01/rdf-schema#label> "Sphagnopsida"@en .
+<http://id.nlm.nih.gov/mesh/2026/D062611> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000032> .
+<http://id.nlm.nih.gov/mesh/2026/D062611> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000145> .
+<http://id.nlm.nih.gov/mesh/2026/D062611> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000191> .
+<http://id.nlm.nih.gov/mesh/2026/D062611> <http://id.nlm.nih.gov/mesh/vocab#allowableQualifier> <http://id.nlm.nih.gov/mesh/2026/Q000706> .
+<http://id.nlm.nih.gov/mesh/2026/D062611> <http://id.nlm.nih.gov/mesh/vocab#broaderDescriptor> <http://id.nlm.nih.gov/mesh/2026/D014866> .
+<http://id.nlm.nih.gov/mesh/2026/D062611> <http://id.nlm.nih.gov/mesh/vocab#dateIntroduced> "2013-01-01"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/D062611> <http://id.nlm.nih.gov/mesh/vocab#historyNote> "2013"@en .
+<http://id.nlm.nih.gov/mesh/2026/D062611> <http://id.nlm.nih.gov/mesh/vocab#identifier> "D062611" .
+<http://id.nlm.nih.gov/mesh/2026/D062611> <http://id.nlm.nih.gov/mesh/vocab#lastUpdated> "2019-05-30"^^<http://www.w3.org/2001/XMLSchema#date> .
+<http://id.nlm.nih.gov/mesh/2026/D062611> <http://id.nlm.nih.gov/mesh/vocab#preferredConcept> <http://id.nlm.nih.gov/mesh/2026/M0568791> .
+<http://id.nlm.nih.gov/mesh/2026/D062611> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T818659> .
+<http://id.nlm.nih.gov/mesh/2026/D062611> <http://id.nlm.nih.gov/mesh/vocab#publicMeSHNote> "2013"@en .
+<http://id.nlm.nih.gov/mesh/2026/D062611> <http://id.nlm.nih.gov/mesh/vocab#seeAlso> <http://id.nlm.nih.gov/mesh/2026/D012037> .
+<http://id.nlm.nih.gov/mesh/2026/D062611> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/D20.944.730> .
+<http://id.nlm.nih.gov/mesh/2026/D062611> <http://id.nlm.nih.gov/mesh/vocab#treeNumber> <http://id.nlm.nih.gov/mesh/2026/N06.850.460.710.730> .
+<http://id.nlm.nih.gov/mesh/2026/D062611> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#TopicalDescriptor> .
+<http://id.nlm.nih.gov/mesh/2026/D062611> <http://www.w3.org/2000/01/rdf-schema#label> "Solid Waste"@en .
+<http://id.nlm.nih.gov/mesh/2026/M000622402> <http://id.nlm.nih.gov/mesh/vocab#identifier> "M000622402" .
+<http://id.nlm.nih.gov/mesh/2026/M000622402> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T000908693> .
+<http://id.nlm.nih.gov/mesh/2026/M000622402> <http://id.nlm.nih.gov/mesh/vocab#scopeNote> "The man-made physical elements of the environment (e.g., homes, buildings, streets, open spaces, and infrastructure). The built environment influences a person's level of physical activity and may have other impacts on health in a community."@en .
+<http://id.nlm.nih.gov/mesh/2026/M000622402> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#Concept> .
+<http://id.nlm.nih.gov/mesh/2026/M000622402> <http://www.w3.org/2000/01/rdf-schema#label> "Built Environment"@en .
+<http://id.nlm.nih.gov/mesh/2026/M000679117> <http://id.nlm.nih.gov/mesh/vocab#identifier> "M000679117" .
+<http://id.nlm.nih.gov/mesh/2026/M000679117> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M000679118> .
+<http://id.nlm.nih.gov/mesh/2026/M000679117> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T001005285> .
+<http://id.nlm.nih.gov/mesh/2026/M000679117> <http://id.nlm.nih.gov/mesh/vocab#scopeNote> "All of the VIRUSES that exist within a particular biological niche such as an organism or specific location of the organism, soil, a body of water, etc."@en .
+<http://id.nlm.nih.gov/mesh/2026/M000679117> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T001005287> .
+<http://id.nlm.nih.gov/mesh/2026/M000679117> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T001005288> .
+<http://id.nlm.nih.gov/mesh/2026/M000679117> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#Concept> .
+<http://id.nlm.nih.gov/mesh/2026/M000679117> <http://www.w3.org/2000/01/rdf-schema#label> "Virome"@en .
+<http://id.nlm.nih.gov/mesh/2026/M0007130> <http://id.nlm.nih.gov/mesh/vocab#identifier> "M0007130" .
+<http://id.nlm.nih.gov/mesh/2026/M0007130> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T013868> .
+<http://id.nlm.nih.gov/mesh/2026/M0007130> <http://id.nlm.nih.gov/mesh/vocab#scopeNote> "Animal reproductive bodies, or the contents thereof, used as food. The concept is differentiated from OVUM, the anatomic or physiologic entity."@en .
+<http://id.nlm.nih.gov/mesh/2026/M0007130> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#Concept> .
+<http://id.nlm.nih.gov/mesh/2026/M0007130> <http://www.w3.org/2000/01/rdf-schema#label> "Eggs"@en .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://id.nlm.nih.gov/mesh/vocab#identifier> "M0017253" .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0017251> .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0017252> .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0017255> .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0017256> .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0017257> .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0017258> .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0017259> .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0017260> .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T032762> .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://id.nlm.nih.gov/mesh/vocab#relatedConcept> <http://id.nlm.nih.gov/mesh/2026/M0017254> .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "9005-64-5" .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "9005-65-6" .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://id.nlm.nih.gov/mesh/vocab#scopeNote> "Sorbitan mono-9-octadecanoate poly(oxy-1,2-ethanediyl) derivatives; complex mixtures of polyoxyethylene ethers used as emulsifiers or dispersing agents in pharmaceuticals."@en .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T001008737> .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T032761> .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T032763> .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#Concept> .
+<http://id.nlm.nih.gov/mesh/2026/M0017253> <http://www.w3.org/2000/01/rdf-schema#label> "Polysorbates"@en .
+<http://id.nlm.nih.gov/mesh/2026/M0019579> <http://id.nlm.nih.gov/mesh/vocab#identifier> "M0019579" .
+<http://id.nlm.nih.gov/mesh/2026/M0019579> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T037374> .
+<http://id.nlm.nih.gov/mesh/2026/M0019579> <http://id.nlm.nih.gov/mesh/vocab#scopeNote> "The salinated water of OCEANS AND SEAS that provides habitat for marine organisms."@en .
+<http://id.nlm.nih.gov/mesh/2026/M0019579> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T037375> .
+<http://id.nlm.nih.gov/mesh/2026/M0019579> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#Concept> .
+<http://id.nlm.nih.gov/mesh/2026/M0019579> <http://www.w3.org/2000/01/rdf-schema#label> "Seawater"@en .
+<http://id.nlm.nih.gov/mesh/2026/M0021742> <http://id.nlm.nih.gov/mesh/vocab#identifier> "M0021742" .
+<http://id.nlm.nih.gov/mesh/2026/M0021742> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M000611552> .
+<http://id.nlm.nih.gov/mesh/2026/M0021742> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M000611553> .
+<http://id.nlm.nih.gov/mesh/2026/M0021742> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T041391> .
+<http://id.nlm.nih.gov/mesh/2026/M0021742> <http://id.nlm.nih.gov/mesh/vocab#scopeNote> "A group of chemical elements that are needed in minute quantities for the proper growth, development, and physiology of an organism. (From McGraw-Hill Dictionary of Scientific and Technical Terms, 4th ed)"@en .
+<http://id.nlm.nih.gov/mesh/2026/M0021742> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T000890279> .
+<http://id.nlm.nih.gov/mesh/2026/M0021742> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#Concept> .
+<http://id.nlm.nih.gov/mesh/2026/M0021742> <http://www.w3.org/2000/01/rdf-schema#label> "Trace Elements"@en .
+<http://id.nlm.nih.gov/mesh/2026/M0023157> <http://id.nlm.nih.gov/mesh/vocab#identifier> "M0023157" .
+<http://id.nlm.nih.gov/mesh/2026/M0023157> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T043895> .
+<http://id.nlm.nih.gov/mesh/2026/M0023157> <http://id.nlm.nih.gov/mesh/vocab#scopeNote> "Minute free-floating animal organisms which live in practically all natural waters."@en .
+<http://id.nlm.nih.gov/mesh/2026/M0023157> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#Concept> .
+<http://id.nlm.nih.gov/mesh/2026/M0023157> <http://www.w3.org/2000/01/rdf-schema#label> "Zooplankton"@en .
+<http://id.nlm.nih.gov/mesh/2026/M0052060> <http://id.nlm.nih.gov/mesh/vocab#identifier> "M0052060" .
+<http://id.nlm.nih.gov/mesh/2026/M0052060> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T082063> .
+<http://id.nlm.nih.gov/mesh/2026/M0052060> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#Concept> .
+<http://id.nlm.nih.gov/mesh/2026/M0052060> <http://www.w3.org/2000/01/rdf-schema#label> "marmite"@en .
+<http://id.nlm.nih.gov/mesh/2026/M0060816> <http://id.nlm.nih.gov/mesh/vocab#casn1_label> "Phosphoric acid, monopotassium salt"@en .
+<http://id.nlm.nih.gov/mesh/2026/M0060816> <http://id.nlm.nih.gov/mesh/vocab#identifier> "M0060816" .
+<http://id.nlm.nih.gov/mesh/2026/M0060816> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0312114> .
+<http://id.nlm.nih.gov/mesh/2026/M0060816> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0312115> .
+<http://id.nlm.nih.gov/mesh/2026/M0060816> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0312116> .
+<http://id.nlm.nih.gov/mesh/2026/M0060816> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0312117> .
+<http://id.nlm.nih.gov/mesh/2026/M0060816> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0487668> .
+<http://id.nlm.nih.gov/mesh/2026/M0060816> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T090819> .
+<http://id.nlm.nih.gov/mesh/2026/M0060816> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "14887-42-4 (K-H3PO4[1:2])" .
+<http://id.nlm.nih.gov/mesh/2026/M0060816> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "16068-46-5 (potassium phosphate)" .
+<http://id.nlm.nih.gov/mesh/2026/M0060816> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "4J9FJ0HL51" .
+<http://id.nlm.nih.gov/mesh/2026/M0060816> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "7758-11-4 (K2-H3PO4)" .
+<http://id.nlm.nih.gov/mesh/2026/M0060816> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "7778-53-2 (K3-H3PO4)" .
+<http://id.nlm.nih.gov/mesh/2026/M0060816> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "7778-77-0 (K-H3PO4)" .
+<http://id.nlm.nih.gov/mesh/2026/M0060816> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "CI71S98N1Z" .
+<http://id.nlm.nih.gov/mesh/2026/M0060816> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T000905190> .
+<http://id.nlm.nih.gov/mesh/2026/M0060816> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#Concept> .
+<http://id.nlm.nih.gov/mesh/2026/M0060816> <http://www.w3.org/2000/01/rdf-schema#label> "potassium phosphate"@en .
+<http://id.nlm.nih.gov/mesh/2026/M0066717> <http://id.nlm.nih.gov/mesh/vocab#identifier> "M0066717" .
+<http://id.nlm.nih.gov/mesh/2026/M0066717> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M000747367> .
+<http://id.nlm.nih.gov/mesh/2026/M0066717> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M000747368> .
+<http://id.nlm.nih.gov/mesh/2026/M0066717> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M000747369> .
+<http://id.nlm.nih.gov/mesh/2026/M0066717> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T096719> .
+<http://id.nlm.nih.gov/mesh/2026/M0066717> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "23383-11-1 (monoferrous acid citrate)" .
+<http://id.nlm.nih.gov/mesh/2026/M0066717> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "5YD35P18E0" .
+<http://id.nlm.nih.gov/mesh/2026/M0066717> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "FIZ06U7B2G" .
+<http://id.nlm.nih.gov/mesh/2026/M0066717> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "PW94HT3KE9" .
+<http://id.nlm.nih.gov/mesh/2026/M0066717> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T001105176> .
+<http://id.nlm.nih.gov/mesh/2026/M0066717> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T001105177> .
+<http://id.nlm.nih.gov/mesh/2026/M0066717> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T096720> .
+<http://id.nlm.nih.gov/mesh/2026/M0066717> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T699877> .
+<http://id.nlm.nih.gov/mesh/2026/M0066717> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#Concept> .
+<http://id.nlm.nih.gov/mesh/2026/M0066717> <http://www.w3.org/2000/01/rdf-schema#label> "ferrous citrate"@en .
+<http://id.nlm.nih.gov/mesh/2026/M0067462> <http://id.nlm.nih.gov/mesh/vocab#identifier> "M0067462" .
+<http://id.nlm.nih.gov/mesh/2026/M0067462> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0067461> .
+<http://id.nlm.nih.gov/mesh/2026/M0067462> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T097465> .
+<http://id.nlm.nih.gov/mesh/2026/M0067462> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T097463> .
+<http://id.nlm.nih.gov/mesh/2026/M0067462> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T511524> .
+<http://id.nlm.nih.gov/mesh/2026/M0067462> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#Concept> .
+<http://id.nlm.nih.gov/mesh/2026/M0067462> <http://www.w3.org/2000/01/rdf-schema#label> "asialofetuin"@en .
+<http://id.nlm.nih.gov/mesh/2026/M0092362> <http://id.nlm.nih.gov/mesh/vocab#identifier> "M0092362" .
+<http://id.nlm.nih.gov/mesh/2026/M0092362> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0317928> .
+<http://id.nlm.nih.gov/mesh/2026/M0092362> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0317929> .
+<http://id.nlm.nih.gov/mesh/2026/M0092362> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0317930> .
+<http://id.nlm.nih.gov/mesh/2026/M0092362> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0317931> .
+<http://id.nlm.nih.gov/mesh/2026/M0092362> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0317932> .
+<http://id.nlm.nih.gov/mesh/2026/M0092362> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0317933> .
+<http://id.nlm.nih.gov/mesh/2026/M0092362> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T122365> .
+<http://id.nlm.nih.gov/mesh/2026/M0092362> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "22895-07-4" .
+<http://id.nlm.nih.gov/mesh/2026/M0092362> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "37415-34-2" .
+<http://id.nlm.nih.gov/mesh/2026/M0092362> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "53608-78-9" .
+<http://id.nlm.nih.gov/mesh/2026/M0092362> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "60463-96-9" .
+<http://id.nlm.nih.gov/mesh/2026/M0092362> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "632-25-7 (2-sulfobenzoic acid)" .
+<http://id.nlm.nih.gov/mesh/2026/M0092362> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "6460-57-7" .
+<http://id.nlm.nih.gov/mesh/2026/M0092362> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "6939-89-5" .
+<http://id.nlm.nih.gov/mesh/2026/M0092362> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T122364> .
+<http://id.nlm.nih.gov/mesh/2026/M0092362> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#Concept> .
+<http://id.nlm.nih.gov/mesh/2026/M0092362> <http://www.w3.org/2000/01/rdf-schema#label> "2-sulfobenzoic acid"@en .
+<http://id.nlm.nih.gov/mesh/2026/M0118144> <http://id.nlm.nih.gov/mesh/vocab#identifier> "M0118144" .
+<http://id.nlm.nih.gov/mesh/2026/M0118144> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T148148> .
+<http://id.nlm.nih.gov/mesh/2026/M0118144> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "7705-07-9 (titanium trichloride)" .
+<http://id.nlm.nih.gov/mesh/2026/M0118144> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T148146> .
+<http://id.nlm.nih.gov/mesh/2026/M0118144> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T148147> .
+<http://id.nlm.nih.gov/mesh/2026/M0118144> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#Concept> .
+<http://id.nlm.nih.gov/mesh/2026/M0118144> <http://www.w3.org/2000/01/rdf-schema#label> "titanium trichloride"@en .
+<http://id.nlm.nih.gov/mesh/2026/M0443286> <http://id.nlm.nih.gov/mesh/vocab#identifier> "M0443286" .
+<http://id.nlm.nih.gov/mesh/2026/M0443286> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T528028> .
+<http://id.nlm.nih.gov/mesh/2026/M0443286> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#Concept> .
+<http://id.nlm.nih.gov/mesh/2026/M0443286> <http://www.w3.org/2000/01/rdf-schema#label> "trisodium citrate"@en .
+<http://id.nlm.nih.gov/mesh/2026/M0444134> <http://id.nlm.nih.gov/mesh/vocab#identifier> "M0444134" .
+<http://id.nlm.nih.gov/mesh/2026/M0444134> <http://id.nlm.nih.gov/mesh/vocab#narrowerConcept> <http://id.nlm.nih.gov/mesh/2026/M0028465> .
+<http://id.nlm.nih.gov/mesh/2026/M0444134> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T529337> .
+<http://id.nlm.nih.gov/mesh/2026/M0444134> <http://id.nlm.nih.gov/mesh/vocab#relatedRegistryNumber> "txid13804" .
+<http://id.nlm.nih.gov/mesh/2026/M0444134> <http://id.nlm.nih.gov/mesh/vocab#scopeNote> "A class of BRYOPHYTA which is best known for Sphagnum forming PEAT bogs."@en .
+<http://id.nlm.nih.gov/mesh/2026/M0444134> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T529338> .
+<http://id.nlm.nih.gov/mesh/2026/M0444134> <http://id.nlm.nih.gov/mesh/vocab#term> <http://id.nlm.nih.gov/mesh/2026/T536007> .
+<http://id.nlm.nih.gov/mesh/2026/M0444134> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#Concept> .
+<http://id.nlm.nih.gov/mesh/2026/M0444134> <http://www.w3.org/2000/01/rdf-schema#label> "Sphagnopsida"@en .
+<http://id.nlm.nih.gov/mesh/2026/M0512454> <http://id.nlm.nih.gov/mesh/vocab#identifier> "M0512454" .
+<http://id.nlm.nih.gov/mesh/2026/M0512454> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T703930> .
+<http://id.nlm.nih.gov/mesh/2026/M0512454> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#Concept> .
+<http://id.nlm.nih.gov/mesh/2026/M0512454> <http://www.w3.org/2000/01/rdf-schema#label> "butyl vinyl ether"@en .
+<http://id.nlm.nih.gov/mesh/2026/M0568791> <http://id.nlm.nih.gov/mesh/vocab#identifier> "M0568791" .
+<http://id.nlm.nih.gov/mesh/2026/M0568791> <http://id.nlm.nih.gov/mesh/vocab#preferredTerm> <http://id.nlm.nih.gov/mesh/2026/T818659> .
+<http://id.nlm.nih.gov/mesh/2026/M0568791> <http://id.nlm.nih.gov/mesh/vocab#scopeNote> "Garbage, refuse, or sludge, or other discarded materials from a wastewater treatment plant, water supply treatment plant, and air pollution control facility that include solid, semi-solid, or contained material. It does not include materials dissolved in domestic sewage, irrigation return flows, or industrial discharges."@en .
+<http://id.nlm.nih.gov/mesh/2026/M0568791> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://id.nlm.nih.gov/mesh/vocab#Concept> .
+<http://id.nlm.nih.gov/mesh/2026/M0568791> <http://www.w3.org/2000/01/rdf-schema#label> "Solid Waste"@en .

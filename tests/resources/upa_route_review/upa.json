@@ -1,0 +1,1020 @@
+{
+  "graphs": [
+    {
+      "id": "http://purl.obolibrary.org/obo/upa.owl",
+      "nodes": [
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_UER00134",
+          "lbl": "5-formamido-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide from 5-amino-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide (formate route): step 1/1",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "1 5-amino-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide + 1 ATP + 1 formate =&gt; 1 5-formamido-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide + 1 ADP + 1 phosphate."
+            },
+            "xrefs": [
+              {
+                "val": "EC:6.3.4"
+              },
+              {
+                "val": "GO:0016979"
+              },
+              {
+                "val": "GO:0018271"
+              },
+              {
+                "val": "GO:0032267"
+              },
+              {
+                "val": "GO:0071734"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "enzymatic_reaction"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_UER00367",
+          "lbl": "(S)-3-hydroxy-3-methylglutaryl-CoA from (R)-mevalonate: step 1/1",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "1 (R)-mevalonate + 1 CoA + 2 NAD(+) =&gt; 1 (S)-3-hydroxy-3-methylglutaryl-CoA + 2 H(+) + 2 NADH."
+            },
+            "xrefs": [
+              {
+                "val": "EC:1.1.1.88"
+              },
+              {
+                "val": "GO:0042282"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "enzymatic_reaction"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_UER00448",
+          "lbl": "L-cystathionine from O-acetyl-L-homoserine: step 1/1",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "1 L-cysteine + 1 O-acetyl-L-homoserine =&gt; 1 L-cystathionine + 1 acetate."
+            },
+            "xrefs": [
+              {
+                "val": "EC:2.5.1"
+              },
+              {
+                "val": "GO:0004659"
+              },
+              {
+                "val": "GO:0004661"
+              },
+              {
+                "val": "GO:0008318"
+              },
+              {
+                "val": "GO:0008412"
+              },
+              {
+                "val": "GO:0008495"
+              },
+              {
+                "val": "GO:0016765"
+              },
+              {
+                "val": "GO:0043888"
+              },
+              {
+                "val": "GO:0043918"
+              },
+              {
+                "val": "GO:0043919"
+              },
+              {
+                "val": "GO:0046428"
+              },
+              {
+                "val": "GO:0048045"
+              },
+              {
+                "val": "GO:0052622"
+              },
+              {
+                "val": "GO:0052623"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "enzymatic_reaction"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_UER00587",
+          "lbl": "betaine aldehyde from choline (dehydrogenase route): step 1/1",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "1 NAD(+) + 1 choline =&gt; 1 H(+) + 1 NADH + 1 betaine aldehyde."
+            },
+            "xrefs": [
+              {
+                "val": "EC:1.1.1"
+              },
+              {
+                "val": "GO:0000252"
+              },
+              {
+                "val": "GO:0004033"
+              },
+              {
+                "val": "GO:0004448"
+              },
+              {
+                "val": "GO:0004495"
+              },
+              {
+                "val": "GO:0008875"
+              },
+              {
+                "val": "GO:0016229"
+              },
+              {
+                "val": "GO:0016616"
+              },
+              {
+                "val": "GO:0018451"
+              },
+              {
+                "val": "GO:0018452"
+              },
+              {
+                "val": "GO:0018453"
+              },
+              {
+                "val": "GO:0019152"
+              },
+              {
+                "val": "GO:0032442"
+              },
+              {
+                "val": "GO:0032866"
+              },
+              {
+                "val": "GO:0032867"
+              },
+              {
+                "val": "GO:0033709"
+              },
+              {
+                "val": "GO:0033764"
+              },
+              {
+                "val": "GO:0033765"
+              },
+              {
+                "val": "GO:0034831"
+              },
+              {
+                "val": "GO:0034840"
+              },
+              {
+                "val": "GO:0035380"
+              },
+              {
+                "val": "GO:0035410"
+              },
+              {
+                "val": "GO:0043713"
+              },
+              {
+                "val": "GO:0044103"
+              },
+              {
+                "val": "GO:0044105"
+              },
+              {
+                "val": "GO:0048258"
+              },
+              {
+                "val": "GO:0051990"
+              },
+              {
+                "val": "GO:0052677"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "enzymatic_reaction"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_UER00712",
+          "lbl": "heme O from protoheme: step 1/1",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "1 H(2)O + 1 farnesyl diphosphate + 1 protoheme =&gt; 1 diphosphate + 1 heme O."
+            },
+            "xrefs": [
+              {
+                "val": "EC:2.5.1"
+              },
+              {
+                "val": "GO:0004659"
+              },
+              {
+                "val": "GO:0004661"
+              },
+              {
+                "val": "GO:0008318"
+              },
+              {
+                "val": "GO:0008412"
+              },
+              {
+                "val": "GO:0008495"
+              },
+              {
+                "val": "GO:0016765"
+              },
+              {
+                "val": "GO:0043888"
+              },
+              {
+                "val": "GO:0043918"
+              },
+              {
+                "val": "GO:0043919"
+              },
+              {
+                "val": "GO:0046428"
+              },
+              {
+                "val": "GO:0048045"
+              },
+              {
+                "val": "GO:0052622"
+              },
+              {
+                "val": "GO:0052623"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "enzymatic_reaction"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_UER00846",
+          "lbl": "glutarate from L-lysine: step 6/6",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "1 5-oxopentanoate + 1 H(2)O + 1 NAD(+) =&gt; 1 H(+) + 1 NADH + 1 glutarate."
+            },
+            "xrefs": [
+              {
+                "val": "EC:1.2.1.20"
+              },
+              {
+                "val": "GO:0047949"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "enzymatic_reaction"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_UER00879",
+          "lbl": "L-methionine from S-methyl-5-thio-alpha-D-ribose 1-phosphate: step 6/6",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "1 4-methylthio-2-oxobutanoate + 1 L-glutamate =&gt; 1 2-oxoglutarate + 1 L-methionine."
+            },
+            "xrefs": [
+              {
+                "val": "EC:2.6.1"
+              },
+              {
+                "val": "GO:0008483"
+              },
+              {
+                "val": "GO:0010326"
+              },
+              {
+                "val": "GO:0018719"
+              },
+              {
+                "val": "GO:0043746"
+              },
+              {
+                "val": "GO:0043760"
+              },
+              {
+                "val": "GO:0043840"
+              },
+              {
+                "val": "GO:0043911"
+              },
+              {
+                "val": "GO:0046571"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "enzymatic_reaction"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_ULS00055",
+          "lbl": "5-formamido-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide from 5-amino-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide (formate route)",
+          "type": "CLASS",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "linear_sub_pathway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_ULS00165",
+          "lbl": "(S)-3-hydroxy-3-methylglutaryl-CoA from (R)-mevalonate",
+          "type": "CLASS",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "linear_sub_pathway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_ULS00213",
+          "lbl": "L-cystathionine from O-acetyl-L-homoserine",
+          "type": "CLASS",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "linear_sub_pathway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_ULS00278",
+          "lbl": "betaine aldehyde from choline (dehydrogenase route)",
+          "type": "CLASS",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "linear_sub_pathway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_ULS00393",
+          "lbl": "heme O from protoheme",
+          "type": "CLASS",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "linear_sub_pathway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_ULS00420",
+          "lbl": "glutarate from L-lysine",
+          "type": "CLASS",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "linear_sub_pathway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_ULS00434",
+          "lbl": "L-methionine from S-methyl-5-thio-alpha-D-ribose 1-phosphate",
+          "type": "CLASS",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "linear_sub_pathway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_UPA00051",
+          "lbl": "L-methionine biosynthesis via de novo pathway",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "Sulfur-containing amino-acid L-methionine (2-amino-4-(methylthio)butanoic acid) is synthesized de novo by most microorganisms and plants after the initial steps of inorganic sulfate assimilation and synthesis of cysteine or homocysteine. There are two alternative pathways of methionine synthesis in microorganisms. The enterobacterial type trans-sulfuration pathway involves cystathionine as an intermediate and utilizes cysteine as the sulfur source. In contrast, the direct sulfhydrylation pathway found in yeast (Saccharomyces cerevisiae), spirochete (Leptospira meyeri) and actinomycetes (Corynebacterium glutamicum) bypasses cystathionine and uses inorganic sulfur instead. Although yeast, fungi and higher plants have both transsulfuration and direct sulfhydrylation pathways, only the bacteria C. glutamicum, B. subtilis, P. aeruginosa, P. putida and L. meyeri have been shown to have both pathways. Methionine biosynthesis is a central pathway, as it controls a large number of cellular processes such as translation of mRNA into proteins (not only as a substrate for protein elongation but also as the initiator of protein synthesis) and transmethylation reactions via the formation of S-adenosylmethionine (SAM) (cf activated methyl cycle pathway).",
+              "xrefs": [
+                "UPa:amorgat"
+              ]
+            },
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "2-amino-4-(methylthio)butanoic acid biosynthesis"
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "KEGG:map00260"
+              },
+              {
+                "val": "KEGG:map00270"
+              },
+              {
+                "val": "KEGG:map00300"
+              },
+              {
+                "val": "KEGG:map00670"
+              },
+              {
+                "val": "KEGG:map00920"
+              },
+              {
+                "val": "KEGG:map01100"
+              },
+              {
+                "val": "KEGG:map01110"
+              },
+              {
+                "val": "KEGG:map01120"
+              },
+              {
+                "val": "PMID:10469143"
+              },
+              {
+                "val": "PMID:12845493"
+              },
+              {
+                "val": "PMID:12948640"
+              },
+              {
+                "val": "PMID:12951250"
+              },
+              {
+                "val": "PMID:15215334"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/upa#uniprot_super_pathway",
+                "val": "http://purl.obolibrary.org/obo/UPa_UPA00402"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "pathway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_UPA00074",
+          "lbl": "IMP biosynthesis via de novo pathway",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "The formation from simpler components of purine nucleotide IMP (inosine 5'phosphate).",
+              "xrefs": [
+                "UPa:amorgat"
+              ]
+            },
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "de novo purine biosynthesis"
+              },
+              {
+                "pred": "hasExactSynonym",
+                "val": "inosine 5'-phosphate biosynthesis via de novo pathway"
+              },
+              {
+                "pred": "hasExactSynonym",
+                "val": "inosine monophosphate biosynthesis via de novo pathway"
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "GO:0006189"
+              },
+              {
+                "val": "KEGG:map00230"
+              },
+              {
+                "val": "KEGG:map00250"
+              },
+              {
+                "val": "KEGG:map00340"
+              },
+              {
+                "val": "KEGG:map00630"
+              },
+              {
+                "val": "KEGG:map00670"
+              },
+              {
+                "val": "KEGG:map01100"
+              },
+              {
+                "val": "KEGG:map01110"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/upa#uniprot_super_pathway",
+                "val": "http://purl.obolibrary.org/obo/UPa_UPA00583"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "pathway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_UPA00257",
+          "lbl": "(R)-mevalonate degradation",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "Degradation of mevalonic acid, a key metabolic intermediate.",
+              "xrefs": [
+                "UPa:amorgat"
+              ]
+            },
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "mevalonate degradation"
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "KEGG:map00900"
+              },
+              {
+                "val": "KEGG:map01110"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/upa#uniprot_super_pathway",
+                "val": "http://purl.obolibrary.org/obo/UPa_UPA00496"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "pathway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_UPA00529",
+          "lbl": "betaine biosynthesis via choline pathway",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "Biosynthesis of betaine (glycine betaine, N,N,N-trimethylglycine) by a two- step oxidation of choline. An alternative pathway converts glycine to betaine through two N-methyltransferases.",
+              "xrefs": [
+                "UPa:amorgat"
+              ]
+            },
+            "xrefs": [
+              {
+                "val": "GO:0019285"
+              },
+              {
+                "val": "KEGG:map00260"
+              },
+              {
+                "val": "MetaCyc:BETSYN-PWY"
+              },
+              {
+                "val": "MetaCyc:PWY-3722"
+              },
+              {
+                "val": "MetaCyc:PWY1F-353"
+              },
+              {
+                "val": "PMID:11685374"
+              },
+              {
+                "val": "PMID:12192001"
+              },
+              {
+                "val": "PMID:8752328"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/upa#uniprot_super_pathway",
+                "val": "http://purl.obolibrary.org/obo/UPa_UPA00289"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "pathway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_UPA00834",
+          "lbl": "heme O biosynthesis",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "Biosynthesis of heme O, a derivative of heme containing a 17-carbon hydroxyethylfarnesyl side chain at position 8 of the tetrapyrrole macrocycle. Heme O is a precursor in heme A biosyntesis. Warning: the biochemical reactions composing this pathway are not yet clearly defined.",
+              "xrefs": [
+                "UPa:amorgat"
+              ]
+            },
+            "xrefs": [
+              {
+                "val": "GO:0048034"
+              },
+              {
+                "val": "KEGG:map00860"
+              },
+              {
+                "val": "KEGG:map01110"
+              },
+              {
+                "val": "PMID:1336371"
+              },
+              {
+                "val": "PMID:8082800"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/upa#uniprot_super_pathway",
+                "val": "http://purl.obolibrary.org/obo/UPa_UPA00677"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "pathway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_UPA00869",
+          "lbl": "L-lysine degradation via acetylation pathway",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "Degradation of L-lysine via acetylation pathway. In this fungal pathway, L-lysine is degraded to glutarate via acetylation of the 6-amino group to the initial product N6-acetyl-L-lysine. This is followed by transamination, oxidative decarboxylation, deacetylation, transamination with loss of the second amino group, and oxidation to glutarate.",
+              "xrefs": [
+                "UPa:amorgat"
+              ]
+            },
+            "xrefs": [
+              {
+                "val": "GO:0019473"
+              },
+              {
+                "val": "KEGG:map00310"
+              },
+              {
+                "val": "MetaCyc:LYSDEGII-PWY"
+              },
+              {
+                "val": "PMID:15229592"
+              },
+              {
+                "val": "PMID:8082161"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/upa#uniprot_super_pathway",
+                "val": "http://purl.obolibrary.org/obo/UPa_UPA00427"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "pathway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_UPA00904",
+          "lbl": "L-methionine biosynthesis via salvage pathway",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "The methionine salvage pathway (MSP) is an important metabolic pathway in maintaining the amount of L-methionine as the amount of methionine in cells is typically limiting and its de novo biosynthesis is energetically expensive. Therefore, L-methionine is salvaged from S-methyl-5'-thioadenosine (MTA), the end-product of spermidine biosynthesis.",
+              "xrefs": [
+                "UPa:amorgat"
+              ]
+            },
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "2-amino-4-(methylthio)butanoic acid salvage"
+              },
+              {
+                "pred": "hasExactSynonym",
+                "val": "methionine salvage pathway (MSP)"
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "GO:0019509"
+              },
+              {
+                "val": "KEGG:map00270"
+              },
+              {
+                "val": "KEGG:map01100"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/upa#uniprot_super_pathway",
+                "val": "http://purl.obolibrary.org/obo/UPa_UPA00402"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "pathway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_UPA00058",
+          "lbl": "(R)-mevalonate biosynthesis",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "Biosynthesis of mevalonic acid, a six-carbon metabolic intermediate. In eukaryotes, it arises from linkage of two acetyl-CoAs in the mitochondrion to form acetaoacetyl-CoA (4 carbons), followed by addition of another acetyl group from a third acetyl-CoA to give 3-hydroxy-3-methylglutaryl-CoA (HMG-CoA). This latter compound is reduced by HMG-CoA reductase in the endoplasmic reticulum, using two NADPHs, with coincident loss of CoASH. HMG-CoA reductase is the most important regulatory enzyme for the cholesterol biosynthetic pathway and other isoprenoids/terpenoids. HMG-CoA reductase is a target for drugs that attempt to lower cholesterol levels in the body. One such drug is lovastatin, which inhibits the enzyme and stops endogenous synthesis of cholesterol.",
+              "xrefs": [
+                "UPa:amorgat"
+              ]
+            },
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "mevalonic acid biosynthesis"
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "KEGG:map00071"
+              },
+              {
+                "val": "KEGG:map00072"
+              },
+              {
+                "val": "KEGG:map00280"
+              },
+              {
+                "val": "KEGG:map00310"
+              },
+              {
+                "val": "KEGG:map00362"
+              },
+              {
+                "val": "KEGG:map00380"
+              },
+              {
+                "val": "KEGG:map00620"
+              },
+              {
+                "val": "KEGG:map00630"
+              },
+              {
+                "val": "KEGG:map00640"
+              },
+              {
+                "val": "KEGG:map00650"
+              },
+              {
+                "val": "KEGG:map00720"
+              },
+              {
+                "val": "KEGG:map00900"
+              },
+              {
+                "val": "KEGG:map01100"
+              },
+              {
+                "val": "KEGG:map01110"
+              },
+              {
+                "val": "KEGG:map01120"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/upa#uniprot_super_pathway",
+                "val": "http://purl.obolibrary.org/obo/UPa_UPA00415"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "pathway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_UER00103",
+          "lbl": "(R)-mevalonate from acetyl-CoA: step 3/3",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "1 (S)-3-hydroxy-3-methylglutaryl-CoA + 2 H(+) + 2 NADPH =&gt; 1 (R)-mevalonate + 1 CoA + 2 NADP(+)."
+            },
+            "xrefs": [
+              {
+                "val": "EC:1.1.1.34"
+              },
+              {
+                "val": "GO:0004420"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "enzymatic_reaction"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_ULS00039",
+          "lbl": "(R)-mevalonate from acetyl-CoA",
+          "type": "CLASS",
+          "meta": {
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "linear_sub_pathway"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/UPa_UPA00450",
+          "lbl": "activated methyl cycle",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "The activated methyl donor involved in most biosynthetic methylation is usually S-adenosylmethionine (SAM). SAM is synthesized by the transfer of an adenosyl group from ATP to the sulfur atom of methionine. The methyl group of the methionine unit is activated by the positive charge on the adjacent sulfur atom, which makes the molecule much more reactive than N5-methyltetrahydrofolate. The synthesis of S-adenosylmethionine is unusual in that the triphosphate group of ATP is split into pyrophosphate and orthophosphate; the pyrophosphate is subsequently hydrolyzed to two molecules of Pi. S-Adenosylhomocysteine is formed when the methyl group of S-adenosylmethionine is transferred to an acceptor. S-Adenosylhomocysteine is then hydrolyzed to homocysteine and adenosine. Methionine can be regenerated by the transfer of a methyl group to homocysteine. [Stryer, Biochemistry, 2002].",
+              "xrefs": [
+                "UPa:amorgat"
+              ]
+            },
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "S-adenosylmethionine cycle"
+              },
+              {
+                "pred": "hasExactSynonym",
+                "val": "SAM cycle"
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "GO:0033353"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "pathway"
+              }
+            ]
+          }
+        }
+      ],
+      "edges": [
+        {
+          "sub": "http://purl.obolibrary.org/obo/UPa_UER00134",
+          "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+          "obj": "http://purl.obolibrary.org/obo/UPa_ULS00055"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/UPa_UER00367",
+          "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+          "obj": "http://purl.obolibrary.org/obo/UPa_ULS00165"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/UPa_UER00448",
+          "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+          "obj": "http://purl.obolibrary.org/obo/UPa_ULS00213"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/UPa_UER00587",
+          "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+          "obj": "http://purl.obolibrary.org/obo/UPa_ULS00278"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/UPa_UER00712",
+          "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+          "obj": "http://purl.obolibrary.org/obo/UPa_ULS00393"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/UPa_UER00846",
+          "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+          "obj": "http://purl.obolibrary.org/obo/UPa_ULS00420"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/UPa_UER00879",
+          "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+          "obj": "http://purl.obolibrary.org/obo/UPa_ULS00434"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/UPa_ULS00055",
+          "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+          "obj": "http://purl.obolibrary.org/obo/UPa_UPA00074"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/UPa_ULS00165",
+          "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+          "obj": "http://purl.obolibrary.org/obo/UPa_UPA00257"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/UPa_ULS00213",
+          "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+          "obj": "http://purl.obolibrary.org/obo/UPa_UPA00051"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/UPa_ULS00278",
+          "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+          "obj": "http://purl.obolibrary.org/obo/UPa_UPA00529"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/UPa_ULS00393",
+          "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+          "obj": "http://purl.obolibrary.org/obo/UPa_UPA00834"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/UPa_ULS00420",
+          "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+          "obj": "http://purl.obolibrary.org/obo/UPa_UPA00869"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/UPa_ULS00434",
+          "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+          "obj": "http://purl.obolibrary.org/obo/UPa_UPA00904"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/UPa_UER00103",
+          "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+          "obj": "http://purl.obolibrary.org/obo/UPa_ULS00039"
+        },
+        {
+          "sub": "http://purl.obolibrary.org/obo/UPa_ULS00039",
+          "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+          "obj": "http://purl.obolibrary.org/obo/UPa_UPA00058"
+        }
+      ]
+    }
+  ]
+}

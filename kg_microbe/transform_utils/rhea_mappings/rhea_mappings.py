@@ -1,420 +1,168 @@
-"""Transform for Rhea."""
+"""Transform one pinned native Rhea snapshot, preserving explicit reaction directions."""
 
 import csv
-import logging
-import os
-from collections import defaultdict
-from glob import glob
 from pathlib import Path
 from typing import Optional, Union
 
-import pandas as pd
-import requests_ftp
-from curies import load_extended_prefix_map
-from pyobo import get_id_name_mapping, get_relations_df
-from pyobo.sources.rhea import RheaGetter
-from tqdm import tqdm
-
-from kg_microbe.transform_utils.constants import (
-    AGENT_TYPE_COLUMN,
-    CATEGORY_COLUMN,
-    CHEBI_PREFIX,
-    DEBIO_MAPPER,
-    DESCRIPTION_COLUMN,
-    EC_CATEGORY,
-    EC_PREFIX,
-    GO_CATEGORY,
-    GO_PREFIX,
-    ID_COLUMN,
-    KNOWLEDGE_ASSERTION,
-    KNOWLEDGE_LEVEL_COLUMN,
-    LOGICAL_ENTAILMENT,
-    MANUAL_AGENT,
-    MANUAL_VALIDATION_OF_AUTOMATED_AGENT,
-    NAME_COLUMN,
-    OBJECT_COLUMN,
-    OBJECT_ID_COLUMN,
-    OBJECT_LABEL_COLUMN,
-    PREDICATE_COLUMN,
-    PREDICATE_ID_COLUMN,
-    PREDICATE_LABEL_COLUMN,
-    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
-    PROVIDED_BY_COLUMN,
-    RAW_DATA_DIR,
-    RELATION_COLUMN,
-    RHEA_BIDIRECTIONAL_DIRECTION,
-    RHEA_CATEGORY,
-    RHEA_CATEGORY_COLUMN,
-    RHEA_DIRECTION_COLUMN,
-    RHEA_ID_COLUMN,
-    RHEA_LEFT_TO_RIGHT_DIRECTION,
-    RHEA_MAPPING_ID_COLUMN,
-    RHEA_MAPPING_OBJECT_COLUMN,
-    RHEA_NAME_COLUMN,
-    RHEA_NEW_PREFIX,
-    RHEA_PYOBO_PREFIXES_MAPPER,
-    RHEA_PYOBO_RELATIONS_MAPPER,
-    RHEA_RIGHT_TO_LEFT_DIRECTION,
-    RHEA_SUBJECT_ID_COLUMN,
-    RHEA_TARGET_ID_COLUMN,
-    RHEA_TO_EC_EDGE,
-    RHEA_TO_GO_EDGE,
-    RHEA_UNDEFINED_DIRECTION,
-    RHEA_XREF_RELATION,
-    RHEAMAPPINGS,
-    RHEAMAPPINGS_TMP_DIR,
-    SAME_AS_COLUMN,
-    SPECIAL_PREFIXES,
-    SUBJECT_COLUMN,
-    SUBJECT_LABEL_COLUMN,
-    SUBSTRATE_CATEGORY,
-    SYNONYM_COLUMN,
-    UNIPROT_PREFIX,
-    XREF_COLUMN,
+from kg_microbe.transform_utils.constants import ID_COLUMN, RHEAMAPPINGS
+from kg_microbe.transform_utils.rhea_mappings.label_inputs import (
+    LABEL_CONTRACT,
+    REQUIRED_LABEL_INPUTS,
+    external_label_lookup,
+    validate_label_contract,
+    verify_label_bindings,
+)
+from kg_microbe.transform_utils.rhea_mappings.legacy_xrefs import (
+    AUDIT_FILE as LEGACY_AUDIT_FILE,
+)
+from kg_microbe.transform_utils.rhea_mappings.legacy_xrefs import (
+    AUDIT_HEADER as LEGACY_AUDIT_HEADER,
+)
+from kg_microbe.transform_utils.rhea_mappings.legacy_xrefs import (
+    DATA_INPUTS as LEGACY_DATA_INPUTS,
+)
+from kg_microbe.transform_utils.rhea_mappings.legacy_xrefs import (
+    POLICY_PATH as LEGACY_POLICY_PATH,
+)
+from kg_microbe.transform_utils.rhea_mappings.legacy_xrefs import (
+    REQUIRED_INPUTS as LEGACY_INPUTS,
+)
+from kg_microbe.transform_utils.rhea_mappings.legacy_xrefs import (
+    load_legacy_xref_audit,
+)
+from kg_microbe.transform_utils.rhea_mappings.native_graph import (
+    EDGE_WITNESS_FIELDS,
+    POLYMERIZATION_FIELD,
+    SOURCE,
+    curated_xref,
+    family_rows,
+)
+from kg_microbe.transform_utils.rhea_mappings.native_inputs import POLICY_PATH, REQUIRED_INPUTS, load_pinned_inputs
+from kg_microbe.transform_utils.rhea_mappings.reaction_families import (
+    RHEA_DIRECTION_FIELD,
+    RHEA_MASTER_FIELD,
+    RHEA_STATUS_FIELD,
 )
 from kg_microbe.transform_utils.transform import Transform
-from kg_microbe.utils.dummy_tqdm import DummyTqdm
-from kg_microbe.utils.oak_utils import get_label
-from kg_microbe.utils.ontology_utils import (
-    get_chebi_adapter,
-    get_ec_adapter,
-    get_go_adapter,
-    resolve_adapter,
-)
-from kg_microbe.utils.tsv_io import tsv_writer
+from kg_microbe.utils.atomic_io import atomic_write
+from kg_microbe.utils.graph_schema import canonical_header
+from kg_microbe.utils.tsv_io import tsv_dict_writer
 
-logger = logging.getLogger(__name__)
+REACTION_AUDIT = "rhea_reaction_dispositions.tsv"
 
 
 class RheaMappingsTransform(Transform):
-    """Template for how the transform class would be designed."""
+    """Consume explicit local inputs; never infer directions from ID order or cache state."""
 
-    def __init__(
-        self,
-        input_dir: Optional[Path] = None,
-        output_dir: Optional[Path] = None,
-    ):
-        """Instantiate part."""
-        source_name = RHEAMAPPINGS
-        super().__init__(source_name, input_dir, output_dir)
-        try:
-            self.converter = load_extended_prefix_map(RAW_DATA_DIR / "epm.json")
-        except FileNotFoundError:
-            logger.warning(
-                f"Could not load extended prefix map from {RAW_DATA_DIR / 'epm.json'}. "
-                "Prefix standardization will not be available."
-            )
-            self.converter = None
-        self.reference_cache = defaultdict(lambda: None)
-        self.chebi_oi = get_chebi_adapter()
-        self.knowledge_source = "infores:rhea"  # InforES standard knowledge source
-        self.go_oi = get_go_adapter()
-        # No `gzip -d ec.owl.gz` here: the guarded builder decompresses on demand,
-        # atomically, and only once it has established there is a build to run.
-        # Doing it at construction ran unconditionally — even under
-        # KG_SEMSQL_BUILD=off or with no semsql on PATH — ignored the exit status,
-        # and deleted the archive on success, so an interrupted run could leave a
-        # partial ec.owl with no way back.
-        self.ec_oi = get_ec_adapter()
+    DATA_INPUTS = ("mappings/rhea_release.json", *LEGACY_DATA_INPUTS)
+    TSV_QUOTING = csv.QUOTE_NONE
+    REQUIRED_CONSUMED_INPUTS = (*REQUIRED_INPUTS, *REQUIRED_LABEL_INPUTS, *LEGACY_INPUTS)
+    REQUIRED_AUDIT_FILES = (REACTION_AUDIT, LEGACY_AUDIT_FILE)
 
-    def _create_node_row(
-        self,
-        node_id: str,
-        category: str,
-        name: str,
-        description: str = None,
-        xref: str = None,
-        synonym: str = None,
-        same_as: str = None,
-    ) -> list:
-        """
-        Create a properly formatted node row with all columns.
+    def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
+        """Prepare source headers without opening global ontology adapters or downloading data."""
+        super().__init__(RHEAMAPPINGS, input_dir, output_dir)
+        self.knowledge_source = SOURCE
+        self.node_header = canonical_header(
+            [*self.node_header, RHEA_DIRECTION_FIELD, RHEA_MASTER_FIELD, RHEA_STATUS_FIELD, POLYMERIZATION_FIELD], True
+        )
+        self.edge_header = canonical_header([*self.edge_header, *EDGE_WITNESS_FIELDS], False)
 
-        Automatically populates the provided_by field with self.knowledge_source.
+    @property
+    def producer_native_inputs(self):
+        """Version the label projection; exact DB identities live in consumed-input roles."""
+        return dict(LABEL_CONTRACT)
 
-        :param node_id: Node ID (CURIE format)
-        :param category: Biolink category
-        :param name: Node name/label
-        :param description: Optional description
-        :param xref: Optional cross-references (pipe-separated string)
-        :param synonym: Optional synonyms (pipe-separated string)
-        :param same_as: Optional equivalent identifiers (pipe-separated string)
-        :return: List representing a complete node row matching node_header
-        """
-        # Positions follow base Transform.node_header:
-        # [id, category, name, description, xref, provided_by, synonym, deprecated, same_as]
-        node_row = [None] * len(self.node_header)
-        node_row[self.node_header.index(ID_COLUMN)] = node_id
-        node_row[self.node_header.index(CATEGORY_COLUMN)] = category
-        node_row[self.node_header.index(NAME_COLUMN)] = name
-        node_row[self.node_header.index(DESCRIPTION_COLUMN)] = description
-        node_row[self.node_header.index(XREF_COLUMN)] = xref
-        node_row[self.node_header.index(PROVIDED_BY_COLUMN)] = self.knowledge_source
-        node_row[self.node_header.index(SYNONYM_COLUMN)] = synonym
-        node_row[self.node_header.index(SAME_AS_COLUMN)] = same_as
-        return node_row
+    @producer_native_inputs.setter
+    def producer_native_inputs(self, recorded):
+        """Repeated finalization must retain the original label reader contract."""
+        validate_label_contract(recorded)
+
+    def verify_native_inputs(self, *, byte_verified=False, output_dir=None):
+        """Reject unconsumed SQLite sidecars even when each main-file SHA remains unchanged."""
+        verify_label_bindings(self.input_base_dir, self.consumed_input_snapshots)
+
+    @classmethod
+    def verify_recorded_native_inputs(cls, report, report_path, *, admission=None):
+        """Enforce raw-root roles and quiescent SQLite state again at merge admission."""
+        validate_label_contract(report.get("producer_native_inputs"))
+        verify_label_bindings(report["raw_input_directory"], report["consumed_inputs"])
+        return admission
 
     def _curated_xref_row(self, subject: str, target: str) -> list:
-        """Represent a curated Rhea activity cross-reference, not gene-product enablement."""
-        if not subject.startswith(RHEA_NEW_PREFIX) or not target.startswith((EC_PREFIX, GO_PREFIX)):
-            raise ValueError(f"Not a Rhea activity cross-reference: {subject} -> {target}")
-        values = {
-            SUBJECT_COLUMN: subject,
-            PREDICATE_COLUMN: RHEA_TO_EC_EDGE if target.startswith(EC_PREFIX) else RHEA_TO_GO_EDGE,
-            OBJECT_COLUMN: target,
-            RELATION_COLUMN: RHEA_XREF_RELATION,
-            PRIMARY_KNOWLEDGE_SOURCE_COLUMN: self.knowledge_source,
-            KNOWLEDGE_LEVEL_COLUMN: KNOWLEDGE_ASSERTION,
-            AGENT_TYPE_COLUMN: MANUAL_AGENT,
-        }
-        return [values.get(column, "") for column in self.edge_header]
-
-    def _reference_to_tuple(self, ref):
-        """Convert a reference to a tuple."""
-        # Check if the result is already cached
-        if ref in self.reference_cache:
-            return self.reference_cache[ref]
-
-        # Use the mapping if the prefix is a special case, otherwise standardize it
-        if ref.prefix in SPECIAL_PREFIXES:
-            prefix = SPECIAL_PREFIXES[ref.prefix]
-        elif self.converter:
-            prefix = self.converter.standardize_prefix(ref.prefix)
-        else:
-            # If converter not available, use original prefix
-            prefix = ref.prefix
-
-        # Cache the result before returning
-        result = (f"{prefix}:{ref.identifier}", ref.name)
-        self.reference_cache[ref] = result
-
-        return result
-
-    def _get_label_based_on_prefix(self, id):
-        if id.startswith(CHEBI_PREFIX.rstrip(":")):
-            return get_label(self.chebi_oi, id)
-        elif id.startswith(GO_PREFIX.rstrip(":")):
-            return get_label(self.go_oi, id)
-        elif id.startswith(EC_PREFIX.rstrip(":")):
-            return get_label(self.ec_oi, id)
-        # Add more conditions as needed
-        else:
-            return None
+        """Retain the established manual activity-cross-reference row contract."""
+        row = curated_xref(subject, target)
+        return [row.get(column, "") for column in self.edge_header]
 
     def run(self, data_file: Union[Optional[Path], Optional[str]] = None, show_status: bool = True):
-        """Run the transformation."""
-        # Resolve all three adapters before any output is written; see
-        # bactotraits for why. A fatal ontology error mid-write would leave
-        # the previous complete outputs truncated.
-        for _adapter in (self.chebi_oi, self.go_oi, self.ec_oi):
-            resolve_adapter(_adapter)
-        fn1 = "id_label_mapping.tsv"
-        ks = self.knowledge_source  # Use InforES standard knowledge source
-        # Create tmp dir
-        os.makedirs(RHEAMAPPINGS_TMP_DIR, exist_ok=True)
-        # fn2 = "sssom.tsv"
-        # TODO: Remove the line below once bioversions new version is released
-        requests_ftp.monkeypatch_session()
-        rhea_relation = get_relations_df("rhea", use_tqdm=show_status)
-        if self.converter:
-            rhea_relation["relation_ns"] = rhea_relation["relation_ns"].apply(
-                lambda x: self.converter.standardize_prefix(x)
+        """Write canonical graph rows and audited statuses from coherent pinned native evidence."""
+        if data_file is not None:
+            raise ValueError(
+                "Rhea requires its pinned directions/RDF pair under input_dir/rhea, not a single data_file"
             )
-        # else: keep original relation_ns values
-        # Combines relation_ns with relation_id to get full curie
-        rhea_relation[RELATION_COLUMN] = rhea_relation["relation_ns"] + ":" + rhea_relation["relation_id"]
-        rhea_relation[RHEA_MAPPING_ID_COLUMN.lower()] = RHEA_NEW_PREFIX + rhea_relation[
-            RHEA_MAPPING_ID_COLUMN.lower()
-        ].astype(str)
-        # Update prefixes
-        rhea_relation["target_ns"] = rhea_relation["target_ns"].apply(lambda x: RHEA_PYOBO_PREFIXES_MAPPER[x])
-        # Add correct prefix to target
-        rhea_relation[RHEA_TARGET_ID_COLUMN] = rhea_relation.agg(
-            lambda x: x["target_ns"] + str(x[RHEA_TARGET_ID_COLUMN]), axis=1
-        )
-
-        # Get corresponding prefixes if they exist, otherwise exclude (debio for now)
-        rhea_relation[PREDICATE_COLUMN] = rhea_relation[RELATION_COLUMN].apply(
-            lambda x: RHEA_PYOBO_RELATIONS_MAPPER.get(x)
-        )
-        # Filter rows where the predicate column is not None (debio for now)
-        rhea_relation = rhea_relation[rhea_relation[PREDICATE_COLUMN].notna()]
-
-        # Remove any rows other than Rhea-Rhea relations since those relationships accounted for elsewhere
-        relation_types_to_remove_pyobo = [
-            UNIPROT_PREFIX,
-            GO_PREFIX,
-            EC_PREFIX,
-        ]  # [CHEBI_PREFIX, GO_PREFIX, UNIPROT_PREFIX, EC_PREFIX]
-        rhea_relation = rhea_relation[
-            ~rhea_relation[RHEA_TARGET_ID_COLUMN].str.contains("|".join(relation_types_to_remove_pyobo))
-        ]
-
-        rhea_relation = rhea_relation.drop(columns=["relation_ns", "relation_id", "target_ns"])
-        rhea_relation = rhea_relation.rename(
-            columns={
-                RHEA_MAPPING_ID_COLUMN.lower(): SUBJECT_COLUMN,
-                RHEA_TARGET_ID_COLUMN: OBJECT_COLUMN,
-            }
-        )
-        rhea_relation[PRIMARY_KNOWLEDGE_SOURCE_COLUMN] = ks
-        rhea_relation[KNOWLEDGE_LEVEL_COLUMN] = LOGICAL_ENTAILMENT
-        rhea_relation[AGENT_TYPE_COLUMN] = MANUAL_VALIDATION_OF_AUTOMATED_AGENT
-
-        rhea_relation = rhea_relation[self.edge_header]
-
-        rhea_nodes = get_id_name_mapping("rhea")
-        # # TODO: Add the sssom.tsv file to the edges.tsv file
-        # if not (RHEA_TMP_DIR / fn2).is_file():
-        #     rhea_sssom = get_sssom_df("rhea")
-        #     rhea_sssom[RHEA_SUBJECT_ID_COLUMN] = rhea_sssom[RHEA_SUBJECT_ID_COLUMN].str.replace(
-        #         r"(rhea)(:\d+)", lambda m: m.group(1).upper() + m.group(2), regex=True
-        #     )
-        #     rhea_sssom.to_csv(RHEA_TMP_DIR / fn2, sep="\t", index=False)
-
+        policy, families, native, cohort = load_pinned_inputs(self, policy_path=POLICY_PATH)
+        legacy_rows = load_legacy_xref_audit(self, policy, native, policy_path=LEGACY_POLICY_PATH)
+        audit_header = ("reaction_id", "master_id", "direction", "native_status", "disposition", "snapshot_id")
+        node_values, seen_edges = {}, set()
         with (
-            open(RHEAMAPPINGS_TMP_DIR / f"rhea_{fn1}", "w") as tmp_file,
-            open(self.output_dir / "nodes.tsv", "w") as nodes_file,
-            open(self.output_dir / "edges.tsv", "w") as edges_file,
+            atomic_write(self.output_node_file, encoding="utf-8", newline="") as nodes,
+            atomic_write(self.output_edge_file, encoding="utf-8", newline="") as edges,
+            atomic_write(self.output_dir / REACTION_AUDIT, encoding="utf-8", newline="") as audit,
+            atomic_write(self.output_dir / LEGACY_AUDIT_FILE, encoding="utf-8", newline="") as legacy_audit,
+            external_label_lookup(self) as label_lookup,
         ):
-            tmp_file_writer = tsv_writer(tmp_file)
-            nodes_file_writer = tsv_writer(nodes_file)
-            edges_file_writer = tsv_writer(edges_file)
-
-            tmp_file_writer.writerow([RHEA_ID_COLUMN, RHEA_CATEGORY_COLUMN, RHEA_NAME_COLUMN, RHEA_DIRECTION_COLUMN])
-            nodes_file_writer.writerow(self.node_header)
-            edges_file_writer.writerow(self.edge_header)
-            edges_file_writer.writerows(rhea_relation.values.tolist())
-
-            # write direction for rhea nodes # Not including reaction direction for now
-            # nodes_file_writer.writerow(
-            #     self._create_node_row(
-            #         DEBIO_MAPPER.get(RHEA_LEFT_TO_RIGHT_DIRECTION),
-            #         RHEA_DIRECTION_CATEGORY,
-            #         RHEA_LEFT_TO_RIGHT_DIRECTION,
-            #     )
-            # )
-            # nodes_file_writer.writerow(
-            #     self._create_node_row(
-            #         DEBIO_MAPPER.get(RHEA_RIGHT_TO_LEFT_DIRECTION),
-            #         RHEA_DIRECTION_CATEGORY,
-            #         RHEA_RIGHT_TO_LEFT_DIRECTION,
-            #     )
-            # )
-
-            progress_class = tqdm if show_status else DummyTqdm
-            with progress_class(total=len(rhea_nodes.items()) + 1, desc="Processing RHEA mappings...") as progress:
-                # Rhea hierarchy is in groups of 4
-                for i, (k, v) in enumerate(rhea_nodes.items()):
-                    if i % 4 == 0:
-                        direction = RHEA_UNDEFINED_DIRECTION
-                    if i % 4 == 1:
-                        direction = DEBIO_MAPPER.get(RHEA_LEFT_TO_RIGHT_DIRECTION)
-                    if i % 4 == 2:
-                        direction = DEBIO_MAPPER.get(RHEA_RIGHT_TO_LEFT_DIRECTION)
-                    if i % 4 == 3:
-                        direction = DEBIO_MAPPER.get(RHEA_BIDIRECTIONAL_DIRECTION)
-                    # Associate reaction identifiers corresponding to different directions (n, n+1, n+2, n+3)
-                    tmp_file_writer.writerow([RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v, direction])
-                    nodes_file_writer.writerow(self._create_node_row(RHEA_NEW_PREFIX + k, RHEA_CATEGORY, v))
-                    progress.set_description(f"Processing RHEA node: {RHEA_NEW_PREFIX + k} ...")
-                    # After each iteration, call the update method to advance the progress bar.
-                    progress.update()
-
-            # Get files that begin with "rhea2" and end with ".tsv" in self.input_base_dir
-            pattern = f"{self.input_base_dir}/rhea2*.tsv"
-            matching_files = glob(pattern)
-
-            # relation = CLOSE_MATCH
-            with progress_class(total=len(matching_files), desc="Processing Rhea mappings...") as progress:
-                for file in matching_files:
-                    if "rhea2ec" in file:
-                        xref_prefix = EC_PREFIX
-                        predicate = RHEA_TO_EC_EDGE
-                        category = EC_CATEGORY
-                    elif "rhea2go" in file:
-                        xref_prefix = ""  # GO prefix already in the file
-                        predicate = RHEA_TO_GO_EDGE
-                        category = GO_CATEGORY
-
-                    with open(file, "r") as tmp_file:
-                        mapping_tsv_reader = csv.reader(tmp_file, delimiter="\t")
-                        # Read the header
-                        header = next(mapping_tsv_reader)
-                        rhea_idx, xref_idx = (
-                            index
-                            for index, column_name in enumerate(header)
-                            if column_name in {RHEA_MAPPING_ID_COLUMN, RHEA_MAPPING_OBJECT_COLUMN}
-                        )
-                        relation_types_to_remove_rhea2_files = [UNIPROT_PREFIX, CHEBI_PREFIX]
-                        for row in mapping_tsv_reader:
-                            subject_info = RHEA_NEW_PREFIX + str(row[rhea_idx])
-                            object = xref_prefix + str(row[xref_idx])
-                            # Remove rows other than Rhea-Rhea relations, accounted for elsewhere
-                            if not any(substring in object for substring in relation_types_to_remove_rhea2_files):
-                                nodes_file_writer.writerow(self._create_node_row(object, category, None))
-                                edges_file_writer.writerow(self._curated_xref_row(subject_info, object))
-
-                    with open(RHEAMAPPINGS_TMP_DIR / "all_terms.tsv", "w", newline="") as tsvfile:
-                        all_terms_writer = tsv_writer(tsvfile)
-                        # Write headers
-                        all_terms_writer.writerow(
-                            [
-                                RHEA_SUBJECT_ID_COLUMN,
-                                SUBJECT_LABEL_COLUMN,
-                                PREDICATE_ID_COLUMN,
-                                PREDICATE_LABEL_COLUMN,
-                                OBJECT_ID_COLUMN,
-                                OBJECT_LABEL_COLUMN,
-                            ]
-                        )
-                        # Create an instance of RheaGetter outside the loop to avoid repeated instantiation
-                        rhea_getter = RheaGetter()
-                        # Iterate over all terms
-                        for term in rhea_getter.iter_terms():
-                            # Extract subject information
-                            subject_info = self._reference_to_tuple(term.reference)
-                            # Iterate over relationships
-                            for predicate, objects in term.relationships.items():
-                                predicate_info = self._reference_to_tuple(predicate)
-                                for obj in objects:
-                                    object_info = self._reference_to_tuple(obj)
-                                    # Write the row in the specified format
-                                    all_terms_writer.writerow([*subject_info, *predicate_info, *object_info])
-                                    # Only include CHEBI, EC, and GO entries (filter out UniProt entries)
-                                    if any(
-                                        object_info[0].startswith(prefix)
-                                        for prefix in [
-                                            CHEBI_PREFIX,
-                                            EC_PREFIX,
-                                            GO_PREFIX,
-                                        ]
-                                    ):
-                                        if object_info[0].startswith(CHEBI_PREFIX):
-                                            category = SUBSTRATE_CATEGORY
-                                        elif object_info[0].startswith(GO_PREFIX):
-                                            category = GO_CATEGORY
-                                        elif object_info[0].startswith(EC_PREFIX):
-                                            category = EC_CATEGORY
-
-                                        # Remove rows other than Rhea-Rhea relations, accounted for elsewhere
-                                        if not any(
-                                            substring in object_info[0]
-                                            for substring in relation_types_to_remove_rhea2_files
-                                        ):
-                                            nodes_file_writer.writerow(
-                                                self._create_node_row(object_info[0], category, object_info[1])
-                                            )
-
-                                            edges_file_writer.writerow(
-                                                self._curated_xref_row(subject_info[0], object_info[0])
-                                            )
-                progress.set_description(f"Processing {file} ...")
-                # After each iteration, call the update method to advance the progress bar.
-                progress.update()
-        # Add labels for the nodes
-        nodes_df = pd.read_csv(self.output_dir / "nodes.tsv", sep="\t", low_memory=False).drop_duplicates()
-        no_name_df = nodes_df[nodes_df[NAME_COLUMN].isna()][[ID_COLUMN, NAME_COLUMN]].drop_duplicates()
-        no_name_df[NAME_COLUMN] = no_name_df[ID_COLUMN].apply(lambda x: self._get_label_based_on_prefix(x))
-        nodes_df.update(no_name_df)
-        nodes_df.to_csv(self.output_dir / "nodes.tsv", sep="\t", index=False)
+            options = {"quoting": csv.QUOTE_NONE, "quotechar": None}
+            node_writer = tsv_dict_writer(nodes, self.node_header, **options)
+            edge_writer = tsv_dict_writer(edges, self.edge_header, **options)
+            audit_writer = tsv_dict_writer(audit, audit_header, **options)
+            legacy_writer = tsv_dict_writer(legacy_audit, LEGACY_AUDIT_HEADER, **options)
+            node_writer.writeheader()
+            edge_writer.writeheader()
+            audit_writer.writeheader()
+            legacy_writer.writeheader()
+            legacy_writer.writerows(legacy_rows)
+            for family in families:
+                for kind, row in family_rows(family, native, label_lookup):
+                    if kind == "node":
+                        identifier = row[ID_COLUMN]
+                        previous = node_values.get(identifier)
+                        if previous is not None and previous != row:
+                            raise ValueError(f"Conflicting native Rhea node declarations: {identifier}")
+                        if previous is None:
+                            node_values[identifier] = row
+                            node_writer.writerow(row)
+                    else:
+                        identity = tuple(row.get(column, "") for column in self.edge_header)
+                        if identity not in seen_edges:
+                            edge_writer.writerow(row)
+                            seen_edges.add(identity)
+                for identifier, direction in family.members:
+                    audit_writer.writerow(
+                        {
+                            "reaction_id": identifier,
+                            "master_id": family.master,
+                            "direction": direction,
+                            "native_status": node_values[identifier][RHEA_STATUS_FIELD],
+                            "disposition": "retained_active",
+                            "snapshot_id": policy["snapshot_id"],
+                        }
+                    )
+            for identifier in cohort["obsolete_ids"]:
+                audit_writer.writerow(
+                    {
+                        "reaction_id": identifier,
+                        "native_status": "Obsolete",
+                        "disposition": "excluded_obsolete",
+                        "snapshot_id": policy["snapshot_id"],
+                    }
+                )
+        self.record_producer_audit(REACTION_AUDIT)
+        self.record_producer_audit(LEGACY_AUDIT_FILE)
+        if show_status:
+            print(
+                f"[rhea_mappings] snapshot={policy['snapshot_id']} families={len(families):,} "
+                f"statuses={cohort['family_status_counts']} nodes={len(node_values):,} edges={len(seen_edges):,} "
+                f"obsolete_reactions_audited={len(cohort['obsolete_ids']):,} "
+                f"historical_xrefs_audited={len(legacy_rows):,} "
+                f"missing_external_labels={label_lookup.missing_counts}"
+            )

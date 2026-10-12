@@ -185,10 +185,15 @@ def test_current_candidates_and_archived_duplicates_remain_distinct(tmp_path, mo
 
 
 def test_independently_available_alternative_is_not_a_name_wide_hold(tmp_path, monkeypatch):
-    """The audit retains the actual alternate selection without declaring new scientific approval."""
+    """Compound alternatives survive; native child references remain independently scoped (#1319)."""
     producer, _, _, _, _ = _prepare(tmp_path, monkeypatch, alternate="CHEBI:2")
     producer.run(show_status=False)
-    assert {row["retained_target"] for row in existing._rows(producer)} == {"CHEBI:2"}
+    rows = existing._rows(producer)
+    assert {row["retained_target"] for row in rows} == {"CHEBI:2", "mediadive.solution:4172", "mediadive.solution:777"}
+    for row in rows:
+        native = json.loads(row["source_record"])
+        expected = "mediadive.solution:" + str(native["solution_id"]) if "solution_id" in native else "CHEBI:2"
+        assert row["retained_target"] == expected
 
 
 @pytest.mark.parametrize(

@@ -1,0 +1,19 @@
+{
+  "selection": "First well-formed native ENVO-to-taxon record for each finite policy identifier in the recorded cached PREGO payloads. Cache byte identity is verified; no historical archive-member proof is claimed by this fixture.",
+  "payloads": [
+    {"file": "raw/prego/annotated_genomes_isolates_extracted/database_pairs.tsv", "sha256": "fcd478e1b3ac6aa426152edc7c1d932763a3d08f0f57db8339ecf77e55c3bf71", "bytes": 8679648772},
+    {"file": "raw/prego/environmental_samples_extracted/database_pairs.tsv", "sha256": "5097941e8320db4d4c8555361daad3e5d62158d8fcc5e7d85fd0a757ed042967", "bytes": 5480188646}
+  ],
+  "records": [
+    {"channel": "annotated_genomes_isolates", "physical_line": 42005411, "row": ["-27", "ENVO:00000373", "-2", "2", "JGI IMG", "Single Amplified Genome", "3", "TRUE", "https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2600255345"]},
+    {"channel": "annotated_genomes_isolates", "physical_line": 42019475, "row": ["-27", "ENVO:00002002", "-2", "1114972", "JGI IMG", "Isolates", "3", "TRUE", "https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2524023155"]},
+    {"channel": "environmental_samples", "physical_line": 659223, "row": ["-27", "ENVO:00002004", "-2", "1351", "MG-RAST metagenome study", "8 of 16 samples", "0.676970382604175", "TRUE", ""]},
+    {"channel": "environmental_samples", "physical_line": 568068, "row": ["-27", "ENVO:00002036", "-2", "43214", "MG-RAST metagenome study", "2 of 1519 samples", "0.357963269176318", "TRUE", ""]},
+    {"channel": "annotated_genomes_isolates", "physical_line": 42030294, "row": ["-27", "ENVO:00002041", "-2", "1046938", "JGI IMG", "Single Amplified Genome GOLD", "4", "TRUE", "https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2264867064"]},
+    {"channel": "annotated_genomes_isolates", "physical_line": 42036898, "row": ["-27", "ENVO:00002265", "-2", "1048394", "JGI IMG", "Isolates GOLD", "4", "TRUE", "https://img.jgi.doe.gov/cgi-bin/m/main.cgi?section=TaxonDetail&page=taxonDetail&taxon_oid=2731639183"]},
+    {"channel": "environmental_samples", "physical_line": 384722, "row": ["-27", "ENVO:00002297", "-2", "411468", "MG-RAST metagenome study", "8 of 74 samples", "0.392356541803758", "TRUE", ""]},
+    {"channel": "environmental_samples", "physical_line": 60753421, "row": ["-27", "ENVO:01000009", "-2", "180295", "MG-RAST amplicon study", "11 of 110 samples", "0.154732322729895", "TRUE", ""]},
+    {"channel": "environmental_samples", "physical_line": 540169, "row": ["-27", "ENVO:01000105", "-2", "891", "MG-RAST metagenome study", "13 of 46 samples", "0.735561312313644", "TRUE", ""]},
+    {"channel": "environmental_samples", "physical_line": 393787, "row": ["-27", "ENVO:01000159", "-2", "281782", "MG-RAST metagenome study", "1 of 704 samples", "0.090156078665054", "TRUE", ""]}
+  ]
+}

@@ -1,0 +1,897 @@
+{
+  "source": {
+    "relative_path": "bacdive_strains.json",
+    "sha256": "57344e55e5683d168b735b6f186fd239d5637820d0c1559a210945bca883cea2",
+    "scope": "Four complete selected records from the independently scanned 99392-record export; runtime subsets retain their own actual raw coordinates and byte identity."
+  },
+  "records": [
+    {
+      "Culture and growth conditions": {
+        "culture medium": [
+          {
+            "@ref": 12685,
+            "composition": "Name: TRYPTICASE SOY BROTH AGAR (DSMZ Medium 535)\nComposition:\nTrypticase soy broth 30.0 g/l\nAgar 15.0 g/l\nDistilled water",
+            "growth": "yes",
+            "link": "https://mediadive.dsmz.de/medium/535",
+            "name": "TRYPTICASE SOY BROTH AGAR (DSMZ Medium 535)"
+          },
+          {
+            "@ref": 12685,
+            "composition": "Name: NUTRIENT AGAR (DSMZ Medium 1)\nComposition:\nAgar 15.0 g/l\nPeptone 5.0 g/l\nMeat extract 3.0 g/l\nDistilled water",
+            "growth": "yes",
+            "link": "https://mediadive.dsmz.de/medium/1",
+            "name": "NUTRIENT AGAR (DSMZ Medium 1)"
+          },
+          {
+            "@ref": 12685,
+            "composition": "Name: GLUCOSE YEAST EXTRACT MEDIUM (DSMZ Medium 54)\nComposition:\nCaCO3 20.0 g/l\nGlucose 20.0 g/l\nAgar 17.0 g/l\nYeast extract 10.0 g/l\nDistilled water",
+            "growth": "yes",
+            "link": "https://mediadive.dsmz.de/medium/54",
+            "name": "GLUCOSE YEAST EXTRACT MEDIUM (DSMZ Medium 54)"
+          }
+        ],
+        "culture temp": {
+          "@ref": 12685,
+          "growth": "positive",
+          "temperature": "27",
+          "type": "growth"
+        }
+      },
+      "External links": {
+        "@ref": 12685,
+        "culture collection no.": "DSM 50255, ATCC 9004, DSM 60116, ICPB PA 13, NCPPB 1868, NRRL B-826",
+        "straininfo link": {
+          "@ref": 82237,
+          "straininfo": 4355
+        }
+      },
+      "General": {
+        "@ref": 12685,
+        "BacDive-ID": 13026,
+        "DSM-Number": 50255,
+        "NCBI tax id": {
+          "Matching level": "species",
+          "NCBI tax id": 317
+        },
+        "description": "Pseudomonas syringae PA 13 is an aerobe, mesophilic, Gram-negative plant pathogen that was isolated from glume lesion on Thatcher wheat.",
+        "doi": "10.13145/bacdive13026.20241212.9.2",
+        "keywords": [
+          "genome sequence",
+          "Bacteria",
+          "aerobe",
+          "mesophilic",
+          "Gram-negative",
+          "plant pathogen"
+        ],
+        "strain history": {
+          "@ref": 12685,
+          "history": "<- H. Stolp (<I>Pseudomonas atrofaciens</I>) <- ATCC <- W.H. Burkholder; PA 13 <- A. Hagborg; 1440"
+        }
+      },
+      "Genome-based predictions": {},
+      "Isolation, sampling and environmental information": {
+        "isolation": {
+          "@ref": 12685,
+          "sample type": "glume lesion on Thatcher wheat"
+        },
+        "isolation source categories": [
+          {
+            "Cat1": "#Host Body-Site",
+            "Cat2": "#Plant",
+            "Cat3": "#Fruit (Seed)"
+          },
+          {
+            "Cat1": "#Host",
+            "Cat2": "#Plants",
+            "Cat3": "#Herbaceous plants (Grass,Crops)"
+          },
+          {
+            "Cat1": "#Infection",
+            "Cat2": "#Plant infections",
+            "Cat3": "#Lesion (incl. Necrosis)"
+          }
+        ]
+      },
+      "Morphology": {},
+      "Name and taxonomic classification": {
+        "@ref": 12685,
+        "LPSN": {
+          "@ref": 20215,
+          "class": "Gammaproteobacteria",
+          "description": "domain/bacteria",
+          "domain": "Bacteria",
+          "family": "Pseudomonadaceae",
+          "full scientific name": "<I>Pseudomonas</I> <I>syringae</I> van Hall 1902 (Approved Lists 1980)",
+          "genus": "Pseudomonas",
+          "keyword": "phylum/pseudomonadota",
+          "order": "Pseudomonadales",
+          "phylum": "Pseudomonadota",
+          "species": "Pseudomonas syringae"
+        },
+        "class": "Gammaproteobacteria",
+        "domain": "Bacteria",
+        "family": "Pseudomonadaceae",
+        "full scientific name": "Pseudomonas syringae van Hall 1902",
+        "genus": "Pseudomonas",
+        "order": "Pseudomonadales",
+        "phylum": "Proteobacteria",
+        "species": "Pseudomonas syringae",
+        "strain designation": "PA 13",
+        "type strain": "no"
+      },
+      "Physiology and metabolism": {
+        "API 20NE": [
+          {
+            "@ref": 12685,
+            "ADH Arg": "-",
+            "ADI": "-",
+            "ARA": "+",
+            "CAP": "-",
+            "CIT": "+",
+            "ESC": "+",
+            "GEL": "-",
+            "GLU_ Assim": "+",
+            "GLU_ Ferm": "-",
+            "GNT": "+",
+            "MAL": "-",
+            "MAN": "+",
+            "MLT": "+",
+            "MNE": "-",
+            "NAG": "-",
+            "NO3": "-",
+            "OX": "-",
+            "PAC": "-",
+            "PNPG": "-",
+            "TRP": "-",
+            "URE": "-"
+          },
+          {
+            "@ref": 12685,
+            "ADH Arg": "-",
+            "ADI": "-",
+            "ARA": "+",
+            "CAP": "-",
+            "CIT": "+",
+            "ESC": "+",
+            "GEL": "-",
+            "GLU_ Assim": "+",
+            "GLU_ Ferm": "-",
+            "GNT": "+",
+            "MAL": "-",
+            "MAN": "+",
+            "MLT": "+",
+            "MNE": "+",
+            "NAG": "-",
+            "NO3": "-",
+            "OX": "-",
+            "PAC": "-",
+            "PNPG": "-",
+            "TRP": "-",
+            "URE": "-"
+          }
+        ],
+        "enzymes": [
+          {
+            "@ref": 68369,
+            "activity": "-",
+            "ec": "1.9.3.1",
+            "value": "cytochrome oxidase"
+          },
+          {
+            "@ref": 68369,
+            "activity": "-",
+            "value": "gelatinase"
+          },
+          {
+            "@ref": 68369,
+            "activity": "+",
+            "ec": "3.2.1.21",
+            "value": "beta-glucosidase"
+          },
+          {
+            "@ref": 68369,
+            "activity": "-",
+            "ec": "3.5.1.5",
+            "value": "urease"
+          },
+          {
+            "@ref": 68369,
+            "activity": "-",
+            "ec": "3.5.3.6",
+            "value": "arginine dihydrolase"
+          }
+        ],
+        "metabolite production": {
+          "@ref": 68369,
+          "Chebi-ID": 35581,
+          "metabolite": "indole",
+          "production": "no"
+        },
+        "metabolite tests": {
+          "@ref": 68369,
+          "Chebi-ID": 35581,
+          "indole test": "-",
+          "metabolite": "indole"
+        },
+        "metabolite utilization": [
+          {
+            "@ref": 68369,
+            "Chebi-ID": 25115,
+            "kind of utilization tested": "assimilation",
+            "metabolite": "malate",
+            "utilization activity": "+"
+          },
+          {
+            "@ref": 68369,
+            "Chebi-ID": 17128,
+            "kind of utilization tested": "assimilation",
+            "metabolite": "adipate",
+            "utilization activity": "-"
+          },
+          {
+            "@ref": 68369,
+            "Chebi-ID": 27689,
+            "kind of utilization tested": "assimilation",
+            "metabolite": "decanoate",
+            "utilization activity": "-"
+          },
+          {
+            "@ref": 68369,
+            "Chebi-ID": 24265,
+            "kind of utilization tested": "assimilation",
+            "metabolite": "gluconate",
+            "utilization activity": "+"
+          },
+          {
+            "@ref": 68369,
+            "Chebi-ID": 17306,
+            "kind of utilization tested": "assimilation",
+            "metabolite": "maltose",
+            "utilization activity": "-"
+          },
+          {
+            "@ref": 68369,
+            "Chebi-ID": 59640,
+            "kind of utilization tested": "assimilation",
+            "metabolite": "N-acetylglucosamine",
+            "utilization activity": "-"
+          },
+          {
+            "@ref": 68369,
+            "Chebi-ID": 16899,
+            "kind of utilization tested": "assimilation",
+            "metabolite": "D-mannitol",
+            "utilization activity": "+"
+          },
+          {
+            "@ref": 68369,
+            "Chebi-ID": 30849,
+            "kind of utilization tested": "assimilation",
+            "metabolite": "L-arabinose",
+            "utilization activity": "+"
+          },
+          {
+            "@ref": 68369,
+            "Chebi-ID": 17634,
+            "kind of utilization tested": "assimilation",
+            "metabolite": "D-glucose",
+            "utilization activity": "+"
+          },
+          {
+            "@ref": 68369,
+            "Chebi-ID": 5291,
+            "kind of utilization tested": "hydrolysis",
+            "metabolite": "gelatin",
+            "utilization activity": "-"
+          },
+          {
+            "@ref": 68369,
+            "Chebi-ID": 4853,
+            "kind of utilization tested": "hydrolysis",
+            "metabolite": "esculin",
+            "utilization activity": "+"
+          },
+          {
+            "@ref": 68369,
+            "Chebi-ID": 16199,
+            "kind of utilization tested": "hydrolysis",
+            "metabolite": "urea",
+            "utilization activity": "-"
+          },
+          {
+            "@ref": 68369,
+            "Chebi-ID": 29016,
+            "kind of utilization tested": "hydrolysis",
+            "metabolite": "arginine",
+            "utilization activity": "-"
+          },
+          {
+            "@ref": 68369,
+            "Chebi-ID": 17634,
+            "kind of utilization tested": "fermentation",
+            "metabolite": "D-glucose",
+            "utilization activity": "-"
+          },
+          {
+            "@ref": 68369,
+            "Chebi-ID": 27897,
+            "kind of utilization tested": "energy source",
+            "metabolite": "tryptophan",
+            "utilization activity": "-"
+          },
+          {
+            "@ref": 68369,
+            "Chebi-ID": 17632,
+            "kind of utilization tested": "reduction",
+            "metabolite": "nitrate",
+            "utilization activity": "-"
+          }
+        ]
+      },
+      "Reference": [
+        {
+          "@id": 12685,
+          "authors": "Curators of the DSMZ",
+          "catalogue": "Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen GmbH (DSM 50255)",
+          "doi/url": "https://www.dsmz.de/collection/catalogue/details/culture/DSM-50255"
+        },
+        {
+          "@id": 20215,
+          "authors": "Parte, A.C., Sard\u00e0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C. and G\u00f6ker, M.",
+          "doi/url": "10.1099/ijsem.0.004332",
+          "title": "List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the DSMZ"
+        },
+        {
+          "@id": 66792,
+          "authors": "Julia Koblitz, Joaquim Sard\u00e0, Lorenz Christian Reimer, Boyke Bunk, J\u00f6rg Overmann",
+          "doi/url": "https://diaspora-project.de/progress.html#genomes",
+          "title": "Automatically annotated for the DiASPora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+        },
+        {
+          "@id": 66794,
+          "authors": "Antje Chang, Lisa Jeske, Sandra Ulbrich, Julia Hofmann, Julia Koblitz, Ida Schomburg, Meina Neumann-Schaal, Dieter Jahn, Dietmar Schomburg",
+          "doi/url": "10.1093/nar/gkaa1025",
+          "journal": "Nucleic Acids Res. 49: D498-D508 2020",
+          "pubmed": 33211880,
+          "title": "BRENDA, the ELIXIR core data resource in 2021: new developments and updates"
+        },
+        {
+          "@id": 68369,
+          "title": "Automatically annotated from API 20NE"
+        },
+        {
+          "@id": 69480,
+          "authors": "Julia Koblitz, Joaquim Sard\u00e0, Lorenz Christian Reimer, Boyke Bunk, J\u00f6rg Overmann",
+          "doi/url": "https://diaspora-project.de/progress.html#genomes",
+          "title": "Predictions based on genome sequence made in the Diaspora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+        },
+        {
+          "@id": 82237,
+          "authors": "Reimer, L.C., Lissin, A.,Schober, I., Witte,J.F., Podstawka, A., L\u00fcken, H., Bunk, B.,Overmann, J.",
+          "doi/url": "10.60712/SI-ID4355.1",
+          "title": "StrainInfo: A central database for resolving microbial strain identifiers"
+        }
+      ],
+      "Safety information": {
+        "risk assessment": {
+          "@ref": 12685,
+          "biosafety level": "1",
+          "biosafety level comment": "Risk group (German classification)",
+          "pathogenicity plant": "yes"
+        }
+      },
+      "Sequence information": {
+        "Genome sequences": [
+          {
+            "@ref": 66792,
+            "NCBI tax ID": 629269,
+            "accession": "GCA_000498595",
+            "assembly level": "contig",
+            "database": "ncbi",
+            "description": "Pseudomonas syringae pv. atrofaciens str. DSM 50255"
+          },
+          {
+            "@ref": 66792,
+            "NCBI tax ID": 629269,
+            "accession": "629269.3",
+            "assembly level": "wgs",
+            "database": "patric",
+            "description": "Pseudomonas syringae pv. atrofaciens str. DSM 50255"
+          },
+          {
+            "@ref": 66792,
+            "NCBI tax ID": 629269,
+            "accession": "2574179842",
+            "assembly level": "draft",
+            "database": "img",
+            "description": "Pseudomonas syringae pv. atrofaciens DSM 50255"
+          }
+        ]
+      },
+      "_id": {
+        "$oid": "688b703016cfda6e493805fd"
+      }
+    },
+    {
+      "Culture and growth conditions": {
+        "culture medium": {
+          "@ref": 116182,
+          "growth": "yes",
+          "link": "https://catalogue-crbip.pasteur.fr/fiche_milieu.xhtml?crbip=72",
+          "name": "CIP Medium 72"
+        },
+        "culture temp": {
+          "@ref": 63405,
+          "growth": "positive",
+          "temperature": "30",
+          "type": "growth"
+        }
+      },
+      "External links": {
+        "@ref": 63405,
+        "culture collection no.": "CCUG 67281, CCM 8611, CIP 111640, ANC 4874",
+        "literature": {
+          "DOI": "10.1099/ijsem.0.000511",
+          "Pubmed-ID": "26245775",
+          "authors": "Krizova L, Maixnerova M, Sedo O, Nemec A",
+          "journal": "Int J Syst Evol Microbiol",
+          "title": "Acinetobacter albensis sp. nov., isolated from natural soil and water ecosystems.",
+          "topic": "Phylogeny",
+          "year": 2015
+        },
+        "straininfo link": {
+          "@ref": 110104,
+          "straininfo": 410072
+        }
+      },
+      "General": {
+        "@ref": 63405,
+        "BacDive-ID": 156949,
+        "NCBI tax id": {
+          "Matching level": "species",
+          "NCBI tax id": 1673609
+        },
+        "description": "Acinetobacter albensis CCUG 67281 is an aerobe, mesophilic, Gram-negative bacterium that was isolated from Water with organic detritus from a forest pool.",
+        "doi": "10.13145/bacdive156949.20241212.9.2",
+        "keywords": [
+          "Bacteria",
+          "aerobe",
+          "mesophilic",
+          "Gram-negative",
+          "oval-shaped"
+        ],
+        "strain history": {
+          "@ref": 116182,
+          "history": "CIP <- 2018, A. Nemec, NIPH, Prague, Czech Republic: strain ANC 4874"
+        }
+      },
+      "Genome-based predictions": {},
+      "Isolation, sampling and environmental information": {
+        "isolation": [
+          {
+            "@ref": 63405,
+            "continent": "Europe",
+            "country": "Czech Republic",
+            "origin.country": "CZE",
+            "sample type": "Water with organic detritus from a forest pool",
+            "sampling date": "2014-05-25"
+          },
+          {
+            "@ref": 116182,
+            "continent": "Europe",
+            "country": "Czech Republic",
+            "geographic location": "pool in a deciduous forest in the natural reserve Mydlovarsky luh, on the bank of the river Labe",
+            "isolation date": "2014-05-02",
+            "origin.country": "CZE",
+            "sample type": "Environment, Water, pool"
+          }
+        ],
+        "isolation source categories": [
+          {
+            "Cat1": "#Environmental",
+            "Cat2": "#Aquatic"
+          },
+          {
+            "Cat1": "#Host Body Product",
+            "Cat2": "#Plant",
+            "Cat3": "#Parasite"
+          }
+        ]
+      },
+      "Morphology": {
+        "cell morphology": {
+          "@ref": 116182,
+          "cell shape": "oval-shaped",
+          "gram stain": "negative",
+          "motility": "no"
+        },
+        "colony morphology": {
+          "@ref": 63405,
+          "incubation period": "1 day"
+        }
+      },
+      "Name and taxonomic classification": {
+        "@ref": 63405,
+        "LPSN": {
+          "@ref": 20215,
+          "class": "Gammaproteobacteria",
+          "description": "domain/bacteria",
+          "domain": "Bacteria",
+          "family": "Moraxellaceae",
+          "full scientific name": "<I>Acinetobacter</I> <I>albensis</I> Krizova et al. 2015",
+          "genus": "Acinetobacter",
+          "keyword": "phylum/pseudomonadota",
+          "order": "Pseudomonadales",
+          "phylum": "Pseudomonadota",
+          "species": "Acinetobacter albensis"
+        },
+        "class": "Gammaproteobacteria",
+        "domain": "Bacteria",
+        "family": "Moraxellaceae",
+        "genus": "Acinetobacter",
+        "order": "Pseudomonadales",
+        "phylum": "Proteobacteria",
+        "species": "Acinetobacter albensis",
+        "type strain": "yes"
+      },
+      "Physiology and metabolism": {
+        "fatty acid profile": {
+          "fatty acids": [
+            {
+              "@ref": 63405,
+              "ECL": 10,
+              "fatty acid": "C10:0",
+              "percentage": 8.1
+            },
+            {
+              "@ref": 63405,
+              "ECL": 12,
+              "fatty acid": "C12:0",
+              "percentage": 9.8
+            },
+            {
+              "@ref": 63405,
+              "ECL": 14,
+              "fatty acid": "C14:0",
+              "percentage": 1.3
+            },
+            {
+              "@ref": 63405,
+              "ECL": 16,
+              "fatty acid": "C16:0",
+              "percentage": 8.8
+            },
+            {
+              "@ref": 63405,
+              "ECL": 13.455,
+              "fatty acid": "C12:0 3OH",
+              "percentage": 21.3
+            },
+            {
+              "@ref": 63405,
+              "ECL": 15.819,
+              "fatty acid": "C16:1 &omega;7c",
+              "percentage": 19.2
+            },
+            {
+              "@ref": 63405,
+              "ECL": 17.769,
+              "fatty acid": "C18:1 &omega;9c",
+              "percentage": 28.6
+            },
+            {
+              "@ref": 63405,
+              "ECL": 17.724,
+              "fatty acid": "C18:2 &omega;6,9c/C18:0 ANTE",
+              "percentage": 1.7
+            },
+            {
+              "@ref": 63405,
+              "ECL": 12.486,
+              "fatty acid": "unknown 12.486",
+              "percentage": 1.1
+            }
+          ],
+          "method/protocol": "CCUG",
+          "type of FA analysis": "whole cell analysis"
+        },
+        "oxygen tolerance": {
+          "@ref": 63405,
+          "oxygen tolerance": "aerobe"
+        }
+      },
+      "Reference": [
+        {
+          "@id": 20215,
+          "authors": "Parte, A.C., Sard\u00e0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C. and G\u00f6ker, M.",
+          "doi/url": "10.1099/ijsem.0.004332",
+          "title": "List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the DSMZ"
+        },
+        {
+          "@id": 63405,
+          "authors": "Curators of the CCUG",
+          "catalogue": "Culture Collection University of Gothenburg (CCUG) (CCUG 67281)",
+          "doi/url": "https://www.ccug.se/strain?id=67281"
+        },
+        {
+          "@id": 110104,
+          "authors": "Reimer, L.C., Lissin, A.,Schober, I., Witte,J.F., Podstawka, A., L\u00fcken, H., Bunk, B.,Overmann, J.",
+          "doi/url": "10.60712/SI-ID410072.1",
+          "title": "StrainInfo: A central database for resolving microbial strain identifiers"
+        },
+        {
+          "@id": 116182,
+          "authors": "Curators of the CIP",
+          "catalogue": "Collection of Institut Pasteur (CIP 111640)",
+          "doi/url": "https://catalogue-crbip.pasteur.fr/fiche_catalogue.xhtml?crbip=CIP%20111640"
+        }
+      ],
+      "Safety information": {
+        "risk assessment": {
+          "@ref": 116182,
+          "biosafety level": "1",
+          "biosafety level comment": "Risk group (French classification)"
+        }
+      },
+      "Sequence information": {},
+      "_id": {
+        "$oid": "688b703816cfda6e49390bd9"
+      }
+    },
+    {
+      "Culture and growth conditions": {
+        "culture medium": {
+          "@ref": 63957,
+          "growth": "yes",
+          "name": "Nutrient Agar (NA)"
+        },
+        "culture temp": {
+          "@ref": 63957,
+          "growth": "positive",
+          "temperature": "28",
+          "type": "growth"
+        }
+      },
+      "External links": {
+        "@ref": 63957,
+        "culture collection no.": "IMI 353995"
+      },
+      "General": {
+        "@ref": 63957,
+        "BacDive-ID": 157411,
+        "NCBI tax id": {
+          "Matching level": "species",
+          "NCBI tax id": 306
+        },
+        "description": "Pseudomonas sp. IMI 353995 is a mesophilic bacterium that was isolated from shoot of lesion.",
+        "doi": "10.13145/bacdive157411.20241212.9.2",
+        "keywords": [
+          "Bacteria",
+          "mesophilic"
+        ]
+      },
+      "Genome-based predictions": {},
+      "Isolation, sampling and environmental information": {
+        "isolation": {
+          "@ref": 63957,
+          "sample type": "shoot of lesion"
+        },
+        "isolation source categories": [
+          {
+            "Cat1": "#Infection",
+            "Cat2": "#Plant infections",
+            "Cat3": "#Lesion (incl. Necrosis)"
+          },
+          {
+            "Cat1": "#Host Body-Site",
+            "Cat2": "#Plant",
+            "Cat3": "#Stem (Branch)"
+          }
+        ]
+      },
+      "Morphology": {},
+      "Name and taxonomic classification": {
+        "@ref": 63957,
+        "LPSN": {
+          "@ref": 20215,
+          "class": "Gammaproteobacteria",
+          "description": "domain/bacteria",
+          "domain": "Bacteria",
+          "family": "Pseudomonadaceae",
+          "full scientific name": "<I>Pseudomonas</I> Migula 1894 (Approved Lists 1980)",
+          "genus": "Pseudomonas",
+          "keyword": "phylum/pseudomonadota",
+          "order": "Pseudomonadales",
+          "phylum": "Pseudomonadota",
+          "species": "Pseudomonas sp.",
+          "synonyms": [
+            {
+              "@ref": 20215,
+              "synonym": "Flavimonas"
+            },
+            {
+              "@ref": 20215,
+              "synonym": "Serpens"
+            },
+            {
+              "@ref": 20215,
+              "synonym": "Chryseomonas"
+            },
+            {
+              "@ref": 20215,
+              "synonym": "Zestomonas"
+            },
+            {
+              "@ref": 20215,
+              "synonym": "Phytopseudomonas"
+            },
+            {
+              "@ref": 20215,
+              "synonym": "Caenipseudomonas"
+            },
+            {
+              "@ref": 20215,
+              "synonym": "Aquipseudomonas"
+            },
+            {
+              "@ref": 20215,
+              "synonym": "Ectopseudomonas"
+            },
+            {
+              "@ref": 20215,
+              "synonym": "Metapseudomonas"
+            },
+            {
+              "@ref": 20215,
+              "synonym": "Geopseudomonas"
+            }
+          ]
+        },
+        "class": "Gammaproteobacteria",
+        "domain": "Bacteria",
+        "family": "Pseudomonadaceae",
+        "full scientific name": "Pseudomonas; Migula 1894",
+        "genus": "Pseudomonas",
+        "order": "Pseudomonadales",
+        "phylum": "Proteobacteria",
+        "species": "Pseudomonas sp.",
+        "type strain": "no"
+      },
+      "Physiology and metabolism": {},
+      "Reference": [
+        {
+          "@id": 20215,
+          "authors": "Parte, A.C., Sard\u00e0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C. and G\u00f6ker, M.",
+          "doi/url": "10.1099/ijsem.0.004332",
+          "title": "List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the DSMZ"
+        },
+        {
+          "@id": 63957,
+          "authors": "CABI",
+          "catalogue": "CABI Genetic Resource Collection (IMI 353995)"
+        }
+      ],
+      "Safety information": {},
+      "Sequence information": {},
+      "_id": {
+        "$oid": "688b703816cfda6e49390df5"
+      }
+    },
+    {
+      "Culture and growth conditions": {
+        "culture medium": {
+          "@ref": 64081,
+          "growth": "yes",
+          "name": "Nutrient Agar (NA)"
+        },
+        "culture temp": {
+          "@ref": 64081,
+          "growth": "positive",
+          "temperature": "28",
+          "type": "growth"
+        }
+      },
+      "External links": {
+        "@ref": 64081,
+        "culture collection no.": "IMI 372762"
+      },
+      "General": {
+        "@ref": 64081,
+        "BacDive-ID": 157533,
+        "NCBI tax id": {
+          "Matching level": "species",
+          "NCBI tax id": 29446
+        },
+        "description": "Xanthomonas sp. IMI 372762 is a mesophilic bacterium that was isolated from Murraya koenigii; leaf, lesion.",
+        "doi": "10.13145/bacdive157533.20241212.9.2",
+        "keywords": [
+          "Bacteria",
+          "mesophilic"
+        ]
+      },
+      "Genome-based predictions": {},
+      "Isolation, sampling and environmental information": {
+        "isolation": {
+          "@ref": 64081,
+          "continent": "Asia",
+          "country": "India",
+          "latitude": 20,
+          "longitude": 77,
+          "origin.country": "IND",
+          "sample type": "Murraya koenigii; leaf, lesion"
+        },
+        "isolation source categories": [
+          {
+            "Cat1": "#Host Body-Site",
+            "Cat2": "#Plant",
+            "Cat3": "#Leaf (Phyllosphere)"
+          },
+          {
+            "Cat1": "#Infection",
+            "Cat2": "#Plant infections",
+            "Cat3": "#Lesion (incl. Necrosis)"
+          },
+          {
+            "Cat1": "#Host",
+            "Cat2": "#Plants",
+            "Cat3": "#Tree"
+          },
+          {
+            "Cat1": "#Host Body-Site",
+            "Cat2": "#Other",
+            "Cat3": "#Wound"
+          }
+        ]
+      },
+      "Morphology": {},
+      "Name and taxonomic classification": {
+        "@ref": 64081,
+        "LPSN": {
+          "@ref": 20215,
+          "class": "Gammaproteobacteria",
+          "description": "domain/bacteria",
+          "domain": "Bacteria",
+          "family": "Lysobacteraceae",
+          "full scientific name": "<I>Xanthomonas</I> Dowson 1939 (Approved Lists 1980)",
+          "genus": "Xanthomonas",
+          "keyword": "phylum/pseudomonadota",
+          "order": "Lysobacterales",
+          "phylum": "Pseudomonadota",
+          "species": "Xanthomonas sp.",
+          "synonyms": {
+            "@ref": 20215,
+            "synonym": "Phytomonas"
+          }
+        },
+        "class": "Gammaproteobacteria",
+        "domain": "Bacteria",
+        "family": "Xanthomonadaceae",
+        "full scientific name": "Xanthomonas; Dowson 1939",
+        "genus": "Xanthomonas",
+        "order": "Lysobacterales",
+        "phylum": "Proteobacteria",
+        "species": "Xanthomonas sp.",
+        "type strain": "no"
+      },
+      "Physiology and metabolism": {},
+      "Reference": [
+        {
+          "@id": 20215,
+          "authors": "Parte, A.C., Sard\u00e0 Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C. and G\u00f6ker, M.",
+          "doi/url": "10.1099/ijsem.0.004332",
+          "title": "List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the DSMZ"
+        },
+        {
+          "@id": 64081,
+          "authors": "CABI",
+          "catalogue": "CABI Genetic Resource Collection (IMI 372762)"
+        }
+      ],
+      "Safety information": {},
+      "Sequence information": {},
+      "_id": {
+        "$oid": "688b703816cfda6e49390e43"
+      }
+    }
+  ]
+}

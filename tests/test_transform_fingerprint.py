@@ -21,6 +21,19 @@ from kg_microbe.utils.transform_fingerprint import (
 )
 
 
+def test_gold_selected_alias_policy_invalidates_shared_consumer_data(tmp_path):
+    """An alias-policy-only change invalidates users of GOLD declaration authority."""
+    policy = tmp_path / "mappings" / "gold_selected_taxon_aliases.json"
+    policy.parent.mkdir()
+    policy.write_text('{"reviewed_cohort": "original"}\n', encoding="utf-8")
+    before = data_fingerprint(tmp_path, ())
+    policy.write_text('{"reviewed_cohort": "changed"}\n', encoding="utf-8")
+    assert data_fingerprint(tmp_path, ()) != before
+    after = data_fingerprint(tmp_path, ())
+    policy.unlink()
+    assert data_fingerprint(tmp_path, ()) != after
+
+
 class FingerprintTest(TestCase):
     """The properties the freshness verdict rests on."""
 

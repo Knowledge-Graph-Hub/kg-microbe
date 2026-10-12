@@ -1,0 +1,18 @@
+{
+  "graphs": [{
+    "id": "https://example.org/fixtures/chebi_annotation_metadata",
+    "nodes": [
+      {"id": "http://purl.obolibrary.org/obo/chebi/BRAND_NAME", "lbl": "BRAND NAME", "type": "PROPERTY", "propertyType": "ANNOTATION"},
+      {"id": "http://purl.obolibrary.org/obo/chebi/INN", "lbl": "INN", "type": "PROPERTY", "propertyType": "ANNOTATION"},
+      {"id": "http://purl.obolibrary.org/obo/chebi/IUPAC_NAME", "lbl": "IUPAC NAME", "type": "PROPERTY", "propertyType": "ANNOTATION"},
+      {"id": "http://purl.obolibrary.org/obo/chebi/1_STAR", "type": "PROPERTY", "propertyType": "ANNOTATION"},
+      {"id": "http://purl.obolibrary.org/obo/chebi/2_STAR", "type": "PROPERTY", "propertyType": "ANNOTATION"},
+      {"id": "http://purl.obolibrary.org/obo/chebi/3_STAR", "type": "PROPERTY", "propertyType": "ANNOTATION"},
+      {"id": "http://purl.obolibrary.org/obo/CHEBI_15377", "lbl": "water", "type": "CLASS", "meta": {"synonyms": [{"pred": "hasExactSynonym", "val": "water", "synonymType": "http://purl.obolibrary.org/obo/chebi/IUPAC_NAME"}]}},
+      {"id": "http://purl.obolibrary.org/obo/chebi/genuine_class", "lbl": "BRAND NAME", "type": "CLASS"},
+      {"id": "http://purl.obolibrary.org/obo/chebi/object_property", "type": "PROPERTY", "propertyType": "OBJECT"},
+      {"id": "http://purl.obolibrary.org/obo/unrelated/class", "type": "CLASS"}
+    ],
+    "edges": []
+  }]
+}

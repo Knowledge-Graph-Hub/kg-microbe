@@ -1,0 +1,95 @@
+{
+  "solutions": {
+    "6194": {
+      "id": 6194,
+      "name": "SES (Soil Extract with Added Salts)",
+      "recipe": [
+        {
+          "amount": 20,
+          "attribute": "1.0 g/l stock solution",
+          "compound": "K2HPO4",
+          "compound_id": 10,
+          "optional": 0,
+          "recipe_order": 1,
+          "unit": "ml"
+        },
+        {
+          "amount": 20,
+          "attribute": "1.0 g/l stock solution",
+          "compound": "MgSO4 x 7 H2O",
+          "compound_id": 8,
+          "optional": 0,
+          "recipe_order": 2,
+          "unit": "ml"
+        },
+        {
+          "amount": 20,
+          "attribute": "10.0 g/l stock solution",
+          "compound": "KNO3",
+          "compound_id": 191,
+          "optional": 0,
+          "recipe_order": 3,
+          "unit": "ml"
+        },
+        {
+          "amount": 100,
+          "optional": 0,
+          "recipe_order": 4,
+          "solution": "SE1 (Soil Extract 1)",
+          "solution_id": 6257,
+          "unit": "ml"
+        },
+        {
+          "amount": 840,
+          "compound": "Deionized water",
+          "compound_id": 418,
+          "optional": 0,
+          "recipe_order": 5,
+          "unit": "ml"
+        }
+      ],
+      "steps": [
+        {
+          "step": "Make up to 1 litre with deionized water and autoclave at 15 psi for 15 minutes."
+        },
+        {
+          "step": "At the  CCAP, SE1 is  used for  marine algae, SE2 for freshwater  and terrestrial\r\nprotozoa"
+        }
+      ],
+      "volume": 1000
+    },
+    "6257": {
+      "id": 6257,
+      "name": "SE1 (Soil Extract 1)",
+      "recipe": [
+        {
+          "attribute": "air-dried",
+          "compound": "Soil",
+          "compound_id": 2350,
+          "optional": 0,
+          "recipe_order": 2
+        },
+        {
+          "compound": "Distilled water",
+          "compound_id": 4,
+          "optional": 0,
+          "recipe_order": 3
+        }
+      ],
+      "steps": [
+        {
+          "step": "Site selection for a good soil is very important and for most purposes a soil from undisturbed\r\ndeciduous woodland is best. Sites to avoid are those showing obvious signs of man's activity\r\nand particular care should be taken to avoid areas where fertilizers, crop sprays or other toxic\r\nchemicals may have been used."
+        },
+        {
+          "step": "A rich loam with good crumb structure should be sought. Stones, roots and larger\r\ninvertebrates should be removed during an initial sieving through a 1 cm mesh. The sieved\r\nsoil should be spread to air dry and handpicked for smaller invertebrates and roots. It should\r\nbe turned periodically and picked over again. When dry sieve through a finer mesh (2-4 mm)\r\nand store in an airtight container away from light and heat."
+        },
+        {
+          "step": "Soil is  prepared  as  above.  Air­-dried  soil and  twice  its  volume  of  supernatant\r\ndistilled water are autoclaved together at 15 psi for 2 hours and left to cool.  The \r\nsupernatant is then decanted and filtered through Whatman No 1 filter paper, then\r\ndistributed to containers in volumes suitable for making up batches of media. The \r\naliquots and their containers are autoclaved for an appropriate length of time (e.g.\r\n1 litre or less for 15 minutes) and are then kept in a cool place (e.g. a refrigerator) \r\nuntil required."
+        }
+      ],
+      "volume": 1000
+    }
+  },
+  "source_file": "data/raw/mediadive/solutions.json",
+  "source_sha256": "9ab0fbf72c2e5ac25ecab3ada268dfe524db971daa86d67532dea6a5412a5c44"
+}

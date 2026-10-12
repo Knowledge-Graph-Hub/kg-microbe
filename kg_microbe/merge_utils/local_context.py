@@ -6,6 +6,10 @@ from threading import RLock
 _CONTEXT_LOCK = RLock()
 _ABSENT = object()
 _CONTEXT_NAMES = ("biolink", "monarch_context", "obo_context")
+# Rhea's RDF vocabulary and nonnumeric compound/part resources have their
+# native namespace. Reaction identifiers are emitted separately as RHEA CURIEs.
+# Namespace registration does not declare these predicates part of Biolink.
+_NATIVE_PREFIXES = {"rheav": "http://rdf.rhea-db.org/"}
 _USERS = 0
 _PREVIOUS = {}
 _ACTIVE = None
@@ -31,6 +35,10 @@ def _pinned_prefix_map():
     for prefix, uri in ingredient_kgx_profile()["prefixes"].items():
         if prefix in context and context[prefix] != uri:
             raise ValueError(f"Conflicting ingredient namespace: {prefix}")
+        context[prefix] = uri
+    for prefix, uri in _NATIVE_PREFIXES.items():
+        if prefix in context and context[prefix] != uri:
+            raise ValueError(f"Conflicting native namespace: {prefix}")
         context[prefix] = uri
     return context
 

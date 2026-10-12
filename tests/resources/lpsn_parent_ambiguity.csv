@@ -1,0 +1,9 @@
+genus_name,sp_epithet,subsp_epithet,reference,status,authors,address,risk_grp,nomenclatural_type,record_no,record_lnk
+Ambigua,,,synthetic fixture,current name,First author,,,,10,
+Ambigua,,,synthetic fixture,synonym,Second author,,,,11,
+Ambigua,alpha,,synthetic fixture,current name,Third author,,,,20,
+Ambigua,alpha,,synthetic fixture,synonym,Fourth author,,,,21,
+Ambigua,alpha,beta,synthetic fixture,current name,Fifth author,,,,30,
+Unica,,,synthetic fixture,current name,Sixth author,,,,40,
+Unica,historical,,synthetic fixture,synonym,Seventh author,,,,41,40
+Absentus,orphan,,synthetic fixture,current name,Eighth author,,,,42,

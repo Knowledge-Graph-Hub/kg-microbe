@@ -86,10 +86,44 @@ legacy MicroMediaParam hydrate/strict mappings. Embedded compound identifiers
 must pass the same ingredient-identity checks. A hydrated ingredient is not
 collapsed to its anhydrous chemical merely because the names are related;
 without an admitted identity, the source-local `mediadive.ingredient:` identifier
-is retained. Nested solution references likewise retain their native
-`mediadive.solution:` identifiers unless their names have an admitted mapping.
-Source recipe occurrences and their original solution references remain in the
-recorded evidence regardless of the resolved node identifier.
+is retained.
+
+Explicit nested `solution_id` references always retain their native
+`mediadive.solution:` identity, before every lexical mapping route (#1319).
+A stock solution is not the chemical whose name resembles its label. Present
+child records retain their source-owned mixture declarations; a child absent
+from the selected export retains its native identifier and literal name as an
+unresolved `biolink:NamedThing`. No composition, external identity, or online
+replacement is invented. Repeated references, including different amounts,
+remain distinct source occurrences.
+
+Two finite reviewed material cohorts are intercepted before unified, legacy,
+and embedded candidates: the five native compound-471 Oatmeal observations
+(#1317) and the compound-672 Substrate observation (#1318). They remain
+`mediadive.ingredient:471` and `mediadive.ingredient:672`, respectively. The
+native product and preparation evidence does not establish NCIT's colloidal
+Oatmeal Powder identity or one specific substrate material. These decisions
+do not globally disable NCIT classes or reinterpret other ingredient records.
+New or changed occurrences of those reviewed IDs require renewed evidence
+review; label similarity alone does not extend the finite policy.
+
+Every selected recipe observation retains its complete native JSON record,
+source coordinate, quantities and qualifiers. Four mandatory sidecars preserve
+the nested-reference, missing-child, Oatmeal and Substrate dispositions:
+
+- `mediadive_nested_solution_identity.tsv`;
+- `mediadive_missing_solution_references.tsv`;
+- `mediadive_oatmeal_identity.tsv`;
+- `mediadive_substrate_identity.tsv`.
+
+The version-2 native-input contract binds those sidecars to actual immutable
+raw reads and code-pinned policy/evidence. Source finalization and public
+admission independently reconstruct their complete contents; changing only
+outer file hashes cannot hide partial audit loss. A zero-cohort source still
+emits honest header-only sidecars. Fresh-instance checkpoint reuse re-reads
+recorded inputs and compares the exact native contract before accepting the
+existing graph; it does not run a new transformation or replace missing
+evidence. This adds source-validation work, not post-merge graph edits.
 
 ## Tests and maintenance
 

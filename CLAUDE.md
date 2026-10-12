@@ -54,9 +54,11 @@ than built on stale upstream output), and exits non-zero with a per-source
 summary. `FatalOntologyError` and Ctrl-C still abort at once. See #685, #690.
 An optional source with no input (Bakta without a `bakta/SAMN*` dataset under
 `data/raw/bakta/`) is skipped in the default batch, along with anything that
-declares it in `TRANSFORM_INPUTS`, and its earlier fingerprint is withdrawn so
-the merge cannot admit stale output. Named with `-s`, it fails preflight,
-since the requested output cannot be created.
+depends on it through `TRANSFORM_INPUTS`, and its earlier fingerprint is
+withdrawn so the merge refuses what a previous run left. Named with `-s`, it
+fails preflight, since the requested output cannot be created, and its
+fingerprint is withdrawn too. A raw directory that cannot be read is not a
+skip: the source runs and fails in isolation.
 
 `kg download` skips existing files, but a pin change now takes effect on its own: the URL behind each artifact is recorded in `data/raw/.download_manifest.json`, and a file whose declared URL has moved is re-fetched. A file with no record is left alone — unknown provenance is not wrong provenance (#911). `-i` still invalidates every selected entry, so always combine it with one or more `-t` tags. MediaDive invalidation also clears
 its response cache and can trigger an approximately one-hour crawl.
@@ -183,10 +185,16 @@ the claims report, and the node carries a description saying so. See issues
   by identifier shape, not by a blanket GOLD/GTDB prefix exemption: a missing
   assembly or GOLD organism is unexpected even if other references in the
   same namespace are intentional. See #892, #896, #918, #1050 and #1051.
-- GOLD writes `organism_folds.tsv` from its explicit organism-to-taxon
-  collapse map. MicrobeDecoder consumes this report rather than inventing
-  undeclared nodes for folded organism IDs. Regenerate GOLD before
-  MicrobeDecoder; a missing report is an error, not permission to guess.
+- GOLD no longer folds organism IDs onto taxa by normalized label (#1316).
+  Unresolved native referents stay `biolink:NamedThing` with
+  `biolink:related_to` taxon associations, backed by the mandatory
+  `gold_taxon_dispositions.tsv`, `gold_lexical_fold_restorations.tsv` and
+  `gold_selected_taxon_aliases.tsv` audits. MicrobeDecoder joins only the
+  declarations admitted by the selected sibling GOLD's finalized bundle;
+  `organism_folds.tsv` is header-only compatibility output and is not
+  consumed. Regenerate GOLD before MicrobeDecoder; a missing or unfinalized
+  GOLD bundle is an error, not permission to guess. See
+  [GOLD unresolved referents](docs/GOLD_UNRESOLVED_REFERENTS.md).
 - Merge assertion identity includes `relation` as well as subject, predicate,
   and object. Different original relations must retain separate source
   evidence; never split a merged relation list and copy its pooled provenance

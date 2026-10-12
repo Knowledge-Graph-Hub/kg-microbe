@@ -25,8 +25,9 @@ asserted which relation: rebuild from the source TSVs instead.
 
 At minimum regenerate `ontologies`, `gold`, `microbedecoder`, and
 `metatraits_gtdb`, in dependency order. GTDB's canonical transformed mappings
-must be present. GOLD's new `organism_folds.tsv` must exist before MicrobeDecoder
-runs, even when it contains only its header. Shared-code fingerprint changes
+must be present. MicrobeDecoder requires the selected sibling GOLD bundle to be
+finalized first. `organism_folds.tsv` is now header-only compatibility output and
+is not consumed (see `GOLD_UNRESOLVED_REFERENTS.md`). Shared-code fingerprint changes
 may require further source reruns; inspect freshness rather than relabeling old
 outputs as current.
 

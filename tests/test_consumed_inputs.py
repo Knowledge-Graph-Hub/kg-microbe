@@ -205,9 +205,15 @@ def test_same_role_cannot_change_within_run_but_fresh_tracking_can(tmp_path):
 
 def test_clean_preflight_allows_upstream_to_create_lookup_then_real_media_reads_it(tmp_path, monkeypatch):
     """Generated lookup absence is checked at consumption, not before the upstream batch runs."""
-    curated = tmp_path / media.MediaDiveTransform.DATA_INPUTS[0]
-    curated.parent.mkdir(parents=True)
-    curated.write_text("fixture curation\n")
+    # Seed every curated input except the separately tested reviewed catalogue.
+    # New mandatory source policies are not optional fixture exemptions.
+    root = Path(__file__).resolve().parents[1]
+    for declaration in media.MediaDiveTransform.DATA_INPUTS:
+        if declaration == media.REVIEWED_PATH:
+            continue
+        curated = tmp_path / declaration
+        curated.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(root / declaration, curated)
     assert not (tmp_path / "bacdive/bacdive.tsv").exists()
     assert _missing_declared_inputs(["mediadive", "bactotraits"], tmp_path) == [f"mediadive: {media.REVIEWED_PATH}"]
     catalogue = tmp_path / media.REVIEWED_PATH

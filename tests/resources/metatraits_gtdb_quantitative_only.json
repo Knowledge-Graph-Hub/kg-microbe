@@ -1,0 +1,406 @@
+{
+  "records": [
+    {
+      "line": 4488,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 25.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Arthrobacter_D sp030433645"
+      }
+    },
+    {
+      "line": 5951,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 30.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Bdellovibrio sp029531655"
+      }
+    },
+    {
+      "line": 7531,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 35.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "BRXR01 sp026012015"
+      }
+    },
+    {
+      "line": 10133,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 30.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Caldibacillus_A lycopersici"
+      }
+    },
+    {
+      "line": 21339,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 28.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Glycomyces tritici"
+      }
+    },
+    {
+      "line": 22028,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 30.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Halobacillus_A sp022919835"
+      }
+    },
+    {
+      "line": 22698,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 28.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Herbiconiux daphne"
+      }
+    },
+    {
+      "line": 28282,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 28.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "JAROCA01 sp030732005"
+      }
+    },
+    {
+      "line": 29230,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 30.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Lactiplantibacillus sp031085375"
+      }
+    },
+    {
+      "line": 29588,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 30.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Lederbergia_A panacisoli"
+      }
+    },
+    {
+      "line": 29701,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 25.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Leifsonia sp030433675"
+      }
+    },
+    {
+      "line": 29702,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 25.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Leifsonia sp030433685"
+      }
+    },
+    {
+      "line": 34145,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 28.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Microbacterium sp023091245"
+      }
+    },
+    {
+      "line": 37382,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 32.5 Celsius",
+            "name": "temperature growth",
+            "num_observations": 2,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Nonomuraea sp022664455"
+      }
+    },
+    {
+      "line": 38654,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 28.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Paenibacillus_J kyungheensis"
+      }
+    },
+    {
+      "line": 40780,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 28.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "PGEI01 sp002894305"
+      }
+    },
+    {
+      "line": 40960,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 30.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Philodulcilactobacillus myokoensis"
+      }
+    },
+    {
+      "line": 41251,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 28.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Phytohabitans sp027923225"
+      }
+    },
+    {
+      "line": 44664,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 15.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Psychrobacillus sp029533155"
+      }
+    },
+    {
+      "line": 52266,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 28.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Sporosarcina sp030433715"
+      }
+    },
+    {
+      "line": 52611,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 30.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Steroidobacter_A agariperforans"
+      }
+    },
+    {
+      "line": 53325,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 28.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Streptomyces coralus"
+      }
+    },
+    {
+      "line": 53928,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 25.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Streptomyces sp020740535"
+      }
+    },
+    {
+      "line": 56868,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 30.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "Trichlorobacter sp933509905"
+      }
+    },
+    {
+      "line": 58871,
+      "record": {
+        "summaries": [
+          {
+            "is_discrete": false,
+            "majority_label": "Median: 30.0 Celsius",
+            "name": "temperature growth",
+            "num_observations": 1,
+            "percentages": {},
+            "unique_databases": 1
+          }
+        ],
+        "tax_name": "UBA2284 sp030012175"
+      }
+    }
+  ],
+  "source_file": "data/raw/gtdb_species_summary.jsonl.gz",
+  "source_sha256": "cb2fa59208200105a9473b792c94a45ae41abc24583a37eeaec4c5e4c3d84a63"
+}

@@ -1,0 +1,192 @@
+{
+  "selected": "gold:Go0009048",
+  "microbedecoder": {
+    "current_claims": [
+      {
+        "file": "transformed/microbedecoder/edges.tsv",
+        "matched_ids": [
+          "gold:Go0009048"
+        ],
+        "physical_end_line": 99901,
+        "row": {
+          "agent_type": "manual_agent",
+          "description": "",
+          "knowledge_level": "knowledge_assertion",
+          "object": "gold:Go0009048",
+          "original_object": "",
+          "original_subject": "",
+          "predicate": "biolink:close_match",
+          "primary_knowledge_source": "infores:microbedecoder",
+          "publications": "",
+          "relation": "skos:closeMatch",
+          "source_citation": "",
+          "source_citation_base64": "",
+          "source_column": "",
+          "source_record": "sha256:0c6ff730a108720a5d6972400f2bccf2eca8621713b62736abdf5df0fb188c95#record=3",
+          "subject": "lpsn:5758",
+          "value": "",
+          "value_encoding": ""
+        }
+      }
+    ],
+    "full_native_record": {
+      "BacDive_Antibiotic_resistance": "NA",
+      "BacDive_Antibiotic_sensitivity": "NA",
+      "BacDive_Cell_length": "0.3-0.4",
+      "BacDive_Cell_shape": "coccus-shaped",
+      "BacDive_Cell_width": "0.2-0.3",
+      "BacDive_Colony_size": "NA",
+      "BacDive_Enzyme_activity": "arginine arylamidase;histidine arylamidase",
+      "BacDive_Flagellum_arrangement": "NA",
+      "BacDive_Gram_stain": "positive",
+      "BacDive_ID": "164352",
+      "BacDive_Incubation_period": "NA",
+      "BacDive_Indole_test": "-",
+      "BacDive_Isolation_category_1": "NA",
+      "BacDive_Isolation_category_2": "NA",
+      "BacDive_Isolation_category_3": "NA",
+      "BacDive_Metabolite_production": "NA",
+      "BacDive_Metabolite_utilization": "arabinose;cellobiose;gelatin;glucose;glycerol;hydrogen sulfide;lactose;maltose;mannose;raffinose",
+      "BacDive_Motility": "0",
+      "BacDive_Oxygen_tolerance": "anaerobe",
+      "BacDive_Pathogenicity_animal": "NA",
+      "BacDive_Pathogenicity_human": "NA",
+      "BacDive_Pathogenicity_plant": "NA",
+      "BacDive_Salt_concentration": "1-2",
+      "BacDive_Salt_concentration_unit": "%(w/v)",
+      "BacDive_Spore_formation": "0",
+      "BacDive_Temperature_for_growth": "30-40;37",
+      "BacDive_Voges_proskauer": "NA",
+      "BacDive_pH_for_growth": "5.5-9",
+      "Bergey_Article_link": "NA",
+      "Bergey_Class": "NA",
+      "Bergey_Family": "NA",
+      "Bergey_Genus": "NA",
+      "Bergey_Major_end_products": "NA",
+      "Bergey_Minor_end_products": "NA",
+      "Bergey_Order": "NA",
+      "Bergey_Phylum": "NA",
+      "Bergey_Species": "NA",
+      "Bergey_Strain": "NA",
+      "Bergey_Subspecies": "NA",
+      "Bergey_Substrates_for_end_products": "NA",
+      "Bergey_Text_for_end_products": "NA",
+      "Bergey_Text_for_substrates": "NA",
+      "Bergey_Type_of_metabolism": "NA",
+      "FAPROTAX_Type_of_metabolism": "NA",
+      "GOLD_Organism_ID": "Go0009048",
+      "GOLD_Project_ID": "Gp0009048",
+      "GTDB_Class": "Bacilli",
+      "GTDB_Domain": "NA",
+      "GTDB_Family": "Erysipelotrichaceae",
+      "GTDB_Genus": "Absicoccus",
+      "GTDB_ID": "RS_GCF_003725415.1",
+      "GTDB_Order": "Erysipelotrichales",
+      "GTDB_Phylum": "Bacillota",
+      "GTDB_Species": "porci",
+      "Genus": "Absicoccus",
+      "IMG_Genome_ID": "2881717282",
+      "IMG_Genome_ID_max_quality": "2881717282",
+      "LPSN_16S_Ribosomal_sequence": "AAAGATTTTGGTACTGGCTCAGGATGAACGCTGGCGGCATGCCTAATACATGCAAGTCGAACGGAGAAGGAAGGTGCTTGCATCTTCCGGATCAGTGGCGAACGGGTGAGTAACACGTAGGTAACCTGCCCATGTACCCGGGACAACGGTTGGAAACGACTGCTAAAACCGGATAGGCATATGGAAGGCATCTTCGATATGTTAAAGGGGCCACGGCCCTGGACATGGATGGACCTGCGGTGCATTAGCCAGTTGGTGAGGTAACGGCCCACCAAGGCGACGATGCATAAGCCGACCTGAGAGGGCGAACGGCCACATTGGGACTGAGACACCGGCCCAAACTCCTACGGGAGGCAGCAGTAGGGAATTTTCGTCAATGGGGGGAACCCTGAACGAGCAATGCCGCGTGAGTGAAGACGGTCTTCGGATTGTAAAGCTCTGTTGCGAGAGAAAAAGGACAGGAAGAGGGAATGCTTCCGGTTTGATGGTATCTCGCCAGAAAGTCACGGCTAACTACGTGCCAGCAGCCGCGGTAATACGTAGGTGGCGAGCGTTATCCGGAATGATTGGGCGTAAAGGGTACGTAGGCGGCCAGATAAGTCTGGTGTGAAAGGCTGCAGCTCAACTGCAGCACTGCACTGGAAACTGTCCGGCTGGAGTGCAGAAGAGGGCGATGGAACTCCATGTGTAGCGGTAAAATGCGTAGATATATGGAAGAACACCGGTGGCGAAGGCGGTCGCCTGGTCTGCAACTGACGCTGAAGTACGAAAGCGTGGGGAGCAAATAGGATTAGATACCCTAGTAGTCCACGCCGTAAACGATGAGAACTAGGTGTTGGGGGAATAACTCAGTGCCGCAGTCAACGCAATAAGTTCTCCGCCTGGGGAGTATGCACGCAAGTGTGAAACTCAAAGGAATTGACGGGGGCCCGCACAAGCGGTGGAGTATGTGGTTTAATTCGAAGCAACGCGAAGAACCTTACCAGGCCTTGACATCCCCTGCAAAGATGCAGAGATGTATCGGAGGCTATCAGGGAGACAGGTGGTGCATGGTTGTCGTCAGCTCGTGTCGTGAGATGTTGGGTTAAGTCCCGCAACGAGCGCAACCCTTGTGATATGTTACCAGTATCAAGTTAGGGACTCATATCAGACTGCCCGGTGACAAACCGGAGGAAGGTGGGGATGACGTCAAATCATCATGCCCCTTATGGCCTGGGCCACACACGTACTACAATGGCGGATACAGAGGGCAGCGACAGGGCGACCTGGAGCGAATCCCGAAAAGTCCGTCCCAGTTCGGATTGGAGTCTGCAACCCGACTCCATGAAGTTGGAATCGCTAGTAATCGCGAATCAGCATGTCGCGGTGAATACGTTCTCGGGCCTTGTACACACCGCCCGTCAAACCATGGGAGTCAGTAATACCCGAATGCCGGTGGCATAACCTTAGGGAGTGAGCCGTTGAAGTAGATCCATCG",
+      "LPSN_Class": "Erysipelotrichia",
+      "LPSN_Domain": "Bacteria",
+      "LPSN_Family": "Erysipelotrichaceae",
+      "LPSN_Genus": "Absicoccus",
+      "LPSN_ID": "5758",
+      "LPSN_Order": "Erysipelotrichales",
+      "LPSN_Page_link": "https://lpsn.dsmz.de/species/absicoccus-porci",
+      "LPSN_Phylum": "Bacillota",
+      "LPSN_Species": "porci",
+      "LPSN_Strain": "JCM 32769; KCTC 15747; YH-panp20",
+      "LPSN_Subspecies": "NA",
+      "LPSN_status": "VP; sp. nov.; validly published under the ICNP; correct name",
+      "Literature_Citation": "NA",
+      "Literature_Genus": "NA",
+      "Literature_Major_end_products": "NA",
+      "Literature_Minor_end_products": "NA",
+      "Literature_Species": "NA",
+      "Literature_Strain": "NA",
+      "Literature_Subspecies": "NA",
+      "Literature_Substrates_for_end_products": "NA",
+      "Literature_Text_for_end_products": "NA",
+      "Literature_Type_of_metabolism": "NA",
+      "NCBI_Class": "Bacilli",
+      "NCBI_Family": "Staphylococcaceae",
+      "NCBI_Genus": "Staphylococcus",
+      "NCBI_Order": "Bacillales",
+      "NCBI_Phylum": "Bacillota",
+      "NCBI_Species": "Staphylococcus epidermidis",
+      "NCBI_Taxonomy_ID": "1282",
+      "Species": "porci",
+      "Strain": "JCM 32769; KCTC 15747; YH-panp20",
+      "Subspecies": "NA",
+      "VPI_Genus": "NA",
+      "VPI_Major_end_products": "NA",
+      "VPI_Minor_end_products": "NA",
+      "VPI_Species": "NA",
+      "VPI_Subspecies": "NA",
+      "VPI_Type_of_metabolism": "NA"
+    },
+    "literal_source_cell": "Go0009048",
+    "physical_end_line": 4,
+    "source_column": "GOLD_Organism_ID",
+    "source_record": "sha256:0c6ff730a108720a5d6972400f2bccf2eca8621713b62736abdf5df0fb188c95#record=3"
+  },
+  "gold_nodes": {
+    "gold:Go0009048": {
+      "line": 528587,
+      "row": {
+        "category": "biolink:IndividualOrganism",
+        "id": "gold:Go0009048",
+        "name": "Staphylococcus epidermidis 3c09",
+        "provided_by": "infores:gold",
+        "xref": "NCBITaxon:1282"
+      }
+    },
+    "NCBITaxon:1282": {
+      "line": 974926,
+      "row": {
+        "category": "biolink:OrganismTaxon",
+        "id": "NCBITaxon:1282",
+        "name": "Staphylococcus epidermidis",
+        "provided_by": "infores:gold",
+        "xref": ""
+      }
+    }
+  },
+  "gold_parent_claims": [
+    {
+      "line": 302650,
+      "row": {
+        "id": "gold:Go0009048-in_taxon-NCBITaxon:1282",
+        "object": "NCBITaxon:1282",
+        "predicate": "biolink:in_taxon",
+        "primary_knowledge_source": "infores:gold",
+        "relation": "gold:organism_v2.ncbi_taxonomy_id",
+        "subject": "gold:Go0009048"
+      }
+    }
+  ],
+  "gold_source_bindings": {
+    "native_nodes": {
+      "path": "source-repository/data/raw/gold/GOLD_nodes.tsv",
+      "sha256": "c13c21bdd04619c75ce16e63b05e51577b0cefec5b61765d383313f654ab3fae",
+      "bytes": 121818977
+    },
+    "native_edges": {
+      "path": "source-repository/data/raw/gold/GOLD_edges.tsv",
+      "sha256": "54982c25de9d2c820eeebc1452aeac0b034595921d04d55b810bf1d2b1e127e0",
+      "bytes": 184164126
+    },
+    "current_nodes": {
+      "path": "source-repository/data/transformed/gold/nodes.tsv",
+      "sha256": "9f758cef6a4390ff7f7582c66263d909b7e01cff498c0968eaead06810b4ae06",
+      "bytes": 55804794
+    },
+    "current_edges": {
+      "path": "source-repository/data/transformed/gold/edges.tsv",
+      "sha256": "9bea76461e45761a44f6c24e3ac261d00dcd0baa3e1928f8c66f26c6a117cc14",
+      "bytes": 84240957
+    }
+  }
+}

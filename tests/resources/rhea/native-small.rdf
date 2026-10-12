@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+         xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+         xmlns:rh="http://rdf.rhea-db.org/">
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/100">
+    <rdf:type rdf:resource="http://rdf.rhea-db.org/Reaction"/>
+    <rdfs:label>fixture master</rdfs:label>
+    <rh:equation>left = right</rh:equation>
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rh:ec rdf:resource="http://purl.uniprot.org/enzyme/1.2.3.4"/>
+    <rdfs:seeAlso rdf:resource="http://purl.obolibrary.org/obo/GO_0000001"/>
+    <rh:citation rdf:resource="http://rdf.rhea-db.org/citations/12345"/>
+    <rh:side rdf:resource="http://rdf.rhea-db.org/100_L"/>
+    <rh:directionalReaction rdf:resource="http://rdf.rhea-db.org/101"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/100">
+    <rdfs:label>fixture master</rdfs:label>
+    <rh:side rdf:resource="http://rdf.rhea-db.org/100_R"/>
+    <rh:directionalReaction rdf:resource="http://rdf.rhea-db.org/102"/>
+    <rh:bidirectionalReaction rdf:resource="http://rdf.rhea-db.org/103"/>
+  </rdf:Description>
+  <rh:DirectionalReaction rdf:about="http://rdf.rhea-db.org/101">
+    <rdfs:label>fixture forward</rdfs:label>
+    <rh:equation>left =&gt; right</rh:equation>
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rh:substrates rdf:resource="http://rdf.rhea-db.org/100_L"/>
+    <rh:products rdf:resource="http://rdf.rhea-db.org/100_R"/>
+  </rh:DirectionalReaction>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/102">
+    <rdf:type rdf:resource="http://rdf.rhea-db.org/DirectionalReaction"/>
+    <rdfs:label>fixture reverse</rdfs:label>
+    <rh:equation>right =&gt; left</rh:equation>
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rh:substrates rdf:resource="http://rdf.rhea-db.org/100_R"/>
+    <rh:products rdf:resource="http://rdf.rhea-db.org/100_L"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/103">
+    <rdf:type rdf:resource="http://rdf.rhea-db.org/BidirectionalReaction"/>
+    <rdfs:label>fixture reversible</rdfs:label>
+    <rh:equation>left = right</rh:equation>
+    <rh:status rdf:resource="http://rdf.rhea-db.org/Approved"/>
+    <rh:substratesOrProducts rdf:resource="http://rdf.rhea-db.org/100_L"/>
+    <rh:substratesOrProducts rdf:resource="http://rdf.rhea-db.org/100_R"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/100_L">
+    <rh:contains rdf:resource="http://rdf.rhea-db.org/Participant_1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/100_L">
+    <rh:contains rdf:resource="http://rdf.rhea-db.org/Participant_2"/>
+    <rh:contains rdf:resource="http://rdf.rhea-db.org/Participant_1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/100_R">
+    <rh:contains rdf:resource="http://rdf.rhea-db.org/Participant_3"/>
+    <rh:contains rdf:resource="http://rdf.rhea-db.org/Participant_4"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/Participant_1">
+    <rh:compound rdf:resource="http://rdf.rhea-db.org/Compound_1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/Participant_2">
+    <rh:compound rdf:resource="http://rdf.rhea-db.org/Polymer_2"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/Participant_3">
+    <rh:compound rdf:resource="http://rdf.rhea-db.org/Generic_3"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/Participant_4">
+    <rh:compound rdf:resource="http://rdf.rhea-db.org/Compound_1"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/Compound_1">
+    <rh:name>water</rh:name>
+    <rdfs:label>native water label</rdfs:label>
+    <rh:chebi rdf:resource="http://purl.obolibrary.org/obo/CHEBI_15377"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/Polymer_2">
+    <rh:name>fixture polymer (n+1)</rh:name>
+    <rh:polymerizationIndex>n+1</rh:polymerizationIndex>
+    <rh:underlyingChebi rdf:resource="http://purl.obolibrary.org/obo/CHEBI_27732"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/Generic_3">
+    <rh:name>fixture whole compound</rh:name>
+    <rh:reactivePart rdf:resource="http://rdf.rhea-db.org/ReactivePart_3a"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/Generic_3">
+    <rh:reactivePart rdf:resource="http://rdf.rhea-db.org/ReactivePart_3b"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/ReactivePart_3a">
+    <rh:name>fixture water moiety</rh:name>
+    <rh:chebi rdf:resource="http://purl.obolibrary.org/obo/CHEBI_15377"/>
+  </rdf:Description>
+  <rdf:Description rdf:about="http://rdf.rhea-db.org/ReactivePart_3b">
+    <rh:name>fixture proton moiety</rh:name>
+    <rh:chebi rdf:resource="http://purl.obolibrary.org/obo/CHEBI_15378"/>
+  </rdf:Description>
+</rdf:RDF>

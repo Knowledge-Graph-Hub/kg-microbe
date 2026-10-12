@@ -1,0 +1,32 @@
+{
+  "source_file": "data/raw/mediadive/solutions.json",
+  "source_sha256": "9ab0fbf72c2e5ac25ecab3ada268dfe524db971daa86d67532dea6a5412a5c44",
+  "observations": [
+    {
+      "owner_solution_id": 3532,
+      "raw_recipe_position": 3,
+      "child_recipe_available": false,
+      "row": {
+        "recipe_order": 3,
+        "solution": "Solution 3",
+        "solution_id": 6420,
+        "amount": 400,
+        "unit": "ml",
+        "optional": 0
+      }
+    },
+    {
+      "owner_solution_id": 6571,
+      "raw_recipe_position": 6,
+      "child_recipe_available": false,
+      "row": {
+        "recipe_order": 6,
+        "solution": "2,3,5-triphenyltetrazolium chloride stock solution",
+        "solution_id": 6572,
+        "amount": 4,
+        "unit": "ml",
+        "optional": 0
+      }
+    }
+  ]
+}

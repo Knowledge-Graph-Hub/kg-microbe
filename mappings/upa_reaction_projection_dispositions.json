@@ -1,0 +1,2843 @@
+{
+  "version": 2,
+  "scope": "complete_candidates_computed_go_projections_audit_only_no_missing_edge_promotion",
+  "computed_projection_disposition": "audit_only_unverified_xref_substitution",
+  "decision": "User-approved conservative disposition: retain all computed reaction/step/pathway GO-substitution candidates and original writer rows in audit evidence, not graph assertions. Seven contradicted routes keep their distinct exclusion reason; direct weak pathway xrefs and unrelated native paths are unchanged. The 449 historically retained distinct projections are not established false.",
+  "sources": {
+    "upa.json": "cff92938a092dcc2e4e2e1a17266417edeacba8e7b9f51b3f183066a80fdb8bd",
+    "upa.owl": "1ea0465c2222592bdeea3197a687ba26c74818263e1e6c5e8838baafcb6838ce",
+    "go.db": "a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a"
+  },
+  "rules": [
+    {
+      "id": "upa-reaction-context-1",
+      "supplier": "infores:upa",
+      "reaction": "UPA:UER00367",
+      "step": "UPA:ULS00165",
+      "pathway": "UPA:UPA00257",
+      "original_go": "GO:0042282",
+      "canonical_go": "GO:0004420",
+      "rationale": "Native UER00367 uses NAD+/NADH; selected GO:0004420 specifies NADP+/NADPH. GO:0042282 is an alternative ID, not an independently obsolete class.",
+      "native_nodes": [
+        {
+          "ordinal": 1353,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_UER00367",
+            "lbl": "(S)-3-hydroxy-3-methylglutaryl-CoA from (R)-mevalonate: step 1/1",
+            "type": "CLASS",
+            "meta": {
+              "definition": {
+                "val": "1 (R)-mevalonate + 1 CoA + 2 NAD(+) =&gt; 1 (S)-3-hydroxy-3-methylglutaryl-CoA + 2 H(+) + 2 NADH."
+              },
+              "xrefs": [
+                {
+                  "val": "EC:1.1.1.88"
+                },
+                {
+                  "val": "GO:0042282"
+                }
+              ],
+              "basicPropertyValues": [
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "enzymatic_reaction"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "ordinal": 2165,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_ULS00165",
+            "lbl": "(S)-3-hydroxy-3-methylglutaryl-CoA from (R)-mevalonate",
+            "type": "CLASS",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "linear_sub_pathway"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "ordinal": 2760,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_UPA00257",
+            "lbl": "(R)-mevalonate degradation",
+            "type": "CLASS",
+            "meta": {
+              "definition": {
+                "val": "Degradation of mevalonic acid, a key metabolic intermediate.",
+                "xrefs": [
+                  "UPa:amorgat"
+                ]
+              },
+              "synonyms": [
+                {
+                  "pred": "hasExactSynonym",
+                  "val": "mevalonate degradation"
+                }
+              ],
+              "xrefs": [
+                {
+                  "val": "KEGG:map00900"
+                },
+                {
+                  "val": "KEGG:map01110"
+                }
+              ],
+              "basicPropertyValues": [
+                {
+                  "pred": "http://purl.obolibrary.org/obo/upa#uniprot_super_pathway",
+                  "val": "http://purl.obolibrary.org/obo/UPa_UPA00496"
+                },
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "pathway"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "native_edges": [
+        {
+          "ordinal": 9517,
+          "historical_one_based_ordinal": 9518,
+          "record": {
+            "obj": "http://purl.obolibrary.org/obo/UPa_ULS00165",
+            "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+            "sub": "http://purl.obolibrary.org/obo/UPa_UER00367"
+          }
+        },
+        {
+          "ordinal": 14527,
+          "historical_one_based_ordinal": 14528,
+          "record": {
+            "obj": "http://purl.obolibrary.org/obo/UPa_UPA00257",
+            "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+            "sub": "http://purl.obolibrary.org/obo/UPa_ULS00165"
+          }
+        }
+      ],
+      "native_owl": [
+        {
+          "id": "UPA:UER00367",
+          "line_end": 154881,
+          "line_start": 154824,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_UER00367\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000015\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_ULS00165\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00003\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00010\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00418\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00004\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00080\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00356\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf rdf:nodeID=\"genid20936\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid20938\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid20940\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid20942\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid20944\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid20946\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid20948\"/>\n        <obo:IAO_0000115>1 (R)-mevalonate + 1 CoA + 2 NAD(+) =&amp;gt; 1 (S)-3-hydroxy-3-methylglutaryl-CoA + 2 H(+) + 2 NADH.</obo:IAO_0000115>\n        <oboInOwl:hasDbXref>EC:1.1.1.88</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0042282</oboInOwl:hasDbXref>\n        <oboInOwl:hasOBONamespace>enzymatic_reaction</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:UER00367</oboInOwl:id>\n        <rdfs:label>(S)-3-hydroxy-3-methylglutaryl-CoA from (R)-mevalonate: step 1/1</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "236b9a00d56380647c77a128c5094f232cdc7310e955de48236a2d6cc1190e38"
+        },
+        {
+          "id": "UPA:ULS00165",
+          "line_end": 249675,
+          "line_start": 249630,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_ULS00165\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000015\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UPa_ULS00000\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00257\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00418\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00356\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00257\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00418\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00356\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <oboInOwl:hasOBONamespace>linear_sub_pathway</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:ULS00165</oboInOwl:id>\n        <rdfs:label>(S)-3-hydroxy-3-methylglutaryl-CoA from (R)-mevalonate</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "e02a54ad6e0de4448c6558430ae5ded69c4024ca1e96af4399097ddcde546815"
+        },
+        {
+          "id": "UPA:UPA00257",
+          "line_end": 277099,
+          "line_start": 277088,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_UPA00257\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00497\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00498\"/>\n        <obo:IAO_0000115>Degradation of mevalonic acid, a key metabolic intermediate.</obo:IAO_0000115>\n        <upa:uniprot_super_pathway rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00496\"/>\n        <oboInOwl:hasDbXref>KEGG:map00900</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map01110</oboInOwl:hasDbXref>\n        <oboInOwl:hasExactSynonym>mevalonate degradation</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasOBONamespace>pathway</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:UPA00257</oboInOwl:id>\n        <rdfs:label>(R)-mevalonate degradation</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "af55854dff4a989c206387915107d06b5c1e77c333b7eca61c30f7fb50cd87ce"
+        }
+      ],
+      "historical_original_row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "UPA:UPA00257",
+        "predicate": "biolink:part_of",
+        "primary_knowledge_source": "infores:upa",
+        "publications": "",
+        "relation": "BFO:0000050",
+        "subject": "GO:0042282"
+      },
+      "historical_candidate_row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "[{\"authority\":\"/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/raw/go.db\",\"authority_sha256\":\"a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a\",\"canonical_id\":\"GO:0004420\",\"column\":\"subject\",\"original_id\":\"GO:0042282\",\"replacement_chain\":[\"GO:0042282\",\"GO:0004420\"]}]",
+        "knowledge_level": "knowledge_assertion",
+        "object": "UPA:UPA00257",
+        "original_object": "",
+        "original_subject": "GO:0042282",
+        "predicate": "biolink:part_of",
+        "primary_knowledge_source": "infores:upa",
+        "publications": "",
+        "relation": "BFO:0000050",
+        "subject": "GO:0004420"
+      }
+    },
+    {
+      "id": "upa-reaction-context-2",
+      "supplier": "infores:upa",
+      "reaction": "UPA:UER00879",
+      "step": "UPA:ULS00434",
+      "pathway": "UPA:UPA00904",
+      "original_go": "GO:0046571",
+      "canonical_go": "GO:0004084",
+      "rationale": "Native UER00879 is methionine/glutamate transamination. Selected GO:0004084 specifies branched-chain amino acids and their ketoacids. Coarse EC:2.6.1 and the native xref list do not establish this reaction identity.",
+      "native_nodes": [
+        {
+          "ordinal": 1862,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_UER00879",
+            "lbl": "L-methionine from S-methyl-5-thio-alpha-D-ribose 1-phosphate: step 6/6",
+            "type": "CLASS",
+            "meta": {
+              "definition": {
+                "val": "1 4-methylthio-2-oxobutanoate + 1 L-glutamate =&gt; 1 2-oxoglutarate + 1 L-methionine."
+              },
+              "xrefs": [
+                {
+                  "val": "EC:2.6.1"
+                },
+                {
+                  "val": "GO:0008483"
+                },
+                {
+                  "val": "GO:0010326"
+                },
+                {
+                  "val": "GO:0018719"
+                },
+                {
+                  "val": "GO:0043746"
+                },
+                {
+                  "val": "GO:0043760"
+                },
+                {
+                  "val": "GO:0043840"
+                },
+                {
+                  "val": "GO:0043911"
+                },
+                {
+                  "val": "GO:0046571"
+                }
+              ],
+              "basicPropertyValues": [
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "enzymatic_reaction"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "ordinal": 2430,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_ULS00434",
+            "lbl": "L-methionine from S-methyl-5-thio-alpha-D-ribose 1-phosphate",
+            "type": "CLASS",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "linear_sub_pathway"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "ordinal": 3405,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_UPA00904",
+            "lbl": "L-methionine biosynthesis via salvage pathway",
+            "type": "CLASS",
+            "meta": {
+              "definition": {
+                "val": "The methionine salvage pathway (MSP) is an important metabolic pathway in maintaining the amount of L-methionine as the amount of methionine in cells is typically limiting and its de novo biosynthesis is energetically expensive. Therefore, L-methionine is salvaged from S-methyl-5'-thioadenosine (MTA), the end-product of spermidine biosynthesis.",
+                "xrefs": [
+                  "UPa:amorgat"
+                ]
+              },
+              "synonyms": [
+                {
+                  "pred": "hasExactSynonym",
+                  "val": "2-amino-4-(methylthio)butanoic acid salvage"
+                },
+                {
+                  "pred": "hasExactSynonym",
+                  "val": "methionine salvage pathway (MSP)"
+                }
+              ],
+              "xrefs": [
+                {
+                  "val": "GO:0019509"
+                },
+                {
+                  "val": "KEGG:map00270"
+                },
+                {
+                  "val": "KEGG:map01100"
+                }
+              ],
+              "basicPropertyValues": [
+                {
+                  "pred": "http://purl.obolibrary.org/obo/upa#uniprot_super_pathway",
+                  "val": "http://purl.obolibrary.org/obo/UPa_UPA00402"
+                },
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "pathway"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "native_edges": [
+        {
+          "ordinal": 12736,
+          "historical_one_based_ordinal": 12737,
+          "record": {
+            "obj": "http://purl.obolibrary.org/obo/UPa_ULS00434",
+            "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+            "sub": "http://purl.obolibrary.org/obo/UPa_UER00879"
+          }
+        },
+        {
+          "ordinal": 15900,
+          "historical_one_based_ordinal": 15901,
+          "record": {
+            "obj": "http://purl.obolibrary.org/obo/UPa_UPA00904",
+            "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+            "sub": "http://purl.obolibrary.org/obo/UPa_ULS00434"
+          }
+        }
+      ],
+      "native_owl": [
+        {
+          "id": "UPA:UER00879",
+          "line_end": 220913,
+          "line_start": 220863,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_UER00879\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000015\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_ULS00434\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00025\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC01180\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00026\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00073\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf rdf:nodeID=\"genid30266\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid30268\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid30270\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid30272\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid30274\"/>\n        <obo:IAO_0000115>1 4-methylthio-2-oxobutanoate + 1 L-glutamate =&amp;gt; 1 2-oxoglutarate + 1 L-methionine.</obo:IAO_0000115>\n        <oboInOwl:hasDbXref>EC:2.6.1</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0008483</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0010326</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0018719</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0043746</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0043760</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0043840</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0043911</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0046571</oboInOwl:hasDbXref>\n        <oboInOwl:hasOBONamespace>enzymatic_reaction</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:UER00879</oboInOwl:id>\n        <rdfs:label>L-methionine from S-methyl-5-thio-alpha-D-ribose 1-phosphate: step 6/6</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "913140faae838d8a706359804adf0d35f2aa4708f5a6504b1efd9955546fba31"
+        },
+        {
+          "id": "UPA:ULS00434",
+          "line_end": 263821,
+          "line_start": 263776,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_ULS00434\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000015\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UPa_ULS00000\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00904\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC04188\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00073\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00904\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC04188\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00073\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <oboInOwl:hasOBONamespace>linear_sub_pathway</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:ULS00434</oboInOwl:id>\n        <rdfs:label>L-methionine from S-methyl-5-thio-alpha-D-ribose 1-phosphate</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "148fd6d3ce932bf9373ff83f4fedee96b90b9a962fb0c2e4f2c8245bbdfa4b63"
+        },
+        {
+          "id": "UPA:UPA00904",
+          "line_end": 296114,
+          "line_start": 296102,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_UPA00904\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00903\"/>\n        <obo:IAO_0000115>The methionine salvage pathway (MSP) is an important metabolic pathway in maintaining the amount of L-methionine as the amount of methionine in cells is typically limiting and its de novo biosynthesis is energetically expensive. Therefore, L-methionine is salvaged from S-methyl-5&apos;-thioadenosine (MTA), the end-product of spermidine biosynthesis.</obo:IAO_0000115>\n        <upa:uniprot_super_pathway rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00402\"/>\n        <oboInOwl:hasDbXref>GO:0019509</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map00270</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map01100</oboInOwl:hasDbXref>\n        <oboInOwl:hasExactSynonym>2-amino-4-(methylthio)butanoic acid salvage</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasExactSynonym>methionine salvage pathway (MSP)</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasOBONamespace>pathway</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:UPA00904</oboInOwl:id>\n        <rdfs:label>L-methionine biosynthesis via salvage pathway</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "89c0a4d86bb9d2072df9f7eca5416c808429b335924a78ba82c56d42b8ac8a20"
+        }
+      ],
+      "historical_original_row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "UPA:UPA00904",
+        "predicate": "biolink:part_of",
+        "primary_knowledge_source": "infores:upa",
+        "publications": "",
+        "relation": "BFO:0000050",
+        "subject": "GO:0046571"
+      },
+      "historical_candidate_row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "[{\"authority\":\"/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/raw/go.db\",\"authority_sha256\":\"a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a\",\"canonical_id\":\"GO:0004084\",\"column\":\"subject\",\"original_id\":\"GO:0046571\",\"replacement_chain\":[\"GO:0046571\",\"GO:0004084\"]}]",
+        "knowledge_level": "knowledge_assertion",
+        "object": "UPA:UPA00904",
+        "original_object": "",
+        "original_subject": "GO:0046571",
+        "predicate": "biolink:part_of",
+        "primary_knowledge_source": "infores:upa",
+        "publications": "",
+        "relation": "BFO:0000050",
+        "subject": "GO:0004084"
+      }
+    },
+    {
+      "id": "upa-reaction-context-3",
+      "supplier": "infores:upa",
+      "reaction": "UPA:UER00846",
+      "step": "UPA:ULS00420",
+      "pathway": "UPA:UPA00869",
+      "original_go": "GO:0047949",
+      "canonical_go": "GO:0102810",
+      "rationale": "Native UER00846 uses NAD+/NADH; selected GO:0102810 specifies NADP+/NADPH. Sharing an EC annotation does not remove the cofactor contradiction.",
+      "native_nodes": [
+        {
+          "ordinal": 1829,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_UER00846",
+            "lbl": "glutarate from L-lysine: step 6/6",
+            "type": "CLASS",
+            "meta": {
+              "definition": {
+                "val": "1 5-oxopentanoate + 1 H(2)O + 1 NAD(+) =&gt; 1 H(+) + 1 NADH + 1 glutarate."
+              },
+              "xrefs": [
+                {
+                  "val": "EC:1.2.1.20"
+                },
+                {
+                  "val": "GO:0047949"
+                }
+              ],
+              "basicPropertyValues": [
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "enzymatic_reaction"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "ordinal": 2416,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_ULS00420",
+            "lbl": "glutarate from L-lysine",
+            "type": "CLASS",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "linear_sub_pathway"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "ordinal": 3370,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_UPA00869",
+            "lbl": "L-lysine degradation via acetylation pathway",
+            "type": "CLASS",
+            "meta": {
+              "definition": {
+                "val": "Degradation of L-lysine via acetylation pathway. In this fungal pathway, L-lysine is degraded to glutarate via acetylation of the 6-amino group to the initial product N6-acetyl-L-lysine. This is followed by transamination, oxidative decarboxylation, deacetylation, transamination with loss of the second amino group, and oxidation to glutarate.",
+                "xrefs": [
+                  "UPa:amorgat"
+                ]
+              },
+              "xrefs": [
+                {
+                  "val": "GO:0019473"
+                },
+                {
+                  "val": "KEGG:map00310"
+                },
+                {
+                  "val": "MetaCyc:LYSDEGII-PWY"
+                },
+                {
+                  "val": "PMID:15229592"
+                },
+                {
+                  "val": "PMID:8082161"
+                }
+              ],
+              "basicPropertyValues": [
+                {
+                  "pred": "http://purl.obolibrary.org/obo/upa#uniprot_super_pathway",
+                  "val": "http://purl.obolibrary.org/obo/UPa_UPA00427"
+                },
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "pathway"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "native_edges": [
+        {
+          "ordinal": 12506,
+          "historical_one_based_ordinal": 12507,
+          "record": {
+            "obj": "http://purl.obolibrary.org/obo/UPa_ULS00420",
+            "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+            "sub": "http://purl.obolibrary.org/obo/UPa_UER00846"
+          }
+        },
+        {
+          "ordinal": 15830,
+          "historical_one_based_ordinal": 15831,
+          "record": {
+            "obj": "http://purl.obolibrary.org/obo/UPa_UPA00869",
+            "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+            "sub": "http://purl.obolibrary.org/obo/UPa_ULS00420"
+          }
+        }
+      ],
+      "native_owl": [
+        {
+          "id": "UPA:UER00846",
+          "line_end": 216335,
+          "line_start": 216278,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_UER00846\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000015\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_ULS00420\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00001\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00003\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC03273\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00004\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00080\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00489\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf rdf:nodeID=\"genid29614\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid29616\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid29618\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid29620\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid29622\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid29624\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid29626\"/>\n        <obo:IAO_0000115>1 5-oxopentanoate + 1 H(2)O + 1 NAD(+) =&amp;gt; 1 H(+) + 1 NADH + 1 glutarate.</obo:IAO_0000115>\n        <oboInOwl:hasDbXref>EC:1.2.1.20</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0047949</oboInOwl:hasDbXref>\n        <oboInOwl:hasOBONamespace>enzymatic_reaction</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:UER00846</oboInOwl:id>\n        <rdfs:label>glutarate from L-lysine: step 6/6</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "d9e99660a819b84d3243648c805a58a2a39e28744be1dbe3a22ff4087a653de6"
+        },
+        {
+          "id": "UPA:ULS00420",
+          "line_end": 263107,
+          "line_start": 263062,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_ULS00420\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000015\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UPa_ULS00000\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00869\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00047\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00489\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00869\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00047\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00489\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <oboInOwl:hasOBONamespace>linear_sub_pathway</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:ULS00420</oboInOwl:id>\n        <rdfs:label>glutarate from L-lysine</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "c81f8e72edd0a4c0dd3a6c516025ad49a11509aed1e26d2ad092b0a1127d033c"
+        },
+        {
+          "id": "UPA:UPA00869",
+          "line_end": 295162,
+          "line_start": 295150,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_UPA00869\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00867\"/>\n        <obo:IAO_0000115>Degradation of L-lysine via acetylation pathway. In this fungal pathway, L-lysine is degraded to glutarate via acetylation of the 6-amino group to the initial product N6-acetyl-L-lysine. This is followed by transamination, oxidative decarboxylation, deacetylation, transamination with loss of the second amino group, and oxidation to glutarate.</obo:IAO_0000115>\n        <upa:uniprot_super_pathway rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00427\"/>\n        <oboInOwl:hasDbXref>GO:0019473</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map00310</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>MetaCyc:LYSDEGII-PWY</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>PMID:15229592</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>PMID:8082161</oboInOwl:hasDbXref>\n        <oboInOwl:hasOBONamespace>pathway</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:UPA00869</oboInOwl:id>\n        <rdfs:label>L-lysine degradation via acetylation pathway</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "69703119d42ee0c7297d7c7b8463b8d3ac0e3b40649afe9b8069f80a4eabf3f5"
+        }
+      ],
+      "historical_original_row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "UPA:UPA00869",
+        "predicate": "biolink:part_of",
+        "primary_knowledge_source": "infores:upa",
+        "publications": "",
+        "relation": "BFO:0000050",
+        "subject": "GO:0047949"
+      },
+      "historical_candidate_row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "[{\"authority\":\"/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/raw/go.db\",\"authority_sha256\":\"a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a\",\"canonical_id\":\"GO:0102810\",\"column\":\"subject\",\"original_id\":\"GO:0047949\",\"replacement_chain\":[\"GO:0047949\",\"GO:0102810\"]}]",
+        "knowledge_level": "knowledge_assertion",
+        "object": "UPA:UPA00869",
+        "original_object": "",
+        "original_subject": "GO:0047949",
+        "predicate": "biolink:part_of",
+        "primary_knowledge_source": "infores:upa",
+        "publications": "",
+        "relation": "BFO:0000050",
+        "subject": "GO:0102810"
+      }
+    },
+    {
+      "id": "upa-reaction-context-4",
+      "supplier": "infores:upa",
+      "reaction": "UPA:UER00712",
+      "step": "UPA:ULS00393",
+      "pathway": "UPA:UPA00834",
+      "original_go": "GO:0052623",
+      "canonical_go": "GO:0052622",
+      "rationale": "Native UER00712 is heme O synthesis using farnesyl diphosphate and protoheme; selected GO:0052622 is ATP/ADP dimethylallyltransferase activity. Even the replacement GO ID is present in the broad native xref list, demonstrating that xref presence alone is insufficient.",
+      "native_nodes": [
+        {
+          "ordinal": 1695,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_UER00712",
+            "lbl": "heme O from protoheme: step 1/1",
+            "type": "CLASS",
+            "meta": {
+              "definition": {
+                "val": "1 H(2)O + 1 farnesyl diphosphate + 1 protoheme =&gt; 1 diphosphate + 1 heme O."
+              },
+              "xrefs": [
+                {
+                  "val": "EC:2.5.1"
+                },
+                {
+                  "val": "GO:0004659"
+                },
+                {
+                  "val": "GO:0004661"
+                },
+                {
+                  "val": "GO:0008318"
+                },
+                {
+                  "val": "GO:0008412"
+                },
+                {
+                  "val": "GO:0008495"
+                },
+                {
+                  "val": "GO:0016765"
+                },
+                {
+                  "val": "GO:0043888"
+                },
+                {
+                  "val": "GO:0043918"
+                },
+                {
+                  "val": "GO:0043919"
+                },
+                {
+                  "val": "GO:0046428"
+                },
+                {
+                  "val": "GO:0048045"
+                },
+                {
+                  "val": "GO:0052622"
+                },
+                {
+                  "val": "GO:0052623"
+                }
+              ],
+              "basicPropertyValues": [
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "enzymatic_reaction"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "ordinal": 2389,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_ULS00393",
+            "lbl": "heme O from protoheme",
+            "type": "CLASS",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "linear_sub_pathway"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "ordinal": 3335,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_UPA00834",
+            "lbl": "heme O biosynthesis",
+            "type": "CLASS",
+            "meta": {
+              "definition": {
+                "val": "Biosynthesis of heme O, a derivative of heme containing a 17-carbon hydroxyethylfarnesyl side chain at position 8 of the tetrapyrrole macrocycle. Heme O is a precursor in heme A biosyntesis. Warning: the biochemical reactions composing this pathway are not yet clearly defined.",
+                "xrefs": [
+                  "UPa:amorgat"
+                ]
+              },
+              "xrefs": [
+                {
+                  "val": "GO:0048034"
+                },
+                {
+                  "val": "KEGG:map00860"
+                },
+                {
+                  "val": "KEGG:map01110"
+                },
+                {
+                  "val": "PMID:1336371"
+                },
+                {
+                  "val": "PMID:8082800"
+                }
+              ],
+              "basicPropertyValues": [
+                {
+                  "pred": "http://purl.obolibrary.org/obo/upa#uniprot_super_pathway",
+                  "val": "http://purl.obolibrary.org/obo/UPa_UPA00677"
+                },
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "pathway"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "native_edges": [
+        {
+          "ordinal": 11640,
+          "historical_one_based_ordinal": 11641,
+          "record": {
+            "obj": "http://purl.obolibrary.org/obo/UPa_ULS00393",
+            "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+            "sub": "http://purl.obolibrary.org/obo/UPa_UER00712"
+          }
+        },
+        {
+          "ordinal": 15694,
+          "historical_one_based_ordinal": 15695,
+          "record": {
+            "obj": "http://purl.obolibrary.org/obo/UPa_UPA00834",
+            "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+            "sub": "http://purl.obolibrary.org/obo/UPa_ULS00393"
+          }
+        }
+      ],
+      "native_owl": [
+        {
+          "id": "UPA:UER00712",
+          "line_end": 197750,
+          "line_start": 197688,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_UER00712\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000015\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_ULS00393\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00001\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00032\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00448\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00013\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC15672\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf rdf:nodeID=\"genid26979\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid26981\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid26983\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid26985\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid26987\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid26989\"/>\n        <obo:IAO_0000115>1 H(2)O + 1 farnesyl diphosphate + 1 protoheme =&amp;gt; 1 diphosphate + 1 heme O.</obo:IAO_0000115>\n        <oboInOwl:hasDbXref>EC:2.5.1</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0004659</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0004661</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0008318</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0008412</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0008495</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0016765</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0043888</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0043918</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0043919</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0046428</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0048045</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0052622</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0052623</oboInOwl:hasDbXref>\n        <oboInOwl:hasOBONamespace>enzymatic_reaction</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:UER00712</oboInOwl:id>\n        <rdfs:label>heme O from protoheme: step 1/1</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "3e9cd5f57df6748dc38e390555d87fc9f5f50306e2f8231b8029f22cdf480dfc"
+        },
+        {
+          "id": "UPA:ULS00393",
+          "line_end": 261717,
+          "line_start": 261672,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_ULS00393\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000015\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UPa_ULS00000\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00834\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00032\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC15672\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00834\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00032\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC15672\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <oboInOwl:hasOBONamespace>linear_sub_pathway</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:ULS00393</oboInOwl:id>\n        <rdfs:label>heme O from protoheme</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "99660c391dd16e83c8a69c2b4a08ea20479bd142461ff475aaea5a50a864933c"
+        },
+        {
+          "id": "UPA:UPA00834",
+          "line_end": 294049,
+          "line_start": 294036,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_UPA00834\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00399\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00678\"/>\n        <obo:IAO_0000115>Biosynthesis of heme O, a derivative of heme containing a 17-carbon hydroxyethylfarnesyl side chain at position 8 of the tetrapyrrole macrocycle. Heme O is a precursor in heme A biosyntesis. Warning: the biochemical reactions composing this pathway are not yet clearly defined.</obo:IAO_0000115>\n        <upa:uniprot_super_pathway rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00677\"/>\n        <oboInOwl:hasDbXref>GO:0048034</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map00860</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map01110</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>PMID:1336371</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>PMID:8082800</oboInOwl:hasDbXref>\n        <oboInOwl:hasOBONamespace>pathway</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:UPA00834</oboInOwl:id>\n        <rdfs:label>heme O biosynthesis</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "b3e1e4ae1ae9f3d77df7b499985cb7b1555cb198a2d5006ace523d147e151fe6"
+        }
+      ],
+      "historical_original_row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "UPA:UPA00834",
+        "predicate": "biolink:part_of",
+        "primary_knowledge_source": "infores:upa",
+        "publications": "",
+        "relation": "BFO:0000050",
+        "subject": "GO:0052623"
+      },
+      "historical_candidate_row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "[{\"authority\":\"/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/raw/go.db\",\"authority_sha256\":\"a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a\",\"canonical_id\":\"GO:0052622\",\"column\":\"subject\",\"original_id\":\"GO:0052623\",\"replacement_chain\":[\"GO:0052623\",\"GO:0052622\"]}]",
+        "knowledge_level": "knowledge_assertion",
+        "object": "UPA:UPA00834",
+        "original_object": "",
+        "original_subject": "GO:0052623",
+        "predicate": "biolink:part_of",
+        "primary_knowledge_source": "infores:upa",
+        "publications": "",
+        "relation": "BFO:0000050",
+        "subject": "GO:0052622"
+      }
+    },
+    {
+      "id": "upa-reaction-context-5",
+      "supplier": "infores:upa",
+      "reaction": "UPA:UER00448",
+      "step": "UPA:ULS00213",
+      "pathway": "UPA:UPA00051",
+      "original_go": "GO:0052623",
+      "canonical_go": "GO:0052622",
+      "rationale": "Native UER00448 is cystathionine formation from cysteine and O-acetylhomoserine; selected GO:0052622 is ATP/ADP dimethylallyltransferase activity. Broad EC:2.5.1/xref annotations are not specific reaction identity evidence.",
+      "native_nodes": [
+        {
+          "ordinal": 1433,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_UER00448",
+            "lbl": "L-cystathionine from O-acetyl-L-homoserine: step 1/1",
+            "type": "CLASS",
+            "meta": {
+              "definition": {
+                "val": "1 L-cysteine + 1 O-acetyl-L-homoserine =&gt; 1 L-cystathionine + 1 acetate."
+              },
+              "xrefs": [
+                {
+                  "val": "EC:2.5.1"
+                },
+                {
+                  "val": "GO:0004659"
+                },
+                {
+                  "val": "GO:0004661"
+                },
+                {
+                  "val": "GO:0008318"
+                },
+                {
+                  "val": "GO:0008412"
+                },
+                {
+                  "val": "GO:0008495"
+                },
+                {
+                  "val": "GO:0016765"
+                },
+                {
+                  "val": "GO:0043888"
+                },
+                {
+                  "val": "GO:0043918"
+                },
+                {
+                  "val": "GO:0043919"
+                },
+                {
+                  "val": "GO:0046428"
+                },
+                {
+                  "val": "GO:0048045"
+                },
+                {
+                  "val": "GO:0052622"
+                },
+                {
+                  "val": "GO:0052623"
+                }
+              ],
+              "basicPropertyValues": [
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "enzymatic_reaction"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "ordinal": 2211,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_ULS00213",
+            "lbl": "L-cystathionine from O-acetyl-L-homoserine",
+            "type": "CLASS",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "linear_sub_pathway"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "ordinal": 2556,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_UPA00051",
+            "lbl": "L-methionine biosynthesis via de novo pathway",
+            "type": "CLASS",
+            "meta": {
+              "definition": {
+                "val": "Sulfur-containing amino-acid L-methionine (2-amino-4-(methylthio)butanoic acid) is synthesized de novo by most microorganisms and plants after the initial steps of inorganic sulfate assimilation and synthesis of cysteine or homocysteine. There are two alternative pathways of methionine synthesis in microorganisms. The enterobacterial type trans-sulfuration pathway involves cystathionine as an intermediate and utilizes cysteine as the sulfur source. In contrast, the direct sulfhydrylation pathway found in yeast (Saccharomyces cerevisiae), spirochete (Leptospira meyeri) and actinomycetes (Corynebacterium glutamicum) bypasses cystathionine and uses inorganic sulfur instead. Although yeast, fungi and higher plants have both transsulfuration and direct sulfhydrylation pathways, only the bacteria C. glutamicum, B. subtilis, P. aeruginosa, P. putida and L. meyeri have been shown to have both pathways. Methionine biosynthesis is a central pathway, as it controls a large number of cellular processes such as translation of mRNA into proteins (not only as a substrate for protein elongation but also as the initiator of protein synthesis) and transmethylation reactions via the formation of S-adenosylmethionine (SAM) (cf activated methyl cycle pathway).",
+                "xrefs": [
+                  "UPa:amorgat"
+                ]
+              },
+              "synonyms": [
+                {
+                  "pred": "hasExactSynonym",
+                  "val": "2-amino-4-(methylthio)butanoic acid biosynthesis"
+                }
+              ],
+              "xrefs": [
+                {
+                  "val": "KEGG:map00260"
+                },
+                {
+                  "val": "KEGG:map00270"
+                },
+                {
+                  "val": "KEGG:map00300"
+                },
+                {
+                  "val": "KEGG:map00670"
+                },
+                {
+                  "val": "KEGG:map00920"
+                },
+                {
+                  "val": "KEGG:map01100"
+                },
+                {
+                  "val": "KEGG:map01110"
+                },
+                {
+                  "val": "KEGG:map01120"
+                },
+                {
+                  "val": "PMID:10469143"
+                },
+                {
+                  "val": "PMID:12845493"
+                },
+                {
+                  "val": "PMID:12948640"
+                },
+                {
+                  "val": "PMID:12951250"
+                },
+                {
+                  "val": "PMID:15215334"
+                }
+              ],
+              "basicPropertyValues": [
+                {
+                  "pred": "http://purl.obolibrary.org/obo/upa#uniprot_super_pathway",
+                  "val": "http://purl.obolibrary.org/obo/UPa_UPA00402"
+                },
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "pathway"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "native_edges": [
+        {
+          "ordinal": 10018,
+          "historical_one_based_ordinal": 10019,
+          "record": {
+            "obj": "http://purl.obolibrary.org/obo/UPa_ULS00213",
+            "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+            "sub": "http://purl.obolibrary.org/obo/UPa_UER00448"
+          }
+        },
+        {
+          "ordinal": 14774,
+          "historical_one_based_ordinal": 14775,
+          "record": {
+            "obj": "http://purl.obolibrary.org/obo/UPa_UPA00051",
+            "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+            "sub": "http://purl.obolibrary.org/obo/UPa_ULS00213"
+          }
+        }
+      ],
+      "native_owl": [
+        {
+          "id": "UPA:UER00448",
+          "line_end": 164910,
+          "line_start": 164855,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_UER00448\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000015\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_ULS00213\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00097\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC01077\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00033\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC02291\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf rdf:nodeID=\"genid22350\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid22352\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid22354\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid22356\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid22358\"/>\n        <obo:IAO_0000115>1 L-cysteine + 1 O-acetyl-L-homoserine =&amp;gt; 1 L-cystathionine + 1 acetate.</obo:IAO_0000115>\n        <oboInOwl:hasDbXref>EC:2.5.1</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0004659</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0004661</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0008318</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0008412</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0008495</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0016765</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0043888</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0043918</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0043919</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0046428</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0048045</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0052622</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0052623</oboInOwl:hasDbXref>\n        <oboInOwl:hasOBONamespace>enzymatic_reaction</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:UER00448</oboInOwl:id>\n        <rdfs:label>L-cystathionine from O-acetyl-L-homoserine: step 1/1</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "78020127909f74af66635f3740f9037520df997f529b627c8f4188f1a5dbb42f"
+        },
+        {
+          "id": "UPA:ULS00213",
+          "line_end": 252242,
+          "line_start": 252197,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_ULS00213\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000015\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UPa_ULS00000\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00051\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC01077\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC02291\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00051\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC01077\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC02291\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <oboInOwl:hasOBONamespace>linear_sub_pathway</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:ULS00213</oboInOwl:id>\n        <rdfs:label>L-cystathionine from O-acetyl-L-homoserine</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "8d541864622c3484a2942b8e84a7490de3e0992b757d619207615ffcb2bc37ff"
+        },
+        {
+          "id": "UPA:UPA00051",
+          "line_end": 269702,
+          "line_start": 269681,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_UPA00051\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00903\"/>\n        <obo:IAO_0000115>Sulfur-containing amino-acid L-methionine (2-amino-4-(methylthio)butanoic acid) is synthesized de novo by most microorganisms and plants after the initial steps of inorganic sulfate assimilation and synthesis of cysteine or homocysteine. There are two alternative pathways of methionine synthesis in microorganisms. The enterobacterial type trans-sulfuration pathway involves cystathionine as an intermediate and utilizes cysteine as the sulfur source. In contrast, the direct sulfhydrylation pathway found in yeast (Saccharomyces cerevisiae), spirochete (Leptospira meyeri) and actinomycetes (Corynebacterium glutamicum) bypasses cystathionine and uses inorganic sulfur instead. Although yeast, fungi and higher plants have both transsulfuration and direct sulfhydrylation pathways, only the bacteria C. glutamicum, B. subtilis, P. aeruginosa, P. putida and L. meyeri have been shown to have both pathways. Methionine biosynthesis is a central pathway, as it controls a large number of cellular processes such as translation of mRNA into proteins (not only as a substrate for protein elongation but also as the initiator of protein synthesis) and transmethylation reactions via the formation of S-adenosylmethionine (SAM) (cf activated methyl cycle pathway).</obo:IAO_0000115>\n        <upa:uniprot_super_pathway rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00402\"/>\n        <oboInOwl:hasDbXref>KEGG:map00260</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map00270</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map00300</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map00670</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map00920</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map01100</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map01110</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map01120</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>PMID:10469143</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>PMID:12845493</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>PMID:12948640</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>PMID:12951250</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>PMID:15215334</oboInOwl:hasDbXref>\n        <oboInOwl:hasExactSynonym>2-amino-4-(methylthio)butanoic acid biosynthesis</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasOBONamespace>pathway</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:UPA00051</oboInOwl:id>\n        <rdfs:label>L-methionine biosynthesis via de novo pathway</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "aac021facab74fa1653ab3db6fadca68080c73829a1cb688bcc7cd4bc171ae70"
+        }
+      ],
+      "historical_original_row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "UPA:UPA00051",
+        "predicate": "biolink:part_of",
+        "primary_knowledge_source": "infores:upa",
+        "publications": "",
+        "relation": "BFO:0000050",
+        "subject": "GO:0052623"
+      },
+      "historical_candidate_row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "[{\"authority\":\"/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/raw/go.db\",\"authority_sha256\":\"a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a\",\"canonical_id\":\"GO:0052622\",\"column\":\"subject\",\"original_id\":\"GO:0052623\",\"replacement_chain\":[\"GO:0052623\",\"GO:0052622\"]}]",
+        "knowledge_level": "knowledge_assertion",
+        "object": "UPA:UPA00051",
+        "original_object": "",
+        "original_subject": "GO:0052623",
+        "predicate": "biolink:part_of",
+        "primary_knowledge_source": "infores:upa",
+        "publications": "",
+        "relation": "BFO:0000050",
+        "subject": "GO:0052622"
+      }
+    },
+    {
+      "id": "upa-reaction-context-6",
+      "supplier": "infores:upa",
+      "reaction": "UPA:UER00587",
+      "step": "UPA:ULS00278",
+      "pathway": "UPA:UPA00529",
+      "original_go": "GO:0052677",
+      "canonical_go": "GO:0033709",
+      "rationale": "Native UER00587 oxidizes choline using NAD+; selected GO:0033709 oxidizes D-arabinitol using NADP+. Both substrate and cofactor differ; the replacement ID already appears in the broad native xref list.",
+      "native_nodes": [
+        {
+          "ordinal": 1570,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_UER00587",
+            "lbl": "betaine aldehyde from choline (dehydrogenase route): step 1/1",
+            "type": "CLASS",
+            "meta": {
+              "definition": {
+                "val": "1 NAD(+) + 1 choline =&gt; 1 H(+) + 1 NADH + 1 betaine aldehyde."
+              },
+              "xrefs": [
+                {
+                  "val": "EC:1.1.1"
+                },
+                {
+                  "val": "GO:0000252"
+                },
+                {
+                  "val": "GO:0004033"
+                },
+                {
+                  "val": "GO:0004448"
+                },
+                {
+                  "val": "GO:0004495"
+                },
+                {
+                  "val": "GO:0008875"
+                },
+                {
+                  "val": "GO:0016229"
+                },
+                {
+                  "val": "GO:0016616"
+                },
+                {
+                  "val": "GO:0018451"
+                },
+                {
+                  "val": "GO:0018452"
+                },
+                {
+                  "val": "GO:0018453"
+                },
+                {
+                  "val": "GO:0019152"
+                },
+                {
+                  "val": "GO:0032442"
+                },
+                {
+                  "val": "GO:0032866"
+                },
+                {
+                  "val": "GO:0032867"
+                },
+                {
+                  "val": "GO:0033709"
+                },
+                {
+                  "val": "GO:0033764"
+                },
+                {
+                  "val": "GO:0033765"
+                },
+                {
+                  "val": "GO:0034831"
+                },
+                {
+                  "val": "GO:0034840"
+                },
+                {
+                  "val": "GO:0035380"
+                },
+                {
+                  "val": "GO:0035410"
+                },
+                {
+                  "val": "GO:0043713"
+                },
+                {
+                  "val": "GO:0044103"
+                },
+                {
+                  "val": "GO:0044105"
+                },
+                {
+                  "val": "GO:0048258"
+                },
+                {
+                  "val": "GO:0051990"
+                },
+                {
+                  "val": "GO:0052677"
+                }
+              ],
+              "basicPropertyValues": [
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "enzymatic_reaction"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "ordinal": 2274,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_ULS00278",
+            "lbl": "betaine aldehyde from choline (dehydrogenase route)",
+            "type": "CLASS",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "linear_sub_pathway"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "ordinal": 3032,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_UPA00529",
+            "lbl": "betaine biosynthesis via choline pathway",
+            "type": "CLASS",
+            "meta": {
+              "definition": {
+                "val": "Biosynthesis of betaine (glycine betaine, N,N,N-trimethylglycine) by a two- step oxidation of choline. An alternative pathway converts glycine to betaine through two N-methyltransferases.",
+                "xrefs": [
+                  "UPa:amorgat"
+                ]
+              },
+              "xrefs": [
+                {
+                  "val": "GO:0019285"
+                },
+                {
+                  "val": "KEGG:map00260"
+                },
+                {
+                  "val": "MetaCyc:BETSYN-PWY"
+                },
+                {
+                  "val": "MetaCyc:PWY-3722"
+                },
+                {
+                  "val": "MetaCyc:PWY1F-353"
+                },
+                {
+                  "val": "PMID:11685374"
+                },
+                {
+                  "val": "PMID:12192001"
+                },
+                {
+                  "val": "PMID:8752328"
+                }
+              ],
+              "basicPropertyValues": [
+                {
+                  "pred": "http://purl.obolibrary.org/obo/upa#uniprot_super_pathway",
+                  "val": "http://purl.obolibrary.org/obo/UPa_UPA00289"
+                },
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "pathway"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "native_edges": [
+        {
+          "ordinal": 10869,
+          "historical_one_based_ordinal": 10870,
+          "record": {
+            "obj": "http://purl.obolibrary.org/obo/UPa_ULS00278",
+            "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+            "sub": "http://purl.obolibrary.org/obo/UPa_UER00587"
+          }
+        },
+        {
+          "ordinal": 15105,
+          "historical_one_based_ordinal": 15106,
+          "record": {
+            "obj": "http://purl.obolibrary.org/obo/UPa_UPA00529",
+            "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+            "sub": "http://purl.obolibrary.org/obo/UPa_ULS00278"
+          }
+        }
+      ],
+      "native_owl": [
+        {
+          "id": "UPA:UER00587",
+          "line_end": 182738,
+          "line_start": 182662,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_UER00587\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000015\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_ULS00278\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00003\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00114\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00004\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00080\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00576\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf rdf:nodeID=\"genid24863\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid24865\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid24867\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid24869\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid24871\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid24873\"/>\n        <obo:IAO_0000115>1 NAD(+) + 1 choline =&amp;gt; 1 H(+) + 1 NADH + 1 betaine aldehyde.</obo:IAO_0000115>\n        <oboInOwl:hasDbXref>EC:1.1.1</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0000252</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0004033</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0004448</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0004495</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0008875</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0016229</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0016616</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0018451</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0018452</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0018453</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0019152</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0032442</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0032866</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0032867</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0033709</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0033764</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0033765</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0034831</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0034840</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0035380</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0035410</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0043713</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0044103</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0044105</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0048258</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0051990</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0052677</oboInOwl:hasDbXref>\n        <oboInOwl:hasOBONamespace>enzymatic_reaction</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:UER00587</oboInOwl:id>\n        <rdfs:label>betaine aldehyde from choline (dehydrogenase route): step 1/1</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "0e34727bbaa366914873dc6a1b88c4dd4b8ae1180ee82d72e29f9a1b09a1a6ed"
+        },
+        {
+          "id": "UPA:ULS00278",
+          "line_end": 255663,
+          "line_start": 255618,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_ULS00278\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000015\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UPa_ULS00000\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00529\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00114\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00576\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00529\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00114\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00576\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <oboInOwl:hasOBONamespace>linear_sub_pathway</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:ULS00278</oboInOwl:id>\n        <rdfs:label>betaine aldehyde from choline (dehydrogenase route)</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "dd5bd4458a2fd4db93adefa350490edba541a95e02fc176fdf29936ad7e48b83"
+        },
+        {
+          "id": "UPA:UPA00529",
+          "line_end": 284954,
+          "line_start": 284938,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_UPA00529\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00264\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00503\"/>\n        <obo:IAO_0000115>Biosynthesis of betaine (glycine betaine, N,N,N-trimethylglycine) by a two- step oxidation of choline. An alternative pathway converts glycine to betaine through two N-methyltransferases.</obo:IAO_0000115>\n        <upa:uniprot_super_pathway rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00289\"/>\n        <oboInOwl:hasDbXref>GO:0019285</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map00260</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>MetaCyc:BETSYN-PWY</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>MetaCyc:PWY-3722</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>MetaCyc:PWY1F-353</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>PMID:11685374</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>PMID:12192001</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>PMID:8752328</oboInOwl:hasDbXref>\n        <oboInOwl:hasOBONamespace>pathway</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:UPA00529</oboInOwl:id>\n        <rdfs:label>betaine biosynthesis via choline pathway</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "7ebd1c2e59a2e7c2023904d416ebf7c6980722194e544c774b02e100a94382c5"
+        }
+      ],
+      "historical_original_row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "UPA:UPA00529",
+        "predicate": "biolink:part_of",
+        "primary_knowledge_source": "infores:upa",
+        "publications": "",
+        "relation": "BFO:0000050",
+        "subject": "GO:0052677"
+      },
+      "historical_candidate_row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "[{\"authority\":\"/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/raw/go.db\",\"authority_sha256\":\"a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a\",\"canonical_id\":\"GO:0033709\",\"column\":\"subject\",\"original_id\":\"GO:0052677\",\"replacement_chain\":[\"GO:0052677\",\"GO:0033709\"]}]",
+        "knowledge_level": "knowledge_assertion",
+        "object": "UPA:UPA00529",
+        "original_object": "",
+        "original_subject": "GO:0052677",
+        "predicate": "biolink:part_of",
+        "primary_knowledge_source": "infores:upa",
+        "publications": "",
+        "relation": "BFO:0000050",
+        "subject": "GO:0033709"
+      }
+    },
+    {
+      "id": "upa-reaction-context-7",
+      "supplier": "infores:upa",
+      "reaction": "UPA:UER00134",
+      "step": "UPA:ULS00055",
+      "pathway": "UPA:UPA00074",
+      "original_go": "GO:0071734",
+      "canonical_go": "GO:0004077",
+      "rationale": "Native UER00134 is formate-dependent AICAR formylation in IMP biosynthesis; selected GO:0004077 is biotin-protein ligase activity. Coarse EC:6.3.4/xref annotations do not establish the latter reaction.",
+      "native_nodes": [
+        {
+          "ordinal": 1123,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_UER00134",
+            "lbl": "5-formamido-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide from 5-amino-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide (formate route): step 1/1",
+            "type": "CLASS",
+            "meta": {
+              "definition": {
+                "val": "1 5-amino-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide + 1 ATP + 1 formate =&gt; 1 5-formamido-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide + 1 ADP + 1 phosphate."
+              },
+              "xrefs": [
+                {
+                  "val": "EC:6.3.4"
+                },
+                {
+                  "val": "GO:0016979"
+                },
+                {
+                  "val": "GO:0018271"
+                },
+                {
+                  "val": "GO:0032267"
+                },
+                {
+                  "val": "GO:0071734"
+                }
+              ],
+              "basicPropertyValues": [
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "enzymatic_reaction"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "ordinal": 2060,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_ULS00055",
+            "lbl": "5-formamido-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide from 5-amino-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide (formate route)",
+            "type": "CLASS",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "linear_sub_pathway"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "ordinal": 2579,
+          "record": {
+            "id": "http://purl.obolibrary.org/obo/UPa_UPA00074",
+            "lbl": "IMP biosynthesis via de novo pathway",
+            "type": "CLASS",
+            "meta": {
+              "definition": {
+                "val": "The formation from simpler components of purine nucleotide IMP (inosine 5'phosphate).",
+                "xrefs": [
+                  "UPa:amorgat"
+                ]
+              },
+              "synonyms": [
+                {
+                  "pred": "hasExactSynonym",
+                  "val": "de novo purine biosynthesis"
+                },
+                {
+                  "pred": "hasExactSynonym",
+                  "val": "inosine 5'-phosphate biosynthesis via de novo pathway"
+                },
+                {
+                  "pred": "hasExactSynonym",
+                  "val": "inosine monophosphate biosynthesis via de novo pathway"
+                }
+              ],
+              "xrefs": [
+                {
+                  "val": "GO:0006189"
+                },
+                {
+                  "val": "KEGG:map00230"
+                },
+                {
+                  "val": "KEGG:map00250"
+                },
+                {
+                  "val": "KEGG:map00340"
+                },
+                {
+                  "val": "KEGG:map00630"
+                },
+                {
+                  "val": "KEGG:map00670"
+                },
+                {
+                  "val": "KEGG:map01100"
+                },
+                {
+                  "val": "KEGG:map01110"
+                }
+              ],
+              "basicPropertyValues": [
+                {
+                  "pred": "http://purl.obolibrary.org/obo/upa#uniprot_super_pathway",
+                  "val": "http://purl.obolibrary.org/obo/UPa_UPA00583"
+                },
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                  "val": "pathway"
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "native_edges": [
+        {
+          "ordinal": 8019,
+          "historical_one_based_ordinal": 8020,
+          "record": {
+            "obj": "http://purl.obolibrary.org/obo/UPa_ULS00055",
+            "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+            "sub": "http://purl.obolibrary.org/obo/UPa_UER00134"
+          }
+        },
+        {
+          "ordinal": 13985,
+          "historical_one_based_ordinal": 13986,
+          "record": {
+            "obj": "http://purl.obolibrary.org/obo/UPa_UPA00074",
+            "pred": "http://purl.obolibrary.org/obo/BFO_0000050",
+            "sub": "http://purl.obolibrary.org/obo/UPa_ULS00055"
+          }
+        }
+      ],
+      "native_owl": [
+        {
+          "id": "UPA:UER00134",
+          "line_end": 125229,
+          "line_start": 125169,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_UER00134\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000015\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_ULS00055\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00002\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00058\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC04677\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00008\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC00009\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC04734\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf rdf:nodeID=\"genid16732\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid16734\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid16736\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid16738\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid16740\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid16742\"/>\n        <rdfs:subClassOf rdf:nodeID=\"genid16744\"/>\n        <obo:IAO_0000115>1 5-amino-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide + 1 ATP + 1 formate =&amp;gt; 1 5-formamido-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide + 1 ADP + 1 phosphate.</obo:IAO_0000115>\n        <oboInOwl:hasDbXref>EC:6.3.4</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0016979</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0018271</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0032267</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>GO:0071734</oboInOwl:hasDbXref>\n        <oboInOwl:hasOBONamespace>enzymatic_reaction</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:UER00134</oboInOwl:id>\n        <rdfs:label>5-formamido-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide from 5-amino-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide (formate route): step 1/1</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "11fa19743b7f073692cff9a1fe4bc7b526cfa158d6bd10b617cc3d12ec0b157c"
+        },
+        {
+          "id": "UPA:ULS00055",
+          "line_end": 244099,
+          "line_start": 244054,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_ULS00055\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000015\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UPa_ULS00000\"/>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00074\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC04677\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:someValuesFrom rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC04734\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000050\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00074\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002233\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC04677\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <rdfs:subClassOf>\n            <owl:Restriction>\n                <owl:onProperty rdf:resource=\"http://purl.obolibrary.org/obo/RO_0002234\"/>\n                <owl:qualifiedCardinality rdf:datatype=\"http://www.w3.org/2001/XMLSchema#nonNegativeInteger\">1</owl:qualifiedCardinality>\n                <owl:onClass rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPC04734\"/>\n            </owl:Restriction>\n        </rdfs:subClassOf>\n        <oboInOwl:hasOBONamespace>linear_sub_pathway</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:ULS00055</oboInOwl:id>\n        <rdfs:label>5-formamido-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide from 5-amino-1-(5-phospho-D-ribosyl)imidazole-4-carboxamide (formate route)</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "cf6126a7e6fdc6b38f78328562cd18fc510d719897b9bf05e2fc920027fe5004"
+        },
+        {
+          "id": "UPA:UPA00074",
+          "line_end": 270775,
+          "line_start": 270756,
+          "literal_xml": "    <owl:Class rdf:about=\"http://purl.obolibrary.org/obo/UPa_UPA00074\">\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00593\"/>\n        <rdfs:subClassOf rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00648\"/>\n        <obo:IAO_0000115>The formation from simpler components of purine nucleotide IMP (inosine 5&apos;phosphate).</obo:IAO_0000115>\n        <upa:uniprot_super_pathway rdf:resource=\"http://purl.obolibrary.org/obo/UPa_UPA00583\"/>\n        <oboInOwl:hasDbXref>GO:0006189</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map00230</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map00250</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map00340</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map00630</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map00670</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map01100</oboInOwl:hasDbXref>\n        <oboInOwl:hasDbXref>KEGG:map01110</oboInOwl:hasDbXref>\n        <oboInOwl:hasExactSynonym>de novo purine biosynthesis</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasExactSynonym>inosine 5&apos;-phosphate biosynthesis via de novo pathway</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasExactSynonym>inosine monophosphate biosynthesis via de novo pathway</oboInOwl:hasExactSynonym>\n        <oboInOwl:hasOBONamespace>pathway</oboInOwl:hasOBONamespace>\n        <oboInOwl:id>UPa:UPA00074</oboInOwl:id>\n        <rdfs:label>IMP biosynthesis via de novo pathway</rdfs:label>\n    </owl:Class>\n",
+          "sha256": "2a3489ac749afa6483615ddcf24db2a38a61713a4f533f8d94ec166ba3b81b35"
+        }
+      ],
+      "historical_original_row": {
+        "agent_type": "manual_agent",
+        "knowledge_level": "knowledge_assertion",
+        "object": "UPA:UPA00074",
+        "predicate": "biolink:part_of",
+        "primary_knowledge_source": "infores:upa",
+        "publications": "",
+        "relation": "BFO:0000050",
+        "subject": "GO:0071734"
+      },
+      "historical_candidate_row": {
+        "agent_type": "manual_agent",
+        "go_reference_context": "[{\"authority\":\"/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe/data/raw/go.db\",\"authority_sha256\":\"a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a\",\"canonical_id\":\"GO:0004077\",\"column\":\"subject\",\"original_id\":\"GO:0071734\",\"replacement_chain\":[\"GO:0071734\",\"GO:0004077\"]}]",
+        "knowledge_level": "knowledge_assertion",
+        "object": "UPA:UPA00074",
+        "original_object": "",
+        "original_subject": "GO:0071734",
+        "predicate": "biolink:part_of",
+        "primary_knowledge_source": "infores:upa",
+        "publications": "",
+        "relation": "BFO:0000050",
+        "subject": "GO:0004077"
+      }
+    }
+  ],
+  "finite_go_identifiers": [
+    "GO:0004077",
+    "GO:0004084",
+    "GO:0004420",
+    "GO:0033709",
+    "GO:0042282",
+    "GO:0046571",
+    "GO:0047949",
+    "GO:0052622",
+    "GO:0052623",
+    "GO:0052677",
+    "GO:0071734",
+    "GO:0102810"
+  ],
+  "finite_go_statements": [
+    [
+      "GO:0004077",
+      "IAO:0000115",
+      null,
+      "Catalysis of the reaction: ATP + biotin + L-lysyl-[protein] = AMP + diphosphate + H+ + N(6)-biotinyl-L-lysyl-[protein]."
+    ],
+    [
+      "GO:0004077",
+      "IAO:0000233",
+      null,
+      "https://github.com/geneontology/go-ontology/issues/28107"
+    ],
+    [
+      "GO:0004077",
+      "IAO:0000233",
+      null,
+      "https://github.com/geneontology/go-ontology/issues/30193"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasBroadSynonym",
+      null,
+      "biotin-acetyl-CoA carboxylase synthetase"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "EC:6.3.4.10"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "EC:6.3.4.11"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "EC:6.3.4.15"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "EC:6.3.4.9"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "MetaCyc:6.3.4.10-RXN"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "MetaCyc:6.3.4.11-RXN"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "MetaCyc:6.3.4.9-RXN"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "MetaCyc:BIOTINLIG-RXN"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "RHEA:11204"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "RHEA:11756"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "RHEA:23668"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "RHEA:24376"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "Reactome:R-HSA-2993447"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "Reactome:R-HSA-2993799"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "Reactome:R-HSA-2993802"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "Reactome:R-HSA-2993814"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "Reactome:R-HSA-3323184"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "Reactome:R-HSA-4167511"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "Reactome:R-HSA-9035987"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "Reactome:R-HSA-9035988"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasDbXref",
+      null,
+      "Reactome:R-HSA-9035990"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasExactSynonym",
+      null,
+      "biotin-protein ligase activity"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasOBONamespace",
+      null,
+      "molecular_function"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasRelatedSynonym",
+      null,
+      "HCS"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasRelatedSynonym",
+      null,
+      "acetyl CoA holocarboxylase synthetase activity"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasRelatedSynonym",
+      null,
+      "acetyl coenzyme A holocarboxylase synthetase activity"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasRelatedSynonym",
+      null,
+      "acetyl-CoA carboxylase biotin holoenzyme synthetase activity"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasRelatedSynonym",
+      null,
+      "biotin holoenzyme synthetase activity"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasRelatedSynonym",
+      null,
+      "biotin--[acetyl-CoA carboxylase] synthetase activity"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasRelatedSynonym",
+      null,
+      "biotin--protein ligase activity"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasRelatedSynonym",
+      null,
+      "biotin-acetyl coenzyme A carboxylase synthetase activity"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasRelatedSynonym",
+      null,
+      "biotin-acetyl-CoA-carboxylase ligase activity"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasRelatedSynonym",
+      null,
+      "biotin:apo-acetyl-CoA:carbon-dioxide ligase (ADP-forming) ligase (AMP-forming)"
+    ],
+    [
+      "GO:0004077",
+      "oio:hasRelatedSynonym",
+      null,
+      "biotin:apocarboxylase ligase activity"
+    ],
+    [
+      "GO:0004077",
+      "oio:id",
+      null,
+      "GO:0004077"
+    ],
+    [
+      "GO:0004077",
+      "rdf:type",
+      "owl:Class",
+      null
+    ],
+    [
+      "GO:0004077",
+      "rdfs:label",
+      null,
+      "biotin--[biotin carboxyl-carrier protein] ligase activity"
+    ],
+    [
+      "GO:0004077",
+      "rdfs:subClassOf",
+      "GO:0016879",
+      null
+    ],
+    [
+      "GO:0004077",
+      "rdfs:subClassOf",
+      "GO:0140096",
+      null
+    ],
+    [
+      "GO:0004077",
+      "skos:exactMatch",
+      "<http://purl.uniprot.org/enzyme/6.3.4.15>",
+      null
+    ],
+    [
+      "GO:0004077",
+      "skos:exactMatch",
+      "<http://rdf.rhea-db.org/11756>",
+      null
+    ],
+    [
+      "GO:0004077",
+      "skos:narrowMatch",
+      "<http://identifiers.org/metacyc.reaction/6.3.4.10-RXN>",
+      null
+    ],
+    [
+      "GO:0004077",
+      "skos:narrowMatch",
+      "<http://identifiers.org/metacyc.reaction/6.3.4.11-RXN>",
+      null
+    ],
+    [
+      "GO:0004077",
+      "skos:narrowMatch",
+      "<http://identifiers.org/metacyc.reaction/6.3.4.9-RXN>",
+      null
+    ],
+    [
+      "GO:0004077",
+      "skos:narrowMatch",
+      "<http://purl.uniprot.org/enzyme/6.3.4.10>",
+      null
+    ],
+    [
+      "GO:0004077",
+      "skos:narrowMatch",
+      "<http://purl.uniprot.org/enzyme/6.3.4.11>",
+      null
+    ],
+    [
+      "GO:0004077",
+      "skos:narrowMatch",
+      "<http://purl.uniprot.org/enzyme/6.3.4.9>",
+      null
+    ],
+    [
+      "GO:0004077",
+      "skos:narrowMatch",
+      "<http://rdf.rhea-db.org/11204>",
+      null
+    ],
+    [
+      "GO:0004077",
+      "skos:narrowMatch",
+      "<http://rdf.rhea-db.org/23668>",
+      null
+    ],
+    [
+      "GO:0004077",
+      "skos:narrowMatch",
+      "<http://rdf.rhea-db.org/24376>",
+      null
+    ],
+    [
+      "GO:0004084",
+      "IAO:0000115",
+      null,
+      "Catalysis of the reaction: a branched-chain amino acid (L-leucine, L-isoleucine and L-valine) + 2-oxoglutarate = L-glutamate + a 2-oxocarboxylate derived from the branched-chain amino acid."
+    ],
+    [
+      "GO:0004084",
+      "IAO:0000233",
+      null,
+      "https://github.com/geneontology/go-ontology/issues/28070"
+    ],
+    [
+      "GO:0004084",
+      "IAO:0000233",
+      null,
+      "https://github.com/geneontology/go-ontology/issues/31140"
+    ],
+    [
+      "GO:0004084",
+      "oio:hasDbXref",
+      null,
+      "EC:2.6.1.42"
+    ],
+    [
+      "GO:0004084",
+      "oio:hasDbXref",
+      null,
+      "Reactome:R-HSA-508179"
+    ],
+    [
+      "GO:0004084",
+      "oio:hasDbXref",
+      null,
+      "Reactome:R-HSA-508189"
+    ],
+    [
+      "GO:0004084",
+      "oio:hasDbXref",
+      null,
+      "Reactome:R-HSA-70723"
+    ],
+    [
+      "GO:0004084",
+      "oio:hasDbXref",
+      null,
+      "Reactome:R-HSA-70724"
+    ],
+    [
+      "GO:0004084",
+      "oio:hasExactSynonym",
+      null,
+      "branched-chain amino acid aminotransferase activity"
+    ],
+    [
+      "GO:0004084",
+      "oio:hasExactSynonym",
+      null,
+      "branched-chain-amino-acid transaminase activity"
+    ],
+    [
+      "GO:0004084",
+      "oio:hasOBONamespace",
+      null,
+      "molecular_function"
+    ],
+    [
+      "GO:0004084",
+      "oio:hasRelatedSynonym",
+      null,
+      "L-branched chain amino acid aminotransferase activity"
+    ],
+    [
+      "GO:0004084",
+      "oio:hasRelatedSynonym",
+      null,
+      "branched-chain amino acid-glutamate transaminase activity"
+    ],
+    [
+      "GO:0004084",
+      "oio:hasRelatedSynonym",
+      null,
+      "branched-chain aminotransferase activity"
+    ],
+    [
+      "GO:0004084",
+      "oio:hasRelatedSynonym",
+      null,
+      "branched-chain-amino-acid:2-oxoglutarate aminotransferase activity"
+    ],
+    [
+      "GO:0004084",
+      "oio:hasRelatedSynonym",
+      null,
+      "glutamate-branched-chain amino acid transaminase activity"
+    ],
+    [
+      "GO:0004084",
+      "oio:hasRelatedSynonym",
+      null,
+      "transaminase B activity"
+    ],
+    [
+      "GO:0004084",
+      "oio:id",
+      null,
+      "GO:0004084"
+    ],
+    [
+      "GO:0004084",
+      "rdf:type",
+      "owl:Class",
+      null
+    ],
+    [
+      "GO:0004084",
+      "rdfs:label",
+      null,
+      "branched-chain-amino-acid:2-oxoglutarate transaminase activity"
+    ],
+    [
+      "GO:0004084",
+      "rdfs:subClassOf",
+      "GO:0140385",
+      null
+    ],
+    [
+      "GO:0004084",
+      "skos:exactMatch",
+      "<http://purl.uniprot.org/enzyme/2.6.1.42>",
+      null
+    ],
+    [
+      "GO:0004420",
+      "IAO:0000115",
+      null,
+      "Catalysis of the reaction: (R)-mevalonate + CoA + 2 NADP+ = (S)-3-hydroxy-3-methylglutaryl-CoA + 2 H+ + 2 NADPH."
+    ],
+    [
+      "GO:0004420",
+      "IAO:0000233",
+      null,
+      "https://github.com/geneontology/go-ontology/issues/21411"
+    ],
+    [
+      "GO:0004420",
+      "IAO:0000233",
+      null,
+      "https://github.com/geneontology/go-ontology/issues/30193"
+    ],
+    [
+      "GO:0004420",
+      "oio:hasAlternativeId",
+      null,
+      "GO:0042282"
+    ],
+    [
+      "GO:0004420",
+      "oio:hasBroadSynonym",
+      null,
+      "3-hydroxy-3-methylglutaryl-coenzyme A reductase activity"
+    ],
+    [
+      "GO:0004420",
+      "oio:hasBroadSynonym",
+      null,
+      "HMG-CoA reductase activity"
+    ],
+    [
+      "GO:0004420",
+      "oio:hasDbXref",
+      null,
+      "EC:1.1.1.34"
+    ],
+    [
+      "GO:0004420",
+      "oio:hasDbXref",
+      null,
+      "KEGG_REACTION:R02082"
+    ],
+    [
+      "GO:0004420",
+      "oio:hasDbXref",
+      null,
+      "MetaCyc:1.1.1.34-RXN"
+    ],
+    [
+      "GO:0004420",
+      "oio:hasDbXref",
+      null,
+      "RHEA:15989"
+    ],
+    [
+      "GO:0004420",
+      "oio:hasDbXref",
+      null,
+      "Reactome:R-HSA-191352"
+    ],
+    [
+      "GO:0004420",
+      "oio:hasOBONamespace",
+      null,
+      "molecular_function"
+    ],
+    [
+      "GO:0004420",
+      "oio:hasRelatedSynonym",
+      null,
+      "hydroxymethylglutaryl-CoA reductase activity"
+    ],
+    [
+      "GO:0004420",
+      "oio:id",
+      null,
+      "GO:0004420"
+    ],
+    [
+      "GO:0004420",
+      "rdf:type",
+      "owl:Class",
+      null
+    ],
+    [
+      "GO:0004420",
+      "rdfs:label",
+      null,
+      "hydroxymethylglutaryl-CoA reductase (NADPH) activity"
+    ],
+    [
+      "GO:0004420",
+      "rdfs:subClassOf",
+      "GO:0016616",
+      null
+    ],
+    [
+      "GO:0004420",
+      "skos:exactMatch",
+      "<http://purl.uniprot.org/enzyme/1.1.1.34>",
+      null
+    ],
+    [
+      "GO:0004420",
+      "skos:exactMatch",
+      "<http://rdf.rhea-db.org/15989>",
+      null
+    ],
+    [
+      "GO:0033709",
+      "IAO:0000115",
+      null,
+      "Catalysis of the reaction: D-arabinitol + NADP+ = D-ribulose + NADPH + H+. Can also produce D-ribulose."
+    ],
+    [
+      "GO:0033709",
+      "IAO:0000233",
+      null,
+      "https://github.com/geneontology/go-ontology/issues/28859"
+    ],
+    [
+      "GO:0033709",
+      "oio:hasBroadSynonym",
+      null,
+      "D-arabinitol dehydrogenase 1 activity"
+    ],
+    [
+      "GO:0033709",
+      "oio:hasBroadSynonym",
+      null,
+      "D-arabinitol:NADP+ dehydrogenase activity"
+    ],
+    [
+      "GO:0033709",
+      "oio:hasBroadSynonym",
+      null,
+      "NADP+-dependent D-arabinitol dehydrogenase activity"
+    ],
+    [
+      "GO:0033709",
+      "oio:hasDbXref",
+      null,
+      "EC:1.1.1.287"
+    ],
+    [
+      "GO:0033709",
+      "oio:hasDbXref",
+      null,
+      "KEGG_REACTION:R07143"
+    ],
+    [
+      "GO:0033709",
+      "oio:hasDbXref",
+      null,
+      "KEGG_REACTION:R07144"
+    ],
+    [
+      "GO:0033709",
+      "oio:hasDbXref",
+      null,
+      "MetaCyc:RXN-7971"
+    ],
+    [
+      "GO:0033709",
+      "oio:hasDbXref",
+      null,
+      "MetaCyc:RXN-7972"
+    ],
+    [
+      "GO:0033709",
+      "oio:hasDbXref",
+      null,
+      "RHEA:11868"
+    ],
+    [
+      "GO:0033709",
+      "oio:hasDbXref",
+      null,
+      "RHEA:21276"
+    ],
+    [
+      "GO:0033709",
+      "oio:hasOBONamespace",
+      null,
+      "molecular_function"
+    ],
+    [
+      "GO:0033709",
+      "oio:hasRelatedSynonym",
+      null,
+      "ARD1p"
+    ],
+    [
+      "GO:0033709",
+      "oio:hasRelatedSynonym",
+      null,
+      "D-arabinitol dehydrogenase, D-ribulose forming (NADP+) activity"
+    ],
+    [
+      "GO:0033709",
+      "oio:hasRelatedSynonym",
+      null,
+      "D-arabinitol dehydrogenase, D-xylulose forming (NADP+) activity"
+    ],
+    [
+      "GO:0033709",
+      "oio:id",
+      null,
+      "GO:0033709"
+    ],
+    [
+      "GO:0033709",
+      "rdf:type",
+      "owl:Class",
+      null
+    ],
+    [
+      "GO:0033709",
+      "rdfs:label",
+      null,
+      "D-arabinitol dehydrogenase (NADP+) activity"
+    ],
+    [
+      "GO:0033709",
+      "rdfs:subClassOf",
+      "GO:0016616",
+      null
+    ],
+    [
+      "GO:0033709",
+      "skos:exactMatch",
+      "<http://purl.uniprot.org/enzyme/1.1.1.287>",
+      null
+    ],
+    [
+      "GO:0033709",
+      "skos:narrowMatch",
+      "<http://identifiers.org/metacyc.reaction/RXN-7971>",
+      null
+    ],
+    [
+      "GO:0033709",
+      "skos:narrowMatch",
+      "<http://identifiers.org/metacyc.reaction/RXN-7972>",
+      null
+    ],
+    [
+      "GO:0033709",
+      "skos:narrowMatch",
+      "<http://rdf.rhea-db.org/11868>",
+      null
+    ],
+    [
+      "GO:0033709",
+      "skos:narrowMatch",
+      "<http://rdf.rhea-db.org/21276>",
+      null
+    ],
+    [
+      "GO:0033709",
+      "skos:narrowMatch",
+      "<http://www.kegg.jp/entry/R07143>",
+      null
+    ],
+    [
+      "GO:0033709",
+      "skos:narrowMatch",
+      "<http://www.kegg.jp/entry/R07144>",
+      null
+    ],
+    [
+      "GO:0042282",
+      "IAO:0000231",
+      "IAO:0000227",
+      null
+    ],
+    [
+      "GO:0042282",
+      "IAO:0100001",
+      "GO:0004420",
+      null
+    ],
+    [
+      "GO:0042282",
+      "owl:deprecated",
+      null,
+      "true"
+    ],
+    [
+      "GO:0042282",
+      "rdf:type",
+      "owl:Class",
+      null
+    ],
+    [
+      "GO:0046571",
+      "IAO:0000115",
+      null,
+      "OBSOLETE. Catalysis of the reaction: 2-keto-4-methylthiobutyrate + aspartate = methionine + oxaloacetate."
+    ],
+    [
+      "GO:0046571",
+      "IAO:0000233",
+      null,
+      "https://github.com/geneontology/go-ontology/issues/28070"
+    ],
+    [
+      "GO:0046571",
+      "IAO:0100001",
+      "GO:0004084",
+      null
+    ],
+    [
+      "GO:0046571",
+      "oio:hasOBONamespace",
+      null,
+      "molecular_function"
+    ],
+    [
+      "GO:0046571",
+      "oio:id",
+      null,
+      "GO:0046571"
+    ],
+    [
+      "GO:0046571",
+      "owl:deprecated",
+      null,
+      "true"
+    ],
+    [
+      "GO:0046571",
+      "rdf:type",
+      "owl:Class",
+      null
+    ],
+    [
+      "GO:0046571",
+      "rdfs:comment",
+      null,
+      "This term was obsoleted because it represents a specific substrate of branched-chain-amino-acid transaminase activity ; GO:0004084."
+    ],
+    [
+      "GO:0046571",
+      "rdfs:label",
+      null,
+      "obsolete aspartate-2-keto-4-methylthiobutyrate transaminase activity"
+    ],
+    [
+      "GO:0047949",
+      "IAO:0000115",
+      null,
+      "OBSOLETE. Catalysis of the reaction: glutarate semialdehyde + NAD+ + H2O = glutarate + NADH."
+    ],
+    [
+      "GO:0047949",
+      "IAO:0000233",
+      null,
+      "https://github.com/geneontology/go-ontology/issues/25447"
+    ],
+    [
+      "GO:0047949",
+      "IAO:0100001",
+      "GO:0102810",
+      null
+    ],
+    [
+      "GO:0047949",
+      "oio:hasExactSynonym",
+      null,
+      "glutarate semialdehyde dehydrogenase (NAD+) activity"
+    ],
+    [
+      "GO:0047949",
+      "oio:hasOBONamespace",
+      null,
+      "molecular_function"
+    ],
+    [
+      "GO:0047949",
+      "oio:id",
+      null,
+      "GO:0047949"
+    ],
+    [
+      "GO:0047949",
+      "owl:deprecated",
+      null,
+      "true"
+    ],
+    [
+      "GO:0047949",
+      "rdf:type",
+      "owl:Class",
+      null
+    ],
+    [
+      "GO:0047949",
+      "rdfs:comment",
+      null,
+      "This term was obsoleted because there is no evidence that this reaction is physiological."
+    ],
+    [
+      "GO:0047949",
+      "rdfs:label",
+      null,
+      "obsolete glutarate-semialdehyde dehydrogenase (NAD+) activity"
+    ],
+    [
+      "GO:0052622",
+      "IAO:0000115",
+      null,
+      "Catalysis of the reaction: delta(2)-isopentenyl diphosphate + ATP = diphosphate + N6-(delta(2)-isopentenyl)adenosine 5'-triphosphate."
+    ],
+    [
+      "GO:0052622",
+      "IAO:0000233",
+      null,
+      "https://github.com/geneontology/go-ontology/issues/28059"
+    ],
+    [
+      "GO:0052622",
+      "oio:created_by",
+      null,
+      "ai"
+    ],
+    [
+      "GO:0052622",
+      "oio:creation_date",
+      null,
+      "2010-08-26T10:45:38Z"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasBroadSynonym",
+      null,
+      "adenylate isopentenyltransferase activity"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasBroadSynonym",
+      null,
+      "cytokinin synthase activity"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasDbXref",
+      null,
+      "EC:2.5.1.112"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasDbXref",
+      null,
+      "KEGG_REACTION:R08051"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasDbXref",
+      null,
+      "KEGG_REACTION:R08052"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasDbXref",
+      null,
+      "MetaCyc:RXN-4303"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasDbXref",
+      null,
+      "MetaCyc:RXN-4305"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasDbXref",
+      null,
+      "RHEA:36327"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasDbXref",
+      null,
+      "RHEA:36331"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasExactSynonym",
+      null,
+      "ADP/ATP dimethylallyltransferase activity"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasExactSynonym",
+      null,
+      "adenylate dimethylallyltransferase (ADP/ATP-dependent) activity"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasExactSynonym",
+      null,
+      "adenylate dimethylallyltransferase (ATP/ADP-dependent) activity"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasNarrowSynonym",
+      null,
+      "2-isopentenyl-diphosphate:ADP 2-isopentenyltransferase activity"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasNarrowSynonym",
+      null,
+      "2-isopentenyl-diphosphate:ADP delta2-isopentenyltransferase activity"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasNarrowSynonym",
+      null,
+      "2-isopentenyl-diphosphate:ATP 2-isopentenyltransferase activity"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasNarrowSynonym",
+      null,
+      "2-isopentenyl-diphosphate:ATP delta2-isopentenyltransferase activity"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasNarrowSynonym",
+      null,
+      "ADP dimethylallyltransferase activity"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasNarrowSynonym",
+      null,
+      "ADP isopentenyltransferase activity"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasNarrowSynonym",
+      null,
+      "ATP dimethylallyltransferase activity"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasNarrowSynonym",
+      null,
+      "ATP isopentenyltransferase activity"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasNarrowSynonym",
+      null,
+      "dimethylallyl-diphosphate:ADP dimethylallyltransferase activity"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasNarrowSynonym",
+      null,
+      "dimethylallyl-diphosphate:ATP dimethylallyltransferase activity"
+    ],
+    [
+      "GO:0052622",
+      "oio:hasOBONamespace",
+      null,
+      "molecular_function"
+    ],
+    [
+      "GO:0052622",
+      "oio:id",
+      null,
+      "GO:0052622"
+    ],
+    [
+      "GO:0052622",
+      "rdf:type",
+      "owl:Class",
+      null
+    ],
+    [
+      "GO:0052622",
+      "rdfs:label",
+      null,
+      "ATP/ADP dimethylallyltransferase activity"
+    ],
+    [
+      "GO:0052622",
+      "rdfs:subClassOf",
+      "GO:0016765",
+      null
+    ],
+    [
+      "GO:0052622",
+      "skos:exactMatch",
+      "<http://purl.uniprot.org/enzyme/2.5.1.112>",
+      null
+    ],
+    [
+      "GO:0052622",
+      "skos:narrowMatch",
+      "<http://identifiers.org/metacyc.reaction/RXN-4303>",
+      null
+    ],
+    [
+      "GO:0052622",
+      "skos:narrowMatch",
+      "<http://identifiers.org/metacyc.reaction/RXN-4305>",
+      null
+    ],
+    [
+      "GO:0052622",
+      "skos:narrowMatch",
+      "<http://rdf.rhea-db.org/36327>",
+      null
+    ],
+    [
+      "GO:0052622",
+      "skos:narrowMatch",
+      "<http://rdf.rhea-db.org/36331>",
+      null
+    ],
+    [
+      "GO:0052622",
+      "skos:narrowMatch",
+      "<http://www.kegg.jp/entry/R08051>",
+      null
+    ],
+    [
+      "GO:0052622",
+      "skos:narrowMatch",
+      "<http://www.kegg.jp/entry/R08052>",
+      null
+    ],
+    [
+      "GO:0052623",
+      "IAO:0000115",
+      null,
+      "OBSOLETE. Catalysis of the reaction: delta2-isopentenyl diphosphate + ADP = diphosphate + N6-(delta(2)-isopentenyl)adenosine 5'-diphosphate."
+    ],
+    [
+      "GO:0052623",
+      "IAO:0000233",
+      null,
+      "https://github.com/geneontology/go-ontology/issues/28059"
+    ],
+    [
+      "GO:0052623",
+      "IAO:0100001",
+      "GO:0052622",
+      null
+    ],
+    [
+      "GO:0052623",
+      "oio:created_by",
+      null,
+      "ai"
+    ],
+    [
+      "GO:0052623",
+      "oio:creation_date",
+      null,
+      "2010-08-26T10:45:44Z"
+    ],
+    [
+      "GO:0052623",
+      "oio:hasExactSynonym",
+      null,
+      "2-isopentenyl-diphosphate:ADP 2-isopentenyltransferase activity"
+    ],
+    [
+      "GO:0052623",
+      "oio:hasExactSynonym",
+      null,
+      "ADP isopentenyltransferase activity"
+    ],
+    [
+      "GO:0052623",
+      "oio:hasOBONamespace",
+      null,
+      "molecular_function"
+    ],
+    [
+      "GO:0052623",
+      "oio:id",
+      null,
+      "GO:0052623"
+    ],
+    [
+      "GO:0052623",
+      "owl:deprecated",
+      null,
+      "true"
+    ],
+    [
+      "GO:0052623",
+      "rdf:type",
+      "owl:Class",
+      null
+    ],
+    [
+      "GO:0052623",
+      "rdfs:comment",
+      null,
+      "This term was obsoleted because it represents the same reaction as ATP dimethylallyltransferase activity ; GO:0052622."
+    ],
+    [
+      "GO:0052623",
+      "rdfs:label",
+      null,
+      "obsolete ADP dimethylallyltransferase activity"
+    ],
+    [
+      "GO:0052677",
+      "IAO:0000115",
+      null,
+      "OBSOLETE. Catalysis of the reaction: D-arabinitol + NADP+ = D-xylulose + NADPH + H+."
+    ],
+    [
+      "GO:0052677",
+      "IAO:0000233",
+      null,
+      "https://github.com/geneontology/go-ontology/issues/28859"
+    ],
+    [
+      "GO:0052677",
+      "IAO:0100001",
+      "GO:0033709",
+      null
+    ],
+    [
+      "GO:0052677",
+      "oio:created_by",
+      null,
+      "ai"
+    ],
+    [
+      "GO:0052677",
+      "oio:creation_date",
+      null,
+      "2011-04-12T02:33:43Z"
+    ],
+    [
+      "GO:0052677",
+      "oio:hasOBONamespace",
+      null,
+      "molecular_function"
+    ],
+    [
+      "GO:0052677",
+      "oio:id",
+      null,
+      "GO:0052677"
+    ],
+    [
+      "GO:0052677",
+      "owl:deprecated",
+      null,
+      "true"
+    ],
+    [
+      "GO:0052677",
+      "rdf:type",
+      "owl:Class",
+      null
+    ],
+    [
+      "GO:0052677",
+      "rdfs:comment",
+      null,
+      "This term was obsoleted because it represents the same activity as D-arabinitol dehydrogenase (NADP+) activity ; GO:0033709."
+    ],
+    [
+      "GO:0052677",
+      "rdfs:label",
+      null,
+      "obsolete D-arabinitol dehydrogenase, D-xylulose forming (NADP+) activity"
+    ],
+    [
+      "GO:0071734",
+      "IAO:0000115",
+      null,
+      "OBSOLETE. Catalysis of the reaction: ATP + biotin + apo-(pyruvate-carboxylase) = AMP + diphosphate + biotin-(pyruvate-carboxylase)."
+    ],
+    [
+      "GO:0071734",
+      "IAO:0000233",
+      null,
+      "https://github.com/geneontology/go-ontology/issues/28107"
+    ],
+    [
+      "GO:0071734",
+      "IAO:0100001",
+      "GO:0004077",
+      null
+    ],
+    [
+      "GO:0071734",
+      "oio:created_by",
+      null,
+      "mah"
+    ],
+    [
+      "GO:0071734",
+      "oio:creation_date",
+      null,
+      "2010-03-19T02:37:24Z"
+    ],
+    [
+      "GO:0071734",
+      "oio:hasExactSynonym",
+      null,
+      "biotin-[pyruvate carboxylase] ligase activity"
+    ],
+    [
+      "GO:0071734",
+      "oio:hasExactSynonym",
+      null,
+      "biotin-[pyruvate carboxylase] synthetase activity"
+    ],
+    [
+      "GO:0071734",
+      "oio:hasExactSynonym",
+      null,
+      "biotin-pyruvate carboxylase synthetase activity"
+    ],
+    [
+      "GO:0071734",
+      "oio:hasExactSynonym",
+      null,
+      "biotin-pyruvate-carboxylase ligase activity"
+    ],
+    [
+      "GO:0071734",
+      "oio:hasExactSynonym",
+      null,
+      "biotin:apo-pyruvate-carboxylase ligase"
+    ],
+    [
+      "GO:0071734",
+      "oio:hasOBONamespace",
+      null,
+      "molecular_function"
+    ],
+    [
+      "GO:0071734",
+      "oio:id",
+      null,
+      "GO:0071734"
+    ],
+    [
+      "GO:0071734",
+      "owl:deprecated",
+      null,
+      "true"
+    ],
+    [
+      "GO:0071734",
+      "rdf:type",
+      "owl:Class",
+      null
+    ],
+    [
+      "GO:0071734",
+      "rdfs:comment",
+      null,
+      "The reason for obsoletion is this term is more specific than the specificity of any known gene product."
+    ],
+    [
+      "GO:0071734",
+      "rdfs:label",
+      null,
+      "obsolete biotin-[pyruvate-carboxylase] ligase activity"
+    ],
+    [
+      "GO:0102810",
+      "IAO:0000115",
+      null,
+      "Catalysis of the reaction: 5-oxopentanoate + NADP + H2O = glutarate + NADPH + 2 H+."
+    ],
+    [
+      "GO:0102810",
+      "IAO:0000233",
+      null,
+      "https://github.com/geneontology/go-ontology/issues/25447"
+    ],
+    [
+      "GO:0102810",
+      "IAO:0000233",
+      null,
+      "https://github.com/geneontology/go-ontology/issues/30193"
+    ],
+    [
+      "GO:0102810",
+      "oio:hasDbXref",
+      null,
+      "EC:1.2.1.20"
+    ],
+    [
+      "GO:0102810",
+      "oio:hasDbXref",
+      null,
+      "MetaCyc:RXN-8182"
+    ],
+    [
+      "GO:0102810",
+      "oio:hasDbXref",
+      null,
+      "RHEA:57832"
+    ],
+    [
+      "GO:0102810",
+      "oio:hasOBONamespace",
+      null,
+      "molecular_function"
+    ],
+    [
+      "GO:0102810",
+      "oio:id",
+      null,
+      "GO:0102810"
+    ],
+    [
+      "GO:0102810",
+      "rdf:type",
+      "owl:Class",
+      null
+    ],
+    [
+      "GO:0102810",
+      "rdfs:label",
+      null,
+      "glutarate-semialdehyde dehydrogenase (NADP+) activity"
+    ],
+    [
+      "GO:0102810",
+      "rdfs:subClassOf",
+      "GO:0016620",
+      null
+    ],
+    [
+      "GO:0102810",
+      "skos:exactMatch",
+      "<http://purl.uniprot.org/enzyme/1.2.1.20>",
+      null
+    ],
+    [
+      "GO:0102810",
+      "skos:exactMatch",
+      "<http://rdf.rhea-db.org/57832>",
+      null
+    ]
+  ],
+  "legacy_scope": {
+    "direct": 429,
+    "computed": 456,
+    "candidates": 2843,
+    "witnesses": 3030
+  },
+  "acceptance": "449 noncontradicted current computed claims and missing-candidate admission remain pending"
+}

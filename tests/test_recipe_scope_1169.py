@@ -56,7 +56,10 @@ def test_real_recipe_occurrence_remains_local_without_losing_quantities(case, ro
     item[route + "_id"] = item.pop("compound_id")
     value.solutions_data = {"1": {"recipe": [item]}}
     before = deepcopy(value.solutions_data)
-    actual = value.get_compounds_of_solution("1")[name.translate(value.translation_table)]
+    # This fixture has no child definition: preserve the unresolved solution's
+    # original native name rather than assuming compound display cleanup (#1348).
+    display_name = name if route == "solution" else name.translate(value.translation_table)
+    actual = value.get_compounds_of_solution("1")[display_name]
     expected_prefix = "mediadive.ingredient:" if route == "compound" else "mediadive.solution:"
     assert actual == {
         "id": expected_prefix + str(case["compound_id"]),
@@ -66,6 +69,35 @@ def test_real_recipe_occurrence_remains_local_without_losing_quantities(case, ro
         "mmol_l": item.get("mmol_l"),
     }
     assert value.solutions_data == before
+
+
+@pytest.mark.parametrize("case", CASES)
+@pytest.mark.parametrize("child_present", [False, True])
+def test_nested_solution_occurrence_preserves_source_identity_and_display_contract(case, child_present):
+    """Present/missing child display rules preserve every occurrence and its native evidence."""
+    name, target = case["source_name"], case["target_id"]
+    value = _transform({"ChEBI": target.split(":")[1]}, {name.lower(): target}, target)
+    value.translation_table = str.maketrans("", "", "()")
+    item = deepcopy(case["source"])
+    item["solution"] = item.pop("compound")
+    item["solution_id"] = item.pop("compound_id")
+    value.solutions_data = {"1": {"recipe": [item]}}
+    if child_present:
+        value.solutions_data[str(item["solution_id"])] = {"recipe": []}
+    before = deepcopy(value.solutions_data)
+    observations = value.get_solution_recipe_occurrences("1")
+    assert len(observations) == 1
+    actual = observations[0]
+    assert actual["id"] == "mediadive.solution:" + str(case["compound_id"])
+    assert actual["name"] == (name.translate(value.translation_table) if child_present else name)
+    assert actual["source_assertion_id"] == "mediadive.solution:1#recipe/1"
+    assert json.loads(actual["source_record"]) == item
+    for field in ("amount", "unit", "g_l", "mmol_l"):
+        assert actual[field] == item.get(field)
+    assert value.solutions_data == before
+    assert value.get_compounds_of_solution("1") == {
+        actual["name"]: {field: actual[field] for field in ("id", "amount", "unit", "g_l", "mmol_l")}
+    }
 
 
 @pytest.mark.parametrize("stale_canonical", [False, True])

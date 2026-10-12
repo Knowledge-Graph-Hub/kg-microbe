@@ -410,6 +410,10 @@ other:
 # these are biolink:Attribute nodes, not proposed METPO terms or phenotype classes.
 "kgmicrobe.source_attribute": {}
 
+# Dynamic source-record identities, typed InformationContentEntity. Their
+# observations do not establish the organism or taxon described by the record.
+"kgmicrobe.source_record": {}
+
 
 "kgmicrobe.compound":
   casein:

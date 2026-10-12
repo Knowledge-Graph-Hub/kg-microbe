@@ -1,0 +1,18 @@
+{
+  "kind": "synthetic offline behavior controls, not a claim of native BacDive biology",
+  "labels": {"NCBITaxon:10": "Fixture ancestor", "NCBITaxon:20": "Fixture child", "NCBITaxon:30": "Fixture other", "NCBITaxon:99": "Fixture special"},
+  "records": [
+    {"General": {"BacDive-ID": 1, "NCBI tax id": {"NCBI tax id": 20, "Matching level": "strain"}}, "Name and taxonomic classification": {"species": "Fixture child", "LPSN": {"species": "Fixture unique"}}, "External links": {"culture collection no.": "TEST DIRECT"}},
+    {"General": {"BacDive-ID": 2}, "Name and taxonomic classification": {"genus": "Fixture ancestor", "full scientific name": "Fixture inferred", "LPSN": {"species": "Fixture convergens"}}, "External links": {"culture collection no.": "TEST INFERRED"}},
+    {"General": {"BacDive-ID": 3, "NCBI tax id": {"NCBI tax id": 20, "Matching level": "strain"}}, "Name and taxonomic classification": {"species": "Fixture child"}, "External links": {"culture collection no.": "TEST MIXED"}},
+    {"General": {"BacDive-ID": 4}, "Name and taxonomic classification": {"genus": "Fixture ancestor", "full scientific name": "Fixture mixed ancestor"}, "External links": {"culture collection no.": "TEST MIXED"}},
+    {"General": {"BacDive-ID": 5, "NCBI tax id": {"NCBI tax id": 10, "Matching level": "strain"}}, "Name and taxonomic classification": {"species": "Fixture ancestor"}, "External links": {"culture collection no.": "TEST BOTH"}},
+    {"General": {"BacDive-ID": 6}, "Name and taxonomic classification": {"genus": "Fixture ancestor", "full scientific name": "Fixture both ancestor"}, "External links": {"culture collection no.": "TEST BOTH"}},
+    {"General": {"BacDive-ID": 7, "NCBI tax id": {"NCBI tax id": 20, "Matching level": "strain"}}, "Name and taxonomic classification": {"species": "Fixture child"}, "External links": {"culture collection no.": "TEST DISJOINT"}},
+    {"General": {"BacDive-ID": 8, "NCBI tax id": {"NCBI tax id": 30, "Matching level": "strain"}}, "Name and taxonomic classification": {"species": "Fixture other"}, "External links": {"culture collection no.": "TEST DISJOINT"}},
+    {"General": {"BacDive-ID": 9, "NCBI tax id": {"NCBI tax id": 20, "Matching level": "strain"}}, "Name and taxonomic classification": {"species": "Fixture child"}, "External links": {"culture collection no.": "TEST REPEAT, TEST REPEAT"}},
+    {"General": {"BacDive-ID": 10}, "Name and taxonomic classification": {"full scientific name": "Unidentified actinobacterium"}, "External links": {"culture collection no.": "TEST LATE"}},
+    {"General": {"BacDive-ID": 11}},
+    {"General": {"BacDive-ID": 12, "NCBI tax id": {"NCBI tax id": 10, "Matching level": "strain"}}, "Name and taxonomic classification": {"species": "Fixture ancestor", "LPSN": {"species": "Fixture ambiguous"}}}
+  ]
+}

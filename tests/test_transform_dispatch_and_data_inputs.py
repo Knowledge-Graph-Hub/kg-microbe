@@ -399,6 +399,43 @@ class BatchIsolationTest(TestCase):
             transform(None, None, sources=["a", "b"])
         self.assertEqual(self.log, ["a", "b"])
 
+    def _optional_without_input(self, name, **kwargs):
+        """Build a fake optional source that reports it has nothing to transform."""
+        fake = _fake_source(name, self.log, self.base, **kwargs)
+        fake.missing_optional_input = classmethod(lambda cls, input_dir=None: "data/raw/opt does not exist")
+        return fake
+
+    def test_an_optional_source_without_input_is_skipped_in_the_default_batch(self):
+        """Bakta without data used to fail finalization and turn a clean full run into exit 1."""
+        registry = {
+            "a": _fake_source("a", self.log, self.base),
+            "opt": self._optional_without_input("opt"),
+            "b": _fake_source("b", self.log, self.base),
+        }
+        with mock.patch.dict(DATA_SOURCES, registry, clear=True):
+            transform(None, None, sources=None)
+        self.assertEqual(self.log, ["a", "b"])
+
+    def test_a_dependent_of_a_skipped_optional_source_does_not_run(self):
+        """Nothing may be built on an optional source's absent (or stale) output."""
+        registry = {
+            "opt": self._optional_without_input("opt"),
+            "uses_opt": _fake_source("uses_opt", self.log, self.base, inputs=("opt",)),
+            "b": _fake_source("b", self.log, self.base),
+        }
+        with mock.patch.dict(DATA_SOURCES, registry, clear=True):
+            transform(None, None, sources=None)
+        self.assertEqual(self.log, ["b"])
+
+    def test_an_explicitly_requested_optional_source_without_input_fails_before_anything_runs(self):
+        """`-s bakta` with no data asked for output that cannot be created: fail early and say why."""
+        registry = {"early": _fake_source("early", self.log, self.base), "opt": self._optional_without_input("opt")}
+        with mock.patch.dict(DATA_SOURCES, registry, clear=True):
+            with pytest.raises(FileNotFoundError) as excinfo:
+                transform(None, None, sources=["early", "opt"])
+        self.assertEqual(self.log, [])
+        self.assertIn("opt: data/raw/opt does not exist", str(excinfo.value))
+
     def test_a_missing_declared_input_fails_before_anything_runs(self):
         """A missing curation file is known in seconds; do not spend hours finding out."""
         fake = _fake_source("a", self.log, self.base)

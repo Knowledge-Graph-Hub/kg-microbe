@@ -96,6 +96,16 @@ class BaktaTransform(Transform):
         # Knowledge source
         self.knowledge_source = "infores:bakta"
 
+    @classmethod
+    def missing_optional_input(cls, input_dir: Optional[Path] = None) -> Optional[str]:
+        """Bakta is optional: no ``bakta/`` dataset directories means nothing to transform."""
+        bakta_raw_dir = (Path(input_dir) if input_dir else cls.DEFAULT_INPUT_DIR) / "bakta"
+        if not bakta_raw_dir.is_dir():
+            return f"{bakta_raw_dir} does not exist"
+        if not any(d.is_dir() for d in bakta_raw_dir.iterdir()):
+            return f"no dataset directories in {bakta_raw_dir}"
+        return None
+
     def run(self, data_file: Optional[Path] = None, show_status: bool = True) -> None:
         """
         Run the Bakta transform.

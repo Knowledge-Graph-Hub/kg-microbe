@@ -169,6 +169,17 @@ def _missing_declared_inputs(sources: List[str], repo_root: Path, input_dir: Opt
     return missing
 
 
+def _absent_optional_inputs(sources: List[str], input_dir: Optional[Path] = None) -> dict:
+    """Return ``{source: reason}`` for each selected optional source that has nothing to transform."""
+    absent = {}
+    for source in sources:
+        check = getattr(DATA_SOURCES.get(source), "missing_optional_input", None)
+        reason = check(input_dir) if check is not None else None
+        if isinstance(reason, str) and reason:
+            absent[source] = reason
+    return absent
+
+
 def _run_one(source: str, input_dir: Optional[Path], output_dir: Optional[Path], show_status: bool) -> None:
     """Run one registered source, or one ontology by name, and report what it wrote."""
     if source in DATA_SOURCES:
@@ -239,7 +250,10 @@ def transform(
         they declare the failed one in ``TRANSFORM_INPUTS``, in which case they
         are skipped rather than built on stale upstream output (#685).
         ``BaseException`` (``FatalOntologyError``, Ctrl-C) still aborts at once.
+        An optional source with no input (``missing_optional_input``) is
+        skipped in the default batch but fails preflight when named with ``-s``.
     """
+    explicit = bool(sources)
     if not sources:
         # run all sources
         sources = [source for source in DATA_SOURCES if source not in EXPLICIT_ONLY_SOURCES]
@@ -261,8 +275,14 @@ def transform(
         )
 
     missing = _missing_declared_inputs(sources, Path(__file__).resolve().parent.parent, input_dir)
+    absent_optional = _absent_optional_inputs(sources, input_dir)
+    if explicit:
+        # Named on the command line: absent input means the requested output
+        # cannot be created, which is a failure, not a skip.
+        missing += [f"{source}: {reason}" for source, reason in absent_optional.items()]
+        absent_optional = {}
     if missing:
-        raise FileNotFoundError("Declared curation input(s) missing; nothing was run: " + "; ".join(missing))
+        raise FileNotFoundError("Required input(s) missing; nothing was run: " + "; ".join(missing))
 
     failed: dict = {}
     skipped: dict = {}
@@ -271,6 +291,11 @@ def transform(
     # gold and prego declare the directory, not the ontology inside it.
     unavailable: set = set()
     for source in sources:
+        if source in absent_optional:
+            unavailable.add(source)
+            reason = absent_optional[source]
+            print(f"[transform] {source}: skipped — optional source has no input ({reason})", flush=True)
+            continue
         upstream = [u for u in getattr(DATA_SOURCES.get(source), "TRANSFORM_INPUTS", ()) if u in unavailable]
         if upstream:
             skipped[source] = upstream

@@ -185,3 +185,31 @@ class TestBaktaTransform(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestBaktaOptionalInput(unittest.TestCase):
+    """Bakta is optional: report absent or empty input instead of running into finalization."""
+
+    def setUp(self):
+        """Make a scratch raw directory."""
+        self._tmp = tempfile.TemporaryDirectory()
+        self.raw = Path(self._tmp.name)
+
+    def tearDown(self):
+        """Drop the scratch raw directory."""
+        self._tmp.cleanup()
+
+    def test_an_absent_bakta_directory_is_reported(self):
+        """No data/raw/bakta at all is the common machine, not an error."""
+        self.assertIn("does not exist", BaktaTransform.missing_optional_input(self.raw))
+
+    def test_an_empty_bakta_directory_is_reported(self):
+        """An empty directory holds no datasets either."""
+        (self.raw / "bakta").mkdir()
+        (self.raw / "bakta" / "README").write_text("not a dataset directory")
+        self.assertIn("no dataset directories", BaktaTransform.missing_optional_input(self.raw))
+
+    def test_a_dataset_directory_means_bakta_runs(self):
+        """Once a dataset directory exists, the source runs and its own validation applies."""
+        (self.raw / "bakta" / "pfas_bakta").mkdir(parents=True)
+        self.assertIsNone(BaktaTransform.missing_optional_input(self.raw))

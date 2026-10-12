@@ -222,14 +222,15 @@ def test_unverified_projection_audit_preserves_repeated_rows_and_qualifiers(tmp_
 
 
 @pytest.mark.parametrize(
-    "damage", ["policy", "json_release", "owl", "go_release", "go_owl", "sidecar", "duplicate_json_key"]
+    "damage", ["policy", "json", "json_release", "owl", "go_release", "go_owl", "sidecar", "duplicate_json_key"]
 )
 def test_original_native_evidence_failures_abort_the_actual_run(tmp_path, monkeypatch, damage):
     """
-    A different release or malformed native object cannot stand in for the reviewed input epoch.
+    A different release, other bytes or a malformed native object cannot stand in for the reviewed epoch.
 
-    The converted upa.json and the locally built go.db are bound by release and content, not
-    bytes (#1420), so the damage here changes what is bound: a release or a release file.
+    The locally built go.db is bound by release and content, not bytes (#1420). The converted
+    upa.json keeps its byte pin as well as its release, since the pinned ROBOT reproduces it
+    from the pinned upa.owl (#1516).
     """
     transform, _, policy_path = prepare(tmp_path, monkeypatch)
     if damage == "policy":
@@ -246,7 +247,7 @@ def test_original_native_evidence_failures_abort_the_actual_run(tmp_path, monkey
         path = transform.input_base_dir / "go.owl"
         path.write_bytes(path.read_bytes() + b"<!-- another release -->\n")
     else:
-        filename = {"owl": "upa.owl", "duplicate_json_key": "upa.json"}[damage]
+        filename = {"json": "upa.json", "owl": "upa.owl", "duplicate_json_key": "upa.json"}[damage]
         path = transform.input_base_dir / filename
         payload = path.read_bytes()
         path.write_bytes(
@@ -255,6 +256,34 @@ def test_original_native_evidence_failures_abort_the_actual_run(tmp_path, monkey
             else payload + b" "
         )
     with pytest.raises((SourceFinalizationRequired, ValueError)):
+        transform.run(data_file="upa.json", show_status=False)
+    assert not (transform.output_dir / "upa_source_finalization.json").exists()
+
+
+def test_a_same_release_upa_json_with_a_changed_xref_is_refused(tmp_path, monkeypatch):
+    """One changed pathway xref in a JSON that still declares the reviewed release is refused (#1516)."""
+    transform, _, _ = prepare(tmp_path, monkeypatch)
+    path = transform.input_base_dir / "upa.json"
+    document = json.loads(path.read_text())
+    node = next(node for node in document["graphs"][0]["nodes"] if node["id"].endswith("UPa_UPA00450"))
+    assert [xref["val"] for xref in node["meta"]["xrefs"]] == ["GO:0033353"]
+    node["meta"]["xrefs"][0]["val"] = "GO:0004077"
+    path.write_text(json.dumps(document))
+    with pytest.raises(SourceFinalizationRequired, match="source epoch changed"):
+        transform.run(data_file="upa.json", show_status=False)
+    assert not (transform.output_dir / "upa_source_finalization.json").exists()
+
+
+def test_a_same_release_go_db_missing_a_selected_statement_is_refused(tmp_path, monkeypatch):
+    """With no go.db byte pin, the selected GO statements alone catch a changed database (#1517)."""
+    transform, policy, _ = prepare(tmp_path, monkeypatch)
+    subject, predicate = policy["finite_go_statements"][0][:2]
+    with sqlite3.connect(transform.input_base_dir / "go.db") as connection:
+        rowid = connection.execute(
+            "SELECT rowid FROM statements WHERE subject=? AND predicate=? LIMIT 1", (subject, predicate)
+        ).fetchone()[0]
+        connection.execute("DELETE FROM statements WHERE rowid=?", (rowid,))
+    with pytest.raises(SourceFinalizationRequired, match="finite GO"):
         transform.run(data_file="upa.json", show_status=False)
     assert not (transform.output_dir / "upa_source_finalization.json").exists()
 

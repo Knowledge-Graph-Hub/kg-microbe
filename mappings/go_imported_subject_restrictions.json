@@ -2468,5 +2468,41 @@
       "sha256": "73a80487130a81a3696f1e03c551288f741ed1be5a07639e69e7ecd8b6f0371c"
     }
   },
-  "version": 5
+  "version": 5,
+  "blank_nodes": {
+    "_:riog00023702": [
+      {
+        "predicate": "owl:onProperty",
+        "object": "BFO:0000050",
+        "value": null
+      },
+      {
+        "predicate": "owl:someValuesFrom",
+        "object": "GO:0005622",
+        "value": null
+      },
+      {
+        "predicate": "rdf:type",
+        "object": "owl:Restriction",
+        "value": null
+      }
+    ],
+    "_:riog00055663": [
+      {
+        "predicate": "owl:onProperty",
+        "object": "BFO:0000050",
+        "value": null
+      },
+      {
+        "predicate": "owl:someValuesFrom",
+        "object": "GO:0012505",
+        "value": null
+      },
+      {
+        "predicate": "rdf:type",
+        "object": "owl:Restriction",
+        "value": null
+      }
+    ]
+  }
 }

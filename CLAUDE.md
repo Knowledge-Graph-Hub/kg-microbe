@@ -287,13 +287,16 @@ than being fetched; preflight checks the modules are present and match what
 `micro.owl` imports. `tests/test_micro_version_pin.py` checks `download.yaml`
 against the constant. PO still fetches its imports live.
 
-Inputs bound by reviewed policies are pinned the same way. Each one is fetched
-from a URL that names exactly one release: a dated release directory, a release
-asset or a commit, never a rolling PURL or branch. `tests/test_reviewed_release_urls.py`
-lists them, and each listed URL was verified byte-identical to the reviewed
-input. Moving one to a newer release means re-reviewing every policy that binds
-it. MeSH and NCIT have no such URL, so their policies bind only the statements
-they reviewed: any export or release with those statements unchanged is
+Inputs that reviewed policies pin by their bytes are fetched the same way: from
+a URL that names exactly one release (a dated release directory, a release asset
+or a commit), never a rolling PURL or branch. `tests/test_reviewed_release_urls.py`
+lists them, and each listed URL was checked to serve the bytes the policies pin.
+Moving one to a newer release means re-reviewing every policy that binds it. Rhea
+comes from its archived release tarball, whose two reviewed members keep their
+byte pins. Some policy-bound inputs have no such URL (MeSH, NCIT, the LPSN GSS,
+and the GOLD and BacDive files on Google Drive); this rule does not cover them.
+Their policies bind only the records they reviewed (statements, GSS rows or
+selected records): any export or release with those records unchanged is
 accepted, and each run's receipt records the one it read. Before the
 `ontologies` source starts, `kg transform` checks every byte-pinned release file
 against the policies that pin it, so a stale download fails in seconds. See #1420

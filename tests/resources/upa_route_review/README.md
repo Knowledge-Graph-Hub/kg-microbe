@@ -17,11 +17,13 @@ JSON bytes, physical SQL locations, or historical producer consumption. Selected
 OWL class stanzas are literal upstream bytes enclosed in the original namespace
 declarations for a parseable excerpt.
 
-The active fixture explicitly repins only the `upa.owl` hash and the `go.owl` release
-behind `go.db` to separately identified excerpt or stand-in files. Since policy
-version 3 (#1420), `upa.json` and `go.db` are bound by the release they declare
-and by their selected content, not by bytes. So the excerpt `upa.json` carries its
-real `meta.version`, and the fixture database records the reviewed GO release.
+The active fixture explicitly repins only the `upa.json` and `upa.owl` hashes and
+the `go.owl` release behind `go.db` to separately identified excerpt or stand-in
+files. Since policy version 3 (#1420), `go.db` is bound by the release it records
+and by its selected content, not by bytes. `upa.json` keeps its byte pin, because
+the pinned ROBOT reproduces it from the pinned `upa.owl`, and must also declare the
+reviewed release (#1516). So the excerpt `upa.json` carries its real
+`meta.version`, and the fixture database records the reviewed GO release.
 All seven scientific rules, native record content and the finite identity guard
 remain unchanged. It builds a real SQLite authority and
 runs the real converter, legacy writer, source finalizer and public admission;

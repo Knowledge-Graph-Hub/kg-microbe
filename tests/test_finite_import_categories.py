@@ -193,6 +193,25 @@ def test_incomplete_or_unreviewed_policy_refuses(change):
         finite.load_import_category_policy(io.StringIO(text))
 
 
+def test_a_redundant_native_axiom_changes_the_reviewed_decisions():
+    """With no byte pin left, the decisions digest alone catches an added axiom between reviewed classes (#1517)."""
+    filename = "foodon.json"
+    policy = _policy()
+    native = json.loads((NATIVE / filename).read_text())
+    graph = native["graphs"][0]
+    identifier = sorted(key for key, record in policy["records"].items() if record["authority_file"] == filename)[0]
+    iri = policy["records"][identifier]["native_iri"]
+    direct = {edge["obj"] for edge in graph["edges"] if edge["sub"] == iri and edge["pred"] == "is_a"}
+    target = next(
+        ancestor
+        for ancestor in sorted(policy["records"][identifier]["ancestor_paths"])
+        if ancestor != iri and ancestor not in direct
+    )
+    graph["edges"].append({"sub": iri, "pred": "is_a", "obj": target})
+    with pytest.raises(ValueError, match="Finite import decisions differ"):
+        _decisions(filename, policy=policy, native=json.dumps(native))
+
+
 @pytest.mark.parametrize(
     "change",
     [

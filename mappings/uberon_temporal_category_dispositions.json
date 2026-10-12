@@ -5,7 +5,7 @@
     "biolink:LifeStage": "Pinned Biolink 4.4.2 exact mapping of asserted ancestor UBERON:0000105",
     "biolink:OntologyClass": "Three live native temporal-boundary classes lack a supported substantive category; retain explicitly unresolved rather than asserting anatomy or process"
   },
-  "decisions_sha256": "839aed0ec27395239ab2d4512f7046641fa6588d5b2119a43348f30f5c6dc023",
+  "native_closure_sha256": "3b99bc09866236aa378a0cc9bc397ec14c071a937bb083298a989593924419ac",
   "native_file": "uberon.json",
   "native_release": "http://purl.obolibrary.org/obo/uberon/releases/2026-06-19/uberon.owl",
   "native_source": {

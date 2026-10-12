@@ -1,0 +1,76 @@
+{
+  "evidence_sha256": "5ec6fc063a5c0c10a77392b20e9f3fe70272479d1ba0a3396dd49a472645ab92",
+  "extractor_sha256": "ff3e5c21199d3ec195eb6b3370b83fe0e51239aff3c4f1db95001f41994e6d26",
+  "fixtures": {
+    "mediadive.json": {
+      "excerpt": true,
+      "fixture_bytes": 6132,
+      "fixture_sha256": "61666c9548d748f2b3bc533a68911e6f3d5ad8971584a4dd944e1ca02649b0bc",
+      "native_origin": {
+        "bytes": 1203964,
+        "path": "data/raw/mediadive.json",
+        "sha256": "d53f6d4319f17a6ed7533988d2ded47db2769f1524b98546bf1991151d44c495"
+      },
+      "semantic_sha256": "6a5da0015e4c92ad84ba6245cc5d838fee864efe632ea958aa2ef63ebd4c8344"
+    },
+    "mediadive/compounds.json": {
+      "excerpt": true,
+      "fixture_bytes": 18695,
+      "fixture_sha256": "56a9834f73d8f9ea1cf15c1ffe418a910d2894d9e4fcd78bde45ea258f001869",
+      "native_origin": {
+        "bytes": 228306,
+        "path": "data/raw/mediadive/compounds.json",
+        "sha256": "ccc1130355354a55729d31618b152d1c340d75379dfea49352e9075f3419cea1"
+      },
+      "semantic_sha256": "bb055cf2b2d531b6e33fa65a7415c8ef65d38ff0315a1e20b7b69ea2da5e000b"
+    },
+    "mediadive/media_detailed.json": {
+      "excerpt": true,
+      "fixture_bytes": 137958,
+      "fixture_sha256": "b05876cd9fd5d239f45caadc4b9bc88eb483c293408029e564e65d5755fcb4ba",
+      "native_origin": {
+        "bytes": 20777670,
+        "path": "data/raw/mediadive/media_detailed.json",
+        "sha256": "755a05753d42b0dcd46dd0564f101faf7f59b1ba4d1b226dee0ed6cedf35f8e2"
+      },
+      "semantic_sha256": "17b319f3c244cf331581d00fd36f3e0634619a3048bf39d7bfe5c540334a28c5"
+    },
+    "mediadive/media_strains.json": {
+      "excerpt": true,
+      "fixture_bytes": 164990,
+      "fixture_sha256": "de3a87cf1a3e10aded9f5f9c23a350a9df684512e2a9d4c640c30b446b6bbe48",
+      "native_origin": {
+        "bytes": 12275436,
+        "path": "data/raw/mediadive/media_strains.json",
+        "sha256": "6c5c81db8bcea45643c60516d620941ee4d86be516f9e3ca63bd14f17d2480e5"
+      },
+      "semantic_sha256": "8f5454ceb87522fec4badf7a70bba31fe0285f3f0bf95c77a550b0c811a889bc"
+    },
+    "mediadive/solutions.json": {
+      "excerpt": true,
+      "fixture_bytes": 90396,
+      "fixture_sha256": "201cfe20276f1f4363eb2c44f1798835b7b67fa6e67e9dc0e318f5c1b1ff2439",
+      "native_origin": {
+        "bytes": 10447742,
+        "path": "data/raw/mediadive/solutions.json",
+        "sha256": "9ab0fbf72c2e5ac25ecab3ada268dfe524db971daa86d67532dea6a5412a5c44"
+      },
+      "semantic_sha256": "cda5c08b406b0f238d2620e205177088a4e6f16f20b0f415245fb59c510ab7fd"
+    }
+  },
+  "missing_referenced_child_ids": [
+    "2269",
+    "6420",
+    "6572"
+  ],
+  "policy_sha256": "9f590b55a9183b5dfec6cc9082c6193db79b2fd7b6bd8e938a5c4a35126e059f",
+  "production_writes": false,
+  "recipe_occurrences": {
+    "compound": 295,
+    "nested": 43
+  },
+  "selected_compound_count": 100,
+  "selected_medium_count": 20,
+  "selected_solution_count": 53,
+  "source_files_unchanged": true
+}

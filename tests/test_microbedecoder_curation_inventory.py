@@ -802,11 +802,11 @@ def test_untyped_legacy_inventory_does_not_require_new_node_provenance_field(tmp
     assert summary["edge_rows_by_disposition"] == {"reported_phenotype_code": 1}
 
 
-def test_real_producer_typed_node_provider_survives_inventory(tmp_path):
+def test_real_producer_typed_node_provider_survives_inventory(monkeypatch, tmp_path):
     """Validate actual producer ownership separately from FAPROTAX prediction provenance."""
     from tests.test_microbedecoder_context import FIXTURES, read_tsv, run_fixture
 
-    transform, nodes, _ = run_fixture(tmp_path, "typed_source_attributes.csv")
+    transform, nodes, _ = run_fixture(tmp_path, "typed_source_attributes.csv", monkeypatch=monkeypatch)
     typed = [row for row in nodes if row["has_attribute_type"]]
     assert typed and all(row["provided_by"] == "infores:microbedecoder" for row in typed)
     summary, _ = run_review(transform.output_dir, tmp_path)

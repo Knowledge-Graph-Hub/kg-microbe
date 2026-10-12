@@ -1,0 +1,41 @@
+{
+  "fixture_provenance": {
+    "source": "data/raw/envo.json",
+    "source_sha256": "d676aae57774fee7f8818130c47e098367e6a5d8540a8c69d150b6575a3aebee",
+    "scope": "Immutable projection of selected native class declarations and asserted subclass paths; CURIEs compact source IRIs. No restrictions or labels used to derive ancestry."
+  },
+  "graphs": [{
+    "nodes": [
+      {"id": "BFO:0000038", "type": "CLASS", "lbl": "one-dimensional temporal region"},
+      {"id": "BFO:0000040", "type": "CLASS", "lbl": "material entity"},
+      {"id": "ENVO:00000428", "type": "CLASS", "lbl": "biome"},
+      {"id": "ENVO:00001998", "type": "CLASS", "lbl": "soil"},
+      {"id": "ENVO:00002030", "type": "CLASS", "lbl": "aquatic biome"},
+      {"id": "ENVO:00010483", "type": "CLASS", "lbl": "environmental material"},
+      {"id": "ENVO:01000203", "type": "CLASS", "lbl": "environmental condition"},
+      {"id": "ENVO:01000206", "type": "CLASS", "lbl": "temperate"},
+      {"id": "ENVO:01000254", "type": "CLASS", "lbl": "environmental system"},
+      {"id": "ENVO:01000813", "type": "CLASS", "lbl": "astronomical body part"},
+      {"id": "ENVO:01001110", "type": "CLASS", "lbl": "ecosystem"},
+      {"id": "ENVO:02500000", "type": "CLASS", "lbl": "environmental system process"},
+      {"id": "PATO:0000001", "type": "CLASS", "lbl": "quality"},
+      {"id": "PATO:0001018", "type": "CLASS", "lbl": "physical quality"},
+      {"id": "PATO:0001241", "type": "CLASS", "lbl": "physical object quality"},
+      {"id": "ENVO:01001307", "type": "PROPERTY", "lbl": "partially_surrounded_by"},
+      {"id": "ENVO:01001862", "type": "INDIVIDUAL", "lbl": "Solar radiation"}
+    ],
+    "edges": [
+      {"sub": "ENVO:00002030", "pred": "is_a", "obj": "ENVO:00000428"},
+      {"sub": "ENVO:00000428", "pred": "is_a", "obj": "ENVO:01000813"},
+      {"sub": "ENVO:00000428", "pred": "is_a", "obj": "ENVO:01001110"},
+      {"sub": "ENVO:01000813", "pred": "is_a", "obj": "BFO:0000040"},
+      {"sub": "ENVO:01001110", "pred": "is_a", "obj": "ENVO:01000254"},
+      {"sub": "ENVO:00001998", "pred": "is_a", "obj": "ENVO:00010483"},
+      {"sub": "ENVO:00010483", "pred": "is_a", "obj": "BFO:0000040"},
+      {"sub": "ENVO:01000206", "pred": "is_a", "obj": "ENVO:01000203"},
+      {"sub": "ENVO:01000203", "pred": "is_a", "obj": "PATO:0001018"},
+      {"sub": "PATO:0001018", "pred": "is_a", "obj": "PATO:0001241"},
+      {"sub": "PATO:0001241", "pred": "is_a", "obj": "PATO:0000001"}
+    ]
+  }]
+}

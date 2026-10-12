@@ -1,11 +1,13 @@
 """Production merge parsers must derive their real prefix context from pinned local inputs."""
 
+import csv
 import multiprocessing
 from concurrent.futures import ProcessPoolExecutor, ThreadPoolExecutor
 from pathlib import Path
 
 import pytest
 import requests
+import yaml
 
 from kg_microbe.merge_utils.kgx_source import parse_source
 
@@ -51,6 +53,7 @@ def test_real_parser_loads_nonempty_pinned_context_without_http(tmp_path, monkey
     assert store.prefix_manager.prefix_map["GO"] == "http://purl.obolibrary.org/obo/GO_"
     assert store.prefix_manager.prefix_map["CHEBI"] == "http://purl.obolibrary.org/obo/CHEBI_"
     assert store.prefix_manager.prefix_map["NCBITaxon"] == "http://purl.obolibrary.org/obo/NCBITaxon_"
+    assert store.prefix_manager.prefix_map["rheav"] == "http://rdf.rhea-db.org/"
     assert "biolink" not in jsonld_context_map
 
 
@@ -65,6 +68,70 @@ def test_real_spawned_parser_needs_no_context_injection(tmp_path):
     assert store.graph.number_of_edges() == 3
     assert store.prefix_manager.prefix_map["GO"] == "http://purl.obolibrary.org/obo/GO_"
     assert store.prefix_manager.prefix_map["biolink"] == "https://w3id.org/biolink/vocab/"
+    assert store.prefix_manager.prefix_map["rheav"] == "http://rdf.rhea-db.org/"
+
+
+@pytest.mark.parametrize("existing_uri", ["http://rdf.rhea-db.org/", "https://conflicting.invalid/rhea/"])
+def test_native_rhea_namespace_never_overrides_pinned_prefix(tmp_path, monkeypatch, existing_uri):
+    """An identical native namespace is allowed; conflicting pinned declarations fail before cache mutation."""
+    from kgx.config import jsonld_context_map
+
+    from kg_microbe.merge_utils.local_context import local_prefix_context
+
+    schema = Path(__file__).parent / "resources/merge_offline_context/biolink-model.yaml"
+    model = yaml.safe_load(schema.read_text(encoding="utf-8"))
+    model["prefixes"]["rheav"] = existing_uri
+    selected = tmp_path / "biolink-model.yaml"
+    selected.write_text(yaml.safe_dump(model), encoding="utf-8")
+    monkeypatch.setenv("KG_MICROBE_BIOLINK_MODEL", str(selected))
+    monkeypatch.setattr(requests.sessions.Session, "request", _reject_http)
+    previous = {"biolink": "https://previous-context.invalid/"}
+    monkeypatch.setitem(jsonld_context_map, "biolink", previous)
+    if existing_uri == "http://rdf.rhea-db.org/":
+        with local_prefix_context():
+            assert jsonld_context_map["biolink"]["rheav"] == existing_uri
+            assert jsonld_context_map["biolink"]["biolink"] == "https://w3id.org/biolink/vocab/"
+    else:
+        with pytest.raises(ValueError, match="Conflicting native namespace: rheav"):
+            with local_prefix_context():
+                pytest.fail("Conflicting native namespaces must not enter the merge context")
+    assert jsonld_context_map["biolink"] is previous
+
+
+def test_native_rhea_rows_parse_without_predicate_rewriting(tmp_path, monkeypatch):
+    """Native family and chemical-route predicates pass representation checks without becoming Biolink claims."""
+    from kg_microbe.utils.graph_canonicalization import compact_identifier
+
+    fixture = Path(__file__).parent / "resources/merge_offline_context"
+    source = {
+        "input": {
+            "format": "tsv",
+            "filename": [str(fixture / "rheav_nodes.tsv"), str(fixture / "rheav_edges.tsv")],
+        }
+    }
+    monkeypatch.setattr(requests.sessions.Session, "request", _reject_http)
+    store = parse_source("rhea-native", source, str(tmp_path))
+    with (fixture / "rheav_edges.tsv").open(encoding="utf-8", newline="") as stream:
+        expected = list(csv.DictReader(stream, delimiter="\t"))
+    actual = [row for _, _, row in store.graph.edges(data=True)]
+    fields = tuple(expected[0])
+    assert sorted(tuple(row[field] for field in fields) for row in actual) == sorted(
+        tuple(row[field] for field in fields) for row in expected
+    )
+    assert "RHEA:12345" in store.graph.nodes()
+    assert "rheav:12345" not in store.graph.nodes()
+    assert compact_identifier("RHEA:12345") == "RHEA:12345"
+    assert store.prefix_manager.prefix_map["rheav"] == "http://rdf.rhea-db.org/"
+    for suffix in (
+        "directionalReaction",
+        "bidirectionalReaction",
+        "reactivePart",
+        "underlyingChebi",
+        "chebi",
+        "Compound_123",
+        "ReactivePart_123",
+    ):
+        assert compact_identifier(f"http://rdf.rhea-db.org/{suffix}") == f"rheav:{suffix}"
 
 
 @pytest.mark.parametrize("fail_worker", [False, True])
@@ -145,13 +212,15 @@ def test_missing_local_schema_fails_without_cache_or_adapter_mutation(tmp_path, 
 
     monkeypatch.setattr(cli_utils, "merge", no_kgx)
     monkeypatch.setattr(kgx_source, "_kgx_parse_source", no_kgx)
+    config = tmp_path / "merge.yaml"
+    config.write_text("merged_graph:\n  source: {}\n  destination:\n    fixture: {format: tsv, filename: fixture}\n")
     with pytest.raises(FileNotFoundError, match="Pinned Biolink"):
         if entrypoint == "parent":
-            merge_kg.merge("unused.yaml")
+            merge_kg.merge(str(config))
         else:
             parse_source("alpha", _source(), str(tmp_path))
     assert jsonld_context_map["biolink"] is previous
     assert cli_utils.Transformer is original_transformer
     assert transformer_module.SOURCE_MAP == original_sources
     assert transformer_module.SINK_MAP == original_sinks
-    assert not list(tmp_path.iterdir())
+    assert list(tmp_path.iterdir()) == [config]

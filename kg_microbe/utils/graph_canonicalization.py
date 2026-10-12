@@ -7,6 +7,7 @@ from functools import lru_cache
 from kg_microbe.transform_utils.constants import FOOD_CATEGORY, PHENOTYPIC_CATEGORY, PREFIXMAP_JSON_FILEPATH
 
 _OBO_IRI = re.compile(r"^https?://purl\.obolibrary\.org/obo/([A-Za-z][A-Za-z0-9]*)_(.+)$")
+_RHEA_REACTION_IRI = re.compile(r"^http://rdf\.rhea-db\.org/([1-9][0-9]*)$")
 # FOODON imports OWL-Time using links to its specification rather than the
 # vocabulary namespace. This is an explicit known alias, not a general rule
 # that guesses an identifier from a URL fragment.
@@ -38,6 +39,11 @@ def compact_identifier(identifier: str) -> str:
         return "orcid:" + identifier[len("ORCID:") :]
     if not identifier.startswith(("http://", "https://")):
         return identifier
+    # The native namespace contains both reactions and vocabulary/compound
+    # resources. Numeric reaction IRIs must keep the established RHEA identity.
+    reaction = _RHEA_REACTION_IRI.fullmatch(identifier)
+    if reaction:
+        return "RHEA:" + reaction[1]
     for uri, prefix in _RDF_VOCABULARIES.items():
         if identifier.startswith(uri):
             return prefix + identifier[len(uri) :]
@@ -55,24 +61,34 @@ def compact_identifier(identifier: str) -> str:
     return identifier
 
 
-def canonical_node_category(identifier: str, category: str, *, foodon_path=None) -> str:
+def canonical_node_category(
+    identifier: str, category: str, *, foodon_path=None, foodon_categories=None, ontology_authority=None
+) -> str:
     """Replace imported OntologyClass fallbacks without discarding substantive multi-typing."""
     identifier = compact_identifier(identifier)
     if identifier.startswith("FOODON:") or identifier in {"COB:0000022", "OBO:COB_0000022", "PO:0000003"}:
         from kg_microbe.utils.foodon_classification import authoritative_foodon_category
 
-        canonical = authoritative_foodon_category(identifier, path=foodon_path)
+        canonical = authoritative_foodon_category(identifier, path=foodon_path, categories=foodon_categories)
     elif identifier.startswith("PATO:"):
         canonical = PHENOTYPIC_CATEGORY
+    elif ontology_authority is not None and "biolink:OntologyClass" in category.split("|"):
+        canonical = ontology_authority.category_for(identifier)
+        if canonical is None:
+            return category
     else:
         return category
     categories = set(category.split("|")) if isinstance(category, str) else set()
     categories.discard("biolink:OntologyClass")
+    if identifier.startswith("FOODON:") and canonical != FOOD_CATEGORY:
+        # FOODON's previous default material category must not survive an
+        # authoritative process, quality, information, or organism decision.
+        categories.discard(FOOD_CATEGORY)
     if canonical == "biolink:OrganismTaxon":
         # An imported Food or anatomical fallback cannot override an explicit
         # whole-organism class. Other legitimate multi-typing remains intact.
         categories.discard(FOOD_CATEGORY)
         categories.discard("biolink:AnatomicalEntity")
     categories.discard("")
-    categories.add(canonical)
+    categories.update(canonical.split("|"))
     return "|".join(sorted(categories))

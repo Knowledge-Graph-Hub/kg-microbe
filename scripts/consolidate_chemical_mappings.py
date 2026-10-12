@@ -85,6 +85,11 @@ from kg_microbe.utils.chemical_mapping_utils import (
     normalize_chemical_primes,
     read_predicate_semantics,
 )
+from kg_microbe.utils.ingredient_context import (
+    CONTEXT_POLICY,
+    NATIVE_AUTHORITY,
+    contextualize_ingredient_row,
+)
 from kg_microbe.utils.ingredient_identity import (
     IDENTITY_POLICY,
     ingredient_authority_label,
@@ -3010,6 +3015,7 @@ class ChemicalMappingConsolidator:
                 fh.write(line + "\n")
             fh.write("\t".join(column_order) + "\n")
             for row in mapping_rows:
+                row = contextualize_ingredient_row(row)
                 fh.write("\t".join(_sanitize_tsv(row.get(c, "")) for c in column_order) + "\n")
 
         print(
@@ -3033,7 +3039,10 @@ def ingredient_policy_fingerprint() -> str:
     """Fingerprint both the curated policy and its shared implementation."""
     helper = Path(__file__).resolve().parents[1] / "kg_microbe/utils/ingredient_identity.py"
     digest = hashlib.sha256()
-    for path in (IDENTITY_POLICY, helper, helper.with_name("cas.py")):
+    for path in (
+        IDENTITY_POLICY, helper, helper.with_name("cas.py"),
+        CONTEXT_POLICY, NATIVE_AUTHORITY, helper.with_name("ingredient_context.py"),
+    ):
         digest.update(path.name.encode())
         digest.update(path.read_bytes())
     return digest.hexdigest()
@@ -3165,6 +3174,10 @@ def refresh_identity_policy(source: Path, output: Path) -> dict:
                 row = dict(zip(fields, values, strict=True))
                 changed = False
                 stats["rows_read"] += 1
+                scoped = contextualize_ingredient_row(row)
+                if scoped != row:
+                    row, changed = scoped, True
+                    stats["rows_context_scoped"] = stats.get("rows_context_scoped", 0) + 1
                 target, subject = row["object_id"], row["subject_id"]
                 if invalid_cas_identifier(subject) or invalid_cas_identifier(target):
                     stats["rows_removed"] += 1

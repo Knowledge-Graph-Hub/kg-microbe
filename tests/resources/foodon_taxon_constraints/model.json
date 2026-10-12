@@ -1,0 +1,179 @@
+{
+  "complete_native_property_owl": [
+    "<ns0:ObjectProperty xmlns:ns0=\"http://www.w3.org/2002/07/owl#\" xmlns:ns2=\"http://purl.obolibrary.org/obo/\" xmlns:ns3=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" rdf:about=\"http://purl.obolibrary.org/obo/RO_0002162\">\n        <ns2:IAO_0000114 rdf:resource=\"http://purl.obolibrary.org/obo/IAO_0000125\" />\n        <ns2:IAO_0000115>x is in taxon y if an only if y is an organism, and the relationship between x and y is one of: part of (reflexive), developmentally preceded by, derives from, secreted by, expressed.</ns2:IAO_0000115>\n        <ns2:IAO_0000119 rdf:resource=\"http://www.ncbi.nlm.nih.gov/pubmed/17921072\" />\n        <ns2:IAO_0000119 rdf:resource=\"http://www.ncbi.nlm.nih.gov/pubmed/20973947\" />\n        <ns2:IAO_0000412 rdf:resource=\"http://purl.obolibrary.org/obo/ro.owl\" />\n        <ns3:label>in taxon</ns3:label>\n    </ns0:ObjectProperty>\n    \n\n\n    \n\n    "
+  ],
+  "pinned_model": {
+    "classes": {
+      "biological entity": {
+        "abstract": true,
+        "aliases": [
+          "bioentity"
+        ],
+        "description": "A heterogeneous substance that contains genomic material or is the product of a biological process.",
+        "is_a": "named thing",
+        "mixins": [
+          "thing with taxon"
+        ],
+        "narrow_mappings": [
+          "WIKIDATA:Q28845870",
+          "STY:T050",
+          "SIO:010046",
+          "STY:T129"
+        ]
+      },
+      "cellular organism": {
+        "comments": "see: https://github.com/OBOFoundry/COB/pull/211",
+        "description": "An organism that contains one or more cells belonging to the cellular lineages of life (Archaea, Bacteria, or Eukaryota), whose body consists of one or more cells. Distinguished from acellular biological entities such as viruses and viroids.",
+        "exact_mappings": [
+          "NCBITaxon:131567"
+        ],
+        "is_a": "organismal entity",
+        "mixins": [
+          "subject of investigation"
+        ]
+      },
+      "entity": {
+        "abstract": true,
+        "description": "Root Biolink Model class for all things and informational relationships, real or imagined.",
+        "slots": [
+          "id",
+          "iri",
+          "category",
+          "type",
+          "name",
+          "description",
+          "has attribute",
+          "deprecated"
+        ]
+      },
+      "named thing": {
+        "description": "a databased entity or concept/class",
+        "exact_mappings": [
+          "BFO:0000001",
+          "WIKIDATA:Q35120",
+          "UMLSSG:OBJC",
+          "STY:T071",
+          "dcid:Thing"
+        ],
+        "is_a": "entity",
+        "slot_usage": {
+          "category": {
+            "required": true
+          }
+        },
+        "slots": [
+          "provided by",
+          "xref",
+          "full name",
+          "synonym",
+          "exact synonym",
+          "broad synonym",
+          "narrow synonym",
+          "related synonym",
+          "equivalent identifiers",
+          "information content",
+          "taxon"
+        ]
+      },
+      "organism taxon": {
+        "aliases": [
+          "taxon",
+          "taxonomic classification"
+        ],
+        "description": "A classification of a set of organisms. Example instances: NCBITaxon:9606 (Homo sapiens), NCBITaxon:2 (Bacteria). Can also be used to represent strains or subspecies.",
+        "exact_mappings": [
+          "WIKIDATA:Q16521",
+          "STY:T001",
+          "bioschemas:Taxon"
+        ],
+        "id_prefixes": [
+          "NCBITaxon",
+          "MESH",
+          "UMLS"
+        ],
+        "in_subset": [
+          "model_organism_database"
+        ],
+        "is_a": "named thing",
+        "narrow_mappings": [
+          "dcid:BiologicalSpecies"
+        ],
+        "slot_usage": {
+          "has taxonomic rank": {
+            "mappings": [
+              "WIKIDATA:P105"
+            ],
+            "multivalued": false,
+            "range": "taxonomic rank"
+          }
+        },
+        "slots": [
+          "has taxonomic rank"
+        ],
+        "values_from": [
+          "NCBITaxon"
+        ]
+      },
+      "organismal entity": {
+        "abstract": true,
+        "description": "A named entity that is either a part of an organism, a whole organism, population or clade of organisms, excluding chemical entities",
+        "exact_mappings": [
+          "WIKIDATA:Q7239",
+          "UMLSSG:LIVB",
+          "CARO:0001010"
+        ],
+        "is_a": "biological entity",
+        "mixins": [
+          "subject of investigation"
+        ],
+        "narrow_mappings": [
+          "STY:T008"
+        ],
+        "slot_usage": {
+          "has attribute": {
+            "description": "may often be an organism attribute"
+          }
+        }
+      },
+      "subject of investigation": {
+        "description": "An entity that has the role of being studied in an investigation, study, or experiment",
+        "mixin": true
+      },
+      "thing with taxon": {
+        "description": "A mixin that can be used on any entity that can be taxonomically classified. This includes individual organisms; genes, their products and other molecular entities; body parts; biological processes",
+        "mixin": true,
+        "slots": [
+          "in taxon",
+          "in taxon label"
+        ]
+      }
+    },
+    "in_taxon": {
+      "aliases": [
+        "instance of",
+        "is organism source of gene product",
+        "organism has gene",
+        "gene found in organism",
+        "gene product has organism source"
+      ],
+      "annotations": {
+        "canonical_predicate": true
+      },
+      "description": "connects an entity to its taxonomic classification. Only certain kinds of entities can be taxonomically classified; see 'thing with taxon'",
+      "domain": "thing with taxon",
+      "exact_mappings": [
+        "RO:0002162",
+        "WIKIDATA_PROPERTY:P703"
+      ],
+      "in_subset": [
+        "translator_minimal"
+      ],
+      "is_a": "related to at instance level",
+      "narrow_mappings": [
+        "RO:0002160"
+      ],
+      "range": "organism taxon"
+    },
+    "version": "4.4.2"
+  }
+}

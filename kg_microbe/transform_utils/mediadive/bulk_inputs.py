@@ -1,7 +1,11 @@
 """Bind MediaDive's five required JSON reads to their original locators and bytes."""
 
+import hashlib
+import json
 from contextlib import contextmanager
+from dataclasses import dataclass
 from pathlib import Path
+from types import MappingProxyType
 
 from kg_microbe.merge_utils.source_admission import SourceAdmission
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
@@ -14,6 +18,147 @@ BULK_INPUTS = {
 }
 MEDIA_LIST_INPUT = "mediadive_media_list"
 REQUIRED_BULK_INPUTS = (MEDIA_LIST_INPUT, *BULK_INPUTS)
+PAYLOAD_ATTRIBUTES = {
+    "mediadive_media_detailed": "media_detailed",
+    "mediadive_media_strains": "media_strains",
+    "mediadive_solutions": "solutions_data",
+    "mediadive_compounds": "compounds_data",
+}
+
+
+@dataclass(frozen=True)
+class _ParsedPayload:
+    """Read-bound semantic identity, independent of mutable producer lookup caches."""
+
+    source_path: str
+    source_sha256: str
+    sha256: str
+    records: MappingProxyType
+
+
+def _payload_digest(payload):
+    """Preserve JSON value types and list positions without allocating a second serialized tree."""
+    # json.dumps silently coerces tuple to list and non-string dictionary keys
+    # to strings. Neither is an unchanged value from the native JSON parser.
+    pending, seen = [payload], set()
+    while pending:
+        value = pending.pop()
+        if type(value) in {dict, list}:
+            if id(value) in seen:
+                continue
+            seen.add(id(value))
+        if type(value) is dict:
+            if any(type(key) is not str for key in value):
+                raise SourceFinalizationRequired("MediaDive cached JSON object has a non-string key")
+            pending.extend(value.values())
+        elif type(value) is list:
+            pending.extend(value)
+        elif value is not None and type(value) not in {str, bool, int, float}:
+            raise SourceFinalizationRequired("MediaDive cached payload is not an exact JSON value")
+    digest = hashlib.sha256()
+    encoder = json.JSONEncoder(ensure_ascii=False, allow_nan=False, sort_keys=True, separators=(",", ":"))
+    try:
+        for piece in encoder.iterencode(payload):
+            digest.update(piece.encode("utf-8"))
+    except (ValueError, TypeError) as error:
+        raise SourceFinalizationRequired("MediaDive cached payload cannot be encoded as native JSON") from error
+    return digest.hexdigest()
+
+
+def _unique_native_object(pairs):
+    """Reject duplicate catalog IDs and record fields before any graph emission (#1319)."""
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise SourceFinalizationRequired(f"MediaDive native duplicate JSON key: {key!r}")
+        result[key] = value
+    return result
+
+
+def load_bulk_payload(transform, name, path):
+    """Parse and bind payload identity inside its actual immutable native-read boundary (#1299)."""
+    try:
+        with snapshot_bulk_input(transform, name, path) as reader:
+            payload = json.load(reader, object_pairs_hook=_unique_native_object)
+            if not isinstance(payload, dict):
+                raise ValueError(f"MediaDive {name} must contain a JSON object")
+            snapshot = transform.consumed_input_snapshots[name]
+            binding = _ParsedPayload(
+                snapshot["path"],
+                snapshot["sha256"],
+                _payload_digest(payload),
+                MappingProxyType({key: _payload_digest(value) for key, value in payload.items()}),
+            )
+            if not hasattr(transform, "_bulk_payload_bindings"):
+                transform._bulk_payload_bindings = {}
+                transform._bulk_parsed_payloads = {}
+            if transform._bulk_payload_bindings.setdefault(name, binding) != binding:
+                raise SourceFinalizationRequired(f"MediaDive parsed bulk input changed within one producer: {name!r}")
+            # Retain the list object too: it is local to _run, unlike four public
+            # caches. A later repeated read must not erase an already changed object.
+            previous = transform._bulk_parsed_payloads.get(name)
+            if previous is not None and _payload_digest(previous) != binding.sha256:
+                raise SourceFinalizationRequired(f"MediaDive previously parsed bulk payload changed: {name!r}")
+            transform._bulk_parsed_payloads[name] = payload
+        return payload
+    except BaseException as error:
+        transform._consumed_input_error = str(error)
+        raise
+
+
+def _bound_payload(transform, name):
+    """Use the public dictionary currently selected by the producer, including whole-cache replacements."""
+    if name in PAYLOAD_ATTRIBUTES:
+        return getattr(transform, PAYLOAD_ATTRIBUTES[name], None)
+    return getattr(transform, "_bulk_parsed_payloads", {}).get(name)
+
+
+def verify_bulk_payloads(transform):
+    """Recheck every cached payload at run/finalization boundaries, never rebaseline its identity."""
+    try:
+        if getattr(transform, "_consumed_input_error", None) is not None:
+            raise SourceFinalizationRequired("A previous MediaDive input read failed; construct a new producer")
+        bindings = getattr(transform, "_bulk_payload_bindings", {})
+        if set(bindings) != set(REQUIRED_BULK_INPUTS):
+            raise SourceFinalizationRequired("MediaDive parsed bulk input bindings are incomplete; rerun the producer")
+        for name, binding in bindings.items():
+            expected = {"path": binding.source_path, "sha256": binding.source_sha256}
+            if transform.consumed_input_snapshots.get(name) != expected:
+                raise SourceFinalizationRequired(f"MediaDive parsed payload differs from its read identity: {name!r}")
+            payload = _bound_payload(transform, name)
+            if not isinstance(payload, dict) or _payload_digest(payload) != binding.sha256:
+                raise SourceFinalizationRequired(f"MediaDive cached native payload changed: {name!r}")
+    except BaseException as error:
+        transform._consumed_input_error = str(error)
+        raise
+
+
+def verify_bulk_record(transform, name, key):
+    """Verify one actual parsed record before lookup, without rehashing the complete source tree."""
+    # Lookup-only callers can supply dictionaries without claiming a producer
+    # completion. Actual admitted producers may never omit their read binding.
+    if getattr(transform, "_bulk_input_admission", None) is None:
+        return
+    try:
+        if getattr(transform, "_consumed_input_error", None) is not None:
+            raise SourceFinalizationRequired("A previous MediaDive input read failed; construct a new producer")
+        binding = getattr(transform, "_bulk_payload_bindings", {}).get(name)
+        payload = _bound_payload(transform, name)
+        if binding is None or not isinstance(payload, dict):
+            raise SourceFinalizationRequired(f"MediaDive parsed bulk input binding is missing: {name!r}")
+        if transform.consumed_input_snapshots.get(name) != {
+            "path": binding.source_path,
+            "sha256": binding.source_sha256,
+        }:
+            raise SourceFinalizationRequired(f"MediaDive record differs from its read identity: {name!r}")
+        expected = binding.records.get(key)
+        if (key in payload) != (expected is not None) or (
+            expected is not None and _payload_digest(payload[key]) != expected
+        ):
+            raise SourceFinalizationRequired(f"MediaDive cached native record changed: {name!r}, {key!r}")
+    except BaseException as error:
+        transform._consumed_input_error = str(error)
+        raise
 
 
 def _raw_locator(input_dir):
@@ -38,9 +183,9 @@ def _validate_contract(contract, snapshots, raw, guard):
     """Require complete role membership and agreement with the original immutable reads."""
     if (
         not isinstance(contract, dict)
-        or set(contract) != {"version", "inputs"}
+        or set(contract) != {"version", "inputs", "recipe_identity"}
         or type(contract["version"]) is not int
-        or contract["version"] != 1
+        or contract["version"] != 2
         or not isinstance(contract["inputs"], dict)
         or set(contract["inputs"]) != set(REQUIRED_BULK_INPUTS)
         or not isinstance(snapshots, dict)
@@ -118,6 +263,7 @@ def verify_bulk_inputs(transform, *, byte_verified=False, output_dir=None):
             _raw_locator(transform.input_base_dir),
             guard,
         )
+        verify_bulk_payloads(transform)
         # The generic consumed-input checkpoint has already rehashed every
         # snapshot when byte_verified=True; locator/stamp verification still runs.
         guard.verify(metadata_only=byte_verified)

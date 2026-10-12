@@ -20,6 +20,7 @@ from kg_microbe.transform_utils.constants import (
     VPI_KNOWLEDGE_SOURCE,
 )
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
+from tests.microbedecoder_inactive_join_fixtures import bind_inactive_join_policy, write_empty_join_gss
 from tests.microbedecoder_quarantine_fixtures import (
     bind_fixture_quarantine_policy,
     write_fixture_quarantine_policy,
@@ -41,6 +42,22 @@ def _supply_gold_fold_report(output_dir):
     shutil.copyfile(FIXTURE_DIR / "metpo_nodes.tsv", ontology_dir / "metpo_nodes.tsv")
     shutil.copyfile(FIXTURE_DIR / "go_nodes.tsv", ontology_dir / "go_nodes.tsv")
     shutil.copyfile(FIXTURE_DIR / "chebi_record_nodes.tsv", ontology_dir / "chebi_nodes.tsv")
+    # Unknown synthetic crosswalk IDs are not positive GOLD identity fixtures.
+    # Supply a genuinely empty, actually run/finalized GOLD authority so the
+    # consumer must distinguish them from the reviewed unresolved native cohort.
+    import os
+    from unittest.mock import patch
+
+    from kg_microbe.transform_utils.gold.gold import GOLDTransform
+
+    raw = output_dir / "fixture-gold-raw"
+    (raw / "gold").mkdir(parents=True, exist_ok=True)
+    for kind in ("nodes", "edges"):
+        shutil.copyfile(FIXTURE_DIR.parent / "gold_abscess" / f"empty_{kind}.tsv", raw / "gold" / f"GOLD_{kind}.tsv")
+    with patch.dict(os.environ, {"GOLD_APPLY_TAXON_TRIM": "false"}):
+        gold = GOLDTransform(raw, output_dir)
+        gold.run()
+        gold.finalize(fresh_run=True)
 
 
 class _NoChebi:
@@ -59,25 +76,21 @@ class _NoChebi:
 
 
 @pytest.fixture()
-def microbedecoder_transform(tmp_path):
-    """
-    Return a ``MicrobeDecoderTransform`` configured to read the fixture CSV.
-
-    Points ``input_base_dir`` at ``tests/resources/microbedecoder`` so
-    ``database.csv`` is picked up by the transform's default resolve chain,
-    and ``output_dir`` at a per-test temp dir so nodes.tsv / edges.tsv
-    land in isolation. ``_NoChebi`` is injected so the tests never depend
-    on the unified chemical mapping file being present.
-    """
+def microbedecoder_transform(tmp_path, monkeypatch):
+    """Use isolated raw CSV/GSS and real inactive join reads for ordinary tests."""
     _supply_gold_fold_report(tmp_path)
-    return MicrobeDecoderTransform(
-        input_dir=FIXTURE_DIR,
+    raw = write_empty_join_gss(tmp_path / "raw").parent
+    shutil.copyfile(FIXTURE_DIR / "database.csv", raw / "database.csv")
+    transform = MicrobeDecoderTransform(
+        input_dir=raw,
         output_dir=tmp_path,
         chemical_loader=_NoChebi(),
         crosswalk_quarantine_policy=write_fixture_quarantine_policy(
-            FIXTURE_DIR / "database.csv", tmp_path / "fixture-crosswalk-policy"
+            raw / "database.csv", tmp_path / "fixture-crosswalk-policy"
         ),
     )
+    bind_inactive_join_policy(transform, raw / "database.csv", monkeypatch)
+    return transform
 
 
 def _read_tsv(path: Path) -> list:
@@ -373,14 +386,14 @@ def test_crosswalk_normalizes_prefixed_source_ids(microbedecoder_transform):
         ("GOLD_Organism_ID", "Gold:Go0000002", "gold:Go0000002"),
     ],
 )
-def test_crosswalk_uses_owner_namespaces(tmp_path, column, raw, expected):
+def test_crosswalk_uses_owner_namespaces(monkeypatch, tmp_path, column, raw, expected):
     """Assemblies and GOLD organisms join the owner IDs, not KGX stubs (#1050/1051)."""
     input_dir = tmp_path / "raw"
     input_dir.mkdir()
     with (input_dir / "database.csv").open("w", newline="") as handle:
         writer = csv.writer(handle)
-        writer.writerow(["LPSN_ID", column])
-        writer.writerow(["101", raw])
+        writer.writerow(["LPSN_ID", column, "BacDive_ID"])
+        writer.writerow(["101", raw, ""])
     _supply_gold_fold_report(tmp_path / "transformed")
     transform = MicrobeDecoderTransform(
         input_dir=input_dir,
@@ -388,6 +401,8 @@ def test_crosswalk_uses_owner_namespaces(tmp_path, column, raw, expected):
         chemical_loader=_NoChebi(),
     )
     bind_fixture_quarantine_policy(transform, input_dir / "database.csv")
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, input_dir / "database.csv", monkeypatch)
     transform.run()
     edges = _read_tsv(transform.output_edge_file)
     assert len(edges) == 1
@@ -614,7 +629,7 @@ def test_unmapped_labels_report_is_written(microbedecoder_transform):
     )
 
 
-def test_unmapped_labels_report_is_empty_when_no_placeholders(tmp_path):
+def test_unmapped_labels_report_is_empty_when_no_placeholders(monkeypatch, tmp_path):
     """
     A header-only report records no placeholders without leaving an old curation queue.
 
@@ -644,11 +659,12 @@ def test_unmapped_labels_report_is_empty_when_no_placeholders(tmp_path):
         "LPSN_ID",
         "Bergey_Major_end_products",
         "Bergey_Substrates_for_end_products",
+        "BacDive_ID",
     ]
     with open(csv_path, "w", newline="") as fh:
         w = csv.writer(fh)
         w.writerow(header)
-        w.writerow(["999", "acetate, lactate", "glucose"])
+        w.writerow(["999", "acetate, lactate", "glucose", ""])
 
     _supply_gold_fold_report(tmp_path)
     xform = MicrobeDecoderTransform(
@@ -657,13 +673,15 @@ def test_unmapped_labels_report_is_empty_when_no_placeholders(tmp_path):
         chemical_loader=_AlwaysResolves(),
     )
     bind_fixture_quarantine_policy(xform, xform.input_base_dir / "database.csv")
+    write_empty_join_gss(xform.input_base_dir)
+    bind_inactive_join_policy(xform, xform.input_base_dir / "database.csv", monkeypatch)
     xform.run(data_file="database.csv")
     report = xform.output_dir / "unmapped_labels.tsv"
     assert report.exists()
     assert _read_tsv(report) == []
 
 
-def test_mixed_encoding_csv_is_read_with_replacement(tmp_path):
+def test_mixed_encoding_csv_is_read_with_replacement(monkeypatch, tmp_path):
     """
     The real MicrobeDecoder CSV is mixed UTF-8 + sporadic Latin-1 bytes.
 
@@ -681,11 +699,14 @@ def test_mixed_encoding_csv_is_read_with_replacement(tmp_path):
     """
     _supply_gold_fold_report(tmp_path)
     xform = MicrobeDecoderTransform(
-        input_dir=FIXTURE_DIR,
+        input_dir=write_empty_join_gss(tmp_path / "mixed-raw").parent,
         output_dir=tmp_path,
         chemical_loader=_NoChebi(),
     )
+    shutil.copyfile(FIXTURE_DIR / "database_mixed_encoding.csv", xform.input_base_dir / "database_mixed_encoding.csv")
     bind_fixture_quarantine_policy(xform, xform.input_base_dir / "database_mixed_encoding.csv")
+    write_empty_join_gss(xform.input_base_dir)
+    bind_inactive_join_policy(xform, xform.input_base_dir / "database_mixed_encoding.csv", monkeypatch)
     xform.run(data_file="database_mixed_encoding.csv")
     edges = _read_tsv(xform.output_edge_file)
     subjects = {e["subject"] for e in edges}
@@ -693,7 +714,7 @@ def test_mixed_encoding_csv_is_read_with_replacement(tmp_path):
     assert f"{LPSN_PREFIX}888" in subjects, "the mixed-encoding row must be processed too"
 
 
-def test_lpsn_anchor_is_repointed_to_the_accepted_name(tmp_path, microbedecoder_transform):
+def test_lpsn_anchor_is_repointed_to_the_accepted_name(monkeypatch, tmp_path, microbedecoder_transform):
     """
     A synonym LPSN_ID must not drag the whole row onto a deprecated record.
 
@@ -717,6 +738,7 @@ def test_lpsn_anchor_is_repointed_to_the_accepted_name(tmp_path, microbedecoder_
     )
     microbedecoder_transform.input_base_dir = staged
     microbedecoder_transform._accepted_lpsn = None
+    bind_inactive_join_policy(microbedecoder_transform, staged / "database.csv", monkeypatch)
     microbedecoder_transform.run()
 
     edges = _read_tsv(microbedecoder_transform.output_edge_file)
@@ -727,21 +749,24 @@ def test_lpsn_anchor_is_repointed_to_the_accepted_name(tmp_path, microbedecoder_
     assert f"{LPSN_PREFIX}101" not in anchors, "the synonym record must not survive as an anchor"
 
 
-def test_a_missing_gss_file_is_non_fatal(tmp_path, microbedecoder_transform):
-    """
-    The GSS CSV is account-gated and not shipped.
-
-    Absence must leave IDs as given rather than abort — the same contract the
-    bacdive transform honours.
-    """
-    import shutil
-
-    staged = tmp_path / "input_no_gss"
+def test_a_missing_gss_file_keeps_preview_compatibility(tmp_path, microbedecoder_transform):
+    """The direct preview helper still returns no aliases without a GSS file."""
+    staged = tmp_path / "input_no_gss_preview"
     staged.mkdir()
-    shutil.copy(FIXTURE_DIR / "database.csv", staged / "database.csv")  # but no lpsn_gss.csv
     microbedecoder_transform.input_base_dir = staged
     microbedecoder_transform._accepted_lpsn = None
-    microbedecoder_transform.run()
+    assert microbedecoder_transform._accepted_lpsn_records() == {}
 
-    edges = _read_tsv(microbedecoder_transform.output_edge_file)
-    assert edges, "the transform must still emit without the GSS file"
+
+def test_public_run_requires_actual_gss_before_output_publication(tmp_path, microbedecoder_transform):
+    """Mandatory public source evidence is stricter than the compatibility preview."""
+    staged = tmp_path / "input_no_gss"
+    staged.mkdir()
+    shutil.copyfile(FIXTURE_DIR / "database.csv", staged / "database.csv")
+    microbedecoder_transform.input_base_dir = staged
+    protected = (microbedecoder_transform.output_node_file, microbedecoder_transform.output_edge_file)
+    for path in protected:
+        path.write_text("previous output bytes\n")
+    with pytest.raises(FileNotFoundError, match="lpsn_gss.csv"):
+        microbedecoder_transform.run()
+    assert all(path.read_text() == "previous output bytes\n" for path in protected)

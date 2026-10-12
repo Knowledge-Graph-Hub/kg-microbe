@@ -1,0 +1,467 @@
+{
+  "boundaries": [
+    "Finite denotational projection, not a general RDF record-type classifier.",
+    "No incident identity or hierarchy-edge acceptance; no new exact ontology equivalence.",
+    "Four clinical descriptors stay outside this policy. No KG editing at merge time."
+  ],
+  "model_classes": {
+    "chemical entity": {
+      "broad_mappings": [
+        "STY:T167"
+      ],
+      "description": "A chemical entity is a physical entity that pertains to chemistry or biochemistry.",
+      "exact_mappings": [
+        "CHEBI:24431",
+        "SIO:010004",
+        "WIKIDATA:Q79529",
+        "STY:T103"
+      ],
+      "id_prefixes": [
+        "CHEBI",
+        "UNII",
+        "PUBCHEM.COMPOUND",
+        "CHEMBL.COMPOUND",
+        "DRUGBANK",
+        "MESH",
+        "CAS",
+        "DrugCentral",
+        "GTOPDB",
+        "HMDB",
+        "KEGG.COMPOUND",
+        "PHARMGKB.DRUG",
+        "ChemBank",
+        "PUBCHEM.SUBSTANCE",
+        "SIDER.DRUG",
+        "INCHI",
+        "INCHIKEY",
+        "BIGG.METABOLITE",
+        "foodb.compound",
+        "KEGG.GLYCAN",
+        "KEGG.DRUG",
+        "KEGG.ENVIRON",
+        "KEGG",
+        "UMLS"
+      ],
+      "in_subset": [
+        "translator_minimal"
+      ],
+      "is_a": "named thing",
+      "mixins": [
+        "physical essence",
+        "chemical or drug or treatment",
+        "chemical entity or gene or gene product",
+        "chemical entity or protein or polypeptide"
+      ],
+      "narrow_mappings": [
+        "WIKIDATA:Q43460564",
+        "STY:T123",
+        "STY:T131"
+      ],
+      "slots": [
+        "trade name",
+        "available from",
+        "max tolerated dose",
+        "is toxic",
+        "has chemical role",
+        "routes of delivery",
+        "chembl prodrug",
+        "chembl black box warning",
+        "chembl natural product",
+        "chembl availability type",
+        "chembl chirality",
+        "chembl drug warning"
+      ]
+    },
+    "chemical mixture": {
+      "close_mappings": [
+        "dcid:ChemicalCompound"
+      ],
+      "description": "A chemical mixture is a chemical entity composed of two or more molecular entities.",
+      "id_prefixes": [
+        "CHEBI",
+        "UNII",
+        "PUBCHEM.COMPOUND",
+        "CHEMBL.COMPOUND",
+        "DRUGBANK",
+        "MESH",
+        "CAS",
+        "DrugCentral",
+        "GTOPDB",
+        "HMDB",
+        "KEGG.COMPOUND",
+        "PHARMGKB.DRUG",
+        "ChemBank",
+        "PUBCHEM.SUBSTANCE",
+        "SIDER.DRUG",
+        "INCHI",
+        "INCHIKEY",
+        "BIGG.METABOLITE",
+        "foodb.compound",
+        "KEGG.GLYCAN",
+        "KEGG.DRUG",
+        "KEGG.ENVIRON",
+        "KEGG",
+        "UMLS"
+      ],
+      "in_subset": [
+        "translator_minimal"
+      ],
+      "is_a": "chemical entity",
+      "mixins": [
+        "ontology class"
+      ],
+      "narrow_mappings": [
+        "NCIT:C20401",
+        "SNOMEDCT:49616005"
+      ],
+      "slots": [
+        "is supplement",
+        "highest FDA approval status",
+        "drug regulatory status world wide"
+      ]
+    },
+    "environmental feature": {
+      "description": "A system or entity in the natural environment that has the disposition to environ one or more material entities.",
+      "exact_mappings": [
+        "ENVO:01000254"
+      ],
+      "is_a": "planetary entity"
+    },
+    "food": {
+      "description": "A substance of plant, animal, or artificial origin consumed by a living organism to provide essential nutrients, energy, and support growth and the processes of life, or to satisfy other health needs or provide a social or organoleptic experience.",
+      "exact_mappings": [
+        "CHEBI:33290",
+        "FOODON:00002403"
+      ],
+      "id_prefixes": [
+        "foodb.food",
+        "foodb.compound",
+        "FOODON",
+        "CHEBI",
+        "UNII",
+        "PUBCHEM.COMPOUND",
+        "CHEMBL.COMPOUND",
+        "DRUGBANK",
+        "MESH",
+        "CAS",
+        "DrugCentral",
+        "GTOPDB",
+        "HMDB",
+        "KEGG.COMPOUND",
+        "PHARMGKB.DRUG",
+        "ChemBank",
+        "PUBCHEM.SUBSTANCE",
+        "SIDER.DRUG",
+        "INCHI",
+        "INCHIKEY",
+        "BIGG.METABOLITE",
+        "KEGG.GLYCAN",
+        "KEGG.DRUG",
+        "KEGG.ENVIRON",
+        "KEGG",
+        "UMLS"
+      ],
+      "is_a": "chemical mixture"
+    },
+    "molecular mixture": {
+      "description": "A molecular mixture is a chemical mixture composed of two or more molecular entities with known concentration and stoichiometry.",
+      "id_prefixes": [
+        "CHEBI",
+        "UNII",
+        "PUBCHEM.COMPOUND",
+        "CHEMBL.COMPOUND",
+        "DRUGBANK",
+        "MESH",
+        "CAS",
+        "DrugCentral",
+        "GTOPDB",
+        "HMDB",
+        "KEGG.COMPOUND",
+        "PHARMGKB.DRUG",
+        "ChemBank",
+        "PUBCHEM.SUBSTANCE",
+        "SIDER.DRUG",
+        "INCHI",
+        "INCHIKEY",
+        "BIGG.METABOLITE",
+        "foodb.compound",
+        "KEGG.GLYCAN",
+        "KEGG.DRUG",
+        "KEGG.ENVIRON",
+        "KEGG",
+        "UMLS"
+      ],
+      "in_subset": [
+        "translator_minimal"
+      ],
+      "is_a": "chemical mixture"
+    },
+    "organism taxon": {
+      "aliases": [
+        "taxon",
+        "taxonomic classification"
+      ],
+      "description": "A classification of a set of organisms. Example instances: NCBITaxon:9606 (Homo sapiens), NCBITaxon:2 (Bacteria). Can also be used to represent strains or subspecies.",
+      "exact_mappings": [
+        "WIKIDATA:Q16521",
+        "STY:T001",
+        "bioschemas:Taxon"
+      ],
+      "id_prefixes": [
+        "NCBITaxon",
+        "MESH",
+        "UMLS"
+      ],
+      "in_subset": [
+        "model_organism_database"
+      ],
+      "is_a": "named thing",
+      "narrow_mappings": [
+        "dcid:BiologicalSpecies"
+      ],
+      "slot_usage": {
+        "has taxonomic rank": {
+          "mappings": [
+            "WIKIDATA:P105"
+          ],
+          "multivalued": false,
+          "range": "taxonomic rank"
+        }
+      },
+      "slots": [
+        "has taxonomic rank"
+      ],
+      "values_from": [
+        "NCBITaxon"
+      ]
+    },
+    "physical entity": {
+      "description": "An entity that has material reality (a.k.a. physical essence).",
+      "exact_mappings": [
+        "STY:T072"
+      ],
+      "is_a": "named thing",
+      "mixins": [
+        "physical essence"
+      ],
+      "narrow_mappings": [
+        "STY:T073"
+      ]
+    },
+    "population of individual organisms": {
+      "description": "A collection of individuals from the same taxonomic class distinguished by one or more characteristics.  Characteristics can include, but are not limited to, shared geographic location, genetics, phenotypes.",
+      "exact_mappings": [
+        "PCO:0000001",
+        "SIO:001061",
+        "STY:T098",
+        "OBI:0000181"
+      ],
+      "id_prefixes": [
+        "HANCESTRO"
+      ],
+      "in_subset": [
+        "model_organism_database"
+      ],
+      "is_a": "organismal entity",
+      "local_names": {
+        "ga4gh": "population"
+      },
+      "mixins": [
+        "subject of investigation"
+      ]
+    }
+  },
+  "model_file": "biolink-model.yaml",
+  "model_sha256": "b6a1320772a92d69e84b8c700cd6386dffe45ed635c8197d61e22b6a6fa3b35e",
+  "model_version": "4.4.2",
+  "native_bytes": 120696702,
+  "native_file": "mesh2026.nt.gz",
+  "native_namespace": "http://id.nlm.nih.gov/mesh/2026/",
+  "native_sha256": "6997c24530cfbc698690e3d85ba5436e5ee56708f7f77073cbf8f502f3de7c5e",
+  "native_statement_count": 522,
+  "native_statements_sha256": "0dfb343a0073357ba55a7e09f968a503379135780bd3de9c83413ef96bd1ba0a",
+  "records": {
+    "mesh:C008328": {
+      "category": "biolink:ChemicalEntity",
+      "native_label_token": "\"marmite\"@en",
+      "native_notes": [
+        "\"commercial yeast extract\"@en"
+      ],
+      "native_type": "SCR_Chemical",
+      "preferred_concept": "http://id.nlm.nih.gov/mesh/2026/M0052060",
+      "preferred_scope_notes": [],
+      "rationale": "Native chemical SCR with commercial yeast extract note; broad ChemicalEntity, not a single molecule."
+    },
+    "mesh:C013216": {
+      "category": "biolink:ChemicalEntity",
+      "native_label_token": "\"potassium phosphate\"@en",
+      "native_notes": [
+        "\"used in dental materials and to treat hypophosphatemia; RN given refers to cpd with unspecified MF\"@en"
+      ],
+      "native_type": "SCR_Chemical",
+      "preferred_concept": "http://id.nlm.nih.gov/mesh/2026/M0060816",
+      "preferred_scope_notes": [],
+      "rationale": "Reviewed native chemical SCR and preferred concept support broad ChemicalEntity, without purity, single-molecule, or structural identity claims."
+    },
+    "mesh:C016600": {
+      "category": "biolink:ChemicalEntity",
+      "native_label_token": "\"ferrous citrate\"@en",
+      "native_notes": [
+        "\"iron fortificant\"@en"
+      ],
+      "native_type": "SCR_Chemical",
+      "preferred_concept": "http://id.nlm.nih.gov/mesh/2026/M0066717",
+      "preferred_scope_notes": [],
+      "rationale": "Reviewed native chemical SCR and preferred concept support broad ChemicalEntity, without purity, single-molecule, or structural identity claims."
+    },
+    "mesh:C017029": {
+      "category": "biolink:ChemicalEntity",
+      "native_label_token": "\"asialofetuin\"@en",
+      "native_notes": [
+        "\"the asialo derivative of fetuin, usually from fetal bovine serum\"@en"
+      ],
+      "native_type": "SCR_Chemical",
+      "preferred_concept": "http://id.nlm.nih.gov/mesh/2026/M0067462",
+      "preferred_scope_notes": [],
+      "rationale": "Reviewed native chemical SCR and preferred concept support broad ChemicalEntity, without purity, single-molecule, or structural identity claims."
+    },
+    "mesh:C028805": {
+      "category": "biolink:ChemicalEntity",
+      "native_label_token": "\"2-sulfobenzoic acid\"@en",
+      "native_notes": [],
+      "native_type": "SCR_Chemical",
+      "preferred_concept": "http://id.nlm.nih.gov/mesh/2026/M0092362",
+      "preferred_scope_notes": [],
+      "rationale": "Reviewed native chemical SCR and preferred concept support broad ChemicalEntity, without purity, single-molecule, or structural identity claims."
+    },
+    "mesh:C039460": {
+      "category": "biolink:ChemicalEntity",
+      "native_label_token": "\"titanium trichloride\"@en",
+      "native_notes": [],
+      "native_type": "SCR_Chemical",
+      "preferred_concept": "http://id.nlm.nih.gov/mesh/2026/M0118144",
+      "preferred_scope_notes": [],
+      "rationale": "Reviewed native chemical SCR and preferred concept support broad ChemicalEntity, without purity, single-molecule, or structural identity claims."
+    },
+    "mesh:C514290": {
+      "category": "biolink:ChemicalEntity",
+      "native_label_token": "\"trisodium citrate\"@en",
+      "native_notes": [
+        "\"antimicrobial and local anticoagulant; was indexed to sodium citrate;\"@en"
+      ],
+      "native_type": "SCR_Chemical",
+      "preferred_concept": "http://id.nlm.nih.gov/mesh/2026/M0443286",
+      "preferred_scope_notes": [],
+      "rationale": "Reviewed native chemical SCR and preferred concept support broad ChemicalEntity, without purity, single-molecule, or structural identity claims."
+    },
+    "mesh:C521980": {
+      "category": "biolink:ChemicalEntity",
+      "native_label_token": "\"butyl vinyl ether\"@en",
+      "native_notes": [],
+      "native_type": "SCR_Chemical",
+      "preferred_concept": "http://id.nlm.nih.gov/mesh/2026/M0512454",
+      "preferred_scope_notes": [],
+      "rationale": "Reviewed native chemical SCR and preferred concept support broad ChemicalEntity, without purity, single-molecule, or structural identity claims."
+    },
+    "mesh:D000076624": {
+      "category": "biolink:PhysicalEntity",
+      "native_label_token": "\"Built Environment\"@en",
+      "native_notes": [],
+      "native_type": "TopicalDescriptor",
+      "preferred_concept": "http://id.nlm.nih.gov/mesh/2026/M000622402",
+      "preferred_scope_notes": [
+        "\"The man-made physical elements of the environment (e.g., homes, buildings, streets, open spaces, and infrastructure). The built environment influences a person's level of physical activity and may have other impacts on health in a community.\"@en"
+      ],
+      "rationale": "Man-made physical elements; pinned EnvironmentalFeature requires natural environment, so use broader PhysicalEntity."
+    },
+    "mesh:D000083422": {
+      "category": "biolink:PhysicalEntity",
+      "native_label_token": "\"Virome\"@en",
+      "native_notes": [],
+      "native_type": "TopicalDescriptor",
+      "preferred_concept": "http://id.nlm.nih.gov/mesh/2026/M000679117",
+      "preferred_scope_notes": [
+        "\"All of the VIRUSES that exist within a particular biological niche such as an organism or specific location of the organism, soil, a body of water, etc.\"@en"
+      ],
+      "rationale": "All viruses in a niche; physical collection, without an asserted single taxonomic population."
+    },
+    "mesh:D004531": {
+      "category": "biolink:Food",
+      "native_label_token": "\"Eggs\"@en",
+      "native_notes": [],
+      "native_type": "TopicalDescriptor",
+      "preferred_concept": "http://id.nlm.nih.gov/mesh/2026/M0007130",
+      "preferred_scope_notes": [
+        "\"Animal reproductive bodies, or the contents thereof, used as food. The concept is differentiated from OVUM, the anatomic or physiologic entity.\"@en"
+      ],
+      "rationale": "Preferred concept explicitly distinguishes eggs used as food from anatomical ovum."
+    },
+    "mesh:D011136": {
+      "category": "biolink:ChemicalMixture",
+      "native_label_token": "\"Polysorbates\"@en",
+      "native_notes": [],
+      "native_type": "TopicalDescriptor",
+      "preferred_concept": "http://id.nlm.nih.gov/mesh/2026/M0017253",
+      "preferred_scope_notes": [
+        "\"Sorbitan mono-9-octadecanoate poly(oxy-1,2-ethanediyl) derivatives; complex mixtures of polyoxyethylene ethers used as emulsifiers or dispersing agents in pharmaceuticals.\"@en"
+      ],
+      "rationale": "Preferred concept explicitly describes complex mixtures; no fixed concentration or stoichiometry asserted."
+    },
+    "mesh:D012623": {
+      "category": "biolink:ChemicalMixture",
+      "native_label_token": "\"Seawater\"@en",
+      "native_notes": [],
+      "native_type": "TopicalDescriptor",
+      "preferred_concept": "http://id.nlm.nih.gov/mesh/2026/M0019579",
+      "preferred_scope_notes": [
+        "\"The salinated water of OCEANS AND SEAS that provides habitat for marine organisms.\"@en"
+      ],
+      "rationale": "Salinated ocean/sea water is a chemical mixture, not pure-water identity."
+    },
+    "mesh:D014131": {
+      "category": "biolink:ChemicalEntity",
+      "native_label_token": "\"Trace Elements\"@en",
+      "native_notes": [],
+      "native_type": "TopicalDescriptor",
+      "preferred_concept": "http://id.nlm.nih.gov/mesh/2026/M0021742",
+      "preferred_scope_notes": [
+        "\"A group of chemical elements that are needed in minute quantities for the proper growth, development, and physiology of an organism. (From McGraw-Hill Dictionary of Scientific and Technical Terms, 4th ed)\"@en"
+      ],
+      "rationale": "Group of chemical elements; no single element or fixed multielement recipe asserted."
+    },
+    "mesh:D015048": {
+      "category": "biolink:PhysicalEntity",
+      "native_label_token": "\"Zooplankton\"@en",
+      "native_notes": [],
+      "native_type": "TopicalDescriptor",
+      "preferred_concept": "http://id.nlm.nih.gov/mesh/2026/M0023157",
+      "preferred_scope_notes": [
+        "\"Minute free-floating animal organisms which live in practically all natural waters.\"@en"
+      ],
+      "rationale": "Minute free-floating animal organisms; physical collection without one taxon identity."
+    },
+    "mesh:D044003": {
+      "category": "biolink:OrganismTaxon",
+      "native_label_token": "\"Sphagnopsida\"@en",
+      "native_notes": [],
+      "native_type": "TopicalDescriptor",
+      "preferred_concept": "http://id.nlm.nih.gov/mesh/2026/M0444134",
+      "preferred_scope_notes": [
+        "\"A class of BRYOPHYTA which is best known for Sphagnum forming PEAT bogs.\"@en"
+      ],
+      "rationale": "Preferred concept M0444134 defines the class of Bryophyta; nonpreferred M0028465 genus definition is not substituted."
+    },
+    "mesh:D062611": {
+      "category": "biolink:PhysicalEntity",
+      "native_label_token": "\"Solid Waste\"@en",
+      "native_notes": [],
+      "native_type": "TopicalDescriptor",
+      "preferred_concept": "http://id.nlm.nih.gov/mesh/2026/M0568791",
+      "preferred_scope_notes": [
+        "\"Garbage, refuse, or sludge, or other discarded materials from a wastewater treatment plant, water supply treatment plant, and air pollution control facility that include solid, semi-solid, or contained material. It does not include materials dissolved in domestic sewage, irrigation return flows, or industrial discharges.\"@en"
+      ],
+      "rationale": "Discarded solid, semi-solid, or contained material, without uniform chemical composition."
+    }
+  },
+  "version": 1
+}

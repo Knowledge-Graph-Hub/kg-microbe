@@ -32,7 +32,11 @@ Output lands in `data/transformed/lpsn/nodes.tsv` and `edges.tsv`.
   CURIE `lpsn:<record_no>`. Rows whose `status` matches an
   illegitimate / synonym / rejected category carry `deprecated=True`.
 - **`subclass_of` edges** — from subspecies → species → genus when
-  both parent and child rows are present in the same CSV.
+  both parent and child rows are present in the same CSV and the parent
+  scientific-name tuple resolves to exactly one native record ID. These
+  remain structured-name joins, not explicit native numeric-parent fields.
+  Ambiguous tuples never use row order, nomenclatural status, synonym links
+  or the separately cached API to choose a parent (#1292).
 - **`close_match` edges** — from each species / subspecies row to
   every culture-collection deposit named in `nomenclatural_type`.
   Deposits are parsed from strings like
@@ -48,6 +52,28 @@ Output lands in `data/transformed/lpsn/nodes.tsv` and `edges.tsv`.
   `NCTC`, `NRRL`, `NBRC`, `CCUG`, `CCTM`, `CIP`, `IAM`, `IFO`, `KCTC`.
   Additional prefixes can be added to the `_CULTURE_CODE` regex in
   `lpsn.py` as needed.
+
+## Ambiguity audit and completion
+
+Every run writes `lpsn_parent_dispositions.tsv`, including a header-only file
+when there are no ambiguous parents. Each ambiguity preserves the child,
+every candidate's complete native CSV record and physical coordinates, source
+path/SHA-256, all candidate projections, and the calculated legacy last-row
+projection. Those projections are audit evidence, not graph assertions.
+The legacy result is not labelled as a witnessed previous release assertion.
+
+Malformed records are rejected before candidate construction; silently skipping
+a malformed parent could manufacture apparent uniqueness. Duplicate native IDs,
+missing/noncanonical IDs or genera, inconsistent subspecies fields, malformed
+quoting, headers and row widths all abort. Valid missing-parent records retain
+their nodes without invented edges.
+
+The actual selected CSV (including a `data_file` override) and original audit
+bytes are mandatory producer evidence. Finalization and merge admission refuse
+missing/changed evidence. Atomic replacement of individual files is not a claim
+of cross-file rollback or a completed source generation; the CLI invalidates
+previous completion before running and records completion only after successful
+finalization. No post-merge taxonomy repair is performed.
 
 ## Still deferred (issue #484)
 

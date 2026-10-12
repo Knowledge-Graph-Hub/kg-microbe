@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "snapshot_id": "rhea-cache-142-20260907",
+  "release_label": "142",
+  "provenance_note": "Existing local PyOBO cache label, not independent proof of a tagged upstream release. Both exact files must pass native quartet and direction validation before use. No latest fallback is permitted.",
+  "files": {
+    "rhea-directions.tsv": {
+      "bytes": 446712,
+      "sha256": "deae1911da372c70ee8fc97992809c7923e63b288a8702fc4396edcb2633fb04",
+      "source_url": "https://ftp.expasy.org/databases/rhea/tsv/rhea-directions.tsv"
+    },
+    "rhea.rdf.gz": {
+      "bytes": 8718726,
+      "sha256": "8ee48d7044cf3eef1001fa730dae2a491902ab25b259b519d6826796bb8acedf",
+      "source_url": "https://ftp.expasy.org/databases/rhea/rdf/rhea.rdf.gz"
+    }
+  }
+}

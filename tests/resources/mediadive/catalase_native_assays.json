@@ -1,0 +1,138 @@
+{
+  "api_kits": [
+    {
+      "kit_name": "API coryne",
+      "source_well_index": 20,
+      "wells": [
+        {
+          "chebi_id": [],
+          "chebi_name": [],
+          "description": [
+            "Tests for Catalase activity"
+          ],
+          "ec_name": [],
+          "ec_number": [
+            "1.11.1.6"
+          ],
+          "enzyme_name": [
+            "Catalase"
+          ],
+          "go_names": [
+            "catalase activity"
+          ],
+          "go_terms": [
+            "GO:0004096"
+          ],
+          "inchi": [],
+          "kegg_ko": [
+            "K03781"
+          ],
+          "kegg_reaction": [],
+          "label": [
+            "Catalase"
+          ],
+          "metacyc_pathway": [],
+          "metacyc_reaction": [],
+          "name": "CAT",
+          "pubchem_cid": [],
+          "pubchem_name": [],
+          "rhea_ids": [],
+          "smiles": [],
+          "type": [
+            "enzyme"
+          ]
+        }
+      ]
+    },
+    {
+      "kit_name": "API CAM",
+      "source_well_index": 20,
+      "wells": [
+        {
+          "chebi_id": [],
+          "chebi_name": [],
+          "description": [
+            "Tests for Catalase activity"
+          ],
+          "ec_name": [],
+          "ec_number": [
+            "1.11.1.6"
+          ],
+          "enzyme_name": [
+            "Catalase"
+          ],
+          "go_names": [
+            "catalase activity"
+          ],
+          "go_terms": [
+            "GO:0004096"
+          ],
+          "inchi": [],
+          "kegg_ko": [
+            "K03781"
+          ],
+          "kegg_reaction": [],
+          "label": [
+            "Catalase"
+          ],
+          "metacyc_pathway": [],
+          "metacyc_reaction": [],
+          "name": "CAT",
+          "pubchem_cid": [],
+          "pubchem_name": [],
+          "rhea_ids": [],
+          "smiles": [],
+          "type": [
+            "enzyme"
+          ]
+        }
+      ]
+    },
+    {
+      "kit_name": "API 20A",
+      "source_well_index": 20,
+      "wells": [
+        {
+          "chebi_id": [],
+          "chebi_name": [],
+          "description": [
+            "Tests for Catalase activity"
+          ],
+          "ec_name": [],
+          "ec_number": [
+            "1.11.1.6"
+          ],
+          "enzyme_name": [
+            "Catalase"
+          ],
+          "go_names": [
+            "catalase activity"
+          ],
+          "go_terms": [
+            "GO:0004096"
+          ],
+          "inchi": [],
+          "kegg_ko": [
+            "K03781"
+          ],
+          "kegg_reaction": [],
+          "label": [
+            "Catalase"
+          ],
+          "metacyc_pathway": [],
+          "metacyc_reaction": [],
+          "name": "CAT",
+          "pubchem_cid": [],
+          "pubchem_name": [],
+          "rhea_ids": [],
+          "smiles": [],
+          "type": [
+            "enzyme"
+          ]
+        }
+      ]
+    }
+  ],
+  "source_path": "data/raw/assay_kits_simple.json",
+  "source_sha256": "bcbbae81696b41691da740f78ec292204f6551675ba01e8d95217a62699e7205"
+}

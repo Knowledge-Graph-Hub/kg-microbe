@@ -1,0 +1,1012 @@
+{
+  "authority": "UBERON",
+  "category_rationale": {
+    "biolink:Activity": "The one life-cycle class has asserted process ancestry and a whole-organism lifespan definition; no molecular-function execution claim",
+    "biolink:LifeStage": "Pinned Biolink 4.4.2 exact mapping of asserted ancestor UBERON:0000105",
+    "biolink:OntologyClass": "Three live native temporal-boundary classes lack a supported substantive category; retain explicitly unresolved rather than asserting anatomy or process"
+  },
+  "native_file": "uberon.json",
+  "native_sha256": "87a892da0544a82f41f0a8b2b52f7ee705ec6d5ca2c102e7d439a7086d79f428",
+  "records": {
+    "UBERON:0000066": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "fully formed stage",
+      "required_paths": [
+        [
+          "UBERON:0000066",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0000066",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0000068": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "embryo stage",
+      "required_paths": [
+        [
+          "UBERON:0000068",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0000068",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0000069": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "larval stage",
+      "required_paths": [
+        [
+          "UBERON:0000069",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0000069",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0000070": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "pupal stage",
+      "required_paths": [
+        [
+          "UBERON:0000070",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0000070",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0000071": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "death stage",
+      "required_paths": [
+        [
+          "UBERON:0000071",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0000071",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0000092": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "post-embryonic stage",
+      "required_paths": [
+        [
+          "UBERON:0000092",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0000092",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0000104": {
+      "category": "biolink:Activity",
+      "disposition": "asserted_process_generic_activity",
+      "native_label": "life cycle",
+      "required_paths": [
+        [
+          "UBERON:0000104",
+          "BFO:0000015",
+          "BFO:0000003"
+        ]
+      ]
+    },
+    "UBERON:0000105": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "life cycle stage",
+      "required_paths": [
+        [
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0000106": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "zygote stage",
+      "required_paths": [
+        [
+          "UBERON:0000106",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0000106",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0000107": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "cleavage stage",
+      "required_paths": [
+        [
+          "UBERON:0000107",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0000107",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0000108": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "blastula stage",
+      "required_paths": [
+        [
+          "UBERON:0000108",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0000108",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0000109": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "gastrula stage",
+      "required_paths": [
+        [
+          "UBERON:0000109",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0000109",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0000110": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "neurula stage",
+      "required_paths": [
+        [
+          "UBERON:0000110",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0000110",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0000111": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "organogenesis stage",
+      "required_paths": [
+        [
+          "UBERON:0000111",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0000111",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0000112": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "sexually immature stage",
+      "required_paths": [
+        [
+          "UBERON:0000112",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0000112",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0000113": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "post-juvenile adult stage",
+      "required_paths": [
+        [
+          "UBERON:0000113",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0000113",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0004707": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "pharyngula stage",
+      "required_paths": [
+        [
+          "UBERON:0004707",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0004707",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0004728": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "amphibian larval stage",
+      "required_paths": [
+        [
+          "UBERON:0004728",
+          "UBERON:0000069",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0004728",
+          "UBERON:0000069",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0004729": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "nematode larval stage",
+      "required_paths": [
+        [
+          "UBERON:0004729",
+          "UBERON:0000069",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0004729",
+          "UBERON:0000069",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0004730": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "instar larval stage",
+      "required_paths": [
+        [
+          "UBERON:0004730",
+          "UBERON:0000069",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0004730",
+          "UBERON:0000069",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0007220": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "late embryonic stage",
+      "required_paths": [
+        [
+          "UBERON:0007220",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0007220",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0007221": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "neonate stage",
+      "required_paths": [
+        [
+          "UBERON:0007221",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0007221",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0007222": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "late adult stage",
+      "required_paths": [
+        [
+          "UBERON:0007222",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0007222",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0007232": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "2 cell stage",
+      "required_paths": [
+        [
+          "UBERON:0007232",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0007232",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0007233": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "4 cell stage",
+      "required_paths": [
+        [
+          "UBERON:0007233",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0007233",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0007236": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "8 cell stage",
+      "required_paths": [
+        [
+          "UBERON:0007236",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0007236",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0008264": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "echinopluteus larval stage",
+      "required_paths": [
+        [
+          "UBERON:0008264",
+          "UBERON:0000069",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0008264",
+          "UBERON:0000069",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0009849": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "tadpole stage",
+      "required_paths": [
+        [
+          "UBERON:0009849",
+          "UBERON:0004728",
+          "UBERON:0000069",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0009849",
+          "UBERON:0004728",
+          "UBERON:0000069",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0012101": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "perinatal stage",
+      "required_paths": [
+        [
+          "UBERON:0012101",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0012101",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0014405": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "nymph stage",
+      "required_paths": [
+        [
+          "UBERON:0014405",
+          "UBERON:0000069",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0014405",
+          "UBERON:0000069",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0014406": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "nauplius stage",
+      "required_paths": [
+        [
+          "UBERON:0014406",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0014406",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0014856": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "cysticercus stage",
+      "required_paths": [
+        [
+          "UBERON:0014856",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0014856",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0014857": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "zoea stage",
+      "required_paths": [
+        [
+          "UBERON:0014857",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0014857",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0014858": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "crustacean post-larval stage",
+      "required_paths": [
+        [
+          "UBERON:0014858",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0014858",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0014859": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "megalopa stage",
+      "required_paths": [
+        [
+          "UBERON:0014859",
+          "UBERON:0014858",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0014859",
+          "UBERON:0014858",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0014860": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "copepodite stage",
+      "required_paths": [
+        [
+          "UBERON:0014860",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0014860",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0014861": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "glaucothoe stage",
+      "required_paths": [
+        [
+          "UBERON:0014861",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0014861",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0014862": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "trochophore stage",
+      "required_paths": [
+        [
+          "UBERON:0014862",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0014862",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0014863": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "veliger stage",
+      "required_paths": [
+        [
+          "UBERON:0014863",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0014863",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0014864": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "caterpillar stage",
+      "required_paths": [
+        [
+          "UBERON:0014864",
+          "UBERON:0000069",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0014864",
+          "UBERON:0000069",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0018241": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "prime adult stage",
+      "required_paths": [
+        [
+          "UBERON:0018241",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0018241",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0018378": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "crustacean larval stage",
+      "required_paths": [
+        [
+          "UBERON:0018378",
+          "UBERON:0000069",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0018378",
+          "UBERON:0000069",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0018685": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "nursing stage",
+      "required_paths": [
+        [
+          "UBERON:0018685",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0018685",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0034919": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "juvenile stage",
+      "required_paths": [
+        [
+          "UBERON:0034919",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0034919",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0034920": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "infant stage",
+      "required_paths": [
+        [
+          "UBERON:0034920",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:0034920",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:0035944": {
+      "category": "biolink:OntologyClass",
+      "disposition": "unresolved_temporal_boundary",
+      "native_label": "life-death temporal boundary",
+      "required_paths": [
+        [
+          "UBERON:0035944",
+          "BFO:0000003"
+        ]
+      ]
+    },
+    "UBERON:0035945": {
+      "category": "biolink:OntologyClass",
+      "disposition": "unresolved_temporal_boundary",
+      "native_label": "start of life cycle",
+      "required_paths": [
+        [
+          "UBERON:0035945",
+          "BFO:0000003"
+        ]
+      ]
+    },
+    "UBERON:0035946": {
+      "category": "biolink:OntologyClass",
+      "disposition": "unresolved_temporal_boundary",
+      "native_label": "start of neonate stage",
+      "required_paths": [
+        [
+          "UBERON:0035946",
+          "BFO:0000003"
+        ]
+      ]
+    },
+    "UBERON:8000000": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "first instar larva stage",
+      "required_paths": [
+        [
+          "UBERON:8000000",
+          "UBERON:0004730",
+          "UBERON:0000069",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:8000000",
+          "UBERON:0004730",
+          "UBERON:0000069",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:8000001": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "second instar larva stage",
+      "required_paths": [
+        [
+          "UBERON:8000001",
+          "UBERON:0004730",
+          "UBERON:0000069",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:8000001",
+          "UBERON:0004730",
+          "UBERON:0000069",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:8000002": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "third instar larva stage",
+      "required_paths": [
+        [
+          "UBERON:8000002",
+          "UBERON:0004730",
+          "UBERON:0000069",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:8000002",
+          "UBERON:0004730",
+          "UBERON:0000069",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:8000003": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "fourth instar larva stage",
+      "required_paths": [
+        [
+          "UBERON:8000003",
+          "UBERON:0004730",
+          "UBERON:0000069",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:8000003",
+          "UBERON:0004730",
+          "UBERON:0000069",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:8200002": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "copepodite stage 1",
+      "required_paths": [
+        [
+          "UBERON:8200002",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:8200002",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:8200003": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "copepodite stage 2",
+      "required_paths": [
+        [
+          "UBERON:8200003",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:8200003",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:8200004": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "copepodite stage 3",
+      "required_paths": [
+        [
+          "UBERON:8200004",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:8200004",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:8200005": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "copepodite stage 4",
+      "required_paths": [
+        [
+          "UBERON:8200005",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:8200005",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:8200006": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "copepodite stage 5",
+      "required_paths": [
+        [
+          "UBERON:8200006",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:8200006",
+          "UBERON:0000105"
+        ]
+      ]
+    },
+    "UBERON:8200007": {
+      "category": "biolink:LifeStage",
+      "disposition": "asserted_life_stage",
+      "native_label": "copepodite stage 6",
+      "required_paths": [
+        [
+          "UBERON:8200007",
+          "UBERON:0000105",
+          "BFO:0000015",
+          "BFO:0000003"
+        ],
+        [
+          "UBERON:8200007",
+          "UBERON:0000105"
+        ]
+      ]
+    }
+  },
+  "review_inventory_sha256": "c9846f04f32d00b392c6c841681815a08fbd8c89ca03b47dfce9b364609babdb",
+  "scope": "39 historical temporal endpoints plus 19 additional life-stage classes independently inventoried in the same pinned native release; no native predicate changes or strict-model waivers",
+  "version": 1
+}

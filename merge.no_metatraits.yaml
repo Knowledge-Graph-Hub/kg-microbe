@@ -113,22 +113,22 @@ merged_graph:
         - data/transformed/rhea_mappings/nodes.tsv
         - data/transformed/rhea_mappings/edges.tsv
     upa:
+      name: upa
       input:
-        name: upa
         format: tsv
         filename:
         - data/transformed/ontologies/upa_nodes.tsv
         - data/transformed/ontologies/upa_edges.tsv
     madin_etal:
+      name: madin_etal
       input:
-        name: madin_etal
         format: tsv
         filename:
         - data/transformed/madin_etal/nodes.tsv
         - data/transformed/madin_etal/edges.tsv
     bactotraits:
+      name: bactotraits
       input:
-        name: bactotraits
         format: tsv
         filename:
         - data/transformed/bactotraits/nodes.tsv

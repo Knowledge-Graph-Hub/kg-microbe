@@ -200,7 +200,7 @@ def _ontology_decisions(raw_dir, prefix, targets, decisions, authorities):
                 break
 
 
-def _local_declarations(raw_dir, targets, decisions, authorities):
+def _local_declarations(raw_dir, targets, decisions, authorities, gold_declarations=None):
     """Recover exact locally present MICRO/GOLD declarations, not a prefix-wide stub policy."""
     # This is the reviewed BacDive assay root, not a MICRO prefix-wide typing
     # rule: MICRO also contains chemicals, qualities and other nonprocedures.
@@ -244,38 +244,26 @@ def _local_declarations(raw_dir, targets, decisions, authorities):
                 "authority": path.name,
             }
     gold = {curie for curie in targets if curie.startswith("gold:")}
-    path = raw_dir / "gold" / "GOLD_nodes.tsv"
-    if gold and path.is_file():
-        authorities["gold/GOLD_nodes.tsv"] = _digest(path)
-        # Restore only a named organism whose exact taxon is demonstrably
-        # bacterial/archaeal. Other GOLD trims (samples, studies, eukaryotes)
-        # remain in force.
-        candidates = {
-            row[ID_COLUMN]: row
-            for row in _rows(path)
-            if row[ID_COLUMN] in gold
-            and row.get(NAME_COLUMN)
-            and row.get(CATEGORY_COLUMN) == "biolink:IndividualOrganism"
-        }
-        taxids = {
-            row.get("xref", "").removeprefix("NCBITaxon:")
-            for row in candidates.values()
-            if row.get("xref", "").startswith("NCBITaxon:")
-        }
-        taxdump = raw_dir / "taxdump.tar.gz"
-        records = _taxdump_records(taxdump, taxids) if taxids and taxdump.is_file() else {}
-        if records:
-            authorities[taxdump.name] = _digest(taxdump)
-        for curie, row in candidates.items():
-            taxid = row.get("xref", "").removeprefix("NCBITaxon:")
-            if records.get(taxid, {}).get("prokaryote"):
-                decisions[curie] = {
-                    "canonical_id": curie,
-                    "name": row[NAME_COLUMN],
-                    "category": NCBI_CATEGORY,
-                    "disposition": "authority_declaration",
-                    "authority": "gold/GOLD_nodes.tsv",
-                }
+    # Raw IndividualOrganism + a prokaryotic xref does not prove strain or
+    # taxon identity. Only the selected GOLD producer's independently admitted
+    # cohort can supply its exact unresolved declaration (#1316).
+    if gold and gold_declarations is not None:
+        gold_declarations.verify(metadata_only=True)
+        for curie in sorted(gold):
+            proof = gold_declarations.declaration_for(curie)
+            if proof is None:
+                continue
+            native = gold_declarations.native_node_input()
+            authorities[native["path"]] = native["sha256"]
+            declaration = proof.declaration
+            decisions[curie] = {
+                "canonical_id": curie,
+                "name": declaration[NAME_COLUMN],
+                "category": declaration[CATEGORY_COLUMN],
+                "disposition": "admitted_unresolved_native_gold_declaration",
+                "authority": native["path"],
+                "native_declaration": declaration,
+            }
 
 
 def resolve_external_references(nodes_path, edges_path, raw_dir, report_path):
@@ -303,6 +291,7 @@ def resolve_external_reference_bundle(
     quoting=csv.QUOTE_MINIMAL,
     known_declarations=frozenset(),
     consumed_authorities=None,
+    gold_declarations=None,
 ):
     """
     Resolve one staged source bundle, preserving file membership and every original assertion.
@@ -384,13 +373,12 @@ def resolve_external_reference_bundle(
             required_local.append(raw_dir / "micro.owl")
         if "OBI:0000079" in targets:
             required_local.append(raw_dir / "metpo.owl")
-        if any(identifier.startswith("gold:") for identifier in targets):
-            required_local.append(raw_dir / "gold" / "GOLD_nodes.tsv")
-            required_local.append(raw_dir / "taxdump.tar.gz")
+        if any(identifier.startswith("gold:") for identifier in targets) and gold_declarations is None:
+            raise ValueError("GOLD reference closure requires selected finalized native declarations")
         for path in required_local:
             if not path.is_file():
                 raise FileNotFoundError(f"Required local reference authority is missing: {path}")
-    _local_declarations(raw_dir, targets, decisions, authorities)
+    _local_declarations(raw_dir, targets, decisions, authorities, gold_declarations)
     if consumed_authorities is not None:
         consumed_authorities.update(raw_dir / name for name in authorities)
     for identifier in targets - decisions.keys():
@@ -412,6 +400,10 @@ def resolve_external_reference_bundle(
     # The disposition report retains every donor's exact original fields.
     enrichment = {}
     for original, decision in decisions.items():
+        if "native_declaration" in decision:
+            # Do not invent a label/description for the actual nameless native
+            # referent. Its complete declaration is copied verbatim below.
+            continue
         if not decision.get("name") or not decision["canonical_id"]:
             continue
         details = enrichment.setdefault(decision["canonical_id"], {"providers": set(), "descriptions": set()})
@@ -438,6 +430,11 @@ def resolve_external_reference_bundle(
                 canonical = decision["canonical_id"]
                 if not canonical:
                     return None
+                if "native_declaration" in decision:
+                    if canonical in existing and not row.get(NAME_COLUMN):
+                        return None
+                    existing.add(canonical)
+                    return {column: decision["native_declaration"].get(column, "") for column in node_header}
                 if canonical in existing:
                     # A donor and a named declaration can share one ID across
                     # source files. Only discard the anonymous donor, never
@@ -488,7 +485,7 @@ def resolve_external_reference_bundle(
         # the first supplied node file, which is already a configured input.
         node_writer, node_header = node_writers[0]
         for identifier in sorted(targets - declared):
-            if not decisions[identifier].get("name"):
+            if not decisions[identifier].get("name") and "native_declaration" not in decisions[identifier]:
                 continue
             row = {column: "" for column in node_header}
             row[ID_COLUMN] = identifier

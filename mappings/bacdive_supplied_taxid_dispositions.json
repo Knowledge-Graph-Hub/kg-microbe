@@ -1,0 +1,1474 @@
+{
+  "version": 1,
+  "disposition": "withhold_ambiguous_supplied_parent_preserve_all_claims",
+  "scope": "97 reviewed records, 89 species and 8 strain priority. Ambiguity is not proof of biological error; BacDive 12996's stronger type-evidence case remains separate. Unrelated deposits retain independently supported contributors.",
+  "evidence_sha256": "b2bd43defa96a62b96db94db21a2054ac6657c6be44007bec66b6c493542cc3b",
+  "records": [
+    {
+      "record_id": "4427",
+      "priority": "strain",
+      "original_priority_ids": [
+        "NCBITaxon:1322345",
+        "NCBITaxon:1236527"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1322345",
+        "NCBITaxon:1236527"
+      ],
+      "native_record_sha256": "f6f9c85bbef56635eccb619e1e7ea92061bd0af496eacf3ebc951622b8c35568"
+    },
+    {
+      "record_id": "7819",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:2721544",
+        "NCBITaxon:136271"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:2721544",
+        "NCBITaxon:136271"
+      ],
+      "native_record_sha256": "e9f0aa2a7afa3bc92f1f3149f52c50b6123318e339a901289e69fcdcfd7c5e26"
+    },
+    {
+      "record_id": "8148",
+      "priority": "strain",
+      "original_priority_ids": [
+        "NCBITaxon:1217660",
+        "NCBITaxon:1341679"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1217660",
+        "NCBITaxon:1341679"
+      ],
+      "native_record_sha256": "215391f081f49bf15852ef89f44ac976689ccec893ccd1450235afda1c6bf6d2"
+    },
+    {
+      "record_id": "8140",
+      "priority": "strain",
+      "original_priority_ids": [
+        "NCBITaxon:1341683",
+        "NCBITaxon:1217652"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1341683",
+        "NCBITaxon:1217652"
+      ],
+      "native_record_sha256": "1d02b3898b6ee8bdb2a923a551e6e33a350fbb7d82e7dcde6986e36b7693767f"
+    },
+    {
+      "record_id": "12800",
+      "priority": "strain",
+      "original_priority_ids": [
+        "NCBITaxon:1123015",
+        "NCBITaxon:1236528"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1123015",
+        "NCBITaxon:1236528"
+      ],
+      "native_record_sha256": "6f18de0a5c91d9159b6b37781c7ab3670a62f4360347b55501d914983627e1b4"
+    },
+    {
+      "record_id": "13000",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "dfc2a02a5fc38fbe4fee76b12e373dec9c7f5e5e315d70edbbbb2e59b3261ada"
+    },
+    {
+      "record_id": "12999",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "881c9bd5bae08297535d1a29bfb8a43d29deffa09e268cd396a732e497e5cffe"
+    },
+    {
+      "record_id": "12995",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "4de762dc13acdb08a8ae13e6649f8ab3d02a5638e75f0bd9daa02124f9d579bb"
+    },
+    {
+      "record_id": "12996",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "63a8b5657dbe9965247186acbaf0f46ba7a6245a296568b701f567049f5e5eb2"
+    },
+    {
+      "record_id": "13015",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "aa4bfdc227ba937e5ae3334347fc6052cf54f2ed6198c5c76e542ca028f461d5"
+    },
+    {
+      "record_id": "13012",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "3d54de32f1ba75bb1cdb2956c5c229fef6c158fe8193d2e420558f7ee3d9035f"
+    },
+    {
+      "record_id": "13013",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "native_record_sha256": "6c8563a1c793f4918ff51ec45e2006e305494b1e8614ccbde369d08e193d51c0"
+    },
+    {
+      "record_id": "13009",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "3c91b79697319813b721f4a3d4a5e6c891e2d903820e10d9e2ffedf851e8dd0a"
+    },
+    {
+      "record_id": "13007",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "0b882de166ddbb8d66b9d9e50319240491f227649ee3728700426d23e6029e67"
+    },
+    {
+      "record_id": "13011",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "7e1408ce274e6a328163ab6a95a7e40f9c3c8cbae44186fc971d5ed2ebd7da30"
+    },
+    {
+      "record_id": "13008",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "d1d33a3fbe5fb9ad6aadeb946b2980ece984e32d825da0cc308866706b2ef913"
+    },
+    {
+      "record_id": "13006",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "71a6f03db130009259843a47791012a7945729a2611140e691dbb072eb0af2f3"
+    },
+    {
+      "record_id": "13010",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "a524637ec33ec5078a38268af7ac7323900734b83bad000711ab93f9755f6eed"
+    },
+    {
+      "record_id": "13005",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "a50cab32bdec029c1a00aeb6c84959da4e0ece1e71d76e4efcef7de9f020b686"
+    },
+    {
+      "record_id": "13002",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "a5a5990e726a999e22406dd364c8af5938e69b2e709f8d9cb43141218f82e144"
+    },
+    {
+      "record_id": "13004",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "157c28b0d0eed30c41d76bf4b193b39fc27b7a9038d5401d00ce9c0557ce54e3"
+    },
+    {
+      "record_id": "13001",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "086e173a42bda1152e8657ab5c055b32fe8c36f26f396ea94896674997104521"
+    },
+    {
+      "record_id": "14736",
+      "priority": "strain",
+      "original_priority_ids": [
+        "NCBITaxon:1123310",
+        "NCBITaxon:1257041"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1123310",
+        "NCBITaxon:1257041"
+      ],
+      "native_record_sha256": "c3ce616859b6049f008b9fa72f561768e9fb9871a269b3db5512f42d95266f52"
+    },
+    {
+      "record_id": "14892",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1902",
+        "NCBITaxon:1886"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1902",
+        "NCBITaxon:1886"
+      ],
+      "native_record_sha256": "133f96a65621ee5a4be0b706c0f783f38a4e5a8d7052a2a99421d7e303ed830b"
+    },
+    {
+      "record_id": "14891",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1947",
+        "NCBITaxon:1886"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1947",
+        "NCBITaxon:1886"
+      ],
+      "native_record_sha256": "74b8a0cac981ae46b085b943398755e2b471ec342d98a35aa0ad832fcf932a5d"
+    },
+    {
+      "record_id": "14903",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:42239",
+        "NCBITaxon:1886"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:42239",
+        "NCBITaxon:1886"
+      ],
+      "native_record_sha256": "686334a0268ba62721d1d4426a9509f1bb82aae18432d00f3676c55f184f253e"
+    },
+    {
+      "record_id": "15714",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:74599",
+        "NCBITaxon:243710"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:74599",
+        "NCBITaxon:243710"
+      ],
+      "native_record_sha256": "2437fef9ff44862dc0742183a9028dd5acdded65f9adceaaf908f27738c15639"
+    },
+    {
+      "record_id": "16140",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:3075519",
+        "NCBITaxon:68252"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:3075519",
+        "NCBITaxon:68252"
+      ],
+      "native_record_sha256": "314584192b323664b26a83ee206aaf953f75cd498cfa9e17bda11c631a371181"
+    },
+    {
+      "record_id": "131009",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "a3684c757cc74c1f9dd1471818e6c9aaf0cb6c93286f8865fa5e1b2905fe58a7"
+    },
+    {
+      "record_id": "131008",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "4633b916da6fdfc04039787706c1a42bc88dfc50debd3e076b27bb74230613fd"
+    },
+    {
+      "record_id": "131912",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "native_record_sha256": "e60d3348029abb670bf12f0cfbbd4cc5efa7db301f28d60ac66f02da9dc6d629"
+    },
+    {
+      "record_id": "134197",
+      "priority": "strain",
+      "original_priority_ids": [
+        "NCBITaxon:1236540",
+        "NCBITaxon:1408473"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1236540",
+        "NCBITaxon:1408473"
+      ],
+      "native_record_sha256": "f2383490763cece8181ee4ffe37c75a22f82174dd795d05a5273090ec2711270"
+    },
+    {
+      "record_id": "134669",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "2dbfe516c06ef8235c4bf6545930499ec8cab554a48f53ad0abad427b3b6aa98"
+    },
+    {
+      "record_id": "134668",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "edb72dbf339e3154731ba9117dc0cdfaf8d63616160c153766e96a8da3ddfe16"
+    },
+    {
+      "record_id": "135450",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "native_record_sha256": "43ac1a22ef03d746810cc4fd2037c25360479e5c300185582720013f12b1e266"
+    },
+    {
+      "record_id": "135520",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "cd4bcfd27047c392e7f3bc36f2a3f80a61b2f46bfcd3f17441ea096d30d03380"
+    },
+    {
+      "record_id": "135757",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "99833caffa6dc3e362ef80f07546f0421931be68d8cdd88cba1e70a57453db33"
+    },
+    {
+      "record_id": "136684",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "bc806b97a294b2c2545565bc558b595f7d6ac01e82339b6d2e774523b88277a0"
+    },
+    {
+      "record_id": "136685",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "f2fa5f8134e81b041332f13fe119446c8c0e374bce8c75383465ab3daebbb7bc"
+    },
+    {
+      "record_id": "136683",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "652abb519b229bd65548e180226d90dafa9cee6b353edc0256f57cdcf191392b"
+    },
+    {
+      "record_id": "136831",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "01f9cb1e1bcdf5bc62ea296484b2ed928c2bcd7e522462b673194171dab39137"
+    },
+    {
+      "record_id": "137121",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "61f7db18d2788bafe1c71881b5de705cd251504c4f207e8806582355e78f8f4a"
+    },
+    {
+      "record_id": "137565",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "f59d94c35930856319fe46686467a9f4d5576d85a63b527dadec3599dc9924a3"
+    },
+    {
+      "record_id": "137506",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "92cba67fb013d030cb016cb799dbf961b1f659e9782d83350b987f317bbf86eb"
+    },
+    {
+      "record_id": "137505",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "ec01c8b4fc0440a067d70df65a125c8955376818b6658604835c86818e76140d"
+    },
+    {
+      "record_id": "137501",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "b27b0c844baa0c4cf8d516e05659409e641bb94740359cd38011c129a5a46de2"
+    },
+    {
+      "record_id": "137503",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "ed4975c6bdf778fe33065daea6499cad48fb7bcc09e6cc93b9ec2937c20c1e07"
+    },
+    {
+      "record_id": "137507",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "45725f20aef1f8de4dd77be2d8414b99bec0e29ffffbcebd6b23e483c2e60c82"
+    },
+    {
+      "record_id": "137746",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "e82b7856245e80f7b5d7682103cbfa7633133f0ad7cdfa24344e8472e37aad67"
+    },
+    {
+      "record_id": "137859",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "3890516b59956810c4c1e39a6d9ce1d8d3f9ce87fd5c43b53f7d6d058a1bf4ea"
+    },
+    {
+      "record_id": "137837",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "cb1bd2504b1b92026360558e0c7b2ee7bdce3dc4593dc6e383664bc1a73adde0"
+    },
+    {
+      "record_id": "138190",
+      "priority": "strain",
+      "original_priority_ids": [
+        "NCBITaxon:1227468",
+        "NCBITaxon:1227467"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1227468",
+        "NCBITaxon:1227467"
+      ],
+      "native_record_sha256": "9759e32e0c4623a03b5dabded1f0df8732ce6767042ee22c16e516f320b67706"
+    },
+    {
+      "record_id": "138526",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "4f8ff43f9131f26bfde4ee03c4bd3474e712c1d3c8124c0a7e5224fa8d7921b1"
+    },
+    {
+      "record_id": "140189",
+      "priority": "strain",
+      "original_priority_ids": [
+        "NCBITaxon:241427",
+        "NCBITaxon:1173022"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:241427",
+        "NCBITaxon:1173022"
+      ],
+      "native_record_sha256": "e46dcf436d408f7237a6cc1db0f4ba328d62857a8b307c82151af237823b6530"
+    },
+    {
+      "record_id": "141218",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "native_record_sha256": "511694f2666a6d6de1f6da11d228b2539b9f4bb94241c0de73876551ca794c35"
+    },
+    {
+      "record_id": "142030",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "8afa083508289bcfd123064b5f7af4f43cdf6c4df10517705db338d224c27487"
+    },
+    {
+      "record_id": "142673",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "3edcca247c57237784574026302e315885303e7be8a0a30d6462d5f2f74cd6e0"
+    },
+    {
+      "record_id": "142868",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "native_record_sha256": "3e6b57837bf0f11ed74cde39710ec784a5b5f958fefa7650c4e5bc5baa149b6b"
+    },
+    {
+      "record_id": "142916",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "f0ee2ae2c91848f8faec619dc9d0aabd0338b7589c77e4e35bfa987afa7a6180"
+    },
+    {
+      "record_id": "143245",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "native_record_sha256": "99a631f8a09a3c717d9750b3f05272b021ae432b2bc90bf898c4ea6d4ff5d02d"
+    },
+    {
+      "record_id": "143244",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "native_record_sha256": "245e9dcd5a52885980856e322b61a3fac7647ae4fd9a8fcf5165f1efcc1b25bf"
+    },
+    {
+      "record_id": "143203",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "native_record_sha256": "939cca194a6105dc6c7acf9ded4de78a527ca5f42c66c2de280d94b9d5e19e73"
+    },
+    {
+      "record_id": "143325",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "native_record_sha256": "3e1580f797b15f8134e989d36cc4187250592f3f876e2ce5b75704db9cb7faed"
+    },
+    {
+      "record_id": "145467",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "e62775c9a1dca26e7ca859f270767a5224ff15de9c864f67821cb4eae0082f96"
+    },
+    {
+      "record_id": "145682",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "5bf8c77b0876099261f13bd56d458b540234256e2a48b7eae7812371323c4407"
+    },
+    {
+      "record_id": "145681",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "5621a7c6ddac54d23cc1c5cc4abe25d7b742ebc1869a71f68dc475dbe08c7ae8"
+    },
+    {
+      "record_id": "145786",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "f403b4bbb73b92b007babbb91d8f29f3baae743e11ee480083b5cb0bf97110f5"
+    },
+    {
+      "record_id": "146072",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "17a06534983033c531ba90de6b9b39524b0355ff4ed16de74f556a64f08623a3"
+    },
+    {
+      "record_id": "146372",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "d41a04be68f8dd8eb7ba2586b36a8ef249f07f3dc3729d60591b6b96da38d9af"
+    },
+    {
+      "record_id": "146527",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "native_record_sha256": "8c061ed6b7792e7e87cd7e1ccaa8edf9dc60c663b0417f88934a6e8254bfaacc"
+    },
+    {
+      "record_id": "146716",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "e4ba415448b7606005754006a2e41dd66eb73985f667e276ef097bca436b5b5f"
+    },
+    {
+      "record_id": "147971",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "f0a1f11c7869ad02e308ffeb314864f3e07f1692ea50aaf930c20a2913f2db23"
+    },
+    {
+      "record_id": "148128",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "cae96cb0090161ed1591b420f5f12c2b30415c51af72029da29ae5a5a7a952d7"
+    },
+    {
+      "record_id": "148964",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "dcd6d217da5695003634e55fa664c0406c32706ac3710b97ab38e0bcdb56deca"
+    },
+    {
+      "record_id": "149158",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "native_record_sha256": "31fce827a91cdd63bbfc03c0bb639b6c4633865073d8669b57cd6fc31c5a86dc"
+    },
+    {
+      "record_id": "149838",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "48ec80748cf4ee506325de576816a2aaea60e1bcb0f2ba4d5b9ecf65415b8de6"
+    },
+    {
+      "record_id": "149984",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "22aa0c498827e6b912e6dbcdbeab8ecf988922c19d0353d4e8708d1ef50ec504"
+    },
+    {
+      "record_id": "150201",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "f31e6bfa11335d0d53b5a399b5ae5cb233400b50786edc59b43d559065f1d2d7"
+    },
+    {
+      "record_id": "151768",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "native_record_sha256": "204a5c3cf874082f920416c5786914d540164f89fde26eca42bec1442f32c179"
+    },
+    {
+      "record_id": "151807",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "native_record_sha256": "825be67d9dd2dddd2da78c929c8e6161602b410d6840d2fd57a5f8de2c14bb72"
+    },
+    {
+      "record_id": "153486",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "e147dc8f000022d04edb490e6917731c3db306298669de2051bc60102387727c"
+    },
+    {
+      "record_id": "154508",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "c8cf539ceca24b51e61d8fbc51320d9a4a0010fa9f0d67b8e136032a320107c6"
+    },
+    {
+      "record_id": "154944",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "93ffe243d673962f300ce40bfd6d47978962871d04b9706b74db5004adf2ff26"
+    },
+    {
+      "record_id": "155594",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "native_record_sha256": "5ffefc5f6889294157c5a49359a56bfe62fe165d3537519628cd5d0c566c78d1"
+    },
+    {
+      "record_id": "157445",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "fe0bd98557f66ee573d94a1cfea9444fdbee5b5bec5844dfcab39c8f4be2eeee"
+    },
+    {
+      "record_id": "157444",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "672e3a379d5e6a9b86f07e363a19f1c50d4c3b82b02171bd0269da51f8b25cf3"
+    },
+    {
+      "record_id": "160861",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "73990aac26ff060a412a0f7f91711208a4b54206c876dd5d4ded134da28aebcb"
+    },
+    {
+      "record_id": "160859",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "348c6e4dda259c5729d27955b8128d9e7d3c78824b8b7a6da676058cb08e97c7"
+    },
+    {
+      "record_id": "161188",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1678136",
+        "NCBITaxon:418211"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1678136",
+        "NCBITaxon:418211"
+      ],
+      "native_record_sha256": "0bad0bde43eb45e7b5fa27f44e07f5a18c3cc513f5cbcf75669a644ae52e481b"
+    },
+    {
+      "record_id": "161818",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "e6a55540a2d851ddd9786babce1d1380478d841609e4d7d76563253b365ef500"
+    },
+    {
+      "record_id": "161987",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:930404",
+        "NCBITaxon:1114169"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:930404",
+        "NCBITaxon:1114169"
+      ],
+      "native_record_sha256": "c4b4c1b2db5c80c90c43589242ea52e3e3d6b2e1220f1f4efb676cbe0c336b84"
+    },
+    {
+      "record_id": "162916",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "0d7457cb5be47a67aca20f1c22a2184120953382b9105641081059c4dd43221e"
+    },
+    {
+      "record_id": "163126",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "native_record_sha256": "78b12af391fe0c1d936d2d3840849253ae8db0296c45050e06e1562d9bd77874"
+    },
+    {
+      "record_id": "163819",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:316",
+        "NCBITaxon:203192",
+        "NCBITaxon:1211807"
+      ],
+      "native_record_sha256": "925a155253550594d71b94e67329b667e7efc071dbaeb2d851fd12672a7dd16c"
+    },
+    {
+      "record_id": "165500",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:516463",
+        "NCBITaxon:59370"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:516463",
+        "NCBITaxon:59370"
+      ],
+      "native_record_sha256": "293a57d258274e623254278299dc21f95fc366587e35fedc14dc1547de4a34be"
+    },
+    {
+      "record_id": "166059",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "31777acb6d5f5373d6a17a9321385e4c00f3ea2060d52e147020d1b2f434be35"
+    },
+    {
+      "record_id": "174176",
+      "priority": "species",
+      "original_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "normalized_priority_ids": [
+        "NCBITaxon:1211807",
+        "NCBITaxon:316",
+        "NCBITaxon:203192"
+      ],
+      "native_record_sha256": "f79110936c650a9a6eab6a8cc72e57f846e250e52073fddeae1368864ca85fb3"
+    }
+  ],
+  "normalizations": {
+    "NCBITaxon:1114169": "NCBITaxon:1114169",
+    "NCBITaxon:1123015": "NCBITaxon:1123015",
+    "NCBITaxon:1123310": "NCBITaxon:1123310",
+    "NCBITaxon:1173022": "NCBITaxon:1173022",
+    "NCBITaxon:1211807": "NCBITaxon:1211807",
+    "NCBITaxon:1217652": "NCBITaxon:1217652",
+    "NCBITaxon:1217660": "NCBITaxon:1217660",
+    "NCBITaxon:1227467": "NCBITaxon:1227467",
+    "NCBITaxon:1227468": "NCBITaxon:1227468",
+    "NCBITaxon:1236527": "NCBITaxon:1236527",
+    "NCBITaxon:1236528": "NCBITaxon:1236528",
+    "NCBITaxon:1236540": "NCBITaxon:1236540",
+    "NCBITaxon:1257041": "NCBITaxon:1257041",
+    "NCBITaxon:1309": "NCBITaxon:1309",
+    "NCBITaxon:1322345": "NCBITaxon:1322345",
+    "NCBITaxon:1341679": "NCBITaxon:1341679",
+    "NCBITaxon:1341683": "NCBITaxon:1341683",
+    "NCBITaxon:136271": "NCBITaxon:136271",
+    "NCBITaxon:1408473": "NCBITaxon:1408473",
+    "NCBITaxon:1678136": "NCBITaxon:1678136",
+    "NCBITaxon:1886": "NCBITaxon:1886",
+    "NCBITaxon:1902": "NCBITaxon:1902",
+    "NCBITaxon:1947": "NCBITaxon:1947",
+    "NCBITaxon:203192": "NCBITaxon:203192",
+    "NCBITaxon:241425": "NCBITaxon:241425",
+    "NCBITaxon:241427": "NCBITaxon:241427",
+    "NCBITaxon:243710": "NCBITaxon:243710",
+    "NCBITaxon:2721544": "NCBITaxon:2721544",
+    "NCBITaxon:287": "NCBITaxon:287",
+    "NCBITaxon:29283": "NCBITaxon:29283",
+    "NCBITaxon:3075519": "NCBITaxon:3075519",
+    "NCBITaxon:314319": "NCBITaxon:314319",
+    "NCBITaxon:316": "NCBITaxon:316",
+    "NCBITaxon:396323": "NCBITaxon:396323",
+    "NCBITaxon:418211": "NCBITaxon:418211",
+    "NCBITaxon:42239": "NCBITaxon:42239",
+    "NCBITaxon:516463": "NCBITaxon:516463",
+    "NCBITaxon:562": "NCBITaxon:562",
+    "NCBITaxon:59370": "NCBITaxon:59370",
+    "NCBITaxon:68252": "NCBITaxon:68252",
+    "NCBITaxon:74599": "NCBITaxon:74599",
+    "NCBITaxon:756892": "NCBITaxon:756892",
+    "NCBITaxon:930404": "NCBITaxon:930404"
+  }
+}

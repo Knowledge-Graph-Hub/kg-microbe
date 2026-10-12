@@ -22,6 +22,9 @@ def _bare_transform(tmp_path: Path) -> MediaDiveTransform:
     xform._http = None
     xform.bulk_data_dir = tmp_path / "raw" / "mediadive"
     xform.using_bulk_data = False
+    # The real constructor initializes this even before loading bulk data.
+    # Explicit HTTP helpers must preserve absent child-recipe references too.
+    xform.solutions_data = {}
     xform.api_calls_made = xform.api_calls_avoided = 0
     xform.translation_table = str.maketrans(mod.TRANSLATION_TABLE_FOR_LABELS)
     xform.chemical_loader = SimpleNamespace(find_chebi_by_name=lambda name: None)
@@ -71,6 +74,7 @@ def test_constructing_the_transform_leaves_requests_session_alone(tmp_path, monk
     with requests.Session() as session:
         assert type(session) is before and not hasattr(session, "cache")
     assert xform._http is None
+    assert xform.solutions_data == {}
 
 
 def test_session_is_owned_uncached_and_never_adopts_old_sqlite(tmp_path, legacy_files):

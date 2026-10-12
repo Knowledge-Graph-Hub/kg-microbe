@@ -25,7 +25,7 @@ class CurationFileTest(TestCase):
         that the reasoning survives; an empty reason defeats that.
         """
         for row in _rows():
-            self.assertIn(row["decision"], {"SITE", "REJECTED"}, row)
+            self.assertIn(row["decision"], {"SITE", "REJECTED", "QUARANTINE_EXACT"}, row)
             self.assertTrue(row["reason"].strip(), f"no reason given for {row['mesh_id']}")
 
     def test_the_taxon_groups_and_the_chemical_class_are_rejected(self):
@@ -50,7 +50,7 @@ class CurationFileTest(TestCase):
         sites = {r["mesh_id"] for r in _rows() if r["decision"] == "SITE"}
         self.assertEqual(
             sites,
-            {"mesh:D000076624", "mesh:D062611", "mesh:D000038", "mesh:D004531", "mesh:D012623"},
+            {"mesh:D000076624", "mesh:D062611", "mesh:D004531", "mesh:D012623"},
         )
 
     def test_no_mesh_id_is_decided_twice(self):
@@ -71,7 +71,8 @@ class TransformGateTest(TestCase):
             output_dir=REPO_ROOT / "data" / "transformed",
         )
         allowed = transform._mesh_site_terms()
-        self.assertIn("mesh:D000038", allowed)
+        self.assertNotIn("mesh:D000038", allowed)
+        self.assertIn("mesh:D000076624", allowed)
         self.assertNotIn("mesh:D007448", allowed)
 
     def test_an_absent_curation_file_bridges_no_mesh(self):
@@ -115,11 +116,19 @@ class DeclaredInputTest(TestCase):
 
     def test_the_declaration_is_derived_from_the_filename_constant(self):
         """Two hand-kept copies of one path drift; the constant is the single source."""
+        import ast
         import inspect
 
         from kg_microbe.transform_utils.gold.gold import GOLDTransform
 
-        declaration = inspect.getsource(GOLDTransform).split("DATA_INPUTS = ")[1].split("\n")[0]
+        tree = ast.parse(inspect.getsource(GOLDTransform))
+        assignment = next(
+            item
+            for item in tree.body[0].body
+            if isinstance(item, ast.Assign)
+            and any(isinstance(target, ast.Name) and target.id == "DATA_INPUTS" for target in item.targets)
+        )
+        declaration = ast.unparse(assignment.value)
         self.assertIn("_MESH_SITE_FILE", declaration)
 
     def test_every_declared_input_exists_and_is_tracked(self):

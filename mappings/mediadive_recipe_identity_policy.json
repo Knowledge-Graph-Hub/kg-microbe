@@ -1,0 +1,156 @@
+{
+  "compound_dispositions": {
+    "471": {
+      "historically_selected_target": "NCIT:C29298",
+      "issue": 1317,
+      "native_compound_id": "471",
+      "native_compound_record": {
+        "amount": 10,
+        "compound": "Oatmeal",
+        "compound_id": 471,
+        "g_l": 10,
+        "optional": 0,
+        "recipe_order": 2,
+        "unit": "g"
+      },
+      "native_compound_record_sha256": "78db7128265e66413b2bcfae925ad088e160edbab4bd37b282c3aeba13941402",
+      "occurrences": [
+        {
+          "native_occurrence": {
+            "amount": 10,
+            "compound": "Oatmeal",
+            "compound_id": 471,
+            "g_l": 10,
+            "optional": 0,
+            "recipe_order": 2,
+            "unit": "g"
+          },
+          "native_occurrence_sha256": "78db7128265e66413b2bcfae925ad088e160edbab4bd37b282c3aeba13941402",
+          "native_parent_record_sha256": "bf0c3ec1596c21915eb6868272de632e3bdb2ab4f3a8645ef158941fd9e866df",
+          "native_position": 2,
+          "solution_id": "855",
+          "source_assertion_id": "mediadive.solution:855#recipe/2"
+        },
+        {
+          "native_occurrence": {
+            "amount": 20,
+            "attribute": "Quaker White Oats",
+            "compound": "Oatmeal",
+            "compound_id": 471,
+            "g_l": 20,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          "native_occurrence_sha256": "9c73dcbe83925a8c5a7f4f8e45fd19bfef9f37ec70c81cf89bdedb6c8faa5d8a",
+          "native_parent_record_sha256": "dfb581e88120f70f6c944174f831b9e2343aaf0c6ece971391f65d30d5928560",
+          "native_position": 1,
+          "solution_id": "1308",
+          "source_assertion_id": "mediadive.solution:1308#recipe/1"
+        },
+        {
+          "native_occurrence": {
+            "amount": 20,
+            "attribute": "Quaker White Oats",
+            "compound": "Oatmeal",
+            "compound_id": 471,
+            "g_l": 19.98,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          "native_occurrence_sha256": "bad72c0885dbf893a6022f92c54823e407ac0d81beb6cdac608e34def0ca9e83",
+          "native_parent_record_sha256": "ecee187d2596e1f93ee39e4da2333aa28a19c49bfca422f61b32335fde27f376",
+          "native_position": 1,
+          "solution_id": "3672",
+          "source_assertion_id": "mediadive.solution:3672#recipe/1"
+        },
+        {
+          "native_occurrence": {
+            "amount": 3,
+            "attribute": "Quaker White Oats",
+            "compound": "Oatmeal",
+            "compound_id": 471,
+            "condition": " powdered",
+            "g_l": 3,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          "native_occurrence_sha256": "2415f96ce582700a12ae7a8b9513b0962ae395f381fa56300ffc3c37164f58a4",
+          "native_parent_record_sha256": "6617d9e502ce7db40b1648008a0627b8904392173ee80028412faafa8a2dccbe",
+          "native_position": 1,
+          "solution_id": "3675",
+          "source_assertion_id": "mediadive.solution:3675#recipe/1"
+        },
+        {
+          "native_occurrence": {
+            "amount": 30,
+            "attribute": "Quaker White Oats",
+            "compound": "Oatmeal",
+            "compound_id": 471,
+            "g_l": 30,
+            "optional": 0,
+            "recipe_order": 1,
+            "unit": "g"
+          },
+          "native_occurrence_sha256": "d8b81ebe19acf80e3addd026e15b4dc76273f116839f1fa9295f436dcea1c6c9",
+          "native_parent_record_sha256": "247b57b0a52e564ff5fe3ad796a8b9997d698653e553804d6f44c084eaca6674",
+          "native_position": 1,
+          "solution_id": "3796",
+          "source_assertion_id": "mediadive.solution:3796#recipe/1"
+        }
+      ],
+      "reason": "native_oatmeal_material_not_demonstrated_colloidal_oatmeal_powder",
+      "retained_identifier": "mediadive.ingredient:471"
+    },
+    "672": {
+      "historically_selected_target": "NCIT:C120264",
+      "issue": 1318,
+      "native_compound_id": "672",
+      "native_compound_record": {
+        "amount": 5,
+        "attribute": "glucose, chitin etc.",
+        "compound": "Substrate",
+        "compound_id": 672,
+        "g_l": 5,
+        "optional": 0,
+        "recipe_order": 14,
+        "unit": "g"
+      },
+      "native_compound_record_sha256": "494f13b5e27bf83a5a74f43bd8f40676e2a98d823c14b4f2f2adcfa03019ed98",
+      "occurrences": [
+        {
+          "native_occurrence": {
+            "amount": 5,
+            "attribute": "glucose, chitin etc.",
+            "compound": "Substrate",
+            "compound_id": 672,
+            "g_l": 5,
+            "optional": 0,
+            "recipe_order": 14,
+            "unit": "g"
+          },
+          "native_occurrence_sha256": "494f13b5e27bf83a5a74f43bd8f40676e2a98d823c14b4f2f2adcfa03019ed98",
+          "native_parent_record_sha256": "5b3cf1bae5208cc352f067e72d71ed89583c64ce8f47200425c5246503277e85",
+          "native_position": 14,
+          "solution_id": "1452",
+          "source_assertion_id": "mediadive.solution:1452#recipe/14"
+        }
+      ],
+      "reason": "source_substrate_alternatives_not_identified_material",
+      "retained_identifier": "mediadive.ingredient:672"
+    }
+  },
+  "evidence_sha256": "5ec6fc063a5c0c10a77392b20e9f3fe70272479d1ba0a3396dd49a472645ab92",
+  "nested_solution": {
+    "deduplicate_native_occurrences": false,
+    "issue": 1319,
+    "missing_child_category": "biolink:NamedThing",
+    "missing_child_disposition": "preserve_source_identifier_and_name_as_unresolved_named_thing",
+    "online_fallback": false,
+    "rule": "preserve_every_explicit_unambiguous_native_solution_id"
+  },
+  "scope": "MediaDive source recipe identity only; no global ontology target denial",
+  "version": 1
+}

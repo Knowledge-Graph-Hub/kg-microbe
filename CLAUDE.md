@@ -175,10 +175,16 @@ the claims report, and the node carries a description saying so. See issues
   by identifier shape, not by a blanket GOLD/GTDB prefix exemption: a missing
   assembly or GOLD organism is unexpected even if other references in the
   same namespace are intentional. See #892, #896, #918, #1050 and #1051.
-- GOLD writes `organism_folds.tsv` from its explicit organism-to-taxon
-  collapse map. MicrobeDecoder consumes this report rather than inventing
-  undeclared nodes for folded organism IDs. Regenerate GOLD before
-  MicrobeDecoder; a missing report is an error, not permission to guess.
+- GOLD no longer folds organism IDs onto taxa by normalized label (#1316).
+  Unresolved native referents stay `biolink:NamedThing` with
+  `biolink:related_to` taxon associations, backed by the mandatory
+  `gold_taxon_dispositions.tsv`, `gold_lexical_fold_restorations.tsv` and
+  `gold_selected_taxon_aliases.tsv` audits. MicrobeDecoder joins only the
+  declarations admitted by the selected sibling GOLD's finalized bundle;
+  `organism_folds.tsv` is header-only compatibility output and is not
+  consumed. Regenerate GOLD before MicrobeDecoder; a missing or unfinalized
+  GOLD bundle is an error, not permission to guess. See
+  [GOLD unresolved referents](docs/GOLD_UNRESOLVED_REFERENTS.md).
 - Merge assertion identity includes `relation` as well as subject, predicate,
   and object. Different original relations must retain separate source
   evidence; never split a merged relation list and copy its pooled provenance

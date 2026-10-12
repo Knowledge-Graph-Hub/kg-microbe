@@ -209,6 +209,14 @@ class Transform:
     def begin_consumed_inputs(self):
         """Start a real producer run with no inherited input-consumption claims."""
         self._consumed_input_snapshots = {}
+        self._go_imported_restriction_guard = None
+        self._ontology_parent_input_contract = None
+        self._ontology_parent_authority = None
+        self._ontology_parent_published = False
+        self._finite_envo_po_category_guard = None
+        self._ncit_eight_category_guard = None
+        self._mesh_finite_category_guard = None
+        self._gold_declaration_guard = None
         self._consumed_input_error = None
         self._optional_input_states = {}
         self._optional_input_admission = None

@@ -10,6 +10,7 @@ from kg_microbe.transform_utils.microbedecoder.phenotype_curation import (
     ATTRIBUTE_TYPE_CURATION_SOURCE,
     DEFAULT_PHENOTYPE_MAPPINGS,
 )
+from tests.microbedecoder_inactive_join_fixtures import bind_inactive_join_policy, write_empty_join_gss
 from tests.microbedecoder_quarantine_fixtures import bind_fixture_quarantine_policy
 from tests.test_microbedecoder_context import read_tsv, run_fixture
 from tests.test_microbedecoder_curation_integration import _transform, _write_source
@@ -33,9 +34,9 @@ def test_native_attribute_type_is_a_single_node_slot_not_an_edge_predicate():
     assert "biolink:OntologyClass" in toolkit.get_descendants(slot.range, formatted=True, reflexive=True)
 
 
-def test_typed_values_keep_shared_field_identity_but_separate_record_observations(tmp_path):
+def test_typed_values_keep_shared_field_identity_but_separate_record_observations(monkeypatch, tmp_path):
     """A shared literal's type is not a new experiment or a universal taxon phenotype."""
-    _, nodes, edges = run_fixture(tmp_path, "typed_source_attributes.csv")
+    _, nodes, edges = run_fixture(tmp_path, "typed_source_attributes.csv", monkeypatch=monkeypatch)
     by_id = {node["id"]: node for node in nodes}
     positive = [edge for edge in edges if edge["source_column"] == "BacDive_Gram_stain" and edge["value"] == "positive"]
     assert len(positive) == 2
@@ -77,7 +78,7 @@ def test_typed_values_keep_shared_field_identity_but_separate_record_observation
             )
 
 
-def test_bacdive_original_edge_bytes_are_unchanged_by_node_typing(tmp_path):
+def test_bacdive_original_edge_bytes_are_unchanged_by_node_typing(monkeypatch, tmp_path):
     """Only node metadata changes; no new context, tier or assertion replaces the snapshot."""
     transform = _transform(tmp_path)
     source = _write_source(
@@ -88,6 +89,8 @@ def test_bacdive_original_edge_bytes_are_unchanged_by_node_typing(tmp_path):
         ],
     )
     bind_fixture_quarantine_policy(transform, source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, source, monkeypatch)
     transform.run(data_file=source)
     before = transform.output_edge_file.read_bytes()
     nodes = read_tsv(transform.output_node_file)
@@ -102,6 +105,8 @@ def test_bacdive_original_edge_bytes_are_unchanged_by_node_typing(tmp_path):
         writer.writeheader()
         writer.writerow(unmatched_rule)
     bind_fixture_quarantine_policy(transform, source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, source, monkeypatch)
     transform.run(data_file=source)
     assert transform.output_edge_file.read_bytes() == before
     untyped = read_tsv(transform.output_node_file)
@@ -120,11 +125,13 @@ def test_bacdive_original_edge_bytes_are_unchanged_by_node_typing(tmp_path):
         ("BacDive_Pathogenicity_plant", "0"),
     ],
 )
-def test_undecoded_codes_and_spore_scope_do_not_gain_an_attribute_type(tmp_path, column, literal):
+def test_undecoded_codes_and_spore_scope_do_not_gain_an_attribute_type(monkeypatch, tmp_path, column, literal):
     """Numeric meaning and generic-spore versus endospore scope need their own evidence."""
     transform = _transform(tmp_path)
     quarantine_source = _write_source(tmp_path, [{"LPSN_ID": "101", column: literal}])
     bind_fixture_quarantine_policy(transform, quarantine_source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, quarantine_source, monkeypatch)
     transform.run(data_file=quarantine_source)
     node = read_tsv(transform.output_node_file)[0]
     assert node["category"] == "biolink:Attribute"
@@ -132,9 +139,9 @@ def test_undecoded_codes_and_spore_scope_do_not_gain_an_attribute_type(tmp_path,
     assert read_tsv(transform.output_edge_file)[0]["value"] == literal
 
 
-def test_faprotax_type_reports_keep_prediction_not_manual_assertion(tmp_path):
+def test_faprotax_type_reports_keep_prediction_not_manual_assertion(monkeypatch, tmp_path):
     """Term normalization provenance cannot upgrade a taxonomically extrapolated prediction."""
-    transform, _, edges = run_fixture(tmp_path, "typed_source_attributes.csv")
+    transform, _, edges = run_fixture(tmp_path, "typed_source_attributes.csv", monkeypatch=monkeypatch)
     reports = read_tsv(transform.output_dir / "phenotype_normalizations.tsv")
     predicted = [row for row in reports if row["source_column"] == "FAPROTAX_Type_of_metabolism"]
     assert len(predicted) == 4
@@ -165,7 +172,9 @@ def test_faprotax_type_reports_keep_prediction_not_manual_assertion(tmp_path):
         ("BacDive_Voges_proskauer", "-", "METPO:1005018", "negative"),
     ],
 )
-def test_snapshot_supported_codes_type_only_original_field_scoped_attribute(tmp_path, column, literal, target, meaning):
+def test_snapshot_supported_codes_type_only_original_field_scoped_attribute(
+    monkeypatch, tmp_path, column, literal, target, meaning
+):
     """Immutable codebook and matching native scopes support exactly these nine pairs."""
     fixture = Path(__file__).parent / "resources/microbedecoder/phenotype_codebook.json"
     codebook = json.loads(fixture.read_text())
@@ -182,6 +191,8 @@ def test_snapshot_supported_codes_type_only_original_field_scoped_attribute(tmp_
     transform = _transform(tmp_path)
     quarantine_source = _write_source(tmp_path, [{"LPSN_ID": "101", "BacDive_ID": "123", column: literal}])
     bind_fixture_quarantine_policy(transform, quarantine_source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, quarantine_source, monkeypatch)
     transform.run(data_file=quarantine_source)
     edges = read_tsv(transform.output_edge_file)
     observed = [edge for edge in edges if edge["source_column"] == column]
@@ -203,7 +214,7 @@ def test_snapshot_supported_codes_type_only_original_field_scoped_attribute(tmp_
     assert not any(row["predicate"] in {"biolink:has_attribute_type", "biolink:has_phenotype"} for row in edges)
 
 
-def test_contradictory_codes_and_ambiguous_assay_results_remain_separate_observations(tmp_path):
+def test_contradictory_codes_and_ambiguous_assay_results_remain_separate_observations(monkeypatch, tmp_path):
     """Neither conflicting signs nor generic spores authorize a new aggregate identity."""
     transform = _transform(tmp_path)
     quarantine_source = _write_source(
@@ -219,6 +230,8 @@ def test_contradictory_codes_and_ambiguous_assay_results_remain_separate_observa
         ],
     )
     bind_fixture_quarantine_policy(transform, quarantine_source)
+    write_empty_join_gss(transform.input_base_dir)
+    bind_inactive_join_policy(transform, quarantine_source, monkeypatch)
     transform.run(data_file=quarantine_source)
     edges = read_tsv(transform.output_edge_file)
     nodes = {node["id"]: node for node in read_tsv(transform.output_node_file)}

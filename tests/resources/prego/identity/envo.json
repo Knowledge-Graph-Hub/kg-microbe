@@ -1,0 +1,407 @@
+{
+  "graphs": [
+    {
+      "id": "http://purl.obolibrary.org/obo/envo.json",
+      "nodes": [
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_00000373",
+          "lbl": "obsolete geothermal field",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "An area where wells can be drilled to obtain elements contained in solution in hot brines or to tap heat energy.",
+              "xrefs": [
+                "wiki:http://www.webref.org/geology/g/geothermal_field.htm"
+              ]
+            },
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0100001",
+                "val": "ENVO:01001851"
+              }
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_00002002",
+          "lbl": "obsolete food product",
+          "type": "CLASS",
+          "meta": {
+            "comments": [
+              "The FAO has the following definition for \"food\": \"Any substance, whether processed, semi-processed, or raw, which is intended for human consumption, and includes drink, chewing gum and any substance which has been used in the manufacture, preparation or treatment of \"food\" but does not include cosmetics or tobacco or substances used only as drugs.\" (Nutrition Division/Meeting Programming and Documentation Service, FAO, 2013 (MI198) adopted from Codex Alimentarius Commission, Procedural Manual, Twentieth edition, 2011 (ftp://ftp.fao.org/codex/Publications/ProcManuals/Manual_20e.pdf). )"
+            ],
+            "subsets": [
+              "http://purl.obolibrary.org/obo/envo#EnvO-Lite-GSC"
+            ],
+            "xrefs": [
+              {
+                "val": "https://en.wikipedia.org/wiki/Food"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0100001",
+                "val": "FOODON:00001002"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "ENVO"
+              }
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_00002004",
+          "lbl": "obsolete physical object of mesoscopic geological size",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "An object which is large enough to be visible to humans, but small enough that humans can handle the object (i.e. transport it, examine it, etc) in its entirety with little to no technological assistance.",
+              "xrefs": [
+                "MA:ma"
+              ],
+              "meta": {
+                "basicPropertyValues": [
+                  {
+                    "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+                    "val": "https://en.oxforddictionaries.com/definition/mesoscopic"
+                  }
+                ]
+              }
+            },
+            "comments": [
+              "This is a legacy class from ENVO's early versions. It will be depopulated and filled in by inference using a PATO quality. Not to be confused with \"mesoscopic\" as defined in physics, which deals with objects typically between 10e-6 and 10-8 meters in diameter."
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+                "val": "mesoscopic physical object"
+              }
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_00002036",
+          "lbl": "obsolete habitat",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A spatial region having environmental qualities which may sustain an organism or a community of organisms.",
+              "xrefs": [
+                "EnvO:EnvO"
+              ]
+            },
+            "comments": [
+              "This class is under development and its definition will be revised and its subclasses may be made obsolete. A habitat's specificity to a species or population will differentiate it from other environment classes."
+            ],
+            "synonyms": [
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "biotope"
+              }
+            ],
+            "xrefs": [
+              {
+                "val": "EcoLexicon:habitat"
+              },
+              {
+                "val": "LTER:238"
+              },
+              {
+                "val": "SWEETRealm:Habitat"
+              },
+              {
+                "val": "https://en.wikipedia.org/wiki/Habitat"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0100001",
+                "val": "ENVO:01000739"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "ENVO"
+              }
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_00002041",
+          "lbl": "obsolete ground water",
+          "type": "CLASS",
+          "meta": {
+            "xrefs": [
+              {
+                "val": "EcoLexicon:groundwater"
+              },
+              {
+                "val": "LTER:235"
+              },
+              {
+                "val": "SWEETRealm:Groundwater"
+              },
+              {
+                "val": "https://en.wikipedia.org/wiki/Ground_water"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0100001",
+                "val": "ENVO:01001004"
+              }
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_00002265",
+          "lbl": "obsolete agricultural waste",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "Wastewater produced in the course of agricultural activities",
+              "xrefs": [
+                "https://en.wikipedia.org/wiki/Agricultural_wastewater_treatment"
+              ]
+            },
+            "xrefs": [
+              {
+                "val": "https://en.wikipedia.org/wiki/Agricultural_waste"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0100001",
+                "val": "ENVO:01000371"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+                "val": "ENVO"
+              }
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_00002297",
+          "lbl": "obsolete environmental feature",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "OBSOLETE A material entity which determines an environmental system.",
+              "xrefs": [
+                "DOI:10.1186/2041-1480-4-43",
+                "NM:nm",
+                "ORCID:0000-0002-4366-3088"
+              ]
+            },
+            "comments": [
+              "A material entity determines an environmental system when its removal would cause the collapse of that system. For example, a seamount determines a seamount environment, acting as its 'hub'. This class is currently being aligned to the Basic Formal Ontology. Following this alignment, its definition and the definitions of its subclasses will be revised."
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01000009",
+          "lbl": "obsolete biotic mesoscopic physical object",
+          "type": "CLASS",
+          "meta": {
+            "synonyms": [
+              {
+                "pred": "hasRelatedSynonym",
+                "val": "organic material feature"
+              }
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#consider",
+                "val": "ENVO:01000159"
+              }
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01000105",
+          "lbl": "obsolete marine benthic feature",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "OBSOLETE A prominent or distinctive aspect, quality, or characteristic of environments occurring on or along marine benthic environments.",
+              "xrefs": [
+                "ISBN:978-0-618-45504-1",
+                "ORCID:0000-0002-4366-3088"
+              ]
+            },
+            "comments": [
+              "Ambiguous term, please consider using a more precise term which describes the feature of tinterest."
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#consider",
+                "val": "http://purl.obolibrary.org/obo/ENVO_00000191"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#consider",
+                "val": "http://purl.obolibrary.org/obo/ENVO_00000447"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#consider",
+                "val": "http://purl.obolibrary.org/obo/ENVO_01001479"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#consider",
+                "val": "http://purl.obolibrary.org/obo/ENVO_01001788"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#created_by",
+                "val": "ORCID:0000-0002-4366-3088"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#creation_date",
+                "val": "2010-03-16T12:27:00Z"
+              }
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01000159",
+          "lbl": "obsolete organic feature",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A prominent or distinctive aspect, quality, or characteristic pertaining to or derived from living organisms.",
+              "xrefs": [
+                "ORCID:0000-0002-4366-3088"
+              ]
+            },
+            "basicPropertyValues": [
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#consider",
+                "val": "ENVO:01001814"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#created_by",
+                "val": "ORCID:0000-0002-4366-3088"
+              },
+              {
+                "pred": "http://www.geneontology.org/formats/oboInOwl#creation_date",
+                "val": "2010-03-20T09:00:40Z"
+              }
+            ],
+            "deprecated": true
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01000371",
+          "lbl": "agricultural waste material",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "Agricultural waste is waste produced as a result of various agricultural operations. It includes manure and other wastes from farms, poultry houses and slaughterhouses; harvest waste; fertilizer run- off from fields; pesticides that enter into water, air or soils; and salt and silt drained from fields.",
+              "xrefs": [
+                "ISBN:978-92-1-161386-5",
+                "http://stats.oecd.org/glossary/detail.asp?ID=77"
+              ]
+            },
+            "comments": [
+              "As with other wastes, this is more a role than a material in itself. This should be revised."
+            ],
+            "synonyms": [
+              {
+                "pred": "hasBroadSynonym",
+                "val": "agricultural waste"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01000739",
+          "lbl": "habitat",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "An environmental system which can sustain and allow the growth of an ecological population.",
+              "xrefs": [
+                "EnvO:EnvO"
+              ]
+            },
+            "comments": [
+              "A habitat's specificity to an ecological population differentiates it from other environment classes."
+            ],
+            "xrefs": [
+              {
+                "val": "EcoLexicon:habitat"
+              },
+              {
+                "val": "LTER:238"
+              },
+              {
+                "val": "SWEETRealm:Habitat"
+              },
+              {
+                "val": "https://en.wikipedia.org/wiki/Habitat"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01001004",
+          "lbl": "groundwater",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "Underground water which is located in pore spaces found in rock or unconsolidated deposits such as soil, clay, or gravel.",
+              "xrefs": [
+                "https://en.wikipedia.org/wiki/Groundwater"
+              ]
+            },
+            "comments": [
+              "The definition of aquifer is quite permissive, referencing any water bearing rock or unconsolidated material."
+            ],
+            "synonyms": [
+              {
+                "pred": "hasExactSynonym",
+                "val": "ground water"
+              }
+            ]
+          }
+        },
+        {
+          "id": "http://purl.obolibrary.org/obo/ENVO_01001851",
+          "lbl": "geothermally active field",
+          "type": "CLASS",
+          "meta": {
+            "definition": {
+              "val": "A field in which geothermal processes occur."
+            },
+            "comments": [
+              "In many geothermally active fields, wells can be drilled to obtain elements contained in solution in hot brines or to tap heat energy."
+            ],
+            "basicPropertyValues": [
+              {
+                "pred": "http://purl.obolibrary.org/obo/IAO_0000232",
+                "val": "This will usually be a part of a rocky planet's crust, with that planet being of sufficient size and age to allow geothermal activity. Such activity may also arise from gravitational effects of large bodies near a rocky astronomical body."
+              },
+              {
+                "pred": "http://purl.org/dc/elements/1.1/creator",
+                "val": "https://orcid.org/0000-0002-4366-3088"
+              },
+              {
+                "pred": "http://purl.org/dc/elements/1.1/date",
+                "val": "2020-02-13T12:41:07Z"
+              }
+            ]
+          }
+        }
+      ],
+      "edges": []
+    }
+  ]
+}

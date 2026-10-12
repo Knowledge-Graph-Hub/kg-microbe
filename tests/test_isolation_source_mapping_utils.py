@@ -92,7 +92,11 @@ def test_loader_honors_manually_curated_fixes(mappings):
         "UBERON",
         None,
     )
-    assert mappings.get("wound") == ("mesh:D014947", "Wounds and Injuries", "mesh", None)
+    # Native #270 review found that these source classification values do not
+    # establish the old physical-site identities. The path-aware BacDive hook
+    # retains each occurrence as an audited record-scoped source observation.
+    assert "wound" not in mappings
+    assert "inflammation" not in mappings
     # closeMatch rows that stay dropped (family-mismatched targets, no PATO override):
     assert mappings.get("catheter") is None  # device, not isolation source
     assert mappings.get("humid") is None  # quality, not source

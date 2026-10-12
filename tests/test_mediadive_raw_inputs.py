@@ -62,13 +62,15 @@ def build(tmp_path, monkeypatch):
 
 
 def read_lookup(value):
-    """Meet both run-time required reads using real immutable consumption, without graph emission."""
-    with value.consume_bulk_input("mediadive_media_list", value.input_base_dir / "mediadive.json") as reader:
-        media_list = json.load(reader)
+    """Consume genuine empty native/audit contracts without simulating a nonempty producer run."""
+    media_list = mod.load_bulk_payload(value, "mediadive_media_list", value.input_base_dir / "mediadive.json")
     with value.consume_input("bacdive_taxon_lookup", mod.BACDIVE_TMP_DIR / "bacdive.tsv") as reader:
         reader.read()
     assert media_list["data"] == []
     value._material_scope_audit = mod.MaterialScopeAudit(value, media_list)
+    value._recipe_identity_guard = mod.RecipeIdentityGuard(value, media_list)
+    value._recipe_identity_prepared = True
+    assert value._recipe_identity_guard.index["occurrences"] == {}
 
 
 def test_constructor_reads_both_roles_and_preserves_priority(tmp_path, build):

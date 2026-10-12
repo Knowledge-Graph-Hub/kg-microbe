@@ -14,9 +14,9 @@ from kg_microbe.transform_utils.gold.gold import GOLDTransform
 # "Mammals: Human", and 58,340 real edges point straight at the hierarchy root.
 NODES = [
     ["id", "category", "name"],
-    ["gold.organism:deep", "biolink:IndividualOrganism", "buried under Unclassified"],
-    ["gold.organism:rootonly", "biolink:IndividualOrganism", "points at the root"],
-    ["gold.organism:named", "biolink:IndividualOrganism", "already informative"],
+    ["gold:organism_deep", "biolink:IndividualOrganism", "buried under Unclassified"],
+    ["gold:organism_rootonly", "biolink:IndividualOrganism", "points at the root"],
+    ["gold:organism_named", "biolink:IndividualOrganism", "already informative"],
     ["gold.ecosystem:4138", "biolink:EnvironmentalFeature", "Unclassified"],
     ["gold.ecosystem:3699", "biolink:EnvironmentalFeature", "Unclassified"],
     ["gold.ecosystem:3593", "biolink:EnvironmentalFeature", "Unclassified"],
@@ -27,9 +27,9 @@ NODES = [
 ]
 EDGES = [
     ["subject", "predicate", "object", "relation"],
-    ["gold.organism:deep", "biolink:occurs_in", "gold.ecosystem:4138", "RO:0002451"],
-    ["gold.organism:rootonly", "biolink:occurs_in", "gold.ecosystem:1", "RO:0002451"],
-    ["gold.organism:named", "biolink:occurs_in", "gold.ecosystem:soil", "RO:0002451"],
+    ["gold:organism_deep", "biolink:occurs_in", "gold.ecosystem:4138", "RO:0002451"],
+    ["gold:organism_rootonly", "biolink:occurs_in", "gold.ecosystem:1", "RO:0002451"],
+    ["gold:organism_named", "biolink:occurs_in", "gold.ecosystem:soil", "RO:0002451"],
     ["gold.ecosystem:4138", "biolink:subclass_of", "gold.ecosystem:3699", "rdfs:subClassOf"],
     ["gold.ecosystem:3699", "biolink:subclass_of", "gold.ecosystem:3593", "rdfs:subClassOf"],
     ["gold.ecosystem:3593", "biolink:subclass_of", "gold.ecosystem:3381", "rdfs:subClassOf"],
@@ -86,7 +86,7 @@ class EcosystemResolutionTest(TestCase):
         alone, every one of them says only "Unclassified"; resolved, they say
         the organism came from a human host — which is what GOLD knows.
         """
-        deep = [e for e in self.occurs if e["subject"] == "gold.organism:deep"]
+        deep = [e for e in self.occurs if e["subject"] == "gold:organism_deep"]
         self.assertEqual(len(deep), 1)
         self.assertEqual(deep[0]["object"], "gold.ecosystem:3381")
 
@@ -97,7 +97,7 @@ class EcosystemResolutionTest(TestCase):
         `original_object` is Biolink's slot for exactly this — what the source
         said before transformation — so the resolution is reversible.
         """
-        deep = [e for e in self.occurs if e["subject"] == "gold.organism:deep"][0]
+        deep = [e for e in self.occurs if e["subject"] == "gold:organism_deep"][0]
         self.assertEqual(deep["original_object"], "gold.ecosystem:4138")
 
     def test_an_edge_resolving_only_to_the_root_is_dropped(self):
@@ -107,11 +107,11 @@ class EcosystemResolutionTest(TestCase):
         58,340 real edges say this. There is nothing above to recover, so the
         edge carries no information at any depth.
         """
-        self.assertFalse([e for e in self.occurs if e["subject"] == "gold.organism:rootonly"])
+        self.assertFalse([e for e in self.occurs if e["subject"] == "gold:organism_rootonly"])
 
     def test_an_already_named_target_is_untouched_and_unannotated(self):
         """Resolution must not disturb, or mark, edges that were already fine."""
-        named = [e for e in self.occurs if e["subject"] == "gold.organism:named"][0]
+        named = [e for e in self.occurs if e["subject"] == "gold:organism_named"][0]
         self.assertEqual(named["object"], "gold.ecosystem:soil")
         self.assertEqual(named["original_object"], "")
 

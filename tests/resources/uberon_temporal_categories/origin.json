@@ -1,0 +1,1679 @@
+{
+  "category_counts": {
+    "biolink:Activity": 1,
+    "biolink:LifeStage": 54,
+    "biolink:OntologyClass": 3
+  },
+  "cohort_ids": [
+    "UBERON:0000066",
+    "UBERON:0000068",
+    "UBERON:0000069",
+    "UBERON:0000070",
+    "UBERON:0000071",
+    "UBERON:0000092",
+    "UBERON:0000104",
+    "UBERON:0000105",
+    "UBERON:0000106",
+    "UBERON:0000107",
+    "UBERON:0000108",
+    "UBERON:0000109",
+    "UBERON:0000110",
+    "UBERON:0000111",
+    "UBERON:0000112",
+    "UBERON:0000113",
+    "UBERON:0004707",
+    "UBERON:0004728",
+    "UBERON:0004729",
+    "UBERON:0004730",
+    "UBERON:0007220",
+    "UBERON:0007221",
+    "UBERON:0007222",
+    "UBERON:0007232",
+    "UBERON:0007233",
+    "UBERON:0007236",
+    "UBERON:0008264",
+    "UBERON:0009849",
+    "UBERON:0012101",
+    "UBERON:0014405",
+    "UBERON:0014406",
+    "UBERON:0014856",
+    "UBERON:0014857",
+    "UBERON:0014858",
+    "UBERON:0014859",
+    "UBERON:0014860",
+    "UBERON:0014861",
+    "UBERON:0014862",
+    "UBERON:0014863",
+    "UBERON:0014864",
+    "UBERON:0018241",
+    "UBERON:0018378",
+    "UBERON:0018685",
+    "UBERON:0034919",
+    "UBERON:0034920",
+    "UBERON:0035944",
+    "UBERON:0035945",
+    "UBERON:0035946",
+    "UBERON:8000000",
+    "UBERON:8000001",
+    "UBERON:8000002",
+    "UBERON:8000003",
+    "UBERON:8200002",
+    "UBERON:8200003",
+    "UBERON:8200004",
+    "UBERON:8200005",
+    "UBERON:8200006",
+    "UBERON:8200007"
+  ],
+  "edges": 301,
+  "endpoint_ids": [
+    "CL:0009098",
+    "GO:0001841",
+    "GO:0002117",
+    "GO:0002119",
+    "GO:0002164",
+    "GO:0002168",
+    "GO:0007369",
+    "GO:0009790",
+    "GO:0009791",
+    "GO:0035209",
+    "GO:0040016",
+    "GO:0048513",
+    "UBERON:0000019",
+    "UBERON:0000061",
+    "UBERON:0000066",
+    "UBERON:0000068",
+    "UBERON:0000069",
+    "UBERON:0000070",
+    "UBERON:0000071",
+    "UBERON:0000080",
+    "UBERON:0000081",
+    "UBERON:0000085",
+    "UBERON:0000092",
+    "UBERON:0000104",
+    "UBERON:0000106",
+    "UBERON:0000107",
+    "UBERON:0000108",
+    "UBERON:0000109",
+    "UBERON:0000110",
+    "UBERON:0000111",
+    "UBERON:0000112",
+    "UBERON:0000113",
+    "UBERON:0000922",
+    "UBERON:0000949",
+    "UBERON:0000955",
+    "UBERON:0000990",
+    "UBERON:0001003",
+    "UBERON:0001004",
+    "UBERON:0001007",
+    "UBERON:0001008",
+    "UBERON:0001009",
+    "UBERON:0001016",
+    "UBERON:0001033",
+    "UBERON:0001434",
+    "UBERON:0001530",
+    "UBERON:0002101",
+    "UBERON:0002204",
+    "UBERON:0002328",
+    "UBERON:0002330",
+    "UBERON:0002342",
+    "UBERON:0002405",
+    "UBERON:0002416",
+    "UBERON:0002418",
+    "UBERON:0002423",
+    "UBERON:0002513",
+    "UBERON:0002529",
+    "UBERON:0003055",
+    "UBERON:0003077",
+    "UBERON:0003886",
+    "UBERON:0004114",
+    "UBERON:0004122",
+    "UBERON:0004456",
+    "UBERON:0004707",
+    "UBERON:0004716",
+    "UBERON:0004728",
+    "UBERON:0004729",
+    "UBERON:0004730",
+    "UBERON:0004749",
+    "UBERON:0004750",
+    "UBERON:0004763",
+    "UBERON:0004770",
+    "UBERON:0005409",
+    "UBERON:0005625",
+    "UBERON:0005725",
+    "UBERON:0006272",
+    "UBERON:0007010",
+    "UBERON:0007021",
+    "UBERON:0007023",
+    "UBERON:0007026",
+    "UBERON:0007116",
+    "UBERON:0007220",
+    "UBERON:0007221",
+    "UBERON:0007222",
+    "UBERON:0007232",
+    "UBERON:0007233",
+    "UBERON:0007236",
+    "UBERON:0007774",
+    "UBERON:0008251",
+    "UBERON:0009671",
+    "UBERON:0009672",
+    "UBERON:0009692",
+    "UBERON:0009953",
+    "UBERON:0010229",
+    "UBERON:0011288",
+    "UBERON:0012125",
+    "UBERON:0012286",
+    "UBERON:0014406",
+    "UBERON:0014857",
+    "UBERON:0014860",
+    "UBERON:0016880",
+    "UBERON:0018241",
+    "UBERON:0019250",
+    "UBERON:0034920",
+    "UBERON:0035944",
+    "UBERON:0035945",
+    "UBERON:0035946",
+    "UBERON:8200002",
+    "UBERON:8200003",
+    "UBERON:8200004",
+    "UBERON:8200005",
+    "UBERON:8200006",
+    "UBERON:8200007",
+    "UBERON:8410003"
+  ],
+  "extraction": "Exact native declarations and complete asserted is_a upward closure for all 113 historical temporal endpoints plus 19 related life-stage classes; no renamed nodes, new axioms, or restriction fillers",
+  "fixture_sha256": "cafb76da592cc587fdbbe5af4049ba9a8e0f8c11e93e24b8977663c46238889e",
+  "historical_cohort_ids": [
+    "UBERON:0000066",
+    "UBERON:0000068",
+    "UBERON:0000069",
+    "UBERON:0000070",
+    "UBERON:0000071",
+    "UBERON:0000092",
+    "UBERON:0000104",
+    "UBERON:0000106",
+    "UBERON:0000107",
+    "UBERON:0000108",
+    "UBERON:0000109",
+    "UBERON:0000110",
+    "UBERON:0000111",
+    "UBERON:0000112",
+    "UBERON:0000113",
+    "UBERON:0004707",
+    "UBERON:0004728",
+    "UBERON:0004729",
+    "UBERON:0004730",
+    "UBERON:0007220",
+    "UBERON:0007221",
+    "UBERON:0007222",
+    "UBERON:0007232",
+    "UBERON:0007233",
+    "UBERON:0007236",
+    "UBERON:0014406",
+    "UBERON:0014857",
+    "UBERON:0014860",
+    "UBERON:0018241",
+    "UBERON:0034920",
+    "UBERON:0035944",
+    "UBERON:0035945",
+    "UBERON:0035946",
+    "UBERON:8200002",
+    "UBERON:8200003",
+    "UBERON:8200004",
+    "UBERON:8200005",
+    "UBERON:8200006",
+    "UBERON:8200007"
+  ],
+  "native_endpoint_categories": {
+    "CL:0009098": "biolink:Cell",
+    "GO:0001841": "biolink:BiologicalProcess",
+    "GO:0002117": "biolink:BiologicalProcess",
+    "GO:0002119": "biolink:BiologicalProcess",
+    "GO:0002164": "biolink:BiologicalProcess",
+    "GO:0002168": "biolink:BiologicalProcess",
+    "GO:0007369": "biolink:BiologicalProcess",
+    "GO:0009790": "biolink:BiologicalProcess",
+    "GO:0009791": "biolink:BiologicalProcess",
+    "GO:0035209": "biolink:BiologicalProcess",
+    "GO:0040016": "biolink:BiologicalProcess",
+    "GO:0048513": "biolink:BiologicalProcess",
+    "UBERON:0000019": "biolink:AnatomicalEntity",
+    "UBERON:0000061": "biolink:AnatomicalEntity",
+    "UBERON:0000066": "biolink:AnatomicalEntity",
+    "UBERON:0000068": "biolink:AnatomicalEntity",
+    "UBERON:0000069": "biolink:AnatomicalEntity",
+    "UBERON:0000070": "biolink:AnatomicalEntity",
+    "UBERON:0000071": "biolink:AnatomicalEntity",
+    "UBERON:0000080": "biolink:AnatomicalEntity",
+    "UBERON:0000081": "biolink:AnatomicalEntity",
+    "UBERON:0000085": "biolink:AnatomicalEntity",
+    "UBERON:0000092": "biolink:AnatomicalEntity",
+    "UBERON:0000104": "biolink:AnatomicalEntity",
+    "UBERON:0000106": "biolink:AnatomicalEntity",
+    "UBERON:0000107": "biolink:AnatomicalEntity",
+    "UBERON:0000108": "biolink:AnatomicalEntity",
+    "UBERON:0000109": "biolink:AnatomicalEntity",
+    "UBERON:0000110": "biolink:AnatomicalEntity",
+    "UBERON:0000111": "biolink:AnatomicalEntity",
+    "UBERON:0000112": "biolink:AnatomicalEntity",
+    "UBERON:0000113": "biolink:AnatomicalEntity",
+    "UBERON:0000922": "biolink:AnatomicalEntity",
+    "UBERON:0000949": "biolink:AnatomicalEntity",
+    "UBERON:0000955": "biolink:AnatomicalEntity",
+    "UBERON:0000990": "biolink:AnatomicalEntity",
+    "UBERON:0001003": "biolink:AnatomicalEntity",
+    "UBERON:0001004": "biolink:AnatomicalEntity",
+    "UBERON:0001007": "biolink:AnatomicalEntity",
+    "UBERON:0001008": "biolink:AnatomicalEntity",
+    "UBERON:0001009": "biolink:AnatomicalEntity",
+    "UBERON:0001016": "biolink:AnatomicalEntity",
+    "UBERON:0001033": "biolink:AnatomicalEntity",
+    "UBERON:0001434": "biolink:AnatomicalEntity",
+    "UBERON:0001530": "biolink:AnatomicalEntity",
+    "UBERON:0002101": "biolink:AnatomicalEntity",
+    "UBERON:0002204": "biolink:AnatomicalEntity",
+    "UBERON:0002328": "biolink:AnatomicalEntity",
+    "UBERON:0002330": "biolink:AnatomicalEntity",
+    "UBERON:0002342": "biolink:AnatomicalEntity",
+    "UBERON:0002405": "biolink:AnatomicalEntity",
+    "UBERON:0002416": "biolink:AnatomicalEntity",
+    "UBERON:0002418": "biolink:AnatomicalEntity",
+    "UBERON:0002423": "biolink:AnatomicalEntity",
+    "UBERON:0002513": "biolink:AnatomicalEntity",
+    "UBERON:0002529": "biolink:AnatomicalEntity",
+    "UBERON:0003055": "biolink:AnatomicalEntity",
+    "UBERON:0003077": "biolink:AnatomicalEntity",
+    "UBERON:0003886": "biolink:AnatomicalEntity",
+    "UBERON:0004114": "biolink:AnatomicalEntity",
+    "UBERON:0004122": "biolink:AnatomicalEntity",
+    "UBERON:0004456": "biolink:AnatomicalEntity",
+    "UBERON:0004707": "biolink:AnatomicalEntity",
+    "UBERON:0004716": "biolink:AnatomicalEntity",
+    "UBERON:0004728": "biolink:AnatomicalEntity",
+    "UBERON:0004729": "biolink:AnatomicalEntity",
+    "UBERON:0004730": "biolink:AnatomicalEntity",
+    "UBERON:0004749": "biolink:AnatomicalEntity",
+    "UBERON:0004750": "biolink:AnatomicalEntity",
+    "UBERON:0004763": "biolink:AnatomicalEntity",
+    "UBERON:0004770": "biolink:AnatomicalEntity",
+    "UBERON:0005409": "biolink:AnatomicalEntity",
+    "UBERON:0005625": "biolink:AnatomicalEntity",
+    "UBERON:0005725": "biolink:AnatomicalEntity",
+    "UBERON:0006272": "biolink:AnatomicalEntity",
+    "UBERON:0007010": "biolink:AnatomicalEntity",
+    "UBERON:0007021": "biolink:AnatomicalEntity",
+    "UBERON:0007023": "biolink:AnatomicalEntity",
+    "UBERON:0007026": "biolink:AnatomicalEntity",
+    "UBERON:0007116": "biolink:AnatomicalEntity",
+    "UBERON:0007220": "biolink:AnatomicalEntity",
+    "UBERON:0007221": "biolink:AnatomicalEntity",
+    "UBERON:0007222": "biolink:AnatomicalEntity",
+    "UBERON:0007232": "biolink:AnatomicalEntity",
+    "UBERON:0007233": "biolink:AnatomicalEntity",
+    "UBERON:0007236": "biolink:AnatomicalEntity",
+    "UBERON:0007774": "biolink:AnatomicalEntity",
+    "UBERON:0008251": "biolink:AnatomicalEntity",
+    "UBERON:0009671": "biolink:AnatomicalEntity",
+    "UBERON:0009672": "biolink:AnatomicalEntity",
+    "UBERON:0009692": "biolink:AnatomicalEntity",
+    "UBERON:0009953": "biolink:AnatomicalEntity",
+    "UBERON:0010229": "biolink:AnatomicalEntity",
+    "UBERON:0011288": "biolink:AnatomicalEntity",
+    "UBERON:0012125": "biolink:AnatomicalEntity",
+    "UBERON:0012286": "biolink:AnatomicalEntity",
+    "UBERON:0014406": "biolink:AnatomicalEntity",
+    "UBERON:0014857": "biolink:AnatomicalEntity",
+    "UBERON:0014860": "biolink:AnatomicalEntity",
+    "UBERON:0016880": "biolink:AnatomicalEntity",
+    "UBERON:0018241": "biolink:AnatomicalEntity",
+    "UBERON:0019250": "biolink:AnatomicalEntity",
+    "UBERON:0034920": "biolink:AnatomicalEntity",
+    "UBERON:0035944": "biolink:AnatomicalEntity",
+    "UBERON:0035945": "biolink:AnatomicalEntity",
+    "UBERON:0035946": "biolink:AnatomicalEntity",
+    "UBERON:8200002": "biolink:AnatomicalEntity",
+    "UBERON:8200003": "biolink:AnatomicalEntity",
+    "UBERON:8200004": "biolink:AnatomicalEntity",
+    "UBERON:8200005": "biolink:AnatomicalEntity",
+    "UBERON:8200006": "biolink:AnatomicalEntity",
+    "UBERON:8200007": "biolink:AnatomicalEntity",
+    "UBERON:8410003": "biolink:AnatomicalEntity"
+  },
+  "native_endpoint_paths": {
+    "CL:0009098": {
+      "BFO:0000002": [
+        "CL:0009098",
+        "CL:0008002",
+        "CL:0000188",
+        "CL:0000255",
+        "CL:0000000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "GO:0001841": {
+      "BFO:0000003": [
+        "GO:0001841",
+        "GO:0001838",
+        "GO:0072175",
+        "GO:0035148",
+        "GO:0048646",
+        "GO:0032502",
+        "GO:0008150",
+        "BFO:0000015",
+        "BFO:0000003"
+      ]
+    },
+    "GO:0002117": {
+      "BFO:0000003": [
+        "GO:0002117",
+        "GO:0002164",
+        "GO:0007275",
+        "GO:0032501",
+        "GO:0008150",
+        "BFO:0000015",
+        "BFO:0000003"
+      ]
+    },
+    "GO:0002119": {
+      "BFO:0000003": [
+        "GO:0002119",
+        "GO:0002164",
+        "GO:0007275",
+        "GO:0032501",
+        "GO:0008150",
+        "BFO:0000015",
+        "BFO:0000003"
+      ]
+    },
+    "GO:0002164": {
+      "BFO:0000003": [
+        "GO:0002164",
+        "GO:0007275",
+        "GO:0032501",
+        "GO:0008150",
+        "BFO:0000015",
+        "BFO:0000003"
+      ]
+    },
+    "GO:0002168": {
+      "BFO:0000003": [
+        "GO:0002168",
+        "GO:0002164",
+        "GO:0007275",
+        "GO:0032501",
+        "GO:0008150",
+        "BFO:0000015",
+        "BFO:0000003"
+      ]
+    },
+    "GO:0007369": {
+      "BFO:0000003": [
+        "GO:0007369",
+        "GO:0048598",
+        "GO:0009653",
+        "GO:0032502",
+        "GO:0008150",
+        "BFO:0000015",
+        "BFO:0000003"
+      ]
+    },
+    "GO:0009790": {
+      "BFO:0000003": [
+        "GO:0009790",
+        "GO:0007275",
+        "GO:0032501",
+        "GO:0008150",
+        "BFO:0000015",
+        "BFO:0000003"
+      ]
+    },
+    "GO:0009791": {
+      "BFO:0000003": [
+        "GO:0009791",
+        "GO:0032501",
+        "GO:0008150",
+        "BFO:0000015",
+        "BFO:0000003"
+      ]
+    },
+    "GO:0035209": {
+      "BFO:0000003": [
+        "GO:0035209",
+        "GO:0002165",
+        "GO:0007275",
+        "GO:0032501",
+        "GO:0008150",
+        "BFO:0000015",
+        "BFO:0000003"
+      ]
+    },
+    "GO:0040016": {
+      "BFO:0000003": [
+        "GO:0040016",
+        "GO:0051301",
+        "GO:0009987",
+        "GO:0008150",
+        "BFO:0000015",
+        "BFO:0000003"
+      ]
+    },
+    "GO:0048513": {
+      "BFO:0000003": [
+        "GO:0048513",
+        "GO:0048856",
+        "GO:0032502",
+        "GO:0008150",
+        "BFO:0000015",
+        "BFO:0000003"
+      ]
+    },
+    "UBERON:0000019": {
+      "BFO:0000002": [
+        "UBERON:0000019",
+        "UBERON:0004121",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0000061": {
+      "BFO:0000002": [
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0000066": {
+      "BFO:0000003": [
+        "UBERON:0000066",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0000066",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0000068": {
+      "BFO:0000003": [
+        "UBERON:0000068",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0000068",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0000069": {
+      "BFO:0000003": [
+        "UBERON:0000069",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0000069",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0000070": {
+      "BFO:0000003": [
+        "UBERON:0000070",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0000070",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0000071": {
+      "BFO:0000003": [
+        "UBERON:0000071",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0000071",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0000080": {
+      "BFO:0000002": [
+        "UBERON:0000080",
+        "UBERON:0004120",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0000081": {
+      "BFO:0000002": [
+        "UBERON:0000081",
+        "UBERON:0004120",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0000085": {
+      "BFO:0000002": [
+        "UBERON:0000085",
+        "UBERON:0000922",
+        "UBERON:0000468",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0000092": {
+      "BFO:0000003": [
+        "UBERON:0000092",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0000092",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0000104": {
+      "BFO:0000003": [
+        "UBERON:0000104",
+        "BFO:0000015",
+        "BFO:0000003"
+      ]
+    },
+    "UBERON:0000106": {
+      "BFO:0000003": [
+        "UBERON:0000106",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0000106",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0000107": {
+      "BFO:0000003": [
+        "UBERON:0000107",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0000107",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0000108": {
+      "BFO:0000003": [
+        "UBERON:0000108",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0000108",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0000109": {
+      "BFO:0000003": [
+        "UBERON:0000109",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0000109",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0000110": {
+      "BFO:0000003": [
+        "UBERON:0000110",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0000110",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0000111": {
+      "BFO:0000003": [
+        "UBERON:0000111",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0000111",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0000112": {
+      "BFO:0000003": [
+        "UBERON:0000112",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0000112",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0000113": {
+      "BFO:0000003": [
+        "UBERON:0000113",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0000113",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0000922": {
+      "BFO:0000002": [
+        "UBERON:0000922",
+        "UBERON:0000468",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0000949": {
+      "BFO:0000002": [
+        "UBERON:0000949",
+        "UBERON:0015204",
+        "UBERON:0015203",
+        "UBERON:0034923",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0000955": {
+      "BFO:0000002": [
+        "UBERON:0000955",
+        "UBERON:0004121",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0000990": {
+      "BFO:0000002": [
+        "UBERON:0000990",
+        "UBERON:0000467",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0001003": {
+      "BFO:0000002": [
+        "UBERON:0001003",
+        "UBERON:0007376",
+        "UBERON:0003102",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0001004": {
+      "BFO:0000002": [
+        "UBERON:0001004",
+        "UBERON:0000467",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0001007": {
+      "BFO:0000002": [
+        "UBERON:0001007",
+        "UBERON:0000467",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0001008": {
+      "BFO:0000002": [
+        "UBERON:0001008",
+        "UBERON:8450002",
+        "UBERON:0000467",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0001009": {
+      "BFO:0000002": [
+        "UBERON:0001009",
+        "UBERON:0000467",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0001016": {
+      "BFO:0000002": [
+        "UBERON:0001016",
+        "UBERON:0000467",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0001033": {
+      "BFO:0000002": [
+        "UBERON:0001033",
+        "UBERON:0000467",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0001434": {
+      "BFO:0000002": [
+        "UBERON:0001434",
+        "UBERON:0011216",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0001530": {
+      "BFO:0000002": [
+        "UBERON:0001530",
+        "UBERON:0004573",
+        "UBERON:0001637",
+        "UBERON:0003509",
+        "UBERON:0001981",
+        "UBERON:0000055",
+        "UBERON:0004111",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0002101": {
+      "BFO:0000002": [
+        "UBERON:0002101",
+        "UBERON:0004708",
+        "UBERON:0010314",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0002204": {
+      "BFO:0000002": [
+        "UBERON:0002204",
+        "UBERON:0000467",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0002328": {
+      "BFO:0000002": [
+        "UBERON:0002328",
+        "UBERON:0004121",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0002330": {
+      "BFO:0000002": [
+        "UBERON:0002330",
+        "UBERON:0000467",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0002342": {
+      "BFO:0000002": [
+        "UBERON:0002342",
+        "UBERON:0004121",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0002405": {
+      "BFO:0000002": [
+        "UBERON:0002405",
+        "UBERON:0015203",
+        "UBERON:0034923",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0002416": {
+      "BFO:0000002": [
+        "UBERON:0002416",
+        "UBERON:0000467",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0002418": {
+      "BFO:0000002": [
+        "UBERON:0002418",
+        "UBERON:0004755",
+        "UBERON:0002384",
+        "UBERON:0000479",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0002423": {
+      "BFO:0000002": [
+        "UBERON:0002423",
+        "UBERON:0011216",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0002513": {
+      "BFO:0000002": [
+        "UBERON:0002513",
+        "UBERON:0001474",
+        "UBERON:0004765",
+        "UBERON:0000062",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0002529": {
+      "BFO:0000002": [
+        "UBERON:0002529",
+        "UBERON:0010538",
+        "UBERON:0010758",
+        "UBERON:0000475",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0003055": {
+      "BFO:0000002": [
+        "UBERON:0003055",
+        "UBERON:0007376",
+        "UBERON:0003102",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0003077": {
+      "BFO:0000002": [
+        "UBERON:0003077",
+        "UBERON:0015212",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0003886": {
+      "BFO:0000002": [
+        "UBERON:0003886",
+        "UBERON:0000464",
+        "UBERON:0000466",
+        "BFO:0000141",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0004114": {
+      "BFO:0000002": [
+        "UBERON:0004114",
+        "UBERON:0002553",
+        "UBERON:0000464",
+        "UBERON:0000466",
+        "BFO:0000141",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0004122": {
+      "BFO:0000002": [
+        "UBERON:0004122",
+        "UBERON:0000467",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0004456": {
+      "BFO:0000002": [
+        "UBERON:0004456",
+        "UBERON:0000467",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0004707": {
+      "BFO:0000003": [
+        "UBERON:0004707",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0004707",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0004716": {
+      "BFO:0000002": [
+        "UBERON:0004716",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0004728": {
+      "BFO:0000003": [
+        "UBERON:0004728",
+        "UBERON:0000069",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0004728",
+        "UBERON:0000069",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0004729": {
+      "BFO:0000003": [
+        "UBERON:0004729",
+        "UBERON:0000069",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0004729",
+        "UBERON:0000069",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0004730": {
+      "BFO:0000003": [
+        "UBERON:0004730",
+        "UBERON:0000069",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0004730",
+        "UBERON:0000069",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0004749": {
+      "BFO:0000002": [
+        "UBERON:0004749",
+        "UBERON:0002050",
+        "UBERON:0005423",
+        "UBERON:0000001",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0004750": {
+      "BFO:0000002": [
+        "UBERON:0004750",
+        "UBERON:0002050",
+        "UBERON:0005423",
+        "UBERON:0000001",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0004763": {
+      "BFO:0000002": [
+        "UBERON:0004763",
+        "UBERON:0002481",
+        "UBERON:0004755",
+        "UBERON:0002384",
+        "UBERON:0000479",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0004770": {
+      "BFO:0000002": [
+        "UBERON:0004770",
+        "UBERON:0034925",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0005409": {
+      "BFO:0000002": [
+        "UBERON:0005409",
+        "UBERON:0000467",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0005625": {
+      "BFO:0000002": [
+        "UBERON:0005625",
+        "UBERON:0002553",
+        "UBERON:0000464",
+        "UBERON:0000466",
+        "BFO:0000141",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0005725": {
+      "BFO:0000002": [
+        "UBERON:0005725",
+        "UBERON:0005726",
+        "UBERON:0001032",
+        "UBERON:0015203",
+        "UBERON:0034923",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0006272": {
+      "BFO:0000002": [
+        "UBERON:0006272",
+        "UBERON:0002553",
+        "UBERON:0000464",
+        "UBERON:0000466",
+        "BFO:0000141",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0007010": {
+      "BFO:0000002": [
+        "UBERON:0007010",
+        "UBERON:0000922",
+        "UBERON:0000468",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0007021": {
+      "BFO:0000002": [
+        "UBERON:0007021",
+        "UBERON:0000468",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0007023": {
+      "BFO:0000002": [
+        "UBERON:0007023",
+        "UBERON:0000468",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0007026": {
+      "BFO:0000002": [
+        "UBERON:0007026",
+        "UBERON:0006598",
+        "UBERON:0002050",
+        "UBERON:0005423",
+        "UBERON:0000001",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0007116": {
+      "BFO:0000002": [
+        "UBERON:0007116",
+        "UBERON:0003672",
+        "UBERON:0034925",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0007220": {
+      "BFO:0000003": [
+        "UBERON:0007220",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0007220",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0007221": {
+      "BFO:0000003": [
+        "UBERON:0007221",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0007221",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0007222": {
+      "BFO:0000003": [
+        "UBERON:0007222",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0007222",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0007232": {
+      "BFO:0000003": [
+        "UBERON:0007232",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0007232",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0007233": {
+      "BFO:0000003": [
+        "UBERON:0007233",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0007233",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0007236": {
+      "BFO:0000003": [
+        "UBERON:0007236",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0007236",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0007774": {
+      "BFO:0000002": [
+        "UBERON:0007774",
+        "UBERON:0003672",
+        "UBERON:0034925",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0008251": {
+      "BFO:0000002": [
+        "UBERON:0008251",
+        "UBERON:0000467",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0009671": {
+      "BFO:0000002": [
+        "UBERON:0009671",
+        "UBERON:0002424",
+        "UBERON:0003350",
+        "UBERON:0000483",
+        "UBERON:0000479",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0009672": {
+      "BFO:0000002": [
+        "UBERON:0009672",
+        "UBERON:0000481",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0009692": {
+      "BFO:0000002": [
+        "UBERON:0009692",
+        "UBERON:0005082",
+        "UBERON:0000464",
+        "UBERON:0000466",
+        "BFO:0000141",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0009953": {
+      "BFO:0000002": [
+        "UBERON:0009953",
+        "UBERON:0000468",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0010229": {
+      "BFO:0000002": [
+        "UBERON:0010229",
+        "UBERON:0004111",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0011288": {
+      "BFO:0000002": [
+        "UBERON:0011288",
+        "UBERON:0000481",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0012125": {
+      "BFO:0000002": [
+        "UBERON:0012125",
+        "UBERON:0000467",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0012286": {
+      "BFO:0000002": [
+        "UBERON:0012286",
+        "UBERON:0002050",
+        "UBERON:0005423",
+        "UBERON:0000001",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0014406": {
+      "BFO:0000003": [
+        "UBERON:0014406",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0014406",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0014857": {
+      "BFO:0000003": [
+        "UBERON:0014857",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0014857",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0014860": {
+      "BFO:0000003": [
+        "UBERON:0014860",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0014860",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0016880": {
+      "BFO:0000002": [
+        "UBERON:0016880",
+        "UBERON:0006598",
+        "UBERON:0002050",
+        "UBERON:0005423",
+        "UBERON:0000001",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0018241": {
+      "BFO:0000003": [
+        "UBERON:0018241",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0018241",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0019250": {
+      "BFO:0000002": [
+        "UBERON:0019250",
+        "UBERON:0019248",
+        "UBERON:0000922",
+        "UBERON:0000468",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    },
+    "UBERON:0034920": {
+      "BFO:0000003": [
+        "UBERON:0034920",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:0034920",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:0035944": {
+      "BFO:0000003": [
+        "UBERON:0035944",
+        "BFO:0000003"
+      ]
+    },
+    "UBERON:0035945": {
+      "BFO:0000003": [
+        "UBERON:0035945",
+        "BFO:0000003"
+      ]
+    },
+    "UBERON:0035946": {
+      "BFO:0000003": [
+        "UBERON:0035946",
+        "BFO:0000003"
+      ]
+    },
+    "UBERON:8200002": {
+      "BFO:0000003": [
+        "UBERON:8200002",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:8200002",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:8200003": {
+      "BFO:0000003": [
+        "UBERON:8200003",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:8200003",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:8200004": {
+      "BFO:0000003": [
+        "UBERON:8200004",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:8200004",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:8200005": {
+      "BFO:0000003": [
+        "UBERON:8200005",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:8200005",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:8200006": {
+      "BFO:0000003": [
+        "UBERON:8200006",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:8200006",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:8200007": {
+      "BFO:0000003": [
+        "UBERON:8200007",
+        "UBERON:0000105",
+        "BFO:0000015",
+        "BFO:0000003"
+      ],
+      "UBERON:0000105": [
+        "UBERON:8200007",
+        "UBERON:0000105"
+      ]
+    },
+    "UBERON:8410003": {
+      "BFO:0000002": [
+        "UBERON:8410003",
+        "UBERON:0010000",
+        "UBERON:0000061",
+        "UBERON:0000465",
+        "BFO:0000040",
+        "BFO:0000004",
+        "BFO:0000002"
+      ]
+    }
+  },
+  "native_relative_path": "data/raw/uberon.json",
+  "native_sha256": "87a892da0544a82f41f0a8b2b52f7ee705ec6d5ca2c102e7d439a7086d79f428",
+  "nodes": 253,
+  "related_life_stage_ids": [
+    "UBERON:0000105",
+    "UBERON:0008264",
+    "UBERON:0009849",
+    "UBERON:0012101",
+    "UBERON:0014405",
+    "UBERON:0014856",
+    "UBERON:0014858",
+    "UBERON:0014859",
+    "UBERON:0014861",
+    "UBERON:0014862",
+    "UBERON:0014863",
+    "UBERON:0014864",
+    "UBERON:0018378",
+    "UBERON:0018685",
+    "UBERON:0034919",
+    "UBERON:8000000",
+    "UBERON:8000001",
+    "UBERON:8000002",
+    "UBERON:8000003"
+  ]
+}

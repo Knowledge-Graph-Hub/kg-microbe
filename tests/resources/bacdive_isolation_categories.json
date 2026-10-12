@@ -1,0 +1,42 @@
+{
+  "source": "data/raw/bacdive_strains.json",
+  "sha256": "57344e55e5683d168b735b6f186fd239d5637820d0c1559a210945bca883cea2",
+  "selection": "Unmodified selected General identity/description/doi cells and complete isolation-source category arrays, with one exact isolation record from each native record; omitted fields are not claimed to be absent.",
+  "records": [
+    {
+      "General": {"BacDive-ID": 100, "description": "Phascolarctobacterium faecium QUM 3679 is an anaerobe, mesophilic bacterium that was isolated from koala faeces.", "doi": "10.13145/bacdive100.20241212.9.2"},
+      "Isolation, sampling and environmental information": {
+        "isolation": {"@ref": 5523, "sample type": "koala faeces", "country": "Australia", "origin.country": "AUS", "continent": "Australia and Oceania"},
+        "isolation source categories": [{"Cat1": "#Host", "Cat2": "#Mammals"}, {"Cat1": "#Host Body Product", "Cat2": "#Gastrointestinal tract", "Cat3": "#Feces (Stool)"}]
+      }
+    },
+    {
+      "General": {"BacDive-ID": 94, "description": "Komagataeibacter rhaeticus DSM 16663 is a mesophilic, Gram-negative, rod-shaped bacterium that was isolated from organic apple juice.", "doi": "10.13145/bacdive94.20241212.9.2"},
+      "Isolation, sampling and environmental information": {
+        "isolation": {"@ref": 6558, "sample type": "organic apple juice", "geographic location": "South Tyrol, Val Venosta", "country": "Italy", "origin.country": "ITA", "continent": "Europe"},
+        "isolation source categories": [{"Cat1": "#Engineered", "Cat2": "#Food production", "Cat3": "#Beverage"}, {"Cat1": "#Host Body Product", "Cat2": "#Plant", "Cat3": "#Juice (natural)"}]
+      }
+    },
+    {
+      "General": {"BacDive-ID": 99, "description": "Acidaminococcus intestini DSM 21505 is an anaerobe, mesophilic, Gram-negative bacterium that forms circular colonies and was isolated from Human peritoneal fluid.", "doi": "10.13145/bacdive99.20241212.9.2"},
+      "Isolation, sampling and environmental information": {
+        "isolation": {"@ref": 15684, "sample type": "Human peritoneal fluid", "geographic location": "University Hospital Arnaud de Villeneuve, Montpellier", "country": "France", "origin.country": "FRA", "continent": "Europe"},
+        "isolation source categories": [{"Cat1": "#Infection", "Cat2": "#Patient"}, {"Cat1": "#Host", "Cat2": "#Human"}, {"Cat1": "#Host Body Product", "Cat2": "#Fluids"}, {"Cat1": "#Host Body-Site", "Cat2": "#Other", "Cat3": "#Abdomen"}]
+      }
+    },
+    {
+      "General": {"BacDive-ID": 98, "description": "Acidaminococcus fermentans VR4 is an anaerobe, mesophilic, Gram-negative human pathogen that was isolated from pig gut.", "doi": "10.13145/bacdive98.20241212.9.2"},
+      "Isolation, sampling and environmental information": {
+        "isolation": {"@ref": 9041, "sample type": "pig gut"},
+        "isolation source categories": [{"Cat1": "#Host", "Cat2": "#Mammals", "Cat3": "#Suidae (Pig,Swine)"}, {"Cat1": "#Host Body-Site", "Cat2": "#Gastrointestinal tract"}]
+      }
+    },
+    {
+      "General": {"BacDive-ID": 88, "description": "Acetobacter aceti subsp. xylinus DSM 6513 is a mesophilic, Gram-negative, rod-shaped bacterium that was isolated from mountains ash berries.", "doi": "10.13145/bacdive88.20241212.9.2"},
+      "Isolation, sampling and environmental information": {
+        "isolation": {"@ref": 2710, "sample type": "mountains ash berries"},
+        "isolation source categories": [{"Cat1": "#Host", "Cat2": "#Plants", "Cat3": "#Shrub (Scrub)"}, {"Cat1": "#Host", "Cat2": "#Plants", "Cat3": "#Tree"}, {"Cat1": "#Host Body-Site", "Cat2": "#Plant", "Cat3": "#Fruit (Seed)"}]
+      }
+    }
+  ]
+}

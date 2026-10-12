@@ -341,7 +341,7 @@ def _child(root):
 def lifetime_probe(tmp_path_factory):
     """Isolate code, declared curation and tiny schemas before exercising real registered gates."""
     root = tmp_path_factory.mktemp("ncit-lifetime-copy")
-    shutil.copytree(ROOT / "kg_microbe", root / "kg_microbe", ignore=shutil.ignore_patterns("__pycache__"))
+    shutil.copytree(ROOT / "kg_microbe", root / "kg_microbe", ignore=shutil.ignore_patterns("__pycache__", "tmp"))
     shutil.copytree(ROOT / "mappings", root / "mappings", ignore=shutil.ignore_patterns("__pycache__"))
     with gzip.open(root / "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz", "wb") as stream:
         stream.write((ROOT / "tests/resources/metatraits_manual_identity.sssom.tsv").read_bytes())

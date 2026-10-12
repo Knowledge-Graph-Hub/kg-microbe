@@ -47,12 +47,34 @@ SHARED_CODE = (
     Path("kg_microbe") / "transform.py",
     Path("kg_microbe") / "merge_utils" / "external_node_closure.py",
     Path("kg_microbe") / "merge_utils" / "local_context.py",
+    # Imported by kg_microbe/utils for every source's finalization, admission or
+    # shared category canonicalization, so they change every source's output too.
+    Path("kg_microbe") / "merge_utils" / "source_admission.py",
+    Path("kg_microbe") / "transform_utils" / "gold" / "taxon_dispositions.py",
+    Path("kg_microbe") / "transform_utils" / "ontologies_stubs" / "ncit_category_projection.py",
 )
 
 # Shared canonicalization is used by source transforms and merge ingestion.
 # Curation changes affect output even when no Python code has changed.
 SHARED_DATA_INPUTS = (
+    "mappings/finite_import_category_dispositions.json",
+    "mappings/finite_envo_po_category_dispositions.json",
+    "mappings/ncit_eight_categories.json",
+    "mappings/mesh_finite_category_dispositions.json",
+    "mappings/bacdive_clinical_mesh_policy.json",
+    "mappings/ingredient_context_dispositions.json",
+    "mappings/mediadive_recipe_identity_policy.json",
+    "mappings/mediadive_recipe_identity_evidence.json",
+    "mappings/gold_taxon_dispositions.json",
+    "mappings/gold_selected_taxon_aliases.json",
+    "mappings/catalase_native_authority.json",
+    "mappings/uberon_temporal_category_dispositions.json",
     "mappings/foodon_model_dispositions.tsv",
+    "mappings/foodon_kernel_quarantine.json",
+    "mappings/foodon_anatomical_category_dispositions.json",
+    "mappings/go_imported_subject_restrictions.json",
+    "mappings/imported_gene_authority.json",
+    "mappings/imported_gene_native_esummary.json",
     "mappings/ingredient_identity_exclusions.tsv",
     "mappings/ingredient_name_scopes.tsv",
     "kg_microbe/profiles/ingredient_scope_v1.yaml",

@@ -18,7 +18,9 @@
 # reason. REJECTED rows are kept rather than deleted so the reasoning survives
 # and re-adding one is a deliberate act, not an oversight.
 #
-# `decision` is SITE (bridge it) or REJECTED (never bridge it). Any MeSH term
+# `decision` is SITE (bridge it), REJECTED (not a site), or QUARANTINE_EXACT
+# (site context supported, exact equivalence unsupported; reviewed audit required).
+# Any MeSH term
 # not listed here is not bridged: unknown means no, so a new upstream label
 # cannot quietly readmit the class of error this file exists to prevent.
 #
@@ -26,7 +28,7 @@
 gold_label	mesh_id	mesh_label	decision	edges	reason	curator	verified_date
 Built environment	mesh:D000076624	Built Environment	SITE	277	Anthropogenic environment; a place an organism is isolated from.	claude	2026-08-21
 Solid waste	mesh:D062611	Solid Waste	SITE	77	Environmental material, and the substrate organisms are recovered from.	claude	2026-08-21
-Abscess	mesh:D000038	Abscess	SITE	34	Body site / lesion. bacdive already uses mesh:D000038 as an isolation-source target, so this is consistent with an existing decision rather than a new one.	claude	2026-08-21
+Abscess	mesh:D000038	Abscess	QUARANTINE_EXACT	34	Native GOLD site-qualified ecosystem context does not establish exact equivalence to the generic MeSH descriptor; retain native nodes and location assertions, quarantine only the seven reviewed label-derived bridges (#1294).	kg_review_native_evidence	2026-09-30
 Eggs	mesh:D004531	Eggs	SITE	20	Food/biological material an organism is isolated from, in the same family as the FOODON targets this join already bridges.	claude	2026-08-21
 Seawater	mesh:D012623	Seawater	SITE	0	Unambiguously an environmental site. Zero edges today, listed so the decision is recorded if GOLD ever attaches organisms to it. ENVO has no matching label in our extract.	claude	2026-08-21
 Invertebrates	mesh:D007448	Invertebrates	REJECTED	188	A TAXON GROUP, not a site. `located_in <taxon>` reads as classification — the exact case already excluded for NCBITaxon, readmitted through a different prefix. Needs `taxon location_of organism` instead; see #790.	claude	2026-08-21

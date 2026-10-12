@@ -1,0 +1,1849 @@
+{
+  "scope": "Literal saved General/classification/isolation/reference excerpts; unrelated source sections omitted. Category assertions and citations are unchanged. Full native record digest/source position retained.",
+  "saved_evidence_sha256_or_prefix": "0bdcb5586cb225b4ef4c745212a6ae21760c522b58e9e2a1abafcc85de3db6f7",
+  "records": [
+    {
+      "bacdive_id": 383,
+      "canonical_record_sha256": "a8f206e7490653982f19f0116408f63ca0086dab308194777d5df97bbb48d08f",
+      "native_array_index": 317,
+      "record": {
+        "General": {
+          "@ref": 6757,
+          "BacDive-ID": 383,
+          "DSM-Number": 17095,
+          "NCBI tax id": [
+            {
+              "Matching level": "species",
+              "NCBI tax id": 310575
+            },
+            {
+              "Matching level": "subspecies",
+              "NCBI tax id": 1914954
+            }
+          ],
+          "description": "Advenella kashmirensis WT001 is an aerobe, mesophilic, Gram-negative bacterium that was isolated from bulk soil of a temperate orchard.",
+          "doi": "10.13145/bacdive383.20241212.9.2",
+          "keywords": [
+            "genome sequence",
+            "16S sequence",
+            "Bacteria",
+            "aerobe",
+            "mesophilic",
+            "Gram-negative",
+            "coccus-shaped"
+          ],
+          "strain history": {
+            "@ref": 6757,
+            "history": "<- P. Roy <- W. Ghosh; WT001"
+          }
+        },
+        "Name and taxonomic classification": {
+          "@ref": 6757,
+          "LPSN": {
+            "@ref": 20215,
+            "class": "Betaproteobacteria",
+            "description": "domain/bacteria",
+            "domain": "Bacteria",
+            "family": "Alcaligenaceae",
+            "full scientific name": "<I>Advenella</I> <I>kashmirensis</I> (Ghosh et al. 2005) Gibello et al. 2009",
+            "genus": "Advenella",
+            "keyword": "phylum/pseudomonadota",
+            "order": "Burkholderiales",
+            "phylum": "Pseudomonadota",
+            "species": "Advenella kashmirensis",
+            "synonyms": {
+              "@ref": 20215,
+              "synonym": "Tetrathiobacter kashmirensis"
+            }
+          },
+          "class": "Betaproteobacteria",
+          "domain": "Bacteria",
+          "family": "Alcaligenaceae",
+          "full scientific name": "Advenella kashmirensis (Ghosh et al. 2005) Gibello et al. 2009 emend. Shmareva et al. 2016",
+          "genus": "Advenella",
+          "order": "Burkholderiales",
+          "phylum": "Proteobacteria",
+          "species": "Advenella kashmirensis",
+          "strain designation": "WT001",
+          "type strain": "yes"
+        },
+        "Isolation, sampling and environmental information": {
+          "isolation": {
+            "@ref": 6757,
+            "continent": "Asia",
+            "country": "India",
+            "geographic location": "Srinagar, Jammu and Kashmir",
+            "origin.country": "IND",
+            "sample type": "bulk soil of a temperate orchard"
+          },
+          "isolation source categories": [
+            {
+              "Cat1": "#Engineered",
+              "Cat2": "#Agriculture",
+              "Cat3": "#Grove (Orchard)"
+            },
+            {
+              "Cat1": "#Environmental",
+              "Cat2": "#Terrestrial",
+              "Cat3": "#Soil"
+            }
+          ],
+          "taxonmaps": {
+            "16S sequence": "AJ864470",
+            "@ref": 69479,
+            "File name": "preview.99_1770.png",
+            "Last taxonomy": "Advenella",
+            "Sequence Identity": null,
+            "Total samples": 2457,
+            "animal counts": 766,
+            "aquatic counts": 378,
+            "plant counts": 491,
+            "soil counts": 822,
+            "url": "https://microbeatlas.org/index.html?action=taxon&taxon_id=90_7;96_1003;97_1169;98_1397;99_1770&stattab=map"
+          }
+        },
+        "Reference": [
+          {
+            "@id": 6757,
+            "authors": "Curators of the DSMZ",
+            "catalogue": "Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen GmbH (DSM 17095)",
+            "doi/url": "https://www.dsmz.de/collection/catalogue/details/culture/DSM-17095"
+          },
+          {
+            "@id": 20215,
+            "authors": "Parte, A.C., Sardà Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C. and Göker, M.",
+            "doi/url": "10.1099/ijsem.0.004332",
+            "title": "List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the DSMZ"
+          },
+          {
+            "@id": 31452,
+            "ID_cross_reference": 27755,
+            "authors": "Barberan A, Caceres Velazquez H, Jones S, Fierer N.",
+            "doi/url": "10.1128/mSphere.00237-17",
+            "pubmed": 28776041,
+            "title": "Hiding in Plain Sight: Mining Bacterial Species Records for Phenotypic Trait Information"
+          },
+          {
+            "@id": 66792,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Automatically annotated for the DiASPora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 69479,
+            "authors": "João F Matias Rodrigues, Janko Tackmann,Gregor Rot, Thomas SB Schmidt, Lukas Malfertheiner, Mihai Danaila,Marija Dmitrijeva, Daniela Gaio, Nicolas Näpflin and Christian von Mering. University of Zurich.",
+            "doi/url": "https://microbeatlas.org/",
+            "title": "MicrobeAtlas 1.0 beta"
+          },
+          {
+            "@id": 69480,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Predictions based on genome sequence made in the Diaspora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 70063,
+            "authors": "Reimer, L.C., Lissin, A.,Schober, I., Witte,J.F., Podstawka, A., Lüken, H., Bunk, B.,Overmann, J.",
+            "doi/url": "10.60712/SI-ID135988.1",
+            "title": "StrainInfo: A central database for resolving microbial strain identifiers"
+          }
+        ]
+      }
+    },
+    {
+      "bacdive_id": 387,
+      "canonical_record_sha256": "d34deeaef9d823962c21f8a81ed8ad233f44b09a469222394e467efc990699d0",
+      "native_array_index": 310,
+      "record": {
+        "General": {
+          "@ref": 17702,
+          "BacDive-ID": 387,
+          "DSM-Number": 24591,
+          "NCBI tax id": {
+            "Matching level": "species",
+            "NCBI tax id": 627131
+          },
+          "description": "Paralcaligenes ureilyticus GR24-5 is a mesophilic, Gram-negative bacterium that was isolated from soil of ginseng field.",
+          "doi": "10.13145/bacdive387.20241212.9.2",
+          "keywords": [
+            "genome sequence",
+            "16S sequence",
+            "Bacteria",
+            "mesophilic",
+            "Gram-negative"
+          ],
+          "strain history": {
+            "@ref": 17702,
+            "history": "<- S. W. Kwon, KACC; GR24-5"
+          }
+        },
+        "Name and taxonomic classification": {
+          "@ref": 17702,
+          "LPSN": {
+            "@ref": 20215,
+            "class": "Betaproteobacteria",
+            "description": "domain/bacteria",
+            "domain": "Bacteria",
+            "family": "Alcaligenaceae",
+            "full scientific name": "<I>Paralcaligenes</I> <I>ureilyticus</I> Kim et al. 2011",
+            "genus": "Paralcaligenes",
+            "keyword": "phylum/pseudomonadota",
+            "order": "Burkholderiales",
+            "phylum": "Pseudomonadota",
+            "species": "Paralcaligenes ureilyticus"
+          },
+          "class": "Betaproteobacteria",
+          "domain": "Bacteria",
+          "family": "Alcaligenaceae",
+          "full scientific name": "Paralcaligenes ureilyticus Kim et al. 2011",
+          "genus": "Paralcaligenes",
+          "order": "Burkholderiales",
+          "phylum": "Proteobacteria",
+          "species": "Paralcaligenes ureilyticus",
+          "strain designation": "GR24-5",
+          "type strain": "yes"
+        },
+        "Isolation, sampling and environmental information": {
+          "isolation": {
+            "@ref": 17702,
+            "continent": "Asia",
+            "country": "Republic of Korea",
+            "origin.country": "KOR",
+            "sample type": "soil of ginseng field"
+          },
+          "isolation source categories": [
+            {
+              "Cat1": "#Engineered",
+              "Cat2": "#Agriculture",
+              "Cat3": "#Field"
+            },
+            {
+              "Cat1": "#Environmental",
+              "Cat2": "#Terrestrial",
+              "Cat3": "#Soil"
+            },
+            {
+              "Cat1": "#Host",
+              "Cat2": "#Plants",
+              "Cat3": "#Herbaceous plants (Grass,Crops)"
+            }
+          ],
+          "taxonmaps": {
+            "16S sequence": "FJ793551",
+            "@ref": 69479,
+            "File name": "preview.99_68706.png",
+            "Last taxonomy": "Paralcaligenes ureilyticus",
+            "Sequence Identity": null,
+            "Total samples": 146,
+            "animal counts": 18,
+            "aquatic counts": 16,
+            "plant counts": 10,
+            "soil counts": 102,
+            "url": "https://microbeatlas.org/index.html?action=taxon&taxon_id=90_7;96_2229;97_2828;98_48347;99_68706&stattab=map"
+          }
+        },
+        "Reference": [
+          {
+            "@id": 17702,
+            "authors": "Curators of the DSMZ",
+            "catalogue": "Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen GmbH (DSM 24591)",
+            "doi/url": "https://www.dsmz.de/collection/catalogue/details/culture/DSM-24591"
+          },
+          {
+            "@id": 20215,
+            "authors": "Parte, A.C., Sardà Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C. and Göker, M.",
+            "doi/url": "10.1099/ijsem.0.004332",
+            "title": "List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the DSMZ"
+          },
+          {
+            "@id": 66792,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Automatically annotated for the DiASPora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 66794,
+            "authors": "Antje Chang, Lisa Jeske, Sandra Ulbrich, Julia Hofmann, Julia Koblitz, Ida Schomburg, Meina Neumann-Schaal, Dieter Jahn, Dietmar Schomburg",
+            "doi/url": "10.1093/nar/gkaa1025",
+            "journal": "Nucleic Acids Res. 49: D498-D508 2020",
+            "pubmed": 33211880,
+            "title": "BRENDA, the ELIXIR core data resource in 2021: new developments and updates"
+          },
+          {
+            "@id": 68369,
+            "title": "Automatically annotated from API 20NE"
+          },
+          {
+            "@id": 69479,
+            "authors": "João F Matias Rodrigues, Janko Tackmann,Gregor Rot, Thomas SB Schmidt, Lukas Malfertheiner, Mihai Danaila,Marija Dmitrijeva, Daniela Gaio, Nicolas Näpflin and Christian von Mering. University of Zurich.",
+            "doi/url": "https://microbeatlas.org/",
+            "title": "MicrobeAtlas 1.0 beta"
+          },
+          {
+            "@id": 69480,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Predictions based on genome sequence made in the Diaspora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 69481,
+            "authors": "Xiao-Yin To, René Mreches, Martin Binder, Alice C. McHardy, Philipp C. Münch",
+            "doi/url": "10.21203/rs.3.rs-2527258/v1",
+            "title": "Predictions based on the model GenomeNet Sporulation v. 1"
+          },
+          {
+            "@id": 70067,
+            "authors": "Reimer, L.C., Lissin, A.,Schober, I., Witte,J.F., Podstawka, A., Lüken, H., Bunk, B.,Overmann, J.",
+            "doi/url": "10.60712/SI-ID401601.1",
+            "title": "StrainInfo: A central database for resolving microbial strain identifiers"
+          }
+        ]
+      }
+    },
+    {
+      "bacdive_id": 400,
+      "canonical_record_sha256": "f8c975ac09e75560a8bf63052ccf356db58c84530b42277989fbba848848cc58",
+      "native_array_index": 299,
+      "record": {
+        "General": {
+          "@ref": 1510,
+          "BacDive-ID": 400,
+          "DSM-Number": 3922,
+          "NCBI tax id": [
+            {
+              "Matching level": "species",
+              "NCBI tax id": 1450
+            },
+            {
+              "Matching level": "strain",
+              "NCBI tax id": 1356854
+            }
+          ],
+          "description": "Alicyclobacillus acidoterrestris GD3B is a thermophilic, Gram-positive, rod-shaped bacterium that was isolated from garden soil.",
+          "doi": "10.13145/bacdive400.20241212.9.2",
+          "keywords": [
+            "genome sequence",
+            "16S sequence",
+            "Bacteria",
+            "thermophilic",
+            "Gram-positive",
+            "rod-shaped"
+          ],
+          "strain history": [
+            {
+              "@ref": 1510,
+              "history": "<- Deinhard, GD3B"
+            },
+            {
+              "@ref": 116022,
+              "history": "CIP <- 2013, DSMZ <- K. Poralla, Bacillus acidoterrestris <- B. Hippchen <- Deinhard: strain GD3B"
+            }
+          ]
+        },
+        "Name and taxonomic classification": {
+          "@ref": 1510,
+          "LPSN": {
+            "@ref": 20215,
+            "class": "Bacilli",
+            "description": "domain/bacteria",
+            "domain": "Bacteria",
+            "family": "Alicyclobacillaceae",
+            "full scientific name": "<I>Alicyclobacillus</I> <I>acidoterrestris</I> (Deinhard et al. 1988) Wisotzkey et al. 1992",
+            "genus": "Alicyclobacillus",
+            "keyword": "phylum/bacillota",
+            "order": "Caryophanales",
+            "phylum": "Bacillota",
+            "species": "Alicyclobacillus acidoterrestris",
+            "synonyms": {
+              "@ref": 20215,
+              "synonym": "Bacillus acidoterrestris"
+            }
+          },
+          "class": "Bacilli",
+          "domain": "Bacteria",
+          "family": "Alicyclobacillaceae",
+          "full scientific name": "Alicyclobacillus acidoterrestris (Deinhard et al. 1988) Wisotzkey et al. 1992",
+          "genus": "Alicyclobacillus",
+          "order": "Bacillales",
+          "phylum": "Firmicutes",
+          "species": "Alicyclobacillus acidoterrestris",
+          "strain designation": "GD3B",
+          "type strain": "yes"
+        },
+        "Isolation, sampling and environmental information": {
+          "isolation": [
+            {
+              "@ref": 1510,
+              "sample type": "garden soil"
+            },
+            {
+              "@ref": 116022,
+              "continent": "Europe",
+              "country": "Germany",
+              "origin.country": "DEU",
+              "sample type": "Environment, Garden soil"
+            }
+          ],
+          "isolation source categories": [
+            {
+              "Cat1": "#Environmental",
+              "Cat2": "#Terrestrial",
+              "Cat3": "#Soil"
+            },
+            {
+              "Cat1": "#Engineered",
+              "Cat2": "#Agriculture",
+              "Cat3": "#Garden"
+            }
+          ]
+        },
+        "Reference": [
+          {
+            "@id": 1510,
+            "authors": "Curators of the DSMZ",
+            "catalogue": "Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen GmbH (DSM 3922)",
+            "doi/url": "https://www.dsmz.de/collection/catalogue/details/culture/DSM-3922"
+          },
+          {
+            "@id": 20215,
+            "authors": "Parte, A.C., Sardà Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C. and Göker, M.",
+            "doi/url": "10.1099/ijsem.0.004332",
+            "title": "List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the DSMZ"
+          },
+          {
+            "@id": 20218,
+            "authors": "Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.",
+            "doi/url": "10.1016/j.syapm.2013.11.002",
+            "journal": "Syst Appl Microbiol. 37: 42-50 2014",
+            "pubmed": 24321274,
+            "title": "StrainInfo introduces electronic passports for microorganisms."
+          },
+          {
+            "@id": 41589,
+            "authors": "Curators of the CIP",
+            "doi/url": "https://brclims.pasteur.fr/brcWeb/souche/detail/1/18229\r"
+          },
+          {
+            "@id": 66792,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Automatically annotated for the DiASPora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 66794,
+            "authors": "Antje Chang, Lisa Jeske, Sandra Ulbrich, Julia Hofmann, Julia Koblitz, Ida Schomburg, Meina Neumann-Schaal, Dieter Jahn, Dietmar Schomburg",
+            "doi/url": "10.1093/nar/gkaa1025",
+            "journal": "Nucleic Acids Res. 49: D498-D508 2020",
+            "pubmed": 33211880,
+            "title": "BRENDA, the ELIXIR core data resource in 2021: new developments and updates"
+          },
+          {
+            "@id": 68382,
+            "title": "Automatically annotated from API zym"
+          },
+          {
+            "@id": 69480,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Predictions based on genome sequence made in the Diaspora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 69481,
+            "authors": "Xiao-Yin To, René Mreches, Martin Binder, Alice C. McHardy, Philipp C. Münch",
+            "doi/url": "10.21203/rs.3.rs-2527258/v1",
+            "title": "Predictions based on the model GenomeNet Sporulation v. 1"
+          },
+          {
+            "@id": 70080,
+            "authors": "Reimer, L.C., Lissin, A.,Schober, I., Witte,J.F., Podstawka, A., Lüken, H., Bunk, B.,Overmann, J.",
+            "doi/url": "10.60712/SI-ID1091.1",
+            "title": "StrainInfo: A central database for resolving microbial strain identifiers"
+          },
+          {
+            "@id": 116022,
+            "authors": "Curators of the CIP",
+            "catalogue": "Collection of Institut Pasteur (CIP 106132)",
+            "doi/url": "https://catalogue-crbip.pasteur.fr/fiche_catalogue.xhtml?crbip=CIP%20106132"
+          }
+        ]
+      }
+    },
+    {
+      "bacdive_id": 1081,
+      "canonical_record_sha256": "fa891d056028eb3a43e7ea01df609b0c022ceec327210f790b8e6e1a5ddb5392",
+      "native_array_index": 1021,
+      "record": {
+        "General": {
+          "@ref": 2589,
+          "BacDive-ID": 1081,
+          "DSM-Number": 6307,
+          "NCBI tax id": [
+            {
+              "Matching level": "species",
+              "NCBI tax id": 33932
+            },
+            {
+              "Matching level": "strain",
+              "NCBI tax id": 1314751
+            }
+          ],
+          "description": "Sutcliffiella cohnii RSH is an obligate aerobe, spore-forming, mesophilic bacterium that was isolated from soil.",
+          "doi": "10.13145/bacdive1081.20241212.9.2",
+          "keywords": [
+            "genome sequence",
+            "16S sequence",
+            "Bacteria",
+            "obligate aerobe",
+            "spore-forming",
+            "mesophilic",
+            "Gram-positive",
+            "motile"
+          ],
+          "strain history": [
+            {
+              "@ref": 2589,
+              "history": "<- R. Spanka; RSH"
+            },
+            {
+              "@ref": 67770,
+              "history": "DSM 6307 <-- R. Spanka strain RSH."
+            },
+            {
+              "@ref": 118329,
+              "history": "CIP <- 1995, DSM <- NCIMB <- M.E. Chislett: strain RU 38, Bacillus circulans"
+            }
+          ]
+        },
+        "Name and taxonomic classification": {
+          "@ref": 2589,
+          "LPSN": {
+            "@ref": 20215,
+            "class": "Bacilli",
+            "description": "domain/bacteria",
+            "domain": "Bacteria",
+            "family": "Bacillaceae",
+            "full scientific name": "<I>Sutcliffiella</I> <I>cohnii</I> (Spanka and Fritze 1993) Gupta et al. 2020",
+            "genus": "Sutcliffiella",
+            "keyword": "phylum/bacillota",
+            "order": "Caryophanales",
+            "phylum": "Bacillota",
+            "species": "Sutcliffiella cohnii",
+            "synonyms": {
+              "@ref": 20215,
+              "synonym": "Bacillus cohnii"
+            }
+          },
+          "class": "Bacilli",
+          "domain": "Bacteria",
+          "family": "Bacillaceae",
+          "full scientific name": "Sutcliffiella cohnii (Spanka and Fritze 1993) Gupta et al. 2020",
+          "genus": "Sutcliffiella",
+          "order": "Bacillales",
+          "phylum": "Firmicutes",
+          "species": "Sutcliffiella cohnii",
+          "strain designation": "RSH",
+          "type strain": "yes"
+        },
+        "Isolation, sampling and environmental information": {
+          "isolation": [
+            {
+              "@ref": 2589,
+              "continent": "Europe",
+              "country": "Germany",
+              "geographic location": "Braunschweig",
+              "origin.country": "DEU",
+              "sample type": "soil"
+            },
+            {
+              "@ref": 23300,
+              "sample type": "Soil, horse meadow"
+            },
+            {
+              "@ref": 67770,
+              "continent": "Europe",
+              "country": "Germany",
+              "geographic location": "Braunschweig",
+              "origin.country": "DEU",
+              "sample type": "Soil, horse meadow"
+            }
+          ],
+          "isolation source categories": [
+            {
+              "Cat1": "#Engineered",
+              "Cat2": "#Agriculture",
+              "Cat3": "#Meadow"
+            },
+            {
+              "Cat1": "#Environmental",
+              "Cat2": "#Terrestrial",
+              "Cat3": "#Soil"
+            },
+            {
+              "Cat1": "#Host",
+              "Cat2": "#Mammals",
+              "Cat3": "#Equidae (Horse)"
+            }
+          ],
+          "taxonmaps": {
+            "16S sequence": "X76437",
+            "@ref": 69479,
+            "File name": "preview.99_7611.png",
+            "Last taxonomy": "Bacillus",
+            "Sequence Identity": null,
+            "Total samples": 1009,
+            "animal counts": 252,
+            "aquatic counts": 147,
+            "plant counts": 297,
+            "soil counts": 313,
+            "url": "https://microbeatlas.org/index.html?action=taxon&taxon_id=90_3;96_567;97_659;98_5573;99_7611&stattab=map"
+          }
+        },
+        "Reference": [
+          {
+            "@id": 2589,
+            "authors": "Curators of the DSMZ",
+            "catalogue": "Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen GmbH (DSM 6307)",
+            "doi/url": "https://www.dsmz.de/collection/catalogue/details/culture/DSM-6307"
+          },
+          {
+            "@id": 20215,
+            "authors": "Parte, A.C., Sardà Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C. and Göker, M.",
+            "doi/url": "10.1099/ijsem.0.004332",
+            "title": "List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the DSMZ"
+          },
+          {
+            "@id": 20218,
+            "authors": "Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.",
+            "doi/url": "10.1016/j.syapm.2013.11.002",
+            "journal": "Syst Appl Microbiol. 37: 42-50 2014",
+            "pubmed": 24321274,
+            "title": "StrainInfo introduces electronic passports for microorganisms."
+          },
+          {
+            "@id": 23300,
+            "authors": "Roland Spanka, Dagmar Fritze",
+            "doi/url": "10.1099/00207713-43-1-150",
+            "journal": "IJSEM 43: 150-156 1993",
+            "pubmed": 8323866,
+            "title": "Bacillus cohnii sp. nov., a New, Obligately Alkaliphilic, Oval-Spore-Forming Bacillus Species with Ornithine and Aspartic Acid Instead of Diaminopimelic Acid in the Cell Wall"
+          },
+          {
+            "@id": 35231,
+            "authors": "Curators of the CIP",
+            "doi/url": "https://brclims.pasteur.fr/brcWeb/souche/detail/1/16512\r"
+          },
+          {
+            "@id": 66792,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Automatically annotated for the DiASPora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 66794,
+            "authors": "Antje Chang, Lisa Jeske, Sandra Ulbrich, Julia Hofmann, Julia Koblitz, Ida Schomburg, Meina Neumann-Schaal, Dieter Jahn, Dietmar Schomburg",
+            "doi/url": "10.1093/nar/gkaa1025",
+            "journal": "Nucleic Acids Res. 49: D498-D508 2020",
+            "pubmed": 33211880,
+            "title": "BRENDA, the ELIXIR core data resource in 2021: new developments and updates"
+          },
+          {
+            "@id": 67770,
+            "authors": "Curators of the JCM",
+            "doi/url": "https://jcm.brc.riken.jp/en/"
+          },
+          {
+            "@id": 68371,
+            "title": "Automatically annotated from API 50CH acid"
+          },
+          {
+            "@id": 68382,
+            "title": "Automatically annotated from API zym"
+          },
+          {
+            "@id": 69479,
+            "authors": "João F Matias Rodrigues, Janko Tackmann,Gregor Rot, Thomas SB Schmidt, Lukas Malfertheiner, Mihai Danaila,Marija Dmitrijeva, Daniela Gaio, Nicolas Näpflin and Christian von Mering. University of Zurich.",
+            "doi/url": "https://microbeatlas.org/",
+            "title": "MicrobeAtlas 1.0 beta"
+          },
+          {
+            "@id": 69480,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Predictions based on genome sequence made in the Diaspora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 69481,
+            "authors": "Xiao-Yin To, René Mreches, Martin Binder, Alice C. McHardy, Philipp C. Münch",
+            "doi/url": "10.21203/rs.3.rs-2527258/v1",
+            "title": "Predictions based on the model GenomeNet Sporulation v. 1"
+          },
+          {
+            "@id": 70753,
+            "authors": "Reimer, L.C., Lissin, A.,Schober, I., Witte,J.F., Podstawka, A., Lüken, H., Bunk, B.,Overmann, J.",
+            "doi/url": "10.60712/SI-ID8356.1",
+            "title": "StrainInfo: A central database for resolving microbial strain identifiers"
+          },
+          {
+            "@id": 118329,
+            "authors": "Curators of the CIP",
+            "catalogue": "Collection of Institut Pasteur (CIP 104587)",
+            "doi/url": "https://catalogue-crbip.pasteur.fr/fiche_catalogue.xhtml?crbip=CIP%20104587"
+          }
+        ]
+      }
+    },
+    {
+      "bacdive_id": 1286,
+      "canonical_record_sha256": "fb2a8c020f4e7bf816f5850ac78e48900fac96f613225eb9b2948b6e2fce0483",
+      "native_array_index": 1209,
+      "record": {
+        "General": {
+          "@ref": 16732,
+          "BacDive-ID": 1286,
+          "DSM-Number": 23148,
+          "NCBI tax id": [
+            {
+              "Matching level": "strain",
+              "NCBI tax id": 444461
+            },
+            {
+              "Matching level": "species",
+              "NCBI tax id": 1121084
+            }
+          ],
+          "description": "Heyndrickxia acidiproducens SL213 is an aerobe, spore-forming, mesophilic bacterium that was isolated from vineyard soil.",
+          "doi": "10.13145/bacdive1286.20241212.9.2",
+          "keywords": [
+            "genome sequence",
+            "16S sequence",
+            "Bacteria",
+            "aerobe",
+            "spore-forming",
+            "mesophilic",
+            "motile",
+            "rod-shaped"
+          ],
+          "strain history": [
+            {
+              "@ref": 16732,
+              "history": "<- JCM/RIKEN <- Y.-H. Chang, Korea Res. Inst. Biosci. & Biotechnol. (KRIBB), Taejon, South Korea; SL213"
+            },
+            {
+              "@ref": 67770,
+              "history": "Y.-H. Chang SL213."
+            },
+            {
+              "@ref": 67771,
+              "history": "<- YH Chang, KRIBB"
+            }
+          ]
+        },
+        "Name and taxonomic classification": {
+          "@ref": 16732,
+          "LPSN": {
+            "@ref": 20215,
+            "class": "Bacilli",
+            "description": "domain/bacteria",
+            "domain": "Bacteria",
+            "family": "Bacillaceae",
+            "full scientific name": "<I>Heyndrickxia</I> <I>acidiproducens</I> (Jung et al. 2009) Narsing Rao et al. 2023",
+            "genus": "Heyndrickxia",
+            "keyword": "phylum/bacillota",
+            "order": "Caryophanales",
+            "phylum": "Bacillota",
+            "species": "Heyndrickxia acidiproducens",
+            "synonyms": [
+              {
+                "@ref": 20215,
+                "synonym": "Weizmannia acidiproducens"
+              },
+              {
+                "@ref": 20215,
+                "synonym": "Bacillus acidiproducens"
+              }
+            ]
+          },
+          "class": "Bacilli",
+          "domain": "Bacteria",
+          "family": "Bacillaceae",
+          "full scientific name": "Heyndrickxia acidiproducens (Jung et al. 2009) Narsing-Rao et al. 2023",
+          "genus": "Heyndrickxia",
+          "order": "Caryophanales",
+          "phylum": "Firmicutes",
+          "species": "Heyndrickxia acidiproducens",
+          "strain designation": "SL213",
+          "type strain": "yes"
+        },
+        "Isolation, sampling and environmental information": {
+          "isolation": [
+            {
+              "@ref": 16732,
+              "continent": "Asia",
+              "country": "Republic of Korea",
+              "geographic location": "Daejeon",
+              "origin.country": "KOR",
+              "sample type": "vineyard soil"
+            },
+            {
+              "@ref": 67770,
+              "continent": "Asia",
+              "country": "Republic of Korea",
+              "origin.country": "KOR",
+              "sample type": "Vineyard soil in Daejeon"
+            },
+            {
+              "@ref": 67771,
+              "continent": "Asia",
+              "country": "Republic of Korea",
+              "origin.country": "KOR",
+              "sample type": "From vineyard soils in Korea"
+            }
+          ],
+          "isolation source categories": [
+            {
+              "Cat1": "#Engineered",
+              "Cat2": "#Agriculture",
+              "Cat3": "#Vineyard"
+            },
+            {
+              "Cat1": "#Environmental",
+              "Cat2": "#Terrestrial",
+              "Cat3": "#Soil"
+            }
+          ]
+        },
+        "Reference": [
+          {
+            "@id": 16732,
+            "authors": "Curators of the DSMZ",
+            "catalogue": "Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen GmbH (DSM 23148)",
+            "doi/url": "https://www.dsmz.de/collection/catalogue/details/culture/DSM-23148"
+          },
+          {
+            "@id": 20215,
+            "authors": "Parte, A.C., Sardà Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C. and Göker, M.",
+            "doi/url": "10.1099/ijsem.0.004332",
+            "title": "List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the DSMZ"
+          },
+          {
+            "@id": 66792,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Automatically annotated for the DiASPora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 67770,
+            "authors": "Curators of the JCM",
+            "doi/url": "https://jcm.brc.riken.jp/en/"
+          },
+          {
+            "@id": 67771,
+            "authors": "Curators of the KCTC",
+            "doi/url": "https://kctc.kribb.re.kr/En/Kctc"
+          },
+          {
+            "@id": 69480,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Predictions based on genome sequence made in the Diaspora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 69481,
+            "authors": "Xiao-Yin To, René Mreches, Martin Binder, Alice C. McHardy, Philipp C. Münch",
+            "doi/url": "10.21203/rs.3.rs-2527258/v1",
+            "title": "Predictions based on the model GenomeNet Sporulation v. 1"
+          },
+          {
+            "@id": 70940,
+            "authors": "Reimer, L.C., Lissin, A.,Schober, I., Witte,J.F., Podstawka, A., Lüken, H., Bunk, B.,Overmann, J.",
+            "doi/url": "10.60712/SI-ID363448.1",
+            "title": "StrainInfo: A central database for resolving microbial strain identifiers"
+          }
+        ]
+      }
+    },
+    {
+      "bacdive_id": 1300,
+      "canonical_record_sha256": "18c101e4a205771d3af3f06ecbb346d223d299c49e257c2aff83da3eafd34c6c",
+      "native_array_index": 1194,
+      "record": {
+        "General": {
+          "@ref": 15609,
+          "BacDive-ID": 1300,
+          "DSM-Number": 21297,
+          "NCBI tax id": [
+            {
+              "Matching level": "strain",
+              "NCBI tax id": 1188261
+            },
+            {
+              "Matching level": "species",
+              "NCBI tax id": 521377
+            }
+          ],
+          "description": "Alkalihalophilus marmarensis GMBAE72 is an aerobe, spore-forming, mesophilic bacterium that was isolated from mushroom compost.",
+          "doi": "10.13145/bacdive1300.20241212.9.2",
+          "keywords": [
+            "genome sequence",
+            "16S sequence",
+            "Bacteria",
+            "aerobe",
+            "spore-forming",
+            "mesophilic",
+            "Gram-positive",
+            "motile",
+            "rod-shaped"
+          ],
+          "strain history": [
+            {
+              "@ref": 15609,
+              "history": "<- A. A. Denizci; Scientific and Technological Research Council of Turkey, Marmara Research Center; strain GMBE72"
+            },
+            {
+              "@ref": 67770,
+              "history": "A. A. Denizci GMBE 72."
+            }
+          ]
+        },
+        "Name and taxonomic classification": {
+          "@ref": 15609,
+          "LPSN": {
+            "@ref": 20215,
+            "class": "Bacilli",
+            "description": "domain/bacteria",
+            "domain": "Bacteria",
+            "family": "Bacillaceae",
+            "full scientific name": "<I>Alkalihalophilus</I> <I>marmarensis</I> (Denizci et al. 2010) Joshi et al. 2022",
+            "genus": "Alkalihalophilus",
+            "keyword": "phylum/bacillota",
+            "order": "Caryophanales",
+            "phylum": "Bacillota",
+            "species": "Alkalihalophilus marmarensis",
+            "synonyms": [
+              {
+                "@ref": 20215,
+                "synonym": "Alkalihalobacillus marmarensis"
+              },
+              {
+                "@ref": 20215,
+                "synonym": "Bacillus marmarensis"
+              }
+            ]
+          },
+          "class": "Bacilli",
+          "domain": "Bacteria",
+          "family": "Bacillaceae",
+          "full scientific name": "Alkalihalophilus marmarensis (Denizci et al. 2010) Joshi et al. 2022",
+          "genus": "Alkalihalophilus",
+          "order": "Caryophanales",
+          "phylum": "Firmicutes",
+          "species": "Alkalihalophilus marmarensis",
+          "strain designation": "GMBAE72",
+          "type strain": "yes"
+        },
+        "Isolation, sampling and environmental information": {
+          "isolation": [
+            {
+              "@ref": 15609,
+              "country": "Turkey",
+              "geographic location": "Marmara region",
+              "origin.country": "TUR",
+              "sample type": "mushroom compost"
+            },
+            {
+              "@ref": 67770,
+              "continent": "Asia",
+              "country": "Turkey",
+              "geographic location": "Marmara region",
+              "origin.country": "TUR",
+              "sample type": "Mushroom compost from Yalova"
+            }
+          ],
+          "isolation source categories": [
+            {
+              "Cat1": "#Engineered",
+              "Cat2": "#Biodegradation",
+              "Cat3": "#Composting"
+            },
+            {
+              "Cat1": "#Host",
+              "Cat2": "#Fungi",
+              "Cat3": "#Mushroom"
+            },
+            {
+              "Cat1": "#Engineered",
+              "Cat2": "#Agriculture"
+            }
+          ]
+        },
+        "Reference": [
+          {
+            "@id": 15609,
+            "authors": "Curators of the DSMZ",
+            "catalogue": "Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen GmbH (DSM 21297)",
+            "doi/url": "https://www.dsmz.de/collection/catalogue/details/culture/DSM-21297"
+          },
+          {
+            "@id": 20215,
+            "authors": "Parte, A.C., Sardà Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C. and Göker, M.",
+            "doi/url": "10.1099/ijsem.0.004332",
+            "title": "List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the DSMZ"
+          },
+          {
+            "@id": 29401,
+            "ID_cross_reference": 25808,
+            "authors": "Barberan A, Caceres Velazquez H, Jones S, Fierer N.",
+            "doi/url": "10.1128/mSphere.00237-17",
+            "pubmed": 28776041,
+            "title": "Hiding in Plain Sight: Mining Bacterial Species Records for Phenotypic Trait Information"
+          },
+          {
+            "@id": 66792,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Automatically annotated for the DiASPora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 67770,
+            "authors": "Curators of the JCM",
+            "doi/url": "https://jcm.brc.riken.jp/en/"
+          },
+          {
+            "@id": 69480,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Predictions based on genome sequence made in the Diaspora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 69481,
+            "authors": "Xiao-Yin To, René Mreches, Martin Binder, Alice C. McHardy, Philipp C. Münch",
+            "doi/url": "10.21203/rs.3.rs-2527258/v1",
+            "title": "Predictions based on the model GenomeNet Sporulation v. 1"
+          },
+          {
+            "@id": 70951,
+            "authors": "Reimer, L.C., Lissin, A.,Schober, I., Witte,J.F., Podstawka, A., Lüken, H., Bunk, B.,Overmann, J.",
+            "doi/url": "10.60712/SI-ID404195.1",
+            "title": "StrainInfo: A central database for resolving microbial strain identifiers"
+          }
+        ]
+      }
+    },
+    {
+      "bacdive_id": 1400,
+      "canonical_record_sha256": "08da25fb2bbadc4a2ad7d59f5a7816b83fd438b9a7614f668a5584238a485eca",
+      "native_array_index": 1295,
+      "record": {
+        "General": {
+          "@ref": 7285,
+          "BacDive-ID": 1400,
+          "DSM-Number": 17951,
+          "NCBI tax id": {
+            "Matching level": "species",
+            "NCBI tax id": 367742
+          },
+          "description": "Ureibacillus composti HC145 is a spore-forming, thermophilic, Gram-negative bacterium that forms circular colonies and was isolated from livestock-manure compost.",
+          "doi": "10.13145/bacdive1400.20241212.9.2",
+          "keywords": [
+            "16S sequence",
+            "Bacteria",
+            "spore-forming",
+            "thermophilic",
+            "Gram-negative",
+            "motile",
+            "rod-shaped",
+            "colony-forming"
+          ],
+          "strain history": {
+            "@ref": 7285,
+            "history": "<- Soon-Wo Kwon, HC145"
+          }
+        },
+        "Name and taxonomic classification": {
+          "@ref": 7285,
+          "LPSN": {
+            "@ref": 20215,
+            "class": "Bacilli",
+            "description": "domain/bacteria",
+            "domain": "Bacteria",
+            "family": "Caryophanaceae",
+            "full scientific name": "<I>Ureibacillus</I> <I>composti</I> Weon et al. 2007",
+            "genus": "Ureibacillus",
+            "keyword": "phylum/bacillota",
+            "order": "Caryophanales",
+            "phylum": "Bacillota",
+            "species": "Ureibacillus composti"
+          },
+          "class": "Bacilli",
+          "domain": "Bacteria",
+          "family": "Caryophanaceae",
+          "full scientific name": "Ureibacillus composti Weon et al. 2007",
+          "genus": "Ureibacillus",
+          "order": "Bacillales",
+          "phylum": "Firmicutes",
+          "species": "Ureibacillus composti",
+          "strain designation": "HC145",
+          "type strain": "yes"
+        },
+        "Isolation, sampling and environmental information": {
+          "isolation": [
+            {
+              "@ref": 7285,
+              "continent": "Asia",
+              "country": "Republic of Korea",
+              "geographic location": "Ichon",
+              "origin.country": "KOR",
+              "sample type": "livestock-manure compost"
+            },
+            {
+              "@ref": 23026,
+              "enrichment culture": "trypticase soy agar",
+              "enrichment culture temperature": "55.0",
+              "sample type": "livestock-manure compost"
+            }
+          ],
+          "isolation source categories": [
+            {
+              "Cat1": "#Engineered",
+              "Cat2": "#Agriculture",
+              "Cat3": "#Livestock (Husbandry)"
+            },
+            {
+              "Cat1": "#Engineered",
+              "Cat2": "#Biodegradation",
+              "Cat3": "#Composting"
+            },
+            {
+              "Cat1": "#Host Body Product",
+              "Cat2": "#Gastrointestinal tract",
+              "Cat3": "#Feces (Stool)"
+            }
+          ],
+          "taxonmaps": {
+            "16S sequence": "DQ348071",
+            "@ref": 69479,
+            "File name": "preview.99_79545.png",
+            "Last taxonomy": "Ureibacillus composti",
+            "Sequence Identity": null,
+            "Total samples": 743,
+            "animal counts": 193,
+            "aquatic counts": 95,
+            "plant counts": 149,
+            "soil counts": 306,
+            "url": "https://microbeatlas.org/index.html?action=taxon&taxon_id=90_3;96_8510;97_42068;98_54912;99_79545&stattab=map"
+          }
+        },
+        "Reference": [
+          {
+            "@id": 7285,
+            "authors": "Curators of the DSMZ",
+            "catalogue": "Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen GmbH (DSM 17951)",
+            "doi/url": "https://www.dsmz.de/collection/catalogue/details/culture/DSM-17951"
+          },
+          {
+            "@id": 20215,
+            "authors": "Parte, A.C., Sardà Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C. and Göker, M.",
+            "doi/url": "10.1099/ijsem.0.004332",
+            "title": "List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the DSMZ"
+          },
+          {
+            "@id": 23026,
+            "authors": "Hang-Yeon Weon,Seon-Young Lee,Byung-Yong Kim,Hyung-Jun Noh,Peter Schumann,Jong-Shik Kim,Soon-Wo Kwon",
+            "doi/url": "10.1099/ijs.0.65232-0",
+            "journal": "IJSEM 57: 2908-2911 2007",
+            "pubmed": 18048747,
+            "title": "Ureibacillus composti sp. nov. and Ureibacillus thermophilus sp. nov., isolated from livestock-manure composts"
+          },
+          {
+            "@id": 69479,
+            "authors": "João F Matias Rodrigues, Janko Tackmann,Gregor Rot, Thomas SB Schmidt, Lukas Malfertheiner, Mihai Danaila,Marija Dmitrijeva, Daniela Gaio, Nicolas Näpflin and Christian von Mering. University of Zurich.",
+            "doi/url": "https://microbeatlas.org/",
+            "title": "MicrobeAtlas 1.0 beta"
+          },
+          {
+            "@id": 71051,
+            "authors": "Reimer, L.C., Lissin, A.,Schober, I., Witte,J.F., Podstawka, A., Lüken, H., Bunk, B.,Overmann, J.",
+            "doi/url": "10.60712/SI-ID402856.1",
+            "title": "StrainInfo: A central database for resolving microbial strain identifiers"
+          }
+        ]
+      }
+    },
+    {
+      "bacdive_id": 1959,
+      "canonical_record_sha256": "00632de26708c2ae0fce55f688a43bc32eb05298b18da4f0a23c0caff44674b7",
+      "native_array_index": 1938,
+      "record": {
+        "General": {
+          "@ref": 6800,
+          "BacDive-ID": 1959,
+          "DSM-Number": 17165,
+          "NCBI tax id": {
+            "Matching level": "species",
+            "NCBI tax id": 159450
+          },
+          "description": "Paraburkholderia sacchari R-10964 is an aerobe, mesophilic, Gram-negative bacterium that was isolated from soil of sugar cane plantation.",
+          "doi": "10.13145/bacdive1959.20241212.9.2",
+          "keywords": [
+            "genome sequence",
+            "16S sequence",
+            "Bacteria",
+            "aerobe",
+            "mesophilic",
+            "Gram-negative",
+            "motile",
+            "rod-shaped"
+          ],
+          "strain history": [
+            {
+              "@ref": 6800,
+              "history": "<- CCUG <- P. Vandamme, Ghent <- A. Steinbüchel, Univ. Münster <- L. da Silva, IPT Sao Paolo, Brazil <- J. Gomez, IPT, Brazil; IPT 101"
+            },
+            {
+              "@ref": 41982,
+              "history": "2001, A. Steinbüchel, Munster, Germany: strain IPT 101"
+            },
+            {
+              "@ref": 122332,
+              "history": "CIP <- 2001, A. Steinbüchel, Munster, Germany: strain IPT 101"
+            }
+          ]
+        },
+        "Name and taxonomic classification": {
+          "@ref": 6800,
+          "LPSN": {
+            "@ref": 20215,
+            "class": "Betaproteobacteria",
+            "description": "domain/bacteria",
+            "domain": "Bacteria",
+            "family": "Burkholderiaceae",
+            "full scientific name": "<I>Paraburkholderia</I> <I>sacchari</I> (Brämer et al. 2001) Sawana et al. 2015",
+            "genus": "Paraburkholderia",
+            "keyword": "phylum/pseudomonadota",
+            "order": "Burkholderiales",
+            "phylum": "Pseudomonadota",
+            "species": "Paraburkholderia sacchari",
+            "synonyms": {
+              "@ref": 20215,
+              "synonym": "Burkholderia sacchari"
+            }
+          },
+          "class": "Betaproteobacteria",
+          "domain": "Bacteria",
+          "family": "Burkholderiaceae",
+          "full scientific name": "Paraburkholderia sacchari (Brämer et al. 2001) Sawana et al. 2015",
+          "genus": "Paraburkholderia",
+          "order": "Burkholderiales",
+          "phylum": "Proteobacteria",
+          "species": "Paraburkholderia sacchari",
+          "strain designation": "R-10964",
+          "type strain": "yes"
+        },
+        "Isolation, sampling and environmental information": {
+          "isolation": [
+            {
+              "@ref": 6800,
+              "continent": "Middle and South America",
+              "country": "Brazil",
+              "origin.country": "BRA",
+              "sample type": "soil of sugar cane plantation"
+            },
+            {
+              "@ref": 57036,
+              "continent": "Middle and South America",
+              "country": "Brazil",
+              "origin.country": "BRA",
+              "sample type": "Soil,sugar cane plantation"
+            },
+            {
+              "@ref": 122332,
+              "continent": "Middle and South America",
+              "country": "Brazil",
+              "isolation date": "1996",
+              "origin.country": "BRA",
+              "sample type": "Environment, Soil"
+            }
+          ],
+          "isolation source categories": [
+            {
+              "Cat1": "#Engineered",
+              "Cat2": "#Agriculture",
+              "Cat3": "#Plantation"
+            },
+            {
+              "Cat1": "#Environmental",
+              "Cat2": "#Terrestrial",
+              "Cat3": "#Soil"
+            },
+            {
+              "Cat1": "#Host",
+              "Cat2": "#Plants",
+              "Cat3": "#Herbaceous plants (Grass,Crops)"
+            }
+          ]
+        },
+        "Reference": [
+          {
+            "@id": 6800,
+            "authors": "Curators of the DSMZ",
+            "catalogue": "Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen GmbH (DSM 17165)",
+            "doi/url": "https://www.dsmz.de/collection/catalogue/details/culture/DSM-17165"
+          },
+          {
+            "@id": 20215,
+            "authors": "Parte, A.C., Sardà Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C. and Göker, M.",
+            "doi/url": "10.1099/ijsem.0.004332",
+            "title": "List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the DSMZ"
+          },
+          {
+            "@id": 20218,
+            "authors": "Verslyppe, B., De Smet, W., De Baets, B., De Vos, P., Dawyndt P.",
+            "doi/url": "10.1016/j.syapm.2013.11.002",
+            "journal": "Syst Appl Microbiol. 37: 42-50 2014",
+            "pubmed": 24321274,
+            "title": "StrainInfo introduces electronic passports for microorganisms."
+          },
+          {
+            "@id": 41982,
+            "authors": "Curators of the CIP",
+            "doi/url": "https://brclims.pasteur.fr/brcWeb/souche/detail/1/4622\r"
+          },
+          {
+            "@id": 57036,
+            "authors": "Curators of the CCUG",
+            "catalogue": "Culture Collection University of Gothenburg (CCUG) (CCUG 46043)",
+            "doi/url": "https://www.ccug.se/strain?id=46043"
+          },
+          {
+            "@id": 66792,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Automatically annotated for the DiASPora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 66794,
+            "authors": "Antje Chang, Lisa Jeske, Sandra Ulbrich, Julia Hofmann, Julia Koblitz, Ida Schomburg, Meina Neumann-Schaal, Dieter Jahn, Dietmar Schomburg",
+            "doi/url": "10.1093/nar/gkaa1025",
+            "journal": "Nucleic Acids Res. 49: D498-D508 2020",
+            "pubmed": 33211880,
+            "title": "BRENDA, the ELIXIR core data resource in 2021: new developments and updates"
+          },
+          {
+            "@id": 68369,
+            "title": "Automatically annotated from API 20NE"
+          },
+          {
+            "@id": 68382,
+            "title": "Automatically annotated from API zym"
+          },
+          {
+            "@id": 69480,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Predictions based on genome sequence made in the Diaspora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 69481,
+            "authors": "Xiao-Yin To, René Mreches, Martin Binder, Alice C. McHardy, Philipp C. Münch",
+            "doi/url": "10.21203/rs.3.rs-2527258/v1",
+            "title": "Predictions based on the model GenomeNet Sporulation v. 1"
+          },
+          {
+            "@id": 71604,
+            "authors": "Reimer, L.C., Lissin, A.,Schober, I., Witte,J.F., Podstawka, A., Lüken, H., Bunk, B.,Overmann, J.",
+            "doi/url": "10.60712/SI-ID13280.1",
+            "title": "StrainInfo: A central database for resolving microbial strain identifiers"
+          },
+          {
+            "@id": 122332,
+            "authors": "Curators of the CIP",
+            "catalogue": "Collection of Institut Pasteur (CIP 107211)",
+            "doi/url": "https://catalogue-crbip.pasteur.fr/fiche_catalogue.xhtml?crbip=CIP%20107211"
+          }
+        ]
+      }
+    },
+    {
+      "bacdive_id": 1993,
+      "canonical_record_sha256": "774442c91ac9d1650dcfb73b6ec0625f83e1b28074c1481e74ffbe70380fb7bd",
+      "native_array_index": 1905,
+      "record": {
+        "General": {
+          "@ref": 6922,
+          "BacDive-ID": 1993,
+          "DSM-Number": 17726,
+          "NCBI tax id": [
+            {
+              "Matching level": "strain",
+              "NCBI tax id": 1121278
+            },
+            {
+              "Matching level": "species",
+              "NCBI tax id": 356302
+            }
+          ],
+          "description": "Chitinimonas koreensis R2A43-10 is a microaerophile, mesophilic, Gram-negative bacterium that forms irregular colonies and was isolated from greenhouse soil cultivated with cucumber.",
+          "doi": "10.13145/bacdive1993.20241212.9.2",
+          "keywords": [
+            "genome sequence",
+            "16S sequence",
+            "Bacteria",
+            "microaerophile",
+            "mesophilic",
+            "Gram-negative",
+            "motile",
+            "colony-forming"
+          ],
+          "strain history": [
+            {
+              "@ref": 6922,
+              "history": "<- S.-W. Kwon, KACC Korea <- K.-Y. Kim; R2A 43-10"
+            },
+            {
+              "@ref": 120473,
+              "history": "CIP <- 2006, DSMZ <- KACC <- K.Y. Kim, Korea: strain R2A 43-10"
+            }
+          ]
+        },
+        "Name and taxonomic classification": {
+          "@ref": 6922,
+          "LPSN": {
+            "@ref": 20215,
+            "class": "Betaproteobacteria",
+            "description": "domain/bacteria",
+            "domain": "Bacteria",
+            "family": "Burkholderiaceae",
+            "full scientific name": "<I>Chitinimonas</I> <I>koreensis</I> Kim et al. 2006",
+            "genus": "Chitinimonas",
+            "keyword": "phylum/pseudomonadota",
+            "order": "Burkholderiales",
+            "phylum": "Pseudomonadota",
+            "species": "Chitinimonas koreensis"
+          },
+          "class": "Betaproteobacteria",
+          "domain": "Bacteria",
+          "family": "Burkholderiaceae",
+          "full scientific name": "Chitinimonas koreensis Kim et al. 2006",
+          "genus": "Chitinimonas",
+          "order": "Burkholderiales",
+          "phylum": "Proteobacteria",
+          "species": "Chitinimonas koreensis",
+          "strain designation": "R2A43-10, R2A 43-10",
+          "type strain": "yes"
+        },
+        "Isolation, sampling and environmental information": {
+          "isolation": [
+            {
+              "@ref": 6922,
+              "continent": "Asia",
+              "country": "Republic of Korea",
+              "origin.country": "KOR",
+              "sample type": "greenhouse soil cultivated with cucumber"
+            },
+            {
+              "@ref": 23159,
+              "geographic location": "Sangju Province"
+            },
+            {
+              "@ref": 120473,
+              "continent": "Asia",
+              "country": "Republic of Korea",
+              "geographic location": "Sangju Province",
+              "origin.country": "KOR",
+              "sample type": "Environment, Greenhouse soil cultivated with cucumber"
+            }
+          ],
+          "isolation source categories": [
+            {
+              "Cat1": "#Engineered",
+              "Cat2": "#Agriculture",
+              "Cat3": "#Greenhouse"
+            },
+            {
+              "Cat1": "#Environmental",
+              "Cat2": "#Terrestrial",
+              "Cat3": "#Soil"
+            },
+            {
+              "Cat1": "#Host",
+              "Cat2": "#Plants",
+              "Cat3": "#Herbaceous plants (Grass,Crops)"
+            }
+          ],
+          "taxonmaps": {
+            "16S sequence": "DQ256728",
+            "@ref": 69479,
+            "File name": "preview.99_6728.png",
+            "Last taxonomy": "Chitinimonas koreensis subclade",
+            "Sequence Identity": null,
+            "Total samples": 2386,
+            "animal counts": 1310,
+            "aquatic counts": 395,
+            "plant counts": 311,
+            "soil counts": 370,
+            "url": "https://microbeatlas.org/index.html?action=taxon&taxon_id=90_16429;96_3181;97_3899;98_4957;99_6728&stattab=map"
+          }
+        },
+        "Reference": [
+          {
+            "@id": 6922,
+            "authors": "Curators of the DSMZ",
+            "catalogue": "Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen GmbH (DSM 17726)",
+            "doi/url": "https://www.dsmz.de/collection/catalogue/details/culture/DSM-17726"
+          },
+          {
+            "@id": 20215,
+            "authors": "Parte, A.C., Sardà Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C. and Göker, M.",
+            "doi/url": "10.1099/ijsem.0.004332",
+            "title": "List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the DSMZ"
+          },
+          {
+            "@id": 23159,
+            "authors": "Byung-Yong Kim, Hang-Yeon Weon, Seung-Hee Yoo, Wen-Ming Chen, Soon-Wo Kwon, Seung-Joo Go, Erko Stackebrandt",
+            "doi/url": "10.1099/ijs.0.64163-0",
+            "journal": "IJSEM 56: 1761-1764 2006",
+            "pubmed": 16902004,
+            "title": "Chitinimonas koreensis sp. nov., isolated from greenhouse soil in Korea"
+          },
+          {
+            "@id": 36999,
+            "authors": "Curators of the CIP",
+            "doi/url": "https://brclims.pasteur.fr/brcWeb/souche/detail/1/7115\r"
+          },
+          {
+            "@id": 66792,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Automatically annotated for the DiASPora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 68369,
+            "title": "Automatically annotated from API 20NE"
+          },
+          {
+            "@id": 68382,
+            "title": "Automatically annotated from API zym"
+          },
+          {
+            "@id": 69479,
+            "authors": "João F Matias Rodrigues, Janko Tackmann,Gregor Rot, Thomas SB Schmidt, Lukas Malfertheiner, Mihai Danaila,Marija Dmitrijeva, Daniela Gaio, Nicolas Näpflin and Christian von Mering. University of Zurich.",
+            "doi/url": "https://microbeatlas.org/",
+            "title": "MicrobeAtlas 1.0 beta"
+          },
+          {
+            "@id": 69480,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Predictions based on genome sequence made in the Diaspora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 69481,
+            "authors": "Xiao-Yin To, René Mreches, Martin Binder, Alice C. McHardy, Philipp C. Münch",
+            "doi/url": "10.21203/rs.3.rs-2527258/v1",
+            "title": "Predictions based on the model GenomeNet Sporulation v. 1"
+          },
+          {
+            "@id": 71640,
+            "authors": "Reimer, L.C., Lissin, A.,Schober, I., Witte,J.F., Podstawka, A., Lüken, H., Bunk, B.,Overmann, J.",
+            "doi/url": "10.60712/SI-ID297145.1",
+            "title": "StrainInfo: A central database for resolving microbial strain identifiers"
+          },
+          {
+            "@id": 120473,
+            "authors": "Curators of the CIP",
+            "catalogue": "Collection of Institut Pasteur (CIP 109380)",
+            "doi/url": "https://catalogue-crbip.pasteur.fr/fiche_catalogue.xhtml?crbip=CIP%20109380"
+          }
+        ]
+      }
+    },
+    {
+      "bacdive_id": 158499,
+      "canonical_record_sha256": "df8aaf7aa7fd12ccd725df880575653ecd5fc7211988911c1d7102ed3c439275",
+      "native_array_index": 81401,
+      "record": {
+        "General": {
+          "@ref": 65175,
+          "BacDive-ID": 158499,
+          "DSM-Number": 103433,
+          "NCBI tax id": {
+            "Matching level": "species",
+            "NCBI tax id": 1808352
+          },
+          "description": "Ligilactobacillus salitolerans YK43 is a mesophilic bacterium that was isolated from mushroom bed.",
+          "doi": "10.13145/bacdive158499.20241212.9.2",
+          "keywords": [
+            "genome sequence",
+            "16S sequence",
+            "Bacteria",
+            "mesophilic"
+          ],
+          "strain history": [
+            {
+              "@ref": 65175,
+              "history": "<- M. Tohno, National Agriculture and Food Research Organization, Nasushiobara, Japan; YK43"
+            },
+            {
+              "@ref": 67770,
+              "history": "M. Tohno; NARO Inst. of Livestock & Grassland Sci., Japan; YK43."
+            }
+          ]
+        },
+        "Name and taxonomic classification": {
+          "@ref": 65175,
+          "LPSN": {
+            "@ref": 20215,
+            "class": "Bacilli",
+            "description": "domain/bacteria",
+            "domain": "Bacteria",
+            "family": "Lactobacillaceae",
+            "full scientific name": "<I>Ligilactobacillus</I> <I>salitolerans</I> (Tohno et al. 2019) Zheng et al. 2020",
+            "genus": "Ligilactobacillus",
+            "keyword": "phylum/bacillota",
+            "order": "Lactobacillales",
+            "phylum": "Bacillota",
+            "species": "Ligilactobacillus salitolerans",
+            "synonyms": {
+              "@ref": 20215,
+              "synonym": "Lactobacillus salitolerans"
+            }
+          },
+          "class": "Bacilli",
+          "domain": "Bacteria",
+          "family": "Lactobacillaceae",
+          "full scientific name": "Ligilactobacillus salitolerans (Tohno et al. 2019) Zheng et al. 2020",
+          "genus": "Ligilactobacillus",
+          "order": "Lactobacillales",
+          "phylum": "Firmicutes",
+          "species": "Ligilactobacillus salitolerans",
+          "strain designation": "YK43",
+          "type strain": "yes"
+        },
+        "Isolation, sampling and environmental information": {
+          "isolation": [
+            {
+              "@ref": 65175,
+              "continent": "Asia",
+              "country": "Japan",
+              "geographic location": "Tochigi",
+              "origin.country": "JPN",
+              "sample type": "mushroom bed"
+            },
+            {
+              "@ref": 67770,
+              "continent": "Asia",
+              "country": "Japan",
+              "origin.country": "JPN",
+              "sample type": "Spent mushroom substrates stored in Nagano"
+            }
+          ],
+          "isolation source categories": [
+            {
+              "Cat1": "#Host",
+              "Cat2": "#Fungi",
+              "Cat3": "#Mushroom"
+            },
+            {
+              "Cat1": "#Engineered",
+              "Cat2": "#Agriculture"
+            },
+            {
+              "Cat1": "#Engineered",
+              "Cat2": "#Agriculture",
+              "Cat3": "#Garden"
+            }
+          ],
+          "taxonmaps": {
+            "16S sequence": "LC127508",
+            "@ref": 69479,
+            "File name": "preview.99_101298.png",
+            "Last taxonomy": "Ligilactobacillus",
+            "Sequence Identity": null,
+            "Total samples": 916,
+            "animal counts": 865,
+            "aquatic counts": 24,
+            "plant counts": 12,
+            "soil counts": 15,
+            "url": "https://microbeatlas.org/index.html?action=taxon&taxon_id=90_45;96_937;97_1090;98_69182;99_101298&stattab=map"
+          }
+        },
+        "Reference": [
+          {
+            "@id": 20215,
+            "authors": "Parte, A.C., Sardà Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C. and Göker, M.",
+            "doi/url": "10.1099/ijsem.0.004332",
+            "title": "List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the DSMZ"
+          },
+          {
+            "@id": 65175,
+            "authors": "Curators of the DSMZ",
+            "catalogue": "Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen GmbH (DSM 103433)",
+            "doi/url": "https://www.dsmz.de/collection/catalogue/details/culture/DSM-103433"
+          },
+          {
+            "@id": 67770,
+            "authors": "Curators of the JCM",
+            "doi/url": "https://jcm.brc.riken.jp/en/"
+          },
+          {
+            "@id": 69479,
+            "authors": "João F Matias Rodrigues, Janko Tackmann,Gregor Rot, Thomas SB Schmidt, Lukas Malfertheiner, Mihai Danaila,Marija Dmitrijeva, Daniela Gaio, Nicolas Näpflin and Christian von Mering. University of Zurich.",
+            "doi/url": "https://microbeatlas.org/",
+            "title": "MicrobeAtlas 1.0 beta"
+          },
+          {
+            "@id": 69480,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Predictions based on genome sequence made in the Diaspora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 69481,
+            "authors": "Xiao-Yin To, René Mreches, Martin Binder, Alice C. McHardy, Philipp C. Münch",
+            "doi/url": "10.21203/rs.3.rs-2527258/v1",
+            "title": "Predictions based on the model GenomeNet Sporulation v. 1"
+          },
+          {
+            "@id": 111294,
+            "authors": "Reimer, L.C., Lissin, A.,Schober, I., Witte,J.F., Podstawka, A., Lüken, H., Bunk, B.,Overmann, J.",
+            "doi/url": "10.60712/SI-ID408167.1",
+            "title": "StrainInfo: A central database for resolving microbial strain identifiers"
+          }
+        ]
+      }
+    },
+    {
+      "bacdive_id": 159039,
+      "canonical_record_sha256": "5b85763b74fef1552695ce4e10da5a6bad63b2fd81b5b8c19ffcbdf450aa3070",
+      "native_array_index": 82060,
+      "record": {
+        "General": {
+          "@ref": 65862,
+          "BacDive-ID": 159039,
+          "DSM-Number": 106353,
+          "NCBI tax id": {
+            "Matching level": "species",
+            "NCBI tax id": 391
+          },
+          "description": "Rhizobium sp. Q54 is a mesophilic, Gram-negative bacterium that was isolated from paddy soil contaminated with arsenic due to geogenic reasons.",
+          "doi": "10.13145/bacdive159039.20241212.9.2",
+          "keywords": [
+            "genome sequence",
+            "16S sequence",
+            "Bacteria",
+            "mesophilic",
+            "Gram-negative"
+          ],
+          "strain history": {
+            "@ref": 65862,
+            "history": "<- J. Santos, Univ. College London, Inst. of Structural & Molecular Biology, United Kingdom; Q54 <- J. Zhang, Nanjing Agric. Univ., China"
+          }
+        },
+        "Name and taxonomic classification": {
+          "@ref": 65862,
+          "LPSN": {
+            "@ref": 20215,
+            "class": "Alphaproteobacteria",
+            "description": "domain/bacteria",
+            "domain": "Bacteria",
+            "family": "Rhizobiaceae",
+            "full scientific name": "<I>Rhizobium</I> Frank 1889 (Approved Lists 1980)",
+            "genus": "Rhizobium",
+            "keyword": "phylum/pseudomonadota",
+            "order": "Hyphomicrobiales",
+            "phylum": "Pseudomonadota",
+            "species": "Rhizobium sp.",
+            "synonyms": [
+              {
+                "@ref": 20215,
+                "synonym": "Paenirhizobium"
+              },
+              {
+                "@ref": 20215,
+                "synonym": "Heterorhizobium"
+              },
+              {
+                "@ref": 20215,
+                "synonym": "Peteryoungia"
+              }
+            ]
+          },
+          "class": "Alphaproteobacteria",
+          "domain": "Bacteria",
+          "family": "Rhizobiaceae",
+          "full scientific name": "Rhizobium sp.",
+          "genus": "Rhizobium",
+          "order": "Hyphomicrobiales",
+          "phylum": "Proteobacteria",
+          "species": "Rhizobium sp.",
+          "strain designation": "Q54",
+          "type strain": "no"
+        },
+        "Isolation, sampling and environmental information": {
+          "isolation": {
+            "@ref": 65862,
+            "continent": "Asia",
+            "country": "China",
+            "geographic location": "Qiyang city, Hunan province",
+            "origin.country": "CHN",
+            "sample type": "paddy soil contaminated with arsenic due to geogenic reasons"
+          },
+          "isolation source categories": [
+            {
+              "Cat1": "#Engineered",
+              "Cat2": "#Agriculture",
+              "Cat3": "#Paddy (Ricefield)"
+            },
+            {
+              "Cat1": "#Environmental",
+              "Cat2": "#Terrestrial",
+              "Cat3": "#Soil"
+            },
+            {
+              "Cat1": "#Engineered",
+              "Cat2": "#Contamination"
+            }
+          ]
+        },
+        "Reference": [
+          {
+            "@id": 20215,
+            "authors": "Parte, A.C., Sardà Carbasse, J., Meier-Kolthoff, J.P., Reimer, L.C. and Göker, M.",
+            "doi/url": "10.1099/ijsem.0.004332",
+            "title": "List of Prokaryotic names with Standing in Nomenclature (LPSN) moves to the DSMZ"
+          },
+          {
+            "@id": 65862,
+            "authors": "Curators of the DSMZ",
+            "catalogue": "Leibniz Institut DSMZ-Deutsche Sammlung von Mikroorganismen und Zellkulturen GmbH (DSM 106353)",
+            "doi/url": "https://www.dsmz.de/collection/catalogue/details/culture/DSM-106353"
+          },
+          {
+            "@id": 66792,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Automatically annotated for the DiASPora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 69480,
+            "authors": "Julia Koblitz, Joaquim Sardà, Lorenz Christian Reimer, Boyke Bunk, Jörg Overmann",
+            "doi/url": "https://diaspora-project.de/progress.html#genomes",
+            "title": "Predictions based on genome sequence made in the Diaspora project (Digital Approaches for the Synthesis of Poorly Accessible Biodiversity Information)"
+          },
+          {
+            "@id": 69481,
+            "authors": "Xiao-Yin To, René Mreches, Martin Binder, Alice C. McHardy, Philipp C. Münch",
+            "doi/url": "10.21203/rs.3.rs-2527258/v1",
+            "title": "Predictions based on the model GenomeNet Sporulation v. 1"
+          },
+          {
+            "@id": 111553,
+            "authors": "Reimer, L.C., Lissin, A.,Schober, I., Witte,J.F., Podstawka, A., Lüken, H., Bunk, B.,Overmann, J.",
+            "doi/url": "10.60712/SI-ID407880.1",
+            "title": "StrainInfo: A central database for resolving microbial strain identifiers"
+          }
+        ]
+      }
+    }
+  ]
+}

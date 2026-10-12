@@ -1,0 +1,1197 @@
+{
+  "native_property_excerpt": {
+    "foodon": {
+      "domainRangeAxioms": [],
+      "edges": [
+        {
+          "edge": {
+            "obj": "http://purl.obolibrary.org/obo/RO_0000057",
+            "pred": "subPropertyOf",
+            "sub": "http://purl.obolibrary.org/obo/OBI_0000293"
+          },
+          "pointer": "/graphs/0/edges/55403"
+        },
+        {
+          "edge": {
+            "obj": "http://purl.obolibrary.org/obo/RO_0000056",
+            "pred": "subPropertyOf",
+            "sub": "http://purl.obolibrary.org/obo/OBI_0000295"
+          },
+          "pointer": "/graphs/0/edges/55404"
+        }
+      ],
+      "nodes": [
+        {
+          "declaration": {
+            "id": "http://purl.obolibrary.org/obo/OBI_0000293",
+            "lbl": "has specified input",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                  "val": "http://purl.obolibrary.org/obo/IAO_0000122"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                  "val": "http://purl.obolibrary.org/obo/obi.owl"
+                }
+              ],
+              "definition": {
+                "val": "The inverse property of is specified input of"
+              }
+            },
+            "propertyType": "OBJECT",
+            "type": "PROPERTY"
+          },
+          "pointer": "/graphs/0/nodes/39107"
+        },
+        {
+          "declaration": {
+            "id": "http://purl.obolibrary.org/obo/OBI_0000295",
+            "lbl": "is specified input of",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                  "val": "http://purl.obolibrary.org/obo/IAO_0000122"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                  "val": "http://purl.obolibrary.org/obo/obi.owl"
+                }
+              ],
+              "definition": {
+                "val": "A relation between a planned process and a continuant participating in that process that is not created during  the process. The presence of the continuant during the process is explicitly specified in the plan specification which the process realizes the concretization of."
+              }
+            },
+            "propertyType": "OBJECT",
+            "type": "PROPERTY"
+          },
+          "pointer": "/graphs/0/nodes/39108"
+        },
+        {
+          "declaration": {
+            "id": "http://purl.obolibrary.org/obo/RO_0000056",
+            "lbl": "participates_in",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+                  "val": "participates_in"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                  "val": "http://purl.obolibrary.org/obo/obi.owl"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                  "val": "http://purl.obolibrary.org/obo/ro.owl"
+                }
+              ],
+              "definition": {
+                "val": "a relation between a continuant and a process, in which the continuant is somehow involved in the process"
+              }
+            },
+            "propertyType": "OBJECT",
+            "type": "PROPERTY"
+          },
+          "pointer": "/graphs/0/nodes/39114"
+        },
+        {
+          "declaration": {
+            "id": "http://purl.obolibrary.org/obo/RO_0000057",
+            "lbl": "has_participant",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+                  "val": "has_participant"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                  "val": "http://purl.obolibrary.org/obo/obi.owl"
+                }
+              ],
+              "definition": {
+                "val": "a relation between a process and a continuant, in which the continuant is somehow involved in the process"
+              }
+            },
+            "propertyType": "OBJECT",
+            "type": "PROPERTY"
+          },
+          "pointer": "/graphs/0/nodes/39115"
+        }
+      ]
+    },
+    "ro": {
+      "domainRangeAxioms": [
+        {
+          "domainClassIds": [
+            "http://purl.obolibrary.org/obo/BFO_0000002"
+          ],
+          "predicateId": "http://purl.obolibrary.org/obo/RO_0000056",
+          "rangeClassIds": [
+            "http://purl.obolibrary.org/obo/BFO_0000003"
+          ]
+        },
+        {
+          "domainClassIds": [
+            "http://purl.obolibrary.org/obo/BFO_0000003"
+          ],
+          "predicateId": "http://purl.obolibrary.org/obo/RO_0000057",
+          "rangeClassIds": [
+            "http://purl.obolibrary.org/obo/BFO_0000002"
+          ]
+        }
+      ],
+      "edges": [
+        {
+          "edge": {
+            "obj": "http://purl.obolibrary.org/obo/RO_0040036",
+            "pred": "subPropertyOf",
+            "sub": "http://purl.obolibrary.org/obo/RO_0002565"
+          },
+          "pointer": "/graphs/0/edges/490"
+        },
+        {
+          "edge": {
+            "obj": "http://purl.obolibrary.org/obo/RO_0000057",
+            "pred": "subPropertyOf",
+            "sub": "http://purl.obolibrary.org/obo/RO_0004007"
+          },
+          "pointer": "/graphs/0/edges/579"
+        },
+        {
+          "edge": {
+            "obj": "http://purl.obolibrary.org/obo/RO_0000057",
+            "pred": "subPropertyOf",
+            "sub": "http://purl.obolibrary.org/obo/RO_0040036"
+          },
+          "pointer": "/graphs/0/edges/734"
+        },
+        {
+          "edge": {
+            "obj": "http://purl.obolibrary.org/obo/RO_0000057",
+            "pred": "inverseOf",
+            "sub": "http://purl.obolibrary.org/obo/RO_0000056"
+          },
+          "pointer": "/graphs/0/edges/817"
+        }
+      ],
+      "nodes": [
+        {
+          "declaration": {
+            "id": "http://purl.obolibrary.org/obo/RO_0000056",
+            "lbl": "participates in",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000111",
+                  "val": "participates in"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000112",
+                  "val": "this blood clot participates in this blood coagulation"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000112",
+                  "val": "this input material (or this output material) participates in this process"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000112",
+                  "val": "this investigator participates in this investigation"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+                  "val": "participates_in"
+                }
+              ],
+              "definition": {
+                "val": "a relation between a continuant and a process, in which the continuant is somehow involved in the process"
+              }
+            },
+            "propertyType": "OBJECT",
+            "type": "PROPERTY"
+          },
+          "pointer": "/graphs/0/nodes/71"
+        },
+        {
+          "declaration": {
+            "id": "http://purl.obolibrary.org/obo/RO_0000057",
+            "lbl": "has participant",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000111",
+                  "val": "has participant"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000112",
+                  "val": "this blood coagulation has participant this blood clot"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000112",
+                  "val": "this investigation has participant this investigator"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000112",
+                  "val": "this process has participant this input material (or this output material)"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                  "val": "Has_participant is a primitive instance-level relation between a process, a continuant, and a time at which the continuant participates in some way in the process. The relation obtains, for example, when this particular process of oxygen exchange across this particular alveolar membrane has_participant this particular sample of hemoglobin at this particular time."
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+                  "val": "has_participant"
+                },
+                {
+                  "pred": "http://purl.org/dc/terms/source",
+                  "val": "http://www.obofoundry.org/ro/#OBO_REL:has_participant"
+                }
+              ],
+              "definition": {
+                "val": "a relation between a process and a continuant, in which the continuant is somehow involved in the process"
+              }
+            },
+            "propertyType": "OBJECT",
+            "type": "PROPERTY"
+          },
+          "pointer": "/graphs/0/nodes/72"
+        },
+        {
+          "declaration": {
+            "id": "http://purl.obolibrary.org/obo/RO_0002565",
+            "lbl": "results in movement of",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                  "val": "https://orcid.org/0000-0002-6601-2165"
+                }
+              ],
+              "definition": {
+                "val": "Holds between p and c when p is locomotion process and the outcome of this process is the change of location of c"
+              },
+              "subsets": [
+                "http://purl.obolibrary.org/obo/valid_for_go_annotation_extension",
+                "http://purl.obolibrary.org/obo/valid_for_go_ontology",
+                "http://purl.obolibrary.org/obo/valid_for_gocam"
+              ]
+            },
+            "propertyType": "OBJECT",
+            "type": "PROPERTY"
+          },
+          "pointer": "/graphs/0/nodes/426"
+        },
+        {
+          "declaration": {
+            "id": "http://purl.obolibrary.org/obo/RO_0004007",
+            "lbl": "has primary input or output",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#created_by",
+                  "val": "https://orcid.org/0000-0002-6601-2165"
+                },
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#creation_date",
+                  "val": "2018-12-13T11:26:17Z"
+                }
+              ],
+              "definition": {
+                "val": "p 'has primary input ot output' c iff either (a) p 'has primary input' c or (b) p 'has primary output' c."
+              },
+              "subsets": [
+                "http://purl.obolibrary.org/obo/valid_for_go_ontology"
+              ]
+            },
+            "propertyType": "OBJECT",
+            "type": "PROPERTY"
+          },
+          "pointer": "/graphs/0/nodes/511"
+        },
+        {
+          "declaration": {
+            "id": "http://purl.obolibrary.org/obo/RO_0040036",
+            "lbl": "results in changes to anatomical or cellular structure",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#created_by",
+                  "val": "https://orcid.org/0000-0002-6601-2165"
+                },
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#creation_date",
+                  "val": "2018-09-26T01:08:58Z"
+                }
+              ],
+              "definition": {
+                "val": "p has anatomical participant c iff p has participant c, and c is an anatomical entity"
+              }
+            },
+            "propertyType": "OBJECT",
+            "type": "PROPERTY"
+          },
+          "pointer": "/graphs/0/nodes/679"
+        }
+      ]
+    }
+  },
+  "native_property_owl_declarations": {
+    "foodon": {
+      "OBI:0000293": [
+        {
+          "declaration_xml": "<ns0:ObjectProperty xmlns:ns0=\"http://www.w3.org/2002/07/owl#\" xmlns:ns2=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns:ns3=\"http://purl.obolibrary.org/obo/\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" rdf:about=\"http://purl.obolibrary.org/obo/OBI_0000293\">\n        <ns2:subPropertyOf rdf:resource=\"http://purl.obolibrary.org/obo/RO_0000057\" />\n        <ns3:IAO_0000114 rdf:resource=\"http://purl.obolibrary.org/obo/IAO_0000122\" />\n        <ns3:IAO_0000115 xml:lang=\"en\">The inverse property of is specified input of</ns3:IAO_0000115>\n        <ns3:IAO_0000412 rdf:resource=\"http://purl.obolibrary.org/obo/obi.owl\" />\n        <ns2:label xml:lang=\"en\">has specified input</ns2:label>\n    </ns0:ObjectProperty>\n    \n\n\n    \n\n    ",
+          "node_id_references": [],
+          "referenced_blank_node_declarations": {},
+          "restrictions": [],
+          "top_level_element_ordinal_one_based": 75,
+          "type": "{http://www.w3.org/2002/07/owl#}ObjectProperty"
+        }
+      ],
+      "OBI:0000295": [
+        {
+          "declaration_xml": "<ns0:ObjectProperty xmlns:ns0=\"http://www.w3.org/2002/07/owl#\" xmlns:ns2=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns:ns3=\"http://purl.obolibrary.org/obo/\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" rdf:about=\"http://purl.obolibrary.org/obo/OBI_0000295\">\n        <ns2:subPropertyOf rdf:resource=\"http://purl.obolibrary.org/obo/RO_0000056\" />\n        <ns3:IAO_0000114 rdf:resource=\"http://purl.obolibrary.org/obo/IAO_0000122\" />\n        <ns3:IAO_0000115 xml:lang=\"en\">A relation between a planned process and a continuant participating in that process that is not created during  the process. The presence of the continuant during the process is explicitly specified in the plan specification which the process realizes the concretization of.</ns3:IAO_0000115>\n        <ns3:IAO_0000412 rdf:resource=\"http://purl.obolibrary.org/obo/obi.owl\" />\n        <ns2:label xml:lang=\"en\">is specified input of</ns2:label>\n    </ns0:ObjectProperty>\n    \n\n\n    \n\n    ",
+          "node_id_references": [],
+          "referenced_blank_node_declarations": {},
+          "restrictions": [],
+          "top_level_element_ordinal_one_based": 76,
+          "type": "{http://www.w3.org/2002/07/owl#}ObjectProperty"
+        }
+      ]
+    },
+    "ro": {
+      "RO:0000056": [
+        {
+          "declaration_xml": "<ns0:ObjectProperty xmlns:ns0=\"http://www.w3.org/2002/07/owl#\" xmlns:ns2=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns:ns3=\"http://purl.obolibrary.org/obo/\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" rdf:about=\"http://purl.obolibrary.org/obo/RO_0000056\">\n        <ns0:inverseOf rdf:resource=\"http://purl.obolibrary.org/obo/RO_0000057\" />\n        <ns2:domain rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000002\" />\n        <ns2:range rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000003\" />\n        <ns3:IAO_0000111 xml:lang=\"en\">participates in</ns3:IAO_0000111>\n        <ns3:IAO_0000112 xml:lang=\"en\">this blood clot participates in this blood coagulation</ns3:IAO_0000112>\n        <ns3:IAO_0000112 xml:lang=\"en\">this input material (or this output material) participates in this process</ns3:IAO_0000112>\n        <ns3:IAO_0000112 xml:lang=\"en\">this investigator participates in this investigation</ns3:IAO_0000112>\n        <ns3:IAO_0000115 xml:lang=\"en\">a relation between a continuant and a process, in which the continuant is somehow involved in the process</ns3:IAO_0000115>\n        <ns3:IAO_0000118 xml:lang=\"en\">participates_in</ns3:IAO_0000118>\n        <ns2:label xml:lang=\"en\">participates in</ns2:label>\n    </ns0:ObjectProperty>\n    \n\n\n    \n\n    ",
+          "node_id_references": [],
+          "referenced_blank_node_declarations": {},
+          "restrictions": [],
+          "top_level_element_ordinal_one_based": 144,
+          "type": "{http://www.w3.org/2002/07/owl#}ObjectProperty"
+        }
+      ],
+      "RO:0000057": [
+        {
+          "declaration_xml": "<ns0:ObjectProperty xmlns:ns0=\"http://www.w3.org/2002/07/owl#\" xmlns:ns2=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns:ns3=\"http://purl.obolibrary.org/obo/\" xmlns:ns4=\"http://purl.org/dc/terms/\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" rdf:about=\"http://purl.obolibrary.org/obo/RO_0000057\">\n        <ns2:domain rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000003\" />\n        <ns2:range rdf:resource=\"http://purl.obolibrary.org/obo/BFO_0000002\" />\n        <ns0:propertyChainAxiom rdf:parseType=\"Collection\">\n            <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/BFO_0000051\" />\n            <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/BFO_0000055\" />\n            <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/RO_0000052\" />\n        </ns0:propertyChainAxiom>\n        <ns0:propertyChainAxiom rdf:parseType=\"Collection\">\n            <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/BFO_0000051\" />\n            <rdf:Description rdf:about=\"http://purl.obolibrary.org/obo/RO_0000057\" />\n        </ns0:propertyChainAxiom>\n        <ns3:IAO_0000111 xml:lang=\"en\">has participant</ns3:IAO_0000111>\n        <ns3:IAO_0000112 xml:lang=\"en\">this blood coagulation has participant this blood clot</ns3:IAO_0000112>\n        <ns3:IAO_0000112 xml:lang=\"en\">this investigation has participant this investigator</ns3:IAO_0000112>\n        <ns3:IAO_0000112 xml:lang=\"en\">this process has participant this input material (or this output material)</ns3:IAO_0000112>\n        <ns3:IAO_0000115 xml:lang=\"en\">a relation between a process and a continuant, in which the continuant is somehow involved in the process</ns3:IAO_0000115>\n        <ns3:IAO_0000116 xml:lang=\"en\">Has_participant is a primitive instance-level relation between a process, a continuant, and a time at which the continuant participates in some way in the process. The relation obtains, for example, when this particular process of oxygen exchange across this particular alveolar membrane has_participant this particular sample of hemoglobin at this particular time.</ns3:IAO_0000116>\n        <ns3:IAO_0000118 xml:lang=\"en\">has_participant</ns3:IAO_0000118>\n        <ns4:source>http://www.obofoundry.org/ro/#OBO_REL:has_participant</ns4:source>\n        <ns2:label xml:lang=\"en\">has participant</ns2:label>\n    </ns0:ObjectProperty>\n    \n\n\n    \n\n    ",
+          "node_id_references": [],
+          "referenced_blank_node_declarations": {},
+          "restrictions": [],
+          "top_level_element_ordinal_one_based": 145,
+          "type": "{http://www.w3.org/2002/07/owl#}ObjectProperty"
+        }
+      ],
+      "RO:0002565": [
+        {
+          "declaration_xml": "<ns0:ObjectProperty xmlns:ns0=\"http://www.w3.org/2002/07/owl#\" xmlns:ns2=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns:ns3=\"http://purl.obolibrary.org/obo/\" xmlns:ns4=\"http://www.geneontology.org/formats/oboInOwl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" rdf:about=\"http://purl.obolibrary.org/obo/RO_0002565\">\n        <ns2:subPropertyOf rdf:resource=\"http://purl.obolibrary.org/obo/RO_0040036\" />\n        <ns3:IAO_0000115>Holds between p and c when p is locomotion process and the outcome of this process is the change of location of c</ns3:IAO_0000115>\n        <ns3:IAO_0000117 rdf:resource=\"https://orcid.org/0000-0002-6601-2165\" />\n        <ns4:inSubset rdf:resource=\"http://purl.obolibrary.org/obo/valid_for_go_annotation_extension\" />\n        <ns4:inSubset rdf:resource=\"http://purl.obolibrary.org/obo/valid_for_go_ontology\" />\n        <ns4:inSubset rdf:resource=\"http://purl.obolibrary.org/obo/valid_for_gocam\" />\n        <ns2:label>results in movement of</ns2:label>\n    </ns0:ObjectProperty>\n    \n\n\n    \n\n    ",
+          "node_id_references": [],
+          "referenced_blank_node_declarations": {},
+          "restrictions": [],
+          "top_level_element_ordinal_one_based": 532,
+          "type": "{http://www.w3.org/2002/07/owl#}ObjectProperty"
+        }
+      ],
+      "RO:0004007": [
+        {
+          "declaration_xml": "<ns0:ObjectProperty xmlns:ns0=\"http://www.w3.org/2002/07/owl#\" xmlns:ns2=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns:ns3=\"http://purl.obolibrary.org/obo/\" xmlns:ns4=\"http://www.geneontology.org/formats/oboInOwl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" rdf:about=\"http://purl.obolibrary.org/obo/RO_0004007\">\n        <ns2:subPropertyOf rdf:resource=\"http://purl.obolibrary.org/obo/RO_0000057\" />\n        <ns3:IAO_0000115>p 'has primary input ot output' c iff either (a) p 'has primary input' c or (b) p 'has primary output' c.</ns3:IAO_0000115>\n        <ns4:created_by rdf:resource=\"https://orcid.org/0000-0002-6601-2165\" />\n        <ns4:creation_date rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2018-12-13T11:26:17Z</ns4:creation_date>\n        <ns4:inSubset rdf:resource=\"http://purl.obolibrary.org/obo/valid_for_go_ontology\" />\n        <ns2:label>has primary input or output</ns2:label>\n    </ns0:ObjectProperty>\n    \n\n\n    \n\n    ",
+          "node_id_references": [],
+          "referenced_blank_node_declarations": {},
+          "restrictions": [],
+          "top_level_element_ordinal_one_based": 619,
+          "type": "{http://www.w3.org/2002/07/owl#}ObjectProperty"
+        }
+      ],
+      "RO:0040036": [
+        {
+          "declaration_xml": "<ns0:ObjectProperty xmlns:ns0=\"http://www.w3.org/2002/07/owl#\" xmlns:ns2=\"http://www.w3.org/2000/01/rdf-schema#\" xmlns:ns3=\"http://purl.obolibrary.org/obo/\" xmlns:ns4=\"http://www.geneontology.org/formats/oboInOwl#\" xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" rdf:about=\"http://purl.obolibrary.org/obo/RO_0040036\">\n        <ns2:subPropertyOf rdf:resource=\"http://purl.obolibrary.org/obo/RO_0000057\" />\n        <ns3:IAO_0000115>p has anatomical participant c iff p has participant c, and c is an anatomical entity</ns3:IAO_0000115>\n        <ns4:created_by rdf:resource=\"https://orcid.org/0000-0002-6601-2165\" />\n        <ns4:creation_date rdf:datatype=\"http://www.w3.org/2001/XMLSchema#dateTime\">2018-09-26T01:08:58Z</ns4:creation_date>\n        <ns2:label>results in changes to anatomical or cellular structure</ns2:label>\n    </ns0:ObjectProperty>\n    \n\n\n    \n\n    ",
+          "node_id_references": [],
+          "referenced_blank_node_declarations": {},
+          "restrictions": [],
+          "top_level_element_ordinal_one_based": 806,
+          "type": "{http://www.w3.org/2002/07/owl#}ObjectProperty"
+        }
+      ]
+    }
+  },
+  "native_property_paths": {
+    "OBI:0000293": {
+      "declarations": [
+        {
+          "declaration": {
+            "id": "http://purl.obolibrary.org/obo/OBI_0000293",
+            "lbl": "has specified input",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000114",
+                  "val": "http://purl.obolibrary.org/obo/IAO_0000122"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000412",
+                  "val": "http://purl.obolibrary.org/obo/obi.owl"
+                }
+              ],
+              "definition": {
+                "val": "The inverse property of is specified input of"
+              }
+            },
+            "propertyType": "OBJECT",
+            "type": "PROPERTY"
+          },
+          "pointer": "/graphs/0/nodes/39107"
+        }
+      ],
+      "mapping_strength": "generalization",
+      "path": [
+        {
+          "edge": {
+            "obj": "http://purl.obolibrary.org/obo/RO_0000057",
+            "pred": "subPropertyOf",
+            "sub": "http://purl.obolibrary.org/obo/OBI_0000293"
+          },
+          "pointer": "/graphs/0/edges/55403"
+        }
+      ],
+      "supplier": "foodon",
+      "target": "RO:0000057"
+    },
+    "RO:0000056": {
+      "declarations": [
+        {
+          "declaration": {
+            "id": "http://purl.obolibrary.org/obo/RO_0000056",
+            "lbl": "participates in",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000111",
+                  "val": "participates in"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000112",
+                  "val": "this blood clot participates in this blood coagulation"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000112",
+                  "val": "this input material (or this output material) participates in this process"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000112",
+                  "val": "this investigator participates in this investigation"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+                  "val": "participates_in"
+                }
+              ],
+              "definition": {
+                "val": "a relation between a continuant and a process, in which the continuant is somehow involved in the process"
+              }
+            },
+            "propertyType": "OBJECT",
+            "type": "PROPERTY"
+          },
+          "pointer": "/graphs/0/nodes/71"
+        }
+      ],
+      "mapping_strength": "exact",
+      "path": [],
+      "supplier": "ro",
+      "target": "RO:0000056"
+    },
+    "RO:0000057": {
+      "declarations": [
+        {
+          "declaration": {
+            "id": "http://purl.obolibrary.org/obo/RO_0000057",
+            "lbl": "has participant",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000111",
+                  "val": "has participant"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000112",
+                  "val": "this blood coagulation has participant this blood clot"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000112",
+                  "val": "this investigation has participant this investigator"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000112",
+                  "val": "this process has participant this input material (or this output material)"
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+                  "val": "Has_participant is a primitive instance-level relation between a process, a continuant, and a time at which the continuant participates in some way in the process. The relation obtains, for example, when this particular process of oxygen exchange across this particular alveolar membrane has_participant this particular sample of hemoglobin at this particular time."
+                },
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+                  "val": "has_participant"
+                },
+                {
+                  "pred": "http://purl.org/dc/terms/source",
+                  "val": "http://www.obofoundry.org/ro/#OBO_REL:has_participant"
+                }
+              ],
+              "definition": {
+                "val": "a relation between a process and a continuant, in which the continuant is somehow involved in the process"
+              }
+            },
+            "propertyType": "OBJECT",
+            "type": "PROPERTY"
+          },
+          "pointer": "/graphs/0/nodes/72"
+        }
+      ],
+      "mapping_strength": "exact",
+      "path": [],
+      "supplier": "ro",
+      "target": "RO:0000057"
+    },
+    "RO:0002565": {
+      "declarations": [
+        {
+          "declaration": {
+            "id": "http://purl.obolibrary.org/obo/RO_0002565",
+            "lbl": "results in movement of",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+                  "val": "https://orcid.org/0000-0002-6601-2165"
+                }
+              ],
+              "definition": {
+                "val": "Holds between p and c when p is locomotion process and the outcome of this process is the change of location of c"
+              },
+              "subsets": [
+                "http://purl.obolibrary.org/obo/valid_for_go_annotation_extension",
+                "http://purl.obolibrary.org/obo/valid_for_go_ontology",
+                "http://purl.obolibrary.org/obo/valid_for_gocam"
+              ]
+            },
+            "propertyType": "OBJECT",
+            "type": "PROPERTY"
+          },
+          "pointer": "/graphs/0/nodes/426"
+        }
+      ],
+      "mapping_strength": "generalization",
+      "path": [
+        {
+          "edge": {
+            "obj": "http://purl.obolibrary.org/obo/RO_0040036",
+            "pred": "subPropertyOf",
+            "sub": "http://purl.obolibrary.org/obo/RO_0002565"
+          },
+          "pointer": "/graphs/0/edges/490"
+        },
+        {
+          "edge": {
+            "obj": "http://purl.obolibrary.org/obo/RO_0000057",
+            "pred": "subPropertyOf",
+            "sub": "http://purl.obolibrary.org/obo/RO_0040036"
+          },
+          "pointer": "/graphs/0/edges/734"
+        }
+      ],
+      "supplier": "ro",
+      "target": "RO:0000057"
+    },
+    "RO:0004007": {
+      "declarations": [
+        {
+          "declaration": {
+            "id": "http://purl.obolibrary.org/obo/RO_0004007",
+            "lbl": "has primary input or output",
+            "meta": {
+              "basicPropertyValues": [
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#created_by",
+                  "val": "https://orcid.org/0000-0002-6601-2165"
+                },
+                {
+                  "pred": "http://www.geneontology.org/formats/oboInOwl#creation_date",
+                  "val": "2018-12-13T11:26:17Z"
+                }
+              ],
+              "definition": {
+                "val": "p 'has primary input ot output' c iff either (a) p 'has primary input' c or (b) p 'has primary output' c."
+              },
+              "subsets": [
+                "http://purl.obolibrary.org/obo/valid_for_go_ontology"
+              ]
+            },
+            "propertyType": "OBJECT",
+            "type": "PROPERTY"
+          },
+          "pointer": "/graphs/0/nodes/511"
+        }
+      ],
+      "mapping_strength": "generalization",
+      "path": [
+        {
+          "edge": {
+            "obj": "http://purl.obolibrary.org/obo/RO_0000057",
+            "pred": "subPropertyOf",
+            "sub": "http://purl.obolibrary.org/obo/RO_0004007"
+          },
+          "pointer": "/graphs/0/edges/579"
+        }
+      ],
+      "supplier": "ro",
+      "target": "RO:0000057"
+    }
+  },
+  "negative_property_declarations": [
+    {
+      "declaration": {
+        "id": "http://purl.obolibrary.org/obo/RO_0002215",
+        "lbl": "capable of",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000112",
+              "val": "mechanosensory neuron capable of detection of mechanical stimulus involved in sensory perception (GO:0050974)"
+            },
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000112",
+              "val": "osteoclast SubClassOf 'capable of' some 'bone resorption'"
+            },
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+              "val": "https://orcid.org/0000-0002-6601-2165"
+            },
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000118",
+              "val": "has function realized in"
+            },
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "http://www.ncbi.nlm.nih.gov/pubmed/20123131"
+            },
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "http://www.ncbi.nlm.nih.gov/pubmed/21208450"
+            },
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000232",
+              "val": "For compatibility with BFO, this relation has a shortcut definition in which the expression \"capable of some P\" expands to \"bearer_of (some realized_by only P)\"."
+            }
+          ],
+          "definition": {
+            "val": "A relation between a material entity (such as a cell) and a process, in which the material entity has the ability to carry out the process. "
+          },
+          "subsets": [
+            "http://purl.obolibrary.org/obo/ro/subsets#ro-eco"
+          ]
+        },
+        "propertyType": "OBJECT",
+        "type": "PROPERTY"
+      },
+      "pointer": "/graphs/0/nodes/183"
+    },
+    {
+      "declaration": {
+        "id": "http://purl.obolibrary.org/obo/RO_0002503",
+        "lbl": "towards",
+        "meta": {
+          "basicPropertyValues": [
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000116",
+              "val": "This relation is provided in order to support the use of relational qualities such as 'concentration of'; for example, the concentration of C in V is a quality that inheres in V, but pertains to C."
+            },
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000117",
+              "val": "https://orcid.org/0000-0002-6601-2165"
+            },
+            {
+              "pred": "http://purl.obolibrary.org/obo/IAO_0000119",
+              "val": "http://www.ncbi.nlm.nih.gov/pubmed/20064205"
+            }
+          ],
+          "definition": {
+            "val": "q towards e2 if and only if q is a relational quality such that q inheres-in some e, and e != e2 and q is dependent on e2"
+          }
+        },
+        "propertyType": "OBJECT",
+        "type": "PROPERTY"
+      },
+      "pointer": "/graphs/0/nodes/387"
+    }
+  ],
+  "original_file_sha256": {
+    "biolink-model.yaml": "b6a1320772a92d69e84b8c700cd6386dffe45ed635c8197d61e22b6a6fa3b35e",
+    "envo.json": "d676aae57774fee7f8818130c47e098367e6a5d8540a8c69d150b6575a3aebee",
+    "foodon.json": "8dfba179356a84d8ddad4087dc1fa89a76f6511456c298b9dd7b09df9eb6d853",
+    "foodon.owl": "1e11fc50283c6498697a7aca9606c9d914f1cda71cc5510e006d949c32df7db0",
+    "pato.json": "b129f5f5e968e4a8675bb9d6cb3a40668f1c5a2783bef81b30c86c563ce5d46d",
+    "pato.owl": "73a80487130a81a3696f1e03c551288f741ed1be5a07639e69e7ecd8b6f0371c",
+    "ro.json": "1ed089b1cb33d5ac9d5afee10ba98f79689af9e3b40e9940658625c09785748c",
+    "ro.owl": "a9f644d4a865747e0b4aba7ca3f19aac1e0b072cab89e24a2e476df3abb10aaf",
+    "uberon.json": "87a892da0544a82f41f0a8b2b52f7ee705ec6d5ca2c102e7d439a7086d79f428",
+    "uberon.owl": "938f51e7c3fc9fcbe5a2863eb346da8033737e568af5836958891c4c6bfb1192"
+  },
+  "pinned_model": {
+    "classes": {
+      "anatomical entity": {
+        "description": "A part of a cellular organism at or above the granularity of a protein complex. This is a grouping class with three concrete subclasses that should be preferred when applicable: \"biolink:Cell\" for whole cells, \"biolink:CellularComponent\" for subcellular and intracellular structures (organelles, membranes, bacterial flagella, etc.), and \"biolink:GrossAnatomcialStructure\" for multicellular parts (tissues, organs, body parts). Excludes viral and other acellular biological entities.",
+        "exact_mappings": [
+          "UBERON:0001062",
+          "WIKIDATA:Q4936952",
+          "UMLSSG:ANAT",
+          "STY:T017",
+          "FMA:62955",
+          "CARO:0000000",
+          "SIO:001262",
+          "STY:T029",
+          "STY:T030"
+        ],
+        "examples": [
+          {
+            "description": "blood",
+            "value": "UBERON:0000178"
+          },
+          {
+            "description": "anatomical cavity",
+            "value": "UBERON:0002553"
+          }
+        ],
+        "id_prefixes": [
+          "UBERON",
+          "GO",
+          "CL",
+          "UMLS",
+          "MESH",
+          "NCIT",
+          "EMAPA",
+          "ZFA",
+          "FBbt",
+          "WBbt",
+          "FMA"
+        ],
+        "in_subset": [
+          "model_organism_database"
+        ],
+        "is_a": "organismal entity",
+        "mixins": [
+          "physical essence",
+          "ontology class"
+        ],
+        "narrow_mappings": [
+          "ZFA:0100000",
+          "FBbt:10000000",
+          "EMAPA:0",
+          "MA:0000001",
+          "XAO:0000000",
+          "WBbt:0000100",
+          "NCIT:C12219",
+          "GO:0110165",
+          "STY:T031"
+        ],
+        "related_mappings": [
+          "SNOMEDCT:123037004"
+        ]
+      },
+      "biological entity": {
+        "abstract": true,
+        "aliases": [
+          "bioentity"
+        ],
+        "description": "A heterogeneous substance that contains genomic material or is the product of a biological process.",
+        "is_a": "named thing",
+        "mixins": [
+          "thing with taxon"
+        ],
+        "narrow_mappings": [
+          "WIKIDATA:Q28845870",
+          "STY:T050",
+          "SIO:010046",
+          "STY:T129"
+        ]
+      },
+      "biological process": {
+        "broad_mappings": [
+          "WIKIDATA:P682"
+        ],
+        "description": "One or more causally connected executions of molecular functions",
+        "exact_mappings": [
+          "GO:0008150",
+          "SIO:000006",
+          "WIKIDATA:Q2996394"
+        ],
+        "id_prefixes": [
+          "GO",
+          "REACT",
+          "metacyc.reaction",
+          "KEGG.MODULE",
+          "KEGG",
+          "UMLS"
+        ],
+        "is_a": "biological process or activity",
+        "mixins": [
+          "occurrent",
+          "ontology class"
+        ]
+      },
+      "biological process or activity": {
+        "description": "Either an individual molecular activity, or a collection of causally connected molecular activities in a biological system.",
+        "id_prefixes": [
+          "GO",
+          "REACT"
+        ],
+        "is_a": "biological entity",
+        "mixins": [
+          "occurrent",
+          "ontology class"
+        ],
+        "slots": [
+          "has input",
+          "has output",
+          "enabled by"
+        ]
+      },
+      "cell": {
+        "description": "The basic structural and functional unit of all organisms. Includes the plasma membrane and any external encapsulating structures such as the cell wall and cell envelope.",
+        "exact_mappings": [
+          "GO:0005623",
+          "CL:0000000",
+          "SIO:010001",
+          "WIKIDATA:Q7868",
+          "STY:T025",
+          "MESH:D002477"
+        ],
+        "examples": [
+          {
+            "description": "neuron",
+            "value": "CL:0000540"
+          },
+          {
+            "description": "B cell",
+            "value": "CL:0000236"
+          }
+        ],
+        "id_prefixes": [
+          "CL",
+          "PO",
+          "UMLS",
+          "NCIT",
+          "MESH",
+          "UBERON",
+          "SNOMEDCT",
+          "MESH"
+        ],
+        "is_a": "anatomical entity"
+      },
+      "chemical entity": {
+        "broad_mappings": [
+          "STY:T167"
+        ],
+        "description": "A chemical entity is a physical entity that pertains to chemistry or biochemistry.",
+        "exact_mappings": [
+          "CHEBI:24431",
+          "SIO:010004",
+          "WIKIDATA:Q79529",
+          "STY:T103"
+        ],
+        "id_prefixes": [
+          "CHEBI",
+          "UNII",
+          "PUBCHEM.COMPOUND",
+          "CHEMBL.COMPOUND",
+          "DRUGBANK",
+          "MESH",
+          "CAS",
+          "DrugCentral",
+          "GTOPDB",
+          "HMDB",
+          "KEGG.COMPOUND",
+          "PHARMGKB.DRUG",
+          "ChemBank",
+          "PUBCHEM.SUBSTANCE",
+          "SIDER.DRUG",
+          "INCHI",
+          "INCHIKEY",
+          "BIGG.METABOLITE",
+          "foodb.compound",
+          "KEGG.GLYCAN",
+          "KEGG.DRUG",
+          "KEGG.ENVIRON",
+          "KEGG",
+          "UMLS"
+        ],
+        "in_subset": [
+          "translator_minimal"
+        ],
+        "is_a": "named thing",
+        "mixins": [
+          "physical essence",
+          "chemical or drug or treatment",
+          "chemical entity or gene or gene product",
+          "chemical entity or protein or polypeptide"
+        ],
+        "narrow_mappings": [
+          "WIKIDATA:Q43460564",
+          "STY:T123",
+          "STY:T131"
+        ],
+        "slots": [
+          "trade name",
+          "available from",
+          "max tolerated dose",
+          "is toxic",
+          "has chemical role",
+          "routes of delivery",
+          "chembl prodrug",
+          "chembl black box warning",
+          "chembl natural product",
+          "chembl availability type",
+          "chembl chirality",
+          "chembl drug warning"
+        ]
+      },
+      "chemical entity or gene or gene product": {
+        "description": "A union of chemical entities and children, and gene or gene product. This mixin is helpful to use when searching across chemical entities that must include genes and their children as chemical entities.",
+        "mixin": true
+      },
+      "chemical entity or protein or polypeptide": {
+        "description": "A union of chemical entities and children, and protein and polypeptide. This mixin is helpful to use when searching across chemical entities that must include genes and their children as chemical entities.",
+        "mixin": true
+      },
+      "chemical or drug or treatment": {
+        "description": "A mixin for entities that represent chemical substances, pharmacological agents, or therapeutic interventions.",
+        "id_prefixes": [
+          "PUBCHEM.COMPOUND",
+          "CHEMBL.COMPOUND",
+          "CHEBI",
+          "MAXO"
+        ],
+        "mixin": true
+      },
+      "entity": {
+        "abstract": true,
+        "description": "Root Biolink Model class for all things and informational relationships, real or imagined.",
+        "slots": [
+          "id",
+          "iri",
+          "category",
+          "type",
+          "name",
+          "description",
+          "has attribute",
+          "deprecated"
+        ]
+      },
+      "life stage": {
+        "description": "A stage of development or growth of an organism, including post-natal adult stages",
+        "exact_mappings": [
+          "UBERON:0000105"
+        ],
+        "id_prefixes": [
+          "HsapDv",
+          "MmusDv",
+          "ZFS",
+          "FBdv",
+          "WBls",
+          "UBERON"
+        ],
+        "in_subset": [
+          "model_organism_database"
+        ],
+        "is_a": "organismal entity",
+        "mixins": [
+          "ontology class"
+        ],
+        "narrow_mappings": [
+          "HsapDv:0000000"
+        ]
+      },
+      "named thing": {
+        "description": "a databased entity or concept/class",
+        "exact_mappings": [
+          "BFO:0000001",
+          "WIKIDATA:Q35120",
+          "UMLSSG:OBJC",
+          "STY:T071",
+          "dcid:Thing"
+        ],
+        "is_a": "entity",
+        "slot_usage": {
+          "category": {
+            "required": true
+          }
+        },
+        "slots": [
+          "provided by",
+          "xref",
+          "full name",
+          "synonym",
+          "exact synonym",
+          "broad synonym",
+          "narrow synonym",
+          "related synonym",
+          "equivalent identifiers",
+          "information content",
+          "taxon"
+        ]
+      },
+      "occurrent": {
+        "description": "A processual entity.",
+        "exact_mappings": [
+          "BFO:0000003"
+        ],
+        "is_a": "physical essence or occurrent",
+        "mixin": true
+      },
+      "ontology class": {
+        "comments": [
+          "This is modeled as a mixin. 'ontology class' should not be the primary type of a node in the KG. Instead you should use an informative bioloink category, such as AnatomicalEntity (for Uberon classes), ChemicalSubstance (for CHEBI or CHEMBL), etc",
+          "Note that formally this is a metaclass. Instances of this class are instances in the graph, but can be the object of 'type' edges. For example, if we had a node in the graph representing a specific brain of a specific patient (e.g brain001), this could have a category of bl:Sample, and by typed more specifically with an ontology class UBERON:nnn, which has as category bl:AnatomicalEntity"
+        ],
+        "description": "a concept or class in an ontology, vocabulary or thesaurus. Note that nodes in a biolink compatible KG can be considered both instances of biolink classes, and OWL classes in their own right. In general you should not need to use this class directly. Instead, use the appropriate biolink class. For example, for the GO concept of endocytosis (GO:0006897), use bl:BiologicalProcess as the type.",
+        "exact_mappings": [
+          "owl:Class",
+          "schema:Class"
+        ],
+        "examples": [
+          {
+            "description": "the class 'brain' from the Uberon anatomy ontology",
+            "value": "UBERON:0000955"
+          }
+        ],
+        "id_prefixes": [
+          "MESH",
+          "UMLS",
+          "KEGG.BRITE"
+        ],
+        "mixin": true,
+        "see_also": [
+          "https://github.com/biolink/biolink-model/issues/486"
+        ],
+        "slots": [
+          "id",
+          "subsets"
+        ]
+      },
+      "organismal entity": {
+        "abstract": true,
+        "description": "A named entity that is either a part of an organism, a whole organism, population or clade of organisms, excluding chemical entities",
+        "exact_mappings": [
+          "WIKIDATA:Q7239",
+          "UMLSSG:LIVB",
+          "CARO:0001010"
+        ],
+        "is_a": "biological entity",
+        "mixins": [
+          "subject of investigation"
+        ],
+        "narrow_mappings": [
+          "STY:T008"
+        ],
+        "slot_usage": {
+          "has attribute": {
+            "description": "may often be an organism attribute"
+          }
+        }
+      },
+      "physical essence": {
+        "description": "Semantic mixin concept.  Pertains to entities that have physical properties such as mass, volume, or charge.",
+        "is_a": "physical essence or occurrent",
+        "mixin": true
+      },
+      "physical essence or occurrent": {
+        "description": "Either a physical or processual entity.",
+        "mixin": true
+      },
+      "subject of investigation": {
+        "description": "An entity that has the role of being studied in an investigation, study, or experiment",
+        "mixin": true
+      },
+      "thing with taxon": {
+        "description": "A mixin that can be used on any entity that can be taxonomically classified. This includes individual organisms; genes, their products and other molecular entities; body parts; biological processes",
+        "mixin": true,
+        "slots": [
+          "in taxon",
+          "in taxon label"
+        ]
+      }
+    },
+    "slots": {
+      "has participant": {
+        "annotations": {
+          "canonical_predicate": true
+        },
+        "close_mappings": [
+          "WIKIDATA_PROPERTY:P2283"
+        ],
+        "description": "holds between a process and a continuant, where the continuant is somehow involved in the process",
+        "domain": "biological process or activity",
+        "exact_mappings": [
+          "RO:0000057",
+          "RO:has_participant"
+        ],
+        "in_subset": [
+          "translator_minimal"
+        ],
+        "is_a": "related to at instance level",
+        "narrow_mappings": [
+          "BFO:0000167",
+          "LOINC:has_subject",
+          "NCIT:process_involves_gene",
+          "NBO-PROPERTY:has_participant",
+          "PathWhiz:has_bound",
+          "PathWhiz:has_compound",
+          "PathWhiz:has_element_collection",
+          "PathWhiz:has_enzyme",
+          "OBI:0000293",
+          "PathWhiz:has_nucleic_acid",
+          "PathWhiz:has_protein",
+          "PathWhiz:has_reaction",
+          "RO:0002565",
+          "RO:0004007",
+          "RO:0004020",
+          "RO:0004021",
+          "SNOMED:has_indirect_device",
+          "SNOMED:has_procedure_device",
+          "SNOMED:has_recipient_category"
+        ],
+        "range": "occurrent"
+      },
+      "participates in": {
+        "description": "holds between a continuant and a process, where the continuant is somehow involved in the process",
+        "domain": "occurrent",
+        "exact_mappings": [
+          "RO:0000056",
+          "BFO:0000056"
+        ],
+        "in_subset": [
+          "translator_minimal"
+        ],
+        "inverse": "has participant",
+        "is_a": "related to at instance level",
+        "narrow_mappings": [
+          "DRUGBANK:pathway",
+          "HMDB:in_pathway",
+          "LOINC:is_given_pharmaceutical_substance_for",
+          "NCIT:R130",
+          "NCIT:R37",
+          "NCIT:R131",
+          "NCIT:R51",
+          "NCIT:R53",
+          "OBI:0000295",
+          "RO:0002216",
+          "RO:0002505",
+          "SNOMED:has_direct_device"
+        ],
+        "range": "biological process or activity"
+      }
+    },
+    "version": "4.4.2"
+  },
+  "review_evidence_sha256": "6db7cb105001bb5b59b74c7ca1e63e061e0276ec7a788891fdf71735456f7521",
+  "scope": "Finite documentation/test evidence, not a runtime validation waiver or full native ontology"
+}

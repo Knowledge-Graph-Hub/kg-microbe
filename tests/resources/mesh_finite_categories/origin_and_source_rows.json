@@ -1,0 +1,396 @@
+{
+  "origin": {
+    "current_source_declaration_count": 27,
+    "current_source_incident_occurrences": 1499,
+    "description": "Complete raw native records for 17 reviewed descriptor/SCR subjects and their preferred concepts, no rewritten native statements. Excerpt hash is not the full archive hash.",
+    "historical_diagnostic_sides": 1474,
+    "native_bytes": 120696702,
+    "native_excerpt_bytes": 70697,
+    "native_excerpt_sha256": "e43fa21d7bab84e0ec27aa78212d51821a9b64766ee26dd75d60226cc0a3d910",
+    "native_excerpt_statement_count": 522,
+    "native_excerpt_subject_count": 34,
+    "native_path": "data/raw/mesh2026.nt.gz",
+    "native_sha256": "6997c24530cfbc698690e3d85ba5436e5ee56708f7f77073cbf8f502f3de7c5e",
+    "native_sorted_statements_sha256": "0dfb343a0073357ba55a7e09f968a503379135780bd3de9c83413ef96bd1ba0a"
+  },
+  "source_rows": [
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:C008328",
+        "name": "marmite",
+        "provided_by": "ontologies_stubs",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "ontologies_stubs"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:C008328",
+        "name": "Marmite",
+        "provided_by": "infores:mediadive",
+        "same_as": "",
+        "synonym": "",
+        "xref": "MIM:Marmite"
+      },
+      "source": "mediadive"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:C013216",
+        "name": "potassium phosphate",
+        "provided_by": "ontologies_stubs",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "ontologies_stubs"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:C013216",
+        "name": "Potassium Phosphate",
+        "provided_by": "infores:mediadive",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "mediadive"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:C016600",
+        "name": "ferrous citrate",
+        "provided_by": "ontologies_stubs",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "ontologies_stubs"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:C016600",
+        "name": "Ferrous citrate",
+        "provided_by": "infores:mediadive",
+        "same_as": "",
+        "synonym": "monoferrous acid citrate",
+        "xref": "MIM:Ferrous_Citrate"
+      },
+      "source": "mediadive"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:C017029",
+        "name": "asialofetuin",
+        "provided_by": "ontologies_stubs",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "ontologies_stubs"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:C017029",
+        "name": "Asialofetuin",
+        "provided_by": "infores:mediadive",
+        "same_as": "",
+        "synonym": "",
+        "xref": "MIM:Asialofetuin"
+      },
+      "source": "mediadive"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:C028805",
+        "name": "2-sulfobenzoic acid",
+        "provided_by": "ontologies_stubs",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "ontologies_stubs"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:C028805",
+        "name": "2-Sulfobenzoic acid",
+        "provided_by": "infores:mediadive",
+        "same_as": "",
+        "synonym": "",
+        "xref": "MIM:2-Sulfobenzoic_Acid"
+      },
+      "source": "mediadive"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:C039460",
+        "name": "titanium trichloride",
+        "provided_by": "ontologies_stubs",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "ontologies_stubs"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:C039460",
+        "name": "TiCl3",
+        "provided_by": "infores:mediadive",
+        "same_as": "",
+        "synonym": "titanium trichloride",
+        "xref": "MIM:TiCl3"
+      },
+      "source": "mediadive"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:C514290",
+        "name": "trisodium citrate",
+        "provided_by": "ontologies_stubs",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "ontologies_stubs"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:C514290",
+        "name": "Trisodium citrate",
+        "provided_by": "infores:mediadive",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "mediadive"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:C521980",
+        "name": "butyl vinyl ether",
+        "provided_by": "ontologies_stubs",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "ontologies_stubs"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:C521980",
+        "name": "Butyl vinyl ether",
+        "provided_by": "infores:mediadive",
+        "same_as": "",
+        "synonym": "",
+        "xref": "MIM:Butyl_Vinyl_Ether"
+      },
+      "source": "mediadive"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:D000076624",
+        "name": "Built Environment",
+        "provided_by": "ontologies_stubs",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "ontologies_stubs"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:D000083422",
+        "name": "Virome",
+        "provided_by": "ontologies_stubs",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "ontologies_stubs"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:D004531",
+        "name": "Eggs",
+        "provided_by": "ontologies_stubs",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "ontologies_stubs"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:D011136",
+        "name": "Polysorbates",
+        "provided_by": "ontologies_stubs",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "ontologies_stubs"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:D011136",
+        "name": "Tween",
+        "provided_by": "infores:mediadive",
+        "same_as": "",
+        "synonym": "Polysorbates",
+        "xref": "MIM:Tween"
+      },
+      "source": "mediadive"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:D012623",
+        "name": "Seawater",
+        "provided_by": "ontologies_stubs",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "ontologies_stubs"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:D014131",
+        "name": "Trace Elements",
+        "provided_by": "ontologies_stubs",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "ontologies_stubs"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:D014131",
+        "name": "Trace elements",
+        "provided_by": "infores:mediadive",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "mediadive"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:D015048",
+        "name": "Zooplankton",
+        "provided_by": "ontologies_stubs",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "ontologies_stubs"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:D044003",
+        "name": "Sphagnopsida",
+        "provided_by": "ontologies_stubs",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "ontologies_stubs"
+    },
+    {
+      "row": {
+        "category": "biolink:OntologyClass",
+        "deprecated": "",
+        "description": "",
+        "id": "mesh:D062611",
+        "name": "Solid Waste",
+        "provided_by": "ontologies_stubs",
+        "same_as": "",
+        "synonym": "",
+        "xref": ""
+      },
+      "source": "ontologies_stubs"
+    }
+  ]
+}

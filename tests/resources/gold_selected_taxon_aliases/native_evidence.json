@@ -1,0 +1,930 @@
+{
+  "inputs": {
+    "gold_edges": {
+      "bytes": 184164126,
+      "path": "source-repository/data/raw/gold/GOLD_edges.tsv",
+      "sha256": "54982c25de9d2c820eeebc1452aeac0b034595921d04d55b810bf1d2b1e127e0"
+    },
+    "gold_nodes": {
+      "bytes": 121818977,
+      "path": "source-repository/data/raw/gold/GOLD_nodes.tsv",
+      "sha256": "c13c21bdd04619c75ce16e63b05e51577b0cefec5b61765d383313f654ab3fae"
+    },
+    "md_edges": {
+      "bytes": 186770150,
+      "path": "source-repository/data/transformed/microbedecoder/edges.tsv",
+      "sha256": "5476c0d905ad454e90ff86ec40c175a04d7bbe0c8b1475a23a20cab0b52615f9"
+    },
+    "md_raw": {
+      "bytes": 56709588,
+      "path": "source-repository/data/raw/database.csv",
+      "sha256": "0c6ff730a108720a5d6972400f2bccf2eca8621713b62736abdf5df0fb188c95"
+    },
+    "ncbi_db": {
+      "bytes": 14073847808,
+      "path": "source-repository/data/raw/ncbitaxon.db",
+      "sha256": "8474ba4f4c341b8578ac10d5661b315be8a3c6f0687b4d2e7e61b55e34faea34"
+    },
+    "selected_json": {
+      "bytes": 618773609,
+      "path": "source-repository/data/raw/ncbitaxon_removed_subset.json",
+      "sha256": "c867a413354bb755ed583ca51fa0acd53917465f8e3fb5cef4f34527ef7e0a65"
+    },
+    "selected_nodes": {
+      "bytes": 104675145,
+      "path": "source-repository/data/transformed/ontologies/ncbitaxon_nodes.tsv",
+      "sha256": "e847c7d291320ed80785976e4a7eadbfadde5456245bc77a88bf291fe87eb3fb"
+    },
+    "taxdump": {
+      "bytes": 77752405,
+      "path": "source-repository/data/raw/taxdump.tar.gz",
+      "sha256": "2e9675bdb2c353aae185316319c23c06955eec1bbf9efed4e39875661ee8d2d1"
+    }
+  },
+  "native_incident_rows": [
+    {
+      "id": "gold:Go0680943-in_taxon-NCBITaxon:53360",
+      "object": "NCBITaxon:53360",
+      "predicate": "biolink:in_taxon",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ncbi_taxonomy_id",
+      "subject": "gold:Go0680943"
+    },
+    {
+      "id": "gold:Go0680943-occurs_in-gold.ecosystem:1",
+      "object": "gold.ecosystem:1",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0680943"
+    },
+    {
+      "id": "gold:Go0605406-in_taxon-NCBITaxon:53360",
+      "object": "NCBITaxon:53360",
+      "predicate": "biolink:in_taxon",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ncbi_taxonomy_id",
+      "subject": "gold:Go0605406"
+    },
+    {
+      "id": "gold:Go0605406-occurs_in-gold.ecosystem:5774",
+      "object": "gold.ecosystem:5774",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0605406"
+    },
+    {
+      "id": "gold:Go0605407-in_taxon-NCBITaxon:53360",
+      "object": "NCBITaxon:53360",
+      "predicate": "biolink:in_taxon",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ncbi_taxonomy_id",
+      "subject": "gold:Go0605407"
+    },
+    {
+      "id": "gold:Go0605407-occurs_in-gold.ecosystem:5774",
+      "object": "gold.ecosystem:5774",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0605407"
+    },
+    {
+      "id": "gold:Go0605405-in_taxon-NCBITaxon:53360",
+      "object": "NCBITaxon:53360",
+      "predicate": "biolink:in_taxon",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ncbi_taxonomy_id",
+      "subject": "gold:Go0605405"
+    },
+    {
+      "id": "gold:Go0605405-occurs_in-gold.ecosystem:5774",
+      "object": "gold.ecosystem:5774",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0605405"
+    },
+    {
+      "id": "gold:Go0028995-in_taxon-NCBITaxon:53360",
+      "object": "NCBITaxon:53360",
+      "predicate": "biolink:in_taxon",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ncbi_taxonomy_id",
+      "subject": "gold:Go0028995"
+    },
+    {
+      "id": "gold:Go0028995-occurs_in-gold.ecosystem:4212",
+      "object": "gold.ecosystem:4212",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0028995"
+    },
+    {
+      "id": "gold:Go0698482-in_taxon-NCBITaxon:53360",
+      "object": "NCBITaxon:53360",
+      "predicate": "biolink:in_taxon",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ncbi_taxonomy_id",
+      "subject": "gold:Go0698482"
+    },
+    {
+      "id": "gold:Go0698482-occurs_in-gold.ecosystem:1",
+      "object": "gold.ecosystem:1",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0698482"
+    },
+    {
+      "id": "gold:Go0605408-in_taxon-NCBITaxon:53360",
+      "object": "NCBITaxon:53360",
+      "predicate": "biolink:in_taxon",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ncbi_taxonomy_id",
+      "subject": "gold:Go0605408"
+    },
+    {
+      "id": "gold:Go0605408-occurs_in-gold.ecosystem:5774",
+      "object": "gold.ecosystem:5774",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0605408"
+    },
+    {
+      "id": "gold:Go0605409-in_taxon-NCBITaxon:53360",
+      "object": "NCBITaxon:53360",
+      "predicate": "biolink:in_taxon",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ncbi_taxonomy_id",
+      "subject": "gold:Go0605409"
+    },
+    {
+      "id": "gold:Go0605409-occurs_in-gold.ecosystem:5774",
+      "object": "gold.ecosystem:5774",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0605409"
+    },
+    {
+      "id": "gold:Go0705252-in_taxon-NCBITaxon:1194211",
+      "object": "NCBITaxon:1194211",
+      "predicate": "biolink:in_taxon",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ncbi_taxonomy_id",
+      "subject": "gold:Go0705252"
+    },
+    {
+      "id": "gold:Go0705252-occurs_in-gold.ecosystem:1",
+      "object": "gold.ecosystem:1",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0705252"
+    },
+    {
+      "id": "gold:Go0679921-in_taxon-NCBITaxon:659496",
+      "object": "NCBITaxon:659496",
+      "predicate": "biolink:in_taxon",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ncbi_taxonomy_id",
+      "subject": "gold:Go0679921"
+    },
+    {
+      "id": "gold:Go0679921-occurs_in-gold.ecosystem:1",
+      "object": "gold.ecosystem:1",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0679921"
+    },
+    {
+      "id": "gold:Go0605404-in_taxon-NCBITaxon:53360",
+      "object": "NCBITaxon:53360",
+      "predicate": "biolink:in_taxon",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ncbi_taxonomy_id",
+      "subject": "gold:Go0605404"
+    },
+    {
+      "id": "gold:Go0605404-occurs_in-gold.ecosystem:5774",
+      "object": "gold.ecosystem:5774",
+      "predicate": "biolink:occurs_in",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:organism_v2.ecosystem_path_id",
+      "subject": "gold:Go0605404"
+    },
+    {
+      "id": "gold:Go0698482-related_to-gold:Gs0164761",
+      "object": "gold:Gs0164761",
+      "predicate": "biolink:related_to",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:project.organism_id+master_study_id",
+      "subject": "gold:Go0698482"
+    },
+    {
+      "id": "gold:Go0680943-related_to-gold:Gs0165895",
+      "object": "gold:Gs0165895",
+      "predicate": "biolink:related_to",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:project.organism_id+master_study_id",
+      "subject": "gold:Go0680943"
+    },
+    {
+      "id": "gold:Go0679921-related_to-gold:Gs0165669",
+      "object": "gold:Gs0165669",
+      "predicate": "biolink:related_to",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:project.organism_id+master_study_id",
+      "subject": "gold:Go0679921"
+    },
+    {
+      "id": "gold:Go0605407-related_to-gold:Gs0151912",
+      "object": "gold:Gs0151912",
+      "predicate": "biolink:related_to",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:project.organism_id+master_study_id",
+      "subject": "gold:Go0605407"
+    },
+    {
+      "id": "gold:Go0705252-related_to-gold:Gs0165221",
+      "object": "gold:Gs0165221",
+      "predicate": "biolink:related_to",
+      "primary_knowledge_source": "infores:gold",
+      "relation": "gold:project.organism_id+master_study_id",
+      "subject": "gold:Go0705252"
+    }
+  ],
+  "native_records": [
+    {
+      "category": "biolink:IndividualOrganism",
+      "id": "gold:Go0028995",
+      "name": "Dactylosporangium matsuzakiense DSM 43810",
+      "provided_by": "infores:gold",
+      "xref": "NCBITaxon:53360"
+    },
+    {
+      "category": "biolink:IndividualOrganism",
+      "id": "gold:Go0605404",
+      "name": "Dactylosporangium matsuzakiense ATCC 31570",
+      "provided_by": "infores:gold",
+      "xref": "NCBITaxon:53360"
+    },
+    {
+      "category": "biolink:IndividualOrganism",
+      "id": "gold:Go0605405",
+      "name": "Dactylosporangium matsuzakiense FERM P-4670",
+      "provided_by": "infores:gold",
+      "xref": "NCBITaxon:53360"
+    },
+    {
+      "category": "biolink:IndividualOrganism",
+      "id": "gold:Go0605406",
+      "name": "Dactylosporangium matsuzakiense IFO 14259",
+      "provided_by": "infores:gold",
+      "xref": "NCBITaxon:53360"
+    },
+    {
+      "category": "biolink:IndividualOrganism",
+      "id": "gold:Go0605407",
+      "name": "Dactylosporangium matsuzakiense JCM 3311",
+      "provided_by": "infores:gold",
+      "xref": "NCBITaxon:53360"
+    },
+    {
+      "category": "biolink:IndividualOrganism",
+      "id": "gold:Go0605408",
+      "name": "Dactylosporangium matsuzakiense KCC A-0311",
+      "provided_by": "infores:gold",
+      "xref": "NCBITaxon:53360"
+    },
+    {
+      "category": "biolink:IndividualOrganism",
+      "id": "gold:Go0605409",
+      "name": "Dactylosporangium matsuzakiense NBRC 14259",
+      "provided_by": "infores:gold",
+      "xref": "NCBITaxon:53360"
+    },
+    {
+      "category": "biolink:IndividualOrganism",
+      "id": "gold:Go0679921",
+      "name": "Saccharothrix yanglingensis Hhs.015",
+      "provided_by": "infores:gold",
+      "xref": "NCBITaxon:659496"
+    },
+    {
+      "category": "biolink:IndividualOrganism",
+      "id": "gold:Go0680943",
+      "name": "Dactylosporangium matsuzakiense NRRL B-16293",
+      "provided_by": "infores:gold",
+      "xref": "NCBITaxon:53360"
+    },
+    {
+      "category": "biolink:IndividualOrganism",
+      "id": "gold:Go0698482",
+      "name": "Dactylosporangium matsuzakiense VKM Ac-1321",
+      "provided_by": "infores:gold",
+      "xref": "NCBITaxon:53360"
+    },
+    {
+      "category": "biolink:IndividualOrganism",
+      "id": "gold:Go0705252",
+      "name": "Wickerhamomyces subpelliculosus NRRL Y-1683",
+      "provided_by": "infores:gold",
+      "xref": "NCBITaxon:1194211"
+    }
+  ],
+  "native_taxon_nodes": [
+    {
+      "category": "biolink:OrganismTaxon",
+      "id": "NCBITaxon:1194211",
+      "name": "Wickerhamomyces subpelliculosus",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:OrganismTaxon",
+      "id": "NCBITaxon:53360",
+      "name": "Dactylosporangium matsuzakiense",
+      "provided_by": "infores:gold",
+      "xref": ""
+    },
+    {
+      "category": "biolink:OrganismTaxon",
+      "id": "NCBITaxon:659496",
+      "name": "Saccharothrix yanglingensis",
+      "provided_by": "infores:gold",
+      "xref": ""
+    }
+  ],
+  "projected_nodes": [
+    {
+      "category": "biolink:OrganismTaxon",
+      "deprecated": "",
+      "description": "",
+      "id": "NCBITaxon:4927",
+      "name": "Hansenula anomala",
+      "provided_by": "ncbitaxon_removed_subset.json",
+      "same_as": "",
+      "synonym": "Candida beverwijkiae|Candida pelliculosa|Endomyces anomalus|Hansenula subpelliculosa|Pichia anomala|Pichia subpelliculosa|Saccharomyces anomalus|Wickerhamomyces anomalus|Wickerhamomyces subpelliculosa|Wickerhamomyces subpelliculosus|Willia anomala",
+      "xref": "GC_ID:1|PMID:6486768"
+    },
+    {
+      "category": "biolink:OrganismTaxon",
+      "deprecated": "",
+      "description": "",
+      "id": "NCBITaxon:53362",
+      "name": "Dactylosporangium vinaceum",
+      "provided_by": "ncbitaxon_removed_subset.json",
+      "same_as": "",
+      "synonym": "Dactylosporangium matsuzakiense|Dactylosporangium matsuzakiense Shomura and Niida 1983|Dactylosporangium vinaceum subsp. matsuzakiense|Dactylosporangium vinaceum subsp. vinaceum",
+      "xref": "GC_ID:11|PMID:41615716"
+    },
+    {
+      "category": "biolink:OrganismTaxon",
+      "deprecated": "",
+      "description": "",
+      "id": "NCBITaxon:33920",
+      "name": "Saccharothrix longispora",
+      "provided_by": "ncbitaxon_removed_subset.json",
+      "same_as": "",
+      "synonym": "Actinomadura longispora|Nocardiopsis longispora (Preobrazhenskaya and Sveshnikova 1974) Preobrazhenskaya and Sveshnikov 1985|Saccharothrix longispora (Preobrazhenskaya and Sveshnikova 1974) Grund and Kroppenstedt 1990|Saccharothrix longispora subsp. yanglingensis|Saccharothrix yanglingensis|Saccharothrix yanglingensis Yan et al. 2025|s__Actinosynnema yanglingensis",
+      "xref": "GC_ID:11"
+    }
+  ],
+  "selected_nodes": [
+    {
+      "id": "http://purl.obolibrary.org/obo/NCBITaxon_4927",
+      "lbl": "Hansenula anomala",
+      "meta": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/TAXRANK_1000000",
+            "val": "http://purl.obolibrary.org/obo/TAXRANK_0000006"
+          },
+          {
+            "pred": "http://purl.obolibrary.org/obo/ncbitaxon#has_rank",
+            "val": "http://purl.obolibrary.org/obo/NCBITaxon_species"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+            "val": "NCBITaxon:1050175"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+            "val": "NCBITaxon:1050176"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+            "val": "NCBITaxon:1050177"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+            "val": "NCBITaxon:1050178"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+            "val": "NCBITaxon:1194211"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+            "val": "NCBITaxon:1278006"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+            "val": "NCBITaxon:36030"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+            "val": "NCBITaxon:683960"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+            "val": "NCBITaxon:885923"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+            "val": "ncbi_taxonomy"
+          }
+        ],
+        "synonyms": [
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Candida beverwijkiae"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Candida pelliculosa"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Endomyces anomalus"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Hansenula subpelliculosa"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Pichia anomala"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Pichia subpelliculosa"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Saccharomyces anomalus"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Wickerhamomyces anomalus"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Wickerhamomyces subpelliculosa"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Wickerhamomyces subpelliculosus"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Willia anomala"
+          }
+        ],
+        "xrefs": [
+          {
+            "val": "GC_ID:1"
+          },
+          {
+            "val": "PMID:6486768"
+          }
+        ]
+      },
+      "type": "CLASS"
+    },
+    {
+      "id": "http://purl.obolibrary.org/obo/NCBITaxon_53362",
+      "lbl": "Dactylosporangium vinaceum",
+      "meta": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/TAXRANK_1000000",
+            "val": "http://purl.obolibrary.org/obo/TAXRANK_0000006"
+          },
+          {
+            "pred": "http://purl.obolibrary.org/obo/ncbitaxon#has_rank",
+            "val": "http://purl.obolibrary.org/obo/NCBITaxon_species"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+            "val": "NCBITaxon:53360"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+            "val": "ncbi_taxonomy"
+          }
+        ],
+        "synonyms": [
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Dactylosporangium matsuzakiense"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Dactylosporangium matsuzakiense Shomura and Niida 1983"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Dactylosporangium vinaceum subsp. matsuzakiense"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Dactylosporangium vinaceum subsp. vinaceum"
+          }
+        ],
+        "xrefs": [
+          {
+            "val": "GC_ID:11"
+          },
+          {
+            "val": "PMID:41615716"
+          }
+        ]
+      },
+      "type": "CLASS"
+    },
+    {
+      "id": "http://purl.obolibrary.org/obo/NCBITaxon_33920",
+      "lbl": "Saccharothrix longispora",
+      "meta": {
+        "basicPropertyValues": [
+          {
+            "pred": "http://purl.obolibrary.org/obo/TAXRANK_1000000",
+            "val": "http://purl.obolibrary.org/obo/TAXRANK_0000006"
+          },
+          {
+            "pred": "http://purl.obolibrary.org/obo/ncbitaxon#has_rank",
+            "val": "http://purl.obolibrary.org/obo/NCBITaxon_species"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasAlternativeId",
+            "val": "NCBITaxon:659496"
+          },
+          {
+            "pred": "http://www.geneontology.org/formats/oboInOwl#hasOBONamespace",
+            "val": "ncbi_taxonomy"
+          }
+        ],
+        "synonyms": [
+          {
+            "pred": "hasExactSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#equivalent_name",
+            "val": "s__Actinosynnema yanglingensis"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Actinomadura longispora"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Nocardiopsis longispora (Preobrazhenskaya and Sveshnikova 1974) Preobrazhenskaya and Sveshnikov 1985"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Saccharothrix longispora (Preobrazhenskaya and Sveshnikova 1974) Grund and Kroppenstedt 1990"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Saccharothrix longispora subsp. yanglingensis"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Saccharothrix yanglingensis"
+          },
+          {
+            "pred": "hasRelatedSynonym",
+            "synonymType": "http://purl.obolibrary.org/obo/ncbitaxon#synonym",
+            "val": "Saccharothrix yanglingensis Yan et al. 2025"
+          }
+        ],
+        "xrefs": [
+          {
+            "val": "GC_ID:11"
+          }
+        ]
+      },
+      "type": "CLASS"
+    }
+  ],
+  "selected_ontology_metadata": [
+    {
+      "basicPropertyValues": [
+        {
+          "pred": "http://purl.org/dc/terms/description",
+          "val": "An ontology representation of the NCBI organismal taxonomy"
+        },
+        {
+          "pred": "http://purl.org/dc/terms/license",
+          "val": "https://creativecommons.org/publicdomain/zero/1.0/"
+        },
+        {
+          "pred": "http://purl.org/dc/terms/title",
+          "val": "NCBI organismal classification"
+        },
+        {
+          "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+          "val": "Built by https://github.com/obophenotype/ncbitaxon"
+        },
+        {
+          "pred": "http://www.w3.org/2000/01/rdf-schema#comment",
+          "val": "NCBI organismal taxonomy version 2026-07-01"
+        },
+        {
+          "pred": "http://www.w3.org/2002/07/owl#versionInfo",
+          "val": "2026-07-12"
+        }
+      ],
+      "version": "http://purl.obolibrary.org/obo/ncbitaxon/2026-07-12/ncbitaxon.owl"
+    }
+  ],
+  "source_ordinal_witnesses": {
+    "parents": [
+      {
+        "candidate_target": "NCBITaxon:53362",
+        "record": 903164,
+        "row": {
+          "id": "gold:Go0680943-in_taxon-NCBITaxon:53360",
+          "object": "NCBITaxon:53360",
+          "predicate": "biolink:in_taxon",
+          "primary_knowledge_source": "infores:gold",
+          "relation": "gold:organism_v2.ncbi_taxonomy_id",
+          "subject": "gold:Go0680943"
+        }
+      },
+      {
+        "candidate_target": "NCBITaxon:53362",
+        "record": 942494,
+        "row": {
+          "id": "gold:Go0605406-in_taxon-NCBITaxon:53360",
+          "object": "NCBITaxon:53360",
+          "predicate": "biolink:in_taxon",
+          "primary_knowledge_source": "infores:gold",
+          "relation": "gold:organism_v2.ncbi_taxonomy_id",
+          "subject": "gold:Go0605406"
+        }
+      },
+      {
+        "candidate_target": "NCBITaxon:53362",
+        "record": 942668,
+        "row": {
+          "id": "gold:Go0605407-in_taxon-NCBITaxon:53360",
+          "object": "NCBITaxon:53360",
+          "predicate": "biolink:in_taxon",
+          "primary_knowledge_source": "infores:gold",
+          "relation": "gold:organism_v2.ncbi_taxonomy_id",
+          "subject": "gold:Go0605407"
+        }
+      },
+      {
+        "candidate_target": "NCBITaxon:53362",
+        "record": 944002,
+        "row": {
+          "id": "gold:Go0605405-in_taxon-NCBITaxon:53360",
+          "object": "NCBITaxon:53360",
+          "predicate": "biolink:in_taxon",
+          "primary_knowledge_source": "infores:gold",
+          "relation": "gold:organism_v2.ncbi_taxonomy_id",
+          "subject": "gold:Go0605405"
+        }
+      },
+      {
+        "candidate_target": "NCBITaxon:53362",
+        "record": 944043,
+        "row": {
+          "id": "gold:Go0028995-in_taxon-NCBITaxon:53360",
+          "object": "NCBITaxon:53360",
+          "predicate": "biolink:in_taxon",
+          "primary_knowledge_source": "infores:gold",
+          "relation": "gold:organism_v2.ncbi_taxonomy_id",
+          "subject": "gold:Go0028995"
+        }
+      },
+      {
+        "candidate_target": "NCBITaxon:53362",
+        "record": 944241,
+        "row": {
+          "id": "gold:Go0698482-in_taxon-NCBITaxon:53360",
+          "object": "NCBITaxon:53360",
+          "predicate": "biolink:in_taxon",
+          "primary_knowledge_source": "infores:gold",
+          "relation": "gold:organism_v2.ncbi_taxonomy_id",
+          "subject": "gold:Go0698482"
+        }
+      },
+      {
+        "candidate_target": "NCBITaxon:53362",
+        "record": 944342,
+        "row": {
+          "id": "gold:Go0605408-in_taxon-NCBITaxon:53360",
+          "object": "NCBITaxon:53360",
+          "predicate": "biolink:in_taxon",
+          "primary_knowledge_source": "infores:gold",
+          "relation": "gold:organism_v2.ncbi_taxonomy_id",
+          "subject": "gold:Go0605408"
+        }
+      },
+      {
+        "candidate_target": "NCBITaxon:53362",
+        "record": 945750,
+        "row": {
+          "id": "gold:Go0605409-in_taxon-NCBITaxon:53360",
+          "object": "NCBITaxon:53360",
+          "predicate": "biolink:in_taxon",
+          "primary_knowledge_source": "infores:gold",
+          "relation": "gold:organism_v2.ncbi_taxonomy_id",
+          "subject": "gold:Go0605409"
+        }
+      },
+      {
+        "candidate_target": "NCBITaxon:4927",
+        "record": 946725,
+        "row": {
+          "id": "gold:Go0705252-in_taxon-NCBITaxon:1194211",
+          "object": "NCBITaxon:1194211",
+          "predicate": "biolink:in_taxon",
+          "primary_knowledge_source": "infores:gold",
+          "relation": "gold:organism_v2.ncbi_taxonomy_id",
+          "subject": "gold:Go0705252"
+        }
+      },
+      {
+        "candidate_target": "NCBITaxon:33920",
+        "record": 948652,
+        "row": {
+          "id": "gold:Go0679921-in_taxon-NCBITaxon:659496",
+          "object": "NCBITaxon:659496",
+          "predicate": "biolink:in_taxon",
+          "primary_knowledge_source": "infores:gold",
+          "relation": "gold:organism_v2.ncbi_taxonomy_id",
+          "subject": "gold:Go0679921"
+        }
+      },
+      {
+        "candidate_target": "NCBITaxon:53362",
+        "record": 948956,
+        "row": {
+          "id": "gold:Go0605404-in_taxon-NCBITaxon:53360",
+          "object": "NCBITaxon:53360",
+          "predicate": "biolink:in_taxon",
+          "primary_knowledge_source": "infores:gold",
+          "relation": "gold:organism_v2.ncbi_taxonomy_id",
+          "subject": "gold:Go0605404"
+        }
+      }
+    ],
+    "records": {
+      "gold:Go0028995": {
+        "record": 953694,
+        "row": {
+          "category": "biolink:IndividualOrganism",
+          "id": "gold:Go0028995",
+          "name": "Dactylosporangium matsuzakiense DSM 43810",
+          "provided_by": "infores:gold",
+          "xref": "NCBITaxon:53360"
+        }
+      },
+      "gold:Go0605404": {
+        "record": 957322,
+        "row": {
+          "category": "biolink:IndividualOrganism",
+          "id": "gold:Go0605404",
+          "name": "Dactylosporangium matsuzakiense ATCC 31570",
+          "provided_by": "infores:gold",
+          "xref": "NCBITaxon:53360"
+        }
+      },
+      "gold:Go0605405": {
+        "record": 953670,
+        "row": {
+          "category": "biolink:IndividualOrganism",
+          "id": "gold:Go0605405",
+          "name": "Dactylosporangium matsuzakiense FERM P-4670",
+          "provided_by": "infores:gold",
+          "xref": "NCBITaxon:53360"
+        }
+      },
+      "gold:Go0605406": {
+        "record": 952804,
+        "row": {
+          "category": "biolink:IndividualOrganism",
+          "id": "gold:Go0605406",
+          "name": "Dactylosporangium matsuzakiense IFO 14259",
+          "provided_by": "infores:gold",
+          "xref": "NCBITaxon:53360"
+        }
+      },
+      "gold:Go0605407": {
+        "record": 952905,
+        "row": {
+          "category": "biolink:IndividualOrganism",
+          "id": "gold:Go0605407",
+          "name": "Dactylosporangium matsuzakiense JCM 3311",
+          "provided_by": "infores:gold",
+          "xref": "NCBITaxon:53360"
+        }
+      },
+      "gold:Go0605408": {
+        "record": 953866,
+        "row": {
+          "category": "biolink:IndividualOrganism",
+          "id": "gold:Go0605408",
+          "name": "Dactylosporangium matsuzakiense KCC A-0311",
+          "provided_by": "infores:gold",
+          "xref": "NCBITaxon:53360"
+        }
+      },
+      "gold:Go0605409": {
+        "record": 954861,
+        "row": {
+          "category": "biolink:IndividualOrganism",
+          "id": "gold:Go0605409",
+          "name": "Dactylosporangium matsuzakiense NBRC 14259",
+          "provided_by": "infores:gold",
+          "xref": "NCBITaxon:53360"
+        }
+      },
+      "gold:Go0679921": {
+        "record": 957119,
+        "row": {
+          "category": "biolink:IndividualOrganism",
+          "id": "gold:Go0679921",
+          "name": "Saccharothrix yanglingensis Hhs.015",
+          "provided_by": "infores:gold",
+          "xref": "NCBITaxon:659496"
+        }
+      },
+      "gold:Go0680943": {
+        "record": 924286,
+        "row": {
+          "category": "biolink:IndividualOrganism",
+          "id": "gold:Go0680943",
+          "name": "Dactylosporangium matsuzakiense NRRL B-16293",
+          "provided_by": "infores:gold",
+          "xref": "NCBITaxon:53360"
+        }
+      },
+      "gold:Go0698482": {
+        "record": 953808,
+        "row": {
+          "category": "biolink:IndividualOrganism",
+          "id": "gold:Go0698482",
+          "name": "Dactylosporangium matsuzakiense VKM Ac-1321",
+          "provided_by": "infores:gold",
+          "xref": "NCBITaxon:53360"
+        }
+      },
+      "gold:Go0705252": {
+        "record": 955562,
+        "row": {
+          "category": "biolink:IndividualOrganism",
+          "id": "gold:Go0705252",
+          "name": "Wickerhamomyces subpelliculosus NRRL Y-1683",
+          "provided_by": "infores:gold",
+          "xref": "NCBITaxon:1194211"
+        }
+      }
+    }
+  },
+  "taxdump_merged_dmp": [
+    {
+      "line": 51437,
+      "literal": "1194211\t|\t36030\t|\n"
+    }
+  ]
+}

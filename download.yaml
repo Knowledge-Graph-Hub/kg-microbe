@@ -383,9 +383,24 @@
 # single source for PO — there is intentionally no po.db entry in the
 # stub-import section below.
 #
+# Pinned to a dated release (PO_RELEASE in constants.py), together with the
+# two modules po.owl imports. ontologies_stubs resolves those imports through
+# a local ROBOT catalog built from these files instead of fetching them from
+# PO's master branch on every run.
+#
 -
-  url: http://purl.obolibrary.org/obo/po.owl
+  url: http://purl.obolibrary.org/obo/po/releases/2026-01-09/po.owl
   local_name: po.owl
+  tag: ontologies
+
+-
+  url: http://purl.obolibrary.org/obo/po/releases/2026-01-09/imports/ncbitaxon_import.owl
+  local_name: po_imports/ncbitaxon_import.owl
+  tag: ontologies
+
+-
+  url: http://purl.obolibrary.org/obo/po/releases/2026-01-09/imports/ro_import.owl
+  local_name: po_imports/ro_import.owl
   tag: ontologies
 
 #

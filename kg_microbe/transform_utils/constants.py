@@ -891,6 +891,20 @@ MICRO_IMPORT_MODULES = tuple(
     )
 )
 
+# PO publishes dated releases, so it is pinned to one, as MicrO is to a commit.
+# The unversioned po.owl PURL always serves the latest release, and po.owl
+# imports two modules by unversioned IRI, which ROBOT fetched from PO's master
+# branch on every run. The release PURL serves the ontology and the modules
+# from the same tag; ontologies_stubs resolves the imports through a local
+# catalog. `mappings/finite_envo_po_category_dispositions.json` was reviewed
+# against this release (its versionIRI and sha256), and a test asserts the two
+# agree, so a PO bump re-opens that review. Pinning changed no content: the
+# release is byte-identical to the latest po.owl at the time.
+PO_RELEASE = "2026-01-09"
+PO_RELEASE_URL = f"http://purl.obolibrary.org/obo/po/releases/{PO_RELEASE}"
+PO_IMPORTS_DIR = "po_imports"
+PO_IMPORT_MODULES = ("ncbitaxon_import.owl", "ro_import.owl")
+
 # Report of every culture-collection deposit number claimed by more than one
 # BacDive record with a different parent taxon, and what became of it: `collapsed`
 # rows were given the ancestor every claimant entails, `suppressed` rows were given

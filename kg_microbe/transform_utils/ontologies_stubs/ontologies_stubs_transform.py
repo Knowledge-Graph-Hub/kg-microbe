@@ -35,6 +35,9 @@ This transform:
      edges (one per is_a axiom in the module). MICRO's two IRI shapes
      — standard ``obo/MICRO_xxxx`` and legacy ``obo/MicrO.owl/MICRO_xxxx``
      — are handled by passing both forms to ROBOT for every lower term.
+     Both OWLs are pinned together with the modules they import, which
+     resolve through a local catalog while ROBOT runs with network access
+     refused.
 
 3. Writes per-ontology TSVs to
    ``data/transformed/ontologies_stubs/{ncit,mesh,bto,po,micro}_nodes.tsv``
@@ -67,6 +70,8 @@ from kg_microbe.transform_utils.constants import (
     KNOWLEDGE_ASSERTION,
     MICRO_IMPORT_MODULES,
     MICRO_IMPORTS_DIR,
+    PO_IMPORT_MODULES,
+    PO_IMPORTS_DIR,
     RDFS_SUBCLASS_OF,
     SUBCLASS_PREDICATE,
 )
@@ -153,7 +158,8 @@ from kg_microbe.utils.tsv_io import tsv_writer
 #     through a catalog mapping each to its copy and runs with network access
 #     refused, so an unmapped import fails instead of being fetched. Preflight
 #     fails if a module is missing or the OWL's imports differ from the list.
-#     Without these ROBOT fetches imports live (PO, for now).
+#     Without these ROBOT would fetch imports live, so every owl_mireot source
+#     sets them (a test checks).
 STUB_ONTOLOGY_SOURCES: Dict[str, Dict[str, Any]] = {
     "NCIT": {
         # NCI Thesaurus. ~73 stubs spanning drugs/antibiotics, foods,
@@ -217,8 +223,13 @@ STUB_ONTOLOGY_SOURCES: Dict[str, Dict[str, Any]] = {
         # under PO:0025131 (plant anatomical entity). MIREOT extracts
         # ~21 nodes (the 6 stubs + 15 ancestors) into a coherent local
         # subtree rooted at the upper term.
+        #
+        # po.owl imports two modules by unversioned IRI; they are pinned with
+        # it to one release (PO_RELEASE) and resolved offline.
         "source_type": "owl_mireot",
         "owl_filename": "po.owl",
+        "imports_dir": PO_IMPORTS_DIR,
+        "import_modules": PO_IMPORT_MODULES,
         "upper_term": "PO:0025131",
         "knowledge_source": "infores:po",
     },
@@ -289,9 +300,9 @@ class OntologiesStubsTransform(Transform):
         """
         Report a missing pinned ROBOT, java or pinned import module before the batch starts.
 
-        ROBOT builds the PO and MICRO hierarchies, and MICRO's imports must be
-        on disk because they are no longer fetched; either missing used to fail
-        only after the hours-long ontologies source.
+        ROBOT builds the PO and MICRO hierarchies, and their imports must be
+        on disk because they are no longer fetched; any of these missing used
+        to fail only after the hours-long ontologies source.
         """
         raw_dir = Path(input_dir) if input_dir else cls.DEFAULT_INPUT_DIR
         problems = missing_robot(raw_dir)

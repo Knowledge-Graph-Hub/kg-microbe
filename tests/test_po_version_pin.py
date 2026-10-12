@@ -2,8 +2,10 @@
 
 import json
 import re
+import subprocess
 from pathlib import Path
 
+import pytest
 import yaml
 
 from kg_microbe.transform_utils.constants import (
@@ -11,6 +13,7 @@ from kg_microbe.transform_utils.constants import (
     PO_IMPORT_MODULES,
     PO_IMPORTS_DIR,
     PO_RAW_URL,
+    PO_RELEASE_TAG,
     PO_VERSION_IRI,
 )
 from kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform import _declared_imports
@@ -23,6 +26,8 @@ PO_OWL_HEADER = REPO_ROOT / "tests" / "resources" / "po" / "po_owl_header.owl"
 _PO_PURL = "http://purl.obolibrary.org/obo/po/"
 # PO's own PURLs (`obo/po.owl`, `obo/po.json`, `obo/po/...`) and the GitHub repository they redirect to.
 _PO_URL = re.compile(r"purl\.obolibrary\.org/obo/po[./_-]|Planteome/plant-ontology/")
+# A PO file saved under data/raw, wherever it is fetched from: po.owl, po.obo, po_imports/...
+_PO_LOCAL = re.compile(r"^po[._-]")
 
 
 def _po_entries():
@@ -37,7 +42,7 @@ def _po_entries():
         for e in entries
         if isinstance(e, dict)
         and (
-            e.get("local_name") == "po.owl"
+            _PO_LOCAL.match(str(e.get("local_name", "")))
             or str(e.get("local_name", "")).startswith(f"{PO_IMPORTS_DIR}/")
             or _PO_URL.search(str(e.get("url", "")))
         )
@@ -50,18 +55,41 @@ def test_po_and_its_imports_are_downloaded_at_the_release_commit():
 
     po.owl also imports two modules by unversioned IRI, which ROBOT fetched
     from master on every run; the catalog can only resolve the copies
-    `kg download` fetched. Any other PO download, unpinned, fails this too.
+    `kg download` fetched. Any other PO download, unpinned, fails this too:
+    compared as a list, so a duplicate entry for a pinned file cannot hide.
     """
-    by_name = {e["local_name"]: e["url"] for e in _po_entries()}
-    expected = {"po.owl": f"{PO_RAW_URL}/po.owl"}
-    expected.update({f"{PO_IMPORTS_DIR}/{name}": f"{PO_RAW_URL}/imports/{name}" for name in PO_IMPORT_MODULES})
-    assert by_name == expected
+    entries = sorted((e["local_name"], e["url"]) for e in _po_entries())
+    expected = [("po.owl", f"{PO_RAW_URL}/po.owl")]
+    expected += [(f"{PO_IMPORTS_DIR}/{name}", f"{PO_RAW_URL}/imports/{name}") for name in PO_IMPORT_MODULES]
+    assert entries == sorted(expected)
 
 
 def test_the_pin_is_a_commit_not_a_tag_or_branch():
     """PO's release tags are lightweight and hand-named; only a full commit hash cannot move."""
     assert re.fullmatch(r"[0-9a-f]{40}", PO_COMMIT)
     assert PO_RAW_URL == f"https://raw.githubusercontent.com/Planteome/plant-ontology/{PO_COMMIT}"
+
+
+@pytest.mark.integration
+def test_the_commit_is_the_one_the_release_tag_points_at():
+    """
+    Resolve the release tag upstream: nothing offline ties the commit to the release.
+
+    po.owl names its release, and preflight checks that, but the import modules
+    carry no version. A bump that copied a later master commit instead of the
+    tag's would pin modules nobody reviewed, and every offline check would pass.
+    """
+    listing = subprocess.run(  # noqa: S603
+        ["git", "ls-remote", "--tags", "https://github.com/Planteome/plant-ontology", PO_RELEASE_TAG],  # noqa: S607
+        capture_output=True,
+        text=True,
+        timeout=120,
+        check=True,
+    ).stdout
+    refs = {ref: sha for sha, ref in (line.split("\t") for line in listing.splitlines())}
+    # An annotated tag lists its own object too; the peeled ref names the commit.
+    tag = f"refs/tags/{PO_RELEASE_TAG}"
+    assert refs.get(f"{tag}^{{}}", refs.get(tag)) == PO_COMMIT
 
 
 def test_the_release_is_the_one_the_category_policy_was_reviewed_against():

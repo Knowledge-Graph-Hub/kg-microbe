@@ -304,7 +304,7 @@ class OntologiesStubsTransform(Transform):
     @classmethod
     def missing_prerequisites(cls, input_dir: Optional[Path] = None) -> List[str]:
         """
-        Report a missing pinned ROBOT, java or pinned import module before the batch starts.
+        Report a missing pinned ROBOT, java, pinned import module or pinned release before the batch starts.
 
         ROBOT builds the PO and MICRO hierarchies, and their imports must be
         on disk because they are no longer fetched; any of these missing used

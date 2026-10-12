@@ -104,6 +104,17 @@ class TestYamlTagging:
         ]
         assert offenders == []
 
+    def test_no_two_entries_save_to_the_same_local_name(self):
+        """
+        The downloader fetches the first such entry and skips the rest as present.
+
+        The manifest then records the last entry's URL, so a pinned entry after
+        an unpinned duplicate would claim a file that came from elsewhere.
+        """
+        names = [e.get("local_name") for e in _entries() if e.get("local_name")]
+        duplicates = sorted({name for name in names if names.count(name) > 1})
+        assert duplicates == [], f"download.yaml saves several entries to: {duplicates}"
+
     def test_header_documents_exactly_the_known_tags(self):
         """download.yaml's header and KNOWN_TAGS must not drift apart."""
         documented = _documented_tags()

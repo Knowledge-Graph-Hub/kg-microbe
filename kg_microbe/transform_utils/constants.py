@@ -904,7 +904,10 @@ MICRO_IMPORT_MODULES = tuple(
 # byte-identical to the po.owl master served at the time.
 PO_RELEASE = "2026-01-09"
 PO_VERSION_IRI = f"http://purl.obolibrary.org/obo/po/releases/{PO_RELEASE}/po.owl"
-# The commit PO's tag v2026-01-09 points at.
+# PO names its release tags by hand (V2023-07-13, v2019-06-5), so the tag is
+# recorded rather than derived. PO_COMMIT is the commit it points at; an
+# integration test resolves the tag and checks.
+PO_RELEASE_TAG = "v2026-01-09"
 PO_COMMIT = "fb1d146b95d6bfe141992d6a219b891fdef2dc54"
 PO_RAW_URL = f"https://raw.githubusercontent.com/Planteome/plant-ontology/{PO_COMMIT}"
 PO_IMPORTS_DIR = "po_imports"

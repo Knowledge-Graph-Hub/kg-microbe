@@ -223,6 +223,12 @@ class TestBaktaOptionalInput(unittest.TestCase):
         for name in ("pfas_bakta", "cmm_bakta", "__MACOSX", ".ipynb_checkpoints"):
             self.assertIn(name, reason)
 
+    def test_a_file_named_bakta_raises_rather_than_skipping(self):
+        """An unextracted archive saved as data/raw/bakta is malformed input, not absent input."""
+        (self.raw / "bakta").write_text("not a directory")
+        with self.assertRaises(OSError):
+            BaktaTransform.missing_optional_input(self.raw)
+
     def test_a_dataset_with_genome_directories_runs(self):
         """The same discovery `run` uses: a dataset counts once it holds `bakta/SAMN*` directories."""
         (self.raw / "bakta" / "pfas_bakta" / "bakta" / "SAMN00139461").mkdir(parents=True)

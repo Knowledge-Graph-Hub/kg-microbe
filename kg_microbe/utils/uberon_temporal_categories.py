@@ -7,7 +7,7 @@ unresolved ontology classes. Neither the latter fallback nor the LifeStage
 projection claims strict conformance with Biolink temporal endpoint rules.
 """
 
-import hashlib
+import io
 import json
 import re
 from collections import Counter, defaultdict, deque
@@ -23,8 +23,16 @@ from kg_microbe.transform_utils.constants import (
 )
 from kg_microbe.utils.graph_canonicalization import compact_identifier
 from kg_microbe.utils.ontology_metadata import obograph_is_deprecated
+from kg_microbe.utils.release_binding import (
+    canonical_digest,
+    graph_release,
+    is_release_source,
+    read_bound_authority,
+)
 
 TEMPORAL_DISPOSITIONS_FILE = Path(__file__).resolve().parents[2] / "mappings/uberon_temporal_category_dispositions.json"
+# Version 2 binds the authority to its release and reviewed decisions, not its file bytes (#1420).
+POLICY_VERSION = 2
 _BOUNDARIES = {"UBERON:0035944", "UBERON:0035945", "UBERON:0035946"}
 _CATEGORY_DISPOSITIONS = {
     LIFE_STAGE_CATEGORY: "asserted_life_stage",
@@ -49,10 +57,14 @@ def load_temporal_category_policy(stream):
     policy = json.load(stream, object_pairs_hook=_unique_object)
     if (
         not isinstance(policy, dict)
-        or policy.get("version") != 1
+        or policy.get("version") != POLICY_VERSION
         or policy.get("authority") != "UBERON"
         or policy.get("native_file") != "uberon.json"
-        or not re.fullmatch(r"[0-9a-f]{64}", policy.get("native_sha256", ""))
+        or "native_sha256" in policy
+        or not isinstance(policy.get("native_release"), str)
+        or not policy["native_release"].startswith("http://purl.obolibrary.org/obo/uberon/releases/")
+        or not is_release_source(policy.get("native_source"))
+        or not re.fullmatch(r"[0-9a-f]{64}", policy.get("decisions_sha256", ""))
         or not isinstance(policy.get("records"), dict)
         or len(policy["records"]) != 58
     ):
@@ -101,16 +113,37 @@ class TemporalCategoryEvidence:
     root_paths: tuple[tuple[str, ...], ...]
 
 
+def temporal_decisions_digest(decisions):
+    """Digest the reviewed decisions: each record's category, disposition and witness paths."""
+    return canonical_digest(
+        [
+            [identifier, evidence.category, evidence.disposition, evidence.root_paths]
+            for identifier, evidence in sorted(decisions.items())
+        ]
+    )
+
+
+def load_bound_temporal_evidence(policy, raw_dir, opener, source_paths):
+    """Read the UBERON JSON and verify the release file it was converted from, both as consumed inputs."""
+    payload = read_bound_authority(raw_dir, policy["native_file"], policy["native_source"], opener, source_paths)
+    return load_temporal_category_evidence(policy, io.BytesIO(payload))
+
+
 def load_temporal_category_evidence(policy, native_stream):
-    """Require pinned bytes, live native classes and complete noncontradictory ancestry."""
+    """
+    Require the reviewed release, live native classes and complete noncontradictory ancestry.
+
+    The JSON's own bytes are not pinned; :func:`load_bound_temporal_evidence` binds the
+    release file it was converted from, and the decisions must be the reviewed ones (#1420).
+    """
     text = native_stream.read()
     native_bytes = text.encode("utf-8") if isinstance(text, str) else text
-    if hashlib.sha256(native_bytes).hexdigest() != policy["native_sha256"]:
-        raise ValueError("UBERON temporal category authority digest changed; native review required")
     document = json.loads(native_bytes, object_pairs_hook=_unique_object)
     graphs = document.get("graphs")
     if not isinstance(graphs, list) or not graphs:
         raise ValueError("Missing UBERON temporal category authority graphs")
+    if graph_release(graphs[0]) != policy["native_release"]:
+        raise ValueError("Unreviewed UBERON temporal category release; native review required")
     declarations, labels, parents = {}, {}, defaultdict(set)
     for graph in graphs:
         for node in graph["nodes"]:
@@ -154,9 +187,11 @@ def load_temporal_category_evidence(policy, native_stream):
             identifier,
             category,
             record["disposition"],
-            policy["native_sha256"],
+            policy["native_source"]["sha256"],
             tuple(tuple(path) for path in record["required_paths"]),
         )
+    if temporal_decisions_digest(decisions) != policy["decisions_sha256"]:
+        raise ValueError("UBERON temporal decisions differ from the reviewed release content")
     return decisions
 
 

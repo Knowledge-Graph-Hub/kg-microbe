@@ -163,7 +163,10 @@ resulting OBO Graph JSON. Emits both nodes (stubs + ancestors up
 to the upper term, with label/synonyms/xrefs) and <code class="docutils literal notranslate"><span class="pre">biolink:subclass_of</span></code>
 edges (one per is_a axiom in the module). MICRO’s two IRI shapes
 — standard <code class="docutils literal notranslate"><span class="pre">obo/MICRO_xxxx</span></code> and legacy <code class="docutils literal notranslate"><span class="pre">obo/MicrO.owl/MICRO_xxxx</span></code>
-— are handled by passing both forms to ROBOT for every lower term.</p></li>
+— are handled by passing both forms to ROBOT for every lower term.
+Both OWLs are pinned together with the modules they import, which
+resolve through a local catalog while ROBOT runs with network access
+refused.</p></li>
 </ul>
 </li>
 <li><p>Writes per-ontology TSVs to
@@ -211,7 +214,10 @@ path is not git-checkable anyway, so dropping it loses no signal.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform.OntologiesStubsTransform.missing_prerequisites">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">missing_prerequisites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform.OntologiesStubsTransform.missing_prerequisites" title="Link to this definition"></a></dt>
-<dd><p>Report a missing pinned ROBOT or java, which the PO and MICRO hierarchies need, before the batch starts.</p>
+<dd><p>Report a missing pinned ROBOT, java, pinned import module or pinned release before the batch starts.</p>
+<p>ROBOT builds the PO and MICRO hierarchies, and their imports must be
+on disk because they are no longer fetched; any of these missing used
+to fail only after the hours-long ontologies source.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
@@ -304,7 +310,10 @@ path is not git-checkable anyway, so dropping it loses no signal.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies_stubs.OntologiesStubsTransform.missing_prerequisites">
 <em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">missing_prerequisites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies_stubs.OntologiesStubsTransform.missing_prerequisites" title="Link to this definition"></a></dt>
-<dd><p>Report a missing pinned ROBOT or java, which the PO and MICRO hierarchies need, before the batch starts.</p>
+<dd><p>Report a missing pinned ROBOT, java, pinned import module or pinned release before the batch starts.</p>
+<p>ROBOT builds the PO and MICRO hierarchies, and their imports must be
+on disk because they are no longer fetched; any of these missing used
+to fail only after the hours-long ontologies source.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>

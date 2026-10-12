@@ -209,6 +209,20 @@ path is not git-checkable anyway, so dropping it loses no signal.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform.OntologiesStubsTransform.missing_prerequisites">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">missing_prerequisites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform.OntologiesStubsTransform.missing_prerequisites" title="Link to this definition"></a></dt>
+<dd><p>Report a missing pinned ROBOT, java or pinned import module before the batch starts.</p>
+<p>ROBOT builds the PO and MICRO hierarchies, and MICRO’s imports must be
+on disk because they are no longer fetched; either missing used to fail
+only after the hours-long ontologies source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform.OntologiesStubsTransform.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform.OntologiesStubsTransform.run" title="Link to this definition"></a></dt>
 <dd><p>Collect stub CURIEs and emit per-ontology node (and, where configured, edge) TSVs.</p>
@@ -288,6 +302,20 @@ path is not git-checkable anyway, so dropping it loses no signal.</p>
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies_stubs.OntologiesStubsTransform.begin_consumed_inputs">
 <span class="sig-name descname"><span class="pre">begin_consumed_inputs</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies_stubs.OntologiesStubsTransform.begin_consumed_inputs" title="Link to this definition"></a></dt>
 <dd><p>Start the native authority guard afresh only when a new producer run begins.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies_stubs.OntologiesStubsTransform.missing_prerequisites">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">missing_prerequisites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies_stubs.OntologiesStubsTransform.missing_prerequisites" title="Link to this definition"></a></dt>
+<dd><p>Report a missing pinned ROBOT, java or pinned import module before the batch starts.</p>
+<p>ROBOT builds the PO and MICRO hierarchies, and MICRO’s imports must be
+on disk because they are no longer fetched; either missing used to fail
+only after the hours-long ontologies source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">

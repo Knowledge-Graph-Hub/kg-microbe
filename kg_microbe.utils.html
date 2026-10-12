@@ -5666,6 +5666,62 @@ full set of logical entailments.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.robot_utils.missing_robot">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.robot_utils.</span></span><span class="sig-name descname"><span class="pre">missing_robot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.robot_utils.missing_robot" title="Link to this definition"></a></dt>
+<dd><p>Return what the pinned ROBOT under <code class="docutils literal notranslate"><span class="pre">path</span></code> needs but lacks: its files, or a <code class="docutils literal notranslate"><span class="pre">java</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">download.yaml</span></code> pins ROBOT into the raw directory (tag <code class="docutils literal notranslate"><span class="pre">tools</span></code>), and the
+ontology transforms run that copy rather than whatever <code class="docutils literal notranslate"><span class="pre">robot</span></code> is on PATH,
+so the version is the one this repository was tested with.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Raw directory that <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span></code> writes ROBOT into.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>One message per problem; empty when ROBOT can run.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.robot_utils.offline_robot_env">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.robot_utils.</span></span><span class="sig-name descname"><span class="pre">offline_robot_env</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.robot_utils.offline_robot_env" title="Link to this definition"></a></dt>
+<dd><p>Return a copy of a ROBOT environment whose JVM cannot reach the network.</p>
+<p>The JVM applies <code class="docutils literal notranslate"><span class="pre">_JAVA_OPTIONS</span></code> after the command line, so a proxy set
+there would undo <code class="xref py py-data docutils literal notranslate"><span class="pre">ROBOT_OFFLINE_JAVA_ARGS</span></code>; it is moved into
+<code class="docutils literal notranslate"><span class="pre">ROBOT_JAVA_ARGS</span></code> ahead of the offline flags, which then win.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>env</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span>) – Environment from <a class="reference internal" href="#kg_microbe.utils.robot_utils.robot_env" title="kg_microbe.utils.robot_utils.robot_env"><code class="xref py py-func docutils literal notranslate"><span class="pre">robot_env()</span></code></a> or <a class="reference internal" href="#kg_microbe.utils.robot_utils.initialize_robot" title="kg_microbe.utils.robot_utils.initialize_robot"><code class="xref py py-func docutils literal notranslate"><span class="pre">initialize_robot()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.robot_utils.pinned_robot_on_path">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.robot_utils.</span></span><span class="sig-name descname"><span class="pre">pinned_robot_on_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.robot_utils.pinned_robot_on_path" title="Link to this definition"></a></dt>
+<dd><p>Yield an environment in which <code class="docutils literal notranslate"><span class="pre">robot</span></code> on PATH is the pinned ROBOT, run with <a class="reference internal" href="#kg_microbe.utils.robot_utils.robot_java_args" title="kg_microbe.utils.robot_utils.robot_java_args"><code class="xref py py-func docutils literal notranslate"><span class="pre">robot_java_args()</span></code></a>.</p>
+<p>For tools that call ROBOT themselves: SemSQL’s Makefile runs <code class="docutils literal notranslate"><span class="pre">robot</span></code> from
+PATH, so without this a database build used whatever <code class="docutils literal notranslate"><span class="pre">robot</span></code> was there
+(or none) with the JDK’s own limits, and failed on ChEBI under JDK 24+
+(#325). The downloaded wrapper is not executable, so the shim calls it
+through <code class="docutils literal notranslate"><span class="pre">bash</span></code>. Without the pinned files PATH is left as it is.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Raw directory that <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span></code> writes ROBOT into.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.robot_utils.remove_convert_to_json">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.robot_utils.</span></span><span class="sig-name descname"><span class="pre">remove_convert_to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ont_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">terms</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.robot_utils.remove_convert_to_json" title="Link to this definition"></a></dt>
 <dd><p>Remove all children of provided CURIE(s).</p>
@@ -5679,6 +5735,32 @@ full set of logical entailments.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.robot_utils.robot_env">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.robot_utils.</span></span><span class="sig-name descname"><span class="pre">robot_env</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.robot_utils.robot_env" title="Link to this definition"></a></dt>
+<dd><p>Return a copy of the environment with ROBOT’s JVM options set for every invocation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.robot_utils.robot_java_args">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.robot_utils.</span></span><span class="sig-name descname"><span class="pre">robot_java_args</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.robot_utils.robot_java_args" title="Link to this definition"></a></dt>
+<dd><p>Return the JVM options for ROBOT: the configured ones plus any JAXP limit they leave unset.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>base</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – JVM options to start from; defaults to <code class="docutils literal notranslate"><span class="pre">ROBOT_JAVA_ARGS</span></code> or
+<code class="xref py py-data docutils literal notranslate"><span class="pre">DEFAULT_ROBOT_JAVA_ARGS</span></code> when that is unset.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>

@@ -1154,6 +1154,7 @@
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html#kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform.OntologiesStubsTransform"><code class="docutils literal notranslate"><span class="pre">OntologiesStubsTransform</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html#kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform.OntologiesStubsTransform.DATA_INPUTS"><code class="docutils literal notranslate"><span class="pre">OntologiesStubsTransform.DATA_INPUTS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html#kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform.OntologiesStubsTransform.begin_consumed_inputs"><code class="docutils literal notranslate"><span class="pre">OntologiesStubsTransform.begin_consumed_inputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html#kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform.OntologiesStubsTransform.missing_prerequisites"><code class="docutils literal notranslate"><span class="pre">OntologiesStubsTransform.missing_prerequisites()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html#kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform.OntologiesStubsTransform.run"><code class="docutils literal notranslate"><span class="pre">OntologiesStubsTransform.run()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html#kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform.OntologiesStubsTransform.verify_native_inputs"><code class="docutils literal notranslate"><span class="pre">OntologiesStubsTransform.verify_native_inputs()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html#kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform.OntologiesStubsTransform.verify_recorded_native_inputs"><code class="docutils literal notranslate"><span class="pre">OntologiesStubsTransform.verify_recorded_native_inputs()</span></code></a></li>
@@ -1165,6 +1166,7 @@
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html#kg_microbe.transform_utils.ontologies_stubs.OntologiesStubsTransform"><code class="docutils literal notranslate"><span class="pre">OntologiesStubsTransform</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html#kg_microbe.transform_utils.ontologies_stubs.OntologiesStubsTransform.DATA_INPUTS"><code class="docutils literal notranslate"><span class="pre">OntologiesStubsTransform.DATA_INPUTS</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html#kg_microbe.transform_utils.ontologies_stubs.OntologiesStubsTransform.begin_consumed_inputs"><code class="docutils literal notranslate"><span class="pre">OntologiesStubsTransform.begin_consumed_inputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html#kg_microbe.transform_utils.ontologies_stubs.OntologiesStubsTransform.missing_prerequisites"><code class="docutils literal notranslate"><span class="pre">OntologiesStubsTransform.missing_prerequisites()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html#kg_microbe.transform_utils.ontologies_stubs.OntologiesStubsTransform.run"><code class="docutils literal notranslate"><span class="pre">OntologiesStubsTransform.run()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html#kg_microbe.transform_utils.ontologies_stubs.OntologiesStubsTransform.verify_native_inputs"><code class="docutils literal notranslate"><span class="pre">OntologiesStubsTransform.verify_native_inputs()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.ontologies_stubs.html#kg_microbe.transform_utils.ontologies_stubs.OntologiesStubsTransform.verify_recorded_native_inputs"><code class="docutils literal notranslate"><span class="pre">OntologiesStubsTransform.verify_recorded_native_inputs()</span></code></a></li>
@@ -1598,6 +1600,24 @@ Required sources keep this default and always run.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.transform.Transform.missing_prerequisites">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">missing_prerequisites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.transform.Transform.missing_prerequisites" title="Link to this definition"></a></dt>
+<dd><p>Return a message for each external prerequisite this transform needs but cannot find.</p>
+<p>Covers what <code class="docutils literal notranslate"><span class="pre">DATA_INPUTS</span></code> cannot: executables, and raw downloads that
+are not git-tracked curation. Checked before any source runs, so a
+missing prerequisite fails in seconds instead of after hours of
+upstream work.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Effective raw input directory; <code class="docutils literal notranslate"><span class="pre">None</span></code> means the default.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
 </dd>
 </dl>
 </dd></dl>

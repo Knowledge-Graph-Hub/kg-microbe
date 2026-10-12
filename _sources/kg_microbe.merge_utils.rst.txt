@@ -44,6 +44,14 @@ kg\_microbe.merge\_utils.local\_context module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.merge\_utils.merge\_contract module
+-----------------------------------------------
+
+.. automodule:: kg_microbe.merge_utils.merge_contract
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.merge\_utils.merge\_kg module
 -----------------------------------------
 

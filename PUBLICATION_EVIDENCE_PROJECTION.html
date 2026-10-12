@@ -1,0 +1,174 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Portable locators in reviewed evidence &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Portable locators in reviewed evidence</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/PUBLICATION_EVIDENCE_PROJECTION.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="portable-locators-in-reviewed-evidence">
+<h1>Portable locators in reviewed evidence<a class="headerlink" href="#portable-locators-in-reviewed-evidence" title="Link to this heading"></a></h1>
+<p>Eight reviewed evidence artifacts use descriptive relative locator namespaces instead of private machine paths. This is a finite publication projection, not a transform, an identity mapping, or a rewrite of any raw, transformed, or merged graph.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">source-repository/</span></code> identifies the historical original repository root.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">candidate-worktree/</span></code> identifies the separately reviewed candidate worktree root.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">review-evidence/</span></code> identifies historical local review evidence.</p></li>
+</ul>
+<p>These are evidence-locator namespaces, not paths to resolve against the active checkout and not promises of public download availability. Source content hashes retain their original meaning. Do not replace them with hashes of the published evidence containers.</p>
+<section id="exact-scope">
+<h2>Exact scope<a class="headerlink" href="#exact-scope" title="Link to this heading"></a></h2>
+<p>The publication manifest, <a class="reference download internal" download="" href="_downloads/5bd45d9978b5c9e57bf604a565ee5cfc/publication_locator_projection.json"><span class="xref download myst">publication_locator_projection.json</span></a>, records the exact original and published artifact hashes, allowlisted field positions, and full scientific-remainder hashes for this projection.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Evidence artifact</p></th>
+<th class="head text-right"><p>Metadata locators</p></th>
+<th class="head text-right"><p>Historical field strings</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mappings/kgxval_reference_dispositions_v1.json</span></code></p></td>
+<td class="text-right"><p>6</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">mappings/mediadive_recipe_identity_evidence.json</span></code></p></td>
+<td class="text-right"><p>15</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tests/resources/gold_selected_taxon_aliases/native_evidence.json</span></code></p></td>
+<td class="text-right"><p>8</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tests/resources/gold_selected_taxon_aliases/producer_contexts.json</span></code></p></td>
+<td class="text-right"><p>2</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tests/resources/gold_taxonomy/microbedecoder_native_context.json</span></code></p></td>
+<td class="text-right"><p>4</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tests/resources/gold_taxonomy/native_contexts.json</span></code></p></td>
+<td class="text-right"><p>4</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tests/resources/native_ro_retention/temporal62_native.json</span></code></p></td>
+<td class="text-right"><p>16</p></td>
+<td class="text-right"><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">tests/resources/participation_disposition/historical_claims.json</span></code></p></td>
+<td class="text-right"><p>0</p></td>
+<td class="text-right"><p>2</p></td>
+</tr>
+<tr class="row-even"><td><p>Total</p></td>
+<td class="text-right"><p>55</p></td>
+<td class="text-right"><p>2</p></td>
+</tr>
+</tbody>
+</table>
+<p>Every biological identifier, native row, coordinate, citation, source-content hash, quantity, replacement chain, complete XML stanza, and annotation remains unchanged. The projection does not reinterpret the original evidence. Ordinary code, policy, and evidence fingerprints still apply; updating the published containers invalidates affected previously finalized producers as usual.</p>
+</section>
+<section id="two-explicitly-projected-historical-fields">
+<h2>Two explicitly projected historical fields<a class="headerlink" href="#two-explicitly-projected-historical-fields" title="Link to this heading"></a></h2>
+<p>The participation fixture retains all 323 historical claim records in their original order. Two PATO-supplied claims, with original subjects <code class="docutils literal notranslate"><span class="pre">GO:0006082</span></code> and <code class="docutils literal notranslate"><span class="pre">GO:0043603</span></code>, were separately quarantined because their native existential restrictions do not transfer to broad <code class="docutils literal notranslate"><span class="pre">GO:0008152</span></code>. Their historical <code class="docutils literal notranslate"><span class="pre">go_reference_context</span></code> strings contain a private authority locator.</p>
+<p>Only that locator is projected in the two public field views. Those two strings are <strong>not byte-identical unprojected originals</strong>. Their original string and field-map hashes, published hashes, original triples, supplier, and historical line coordinates are explicitly recorded in the publication manifest. The authority content hash and every other context field remain unchanged. The other 321 historical field maps are unaffected, and the 321 retained / two quarantined disposition split is unchanged.</p>
+<p>Byte-exact original artifacts and a reversible locator map are retained in private review evidence, outside the deliverable. Independent local review verifies full inverse reconstruction against those originals. The portable tests verify the declared projection and its scientific remainder; they do not claim to reconstruct unavailable private path values from hashes.</p>
+</section>
+<section id="verification-boundary">
+<h2>Verification boundary<a class="headerlink" href="#verification-boundary" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">tests/test_publication_locator_projection.py</span></code> pins the exact eight-file projection and rejects scientific changes, extra or missing projections, changed roots or suffixes, unsafe locators, and changed original-hash declarations even when public container hashes are recomputed. Existing native-evidence and transform tests remain authoritative for the underlying scientific decisions. No generic path normalization or graph-validation exception is introduced.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

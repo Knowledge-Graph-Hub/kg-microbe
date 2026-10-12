@@ -117,8 +117,9 @@ asserted which relation: rebuild from the source TSVs instead.</p>
 <h2>Rebuilding and acceptance<a class="headerlink" href="#rebuilding-and-acceptance" title="Link to this heading"></a></h2>
 <p>At minimum regenerate <code class="docutils literal notranslate"><span class="pre">ontologies</span></code>, <code class="docutils literal notranslate"><span class="pre">gold</span></code>, <code class="docutils literal notranslate"><span class="pre">microbedecoder</span></code>, and
 <code class="docutils literal notranslate"><span class="pre">metatraits_gtdb</span></code>, in dependency order. GTDB’s canonical transformed mappings
-must be present. GOLD’s new <code class="docutils literal notranslate"><span class="pre">organism_folds.tsv</span></code> must exist before MicrobeDecoder
-runs, even when it contains only its header. Shared-code fingerprint changes
+must be present. MicrobeDecoder requires the selected sibling GOLD bundle to be
+finalized first. <code class="docutils literal notranslate"><span class="pre">organism_folds.tsv</span></code> is now header-only compatibility output and
+is not consumed (see <code class="docutils literal notranslate"><span class="pre">GOLD_UNRESOLVED_REFERENTS.md</span></code>). Shared-code fingerprint changes
 may require further source reruns; inspect freshness rather than relabeling old
 outputs as current.</p>
 <p>Run the focused regressions and the repository’s normal checks before merging.

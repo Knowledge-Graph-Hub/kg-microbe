@@ -1,0 +1,238 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Native Rhea direction contract (#1395, #1396) &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Native Rhea direction contract (#1395, #1396)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/RHEA_DIRECTIONS.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="native-rhea-direction-contract-1395-1396">
+<h1>Native Rhea direction contract (#1395, #1396)<a class="headerlink" href="#native-rhea-direction-contract-1395-1396" title="Link to this heading"></a></h1>
+<p>The candidate Rhea transform reads a single local, hash-pinned native snapshot.
+It does not select a PyOBO home cache, download mutable inputs during transform,
+or infer direction from iteration order or arithmetic on identifiers.</p>
+<section id="graph-meaning">
+<h2>Graph meaning<a class="headerlink" href="#graph-meaning" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><code class="docutils literal notranslate"><span class="pre">rhea_direction</span></code></p></th>
+<th class="head"><p>Native meaning</p></th>
+<th class="head"><p>Participation edges</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">UN</span></code></p></td>
+<td><p>Direction unspecified</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">biolink:has_participant</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">LR</span></code></p></td>
+<td><p>Left-to-right variant</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">biolink:has_input</span></code> / <code class="docutils literal notranslate"><span class="pre">biolink:has_output</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">RL</span></code></p></td>
+<td><p>Right-to-left variant</p></td>
+<td><p>Input/output sides reversed</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">BI</span></code></p></td>
+<td><p>Bidirectional variant</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">biolink:has_participant</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p>Every active reaction node also carries <code class="docutils literal notranslate"><span class="pre">rhea_master_id</span></code> and <code class="docutils literal notranslate"><span class="pre">rhea_status</span></code>.
+<code class="docutils literal notranslate"><span class="pre">Preliminary</span></code> is retained as preliminary, not promoted to <code class="docutils literal notranslate"><span class="pre">Approved</span></code>.
+Undefined direction is not equilibrium, neutral flux, or bidirectionality.
+These reaction descriptions do not establish physiological flux in an organism.
+See the <a class="reference external" href="https://www.rhea-db.org/help/reaction-side-direction">native Rhea direction documentation</a>.</p>
+<p>The master links to LR and RL using the exact native
+<code class="docutils literal notranslate"><span class="pre">rheav:directionalReaction</span></code>, and to BI using <code class="docutils literal notranslate"><span class="pre">rheav:bidirectionalReaction</span></code>.
+These are neither identity nor subclass edges. <code class="docutils literal notranslate"><span class="pre">rheav</span></code> expands to
+<code class="docutils literal notranslate"><span class="pre">http://rdf.rhea-db.org/</span></code>; numeric reaction IDs retain the established <code class="docutils literal notranslate"><span class="pre">RHEA</span></code>
+namespace. Native predicates are intentional project extensions, <strong>not strict
+Biolink conformance</strong>. Strict predicate and domain/range diagnostics remain
+visible; namespace registration does not waive them.</p>
+<p>Participation edges retain <code class="docutils literal notranslate"><span class="pre">rhea_side</span></code>, <code class="docutils literal notranslate"><span class="pre">rhea_participant</span></code>, <code class="docutils literal notranslate"><span class="pre">rhea_compound</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">rhea_participant_route</span></code> witnesses. A direct native <code class="docutils literal notranslate"><span class="pre">chebi</span></code> route uses that
+ChEBI entity. For generic compounds and polymers, the candidate keeps the
+native compound as participant: <code class="docutils literal notranslate"><span class="pre">reactivePart</span></code> then <code class="docutils literal notranslate"><span class="pre">chebi</span></code>, or
+<code class="docutils literal notranslate"><span class="pre">underlyingChebi</span></code>, remain distinct native paths. A protein’s reactive moiety is
+not the whole protein, and polymers at n, n+1, and n-1 are not identical merely
+because they reference the same underlying ChEBI term. Native compound names
+and <code class="docutils literal notranslate"><span class="pre">rhea_polymerization_index</span></code> survive. Stoichiometric coefficients are not yet
+separately modeled; no complete stoichiometric integration is claimed.</p>
+</section>
+<section id="inputs-and-acquisition-boundary">
+<h2>Inputs and acquisition boundary<a class="headerlink" href="#inputs-and-acquisition-boundary" title="Link to this heading"></a></h2>
+<p>Required local files beneath the chosen input directory:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">rhea/rhea-directions.tsv</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rhea/rhea.rdf.gz</span></code></p></li>
+</ul>
+<p>Their complete SHA-256 values and byte sizes must match
+<code class="docutils literal notranslate"><span class="pre">mappings/rhea_release.json</span></code>. The current candidate pins verified local export
+bytes labeled cache version 142; that cache label is <strong>not</strong> proof of a tagged
+upstream release. Stage only the matching reviewed export. Mutable FTP latest
+downloads cannot silently replace it; a new snapshot requires review and a pin
+update. Existing <code class="docutils literal notranslate"><span class="pre">rhea2ec.tsv</span></code> and <code class="docutils literal notranslate"><span class="pre">rhea2go.tsv</span></code> are no longer consumed by this
+producer. EC/GO cross-references come from the same pinned RDF and are emitted
+once per assertion on their exact native subjects (usually the master, with
+native variant exceptions retained). Provisional EC identifiers such as
+<code class="docutils literal notranslate"><span class="pre">EC:3.6.5.n1</span></code> are preserved, not discarded by a numeric-only parser.</p>
+<p><code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-t</span> <span class="pre">rhea</span></code> downloads into <strong><code class="docutils literal notranslate"><span class="pre">data/raw/rhea_download/</span></code></strong>, an acquisition
+quarantine, not the admitted input directory. Its rolling URLs and URL-only
+download manifest do not certify the snapshot. Explicitly stage a matching
+reviewed pair before transforming:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>kg_microbe.transform_utils.rhea_mappings.stage_snapshot<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--source-dir<span class="w"> </span>data/raw/rhea_download<span class="w"> </span>--input-dir<span class="w"> </span>data/raw
+</pre></div>
+</div>
+<p>Alternatively, point <code class="docutils literal notranslate"><span class="pre">--source-dir</span></code> to an explicitly selected local export with
+the pinned bytes. The stager makes no network requests. It verifies both exact
+hashes/sizes, native family/cohort agreement, participant joins and selected
+cross-reference structure before publishing the complete directory. It verifies
+identical existing inputs without rewriting them and refuses different, partial
+or symlink destinations. It never deletes or replaces an existing raw generation,
+changes the pin, repairs a source, or declares transform/release acceptance.
+If upstream’s rolling bytes have changed, staging fails; review a new snapshot
+or supply the already-reviewed matching export. Existing legacy raw mapping
+files are left untouched but are not input authorities for this producer.</p>
+<p>External node labels require prepared <code class="docutils literal notranslate"><span class="pre">chebi.db</span></code>, <code class="docutils literal notranslate"><span class="pre">go.db</span></code> and <code class="docutils literal notranslate"><span class="pre">ec.db</span></code> in that
+same selected raw directory. The producer reads byte-tracked immutable copies
+through read-only SQLite, checks the ontology declaration/schema and indexed
+exact-ID lookup, and never builds a database, downloads one, or consults a global
+adapter/cache. Conflicting or nonliteral labels fail; missing labels remain blank
+and are counted by namespace. Unconsumed SQLite journal/WAL state fails at read,
+source finalization and merge admission. Temporary snapshots need space roughly
+equal to the three database files. Their hashes identify the actual authorities;
+ontology preparation/version alignment remains an upstream prerequisite.</p>
+<p><code class="docutils literal notranslate"><span class="pre">mappings/rhea_legacy_xref_dispositions.json</span></code> binds six observed old-only
+cross-references to the two reviewed RDF snapshots. The mandatory producer audit
+<code class="docutils literal notranslate"><span class="pre">rhea_legacy_xref_dispositions.tsv</span></code> preserves each original assertion and its
+evidence, including the separate old GO:0018581 → GO:0047074 normalization.
+These are explicit historical exclusions, not global identifier invalidations
+or replacement rules. The new native annotations remain on their exact subjects;
+all seven native directional GO assertions are checked, including their side
+roles. Current indexed context is verified against the consumed RDF; historical
+comments and GO hierarchy explanations are retained as reviewed evidence, not
+falsely reported as revalidated at runtime. This audit never edits graph rows.</p>
+<p>Path-derived participation is tagged <code class="docutils literal notranslate"><span class="pre">logical_entailment</span></code> / <code class="docutils literal notranslate"><span class="pre">automated_agent</span></code>.
+Human review of the transform code is not per-assertion manual validation.</p>
+<p>At the initial KGX serialization boundary, the four Rhea node annotations are
+scalar: identical source contributions coalesce, empty contributions remain
+absent, and conflicting nonempty values fail. Direction/master/status tokens
+are validated, while polymer expressions remain literal text. This is transport
+and cross-source conflict checking, not semantic editing of a merged archive.
+The separate pre-existing blank-xref list aggregation finding in #1398 remains
+outside this bounded Rhea-field repair.</p>
+<p>The directions table must exactly cover every Approved or Preliminary numeric
+RDF reaction, with native family links and side-role agreement. Missing,
+ambiguous, conflicting, or unknown statuses fail. Only explicitly Obsolete
+records are excluded, each in the mandatory
+<code class="docutils literal notranslate"><span class="pre">rhea_reaction_dispositions.tsv</span></code> audit. All active members are also listed in
+that report. Input reads and producer audit bytes participate in source
+finalization and merge admission.</p>
+</section>
+<section id="acceptance-still-required">
+<h2>Acceptance still required<a class="headerlink" href="#acceptance-still-required" title="Link to this heading"></a></h2>
+<p>Hermetic tests check input integrity, family/side semantics, generic/polymer
+identity, obsolete and preliminary handling, and canonical output transport.
+Those tests are not a rebuilt release. Full producer execution, independent model/path review,
+all-producer rebuild, and review of the exact resulting archive remain required.
+No merged graph is semantically edited by this implementation.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

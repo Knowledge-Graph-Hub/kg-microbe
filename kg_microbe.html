@@ -131,6 +131,7 @@
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.merge_utils.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.merge_utils.html#module-kg_microbe.merge_utils.artifact_manifest">kg_microbe.merge_utils.artifact_manifest module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.merge_utils.html#kg_microbe.merge_utils.artifact_manifest.build_provenance"><code class="docutils literal notranslate"><span class="pre">build_provenance()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.merge_utils.html#kg_microbe.merge_utils.artifact_manifest.file_identity"><code class="docutils literal notranslate"><span class="pre">file_identity()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.merge_utils.html#kg_microbe.merge_utils.artifact_manifest.write_graph_archive"><code class="docutils literal notranslate"><span class="pre">write_graph_archive()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.merge_utils.html#kg_microbe.merge_utils.artifact_manifest.write_loose_manifest"><code class="docutils literal notranslate"><span class="pre">write_loose_manifest()</span></code></a></li>
 </ul>
@@ -158,6 +159,10 @@
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.merge_utils.html#kg-microbe-merge-utils-kgx-source-module">kg_microbe.merge_utils.kgx_source module</a></li>
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.merge_utils.html#module-kg_microbe.merge_utils.local_context">kg_microbe.merge_utils.local_context module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.merge_utils.html#kg_microbe.merge_utils.local_context.local_prefix_context"><code class="docutils literal notranslate"><span class="pre">local_prefix_context()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.merge_utils.html#module-kg_microbe.merge_utils.merge_contract">kg_microbe.merge_utils.merge_contract module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.merge_utils.html#kg_microbe.merge_utils.merge_contract.validate_merge_semantics"><code class="docutils literal notranslate"><span class="pre">validate_merge_semantics()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.merge_utils.html#module-kg_microbe.merge_utils.merge_kg">kg_microbe.merge_utils.merge_kg module</a><ul>
@@ -237,10 +242,19 @@
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.transform_utils.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.transform_utils.bacdive.html">kg_microbe.transform_utils.bacdive package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bacdive.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bacdive.html#module-kg_microbe.transform_utils.bacdive.ancestry_authority">kg_microbe.transform_utils.bacdive.ancestry_authority module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bacdive.html#module-kg_microbe.transform_utils.bacdive.bacdive">kg_microbe.transform_utils.bacdive.bacdive module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bacdive.html#module-kg_microbe.transform_utils.bacdive.clinical_categories">kg_microbe.transform_utils.bacdive.clinical_categories module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bacdive.html#module-kg_microbe.transform_utils.bacdive.ec_substrate_corrections">kg_microbe.transform_utils.bacdive.ec_substrate_corrections module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bacdive.html#module-kg_microbe.transform_utils.bacdive.emission">kg_microbe.transform_utils.bacdive.emission module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bacdive.html#module-kg_microbe.transform_utils.bacdive.fallback_evidence">kg_microbe.transform_utils.bacdive.fallback_evidence module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bacdive.html#module-kg_microbe.transform_utils.bacdive.fallback_native_authority">kg_microbe.transform_utils.bacdive.fallback_native_authority module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bacdive.html#module-kg_microbe.transform_utils.bacdive.fallback_selection">kg_microbe.transform_utils.bacdive.fallback_selection module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bacdive.html#module-kg_microbe.transform_utils.bacdive.isolation_categories">kg_microbe.transform_utils.bacdive.isolation_categories module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bacdive.html#module-kg_microbe.transform_utils.bacdive.ncit_category_claims">kg_microbe.transform_utils.bacdive.ncit_category_claims module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bacdive.html#module-kg_microbe.transform_utils.bacdive.references">kg_microbe.transform_utils.bacdive.references module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bacdive.html#module-kg_microbe.transform_utils.bacdive.supplied_taxid_policy">kg_microbe.transform_utils.bacdive.supplied_taxid_policy module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bacdive.html#module-kg_microbe.transform_utils.bacdive.taxonomy_evidence">kg_microbe.transform_utils.bacdive.taxonomy_evidence module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.bacdive.html#module-kg_microbe.transform_utils.bacdive">Module contents</a></li>
 </ul>
 </li>
@@ -285,7 +299,12 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.transform_utils.gold.html">kg_microbe.transform_utils.gold package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.gold.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.gold.html#module-kg_microbe.transform_utils.gold.alias_observations">kg_microbe.transform_utils.gold.alias_observations module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.gold.html#module-kg_microbe.transform_utils.gold.crosswalk_quarantine">kg_microbe.transform_utils.gold.crosswalk_quarantine module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.gold.html#module-kg_microbe.transform_utils.gold.fold_restoration">kg_microbe.transform_utils.gold.fold_restoration module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.gold.html#module-kg_microbe.transform_utils.gold.gold">kg_microbe.transform_utils.gold.gold module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.gold.html#module-kg_microbe.transform_utils.gold.selected_taxon_aliases">kg_microbe.transform_utils.gold.selected_taxon_aliases module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.gold.html#module-kg_microbe.transform_utils.gold.taxon_dispositions">kg_microbe.transform_utils.gold.taxon_dispositions module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.gold.html#module-kg_microbe.transform_utils.gold">Module contents</a></li>
 </ul>
 </li>
@@ -326,6 +345,7 @@
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#module-kg_microbe.transform_utils.mediadive.bulk_inputs">kg_microbe.transform_utils.mediadive.bulk_inputs module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#module-kg_microbe.transform_utils.mediadive.material_scope_audit">kg_microbe.transform_utils.mediadive.material_scope_audit module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#module-kg_microbe.transform_utils.mediadive.mediadive">kg_microbe.transform_utils.mediadive.mediadive module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#module-kg_microbe.transform_utils.mediadive.recipe_identity">kg_microbe.transform_utils.mediadive.recipe_identity module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.mediadive.html#module-kg_microbe.transform_utils.mediadive">Module contents</a></li>
 </ul>
 </li>
@@ -344,10 +364,12 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.transform_utils.microbedecoder.html">kg_microbe.transform_utils.microbedecoder package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.microbedecoder.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.microbedecoder.html#module-kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions">kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.microbedecoder.html#module-kg_microbe.transform_utils.microbedecoder.chemical_curation">kg_microbe.transform_utils.microbedecoder.chemical_curation module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.microbedecoder.html#module-kg_microbe.transform_utils.microbedecoder.crosswalk_quarantine">kg_microbe.transform_utils.microbedecoder.crosswalk_quarantine module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.microbedecoder.html#module-kg_microbe.transform_utils.microbedecoder.crosswalk_witnesses">kg_microbe.transform_utils.microbedecoder.crosswalk_witnesses module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.microbedecoder.html#module-kg_microbe.transform_utils.microbedecoder.curation">kg_microbe.transform_utils.microbedecoder.curation module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.microbedecoder.html#module-kg_microbe.transform_utils.microbedecoder.gold_crosswalk_dispositions">kg_microbe.transform_utils.microbedecoder.gold_crosswalk_dispositions module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.microbedecoder.html#module-kg_microbe.transform_utils.microbedecoder.material_dispositions">kg_microbe.transform_utils.microbedecoder.material_dispositions module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.microbedecoder.html#module-kg_microbe.transform_utils.microbedecoder.microbedecoder">kg_microbe.transform_utils.microbedecoder.microbedecoder module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.microbedecoder.html#module-kg_microbe.transform_utils.microbedecoder.phenotype_curation">kg_microbe.transform_utils.microbedecoder.phenotype_curation module</a></li>
@@ -379,6 +401,8 @@
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.transform_utils.prego.html">kg_microbe.transform_utils.prego package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.prego.html#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.prego.html#module-kg_microbe.transform_utils.prego.calibration">kg_microbe.transform_utils.prego.calibration module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.prego.html#module-kg_microbe.transform_utils.prego.envo_identity">kg_microbe.transform_utils.prego.envo_identity module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.prego.html#module-kg_microbe.transform_utils.prego.native_inputs">kg_microbe.transform_utils.prego.native_inputs module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.prego.html#module-kg_microbe.transform_utils.prego.prego">kg_microbe.transform_utils.prego.prego module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.prego.html#module-kg_microbe.transform_utils.prego.quality">kg_microbe.transform_utils.prego.quality module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.prego.html#module-kg_microbe.transform_utils.prego.utils">kg_microbe.transform_utils.prego.utils module</a></li>
@@ -387,7 +411,14 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.transform_utils.rhea_mappings.html">kg_microbe.transform_utils.rhea_mappings package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.rhea_mappings.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.rhea_mappings.html#module-kg_microbe.transform_utils.rhea_mappings.label_inputs">kg_microbe.transform_utils.rhea_mappings.label_inputs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.rhea_mappings.html#module-kg_microbe.transform_utils.rhea_mappings.legacy_xrefs">kg_microbe.transform_utils.rhea_mappings.legacy_xrefs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.rhea_mappings.html#module-kg_microbe.transform_utils.rhea_mappings.native_graph">kg_microbe.transform_utils.rhea_mappings.native_graph module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.rhea_mappings.html#module-kg_microbe.transform_utils.rhea_mappings.native_inputs">kg_microbe.transform_utils.rhea_mappings.native_inputs module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.rhea_mappings.html#module-kg_microbe.transform_utils.rhea_mappings.native_rdf">kg_microbe.transform_utils.rhea_mappings.native_rdf module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.rhea_mappings.html#module-kg_microbe.transform_utils.rhea_mappings.reaction_families">kg_microbe.transform_utils.rhea_mappings.reaction_families module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.rhea_mappings.html#module-kg_microbe.transform_utils.rhea_mappings.rhea_mappings">kg_microbe.transform_utils.rhea_mappings.rhea_mappings module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.rhea_mappings.html#module-kg_microbe.transform_utils.rhea_mappings.stage_snapshot">kg_microbe.transform_utils.rhea_mappings.stage_snapshot module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="kg_microbe.transform_utils.rhea_mappings.html#module-kg_microbe.transform_utils.rhea_mappings">Module contents</a></li>
 </ul>
 </li>
@@ -519,6 +550,20 @@
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.chemical_mapping_utils.read_predicate_semantics"><code class="docutils literal notranslate"><span class="pre">read_predicate_semantics()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.clinical_mesh_categories">kg_microbe.utils.clinical_mesh_categories module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.clinical_mesh_categories.ClinicalMeshEvidence"><code class="docutils literal notranslate"><span class="pre">ClinicalMeshEvidence</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.clinical_mesh_categories.ClinicalMeshEvidence.category"><code class="docutils literal notranslate"><span class="pre">ClinicalMeshEvidence.category</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.clinical_mesh_categories.ClinicalMeshEvidence.disposition"><code class="docutils literal notranslate"><span class="pre">ClinicalMeshEvidence.disposition</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.clinical_mesh_categories.ClinicalMeshEvidence.identifier"><code class="docutils literal notranslate"><span class="pre">ClinicalMeshEvidence.identifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.clinical_mesh_categories.ClinicalMeshEvidence.native_statements_sha256"><code class="docutils literal notranslate"><span class="pre">ClinicalMeshEvidence.native_statements_sha256</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.clinical_mesh_categories.ClinicalMeshEvidence.rationale"><code class="docutils literal notranslate"><span class="pre">ClinicalMeshEvidence.rationale</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.clinical_mesh_categories.apply_clinical_mesh_category"><code class="docutils literal notranslate"><span class="pre">apply_clinical_mesh_category()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.clinical_mesh_categories.load_clinical_mesh_evidence"><code class="docutils literal notranslate"><span class="pre">load_clinical_mesh_evidence()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.clinical_mesh_categories.load_clinical_mesh_policy"><code class="docutils literal notranslate"><span class="pre">load_clinical_mesh_policy()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.consolidate_categories">kg_microbe.utils.consolidate_categories module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.consolidate_categories.consolidate_node_categories"><code class="docutils literal notranslate"><span class="pre">consolidate_node_categories()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.consolidate_categories.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
@@ -561,6 +606,55 @@
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.external_identifiers.resolve_replacement"><code class="docutils literal notranslate"><span class="pre">resolve_replacement()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.finite_envo_po_categories">kg_microbe.utils.finite_envo_po_categories module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.FiniteCategoryEvidence"><code class="docutils literal notranslate"><span class="pre">FiniteCategoryEvidence</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.FiniteCategoryEvidence.authority_file"><code class="docutils literal notranslate"><span class="pre">FiniteCategoryEvidence.authority_file</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.FiniteCategoryEvidence.authority_sha256"><code class="docutils literal notranslate"><span class="pre">FiniteCategoryEvidence.authority_sha256</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.FiniteCategoryEvidence.category"><code class="docutils literal notranslate"><span class="pre">FiniteCategoryEvidence.category</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.FiniteCategoryEvidence.decision_json"><code class="docutils literal notranslate"><span class="pre">FiniteCategoryEvidence.decision_json</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.FiniteCategoryEvidence.disposition"><code class="docutils literal notranslate"><span class="pre">FiniteCategoryEvidence.disposition</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.FiniteCategoryEvidence.identifier"><code class="docutils literal notranslate"><span class="pre">FiniteCategoryEvidence.identifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.FiniteCategoryEvidence.native_witness_json"><code class="docutils literal notranslate"><span class="pre">FiniteCategoryEvidence.native_witness_json</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.FiniteEnvoPoCategoryAuthority"><code class="docutils literal notranslate"><span class="pre">FiniteEnvoPoCategoryAuthority</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.FiniteEnvoPoCategoryAuthority.bind_output_members"><code class="docutils literal notranslate"><span class="pre">FiniteEnvoPoCategoryAuthority.bind_output_members()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.FiniteEnvoPoCategoryAuthority.contract"><code class="docutils literal notranslate"><span class="pre">FiniteEnvoPoCategoryAuthority.contract()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.FiniteEnvoPoCategoryAuthority.evidence_for"><code class="docutils literal notranslate"><span class="pre">FiniteEnvoPoCategoryAuthority.evidence_for()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.FiniteEnvoPoCategoryAuthority.verify"><code class="docutils literal notranslate"><span class="pre">FiniteEnvoPoCategoryAuthority.verify()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.apply_finite_category"><code class="docutils literal notranslate"><span class="pre">apply_finite_category()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.canonical"><code class="docutils literal notranslate"><span class="pre">canonical()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.digest"><code class="docutils literal notranslate"><span class="pre">digest()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.load_policy"><code class="docutils literal notranslate"><span class="pre">load_policy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.native_role"><code class="docutils literal notranslate"><span class="pre">native_role()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.observed_target_counts"><code class="docutils literal notranslate"><span class="pre">observed_target_counts()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.restore_recorded_guard"><code class="docutils literal notranslate"><span class="pre">restore_recorded_guard()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.unique_object"><code class="docutils literal notranslate"><span class="pre">unique_object()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_envo_po_categories.verify_recorded_inputs"><code class="docutils literal notranslate"><span class="pre">verify_recorded_inputs()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.finite_import_categories">kg_microbe.utils.finite_import_categories module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_import_categories.FiniteImportCategoryAuthority"><code class="docutils literal notranslate"><span class="pre">FiniteImportCategoryAuthority</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_import_categories.FiniteImportCategoryAuthority.evidence_for"><code class="docutils literal notranslate"><span class="pre">FiniteImportCategoryAuthority.evidence_for()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_import_categories.ImportCategoryEvidence"><code class="docutils literal notranslate"><span class="pre">ImportCategoryEvidence</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_import_categories.ImportCategoryEvidence.authority"><code class="docutils literal notranslate"><span class="pre">ImportCategoryEvidence.authority</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_import_categories.ImportCategoryEvidence.authority_sha256"><code class="docutils literal notranslate"><span class="pre">ImportCategoryEvidence.authority_sha256</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_import_categories.ImportCategoryEvidence.category"><code class="docutils literal notranslate"><span class="pre">ImportCategoryEvidence.category</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_import_categories.ImportCategoryEvidence.disposition"><code class="docutils literal notranslate"><span class="pre">ImportCategoryEvidence.disposition</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_import_categories.ImportCategoryEvidence.identifier"><code class="docutils literal notranslate"><span class="pre">ImportCategoryEvidence.identifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_import_categories.ImportCategoryEvidence.root_paths"><code class="docutils literal notranslate"><span class="pre">ImportCategoryEvidence.root_paths</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_import_categories.ImportCategoryEvidence.supporting_axioms"><code class="docutils literal notranslate"><span class="pre">ImportCategoryEvidence.supporting_axioms</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_import_categories.apply_import_category"><code class="docutils literal notranslate"><span class="pre">apply_import_category()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_import_categories.load_import_category_evidence"><code class="docutils literal notranslate"><span class="pre">load_import_category_evidence()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.finite_import_categories.load_import_category_policy"><code class="docutils literal notranslate"><span class="pre">load_import_category_policy()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.fix_list_representations">kg_microbe.utils.fix_list_representations module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.fix_list_representations.fix_list_field"><code class="docutils literal notranslate"><span class="pre">fix_list_field()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.fix_list_representations.fix_tsv"><code class="docutils literal notranslate"><span class="pre">fix_tsv()</span></code></a></li>
@@ -568,11 +662,55 @@
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.fix_list_representations.parse_list_representation"><code class="docutils literal notranslate"><span class="pre">parse_list_representation()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.foodon_anatomical_categories">kg_microbe.utils.foodon_anatomical_categories module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_anatomical_categories.apply_category"><code class="docutils literal notranslate"><span class="pre">apply_category()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_anatomical_categories.cache_signature"><code class="docutils literal notranslate"><span class="pre">cache_signature()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_anatomical_categories.categories_for"><code class="docutils literal notranslate"><span class="pre">categories_for()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_anatomical_categories.load_policy"><code class="docutils literal notranslate"><span class="pre">load_policy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_anatomical_categories.selected"><code class="docutils literal notranslate"><span class="pre">selected()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.foodon_classification">kg_microbe.utils.foodon_classification module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_classification.authoritative_foodon_category"><code class="docutils literal notranslate"><span class="pre">authoritative_foodon_category()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_classification.foodon_categories"><code class="docutils literal notranslate"><span class="pre">foodon_categories()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_classification.foodon_dispositions"><code class="docutils literal notranslate"><span class="pre">foodon_dispositions()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_classification.foodon_organism_classes"><code class="docutils literal notranslate"><span class="pre">foodon_organism_classes()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_classification.organism_classes"><code class="docutils literal notranslate"><span class="pre">organism_classes()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.foodon_kernel_producer">kg_microbe.utils.foodon_kernel_producer module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_producer.FoodonKernelQuarantine"><code class="docutils literal notranslate"><span class="pre">FoodonKernelQuarantine</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_producer.FoodonKernelQuarantine.member_names"><code class="docutils literal notranslate"><span class="pre">FoodonKernelQuarantine.member_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_producer.FoodonKernelQuarantine.prepare_source"><code class="docutils literal notranslate"><span class="pre">FoodonKernelQuarantine.prepare_source()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_producer.FoodonKernelQuarantine.project"><code class="docutils literal notranslate"><span class="pre">FoodonKernelQuarantine.project()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_producer.FoodonKernelQuarantine.verify_bindings"><code class="docutils literal notranslate"><span class="pre">FoodonKernelQuarantine.verify_bindings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_producer.FoodonKernelQuarantine.verify_complete"><code class="docutils literal notranslate"><span class="pre">FoodonKernelQuarantine.verify_complete()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_producer.RecordedKernelBinding"><code class="docutils literal notranslate"><span class="pre">RecordedKernelBinding</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_producer.RecordedKernelBinding.member_names"><code class="docutils literal notranslate"><span class="pre">RecordedKernelBinding.member_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_producer.RecordedKernelBinding.verify_bindings"><code class="docutils literal notranslate"><span class="pre">RecordedKernelBinding.verify_bindings()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_producer.selected_members"><code class="docutils literal notranslate"><span class="pre">selected_members()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_producer.verify_kernel_audit_bindings"><code class="docutils literal notranslate"><span class="pre">verify_kernel_audit_bindings()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.foodon_kernel_quarantine">kg_microbe.utils.foodon_kernel_quarantine module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_quarantine.KernelEvidence"><code class="docutils literal notranslate"><span class="pre">KernelEvidence</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_quarantine.KernelEvidence.cohort"><code class="docutils literal notranslate"><span class="pre">KernelEvidence.cohort</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_quarantine.KernelEvidence.json_records"><code class="docutils literal notranslate"><span class="pre">KernelEvidence.json_records</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_quarantine.KernelEvidence.owl_records"><code class="docutils literal notranslate"><span class="pre">KernelEvidence.owl_records</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_quarantine.apply_kernel_category"><code class="docutils literal notranslate"><span class="pre">apply_kernel_category()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_quarantine.canonical"><code class="docutils literal notranslate"><span class="pre">canonical()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_quarantine.digest"><code class="docutils literal notranslate"><span class="pre">digest()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_quarantine.json_evidence"><code class="docutils literal notranslate"><span class="pre">json_evidence()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_quarantine.load_policy"><code class="docutils literal notranslate"><span class="pre">load_policy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_quarantine.owl_evidence"><code class="docutils literal notranslate"><span class="pre">owl_evidence()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_quarantine.reviewed_hierarchy"><code class="docutils literal notranslate"><span class="pre">reviewed_hierarchy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.foodon_kernel_quarantine.unique_object"><code class="docutils literal notranslate"><span class="pre">unique_object()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.go_authority">kg_microbe.utils.go_authority module</a><ul>
@@ -617,6 +755,32 @@
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_authority.write_empty_go_report"><code class="docutils literal notranslate"><span class="pre">write_empty_go_report()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.go_imported_restrictions">kg_microbe.utils.go_imported_restrictions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.ImportedGoRestrictionGuard"><code class="docutils literal notranslate"><span class="pre">ImportedGoRestrictionGuard</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.ImportedGoRestrictionGuard.bind_audit"><code class="docutils literal notranslate"><span class="pre">ImportedGoRestrictionGuard.bind_audit()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.ImportedGoRestrictionGuard.bind_original_input"><code class="docutils literal notranslate"><span class="pre">ImportedGoRestrictionGuard.bind_original_input()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.ImportedGoRestrictionGuard.evidence"><code class="docutils literal notranslate"><span class="pre">ImportedGoRestrictionGuard.evidence()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.ImportedGoRestrictionGuard.inspect"><code class="docutils literal notranslate"><span class="pre">ImportedGoRestrictionGuard.inspect()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.ImportedGoRestrictionGuard.original_rows"><code class="docutils literal notranslate"><span class="pre">ImportedGoRestrictionGuard.original_rows()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.ImportedGoRestrictionGuard.prepare"><code class="docutils literal notranslate"><span class="pre">ImportedGoRestrictionGuard.prepare()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.ImportedGoRestrictionGuard.restore_original_inputs"><code class="docutils literal notranslate"><span class="pre">ImportedGoRestrictionGuard.restore_original_inputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.ImportedGoRestrictionGuard.seal_original_inputs"><code class="docutils literal notranslate"><span class="pre">ImportedGoRestrictionGuard.seal_original_inputs()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.ImportedGoRestrictionGuard.verify_bindings"><code class="docutils literal notranslate"><span class="pre">ImportedGoRestrictionGuard.verify_bindings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.ImportedGoRestrictionGuard.verify_files"><code class="docutils literal notranslate"><span class="pre">ImportedGoRestrictionGuard.verify_files()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.ImportedGoRestrictionGuard.verify_output"><code class="docutils literal notranslate"><span class="pre">ImportedGoRestrictionGuard.verify_output()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.ImportedGoRestrictionGuard.verify_prepared"><code class="docutils literal notranslate"><span class="pre">ImportedGoRestrictionGuard.verify_prepared()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.audit_inventory"><code class="docutils literal notranslate"><span class="pre">audit_inventory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.expected_candidate"><code class="docutils literal notranslate"><span class="pre">expected_candidate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.identify"><code class="docutils literal notranslate"><span class="pre">identify()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.inventory_contract"><code class="docutils literal notranslate"><span class="pre">inventory_contract()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.load_policy"><code class="docutils literal notranslate"><span class="pre">load_policy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.validate_history"><code class="docutils literal notranslate"><span class="pre">validate_history()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.verify_audit_record"><code class="docutils literal notranslate"><span class="pre">verify_audit_record()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.go_imported_restrictions.verify_recorded_restriction_inputs"><code class="docutils literal notranslate"><span class="pre">verify_recorded_restriction_inputs()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.graph_canonicalization">kg_microbe.utils.graph_canonicalization module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.graph_canonicalization.canonical_node_category"><code class="docutils literal notranslate"><span class="pre">canonical_node_category()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.graph_canonicalization.compact_identifier"><code class="docutils literal notranslate"><span class="pre">compact_identifier()</span></code></a></li>
@@ -625,6 +789,20 @@
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.graph_schema">kg_microbe.utils.graph_schema module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.graph_schema.canonical_header"><code class="docutils literal notranslate"><span class="pre">canonical_header()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.graph_schema.validate_canonical_tsv"><code class="docutils literal notranslate"><span class="pre">validate_canonical_tsv()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.imported_gene_authority">kg_microbe.utils.imported_gene_authority module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.imported_gene_authority.GeneAuthority"><code class="docutils literal notranslate"><span class="pre">GeneAuthority</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.imported_gene_authority.GeneAuthority.category"><code class="docutils literal notranslate"><span class="pre">GeneAuthority.category</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.imported_gene_authority.GeneAuthority.description"><code class="docutils literal notranslate"><span class="pre">GeneAuthority.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.imported_gene_authority.GeneAuthority.identifier"><code class="docutils literal notranslate"><span class="pre">GeneAuthority.identifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.imported_gene_authority.GeneAuthority.name"><code class="docutils literal notranslate"><span class="pre">GeneAuthority.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.imported_gene_authority.GeneAuthority.record_url"><code class="docutils literal notranslate"><span class="pre">GeneAuthority.record_url</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.imported_gene_authority.GeneAuthority.taxon"><code class="docutils literal notranslate"><span class="pre">GeneAuthority.taxon</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.imported_gene_authority.imported_gene_record"><code class="docutils literal notranslate"><span class="pre">imported_gene_record()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.imported_gene_authority.load_imported_gene_records"><code class="docutils literal notranslate"><span class="pre">load_imported_gene_records()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.ingredient_bundle">kg_microbe.utils.ingredient_bundle module</a><ul>
@@ -669,6 +847,16 @@
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ingredient_bundle_contract.validate_payload"><code class="docutils literal notranslate"><span class="pre">validate_payload()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.ingredient_context">kg_microbe.utils.ingredient_context module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ingredient_context.catalase_material"><code class="docutils literal notranslate"><span class="pre">catalase_material()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ingredient_context.context_metadata_row"><code class="docutils literal notranslate"><span class="pre">context_metadata_row()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ingredient_context.contextualize_ingredient_row"><code class="docutils literal notranslate"><span class="pre">contextualize_ingredient_row()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ingredient_context.ingredient_context_allowed"><code class="docutils literal notranslate"><span class="pre">ingredient_context_allowed()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ingredient_context.ingredient_context_pair_allowed"><code class="docutils literal notranslate"><span class="pre">ingredient_context_pair_allowed()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ingredient_context.ingredient_context_policy"><code class="docutils literal notranslate"><span class="pre">ingredient_context_policy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ingredient_context.validate_context_bytes"><code class="docutils literal notranslate"><span class="pre">validate_context_bytes()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.ingredient_identity">kg_microbe.utils.ingredient_identity module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ingredient_identity.accepted_name_scope"><code class="docutils literal notranslate"><span class="pre">accepted_name_scope()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ingredient_identity.ingredient_authority_label"><code class="docutils literal notranslate"><span class="pre">ingredient_authority_label()</span></code></a></li>
@@ -701,6 +889,15 @@
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.isolation_source_mapping_utils">kg_microbe.utils.isolation_source_mapping_utils module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.isolation_source_mapping_utils.load_isolation_source_mappings"><code class="docutils literal notranslate"><span class="pre">load_isolation_source_mappings()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.isolation_source_mapping_utils.normalize_isolation_source_label"><code class="docutils literal notranslate"><span class="pre">normalize_isolation_source_label()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.kgm_validation_profile">kg_microbe.utils.kgm_validation_profile module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.kgm_validation_profile.classify_kgxval_report"><code class="docutils literal notranslate"><span class="pre">classify_kgxval_report()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.kgm_validation_profile.diagnostic_signature"><code class="docutils literal notranslate"><span class="pre">diagnostic_signature()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.kgm_validation_profile.file_identity"><code class="docutils literal notranslate"><span class="pre">file_identity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.kgm_validation_profile.load_profile"><code class="docutils literal notranslate"><span class="pre">load_profile()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.kgm_validation_profile.load_reference_dispositions"><code class="docutils literal notranslate"><span class="pre">load_reference_dispositions()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.kgm_validation_profile.validation_contract"><code class="docutils literal notranslate"><span class="pre">validation_contract()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.lpsn_utils">kg_microbe.utils.lpsn_utils module</a><ul>
@@ -740,6 +937,27 @@
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.mediadive_bulk_download.setup_cache"><code class="docutils literal notranslate"><span class="pre">setup_cache()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.mesh_finite_categories">kg_microbe.utils.mesh_finite_categories module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.mesh_finite_categories.FiniteMeshCategoryAuthority"><code class="docutils literal notranslate"><span class="pre">FiniteMeshCategoryAuthority</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.mesh_finite_categories.FiniteMeshCategoryAuthority.bind_node_members"><code class="docutils literal notranslate"><span class="pre">FiniteMeshCategoryAuthority.bind_node_members()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.mesh_finite_categories.FiniteMeshCategoryAuthority.category_for"><code class="docutils literal notranslate"><span class="pre">FiniteMeshCategoryAuthority.category_for()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.mesh_finite_categories.FiniteMeshCategoryAuthority.contract"><code class="docutils literal notranslate"><span class="pre">FiniteMeshCategoryAuthority.contract()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.mesh_finite_categories.FiniteMeshCategoryAuthority.identifiers"><code class="docutils literal notranslate"><span class="pre">FiniteMeshCategoryAuthority.identifiers</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.mesh_finite_categories.FiniteMeshCategoryAuthority.verify"><code class="docutils literal notranslate"><span class="pre">FiniteMeshCategoryAuthority.verify()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.mesh_finite_categories.apply_category"><code class="docutils literal notranslate"><span class="pre">apply_category()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.mesh_finite_categories.canonical"><code class="docutils literal notranslate"><span class="pre">canonical()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.mesh_finite_categories.digest"><code class="docutils literal notranslate"><span class="pre">digest()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.mesh_finite_categories.load_policy"><code class="docutils literal notranslate"><span class="pre">load_policy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.mesh_finite_categories.read_native_evidence"><code class="docutils literal notranslate"><span class="pre">read_native_evidence()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.mesh_finite_categories.restore_recorded_guard"><code class="docutils literal notranslate"><span class="pre">restore_recorded_guard()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.mesh_finite_categories.unique_object"><code class="docutils literal notranslate"><span class="pre">unique_object()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.mesh_finite_categories.validate_evidence"><code class="docutils literal notranslate"><span class="pre">validate_evidence()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.mesh_finite_categories.validate_model"><code class="docutils literal notranslate"><span class="pre">validate_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.mesh_finite_categories.verify_recorded_inputs"><code class="docutils literal notranslate"><span class="pre">verify_recorded_inputs()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.metpo_liveness">kg_microbe.utils.metpo_liveness module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.metpo_liveness.KNOWN_DEPRECATED"><code class="docutils literal notranslate"><span class="pre">KNOWN_DEPRECATED</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.metpo_liveness.deprecated_metpo_terms"><code class="docutils literal notranslate"><span class="pre">deprecated_metpo_terms()</span></code></a></li>
@@ -755,6 +973,47 @@
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.microbial_trait_mappings.load_microbial_trait_mappings"><code class="docutils literal notranslate"><span class="pre">load_microbial_trait_mappings()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.native_rdf">kg_microbe.utils.native_rdf module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.native_rdf.decoded_iri_subject"><code class="docutils literal notranslate"><span class="pre">decoded_iri_subject()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.native_ro_retention">kg_microbe.utils.native_ro_retention module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.native_ro_retention.NativeROPredicateRetention"><code class="docutils literal notranslate"><span class="pre">NativeROPredicateRetention</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.native_ro_retention.NativeROPredicateRetention.prepare_source"><code class="docutils literal notranslate"><span class="pre">NativeROPredicateRetention.prepare_source()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.native_ro_retention.NativeROPredicateRetention.project"><code class="docutils literal notranslate"><span class="pre">NativeROPredicateRetention.project()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.native_ro_retention.NativeROPredicateRetention.verify_bindings"><code class="docutils literal notranslate"><span class="pre">NativeROPredicateRetention.verify_bindings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.native_ro_retention.NativeROPredicateRetention.verify_complete"><code class="docutils literal notranslate"><span class="pre">NativeROPredicateRetention.verify_complete()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.native_ro_retention.has_reviewed_relations"><code class="docutils literal notranslate"><span class="pre">has_reviewed_relations()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.native_ro_retention.load_policy"><code class="docutils literal notranslate"><span class="pre">load_policy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.native_ro_retention.native_input_contract"><code class="docutils literal notranslate"><span class="pre">native_input_contract()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.native_ro_retention.verify_audit_input_bindings"><code class="docutils literal notranslate"><span class="pre">verify_audit_input_bindings()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.ncit_eight_categories">kg_microbe.utils.ncit_eight_categories module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ncit_eight_categories.FiniteNcitCategoryAuthority"><code class="docutils literal notranslate"><span class="pre">FiniteNcitCategoryAuthority</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ncit_eight_categories.FiniteNcitCategoryAuthority.bind_members"><code class="docutils literal notranslate"><span class="pre">FiniteNcitCategoryAuthority.bind_members()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ncit_eight_categories.FiniteNcitCategoryAuthority.category_for"><code class="docutils literal notranslate"><span class="pre">FiniteNcitCategoryAuthority.category_for()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ncit_eight_categories.FiniteNcitCategoryAuthority.contract"><code class="docutils literal notranslate"><span class="pre">FiniteNcitCategoryAuthority.contract()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ncit_eight_categories.FiniteNcitCategoryAuthority.verify"><code class="docutils literal notranslate"><span class="pre">FiniteNcitCategoryAuthority.verify()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ncit_eight_categories.RecordedNcitCategoryGuard"><code class="docutils literal notranslate"><span class="pre">RecordedNcitCategoryGuard</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ncit_eight_categories.RecordedNcitCategoryGuard.verify"><code class="docutils literal notranslate"><span class="pre">RecordedNcitCategoryGuard.verify()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ncit_eight_categories.apply_category"><code class="docutils literal notranslate"><span class="pre">apply_category()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ncit_eight_categories.canonical"><code class="docutils literal notranslate"><span class="pre">canonical()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ncit_eight_categories.digest"><code class="docutils literal notranslate"><span class="pre">digest()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ncit_eight_categories.load_policy"><code class="docutils literal notranslate"><span class="pre">load_policy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ncit_eight_categories.restore_recorded_guard"><code class="docutils literal notranslate"><span class="pre">restore_recorded_guard()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ncit_eight_categories.unique_object"><code class="docutils literal notranslate"><span class="pre">unique_object()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ncit_eight_categories.validate_model"><code class="docutils literal notranslate"><span class="pre">validate_model()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ncit_eight_categories.validate_statements"><code class="docutils literal notranslate"><span class="pre">validate_statements()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ncit_eight_categories.verify_recorded_inputs"><code class="docutils literal notranslate"><span class="pre">verify_recorded_inputs()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.ner_utils">kg_microbe.utils.ner_utils module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ner_utils.annotate"><code class="docutils literal notranslate"><span class="pre">annotate()</span></code></a></li>
 </ul>
@@ -762,6 +1021,59 @@
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.oak_utils">kg_microbe.utils.oak_utils module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.oak_utils.get_label"><code class="docutils literal notranslate"><span class="pre">get_label()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.oak_utils.search_by_label"><code class="docutils literal notranslate"><span class="pre">search_by_label()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.ontology_category_authority">kg_microbe.utils.ontology_category_authority module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_category_authority.CategoryEvidence"><code class="docutils literal notranslate"><span class="pre">CategoryEvidence</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_category_authority.CategoryEvidence.authority"><code class="docutils literal notranslate"><span class="pre">CategoryEvidence.authority</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_category_authority.CategoryEvidence.category"><code class="docutils literal notranslate"><span class="pre">CategoryEvidence.category</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_category_authority.CategoryEvidence.disposition"><code class="docutils literal notranslate"><span class="pre">CategoryEvidence.disposition</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_category_authority.CategoryEvidence.identifier"><code class="docutils literal notranslate"><span class="pre">CategoryEvidence.identifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_category_authority.CategoryEvidence.root_paths"><code class="docutils literal notranslate"><span class="pre">CategoryEvidence.root_paths</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_category_authority.CategoryEvidence.supporting_axioms"><code class="docutils literal notranslate"><span class="pre">CategoryEvidence.supporting_axioms</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_category_authority.OntologyCategoryAuthority"><code class="docutils literal notranslate"><span class="pre">OntologyCategoryAuthority</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_category_authority.OntologyCategoryAuthority.category_for"><code class="docutils literal notranslate"><span class="pre">OntologyCategoryAuthority.category_for()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_category_authority.OntologyCategoryAuthority.evidence_for"><code class="docutils literal notranslate"><span class="pre">OntologyCategoryAuthority.evidence_for()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_category_authority.OntologyCategoryAuthority.finite_evidence_for"><code class="docutils literal notranslate"><span class="pre">OntologyCategoryAuthority.finite_evidence_for()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.ontology_metadata">kg_microbe.utils.ontology_metadata module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_metadata.annotation_property_ids"><code class="docutils literal notranslate"><span class="pre">annotation_property_ids()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_metadata.is_chebi_metadata_identifier"><code class="docutils literal notranslate"><span class="pre">is_chebi_metadata_identifier()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_metadata.metadata_declaration_ids"><code class="docutils literal notranslate"><span class="pre">metadata_declaration_ids()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_metadata.metadata_identifier"><code class="docutils literal notranslate"><span class="pre">metadata_identifier()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_metadata.obograph_is_deprecated"><code class="docutils literal notranslate"><span class="pre">obograph_is_deprecated()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_metadata.reviewed_foodon_schema_property_ids"><code class="docutils literal notranslate"><span class="pre">reviewed_foodon_schema_property_ids()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.ontology_parent_quarantine">kg_microbe.utils.ontology_parent_quarantine module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.OntologyParentQuarantine"><code class="docutils literal notranslate"><span class="pre">OntologyParentQuarantine</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.OntologyParentQuarantine.member_names"><code class="docutils literal notranslate"><span class="pre">OntologyParentQuarantine.member_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.OntologyParentQuarantine.prepare_normalization"><code class="docutils literal notranslate"><span class="pre">OntologyParentQuarantine.prepare_normalization()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.OntologyParentQuarantine.prepare_source"><code class="docutils literal notranslate"><span class="pre">OntologyParentQuarantine.prepare_source()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.OntologyParentQuarantine.project"><code class="docutils literal notranslate"><span class="pre">OntologyParentQuarantine.project()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.OntologyParentQuarantine.verify_bindings"><code class="docutils literal notranslate"><span class="pre">OntologyParentQuarantine.verify_bindings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.OntologyParentQuarantine.verify_complete"><code class="docutils literal notranslate"><span class="pre">OntologyParentQuarantine.verify_complete()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.RecordedParentBinding"><code class="docutils literal notranslate"><span class="pre">RecordedParentBinding</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.RecordedParentBinding.member_names"><code class="docutils literal notranslate"><span class="pre">RecordedParentBinding.member_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.RecordedParentBinding.verify_bindings"><code class="docutils literal notranslate"><span class="pre">RecordedParentBinding.verify_bindings()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.canonical"><code class="docutils literal notranslate"><span class="pre">canonical()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.digest"><code class="docutils literal notranslate"><span class="pre">digest()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.json_context"><code class="docutils literal notranslate"><span class="pre">json_context()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.load_policy"><code class="docutils literal notranslate"><span class="pre">load_policy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.native_input_contract"><code class="docutils literal notranslate"><span class="pre">native_input_contract()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.owl_context"><code class="docutils literal notranslate"><span class="pre">owl_context()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.requires_authority"><code class="docutils literal notranslate"><span class="pre">requires_authority()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.unique_object"><code class="docutils literal notranslate"><span class="pre">unique_object()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.ontology_parent_quarantine.verify_audit_bindings"><code class="docutils literal notranslate"><span class="pre">verify_audit_bindings()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.ontology_resolution">kg_microbe.utils.ontology_resolution module</a><ul>
@@ -882,6 +1194,13 @@
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.sanitize_curies.sanitize_tsv"><code class="docutils literal notranslate"><span class="pre">sanitize_tsv()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.source_category_authority">kg_microbe.utils.source_category_authority module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.source_category_authority.SourceCategoryAuthority"><code class="docutils literal notranslate"><span class="pre">SourceCategoryAuthority</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.source_category_authority.SourceCategoryAuthority.normalize"><code class="docutils literal notranslate"><span class="pre">SourceCategoryAuthority.normalize()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.source_finalization">kg_microbe.utils.source_finalization module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.source_finalization.SourceFinalizationRequired"><code class="docutils literal notranslate"><span class="pre">SourceFinalizationRequired</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.source_finalization.finalize_selected_sources"><code class="docutils literal notranslate"><span class="pre">finalize_selected_sources()</span></code></a></li>
@@ -935,6 +1254,21 @@
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.tsv_io.tsv_writer"><code class="docutils literal notranslate"><span class="pre">tsv_writer()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.uberon_temporal_categories">kg_microbe.utils.uberon_temporal_categories module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.uberon_temporal_categories.TemporalCategoryEvidence"><code class="docutils literal notranslate"><span class="pre">TemporalCategoryEvidence</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.uberon_temporal_categories.TemporalCategoryEvidence.authority_sha256"><code class="docutils literal notranslate"><span class="pre">TemporalCategoryEvidence.authority_sha256</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.uberon_temporal_categories.TemporalCategoryEvidence.category"><code class="docutils literal notranslate"><span class="pre">TemporalCategoryEvidence.category</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.uberon_temporal_categories.TemporalCategoryEvidence.disposition"><code class="docutils literal notranslate"><span class="pre">TemporalCategoryEvidence.disposition</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.uberon_temporal_categories.TemporalCategoryEvidence.identifier"><code class="docutils literal notranslate"><span class="pre">TemporalCategoryEvidence.identifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.uberon_temporal_categories.TemporalCategoryEvidence.root_paths"><code class="docutils literal notranslate"><span class="pre">TemporalCategoryEvidence.root_paths</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.uberon_temporal_categories.apply_temporal_category"><code class="docutils literal notranslate"><span class="pre">apply_temporal_category()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.uberon_temporal_categories.is_reviewed_temporal_identifier"><code class="docutils literal notranslate"><span class="pre">is_reviewed_temporal_identifier()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.uberon_temporal_categories.load_temporal_category_evidence"><code class="docutils literal notranslate"><span class="pre">load_temporal_category_evidence()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.uberon_temporal_categories.load_temporal_category_policy"><code class="docutils literal notranslate"><span class="pre">load_temporal_category_policy()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.unipathways_utils">kg_microbe.utils.unipathways_utils module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.unipathways_utils.check_wanted_pairs"><code class="docutils literal notranslate"><span class="pre">check_wanted_pairs()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.unipathways_utils.create_df_from_pair"><code class="docutils literal notranslate"><span class="pre">create_df_from_pair()</span></code></a></li>
@@ -967,6 +1301,33 @@
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.uniprot_utils.prepare_mondo_dictionary"><code class="docutils literal notranslate"><span class="pre">prepare_mondo_dictionary()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.uniprot_utils.process_lines"><code class="docutils literal notranslate"><span class="pre">process_lines()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.uniprot_utils.write_obsolete_file_header"><code class="docutils literal notranslate"><span class="pre">write_obsolete_file_header()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.upa_route_review">kg_microbe.utils.upa_route_review module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.RecordedUPABinding"><code class="docutils literal notranslate"><span class="pre">RecordedUPABinding</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.RecordedUPABinding.member_names"><code class="docutils literal notranslate"><span class="pre">RecordedUPABinding.member_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.RecordedUPABinding.verify_bindings"><code class="docutils literal notranslate"><span class="pre">RecordedUPABinding.verify_bindings()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.UPARouteReview"><code class="docutils literal notranslate"><span class="pre">UPARouteReview</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.UPARouteReview.capture_intermediate"><code class="docutils literal notranslate"><span class="pre">UPARouteReview.capture_intermediate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.UPARouteReview.finish_source"><code class="docutils literal notranslate"><span class="pre">UPARouteReview.finish_source()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.UPARouteReview.keep_generated"><code class="docutils literal notranslate"><span class="pre">UPARouteReview.keep_generated()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.UPARouteReview.member_names"><code class="docutils literal notranslate"><span class="pre">UPARouteReview.member_names()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.UPARouteReview.prepare_source"><code class="docutils literal notranslate"><span class="pre">UPARouteReview.prepare_source()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.UPARouteReview.verify_bindings"><code class="docutils literal notranslate"><span class="pre">UPARouteReview.verify_bindings()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.UPARouteReview.verify_complete"><code class="docutils literal notranslate"><span class="pre">UPARouteReview.verify_complete()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.canonical"><code class="docutils literal notranslate"><span class="pre">canonical()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.compact"><code class="docutils literal notranslate"><span class="pre">compact()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.contract"><code class="docutils literal notranslate"><span class="pre">contract()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.decode"><code class="docutils literal notranslate"><span class="pre">decode()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.digest"><code class="docutils literal notranslate"><span class="pre">digest()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.enumerate_candidates"><code class="docutils literal notranslate"><span class="pre">enumerate_candidates()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.load_policy"><code class="docutils literal notranslate"><span class="pre">load_policy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.unique_object"><code class="docutils literal notranslate"><span class="pre">unique_object()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="kg_microbe.utils.html#kg_microbe.utils.upa_route_review.verify_audit_bindings"><code class="docutils literal notranslate"><span class="pre">verify_audit_bindings()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="kg_microbe.utils.html#module-kg_microbe.utils.validation_utils">kg_microbe.utils.validation_utils module</a><ul>

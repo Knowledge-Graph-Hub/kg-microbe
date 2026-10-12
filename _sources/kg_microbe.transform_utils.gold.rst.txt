@@ -4,10 +4,50 @@ kg\_microbe.transform\_utils.gold package
 Submodules
 ----------
 
+kg\_microbe.transform\_utils.gold.alias\_observations module
+------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.gold.alias_observations
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.gold.crosswalk\_quarantine module
+--------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.gold.crosswalk_quarantine
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.gold.fold\_restoration module
+----------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.gold.fold_restoration
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.transform\_utils.gold.gold module
 ---------------------------------------------
 
 .. automodule:: kg_microbe.transform_utils.gold.gold
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.gold.selected\_taxon\_aliases module
+-----------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.gold.selected_taxon_aliases
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.gold.taxon\_dispositions module
+------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.gold.taxon_dispositions
    :members:
    :undoc-members:
    :show-inheritance:

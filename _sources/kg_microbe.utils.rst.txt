@@ -44,6 +44,14 @@ kg\_microbe.utils.chemical\_mapping\_utils module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.utils.clinical\_mesh\_categories module
+---------------------------------------------------
+
+.. automodule:: kg_microbe.utils.clinical_mesh_categories
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.utils.consolidate\_categories module
 ------------------------------------------------
 
@@ -92,10 +100,34 @@ kg\_microbe.utils.external\_identifiers module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.utils.finite\_envo\_po\_categories module
+-----------------------------------------------------
+
+.. automodule:: kg_microbe.utils.finite_envo_po_categories
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.finite\_import\_categories module
+---------------------------------------------------
+
+.. automodule:: kg_microbe.utils.finite_import_categories
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.utils.fix\_list\_representations module
 ---------------------------------------------------
 
 .. automodule:: kg_microbe.utils.fix_list_representations
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.foodon\_anatomical\_categories module
+-------------------------------------------------------
+
+.. automodule:: kg_microbe.utils.foodon_anatomical_categories
    :members:
    :undoc-members:
    :show-inheritance:
@@ -108,10 +140,34 @@ kg\_microbe.utils.foodon\_classification module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.utils.foodon\_kernel\_producer module
+-------------------------------------------------
+
+.. automodule:: kg_microbe.utils.foodon_kernel_producer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.foodon\_kernel\_quarantine module
+---------------------------------------------------
+
+.. automodule:: kg_microbe.utils.foodon_kernel_quarantine
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.utils.go\_authority module
 --------------------------------------
 
 .. automodule:: kg_microbe.utils.go_authority
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.go\_imported\_restrictions module
+---------------------------------------------------
+
+.. automodule:: kg_microbe.utils.go_imported_restrictions
    :members:
    :undoc-members:
    :show-inheritance:
@@ -132,6 +188,14 @@ kg\_microbe.utils.graph\_schema module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.utils.imported\_gene\_authority module
+--------------------------------------------------
+
+.. automodule:: kg_microbe.utils.imported_gene_authority
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.utils.ingredient\_bundle module
 -------------------------------------------
 
@@ -144,6 +208,14 @@ kg\_microbe.utils.ingredient\_bundle\_contract module
 -----------------------------------------------------
 
 .. automodule:: kg_microbe.utils.ingredient_bundle_contract
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.ingredient\_context module
+--------------------------------------------
+
+.. automodule:: kg_microbe.utils.ingredient_context
    :members:
    :undoc-members:
    :show-inheritance:
@@ -180,6 +252,14 @@ kg\_microbe.utils.isolation\_source\_mapping\_utils module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.utils.kgm\_validation\_profile module
+-------------------------------------------------
+
+.. automodule:: kg_microbe.utils.kgm_validation_profile
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.utils.lpsn\_utils module
 ------------------------------------
 
@@ -200,6 +280,14 @@ kg\_microbe.utils.mediadive\_bulk\_download module
 --------------------------------------------------
 
 .. automodule:: kg_microbe.utils.mediadive_bulk_download
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.mesh\_finite\_categories module
+-------------------------------------------------
+
+.. automodule:: kg_microbe.utils.mesh_finite_categories
    :members:
    :undoc-members:
    :show-inheritance:
@@ -228,6 +316,30 @@ kg\_microbe.utils.microbial\_trait\_mappings module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.utils.native\_rdf module
+------------------------------------
+
+.. automodule:: kg_microbe.utils.native_rdf
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.native\_ro\_retention module
+----------------------------------------------
+
+.. automodule:: kg_microbe.utils.native_ro_retention
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.ncit\_eight\_categories module
+------------------------------------------------
+
+.. automodule:: kg_microbe.utils.ncit_eight_categories
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.utils.ner\_utils module
 -----------------------------------
 
@@ -240,6 +352,30 @@ kg\_microbe.utils.oak\_utils module
 -----------------------------------
 
 .. automodule:: kg_microbe.utils.oak_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.ontology\_category\_authority module
+------------------------------------------------------
+
+.. automodule:: kg_microbe.utils.ontology_category_authority
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.ontology\_metadata module
+-------------------------------------------
+
+.. automodule:: kg_microbe.utils.ontology_metadata
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.ontology\_parent\_quarantine module
+-----------------------------------------------------
+
+.. automodule:: kg_microbe.utils.ontology_parent_quarantine
    :members:
    :undoc-members:
    :show-inheritance:
@@ -332,6 +468,14 @@ kg\_microbe.utils.sanitize\_curies module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.utils.source\_category\_authority module
+----------------------------------------------------
+
+.. automodule:: kg_microbe.utils.source_category_authority
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.utils.source\_finalization module
 ---------------------------------------------
 
@@ -388,6 +532,14 @@ kg\_microbe.utils.tsv\_io module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.utils.uberon\_temporal\_categories module
+-----------------------------------------------------
+
+.. automodule:: kg_microbe.utils.uberon_temporal_categories
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.utils.unipathways\_utils module
 -------------------------------------------
 
@@ -400,6 +552,14 @@ kg\_microbe.utils.uniprot\_utils module
 ---------------------------------------
 
 .. automodule:: kg_microbe.utils.uniprot_utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.utils.upa\_route\_review module
+-------------------------------------------
+
+.. automodule:: kg_microbe.utils.upa_route_review
    :members:
    :undoc-members:
    :show-inheritance:

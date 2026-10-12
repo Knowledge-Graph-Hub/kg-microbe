@@ -1,0 +1,162 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FOODON organism-class taxon restrictions &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">FOODON organism-class taxon restrictions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/FOODON_TAXON_CONSTRAINT_DISPOSITION.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="foodon-organism-class-taxon-restrictions">
+<h1>FOODON organism-class taxon restrictions<a class="headerlink" href="#foodon-organism-class-taxon-restrictions" title="Link to this heading"></a></h1>
+<section id="decision-and-scope">
+<h2>Decision and scope<a class="headerlink" href="#decision-and-scope" title="Link to this heading"></a></h2>
+<p>Retain the 1,679 reviewed FOODON <code class="docutils literal notranslate"><span class="pre">biolink:in_taxon</span></code> projections with
+<code class="docutils literal notranslate"><span class="pre">relation=RO:0002162</span></code>, literal direction, endpoints and FOODON provenance.
+These are projections of native ontology class restrictions, not assertions
+that a taxon classification is an individual organism in another taxon. This
+documentation and regression package does not edit transformed or merged KG
+rows, add a validator exemption, or claim strict Biolink conformance.</p>
+<p>The finite diagnostic cohort has 1,679 distinct subjects and triples: 1,663
+targets are NCBITaxon IDs and 16 are FOODON organism classes, including
+cultivars. Each native OWL subject explicitly carries a subclass existential
+restriction using <code class="docutils literal notranslate"><span class="pre">RO:0002162</span> <span class="pre">someValuesFrom</span></code> the target. Thirty-five subjects
+also express the same restriction in an equivalent-class intersection. All
+1,714 matching restrictions are existential; none is universal.</p>
+<p>An <code class="docutils literal notranslate"><span class="pre">in_taxon</span></code> restriction does not authorize <code class="docutils literal notranslate"><span class="pre">same_as</span></code>, <code class="docutils literal notranslate"><span class="pre">exact_match</span></code> or a new
+<code class="docutils literal notranslate"><span class="pre">subclass_of</span></code> edge. Only 15 of these pairs separately have an asserted native
+subclass axiom to the same target. Those independent assertions are not a
+reason to convert the other 1,664 restrictions into hierarchy edges. FOODON
+targets must not be replaced by guessed NCBI species identities.</p>
+</section>
+<section id="strict-schema-limitation">
+<h2>Strict schema limitation<a class="headerlink" href="#strict-schema-limitation" title="Link to this heading"></a></h2>
+<p>The pinned Biolink 4.4.2 schema lists RO:0002162 as an exact mapping of
+<code class="docutils literal notranslate"><span class="pre">in</span> <span class="pre">taxon</span></code>, with domain <code class="docutils literal notranslate"><span class="pre">thing</span> <span class="pre">with</span> <span class="pre">taxon</span></code> and range <code class="docutils literal notranslate"><span class="pre">organism</span> <span class="pre">taxon</span></code>.
+Its <code class="docutils literal notranslate"><span class="pre">organism</span> <span class="pre">taxon</span></code> category descends from <code class="docutils literal notranslate"><span class="pre">named</span> <span class="pre">thing</span></code>, without the
+<code class="docutils literal notranslate"><span class="pre">thing</span> <span class="pre">with</span> <span class="pre">taxon</span></code> mixin. KGM’s organism-branch category projection therefore
+produced the historical strict domain diagnostic for these class-level restrictions.
+This historical cohort includes the separately reviewed wheat-kernel subject
+FOODON:00005106, now categorized as Food by its own native-evidence correction.
+Its valid in_taxon restriction is retained. The exact rebuilt graph must be
+validated again; 1,679 is the reviewed historical cohort, not a promised new
+validator finding count.</p>
+<p>Preserve and report that diagnostic. Do not relabel all organism classes,
+weaken the model, suppress validator output or infer taxon identity to obtain
+a superficially clean validation result. This is a finite, evidence-backed
+disposition, not a blanket exception for every OrganismTaxon in_taxon edge.</p>
+</section>
+<section id="reproducible-evidence">
+<h2>Reproducible evidence<a class="headerlink" href="#reproducible-evidence" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">tests/resources/foodon_taxon_constraints/manifest.json</span></code> records the exact
+original FOODON JSON/OWL, RO JSON, pinned model and review-cohort identities.
+The finite excerpts contain complete selected OWL subject declarations,
+native endpoint declarations, ancestry edges and their original JSON
+coordinates, historical assertion fields and the pinned model fragment.</p>
+<p><code class="docutils literal notranslate"><span class="pre">tests/test_foodon_taxon_constraints.py</span></code> reparses all complete selected OWL
+declarations, rejoins literal assertions/provenance, verifies directed ancestry
+against native edges, distinguishes the 15 separate subclass assertions, and
+tests wrong direction/property/source/quantifier, annotation-as-axiom,
+fabricated ancestry and invented hierarchy. A real ontology source-normalizer
+test preserves all 1,679 rows unchanged. Tests do not consult production data.</p>
+<p>The native full-source reconciliation and independent plan review found
+1,679 direct restrictions plus 35 equivalent-intersection witnesses, with no
+unresolved logical blank-node references in this cohort. Fresh producer
+conservation and model/path/KGX reviews of the exact rebuilt archive remain
+required; these tests alone do not establish release acceptance.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

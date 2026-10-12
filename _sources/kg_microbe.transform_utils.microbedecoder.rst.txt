@@ -4,6 +4,14 @@ kg\_microbe.transform\_utils.microbedecoder package
 Submodules
 ----------
 
+kg\_microbe.transform\_utils.microbedecoder.bacdive\_join\_dispositions module
+------------------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.transform\_utils.microbedecoder.chemical\_curation module
 ---------------------------------------------------------------------
 
@@ -32,6 +40,14 @@ kg\_microbe.transform\_utils.microbedecoder.curation module
 -----------------------------------------------------------
 
 .. automodule:: kg_microbe.transform_utils.microbedecoder.curation
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.microbedecoder.gold\_crosswalk\_dispositions module
+--------------------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.microbedecoder.gold_crosswalk_dispositions
    :members:
    :undoc-members:
    :show-inheritance:

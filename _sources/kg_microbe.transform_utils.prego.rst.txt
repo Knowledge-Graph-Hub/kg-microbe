@@ -12,6 +12,22 @@ kg\_microbe.transform\_utils.prego.calibration module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.transform\_utils.prego.envo\_identity module
+--------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.prego.envo_identity
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.prego.native\_inputs module
+--------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.prego.native_inputs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.transform\_utils.prego.prego module
 -----------------------------------------------
 

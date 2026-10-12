@@ -4,10 +4,26 @@ kg\_microbe.transform\_utils.bacdive package
 Submodules
 ----------
 
+kg\_microbe.transform\_utils.bacdive.ancestry\_authority module
+---------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bacdive.ancestry_authority
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.transform\_utils.bacdive.bacdive module
 ---------------------------------------------------
 
 .. automodule:: kg_microbe.transform_utils.bacdive.bacdive
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.bacdive.clinical\_categories module
+----------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bacdive.clinical_categories
    :members:
    :undoc-members:
    :show-inheritance:
@@ -28,10 +44,66 @@ kg\_microbe.transform\_utils.bacdive.emission module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.transform\_utils.bacdive.fallback\_evidence module
+--------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bacdive.fallback_evidence
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.bacdive.fallback\_native\_authority module
+-----------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bacdive.fallback_native_authority
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.bacdive.fallback\_selection module
+---------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bacdive.fallback_selection
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.bacdive.isolation\_categories module
+-----------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bacdive.isolation_categories
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.bacdive.ncit\_category\_claims module
+------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bacdive.ncit_category_claims
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.transform\_utils.bacdive.references module
 ------------------------------------------------------
 
 .. automodule:: kg_microbe.transform_utils.bacdive.references
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.bacdive.supplied\_taxid\_policy module
+-------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bacdive.supplied_taxid_policy
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.bacdive.taxonomy\_evidence module
+--------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bacdive.taxonomy_evidence
    :members:
    :undoc-members:
    :show-inheritance:

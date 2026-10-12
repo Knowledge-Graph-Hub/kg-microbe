@@ -1,0 +1,444 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KG-Microbe validation contract v1 &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">KG-Microbe validation contract v1</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/VALIDATION_CONTRACT.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="kg-microbe-validation-contract-v1">
+<h1>KG-Microbe validation contract v1<a class="headerlink" href="#kg-microbe-validation-contract-v1" title="Link to this heading"></a></h1>
+<p>Machine identifier: <code class="docutils literal notranslate"><span class="pre">kgm-validation-contract-v1</span></code>, exposed by
+<code class="docutils literal notranslate"><span class="pre">kg_microbe.utils.kgm_validation_profile.validation_contract()</span></code>.
+This contract distinguishes evidence layers; it does not replace their implementations
+or introduce a graph repair, strict-validator suppression, or automatic release gate.
+The original validators and their findings remain authoritative for their own scopes.</p>
+<section id="separate-layers-and-verdicts">
+<h2>Separate layers and verdicts<a class="headerlink" href="#separate-layers-and-verdicts" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Layer</p></th>
+<th class="head"><p>Checks and evidence</p></th>
+<th class="head"><p>Does not establish</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Source finalization</p></td>
+<td><p>Canonical source TSVs; explicit upstream identifier/category/reference decisions; original-row audits; consumed-input identities</p></td>
+<td><p>Atomic rollback of all producer writes; global graph completeness</p></td>
+</tr>
+<tr class="row-odd"><td><p>Source admission</p></td>
+<td><p>Configured producer files, current finalization/fingerprint and consumed dependency bytes</p></td>
+<td><p>Correct biological interpretation from byte equality alone</p></td>
+</tr>
+<tr class="row-even"><td><p>Merge representation</p></td>
+<td><p>Canonical serializer output and declared cross-source endpoint closure</p></td>
+<td><p>Strict Biolink conformance, all-predicate acyclicity, chemical identity</p></td>
+</tr>
+<tr class="row-odd"><td><p>KGM model</p></td>
+<td><p>Pinned local Biolink checks plus separately counted project rules and native-property tables</p></td>
+<td><p>Strict external-model pass when a house rule was used</p></td>
+</tr>
+<tr class="row-even"><td><p>External KGXVal</p></td>
+<td><p>Predicate and subject/object category diagnostics against the selected local model</p></td>
+<td><p>Original graph-row counts or complete edge-signature reconstruction from the CSV</p></td>
+</tr>
+<tr class="row-odd"><td><p>Strict KGX</p></td>
+<td><p>Original installed-validator callbacks, types, required fields and context</p></td>
+<td><p>Biological correctness; graph rewriting; automatic exemption for project extensions</p></td>
+</tr>
+<tr class="row-even"><td><p>Paths</p></td>
+<td><p>Named structural tests, exact checks or explicitly bounded proxies</p></td>
+<td><p>Every possible path, all-predicate self-loop freedom, ingredient utilization</p></td>
+</tr>
+<tr class="row-odd"><td><p>Scientific disposition</p></td>
+<td><p>Exact source/native evidence and independently reviewed interpretation</p></td>
+<td><p>A replacement machine status or publication authority</p></td>
+</tr>
+</tbody>
+</table>
+<p>Record each validator’s scope, input/model/code hashes, completion status and limitations.
+Process exit 0, a present report, unchanged counts or a successful archive write is not a
+scientific pass. Source/merge validation is mandatory; optional diagnostics retain their
+separate behavior. A model-review allowance is never silently transferred to strict KGX.
+No layer in this module grants release approval. See <code class="docutils literal notranslate"><span class="pre">SOURCE_MERGE_CONTRACTS.md</span></code>,
+<code class="docutils literal notranslate"><span class="pre">PREMERGE_SOURCE_FINALIZATION.md</span></code>, <code class="docutils literal notranslate"><span class="pre">SEMANTIC_MODEL_DECISIONS_20260914.md</span></code> and the model/path
+review skills for the actual rules and their evidence requirements.</p>
+<section id="canonical-transport-is-not-the-strict-validator-s-object-schema">
+<h3>Canonical transport is not the strict validator’s object schema<a class="headerlink" href="#canonical-transport-is-not-the-strict-validator-s-object-schema" title="Link to this heading"></a></h3>
+<p>KGM’s mandatory edge TSV columns are <code class="docutils literal notranslate"><span class="pre">subject</span></code>, <code class="docutils literal notranslate"><span class="pre">predicate</span></code>, <code class="docutils literal notranslate"><span class="pre">object</span></code>, <code class="docutils literal notranslate"><span class="pre">relation</span></code>,
+<code class="docutils literal notranslate"><span class="pre">primary_knowledge_source</span></code>, <code class="docutils literal notranslate"><span class="pre">knowledge_level</span></code>, and <code class="docutils literal notranslate"><span class="pre">agent_type</span></code>. Edge <code class="docutils literal notranslate"><span class="pre">id</span></code> and KGX’s
+internal <code class="docutils literal notranslate"><span class="pre">key</span></code> are deliberately absent. The installed strict KGX validator requires an
+edge identifier and currently emits that missing-ID callback twice per edge. Retain those
+errors; do not fabricate identifiers or reinsert serializer internals to disguise them.</p>
+<p>Canonical TSV cells are strings. Pipe-delimited category/provenance/xref tokens in this
+transport are not Python lists in a validator’s in-memory object schema. Report conversion
+rules explicitly and separate genuine scalar-field violations from transport/type
+callbacks. Native METPO/MICRO and local source namespaces also need the appropriate prefix
+context; a missing registry prefix is neither evidence of an invalid biological identity
+nor permission to silently alias its spelling.</p>
+<p>The reviewed candidate’s original <strong>76,611,293 strict callbacks</strong> remain recorded as errors,
+not unique invalid rows. The 17,637,435 repeated <code class="docutils literal notranslate"><span class="pre">unit</span></code> logger warnings are a different
+stream, not additional callback findings. The source/category disposition report does not
+suppress either stream, change the pinned schema/context, or claim a strict pass. Strict
+delta reconciliation must retain original totals and full source attribution limits.</p>
+</section>
+<section id="the-legacy-named-merge-report">
+<h3>The legacy-named merge report<a class="headerlink" href="#the-legacy-named-merge-report" title="Link to this heading"></a></h3>
+<p><code class="docutils literal notranslate"><span class="pre">merged-kg_reference_resolution.tsv</span></code> now contains a validation summary, not a list of
+semantic edits. Its columns are <code class="docutils literal notranslate"><span class="pre">check</span></code>, <code class="docutils literal notranslate"><span class="pre">status</span></code>, <code class="docutils literal notranslate"><span class="pre">nodes</span></code>, <code class="docutils literal notranslate"><span class="pre">edges</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">audited_native_nameless_nodes</span></code>; its successful
+check is <code class="docutils literal notranslate"><span class="pre">canonical_representation_and_endpoint_closure_no_semantic_rewrites</span></code>.
+<code class="docutils literal notranslate"><span class="pre">write_merge_validation_report()</span></code> validates the original pair before writing that receipt.
+Failures abort rather than repair graph bytes. Semantic audit files belong beside each
+source output: <code class="docutils literal notranslate"><span class="pre">source_canonicalization.tsv</span></code>, <code class="docutils literal notranslate"><span class="pre">source_reference_resolution.tsv</span></code> and
+<code class="docutils literal notranslate"><span class="pre">go_reference_resolution.tsv</span></code> (possibly ontology-prefixed), bound by source finalization.</p>
+<p>The additional nameless-node count distinguishes a verified original native
+declaration from an anonymous endpoint invented during graph loading. Under
+#1316 a native GOLD referent can genuinely have no name. Such a row must match
+an exact declaration already verified during source admission, including its
+native taxon/audit evidence and admitted metadata. Neither an identifier alone
+nor a GOLD prefix grants an exception. Missing or changed proof aborts; merge
+does not invent a name, infer a category, resolve a new identity, or modify the
+row. The count is zero when no such declaration is used. The full GOLD producer
+and late-admission integration still require their separate candidate tests.</p>
+</section>
+</section>
+<section id="finite-kgxval-disposition-profile">
+<h2>Finite KGXVal disposition profile<a class="headerlink" href="#finite-kgxval-disposition-profile" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">mappings/kgxval_dispositions_v1.json</span></code> is <code class="docutils literal notranslate"><span class="pre">kgm-kgxval-dispositions-4.4.2-v1</span></code>.
+It classifies every exact diagnostic in the reviewed candidate CSV, retaining all six
+literal fields, occurrence counts, the Biolink/predicate-map reference hashes, source
+evidence locators and remaining verification. Its reference epoch is candidate archive
+<code class="docutils literal notranslate"><span class="pre">158e7131025c7941ae98d70af5ca14d6efb69857ed019f7f61fa9b44279b2345</span></code>, production commit
+<code class="docutils literal notranslate"><span class="pre">1408e7099d039026d7611c240938d8e177753406</span></code>; this does not replace the archive’s literal
+<code class="docutils literal notranslate"><span class="pre">1408e7099-dirty</span></code> manifest value. The input CSV hash is
+<code class="docutils literal notranslate"><span class="pre">20ef42bf0eaf4683066f9bdcc9e2e26d7cdee1f98b4f0b4db7a2fe98877a8a6c</span></code>.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Explicit disposition</p></th>
+<th class="head text-right"><p>Distinct diagnostic rows</p></th>
+<th class="head text-right"><p>CSV records, including repeats</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Registered native predicate extension (67 METPO + 3 MICRO)</p></td>
+<td class="text-right"><p>70</p></td>
+<td class="text-right"><p>190</p></td>
+</tr>
+<tr class="row-odd"><td><p>Class subsumption: exact row evidence required</p></td>
+<td class="text-right"><p>14</p></td>
+<td class="text-right"><p>49</p></td>
+</tr>
+<tr class="row-even"><td><p>Growth-medium class: exact row evidence required</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-right"><p>1</p></td>
+</tr>
+<tr class="row-odd"><td><p>Taxon phenotype: exact row evidence required</p></td>
+<td class="text-right"><p>2</p></td>
+<td class="text-right"><p>3</p></td>
+</tr>
+<tr class="row-even"><td><p>ChEBI macromolecule role: exact row evidence required</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-right"><p>2</p></td>
+</tr>
+<tr class="row-odd"><td><p>Food-material <code class="docutils literal notranslate"><span class="pre">in_taxon</span></code>: exact row evidence required</p></td>
+<td class="text-right"><p>1</p></td>
+<td class="text-right"><p>1</p></td>
+</tr>
+<tr class="row-even"><td><p>OntologyClass-containing category: source review required</p></td>
+<td class="text-right"><p>60</p></td>
+<td class="text-right"><p>132</p></td>
+</tr>
+<tr class="row-odd"><td><p>Other domain/range category: source review required</p></td>
+<td class="text-right"><p>27</p></td>
+<td class="text-right"><p>34</p></td>
+</tr>
+<tr class="row-even"><td><p>Total</p></td>
+<td class="text-right"><p><strong>176</strong></p></td>
+<td class="text-right"><p><strong>412</strong></p></td>
+</tr>
+</tbody>
+</table>
+<p>The 70 native-property findings are registered project-extension diagnostics, <strong>not strict
+Biolink passes</strong> and not validation of their actual assertions. Only the explicit native
+CURIEs in this finite profile qualify, and each is checked against the production registry
+or the three exact assay-property constants. A <code class="docutils literal notranslate"><span class="pre">METPO:</span></code>/<code class="docutils literal notranslate"><span class="pre">MICRO:</span></code> prefix is insufficient.
+The fallback Biolink map is not permission to replace a native predicate, particularly a
+negative observation, with a broader positive predicate.</p>
+<p>The complete, read-only join of all <strong>106 category diagnostics</strong> against the original
+3,354,500 nodes / 17,637,435 edges is recorded in
+<code class="docutils literal notranslate"><span class="pre">data/validation-upstream-20260930.DbltzT/kgxval-category-join-01.json</span></code>, SHA-256
+<code class="docutils literal notranslate"><span class="pre">1f303c86cacf136e59a9c2f5215d63c38c06c50dade1f0cc903e9421dd10e415</span></code>.
+Inputs were hashed before/after; each matched cohort has complete supplier/relation and
+existing precise-rule counters plus bounded original row/node witnesses. The committed
+<code class="docutils literal notranslate"><span class="pre">mappings/kgxval_reference_dispositions_v1.json</span></code> records these finite reference dispositions:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Evidence-backed category disposition</p></th>
+<th class="head text-right"><p>Exact diagnostics</p></th>
+<th class="head"><p>Remaining action</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Documented precise row convention supported throughout</p></td>
+<td class="text-right"><p>13</p></td>
+<td><p>Keep as reference project conventions, not strict passes</p></td>
+</tr>
+<tr class="row-odd"><td><p>GTDB phenotype bearer declaration gap</p></td>
+<td class="text-right"><p>2</p></td>
+<td><p>Declare the actual named source taxa; 25 assertions affect both sides</p></td>
+</tr>
+<tr class="row-even"><td><p>BacDive recipe class/relation/provenance conflict</p></td>
+<td class="text-right"><p>1</p></td>
+<td><p>Upstream emitter corrected; rebuild the full 1,575-recipe cohort</p></td>
+</tr>
+<tr class="row-odd"><td><p>Chemical subclass exceptions</p></td>
+<td class="text-right"><p>2</p></td>
+<td><p>Trace solution:6257 material category; retain independent finite NCIT Mucin disposition</p></td>
+</tr>
+<tr class="row-even"><td><p>Mixed taxon/strain/genome hierarchy</p></td>
+<td class="text-right"><p>2</p></td>
+<td><p>Verify exact paired categories, inferred relations and #834 scope</p></td>
+</tr>
+<tr class="row-odd"><td><p>FOODON process/quality classes typed Food</p></td>
+<td class="text-right"><p>4</p></td>
+<td><p>Authoritative branch-based categorization, not label inference</p></td>
+</tr>
+<tr class="row-even"><td><p>FOODON organism-class <code class="docutils literal notranslate"><span class="pre">in_taxon</span></code></p></td>
+<td class="text-right"><p>1</p></td>
+<td><p>Decide exact class restriction/mapping semantics, not equality</p></td>
+</tr>
+<tr class="row-odd"><td><p>Participant/continuant versus pinned-model occurrent range</p></td>
+<td class="text-right"><p>13</p></td>
+<td><p>Native-relation projection/model review; no schema replacement</p></td>
+</tr>
+<tr class="row-even"><td><p>Anatomical/cellular temporal assertions</p></td>
+<td class="text-right"><p>7</p></td>
+<td><p>Native existence/developmental relation projection review</p></td>
+</tr>
+<tr class="row-odd"><td><p>PATO relational quality <code class="docutils literal notranslate"><span class="pre">towards</span></code></p></td>
+<td class="text-right"><p>1</p></td>
+<td><p>Review RO:0002503 projection to <code class="docutils literal notranslate"><span class="pre">actively_involved_in</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>UBERON-imported gene endpoints typed OntologyClass</p></td>
+<td class="text-right"><p>1</p></td>
+<td><p>Ground the two native gene declarations before source correction</p></td>
+</tr>
+<tr class="row-odd"><td><p>Generic/union OntologyClass endpoint declarations</p></td>
+<td class="text-right"><p>59</p></td>
+<td><p>Per-supplier/relation authoritative ancestry/category review</p></td>
+</tr>
+<tr class="row-even"><td><p>Total</p></td>
+<td class="text-right"><p><strong>106</strong></p></td>
+<td><p><strong>13 supported reference conventions; 93 still require action</strong></p></td>
+</tr>
+</tbody>
+</table>
+<p>Together with the 70 registered native-predicate extensions, this gives 83 explicitly
+supported project-scope dispositions and 93 action-required diagnostics. It does <strong>not</strong>
+mean the graph passes strict or scientific validation. The 59 generic endpoint cohorts
+now have exact source/relation ownership and witnesses; complete authoritative semantic
+ancestry is still missing, so they are not accepted or silently deleted. The finite catalog
+states the concrete action for each signature and retains the original strict finding.</p>
+<p>The CSV omits subject/object identifiers,
+the opposite category set, original relation and provenance. Several graph signatures can
+therefore serialize to the same diagnostic row. None of the CSV repetition counts can be
+interpreted as graph-edge counts, and identical signatures cannot establish preservation.</p>
+<p>To finish an individual category acceptance, retain exact source assertions and both
+endpoint declarations, test the precise documented rule (including relation and namespace
+conditions), bind selected authorities, and record incompatible/unattributed cases as
+upstream work. Do not infer an exact class, taxon, compound or assay meaning from a label or
+category alone. The finite classifier deliberately has no function that turns a category
+signature into a house-rule pass. Reference evidence is attached only when the complete
+original CSV hash, all occurrence counts <strong>and an explicitly supplied graph archive hash</strong>
+match the pinned reference epoch. Byte-identical CSVs alone do not identify their graph.
+With no supplied archive, classification still runs, but <code class="docutils literal notranslate"><span class="pre">reference_evidence_applies</span></code>
+is false and no historical row assessments are attached. The output always identifies
+the historical <code class="docutils literal notranslate"><span class="pre">reference_epoch</span></code> separately.</p>
+<section id="run-without-changing-original-evidence">
+<h3>Run without changing original evidence<a class="headerlink" href="#run-without-changing-original-evidence" title="Link to this heading"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/classify_kgxval_report.py<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--report<span class="w"> </span>data/&lt;actual-review&gt;/model/model-kgxval-errors.csv<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--report-sha256<span class="w"> </span>20ef42bf0eaf4683066f9bdcc9e2e26d7cdee1f98b4f0b4db7a2fe98877a8a6c<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--require-reference-cohort<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--graph-archive<span class="w"> </span>data/&lt;actual-candidate&gt;/merged-kg.tar.gz<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--output<span class="w"> </span>data/&lt;new-evidence-directory&gt;/kgxval-dispositions.json
+</pre></div>
+</div>
+<p>Use the exact local report selected by the caller, not an implicit latest archive. The
+output parent must already exist and the output file must be new. No ontology service or
+graph TSV is read. The original CSV remains byte-identical; the output binds its input,
+profile, optional archive and implementation/registry identities before and after
+classification. Archive bytes are streamed for hashing, not extracted or revalidated.
+Supplying the matching archive and CSV does not prove that a validator produced that CSV
+from that archive; original run receipts remain necessary. The model hashes identify the
+reference epoch, not proof that an arbitrary CSV was generated by that model. With
+<code class="docutils literal notranslate"><span class="pre">--require-reference-cohort</span></code>, a supplied archive differing from the reference aborts;
+otherwise it is classified without attaching historical assessments.</p>
+<p>The finite catalog requires a join locator, digest and byte size, paired endpoint
+declarations matching witness identifiers/categories, and each original full-row digest.
+These are local integrity/shape guards, not authentication of the external saved join.
+Portable witness assertions omit original columns, so their full-row digests cannot be
+recomputed from that reduced projection. Independent review checked all retained
+counters, witnesses, endpoint declarations and full-row digests against the original
+saved join, without rescanning the graph.</p>
+<p>Exit codes: 0 means only registered native-extension diagnostics were classified (still not
+a strict/scientific pass); 2 means classified findings require additional review; 3 means
+an unregistered exact diagnostic was encountered. Invalid headers/profiles/input digests
+abort. The complete reference run intentionally exits <strong>2</strong>. Omitting
+<code class="docutils literal notranslate"><span class="pre">--require-reference-cohort</span></code> allows a supplied subset or a later report to be classified,
+but does not certify completeness of its originating validator run. Empty reports do not
+certify completion. Unknown diagnostics remain visible and cannot inherit a prefix or
+category waiver; a newly reviewed cohort requires explicit curation and a profile revision.</p>
+<p>The classifier never changes <code class="docutils literal notranslate"><span class="pre">strict_conformance</span></code>, <code class="docutils literal notranslate"><span class="pre">scientific_acceptance</span></code> or
+<code class="docutils literal notranslate"><span class="pre">release_authorized</span></code> to true. Do not use <code class="docutils literal notranslate"><span class="pre">classification_complete</span></code> as an acceptance verdict.</p>
+</section>
+</section>
+<section id="regression-coverage">
+<h2>Regression coverage<a class="headerlink" href="#regression-coverage" title="Link to this heading"></a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">tests/test_kgm_validation_profile.py</span></code> uses committed tiny immutable diagnostic and graph
+fixtures. It tests every finite entry, all six signature fields, new native IDs, report
+multiplicity, corruption/partial-cohort controls, conservative exit statuses, and actual
+merge-validation success/failure with byte-preserved graph files. The existing canonical
+serializer, source-finalization, admission and semantic-model tests remain separate;
+passing the new classification tests does not replace them.</p>
+</section>
+<section id="bacdive-recipe-class-correction-from-this-review">
+<h2>BacDive recipe-class correction from this review<a class="headerlink" href="#bacdive-recipe-class-correction-from-this-review" title="Link to this heading"></a></h2>
+<p>The 16 assertions matching the <code class="docutils literal notranslate"><span class="pre">GrowthMedium</span></code> subclass diagnostic are not the whole emitter scope. A complete
+read-only source inventory found <strong>1,575 distinct recipe-class assertions</strong> emitted by
+BacDive with <code class="docutils literal notranslate"><span class="pre">subclass_of</span></code>, original relation <code class="docutils literal notranslate"><span class="pre">rdf:type</span></code>, and supplier <code class="docutils literal notranslate"><span class="pre">infores:metpo</span></code>.
+They were generated by BacDive code, not native METPO axioms. METPO defines the parent
+<code class="docutils literal notranslate"><span class="pre">METPO:1004005</span></code> (growth medium); catalogue recipes are named recipe classes, consistent
+with the existing MediaDive hierarchy, not individual culture batches.</p>
+<p>The upstream emitter now uses <code class="docutils literal notranslate"><span class="pre">rdfs:subClassOf</span></code> and <code class="docutils literal notranslate"><span class="pre">infores:bacdive</span></code>. Subject, predicate,
+object, knowledge level and agent type remain unchanged. This does not change the parent
+ontology declaration’s own provenance. Positive and negative growth assertions retain
+their exact native predicates and evidence; ambiguous values still produce no observation.
+The prospective full-row difference and unchanged-input guards are retained in
+<code class="docutils literal notranslate"><span class="pre">data/validation-upstream-20260930.DbltzT/bacdive-recipe-source-inventory-01.json</span></code>.
+The original source and candidate remain untouched. An actual BacDive rebuild, complete
+assertion conservation check and fresh model/path review are still required; this code
+change is not a post-merge repair or a new KGXVal waiver.</p>
+</section>
+<section id="other-producer-corrections-from-this-review">
+<h2>Other producer corrections from this review<a class="headerlink" href="#other-producer-corrections-from-this-review" title="Link to this heading"></a></h2>
+<p>The shared MetaTraits worker now declares a taxon when its first quantitative
+phenotype assertion is emitted, even without a mapped categorical trait. Exact
+fixtures cover all 25 affected GTDB records and all six quantitative emission
+routes; empty or deferred records do not acquire edgeless taxon declarations.
+The phenotype observations are unchanged. The existing GTDB hierarchy pass will
+also see these newly declared taxa: 17 have current accession-based species
+bridges, so the rebuild can add existing-policy hierarchy and NCBI crosswalk
+edges. This is not a promise of exactly 25 changed graph rows or permission for
+new identity assertions.</p>
+<p>MediaDive’s explicit retained solution identifiers now receive the solution
+category (<code class="docutils literal notranslate"><span class="pre">ChemicalMixture</span></code>) before generic ingredient category lookup. The
+current source inventory identifies solutions 6257, 6420 and 6572 as affected.
+Only 6257 has a downloaded child formulation; the latter two have explicit
+<code class="docutils literal notranslate"><span class="pre">solution_id</span></code> references but missing child recipes. Correcting their source role
+does not invent composition, identity or subclass assertions.</p>
+<p>These fixes remain upstream implementations awaiting production rebuild and
+conservation checks. The finite reference catalog describes the original pinned
+epoch, not a retrospective acceptance of repaired output. Ontology metadata
+exclusion also occurs only upstream: exact annotation-property evidence is
+required, true semantic punning is preserved, and mandatory exclusion audits
+and consumed authority hashes accompany finalization.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -4,10 +4,66 @@ kg\_microbe.transform\_utils.rhea\_mappings package
 Submodules
 ----------
 
+kg\_microbe.transform\_utils.rhea\_mappings.label\_inputs module
+----------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.rhea_mappings.label_inputs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.rhea\_mappings.legacy\_xrefs module
+----------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.rhea_mappings.legacy_xrefs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.rhea\_mappings.native\_graph module
+----------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.rhea_mappings.native_graph
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.rhea\_mappings.native\_inputs module
+-----------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.rhea_mappings.native_inputs
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.rhea\_mappings.native\_rdf module
+--------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.rhea_mappings.native_rdf
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.rhea\_mappings.reaction\_families module
+---------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.rhea_mappings.reaction_families
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.transform\_utils.rhea\_mappings.rhea\_mappings module
 -----------------------------------------------------------------
 
 .. automodule:: kg_microbe.transform_utils.rhea_mappings.rhea_mappings
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+kg\_microbe.transform\_utils.rhea\_mappings.stage\_snapshot module
+------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.rhea_mappings.stage_snapshot
    :members:
    :undoc-members:
    :show-inheritance:

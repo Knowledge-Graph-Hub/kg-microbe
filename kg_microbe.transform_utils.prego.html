@@ -429,6 +429,81 @@ what a caller means; refusing is better than silently emitting nothing.</p>
 </dd></dl>
 
 </section>
+<section id="module-kg_microbe.transform_utils.prego.envo_identity">
+<span id="kg-microbe-transform-utils-prego-envo-identity-module"></span><h2>kg_microbe.transform_utils.prego.envo_identity module<a class="headerlink" href="#module-kg_microbe.transform_utils.prego.envo_identity" title="Link to this heading"></a></h2>
+<p>Finite native-evidence identity decisions for PREGO’s retired ENVO subjects.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.envo_identity.IdentityDecision">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.envo_identity.</span></span><span class="sig-name descname"><span class="pre">IdentityDecision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">original_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">disposition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">deprecated</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proof_json</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.envo_identity.IdentityDecision" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>One immutable decision with exact native proof and truthful node context.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.envo_identity.IdentityDecision.deprecated">
+<span class="sig-name descname"><span class="pre">deprecated</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.prego.envo_identity.IdentityDecision.deprecated" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.envo_identity.IdentityDecision.disposition">
+<span class="sig-name descname"><span class="pre">disposition</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.prego.envo_identity.IdentityDecision.disposition" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.envo_identity.IdentityDecision.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.prego.envo_identity.IdentityDecision.name" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.envo_identity.IdentityDecision.original_id">
+<span class="sig-name descname"><span class="pre">original_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.prego.envo_identity.IdentityDecision.original_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.envo_identity.IdentityDecision.proof_json">
+<span class="sig-name descname"><span class="pre">proof_json</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.prego.envo_identity.IdentityDecision.proof_json" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.envo_identity.IdentityDecision.target_id">
+<span class="sig-name descname"><span class="pre">target_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.prego.envo_identity.IdentityDecision.target_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.envo_identity.load_identity_decisions">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.envo_identity.</span></span><span class="sig-name descname"><span class="pre">load_identity_decisions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy_stream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">envo_stream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">foodon_stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.envo_identity.load_identity_decisions" title="Link to this definition"></a></dt>
+<dd><p>Validate every finite policy row against its immutable selected native declarations.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.envo_identity.record_digest">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.envo_identity.</span></span><span class="sig-name descname"><span class="pre">record_digest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.envo_identity.record_digest" title="Link to this definition"></a></dt>
+<dd><p>Bind the full selected native declaration, including all annotations.</p>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.prego.native_inputs">
+<span id="kg-microbe-transform-utils-prego-native-inputs-module"></span><h2>kg_microbe.transform_utils.prego.native_inputs module<a class="headerlink" href="#module-kg_microbe.transform_utils.prego.native_inputs" title="Link to this heading"></a></h2>
+<p>Require PREGO’s dynamic archive selection and actual parsed payload identities.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.native_inputs.archive_paths">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.native_inputs.</span></span><span class="sig-name descname"><span class="pre">archive_paths</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.native_inputs.archive_paths" title="Link to this definition"></a></dt>
+<dd><p>Resolve the exact association archive inventory, excluding the optional dictionary.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.native_inputs.archive_payload_identity">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.native_inputs.</span></span><span class="sig-name descname"><span class="pre">archive_payload_identity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">archive_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.native_inputs.archive_payload_identity" title="Link to this definition"></a></dt>
+<dd><p>Stream actual archive bytes to prove the exact member identity; receipts are not authority.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.native_inputs.verify_native_contract">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.native_inputs.</span></span><span class="sig-name descname"><span class="pre">verify_native_contract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snapshots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/kg-microbe/kg-microbe/mappings/prego_envo_identity_dispositions.tsv')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.native_inputs.verify_native_contract" title="Link to this definition"></a></dt>
+<dd><p>Check every actual archive/payload read and keep selection in merge admission.</p>
+</dd></dl>
+
+</section>
 <section id="module-kg_microbe.transform_utils.prego.prego">
 <span id="kg-microbe-transform-utils-prego-prego-module"></span><h2>kg_microbe.transform_utils.prego.prego module<a class="headerlink" href="#module-kg_microbe.transform_utils.prego.prego" title="Link to this heading"></a></h2>
 <p>PREGO transform — ingest taxon↔environment/process associations.</p>
@@ -458,9 +533,50 @@ threshold on confidence.</p>
 <dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
 <p>Ingest PREGO taxon↔environment/process associations.</p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.prego.PregoTransform.DATA_INPUTS">
+<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/prego_envo_identity_dispositions.tsv',</span> <span class="pre">'data/raw/envo.json')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.prego.prego.PregoTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Repo-relative curation files this transform reads, beyond its own
+<code class="docutils literal notranslate"><span class="pre">data/raw/</span></code> download.</p>
+<p>Declared so freshness tooling can tell that an output is stale against
+its <em>data</em> rather than only its code. Without it a mapping correction
+lands, every consumer keeps reporting FRESH, and a re-merge silently
+ships the old groundings: #778 corrected 16 isolation-source ids and
+#786 rewrote the unified chemical SSSOM, and the merged KG built
+afterwards still asserted 75 organisms isolated from a “Cell Line”,
+because nothing re-ran the transforms that read those files (#812).</p>
+<p>Paths are relative to the repo root. Keep them tracked in git — the
+freshness check uses commit time, not mtime, because <cite>git checkout</cite>
+rewrites mtimes without changing content (#797).</p>
+<p>List <strong>every</strong> curation file read, not a representative one. A partial
+declaration fails silently and looks identical to a complete one:
+ontologies_stubs declared 1 of the 11 files it read and was reported
+fresh after changes to the other ten (#839). Where the set comes from a
+constant, derive this from it rather than restating it.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.prego.PregoTransform.REQUIRED_AUDIT_FILES">
+<span class="sig-name descname"><span class="pre">REQUIRED_AUDIT_FILES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('prego_envo_identity.tsv',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.prego.prego.PregoTransform.REQUIRED_AUDIT_FILES" title="Link to this definition"></a></dt>
+<dd><p>Producer-owned disposition reports whose emitted bytes must survive finalization/merge.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.prego.PregoTransform.REQUIRED_CONSUMED_INPUTS">
+<span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('prego_envo_policy',</span> <span class="pre">'prego_native_envo',</span> <span class="pre">'prego_native_foodon')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.prego.prego.PregoTransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Named generated inputs that must actually be read before fresh finalization.
+Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.prego.PregoTransform.TRANSFORM_INPUTS">
 <span class="sig-name descname"><span class="pre">TRANSFORM_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ontologies',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.prego.prego.PregoTransform.TRANSFORM_INPUTS" title="Link to this definition"></a></dt>
 <dd><p>Reads this transform’s output; see Transform.TRANSFORM_INPUTS (#845).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.prego.PregoTransform.producer_native_inputs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">producer_native_inputs</span></span><a class="headerlink" href="#kg_microbe.transform_utils.prego.prego.PregoTransform.producer_native_inputs" title="Link to this definition"></a></dt>
+<dd><p>Serialize the actual archive-to-payload identities without returning mutable state.</p>
 </dd></dl>
 
 <dl class="py method">
@@ -474,6 +590,18 @@ annotated_genomes_isolates) is the intended production input, but any
 subset works (e.g. the isolates-only canary). <code class="docutils literal notranslate"><span class="pre">show_status</span></code> toggles
 the tqdm progress bar; false is used by the pytest suite to keep
 captured output clean.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.prego.PregoTransform.verify_native_inputs">
+<span class="sig-name descname"><span class="pre">verify_native_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">byte_verified</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.prego.PregoTransform.verify_native_inputs" title="Link to this definition"></a></dt>
+<dd><p>Enforce complete actual input selection before source completion, even for an empty cohort.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.prego.PregoTransform.verify_recorded_native_inputs">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verify_recorded_native_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">report</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.prego.PregoTransform.verify_recorded_native_inputs" title="Link to this definition"></a></dt>
+<dd><p>Bind saved archive selection and payload consumption during read-only merge admission.</p>
 </dd></dl>
 
 </dd></dl>
@@ -933,6 +1061,12 @@ CURIEs separately.</p>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.prego.utils.iter_database_pair_lines">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.prego.utils.</span></span><span class="sig-name descname"><span class="pre">iter_database_pair_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.prego.utils.iter_database_pair_lines" title="Link to this definition"></a></dt>
+<dd><p>Yield parsed rows plus true physical line numbers from the caller’s immutable stream.</p>
 </dd></dl>
 
 <dl class="py function">

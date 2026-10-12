@@ -100,6 +100,79 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
+<section id="module-kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions">
+<span id="kg-microbe-transform-utils-microbedecoder-bacdive-join-dispositions-module"></span><h2>kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions module<a class="headerlink" href="#module-kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions" title="Link to this heading"></a></h2>
+<p>Refuse six reviewed joins and retain their snapshots on unresolved source records.</p>
+<p>Only the approved finite snapshot subjects move; literals, attribute objects,
+source context and independent metabolism/FAPROTAX observations remain intact.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.BacDiveJoinGuard">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.</span></span><span class="sig-name descname"><span class="pre">BacDiveJoinGuard</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy_payload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evidence_payload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_stream</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gss_stream</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bindings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.BacDiveJoinGuard" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Bind actual source reads, six refusals, and the complete retained BacDive-link family.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.BacDiveJoinGuard.contract">
+<span class="sig-name descname"><span class="pre">contract</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.BacDiveJoinGuard.contract" title="Link to this definition"></a></dt>
+<dd><p>Expose a copied completion contract, never a mutable cache or implicit acceptance.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.BacDiveJoinGuard.dispatch">
+<span class="sig-name descname"><span class="pre">dispatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_record</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">native_row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accepted_subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">claim</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.BacDiveJoinGuard.dispatch" title="Link to this definition"></a></dt>
+<dd><p>Return an audit row only for the exact would-be strain-to-LPSN assertion.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.BacDiveJoinGuard.finish">
+<span class="sig-name descname"><span class="pre">finish</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.BacDiveJoinGuard.finish" title="Link to this definition"></a></dt>
+<dd><p>Seal the completed audit and finite contract after existing source deduplication.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.BacDiveJoinGuard.require_complete">
+<span class="sig-name descname"><span class="pre">require_complete</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.BacDiveJoinGuard.require_complete" title="Link to this definition"></a></dt>
+<dd><p>Run before atomic source file handles publish any newly written members.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.BacDiveJoinGuard.snapshot_node">
+<span class="sig-name descname"><span class="pre">snapshot_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_record</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">native_row</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accepted_subject</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.BacDiveJoinGuard.snapshot_node" title="Link to this definition"></a></dt>
+<dd><p>Select an admitted record subject once, after its contradicted link was audited.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.BacDiveJoinGuard.verify">
+<span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">contract</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">configured_selectors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.BacDiveJoinGuard.verify" title="Link to this definition"></a></dt>
+<dd><p>Keep mandatory read/audit/output guards live through staging, repeat and publication.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.prepare">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.</span></span><span class="sig-name descname"><span class="pre">prepare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_snapshot</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.prepare" title="Link to this definition"></a></dt>
+<dd><p>Use actual immutable CSV/GSS reads before the existing source output transaction.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.restore">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.</span></span><span class="sig-name descname"><span class="pre">restore</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">report</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.restore" title="Link to this definition"></a></dt>
+<dd><p>Independently reconstruct from mandatory actual input roles, not mutable audit claims.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.verify_recorded_inputs">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.</span></span><span class="sig-name descname"><span class="pre">verify_recorded_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">report</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.verify_recorded_inputs" title="Link to this definition"></a></dt>
+<dd><p>Retain the native/read guard on the caller’s admission until final publication.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.verify_transform">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.</span></span><span class="sig-name descname"><span class="pre">verify_transform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.bacdive_join_dispositions.verify_transform" title="Link to this definition"></a></dt>
+<dd><p>Restore a fresh object’s read-only guard on repeat; do not invent producer completion.</p>
+</dd></dl>
+
+</section>
 <section id="module-kg_microbe.transform_utils.microbedecoder.chemical_curation">
 <span id="kg-microbe-transform-utils-microbedecoder-chemical-curation-module"></span><h2>kg_microbe.transform_utils.microbedecoder.chemical_curation module<a class="headerlink" href="#module-kg_microbe.transform_utils.microbedecoder.chemical_curation" title="Link to this heading"></a></h2>
 <p>Apply a reviewed chemical spelling correction to one complete source record.</p>
@@ -538,6 +611,16 @@ reviewed update before these rules can run.</p>
 </dd></dl>
 
 </section>
+<section id="module-kg_microbe.transform_utils.microbedecoder.gold_crosswalk_dispositions">
+<span id="kg-microbe-transform-utils-microbedecoder-gold-crosswalk-dispositions-module"></span><h2>kg_microbe.transform_utils.microbedecoder.gold_crosswalk_dispositions module<a class="headerlink" href="#module-kg_microbe.transform_utils.microbedecoder.gold_crosswalk_dispositions" title="Link to this heading"></a></h2>
+<p>Rejoin weakened GOLD crosswalks to complete literal native CSV observations (#1316).</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.gold_crosswalk_dispositions.verify_recorded_inputs">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.gold_crosswalk_dispositions.</span></span><span class="sig-name descname"><span class="pre">verify_recorded_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">report</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.gold_crosswalk_dispositions.verify_recorded_inputs" title="Link to this definition"></a></dt>
+<dd><p>Require every emitted weakened observation to retain its exact source record and old claim.</p>
+</dd></dl>
+
+</section>
 <section id="module-kg_microbe.transform_utils.microbedecoder.material_dispositions">
 <span id="kg-microbe-transform-utils-microbedecoder-material-dispositions-module"></span><h2>kg_microbe.transform_utils.microbedecoder.material_dispositions module<a class="headerlink" href="#module-kg_microbe.transform_utils.microbedecoder.material_dispositions" title="Link to this heading"></a></h2>
 <p>Describe a finite reviewed material cohort without resolving chemical identity.</p>
@@ -713,16 +796,21 @@ citations</p></li>
 <li><p><strong>FAPROTAX</strong> — taxon-based functional predictions joined to source records</p></li>
 </ul>
 <p>Also emits a <cite>biolink:close_match</cite> crosswalk from every <cite>lpsn:&lt;LPSN_ID&gt;</cite>
-row to <cite>NCBITaxon:</cite>, <cite>ncbi.assembly:</cite> (or <cite>GTDB:</cite> taxonomy strings), <cite>gold:</cite>,
-and <cite>IMG:</cite>. BacDive crosswalks use <cite>kgmicrobe.strain:bacdive_*</cite> subsumption.
+row to <cite>NCBITaxon:</cite>, <cite>ncbi.assembly:</cite> (or <cite>GTDB:</cite> taxonomy strings), and
+<cite>IMG:</cite>. Verified unresolved GOLD referents instead retain the original field
+observation as audited <cite>biolink:related_to</cite>, never identity (#1316).
+BacDive crosswalks use <cite>kgmicrobe.strain:bacdive_*</cite> subsumption.
 An LPSN name record is not a strain identity, and its reported traits must not
 be propagated as universal observations about every member of the taxon.</p>
 <p>Design decisions locked from the plan-mode Q&amp;A:</p>
 <ol class="arabic simple">
-<li><p><strong>Node identity</strong>: attach every edge to the <em>existing</em> <cite>lpsn:&lt;LPSN_ID&gt;</cite>
+<li><p><strong>Node identity</strong>: normally attach edges to the <em>existing</em> <cite>lpsn:&lt;LPSN_ID&gt;</cite>
 node emitted by the LPSN transform. This transform emits edges only
 (plus terminal nodes for end-products / cross-refs / provisional
-placeholders); it does not re-emit LPSN taxon nodes.</p></li>
+placeholders); it does not re-emit LPSN taxon nodes.
+Six contradicted BacDive joins instead preserve nonempty snapshots on
+record-scoped InformationContentEntity nodes; independent metabolism and
+FAPROTAX observations retain their LPSN subject (#1363).</p></li>
 <li><p><strong>BacDive_* replay</strong>: ingested with <cite>primary_knowledge_source =
 infores:microbedecoder</cite> so the paper’s 2024-11-07 BacDive snapshot
 stays reproducible. The fresher <cite>bacdive</cite> transform is authoritative
@@ -732,12 +820,12 @@ distinguishable by provenance.</p></li>
 <p>License: CC BY 4.0 (matches the upstream repo).</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.microbedecoder.</span></span><span class="sig-name descname"><span class="pre">MicrobeDecoderTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chemical_loader</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_mappings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phenotype_mappings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_scopes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crosswalk_quarantine_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.microbedecoder.microbedecoder.</span></span><span class="sig-name descname"><span class="pre">MicrobeDecoderTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">chemical_loader</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_mappings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phenotype_mappings</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">process_scopes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">crosswalk_quarantine_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bacdive_join_policy</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
 <p>Transform the MicrobeDecoder wide CSV into KGX nodes and edges.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.DATA_INPUTS">
-<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz',</span> <span class="pre">'mappings/canonical/microbedecoder_process_mappings.tsv',</span> <span class="pre">'mappings/canonical/microbedecoder_phenotype_mappings.tsv',</span> <span class="pre">'mappings/canonical/microbedecoder_process_scope_definitions.tsv',</span> <span class="pre">'mappings/canonical/microbedecoder_crosswalk_quarantine.json',</span> <span class="pre">'mappings/canonical/microbedecoder_crosswalk_quarantine.tsv',</span> <span class="pre">'mappings/canonical/microbedecoder_crosswalk_quarantine_evidence.json.gz')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz',</span> <span class="pre">'mappings/canonical/microbedecoder_process_mappings.tsv',</span> <span class="pre">'mappings/canonical/microbedecoder_phenotype_mappings.tsv',</span> <span class="pre">'mappings/canonical/microbedecoder_process_scope_definitions.tsv',</span> <span class="pre">'mappings/canonical/microbedecoder_crosswalk_quarantine.json',</span> <span class="pre">'mappings/canonical/microbedecoder_crosswalk_quarantine.tsv',</span> <span class="pre">'mappings/canonical/microbedecoder_crosswalk_quarantine_evidence.json.gz',</span> <span class="pre">'mappings/canonical/microbedecoder_bacdive_join_dispositions.json',</span> <span class="pre">'mappings/canonical/microbedecoder_bacdive_join_evidence.json')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
 <dd><p>Repo-relative curation files this transform reads, beyond its own
 <code class="docutils literal notranslate"><span class="pre">data/raw/</span></code> download.</p>
 <p>Declared so freshness tooling can tell that an output is stale against
@@ -759,13 +847,13 @@ constant, derive this from it rather than restating it.</p>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.REQUIRED_AUDIT_FILES">
-<span class="sig-name descname"><span class="pre">REQUIRED_AUDIT_FILES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('crosswalk_quarantine.tsv',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.REQUIRED_AUDIT_FILES" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">REQUIRED_AUDIT_FILES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('crosswalk_quarantine.tsv',</span> <span class="pre">'phenotype_normalizations.tsv',</span> <span class="pre">'gold_crosswalk_dispositions.tsv',</span> <span class="pre">'bacdive_join_dispositions.tsv')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.REQUIRED_AUDIT_FILES" title="Link to this definition"></a></dt>
 <dd><p>Producer-owned disposition reports whose emitted bytes must survive finalization/merge.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.REQUIRED_CONSUMED_INPUTS">
-<span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('process_mappings',</span> <span class="pre">'process_authority',</span> <span class="pre">'process_go_authority',</span> <span class="pre">'phenotype_mappings',</span> <span class="pre">'process_scope_definitions',</span> <span class="pre">'chemical_authority',</span> <span class="pre">'crosswalk_policy',</span> <span class="pre">'crosswalk_decisions',</span> <span class="pre">'crosswalk_evidence',</span> <span class="pre">'crosswalk_raw')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('process_mappings',</span> <span class="pre">'process_authority',</span> <span class="pre">'process_go_authority',</span> <span class="pre">'phenotype_mappings',</span> <span class="pre">'process_scope_definitions',</span> <span class="pre">'chemical_authority',</span> <span class="pre">'crosswalk_policy',</span> <span class="pre">'crosswalk_decisions',</span> <span class="pre">'crosswalk_evidence',</span> <span class="pre">'bacdive_join_policy',</span> <span class="pre">'bacdive_join_evidence',</span> <span class="pre">'bacdive_join_lpsn_gss',</span> <span class="pre">'crosswalk_raw')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
 <dd><p>Named generated inputs that must actually be read before fresh finalization.
 Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
 </dd></dl>
@@ -804,6 +892,18 @@ pulling <code class="docutils literal notranslate"><span class="pre">tqdm</span>
 </dd>
 </dl>
 </section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.verify_native_inputs">
+<span class="sig-name descname"><span class="pre">verify_native_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">byte_verified</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.verify_native_inputs" title="Link to this definition"></a></dt>
+<dd><p>Retain source-local six-link evidence through finalization and repeat.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.verify_recorded_native_inputs">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verify_recorded_native_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">report</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.microbedecoder.microbedecoder.MicrobeDecoderTransform.verify_recorded_native_inputs" title="Link to this definition"></a></dt>
+<dd><p>Read-only rejoin of each retained GOLD field observation at source/merge admission.</p>
 </dd></dl>
 
 </dd></dl>

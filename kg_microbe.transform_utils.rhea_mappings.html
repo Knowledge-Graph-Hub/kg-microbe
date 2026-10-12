@@ -100,20 +100,405 @@
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
+<section id="module-kg_microbe.transform_utils.rhea_mappings.label_inputs">
+<span id="kg-microbe-transform-utils-rhea-mappings-label-inputs-module"></span><h2>kg_microbe.transform_utils.rhea_mappings.label_inputs module<a class="headerlink" href="#module-kg_microbe.transform_utils.rhea_mappings.label_inputs" title="Link to this heading"></a></h2>
+<p>Project exact external labels from consumed, prepared DBs in Rhea’s selected raw root.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.label_inputs.external_label_lookup">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.label_inputs.</span></span><span class="sig-name descname"><span class="pre">external_label_lookup</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.label_inputs.external_label_lookup" title="Link to this definition"></a></dt>
+<dd><p>Read immutable DB snapshots only; never build, download, remap IDs, or invent missing labels.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.label_inputs.validate_label_contract">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.label_inputs.</span></span><span class="sig-name descname"><span class="pre">validate_label_contract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recorded</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.label_inputs.validate_label_contract" title="Link to this definition"></a></dt>
+<dd><p>Require an exact versioned reader contract, not Python’s Boolean/integer equality.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.label_inputs.verify_label_bindings">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.label_inputs.</span></span><span class="sig-name descname"><span class="pre">verify_label_bindings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snapshots</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.label_inputs.verify_label_bindings" title="Link to this definition"></a></dt>
+<dd><p>Keep each consumed role rooted in the explicitly selected prepared authority.</p>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.rhea_mappings.legacy_xrefs">
+<span id="kg-microbe-transform-utils-rhea-mappings-legacy-xrefs-module"></span><h2>kg_microbe.transform_utils.rhea_mappings.legacy_xrefs module<a class="headerlink" href="#module-kg_microbe.transform_utils.rhea_mappings.legacy_xrefs" title="Link to this heading"></a></h2>
+<p>Audit six reviewed historical cross-references without restoring or remapping graph assertions.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.legacy_xrefs.load_legacy_xref_audit">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.legacy_xrefs.</span></span><span class="sig-name descname"><span class="pre">load_legacy_xref_audit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">release_policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">native</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/kg-microbe/kg-microbe/mappings/rhea_legacy_xref_dispositions.json')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.legacy_xrefs.load_legacy_xref_audit" title="Link to this definition"></a></dt>
+<dd><p>Consume the policy and return its zero or six scalar audit rows before publication.</p>
+<p>The caller must already have loaded the native RDF through load_pinned_inputs.
+This checks that consumed RDF digest and selected release contract agree with
+this policy; it does not read historical RDF/tables, transform native records,
+rewrite references, or claim to revalidate comments or GO subclass evidence.
+Write all returned rows atomically with AUDIT_HEADER and record_producer_audit
+only after success; declare this module’s required input/audit/data constants.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.legacy_xrefs.read_legacy_policy">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.legacy_xrefs.</span></span><span class="sig-name descname"><span class="pre">read_legacy_policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.legacy_xrefs.read_legacy_policy" title="Link to this definition"></a></dt>
+<dd><p>Parse six reviewed exclusions or explicit absent history, never a general remapping language.</p>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.rhea_mappings.native_graph">
+<span id="kg-microbe-transform-utils-rhea-mappings-native-graph-module"></span><h2>kg_microbe.transform_utils.rhea_mappings.native_graph module<a class="headerlink" href="#module-kg_microbe.transform_utils.rhea_mappings.native_graph" title="Link to this heading"></a></h2>
+<p>Project validated native Rhea families without inferring flux or part/whole identity.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_graph.curated_xref">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.native_graph.</span></span><span class="sig-name descname"><span class="pre">curated_xref</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_graph.curated_xref" title="Link to this definition"></a></dt>
+<dd><p>Preserve the activity-cross-reference contract; this is not physical enablement.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_graph.edge">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.native_graph.</span></span><span class="sig-name descname"><span class="pre">edge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">predicate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">relation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">asserted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">witness</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_graph.edge" title="Link to this definition"></a></dt>
+<dd><p>Distinguish native assertions from documented path-derived participation edges.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_graph.family_rows">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.native_graph.</span></span><span class="sig-name descname"><span class="pre">family_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">family</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">native</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label_lookup</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_graph.family_rows" title="Link to this definition"></a></dt>
+<dd><p>Yield (kind, row) for one validated family, retaining every source participant path.</p>
+<p>Direct rh:chebi participants use ChEBI. Generic compounds and polymers keep
+their native identity: reactive parts and underlying ChEBI references are
+connected by their exact native relations, never substituted as reactants.
+UN and BI have undirected participation; only LR/RL get input/output roles.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_graph.native_curie">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.native_graph.</span></span><span class="sig-name descname"><span class="pre">native_curie</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iri</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_graph.native_curie" title="Link to this definition"></a></dt>
+<dd><p>Compact native nonnumeric resources without minting invalid numeric RHEA IDs.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_graph.native_xrefs">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.native_graph.</span></span><span class="sig-name descname"><span class="pre">native_xrefs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">record</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_graph.native_xrefs" title="Link to this definition"></a></dt>
+<dd><p>Read EC and GO from the same RDF snapshot, never independent latest tables.</p>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.rhea_mappings.native_inputs">
+<span id="kg-microbe-transform-utils-rhea-mappings-native-inputs-module"></span><h2>kg_microbe.transform_utils.rhea_mappings.native_inputs module<a class="headerlink" href="#module-kg_microbe.transform_utils.rhea_mappings.native_inputs" title="Link to this heading"></a></h2>
+<p>Read a coherent, hash-pinned local Rhea snapshot without implicit cache downloads.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_inputs.load_pinned_inputs">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.native_inputs.</span></span><span class="sig-name descname"><span class="pre">load_pinned_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/kg-microbe/kg-microbe/mappings/rhea_release.json')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_inputs.load_pinned_inputs" title="Link to this definition"></a></dt>
+<dd><p>Read and cross-check all reaction families before any producer output is written.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_inputs.read_release_policy">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.native_inputs.</span></span><span class="sig-name descname"><span class="pre">read_release_policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_inputs.read_release_policy" title="Link to this definition"></a></dt>
+<dd><p>Validate the finite two-file pin contract, never selecting paths from input JSON.</p>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.rhea_mappings.native_rdf">
+<span id="kg-microbe-transform-utils-rhea-mappings-native-rdf-module"></span><h2>kg_microbe.transform_utils.rhea_mappings.native_rdf module<a class="headerlink" href="#module-kg_microbe.transform_utils.rhea_mappings.native_rdf" title="Link to this heading"></a></h2>
+<p>Stream selected local Rhea RDF assertions without a graph loader or remote cache.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_rdf.ChemicalParticipant">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.native_rdf.</span></span><span class="sig-name descname"><span class="pre">ChemicalParticipant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">chebi_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side_iri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">participant_iri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compound_iri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">route</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reactive_part_iri</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.ChemicalParticipant" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Retain a ChEBI path witness without claiming whole-compound equivalence.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_rdf.ChemicalParticipant.chebi_id">
+<span class="sig-name descname"><span class="pre">chebi_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.ChemicalParticipant.chebi_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_rdf.ChemicalParticipant.compound_iri">
+<span class="sig-name descname"><span class="pre">compound_iri</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.ChemicalParticipant.compound_iri" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_rdf.ChemicalParticipant.participant_iri">
+<span class="sig-name descname"><span class="pre">participant_iri</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.ChemicalParticipant.participant_iri" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_rdf.ChemicalParticipant.reactive_part_iri">
+<span class="sig-name descname"><span class="pre">reactive_part_iri</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> <span class="pre">|</span> <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.ChemicalParticipant.reactive_part_iri" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_rdf.ChemicalParticipant.route">
+<span class="sig-name descname"><span class="pre">route</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.ChemicalParticipant.route" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_rdf.ChemicalParticipant.side_iri">
+<span class="sig-name descname"><span class="pre">side_iri</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.ChemicalParticipant.side_iri" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.native_rdf.</span></span><span class="sig-name descname"><span class="pre">NativeRheaError</span></span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></p>
+<p>Signal missing, ambiguous or unsupported structure in selected native assertions.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaIndex">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.native_rdf.</span></span><span class="sig-name descname"><span class="pre">NativeRheaIndex</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">reactions</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sides</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">participants</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compounds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reactive_parts</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entity_metadata=&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaIndex" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Hold compact selected RDF adjacency, not a materialized XML or general RDF graph.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaIndex.chemical_participants">
+<span class="sig-name descname"><span class="pre">chemical_participants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">side</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaIndex.chemical_participants" title="Link to this definition"></a></dt>
+<dd><p>Resolve every direct, underlying-polymer or reactive-part path on one explicit side.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<a class="reference internal" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.ChemicalParticipant" title="kg_microbe.transform_utils.rhea_mappings.native_rdf.ChemicalParticipant"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChemicalParticipant</span></code></a>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaIndex.compounds">
+<span class="sig-name descname"><span class="pre">compounds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code><span class="pre">]]]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaIndex.compounds" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaIndex.entity_metadata">
+<span class="sig-name descname"><span class="pre">entity_metadata</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaIndex.entity_metadata" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaIndex.participants">
+<span class="sig-name descname"><span class="pre">participants</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code><span class="pre">]]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaIndex.participants" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaIndex.reactions">
+<span class="sig-name descname"><span class="pre">reactions</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code><span class="pre">]]]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaIndex.reactions" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaIndex.reactive_parts">
+<span class="sig-name descname"><span class="pre">reactive_parts</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code><span class="pre">]]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaIndex.reactive_parts" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaIndex.sides">
+<span class="sig-name descname"><span class="pre">sides</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code><span class="pre">]]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaIndex.sides" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.native_rdf.load_native_rdf">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.native_rdf.</span></span><span class="sig-name descname"><span class="pre">load_native_rdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">compressed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.load_native_rdf" title="Link to this definition"></a></dt>
+<dd><p>Read only the supplied local path or caller-owned binary stream; never consult remote or home caches.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaIndex" title="kg_microbe.transform_utils.rhea_mappings.native_rdf.NativeRheaIndex"><code class="xref py py-class docutils literal notranslate"><span class="pre">NativeRheaIndex</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.rhea_mappings.reaction_families">
+<span id="kg-microbe-transform-utils-rhea-mappings-reaction-families-module"></span><h2>kg_microbe.transform_utils.rhea_mappings.reaction_families module<a class="headerlink" href="#module-kg_microbe.transform_utils.rhea_mappings.reaction_families" title="Link to this heading"></a></h2>
+<p>Validate Rhea’s explicit four-member families without inferring reaction flux.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.reaction_families.ReactionFamily">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.reaction_families.</span></span><span class="sig-name descname"><span class="pre">ReactionFamily</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">master</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bi</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.reaction_families.ReactionFamily" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Four distinct canonical IDs whose roles come from one directions-table row.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.reaction_families.ReactionFamily.bi">
+<span class="sig-name descname"><span class="pre">bi</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.reaction_families.ReactionFamily.bi" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.reaction_families.ReactionFamily.links">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">links</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.reaction_families.ReactionFamily.links" title="Link to this definition"></a></dt>
+<dd><p>Expose native RDF family links, not synthetic hierarchy or identity assertions.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.reaction_families.ReactionFamily.lr">
+<span class="sig-name descname"><span class="pre">lr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.reaction_families.ReactionFamily.lr" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.reaction_families.ReactionFamily.master">
+<span class="sig-name descname"><span class="pre">master</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.reaction_families.ReactionFamily.master" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.reaction_families.ReactionFamily.members">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">members</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.reaction_families.ReactionFamily.members" title="Link to this definition"></a></dt>
+<dd><p>Return source directions; UN is unspecified, never neutral or bidirectional.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.reaction_families.ReactionFamily.node_annotations">
+<span class="sig-name descname"><span class="pre">node_annotations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.reaction_families.ReactionFamily.node_annotations" title="Link to this definition"></a></dt>
+<dd><p>Return exact family annotations for one member, without changing its identity.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.reaction_families.ReactionFamily.rl">
+<span class="sig-name descname"><span class="pre">rl</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.reaction_families.ReactionFamily.rl" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.reaction_families.load_reaction_families">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.reaction_families.</span></span><span class="sig-name descname"><span class="pre">load_reaction_families</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text_stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.reaction_families.load_reaction_families" title="Link to this definition"></a></dt>
+<dd><p>Read the exact native TSV layout and validate all membership before returning.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<a class="reference internal" href="#kg_microbe.transform_utils.rhea_mappings.reaction_families.ReactionFamily" title="kg_microbe.transform_utils.rhea_mappings.reaction_families.ReactionFamily"><code class="xref py py-class docutils literal notranslate"><span class="pre">ReactionFamily</span></code></a>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.reaction_families.validate_family_cohort">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.reaction_families.</span></span><span class="sig-name descname"><span class="pre">validate_family_cohort</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">families</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evidence</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.reaction_families.validate_family_cohort" title="Link to this definition"></a></dt>
+<dd><p>Require directions membership to equal all active native RDF reaction IDs.</p>
+<p>Only explicitly Obsolete records may lie outside the directions table;
+they need no labels or family structure and are returned for an upstream
+exclusion audit. Unknown, ambiguous, missing or mixed statuses fail.
+No native records are changed, and Preliminary is never called Approved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.reaction_families.validate_family_evidence">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.reaction_families.</span></span><span class="sig-name descname"><span class="pre">validate_family_evidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">family</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">evidence</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.reaction_families.validate_family_evidence" title="Link to this definition"></a></dt>
+<dd><p>Require native RDF links, coherent active statuses, labels, and exact side roles.</p>
+<p>Reaction keys are canonical RHEA CURIEs. Predicate keys and object values
+are full native IRIs, while labels are literal strings. The caller must
+combine all RDF descriptions of each subject before invoking this check.
+RDF duplicate triples are set-equivalent. Unrelated properties are retained
+outside this finite check; no labels, sides, statuses or links are repaired.
+Master side names follow the explicit native <code class="docutils literal notranslate"><span class="pre">&lt;master&gt;_L/_R</span></code> convention,
+not the numerical spacing or iteration order of reaction identifiers.
+Approved and Preliminary are both active native states and must agree
+across all four members; neither status is converted or promoted.
+This does not validate participants, stoichiometry, or physiological flux.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="module-kg_microbe.transform_utils.rhea_mappings.rhea_mappings">
 <span id="kg-microbe-transform-utils-rhea-mappings-rhea-mappings-module"></span><h2>kg_microbe.transform_utils.rhea_mappings.rhea_mappings module<a class="headerlink" href="#module-kg_microbe.transform_utils.rhea_mappings.rhea_mappings" title="Link to this heading"></a></h2>
-<p>Transform for Rhea.</p>
+<p>Transform one pinned native Rhea snapshot, preserving explicit reaction directions.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.rhea_mappings.</span></span><span class="sig-name descname"><span class="pre">RheaMappingsTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
-<p>Template for how the transform class would be designed.</p>
+<p>Consume explicit local inputs; never infer directions from ID order or cache state.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.DATA_INPUTS">
+<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/rhea_release.json',</span> <span class="pre">'mappings/rhea_legacy_xref_dispositions.json')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Repo-relative curation files this transform reads, beyond its own
+<code class="docutils literal notranslate"><span class="pre">data/raw/</span></code> download.</p>
+<p>Declared so freshness tooling can tell that an output is stale against
+its <em>data</em> rather than only its code. Without it a mapping correction
+lands, every consumer keeps reporting FRESH, and a re-merge silently
+ships the old groundings: #778 corrected 16 isolation-source ids and
+#786 rewrote the unified chemical SSSOM, and the merged KG built
+afterwards still asserted 75 organisms isolated from a “Cell Line”,
+because nothing re-ran the transforms that read those files (#812).</p>
+<p>Paths are relative to the repo root. Keep them tracked in git — the
+freshness check uses commit time, not mtime, because <cite>git checkout</cite>
+rewrites mtimes without changing content (#797).</p>
+<p>List <strong>every</strong> curation file read, not a representative one. A partial
+declaration fails silently and looks identical to a complete one:
+ontologies_stubs declared 1 of the 11 files it read and was reported
+fresh after changes to the other ten (#839). Where the set comes from a
+constant, derive this from it rather than restating it.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.REQUIRED_AUDIT_FILES">
+<span class="sig-name descname"><span class="pre">REQUIRED_AUDIT_FILES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('rhea_reaction_dispositions.tsv',</span> <span class="pre">'rhea_legacy_xref_dispositions.tsv')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.REQUIRED_AUDIT_FILES" title="Link to this definition"></a></dt>
+<dd><p>Producer-owned disposition reports whose emitted bytes must survive finalization/merge.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.REQUIRED_CONSUMED_INPUTS">
+<span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('rhea_release_manifest',</span> <span class="pre">'rhea_directions',</span> <span class="pre">'rhea_rdf',</span> <span class="pre">'rhea_chebi_labels',</span> <span class="pre">'rhea_go_labels',</span> <span class="pre">'rhea_ec_labels',</span> <span class="pre">'rhea_legacy_xref_dispositions')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Named generated inputs that must actually be read before fresh finalization.
+Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.TSV_QUOTING">
+<span class="sig-name descname"><span class="pre">TSV_QUOTING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.TSV_QUOTING" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.producer_native_inputs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">producer_native_inputs</span></span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.producer_native_inputs" title="Link to this definition"></a></dt>
+<dd><p>Version the label projection; exact DB identities live in consumed-input roles.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.run" title="Link to this definition"></a></dt>
-<dd><p>Run the transformation.</p>
+<dd><p>Write canonical graph rows and audited statuses from coherent pinned native evidence.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.verify_native_inputs">
+<span class="sig-name descname"><span class="pre">verify_native_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">byte_verified</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.verify_native_inputs" title="Link to this definition"></a></dt>
+<dd><p>Reject unconsumed SQLite sidecars even when each main-file SHA remains unchanged.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.verify_recorded_native_inputs">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verify_recorded_native_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">report</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.verify_recorded_native_inputs" title="Link to this definition"></a></dt>
+<dd><p>Enforce raw-root roles and quiescent SQLite state again at merge admission.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.transform_utils.rhea_mappings.stage_snapshot">
+<span id="kg-microbe-transform-utils-rhea-mappings-stage-snapshot-module"></span><h2>kg_microbe.transform_utils.rhea_mappings.stage_snapshot module<a class="headerlink" href="#module-kg_microbe.transform_utils.rhea_mappings.stage_snapshot" title="Link to this heading"></a></h2>
+<p>Explicitly stage a reviewed native Rhea pair; never repin or overwrite an existing snapshot.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.stage_snapshot.main">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.stage_snapshot.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.stage_snapshot.main" title="Link to this definition"></a></dt>
+<dd><p>Provide an explicit offline staging command for hash-pinned acquisition.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.stage_snapshot.stage_snapshot">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.stage_snapshot.</span></span><span class="sig-name descname"><span class="pre">stage_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/kg-microbe/kg-microbe/mappings/rhea_release.json')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.stage_snapshot.stage_snapshot" title="Link to this definition"></a></dt>
+<dd><p>Stage a complete local export under input_dir/rhea, or verify an identical existing snapshot.</p>
+<p>Sources may be an explicitly chosen local export or the rhea_download
+quarantine directory. This function never performs network requests and
+never changes the reviewed pin. Differing or partial existing destinations
+are refused, not repaired or removed. The brief exclusive empty reservation
+is replaced by the fully validated directory, never by one payload at a time.</p>
 </dd></dl>
 
 </section>
@@ -124,11 +509,69 @@
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.</span></span><span class="sig-name descname"><span class="pre">RheaMappingsTransform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
-<p>Template for how the transform class would be designed.</p>
+<p>Consume explicit local inputs; never infer directions from ID order or cache state.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.DATA_INPUTS">
+<span class="sig-name descname"><span class="pre">DATA_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('mappings/rhea_release.json',</span> <span class="pre">'mappings/rhea_legacy_xref_dispositions.json')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.DATA_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Repo-relative curation files this transform reads, beyond its own
+<code class="docutils literal notranslate"><span class="pre">data/raw/</span></code> download.</p>
+<p>Declared so freshness tooling can tell that an output is stale against
+its <em>data</em> rather than only its code. Without it a mapping correction
+lands, every consumer keeps reporting FRESH, and a re-merge silently
+ships the old groundings: #778 corrected 16 isolation-source ids and
+#786 rewrote the unified chemical SSSOM, and the merged KG built
+afterwards still asserted 75 organisms isolated from a “Cell Line”,
+because nothing re-ran the transforms that read those files (#812).</p>
+<p>Paths are relative to the repo root. Keep them tracked in git — the
+freshness check uses commit time, not mtime, because <cite>git checkout</cite>
+rewrites mtimes without changing content (#797).</p>
+<p>List <strong>every</strong> curation file read, not a representative one. A partial
+declaration fails silently and looks identical to a complete one:
+ontologies_stubs declared 1 of the 11 files it read and was reported
+fresh after changes to the other ten (#839). Where the set comes from a
+constant, derive this from it rather than restating it.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.REQUIRED_AUDIT_FILES">
+<span class="sig-name descname"><span class="pre">REQUIRED_AUDIT_FILES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('rhea_reaction_dispositions.tsv',</span> <span class="pre">'rhea_legacy_xref_dispositions.tsv')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.REQUIRED_AUDIT_FILES" title="Link to this definition"></a></dt>
+<dd><p>Producer-owned disposition reports whose emitted bytes must survive finalization/merge.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.REQUIRED_CONSUMED_INPUTS">
+<span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('rhea_release_manifest',</span> <span class="pre">'rhea_directions',</span> <span class="pre">'rhea_rdf',</span> <span class="pre">'rhea_chebi_labels',</span> <span class="pre">'rhea_go_labels',</span> <span class="pre">'rhea_ec_labels',</span> <span class="pre">'rhea_legacy_xref_dispositions')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Named generated inputs that must actually be read before fresh finalization.
+Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.TSV_QUOTING">
+<span class="sig-name descname"><span class="pre">TSV_QUOTING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.TSV_QUOTING" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.producer_native_inputs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">producer_native_inputs</span></span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.producer_native_inputs" title="Link to this definition"></a></dt>
+<dd><p>Version the label projection; exact DB identities live in consumed-input roles.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.run" title="Link to this definition"></a></dt>
-<dd><p>Run the transformation.</p>
+<dd><p>Write canonical graph rows and audited statuses from coherent pinned native evidence.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.verify_native_inputs">
+<span class="sig-name descname"><span class="pre">verify_native_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">byte_verified</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.verify_native_inputs" title="Link to this definition"></a></dt>
+<dd><p>Reject unconsumed SQLite sidecars even when each main-file SHA remains unchanged.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.verify_recorded_native_inputs">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verify_recorded_native_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">report</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">report_path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.verify_recorded_native_inputs" title="Link to this definition"></a></dt>
+<dd><p>Enforce raw-root roles and quiescent SQLite state again at merge admission.</p>
 </dd></dl>
 
 </dd></dl>

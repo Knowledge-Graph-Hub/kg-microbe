@@ -150,6 +150,19 @@ absent (<code class="docutils literal notranslate"><span class="pre">data/raw/nc
 <dd><p>Bases: <a class="reference internal" href="kg_microbe.transform_utils.html#kg_microbe.transform_utils.transform.Transform" title="kg_microbe.transform_utils.transform.Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></a></p>
 <p>Transform LPSN GSS CSV bulk export into KGX nodes + edges.</p>
 <dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.lpsn.lpsn.LPSNTransform.REQUIRED_AUDIT_FILES">
+<span class="sig-name descname"><span class="pre">REQUIRED_AUDIT_FILES</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('lpsn_parent_dispositions.tsv',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.lpsn.lpsn.LPSNTransform.REQUIRED_AUDIT_FILES" title="Link to this definition"></a></dt>
+<dd><p>Producer-owned disposition reports whose emitted bytes must survive finalization/merge.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.lpsn.lpsn.LPSNTransform.REQUIRED_CONSUMED_INPUTS">
+<span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('lpsn_gss_native',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.lpsn.lpsn.LPSNTransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Named generated inputs that must actually be read before fresh finalization.
+Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.lpsn.lpsn.LPSNTransform.TRANSFORM_INPUTS">
 <span class="sig-name descname"><span class="pre">TRANSFORM_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('gtdb',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.lpsn.lpsn.LPSNTransform.TRANSFORM_INPUTS" title="Link to this definition"></a></dt>
 <dd><p>Reads this transform’s output; see Transform.TRANSFORM_INPUTS (#845).</p>

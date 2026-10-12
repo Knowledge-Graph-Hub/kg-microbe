@@ -1,0 +1,178 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GOLD unresolved native referents (#1316) &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">GOLD unresolved native referents (#1316)</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/GOLD_UNRESOLVED_REFERENTS.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="gold-unresolved-native-referents-1316">
+<h1>GOLD unresolved native referents (#1316)<a class="headerlink" href="#gold-unresolved-native-referents-1316" title="Link to this heading"></a></h1>
+<p>The selected native GOLD export supplies organism IDs, names, category,
+provider and taxon xrefs. It contains metagenomes, binned genomes and a blank
+name as well as strain-like labels. A name differing from the taxon’s name
+does not independently establish a named strain. The reviewed current cohort
+has no independently accepted structured strain-evidence records.</p>
+<p>The fold-restoration cohort retains 531,324 unverified referents surviving the
+pre-alias trim (471,702 previously retained plus 59,622 formerly folded) as
+<code class="docutils literal notranslate"><span class="pre">biolink:NamedThing</span></code>, preserving their literal IDs, names, xrefs and providers.
+This does not create new database-record entities: the original referent’s
+specific type remains unresolved. Each native taxon field is retained as
+<code class="docutils literal notranslate"><span class="pre">biolink:related_to</span></code>, with its original
+<code class="docutils literal notranslate"><span class="pre">gold:organism_v2.ncbi_taxonomy_id</span></code> relation. The mandatory
+<code class="docutils literal notranslate"><span class="pre">gold_taxon_dispositions.tsv</span></code> preserves complete native declarations and
+parent claims, source hashes and row coordinates, remap witnesses, rejected
+taxon-class proposals, and emitted declarations/associations.</p>
+<p>Consumers must join the selected sibling GOLD’s finalized, current-code
+bundle and verified native audit. Before the separate finite alias repair, the reviewed MicrobeDecoder scope comprises
+10,554 current crosswalk observations to 10,552 such IDs (5,317 observations
+plus 5,237 restored original GOLD field references), as <code class="docutils literal notranslate"><span class="pre">biolink:related_to</span></code> in both
+predicate and relation. Its mandatory <code class="docutils literal notranslate"><span class="pre">gold_crosswalk_dispositions.tsv</span></code>
+preserves the complete CSV record, original column/cell/token and source
+hash/ordinal, original identity proposal, emitted association, and admitted
+GOLD declaration/native witness. Contradiction quarantine precedes this route.</p>
+<p>Queries must explicitly traverse these associations, not treat them as
+taxonomic inheritance or identity. Neither labels nor xrefs justify copying
+taxon phenotypes onto unresolved referents. The repository’s independently
+evidenced named-strain convention (#834) is unchanged for other producers.</p>
+<p>The 59,622 historical normalized-label folds are disabled. Their original
+source IDs and 32,537 retained record-level environment assertions are restored.
+The latter replace 31,933 collapsed taxon-level environment assertions: 604
+distinct source observations were previously lost to fold-induced deduplication.
+Exactly 560 source names differ literally despite normalized equality; names
+are never replaced by the selected taxon’s label. All 154,693 original incident
+claims, including excluded Study/sample contexts and 6,662 root-only habitats,
+remain in <code class="docutils literal notranslate"><span class="pre">gold_lexical_fold_restorations.tsv</span></code> with complete native declarations,
+hierarchies, original/retired ID witnesses and old-versus-restored projections.
+The compatibility <code class="docutils literal notranslate"><span class="pre">organism_folds.tsv</span></code> is header-only and is not consumed by
+MicrobeDecoder. Its 2,523 contradicted folded-ID proposals remain quarantined;
+only 5,237 noncontradicted source crosswalk observations are restored.
+Existing taxid remapping, trim behavior, non-folded environment observations, and the
+seven independently reviewed Abscess crosswalk quarantines are unchanged.
+An excluded GOLD reference is not restored from raw data merely because its
+identifier is present in another producer.</p>
+<p>The separate #1327 policy resolves exactly three retired taxon identifiers using
+actual selected NCBI alternative-ID assertions and their taxdump witnesses. It
+restores eleven additional native source referents, preserving all 27 original
+incident claims in <code class="docutils literal notranslate"><span class="pre">gold_selected_taxon_aliases.tsv</span></code>. Eleven taxon associations
+and seven non-root environment observations are retained; the four root-only
+habitats and five Study links remain excluded, with original evidence intact.
+The original pre-alias parent target remains separate in historical fold
+diagnostics, so these records are not counted as formerly folded. A missing
+native replacement taxon declaration uses the exact admitted selected-authority
+declaration, never the retired taxon’s label attached to a new ID. The original
+native taxon declaration stays in the mandatory alias audit. All other taxon
+resolution and excluded-branch decisions retain their existing behavior.</p>
+<p>This finite extension predicts 531,335 unresolved source referents and
+637,297 nodes / 765,987 edges for the complete GOLD source. It also admits the
+original MicrobeDecoder claim to <code class="docutils literal notranslate"><span class="pre">gold:Go0028995</span></code>, previously rejected because
+the selected ontology used a different retained taxon ID. Whole-source and
+consumer replay must confirm exact rows and multiplicity, not only these totals.</p>
+<p>The one native blank name (<code class="docutils literal notranslate"><span class="pre">gold:Go0531699</span></code>) is retained literally. Its narrow
+merge admission exception requires an independently rejoined, exact semantic
+declaration, not a prefix/ID allowlist. All category and predicate changes
+occur in source transforms/finalization. Merge verifies unchanged admitted
+bytes; it performs no new identity resolution or graph rewriting.</p>
+<p>The independently reviewed same-stage prediction, before the separate selected
+taxon-alias extension, is 637,286 GOLD nodes and 765,969 edges. Relative to the
+552,376/705,743 unresolved-referent baseline, this adds 59,622 source records
+and revives 25,288 native taxon declarations previously left without edges,
+adds 59,622 audited taxon associations, and restores 604 environment observations.
+All other rows are conserved. Producer replay and acceptance status are reported
+separately; these counts do not claim the production merged archive was rebuilt.</p>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

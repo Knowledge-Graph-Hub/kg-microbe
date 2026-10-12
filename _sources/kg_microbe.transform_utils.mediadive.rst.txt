@@ -28,6 +28,14 @@ kg\_microbe.transform\_utils.mediadive.mediadive module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.transform\_utils.mediadive.recipe\_identity module
+--------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.mediadive.recipe_identity
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 

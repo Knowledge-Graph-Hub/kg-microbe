@@ -85,3 +85,31 @@ class RobotAtomicOutputTest(TestCase):
 
             self.assertTrue(seen[0].endswith(".json"), seen[0])
             self.assertIn(str(os.getpid()), seen[0], "the temp must be per-writer")
+
+
+class RobotJavaArgsTest(TestCase):
+    """Recent JDKs ship JAXP entity limits that reject real ontology imports."""
+
+    def test_the_default_carries_every_jaxp_limit(self):
+        """No ROBOT_JAVA_ARGS: the repo default plus each limit."""
+        with mock.patch.dict(os.environ, {}, clear=True):
+            args = robot_utils.robot_java_args()
+        self.assertTrue(args.startswith(robot_utils.DEFAULT_ROBOT_JAVA_ARGS))
+        for name, value in robot_utils.ROBOT_JAXP_LIMITS:
+            self.assertIn(f"-D{name}={value}", args)
+
+    def test_a_user_setting_wins_and_is_not_duplicated(self):
+        """A limit set in ROBOT_JAVA_ARGS is kept as written; the others are still added."""
+        configured = "-Xmx8G -Djdk.xml.totalEntitySizeLimit=0"
+        with mock.patch.dict(os.environ, {"ROBOT_JAVA_ARGS": configured}, clear=True):
+            args = robot_utils.robot_java_args()
+        self.assertTrue(args.startswith(configured))
+        self.assertEqual(args.count("-Djdk.xml.totalEntitySizeLimit="), 1)
+        self.assertIn("-Djdk.xml.entityExpansionLimit=64000", args)
+
+    def test_initialize_robot_uses_the_same_options(self):
+        """The ontologies transform's ROBOT path gets the limits too, not only ontologies_stubs."""
+        with mock.patch.dict(os.environ, {"PATH": "/usr/bin"}, clear=True):
+            _, env = robot_utils.initialize_robot("robot-dir")
+            self.assertEqual(env["ROBOT_JAVA_ARGS"], robot_utils.robot_java_args())
+        self.assertTrue(env["PATH"].endswith(os.pathsep + "robot-dir"))

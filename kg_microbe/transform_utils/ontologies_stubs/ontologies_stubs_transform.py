@@ -75,6 +75,7 @@ from kg_microbe.transform_utils.ontologies_stubs.ncit_category_projection import
 )
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.isolation_source_mapping_utils import STUB_ONTOLOGY_CATEGORY
+from kg_microbe.utils.robot_utils import robot_env
 from kg_microbe.utils.stub_curie_collection import (
     DEFAULT_MAPPING_PATHS,
     collect_stub_curies,
@@ -237,6 +238,10 @@ STUB_ONTOLOGY_SOURCES: Dict[str, Dict[str, Any]] = {
 _MAX_CELL_LEN = 500
 
 ONTOLOGIES_STUBS_SOURCE_NAME = "ontologies_stubs"
+ROBOT_MISSING = (
+    "ROBOT binary not on PATH. Install robot (http://robot.obolibrary.org/) with a JDK "
+    "and ensure it is on PATH; poetry install does not provide it."
+)
 NCIT_CATEGORY_DISPOSITIONS = _STUB_REPO_ROOT / "mappings/ncit_category_dispositions.tsv"
 
 
@@ -265,6 +270,11 @@ class OntologiesStubsTransform(Transform):
             if path.is_relative_to(_STUB_REPO_ROOT)
         )
     )
+
+    @classmethod
+    def missing_prerequisites(cls, input_dir: Optional[Path] = None) -> List[str]:
+        """ROBOT builds the PO and MICRO hierarchies; without it the run fails only after the ontologies source."""
+        return [] if shutil.which("robot") else [ROBOT_MISSING]
 
     def __init__(
         self,
@@ -502,11 +512,8 @@ class OntologiesStubsTransform(Transform):
         """
         robot_bin = shutil.which("robot")
         if not robot_bin:
-            raise RuntimeError(
-                f"ROBOT binary not on PATH but required to build the {prefix} "
-                "stub hierarchy via MIREOT. Install robot "
-                "(http://robot.obolibrary.org/) and ensure it is on PATH."
-            )
+            raise RuntimeError(f"Required to build the {prefix} stub hierarchy via MIREOT: {ROBOT_MISSING}")
+        env = robot_env()
 
         lower_iris: List[str] = []
         for c in lower_curies:
@@ -539,7 +546,7 @@ class OntologiesStubsTransform(Transform):
         for iri in upper_iris:
             extract_cmd += ["--upper-term", iri]
         extract_cmd += ["--output", str(module_owl)]
-        subprocess.run(extract_cmd, check=True)  # noqa: S603
+        subprocess.run(extract_cmd, check=True, env=env)  # noqa: S603
 
         subprocess.run(  # noqa: S603
             [
@@ -553,6 +560,7 @@ class OntologiesStubsTransform(Transform):
                 "json",
             ],
             check=True,
+            env=env,
         )
         return module_json
 

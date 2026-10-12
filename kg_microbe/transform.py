@@ -200,6 +200,17 @@ def _withdraw_success_claim(source: str, output_dir: Optional[Path]) -> bool:
     return True
 
 
+def _missing_prerequisites(sources: List[str], input_dir: Optional[Path] = None) -> List[str]:
+    """Return ``"source: message"`` for every external prerequisite a selected source needs but cannot find."""
+    missing = []
+    for source in sources:
+        check = getattr(DATA_SOURCES.get(source), "missing_prerequisites", None)
+        problems = check(input_dir) if check is not None else []
+        if isinstance(problems, list):  # registry test doubles may be mocks
+            missing += [f"{source}: {problem}" for problem in problems]
+    return missing
+
+
 def _run_one(source: str, input_dir: Optional[Path], output_dir: Optional[Path], show_status: bool) -> None:
     """Run one registered source, or one ontology by name, and report what it wrote."""
     if source in DATA_SOURCES:
@@ -308,6 +319,7 @@ def transform(
     # A skipped optional source reads nothing; check only what will run.
     runnable = [s for s in sources if s not in absent_optional]
     missing += _missing_declared_inputs(runnable, Path(__file__).resolve().parent.parent, input_dir)
+    missing += _missing_prerequisites(runnable, input_dir)
     if missing:
         raise FileNotFoundError("Required input(s) missing; nothing was run: " + "; ".join(missing))
 

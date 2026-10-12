@@ -21,6 +21,12 @@ network access or modify `data/raw`; put small immutable inputs under
 `tests/resources` and use `tmp_path` for output. Mark intentional live-service
 coverage with `@pytest.mark.integration`.
 
+`ontologies_stubs` (and so `gold` and `microbedecoder`) needs ROBOT on
+`PATH` with a JDK; `poetry install` does not provide it, and `kg transform`
+fails preflight without it. ROBOT calls get JAXP entity limits from
+`robot_utils.robot_java_args()`, because recent JDKs reject real ontology
+imports at their lowered defaults.
+
 Supported Python versions are 3.10 through 3.12. Python 3.13 is blocked by the
 KGX/pyarrow dependency chain; see issue #871.
 

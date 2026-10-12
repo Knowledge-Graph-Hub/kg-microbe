@@ -9,6 +9,7 @@ from typing import Dict, List, Set
 import pytest
 
 from kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform import (
+    ROBOT_MISSING,
     STUB_ONTOLOGY_SOURCES,
     OntologiesStubsTransform,
     _curie_to_iris,
@@ -347,7 +348,7 @@ def test_mireot_intermediate_is_rdfxml_not_functional_syntax(tmp_path, monkeypat
 
     calls = []
 
-    def fake_run(cmd, check):
+    def fake_run(cmd, check, env=None):
         """Capture the ROBOT command without launching it."""
         calls.append(list(cmd))
         return None
@@ -375,6 +376,46 @@ def test_mireot_intermediate_is_rdfxml_not_functional_syntax(tmp_path, monkeypat
     assert module_json.suffix == ".json"
     # The superseded intermediate does not linger beside the new one (#988).
     assert not stale.exists()
+
+
+def test_mireot_robot_calls_carry_the_jaxp_limits(tmp_path, monkeypatch):
+    """
+    Temurin 27 rejected MicrO's ChEBI import at the 100,000-byte entity limit.
+
+    Both ROBOT calls must run with the JVM options from robot_utils, so the
+    transform does not depend on each machine's JDK defaults or shell setup.
+    """
+    import subprocess
+
+    envs = []
+
+    def fake_run(cmd, check, env=None):
+        """Capture the environment each ROBOT call receives."""
+        envs.append(env)
+        return None
+
+    monkeypatch.delenv("ROBOT_JAVA_ARGS", raising=False)
+    monkeypatch.setattr("shutil.which", lambda _name: "/fake/robot")
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    transform = OntologiesStubsTransform(input_dir=tmp_path / "raw", output_dir=tmp_path / "out")
+    transform.output_dir.mkdir(parents=True, exist_ok=True)
+    transform._run_mireot_extract(
+        prefix="MICRO",
+        lower_curies=["MICRO:0000082"],
+        upper_curie="MICRO:0000031",
+        owl_path=tmp_path / "raw" / "micro.owl",
+    )
+    assert len(envs) == 2
+    for env in envs:
+        assert "-Djdk.xml.totalEntitySizeLimit=50000000" in env["ROBOT_JAVA_ARGS"]
+
+
+def test_missing_robot_is_a_prerequisite_failure(monkeypatch):
+    """Without ROBOT the source used to fail mid-batch, after the ontologies transform."""
+    monkeypatch.setattr("shutil.which", lambda _name: None)
+    assert OntologiesStubsTransform.missing_prerequisites() == [ROBOT_MISSING]
+    monkeypatch.setattr("shutil.which", lambda _name: "/fake/robot")
+    assert OntologiesStubsTransform.missing_prerequisites() == []
 
 
 # ---------------------------------------------------------------------------

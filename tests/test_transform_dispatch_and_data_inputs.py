@@ -506,6 +506,17 @@ class BatchIsolationTest(TestCase):
         self.assertEqual(self.log, [])
         self.assertIn("a: mappings/this-file-does-not-exist.tsv", str(excinfo.value))
 
+    def test_a_missing_prerequisite_tool_fails_before_anything_runs(self):
+        """ROBOT absent used to fail ontologies_stubs after hours of ontologies work."""
+        fake = _fake_source("a", self.log, self.base)
+        fake.missing_prerequisites = classmethod(lambda cls, input_dir=None: ["ROBOT binary not on PATH"])
+        registry = {"early": _fake_source("early", self.log, self.base), "a": fake}
+        with mock.patch.dict(DATA_SOURCES, registry, clear=True):
+            with pytest.raises(FileNotFoundError) as excinfo:
+                transform(None, None, sources=["early", "a"])
+        self.assertEqual(self.log, [])
+        self.assertIn("a: ROBOT binary not on PATH", str(excinfo.value))
+
     def test_alternate_raw_declaration_does_not_require_repository_default(self):
         """CLI -i determines the raw authority preflight path, not an unrelated repo file."""
         from kg_microbe.transform import _missing_declared_inputs

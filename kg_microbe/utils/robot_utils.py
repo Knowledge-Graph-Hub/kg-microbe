@@ -4,12 +4,47 @@ import itertools
 import os
 import subprocess
 from pathlib import Path
-from typing import List, Union
+from typing import List, Optional, Union
 
 from kg_microbe.transform_utils.constants import (
     ROBOT_EXTRACT_SUFFIX,
     ROBOT_REMOVED_SUFFIX,
 )
+
+DEFAULT_ROBOT_JAVA_ARGS = "-Xmx12g -XX:+UseG1GC"
+
+# Recent JDKs ship far lower JAXP entity limits; Temurin 27 rejects MicrO's
+# ChEBI import module with "accumulated size of entities is 100,009 that
+# exceeded the 100,000 limit set by jdk.xml.totalEntitySizeLimit", which fails
+# ontologies_stubs and skips gold and microbedecoder behind it. These are the
+# limits older JDKs applied by default: still bounded, so a pathological file
+# fails rather than exhausting memory, but large enough for real ontologies.
+# A value the user already sets in ROBOT_JAVA_ARGS wins.
+ROBOT_JAXP_LIMITS = (
+    ("jdk.xml.totalEntitySizeLimit", "50000000"),
+    ("jdk.xml.entityExpansionLimit", "64000"),
+    ("jdk.xml.maxGeneralEntitySizeLimit", "0"),
+    ("jdk.xml.maxParameterEntitySizeLimit", "1000000"),
+)
+
+
+def robot_java_args(base: Optional[str] = None) -> str:
+    """
+    Return the JVM options for ROBOT: the configured ones plus any JAXP limit they leave unset.
+
+    :param base: JVM options to start from; defaults to ``ROBOT_JAVA_ARGS`` or
+        :data:`DEFAULT_ROBOT_JAVA_ARGS` when that is unset.
+    """
+    args = base if base is not None else os.environ.get("ROBOT_JAVA_ARGS", DEFAULT_ROBOT_JAVA_ARGS)
+    extra = [f"-D{name}={value}" for name, value in ROBOT_JAXP_LIMITS if f"-D{name}=" not in args]
+    return " ".join([args, *extra]).strip()
+
+
+def robot_env() -> dict:
+    """Return a copy of the environment with ROBOT's JVM options set for every invocation."""
+    env = dict(os.environ)
+    env["ROBOT_JAVA_ARGS"] = robot_java_args()
+    return env
 
 
 def initialize_robot(path: str) -> list:
@@ -22,15 +57,9 @@ def initialize_robot(path: str) -> list:
     # Declare variables
     robot_file = os.path.join(path, "robot")
 
-    # Declare environment variables
-    env = dict(os.environ)
-    # (JDK compatibility issue:
-    # https://stackoverflow.com/questions/49962437/unrecognized-vm-option-useparnewgc-error-could-not-create-the-java-virtual) # noqa
-    # env['ROBOT_JAVA_ARGS'] = '-Xmx8g -XX:+UseConcMarkSweepGC' # for JDK 9 and older
-    # env["ROBOT_JAVA_ARGS"] = "-Xmx12g -XX:+UseG1GC"  # For JDK 10 and over
-    env["ROBOT_JAVA_ARGS"] = (
-        os.environ["ROBOT_JAVA_ARGS"] if "ROBOT_JAVA_ARGS" in os.environ else "-Xmx12g -XX:+UseG1GC"
-    )  # noqa
+    # Declare environment variables. G1 rather than ConcMarkSweep: JDK 10 and
+    # over reject the old collector flags.
+    env = robot_env()
     env["PATH"] = os.environ["PATH"]
     env["PATH"] += os.pathsep + path
 

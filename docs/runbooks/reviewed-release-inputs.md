@@ -13,12 +13,14 @@ input is now fetched and bound, and how to stage a raw directory for a rebuild.
 | Input | How it is fetched | What the policies bind |
 | --- | --- | --- |
 | `ro.owl`, `pato.owl`, `uberon.owl`, `foodon.owl`, `po.owl`, `upa.owl`, `go.owl`, `envo.json`, `mondo.json` | `kg download -t ontologies`, from URLs that each name one release (`tests/test_reviewed_release_urls.py`) | The file's SHA-256 |
-| `ro.json`, `pato.json`, `uberon.json`, `foodon.json`, `upa.json` | Converted from the OWL release by the pinned ROBOT during `kg transform` | The release the JSON declares (`meta.version`), the OWL release file's digest, and a canonical digest of the reviewed content only |
-| `go.db` | Built by SemSQL from `go.owl` during `kg transform` | The GO release it records (`owl:versionInfo`), the `go.owl` digest, and the selected statements |
+| `ro.json`, `pato.json`, `uberon.json`, `foodon.json` | Converted from the OWL release by the pinned ROBOT during `kg transform` | The release the JSON declares (`meta.version`), the OWL release file's digest, and a canonical digest of the native content the reviewed decisions rest on (for UBERON temporal: each record's ancestor closure and the life-stage inventory) |
+| `upa.json` | Converted from `upa.owl` by the pinned ROBOT during `kg transform` | Its SHA-256, which ROBOT 1.9.8 reproduces from the pinned `upa.owl`, and its declared release |
+| `go.db` | Built by SemSQL from `go.owl` during `kg transform` | The GO release it records (`owl:versionInfo`), the `go.owl` digest, and the selected statements, with blank nodes compared by what they state rather than their build-local labels |
 | `mesh2026.nt.gz`, `ncit.db` | `kg download -t stubs`; neither has an immutable URL | The reviewed statements only. Any export or release with them unchanged is accepted, and each run's receipt records the bytes it read (and the NCIT release). |
 | Rhea `rhea-directions.tsv`, `rhea.rdf.gz` | `kg download -t rhea` fetches the archived release 142; `stage_snapshot --source-archive` extracts the pair | Both files' digests, which equal the archive members |
 | MicrobeDecoder `database.csv` | `kg download -t microbedecoder`, from a commit; extracted on the first run | The file's digest |
 | `lpsn_gss.csv` | Manual, account-gated download | The six accepted rows the BacDive join decisions name, each compared in full |
+| `gold/GOLD_nodes.tsv`, `gold/GOLD_edges.tsv`, `bacdive_strains.json` | `kg download -t gold` and `-t bacdive`, from Google Drive | Digests of the selected native rows and records their policies reviewed |
 | MicrO import modules | `kg download -t ontologies`, from a commit, into `micro_imports/` | Checked by the `ontologies_stubs` preflight |
 
 Moving any of these to a newer upstream release means re-reviewing every policy

@@ -1,13 +1,18 @@
 """
-Check every byte-pinned upstream release before a long run starts (#1420).
+Check the reviewed upstream inputs before a long run starts (#1420).
 
-Reviewed policies bind the upstream release files their content comes from by
-SHA-256: the OWL each converted JSON is built from, the JSON releases read
-directly, and the ``go.owl`` behind ``go.db``. Each policy checks its pins only
-when its source finalizes, so a stale or rewritten download used to fail after
-hours of NCBITaxon and ChEBI work. This module collects those pins from the
-policies themselves and compares them with the raw directory before any source
-runs. It reads the policies' pins and never replaces them.
+Reviewed policies bind raw upstream files by SHA-256: the OWL each converted JSON
+is built from, the JSON releases read directly, the ``go.owl`` behind ``go.db``,
+and the Biolink model. Each policy checks its pins only when its source
+finalizes, so a stale or rewritten download used to fail after hours of
+NCBITaxon and ChEBI work. This module collects those pins from the policies
+themselves and compares them with the raw directory before any source runs. It
+also checks two things a run would otherwise discover late: that ``ncit.db`` (or
+the archive it is unpacked from) is present, and that an existing ``upa.json`` is
+the pinned conversion. It reads the policies' pins and never replaces them.
+
+Run ``python -m kg_microbe.utils.release_preflight [RAW_DIR]`` to check without
+starting a run.
 """
 
 import hashlib
@@ -19,7 +24,7 @@ from typing import Callable, Dict, Iterable, List, Optional, Tuple
 import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-_FILE = re.compile(r"[a-z_]+\.(json|owl)")
+_FILE = re.compile(r"[a-z_-]+\.(json|owl|yaml)")
 _HEX = re.compile(r"[0-9a-f]{64}")
 
 
@@ -50,8 +55,17 @@ def _upa_routes(policy: dict) -> List[Tuple[str, str]]:
     return [("upa.owl", sources["upa.owl"]), *_sources([sources["go.db"]["source"]])]
 
 
-# Every reviewed policy that pins a raw upstream release file by its bytes. A
-# policy bound only by content (MeSH, NCIT, the LPSN GSS) has no entry here.
+def _biolink_model(policy: dict) -> List[Tuple[str, str]]:
+    return [(policy["model_file"], policy["model_sha256"])]
+
+
+def _upa_json(policy: dict) -> List[Tuple[str, str]]:
+    return [("upa.json", policy["sources"]["upa.json"]["sha256"])]
+
+
+# Every reviewed policy that pins a raw upstream file by its bytes. MeSH and NCIT
+# bind their native exports by content but pin the Biolink model; the LPSN GSS is
+# bound by content only and has no entry here.
 PINNING_POLICIES: Tuple[Tuple[str, Callable[[dict], List[Tuple[str, str]]]], ...] = (
     ("mappings/native_ro_predicate_dispositions.json", _authority_sources),
     ("mappings/finite_import_category_dispositions.json", _authority_sources),
@@ -59,20 +73,29 @@ PINNING_POLICIES: Tuple[Tuple[str, Callable[[dict], List[Tuple[str, str]]]], ...
     ("mappings/finite_envo_po_category_dispositions.json", _finite_envo_po),
     ("mappings/go_imported_subject_restrictions.json", _go_restrictions),
     ("mappings/upa_reaction_projection_dispositions.json", _upa_routes),
+    ("mappings/ncit_eight_categories.json", _biolink_model),
+    ("mappings/mesh_finite_category_dispositions.json", _biolink_model),
+)
+
+# Files a run derives from a pinned release and then binds by bytes. A fresh raw
+# directory does not have them yet, so only one that is present is checked.
+DERIVED_PINS: Tuple[Tuple[str, Callable[[dict], List[Tuple[str, str]]]], ...] = (
+    ("mappings/upa_reaction_projection_dispositions.json", _upa_json),
 )
 
 
-def reviewed_release_pins(repo_root: Path = REPO_ROOT) -> Dict[str, Dict[str, List[str]]]:
+def reviewed_release_pins(repo_root: Path = REPO_ROOT, *, policies=None) -> Dict[str, Dict[str, List[str]]]:
     """
-    Collect the release files the reviewed policies pin.
+    Collect the raw files the reviewed policies pin.
 
     :param repo_root: Repository root holding ``mappings/``.
+    :param policies: The ``(policy, selector)`` pairs to read; the byte-pinning policies by default.
     :return: ``{file: {sha256: [policy, ...]}}``. More than one digest for a file
         means the policies disagree on its release.
     :raises ValueError: When a policy does not hold a well-formed pin where expected.
     """
     pins: Dict[str, Dict[str, List[str]]] = {}
-    for relative, select in PINNING_POLICIES:
+    for relative, select in PINNING_POLICIES if policies is None else policies:
         policy = json.loads((repo_root / relative).read_text(encoding="utf-8"))
         try:
             selected = select(policy)
@@ -143,3 +166,93 @@ def mismatched_release_files(
                 f"`{fetch}` to fetch the pinned release; see docs/runbooks/reviewed-release-inputs.md."
             )
     return problems
+
+
+def stale_derived_files(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> List[str]:
+    """
+    Report each derived, byte-pinned file that is present in ``raw_dir`` but is not the pinned one.
+
+    A run reuses such a file rather than deriving it again, then fails its pin hours
+    later. An absent file is not reported: the run derives it from the pinned release.
+
+    :param raw_dir: The raw input directory a run will read.
+    :param repo_root: Repository root holding ``mappings/``.
+    :return: One message per stale file.
+    """
+    problems = []
+    for name, expected in sorted(reviewed_release_pins(repo_root, policies=DERIVED_PINS).items()):
+        path = Path(raw_dir) / name
+        if not path.is_file():
+            continue
+        sha256, policies = next(iter(expected.items()))
+        if len(expected) != 1:
+            problems.append(f"{name}: the reviewed policies disagree on its pinned bytes")
+        elif (actual := _sha256(path)) != sha256:
+            problems.append(
+                f"{name} in {raw_dir} (sha256 {actual[:12]}) is not the conversion pinned by "
+                f"{', '.join(policies)} (sha256 {sha256[:12]}). Move it aside so the run derives it "
+                "again from its pinned release."
+            )
+    return problems
+
+
+def missing_ncit_authority(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> List[str]:
+    """
+    Report a raw directory with neither ``ncit.db`` nor the ``ncit.db.gz`` it is unpacked from.
+
+    The NCIT category policy reads ``ncit.db`` whenever a source declares one of its
+    classes, and FOODON does, so the ``ontologies`` source needs it when it finalizes
+    (#1526).
+
+    :param raw_dir: The raw input directory a run will read.
+    :param repo_root: Repository root holding ``download.yaml``.
+    :return: A message when both are missing, otherwise nothing.
+    """
+    raw_dir = Path(raw_dir)
+    if (raw_dir / "ncit.db").is_file() or (raw_dir / "ncit.db.gz").is_file():
+        return []
+    tag = _download_tags(repo_root).get("ncit.db.gz")
+    fetch = f"kg download -t {tag}" if tag else "the download.yaml entry for ncit.db.gz"
+    return [
+        f"Neither ncit.db nor ncit.db.gz is in {raw_dir}; the NCIT category policy reads ncit.db "
+        f"when FOODON and other sources finalize. Fetch it with `{fetch}`."
+    ]
+
+
+def release_input_problems(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> List[str]:
+    """
+    Run every check in this module against ``raw_dir``.
+
+    :param raw_dir: The raw input directory a run will read.
+    :param repo_root: Repository root holding ``mappings/`` and ``download.yaml``.
+    :return: One message per problem; empty when the inputs are ready.
+    """
+    return [
+        *mismatched_release_files(raw_dir, repo_root=repo_root),
+        *stale_derived_files(raw_dir, repo_root=repo_root),
+        *missing_ncit_authority(raw_dir, repo_root=repo_root),
+    ]
+
+
+def main(argv: Optional[List[str]] = None) -> int:
+    """
+    Check a raw directory without starting a run.
+
+    :param argv: ``[RAW_DIR]``; ``data/raw`` under the repository by default.
+    :return: 0 when the inputs are ready, 1 when there are problems.
+    """
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Check the reviewed upstream inputs in a raw directory (#1420).")
+    parser.add_argument("raw_dir", nargs="?", type=Path, default=REPO_ROOT / "data" / "raw")
+    args = parser.parse_args(argv)
+    problems = release_input_problems(args.raw_dir)
+    for problem in problems:
+        print(f"- {problem}")
+    if not problems:
+        print(f"Every reviewed upstream input in {args.raw_dir} is ready.")
+    return 1 if problems else 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

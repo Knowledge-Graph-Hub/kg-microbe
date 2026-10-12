@@ -298,9 +298,13 @@ and the GOLD and BacDive files on Google Drive); this rule does not cover them.
 Their policies bind only the records they reviewed (statements, GSS rows or
 selected records): any export or release with those records unchanged is
 accepted, and each run's receipt records the one it read. Before the
-`ontologies` source starts, `kg transform` checks every byte-pinned release file
-against the policies that pin it, so a stale download fails in seconds. See #1420
-and the [reviewed release inputs runbook](docs/runbooks/reviewed-release-inputs.md).
+`ontologies` source or a single ontology starts, `kg transform` checks every raw
+file a reviewed policy pins by its bytes (the releases and the Biolink model),
+that `ncit.db` or its archive is present, and that an existing `upa.json` is the
+pinned conversion, so a stale download fails in seconds; `python -m
+kg_microbe.utils.release_preflight data/raw` runs the same check alone. Other
+sources meet the same pins when they finalize. See #1420 and the [reviewed release
+inputs runbook](docs/runbooks/reviewed-release-inputs.md).
 
 ## Operational references
 

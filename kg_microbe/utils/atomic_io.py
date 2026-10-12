@@ -1,9 +1,11 @@
 """Atomic writes for derived caches, so a failed run leaves no half-written file."""
 
 import csv
+import gzip
 import hashlib
 import itertools
 import os
+import shutil
 import time
 from contextlib import contextmanager
 from pathlib import Path
@@ -78,6 +80,32 @@ def atomic_write(path: Union[str, Path], mode: str = "w", mark_complete: bool = 
             except OSError:
                 # Nothing to clean up, or it is not ours to remove.
                 pass
+
+
+def gunzip_beside(path: Union[str, Path], *, root: Union[str, Path, None] = None) -> Path:
+    """
+    Make ``path`` exist by decompressing its ``.gz`` sibling, atomically, when only the archive is present.
+
+    Some raw authorities are downloaded gzipped (``ncit.db.gz``) and read uncompressed by
+    more than one source. Each reader calls this instead of decompressing in place, so
+    whichever runs first publishes a complete file and none ever sees a truncated one
+    (#1526).
+
+    :param path: The uncompressed file the caller wants.
+    :param root: When given, both files must resolve inside it; a link elsewhere is refused.
+    :return: ``path``, which exists unless neither file did.
+    :raises ValueError: When either file resolves outside ``root``.
+    """
+    path = Path(path)
+    archive = path.with_name(path.name + ".gz")
+    if root is not None:
+        for candidate in (path, archive):
+            if not candidate.resolve().is_relative_to(Path(root).resolve()):
+                raise ValueError(f"{candidate} is outside the selected directory {root}")
+    if not path.is_file() and archive.is_file():
+        with gzip.open(archive, "rb") as source, atomic_write(path, "wb") as target:
+            shutil.copyfileobj(source, target)
+    return path
 
 
 def has_data_rows(path: Union[str, Path], delimiter: str = "\t") -> bool:

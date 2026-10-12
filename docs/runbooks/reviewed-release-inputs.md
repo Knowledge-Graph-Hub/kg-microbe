@@ -18,7 +18,7 @@ input is now fetched and bound, and how to stage a raw directory for a rebuild.
 | `go.db` | Built by SemSQL from `go.owl` during `kg transform` | The GO release it records (`owl:versionInfo`), the `go.owl` digest, and the selected statements, with blank nodes compared by what they state rather than their build-local labels |
 | `mesh2026.nt.gz`, `ncit.db` | `kg download -t stubs`; neither has an immutable URL | The reviewed statements only. Any export or release with them unchanged is accepted, and each run's receipt records the bytes it read (and the NCIT release). |
 | Rhea `rhea-directions.tsv`, `rhea.rdf.gz` | `kg download -t rhea` fetches the archived release 142; `stage_snapshot --source-archive` extracts the pair | Both files' digests, which equal the archive members |
-| MicrobeDecoder `database.csv` | `kg download -t microbedecoder`, from a commit; extracted on the first run | The file's digest |
+| MicrobeDecoder `database.csv` | `kg download -t microbedecoder`, from a commit; extracted next to the zip, and again whenever it is not the zip's copy | The file's digest |
 | `lpsn_gss.csv` | Manual, account-gated download | The six accepted rows the BacDive join decisions name, each compared in full |
 | `gold/GOLD_nodes.tsv`, `gold/GOLD_edges.tsv`, `bacdive_strains.json` | `kg download -t gold` and `-t bacdive`, from Google Drive | Digests of the selected native rows and records their policies reviewed |
 | MicrO import modules | `kg download -t ontologies`, from a commit, into `micro_imports/` | Checked by the `ontologies_stubs` preflight |
@@ -29,12 +29,25 @@ that binds it, then updating the URL, the policies and their tests together.
 ## The preflight
 
 Before any source runs, `kg transform` asks each selected source for missing
-prerequisites. When `ontologies` is selected, that includes every file in the
-first row of the table: each must exist in the raw directory and match the
-digest every policy that pins it agrees on (`kg_microbe/utils/release_preflight.py`).
-Nothing runs until they all match, so a stale download fails in seconds rather
+prerequisites. When `ontologies` or a single ontology (`-s go`, `-s uberon`, ...)
+is selected, that includes `kg_microbe/utils/release_preflight.py`, which checks:
+
+- every file in the first row of the table, and the Biolink model the NCIT and
+  MeSH policies pin: each must exist and match the digest every policy that pins
+  it agrees on;
+- that `ncit.db`, or the `ncit.db.gz` it is unpacked from, is present. The NCIT
+  policy reads it when FOODON and other sources finalize;
+- that an existing `upa.json` is the pinned conversion. A missing one is fine:
+  the run derives it from `upa.owl`.
+
+Nothing runs until they all pass, so a stale download fails in seconds rather
 than after NCBITaxon and ChEBI. A message names the file, its digest, the
-policies that pin it and the command that fetches it.
+policies that pin it and the command that fetches it. To check without starting
+a run, use `python -m kg_microbe.utils.release_preflight data/raw`, which exits 1
+when there are problems.
+
+Other sources (MediaDive, Madin and others) do not run this check; they meet the
+same pins when they finalize their category decisions.
 
 A file that does not match is usually one of these:
 
@@ -69,8 +82,9 @@ was reviewed.
    with `stage_snapshot --source-archive` (see the
    [Rhea runbook](../RHEA_DIRECTIONS.md)), and `lpsn_gss.csv` by hand (see
    [Data hosting](../DATA_HOSTING.md)).
-2. Run `kg transform -s ontologies` and read the preflight messages before
-   anything else runs. Fix each one as above and repeat until there are none.
+2. Run `python -m kg_microbe.utils.release_preflight data/raw` and fix each
+   message as above until there are none. `kg transform` runs the same check
+   first, but once it passes the run starts.
 3. If `ncit.db.gz` or `mesh2026.nt.gz` has moved upstream, the stub sources still
    accept it as long as the reviewed statements are unchanged. If one changed,
    the source fails closed: re-review that policy before changing it.

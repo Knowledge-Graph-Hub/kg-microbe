@@ -235,10 +235,19 @@ def _withdraw_success_claim(source: str, output_dir: Optional[Path]) -> bool:
 
 
 def _missing_prerequisites(sources: List[str], input_dir: Optional[Path] = None) -> List[str]:
-    """Return ``"source: message"`` for every external prerequisite a selected source needs but cannot find."""
-    missing = []
+    """
+    Return ``"source: message"`` for every external prerequisite a selected source needs but cannot find.
+
+    A single ontology runs under the ontologies source, so it gets that source's check,
+    which covers the pinned release files (#1528). Each source's check runs once.
+    """
+    missing, checked = [], set()
     for source in sources:
-        check = getattr(DATA_SOURCES.get(source), "missing_prerequisites", None)
+        owner = source if source in DATA_SOURCES else ONTOLOGIES
+        if owner in checked:
+            continue
+        checked.add(owner)
+        check = getattr(DATA_SOURCES.get(owner), "missing_prerequisites", None)
         problems = check(input_dir) if check is not None else ()
         if isinstance(problems, str):
             # Iterating it would report one problem per character.

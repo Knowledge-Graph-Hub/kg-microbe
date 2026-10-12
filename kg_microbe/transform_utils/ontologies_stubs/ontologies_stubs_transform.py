@@ -55,7 +55,6 @@ from __future__ import annotations
 import gzip
 import json
 import re
-import shutil
 import subprocess
 import tempfile
 from pathlib import Path
@@ -78,6 +77,7 @@ from kg_microbe.transform_utils.ontologies_stubs.ncit_category_projection import
     validate_native_contract,
 )
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.atomic_io import gunzip_beside
 from kg_microbe.utils.isolation_source_mapping_utils import STUB_ONTOLOGY_CATEGORY
 from kg_microbe.utils.robot_utils import initialize_robot, missing_robot, offline_robot_env
 from kg_microbe.utils.stub_curie_collection import (
@@ -935,8 +935,9 @@ class OntologiesStubsTransform(Transform):
                     self._consumed_input_error = "NCIT compressed authority is outside the selected input directory"
                     raise ValueError(self._consumed_input_error)
                 print(f"  [{prefix}] decompressing {gz_path.name} → {db_path.name}")
-                with gzip.open(gz_path, "rb") as src, db_path.open("wb") as dst:
-                    shutil.copyfileobj(src, dst)
+                # Atomic and shared with the NCIT category authority, which can unpack
+                # ncit.db first while the ontologies source finalizes (#1526).
+                gunzip_beside(db_path)
             else:
                 if prefix == "NCIT":
                     self._consumed_input_error = f"Selected NCIT native authority is missing: {db_path}"

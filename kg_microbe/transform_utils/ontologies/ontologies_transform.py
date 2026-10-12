@@ -9,7 +9,7 @@ from contextlib import ExitStack
 from itertools import chain
 from os import makedirs
 from pathlib import Path
-from typing import Optional, Union
+from typing import List, Optional, Union
 
 import pandas as pd
 
@@ -326,6 +326,20 @@ class OntologiesTransform(Transform):
         "ro": "infores:ro",
         "taxrank": "infores:taxrank",
     }
+
+    @classmethod
+    def missing_prerequisites(cls, input_dir: Optional[Path] = None) -> List[str]:
+        """
+        Report each pinned upstream release file that is missing or is not the reviewed release.
+
+        Reviewed policies pin the OWL and JSON releases their content comes from,
+        but check them only when their source finalizes, after hours of NCBITaxon
+        and ChEBI work. Checking every pin first makes a stale download fail in
+        seconds (#1420).
+        """
+        from kg_microbe.utils.release_preflight import mismatched_release_files
+
+        return mismatched_release_files(Path(input_dir) if input_dir else cls.DEFAULT_INPUT_DIR)
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
         """Instantiate object."""

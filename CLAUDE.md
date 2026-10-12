@@ -294,12 +294,16 @@ lists them, and each listed URL was verified byte-identical to the reviewed
 input. Moving one to a newer release means re-reviewing every policy that binds
 it. MeSH and NCIT have no such URL, so their policies bind only the statements
 they reviewed: any export or release with those statements unchanged is
-accepted, and each run's receipt records the one it read. See #1420.
+accepted, and each run's receipt records the one it read. Before the
+`ontologies` source starts, `kg transform` checks every byte-pinned release file
+against the policies that pin it, so a stale download fails in seconds. See #1420
+and the [reviewed release inputs runbook](docs/runbooks/reviewed-release-inputs.md).
 
 ## Operational references
 
 - [Data hosting and ontology build costs](docs/DATA_HOSTING.md)
 - [Ontology cache and failure runbook](docs/runbooks/ontology-caches.md)
+- [Reviewed release inputs and staging](docs/runbooks/reviewed-release-inputs.md)
 - [PREGO score measurements](docs/PREGO_SCORE_VALIDATION.md)
 - [PREGO acquisition and schema](docs/PREGO_INGEST_PLAN.md)
 - [MetaTraits operations](docs/METATRAITS_TRANSFORM_RUNBOOK.md)

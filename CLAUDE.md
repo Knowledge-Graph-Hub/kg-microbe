@@ -287,12 +287,13 @@ than being fetched; preflight checks the modules are present and match what
 `micro.owl` imports. `tests/test_micro_version_pin.py` checks `download.yaml`
 against the constant. PO still fetches its imports live.
 
-Inputs bound by reviewed policies are pinned the same way. Each one is fetched
-from a URL that names exactly one release: a dated release directory, a release
-asset or a commit, never a rolling PURL or branch. `tests/test_reviewed_release_urls.py`
-lists them, and each listed URL was verified byte-identical to the reviewed
-input. Moving one to a newer release means re-reviewing every policy that binds
-it. See #1420.
+Inputs that reviewed policies pin by their bytes are fetched the same way: from
+a URL that names exactly one release (a dated release directory, a release asset
+or a commit), never a rolling PURL or branch. `tests/test_reviewed_release_urls.py`
+lists them, and each listed URL was checked to serve the bytes the policies pin.
+Moving one to a newer release means re-reviewing every policy that binds it. Some
+policy-bound inputs have no such URL (MeSH, NCIT, Rhea, the LPSN GSS, and the
+GOLD and BacDive files on Google Drive); this rule does not cover them. See #1420.
 
 ## Operational references
 

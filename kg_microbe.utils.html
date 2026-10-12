@@ -5686,23 +5686,6 @@ so the version is the one this repository was tested with.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="kg_microbe.utils.robot_utils.offline_robot_env">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.robot_utils.</span></span><span class="sig-name descname"><span class="pre">offline_robot_env</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.robot_utils.offline_robot_env" title="Link to this definition"></a></dt>
-<dd><p>Return a copy of a ROBOT environment whose JVM cannot reach the network.</p>
-<p>The JVM applies <code class="docutils literal notranslate"><span class="pre">_JAVA_OPTIONS</span></code> after the command line, so a proxy set
-there would undo <code class="xref py py-data docutils literal notranslate"><span class="pre">ROBOT_OFFLINE_JAVA_ARGS</span></code>; it is moved into
-<code class="docutils literal notranslate"><span class="pre">ROBOT_JAVA_ARGS</span></code> ahead of the offline flags, which then win.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>env</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span>) – Environment from <a class="reference internal" href="#kg_microbe.utils.robot_utils.robot_env" title="kg_microbe.utils.robot_utils.robot_env"><code class="xref py py-func docutils literal notranslate"><span class="pre">robot_env()</span></code></a> or <a class="reference internal" href="#kg_microbe.utils.robot_utils.initialize_robot" title="kg_microbe.utils.robot_utils.initialize_robot"><code class="xref py py-func docutils literal notranslate"><span class="pre">initialize_robot()</span></code></a>.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.robot_utils.pinned_robot_on_path">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.robot_utils.</span></span><span class="sig-name descname"><span class="pre">pinned_robot_on_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.robot_utils.pinned_robot_on_path" title="Link to this definition"></a></dt>
 <dd><p>Yield an environment in which <code class="docutils literal notranslate"><span class="pre">robot</span></code> on PATH is the pinned ROBOT, run with <a class="reference internal" href="#kg_microbe.utils.robot_utils.robot_java_args" title="kg_microbe.utils.robot_utils.robot_java_args"><code class="xref py py-func docutils literal notranslate"><span class="pre">robot_java_args()</span></code></a>.</p>

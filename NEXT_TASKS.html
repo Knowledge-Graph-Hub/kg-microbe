@@ -1,0 +1,445 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Next tasks &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Next tasks</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/NEXT_TASKS.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="next-tasks">
+<h1>Next tasks<a class="headerlink" href="#next-tasks" title="Link to this heading"></a></h1>
+<p>Snapshot of the work remaining on 2026-10-12, after PR <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1401">#1401</a> (the
+validation-upstream candidate) merged to <code class="docutils literal notranslate"><span class="pre">master</span></code> as <code class="docutils literal notranslate"><span class="pre">bac582f4e</span></code>. Master has
+since moved to <code class="docutils literal notranslate"><span class="pre">82c083a83</span></code> with <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1442">#1442</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1443">#1443</a> and <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1444">#1444</a>. This page covers what is
+needed to rebuild and accept the candidate.</p>
+<p>GitHub issues are the authoritative status. Update this page, or retire it, as
+items close. The root <span class="xref myst"><code class="docutils literal notranslate"><span class="pre">NEXT_TASKS.md</span></code></span> is the older curated
+backlog, last reconciled on 2026-08-16.</p>
+<section id="decisions">
+<h2>Decisions<a class="headerlink" href="#decisions" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1420">#1420</a>: pin strategy (decided 2026-10-12;
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1420#issuecomment-6129515541">decision and plan</a>).</strong></p>
+<ul>
+<li><p>Re-bind each policy to its ontology release plus a canonical digest of only
+the content it reviewed.</p></li>
+<li><p>Pin <code class="docutils literal notranslate"><span class="pre">download.yaml</span></code> to stable release URLs. Use a dated release directory
+where one resolves, and otherwise a release asset or a commit.</p></li>
+<li><p>Check every pinned input before NCBITaxon and ChEBI processing starts.</p></li>
+</ul>
+</li>
+<li><p><strong><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1427">#1427</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1428">#1428</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1429">#1429</a>: category modeling (open).</strong> Decide these before the
+rebuild candidate is frozen (section 1).</p></li>
+<li><p><strong><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1431">#1431</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1433">#1433</a> (open).</strong> Fix these before the freeze, or accept them explicitly
+as known deviations in the merged review.</p></li>
+</ul>
+</section>
+<section id="before-freezing-the-rebuild-candidate">
+<h2>1. Before freezing the rebuild candidate<a class="headerlink" href="#before-freezing-the-rebuild-candidate" title="Link to this heading"></a></h2>
+<p>Each item here can change producer output or shared code. Resolve it, or defer
+it explicitly, before the head used for the rebuild is frozen. Anything that
+changes output after the freeze means rebuilding again.</p>
+<section id="blockers">
+<h3>Blockers<a class="headerlink" href="#blockers" title="Link to this heading"></a></h3>
+<ul>
+<li><p><strong><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1420">#1420</a>: exact-byte pins cannot be reproduced.</strong> Several reviewed policies pin
+the whole-file SHA-256 of raw inputs, and a fresh environment cannot obtain
+those exact bytes:</p>
+<ul class="simple">
+<li><p>some pins are of files the transform used to rewrite in place, with no
+pristine copy kept: <code class="docutils literal notranslate"><span class="pre">ro.json</span></code>, <code class="docutils literal notranslate"><span class="pre">pato.json</span></code>, <code class="docutils literal notranslate"><span class="pre">uberon.json</span></code>, <code class="docutils literal notranslate"><span class="pre">mondo.json</span></code>,
+<code class="docutils literal notranslate"><span class="pre">foodon.json</span></code>;</p></li>
+<li><p>some files are built locally: <code class="docutils literal notranslate"><span class="pre">go.db</span></code>, <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code>, and ROBOT-converted JSON
+such as <code class="docutils literal notranslate"><span class="pre">upa.json</span></code>;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lpsn_gss.csv</span></code> is account-gated, so <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span></code> cannot fetch it;</p></li>
+<li><p>the rest come from rolling URLs, which serve whatever is current:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">envo.json</span></code>, <code class="docutils literal notranslate"><span class="pre">pato.owl</span></code> and <code class="docutils literal notranslate"><span class="pre">mesh2026.nt.gz</span></code>;</p></li>
+<li><p>Rhea’s <code class="docutils literal notranslate"><span class="pre">rhea-directions.tsv</span></code> and <code class="docutils literal notranslate"><span class="pre">rhea.rdf.gz</span></code>;</p></li>
+<li><p>MicrobeDecoder’s <code class="docutils literal notranslate"><span class="pre">database.zip</span></code>. Its upstream changed on 2026-09-08, so a
+fresh download fails today.</p></li>
+</ul>
+</li>
+</ul>
+<p>Even <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-i</span></code> cannot reproduce them.</p>
+<ul class="simple">
+<li><p><strong>Where it fails.</strong> Outside the staged worktree, each affected producer
+fails closed at its first mismatched input.</p></li>
+<li><p><strong>Skipped sources.</strong> In a multi-source batch, every source that declares the
+ontologies transform in <code class="docutils literal notranslate"><span class="pre">TRANSFORM_INPUTS</span></code>, directly or transitively, is then
+skipped.</p></li>
+<li><p><strong>When it fails.</strong> Most pins are checked only when their ontology is parsed,
+so the main checkout aborts at ENVO after hours of NCBITaxon and ChEBI work.</p></li>
+</ul>
+<p>The decided fix re-binds the policies one at a time, each with its own
+independent review; the plan lists the steps. <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1441">#1441</a> belongs to the same work:
+PO’s imports are still fetched live, so <code class="docutils literal notranslate"><span class="pre">ontologies_stubs</span></code> needs the network
+during the rebuild.</p>
+</li>
+<li><p><strong><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1421">#1421</a>: BacDive withheld supplied-taxid records drop out of deposit
+resolution.</strong> As a result, the deposits <code class="docutils literal notranslate"><span class="pre">Chol-1</span></code>, <code class="docutils literal notranslate"><span class="pre">SN-1</span></code> and <code class="docutils literal notranslate"><span class="pre">ATCC-15578</span></code> would
+equate unrelated organisms through <code class="docutils literal notranslate"><span class="pre">close_match</span></code>. The fix is in review as
+PR <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1467">#1467</a>.</p></li>
+</ul>
+</section>
+<section id="landed-after-1401">
+<h3>Landed after <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1401">#1401</a><a class="headerlink" href="#landed-after-1401" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1442">#1442</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1443">#1443</a> and <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1444">#1444</a> merged on 2026-10-12. Together they:</p>
+<ul class="simple">
+<li><p>skip optional Bakta when it has no input;</p></li>
+<li><p>run <code class="docutils literal notranslate"><span class="pre">ontologies_stubs</span></code> and the SemSQL builds on the ROBOT pinned in
+<code class="docutils literal notranslate"><span class="pre">download.yaml</span></code> (jar and wrapper), restoring the XML limits JDK 24 lowered;</p></li>
+<li><p>pin MicrO and its 20 import modules.</p></li>
+</ul>
+<p>They closed <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/325">#325</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1438">#1438</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1439">#1439</a> and <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1440">#1440</a> and most of their review findings.
+Still open:</p>
+<ul class="simple">
+<li><p>PO’s imports are fetched live (<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1441">#1441</a>).</p></li>
+<li><p>KEGG fails the default batch (<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1448">#1448</a>).</p></li>
+<li><p>Stale Bakta per-dataset outputs can be merged (<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1458">#1458</a>).</p></li>
+</ul>
+<p>KEGG and Bakta are outside the 15 standard-merge producers.</p>
+</section>
+<section id="also-before-the-freeze">
+<h3>Also before the freeze<a class="headerlink" href="#also-before-the-freeze" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p><strong><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1422">#1422</a>.</strong> The ontologies run parses MONDO and UPA, and those parses rewrite
+the tracked <code class="docutils literal notranslate"><span class="pre">mondo_xrefs.tsv</span></code> and <code class="docutils literal notranslate"><span class="pre">unipathways_xrefs.tsv</span></code> non-atomically. That
+includes the staged worktree, whose delivery files must stay unchanged. Fix
+this first, or restore and account for both tables after the run.</p></li>
+<li><p><strong>Modeling decisions.</strong> Decide <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1427">#1427</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1428">#1428</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1429">#1429</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1431">#1431</a> and <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1433">#1433</a> as listed
+above. Any decision that changes emitted output (categories, predicates or
+edges) must be implemented before the freeze.</p></li>
+<li><p><strong>The other <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1401">#1401</a> review findings</strong> (section 3). Each fix changes producer
+inputs or shared code, so it lands before the freeze or waits until after
+acceptance.</p></li>
+<li><p><strong>Source-contract review.</strong> Independently review each changed source contract
+and its negative controls, including <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1467">#1467</a> and each <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1420">#1420</a> re-binding.</p></li>
+<li><p><strong>Triage the other open candidate issues</strong> (section 4).</p></li>
+</ul>
+</section>
+</section>
+<section id="freeze-gate-and-rebuild">
+<h2>2. Freeze, gate and rebuild<a class="headerlink" href="#freeze-gate-and-rebuild" title="Link to this heading"></a></h2>
+<ol class="arabic">
+<li><p><strong>Freeze and gate.</strong> Freeze the final head and run the full gates on it:
+<code class="docutils literal notranslate"><span class="pre">pytest</span></code>, <code class="docutils literal notranslate"><span class="pre">tox</span></code>, <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">check</span> <span class="pre">--lock</span></code> and
+<code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">scripts/generate_merge_configs.py</span> <span class="pre">--check</span></code>.</p></li>
+<li><p><strong>Move the staged worktree.</strong> The staged worktree
+(<code class="docutils literal notranslate"><span class="pre">data/validation-upstream-20260930.DbltzT/worktree</span></code>, detached at <code class="docutils literal notranslate"><span class="pre">845f2add1</span></code>)
+holds the receipt-bound <code class="docutils literal notranslate"><span class="pre">data/raw</span></code> for the rebuild.</p>
+<ul class="simple">
+<li><p>Clean up the <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1413">#1413</a> leftovers first (section 5).</p></li>
+<li><p>Move the worktree to the frozen head without disturbing its staged inputs.</p></li>
+<li><p>Stage the inputs the frozen head newly pins, and record them in the staging
+receipt. These include at least MicrO’s 20 <code class="docutils literal notranslate"><span class="pre">micro_imports/</span></code> modules,
+<code class="docutils literal notranslate"><span class="pre">micro.owl</span></code> at its pinned commit if its bytes differ, and anything the
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1420">#1420</a> work re-pins.</p></li>
+<li><p>Do not run a blanket <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-i</span></code>.</p></li>
+</ul>
+</li>
+<li><p><strong>Rebuild the 15 standard-merge producers.</strong></p>
+<ul class="simple">
+<li><p><strong>Where to run.</strong> Run inside the staged worktree with its default
+<code class="docutils literal notranslate"><span class="pre">data/raw</span></code> and <code class="docutils literal notranslate"><span class="pre">data/transformed</span></code>, without <code class="docutils literal notranslate"><span class="pre">-i</span></code> or <code class="docutils literal notranslate"><span class="pre">-o</span></code>. Some producers
+resolve paths relative to the code checkout (<code class="docutils literal notranslate"><span class="pre">RAW_DATA_DIR</span></code> in
+<code class="docutils literal notranslate"><span class="pre">transform_utils/constants.py</span></code>).</p></li>
+<li><p><strong>Which sources.</strong> Name each producer explicitly. The default
+<code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">transform</span></code> batch has 18 sources, including <code class="docutils literal notranslate"><span class="pre">bakta</span></code>, <code class="docutils literal notranslate"><span class="pre">cog</span></code> and <code class="docutils literal notranslate"><span class="pre">kegg</span></code>,
+which are outside the standard merge.</p></li>
+<li><p><strong>No reuse.</strong> Rebuild in these dependency phases, and never reuse or
+relabel earlier outputs as fresh:</p></li>
+</ul>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Phase</p></th>
+<th class="head"><p>Producers</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ontologies</span></code>: the whole 14-member producer, with actual finalization, freshness and authority-epoch checks before anything else</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">ontologies_stubs</span></code>, <code class="docutils literal notranslate"><span class="pre">gtdb</span></code>, <code class="docutils literal notranslate"><span class="pre">bacdive</span></code>, <code class="docutils literal notranslate"><span class="pre">madin_etal</span></code>, <code class="docutils literal notranslate"><span class="pre">metatraits</span></code>, <code class="docutils literal notranslate"><span class="pre">rhea_mappings</span></code>, <code class="docutils literal notranslate"><span class="pre">prego</span></code> (habitat)</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">gold</span></code>, <code class="docutils literal notranslate"><span class="pre">lpsn</span></code>, <code class="docutils literal notranslate"><span class="pre">mediadive</span></code>, <code class="docutils literal notranslate"><span class="pre">bactotraits</span></code>, <code class="docutils literal notranslate"><span class="pre">metatraits_gtdb</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">lpsn_api</span></code>, <code class="docutils literal notranslate"><span class="pre">microbedecoder</span></code></p></td>
+</tr>
+</tbody>
+</table>
+<p><code class="docutils literal notranslate"><span class="pre">rhea_mappings</span></code> runs inside this rebuild, not as a separate Rhea run.</p>
+<ul class="simple">
+<li><p><strong>Inputs.</strong> It uses the pinned Rhea pair (<code class="docutils literal notranslate"><span class="pre">mappings/rhea_release.json</span></code>) and
+the prepared <code class="docutils literal notranslate"><span class="pre">chebi.db</span></code>, <code class="docutils literal notranslate"><span class="pre">go.db</span></code> and <code class="docutils literal notranslate"><span class="pre">ec.db</span></code> label databases, which depend
+on the ontology preparation.</p></li>
+<li><p><strong>Release label.</strong> Rhea label 142 is a local cache label, not verified
+tagged-release provenance.</p></li>
+<li><p><strong>No fallback.</strong> It never falls back to the latest release or a cache.</p></li>
+</ul>
+<p>The previous attempt stopped in phase 1, at ENVO’s native RO evidence (<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1400">#1400</a>).
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1401">#1401</a> added the fix.</p>
+</li>
+<li><p><strong>Merge.</strong> Create a fresh merge, with no semantic edits after serialization.
+The canonical merge still excludes MONDO. Then reconcile:</p>
+<ul class="simple">
+<li><p>source observations;</p></li>
+<li><p>category unions;</p></li>
+<li><p>archive and member identities;</p></li>
+<li><p>manifests.</p></li>
+</ul>
+</li>
+<li><p><strong>Review the exact archive.</strong> Run fresh model, external KGXVal, strict-KGX and
+path reviews on that exact candidate. Strict-Biolink exceptions stay visible.
+Project conventions stay distinct from strict conformance, and both stay
+distinct from scientific acceptance.</p></li>
+<li><p><strong>Close.</strong> On acceptance, close the held issues in section 4.</p></li>
+</ol>
+<p>These steps follow the acceptance steps in
+<a class="reference internal" href="REMAINING_93_UPSTREAM_WORK.html#acceptance-still-required"><span class="std std-ref">Remaining 93 diagnostics</span></a>,
+which also records per-package status, and in
+<a class="reference internal" href="RHEA_DIRECTIONS.html#acceptance-still-required"><span class="std std-ref">Rhea directions</span></a>. The native RO
+row in the per-package table predates <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1400">#1400</a>; <a class="reference internal" href="RO_RELATIONS.html"><span class="std std-doc">RO relations</span></a>
+gives the current 516-assertion scope.</p>
+</section>
+<section id="open-findings-from-the-1401-review">
+<h2>3. Open findings from the <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1401">#1401</a> review<a class="headerlink" href="#open-findings-from-the-1401-review" title="Link to this heading"></a></h2>
+<p>Each finding was verified against the code and filed as an issue. The 18 issues
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1402">#1402</a> to <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1419">#1419</a> were fixed in <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1401">#1401</a> and are all closed. <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1420">#1420</a> and <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1421">#1421</a> are the
+blockers above. The rest remain open.</p>
+<p>Each fix below changes producer inputs or shared code. For example, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1424">#1424</a>
+regenerates a mapping file that six producers declare as an input, and <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1426">#1426</a>
+and <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1430">#1430</a> change shared code. So each one lands before the freeze or waits until
+after acceptance. <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1422">#1422</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1427">#1427</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1428">#1428</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1429">#1429</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1431">#1431</a> and <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1433">#1433</a> also appear in
+section 1.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Kind</p></th>
+<th class="head"><p>Issue</p></th>
+<th class="head"><p>Finding</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Modeling decision</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1427">#1427</a></p></td>
+<td><p>The generic category authority types PO whole-plant descendants (pollen, embryo, seedling) as <code class="docutils literal notranslate"><span class="pre">OrganismTaxon</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Modeling decision</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1428">#1428</a></p></td>
+<td><p>Abiotic ENVO features are typed <code class="docutils literal notranslate"><span class="pre">AnatomicalEntity</span></code> through ENVO’s UBERON anatomy <code class="docutils literal notranslate"><span class="pre">is_a</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Modeling decision</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1429">#1429</a></p></td>
+<td><p>MICRO culture media are typed only as <code class="docutils literal notranslate"><span class="pre">biolink:GrowthMedium</span></code>, without the documented mixture category</p></td>
+</tr>
+<tr class="row-odd"><td><p>Correctness</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1430">#1430</a></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">foodon_category()</span></code> still defaults to <code class="docutils literal notranslate"><span class="pre">data/raw/foodon.json</span></code>, with a silent fallback</p></td>
+</tr>
+<tr class="row-even"><td><p>Correctness</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1431">#1431</a></p></td>
+<td><p>Category authority decisions are not reconciled with other producers’ substantive categories</p></td>
+</tr>
+<tr class="row-odd"><td><p>Correctness</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1432">#1432</a></p></td>
+<td><p>MicrobeDecoder emits <code class="docutils literal notranslate"><span class="pre">close_match</span></code> to GOLD organism IDs the GOLD producer did not admit</p></td>
+</tr>
+<tr class="row-even"><td><p>Correctness</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1433">#1433</a></p></td>
+<td><p>MicrobeDecoder asserts <code class="docutils literal notranslate"><span class="pre">close_match</span></code> between LPSN taxa and <code class="docutils literal notranslate"><span class="pre">ncbi.assembly</span></code> genomes</p></td>
+</tr>
+<tr class="row-odd"><td><p>Correctness</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1434">#1434</a></p></td>
+<td><p>Reviewed supplied-taxid withholding lapses when a record’s priority level changes</p></td>
+</tr>
+<tr class="row-even"><td><p>Correctness</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1437">#1437</a></p></td>
+<td><p>MetaTraits’ optional <code class="docutils literal notranslate"><span class="pre">ec2go.txt</span></code> input ignores the selected <code class="docutils literal notranslate"><span class="pre">--input-dir</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Performance</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1423">#1423</a></p></td>
+<td><p>PREGO payload binding copies and re-hashes about 14 GB per run, and again at merge</p></td>
+</tr>
+<tr class="row-even"><td><p>Performance</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1426">#1426</a></p></td>
+<td><p>GOLD reference-request rescans run for every source at finalization and merge admission</p></td>
+</tr>
+<tr class="row-odd"><td><p>Performance</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1435">#1435</a></p></td>
+<td><p>BacDive ancestry authority <code class="docutils literal notranslate"><span class="pre">finish()</span></code> re-hashes the whole shared admission, including the 14 GB <code class="docutils literal notranslate"><span class="pre">ncbitaxon.db</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>Hygiene</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1422">#1422</a></p></td>
+<td><p>Production MONDO/UPA parses rewrite tracked xref tables in the source tree non-atomically</p></td>
+</tr>
+<tr class="row-odd"><td><p>Hygiene</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1424">#1424</a></p></td>
+<td><p>The committed unified SSSOM was not regenerated under the ingredient-context policy</p></td>
+</tr>
+<tr class="row-even"><td><p>Hygiene</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1425">#1425</a></p></td>
+<td><p>PREGO dictionary synonyms reuse size/mtime-keyed caches outside the native-input contract</p></td>
+</tr>
+<tr class="row-odd"><td><p>Hygiene</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1436">#1436</a></p></td>
+<td><p>CI sets <code class="docutils literal notranslate"><span class="pre">KG_MICROBE_TESTS_NO_NETWORK</span></code>, but no code reads it and tox does not pass it through</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="issues-held-open-and-issues-to-triage">
+<h2>4. Issues held open, and issues to triage<a class="headerlink" href="#issues-held-open-and-issues-to-triage" title="Link to this heading"></a></h2>
+<section id="held-until-acceptance">
+<h3>Held until acceptance<a class="headerlink" href="#held-until-acceptance" title="Link to this heading"></a></h3>
+<p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1401">#1401</a> referenced these 42 issues as part of the candidate but deliberately left
+them open. Each one closes only when producer acceptance and the merged review
+pass:</p>
+<p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1277">#1277</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1290">#1290</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1291">#1291</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1292">#1292</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1294">#1294</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1295">#1295</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1296">#1296</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1297">#1297</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1299">#1299</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1300">#1300</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1301">#1301</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1302">#1302</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1303">#1303</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1305">#1305</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1307">#1307</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1308">#1308</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1309">#1309</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1310">#1310</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1311">#1311</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1312">#1312</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1313">#1313</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1315">#1315</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1316">#1316</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1317">#1317</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1318">#1318</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1319">#1319</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1322">#1322</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1323">#1323</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1327">#1327</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1330">#1330</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1338">#1338</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1342">#1342</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1344">#1344</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1353">#1353</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1354">#1354</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1361">#1361</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1395">#1395</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1396">#1396</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1397">#1397</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1398">#1398</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1399">#1399</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1400">#1400</a>.</p>
+</section>
+<section id="to-triage">
+<h3>To triage<a class="headerlink" href="#to-triage" title="Link to this heading"></a></h3>
+<p>125 issues created between 2026-09-30 and 2026-10-08 are still open. Besides
+the 42 above, 83 come from the same candidate work and were not referenced by
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1401">#1401</a>. For each one, decide whether it:</p>
+<ul class="simple">
+<li><p>is fixed by <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1401">#1401</a> and can close;</p></li>
+<li><p>belongs with the held set;</p></li>
+<li><p>stays open as work.</p></li>
+</ul>
+<p>Start with these, which are probably fixed in the candidate and so should be held
+like the 42 once verified:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1306">#1306</a> and <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1314">#1314</a>, whose packages
+<a class="reference internal" href="REMAINING_93_UPSTREAM_WORK.html"><span class="std std-doc">Remaining 93 diagnostics</span></a> records as cleared;</p></li>
+<li><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1320">#1320</a>, which says its implementation is in the candidate;</p></li>
+<li><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1335">#1335</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1336">#1336</a> and <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1337">#1337</a>, whose author recorded the bounded implementation
+review as clear. Master has the <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1335">#1335</a> guard and cites <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1337">#1337</a>;</p></li>
+<li><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1343">#1343</a>, whose two failing tests now exist and pass;</p></li>
+<li><p>the older <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/270">#270</a>, that page’s “Clinical BacDive tags” package.</p></li>
+</ul>
+<p>Many of the other 76 record that implementation and independent review are
+complete and that rebuild acceptance is pending, for example <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1275">#1275</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1331">#1331</a>,
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1374">#1374</a> and <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1384">#1384</a>. Most of them will probably join the held set.</p>
+<details>
+<summary>The other 76 open candidate issues</summary>
+<p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1275">#1275</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1276">#1276</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1278">#1278</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1279">#1279</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1280">#1280</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1281">#1281</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1282">#1282</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1283">#1283</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1284">#1284</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1285">#1285</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1286">#1286</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1287">#1287</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1288">#1288</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1289">#1289</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1293">#1293</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1298">#1298</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1304">#1304</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1321">#1321</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1324">#1324</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1325">#1325</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1326">#1326</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1328">#1328</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1329">#1329</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1331">#1331</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1332">#1332</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1333">#1333</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1334">#1334</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1339">#1339</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1340">#1340</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1341">#1341</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1345">#1345</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1346">#1346</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1347">#1347</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1348">#1348</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1349">#1349</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1350">#1350</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1351">#1351</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1352">#1352</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1355">#1355</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1356">#1356</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1357">#1357</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1358">#1358</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1359">#1359</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1360">#1360</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1362">#1362</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1363">#1363</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1364">#1364</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1365">#1365</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1366">#1366</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1367">#1367</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1368">#1368</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1369">#1369</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1370">#1370</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1371">#1371</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1372">#1372</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1373">#1373</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1374">#1374</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1375">#1375</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1376">#1376</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1377">#1377</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1378">#1378</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1379">#1379</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1380">#1380</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1381">#1381</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1382">#1382</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1383">#1383</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1384">#1384</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1385">#1385</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1386">#1386</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1387">#1387</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1388">#1388</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1389">#1389</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1390">#1390</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1391">#1391</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1392">#1392</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1393">#1393</a>.</p>
+</details>
+</section>
+</section>
+<section id="local-checkout-housekeeping">
+<h2>5. Local checkout housekeeping<a class="headerlink" href="#local-checkout-housekeeping" title="Link to this heading"></a></h2>
+<p>From <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/633">#633</a> (2026-08-01) until <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1401">#1401</a> fixed <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1413">#1413</a>, a unit test could run a real
+<code class="docutils literal notranslate"><span class="pre">semsql</span> <span class="pre">make</span></code> inside <code class="docutils literal notranslate"><span class="pre">data/raw</span></code> whenever <code class="docutils literal notranslate"><span class="pre">data/raw/go.owl</span></code> was present. In any
+checkout where that happened:</p>
+<ul class="simple">
+<li><p><strong>An interrupted build</strong> leaves <code class="docutils literal notranslate"><span class="pre">data/raw/go.db.tmp</span></code> and
+<code class="docutils literal notranslate"><span class="pre">data/raw/go-relation-graph.tsv</span></code>. Delete both before the next real GO build,
+because a stale <code class="docutils literal notranslate"><span class="pre">go-relation-graph.tsv</span></code> can short-circuit <code class="docutils literal notranslate"><span class="pre">semsql</span> <span class="pre">make</span></code>.</p></li>
+<li><p><strong>A completed build</strong> may have replaced <code class="docutils literal notranslate"><span class="pre">data/raw/go.db</span></code> itself and left no
+stray files. Check <code class="docutils literal notranslate"><span class="pre">go.db</span></code> against its pinned digest, <code class="docutils literal notranslate"><span class="pre">a3903d4c…</span></code>, in
+<code class="docutils literal notranslate"><span class="pre">mappings/go_imported_subject_restrictions.json</span></code> and
+<code class="docutils literal notranslate"><span class="pre">mappings/upa_reaction_projection_dispositions.json</span></code>.</p></li>
+</ul>
+<p>The staged worktree (<code class="docutils literal notranslate"><span class="pre">data/validation-upstream-20260930.DbltzT/worktree</span></code>) has
+both stray files. Its <code class="docutils literal notranslate"><span class="pre">data/raw</span></code> is receipt-bound, so remove only those two
+files, and record any later additions in the staging receipt.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

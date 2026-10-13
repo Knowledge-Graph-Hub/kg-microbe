@@ -35,15 +35,24 @@ prerequisites. When `ontologies` is selected, that includes
 - every file in the first row of the table, and the Biolink model the NCIT and
   MeSH policies pin: each must exist and match the digest every policy that pins
   it agrees on;
-- that `ncit.db` can be read inside the raw directory. The NCIT policy reads it
-  when FOODON and other sources finalize. When it is missing, or older than
-  `ncit.db.gz`, the run unpacks it, so the archive is read to its end first: a
-  truncated download fails here, not hours in;
+- `ncit.db`, which must be inside the raw directory. The NCIT policy reads it
+  when FOODON and other sources finalize; `ontologies_stubs` reads it too, and
+  runs this part of the check itself. A run unpacks `ncit.db.gz` only when
+  `ncit.db` is missing and never replaces an existing copy, so an existing
+  `ncit.db` must have a SQLite header and, with the archive beside it, the
+  archive's unpacked size. Otherwise a newer download would be read silently in
+  its place. Size cannot tell apart two releases of the same size; the run's
+  receipt records the release it read. Without `ncit.db`, the archive is read
+  to its end, so a truncated or empty download fails here, not hours in;
 - that an existing `upa.json` is the pinned conversion. A missing one is fine:
   the run derives it from `upa.owl`.
 
-A single ontology (`-s go`, `-s uberon`, ...) is checked for the files its own run
-reads, listed in `SINGLE_ONTOLOGY_INPUTS`; `-s ec` or `-s chebi` reads none of them.
+A single ontology (`-s go`, `-s uberon`, ...) is checked for the pinned files its
+own run reads, listed in `SINGLE_ONTOLOGY_INPUTS`; `-s ec` or `-s chebi` reads none
+of them. Some runs also read JSON another ontology's run converts: the native RO
+suppliers (pato, uberon, envo, mondo) read `ro.json`, and pato, mondo and foodon
+read `uberon.json` for their reviewed UBERON temporal classes. Run `ro` and `uberon`
+first; the check does not cover these files.
 
 Nothing runs until they all pass, so a stale download fails in seconds rather
 than after NCBITaxon and ChEBI. A message names the file, its digest, the
@@ -66,6 +75,9 @@ A file that does not match is usually one of these:
   `kg download` will not replace it. Move the file aside, then run
   `kg download -t ontologies`.
 - **A hand-copied or hand-edited file.** Treat it like a rewritten one.
+- **An `ncit.db` unpacked from an older archive.** `kg download -i -t stubs`
+  replaces `ncit.db.gz` but leaves `ncit.db`. Delete `ncit.db`, and the next run
+  unpacks the new archive.
 
 Never edit a policy's digest to match a file on disk: the digest records what
 was reviewed.

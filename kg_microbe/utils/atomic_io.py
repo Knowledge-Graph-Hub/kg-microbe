@@ -83,64 +83,43 @@ def atomic_write(path: Union[str, Path], mode: str = "w", mark_complete: bool = 
                 pass
 
 
-def gzip_isize(archive: Union[str, Path]) -> int:
-    """
-    Return the uncompressed size, modulo 2**32, that a gzip archive's trailer records.
-
-    :param archive: A single-member gzip file.
-    :return: The trailer's ISIZE field.
-    """
-    with Path(archive).open("rb") as stream:
-        stream.seek(-4, os.SEEK_END)
-        return int.from_bytes(stream.read(4), "little")
-
-
 def gunzip_beside(path: Union[str, Path], *, root: Union[str, Path, None] = None) -> Path:
     """
-    Make ``path`` the unpacked copy of its ``.gz`` sibling, atomically.
+    Make ``path`` exist by unpacking its ``.gz`` sibling, atomically, when only the archive is present.
 
     Some raw authorities are downloaded gzipped (``ncit.db.gz``) and read uncompressed by
-    more than one source. Each reader calls this instead of decompressing in place
-    (#1526). The archive is unpacked when ``path`` is missing, or when ``path``'s size
-    differs from the size the archive's trailer records, as it does after a newer archive
-    is downloaded over an older one (#1536).
-
-    A first unpack is published by hard link, so if another writer published first, its
-    copy is kept and a reader that already bound it never sees it replaced (#1537). A
-    stale copy is replaced.
+    more than one source. Each reader calls this instead of decompressing in place, so no
+    reader ever sees a partly written file (#1526). An existing ``path`` is never replaced,
+    even after a newer archive is downloaded; the release preflight reports an ``ncit.db``
+    that is not its archive's copy (#1536). Two readers that both find ``path`` missing
+    both unpack it, and the later copy replaces the earlier one: a reader that already
+    bound the earlier copy then refuses it as changed rather than reading a mix (#1537).
 
     :param path: The uncompressed file the caller wants.
     :param root: When given, both files must resolve inside it; a link elsewhere is refused.
-    :return: ``path``, which exists unless neither file did.
-    :raises ValueError: When either file resolves outside ``root``, or the archive cannot be unpacked.
+    :return: ``path``, which is missing only when the archive is too.
+    :raises ValueError: When either file cannot be resolved or resolves outside ``root``, or the
+        archive is damaged or unpacks to nothing. Nothing is published then.
     """
     path = Path(path)
     archive = path.with_name(path.name + ".gz")
     if root is not None:
         for candidate in (path, archive):
-            if not candidate.resolve().is_relative_to(Path(root).resolve()):
-                raise ValueError(f"{candidate} is outside the selected directory {root}")
-    if not archive.is_file():
-        return path
-    stale = path.is_file() and path.stat().st_size % 2**32 != gzip_isize(archive)
-    if path.is_file() and not stale:
-        return path
-    tmp = path.with_name(f"{path.name}.{os.getpid()}.{next(_COUNTER)}.partial")
-    try:
-        try:
-            with gzip.open(archive, "rb") as source, open(tmp, "wb") as target:
-                shutil.copyfileobj(source, target)
-        except (EOFError, gzip.BadGzipFile, zlib.error) as exc:
-            raise ValueError(f"Cannot unpack {archive}: {exc}") from exc
-        if stale:
-            os.replace(tmp, path)
-        else:
             try:
-                os.link(tmp, path)
-            except FileExistsError:
-                pass  # Another writer published first; keep its copy.
-    finally:
-        tmp.unlink(missing_ok=True)
+                inside = candidate.resolve().is_relative_to(Path(root).resolve())
+            except (OSError, RuntimeError) as exc:  # RuntimeError: a symlink loop
+                raise ValueError(f"Cannot resolve {candidate}: {exc}") from exc
+            if not inside:
+                raise ValueError(f"{candidate} is outside the selected directory {root}")
+    if path.is_file() or not archive.is_file():
+        return path
+    try:
+        with gzip.open(archive, "rb") as source, atomic_write(path, "wb") as target:
+            shutil.copyfileobj(source, target)
+            if not target.tell():
+                raise ValueError(f"{archive} unpacks to nothing")
+    except (EOFError, gzip.BadGzipFile, zlib.error) as exc:
+        raise ValueError(f"Cannot unpack {archive}: {exc}") from exc
     return path
 
 

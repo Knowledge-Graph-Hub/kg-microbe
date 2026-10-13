@@ -304,18 +304,22 @@ class OntologiesStubsTransform(Transform):
     @classmethod
     def missing_prerequisites(cls, input_dir: Optional[Path] = None) -> List[str]:
         """
-        Report a missing pinned ROBOT, java, pinned import module or pinned release before the batch starts.
+        Report a missing pinned ROBOT, java, pinned import module or pinned release, or an unusable ncit.db.
 
         ROBOT builds the PO and MICRO hierarchies, and their imports must be
         on disk because they are no longer fetched; any of these missing used
-        to fail only after the hours-long ontologies source.
+        to fail only after the hours-long ontologies source. ``ncit.db`` gets the
+        ontologies source's check: this source reads an existing copy as it is, so
+        one left beside a newer ``ncit.db.gz`` would be read silently (#1536).
         """
+        from kg_microbe.utils.release_preflight import ncit_authority_problems
+
         raw_dir = Path(input_dir) if input_dir else cls.DEFAULT_INPUT_DIR
         problems = missing_robot(raw_dir)
         for prefix, cfg in STUB_ONTOLOGY_SOURCES.items():
             if "imports_dir" in cfg:
                 problems += _pinned_import_problems(prefix, cfg, raw_dir)
-        return problems
+        return problems + ncit_authority_problems(raw_dir)
 
     def __init__(
         self,
@@ -938,27 +942,27 @@ class OntologiesStubsTransform(Transform):
         Open an OAK SemSQL adapter for ``prefix``; return None if the DB is missing.
 
         OBO Foundry distributes SemSQL DBs as ``.db.gz`` and ``download.yaml``
-        stores the gzipped form, so when a sibling ``.db.gz`` is present the
-        ``.db`` is unpacked from it if missing, or again if a newer archive was
-        downloaded over an older one, and the result is used.
+        stores the gzipped form, so if the unzipped ``.db`` is missing but a
+        sibling ``.db.gz`` is present, decompress it once (idempotent) and
+        use the result.
         """
         if prefix == "NCIT" and not db_path.resolve().is_relative_to(self.input_base_dir.resolve()):
             self._consumed_input_error = "NCIT category authority is outside the selected input directory"
             raise ValueError(self._consumed_input_error)
-        gz_path = db_path.with_suffix(db_path.suffix + ".gz")
-        if gz_path.is_file():
-            if prefix == "NCIT" and not gz_path.resolve().is_relative_to(self.input_base_dir.resolve()):
-                self._consumed_input_error = "NCIT compressed authority is outside the selected input directory"
-                raise ValueError(self._consumed_input_error)
-            if not db_path.is_file():
-                print(f"  [{prefix}] decompressing {gz_path.name} → {db_path.name}")
-            # Atomic, shared with the NCIT category authority (which can unpack ncit.db first,
-            # while the ontologies source finalizes), and repeated for a newer archive (#1526, #1536).
-            gunzip_beside(db_path)
         if not db_path.is_file():
-            if prefix == "NCIT":
-                self._consumed_input_error = f"Selected NCIT native authority is missing: {db_path}"
-            return None
+            gz_path = db_path.with_suffix(db_path.suffix + ".gz")
+            if gz_path.is_file():
+                if prefix == "NCIT" and not gz_path.resolve().is_relative_to(self.input_base_dir.resolve()):
+                    self._consumed_input_error = "NCIT compressed authority is outside the selected input directory"
+                    raise ValueError(self._consumed_input_error)
+                print(f"  [{prefix}] decompressing {gz_path.name} → {db_path.name}")
+                # Atomic and shared with the NCIT category authority, which can unpack
+                # ncit.db first while the ontologies source finalizes (#1526).
+                gunzip_beside(db_path)
+            else:
+                if prefix == "NCIT":
+                    self._consumed_input_error = f"Selected NCIT native authority is missing: {db_path}"
+                return None
         if prefix == "NCIT":
             self._bind_ncit_category_authority(db_path)
         try:

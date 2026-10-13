@@ -305,12 +305,14 @@ Their policies bind only the records they reviewed (statements, GSS rows or
 selected records): any export or release with those records unchanged is
 accepted, and each run's receipt records the one it read. Before the
 `ontologies` source starts, `kg transform` checks the release files the ontology
-policies pin and the Biolink model, that `ncit.db` can be read or soundly unpacked,
-and that an existing `upa.json` is the pinned conversion, so a stale download
-fails in seconds; a single ontology (`-s go`) is checked for the files its own run
-reads, and `python -m kg_microbe.utils.release_preflight data/raw` runs the check
-alone. Other sources (Rhea, MicrobeDecoder, MediaDive and the rest) meet their pins
-when they run. See #1420 and the [reviewed release inputs
+policies pin and the Biolink model; that an existing `ncit.db` has a SQLite header
+and the unpacked size of any `ncit.db.gz` beside it (no run replaces it), or else
+that the archive unpacks to one; and that an existing `upa.json` is the pinned
+conversion. A stale download then fails in seconds. A single ontology (`-s go`) is
+checked for the pinned files its own run reads, `ontologies_stubs` for `ncit.db`,
+and `python -m kg_microbe.utils.release_preflight data/raw` runs the check alone.
+Other sources (Rhea, MicrobeDecoder, MediaDive and the rest) meet their pins when
+they run. See #1420 and the [reviewed release inputs
 runbook](docs/runbooks/reviewed-release-inputs.md).
 
 ## Operational references

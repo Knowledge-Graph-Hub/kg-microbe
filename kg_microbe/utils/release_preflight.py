@@ -8,26 +8,28 @@ checks its pins only when its source finalizes, so a stale or rewritten download
 used to fail after hours of NCBITaxon and ChEBI work. This module collects those
 pins from the policies themselves and compares them with the raw directory before
 the ontologies source, or a single ontology, runs. It also checks two things a run
-would otherwise discover late: that ``ncit.db`` (or a sound archive to unpack it
-from) is inside the raw directory, and that an existing ``upa.json`` is the pinned
-conversion. It reads the policies' pins and never replaces them. Other sources'
-pins (Rhea, MicrobeDecoder) are checked when those sources run.
+would otherwise discover late: that the raw directory holds ``ncit.db`` as a SQLite
+database that is the copy of any ``ncit.db.gz`` beside it, or an archive that unpacks
+to one; and that an existing ``upa.json`` is the pinned conversion. It reads the
+policies' pins and never replaces them. ``ontologies_stubs``, which also reads
+``ncit.db``, runs the NCIT check too. Other sources' pins (Rhea, MicrobeDecoder) are
+checked when those sources run.
 
 Run ``python -m kg_microbe.utils.release_preflight [RAW_DIR]`` to check without
 starting a run.
 """
 
+import functools
 import gzip
 import hashlib
 import json
+import os
 import re
 import zlib
 from pathlib import Path
 from typing import Callable, Dict, Iterable, List, Optional, Tuple
 
 import yaml
-
-from kg_microbe.utils.atomic_io import gzip_isize
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 _FILE = re.compile(r"[a-z_-]+\.(json|owl|yaml)")
@@ -118,22 +120,26 @@ def reviewed_release_pins(repo_root: Path = REPO_ROOT, *, policies=None) -> Dict
     return pins
 
 
-# The files each single-ontology run (`kg transform -s <name>`) reads, so it is checked
-# for those only (#1534); the whole ontologies source checks every file. "ncit.db" stands
-# for the NCIT check: FOODON declares NCIT category classes. A category policy reads its
-# file only when a source declares one of its reviewed classes, and no single ontology
-# declares the PO class, so po.owl is checked only for the whole ontologies source.
+# The pinned files each single-ontology run (`kg transform -s <name>`) reads, so it is
+# checked for those only (#1534); the whole ontologies source checks every file. "ncit.db"
+# stands for the NCIT check. Besides its own release, a run reads:
+# - ro.owl, for native RO, in each supplier's run (pato, uberon, envo, mondo);
+# - uberon.owl, where it declares a reviewed UBERON temporal class (pato, mondo, foodon);
+# - po.owl, where it declares the reviewed PO class (envo, foodon);
+# - go.owl, behind go.db, for GO-imported subjects (pato) and UPA's routes (upa);
+# - the Biolink model and ncit.db, for FOODON's NCIT category classes (#1543).
+# Native RO suppliers also read ro.json, and readers of UBERON temporal classes
+# uberon.json, which the ro and uberon runs convert; this check does not cover them.
 SINGLE_ONTOLOGY_INPUTS: Dict[str, frozenset] = {
-    "envo": frozenset({"envo.json"}),
-    "foodon": frozenset({"foodon.owl", "biolink-model.yaml", "ncit.db"}),
+    "envo": frozenset({"envo.json", "ro.owl", "po.owl"}),
+    "foodon": frozenset({"foodon.owl", "uberon.owl", "po.owl", "biolink-model.yaml", "ncit.db"}),
     "go": frozenset({"go.owl"}),
-    "mondo": frozenset({"mondo.json"}),
-    "pato": frozenset({"pato.owl", "go.owl"}),
+    "mondo": frozenset({"mondo.json", "ro.owl", "uberon.owl"}),
+    "pato": frozenset({"pato.owl", "go.owl", "ro.owl", "uberon.owl"}),
     "ro": frozenset({"ro.owl"}),
-    "uberon": frozenset({"uberon.owl"}),
+    "uberon": frozenset({"uberon.owl", "ro.owl"}),
     "upa": frozenset({"upa.owl", "go.owl", "upa.json"}),
 }
-WHOLE_RUN_ONLY = frozenset({"po.owl"})
 
 
 def _download_tags(repo_root: Path) -> Dict[str, str]:
@@ -166,7 +172,7 @@ def mismatched_release_files(
 
     :param raw_dir: The raw input directory a run will read.
     :param repo_root: Repository root holding ``mappings/`` and ``download.yaml``.
-    :param pins: Pins to check instead of the reviewed policies' (tests only).
+    :param pins: The pins to check; every reviewed policy's by default.
     :return: One message per problem; empty when every pinned file matches.
     """
     pins = reviewed_release_pins(repo_root) if pins is None else pins
@@ -221,45 +227,133 @@ def stale_derived_files(raw_dir: Path, *, repo_root: Path = REPO_ROOT, names=Non
     return problems
 
 
+_SQLITE_HEADER = b"SQLite format 3\x00"
+
+
+def _gzip_isize(archive: Path) -> int:
+    """
+    Return the uncompressed size, modulo 2**32, that a gzip archive's trailer records.
+
+    It is the whole size only for a single-member archive, so a mismatch is confirmed
+    by unpacking before it is reported.
+
+    :raises ValueError: When the file cannot be read, or is too short or does not start like gzip.
+    """
+    try:
+        with archive.open("rb") as stream:
+            magic = stream.read(2)
+            if magic != b"\x1f\x8b" or stream.seek(0, os.SEEK_END) < 18:
+                raise ValueError(f"{archive} is not a gzip archive")
+            stream.seek(-4, os.SEEK_END)
+            return int.from_bytes(stream.read(4), "little")
+    except OSError as exc:
+        raise ValueError(f"{archive} cannot be read ({exc})") from exc
+
+
+@functools.lru_cache(maxsize=4)
+def _read_archive(archive: str, size: int, mtime_ns: int) -> Tuple[int, bytes]:
+    """
+    Read a gzip archive to its end; return its unpacked size and first 16 bytes.
+
+    Keyed by size and modification time too, so the ontologies and ontologies_stubs
+    checks of one batch read a 550 MB archive once.
+
+    :raises ValueError: When the archive is damaged, truncated or unreadable.
+    """
+    total, head = 0, b""
+    try:
+        with gzip.open(archive, "rb") as stream:
+            while block := stream.read(16 * 1024 * 1024):
+                head = head or block[: len(_SQLITE_HEADER)]
+                total += len(block)
+    except (EOFError, OSError, zlib.error) as exc:
+        raise ValueError(f"{archive} cannot be unpacked ({exc})") from exc
+    return total, head
+
+
+def _unpack(archive: Path) -> Tuple[int, bytes]:
+    """Read ``archive`` through the cache, keyed by its current size and modification time."""
+    try:
+        status = archive.stat()
+    except OSError as exc:
+        raise ValueError(f"{archive} cannot be read ({exc})") from exc
+    return _read_archive(str(archive), status.st_size, status.st_mtime_ns)
+
+
 def ncit_authority_problems(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> List[str]:
     """
-    Report an ``ncit.db`` the NCIT category policy could not read from ``raw_dir``.
+    Report an ``ncit.db`` a run could not read from ``raw_dir``, or should not.
 
-    The policy reads ``ncit.db`` whenever a source declares one of its classes, and
-    FOODON does, so the ontologies source needs it when it finalizes (#1526). The run
-    unpacks it from ``ncit.db.gz`` when it is missing or older than the archive
-    (#1536), so then the archive is read to its end here: a truncated download would
-    otherwise fail only hours in (#1535). Both files must resolve inside ``raw_dir``.
+    The NCIT category policy reads ``ncit.db`` whenever a source declares one of its
+    classes, and FOODON does, so the ontologies source needs it when it finalizes
+    (#1526); ``ontologies_stubs`` reads it too. A run unpacks ``ncit.db.gz`` only when
+    ``ncit.db`` is missing and never replaces an existing copy. So an existing
+    ``ncit.db`` must start as a SQLite database and, with the archive beside it, be as
+    large as the archive unpacked: otherwise a newer download would be read silently in
+    its place (#1536). Size cannot tell two releases of one size apart; the run's
+    receipt records the release it read. Without ``ncit.db``, the archive is read to its
+    end, so a truncated or empty download fails here rather than hours in (#1535,
+    #1544). Both files must resolve inside ``raw_dir``.
 
     :param raw_dir: The raw input directory a run will read.
     :param repo_root: Repository root holding ``download.yaml``.
-    :return: A message when ``ncit.db`` would be unavailable, otherwise nothing.
+    :return: A message when ``ncit.db`` would be unavailable or stale, otherwise nothing.
     """
     raw_dir = Path(raw_dir)
     database, archive = raw_dir / "ncit.db", raw_dir / "ncit.db.gz"
     tag = _download_tags(repo_root).get("ncit.db.gz")
     fetch = f"kg download -t {tag}" if tag else "the download.yaml entry for ncit.db.gz"
     for candidate in (database, archive):
-        if (candidate.exists() or candidate.is_symlink()) and not candidate.resolve().is_relative_to(raw_dir.resolve()):
-            return [
-                f"{candidate} resolves outside {raw_dir}; the NCIT category policy reads only files "
-                "inside the selected raw directory. Put the file itself there."
-            ]
-    if archive.is_file():
-        if database.is_file() and database.stat().st_size % 2**32 == gzip_isize(archive):
-            return []
         try:
-            with gzip.open(archive, "rb") as stream:
-                while stream.read(16 * 1024 * 1024):
-                    pass
-        except (EOFError, gzip.BadGzipFile, zlib.error, OSError) as exc:
-            return [f"{archive} cannot be unpacked ({exc}). Fetch it again with `{fetch} -i`."]
-        return []
+            present = candidate.exists() or candidate.is_symlink()
+            if present and not candidate.resolve().is_relative_to(raw_dir.resolve()):
+                return [
+                    f"{candidate} resolves outside {raw_dir}; the NCIT category policy reads only files "
+                    "inside the selected raw directory. Put the file itself there."
+                ]
+        except (OSError, RuntimeError) as exc:  # RuntimeError: a symlink loop
+            return [f"{candidate} cannot be resolved ({exc}). Put the file itself in {raw_dir}."]
     if database.is_file():
+        try:
+            with database.open("rb") as stream:
+                header = stream.read(len(_SQLITE_HEADER))
+        except OSError as exc:
+            return [f"{database} cannot be read ({exc})."]
+        if header != _SQLITE_HEADER:
+            return [f"{database} is not a SQLite database. Delete it; the run then unpacks ncit.db.gz (`{fetch}`)."]
+        if not archive.is_file():
+            return []
+        size = database.stat().st_size
+        try:
+            if _gzip_isize(archive) == size % 2**32:
+                return []
+            unpacked, _ = _unpack(archive)
+        except ValueError as exc:
+            return [
+                f"{exc}. The run would read the existing ncit.db instead; fetch the archive again with "
+                f"`{fetch} -i`, or move it aside to keep the database."
+            ]
+        if unpacked == size:
+            return []
+        return [
+            f"{database} ({size:,} bytes) is not the copy of the ncit.db.gz beside it, which unpacks to "
+            f"{unpacked:,} bytes. The run reads an existing ncit.db and never replaces it: delete it to use "
+            "the archive, or move the archive aside to keep the database."
+        ]
+    if archive.is_file():
+        try:
+            unpacked, head = _unpack(archive)
+        except ValueError as exc:
+            return [f"{exc}. Fetch it again with `{fetch} -i`."]
+        if head != _SQLITE_HEADER:
+            return [
+                f"{archive} does not unpack to a SQLite database ({unpacked:,} bytes unpacked). "
+                f"Fetch it again with `{fetch} -i`."
+            ]
         return []
     return [
-        f"Neither ncit.db nor ncit.db.gz is in {raw_dir}; the NCIT category policy reads ncit.db "
-        f"when FOODON and other sources finalize. Fetch it with `{fetch}`."
+        f"Neither ncit.db nor ncit.db.gz is in {raw_dir}; ontologies_stubs reads ncit.db, and so does the "
+        f"NCIT category policy when FOODON and other sources finalize. Fetch it with `{fetch}`."
     ]
 
 

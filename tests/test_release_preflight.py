@@ -11,6 +11,9 @@ from kg_microbe.transform_utils.ontologies.ontologies_transform import Ontologie
 from kg_microbe.utils import release_preflight
 from tests.test_reviewed_release_urls import REVIEWED_RELEASE_URLS
 
+# The start of a SQLite database, as the NCIT check reads it.
+_SQLITE = b"SQLite format 3\x00 fixture pages"
+
 
 def _pins(directory, files):
     """Write each payload and pin its bytes, as a reviewed policy would."""
@@ -91,7 +94,7 @@ def test_ontologies_preflight_fails_before_any_source_runs(tmp_path, monkeypatch
     """The ontologies source reports a stale release through the batch's prerequisite check."""
     pins = _pins(tmp_path, {"ro.owl": b"<ro/>"})
     (tmp_path / "ro.owl").write_bytes(b"<ro>rewritten in place</ro>")
-    (tmp_path / "ncit.db.gz").write_bytes(gzip.compress(b"sqlite"))
+    (tmp_path / "ncit.db.gz").write_bytes(gzip.compress(_SQLITE))
     monkeypatch.setattr(release_preflight, "reviewed_release_pins", _only(pins))
     (problem,) = OntologiesTransform.missing_prerequisites(tmp_path)
     assert problem.startswith("ro.owl in ") and "is not the reviewed release" in problem
@@ -119,14 +122,47 @@ def test_a_single_ontology_is_checked_for_the_files_its_run_reads(tmp_path, monk
     assert any("mondo.json in " in problem for problem in problems)
 
 
-def test_every_checked_file_belongs_to_a_single_ontology_or_the_whole_run():
-    """A new pin must be mapped to the single ontologies that read it, or the whole run (#1534)."""
+def test_a_source_named_twice_is_checked_once(tmp_path, monkeypatch):
+    """`-s ontologies -s ontologies` runs the check once and reports each problem once (#1548)."""
+    calls = []
+
+    def problems(raw_dir, *, repo_root=None, ontology=None):
+        """Record each check and report one problem."""
+        calls.append(ontology)
+        return ["a problem"]
+
+    monkeypatch.setattr(release_preflight, "release_input_problems", problems)
+    assert dispatcher._missing_prerequisites(["ontologies", "ontologies"], tmp_path) == ["ontologies: a problem"]
+    assert dispatcher._missing_prerequisites(["go", "go"], tmp_path) == ["go: a problem"]
+    assert calls == [None, "go"]
+
+
+def test_ncit_db_checked_by_two_sources_is_reported_once(tmp_path, monkeypatch):
+    """The ontologies and ontologies_stubs checks both read ncit.db; a missing one is one problem (#1536)."""
+    from kg_microbe.transform_utils.ontologies_stubs import ontologies_stubs_transform as stubs
+
+    monkeypatch.setattr(release_preflight, "reviewed_release_pins", _only({}))
+    monkeypatch.setattr(stubs, "missing_robot", lambda raw_dir: [])
+    monkeypatch.setattr(stubs, "_pinned_import_problems", lambda prefix, cfg, raw_dir: [])
+    (problem,) = dispatcher._missing_prerequisites(["ontologies_stubs", "ontologies"], tmp_path)
+    assert problem.startswith("ontologies_stubs: Neither ncit.db nor ncit.db.gz")
+
+
+def test_every_checked_file_is_mapped_to_a_single_ontology_that_reads_it():
+    """A new pin must be mapped to the single ontologies that read it (#1534, #1543)."""
     pinned = set(release_preflight.reviewed_release_pins())
     derived = set(release_preflight.reviewed_release_pins(policies=release_preflight.DERIVED_PINS))
     mapped = set().union(*release_preflight.SINGLE_ONTOLOGY_INPUTS.values())
-    assert pinned | derived <= mapped | release_preflight.WHOLE_RUN_ONLY
+    assert pinned | derived <= mapped
     assert mapped - {"ncit.db"} <= pinned | derived
     assert set(release_preflight.SINGLE_ONTOLOGY_INPUTS) <= set(dispatcher._ontology_map())
+
+
+def test_every_native_ro_supplier_is_checked_for_ro_owl():
+    """Native RO checks ro.owl in each supplier's run, so each is checked for it up front (#1543)."""
+    from kg_microbe.utils.native_ro_retention import _SUPPLIERS
+
+    assert sorted(name for name in _SUPPLIERS if "ro.owl" not in release_preflight.SINGLE_ONTOLOGY_INPUTS[name]) == []
 
 
 @pytest.mark.parametrize("state", ["absent", "matching", "stale"])
@@ -149,36 +185,80 @@ def test_an_existing_derived_file_must_be_the_pinned_conversion(tmp_path, monkey
         assert problems == []
 
 
+_ARCHIVE = gzip.compress(_SQLITE)
+_TRUNCATED = _ARCHIVE[:-12] + _ARCHIVE[-4:]
+_OLDER = _SQLITE + b" an older release"
+# The files each layout puts in the raw directory; links are made in the test.
+_NCIT_LAYOUTS = {
+    "neither": {},
+    "database": {"ncit.db": _SQLITE},
+    "archive": {"ncit.db.gz": _ARCHIVE},
+    "matching_pair": {"ncit.db": _SQLITE, "ncit.db.gz": _ARCHIVE},
+    "multi_member_pair": {"ncit.db": _SQLITE, "ncit.db.gz": gzip.compress(_SQLITE[:9]) + gzip.compress(_SQLITE[9:])},
+    "dangling_database_link": {"ncit.db.gz": _ARCHIVE},
+    "stale_database": {"ncit.db": _OLDER, "ncit.db.gz": _ARCHIVE},
+    "database_beside_truncated_archive": {"ncit.db": _OLDER, "ncit.db.gz": _TRUNCATED},
+    "database_beside_short_archive": {"ncit.db": _OLDER, "ncit.db.gz": b"\x1f\x8b"},
+    "not_sqlite_database": {"ncit.db": b"not a database"},
+    "truncated_archive": {"ncit.db.gz": _TRUNCATED},
+    "empty_archive": {"ncit.db.gz": gzip.compress(b"")},
+    "zero_byte_archive": {"ncit.db.gz": b""},
+    "not_sqlite_archive": {"ncit.db.gz": gzip.compress(b"plain text")},
+    "outside": {},
+    "loop": {},
+}
+
+
 @pytest.mark.parametrize(
-    "layout", ["neither", "database", "archive", "stale_database", "truncated", "stale_truncated", "outside"]
+    "layout, expected",
+    [
+        ("neither", "`kg download -t stubs`"),
+        ("database", None),
+        ("archive", None),
+        ("matching_pair", None),
+        # The trailer records only the last member's size, so a mismatch is confirmed by unpacking.
+        ("multi_member_pair", None),
+        # The run replaces the link with the unpacked file.
+        ("dangling_database_link", None),
+        ("stale_database", "is not the copy of the ncit.db.gz beside it"),
+        ("database_beside_truncated_archive", "cannot be unpacked"),
+        ("database_beside_short_archive", "is not a gzip archive"),
+        ("not_sqlite_database", "is not a SQLite database"),
+        ("truncated_archive", "cannot be unpacked"),
+        ("empty_archive", "does not unpack to a SQLite database (0 bytes unpacked)"),
+        ("zero_byte_archive", "does not unpack to a SQLite database (0 bytes unpacked)"),
+        ("not_sqlite_archive", "does not unpack to a SQLite database (10 bytes unpacked)"),
+        ("outside", "resolves outside"),
+        ("loop", "cannot be resolved"),
+    ],
 )
-def test_ncit_must_be_readable_or_soundly_unpackable_inside_the_raw_directory(tmp_path, layout):
-    """The run reads ncit.db, unpacking a missing or stale one; the preflight checks it can (#1526, #1535)."""
+def test_ncit_db_must_be_usable_inside_the_raw_directory(tmp_path, layout, expected):
+    """
+    The run reads an existing ncit.db as it is, and unpacks a missing one.
+
+    So an existing copy must be a SQLite database and its archive's copy, and an
+    archive the run would unpack must unpack to one (#1526, #1535, #1536, #1544, #1550).
+    """
     raw = tmp_path / "raw"
     raw.mkdir()
-    payload = b"sqlite database bytes"
-    archive = gzip.compress(payload)
-    if layout in {"database", "stale_database", "stale_truncated"}:
-        (raw / "ncit.db").write_bytes(payload if layout == "database" else payload + b" older")
-    if layout in {"archive", "stale_database", "database"}:
-        (raw / "ncit.db.gz").write_bytes(archive)
-    if layout in {"truncated", "stale_truncated"}:
-        (raw / "ncit.db.gz").write_bytes(archive[:-12] + archive[-4:])
-    if layout == "outside":
-        (tmp_path / "ncit.db.gz").write_bytes(archive)
+    for name, payload in _NCIT_LAYOUTS[layout].items():
+        (raw / name).write_bytes(payload)
+    if layout == "dangling_database_link":
+        (raw / "ncit.db").symlink_to(raw / "gone.db")
+    elif layout == "outside":
+        (tmp_path / "ncit.db.gz").write_bytes(_ARCHIVE)
         (raw / "ncit.db.gz").symlink_to(tmp_path / "ncit.db.gz")
+    elif layout == "loop":
+        (raw / "ncit.db.gz").symlink_to(raw / "loop.gz")
+        (raw / "loop.gz").symlink_to(raw / "ncit.db.gz")
     problems = release_preflight.ncit_authority_problems(raw)
-    if layout in {"database", "archive", "stale_database"}:
+    if expected is None:
         assert problems == []
     else:
         (problem,) = problems
-        expected = {
-            "neither": "`kg download -t stubs`",
-            "truncated": "cannot be unpacked",
-            "stale_truncated": "cannot be unpacked",
-            "outside": "resolves outside",
-        }[layout]
         assert expected in problem
+    if layout == "database_beside_truncated_archive":
+        assert "move it aside to keep the database" in problem
 
 
 def test_check_only_entry_point_reports_without_running(tmp_path, monkeypatch, capsys):
@@ -187,6 +267,6 @@ def test_check_only_entry_point_reports_without_running(tmp_path, monkeypatch, c
     monkeypatch.setattr(release_preflight, "reviewed_release_pins", _only(pins))
     assert release_preflight.main([str(tmp_path)]) == 1
     assert "ncit.db" in capsys.readouterr().out
-    (tmp_path / "ncit.db.gz").write_bytes(gzip.compress(b"sqlite"))
+    (tmp_path / "ncit.db.gz").write_bytes(gzip.compress(_SQLITE))
     assert release_preflight.main([str(tmp_path)]) == 0
     assert "is ready" in capsys.readouterr().out

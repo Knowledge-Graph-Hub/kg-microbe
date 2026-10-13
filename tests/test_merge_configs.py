@@ -102,7 +102,7 @@ def test_every_input_dir_is_producible(config: Path):
     )
 
 
-def test_the_default_merge_reads_what_the_default_transform_writes():
+def test_the_default_merge_reads_what_the_default_transform_writes(tmp_path):
     """
     The two defaults have to agree about PREGO.
 
@@ -113,7 +113,7 @@ def test_the_default_merge_reads_what_the_default_transform_writes():
     """
     from kg_microbe.transform_utils.prego.prego import PregoTransform
 
-    default_dir = PregoTransform(input_dir=REPO_ROOT / "data" / "raw", output_dir=REPO_ROOT / "data" / "transformed")
+    default_dir = PregoTransform(input_dir=REPO_ROOT / "data" / "raw", output_dir=tmp_path)
     merge_dirs = _active_dirs(REPO_ROOT / "merge.yaml")
     prego_dirs = {d for d in merge_dirs if d.startswith("prego")}
 

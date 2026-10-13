@@ -1,5 +1,6 @@
 """Test the parent Transform class."""
 
+import tempfile
 from pathlib import Path
 from unittest import TestCase
 
@@ -13,8 +14,10 @@ class TestTransform(TestCase):
     """Tests for all transform child classes."""
 
     def setUp(self) -> None:
-        """Set up the transform tests."""
-        self.transform_instance = TransformChildClass()
+        """Set up the transform tests, with an output directory outside the checkout (#1592)."""
+        output = tempfile.TemporaryDirectory()
+        self.addCleanup(output.cleanup)
+        self.transform_instance = TransformChildClass(output_dir=Path(output.name))
 
     def test_reality(self):
         """Test the nature of reality."""
@@ -105,6 +108,10 @@ class TestTransform(TestCase):
 class TransformChildClass(Transform):
     """An example Transform class."""
 
-    def __init__(self):
-        """Initialize a Transform child class."""
-        super().__init__(source_name="test_transform")
+    def __init__(self, output_dir):
+        """
+        Initialize a Transform child class.
+
+        :param output_dir: Location of output directory.
+        """
+        super().__init__(source_name="test_transform", output_dir=output_dir)

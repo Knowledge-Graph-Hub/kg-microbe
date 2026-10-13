@@ -307,6 +307,23 @@ def test_module_admission_compares_the_database_this_run_read(tmp_path, monkeypa
 
 
 @pytest.mark.usefixtures("local_source_schema")
+def test_a_bound_file_that_is_not_sqlite_is_a_clean_refusal(tmp_path, monkeypatch):
+    """A SQLite error during recorded admission is refused like any other contract failure (#1540)."""
+    _, transform, _, _ = prepare_source(tmp_path, monkeypatch)
+    report = transform.finalize(fresh_run=True)
+    report_path = transform.output_dir / "source_finalization.json"
+
+    def broken(*args, **kwargs):
+        """Stand in for a bound file SQLite cannot read."""
+        raise sqlite3.DatabaseError("file is not a database")
+
+    monkeypatch.setattr(finite.sqlite3, "connect", broken)
+    with pytest.raises(SourceFinalizationRequired, match="Invalid finite NCIT") as info:
+        finite.verify_recorded_inputs(report, report_path)
+    assert isinstance(info.value.__cause__, sqlite3.DatabaseError)
+
+
+@pytest.mark.usefixtures("local_source_schema")
 def test_recorded_release_must_be_the_bound_databases(tmp_path, monkeypatch):
     """The receipt's release is provenance, but a rewritten value is refused at admission (#1531)."""
     _, transform, _, _ = prepare_source(tmp_path, monkeypatch)

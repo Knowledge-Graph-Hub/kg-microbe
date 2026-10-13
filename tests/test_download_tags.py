@@ -7,6 +7,8 @@ from unittest.mock import patch
 import pytest
 import yaml
 
+from tests.download_destinations import download_destination
+
 # kg_microbe/__init__.py does `from .download import download`, so the name
 # kg_microbe.download resolves to the *function*, not the module. Fetch the
 # module from sys.modules so patch.object targets the right object.
@@ -103,6 +105,18 @@ class TestYamlTagging:
             if (e.get("local_name") or "") != (e.get("local_name") or "").strip()
         ]
         assert offenders == []
+
+    def test_no_two_entries_save_to_the_same_local_name(self):
+        """
+        The downloader fetches the first such entry and skips the rest as present.
+
+        The manifest then records the last entry's URL, so a pinned entry after
+        an unpinned duplicate would claim a file that came from elsewhere.
+        Compared as the files written, not as spelled (``./a`` is ``a``).
+        """
+        names = [name for name in map(download_destination, _entries()) if name]
+        duplicates = sorted({name for name in names if names.count(name) > 1})
+        assert duplicates == [], f"download.yaml saves several entries to: {duplicates}"
 
     def test_header_documents_exactly_the_known_tags(self):
         """download.yaml's header and KNOWN_TAGS must not drift apart."""

@@ -69,6 +69,32 @@ def _child(root):
     real = raw / "native-original.db"
     real.write_bytes((root / "fixture/native.json").read_bytes())
     db.symlink_to(real)
+    sys.path.append(str(ROOT))
+    from kg_microbe.transform_utils.ontologies.ontologies_transform import OntologiesTransform
+    from kg_microbe.transform_utils.transform import Transform
+    from tests.native_ro_fixtures import prepare_empty_native_ro_contract
+
+    def finalized_ontologies(base):
+        """
+        Finalize the ontologies output a stubs output beside it declares (#1511).
+
+        Admission checks that upstream, so build one as the merge fixtures do,
+        with this copy's code.
+        """
+        upstream = OntologiesTransform.__new__(OntologiesTransform)
+        Transform.__init__(upstream, "ontologies", raw, base)
+        for name in ("nodes.tsv", "edges.tsv", "ontology_metadata_exclusions.tsv"):
+            shutil.copyfile(root / "fixture" / name, upstream.output_dir / name)
+        prepare_empty_native_ro_contract(upstream)
+        for role, _ in OntologiesTransform.OPTIONAL_RAW_CONSUMED_INPUTS:
+            with upstream.consume_optional_input(role) as reader:
+                if reader is not None:
+                    reader.read()
+        upstream.record_producer_audit("ontology_metadata_exclusions.tsv")
+        upstream.finalize(fresh_run=True)
+        dispatcher._record_fingerprint(upstream, "ontologies")
+
+    finalized_ontologies(root / "data/transformed")
     transform = module.OntologiesStubsTransform(input_dir=raw, output_dir=root / "data/transformed")
     transform.run()
     transform.finalize(fresh_run=True)
@@ -240,6 +266,7 @@ def _child(root):
     # A null contract is a separately verified, retained proof over the
     # canonical NCIT output; missing or malformed output never establishes it.
     module.collect_stub_curies = lambda prefixes: {"NCIT": set()}
+    finalized_ontologies(root / "empty")
     empty = module.OntologiesStubsTransform(input_dir=raw, output_dir=root / "empty")
     empty.run()
     empty.finalize(fresh_run=True)
@@ -322,8 +349,6 @@ def _child(root):
         empty.finalize()
 
     # No native-specific obligation is imposed on unrelated registered sources.
-    from kg_microbe.transform_utils.transform import Transform
-
     cls = dispatcher.DATA_SOURCES["cog"].transform_class
     unrelated = cls.__new__(cls)
     Transform.__init__(unrelated, "cog", raw, root / "control")

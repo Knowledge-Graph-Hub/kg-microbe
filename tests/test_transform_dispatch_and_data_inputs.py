@@ -10,6 +10,7 @@ import pytest
 
 from kg_microbe.transform import DATA_SOURCES, LazyTransform, TransformBatchError, transform
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.transform_fingerprint import FINGERPRINT_FILE
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 ISO = "mappings/isolation_source_to_ontology.tsv"
@@ -653,6 +654,52 @@ class BatchIsolationTest(TestCase):
             fake.missing_prerequisites = classmethod(lambda cls, input_dir=None: "needs a tool")
             with pytest.raises(TypeError):
                 _missing_prerequisites(["a"])
+
+    def _upstream_and_dependent(self):
+        """Register a source and one that declares it in TRANSFORM_INPUTS."""
+        return {
+            "up": _fake_source("up", self.log, self.base),
+            "dep": _fake_source("dep", self.log, self.base, inputs=("up",)),
+        }
+
+    def test_a_declared_upstream_with_no_completed_output_fails_before_anything_runs(self):
+        """Without it the source would build on nothing and claim success (#1511)."""
+        with mock.patch.dict(DATA_SOURCES, self._upstream_and_dependent(), clear=True):
+            with pytest.raises(FileNotFoundError) as excinfo:
+                transform(None, self.base / "out", sources=["dep"])
+        self.assertEqual(self.log, [])
+        self.assertIn("dep: needs a completed up output", str(excinfo.value))
+        self.assertIn("kg transform -s up", str(excinfo.value))
+
+    def test_the_upstream_check_follows_the_upstream_default_output_directory(self):
+        """With no -o each source writes to its own default, so look for the upstream there."""
+        registry = self._upstream_and_dependent()
+        registry["up"].DEFAULT_OUTPUT_DIR = self.base / "default"
+        with mock.patch.dict(DATA_SOURCES, registry, clear=True):
+            with pytest.raises(FileNotFoundError, match="default/up/source_fingerprint.json"):
+                transform(None, None, sources=["dep"])
+        self.assertEqual(self.log, [])
+
+    def test_a_completed_upstream_lets_its_dependent_run_alone(self):
+        """The completion marker is the evidence the check asks for, as freshness and the merge do."""
+        marker = self.base / "out" / "up" / FINGERPRINT_FILE
+        marker.parent.mkdir(parents=True)
+        marker.write_text("{}")
+        with mock.patch.dict(DATA_SOURCES, self._upstream_and_dependent(), clear=True):
+            transform(None, self.base / "out", sources=["dep"])
+        self.assertEqual(self.log, ["dep"])
+
+    def test_explicit_selections_run_upstream_first_whatever_order_they_were_named_in(self):
+        """`-s dep -s up` must not build dep against up's previous output (#1554)."""
+        with mock.patch.dict(DATA_SOURCES, self._upstream_and_dependent(), clear=True):
+            transform(None, self.base / "out", sources=["dep", "up"])
+        self.assertEqual(self.log, ["up", "dep"])
+
+    def test_an_upstream_built_in_the_same_run_needs_no_earlier_output(self):
+        """Selected together, the upstream runs first and the batch skips the dependent if it fails."""
+        with mock.patch.dict(DATA_SOURCES, self._upstream_and_dependent(), clear=True):
+            transform(None, self.base / "out", sources=["up", "dep"])
+        self.assertEqual(self.log, ["up", "dep"])
 
     def test_alternate_raw_declaration_does_not_require_repository_default(self):
         """CLI -i determines the raw authority preflight path, not an unrelated repo file."""

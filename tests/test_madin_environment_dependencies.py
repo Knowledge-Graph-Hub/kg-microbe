@@ -13,7 +13,6 @@ from kg_microbe.transform_utils import constants as C
 from kg_microbe.transform_utils.madin_etal import madin_etal
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, verify_finalized_source_files
 from kg_microbe.utils.transform_fingerprint import data_fingerprint, declared_data_inputs
-from tests.ontologies_output_fixtures import prepare_declared_ontologies_output
 
 FIXTURE = Path(__file__).parent / "resources" / "madin_foodon_retirement"
 CORRECTION_DECLARATION = "mappings/madin_environment_id_corrections.tsv"
@@ -40,7 +39,6 @@ def producer(tmp_path, monkeypatch):
     for name in ("environments.csv", "madin_etal.csv"):
         shutil.copyfile(FIXTURE / name, raw / name)
     transform = madin_etal.MadinEtAlTransform(raw, tmp_path / "output", nlp=False)
-    prepare_declared_ontologies_output(transform)
     transform.nlp_output_dir = tmp_path
     transform.nlp_stopwords_dir = tmp_path
     return transform, correction

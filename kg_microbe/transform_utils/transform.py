@@ -73,6 +73,12 @@ class Transform:
     #: is spelled in ``constants.py`` rather than in the transform, which the
     #: guard below could not see until #1035.
     #:
+    #: Source finalization reads the ontologies output's declarations too, but
+    #: only for a source that lists ``ontologies`` here. gtdb, lpsn, madin_etal,
+    #: rhea_mappings and ontologies_stubs declare it for that reason alone
+    #: (#1511). ``kg transform`` refuses to start a source whose declared
+    #: upstream has no completed output, unless the same run builds it.
+    #:
     #: Undeclared, re-running an upstream leaves every downstream genuinely
     #: stale while all three freshness signals report fresh — the #812 shape,
     #: across transforms rather than within one (#845). The ordering was

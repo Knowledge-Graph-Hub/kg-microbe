@@ -1,32 +1,32 @@
-"""The ontologies output a fixture needs beside a source that declares it (#1511)."""
+"""A completed ontologies output, for tests of the sources that declare it (#1511, #1554)."""
 
+import hashlib
+import json
 from pathlib import Path
-from typing import Optional
+
+from kg_microbe.utils.source_finalization import FINALIZATION_FILE, FINALIZATION_VERSION
+from kg_microbe.utils.transform_fingerprint import FINGERPRINT_FILE
 
 
-def prepare_declared_ontologies_output(transform) -> Optional[Path]:
+def write_completed_ontologies_output(directory: Path, nodes: str, name: str = "chebi_nodes.tsv") -> Path:
     """
-    Give a source that lists ``ontologies`` in ``TRANSFORM_INPUTS`` that output beside its own.
+    Write one ontology node file with the whole-source record and marker a completed run leaves.
 
-    Finalization reads the ontologies output's declarations for such a source
-    and refuses to run without them. This one is header-only, so it declares
-    nothing and the fixture's external references resolve as they would
-    against an ontologies output that does not mention them.
+    The record lists the file with its exact bytes, which is what finalization
+    checks before it reads another source's declarations. It is not a real
+    ontology build: tests that need the merge gate to accept the upstream build
+    one with ``prepare_source(tmp_path, "ontologies")`` instead.
 
-    A fixture that needs the merge gate to accept the upstream must build a
-    finalized one instead (``prepare_source(tmp_path, "ontologies")``); this
-    leaves any ontologies output already there alone.
-
-    :param transform: The producer a fixture is about to finalize.
-    :return: The nodes file written, or None if none was needed.
+    :param directory: The ontologies output directory.
+    :param nodes: The node file's TSV text, header included.
+    :param name: The node file's name.
+    :return: The node file.
     """
-    if "ontologies" not in getattr(type(transform), "TRANSFORM_INPUTS", ()):
-        return None
-    directory = Path(transform.output_base_dir) / "ontologies"
-    if any(directory.glob("*nodes.tsv")):
-        return None
     directory.mkdir(parents=True, exist_ok=True)
-    path = directory / "fixture_nodes.tsv"
-    if not path.exists():
-        path.write_text("id\tcategory\tname\n", encoding="utf-8")
+    path = directory / name
+    path.write_text(nodes, encoding="utf-8")
+    member = {"bytes": path.stat().st_size, "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+    record = {"version": FINALIZATION_VERSION, "members": {name: member}}
+    (directory / FINALIZATION_FILE).write_text(json.dumps(record), encoding="utf-8")
+    (directory / FINGERPRINT_FILE).write_text("{}", encoding="utf-8")
     return path

@@ -570,10 +570,10 @@ def test_scoped_ontology_requires_whole_producer_schema_evidence(tmp_path, capsy
     diagnostic = merge_config(tmp_path, [ontology], diagnostic=True)
     merge_kg._assert_sources_finalized(str(diagnostic))
     assert "DIAGNOSTIC OPT-OUT" in capsys.readouterr().out
-    consumer = prepare_source(tmp_path, "bacdive")
-    config = merge_config(tmp_path, [consumer])
-    with pytest.raises(SourceFinalizationRequired, match="upstream|whole|fingerprint"):
-        merge_kg._assert_sources_finalized(str(config))
+    # A declaring consumer is refused at finalization, before it can publish
+    # declarations taken from one scoped ontology (#1554).
+    with pytest.raises(SourceFinalizationRequired, match="incomplete ontologies output"):
+        prepare_source(tmp_path, "bacdive")
 
 
 def test_only_explicit_diagnostic_opt_out_bypasses_dependency_gate(tmp_path, prepared, capsys):

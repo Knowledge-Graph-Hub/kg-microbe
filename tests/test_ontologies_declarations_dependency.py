@@ -4,8 +4,14 @@ from pathlib import Path
 
 import pytest
 
-from kg_microbe.transform import DATA_SOURCES
-from kg_microbe.utils.source_finalization import SourceFinalizationRequired, _dependency_declarations
+from kg_microbe.transform import DATA_SOURCES, transform
+from kg_microbe.utils.source_finalization import (
+    FINALIZATION_FILE,
+    SourceFinalizationRequired,
+    _dependency_declarations,
+)
+from kg_microbe.utils.transform_fingerprint import FINGERPRINT_FILE
+from tests.ontologies_output_fixtures import write_completed_ontologies_output
 
 #: Sources whose finalized output changes when the ontologies output's
 #: declarations are not read: each references NCBITaxon or CHEBI nodes that only
@@ -49,47 +55,63 @@ class _Dependent(_Producer):
     TRANSFORM_INPUTS = ("ontologies",)
 
 
-def _ontologies_output(base: Path) -> Path:
-    """Write an ontologies output declaring one named node and one unnamed one."""
-    directory = base / "ontologies"
-    directory.mkdir(parents=True)
-    path = directory / "chebi_nodes.tsv"
-    path.write_text("id\tcategory\tname\nCHEBI:2509\tbiolink:ChemicalEntity\tagar\nCHEBI:1\tbiolink:NamedThing\t\n")
-    return path
+NODES = "id\tcategory\tname\nCHEBI:2509\tbiolink:ChemicalEntity\tagar\nCHEBI:1\tbiolink:NamedThing\t\n"
 
 
 def test_a_source_that_does_not_declare_ontologies_reads_nothing_beside_it(tmp_path):
     """The bytes of an undeclaring source cannot depend on what else was built beside it."""
-    _ontologies_output(tmp_path)
+    write_completed_ontologies_output(tmp_path / "ontologies", NODES)
     used = set()
     assert _dependency_declarations(_Producer(tmp_path, "cog"), used) == set()
     assert used == set()
 
 
-def test_a_declaring_source_reads_the_named_declarations_and_records_them(tmp_path):
-    """Named rows count as declared, and the files read become consumed inputs."""
-    path = _ontologies_output(tmp_path)
+def test_a_declaring_source_reads_exactly_the_recorded_node_files(tmp_path):
+    """Named rows count as declared; a node file the record does not list is not read."""
+    path = write_completed_ontologies_output(tmp_path / "ontologies", NODES)
+    (tmp_path / "ontologies" / "stray_nodes.tsv").write_text(
+        "id\tcategory\tname\nCHEBI:60004\tbiolink:ChemicalEntity\tmixture\n"
+    )
     used = set()
     assert _dependency_declarations(_Dependent(tmp_path, "gtdb"), used) == {"CHEBI:2509"}
     assert used == {path}
 
 
-@pytest.mark.parametrize("make_directory", [False, True])
-def test_a_declaring_source_fails_without_the_ontologies_output(tmp_path, make_directory):
-    """Without the output it declares, a source fails rather than declaring those nodes itself."""
-    if make_directory:
-        (tmp_path / "ontologies").mkdir()
-    expected = r"ontologies_stubs declares ontologies.*kg transform -s ontologies"
+def test_a_declaring_source_with_no_ontologies_output_reads_nothing(tmp_path):
+    """Its marker records the absent upstream; kg transform and the merge refuse it, not finalization."""
+    used = set()
+    assert _dependency_declarations(_Dependent(tmp_path, "ontologies_stubs"), used) == set()
+    assert used == set()
+
+
+@pytest.mark.parametrize(
+    "damage",
+    [
+        "no_record",  # a single-ontology run's files, or an interrupted run
+        "no_marker",  # a single-ontology run removes the whole output's marker
+        "changed_member",  # a node file rewritten after finalization
+    ],
+)
+def test_a_declaring_source_refuses_a_partial_ontologies_output(tmp_path, damage):
+    """Part of the declarations would make the source quietly declare the rest itself (#1554)."""
+    directory = tmp_path / "ontologies"
+    path = write_completed_ontologies_output(directory, NODES)
+    if damage == "no_record":
+        (directory / FINALIZATION_FILE).unlink()
+    elif damage == "no_marker":
+        (directory / FINGERPRINT_FILE).unlink()
+    else:
+        path.write_text(NODES + "CHEBI:60004\tbiolink:ChemicalEntity\tmixture\n")
+    expected = "incomplete ontologies output" if damage != "changed_member" else "differs from its finalization record"
     with pytest.raises(SourceFinalizationRequired, match=expected):
         _dependency_declarations(_Dependent(tmp_path, "ontologies_stubs"), set())
 
 
-def test_the_ontologies_source_does_not_read_its_own_output(tmp_path):
-    """A single-ontology run writes into the ontologies directory and reads nothing from it."""
-    _ontologies_output(tmp_path)
-    used = set()
-    assert _dependency_declarations(_Producer(tmp_path, "ontologies"), used) == set()
-    assert used == set()
+@pytest.mark.parametrize("source", ["gtdb", "lpsn", "madin_etal", "rhea_mappings", "ontologies_stubs"])
+def test_kg_transform_refuses_a_declaring_source_without_the_ontologies_output(tmp_path, source):
+    """The run stops before any producer starts, and names what to build first."""
+    with pytest.raises(FileNotFoundError, match=rf"{source}: needs a completed ontologies output"):
+        transform(tmp_path / "raw", tmp_path / "out", sources=[source])
 
 
 def test_every_source_that_relies_on_the_ontologies_declarations_declares_them():

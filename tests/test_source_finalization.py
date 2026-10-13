@@ -18,6 +18,7 @@ from kg_microbe.utils.source_finalization import (
     verify_finalized_source_files,
 )
 from kg_microbe.utils.transform_fingerprint import finalization_inputs_current, write_fingerprint
+from tests.ontologies_output_fixtures import write_completed_ontologies_output
 from tests.rhea_fixtures import prepare_rhea_native_inputs
 
 FIXTURES = Path(__file__).parent / "resources"
@@ -141,10 +142,11 @@ def test_dependency_declared_cross_source_target_is_not_an_anonymous_stub(tmp_pa
         "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\n"
         "fixture:1\tbiolink:related_to\tNCBITaxon:20\tskos:related\tinfores:test\n"
     )
-    ontology_dir = transform.output_base_dir / "ontologies"
-    ontology_dir.mkdir()
-    authority = ontology_dir / "foodon_nodes.tsv"
-    authority.write_text("id\tname\tcategory\nNCBITaxon:20\tNamed organism\tbiolink:OrganismTaxon\n")
+    authority = write_completed_ontologies_output(
+        transform.output_base_dir / "ontologies",
+        "id\tname\tcategory\nNCBITaxon:20\tNamed organism\tbiolink:OrganismTaxon\n",
+        name="foodon_nodes.tsv",
+    )
     report = transform.finalize()
     assert list(graph_rows(transform.output_edge_file))[0]["object"] == "NCBITaxon:20"
     assert report["summaries"]["external"] == {}

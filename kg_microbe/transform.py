@@ -247,6 +247,34 @@ def _missing_prerequisites(sources: List[str], input_dir: Optional[Path] = None)
     return missing
 
 
+def _missing_upstream_outputs(runnable: List[str], selected: List[str], output_dir: Optional[Path]) -> List[str]:
+    """
+    Return ``"source: message"`` for each declared upstream that this run neither builds nor finds built.
+
+    A source reads the outputs it lists in ``TRANSFORM_INPUTS``, and source
+    finalization reads the ontologies output's declarations for a source that
+    lists it (#1511). Run without them, it would build on nothing and claim
+    success, so refuse before anything runs. An upstream selected in the same
+    run is built first, and the batch skips its dependents if it fails.
+    """
+    missing = []
+    for source in runnable:
+        for upstream in getattr(DATA_SOURCES.get(source), "TRANSFORM_INPUTS", ()):
+            if upstream in selected:
+                continue
+            default = getattr(DATA_SOURCES.get(upstream), "DEFAULT_OUTPUT_DIR", None)
+            base = output_dir if output_dir is not None else default
+            if base is None:
+                continue
+            marker = Path(base) / upstream / FINGERPRINT_FILE
+            if not marker.is_file():
+                missing.append(
+                    f"{source}: needs a completed {upstream} output, which it declares in TRANSFORM_INPUTS, "
+                    f"but {marker} is absent; run `kg transform -s {upstream}` first, or select both"
+                )
+    return missing
+
+
 def _run_one(source: str, input_dir: Optional[Path], output_dir: Optional[Path], show_status: bool) -> None:
     """Run one registered source, or one ontology by name, and report what it wrote."""
     if source in DATA_SOURCES:
@@ -311,8 +339,10 @@ def transform(
         to refresh that ontology alone (#690).
     :raises ValueError: If a requested source is not registered in DATA_SOURCES.
     :raises FileNotFoundError: If a selected source declares a curation input
-        that is not on disk, or is an optional source with no input named in
-        ``sources``; nothing runs (#685).
+        that is not on disk, is an optional source with no input named in
+        ``sources``, or declares an upstream in ``TRANSFORM_INPUTS`` that this
+        run does not build and that has no completed output; nothing runs
+        (#685, #1511).
     :raises TransformBatchError: After the batch, if any source failed. A
         failure is isolated to its source: later sources still run unless
         they declare the failed one in ``TRANSFORM_INPUTS``, in which case they
@@ -346,6 +376,11 @@ def transform(
             f"Registered sources: {', '.join(sorted(DATA_SOURCES))}; "
             f"single ontologies: {', '.join(ontology_names)}"
         )
+    # Named on the command line, sources still run in registry order, so each
+    # follows the upstreams it declares (#1554). A single ontology runs where
+    # the ontologies source would.
+    position = {name: index for index, name in enumerate(DATA_SOURCES)}
+    sources = sorted(sources, key=lambda name: position.get(name, position.get(ONTOLOGIES, -1)))
 
     absent_optional = _absent_optional_inputs(sources, input_dir)
     missing: List[str] = []
@@ -365,6 +400,7 @@ def transform(
     runnable = [s for s in sources if s not in not_applicable]
     missing += _missing_declared_inputs(runnable, Path(__file__).resolve().parent.parent, input_dir)
     missing += _missing_prerequisites(runnable, input_dir)
+    missing += _missing_upstream_outputs(runnable, sources, output_dir)
     if missing:
         raise FileNotFoundError("Required input(s) missing; nothing was run: " + "; ".join(missing))
 

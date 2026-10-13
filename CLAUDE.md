@@ -112,13 +112,16 @@ Standard edge columns are `subject`, `predicate`, `object`, `relation`,
 `primary_knowledge_source`, `knowledge_level`, and `agent_type`. Source-specific
 extension columns are allowed when the merge preserves them.
 
-Finalization declares any NCBITaxon, CHEBI, MICRO, OBI or `gold:` node that a
-source references but does not declare, unless the `ontologies` output already
-does. It reads that output only for a source that lists `ontologies` in
-`TRANSFORM_INPUTS`, and such a source fails without it. A source whose edges
-reference ontology terms must therefore declare it; otherwise it declares those
-nodes again itself, and before #1511 its bytes depended on what else had been
-built beside it.
+Finalization resolves NCBITaxon and CHEBI nodes (and two named MICRO and OBI
+terms) that a source references but does not declare, unless the `ontologies`
+output already declares them. It declares them from the pinned taxdump or
+`chebi.db`, rewrites merged taxids, and drops edges to taxa outside the
+prokaryote trim and to obsolete CHEBI terms. It reads the `ontologies` output
+only for a source that lists `ontologies` in `TRANSFORM_INPUTS`, and refuses a
+partial one. `kg transform` refuses to start any source whose declared upstream
+has no completed output, unless the same run builds it. A source whose edges
+reference ontology terms must therefore declare `ontologies`; before #1511, its
+output depended on what else had been built beside it.
 
 For this graph, a named strain or isolate beneath an NCBITaxon is typed
 `biolink:OrganismTaxon` and linked with `biolink:subclass_of`. This deliberate

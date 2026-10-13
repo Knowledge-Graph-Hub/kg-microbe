@@ -39,6 +39,7 @@ from kg_microbe.utils.optional_consumed_inputs import has_optional_inputs
 from kg_microbe.utils.producer_audits import verify_producer_audits, verify_recorded_producer_audits
 from kg_microbe.utils.provenance import primary_source_and_publications, serialize_knowledge_sources
 from kg_microbe.utils.transform_fingerprint import (
+    FINGERPRINT_FILE,
     SHARED_DATA_INPUTS,
     code_fingerprint,
     declared_data_inputs,
@@ -576,30 +577,62 @@ def _dependency_declarations(transform, used_inputs):
     Recognize explicit ontology declarations; a cross-source reference is not an anonymous stub.
 
     Reading the ontologies output is a dependency on it, so only a source that
-    lists it in ``TRANSFORM_INPUTS`` reads it, and for such a source it must be
-    there. Reading whatever sat beside the output made the same code and inputs
-    produce different bytes depending on what else had been built (#1511).
+    lists it in ``TRANSFORM_INPUTS`` reads it. Reading whatever sat beside the
+    output made the same code and inputs produce different bytes depending on
+    what else had been built (#1511).
+
+    With no ontologies output at all, nothing is read: the source's marker
+    records the absent upstream, ``kg transform`` refuses to run it, and the
+    merge refuses its output. Partial output is refused here (#1554).
     """
-    ontology_dir = Path(transform.output_base_dir) / ONTOLOGIES
-    if ontology_dir.resolve() == Path(transform.output_dir).resolve():
-        return set()
     if ONTOLOGIES not in getattr(type(transform), "TRANSFORM_INPUTS", ()):
         return set()
-    paths = sorted(ontology_dir.glob("*nodes.tsv"))
-    if not paths:
-        source = getattr(transform, "source_name", type(transform).__name__)
-        raise SourceFinalizationRequired(
-            f"{source} declares {ONTOLOGIES} in TRANSFORM_INPUTS, but {ontology_dir} has no nodes files; "
-            f"run `kg transform -s {ONTOLOGIES}` into the same output directory first"
-        )
+    source = getattr(transform, "source_name", type(transform).__name__)
     found = set()
-    quoting = csv.QUOTE_NONE if (ontology_dir / FINALIZATION_FILE).is_file() else csv.QUOTE_MINIMAL
-    for path in paths:
+    for path in _finalized_ontology_nodes(Path(transform.output_base_dir) / ONTOLOGIES, source):
         used_inputs.add(path)
-        for row in graph_rows(path, quoting=quoting):
+        for row in graph_rows(path):
             if row.get(NAME_COLUMN):
                 found.add(row[ID_COLUMN])
     return found
+
+
+def _finalized_ontology_nodes(ontology_dir, source):
+    """
+    Return the node files of a completed ontologies output, verified against its record.
+
+    A single-ontology run leaves one ontology's files and a scoped record, and
+    removes the completion marker; an interrupted run leaves some files and no
+    record. Either would declare only some ontology terms, so the source would
+    quietly declare the rest itself. Read exactly the node files the
+    whole-source record lists, never whatever else is in the directory.
+    """
+    record_path = ontology_dir / FINALIZATION_FILE
+    if not record_path.is_file() and not any(ontology_dir.glob("*nodes.tsv")):
+        return []
+    rebuild = f"rebuild it with `kg transform -s {ONTOLOGIES}`"
+    if not record_path.is_file() or not (ontology_dir / FINGERPRINT_FILE).is_file():
+        raise SourceFinalizationRequired(
+            f"{source}: {ontology_dir} holds an incomplete {ONTOLOGIES} output, with no whole-source "
+            f"finalization record or completion marker, as a single-ontology or interrupted run leaves; {rebuild}"
+        )
+    try:
+        record = json.loads(record_path.read_text(encoding="utf-8"))
+    except (OSError, ValueError) as exc:
+        raise SourceFinalizationRequired(f"Unreadable source finalization record: {record_path}") from exc
+    if record.get("version") != FINALIZATION_VERSION:
+        raise SourceFinalizationRequired(f"{source}: unsupported finalization record {record_path}; {rebuild}")
+    paths = []
+    for name, expected in sorted((record.get("members") or {}).items()):
+        if not name.endswith("nodes.tsv"):
+            continue
+        path = ontology_dir / name
+        if not path.is_file() or {"bytes": path.stat().st_size, "sha256": _sha256(path)} != expected:
+            raise SourceFinalizationRequired(f"{source}: {path} differs from its finalization record; {rebuild}")
+        paths.append(path)
+    if not paths:
+        raise SourceFinalizationRequired(f"{source}: {record_path} lists no node files; {rebuild}")
+    return paths
 
 
 def _bind_finalization_members(transform, names):

@@ -378,14 +378,21 @@ def test_cached_stale_caller_does_not_determine_new_connection_bytes(tmp_path):
     from sqlalchemy.pool import StaticPool
 
     path = database(tmp_path / "authority.db")
-    # Keep the original immutable inode readable after replacement on platforms
-    # where the default writable SQLite handle reports a moved-file I/O error.
-    # The engine URL still identifies the real selected path for the new reader.
-    engine = create_engine(
-        "sqlite:///" + str(path.absolute()),
-        creator=lambda: sqlite3.connect(path.absolute().as_uri() + "?mode=ro&immutable=1", uri=True),
-        poolclass=StaticPool,
-    )
+
+    def snapshot():
+        """Connect the caller to an in-memory copy of the selected file as it is at connection time."""
+        memory = sqlite3.connect(":memory:")
+        with closing(sqlite3.connect(path.absolute().as_uri() + "?mode=ro", uri=True)) as source:
+            source.backup(memory)
+        return memory
+
+    # The caller keeps the original bytes in memory, never reading the replaced
+    # file: on macOS's system SQLite, a read of a replaced file that misses the
+    # page cache can fail with SQLITE_IOERR_VNODE, "disk I/O error" (#1512). A
+    # reconnect would copy the new file, so the last assertion still shows the
+    # caller was never reconnected. The engine URL still identifies the real
+    # selected path for the new reader.
+    engine = create_engine("sqlite:///" + str(path.absolute()), creator=snapshot, poolclass=StaticPool)
     original = SqlImplementation(resource=OntologyResource(slug=str(path.absolute())), engine=engine)
     try:
         assert "NCBITaxon:10" in original.ancestors(["NCBITaxon:20"], predicates=[RDFS_SUBCLASS_OF])

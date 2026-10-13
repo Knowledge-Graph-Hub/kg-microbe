@@ -134,33 +134,37 @@ separately modeled; no complete stoichiometric integration is claimed.</p>
 <li><p><code class="docutils literal notranslate"><span class="pre">rhea/rhea.rdf.gz</span></code></p></li>
 </ul>
 <p>Their complete SHA-256 values and byte sizes must match
-<code class="docutils literal notranslate"><span class="pre">mappings/rhea_release.json</span></code>. The current candidate pins verified local export
-bytes labeled cache version 142; that cache label is <strong>not</strong> proof of a tagged
-upstream release. Stage only the matching reviewed export. Mutable FTP latest
-downloads cannot silently replace it; a new snapshot requires review and a pin
-update. Existing <code class="docutils literal notranslate"><span class="pre">rhea2ec.tsv</span></code> and <code class="docutils literal notranslate"><span class="pre">rhea2go.tsv</span></code> are no longer consumed by this
+<code class="docutils literal notranslate"><span class="pre">mappings/rhea_release.json</span></code>. The pins are Rhea release 142 (2026-09-02): both
+files are byte-identical to the members of the archived release tarball
+<code class="docutils literal notranslate"><span class="pre">old_releases/142.tar.bz2</span></code> named in the policy (verified 2026-10-12, #1420).
+Stage only that reviewed pair. Mutable FTP latest downloads cannot silently
+replace it; a new snapshot requires review and a pin update. Existing
+<code class="docutils literal notranslate"><span class="pre">rhea2ec.tsv</span></code> and <code class="docutils literal notranslate"><span class="pre">rhea2go.tsv</span></code> are no longer consumed by this
 producer. EC/GO cross-references come from the same pinned RDF and are emitted
 once per assertion on their exact native subjects (usually the master, with
 native variant exceptions retained). Provisional EC identifiers such as
 <code class="docutils literal notranslate"><span class="pre">EC:3.6.5.n1</span></code> are preserved, not discarded by a numeric-only parser.</p>
-<p><code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-t</span> <span class="pre">rhea</span></code> downloads into <strong><code class="docutils literal notranslate"><span class="pre">data/raw/rhea_download/</span></code></strong>, an acquisition
-quarantine, not the admitted input directory. Its rolling URLs and URL-only
-download manifest do not certify the snapshot. Explicitly stage a matching
-reviewed pair before transforming:</p>
+<p><code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-t</span> <span class="pre">rhea</span></code> downloads the archived release tarball (about 412 MB)
+into <strong><code class="docutils literal notranslate"><span class="pre">data/raw/rhea_download/</span></code></strong>, an acquisition quarantine, not the admitted
+input directory. The URL-only download manifest does not certify the snapshot.
+Explicitly extract and stage the reviewed pair before transforming:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>kg_microbe.transform_utils.rhea_mappings.stage_snapshot<span class="w"> </span><span class="se">\</span>
-<span class="w">  </span>--source-dir<span class="w"> </span>data/raw/rhea_download<span class="w"> </span>--input-dir<span class="w"> </span>data/raw
+<span class="w">  </span>--source-archive<span class="w"> </span>data/raw/rhea_download/142.tar.bz2<span class="w"> </span>--input-dir<span class="w"> </span>data/raw
 </pre></div>
 </div>
-<p>Alternatively, point <code class="docutils literal notranslate"><span class="pre">--source-dir</span></code> to an explicitly selected local export with
-the pinned bytes. The stager makes no network requests. It verifies both exact
-hashes/sizes, native family/cohort agreement, participant joins and selected
-cross-reference structure before publishing the complete directory. It verifies
-identical existing inputs without rewriting them and refuses different, partial
-or symlink destinations. It never deletes or replaces an existing raw generation,
-changes the pin, repairs a source, or declares transform/release acceptance.
-If upstream’s rolling bytes have changed, staging fails; review a new snapshot
-or supply the already-reviewed matching export. Existing legacy raw mapping
-files are left untouched but are not input authorities for this producer.</p>
+<p>The stager reads the archive once as a stream and writes only the two members
+the policy names, under their fixed payload names; a missing, repeated, linked
+or non-regular member is refused. Alternatively, point <code class="docutils literal notranslate"><span class="pre">--source-dir</span></code> to an
+explicitly selected local export with the pinned bytes. The stager makes no
+network requests. It verifies both exact hashes/sizes, native family/cohort
+agreement, participant joins and selected cross-reference structure before
+publishing the complete directory. It verifies identical existing inputs
+without rewriting them and refuses different, partial or symlink destinations.
+It never deletes or replaces an existing raw generation, changes the pin,
+repairs a source, or declares transform/release acceptance. A member that
+differs from its pin fails staging; review a new snapshot before changing pins.
+Existing legacy raw mapping files are left untouched but are not input
+authorities for this producer.</p>
 <p>External node labels require prepared <code class="docutils literal notranslate"><span class="pre">chebi.db</span></code>, <code class="docutils literal notranslate"><span class="pre">go.db</span></code> and <code class="docutils literal notranslate"><span class="pre">ec.db</span></code> in that
 same selected raw directory. The producer reads byte-tracked immutable copies
 through read-only SQLite, checks the ontology declaration/schema and indexed

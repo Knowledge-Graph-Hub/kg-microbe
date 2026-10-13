@@ -130,7 +130,11 @@ fails them (#1420). The transform extracts <code class="docutils literal notrans
 next to the zip, as <code class="docutils literal notranslate"><span class="pre">data/raw/database.csv</span></code>, and extracts it again whenever the
 existing file is not the zip’s copy, so re-fetching the zip refreshes it. A zip
 downloaded before the pin, with no record in <code class="docutils literal notranslate"><span class="pre">data/raw/.download_manifest.json</span></code>,
-is not re-fetched on its own: delete it and run <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-t</span> <span class="pre">microbedecoder</span></code>.</p>
+is not re-fetched on its own: delete it and run <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-t</span> <span class="pre">microbedecoder</span></code>.
+The join policy binds the account-gated <code class="docutils literal notranslate"><span class="pre">lpsn_gss.csv</span></code> only through the two
+accepted records each of its six decisions names (the MicrobeDecoder side and
+the distinct BacDive side), each compared with its complete reviewed row, so a
+later monthly GSS passes while those rows are unchanged.</p>
 </section>
 <section id="lpsn-dependency">
 <h3>LPSN dependency<a class="headerlink" href="#lpsn-dependency" title="Link to this heading"></a></h3>

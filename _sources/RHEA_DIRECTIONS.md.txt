@@ -45,36 +45,40 @@ Required local files beneath the chosen input directory:
 - `rhea/rhea.rdf.gz`
 
 Their complete SHA-256 values and byte sizes must match
-`mappings/rhea_release.json`. The current candidate pins verified local export
-bytes labeled cache version 142; that cache label is **not** proof of a tagged
-upstream release. Stage only the matching reviewed export. Mutable FTP latest
-downloads cannot silently replace it; a new snapshot requires review and a pin
-update. Existing `rhea2ec.tsv` and `rhea2go.tsv` are no longer consumed by this
+`mappings/rhea_release.json`. The pins are Rhea release 142 (2026-09-02): both
+files are byte-identical to the members of the archived release tarball
+`old_releases/142.tar.bz2` named in the policy (verified 2026-10-12, #1420).
+Stage only that reviewed pair. Mutable FTP latest downloads cannot silently
+replace it; a new snapshot requires review and a pin update. Existing
+`rhea2ec.tsv` and `rhea2go.tsv` are no longer consumed by this
 producer. EC/GO cross-references come from the same pinned RDF and are emitted
 once per assertion on their exact native subjects (usually the master, with
 native variant exceptions retained). Provisional EC identifiers such as
 `EC:3.6.5.n1` are preserved, not discarded by a numeric-only parser.
 
-`kg download -t rhea` downloads into **`data/raw/rhea_download/`**, an acquisition
-quarantine, not the admitted input directory. Its rolling URLs and URL-only
-download manifest do not certify the snapshot. Explicitly stage a matching
-reviewed pair before transforming:
+`kg download -t rhea` downloads the archived release tarball (about 412 MB)
+into **`data/raw/rhea_download/`**, an acquisition quarantine, not the admitted
+input directory. The URL-only download manifest does not certify the snapshot.
+Explicitly extract and stage the reviewed pair before transforming:
 
 ```bash
 poetry run python -m kg_microbe.transform_utils.rhea_mappings.stage_snapshot \
-  --source-dir data/raw/rhea_download --input-dir data/raw
+  --source-archive data/raw/rhea_download/142.tar.bz2 --input-dir data/raw
 ```
 
-Alternatively, point `--source-dir` to an explicitly selected local export with
-the pinned bytes. The stager makes no network requests. It verifies both exact
-hashes/sizes, native family/cohort agreement, participant joins and selected
-cross-reference structure before publishing the complete directory. It verifies
-identical existing inputs without rewriting them and refuses different, partial
-or symlink destinations. It never deletes or replaces an existing raw generation,
-changes the pin, repairs a source, or declares transform/release acceptance.
-If upstream's rolling bytes have changed, staging fails; review a new snapshot
-or supply the already-reviewed matching export. Existing legacy raw mapping
-files are left untouched but are not input authorities for this producer.
+The stager reads the archive once as a stream and writes only the two members
+the policy names, under their fixed payload names; a missing, repeated, linked
+or non-regular member is refused. Alternatively, point `--source-dir` to an
+explicitly selected local export with the pinned bytes. The stager makes no
+network requests. It verifies both exact hashes/sizes, native family/cohort
+agreement, participant joins and selected cross-reference structure before
+publishing the complete directory. It verifies identical existing inputs
+without rewriting them and refuses different, partial or symlink destinations.
+It never deletes or replaces an existing raw generation, changes the pin,
+repairs a source, or declares transform/release acceptance. A member that
+differs from its pin fails staging; review a new snapshot before changing pins.
+Existing legacy raw mapping files are left untouched but are not input
+authorities for this producer.
 
 External node labels require prepared `chebi.db`, `go.db` and `ec.db` in that
 same selected raw directory. The producer reads byte-tracked immutable copies

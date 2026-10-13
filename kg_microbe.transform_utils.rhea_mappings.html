@@ -499,13 +499,15 @@ nodes Rhea’s edges reference are not declared again here (#1511).</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.stage_snapshot.stage_snapshot">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.stage_snapshot.</span></span><span class="sig-name descname"><span class="pre">stage_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/kg-microbe/kg-microbe/mappings/rhea_release.json')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.stage_snapshot.stage_snapshot" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.rhea_mappings.stage_snapshot.</span></span><span class="sig-name descname"><span class="pre">stage_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policy_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/kg-microbe/kg-microbe/mappings/rhea_release.json')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_archive</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.stage_snapshot.stage_snapshot" title="Link to this definition"></a></dt>
 <dd><p>Stage a complete local export under input_dir/rhea, or verify an identical existing snapshot.</p>
-<p>Sources may be an explicitly chosen local export or the rhea_download
-quarantine directory. This function never performs network requests and
-never changes the reviewed pin. Differing or partial existing destinations
-are refused, not repaired or removed. The brief exclusive empty reservation
-is replaced by the fully validated directory, never by one payload at a time.</p>
+<p>The source is either a directory holding the pair (an explicitly chosen local
+export) or, with <code class="docutils literal notranslate"><span class="pre">source_archive</span></code>, the archived release tarball the policy
+names, as downloaded into the rhea_download quarantine. This function never
+performs network requests and never changes the reviewed pin. Differing or
+partial existing destinations are refused, not repaired or removed. The brief
+exclusive empty reservation is replaced by the fully validated directory,
+never by one payload at a time.</p>
 </dd></dl>
 
 </section>

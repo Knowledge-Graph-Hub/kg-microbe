@@ -130,6 +130,13 @@ fresh after changes to the other ten (#839). Where the set comes from a
 constant, derive this from it rather than restating it.</p>
 </dd></dl>
 
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.gtdb.gtdb.GTDBTransform.TRANSFORM_INPUTS">
+<span class="sig-name descname"><span class="pre">TRANSFORM_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ontologies',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.gtdb.gtdb.GTDBTransform.TRANSFORM_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Finalization reads the ontologies output’s declarations, so the NCBITaxon
+nodes GTDB’s mappings reference are not declared again here (#1511).</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.gtdb.gtdb.GTDBTransform.run">
 <span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_status</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.gtdb.gtdb.GTDBTransform.run" title="Link to this definition"></a></dt>
@@ -263,6 +270,13 @@ declaration fails silently and looks identical to a complete one:
 ontologies_stubs declared 1 of the 11 files it read and was reported
 fresh after changes to the other ten (#839). Where the set comes from a
 constant, derive this from it rather than restating it.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.gtdb.GTDBTransform.TRANSFORM_INPUTS">
+<span class="sig-name descname"><span class="pre">TRANSFORM_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ontologies',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.gtdb.GTDBTransform.TRANSFORM_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Finalization reads the ontologies output’s declarations, so the NCBITaxon
+nodes GTDB’s mappings reference are not declared again here (#1511).</p>
 </dd></dl>
 
 <dl class="py method">

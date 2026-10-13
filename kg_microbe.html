@@ -1629,8 +1629,10 @@ to refresh that ontology alone (#690).</p></li>
 <dd class="field-even"><ul class="simple">
 <li><p><strong>ValueError</strong> – If a requested source is not registered in DATA_SOURCES.</p></li>
 <li><p><strong>FileNotFoundError</strong> – If a selected source declares a curation input
-that is not on disk, or is an optional source with no input named in
-<code class="docutils literal notranslate"><span class="pre">sources</span></code>; nothing runs (#685).</p></li>
+that is not on disk, is an optional source with no input named in
+<code class="docutils literal notranslate"><span class="pre">sources</span></code>, or declares an upstream in <code class="docutils literal notranslate"><span class="pre">TRANSFORM_INPUTS</span></code> that this
+run does not build and that has no completed output; nothing runs
+(#685, #1511).</p></li>
 <li><p><a class="reference internal" href="#kg_microbe.transform.TransformBatchError" title="kg_microbe.transform.TransformBatchError"><strong>TransformBatchError</strong></a> – After the batch, if any source failed. A
 failure is isolated to its source: later sources still run unless
 they declare the failed one in <code class="docutils literal notranslate"><span class="pre">TRANSFORM_INPUTS</span></code>, in which case they

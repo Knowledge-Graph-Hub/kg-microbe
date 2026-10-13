@@ -450,6 +450,13 @@ Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
 </dd></dl>
 
 <dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.TRANSFORM_INPUTS">
+<span class="sig-name descname"><span class="pre">TRANSFORM_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ontologies',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.TRANSFORM_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Finalization reads the ontologies output’s declarations, so the CHEBI
+nodes Rhea’s edges reference are not declared again here (#1511).</p>
+</dd></dl>
+
+<dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.TSV_QUOTING">
 <span class="sig-name descname"><span class="pre">TSV_QUOTING</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.rhea_mappings.RheaMappingsTransform.TSV_QUOTING" title="Link to this definition"></a></dt>
 <dd></dd></dl>
@@ -543,6 +550,13 @@ constant, derive this from it rather than restating it.</p>
 <span class="sig-name descname"><span class="pre">REQUIRED_CONSUMED_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('rhea_release_manifest',</span> <span class="pre">'rhea_directions',</span> <span class="pre">'rhea_rdf',</span> <span class="pre">'rhea_chebi_labels',</span> <span class="pre">'rhea_go_labels',</span> <span class="pre">'rhea_ec_labels',</span> <span class="pre">'rhea_legacy_xref_dispositions')</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.REQUIRED_CONSUMED_INPUTS" title="Link to this definition"></a></dt>
 <dd><p>Named generated inputs that must actually be read before fresh finalization.
 Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.TRANSFORM_INPUTS">
+<span class="sig-name descname"><span class="pre">TRANSFORM_INPUTS</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">('ontologies',)</span></em><a class="headerlink" href="#kg_microbe.transform_utils.rhea_mappings.RheaMappingsTransform.TRANSFORM_INPUTS" title="Link to this definition"></a></dt>
+<dd><p>Finalization reads the ontologies output’s declarations, so the CHEBI
+nodes Rhea’s edges reference are not declared again here (#1511).</p>
 </dd></dl>
 
 <dl class="py attribute">

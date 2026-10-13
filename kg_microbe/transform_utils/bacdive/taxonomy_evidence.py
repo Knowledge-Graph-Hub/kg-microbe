@@ -9,6 +9,7 @@ Name-derived parent claims remain predictions, never native supplied taxids.
 import csv
 import hashlib
 import json
+import os
 import re
 from collections import Counter, defaultdict
 from contextlib import contextmanager
@@ -1119,9 +1120,18 @@ class TaxonomyEvidence:
             _fail("output verification requires completed native accounting")
         directory = Path(directory)
         with (directory / AUDIT_FILE).open(newline="", encoding="utf-8") as stream:
-            reader = csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE)
-            if reader.fieldnames != list(AUDIT_FIELDS) or list(reader) != self._audit_rows():
-                _fail("mandatory taxonomy audit missing, reordered, forged or incomplete")
+            previous_limit = csv.field_size_limit()
+            try:
+                # A row embeds the taxonomy blocks of each record it cites, which
+                # can exceed CSV's 128 KiB default (#1571). No cell is longer than
+                # the open file, so bound the parser by it, then restore the
+                # caller's limit.
+                csv.field_size_limit(max(previous_limit, os.fstat(stream.fileno()).st_size))
+                reader = csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE)
+                if reader.fieldnames != list(AUDIT_FIELDS) or list(reader) != self._audit_rows():
+                    _fail("mandatory taxonomy audit missing, reordered, forged or incomplete")
+            finally:
+                csv.field_size_limit(previous_limit)
         expected = {}
         fallback_subjects = set()
         withheld_subjects = {

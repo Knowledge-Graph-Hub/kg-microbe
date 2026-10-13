@@ -1,6 +1,7 @@
 """The merged graph is where a shared namespace can be policed (#896)."""
 
 import csv
+import json
 from pathlib import Path
 
 from kg_microbe.merge_utils.invariants import (
@@ -242,27 +243,80 @@ def test_a_namedthing_with_no_name_is_a_stub(tmp_path):
     assert find_stub_nodes(path) == {"NCBITaxon": ["NCBITaxon:999"]}
 
 
-def test_a_declared_namedthing_with_no_name_is_not_a_stub(tmp_path):
-    """
-    A source that declares a node sets provided_by; KGX's inventions carry none.
+#: A GOLD organism its raw data gives no name, as GOLD declares and the merge keeps it (#1590).
+_GOLD_NAMELESS = {
+    "id": "gold:Go0531699",
+    "category": "biolink:NamedThing",
+    "xref": "NCBITaxon:32008",
+    "provided_by": "infores:gold",
+}
 
-    GOLD types an organism it cannot resolve biolink:NamedThing (#1316), and its
-    raw data has no name for gold:Go0531699, so shape alone called it an
-    invention (#1590).
+
+def _node_row(node):
+    """Lay out a node mapping in the merged nodes file's column order."""
+    columns = ["id", "category", "name", "description", "xref", "provided_by", "synonym", "deprecated", "same_as"]
+    return [node.get(column, "") for column in columns]
+
+
+class _Declarations:
+    """The merge's admitted native declarations, reduced to exact rows by identifier."""
+
+    def __init__(self, *declarations):
+        """Admit each declaration as GOLD's native proof would carry it."""
+        self.rows = {row["id"]: row for row in declarations}
+
+    def declaration_for(self, identifier):
+        """Return the real proof type, so matching is the production rule."""
+        from kg_microbe.transform_utils.gold.taxon_dispositions import VerifiedGoldDeclaration
+
+        row = self.rows.get(identifier)
+        payload = {"id": identifier, "emitted_node_json": json.dumps(row)}
+        return None if row is None else VerifiedGoldDeclaration(json.dumps(payload))
+
+
+def test_a_nameless_node_its_native_declaration_proves_is_not_a_stub(tmp_path):
+    """
+    GOLD declares organisms it cannot resolve as nameless NamedThing nodes (#1316).
+
+    Shape alone called gold:Go0531699 a KGX invention (#1590). The proof merge
+    validation already requires for such a node decides instead.
     """
     from kg_microbe.merge_utils.invariants import find_stub_nodes
 
-    path = _nodes(tmp_path, [_node("gold:Go0531699", category="biolink:NamedThing", name=""), _stub("IMG:1")])
-    assert find_stub_nodes(path) == {"IMG": ["IMG:1"]}
+    path = _nodes(tmp_path, [_node_row(_GOLD_NAMELESS), _stub("IMG:1")])
+    assert find_stub_nodes(path, _Declarations(_GOLD_NAMELESS)) == {"IMG": ["IMG:1"]}
 
 
-def test_without_a_provided_by_column_the_shape_alone_decides(tmp_path):
-    """A nodes file that cannot say who declared a node keeps the earlier rule."""
+def test_provided_by_alone_does_not_prove_a_declaration(tmp_path):
+    """Sources leave provided_by blank and KGX can fill it; only a native proof counts."""
     from kg_microbe.merge_utils.invariants import find_stub_nodes
 
-    path = tmp_path / "merged-kg_nodes.tsv"
-    path.write_text("id\tcategory\tname\nX:1\tbiolink:NamedThing\t\n", encoding="utf-8")
-    assert find_stub_nodes(path) == {"X": ["X:1"]}
+    path = _nodes(tmp_path, [_node_row(_GOLD_NAMELESS)])
+    assert find_stub_nodes(path) == {"gold": ["gold:Go0531699"]}
+    assert find_stub_nodes(path, _Declarations()) == {"gold": ["gold:Go0531699"]}
+
+
+def test_a_declaration_that_differs_from_the_merged_row_proves_nothing(tmp_path):
+    """The proof covers the exact row: another value, or an extra field, leaves it a stub."""
+    from kg_microbe.merge_utils.invariants import find_stub_nodes
+
+    other_xref = {**_GOLD_NAMELESS, "xref": "NCBITaxon:1"}
+    path = _nodes(tmp_path, [_node_row(_GOLD_NAMELESS)])
+    assert find_stub_nodes(path, _Declarations(other_xref)) == {"gold": ["gold:Go0531699"]}
+    extra = _nodes(tmp_path, [_node_row({**_GOLD_NAMELESS, "synonym": "added later"})])
+    assert find_stub_nodes(extra, _Declarations(_GOLD_NAMELESS)) == {"gold": ["gold:Go0531699"]}
+
+
+def test_the_stub_report_uses_the_declarations_it_is_given(tmp_path):
+    """check_merged_invariants passes the merge's native declarations on to the stub check."""
+    from kg_microbe.merge_utils.invariants import STUB_NODE_REPORT
+
+    nodes = _nodes(tmp_path, [_node_row(_GOLD_NAMELESS), _stub("IMG:1")])
+    edges = _edges(tmp_path, [_row("gold:Go0531699", "NCBITaxon:32008")])
+    check_merged_invariants(edges, nodes_file=nodes, native_declarations=_Declarations(_GOLD_NAMELESS))
+    report = (tmp_path / STUB_NODE_REPORT).read_text(encoding="utf-8")
+    assert "IMG\t1\t" in report
+    assert "gold" not in report
 
 
 def test_a_namedthing_that_carries_a_name_is_not_a_stub(tmp_path):
@@ -480,4 +534,4 @@ def test_the_merge_hands_over_the_path_it_already_built():
     import kg_microbe.merge_utils.merge_kg as merge_kg
 
     source = inspect.getsource(merge_kg._cleanup_merged_outputs)
-    assert "check_merged_invariants(edges_file, output_dir, nodes_file=nodes_file)" in source
+    assert "edges_file, output_dir, nodes_file=nodes_file, native_declarations=native_declarations" in source

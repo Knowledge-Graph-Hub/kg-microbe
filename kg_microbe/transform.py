@@ -247,27 +247,39 @@ def _missing_prerequisites(sources: List[str], input_dir: Optional[Path] = None)
     return missing
 
 
+def _upstream_marker(source: str, upstream: str, output_dir: Optional[Path]) -> Optional[Path]:
+    """Return where finalization and the merge look for an upstream's marker: beside the source's own output."""
+    base = output_dir if output_dir is not None else getattr(DATA_SOURCES.get(source), "DEFAULT_OUTPUT_DIR", None)
+    return None if base is None else Path(base) / upstream / FINGERPRINT_FILE
+
+
 def _missing_upstream_outputs(runnable: List[str], selected: List[str], output_dir: Optional[Path]) -> List[str]:
     """
     Return ``"source: message"`` for each declared upstream that this run neither builds nor finds built.
 
     A source reads the outputs it lists in ``TRANSFORM_INPUTS``, and source
     finalization reads the ontologies output's declarations for a source that
-    lists it (#1511). Run without them, it would build on nothing and claim
-    success, so refuse before anything runs. An upstream selected in the same
-    run is built first, and the batch skips its dependents if it fails.
+    lists it (#1511). Without a completed one, which is what the upstream's
+    marker records, the source would build on nothing or on part of it and
+    claim success. So refuse before anything runs (#1554). An upstream
+    selected in the same run runs first and is checked again just before the
+    source starts. A single ontology removes the ontologies marker, so it
+    counts as removing that output unless ``ontologies`` runs after it (#1564).
     """
+    withdrawn = {ONTOLOGIES} if any(name not in DATA_SOURCES for name in selected) else set()
     missing = []
     for source in runnable:
         for upstream in getattr(DATA_SOURCES.get(source), "TRANSFORM_INPUTS", ()):
             if upstream in selected:
                 continue
-            default = getattr(DATA_SOURCES.get(upstream), "DEFAULT_OUTPUT_DIR", None)
-            base = output_dir if output_dir is not None else default
-            if base is None:
+            if upstream in withdrawn:
+                missing.append(
+                    f"{source}: needs a completed {upstream} output, but a single ontology selected in this run "
+                    f"removes its marker; select {upstream} too, so it is rebuilt first"
+                )
                 continue
-            marker = Path(base) / upstream / FINGERPRINT_FILE
-            if not marker.is_file():
+            marker = _upstream_marker(source, upstream, output_dir)
+            if marker is not None and not marker.is_file():
                 missing.append(
                     f"{source}: needs a completed {upstream} output, which it declares in TRANSFORM_INPUTS, "
                     f"but {marker} is absent; run `kg transform -s {upstream}` first, or select both"
@@ -377,10 +389,12 @@ def transform(
             f"single ontologies: {', '.join(ontology_names)}"
         )
     # Named on the command line, sources still run in registry order, so each
-    # follows the upstreams it declares (#1554). A single ontology runs where
-    # the ontologies source would.
+    # follows the upstreams it declares (#1554). A single ontology removes the
+    # ontologies marker, so it runs just before the ontologies source, which
+    # writes a new one (#1564).
     position = {name: index for index, name in enumerate(DATA_SOURCES)}
-    sources = sorted(sources, key=lambda name: position.get(name, position.get(ONTOLOGIES, -1)))
+    single_ontology_slot = position.get(ONTOLOGIES, 0) - 0.5
+    sources = sorted(sources, key=lambda name: position.get(name, single_ontology_slot))
 
     absent_optional = _absent_optional_inputs(sources, input_dir)
     missing: List[str] = []
@@ -432,12 +446,25 @@ def transform(
             unavailable.add(source)
             print(f"[transform] {source}: skipped — upstream {', '.join(upstream)} did not complete", flush=True)
             continue
+        # Checked again now, not only before the batch: an earlier source in this
+        # run may have left an upstream without its marker, as a single ontology
+        # does (#1564). Failing here costs seconds; finalization would fail
+        # only after the producer had run.
+        absent = _missing_upstream_outputs([source], [], output_dir) if source in DATA_SOURCES else []
+        if absent:
+            failed[source] = FileNotFoundError("; ".join(absent))
+            unavailable.add(source)
+            print(f"[transform] {source}: FAILED — FileNotFoundError: {failed[source]}", flush=True)
+            continue
         # print, not logging.info: the CLI does not configure a handler that
         # shows INFO, so the old log line was invisible and a run that produced
         # nothing looked identical to one that worked.
         print(f"[transform] {source}: starting", flush=True)
         try:
             _run_one(source, input_dir, output_dir, show_status)
+            # A failed single ontology marks `ontologies` unavailable; a later
+            # successful ontologies run in the same batch restores it (#1564).
+            unavailable.discard(source)
         except Exception as exc:  # noqa: BLE001 - isolate one source; BaseException still aborts the batch
             failed[source] = exc
             unavailable.add(source)

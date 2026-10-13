@@ -380,6 +380,17 @@ def _fingerprint_verdict(source: str, code_dir: Path) -> Optional[tuple]:
                 f"built against Biolink {recorded_schema.get('version', '?')}, pinned model is now "
                 f"{current.get('version', 'absent')}; rerun `poetry run kg transform -s {source}`",
             )
+        # A declared upstream with no marker folds in as absent both when the
+        # output was built and now, so the digests match although the output
+        # was built on nothing. It cannot be fresh until that upstream exists
+        # and this source is rebuilt on it (#1565).
+        absent = [u for u in _declared_transform_inputs(source) if read_fingerprint(directory.parent / u) is None]
+        if absent and not (code_stale or data_stale):
+            return (
+                "STALE_VS_UPSTREAM",
+                f"declared upstream {', '.join(absent)} has no completed output; build it, then rerun "
+                f"`poetry run kg transform -s {source}`",
+            )
         if upstream_stale and not (code_stale or data_stale):
             upstreams = ", ".join(_declared_transform_inputs(source)) or "an upstream"
             return (

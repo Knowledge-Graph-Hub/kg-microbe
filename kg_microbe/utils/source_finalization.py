@@ -39,7 +39,6 @@ from kg_microbe.utils.optional_consumed_inputs import has_optional_inputs
 from kg_microbe.utils.producer_audits import verify_producer_audits, verify_recorded_producer_audits
 from kg_microbe.utils.provenance import primary_source_and_publications, serialize_knowledge_sources
 from kg_microbe.utils.transform_fingerprint import (
-    FINGERPRINT_FILE,
     SHARED_DATA_INPUTS,
     code_fingerprint,
     declared_data_inputs,
@@ -581,58 +580,23 @@ def _dependency_declarations(transform, used_inputs):
     output made the same code and inputs produce different bytes depending on
     what else had been built (#1511).
 
-    With no ontologies output at all, nothing is read: the source's marker
-    records the absent upstream, ``kg transform`` refuses to run it, and the
-    merge refuses its output. Partial output is refused here (#1554).
+    Whether that output is complete is judged where runs and publication
+    happen, not here. ``kg transform`` refuses to start a declaring source
+    without a completed ontologies output. The source's marker records the
+    upstream it saw, and the merge and ``kgm-freshness-check`` reject output
+    built without a completed one (#1554, #1564, #1565).
     """
     if ONTOLOGIES not in getattr(type(transform), "TRANSFORM_INPUTS", ()):
         return set()
-    source = getattr(transform, "source_name", type(transform).__name__)
+    ontology_dir = Path(transform.output_base_dir) / ONTOLOGIES
     found = set()
-    for path in _finalized_ontology_nodes(Path(transform.output_base_dir) / ONTOLOGIES, source):
+    quoting = csv.QUOTE_NONE if (ontology_dir / FINALIZATION_FILE).is_file() else csv.QUOTE_MINIMAL
+    for path in sorted(ontology_dir.glob("*nodes.tsv")):
         used_inputs.add(path)
-        for row in graph_rows(path):
+        for row in graph_rows(path, quoting=quoting):
             if row.get(NAME_COLUMN):
                 found.add(row[ID_COLUMN])
     return found
-
-
-def _finalized_ontology_nodes(ontology_dir, source):
-    """
-    Return the node files of a completed ontologies output, verified against its record.
-
-    A single-ontology run leaves one ontology's files and a scoped record, and
-    removes the completion marker; an interrupted run leaves some files and no
-    record. Either would declare only some ontology terms, so the source would
-    quietly declare the rest itself. Read exactly the node files the
-    whole-source record lists, never whatever else is in the directory.
-    """
-    record_path = ontology_dir / FINALIZATION_FILE
-    if not record_path.is_file() and not any(ontology_dir.glob("*nodes.tsv")):
-        return []
-    rebuild = f"rebuild it with `kg transform -s {ONTOLOGIES}`"
-    if not record_path.is_file() or not (ontology_dir / FINGERPRINT_FILE).is_file():
-        raise SourceFinalizationRequired(
-            f"{source}: {ontology_dir} holds an incomplete {ONTOLOGIES} output, with no whole-source "
-            f"finalization record or completion marker, as a single-ontology or interrupted run leaves; {rebuild}"
-        )
-    try:
-        record = json.loads(record_path.read_text(encoding="utf-8"))
-    except (OSError, ValueError) as exc:
-        raise SourceFinalizationRequired(f"Unreadable source finalization record: {record_path}") from exc
-    if record.get("version") != FINALIZATION_VERSION:
-        raise SourceFinalizationRequired(f"{source}: unsupported finalization record {record_path}; {rebuild}")
-    paths = []
-    for name, expected in sorted((record.get("members") or {}).items()):
-        if not name.endswith("nodes.tsv"):
-            continue
-        path = ontology_dir / name
-        if not path.is_file() or {"bytes": path.stat().st_size, "sha256": _sha256(path)} != expected:
-            raise SourceFinalizationRequired(f"{source}: {path} differs from its finalization record; {rebuild}")
-        paths.append(path)
-    if not paths:
-        raise SourceFinalizationRequired(f"{source}: {record_path} lists no node files; {rebuild}")
-    return paths
 
 
 def _bind_finalization_members(transform, names):

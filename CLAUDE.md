@@ -42,7 +42,7 @@ poetry run kg download -t ontologies -t gtdb
 poetry run kg download -i -t mediadive
 poetry run kg transform
 poetry run kg transform -s bacdive -s mediadive
-poetry run kg transform -s ec          # one ontology; leaves the ontologies fingerprint alone
+poetry run kg transform -s ec          # one ontology; withdraws the ontologies marker until a full rebuild
 poetry run kg merge -y merge.yaml
 make run-summary
 ```
@@ -112,16 +112,22 @@ Standard edge columns are `subject`, `predicate`, `object`, `relation`,
 `primary_knowledge_source`, `knowledge_level`, and `agent_type`. Source-specific
 extension columns are allowed when the merge preserves them.
 
-Finalization resolves NCBITaxon and CHEBI nodes (and two named MICRO and OBI
-terms) that a source references but does not declare, unless the `ontologies`
-output already declares them. It declares them from the pinned taxdump or
-`chebi.db`, rewrites merged taxids, and drops edges to taxa outside the
-prokaryote trim and to obsolete CHEBI terms. It reads the `ontologies` output
-only for a source that lists `ontologies` in `TRANSFORM_INPUTS`, and refuses a
-partial one. `kg transform` refuses to start any source whose declared upstream
-has no completed output, unless the same run builds it. A source whose edges
-reference ontology terms must therefore declare `ontologies`; before #1511, its
-output depended on what else had been built beside it.
+Finalization resolves the NCBITaxon and CHEBI nodes that a source references
+but does not declare, unless the `ontologies` output already declares them.
+- It declares them from the pinned taxdump or `chebi.db`.
+- It rewrites merged taxids and replaced CHEBI terms.
+- It drops edges to taxa outside the prokaryote trim and to obsolete CHEBI terms
+  with no replacement.
+- Two named MICRO and OBI terms come from `micro.owl` and `metpo.owl`.
+
+Finalization reads the `ontologies` output only for a source that lists
+`ontologies` in `TRANSFORM_INPUTS`. A source whose edges reference ontology terms
+must therefore declare it; before #1511, its output depended on what else had
+been built beside it. Completeness is checked where runs and publication happen.
+`kg transform` refuses to start any source whose declared upstream has no
+completion marker, unless the same run builds it. A single ontology removes the
+ontologies marker until a full rebuild. The merge and `kgm-freshness-check` reject
+output built without a completed upstream.
 
 For this graph, a named strain or isolate beneath an NCBITaxon is typed
 `biolink:OrganismTaxon` and linked with `biolink:subclass_of`. This deliberate

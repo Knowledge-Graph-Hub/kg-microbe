@@ -60,6 +60,9 @@ class GTDBTransform(Transform):
     """Transform GTDB taxonomy and genome data into KGX format."""
 
     DATA_INPUTS = ("data/raw/taxdump.tar.gz",)
+    #: Finalization reads the ontologies output's declarations, so the NCBITaxon
+    #: nodes GTDB's mappings reference are not declared again here (#1511).
+    TRANSFORM_INPUTS = ("ontologies",)
 
     def __init__(self, input_dir=None, output_dir=None):
         """

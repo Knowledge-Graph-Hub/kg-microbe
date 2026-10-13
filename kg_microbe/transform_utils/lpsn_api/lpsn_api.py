@@ -47,7 +47,7 @@ This is a SEPARATE transform (registered as ``lpsn_api`` in
 transform, so the fast 16-second GSS-only path stays the default. Users
 who want the API enrichment run both:
 
-    poetry run kg transform -s lpsn        # fast GSS-only (16 s)
+    poetry run kg transform -s lpsn        # fast GSS-only (16 s), after gtdb and ontologies
     poetry run kg transform -s lpsn_api    # slow enrichment (hours)
 
 The merge step then combines both nodes.tsv / edges.tsv files.

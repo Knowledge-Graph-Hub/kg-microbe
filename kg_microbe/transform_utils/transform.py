@@ -62,16 +62,22 @@ class Transform:
     #: Registered source names whose **output** this transform reads.
     #:
     #: `DATA_INPUTS` covers curation files under ``mappings/``. It does not
-    #: cover a dependency on another transform's output, and eight sources have
-    #: one: gold reads ``ontologies/ncbitaxon_nodes.tsv`` (and refuses to run
-    #: without it) plus ``ontologies_stubs/po_nodes.tsv``, lpsn reads
-    #: ``gtdb/nodes.tsv``, lpsn_api and microbedecoder read ``lpsn/nodes.tsv``,
-    #: prego reads ``ontologies/``, and bacdive, mediadive and metatraits reach
-    #: ``ontologies/`` through the ``NCBITAXON_NODES_FILE`` /
-    #: ``CHEBI_NODES_FILE`` constants (metatraits_gtdb inherits metatraits').
+    #: cover a dependency on another transform's output, which several sources
+    #: have. For example, gold reads ``ontologies/ncbitaxon_nodes.tsv`` (and
+    #: refuses to run without it) plus ``ontologies_stubs/po_nodes.tsv``, lpsn
+    #: reads ``gtdb/nodes.tsv``, lpsn_api and microbedecoder read
+    #: ``lpsn/nodes.tsv``, prego reads ``ontologies/``, and bacdive, mediadive
+    #: and metatraits reach ``ontologies/`` through the ``NCBITAXON_NODES_FILE``
+    #: / ``CHEBI_NODES_FILE`` constants (metatraits_gtdb inherits metatraits').
     #: Those last three went undeclared for months precisely because the path
     #: is spelled in ``constants.py`` rather than in the transform, which the
     #: guard below could not see until #1035.
+    #:
+    #: Source finalization reads the ontologies output's declarations too, but
+    #: only for a source that lists ``ontologies`` here. gtdb, lpsn, madin_etal,
+    #: rhea_mappings and ontologies_stubs declare it for that reason alone
+    #: (#1511). ``kg transform`` refuses to start a source whose declared
+    #: upstream has no completion marker, unless the same run builds it first.
     #:
     #: Undeclared, re-running an upstream leaves every downstream genuinely
     #: stale while all three freshness signals report fresh — the #812 shape,

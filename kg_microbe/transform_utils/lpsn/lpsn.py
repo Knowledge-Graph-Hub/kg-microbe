@@ -270,8 +270,10 @@ class _NCBILabelIndex:
 class LPSNTransform(Transform):
     """Transform LPSN GSS CSV bulk export into KGX nodes + edges."""
 
-    #: Reads this transform's output; see Transform.TRANSFORM_INPUTS (#845).
-    TRANSFORM_INPUTS = ("gtdb",)
+    #: Reads gtdb's output; see Transform.TRANSFORM_INPUTS (#845). Finalization
+    #: also reads the ontologies output's declarations, so the NCBITaxon nodes
+    #: LPSN's edges reference are not declared again here (#1511).
+    TRANSFORM_INPUTS = ("ontologies", "gtdb")
     REQUIRED_CONSUMED_INPUTS = (GSS_NATIVE_INPUT,)
     REQUIRED_AUDIT_FILES = (PARENT_DISPOSITIONS_FILE,)
 
@@ -300,10 +302,11 @@ class LPSNTransform(Transform):
             GTDB (rank, normalized_name) → CURIE lookup. When
             ``None`` (the default), the constructor auto-loads
             ``data/transformed/gtdb/nodes.tsv`` if that file exists;
-            otherwise GTDB enrichment is silently skipped (so a fresh
-            checkout that hasn't run the GTDB transform yet still
-            produces a valid — GTDB-less — LPSN output). Tests inject a
-            mock here to keep the fixture self-contained.
+            otherwise GTDB enrichment is skipped. ``kg transform -s lpsn``
+            refuses to start without completed gtdb and ontologies
+            outputs, which it declares in ``TRANSFORM_INPUTS`` (#1511), so
+            a GTDB-less output comes only from direct construction. Tests
+            inject a mock here to keep the fixture self-contained.
 
         """
         super().__init__(LPSN_SOURCE, input_dir, output_dir)

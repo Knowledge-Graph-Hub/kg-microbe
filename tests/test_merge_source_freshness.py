@@ -241,11 +241,22 @@ def record_source(transform):
     )
 
 
-def prepare_source(tmp_path, source, *, prefix="", marker=True, output_name=None):
-    """Finalize immutable tiny TSVs with a real producer class, never its constructor or run method."""
+def prepare_source(tmp_path, source, *, prefix="", marker=True, output_name=None, upstream=True):
+    """
+    Finalize immutable tiny TSVs with a real producer class, never its constructor or run method.
+
+    With ``upstream=False`` a source that declares ontologies is finalized with
+    no ontologies output beside it, a state only the merge gate refuses.
+    """
     raw = tmp_path / "raw"
     raw.mkdir(exist_ok=True)
     cls = DATA_SOURCES[source].transform_class
+    ontologies = tmp_path / "transformed/ontologies"
+    if upstream and "ontologies" in cls.TRANSFORM_INPUTS and not any(ontologies.glob("*nodes.tsv")):
+        # Such a source finalizes against the ontologies output, and the merge
+        # gate checks that upstream, so give it a finalized one as a run would
+        # (#1511). A test that prepared its own, even a scoped one, keeps it.
+        prepare_source(tmp_path, "ontologies")
     transform = cls.__new__(cls)
     Transform.__init__(transform, output_name or source, raw, tmp_path / "transformed")
     for kind in ("nodes", "edges"):
@@ -568,6 +579,15 @@ def test_scoped_ontology_requires_whole_producer_schema_evidence(tmp_path, capsy
     consumer = prepare_source(tmp_path, "bacdive")
     config = merge_config(tmp_path, [consumer])
     with pytest.raises(SourceFinalizationRequired, match="upstream|whole|fingerprint"):
+        merge_kg._assert_sources_finalized(str(config))
+
+
+def test_a_consumer_finalized_without_its_declared_upstream_is_refused_at_merge(tmp_path):
+    """Finalization tolerates an absent ontologies output; the merge gate must not (#1565)."""
+    consumer = prepare_source(tmp_path, "madin_etal", upstream=False)
+    assert not (tmp_path / "transformed/ontologies").exists()
+    config = merge_config(tmp_path, [consumer])
+    with pytest.raises(SourceFinalizationRequired, match="invalid upstream ontologies"):
         merge_kg._assert_sources_finalized(str(config))
 
 

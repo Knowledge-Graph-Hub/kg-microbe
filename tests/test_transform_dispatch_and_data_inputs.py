@@ -10,6 +10,7 @@ import pytest
 
 from kg_microbe.transform import DATA_SOURCES, LazyTransform, TransformBatchError, transform
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.transform_fingerprint import FINGERPRINT_FILE, write_fingerprint
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 ISO = "mappings/isolation_source_to_ontology.tsv"
@@ -654,6 +655,120 @@ class BatchIsolationTest(TestCase):
             with pytest.raises(TypeError):
                 _missing_prerequisites(["a"])
 
+    def _upstream_and_dependent(self):
+        """Register a source and one that declares it in TRANSFORM_INPUTS."""
+        return {
+            "up": _fake_source("up", self.log, self.base),
+            "dep": _fake_source("dep", self.log, self.base, inputs=("up",)),
+        }
+
+    def test_a_declared_upstream_with_no_completed_output_fails_before_anything_runs(self):
+        """Without it the source would build on nothing and claim success (#1511)."""
+        with mock.patch.dict(DATA_SOURCES, self._upstream_and_dependent(), clear=True):
+            with pytest.raises(FileNotFoundError) as excinfo:
+                transform(None, self.base / "out", sources=["dep"])
+        self.assertEqual(self.log, [])
+        self.assertIn("dep: needs a completed up output", str(excinfo.value))
+        self.assertIn("kg transform -s up", str(excinfo.value))
+
+    def test_the_upstream_check_looks_beside_the_dependents_own_output(self):
+        """With no -o, finalization and the merge read the upstream beside the dependent's output."""
+        registry = self._upstream_and_dependent()
+        registry["dep"].DEFAULT_OUTPUT_DIR = self.base / "default"
+        with mock.patch.dict(DATA_SOURCES, registry, clear=True):
+            with pytest.raises(FileNotFoundError, match="default/up/source_fingerprint.json"):
+                transform(None, None, sources=["dep"])
+        self.assertEqual(self.log, [])
+
+    def _completed(self, name):
+        """Record a real completion marker for ``name`` under the scratch root."""
+        (self.base / name).mkdir(parents=True, exist_ok=True)
+        write_fingerprint(self.base / name, Path(__file__).parent, Path(__file__).parents[1], ())
+        return self.base / name / FINGERPRINT_FILE
+
+    def test_a_completed_upstream_lets_its_dependent_run_alone(self):
+        """The completion marker is the evidence the check asks for, as freshness and the merge do."""
+        self._completed("up")
+        with mock.patch.dict(DATA_SOURCES, self._upstream_and_dependent(), clear=True):
+            transform(None, self.base, sources=["dep"])
+        self.assertEqual(self.log, ["dep"])
+
+    def test_an_unreadable_upstream_marker_is_not_a_completed_output(self):
+        """Freshness and the merge reject `{}` as a marker, so the preflight must too (#1568)."""
+        marker = self.base / "up" / FINGERPRINT_FILE
+        marker.parent.mkdir(parents=True)
+        marker.write_text("{}")
+        with mock.patch.dict(DATA_SOURCES, self._upstream_and_dependent(), clear=True):
+            with pytest.raises(FileNotFoundError, match="absent or unreadable"):
+                transform(None, self.base, sources=["dep"])
+        self.assertEqual(self.log, [])
+
+    def test_explicit_selections_run_upstream_first_whatever_order_they_were_named_in(self):
+        """`-s dep -s up` must not build dep against up's previous output (#1554)."""
+        with mock.patch.dict(DATA_SOURCES, self._upstream_and_dependent(), clear=True):
+            transform(None, self.base, sources=["dep", "up"])
+        self.assertEqual(self.log, ["up", "dep"])
+
+    def test_an_upstream_built_in_the_same_run_needs_no_earlier_output(self):
+        """Selected together, the upstream runs first and its new marker is what the dependent finds."""
+        with mock.patch.dict(DATA_SOURCES, self._upstream_and_dependent(), clear=True):
+            transform(None, self.base, sources=["up", "dep"])
+        self.assertEqual(self.log, ["up", "dep"])
+
+    def test_an_upstream_that_finishes_without_its_marker_stops_the_dependent_before_it_runs(self):
+        """The marker is written best-effort; without it the dependent fails now, not after its producer."""
+        import kg_microbe.transform as dispatcher
+
+        record = dispatcher._record_fingerprint
+
+        def record_all_but_up(transform_obj, source):
+            """Fail to record only the upstream's marker, as a full disk would."""
+            if source != "up":
+                record(transform_obj, source)
+
+        with mock.patch.dict(DATA_SOURCES, self._upstream_and_dependent(), clear=True):
+            with mock.patch.object(dispatcher, "_record_fingerprint", record_all_but_up):
+                with pytest.raises(TransformBatchError) as excinfo:
+                    transform(None, self.base, sources=["up", "dep"])
+        self.assertEqual(self.log, ["up"])
+        self.assertIn("dep: up ran earlier in this batch but recorded no usable completion marker", str(excinfo.value))
+
+    def _ontologies_and_dependent(self):
+        """Register an ontologies stand-in that can also run one ontology, and a source that declares it."""
+        log, base = self.log, self.base
+
+        class FakeOntologies:
+            """Record whole and single-ontology runs into its own output directory."""
+
+            DATA_INPUTS = ()
+            TRANSFORM_INPUTS = ()
+
+            def __init__(self, input_dir, output_dir):
+                """Create isolated output for the stand-in."""
+                self.output_dir = base / "ontologies"
+                self.output_dir.mkdir(parents=True, exist_ok=True)
+
+            def run(self, data_file=None, show_status=True):
+                """Record which run this was."""
+                log.append("ontologies" if data_file is None else "single ontology")
+
+        return {"ontologies": FakeOntologies, "dep": _fake_source("dep", log, base, inputs=("ontologies",))}
+
+    def test_a_single_ontology_with_a_dependent_and_no_full_rebuild_is_refused_before_it_runs(self):
+        """`-s ec -s dep` would remove the marker dep needs, then build dep on part of it (#1564)."""
+        marker = self._completed("ontologies")
+        with mock.patch.dict(DATA_SOURCES, self._ontologies_and_dependent(), clear=True):
+            with pytest.raises(FileNotFoundError, match="dep: .*single ontology selected in this run"):
+                transform(None, self.base, sources=["dep", "ec"])
+        self.assertEqual(self.log, [])
+        self.assertTrue(marker.is_file(), "a refused run must not remove the marker")
+
+    def test_a_single_ontology_runs_before_the_ontologies_rebuild_that_its_dependents_read(self):
+        """With ontologies selected too, the single ontology goes first and the rebuild restores the marker."""
+        with mock.patch.dict(DATA_SOURCES, self._ontologies_and_dependent(), clear=True):
+            transform(None, self.base, sources=["dep", "ontologies", "ec"])
+        self.assertEqual(self.log, ["single ontology", "ontologies", "dep"])
+
     def test_alternate_raw_declaration_does_not_require_repository_default(self):
         """CLI -i determines the raw authority preflight path, not an unrelated repo file."""
         from kg_microbe.transform import _missing_declared_inputs
@@ -729,7 +844,7 @@ class SingleOntologySourceTest(TestCase):
 
         return FakeOntologies
 
-    def test_an_ontology_name_runs_only_that_ontology_and_leaves_the_fingerprint_alone(self):
+    def test_an_ontology_name_runs_only_that_ontology_and_withdraws_the_directory_marker(self):
         """One ontology's file is refreshed; the directory-wide marker is not rewritten to claim the rest are."""
         calls = []
         with (
@@ -754,28 +869,56 @@ class SingleOntologySourceTest(TestCase):
         self.assertIn("ec_nodes.tsv: 1 rows", done[0])
         self.assertNotIn("chebi", done[0])
 
-    def test_a_failed_single_ontology_skips_what_depends_on_ontologies(self):
-        """A dependent declares `ontologies`, not `ec`; a failed `-s ec` must still keep it from running."""
-        calls = []
+    def _single_ontology_registry(self, calls, log, fail_whole):
+        """Register a stand-in whose single-ontology run fails, and gold, which declares ontologies."""
         fake = self._ontologies_fake(calls)
         original_run = fake.run
 
         def failing_run(self_, data_file=None, show_status=True):
-            """Fail after writing outputs to test dependent-source suppression."""
+            """Fail after writing outputs, for a single ontology and optionally for the whole run."""
             original_run(self_, data_file, show_status)
-            raise RuntimeError("robot died")
+            if data_file is not None or fail_whole:
+                raise RuntimeError("robot died")
 
         fake.run = failing_run
-        log = []
-        registry = {"ontologies": fake, "gold": _fake_source("gold", log, self.base, inputs=("ontologies",))}
+        return {"ontologies": fake, "gold": _fake_source("gold", log, self.base, inputs=("ontologies",))}
+
+    def test_a_single_ontology_with_a_dependent_is_refused_before_anything_runs(self):
+        """`-s ec -s gold` would build gold on one refreshed ontology and no marker (#1564)."""
+        calls, log = [], []
         with (
-            mock.patch.dict(DATA_SOURCES, registry, clear=True),
+            mock.patch.dict(DATA_SOURCES, self._single_ontology_registry(calls, log, False), clear=True),
+            mock.patch("kg_microbe.transform._ontology_map", return_value={"ec": "ec.json"}),
+        ):
+            with pytest.raises(FileNotFoundError, match="gold: .*single ontology selected in this run"):
+                transform(None, None, sources=["ec", "gold"])
+        self.assertEqual((calls, log), ([], []))
+
+    def test_a_failed_single_ontology_skips_what_depends_on_ontologies(self):
+        """A dependent declares `ontologies`, not `ec`; with both failing it must not run."""
+        calls, log = [], []
+        with (
+            mock.patch.dict(DATA_SOURCES, self._single_ontology_registry(calls, log, True), clear=True),
             mock.patch("kg_microbe.transform._ontology_map", return_value={"ec": "ec.json"}),
         ):
             with pytest.raises(TransformBatchError) as excinfo:
-                transform(None, None, sources=["ec", "gold"])
+                transform(None, self.base, sources=["gold", "ontologies", "ec"])
+        self.assertEqual(calls, ["ec.json", None])
         self.assertEqual(log, [])
         self.assertEqual(excinfo.value.skipped, {"gold": ["ontologies"]})
+
+    def test_an_ontologies_rebuild_after_a_failed_single_ontology_lets_dependents_run(self):
+        """The rebuild that follows in the same run restores what the single ontology took away."""
+        calls, log = [], []
+        with (
+            mock.patch.dict(DATA_SOURCES, self._single_ontology_registry(calls, log, False), clear=True),
+            mock.patch("kg_microbe.transform._ontology_map", return_value={"ec": "ec.json"}),
+        ):
+            with pytest.raises(TransformBatchError) as excinfo:
+                transform(None, self.base, sources=["gold", "ontologies", "ec"])
+        self.assertEqual(calls, ["ec.json", None])
+        self.assertEqual(log, ["gold"])
+        self.assertEqual(set(excinfo.value.failed), {"ec"})
 
     def test_an_unknown_name_lists_the_ontologies_too(self):
         """The error names both kinds of accepted source, so `-s EC` is an obvious typo."""

@@ -180,6 +180,28 @@ Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.missing_prerequisites">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">missing_prerequisites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ontology</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.missing_prerequisites" title="Link to this definition"></a></dt>
+<dd><p>Report each reviewed upstream input that is missing, stale or not the reviewed release.</p>
+<p>Reviewed policies pin the OWL and JSON releases their content comes from, and
+the Biolink model, but check them only when their source finalizes, after
+hours of NCBITaxon and ChEBI work. Checking first makes a stale download fail
+in seconds (#1420). A single ontology runs under this source and is checked
+for the files its own run reads (#1534).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Effective raw input directory; <code class="docutils literal notranslate"><span class="pre">None</span></code> means the default.</p></li>
+<li><p><strong>ontology</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The single ontology selected, or <code class="docutils literal notranslate"><span class="pre">None</span></code> for the whole source.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.parse">
 <span class="sig-name descname"><span class="pre">parse</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.ontologies_transform.OntologiesTransform.parse" title="Link to this definition"></a></dt>
 <dd><p>Process the data_file.</p>
@@ -308,6 +330,28 @@ Unlike DATA_INPUTS, these are checked after upstream producers have run.</p>
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.OntologiesTransform.finalize">
 <span class="sig-name descname"><span class="pre">finalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fresh_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.OntologiesTransform.finalize" title="Link to this definition"></a></dt>
 <dd><p>Make the successful source-publication dialect boundary explicit for native verification.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.ontologies.OntologiesTransform.missing_prerequisites">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">missing_prerequisites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ontology</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.ontologies.OntologiesTransform.missing_prerequisites" title="Link to this definition"></a></dt>
+<dd><p>Report each reviewed upstream input that is missing, stale or not the reviewed release.</p>
+<p>Reviewed policies pin the OWL and JSON releases their content comes from, and
+the Biolink model, but check them only when their source finalizes, after
+hours of NCBITaxon and ChEBI work. Checking first makes a stale download fail
+in seconds (#1420). A single ontology runs under this source and is checked
+for the files its own run reads (#1534).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Effective raw input directory; <code class="docutils literal notranslate"><span class="pre">None</span></code> means the default.</p></li>
+<li><p><strong>ontology</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The single ontology selected, or <code class="docutils literal notranslate"><span class="pre">None</span></code> for the whole source.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">

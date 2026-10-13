@@ -161,6 +161,42 @@ truncated one and was regenerated on every subsequent run forever.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.atomic_io.gunzip_beside">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.atomic_io.</span></span><span class="sig-name descname"><span class="pre">gunzip_beside</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">b''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.atomic_io.gunzip_beside" title="Link to this definition"></a></dt>
+<dd><p>Make <code class="docutils literal notranslate"><span class="pre">path</span></code> exist by unpacking its <code class="docutils literal notranslate"><span class="pre">.gz</span></code> sibling, atomically, when only the archive is present.</p>
+<p>Some raw authorities are downloaded gzipped (<code class="docutils literal notranslate"><span class="pre">ncit.db.gz</span></code>) and read uncompressed by
+more than one source. Each reader calls this instead of decompressing in place, so no
+reader ever sees a partly written file (#1526). An existing <code class="docutils literal notranslate"><span class="pre">path</span></code> is never replaced,
+even after a newer archive is downloaded; the release preflight reports an <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code>
+whose size is not the archive’s unpacked size (#1536). Two readers that both find
+<code class="docutils literal notranslate"><span class="pre">path</span></code> missing both unpack it, and the later copy replaces the earlier one. A reader
+that bound the earlier copy, as the NCIT category authority does, then refuses the
+replaced file as changed; other readers keep the copy they opened (#1537). Partial
+files that a killed unpack left more than a day ago are swept whenever <code class="docutils literal notranslate"><span class="pre">path</span></code> is
+found or published, so a later run’s early return no longer strands them (#1558).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – The uncompressed file the caller wants.</p></li>
+<li><p><strong>root</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – When given, both files must resolve inside it; a link elsewhere is refused.</p></li>
+<li><p><strong>magic</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></span>) – The bytes the unpacked file must start with, such as <code class="xref py py-data docutils literal notranslate"><span class="pre">SQLITE_HEADER</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">path</span></code>, which is missing only when the archive is too.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – When either file cannot be resolved or resolves outside <code class="docutils literal notranslate"><span class="pre">root</span></code>, or the
+archive is damaged, unpacks to nothing or does not start with <code class="docutils literal notranslate"><span class="pre">magic</span></code>. Nothing is
+published then.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.atomic_io.has_data_rows">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.atomic_io.</span></span><span class="sig-name descname"><span class="pre">has_data_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delimiter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'\\t'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.atomic_io.has_data_rows" title="Link to this definition"></a></dt>
 <dd><p>Report whether a delimited cache exists and holds at least one data row.</p>
@@ -5661,6 +5697,162 @@ reads a release. Exactly one distinct value must be recorded.</p>
 <dt class="sig sig-object py" id="kg_microbe.utils.release_binding.stream_bytes">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.release_binding.</span></span><span class="sig-name descname"><span class="pre">stream_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.release_binding.stream_bytes" title="Link to this definition"></a></dt>
 <dd><p>Return a consumed-input stream’s exact bytes, whether it is opened as text or binary.</p>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.utils.release_preflight">
+<span id="kg-microbe-utils-release-preflight-module"></span><h2>kg_microbe.utils.release_preflight module<a class="headerlink" href="#module-kg_microbe.utils.release_preflight" title="Link to this heading"></a></h2>
+<p>Check the reviewed upstream inputs before a long ontology run starts (#1420).</p>
+<p>The ontology policies bind raw upstream release files by SHA-256: the OWL each
+converted JSON is built from, the JSON releases read directly and the <code class="docutils literal notranslate"><span class="pre">go.owl</span></code>
+behind <code class="docutils literal notranslate"><span class="pre">go.db</span></code>; the NCIT and MeSH policies pin the Biolink model. Each policy
+checks its pins only when its source finalizes, so a stale or rewritten download
+used to fail after hours of NCBITaxon and ChEBI work. This module collects those
+pins from the policies themselves and compares them with the raw directory before
+the ontologies source, or a single ontology, runs. It also checks two things a run
+would otherwise discover late: that the raw directory holds <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> with a SQLite
+header and, with <code class="docutils literal notranslate"><span class="pre">ncit.db.gz</span></code> beside it, the archive’s unpacked size, or else an
+archive that unpacks to a SQLite database; and that an existing <code class="docutils literal notranslate"><span class="pre">upa.json</span></code> is the
+pinned conversion. It reads the policies’ pins and never replaces them.
+<code class="docutils literal notranslate"><span class="pre">ontologies_stubs</span></code> and MediaDive, which also read <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code>, run the NCIT check
+too. Other sources’ pins (Rhea, MicrobeDecoder) are checked when those sources run.</p>
+<p>Run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">kg_microbe.utils.release_preflight</span> <span class="pre">[RAW_DIR]</span></code> to check without
+starting a run.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.release_preflight.main">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.release_preflight.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.release_preflight.main" title="Link to this definition"></a></dt>
+<dd><p>Check a raw directory without starting a run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>argv</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – <code class="docutils literal notranslate"><span class="pre">[RAW_DIR]</span></code>; <code class="docutils literal notranslate"><span class="pre">data/raw</span></code> under the repository by default.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>0 when the inputs are ready, 1 when there are problems.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.release_preflight.mismatched_release_files">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.release_preflight.</span></span><span class="sig-name descname"><span class="pre">mismatched_release_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/kg-microbe/kg-microbe')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.release_preflight.mismatched_release_files" title="Link to this definition"></a></dt>
+<dd><p>Report each pinned release file that is missing from <code class="docutils literal notranslate"><span class="pre">raw_dir</span></code> or is not the reviewed release.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>raw_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – The raw input directory a run will read.</p></li>
+<li><p><strong>repo_root</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Repository root holding <code class="docutils literal notranslate"><span class="pre">mappings/</span></code> and <code class="docutils literal notranslate"><span class="pre">download.yaml</span></code>.</p></li>
+<li><p><strong>pins</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]]]</span>) – The pins to check; every reviewed policy’s by default.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>One message per problem; empty when every pinned file matches.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.release_preflight.ncit_authority_problems">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.release_preflight.</span></span><span class="sig-name descname"><span class="pre">ncit_authority_problems</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/kg-microbe/kg-microbe')</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.release_preflight.ncit_authority_problems" title="Link to this definition"></a></dt>
+<dd><p>Report an <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> a run could not read from <code class="docutils literal notranslate"><span class="pre">raw_dir</span></code>, or should not.</p>
+<p>The NCIT category policy reads <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> whenever a source declares one of its
+classes, and FOODON does, so the ontologies source needs it when it finalizes
+(#1526); <code class="docutils literal notranslate"><span class="pre">ontologies_stubs</span></code> and MediaDive read it too (#1557). A run unpacks <code class="docutils literal notranslate"><span class="pre">ncit.db.gz</span></code> only when
+<code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> is missing and never replaces an existing copy. So an existing
+<code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> must start as a SQLite database and, with the archive beside it, be as
+large as the archive unpacked: otherwise a newer download would be read silently in
+its place (#1536). Size cannot tell two releases of one size apart; the run’s
+receipt records the release it read. Without <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code>, the archive is read to its
+end, so a truncated or empty download fails here rather than hours in (#1535,
+#1544). Both files must resolve inside <code class="docutils literal notranslate"><span class="pre">raw_dir</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>raw_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – The raw input directory a run will read.</p></li>
+<li><p><strong>repo_root</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Repository root holding <code class="docutils literal notranslate"><span class="pre">download.yaml</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A message when <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> would be unavailable or stale, otherwise nothing.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.release_preflight.release_input_problems">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.release_preflight.</span></span><span class="sig-name descname"><span class="pre">release_input_problems</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/kg-microbe/kg-microbe')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ontology</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.release_preflight.release_input_problems" title="Link to this definition"></a></dt>
+<dd><p>Run the checks in this module against <code class="docutils literal notranslate"><span class="pre">raw_dir</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>raw_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – The raw input directory a run will read.</p></li>
+<li><p><strong>repo_root</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Repository root holding <code class="docutils literal notranslate"><span class="pre">mappings/</span></code> and <code class="docutils literal notranslate"><span class="pre">download.yaml</span></code>.</p></li>
+<li><p><strong>ontology</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – A single ontology to check only the files its run reads (#1534);
+every file when omitted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>One message per problem; empty when the inputs are ready.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.release_preflight.reviewed_release_pins">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.release_preflight.</span></span><span class="sig-name descname"><span class="pre">reviewed_release_pins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repo_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/kg-microbe/kg-microbe')</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">policies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.release_preflight.reviewed_release_pins" title="Link to this definition"></a></dt>
+<dd><p>Collect the raw files the reviewed policies pin.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>repo_root</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Repository root holding <code class="docutils literal notranslate"><span class="pre">mappings/</span></code>.</p></li>
+<li><p><strong>policies</strong> – The <code class="docutils literal notranslate"><span class="pre">(policy,</span> <span class="pre">selector)</span></code> pairs to read; the byte-pinning policies by default.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">{file:</span> <span class="pre">{sha256:</span> <span class="pre">[policy,</span> <span class="pre">...]}}</span></code>. More than one digest for a file
+means the policies disagree on its release.</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>ValueError</strong> – When a policy does not hold a well-formed pin where expected.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.release_preflight.stale_derived_files">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.release_preflight.</span></span><span class="sig-name descname"><span class="pre">stale_derived_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repo_root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/kg-microbe/kg-microbe')</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.release_preflight.stale_derived_files" title="Link to this definition"></a></dt>
+<dd><p>Report each derived, byte-pinned file that is present in <code class="docutils literal notranslate"><span class="pre">raw_dir</span></code> but is not the pinned one.</p>
+<p>A run reuses such a file rather than deriving it again, then fails its pin hours
+later. An absent file is not reported: the run derives it from the pinned release.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>raw_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – The raw input directory a run will read.</p></li>
+<li><p><strong>repo_root</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Repository root holding <code class="docutils literal notranslate"><span class="pre">mappings/</span></code>.</p></li>
+<li><p><strong>names</strong> – Only these files, when given.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>One message per stale file.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

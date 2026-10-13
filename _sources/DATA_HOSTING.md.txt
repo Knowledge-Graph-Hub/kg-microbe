@@ -107,7 +107,9 @@ update the md5 in `download.yaml` and in the table above as a deliberate act.
   whatever release the copy holds — the version gates will warn, and a drifted DB
   is rebuilt on the next run anyway. `bto.db` and `ncit.db` are the exception:
   they are downloaded as `.db.gz` with no OWL declared, so there is nothing to
-  build them from and copying is fine.
+  build them from, and a copy is used as it is. The release preflight accepts a
+  copied `ncit.db` only with no `ncit.db.gz` beside it, or beside an archive that
+  unpacks to the same size (#1536).
 
   Set `KG_SEMSQL_BUILD=off` to decline those builds — they run for tens of
   minutes (ChEBI, GO) to hours (NCBITaxon, ~13 GB, plus ~2 GB for the

@@ -341,6 +341,25 @@ source order, optional flag and all supplied quantity fields.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.missing_prerequisites">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">missing_prerequisites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.missing_prerequisites" title="Link to this definition"></a></dt>
+<dd><p>Report an unusable ncit.db before the batch starts.</p>
+<p>MediaDive’s nodes include reviewed NCIT category classes, so the NCIT category
+policy reads <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> when this source finalizes. It gets the ontologies
+source’s check: an existing copy is read as it is, so one left beside a newer
+<code class="docutils literal notranslate"><span class="pre">ncit.db.gz</span></code> would be read silently, and a damaged archive would fail only at
+finalization (#1536, #1557).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Effective raw input directory; <code class="docutils literal notranslate"><span class="pre">None</span></code> means the default.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.producer_native_inputs">
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">producer_native_inputs</span></span><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.mediadive.MediaDiveTransform.producer_native_inputs" title="Link to this definition"></a></dt>
@@ -653,6 +672,25 @@ source order, optional flag and all supplied quantity fields.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Ordered occurrence dictionaries with resolved IDs and source evidence.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.mediadive.MediaDiveTransform.missing_prerequisites">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">missing_prerequisites</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.mediadive.MediaDiveTransform.missing_prerequisites" title="Link to this definition"></a></dt>
+<dd><p>Report an unusable ncit.db before the batch starts.</p>
+<p>MediaDive’s nodes include reviewed NCIT category classes, so the NCIT category
+policy reads <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> when this source finalizes. It gets the ontologies
+source’s check: an existing copy is read as it is, so one left beside a newer
+<code class="docutils literal notranslate"><span class="pre">ncit.db.gz</span></code> would be read silently, and a damaged archive would fail only at
+finalization (#1536, #1557).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>input_dir</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Effective raw input directory; <code class="docutils literal notranslate"><span class="pre">None</span></code> means the default.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
 </dd>
 </dl>
 </dd></dl>

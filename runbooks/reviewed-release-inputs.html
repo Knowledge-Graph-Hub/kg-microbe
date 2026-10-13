@@ -1,0 +1,251 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reviewed release inputs &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7026087e"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Reviewed release inputs</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/runbooks/reviewed-release-inputs.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="reviewed-release-inputs">
+<h1>Reviewed release inputs<a class="headerlink" href="#reviewed-release-inputs" title="Link to this heading"></a></h1>
+<p>Several transforms apply reviewed policies under <code class="docutils literal notranslate"><span class="pre">mappings/</span></code> that bind the
+upstream data they were checked against. Until #1420 some of those bindings were
+whole-file digests of files no download could reproduce: JSON converted by
+ROBOT, a <code class="docutils literal notranslate"><span class="pre">mondo.json</span></code> an older transform rewrote in place, a locally built
+<code class="docutils literal notranslate"><span class="pre">go.db</span></code>, a gunzipped <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code>, and inputs fetched from rolling URLs. A fresh
+checkout therefore failed, often hours into a run. This runbook says how each
+input is now fetched and bound, and how to stage a raw directory for a rebuild.</p>
+<section id="how-each-input-is-bound">
+<h2>How each input is bound<a class="headerlink" href="#how-each-input-is-bound" title="Link to this heading"></a></h2>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Input</p></th>
+<th class="head"><p>How it is fetched</p></th>
+<th class="head"><p>What the policies bind</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">ro.owl</span></code>, <code class="docutils literal notranslate"><span class="pre">pato.owl</span></code>, <code class="docutils literal notranslate"><span class="pre">uberon.owl</span></code>, <code class="docutils literal notranslate"><span class="pre">foodon.owl</span></code>, <code class="docutils literal notranslate"><span class="pre">po.owl</span></code>, <code class="docutils literal notranslate"><span class="pre">upa.owl</span></code>, <code class="docutils literal notranslate"><span class="pre">go.owl</span></code>, <code class="docutils literal notranslate"><span class="pre">envo.json</span></code>, <code class="docutils literal notranslate"><span class="pre">mondo.json</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-t</span> <span class="pre">ontologies</span></code>, from URLs that each name one release (<code class="docutils literal notranslate"><span class="pre">tests/test_reviewed_release_urls.py</span></code>)</p></td>
+<td><p>The file’s SHA-256</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ro.json</span></code>, <code class="docutils literal notranslate"><span class="pre">pato.json</span></code>, <code class="docutils literal notranslate"><span class="pre">uberon.json</span></code>, <code class="docutils literal notranslate"><span class="pre">foodon.json</span></code></p></td>
+<td><p>Converted from the OWL release by the pinned ROBOT during <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">transform</span></code></p></td>
+<td><p>The release the JSON declares (<code class="docutils literal notranslate"><span class="pre">meta.version</span></code>), the OWL release file’s digest, and a canonical digest of the native content the reviewed decisions rest on (for UBERON temporal: each record’s ancestor closure and the life-stage inventory)</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">upa.json</span></code></p></td>
+<td><p>Converted from <code class="docutils literal notranslate"><span class="pre">upa.owl</span></code> by the pinned ROBOT during <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">transform</span></code></p></td>
+<td><p>Its SHA-256, which ROBOT 1.9.8 reproduces from the pinned <code class="docutils literal notranslate"><span class="pre">upa.owl</span></code>, and its declared release</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">go.db</span></code></p></td>
+<td><p>Built by SemSQL from <code class="docutils literal notranslate"><span class="pre">go.owl</span></code> during <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">transform</span></code></p></td>
+<td><p>The GO release it records (<code class="docutils literal notranslate"><span class="pre">owl:versionInfo</span></code>), the <code class="docutils literal notranslate"><span class="pre">go.owl</span></code> digest, and the selected statements, with blank nodes compared by what they state rather than their build-local labels</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mesh2026.nt.gz</span></code>, <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-t</span> <span class="pre">stubs</span></code>; neither has an immutable URL</p></td>
+<td><p>The reviewed statements only. Any export or release with them unchanged is accepted, and each run’s receipt records the bytes it read (and the NCIT release).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Rhea <code class="docutils literal notranslate"><span class="pre">rhea-directions.tsv</span></code>, <code class="docutils literal notranslate"><span class="pre">rhea.rdf.gz</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-t</span> <span class="pre">rhea</span></code> fetches the archived release 142; <code class="docutils literal notranslate"><span class="pre">stage_snapshot</span> <span class="pre">--source-archive</span></code> extracts the pair</p></td>
+<td><p>Both files’ digests, which equal the archive members</p></td>
+</tr>
+<tr class="row-even"><td><p>MicrobeDecoder <code class="docutils literal notranslate"><span class="pre">database.csv</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-t</span> <span class="pre">microbedecoder</span></code>, from a commit; extracted next to the zip, and again whenever it is not the zip’s copy</p></td>
+<td><p>The file’s digest</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">lpsn_gss.csv</span></code></p></td>
+<td><p>Manual, account-gated download</p></td>
+<td><p>Both accepted rows of each of the six BacDive join decisions (the MicrobeDecoder side and the BacDive side), each compared in full</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">gold/GOLD_nodes.tsv</span></code>, <code class="docutils literal notranslate"><span class="pre">gold/GOLD_edges.tsv</span></code>, <code class="docutils literal notranslate"><span class="pre">bacdive_strains.json</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-t</span> <span class="pre">gold</span></code> and <code class="docutils literal notranslate"><span class="pre">-t</span> <span class="pre">bacdive</span></code>, from Google Drive</p></td>
+<td><p>Digests of the selected native rows and records their policies reviewed</p></td>
+</tr>
+<tr class="row-odd"><td><p>MicrO import modules</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-t</span> <span class="pre">ontologies</span></code>, from a commit, into <code class="docutils literal notranslate"><span class="pre">micro_imports/</span></code></p></td>
+<td><p>Checked by the <code class="docutils literal notranslate"><span class="pre">ontologies_stubs</span></code> preflight</p></td>
+</tr>
+</tbody>
+</table>
+<p>Moving any of these to a newer upstream release means re-reviewing every policy
+that binds it, then updating the URL, the policies and their tests together.</p>
+</section>
+<section id="the-preflight">
+<h2>The preflight<a class="headerlink" href="#the-preflight" title="Link to this heading"></a></h2>
+<p>Before any source runs, <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">transform</span></code> asks each selected source for missing
+prerequisites. When <code class="docutils literal notranslate"><span class="pre">ontologies</span></code> is selected, that includes
+<code class="docutils literal notranslate"><span class="pre">kg_microbe/utils/release_preflight.py</span></code>, which checks:</p>
+<ul class="simple">
+<li><p>every file in the first row of the table, and the Biolink model the NCIT and
+MeSH policies pin: each must exist and match the digest every policy that pins
+it agrees on;</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">ncit.db</span></code>, which must be inside the raw directory. The NCIT policy reads it
+when FOODON and MediaDive finalize, and <code class="docutils literal notranslate"><span class="pre">ontologies_stubs</span></code> reads it too.
+MediaDive and <code class="docutils literal notranslate"><span class="pre">ontologies_stubs</span></code> run this part of the check themselves. A run
+unpacks <code class="docutils literal notranslate"><span class="pre">ncit.db.gz</span></code> only when <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> is missing and never replaces an
+existing copy, so an existing <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> must have a SQLite header and, with the
+archive beside it, the archive’s unpacked size. Otherwise a newer download
+would be read silently in its place. Size cannot tell apart two releases of
+the same size; the run’s receipt records the release it read. Without
+<code class="docutils literal notranslate"><span class="pre">ncit.db</span></code>, the archive is read to its end and must unpack to a SQLite
+database, so a truncated, empty or wrong download fails here, not hours in;</p></li>
+<li><p>that an existing <code class="docutils literal notranslate"><span class="pre">upa.json</span></code> is the pinned conversion. A missing one is fine:
+the run derives it from <code class="docutils literal notranslate"><span class="pre">upa.owl</span></code>.</p></li>
+</ul>
+<p>A single ontology (<code class="docutils literal notranslate"><span class="pre">-s</span> <span class="pre">go</span></code>, <code class="docutils literal notranslate"><span class="pre">-s</span> <span class="pre">uberon</span></code>, …) is checked for the pinned files its
+own run reads, listed in <code class="docutils literal notranslate"><span class="pre">SINGLE_ONTOLOGY_INPUTS</span></code>; <code class="docutils literal notranslate"><span class="pre">-s</span> <span class="pre">ec</span></code> or <code class="docutils literal notranslate"><span class="pre">-s</span> <span class="pre">chebi</span></code> reads none
+of them. Some runs also read JSON another ontology’s run converts: the native RO
+suppliers (pato, uberon, envo, mondo) read <code class="docutils literal notranslate"><span class="pre">ro.json</span></code>, and pato, mondo and foodon
+read <code class="docutils literal notranslate"><span class="pre">uberon.json</span></code> for their reviewed UBERON temporal classes. Run <code class="docutils literal notranslate"><span class="pre">ro</span></code> and <code class="docutils literal notranslate"><span class="pre">uberon</span></code>
+first; the check does not cover these files.</p>
+<p>Nothing runs until they all pass, so a stale download fails in seconds rather
+than after NCBITaxon and ChEBI. A message names the file, its digest, the
+policies that pin it and the command that fetches it. To check without starting
+a run, use <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">kg_microbe.utils.release_preflight</span> <span class="pre">data/raw</span></code>, which exits 1
+when there are problems.</p>
+<p>Other sources do not run this check, apart from the <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> part that
+MediaDive and <code class="docutils literal notranslate"><span class="pre">ontologies_stubs</span></code> run. Rhea and MicrobeDecoder check their own pins
+when they run, and sources such as MediaDive and Madin meet the category pins when
+they finalize.</p>
+<p>A file that does not match is usually one of these:</p>
+<ul class="simple">
+<li><p><strong>A rolling download from before #1420.</strong> When the download manifest
+(<code class="docutils literal notranslate"><span class="pre">data/raw/.download_manifest.json</span></code>) recorded the old URL, <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-t</span> <span class="pre">ontologies</span></code> re-fetches the file from its release URL. A file with no record is
+left alone, so move it aside first.</p></li>
+<li><p><strong>A file rewritten in place.</strong> Older transforms rewrote <code class="docutils literal notranslate"><span class="pre">mondo.json</span></code> after
+dropping deprecated terms. Its recorded URL can be the current one, so
+<code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span></code> will not replace it. Move the file aside, then run
+<code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-t</span> <span class="pre">ontologies</span></code>.</p></li>
+<li><p><strong>A hand-copied or hand-edited file.</strong> Treat it like a rewritten one.</p></li>
+<li><p><strong>An <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> unpacked from an older archive.</strong> <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-i</span> <span class="pre">-t</span> <span class="pre">stubs</span></code>
+replaces <code class="docutils literal notranslate"><span class="pre">ncit.db.gz</span></code> but leaves <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code>. Delete <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code>, and the next run
+unpacks the new archive.</p></li>
+</ul>
+<p>Never edit a policy’s digest to match a file on disk: the digest records what
+was reviewed.</p>
+</section>
+<section id="external-prerequisites">
+<h2>External prerequisites<a class="headerlink" href="#external-prerequisites" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p><strong>ROBOT and Java.</strong> <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-t</span> <span class="pre">tools</span></code> installs the pinned ROBOT; Java
+must be on <code class="docutils literal notranslate"><span class="pre">PATH</span></code>. The <code class="docutils literal notranslate"><span class="pre">ontologies_stubs</span></code> preflight checks both.</p></li>
+<li><p><strong>rdftab and relation-graph.</strong> SemSQL builds (<code class="docutils literal notranslate"><span class="pre">go.db</span></code>, <code class="docutils literal notranslate"><span class="pre">chebi.db</span></code> and others)
+run both from <code class="docutils literal notranslate"><span class="pre">PATH</span></code>, and no preflight checks them. Install rdftab v0.1.1,
+the version SemSQL itself uses, from the
+<a class="reference external" href="https://github.com/ontodev/rdftab.rs/releases/tag/v0.1.1">rdftab.rs release</a>.
+On Apple silicon the <code class="docutils literal notranslate"><span class="pre">x86_64-apple-darwin</span></code> binary runs under Rosetta. The
+repository has no lock file for building it from source, so a source build
+may not reproduce the same databases.</p></li>
+</ul>
+</section>
+<section id="staging-a-raw-directory-for-a-rebuild">
+<h2>Staging a raw directory for a rebuild<a class="headerlink" href="#staging-a-raw-directory-for-a-rebuild" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span></code> for the tags you need, and stage the manual inputs: Rhea
+with <code class="docutils literal notranslate"><span class="pre">stage_snapshot</span> <span class="pre">--source-archive</span></code> (see the
+<a class="reference internal" href="../RHEA_DIRECTIONS.html"><span class="std std-doc">Rhea runbook</span></a>), and <code class="docutils literal notranslate"><span class="pre">lpsn_gss.csv</span></code> by hand (see
+<a class="reference internal" href="../DATA_HOSTING.html"><span class="std std-doc">Data hosting</span></a>).</p></li>
+<li><p>Run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">kg_microbe.utils.release_preflight</span> <span class="pre">data/raw</span></code> and fix each
+message as above until there are none. <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">transform</span></code> runs the same check
+first, but once it passes the run starts.</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">ncit.db.gz</span></code> or <code class="docutils literal notranslate"><span class="pre">mesh2026.nt.gz</span></code> has moved upstream, the stub sources still
+accept it as long as the reviewed statements are unchanged. If one changed,
+the source fails closed: re-review that policy before changing it.</p></li>
+</ol>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

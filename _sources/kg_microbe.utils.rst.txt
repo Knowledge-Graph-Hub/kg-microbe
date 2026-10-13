@@ -452,6 +452,14 @@ kg\_microbe.utils.release\_binding module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.utils.release\_preflight module
+-------------------------------------------
+
+.. automodule:: kg_microbe.utils.release_preflight
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.utils.review\_claims module
 ---------------------------------------
 

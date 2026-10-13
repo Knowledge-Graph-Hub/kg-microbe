@@ -353,7 +353,7 @@ unchanged GO controls and fourteen RO declarations. Its 190 additional rows
 are source-specific: 126 MONDO triples overlap the earlier cohort, 61 concern
 HsapDv immediate-predecessor assertions, and one repeats ENVO sedimentation.
 They remain distinct supplier assertions, not permission for a relation-wide
-rewrite. Full native ENVO/MONDO bytes and their exact graph IDs are pinned;
+rewrite. The ENVO and MONDO release files and their exact graph IDs are pinned;
 ENVO’s native graph ID ends in <code class="docutils literal notranslate"><span class="pre">envo.json</span></code>, not <code class="docutils literal notranslate"><span class="pre">envo.owl</span></code>.</p>
 <p>Capability to perform part of a process is not evidence of realized
 participation or of capability to execute the entire process. Relational
@@ -381,12 +381,25 @@ of the protected relations fail closed.</p>
 They do not assert a relation between every instance of both endpoint classes;
 inverse properties do not license reversing class-level restrictions. Literal
 upstream formula/comment inconsistencies and axiom annotations are preserved,
-not repaired locally. Runtime evidence remains the actual pinned full native
-JSON exports and complete RO property declarations; the additional OWL excerpts
-are scientific test evidence, not a claim of new runtime OWL consumption.</p>
-<p>The policy binds exact supplier/triples, complete native input hashes and RO
-property declarations. Full ontology runs process RO before its consumers;
-an explicit PATO/UBERON/ENVO/MONDO run needs the prepared pinned <code class="docutils literal notranslate"><span class="pre">data/raw/ro.json</span></code>.
+not repaired locally. Runtime evidence remains the full native JSON exports
+of the pinned releases and the complete RO property declarations. The additional
+OWL excerpts are scientific test evidence, not a claim of new runtime OWL
+consumption.</p>
+<p>The policy binds exact supplier/triples and RO property declarations. It also
+binds each authority to one release (#1420):</p>
+<ul class="simple">
+<li><p><strong>Release file.</strong> It records the upstream file’s SHA-256: <code class="docutils literal notranslate"><span class="pre">envo.json</span></code> and
+<code class="docutils literal notranslate"><span class="pre">mondo.json</span></code> as published, and the <code class="docutils literal notranslate"><span class="pre">ro.owl</span></code>, <code class="docutils literal notranslate"><span class="pre">pato.owl</span></code> and <code class="docutils literal notranslate"><span class="pre">uberon.owl</span></code> the
+JSON is converted from. A converted JSON’s own bytes are not pinned, so an
+in-place rewrite or a different serialization does not break a fresh checkout.</p></li>
+<li><p><strong>Release version.</strong> The JSON must declare that release’s <code class="docutils literal notranslate"><span class="pre">versionIRI</span></code>.</p></li>
+<li><p><strong>Reviewed content.</strong> A canonical digest covers exactly the reviewed content:
+every supplier assertion that uses a protected relation, and the 14 RO property
+declarations.</p></li>
+</ul>
+<p><code class="docutils literal notranslate"><span class="pre">download.yaml</span></code> fetches those releases from their dated URLs. Full ontology runs
+process RO before its consumers. An explicit PATO/UBERON/ENVO/MONDO run needs
+<code class="docutils literal notranslate"><span class="pre">data/raw/ro.json</span></code>, converted from the pinned <code class="docutils literal notranslate"><span class="pre">ro.owl</span></code>.
 Sanitization and KGX read private admitted copies, leaving native evidence
 unchanged. Unexpected sources, changed native bytes, wrong projections,
 missing/duplicate assertions and absent mandatory audits abort the run.</p>

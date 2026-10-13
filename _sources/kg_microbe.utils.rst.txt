@@ -444,6 +444,14 @@ kg\_microbe.utils.provenance module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.utils.release\_binding module
+-----------------------------------------
+
+.. automodule:: kg_microbe.utils.release_binding
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.utils.review\_claims module
 ---------------------------------------
 

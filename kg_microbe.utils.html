@@ -1691,9 +1691,18 @@ The existing OBO:COB graph identifiers are preserved, not equated with ChEBI.</p
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.finite_import_categories.decisions_digest">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.finite_import_categories.</span></span><span class="sig-name descname"><span class="pre">decisions_digest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">decisions</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.finite_import_categories.decisions_digest" title="Link to this definition"></a></dt>
+<dd><p>Digest the reviewed decisions: each record’s category, root paths and supporting axioms.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.finite_import_categories.load_import_category_evidence">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.finite_import_categories.</span></span><span class="sig-name descname"><span class="pre">load_import_category_evidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">native_stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.finite_import_categories.load_import_category_evidence" title="Link to this definition"></a></dt>
-<dd><p>Bind complete consumed native bytes and inspect all live same-module ancestors.</p>
+<dd><p>Inspect all live same-module ancestors of the reviewed records in one native authority.</p>
+<p>The JSON must declare the reviewed release, and the decisions it yields must be the
+reviewed ones. Its own bytes are not pinned: the caller binds the release file it was
+converted from (#1420).</p>
 </dd></dl>
 
 <dl class="py function">
@@ -4220,6 +4229,16 @@ scalar values and incomplete/unsupported escapes fail closed (#1295/#1300).</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.native_ro_retention.selected_content_sha256">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.native_ro_retention.</span></span><span class="sig-name descname"><span class="pre">selected_content_sha256</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.native_ro_retention.selected_content_sha256" title="Link to this definition"></a></dt>
+<dd><p>Digest exactly the native content this policy reviewed in one authority graph.</p>
+<p>For RO, that is the 14 reviewed property declarations. For a supplier, it is every
+assertion that uses a reviewed relation: the retained records and the unchanged
+controls. A whole-file digest also bound serialization, and an in-place rewrite
+no release URL can reproduce; this binds the reviewed content itself (#1420).</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.native_ro_retention.verify_audit_input_bindings">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.native_ro_retention.</span></span><span class="sig-name descname"><span class="pre">verify_audit_input_bindings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snapshots</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">members</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.native_ro_retention.verify_audit_input_bindings" title="Link to this definition"></a></dt>
 <dd><p>At finalization/admission, bind every audited supplier to its original native read.</p>
@@ -5562,6 +5581,65 @@ without inventing a new primary provider or duplicating ambiguous evidence.</p>
 </dd></dl>
 
 </section>
+<section id="module-kg_microbe.utils.release_binding">
+<span id="kg-microbe-utils-release-binding-module"></span><h2>kg_microbe.utils.release_binding module<a class="headerlink" href="#module-kg_microbe.utils.release_binding" title="Link to this heading"></a></h2>
+<p>Bind a reviewed ontology authority to its upstream release, not to converted bytes (#1420).</p>
+<p>A JSON converted from an OWL release cannot be reproduced byte for byte: a different
+ROBOT serialization, or an older transform that rewrote the file in place, changes the
+bytes without changing a reviewed fact. The release file itself can be fetched again
+from its stable URL. So a policy pins that file’s SHA-256, checks the release the JSON
+declares, and digests only the content it reviewed.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.release_binding.canonical_digest">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.release_binding.</span></span><span class="sig-name descname"><span class="pre">canonical_digest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.release_binding.canonical_digest" title="Link to this definition"></a></dt>
+<dd><p>SHA-256 of a value’s canonical JSON, so reviewed content is compared, not its layout.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.release_binding.graph_release">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.release_binding.</span></span><span class="sig-name descname"><span class="pre">graph_release</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.release_binding.graph_release" title="Link to this definition"></a></dt>
+<dd><p>Return the release (<code class="docutils literal notranslate"><span class="pre">meta.version</span></code>) an obograph JSON graph declares, or None.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.release_binding.is_release_source">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.release_binding.</span></span><span class="sig-name descname"><span class="pre">is_release_source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.release_binding.is_release_source" title="Link to this definition"></a></dt>
+<dd><p>Return whether a policy’s release-file binding is well formed.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.release_binding.read_bound_authority">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.release_binding.</span></span><span class="sig-name descname"><span class="pre">read_bound_authority</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opener</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_paths</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.release_binding.read_bound_authority" title="Link to this definition"></a></dt>
+<dd><p>Read an authority JSON and verify the release file it is, or was converted from.</p>
+<p>Each file is read through <code class="docutils literal notranslate"><span class="pre">opener</span></code>, so finalization records it as a consumed
+input. When the release is published as the JSON itself, the JSON’s own bytes
+must be the pinned release; otherwise the OWL release beside it is read too.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>raw_dir</strong> – The selected raw directory.</p></li>
+<li><p><strong>filename</strong> – The JSON the policy reads.</p></li>
+<li><p><strong>source</strong> – <code class="docutils literal notranslate"><span class="pre">{&quot;file&quot;:</span> <span class="pre">...,</span> <span class="pre">&quot;sha256&quot;:</span> <span class="pre">...}</span></code> naming the pinned release file.</p></li>
+<li><p><strong>opener</strong> – Consumed-input opener returning a context-managed stream.</p></li>
+<li><p><strong>source_paths</strong> – Set that collects every consulted path.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The JSON’s exact bytes.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – When the release file is not the pinned release.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.release_binding.stream_bytes">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.release_binding.</span></span><span class="sig-name descname"><span class="pre">stream_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.release_binding.stream_bytes" title="Link to this definition"></a></dt>
+<dd><p>Return a consumed-input stream’s exact bytes, whether it is opened as text or binary.</p>
+</dd></dl>
+
+</section>
 <section id="module-kg_microbe.utils.review_claims">
 <span id="kg-microbe-utils-review-claims-module"></span><h2>kg_microbe.utils.review_claims module<a class="headerlink" href="#module-kg_microbe.utils.review_claims" title="Link to this heading"></a></h2>
 <p>Complete-payload and owning-record evidence checks shared by reviewed exports.</p>
@@ -6398,15 +6476,46 @@ projection claims strict conformance with Biolink temporal endpoint rules.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.uberon_temporal_categories.load_bound_temporal_evidence">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.uberon_temporal_categories.</span></span><span class="sig-name descname"><span class="pre">load_bound_temporal_evidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opener</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_paths</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.uberon_temporal_categories.load_bound_temporal_evidence" title="Link to this definition"></a></dt>
+<dd><p>Read the UBERON JSON and verify the release file it was converted from, both as consumed inputs.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.uberon_temporal_categories.load_temporal_category_evidence">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.uberon_temporal_categories.</span></span><span class="sig-name descname"><span class="pre">load_temporal_category_evidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">native_stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.uberon_temporal_categories.load_temporal_category_evidence" title="Link to this definition"></a></dt>
-<dd><p>Require pinned bytes, live native classes and complete noncontradictory ancestry.</p>
+<dd><p>Require the reviewed release, live native classes and complete noncontradictory ancestry.</p>
+<p>The JSON’s own bytes are not pinned; <a class="reference internal" href="#kg_microbe.utils.uberon_temporal_categories.load_bound_temporal_evidence" title="kg_microbe.utils.uberon_temporal_categories.load_bound_temporal_evidence"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_bound_temporal_evidence()</span></code></a> binds the
+release file it was converted from, every graph must declare the reviewed release, and
+the native closures and life-stage inventory must be the reviewed ones (#1420).</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.uberon_temporal_categories.load_temporal_category_policy">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.uberon_temporal_categories.</span></span><span class="sig-name descname"><span class="pre">load_temporal_category_policy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.uberon_temporal_categories.load_temporal_category_policy" title="Link to this definition"></a></dt>
 <dd><p>Validate the finite policy’s identity and shape before consulting native evidence.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.uberon_temporal_categories.temporal_native_digest">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.uberon_temporal_categories.</span></span><span class="sig-name descname"><span class="pre">temporal_native_digest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">closures</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">declarations</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.uberon_temporal_categories.temporal_native_digest" title="Link to this definition"></a></dt>
+<dd><p>Digest the native content the reviewed decisions rest on (#1420).</p>
+<p>That is each record’s ancestor closure with every subclass axiom inside it, and the
+live classes beneath UBERON:0000105 (life stage), which the review inventoried in
+full. The decisions themselves come from the policy, so a digest of them would
+bind nothing in the native file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>closures</strong> – Each reviewed identifier’s set of visited ancestors, itself included.</p></li>
+<li><p><strong>parents</strong> – Each native class’s asserted subclass parents.</p></li>
+<li><p><strong>declarations</strong> – Each native node’s <code class="docutils literal notranslate"><span class="pre">(type,</span> <span class="pre">deprecated)</span></code> declaration.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The canonical SHA-256 of that content.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </section>

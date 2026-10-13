@@ -5634,6 +5634,30 @@ must be the pinned release; otherwise the OWL release beside it is read too.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.release_binding.semsql_go_release">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.release_binding.</span></span><span class="sig-name descname"><span class="pre">semsql_go_release</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.release_binding.semsql_go_release" title="Link to this definition"></a></dt>
+<dd><p>Return the single GO release a SemSQL database records, or None.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.release_binding.semsql_release">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.release_binding.</span></span><span class="sig-name descname"><span class="pre">semsql_release</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">connection</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ontology</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.release_binding.semsql_release" title="Link to this definition"></a></dt>
+<dd><p>Return the single release a SemSQL database records for <code class="docutils literal notranslate"><span class="pre">ontology</span></code>, or None.</p>
+<p>SemSQL stamps the ontology node (<code class="docutils literal notranslate"><span class="pre">obo:go.owl</span> <span class="pre">owl:versionInfo</span> <span class="pre">2026-06-15</span></code>). Builds
+spell the subject <code class="docutils literal notranslate"><span class="pre">obo:&lt;name&gt;.owl</span></code>, <code class="docutils literal notranslate"><span class="pre">obo:&lt;name&gt;</span></code> or as a full IRI ending in
+<code class="docutils literal notranslate"><span class="pre">/&lt;name&gt;.owl</span></code>; all three are matched, as <code class="docutils literal notranslate"><span class="pre">ontology_utils</span></code> already does when it
+reads a release. Exactly one distinct value must be recorded.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>connection</strong> – An open connection to the SemSQL database.</p></li>
+<li><p><strong>ontology</strong> – The OBO ontology name, such as <code class="docutils literal notranslate"><span class="pre">go</span></code> or <code class="docutils literal notranslate"><span class="pre">ncit</span></code>.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.release_binding.stream_bytes">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.release_binding.</span></span><span class="sig-name descname"><span class="pre">stream_bytes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stream</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.release_binding.stream_bytes" title="Link to this definition"></a></dt>
 <dd><p>Return a consumed-input stream’s exact bytes, whether it is opened as text or binary.</p>

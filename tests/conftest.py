@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import ipaddress
 import os
 import shutil
@@ -13,6 +14,9 @@ from typing import Any
 import pytest
 
 TEST_RESOURCES = Path(__file__).resolve().parent / "resources"
+
+#: CSV's field limit as the session started, before any test module was imported.
+SESSION_CSV_FIELD_LIMIT = csv.field_size_limit()
 
 
 @pytest.fixture
@@ -75,6 +79,21 @@ def _is_loopback(host: Any) -> bool:
         return ipaddress.ip_address(str(host)).is_loopback
     except ValueError:
         return False
+
+
+@pytest.fixture(autouse=True)
+def session_csv_field_limit():
+    """
+    Run every test at the CSV field limit the session started with (#1574).
+
+    The limit is process-wide. A test, or a module it loads, that raises it must
+    not decide whether a later test's reader meets CSV's 131,072-character
+    default: a GTDB skill test did, and it hid a read-back that failed on real
+    BacDive data (#1571).
+    """
+    csv.field_size_limit(SESSION_CSV_FIELD_LIMIT)
+    yield
+    csv.field_size_limit(SESSION_CSV_FIELD_LIMIT)
 
 
 @pytest.fixture(autouse=True)

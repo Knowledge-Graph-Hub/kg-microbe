@@ -62,8 +62,6 @@ RANK_PREFIX_TO_NAME = {
 }
 RANK_ORDER = ["domain", "phylum", "class", "order", "family", "genus", "species"]
 
-csv.field_size_limit(sys.maxsize)
-
 
 # ----------------------------------------------------------------------------
 # Data classes
@@ -787,6 +785,10 @@ def write_report(
 
 
 def main() -> int:
+    # Merged rows can exceed csv's default 131,072-character field limit. Lift it
+    # for this command, not at import: loading the module must leave the caller's
+    # limit alone (#1574).
+    csv.field_size_limit(sys.maxsize)
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--merged-dir", default="data/merged/20260523_nometatraits",
                     help="Directory containing merged-kg_nodes.tsv and merged-kg_edges.tsv")

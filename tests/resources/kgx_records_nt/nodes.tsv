@@ -1,0 +1,3 @@
+id	category	name	description	provided_by
+RHEA:10000	biolink:ChemicalReaction	α → β at 37°C	"quoted" | literal\text	infores:rhea
+CHEBI:15377	biolink:ChemicalEntity	water		infores:chebi

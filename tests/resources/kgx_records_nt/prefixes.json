@@ -1,0 +1,5 @@
+{
+  "RHEA": "http://rdf.rhea-db.org/",
+  "CHEBI": "http://purl.obolibrary.org/obo/CHEBI_",
+  "rheav": "http://rdf.rhea-db.org/"
+}

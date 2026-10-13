@@ -1,16 +1,31 @@
 {
   "authorities": {
     "foodon.json": {
+      "decisions_sha256": "a8a81f3bb58a39edb7dc705d32d3ffb8bf60b857421e885c4feb641803172bc2",
       "graph_id": "http://purl.obolibrary.org/obo/foodon.owl",
-      "sha256": "8dfba179356a84d8ddad4087dc1fa89a76f6511456c298b9dd7b09df9eb6d853"
+      "release": "http://purl.obolibrary.org/obo/foodon/releases/2025-12-30/foodon.owl",
+      "source": {
+        "file": "foodon.owl",
+        "sha256": "1e11fc50283c6498697a7aca9606c9d914f1cda71cc5510e006d949c32df7db0"
+      }
     },
     "pato.json": {
+      "decisions_sha256": "93e5a3c35408607a99e444c885c44b1c507058a5a95a1fa942c02ea9797fda1c",
       "graph_id": "http://purl.obolibrary.org/obo/pato.owl",
-      "sha256": "b129f5f5e968e4a8675bb9d6cb3a40668f1c5a2783bef81b30c86c563ce5d46d"
+      "release": "http://purl.obolibrary.org/obo/pato/releases/2025-05-14/pato.owl",
+      "source": {
+        "file": "pato.owl",
+        "sha256": "73a80487130a81a3696f1e03c551288f741ed1be5a07639e69e7ecd8b6f0371c"
+      }
     },
     "uberon.json": {
+      "decisions_sha256": "a6ef730ec49dd6742c5fd487283d8da56caeda6de49f7ce610bfcc3cefc39109",
       "graph_id": "http://purl.obolibrary.org/obo/uberon.owl",
-      "sha256": "87a892da0544a82f41f0a8b2b52f7ee705ec6d5ca2c102e7d439a7086d79f428"
+      "release": "http://purl.obolibrary.org/obo/uberon/releases/2026-06-19/uberon.owl",
+      "source": {
+        "file": "uberon.owl",
+        "sha256": "938f51e7c3fc9fcbe5a2863eb346da8033737e568af5836958891c4c6bfb1192"
+      }
     }
   },
   "finite_id_set_sha256": "ae53a95abe9bcf5f9298f02e4f6ae93d7d39233462619e122c873951628d56cb",
@@ -2285,5 +2300,5 @@
       "native_node_sha256": "654a9c49b1548cad5c07a89f6e432a768c8a2af6812ee45d5ed63e9635181ba5"
     }
   },
-  "version": 1
+  "version": 2
 }

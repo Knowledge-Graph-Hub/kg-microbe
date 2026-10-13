@@ -111,7 +111,7 @@ class SourceCategoryAuthority:
             from kg_microbe.utils.uberon_temporal_categories import (
                 TEMPORAL_DISPOSITIONS_FILE,
                 apply_temporal_category,
-                load_temporal_category_evidence,
+                load_bound_temporal_evidence,
                 load_temporal_category_policy,
             )
 
@@ -121,10 +121,9 @@ class SourceCategoryAuthority:
                     self._temporal_policy = load_temporal_category_policy(stream)
             if identifier in self._temporal_policy["records"]:
                 if self._temporal_categories is None:
-                    path = self.raw_dir / self._temporal_policy["native_file"]
-                    self.source_paths.add(path)
-                    with self.opener(path) as stream:
-                        self._temporal_categories = load_temporal_category_evidence(self._temporal_policy, stream)
+                    self._temporal_categories = load_bound_temporal_evidence(
+                        self._temporal_policy, self.raw_dir, self.opener, self.source_paths
+                    )
                 row[CATEGORY_COLUMN] = apply_temporal_category(
                     row[CATEGORY_COLUMN], self._temporal_categories[identifier]
                 )

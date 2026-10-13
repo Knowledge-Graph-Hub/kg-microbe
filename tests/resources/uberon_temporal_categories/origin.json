@@ -181,7 +181,7 @@
     "UBERON:8410003"
   ],
   "extraction": "Exact native declarations and complete asserted is_a upward closure for all 113 historical temporal endpoints plus 19 related life-stage classes; no renamed nodes, new axioms, or restriction fillers",
-  "fixture_sha256": "cafb76da592cc587fdbbe5af4049ba9a8e0f8c11e93e24b8977663c46238889e",
+  "fixture_sha256": "bcaec695c054f1b5f2ba00c9c286aa86b14de19c6c2fb6d887adb79006944fbe",
   "historical_cohort_ids": [
     "UBERON:0000066",
     "UBERON:0000068",

@@ -4,8 +4,13 @@ These are immutable excerpts of the selected native FOODON, UBERON, PATO and
 ENVO snapshots. Every retained node and edge object is a verbatim UTF-8 fragment
 of its native source, including definitions, comments and spelling. Only the
 outer graph wrapper is newly assembled. `origin.json` distinguishes each full
-native file SHA-256 from the excerpt SHA-256. Tests explicitly substitute the
-excerpt pin in a temporary policy; production always requires the full-file pin.
+native file SHA-256 from the excerpt SHA-256. Since policy version 2 (#1420),
+production binds each converted JSON to the SHA-256 of the OWL release file it
+was converted from, to the release it declares (`meta.version`), and to a
+canonical digest of the reviewed decisions computed from its native content. The
+excerpts declare the reviewed release and yield the reviewed decisions, so tests
+substitute only the release-file binding, letting each excerpt stand for its own
+release file.
 
 The exact reviewed cohort is 75 GAZ geographic classes from FOODON, three
 `OBO:COB_*` material classes from UBERON, and two PCO population/community

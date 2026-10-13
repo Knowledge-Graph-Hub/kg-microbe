@@ -42,6 +42,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import ctypes
 import json
 import os
 import re
@@ -671,25 +672,40 @@ def _format_merge(m: MergeReport) -> str:
     return "\n".join(lines)
 
 
+def _flush_c_stdio() -> None:
+    """Flush C stdio's buffers, so what C code printed goes where descriptor 1 points now."""
+    try:
+        ctypes.CDLL(None).fflush(None)
+    except (OSError, AttributeError, TypeError):  # no C library to load here
+        pass
+
+
 @contextlib.contextmanager
 def _stdout_to_stderr():
     """
-    Send everything written to stdout in the block to stderr (#1576).
+    Send what the block writes to stdout to stderr (#1576).
 
     The checks run each source's own verification code, which may print; BacDive
-    does. With --json, stdout must carry the payload alone, so point both
-    sys.stdout and file descriptor 1, which child processes inherit, at stderr.
+    does. With --json, stdout must carry the payload alone, so point sys.stdout
+    and file descriptor 1, which child processes inherit, at stderr. Python's and
+    C stdio's buffers are flushed at both switches, so a buffered write lands on
+    the side it was made on. Output written after the block, at exit for example,
+    is not covered.
     """
     sys.stdout.flush()
+    _flush_c_stdio()
     saved = os.dup(1)
     try:
         os.dup2(2, 1)
         with contextlib.redirect_stdout(sys.stderr):
             yield
     finally:
-        sys.stdout.flush()
-        os.dup2(saved, 1)
-        os.close(saved)
+        try:
+            sys.stdout.flush()
+            _flush_c_stdio()
+        finally:
+            os.dup2(saved, 1)
+            os.close(saved)
 
 
 def main() -> int:

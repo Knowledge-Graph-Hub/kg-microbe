@@ -97,7 +97,11 @@ def gunzip_beside(path: Union[str, Path], *, root: Union[str, Path, None] = None
     whose size is not the archive's unpacked size (#1536). Two readers that both find
     ``path`` missing both unpack it, and the later copy replaces the earlier one. A reader
     that bound the earlier copy, as the NCIT category authority does, then refuses the
-    replaced file as changed; other readers keep the copy they opened (#1537). Partial
+    replaced file as changed (#1537). A reader that only opened the earlier copy keeps
+    reading it with a standard SQLite build, but not with macOS's system SQLite
+    (``/usr/lib/libsqlite3.dylib``): once the process has loaded the SystemConfiguration
+    framework, as importing oaklib does, any read of the replaced file that misses the page
+    cache fails with ``SQLITE_IOERR_VNODE``, "disk I/O error" (#1580). Partial
     files that a killed unpack left more than a day ago are swept whenever ``path`` is
     found or published, so a later run's early return no longer strands them (#1558).
 

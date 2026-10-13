@@ -504,7 +504,7 @@ def verify_recorded_inputs(report, report_path, *, admission=None):
             validate_model(yaml.safe_load(model_bytes), policy)
             if contract["native_evidence_sha256"] != digest(canonical(policy["native_statements"]).encode()):
                 raise ValueError("finite native statement inventory changed")
-        except (ValueError, TypeError, KeyError) as exc:
+        except (ValueError, TypeError, KeyError, sqlite3.Error) as exc:
             raise SourceFinalizationRequired("Invalid finite NCIT category authority contract") from exc
     guard.verify(metadata_only=True)
     return guard

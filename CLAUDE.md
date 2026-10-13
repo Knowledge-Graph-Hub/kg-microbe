@@ -279,13 +279,19 @@ predicate reached 706,765 shipped edges. `tests/test_metpo_version_pin.py`
 enforces this against `download.yaml`. See issues #900 and #909.
 
 MicrO has no releases, so it is pinned to a commit (`MICRO_COMMIT` in
-`constants.py`) together with the 20 modules `MicrO.owl` imports.
+`constants.py`) together with the 20 modules `MicrO.owl` imports. PO is
+pinned to a dated release (`PO_RELEASE`), downloaded with its two modules from
+the commit the release tag points at (`PO_COMMIT`), and preflight checks that
+`po.owl` declares that release.
 `ontologies_stubs` resolves those imports through a generated ROBOT catalog
 and runs ROBOT with HTTP(S) and SOCKS sent to a closed local port (no host
 exempt, `_JAVA_OPTIONS` folded in first), so an unmapped import fails rather
 than being fetched; preflight checks the modules are present and match what
-`micro.owl` imports. `tests/test_micro_version_pin.py` checks `download.yaml`
-against the constant. PO still fetches its imports live.
+each ontology imports. `tests/test_micro_version_pin.py` and
+`tests/test_po_version_pin.py` check `download.yaml` against the constants.
+The PO release must also be the one
+`mappings/finite_envo_po_category_dispositions.json` was reviewed against, so
+a PO bump means re-reviewing that policy.
 
 Inputs that reviewed policies pin by their bytes are fetched the same way: from
 a URL that names exactly one release (a dated release directory, a release asset

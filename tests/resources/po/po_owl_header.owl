@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<rdf:RDF xmlns="http://purl.obolibrary.org/obo/po.owl#"
+     xml:base="http://purl.obolibrary.org/obo/po.owl"
+     xmlns:dc="http://purl.org/dc/elements/1.1/"
+     xmlns:po="http://purl.obolibrary.org/obo/po#"
+     xmlns:obo="http://purl.obolibrary.org/obo/"
+     xmlns:owl="http://www.w3.org/2002/07/owl#"
+     xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xml="http://www.w3.org/XML/1998/namespace"
+     xmlns:xsd="http://www.w3.org/2001/XMLSchema#"
+     xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+     xmlns:swrla="http://swrl.stanford.edu/ontologies/3.3/swrla.owl#"
+     xmlns:terms="http://purl.org/dc/terms/"
+     xmlns:oboInOwl="http://www.geneontology.org/formats/oboInOwl#">
+    <owl:Ontology rdf:about="http://purl.obolibrary.org/obo/po.owl">
+        <owl:versionIRI rdf:resource="http://purl.obolibrary.org/obo/po/releases/2026-01-09/po.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/po/imports/ncbitaxon_import.owl"/>
+        <owl:imports rdf:resource="http://purl.obolibrary.org/obo/po/imports/ro_import.owl"/>
+        <terms:description>An ontology that describes plant anatomy, morphology, and growth and development in plants.</terms:description>
+        <terms:license rdf:resource="http://creativecommons.org/licenses/by/4.0/"/>
+        <terms:title>Plant Ontology</terms:title>
+        <oboInOwl:default-namespace>plant_ontology</oboInOwl:default-namespace>
+        <oboInOwl:hasOBOFormatVersion>1.2</oboInOwl:hasOBOFormatVersion>
+        <oboInOwl:saved-by>cooperl</oboInOwl:saved-by>
+        <oboInOwl:treat-xrefs-as-genus-differentia>CL part_of NCBITaxon:33090</oboInOwl:treat-xrefs-as-genus-differentia>
+        <oboInOwl:treat-xrefs-as-is_a>CARO</oboInOwl:treat-xrefs-as-is_a>
+    </owl:Ontology>
+</rdf:RDF>

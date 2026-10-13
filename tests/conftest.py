@@ -8,6 +8,7 @@ import os
 import shutil
 import socket
 import subprocess
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Any
 
@@ -81,19 +82,32 @@ def _is_loopback(host: Any) -> bool:
         return False
 
 
-@pytest.fixture(autouse=True)
-def session_csv_field_limit():
+@contextmanager
+def csv_field_limit_guard():
     """
-    Run every test at the CSV field limit the session started with (#1574).
+    Run the block at the session's CSV field limit, and fail it if it leaves the limit changed (#1574).
 
-    The limit is process-wide. A test, or a module it loads, that raises it must
-    not decide whether a later test's reader meets CSV's 131,072-character
-    default: a GTDB skill test did, and it hid a read-back that failed on real
-    BacDive data (#1571).
+    The limit is process-wide. A test, or code it runs, that raises it and keeps it
+    raised decides whether a later reader meets CSV's 131,072-character default:
+    a GTDB skill test did, and it hid a read-back that failed on real BacDive
+    data (#1571). The reset at entry undoes a raise made before the block, while
+    modules were imported for example; the check at exit reports a raise made in
+    it. Code that changes the limit on purpose restores it in a ``finally``.
     """
     csv.field_size_limit(SESSION_CSV_FIELD_LIMIT)
-    yield
-    csv.field_size_limit(SESSION_CSV_FIELD_LIMIT)
+    try:
+        yield
+    finally:
+        left = csv.field_size_limit(SESSION_CSV_FIELD_LIMIT)
+    if left != SESSION_CSV_FIELD_LIMIT:
+        pytest.fail(f"CSV's field limit was left at {left}, not {SESSION_CSV_FIELD_LIMIT}; restore it in a finally")
+
+
+@pytest.fixture(autouse=True)
+def csv_field_limit_unchanged():
+    """Run every test inside :func:`csv_field_limit_guard`."""
+    with csv_field_limit_guard():
+        yield
 
 
 @pytest.fixture(autouse=True)

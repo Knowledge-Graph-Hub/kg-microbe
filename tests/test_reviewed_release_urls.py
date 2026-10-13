@@ -8,9 +8,11 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DOWNLOAD_YAML = REPO_ROOT / "download.yaml"
 
-# Each URL was downloaded on 2026-10-12 and was byte-identical to the input the
-# reviewed policies were checked against. A rolling URL serves whatever is newest,
-# and a newer release fails those policies' pins in a fresh checkout.
+# Each URL was downloaded on 2026-10-12 and serves exactly the bytes the reviewed
+# policies pin. For mondo.json that is the pristine release: the native RO policy
+# was first reviewed against an in-place rewrite of it, and was re-bound to the
+# release whose reviewed content it shares (#1420). A rolling URL serves whatever
+# is newest, and a newer release fails those policies' pins in a fresh checkout.
 REVIEWED_RELEASE_URLS = {
     "envo.json": "http://purl.obolibrary.org/obo/envo/releases/2026-06-26/envo.json",
     "go.owl": "https://release.geneontology.org/2026-06-19/ontology/go.owl",
@@ -31,6 +33,7 @@ REVIEWED_RELEASE_URLS = {
     "po.owl": (
         "https://raw.githubusercontent.com/Planteome/plant-ontology/fb1d146b95d6bfe141992d6a219b891fdef2dc54/po.owl"
     ),
+    "mondo.json": "http://purl.obolibrary.org/obo/mondo/releases/2026-07-06/mondo.json",
 }
 
 # A dated release directory or tag, or a 40-hex commit, identifies one release.

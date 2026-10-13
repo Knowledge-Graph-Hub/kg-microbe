@@ -434,6 +434,9 @@
         }
       ],
       "id": "http://purl.obolibrary.org/obo/pato.owl",
+      "meta": {
+        "version": "http://purl.obolibrary.org/obo/pato/releases/2025-05-14/pato.owl"
+      },
       "nodes": [
         {
           "id": "http://purl.obolibrary.org/obo/CL_0000023",

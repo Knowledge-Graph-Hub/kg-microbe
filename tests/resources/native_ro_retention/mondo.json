@@ -944,6 +944,9 @@
         }
       ],
       "id": "http://purl.obolibrary.org/obo/mondo.owl",
+      "meta": {
+        "version": "http://purl.obolibrary.org/obo/mondo/releases/2026-07-06/mondo.owl"
+      },
       "nodes": [
         {
           "id": "http://protege.stanford.edu/plugins/owl/protege#defaultLanguage",

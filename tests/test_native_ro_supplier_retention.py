@@ -17,7 +17,7 @@ from kg_microbe.transform_utils.constants import MONDO_XREFS_FILEPATH, UNIPATHWA
 from kg_microbe.transform_utils.ontologies.ontologies_transform import OntologiesTransform
 from kg_microbe.utils import native_ro_retention as native
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, verify_finalized_source_files
-from tests.test_native_ro_retention import FIXTURE, ORIGIN, POLICY, audit_rows, frame, prepare
+from tests.test_native_ro_retention import FIXTURE, ORIGIN, POLICY, audit_rows, frame, legacy_authorities, prepare
 
 SUPPLIERS = ("pato", "uberon", "envo", "mondo")
 
@@ -25,10 +25,9 @@ SUPPLIERS = ("pato", "uberon", "envo", "mondo")
 def test_extension_preserves_original326_controls_declarations_and_pins():
     """Check the complete prior contract, not only totals shared by different claims."""
     previous = copy.deepcopy(POLICY)
+    previous["version"] = 2
     previous["records"] = [row for row in previous["records"] if row["ontology"] in {"pato", "uberon"}]
-    previous["authorities"] = {
-        key: value for key, value in previous["authorities"].items() if key in {"pato.json", "uberon.json", "ro.json"}
-    }
+    previous["authorities"] = legacy_authorities({"pato.json", "uberon.json", "ro.json"})
     previous["finite_cohort_sha256"] = native._digest(native._json(previous["records"]).encode())
     assert previous["records"] == POLICY["records"][:326]
     assert previous["finite_cohort_sha256"] == "93b0ba1b3859c6a4c00a9e5f54e7dfcb45fd7ed4b1900c5f3fb4f68245a465bf"

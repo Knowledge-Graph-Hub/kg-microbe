@@ -2,23 +2,48 @@
   "authorities": {
     "envo.json": {
       "graph_id": "http://purl.obolibrary.org/obo/envo.json",
-      "sha256": "c3c288b9d95cf1e62b0146bcb2a365bdbd294b0072bbf2efab8819e5db8fff2b"
+      "release": "http://purl.obolibrary.org/obo/envo/releases/2026-06-26/envo.json",
+      "selected_sha256": "a9e9686f84d26bf95fe4b39e2525799b6990e8b1db00e6b037974929d9dc7466",
+      "source": {
+        "file": "envo.json",
+        "sha256": "c3c288b9d95cf1e62b0146bcb2a365bdbd294b0072bbf2efab8819e5db8fff2b"
+      }
     },
     "mondo.json": {
       "graph_id": "http://purl.obolibrary.org/obo/mondo.owl",
-      "sha256": "f3d7ab708cd17cba5477383c78026bfa7f0248fd36d52929087066527e9b3d6c"
+      "release": "http://purl.obolibrary.org/obo/mondo/releases/2026-07-06/mondo.owl",
+      "selected_sha256": "581af75abaf1ac63814bac014902b939a7aaf53107524ca480e8ab99e0eef7e2",
+      "source": {
+        "file": "mondo.json",
+        "sha256": "80b8658b4ec7da7699f7f8f6460425396e42f1bb7fbead837469ebf1907f7c30"
+      }
     },
     "pato.json": {
       "graph_id": "http://purl.obolibrary.org/obo/pato.owl",
-      "sha256": "b129f5f5e968e4a8675bb9d6cb3a40668f1c5a2783bef81b30c86c563ce5d46d"
+      "release": "http://purl.obolibrary.org/obo/pato/releases/2025-05-14/pato.owl",
+      "selected_sha256": "dcde11942fc0becaae849bed0c13f0d272527c995633d743930e717053f53441",
+      "source": {
+        "file": "pato.owl",
+        "sha256": "73a80487130a81a3696f1e03c551288f741ed1be5a07639e69e7ecd8b6f0371c"
+      }
     },
     "ro.json": {
       "graph_id": "http://purl.obolibrary.org/obo/ro.owl",
-      "sha256": "1ed089b1cb33d5ac9d5afee10ba98f79689af9e3b40e9940658625c09785748c"
+      "release": "http://purl.obolibrary.org/obo/ro/releases/2025-12-17/ro.owl",
+      "selected_sha256": "cea0cb1b679d582815e0d6b13b18869ccb72cbe4768c61db8cef8c53c1291573",
+      "source": {
+        "file": "ro.owl",
+        "sha256": "a9f644d4a865747e0b4aba7ca3f19aac1e0b072cab89e24a2e476df3abb10aaf"
+      }
     },
     "uberon.json": {
       "graph_id": "http://purl.obolibrary.org/obo/uberon.owl",
-      "sha256": "87a892da0544a82f41f0a8b2b52f7ee705ec6d5ca2c102e7d439a7086d79f428"
+      "release": "http://purl.obolibrary.org/obo/uberon/releases/2026-06-19/uberon.owl",
+      "selected_sha256": "89b680637759dbc203a16b97828b5c71f4ce9b4172294759481fd2284a46a35d",
+      "source": {
+        "file": "uberon.owl",
+        "sha256": "938f51e7c3fc9fcbe5a2863eb346da8033737e568af5836958891c4c6bfb1192"
+      }
     }
   },
   "finite_cohort_sha256": "782027979cacfca38d615321ae8849d094e06fe2c03b4f024e988d3bf8fecde7",
@@ -3771,5 +3796,5 @@
       "subject": "GO:0098876"
     }
   ],
-  "version": 2
+  "version": 3
 }

@@ -129,6 +129,16 @@ def test_only_the_downloaded_archive_is_unpacked_for_the_authority(tmp_path, mon
     assert sorted(path.name for path in raw.iterdir() if path.name.startswith("ncit.db")) == ["ncit.db", "ncit.db.gz"]
 
 
+def test_an_archive_that_is_not_a_database_is_refused_by_name(tmp_path, monkeypatch):
+    """A gzipped error page is refused before it is published as ncit.db (#1557)."""
+    raw, _, _, _, authority = prepare(tmp_path, monkeypatch)
+    (raw / "ncit.db").unlink()
+    (raw / "ncit.db.gz").write_bytes(gzip.compress(b"<html>Service unavailable</html>"))
+    with pytest.raises(ValueError, match="ncit.db.gz does not unpack to the expected file"):
+        authority.category_for("NCIT:C14191")
+    assert not (raw / "ncit.db").exists()
+
+
 @pytest.mark.parametrize("suffix", ["-wal", "-shm", "-journal"])
 @pytest.mark.parametrize("when", ["before", "after"])
 def test_sqlite_sidecars_are_absent_before_read_and_through_lifetime(tmp_path, monkeypatch, suffix, when):

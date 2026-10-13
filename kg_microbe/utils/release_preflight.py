@@ -8,12 +8,12 @@ checks its pins only when its source finalizes, so a stale or rewritten download
 used to fail after hours of NCBITaxon and ChEBI work. This module collects those
 pins from the policies themselves and compares them with the raw directory before
 the ontologies source, or a single ontology, runs. It also checks two things a run
-would otherwise discover late: that the raw directory holds ``ncit.db`` as a SQLite
-database that is the copy of any ``ncit.db.gz`` beside it, or an archive that unpacks
-to one; and that an existing ``upa.json`` is the pinned conversion. It reads the
-policies' pins and never replaces them. ``ontologies_stubs``, which also reads
-``ncit.db``, runs the NCIT check too. Other sources' pins (Rhea, MicrobeDecoder) are
-checked when those sources run.
+would otherwise discover late: that the raw directory holds ``ncit.db`` with a SQLite
+header and, with ``ncit.db.gz`` beside it, the archive's unpacked size, or else an
+archive that unpacks to a SQLite database; and that an existing ``upa.json`` is the
+pinned conversion. It reads the policies' pins and never replaces them.
+``ontologies_stubs`` and MediaDive, which also read ``ncit.db``, run the NCIT check
+too. Other sources' pins (Rhea, MicrobeDecoder) are checked when those sources run.
 
 Run ``python -m kg_microbe.utils.release_preflight [RAW_DIR]`` to check without
 starting a run.
@@ -30,6 +30,8 @@ from pathlib import Path
 from typing import Callable, Dict, Iterable, List, Optional, Tuple
 
 import yaml
+
+from kg_microbe.utils.atomic_io import SQLITE_HEADER
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 _FILE = re.compile(r"[a-z_-]+\.(json|owl|yaml)")
@@ -227,9 +229,6 @@ def stale_derived_files(raw_dir: Path, *, repo_root: Path = REPO_ROOT, names=Non
     return problems
 
 
-_SQLITE_HEADER = b"SQLite format 3\x00"
-
-
 def _gzip_isize(archive: Path) -> int:
     """
     Return the uncompressed size, modulo 2**32, that a gzip archive's trailer records.
@@ -251,12 +250,13 @@ def _gzip_isize(archive: Path) -> int:
 
 
 @functools.lru_cache(maxsize=4)
-def _read_archive(archive: str, size: int, mtime_ns: int) -> Tuple[int, bytes]:
+def _read_archive(archive: str, identity: Tuple[int, ...]) -> Tuple[int, bytes]:
     """
     Read a gzip archive to its end; return its unpacked size and first 16 bytes.
 
-    Keyed by size and modification time too, so the ontologies and ontologies_stubs
-    checks of one batch read a 550 MB archive once.
+    Keyed by the file's identity too (device, inode, size, modification and change
+    times), so the checks of one batch read a 550 MB archive once, and a replaced
+    archive is read again even when its size and modification time were kept (#1560).
 
     :raises ValueError: When the archive is damaged, truncated or unreadable.
     """
@@ -264,7 +264,7 @@ def _read_archive(archive: str, size: int, mtime_ns: int) -> Tuple[int, bytes]:
     try:
         with gzip.open(archive, "rb") as stream:
             while block := stream.read(16 * 1024 * 1024):
-                head = head or block[: len(_SQLITE_HEADER)]
+                head = head or block[: len(SQLITE_HEADER)]
                 total += len(block)
     except (EOFError, OSError, zlib.error) as exc:
         raise ValueError(f"{archive} cannot be unpacked ({exc})") from exc
@@ -272,12 +272,13 @@ def _read_archive(archive: str, size: int, mtime_ns: int) -> Tuple[int, bytes]:
 
 
 def _unpack(archive: Path) -> Tuple[int, bytes]:
-    """Read ``archive`` through the cache, keyed by its current size and modification time."""
+    """Read ``archive`` through the cache, keyed by its current identity."""
     try:
         status = archive.stat()
     except OSError as exc:
         raise ValueError(f"{archive} cannot be read ({exc})") from exc
-    return _read_archive(str(archive), status.st_size, status.st_mtime_ns)
+    identity = (status.st_dev, status.st_ino, status.st_size, status.st_mtime_ns, status.st_ctime_ns)
+    return _read_archive(str(archive), identity)
 
 
 def ncit_authority_problems(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> List[str]:
@@ -286,7 +287,7 @@ def ncit_authority_problems(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> Li
 
     The NCIT category policy reads ``ncit.db`` whenever a source declares one of its
     classes, and FOODON does, so the ontologies source needs it when it finalizes
-    (#1526); ``ontologies_stubs`` reads it too. A run unpacks ``ncit.db.gz`` only when
+    (#1526); ``ontologies_stubs`` and MediaDive read it too (#1557). A run unpacks ``ncit.db.gz`` only when
     ``ncit.db`` is missing and never replaces an existing copy. So an existing
     ``ncit.db`` must start as a SQLite database and, with the archive beside it, be as
     large as the archive unpacked: otherwise a newer download would be read silently in
@@ -316,25 +317,29 @@ def ncit_authority_problems(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> Li
     if database.is_file():
         try:
             with database.open("rb") as stream:
-                header = stream.read(len(_SQLITE_HEADER))
+                header = stream.read(len(SQLITE_HEADER))
         except OSError as exc:
             return [f"{database} cannot be read ({exc})."]
-        if header != _SQLITE_HEADER:
+        if header != SQLITE_HEADER:
             return [f"{database} is not a SQLite database. Delete it; the run then unpacks ncit.db.gz (`{fetch}`)."]
         if not archive.is_file():
             return []
         size = database.stat().st_size
+        unusable = (
+            "The run would read the existing ncit.db instead; fetch the archive again with "
+            f"`{fetch} -i`, or move it aside to keep the database."
+        )
         try:
             if _gzip_isize(archive) == size % 2**32:
                 return []
-            unpacked, _ = _unpack(archive)
+            unpacked, head = _unpack(archive)
         except ValueError as exc:
-            return [
-                f"{exc}. The run would read the existing ncit.db instead; fetch the archive again with "
-                f"`{fetch} -i`, or move it aside to keep the database."
-            ]
+            return [f"{exc}. {unusable}"]
         if unpacked == size:
             return []
+        if head != SQLITE_HEADER:
+            # Deleting the database for this archive would leave no working copy (#1559).
+            return [f"{archive} does not unpack to a SQLite database ({unpacked:,} bytes unpacked). {unusable}"]
         return [
             f"{database} ({size:,} bytes) is not the copy of the ncit.db.gz beside it, which unpacks to "
             f"{unpacked:,} bytes. The run reads an existing ncit.db and never replaces it: delete it to use "
@@ -345,7 +350,7 @@ def ncit_authority_problems(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> Li
             unpacked, head = _unpack(archive)
         except ValueError as exc:
             return [f"{exc}. Fetch it again with `{fetch} -i`."]
-        if head != _SQLITE_HEADER:
+        if head != SQLITE_HEADER:
             return [
                 f"{archive} does not unpack to a SQLite database ({unpacked:,} bytes unpacked). "
                 f"Fetch it again with `{fetch} -i`."

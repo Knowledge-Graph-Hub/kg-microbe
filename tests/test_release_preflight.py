@@ -3,16 +3,18 @@
 import gzip
 import hashlib
 import json
+import os
 
 import pytest
 
 import kg_microbe.transform as dispatcher
 from kg_microbe.transform_utils.ontologies.ontologies_transform import OntologiesTransform
 from kg_microbe.utils import release_preflight
+from kg_microbe.utils.atomic_io import SQLITE_HEADER
 from tests.test_reviewed_release_urls import REVIEWED_RELEASE_URLS
 
 # The start of a SQLite database, as the NCIT check reads it.
-_SQLITE = b"SQLite format 3\x00 fixture pages"
+_SQLITE = SQLITE_HEADER + b" fixture pages"
 
 
 def _pins(directory, files):
@@ -199,6 +201,8 @@ _NCIT_LAYOUTS = {
     "stale_database": {"ncit.db": _OLDER, "ncit.db.gz": _ARCHIVE},
     "database_beside_truncated_archive": {"ncit.db": _OLDER, "ncit.db.gz": _TRUNCATED},
     "database_beside_short_archive": {"ncit.db": _OLDER, "ncit.db.gz": b"\x1f\x8b"},
+    "database_beside_empty_archive": {"ncit.db": _OLDER, "ncit.db.gz": gzip.compress(b"")},
+    "database_beside_not_sqlite_archive": {"ncit.db": _OLDER, "ncit.db.gz": gzip.compress(b"<html>error</html>")},
     "not_sqlite_database": {"ncit.db": b"not a database"},
     "truncated_archive": {"ncit.db.gz": _TRUNCATED},
     "empty_archive": {"ncit.db.gz": gzip.compress(b"")},
@@ -223,6 +227,9 @@ _NCIT_LAYOUTS = {
         ("stale_database", "is not the copy of the ncit.db.gz beside it"),
         ("database_beside_truncated_archive", "cannot be unpacked"),
         ("database_beside_short_archive", "is not a gzip archive"),
+        # Not "delete the database": that would leave no working copy (#1559).
+        ("database_beside_empty_archive", "does not unpack to a SQLite database (0 bytes unpacked)"),
+        ("database_beside_not_sqlite_archive", "does not unpack to a SQLite database (18 bytes unpacked)"),
         ("not_sqlite_database", "is not a SQLite database"),
         ("truncated_archive", "cannot be unpacked"),
         ("empty_archive", "does not unpack to a SQLite database (0 bytes unpacked)"),
@@ -257,8 +264,34 @@ def test_ncit_db_must_be_usable_inside_the_raw_directory(tmp_path, layout, expec
     else:
         (problem,) = problems
         assert expected in problem
-    if layout == "database_beside_truncated_archive":
+    if layout.startswith("database_beside_"):
         assert "move it aside to keep the database" in problem
+        assert "delete it" not in problem
+
+
+def test_a_replaced_archive_is_read_again_even_with_its_size_and_mtime_kept(tmp_path):
+    """A same-size damaged copy whose modification time was preserved is not served from the cache (#1560)."""
+    archive = tmp_path / "ncit.db.gz"
+    archive.write_bytes(_ARCHIVE)
+    assert release_preflight.ncit_authority_problems(tmp_path) == []
+    status = archive.stat()
+    damaged = bytearray(_ARCHIVE)
+    damaged[12] ^= 0xFF
+    replacement = tmp_path / "replacement.gz"
+    replacement.write_bytes(bytes(damaged))
+    os.utime(replacement, ns=(status.st_atime_ns, status.st_mtime_ns))
+    os.replace(replacement, archive)
+    assert (archive.stat().st_size, archive.stat().st_mtime_ns) == (status.st_size, status.st_mtime_ns)
+    (problem,) = release_preflight.ncit_authority_problems(tmp_path)
+    assert "cannot be unpacked" in problem
+
+
+def test_mediadive_is_checked_for_ncit_db(tmp_path):
+    """MediaDive's nodes include reviewed NCIT classes, so the NCIT policy reads ncit.db when it finalizes (#1557)."""
+    (tmp_path / "ncit.db").write_bytes(_OLDER)
+    (tmp_path / "ncit.db.gz").write_bytes(_ARCHIVE)
+    (problem,) = dispatcher._missing_prerequisites(["mediadive"], tmp_path)
+    assert problem.startswith("mediadive: ") and "is not the copy of the ncit.db.gz beside it" in problem
 
 
 def test_check_only_entry_point_reports_without_running(tmp_path, monkeypatch, capsys):

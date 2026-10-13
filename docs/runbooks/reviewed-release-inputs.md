@@ -36,14 +36,15 @@ prerequisites. When `ontologies` is selected, that includes
   MeSH policies pin: each must exist and match the digest every policy that pins
   it agrees on;
 - `ncit.db`, which must be inside the raw directory. The NCIT policy reads it
-  when FOODON and other sources finalize; `ontologies_stubs` reads it too, and
-  runs this part of the check itself. A run unpacks `ncit.db.gz` only when
-  `ncit.db` is missing and never replaces an existing copy, so an existing
-  `ncit.db` must have a SQLite header and, with the archive beside it, the
-  archive's unpacked size. Otherwise a newer download would be read silently in
-  its place. Size cannot tell apart two releases of the same size; the run's
-  receipt records the release it read. Without `ncit.db`, the archive is read
-  to its end, so a truncated or empty download fails here, not hours in;
+  when FOODON and MediaDive finalize, and `ontologies_stubs` reads it too.
+  MediaDive and `ontologies_stubs` run this part of the check themselves. A run
+  unpacks `ncit.db.gz` only when `ncit.db` is missing and never replaces an
+  existing copy, so an existing `ncit.db` must have a SQLite header and, with the
+  archive beside it, the archive's unpacked size. Otherwise a newer download
+  would be read silently in its place. Size cannot tell apart two releases of
+  the same size; the run's receipt records the release it read. Without
+  `ncit.db`, the archive is read to its end and must unpack to a SQLite
+  database, so a truncated, empty or wrong download fails here, not hours in;
 - that an existing `upa.json` is the pinned conversion. A missing one is fine:
   the run derives it from `upa.owl`.
 
@@ -60,7 +61,8 @@ policies that pin it and the command that fetches it. To check without starting
 a run, use `python -m kg_microbe.utils.release_preflight data/raw`, which exits 1
 when there are problems.
 
-Other sources do not run this check. Rhea and MicrobeDecoder check their own pins
+Other sources do not run this check, apart from the `ncit.db` part that
+MediaDive and `ontologies_stubs` run. Rhea and MicrobeDecoder check their own pins
 when they run, and sources such as MediaDive and Madin meet the category pins when
 they finalize.
 

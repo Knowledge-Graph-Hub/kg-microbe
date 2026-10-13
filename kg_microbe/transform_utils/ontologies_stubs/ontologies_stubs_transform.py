@@ -943,8 +943,8 @@ class OntologiesStubsTransform(Transform):
 
         OBO Foundry distributes SemSQL DBs as ``.db.gz`` and ``download.yaml``
         stores the gzipped form, so if the unzipped ``.db`` is missing but a
-        sibling ``.db.gz`` is present, decompress it once (idempotent) and
-        use the result.
+        sibling ``.db.gz`` is present, it is unpacked atomically and used. An
+        existing ``.db`` is used as it is, whatever archive is beside it.
         """
         if prefix == "NCIT" and not db_path.resolve().is_relative_to(self.input_base_dir.resolve()):
             self._consumed_input_error = "NCIT category authority is outside the selected input directory"

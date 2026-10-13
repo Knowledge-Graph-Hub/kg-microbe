@@ -7,7 +7,7 @@ import time
 import pytest
 
 from kg_microbe.utils import atomic_io
-from kg_microbe.utils.atomic_io import gunzip_beside
+from kg_microbe.utils.atomic_io import SQLITE_HEADER, gunzip_beside
 
 
 def test_only_the_archive_present_is_unpacked_beside_it(tmp_path):
@@ -50,6 +50,16 @@ def test_an_archive_that_unpacks_to_nothing_publishes_nothing(tmp_path, archive)
     with pytest.raises(ValueError, match="ncit.db.gz unpacks to nothing"):
         gunzip_beside(tmp_path / "ncit.db")
     assert sorted(path.name for path in tmp_path.iterdir()) == ["ncit.db.gz"]
+
+
+def test_a_payload_without_the_expected_start_publishes_nothing(tmp_path):
+    """A gzipped error page is refused by name, rather than published as the database (#1557)."""
+    (tmp_path / "ncit.db.gz").write_bytes(gzip.compress(b"<html>Service unavailable</html>"))
+    with pytest.raises(ValueError, match="ncit.db.gz does not unpack to the expected file"):
+        gunzip_beside(tmp_path / "ncit.db", magic=SQLITE_HEADER)
+    assert sorted(path.name for path in tmp_path.iterdir()) == ["ncit.db.gz"]
+    (tmp_path / "ncit.db.gz").write_bytes(gzip.compress(SQLITE_HEADER + b"pages"))
+    assert gunzip_beside(tmp_path / "ncit.db", magic=SQLITE_HEADER).read_bytes() == SQLITE_HEADER + b"pages"
 
 
 def test_neither_file_present_returns_the_missing_path(tmp_path):
@@ -107,6 +117,23 @@ def test_a_killed_unpack_does_not_strand_its_partial_file(tmp_path):
     (tmp_path / "ncit.db.gz").write_bytes(gzip.compress(b"sqlite bytes"))
     stranded = tmp_path / "ncit.db.4242.0.partial"
     stranded.write_bytes(b"sql")
+    day_old = time.time() - 2 * 24 * 60 * 60
+    os.utime(stranded, (day_old, day_old))
+    gunzip_beside(tmp_path / "ncit.db")
+    assert sorted(path.name for path in tmp_path.iterdir()) == ["ncit.db", "ncit.db.gz"]
+
+
+def test_a_same_day_partial_is_swept_once_it_is_a_day_old(tmp_path):
+    """
+    A rerun on the day of the kill unpacks while the partial is still young (#1558).
+
+    Every later call finds the file and returns early, so the sweep has to run there too.
+    """
+    (tmp_path / "ncit.db.gz").write_bytes(gzip.compress(b"sqlite bytes"))
+    stranded = tmp_path / "ncit.db.4242.0.partial"
+    stranded.write_bytes(b"sql")
+    gunzip_beside(tmp_path / "ncit.db")
+    assert stranded.exists()
     day_old = time.time() - 2 * 24 * 60 * 60
     os.utime(stranded, (day_old, day_old))
     gunzip_beside(tmp_path / "ncit.db")

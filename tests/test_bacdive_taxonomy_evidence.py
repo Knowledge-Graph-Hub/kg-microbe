@@ -381,16 +381,17 @@ def test_cached_stale_caller_does_not_determine_new_connection_bytes(tmp_path):
 
     def snapshot():
         """Connect the caller to an in-memory copy of the selected file as it is at connection time."""
-        copy = sqlite3.connect(":memory:")
+        memory = sqlite3.connect(":memory:")
         with closing(sqlite3.connect(path.absolute().as_uri() + "?mode=ro", uri=True)) as source:
-            source.backup(copy)
-        return copy
+            source.backup(memory)
+        return memory
 
-    # The caller's handle keeps the original bytes without reading the replaced
-    # file again: on macOS's system SQLite, that read can fail with a disk I/O
-    # error while other test runs load the machine (#1512). A reconnect would copy
-    # the new file, so the last assertion still shows the caller was never reset.
-    # The engine URL still identifies the real selected path for the new reader.
+    # The caller keeps the original bytes in memory, never reading the replaced
+    # file: on macOS's system SQLite, a read of a replaced file that misses the
+    # page cache can fail with SQLITE_IOERR_VNODE, "disk I/O error" (#1512). A
+    # reconnect would copy the new file, so the last assertion still shows the
+    # caller was never reconnected. The engine URL still identifies the real
+    # selected path for the new reader.
     engine = create_engine("sqlite:///" + str(path.absolute()), creator=snapshot, poolclass=StaticPool)
     original = SqlImplementation(resource=OntologyResource(slug=str(path.absolute())), engine=engine)
     try:

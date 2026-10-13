@@ -239,20 +239,32 @@ def _missing_prerequisites(sources: List[str], input_dir: Optional[Path] = None)
     Return ``"source: message"`` for every external prerequisite a selected source needs but cannot find.
 
     A single ontology runs under the ontologies source, so it gets that source's check,
-    which covers the pinned release files (#1528). Each source's check runs once.
+    for the pinned files its own run reads (#1528, #1534). When the whole ontologies
+    source is selected too, its full check covers the single ones. A file several
+    selected ontologies read is reported once, under the first.
     """
-    missing, checked = [], set()
+    whole = ONTOLOGIES in sources
+    missing, reported = [], set()
     for source in sources:
-        owner = source if source in DATA_SOURCES else ONTOLOGIES
-        if owner in checked:
+        if source not in DATA_SOURCES and whole:
             continue
-        checked.add(owner)
+        owner = source if source in DATA_SOURCES else ONTOLOGIES
         check = getattr(DATA_SOURCES.get(owner), "missing_prerequisites", None)
-        problems = check(input_dir) if check is not None else ()
+        if check is None:
+            problems = ()
+        elif owner == source:
+            problems = check(input_dir)
+        else:
+            problems = check(input_dir, ontology=source)
         if isinstance(problems, str):
             # Iterating it would report one problem per character.
             raise TypeError(f"{source}.missing_prerequisites must return messages, not a string")
-        missing += [f"{source}: {problem}" for problem in problems]
+        for problem in problems:
+            if owner != source:
+                if problem in reported:
+                    continue
+                reported.add(problem)
+            missing.append(f"{source}: {problem}")
     return missing
 
 

@@ -1,27 +1,33 @@
 """
-Check the reviewed upstream inputs before a long run starts (#1420).
+Check the reviewed upstream inputs before a long ontology run starts (#1420).
 
-Reviewed policies bind raw upstream files by SHA-256: the OWL each converted JSON
-is built from, the JSON releases read directly, the ``go.owl`` behind ``go.db``,
-and the Biolink model. Each policy checks its pins only when its source
-finalizes, so a stale or rewritten download used to fail after hours of
-NCBITaxon and ChEBI work. This module collects those pins from the policies
-themselves and compares them with the raw directory before any source runs. It
-also checks two things a run would otherwise discover late: that ``ncit.db`` (or
-the archive it is unpacked from) is present, and that an existing ``upa.json`` is
-the pinned conversion. It reads the policies' pins and never replaces them.
+The ontology policies bind raw upstream release files by SHA-256: the OWL each
+converted JSON is built from, the JSON releases read directly and the ``go.owl``
+behind ``go.db``; the NCIT and MeSH policies pin the Biolink model. Each policy
+checks its pins only when its source finalizes, so a stale or rewritten download
+used to fail after hours of NCBITaxon and ChEBI work. This module collects those
+pins from the policies themselves and compares them with the raw directory before
+the ontologies source, or a single ontology, runs. It also checks two things a run
+would otherwise discover late: that ``ncit.db`` (or a sound archive to unpack it
+from) is inside the raw directory, and that an existing ``upa.json`` is the pinned
+conversion. It reads the policies' pins and never replaces them. Other sources'
+pins (Rhea, MicrobeDecoder) are checked when those sources run.
 
 Run ``python -m kg_microbe.utils.release_preflight [RAW_DIR]`` to check without
 starting a run.
 """
 
+import gzip
 import hashlib
 import json
 import re
+import zlib
 from pathlib import Path
 from typing import Callable, Dict, Iterable, List, Optional, Tuple
 
 import yaml
+
+from kg_microbe.utils.atomic_io import gzip_isize
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 _FILE = re.compile(r"[a-z_-]+\.(json|owl|yaml)")
@@ -63,9 +69,9 @@ def _upa_json(policy: dict) -> List[Tuple[str, str]]:
     return [("upa.json", policy["sources"]["upa.json"]["sha256"])]
 
 
-# Every reviewed policy that pins a raw upstream file by its bytes. MeSH and NCIT
-# bind their native exports by content but pin the Biolink model; the LPSN GSS is
-# bound by content only and has no entry here.
+# The ontology policies that pin a raw upstream release file by its bytes, plus the
+# NCIT and MeSH policies, which bind their native exports by content but pin the
+# Biolink model. Rhea's and MicrobeDecoder's pins are checked when those sources run.
 PINNING_POLICIES: Tuple[Tuple[str, Callable[[dict], List[Tuple[str, str]]]], ...] = (
     ("mappings/native_ro_predicate_dispositions.json", _authority_sources),
     ("mappings/finite_import_category_dispositions.json", _authority_sources),
@@ -106,10 +112,28 @@ def reviewed_release_pins(repo_root: Path = REPO_ROOT, *, policies=None) -> Dict
                 raise ValueError(f"Malformed release pin in {relative}: {name!r}")
             if not _HEX.fullmatch(sha256):
                 raise ValueError(f"Malformed release pin in {relative}: {name}")
-            policies = pins.setdefault(name, {}).setdefault(sha256, [])
-            if relative not in policies:
-                policies.append(relative)
+            claimants = pins.setdefault(name, {}).setdefault(sha256, [])
+            if relative not in claimants:
+                claimants.append(relative)
     return pins
+
+
+# The files each single-ontology run (`kg transform -s <name>`) reads, so it is checked
+# for those only (#1534); the whole ontologies source checks every file. "ncit.db" stands
+# for the NCIT check: FOODON declares NCIT category classes. A category policy reads its
+# file only when a source declares one of its reviewed classes, and no single ontology
+# declares the PO class, so po.owl is checked only for the whole ontologies source.
+SINGLE_ONTOLOGY_INPUTS: Dict[str, frozenset] = {
+    "envo": frozenset({"envo.json"}),
+    "foodon": frozenset({"foodon.owl", "biolink-model.yaml", "ncit.db"}),
+    "go": frozenset({"go.owl"}),
+    "mondo": frozenset({"mondo.json"}),
+    "pato": frozenset({"pato.owl", "go.owl"}),
+    "ro": frozenset({"ro.owl"}),
+    "uberon": frozenset({"uberon.owl"}),
+    "upa": frozenset({"upa.owl", "go.owl", "upa.json"}),
+}
+WHOLE_RUN_ONLY = frozenset({"po.owl"})
 
 
 def _download_tags(repo_root: Path) -> Dict[str, str]:
@@ -168,7 +192,7 @@ def mismatched_release_files(
     return problems
 
 
-def stale_derived_files(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> List[str]:
+def stale_derived_files(raw_dir: Path, *, repo_root: Path = REPO_ROOT, names=None) -> List[str]:
     """
     Report each derived, byte-pinned file that is present in ``raw_dir`` but is not the pinned one.
 
@@ -177,12 +201,13 @@ def stale_derived_files(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> List[s
 
     :param raw_dir: The raw input directory a run will read.
     :param repo_root: Repository root holding ``mappings/``.
+    :param names: Only these files, when given.
     :return: One message per stale file.
     """
     problems = []
     for name, expected in sorted(reviewed_release_pins(repo_root, policies=DERIVED_PINS).items()):
         path = Path(raw_dir) / name
-        if not path.is_file():
+        if (names is not None and name not in names) or not path.is_file():
             continue
         sha256, policies = next(iter(expected.items()))
         if len(expected) != 1:
@@ -196,41 +221,66 @@ def stale_derived_files(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> List[s
     return problems
 
 
-def missing_ncit_authority(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> List[str]:
+def ncit_authority_problems(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> List[str]:
     """
-    Report a raw directory with neither ``ncit.db`` nor the ``ncit.db.gz`` it is unpacked from.
+    Report an ``ncit.db`` the NCIT category policy could not read from ``raw_dir``.
 
-    The NCIT category policy reads ``ncit.db`` whenever a source declares one of its
-    classes, and FOODON does, so the ``ontologies`` source needs it when it finalizes
-    (#1526).
+    The policy reads ``ncit.db`` whenever a source declares one of its classes, and
+    FOODON does, so the ontologies source needs it when it finalizes (#1526). The run
+    unpacks it from ``ncit.db.gz`` when it is missing or older than the archive
+    (#1536), so then the archive is read to its end here: a truncated download would
+    otherwise fail only hours in (#1535). Both files must resolve inside ``raw_dir``.
 
     :param raw_dir: The raw input directory a run will read.
     :param repo_root: Repository root holding ``download.yaml``.
-    :return: A message when both are missing, otherwise nothing.
+    :return: A message when ``ncit.db`` would be unavailable, otherwise nothing.
     """
     raw_dir = Path(raw_dir)
-    if (raw_dir / "ncit.db").is_file() or (raw_dir / "ncit.db.gz").is_file():
-        return []
+    database, archive = raw_dir / "ncit.db", raw_dir / "ncit.db.gz"
     tag = _download_tags(repo_root).get("ncit.db.gz")
     fetch = f"kg download -t {tag}" if tag else "the download.yaml entry for ncit.db.gz"
+    for candidate in (database, archive):
+        if (candidate.exists() or candidate.is_symlink()) and not candidate.resolve().is_relative_to(raw_dir.resolve()):
+            return [
+                f"{candidate} resolves outside {raw_dir}; the NCIT category policy reads only files "
+                "inside the selected raw directory. Put the file itself there."
+            ]
+    if archive.is_file():
+        if database.is_file() and database.stat().st_size % 2**32 == gzip_isize(archive):
+            return []
+        try:
+            with gzip.open(archive, "rb") as stream:
+                while stream.read(16 * 1024 * 1024):
+                    pass
+        except (EOFError, gzip.BadGzipFile, zlib.error, OSError) as exc:
+            return [f"{archive} cannot be unpacked ({exc}). Fetch it again with `{fetch} -i`."]
+        return []
+    if database.is_file():
+        return []
     return [
         f"Neither ncit.db nor ncit.db.gz is in {raw_dir}; the NCIT category policy reads ncit.db "
         f"when FOODON and other sources finalize. Fetch it with `{fetch}`."
     ]
 
 
-def release_input_problems(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> List[str]:
+def release_input_problems(raw_dir: Path, *, repo_root: Path = REPO_ROOT, ontology: Optional[str] = None) -> List[str]:
     """
-    Run every check in this module against ``raw_dir``.
+    Run the checks in this module against ``raw_dir``.
 
     :param raw_dir: The raw input directory a run will read.
     :param repo_root: Repository root holding ``mappings/`` and ``download.yaml``.
+    :param ontology: A single ontology to check only the files its run reads (#1534);
+        every file when omitted.
     :return: One message per problem; empty when the inputs are ready.
     """
+    names = None if ontology is None else SINGLE_ONTOLOGY_INPUTS.get(ontology, frozenset())
+    pins = reviewed_release_pins(repo_root)
+    if names is not None:
+        pins = {name: digests for name, digests in pins.items() if name in names}
     return [
-        *mismatched_release_files(raw_dir, repo_root=repo_root),
-        *stale_derived_files(raw_dir, repo_root=repo_root),
-        *missing_ncit_authority(raw_dir, repo_root=repo_root),
+        *mismatched_release_files(raw_dir, repo_root=repo_root, pins=pins),
+        *stale_derived_files(raw_dir, repo_root=repo_root, names=names),
+        *(ncit_authority_problems(raw_dir, repo_root=repo_root) if names is None or "ncit.db" in names else []),
     ]
 
 

@@ -304,13 +304,14 @@ and the GOLD and BacDive files on Google Drive); this rule does not cover them.
 Their policies bind only the records they reviewed (statements, GSS rows or
 selected records): any export or release with those records unchanged is
 accepted, and each run's receipt records the one it read. Before the
-`ontologies` source or a single ontology starts, `kg transform` checks every raw
-file a reviewed policy pins by its bytes (the releases and the Biolink model),
-that `ncit.db` or its archive is present, and that an existing `upa.json` is the
-pinned conversion, so a stale download fails in seconds; `python -m
-kg_microbe.utils.release_preflight data/raw` runs the same check alone. Other
-sources meet the same pins when they finalize. See #1420 and the [reviewed release
-inputs runbook](docs/runbooks/reviewed-release-inputs.md).
+`ontologies` source starts, `kg transform` checks the release files the ontology
+policies pin and the Biolink model, that `ncit.db` can be read or soundly unpacked,
+and that an existing `upa.json` is the pinned conversion, so a stale download
+fails in seconds; a single ontology (`-s go`) is checked for the files its own run
+reads, and `python -m kg_microbe.utils.release_preflight data/raw` runs the check
+alone. Other sources (Rhea, MicrobeDecoder, MediaDive and the rest) meet their pins
+when they run. See #1420 and the [reviewed release inputs
+runbook](docs/runbooks/reviewed-release-inputs.md).
 
 ## Operational references
 

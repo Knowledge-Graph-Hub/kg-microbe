@@ -19,7 +19,7 @@ input is now fetched and bound, and how to stage a raw directory for a rebuild.
 | `mesh2026.nt.gz`, `ncit.db` | `kg download -t stubs`; neither has an immutable URL | The reviewed statements only. Any export or release with them unchanged is accepted, and each run's receipt records the bytes it read (and the NCIT release). |
 | Rhea `rhea-directions.tsv`, `rhea.rdf.gz` | `kg download -t rhea` fetches the archived release 142; `stage_snapshot --source-archive` extracts the pair | Both files' digests, which equal the archive members |
 | MicrobeDecoder `database.csv` | `kg download -t microbedecoder`, from a commit; extracted next to the zip, and again whenever it is not the zip's copy | The file's digest |
-| `lpsn_gss.csv` | Manual, account-gated download | The six accepted rows the BacDive join decisions name, each compared in full |
+| `lpsn_gss.csv` | Manual, account-gated download | Both accepted rows of each of the six BacDive join decisions (the MicrobeDecoder side and the BacDive side), each compared in full |
 | `gold/GOLD_nodes.tsv`, `gold/GOLD_edges.tsv`, `bacdive_strains.json` | `kg download -t gold` and `-t bacdive`, from Google Drive | Digests of the selected native rows and records their policies reviewed |
 | MicrO import modules | `kg download -t ontologies`, from a commit, into `micro_imports/` | Checked by the `ontologies_stubs` preflight |
 
@@ -29,16 +29,21 @@ that binds it, then updating the URL, the policies and their tests together.
 ## The preflight
 
 Before any source runs, `kg transform` asks each selected source for missing
-prerequisites. When `ontologies` or a single ontology (`-s go`, `-s uberon`, ...)
-is selected, that includes `kg_microbe/utils/release_preflight.py`, which checks:
+prerequisites. When `ontologies` is selected, that includes
+`kg_microbe/utils/release_preflight.py`, which checks:
 
 - every file in the first row of the table, and the Biolink model the NCIT and
   MeSH policies pin: each must exist and match the digest every policy that pins
   it agrees on;
-- that `ncit.db`, or the `ncit.db.gz` it is unpacked from, is present. The NCIT
-  policy reads it when FOODON and other sources finalize;
+- that `ncit.db` can be read inside the raw directory. The NCIT policy reads it
+  when FOODON and other sources finalize. When it is missing, or older than
+  `ncit.db.gz`, the run unpacks it, so the archive is read to its end first: a
+  truncated download fails here, not hours in;
 - that an existing `upa.json` is the pinned conversion. A missing one is fine:
   the run derives it from `upa.owl`.
+
+A single ontology (`-s go`, `-s uberon`, ...) is checked for the files its own run
+reads, listed in `SINGLE_ONTOLOGY_INPUTS`; `-s ec` or `-s chebi` reads none of them.
 
 Nothing runs until they all pass, so a stale download fails in seconds rather
 than after NCBITaxon and ChEBI. A message names the file, its digest, the
@@ -46,8 +51,9 @@ policies that pin it and the command that fetches it. To check without starting
 a run, use `python -m kg_microbe.utils.release_preflight data/raw`, which exits 1
 when there are problems.
 
-Other sources (MediaDive, Madin and others) do not run this check; they meet the
-same pins when they finalize their category decisions.
+Other sources do not run this check. Rhea and MicrobeDecoder check their own pins
+when they run, and sources such as MediaDive and Madin meet the category pins when
+they finalize.
 
 A file that does not match is usually one of these:
 

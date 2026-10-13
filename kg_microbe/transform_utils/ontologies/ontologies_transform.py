@@ -328,19 +328,22 @@ class OntologiesTransform(Transform):
     }
 
     @classmethod
-    def missing_prerequisites(cls, input_dir: Optional[Path] = None) -> List[str]:
+    def missing_prerequisites(cls, input_dir: Optional[Path] = None, *, ontology: Optional[str] = None) -> List[str]:
         """
         Report each reviewed upstream input that is missing, stale or not the reviewed release.
 
         Reviewed policies pin the OWL and JSON releases their content comes from, and
         the Biolink model, but check them only when their source finalizes, after
         hours of NCBITaxon and ChEBI work. Checking first makes a stale download fail
-        in seconds (#1420). A single ontology runs under this source and gets the same
-        check.
+        in seconds (#1420). A single ontology runs under this source and is checked
+        for the files its own run reads (#1534).
+
+        :param input_dir: Effective raw input directory; ``None`` means the default.
+        :param ontology: The single ontology selected, or ``None`` for the whole source.
         """
         from kg_microbe.utils.release_preflight import release_input_problems
 
-        return release_input_problems(Path(input_dir) if input_dir else cls.DEFAULT_INPUT_DIR)
+        return release_input_problems(Path(input_dir) if input_dir else cls.DEFAULT_INPUT_DIR, ontology=ontology)
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
         """Instantiate object."""

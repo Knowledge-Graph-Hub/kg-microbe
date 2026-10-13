@@ -98,18 +98,35 @@ def test_ontologies_preflight_fails_before_any_source_runs(tmp_path, monkeypatch
     assert dispatcher._missing_prerequisites(["ontologies"], tmp_path) == [f"ontologies: {problem}"]
 
 
-def test_a_single_ontology_gets_the_ontologies_check_once(tmp_path, monkeypatch):
-    """`kg transform -s go` runs under the ontologies source, so it is checked the same way (#1528)."""
-    pins = _pins(tmp_path, {"go.owl": b"<go/>"})
+def test_a_single_ontology_is_checked_for_the_files_its_run_reads(tmp_path, monkeypatch):
+    """`-s go` checks go.owl, not mondo.json; `-s ec` reads no pinned file (#1528, #1534)."""
+    pins = _pins(tmp_path, {"go.owl": b"<go/>", "mondo.json": b"{}"})
     (tmp_path / "go.owl").unlink()
-    (tmp_path / "ncit.db").write_bytes(b"sqlite")
+    (tmp_path / "mondo.json").write_bytes(b'{"rewritten": true}')
     monkeypatch.setattr(release_preflight, "reviewed_release_pins", _only(pins))
+    assert dispatcher._missing_prerequisites(["ec"], tmp_path) == []
     (problem,) = dispatcher._missing_prerequisites(["go"], tmp_path)
     assert problem.startswith("go: go.owl is missing")
-    assert dispatcher._missing_prerequisites(["go", "uberon"], tmp_path) == [problem]
-    assert dispatcher._missing_prerequisites(["ontologies", "go"], tmp_path) == [
-        problem.replace("go: ", "ontologies: ", 1)
-    ]
+    (problem,) = dispatcher._missing_prerequisites(["mondo"], tmp_path)
+    assert problem.startswith("mondo: mondo.json in ")
+    # go.owl is read by the go, pato and upa runs; it is reported once, under the first.
+    problems = dispatcher._missing_prerequisites(["go", "pato", "upa"], tmp_path)
+    assert [problem.split(":", 1)[0] for problem in problems if "go.owl" in problem] == ["go"]
+    # With the whole ontologies source selected, its full check runs once and covers them.
+    problems = dispatcher._missing_prerequisites(["ontologies", "go"], tmp_path)
+    assert {problem.split(":", 1)[0] for problem in problems} == {"ontologies"}
+    assert any("go.owl is missing" in problem for problem in problems)
+    assert any("mondo.json in " in problem for problem in problems)
+
+
+def test_every_checked_file_belongs_to_a_single_ontology_or_the_whole_run():
+    """A new pin must be mapped to the single ontologies that read it, or the whole run (#1534)."""
+    pinned = set(release_preflight.reviewed_release_pins())
+    derived = set(release_preflight.reviewed_release_pins(policies=release_preflight.DERIVED_PINS))
+    mapped = set().union(*release_preflight.SINGLE_ONTOLOGY_INPUTS.values())
+    assert pinned | derived <= mapped | release_preflight.WHOLE_RUN_ONLY
+    assert mapped - {"ncit.db"} <= pinned | derived
+    assert set(release_preflight.SINGLE_ONTOLOGY_INPUTS) <= set(dispatcher._ontology_map())
 
 
 @pytest.mark.parametrize("state", ["absent", "matching", "stale"])
@@ -132,17 +149,36 @@ def test_an_existing_derived_file_must_be_the_pinned_conversion(tmp_path, monkey
         assert problems == []
 
 
-@pytest.mark.parametrize("present", [(), ("ncit.db",), ("ncit.db.gz",)])
-def test_the_ncit_authority_or_its_archive_must_be_present(tmp_path, present):
-    """FOODON's NCIT ids need ncit.db when the ontologies source finalizes (#1526)."""
-    for name in present:
-        (tmp_path / name).write_bytes(b"x")
-    problems = release_preflight.missing_ncit_authority(tmp_path)
-    if present:
+@pytest.mark.parametrize(
+    "layout", ["neither", "database", "archive", "stale_database", "truncated", "stale_truncated", "outside"]
+)
+def test_ncit_must_be_readable_or_soundly_unpackable_inside_the_raw_directory(tmp_path, layout):
+    """The run reads ncit.db, unpacking a missing or stale one; the preflight checks it can (#1526, #1535)."""
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    payload = b"sqlite database bytes"
+    archive = gzip.compress(payload)
+    if layout in {"database", "stale_database", "stale_truncated"}:
+        (raw / "ncit.db").write_bytes(payload if layout == "database" else payload + b" older")
+    if layout in {"archive", "stale_database", "database"}:
+        (raw / "ncit.db.gz").write_bytes(archive)
+    if layout in {"truncated", "stale_truncated"}:
+        (raw / "ncit.db.gz").write_bytes(archive[:-12] + archive[-4:])
+    if layout == "outside":
+        (tmp_path / "ncit.db.gz").write_bytes(archive)
+        (raw / "ncit.db.gz").symlink_to(tmp_path / "ncit.db.gz")
+    problems = release_preflight.ncit_authority_problems(raw)
+    if layout in {"database", "archive", "stale_database"}:
         assert problems == []
     else:
         (problem,) = problems
-        assert "ncit.db" in problem and "`kg download -t stubs`" in problem
+        expected = {
+            "neither": "`kg download -t stubs`",
+            "truncated": "cannot be unpacked",
+            "stale_truncated": "cannot be unpacked",
+            "outside": "resolves outside",
+        }[layout]
+        assert expected in problem
 
 
 def test_check_only_entry_point_reports_without_running(tmp_path, monkeypatch, capsys):

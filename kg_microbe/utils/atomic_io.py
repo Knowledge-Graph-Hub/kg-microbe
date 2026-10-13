@@ -7,6 +7,7 @@ import itertools
 import os
 import shutil
 import time
+import zlib
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Union
@@ -82,19 +83,36 @@ def atomic_write(path: Union[str, Path], mode: str = "w", mark_complete: bool = 
                 pass
 
 
+def gzip_isize(archive: Union[str, Path]) -> int:
+    """
+    Return the uncompressed size, modulo 2**32, that a gzip archive's trailer records.
+
+    :param archive: A single-member gzip file.
+    :return: The trailer's ISIZE field.
+    """
+    with Path(archive).open("rb") as stream:
+        stream.seek(-4, os.SEEK_END)
+        return int.from_bytes(stream.read(4), "little")
+
+
 def gunzip_beside(path: Union[str, Path], *, root: Union[str, Path, None] = None) -> Path:
     """
-    Make ``path`` exist by decompressing its ``.gz`` sibling, atomically, when only the archive is present.
+    Make ``path`` the unpacked copy of its ``.gz`` sibling, atomically.
 
     Some raw authorities are downloaded gzipped (``ncit.db.gz``) and read uncompressed by
-    more than one source. Each reader calls this instead of decompressing in place, so
-    whichever runs first publishes a complete file and none ever sees a truncated one
-    (#1526).
+    more than one source. Each reader calls this instead of decompressing in place
+    (#1526). The archive is unpacked when ``path`` is missing, or when ``path``'s size
+    differs from the size the archive's trailer records, as it does after a newer archive
+    is downloaded over an older one (#1536).
+
+    A first unpack is published by hard link, so if another writer published first, its
+    copy is kept and a reader that already bound it never sees it replaced (#1537). A
+    stale copy is replaced.
 
     :param path: The uncompressed file the caller wants.
     :param root: When given, both files must resolve inside it; a link elsewhere is refused.
     :return: ``path``, which exists unless neither file did.
-    :raises ValueError: When either file resolves outside ``root``.
+    :raises ValueError: When either file resolves outside ``root``, or the archive cannot be unpacked.
     """
     path = Path(path)
     archive = path.with_name(path.name + ".gz")
@@ -102,9 +120,27 @@ def gunzip_beside(path: Union[str, Path], *, root: Union[str, Path, None] = None
         for candidate in (path, archive):
             if not candidate.resolve().is_relative_to(Path(root).resolve()):
                 raise ValueError(f"{candidate} is outside the selected directory {root}")
-    if not path.is_file() and archive.is_file():
-        with gzip.open(archive, "rb") as source, atomic_write(path, "wb") as target:
-            shutil.copyfileobj(source, target)
+    if not archive.is_file():
+        return path
+    stale = path.is_file() and path.stat().st_size % 2**32 != gzip_isize(archive)
+    if path.is_file() and not stale:
+        return path
+    tmp = path.with_name(f"{path.name}.{os.getpid()}.{next(_COUNTER)}.partial")
+    try:
+        try:
+            with gzip.open(archive, "rb") as source, open(tmp, "wb") as target:
+                shutil.copyfileobj(source, target)
+        except (EOFError, gzip.BadGzipFile, zlib.error) as exc:
+            raise ValueError(f"Cannot unpack {archive}: {exc}") from exc
+        if stale:
+            os.replace(tmp, path)
+        else:
+            try:
+                os.link(tmp, path)
+            except FileExistsError:
+                pass  # Another writer published first; keep its copy.
+    finally:
+        tmp.unlink(missing_ok=True)
     return path
 
 

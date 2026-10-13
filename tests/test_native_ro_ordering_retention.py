@@ -14,7 +14,7 @@ import pytest
 from kg_microbe.utils import native_ro_retention as native
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 from tests.test_native_ro_input_bindings import _completed
-from tests.test_native_ro_retention import FIXTURE, POLICY, audit_rows, frame, prepare
+from tests.test_native_ro_retention import FIXTURE, POLICY, audit_rows, frame, legacy_authorities, prepare
 
 NEW = {"RO:0002082": 17, "RO:0002087": 8, "RO:0002223": 4, "RO:0002229": 3, "RO:0002230": 2}
 SCIENCE_SHA = "d6a5bf58b80114861739f7f9714836d419d9b9ed96eb50a56ea61c20c9e303bb"
@@ -124,11 +124,7 @@ def test_exact_extension_preserves_prior292_and_declares_only_reviewed34():
     old_policy = copy.deepcopy(POLICY)
     old_policy["version"] = 1
     old_policy["records"] = previous
-    old_policy["authorities"] = {
-        name: value
-        for name, value in old_policy["authorities"].items()
-        if name in {"pato.json", "uberon.json", "ro.json"}
-    }
+    old_policy["authorities"] = legacy_authorities({"pato.json", "uberon.json", "ro.json"})
     old_policy["relations"] = {key: row for key, row in old_policy["relations"].items() if key not in NEW}
     old_policy["finite_cohort_sha256"] = native._digest(native._json(previous).encode())
     old_policy.pop("unchanged_records")

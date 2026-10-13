@@ -1,6 +1,7 @@
 """Finite NCIT category changes preserve native evidence, source meaning and admission guards."""
 
 import copy
+import gzip
 import io
 import json
 import shutil
@@ -115,6 +116,27 @@ def test_fixture_database_records_the_reviewed_release(tmp_path, monkeypatch):
     _, _, policy, _, authority = prepare(tmp_path, monkeypatch)
     authority.category_for("NCIT:C72005")
     assert authority.contract()["native_release"] == policy["native_reviewed_release"] == "26.02d"
+
+
+def test_only_the_downloaded_archive_is_unpacked_for_the_authority(tmp_path, monkeypatch):
+    """The ontologies source can finalize NCIT ids before ontologies_stubs has unpacked ncit.db (#1526)."""
+    raw, _, policy, _, authority = prepare(tmp_path, monkeypatch)
+    database = raw / "ncit.db"
+    (raw / "ncit.db.gz").write_bytes(gzip.compress(database.read_bytes()))
+    database.unlink()
+    assert authority.category_for("NCIT:C14191") == policy["records"]["NCIT:C14191"]["category"]
+    assert database.is_file()
+    assert sorted(path.name for path in raw.iterdir() if path.name.startswith("ncit.db")) == ["ncit.db", "ncit.db.gz"]
+
+
+def test_an_archive_that_is_not_a_database_is_refused_by_name(tmp_path, monkeypatch):
+    """A gzipped error page is refused before it is published as ncit.db (#1557)."""
+    raw, _, _, _, authority = prepare(tmp_path, monkeypatch)
+    (raw / "ncit.db").unlink()
+    (raw / "ncit.db.gz").write_bytes(gzip.compress(b"<html>Service unavailable</html>"))
+    with pytest.raises(ValueError, match="ncit.db.gz does not unpack to the expected file"):
+        authority.category_for("NCIT:C14191")
+    assert not (raw / "ncit.db").exists()
 
 
 @pytest.mark.parametrize("suffix", ["-wal", "-shm", "-journal"])

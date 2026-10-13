@@ -320,12 +320,23 @@ byte pins. Some policy-bound inputs have no such URL (MeSH, NCIT, the LPSN GSS,
 and the GOLD and BacDive files on Google Drive); this rule does not cover them.
 Their policies bind only the records they reviewed (statements, GSS rows or
 selected records): any export or release with those records unchanged is
-accepted, and each run's receipt records the one it read. See #1420.
+accepted, and each run's receipt records the one it read. Before the
+`ontologies` source starts, `kg transform` checks the release files the ontology
+policies pin and the Biolink model; that an existing `ncit.db` has a SQLite header
+and the unpacked size of any `ncit.db.gz` beside it (no run replaces it), or else
+that the archive unpacks to one; and that an existing `upa.json` is the pinned
+conversion. A stale download then fails in seconds. A single ontology (`-s go`) is
+checked for the pinned files its own run reads, `ontologies_stubs` and MediaDive for
+`ncit.db`, and `python -m kg_microbe.utils.release_preflight data/raw` runs the check
+alone. The other pins (Rhea's, MicrobeDecoder's, and the category pins MediaDive
+and other sources meet) are checked when those sources run. See #1420 and the
+[reviewed release inputs runbook](docs/runbooks/reviewed-release-inputs.md).
 
 ## Operational references
 
 - [Data hosting and ontology build costs](docs/DATA_HOSTING.md)
 - [Ontology cache and failure runbook](docs/runbooks/ontology-caches.md)
+- [Reviewed release inputs and staging](docs/runbooks/reviewed-release-inputs.md)
 - [PREGO score measurements](docs/PREGO_SCORE_VALIDATION.md)
 - [PREGO acquisition and schema](docs/PREGO_INGEST_PLAN.md)
 - [MetaTraits operations](docs/METATRAITS_TRANSFORM_RUNBOOK.md)

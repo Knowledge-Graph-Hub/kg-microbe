@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import csv
+import gzip
 import zipfile
 from pathlib import Path
 from typing import Dict, List, Set
@@ -36,6 +37,7 @@ from kg_microbe.utils.robot_utils import ROBOT_JAXP_LIMITS
 from kg_microbe.utils.stub_curie_collection import collect_stub_curies
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
+SQLITE_HEADER = b"SQLite format 3\x00"
 # The head of the pinned MicrO.owl (MICRO_COMMIT): its DOCTYPE, namespaces and
 # 20 owl:imports, without the ontology annotations.
 MICRO_OWL_HEADER = REPO_ROOT / "tests" / "resources" / "micro" / "micro_owl_header.owl"
@@ -485,12 +487,47 @@ def test_missing_java_is_a_prerequisite_failure(tmp_path, monkeypatch):
 
 
 def _pinned_imports(raw_dir: Path) -> None:
-    """Lay out every pinned ontology and its import modules under ``raw_dir``, as `kg download` does."""
+    """
+    Lay out every pinned ontology and its import modules under ``raw_dir``, as `kg download` does.
+
+    Also an unpacked ``ncit.db``, which the preflight checks for its SQLite header.
+    """
     for owl_name, imports_name, header, modules in PINNED_IMPORTS.values():
         (raw_dir / imports_name).mkdir(parents=True)
         (raw_dir / owl_name).write_text(header.read_text(encoding="utf-8"), encoding="utf-8")
         for name in modules:
             (raw_dir / imports_name / name).write_text("<rdf:RDF/>", encoding="utf-8")
+    (raw_dir / "ncit.db").write_bytes(SQLITE_HEADER)
+
+
+def test_a_stale_ncit_db_fails_the_stubs_preflight(tmp_path, monkeypatch):
+    """
+    An ncit.db older than its archive is refused, since ontologies_stubs reads it as it is (#1536).
+
+    `kg download -i -t stubs` brings a new ncit.db.gz and leaves the old ncit.db in place.
+    """
+    monkeypatch.setattr(robot_utils, "_java_runs", lambda: True)
+    _pinned_robot(tmp_path)
+    _pinned_imports(tmp_path)
+    (tmp_path / "ncit.db.gz").write_bytes(gzip.compress(SQLITE_HEADER + b" a newer release"))
+    (problem,) = OntologiesStubsTransform.missing_prerequisites(tmp_path)
+    assert "is not the copy of the ncit.db.gz beside it" in problem
+
+
+def test_a_damaged_archive_beside_its_database_is_not_unpacked(tmp_path, monkeypatch):
+    """An interrupted re-download of bto.db.gz leaves the bto.db already there in use (#1545)."""
+    import oaklib
+
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    (raw / "bto.db").write_bytes(b"the database already unpacked")
+    (raw / "bto.db.gz").write_bytes(b"\x1f\x8b an interrupted download")
+    opened = []
+    monkeypatch.setattr(oaklib, "get_adapter", lambda locator: opened.append(locator) or "adapter")
+    transform = OntologiesStubsTransform(input_dir=raw, output_dir=tmp_path / "out")
+    assert transform._open_adapter("BTO", raw / "bto.db") == "adapter"
+    assert opened == [f"sqlite:{raw / 'bto.db'}"]
+    assert (raw / "bto.db").read_bytes() == b"the database already unpacked"
 
 
 def test_the_pinned_micro_owl_imports_exactly_the_pinned_modules():

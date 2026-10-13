@@ -22,6 +22,7 @@ from kg_microbe.transform_utils.constants import (
     SOLUTION_CATEGORY,
 )
 from kg_microbe.transform_utils.ontologies_stubs.ncit_category_projection import native_contract
+from kg_microbe.utils.atomic_io import SQLITE_HEADER, gunzip_beside
 from kg_microbe.utils.release_binding import semsql_release
 
 POLICY_FILE = Path(__file__).resolve().parents[2] / "mappings/ncit_eight_categories.json"
@@ -273,6 +274,9 @@ class FiniteNcitCategoryAuthority:
         # SemanticSQL republishes ncit.db.gz at one URL, so any release whose reviewed
         # statements are unchanged is accepted. The bytes and the release actually read
         # are recorded in the receipt, and every later check compares against that record.
+        # ncit.db is downloaded gzipped. FOODON's NCIT ids reach this authority while the
+        # ontologies source finalizes, before ontologies_stubs would unpack it (#1526).
+        gunzip_beside(Path(self.raw_dir) / "ncit.db", root=self.raw_dir, magic=SQLITE_HEADER)
         authority = _select_native(self.raw_dir, admission)
         selected = Path(authority["selected_path"])
         with self.opener(selected) as stream:

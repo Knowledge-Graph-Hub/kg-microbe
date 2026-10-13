@@ -1,10 +1,13 @@
 """Atomic writes for derived caches, so a failed run leaves no half-written file."""
 
 import csv
+import gzip
 import hashlib
 import itertools
 import os
+import shutil
 import time
+import zlib
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Union
@@ -12,6 +15,9 @@ from typing import Union
 # Distinguishes concurrent writers within one process; os.getpid() covers
 # across processes. itertools.count is atomic under the GIL.
 _COUNTER = itertools.count()
+
+# The first 16 bytes of every SQLite database file.
+SQLITE_HEADER = b"SQLite format 3\x00"
 
 
 @contextmanager
@@ -78,6 +84,56 @@ def atomic_write(path: Union[str, Path], mode: str = "w", mark_complete: bool = 
             except OSError:
                 # Nothing to clean up, or it is not ours to remove.
                 pass
+
+
+def gunzip_beside(path: Union[str, Path], *, root: Union[str, Path, None] = None, magic: bytes = b"") -> Path:
+    """
+    Make ``path`` exist by unpacking its ``.gz`` sibling, atomically, when only the archive is present.
+
+    Some raw authorities are downloaded gzipped (``ncit.db.gz``) and read uncompressed by
+    more than one source. Each reader calls this instead of decompressing in place, so no
+    reader ever sees a partly written file (#1526). An existing ``path`` is never replaced,
+    even after a newer archive is downloaded; the release preflight reports an ``ncit.db``
+    whose size is not the archive's unpacked size (#1536). Two readers that both find
+    ``path`` missing both unpack it, and the later copy replaces the earlier one. A reader
+    that bound the earlier copy, as the NCIT category authority does, then refuses the
+    replaced file as changed; other readers keep the copy they opened (#1537). Partial
+    files that a killed unpack left more than a day ago are swept whenever ``path`` is
+    found or published, so a later run's early return no longer strands them (#1558).
+
+    :param path: The uncompressed file the caller wants.
+    :param root: When given, both files must resolve inside it; a link elsewhere is refused.
+    :param magic: The bytes the unpacked file must start with, such as :data:`SQLITE_HEADER`.
+    :return: ``path``, which is missing only when the archive is too.
+    :raises ValueError: When either file cannot be resolved or resolves outside ``root``, or the
+        archive is damaged, unpacks to nothing or does not start with ``magic``. Nothing is
+        published then.
+    """
+    path = Path(path)
+    archive = path.with_name(path.name + ".gz")
+    if root is not None:
+        for candidate in (path, archive):
+            try:
+                inside = candidate.resolve().is_relative_to(Path(root).resolve())
+            except (OSError, RuntimeError) as exc:  # RuntimeError: a symlink loop
+                raise ValueError(f"Cannot resolve {candidate}: {exc}") from exc
+            if not inside:
+                raise ValueError(f"{candidate} is outside the selected directory {root}")
+    if path.is_file() or not archive.is_file():
+        _sweep_stale_partials(path)
+        return path
+    try:
+        with gzip.open(archive, "rb") as source, atomic_write(path, "wb") as target:
+            head = source.read(max(len(magic), 1))
+            if not head:
+                raise ValueError(f"{archive} unpacks to nothing")
+            if not head.startswith(magic):
+                raise ValueError(f"{archive} does not unpack to the expected file: it starts {head!r}")
+            target.write(head)
+            shutil.copyfileobj(source, target)
+    except (EOFError, gzip.BadGzipFile, zlib.error) as exc:
+        raise ValueError(f"Cannot unpack {archive}: {exc}") from exc
+    return path
 
 
 def has_data_rows(path: Union[str, Path], delimiter: str = "\t") -> bool:

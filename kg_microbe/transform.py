@@ -236,15 +236,36 @@ def _withdraw_success_claim(source: str, output_dir: Optional[Path]) -> bool:
 
 
 def _missing_prerequisites(sources: List[str], input_dir: Optional[Path] = None) -> List[str]:
-    """Return ``"source: message"`` for every external prerequisite a selected source needs but cannot find."""
-    missing = []
-    for source in sources:
-        check = getattr(DATA_SOURCES.get(source), "missing_prerequisites", None)
-        problems = check(input_dir) if check is not None else ()
+    """
+    Return ``"source: message"`` for every external prerequisite a selected source needs but cannot find.
+
+    A single ontology runs under the ontologies source, so it gets that source's check,
+    for the pinned files its own run reads (#1528, #1534). When the whole ontologies
+    source is selected too, its full check covers the single ones. Each source named
+    more than once is checked once (#1548), and a problem several selected sources
+    report (a file two ontologies read, or ``ncit.db``, which ontologies and
+    ontologies_stubs both check) is reported once, under the first.
+    """
+    whole = ONTOLOGIES in sources
+    missing, reported = [], set()
+    for source in dict.fromkeys(sources):
+        if source not in DATA_SOURCES and whole:
+            continue
+        owner = source if source in DATA_SOURCES else ONTOLOGIES
+        check = getattr(DATA_SOURCES.get(owner), "missing_prerequisites", None)
+        if check is None:
+            problems = ()
+        elif owner == source:
+            problems = check(input_dir)
+        else:
+            problems = check(input_dir, ontology=source)
         if isinstance(problems, str):
             # Iterating it would report one problem per character.
             raise TypeError(f"{source}.missing_prerequisites must return messages, not a string")
-        missing += [f"{source}: {problem}" for problem in problems]
+        for problem in problems:
+            if problem not in reported:
+                reported.add(problem)
+                missing.append(f"{source}: {problem}")
     return missing
 
 

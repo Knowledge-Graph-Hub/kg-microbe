@@ -21,7 +21,7 @@ import math
 import os
 import time
 from pathlib import Path
-from typing import Dict, Optional, Union
+from typing import Dict, List, Optional, Union
 
 import pandas as pd
 import requests
@@ -225,6 +225,23 @@ class MediaDiveTransform(Transform):
         ("micromediaparam_strict", MICROMEDIAPARAM_COMPOUND_MAPPINGS_FILE),
         ("micromediaparam_hydrate", MICROMEDIAPARAM_HYDRATE_MAPPINGS_FILE),
     )
+
+    @classmethod
+    def missing_prerequisites(cls, input_dir: Optional[Path] = None) -> List[str]:
+        """
+        Report an unusable ncit.db before the batch starts.
+
+        MediaDive's nodes include reviewed NCIT category classes, so the NCIT category
+        policy reads ``ncit.db`` when this source finalizes. It gets the ontologies
+        source's check: an existing copy is read as it is, so one left beside a newer
+        ``ncit.db.gz`` would be read silently, and a damaged archive would fail only at
+        finalization (#1536, #1557).
+
+        :param input_dir: Effective raw input directory; ``None`` means the default.
+        """
+        from kg_microbe.utils.release_preflight import ncit_authority_problems
+
+        return ncit_authority_problems(Path(input_dir) if input_dir else cls.DEFAULT_INPUT_DIR)
 
     def __init__(self, input_dir: Optional[Path] = None, output_dir: Optional[Path] = None):
         """Instantiate part."""

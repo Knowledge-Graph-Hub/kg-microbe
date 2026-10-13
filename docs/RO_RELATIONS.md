@@ -106,7 +106,7 @@ unchanged GO controls and fourteen RO declarations. Its 190 additional rows
 are source-specific: 126 MONDO triples overlap the earlier cohort, 61 concern
 HsapDv immediate-predecessor assertions, and one repeats ENVO sedimentation.
 They remain distinct supplier assertions, not permission for a relation-wide
-rewrite. Full native ENVO/MONDO bytes and their exact graph IDs are pinned;
+rewrite. The ENVO and MONDO release files and their exact graph IDs are pinned;
 ENVO's native graph ID ends in `envo.json`, not `envo.owl`.
 
 Capability to perform part of a process is not evidence of realized
@@ -138,13 +138,26 @@ Immutable scientific fixtures prove all 62 class restrictions as existential
 They do not assert a relation between every instance of both endpoint classes;
 inverse properties do not license reversing class-level restrictions. Literal
 upstream formula/comment inconsistencies and axiom annotations are preserved,
-not repaired locally. Runtime evidence remains the actual pinned full native
-JSON exports and complete RO property declarations; the additional OWL excerpts
-are scientific test evidence, not a claim of new runtime OWL consumption.
+not repaired locally. Runtime evidence remains the full native JSON exports
+of the pinned releases and the complete RO property declarations. The additional
+OWL excerpts are scientific test evidence, not a claim of new runtime OWL
+consumption.
 
-The policy binds exact supplier/triples, complete native input hashes and RO
-property declarations. Full ontology runs process RO before its consumers;
-an explicit PATO/UBERON/ENVO/MONDO run needs the prepared pinned `data/raw/ro.json`.
+The policy binds exact supplier/triples and RO property declarations. It also
+binds each authority to one release (#1420):
+
+- **Release file.** It records the upstream file's SHA-256: `envo.json` and
+  `mondo.json` as published, and the `ro.owl`, `pato.owl` and `uberon.owl` the
+  JSON is converted from. A converted JSON's own bytes are not pinned, so an
+  in-place rewrite or a different serialization does not break a fresh checkout.
+- **Release version.** The JSON must declare that release's `versionIRI`.
+- **Reviewed content.** A canonical digest covers exactly the reviewed content:
+  every supplier assertion that uses a protected relation, and the 14 RO property
+  declarations.
+
+`download.yaml` fetches those releases from their dated URLs. Full ontology runs
+process RO before its consumers. An explicit PATO/UBERON/ENVO/MONDO run needs
+`data/raw/ro.json`, converted from the pinned `ro.owl`.
 Sanitization and KGX read private admitted copies, leaving native evidence
 unchanged. Unexpected sources, changed native bytes, wrong projections,
 missing/duplicate assertions and absent mandatory audits abort the run.

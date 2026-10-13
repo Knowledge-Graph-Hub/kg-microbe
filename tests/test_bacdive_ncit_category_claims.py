@@ -77,25 +77,45 @@ def test_complete_native_run_retains_four_observations_and_existing_pride_coordi
     assert not {"lesion incl. necrosis", "parasite"} & load_isolation_source_mappings().keys()
 
 
-def test_an_audit_cell_over_the_csv_field_limit_still_verifies(tmp_path, monkeypatch):
-    """A row holds a whole native record; reading the audit back must not depend on CSV's limit (#1575)."""
+def test_an_audit_cell_over_the_csv_field_limit_still_verifies(tmp_path, monkeypatch, local_source_schema):
+    """A row holds a whole native record; no read-back of the audit may depend on CSV's limit (#1575)."""
     transform, _, _, _ = run_native(tmp_path, monkeypatch, records())
+    assert transform._ncit_claim_output_ready  # so the checks below read the audit back
 
     def longest(name):
         """Return the length of the longest cell in one output file."""
         text = (transform.output_dir / name).read_text(encoding="utf-8")
         return max(len(cell) for line in text.splitlines() for cell in line.split("\t"))
 
-    # Pin the limit below the audit's longest cell and above every node and edge
-    # cell, which the same verification reads at the caller's limit.
-    limit = max(longest("nodes.tsv"), longest("edges.tsv")) + 1
-    assert longest(claims.AUDIT_FILE) > limit
-    previous = csv.field_size_limit(limit)
-    try:
-        transform.verify_native_inputs()
-        assert csv.field_size_limit() == limit
-    finally:
-        csv.field_size_limit(previous)
+    def pinned(limit, check):
+        """Run one check at a caller's limit and require that limit back afterwards."""
+        previous = csv.field_size_limit(limit)
+        try:
+            result = check()
+            assert csv.field_size_limit() == limit
+            return result
+        finally:
+            csv.field_size_limit(previous)
+
+    # BacDive's end-of-run check also reads nodes and edges at the caller's limit,
+    # so pin it below the audit's longest cell and above every node and edge cell.
+    assert longest(claims.AUDIT_FILE) > max(longest("nodes.tsv"), longest("edges.tsv")) + 1
+    pinned(max(longest("nodes.tsv"), longest("edges.tsv")) + 1, transform.verify_native_inputs)
+
+    # Finalization, a fresh instance's repeat, and recorded-input admission (the
+    # merge gate's and the freshness check's path) also read curated mappings with
+    # longer cells, so pin just below the audit's longest cell.
+    limit = longest(claims.AUDIT_FILE) - 1
+    report = pinned(limit, transform.finalize)
+    fresh = BacDiveTransform.__new__(BacDiveTransform)
+    Transform.__init__(fresh, "bacdive", transform.input_base_dir, transform.output_base_dir)
+    assert pinned(limit, fresh.finalize) == report
+    pinned(limit, fresh.verify_native_inputs)
+    record = transform.output_dir / "source_finalization.json"
+    pinned(
+        limit,
+        lambda: BacDiveTransform.verify_recorded_native_inputs(report, record, admission=SourceAdmission()).verify(),
+    )
 
 
 @pytest.mark.parametrize(

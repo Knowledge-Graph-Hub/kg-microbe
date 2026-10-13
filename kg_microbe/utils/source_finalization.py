@@ -19,6 +19,7 @@ from kg_microbe.transform_utils.constants import (
     ID_COLUMN,
     NAME_COLUMN,
     OBJECT_COLUMN,
+    ONTOLOGIES,
     PREDICATE_COLUMN,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PUBLICATIONS_COLUMN,
@@ -571,13 +572,29 @@ def _order_finalized_schema(path, is_node):
 
 
 def _dependency_declarations(transform, used_inputs):
-    """Recognize explicit ontology declarations; a cross-source reference is not an anonymous stub."""
-    ontology_dir = Path(transform.output_base_dir) / "ontologies"
+    """
+    Recognize explicit ontology declarations; a cross-source reference is not an anonymous stub.
+
+    Reading the ontologies output is a dependency on it, so only a source that
+    lists it in ``TRANSFORM_INPUTS`` reads it, and for such a source it must be
+    there. Reading whatever sat beside the output made the same code and inputs
+    produce different bytes depending on what else had been built (#1511).
+    """
+    ontology_dir = Path(transform.output_base_dir) / ONTOLOGIES
     if ontology_dir.resolve() == Path(transform.output_dir).resolve():
         return set()
+    if ONTOLOGIES not in getattr(type(transform), "TRANSFORM_INPUTS", ()):
+        return set()
+    paths = sorted(ontology_dir.glob("*nodes.tsv"))
+    if not paths:
+        source = getattr(transform, "source_name", type(transform).__name__)
+        raise SourceFinalizationRequired(
+            f"{source} declares {ONTOLOGIES} in TRANSFORM_INPUTS, but {ontology_dir} has no nodes files; "
+            f"run `kg transform -s {ONTOLOGIES}` into the same output directory first"
+        )
     found = set()
     quoting = csv.QUOTE_NONE if (ontology_dir / FINALIZATION_FILE).is_file() else csv.QUOTE_MINIMAL
-    for path in sorted(ontology_dir.glob("*nodes.tsv")):
+    for path in paths:
         used_inputs.add(path)
         for row in graph_rows(path, quoting=quoting):
             if row.get(NAME_COLUMN):

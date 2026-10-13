@@ -300,6 +300,9 @@ class OntologiesStubsTransform(Transform):
             if path.is_relative_to(_STUB_REPO_ROOT)
         )
     )
+    #: Finalization reads the ontologies output's declarations, so CHEBI terms
+    #: MicrO's edges reference are not declared again here (#1511).
+    TRANSFORM_INPUTS = ("ontologies",)
 
     @classmethod
     def missing_prerequisites(cls, input_dir: Optional[Path] = None) -> List[str]:

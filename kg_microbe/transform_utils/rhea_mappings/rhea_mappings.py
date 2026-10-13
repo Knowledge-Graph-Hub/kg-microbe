@@ -55,6 +55,9 @@ class RheaMappingsTransform(Transform):
     """Consume explicit local inputs; never infer directions from ID order or cache state."""
 
     DATA_INPUTS = ("mappings/rhea_release.json", *LEGACY_DATA_INPUTS)
+    #: Finalization reads the ontologies output's declarations, so the CHEBI
+    #: nodes Rhea's edges reference are not declared again here (#1511).
+    TRANSFORM_INPUTS = ("ontologies",)
     TSV_QUOTING = csv.QUOTE_NONE
     REQUIRED_CONSUMED_INPUTS = (*REQUIRED_INPUTS, *REQUIRED_LABEL_INPUTS, *LEGACY_INPUTS)
     REQUIRED_AUDIT_FILES = (REACTION_AUDIT, LEGACY_AUDIT_FILE)

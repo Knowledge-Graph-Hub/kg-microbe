@@ -270,8 +270,10 @@ class _NCBILabelIndex:
 class LPSNTransform(Transform):
     """Transform LPSN GSS CSV bulk export into KGX nodes + edges."""
 
-    #: Reads this transform's output; see Transform.TRANSFORM_INPUTS (#845).
-    TRANSFORM_INPUTS = ("gtdb",)
+    #: Reads gtdb's output; see Transform.TRANSFORM_INPUTS (#845). Finalization
+    #: also reads the ontologies output's declarations, so the NCBITaxon nodes
+    #: LPSN's edges reference are not declared again here (#1511).
+    TRANSFORM_INPUTS = ("ontologies", "gtdb")
     REQUIRED_CONSUMED_INPUTS = (GSS_NATIVE_INPUT,)
     REQUIRED_AUDIT_FILES = (PARENT_DISPOSITIONS_FILE,)
 

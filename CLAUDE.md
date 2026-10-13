@@ -112,6 +112,14 @@ Standard edge columns are `subject`, `predicate`, `object`, `relation`,
 `primary_knowledge_source`, `knowledge_level`, and `agent_type`. Source-specific
 extension columns are allowed when the merge preserves them.
 
+Finalization declares any NCBITaxon, CHEBI, MICRO, OBI or `gold:` node that a
+source references but does not declare, unless the `ontologies` output already
+does. It reads that output only for a source that lists `ontologies` in
+`TRANSFORM_INPUTS`, and such a source fails without it. A source whose edges
+reference ontology terms must therefore declare it; otherwise it declares those
+nodes again itself, and before #1511 its bytes depended on what else had been
+built beside it.
+
 For this graph, a named strain or isolate beneath an NCBITaxon is typed
 `biolink:OrganismTaxon` and linked with `biolink:subclass_of`. This deliberate
 house convention means “sits under this taxon” and keeps the taxonomic backbone

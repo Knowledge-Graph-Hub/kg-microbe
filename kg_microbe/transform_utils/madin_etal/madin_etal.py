@@ -261,6 +261,9 @@ class MadinEtAlTransform(Transform):
         "mappings/kgmicrobe_unified_entity_mappings.sssom.tsv.gz",
         "mappings/madin_environment_id_corrections.tsv",
     )
+    #: Finalization reads the ontologies output's declarations, so the CHEBI
+    #: nodes Madin's edges reference are not declared again here (#1511).
+    TRANSFORM_INPUTS = ("ontologies",)
     REQUIRED_CONSUMED_INPUTS = ("madin_environment_id_corrections",)
 
     def __init__(self, input_dir: str, output_dir: str, nlp=True) -> None:

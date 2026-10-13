@@ -246,6 +246,11 @@ def prepare_source(tmp_path, source, *, prefix="", marker=True, output_name=None
     raw = tmp_path / "raw"
     raw.mkdir(exist_ok=True)
     cls = DATA_SOURCES[source].transform_class
+    if "ontologies" in cls.TRANSFORM_INPUTS and not any((tmp_path / "transformed/ontologies").glob("*nodes.tsv")):
+        # Such a source finalizes against the ontologies output, and the merge
+        # gate checks that upstream, so give it a finalized one as a run would
+        # (#1511). A test that prepared its own, even a scoped one, keeps it.
+        prepare_source(tmp_path, "ontologies")
     transform = cls.__new__(cls)
     Transform.__init__(transform, output_name or source, raw, tmp_path / "transformed")
     for kind in ("nodes", "edges"):

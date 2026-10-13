@@ -23,11 +23,17 @@ from tests.rhea_fixtures import prepare_rhea_native_inputs
 FIXTURES = Path(__file__).parent / "resources"
 
 
-def _transform(tmp_path, quoting=csv.QUOTE_MINIMAL):
+class _OntologiesDependent(Transform):
+    """A producer that declares the ontologies output, so finalization reads its declarations."""
+
+    TRANSFORM_INPUTS = ("ontologies",)
+
+
+def _transform(tmp_path, quoting=csv.QUOTE_MINIMAL, producer=Transform):
     """Create an explicit producer boundary with isolated raw and transformed roots."""
     raw, output = tmp_path / "raw", tmp_path / "transformed"
     raw.mkdir()
-    result = Transform("fixture", raw, output)
+    result = producer("fixture", raw, output)
     result.TSV_QUOTING = quoting
     return result
 
@@ -129,7 +135,7 @@ def test_go_authority_corrects_named_nonanonymous_stub_before_merge(tmp_path, mo
 
 def test_dependency_declared_cross_source_target_is_not_an_anonymous_stub(tmp_path):
     """Per-transform incompleteness cannot justify dropping a valid named ontology target."""
-    transform = _transform(tmp_path)
+    transform = _transform(tmp_path, producer=_OntologiesDependent)
     _pair(transform)
     transform.output_edge_file.write_text(
         "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\n"
@@ -224,10 +230,11 @@ def test_public_merge_gate_requires_exact_prepared_inputs(tmp_path, monkeypatch)
 
     from kg_microbe.merge_utils import merge_kg
     from kg_microbe.transform_utils.rhea_mappings.rhea_mappings import RheaMappingsTransform
-    from tests.test_merge_source_freshness import record_source
+    from tests.test_merge_source_freshness import prepare_source, record_source
 
     raw = tmp_path / "raw"
     raw.mkdir()
+    prepare_source(tmp_path, "ontologies")  # rhea_mappings declares it; the gate checks it (#1511)
     transform = RheaMappingsTransform.__new__(RheaMappingsTransform)
     Transform.__init__(transform, "rhea_mappings", raw, tmp_path / "transformed")
     _pair(transform)

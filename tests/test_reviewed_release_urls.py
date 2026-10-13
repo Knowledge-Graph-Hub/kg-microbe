@@ -29,7 +29,10 @@ REVIEWED_RELEASE_URLS = {
         "Shiny/MicrobeDecoder/data/database/database.zip"
     ),
     "ro.owl": "http://purl.obolibrary.org/obo/ro/releases/2025-12-17/ro.owl",
-    "po.owl": "http://purl.obolibrary.org/obo/po/releases/2026-01-09/po.owl",
+    # The commit release v2026-01-09 points at (PO_COMMIT, #1500); byte-identical to that release.
+    "po.owl": (
+        "https://raw.githubusercontent.com/Planteome/plant-ontology/fb1d146b95d6bfe141992d6a219b891fdef2dc54/po.owl"
+    ),
     "mondo.json": "http://purl.obolibrary.org/obo/mondo/releases/2026-07-06/mondo.json",
     # The archive itself is not pinned: its two members are, byte for byte, by
     # mappings/rhea_release.json, and stage_snapshot extracts only those.

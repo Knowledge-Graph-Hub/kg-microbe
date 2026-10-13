@@ -191,16 +191,28 @@ def test_real_lookup_convergence_preserves_original_rows_and_true_ambiguity(tmp_
     assert by_record["kgmicrobe.strain:bacdive_12"]["emitted_edge_json"] == "null"
 
 
-def test_an_audit_cell_over_the_csv_field_limit_still_verifies(tmp_path, monkeypatch):
-    """A whole native record can exceed CSV's 131,072-character default; the caller's limit is kept (#1571)."""
+def test_an_audit_cell_over_the_csv_field_limit_still_verifies(tmp_path, monkeypatch, local_source_schema):
+    """An audit cell can exceed CSV's 131,072-character default; every reader keeps the caller's limit (#1571)."""
     records = copy.deepcopy(controls()["records"])
-    # BacDive 4 is the inferred TEST MIXED claim, whose deposit row embeds its whole native record.
+    # BacDive 4 is the inferred TEST MIXED claim, whose deposit row embeds this record's General block.
     records[3]["General"]["fixture padding"] = "x" * 140_000
-    limit = csv.field_size_limit()
-    transform, _, _, _ = produce(tmp_path, monkeypatch, records)
-    assert csv.field_size_limit() == limit
-    audit = (transform.output_dir / taxonomy.AUDIT_FILE).read_text(encoding="utf-8")
-    assert max(len(cell) for line in audit.splitlines() for cell in line.split("\t")) > 131_072
+    # Pin CSV's default: a test that ran earlier may have raised it for the whole session (#1574).
+    previous = csv.field_size_limit(131_072)
+    try:
+        transform, _, _, _ = produce(tmp_path, monkeypatch, records)
+        audit = (transform.output_dir / taxonomy.AUDIT_FILE).read_text(encoding="utf-8")
+        assert max(len(cell) for line in audit.splitlines() for cell in line.split("\t")) > 131_072
+        report = transform.finalize()
+        fresh = BacDiveTransform.__new__(BacDiveTransform)
+        Transform.__init__(fresh, "bacdive", transform.input_base_dir, transform.output_base_dir)
+        assert fresh.finalize() == report
+        fresh.verify_native_inputs()
+        BacDiveTransform.verify_recorded_native_inputs(
+            report, transform.output_dir / "source_finalization.json", admission=SourceAdmission()
+        ).verify()
+        assert csv.field_size_limit() == 131_072
+    finally:
+        csv.field_size_limit(previous)
 
 
 @pytest.mark.parametrize(

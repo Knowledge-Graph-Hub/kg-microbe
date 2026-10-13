@@ -1122,9 +1122,10 @@ class TaxonomyEvidence:
         with (directory / AUDIT_FILE).open(newline="", encoding="utf-8") as stream:
             previous_limit = csv.field_size_limit()
             try:
-                # A row carries its whole native record, which can exceed CSV's
-                # 128 KiB default (#1571). No cell is longer than the open file,
-                # so bound the parser by it, then restore the caller's limit.
+                # A row embeds the taxonomy blocks of each record it cites, which
+                # can exceed CSV's 128 KiB default (#1571). No cell is longer than
+                # the open file, so bound the parser by it, then restore the
+                # caller's limit.
                 csv.field_size_limit(max(previous_limit, os.fstat(stream.fileno()).st_size))
                 reader = csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE)
                 if reader.fieldnames != list(AUDIT_FIELDS) or list(reader) != self._audit_rows():

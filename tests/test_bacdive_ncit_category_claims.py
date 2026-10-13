@@ -77,6 +77,27 @@ def test_complete_native_run_retains_four_observations_and_existing_pride_coordi
     assert not {"lesion incl. necrosis", "parasite"} & load_isolation_source_mappings().keys()
 
 
+def test_an_audit_cell_over_the_csv_field_limit_still_verifies(tmp_path, monkeypatch):
+    """A row holds a whole native record; reading the audit back must not depend on CSV's limit (#1575)."""
+    transform, _, _, _ = run_native(tmp_path, monkeypatch, records())
+
+    def longest(name):
+        """Return the length of the longest cell in one output file."""
+        text = (transform.output_dir / name).read_text(encoding="utf-8")
+        return max(len(cell) for line in text.splitlines() for cell in line.split("\t"))
+
+    # Pin the limit below the audit's longest cell and above every node and edge
+    # cell, which the same verification reads at the caller's limit.
+    limit = max(longest("nodes.tsv"), longest("edges.tsv")) + 1
+    assert longest(claims.AUDIT_FILE) > limit
+    previous = csv.field_size_limit(limit)
+    try:
+        transform.verify_native_inputs()
+        assert csv.field_size_limit() == limit
+    finally:
+        csv.field_size_limit(previous)
+
+
 @pytest.mark.parametrize(
     "damage", ["new-record", "alias", "reorder", "reference", "duplicate", "removed-leaf", "wrong-field"]
 )

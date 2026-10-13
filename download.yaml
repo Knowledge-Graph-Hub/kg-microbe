@@ -127,7 +127,9 @@
 # MONDO
 #
 -
-  url: https://purl.obolibrary.org/obo/mondo/mondo.json
+  # Pinned to the release the native RO policy binds (#1420). The pristine release
+  # is bound, not the copy an older transform rewrote in place.
+  url: http://purl.obolibrary.org/obo/mondo/releases/2026-07-06/mondo.json
   local_name: mondo.json
   tag: ontologies
 #

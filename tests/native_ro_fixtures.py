@@ -64,12 +64,17 @@ def stage_native_ro_envo(raw: Path) -> Path:
             graph["nodes"].append(node)
     edges = {(edge["sub"], edge["pred"], edge["obj"]) for edge in graph["edges"]}
     graph["edges"].extend(edge for edge in supplier["edges"] if (edge["sub"], edge["pred"], edge["obj"]) not in edges)
+    # The combined excerpt is still from the reviewed ENVO release.
+    graph.setdefault("meta", {})["version"] = supplier["meta"]["version"]
     (raw / "envo.json").write_text(json.dumps(document, indent=2, sort_keys=True) + "\n")
 
     policy = copy.deepcopy(json.loads(native.POLICY_FILE.read_text()))
     for filename in ("ro.json", "envo.json"):
-        assert policy["authorities"][filename]["sha256"] == origin["native_files"][filename]["full_source_sha256"]
-        policy["authorities"][filename]["sha256"] = hashlib.sha256((raw / filename).read_bytes()).hexdigest()
+        authority = policy["authorities"][filename]
+        [staged] = json.loads((raw / filename).read_text())["graphs"]
+        assert staged["meta"]["version"] == authority["release"]
+        assert native.selected_content_sha256(filename[:-5], staged) == authority["selected_sha256"]
+        authority["source"] = {"file": filename, "sha256": hashlib.sha256((raw / filename).read_bytes()).hexdigest()}
     path = raw.parent / POLICY_NAME
     path.write_text(json.dumps(policy))
     return path

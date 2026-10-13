@@ -27,14 +27,33 @@ POLICY = json.loads(native.POLICY_FILE.read_text())
 
 
 def fixture_policy():
-    """Explicitly bind verbatim excerpts, without falsely claiming whole-file hashes."""
+    """
+    Bind verbatim excerpts as their own release files, without claiming they are the full release.
+
+    The excerpts carry the reviewed release and exactly the reviewed content, so only
+    the upstream source binding is substituted (#1420).
+    """
     policy = copy.deepcopy(POLICY)
     for filename, authority in policy["authorities"].items():
         evidence = ORIGIN["native_files"][filename]
-        assert authority["sha256"] == evidence["full_source_sha256"]
-        assert hashlib.sha256((FIXTURE / filename).read_bytes()).hexdigest() == evidence["fixture_sha256"]
-        authority["sha256"] = evidence["fixture_sha256"]
+        content = (FIXTURE / filename).read_bytes()
+        assert hashlib.sha256(content).hexdigest() == evidence["fixture_sha256"]
+        [graph] = json.loads(content)["graphs"]
+        assert graph["meta"]["version"] == authority["release"]
+        assert native.selected_content_sha256(filename[:-5], graph) == authority["selected_sha256"]
+        authority["source"] = {"file": filename, "sha256": evidence["fixture_sha256"]}
     return policy
+
+
+def legacy_authorities(filenames):
+    """Rebuild the whole-file authority pins that policies before version 3 carried."""
+    return {
+        filename: {
+            "graph_id": POLICY["authorities"][filename]["graph_id"],
+            "sha256": ORIGIN["native_files"][filename]["full_source_sha256"],
+        }
+        for filename in sorted(filenames)
+    }
 
 
 @pytest.mark.parametrize("damage", ["definition_hash", "authority_hash", "cohort", "strict_disposition"])
@@ -44,7 +63,7 @@ def test_restamped_policy_cannot_redefine_reviewed_native_evidence(damage):
     if damage == "definition_hash":
         policy["relations"]["RO:0002216"]["native_node_sha256"] = "a" * 64
     elif damage == "authority_hash":
-        policy["authorities"]["ro.json"]["sha256"] = "a" * 64
+        policy["authorities"]["ro.json"]["selected_sha256"] = "a" * 64
     elif damage == "cohort":
         policy["records"][0]["object"] = "GO:9999999"
         policy["finite_cohort_sha256"] = native._digest(native._json(policy["records"]).encode())
@@ -54,19 +73,20 @@ def test_restamped_policy_cannot_redefine_reviewed_native_evidence(damage):
         native.load_policy(io.StringIO(json.dumps(policy)))
 
 
-def prepare(tmp_path, monkeypatch, *, sources=("pato", "uberon")):
+def prepare(tmp_path, monkeypatch, *, sources=("pato", "uberon"), policy=None):
     """Exercise actual consumed snapshots with faithful immutable offline evidence."""
     raw = tmp_path / "raw"
     raw.mkdir(exist_ok=True)
     for filename in POLICY["authorities"]:
         shutil.copyfile(FIXTURE / filename, raw / filename)
+    policy = fixture_policy() if policy is None else policy
     path = tmp_path / "policy.json"
-    path.write_text(json.dumps(fixture_policy()))
+    path.write_text(json.dumps(policy))
     monkeypatch.setattr(native, "POLICY_FILE", path)
     # The production policy digest pins complete native definitions and input
     # bytes. This explicit fixture-only digest binds the already verified,
     # separately identified excerpts; it is not a production escape hatch.
-    monkeypatch.setattr(native, "REVIEWED_POLICY_SHA256", native._digest(native._json(fixture_policy()).encode()))
+    monkeypatch.setattr(native, "REVIEWED_POLICY_SHA256", native._digest(native._json(policy).encode()))
     transform = OntologiesTransform(raw, tmp_path / "transformed")
     prepare_empty_foodon_kernel_contract(transform)
     prepare_empty_parent_contract(transform)
@@ -192,7 +212,7 @@ def test_changed_native_bytes_do_not_get_restamped(tmp_path, monkeypatch, filena
     path = transform.input_base_dir / filename
     path.write_bytes(path.read_bytes() + b"\n")
     name = "pato" if filename == "ro.json" else Path(filename).stem
-    with pytest.raises(ValueError, match="authority bytes"):
+    with pytest.raises(ValueError, match="release file"):
         authority.prepare_source(name, transform.input_base_dir / (name + ".json"))
 
 
@@ -233,7 +253,7 @@ def test_native_semantics_are_checked_beyond_fullfile_pins(tmp_path, monkeypatch
     payload = json.dumps(document).encode()
     path.write_bytes(payload)
     policy = fixture_policy()
-    policy["authorities"]["pato.json"]["sha256"] = hashlib.sha256(payload).hexdigest()
+    policy["authorities"]["pato.json"]["source"]["sha256"] = hashlib.sha256(payload).hexdigest()
     native.POLICY_FILE.write_text(json.dumps(policy))
     monkeypatch.setattr(native, "REVIEWED_POLICY_SHA256", native._digest(native._json(policy).encode()))
     transform.begin_consumed_inputs()

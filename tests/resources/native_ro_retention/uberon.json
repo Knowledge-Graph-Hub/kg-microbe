@@ -1818,6 +1818,9 @@
         }
       ],
       "id": "http://purl.obolibrary.org/obo/uberon.owl",
+      "meta": {
+        "version": "http://purl.obolibrary.org/obo/uberon/releases/2026-06-19/uberon.owl"
+      },
       "nodes": [
         {
           "id": "http://purl.obolibrary.org/obo/CL_0000015",

@@ -9,7 +9,13 @@ from typing import Dict, List, Set
 
 import pytest
 
-from kg_microbe.transform_utils.constants import MICRO_IMPORT_MODULES, MICRO_IMPORTS_DIR
+from kg_microbe.transform_utils.constants import (
+    MICRO_IMPORT_MODULES,
+    MICRO_IMPORTS_DIR,
+    PO_IMPORT_MODULES,
+    PO_IMPORTS_DIR,
+    PO_VERSION_IRI,
+)
 from kg_microbe.transform_utils.ontologies_stubs import ontologies_stubs_transform as stubs_module
 from kg_microbe.transform_utils.ontologies_stubs.ontologies_stubs_transform import (
     STUB_ONTOLOGY_SOURCES,
@@ -33,6 +39,14 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 # The head of the pinned MicrO.owl (MICRO_COMMIT): its DOCTYPE, namespaces and
 # 20 owl:imports, without the ontology annotations.
 MICRO_OWL_HEADER = REPO_ROOT / "tests" / "resources" / "micro" / "micro_owl_header.owl"
+# The head of the pinned po.owl (PO_RELEASE): its namespaces, versionIRI, two
+# owl:imports and ontology annotations.
+PO_OWL_HEADER = REPO_ROOT / "tests" / "resources" / "po" / "po_owl_header.owl"
+# Each pinned source: its ontology file, imports directory, header and pinned modules.
+PINNED_IMPORTS = {
+    "PO": ("po.owl", PO_IMPORTS_DIR, PO_OWL_HEADER, PO_IMPORT_MODULES),
+    "MICRO": ("micro.owl", MICRO_IMPORTS_DIR, MICRO_OWL_HEADER, MICRO_IMPORT_MODULES),
+}
 # The concrete settings that keep a catalog run offline, spelled out rather than
 # compared with the constant, so trimming the constant cannot pass unnoticed.
 OFFLINE_FLAGS = (
@@ -434,7 +448,7 @@ def test_mireot_robot_calls_carry_the_jaxp_limits(tmp_path, monkeypatch):
     for env in envs:
         for name, value in ROBOT_JAXP_LIMITS:
             assert f"-D{name}={value}" in env["ROBOT_JAVA_ARGS"]
-        # Without pinned imports the network stays available (PO still needs it).
+        # Offline mode comes with the catalog: no imports_dir, no proxy flags.
         assert not any(flag in env["ROBOT_JAVA_ARGS"] for flag in OFFLINE_FLAGS)
 
 
@@ -453,7 +467,7 @@ def test_missing_pinned_robot_is_a_prerequisite_failure(tmp_path, monkeypatch):
     provides and the run uses, not for a `robot` on PATH.
     """
     monkeypatch.setattr(robot_utils, "_java_runs", lambda: True)
-    _pinned_micro_imports(tmp_path)
+    _pinned_imports(tmp_path)
     (problem,) = OntologiesStubsTransform.missing_prerequisites(tmp_path)
     assert problem.startswith(f"pinned ROBOT missing from {tmp_path}: robot, robot.jar")
     _pinned_robot(tmp_path)
@@ -463,21 +477,20 @@ def test_missing_pinned_robot_is_a_prerequisite_failure(tmp_path, monkeypatch):
 def test_missing_java_is_a_prerequisite_failure(tmp_path, monkeypatch):
     """The ROBOT wrapper execs `java`; a host without one fails every ROBOT call."""
     _pinned_robot(tmp_path)
-    _pinned_micro_imports(tmp_path)
+    _pinned_imports(tmp_path)
     monkeypatch.setattr(robot_utils, "_java_runs", lambda: False)
     assert OntologiesStubsTransform.missing_prerequisites(tmp_path) == [
         "java on PATH does not run (no JDK installed?); ROBOT needs one."
     ]
 
 
-def _pinned_micro_imports(raw_dir: Path) -> Path:
-    """Lay out the pinned MicrO and every import module under ``raw_dir``, as `kg download` does."""
-    imports_dir = raw_dir / MICRO_IMPORTS_DIR
-    imports_dir.mkdir(parents=True)
-    (raw_dir / "micro.owl").write_text(MICRO_OWL_HEADER.read_text(encoding="utf-8"), encoding="utf-8")
-    for name in MICRO_IMPORT_MODULES:
-        (imports_dir / name).write_text("<rdf:RDF/>", encoding="utf-8")
-    return imports_dir
+def _pinned_imports(raw_dir: Path) -> None:
+    """Lay out every pinned ontology and its import modules under ``raw_dir``, as `kg download` does."""
+    for owl_name, imports_name, header, modules in PINNED_IMPORTS.values():
+        (raw_dir / imports_name).mkdir(parents=True)
+        (raw_dir / owl_name).write_text(header.read_text(encoding="utf-8"), encoding="utf-8")
+        for name in modules:
+            (raw_dir / imports_name / name).write_text("<rdf:RDF/>", encoding="utf-8")
 
 
 def test_the_pinned_micro_owl_imports_exactly_the_pinned_modules():
@@ -492,44 +505,85 @@ def test_the_pinned_micro_owl_imports_exactly_the_pinned_modules():
     assert len(declared) == 20
 
 
-def test_imports_that_disagree_with_the_pin_fail_preflight(tmp_path, monkeypatch):
+def test_the_pinned_po_owl_imports_exactly_the_pinned_modules():
+    """The same check for po.owl, whose header also names the release it was cut from."""
+    declared = [iri.rsplit("/", 1)[-1] for iri in _declared_imports(PO_OWL_HEADER)]
+    assert sorted(declared) == sorted(PO_IMPORT_MODULES)
+    version_iri = f'<owl:versionIRI rdf:resource="{PO_VERSION_IRI}"/>'
+    assert version_iri in PO_OWL_HEADER.read_text(encoding="utf-8")
+
+
+@pytest.mark.parametrize("prefix", sorted(PINNED_IMPORTS))
+def test_imports_that_disagree_with_the_pin_fail_preflight(tmp_path, monkeypatch, prefix):
     """An import a new pin adds would otherwise pass preflight and fail only after the ontologies source."""
     monkeypatch.setattr(robot_utils, "_java_runs", lambda: True)
     _pinned_robot(tmp_path)
-    _pinned_micro_imports(tmp_path)
-    owl = tmp_path / "micro.owl"
+    _pinned_imports(tmp_path)
+    owl = tmp_path / PINNED_IMPORTS[prefix][0]
     extra = '        <owl:imports rdf:resource="https://example.org/branch/NEW_imports.owl"/>\n    </owl:Ontology>'
     owl.write_text(owl.read_text(encoding="utf-8").replace("    </owl:Ontology>", extra), encoding="utf-8")
     (problem,) = OntologiesStubsTransform.missing_prerequisites(tmp_path)
-    assert problem.startswith("MICRO imports and pin disagree")
+    assert problem.startswith(f"{prefix} imports and pin disagree")
     assert "NEW_imports.owl" in problem
 
 
-def test_a_missing_micro_owl_fails_preflight(tmp_path, monkeypatch):
+@pytest.mark.parametrize("prefix", sorted(PINNED_IMPORTS))
+def test_a_missing_pinned_ontology_fails_preflight(tmp_path, monkeypatch, prefix):
     """Without the ontology there is nothing to check the imports against, and the run would fail late."""
     monkeypatch.setattr(robot_utils, "_java_runs", lambda: True)
     _pinned_robot(tmp_path)
-    _pinned_micro_imports(tmp_path)
-    (tmp_path / "micro.owl").unlink()
+    _pinned_imports(tmp_path)
+    (tmp_path / PINNED_IMPORTS[prefix][0]).unlink()
     (problem,) = OntologiesStubsTransform.missing_prerequisites(tmp_path)
-    assert problem.startswith("MICRO ontology missing")
+    assert problem.startswith(f"{prefix} ontology missing")
 
 
-def test_a_missing_pinned_micro_import_is_a_prerequisite_failure(tmp_path, monkeypatch):
+@pytest.mark.parametrize(
+    "replacement, found",
+    [
+        ('<owl:versionIRI rdf:resource="http://purl.obolibrary.org/obo/po/releases/2025-10-31/po.owl"/>', "2025-10-31"),
+        ("", "versionIRI none"),
+    ],
+)
+def test_a_po_owl_from_another_release_fails_preflight(tmp_path, monkeypatch, replacement, found):
     """
-    MicrO's imports are no longer fetched, so an absent module must stop the batch up front.
+    An older release imports the same two modules, so only its versionIRI tells it apart.
+
+    `kg download` leaves a po.owl it has no record of in place, and then records
+    the pinned URL against it; the stub hierarchy would be built from it silently.
+    """
+    monkeypatch.setattr(robot_utils, "_java_runs", lambda: True)
+    _pinned_robot(tmp_path)
+    _pinned_imports(tmp_path)
+    owl = tmp_path / "po.owl"
+    pinned = f'<owl:versionIRI rdf:resource="{PO_VERSION_IRI}"/>'
+    owl.write_text(owl.read_text(encoding="utf-8").replace(pinned, replacement), encoding="utf-8")
+    (problem,) = OntologiesStubsTransform.missing_prerequisites(tmp_path)
+    assert problem.startswith("PO ontology is not the pinned release")
+    assert found in problem
+    assert PO_VERSION_IRI in problem
+    assert "kg download -t ontologies" in problem
+
+
+@pytest.mark.parametrize(
+    "prefix, absent, present",
+    [("MICRO", "ChEBI_imports.owl", "GO_imports.owl"), ("PO", "ro_import.owl", "ncbitaxon_import.owl")],
+)
+def test_a_missing_pinned_import_is_a_prerequisite_failure(tmp_path, monkeypatch, prefix, absent, present):
+    """
+    The imports are no longer fetched, so an absent module must stop the batch up front.
 
     Every machine that downloaded data before the pin lacks them; finding out
     after the ontologies source would cost hours.
     """
     monkeypatch.setattr(robot_utils, "_java_runs", lambda: True)
     _pinned_robot(tmp_path)
-    imports_dir = _pinned_micro_imports(tmp_path)
-    (imports_dir / "ChEBI_imports.owl").unlink()
+    _pinned_imports(tmp_path)
+    (tmp_path / PINNED_IMPORTS[prefix][1] / absent).unlink()
     (problem,) = OntologiesStubsTransform.missing_prerequisites(tmp_path)
-    assert problem.startswith("MICRO import modules missing")
-    assert "ChEBI_imports.owl" in problem
-    assert "GO_imports.owl" not in problem
+    assert problem.startswith(f"{prefix} import modules missing")
+    assert absent in problem
+    assert present not in problem
 
 
 _TWO_IMPORTS = """<?xml version="1.0"?>
@@ -645,13 +699,14 @@ def test_micro_extract_runs_with_the_catalog(tmp_path, monkeypatch):
     assert not catalog.is_relative_to(transform.output_dir)
 
 
-def test_run_routes_micro_through_the_catalog_and_po_without(tmp_path, monkeypatch):
+def test_run_routes_po_and_micro_through_the_catalog(tmp_path, monkeypatch):
     """
     Drive the configuration wiring from `run`, not just the extract helper.
 
     Dropping the `imports_dir` pass-through anywhere between `run` and the
     extract used to leave every test passing while ROBOT went back to MicrO's
-    master branch for all 20 modules.
+    master branch for all 20 modules; PO's two came from its master branch the
+    same way.
     """
     import subprocess
 
@@ -671,25 +726,33 @@ def test_run_routes_micro_through_the_catalog_and_po_without(tmp_path, monkeypat
     monkeypatch.setattr(OntologiesStubsTransform, "_parse_mireot_module", lambda self, **kwargs: ([], [], set(), []))
     raw = tmp_path / "raw"
     _pinned_robot(raw)
-    (raw / "po.owl").write_text("<rdf:RDF/>", encoding="utf-8")
-    (raw / "micro.owl").write_text(_TWO_IMPORTS, encoding="utf-8")
-    (raw / MICRO_IMPORTS_DIR).mkdir()
-    for name in ("A_imports.owl", "B_imports.owl"):
-        (raw / MICRO_IMPORTS_DIR / name).write_text("<rdf:RDF/>", encoding="utf-8")
+    for owl_name, imports_name, _, _ in PINNED_IMPORTS.values():
+        (raw / owl_name).write_text(_TWO_IMPORTS, encoding="utf-8")
+        (raw / imports_name).mkdir()
+        for name in ("A_imports.owl", "B_imports.owl"):
+            (raw / imports_name / name).write_text("<rdf:RDF/>", encoding="utf-8")
     OntologiesStubsTransform(input_dir=raw, output_dir=tmp_path / "out").run()
-    micro_cmd, micro_env = extracts["micro.owl"]
-    po_cmd, po_env = extracts["po.owl"]
-    assert "--catalog" in micro_cmd
-    assert all(flag in micro_env["ROBOT_JAVA_ARGS"] for flag in OFFLINE_FLAGS)
-    assert "--catalog" not in po_cmd
-    assert not any(flag in po_env["ROBOT_JAVA_ARGS"] for flag in OFFLINE_FLAGS)
+    assert set(extracts) == {"po.owl", "micro.owl"}
+    for owl_name, (cmd, env) in extracts.items():
+        assert "--catalog" in cmd, owl_name
+        assert all(flag in env["ROBOT_JAVA_ARGS"] for flag in OFFLINE_FLAGS), owl_name
 
 
-def test_micro_is_configured_for_offline_imports():
-    """The pin is only effective while MICRO's config routes its extract through the catalog."""
-    cfg = STUB_ONTOLOGY_SOURCES["MICRO"]
-    assert cfg["imports_dir"] == MICRO_IMPORTS_DIR
-    assert cfg["import_modules"] == MICRO_IMPORT_MODULES
+def test_every_owl_mireot_source_resolves_its_imports_offline():
+    """
+    A pin is only effective while the source's config routes its extract through the catalog.
+
+    An owl_mireot source without ``imports_dir`` runs ROBOT online, and ROBOT
+    fetches whatever the OWL imports from wherever its IRIs point.
+    """
+    owl_sources = {p: c for p, c in STUB_ONTOLOGY_SOURCES.items() if c.get("source_type") == "owl_mireot"}
+    assert set(owl_sources) == set(PINNED_IMPORTS)
+    for prefix, (owl_name, imports_name, _, modules) in PINNED_IMPORTS.items():
+        cfg = owl_sources[prefix]
+        assert (cfg["owl_filename"], cfg["imports_dir"], cfg["import_modules"]) == (owl_name, imports_name, modules)
+    # PO publishes releases, so preflight can also check which one is on disk; MicrO has none.
+    assert owl_sources["PO"]["version_iri"] == PO_VERSION_IRI
+    assert "version_iri" not in owl_sources["MICRO"]
 
 
 # ---------------------------------------------------------------------------

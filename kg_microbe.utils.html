@@ -4220,6 +4220,16 @@ scalar values and incomplete/unsupported escapes fail closed (#1295/#1300).</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.native_ro_retention.selected_content_sha256">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.native_ro_retention.</span></span><span class="sig-name descname"><span class="pre">selected_content_sha256</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.native_ro_retention.selected_content_sha256" title="Link to this definition"></a></dt>
+<dd><p>Digest exactly the native content this policy reviewed in one authority graph.</p>
+<p>For RO, that is the 14 reviewed property declarations. For a supplier, it is every
+assertion that uses a reviewed relation: the retained records and the unchanged
+controls. A whole-file digest also bound serialization, and an in-place rewrite
+no release URL can reproduce; this binds the reviewed content itself (#1420).</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.native_ro_retention.verify_audit_input_bindings">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.native_ro_retention.</span></span><span class="sig-name descname"><span class="pre">verify_audit_input_bindings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snapshots</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">members</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.native_ro_retention.verify_audit_input_bindings" title="Link to this definition"></a></dt>
 <dd><p>At finalization/admission, bind every audited supplier to its original native read.</p>

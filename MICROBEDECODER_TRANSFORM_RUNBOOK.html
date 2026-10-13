@@ -122,10 +122,15 @@ source, plain HTTPS download).</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>kg<span class="w"> </span>download<span class="w"> </span>-t<span class="w"> </span>microbedecoder
 </pre></div>
 </div>
-<p>Fetches <code class="docutils literal notranslate"><span class="pre">https://github.com/thackmann/MicrobeDecoder/raw/main/Shiny/MicrobeDecoder/data/database/database.zip</span></code>
-into <code class="docutils literal notranslate"><span class="pre">data/raw/microbedecoder_database.zip</span></code>. On first <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">transform</span></code>
-run the transform extracts the archive into
-<code class="docutils literal notranslate"><span class="pre">data/raw/microbedecoder/database.csv</span></code> (~57 MB, ~27 K rows).</p>
+<p>Fetches the 2025-12-18 upload of <code class="docutils literal notranslate"><span class="pre">Shiny/MicrobeDecoder/data/database/database.zip</span></code>,
+pinned to commit <code class="docutils literal notranslate"><span class="pre">ff90e9aa</span></code> in <code class="docutils literal notranslate"><span class="pre">download.yaml</span></code>, into
+<code class="docutils literal notranslate"><span class="pre">data/raw/microbedecoder_database.zip</span></code>. The reviewed join and crosswalk policies
+bind that upload’s <code class="docutils literal notranslate"><span class="pre">database.csv</span></code>; upstream <code class="docutils literal notranslate"><span class="pre">main</span></code> changed on 2026-09-08 and
+fails them (#1420). The transform extracts <code class="docutils literal notranslate"><span class="pre">database.csv</span></code> (~57 MB, ~27 K rows)
+next to the zip, as <code class="docutils literal notranslate"><span class="pre">data/raw/database.csv</span></code>, and extracts it again whenever the
+existing file is not the zip’s copy, so re-fetching the zip refreshes it. A zip
+downloaded before the pin, with no record in <code class="docutils literal notranslate"><span class="pre">data/raw/.download_manifest.json</span></code>,
+is not re-fetched on its own: delete it and run <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">download</span> <span class="pre">-t</span> <span class="pre">microbedecoder</span></code>.</p>
 </section>
 <section id="lpsn-dependency">
 <h3>LPSN dependency<a class="headerlink" href="#lpsn-dependency" title="Link to this heading"></a></h3>

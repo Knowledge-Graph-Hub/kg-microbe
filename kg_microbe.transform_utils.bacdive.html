@@ -311,8 +311,12 @@ path lives in constants.py, so the cross-transform guard never saw it.</p>
 <p>KGX row-emission helpers for the BacDive transform.</p>
 <dl class="py data">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.DEPOSIT_CONFLICT_HEADER">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">DEPOSIT_CONFLICT_HEADER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['strain_id',</span> <span class="pre">'parent_count',</span> <span class="pre">'parents',</span> <span class="pre">'bacdive_ids',</span> <span class="pre">'resolution',</span> <span class="pre">'asserted_parent']</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.DEPOSIT_CONFLICT_HEADER" title="Link to this definition"></a></dt>
-<dd><p>Header of the deposit-claim report written alongside nodes.tsv / edges.tsv.</p>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">DEPOSIT_CONFLICT_HEADER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">['strain_id',</span> <span class="pre">'parent_count',</span> <span class="pre">'parents',</span> <span class="pre">'bacdive_ids',</span> <span class="pre">'resolution',</span> <span class="pre">'asserted_parent',</span> <span class="pre">'withheld_supplied_taxids',</span> <span class="pre">'other_bacdive_ids']</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.DEPOSIT_CONFLICT_HEADER" title="Link to this definition"></a></dt>
+<dd><p>Header of the deposit-claim report written alongside nodes.tsv / edges.tsv.
+<code class="docutils literal notranslate"><span class="pre">withheld_supplied_taxids</span></code> lists citing records whose ambiguous supplied
+taxids were withheld, as <code class="docutils literal notranslate"><span class="pre">&lt;BacDive</span> <span class="pre">key&gt;=&lt;CURIE&gt;,&lt;CURIE&gt;</span></code> joined by <code class="docutils literal notranslate"><span class="pre">|</span></code>;
+<code class="docutils literal notranslate"><span class="pre">other_bacdive_ids</span></code> lists citing records that contributed neither a claim
+nor withheld candidates (#1421).</p>
 </dd></dl>
 
 <dl class="py data">
@@ -334,6 +338,15 @@ path lives in constants.py, so the cross-transform guard never saw it.</p>
 compared and the deposit was suppressed as a precaution rather than a verdict.
 Distinguishing this matters – a degraded NCBITaxon adapter otherwise looks
 exactly like a data problem in BacDive (#897).</p>
+</dd></dl>
+
+<dl class="py data">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.RESOLUTION_SUPPRESSED_WITHHELD">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">RESOLUTION_SUPPRESSED_WITHHELD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'suppressed_withheld_unresolved'</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.RESOLUTION_SUPPRESSED_WITHHELD" title="Link to this definition"></a></dt>
+<dd><p>A record whose ambiguous supplied taxids were withheld cites the deposit, and
+its candidates could not all be shown to be, or lie beneath, one parent that
+the other citing records support. That is not proof the records disagree,
+only that no parent can be asserted for all of them (#1421).</p>
 </dd></dl>
 
 <dl class="py class">
@@ -367,7 +380,7 @@ exactly like a data problem in BacDive (#897).</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.contested_deposit_description">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">contested_deposit_description</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parents</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.contested_deposit_description" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">contested_deposit_description</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">withheld</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">others</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'suppressed'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.contested_deposit_description" title="Link to this definition"></a></dt>
 <dd><p>Explain, on the node itself, why a contested deposit has no edges (#907).</p>
 <p>A deposit whose claimants disagreed gets neither a parent nor a link to the
 records that cited it, which leaves an organism-typed node with a culture
@@ -380,7 +393,15 @@ be false in the merged graph (#908). This transform cannot see LPSN’s output
 and should not try to – it states only what it did itself.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>parents</strong> – <code class="docutils literal notranslate"><span class="pre">{NCBITaxon</span> <span class="pre">CURIE:</span> <span class="pre">[BacDive</span> <span class="pre">record</span> <span class="pre">key,</span> <span class="pre">...]}</span></code> for the deposit.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parents</strong> – <code class="docutils literal notranslate"><span class="pre">{NCBITaxon</span> <span class="pre">CURIE:</span> <span class="pre">[BacDive</span> <span class="pre">record</span> <span class="pre">key,</span> <span class="pre">...]}</span></code> for the deposit.</p></li>
+<li><p><strong>withheld</strong> – <code class="docutils literal notranslate"><span class="pre">{BacDive</span> <span class="pre">record</span> <span class="pre">key:</span> <span class="pre">[NCBITaxon</span> <span class="pre">CURIE,</span> <span class="pre">...]}</span></code> for citing
+records whose ambiguous supplied taxids were withheld (#1421).</p></li>
+<li><p><strong>others</strong> – BacDive record keys of citing records that contributed neither
+a claim nor withheld candidates.</p></li>
+<li><p><strong>resolution</strong> – The deposit’s <code class="docutils literal notranslate"><span class="pre">RESOLUTION_*</span></code> value. A withheld-record
+suppression is not a proven disagreement, so it is worded as such.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>One-sentence description naming the conflicting claims.</p>
@@ -390,14 +411,18 @@ and should not try to – it states only what it did itself.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.deposit_conflict_rows">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">deposit_conflict_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contested</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.deposit_conflict_rows" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">deposit_conflict_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contested</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">others</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.deposit_conflict_rows" title="Link to this definition"></a></dt>
 <dd><p>Render contested deposit claims as report rows.</p>
 <p>The report is the record that a claim existed and what became of it, so a
 consumer can recover the taxonomy that was suppressed, and see which deposits
 had theirs coarsened to a shared ancestor.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>contested</strong> – <code class="docutils literal notranslate"><span class="pre">contested</span></code> as returned by <a class="reference internal" href="#kg_microbe.transform_utils.bacdive.emission.resolve_deposit_parents" title="kg_microbe.transform_utils.bacdive.emission.resolve_deposit_parents"><code class="xref py py-func docutils literal notranslate"><span class="pre">resolve_deposit_parents()</span></code></a>.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>contested</strong> – <code class="docutils literal notranslate"><span class="pre">contested</span></code> as returned by <a class="reference internal" href="#kg_microbe.transform_utils.bacdive.emission.resolve_deposit_parents" title="kg_microbe.transform_utils.bacdive.emission.resolve_deposit_parents"><code class="xref py py-func docutils literal notranslate"><span class="pre">resolve_deposit_parents()</span></code></a>.</p></li>
+<li><p><strong>others</strong> – <code class="docutils literal notranslate"><span class="pre">{strain</span> <span class="pre">CURIE:</span> <span class="pre">[BacDive</span> <span class="pre">record</span> <span class="pre">key,</span> <span class="pre">...]}</span></code>, citing records that
+contributed neither a claim nor withheld candidates.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>List of rows matching <a class="reference internal" href="#kg_microbe.transform_utils.bacdive.emission.DEPOSIT_CONFLICT_HEADER" title="kg_microbe.transform_utils.bacdive.emission.DEPOSIT_CONFLICT_HEADER"><code class="xref py py-data docutils literal notranslate"><span class="pre">DEPOSIT_CONFLICT_HEADER</span></code></a>.</p>
@@ -431,6 +456,32 @@ ancestors, or None when no ontology is available.</p></li>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.is_contested">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">is_contested</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">withheld</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.is_contested" title="Link to this definition"></a></dt>
+<dd><p>Report whether a deposit’s claimants must be resolved rather than trusted.</p>
+<p>Two claimed parents always must. A record whose ambiguous supplied taxids
+were withheld claims no parent, but its candidates are still evidence about
+the organism (#1421). It contests the deposit whenever any other record
+cites it, whether or not that record contributed a claim: a record whose
+parent came only from a late, name-derived route could otherwise be linked
+to an unrelated withheld record. Cited by that record alone, it has nothing
+to contradict.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parents</strong> – <code class="docutils literal notranslate"><span class="pre">{NCBITaxon</span> <span class="pre">CURIE:</span> <span class="pre">[BacDive</span> <span class="pre">record</span> <span class="pre">key,</span> <span class="pre">...]}</span></code> for the deposit.</p></li>
+<li><p><strong>withheld</strong> – <code class="docutils literal notranslate"><span class="pre">{BacDive</span> <span class="pre">record</span> <span class="pre">key:</span> <span class="pre">[NCBITaxon</span> <span class="pre">CURIE,</span> <span class="pre">...]}</span></code> for the deposit.</p></li>
+<li><p><strong>citing</strong> – Every BacDive record key that cites the deposit. When None, only
+claimants and withheld records are counted.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True when the deposit belongs in the claims report.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.resolution_asserts_a_parent">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">resolution_asserts_a_parent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">resolution</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.resolution_asserts_a_parent" title="Link to this definition"></a></dt>
 <dd><p>Report whether a resolution left the deposit with a parent taxon.</p>
@@ -452,7 +503,7 @@ mapped to <code class="docutils literal notranslate"><span class="pre">SEMMEDDB:
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.emission.resolve_deposit_parents">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">resolve_deposit_parents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">claims</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ancestors_of</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ancestry_failed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.resolve_deposit_parents" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.emission.</span></span><span class="sig-name descname"><span class="pre">resolve_deposit_parents</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">claims</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ancestors_of</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ancestry_failed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">withheld</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">citing</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.emission.resolve_deposit_parents" title="Link to this definition"></a></dt>
 <dd><p>Decide which culture-collection deposits may assert a parent taxon (#892).</p>
 <p>A deposit number such as <code class="docutils literal notranslate"><span class="pre">ATCC</span> <span class="pre">13722</span></code> identifies a physical deposit, not a
 BacDive record, so several records can cite the same one. When they disagree
@@ -462,9 +513,16 @@ consumer that takes “the” parent gets whichever one file order put first.</p
 <p>A parent is asserted when the claimants agree outright, and when they differ
 only in depth along one lineage – there the shared ancestor is asserted, per
 <a class="reference internal" href="#kg_microbe.transform_utils.bacdive.emission.entailed_by_every_claim" title="kg_microbe.transform_utils.bacdive.emission.entailed_by_every_claim"><code class="xref py py-func docutils literal notranslate"><span class="pre">entailed_by_every_claim()</span></code></a>. Genuinely disjoint claims get no edge.</p>
-<p>Every deposit with more than one claim is reported, whichever way it went, so
-the report answers “what happened here and why” rather than listing only the
-half that lost its edge (#898).</p>
+<p>A record whose ambiguous supplied taxids were withheld supports no parent,
+but its candidates contest one: the claimed parent survives only if every
+candidate is that taxon or lies beneath it, so the record belongs to it
+whichever candidate is right. Otherwise, and whenever the withheld record
+shares the deposit with a record that claimed nothing, the deposit gets no
+parent and no record links, with <a class="reference internal" href="#kg_microbe.transform_utils.bacdive.emission.RESOLUTION_SUPPRESSED_WITHHELD" title="kg_microbe.transform_utils.bacdive.emission.RESOLUTION_SUPPRESSED_WITHHELD"><code class="xref py py-data docutils literal notranslate"><span class="pre">RESOLUTION_SUPPRESSED_WITHHELD</span></code></a> (#1421).
+A candidate is never asserted, not even as a coarser shared parent.</p>
+<p>Every contested deposit is reported, whichever way it went, so the report
+answers “what happened here and why” rather than listing only the half that
+lost its edge (#898).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -474,13 +532,18 @@ ancestors. When None, any disagreement is treated as a conflict.</p></li>
 <li><p><strong>ancestry_failed</strong> – Callable reporting whether a CURIE’s ancestry could not
 be read, used to mark a suppression that is a precaution rather than a
 verdict (#897). When None, no suppression is marked that way.</p></li>
+<li><p><strong>withheld</strong> – <code class="docutils literal notranslate"><span class="pre">{strain</span> <span class="pre">CURIE:</span> <span class="pre">{BacDive</span> <span class="pre">record</span> <span class="pre">key:</span> <span class="pre">[NCBITaxon</span> <span class="pre">CURIE,</span> <span class="pre">...]}}</span></code>
+for citing records whose ambiguous supplied taxids were withheld.</p></li>
+<li><p><strong>citing</strong> – <code class="docutils literal notranslate"><span class="pre">{strain</span> <span class="pre">CURIE:</span> <span class="pre">[BacDive</span> <span class="pre">record</span> <span class="pre">key,</span> <span class="pre">...]}</span></code>, every record that
+cites each withheld-cited deposit. See <a class="reference internal" href="#kg_microbe.transform_utils.bacdive.emission.is_contested" title="kg_microbe.transform_utils.bacdive.emission.is_contested"><code class="xref py py-func docutils literal notranslate"><span class="pre">is_contested()</span></code></a>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">(resolved,</span> <span class="pre">contested)</span></code>. <code class="docutils literal notranslate"><span class="pre">resolved</span></code> is a sorted list of
 <code class="docutils literal notranslate"><span class="pre">(strain</span> <span class="pre">CURIE,</span> <span class="pre">NCBITaxon</span> <span class="pre">CURIE)</span></code> pairs to emit. <code class="docutils literal notranslate"><span class="pre">contested</span></code> is a sorted
-list of <code class="docutils literal notranslate"><span class="pre">(strain</span> <span class="pre">CURIE,</span> <span class="pre">claims,</span> <span class="pre">resolution,</span> <span class="pre">asserted</span> <span class="pre">parent)</span></code> for every
-deposit with more than one claim; <code class="docutils literal notranslate"><span class="pre">asserted</span> <span class="pre">parent</span></code> is empty when none was.</p>
+list of <code class="docutils literal notranslate"><span class="pre">(strain</span> <span class="pre">CURIE,</span> <span class="pre">claims,</span> <span class="pre">resolution,</span> <span class="pre">asserted</span> <span class="pre">parent,</span> <span class="pre">withheld)</span></code> for
+every deposit <a class="reference internal" href="#kg_microbe.transform_utils.bacdive.emission.is_contested" title="kg_microbe.transform_utils.bacdive.emission.is_contested"><code class="xref py py-func docutils literal notranslate"><span class="pre">is_contested()</span></code></a> selects; <code class="docutils literal notranslate"><span class="pre">asserted</span> <span class="pre">parent</span></code> is empty when
+none was, and <code class="docutils literal notranslate"><span class="pre">withheld</span></code> is empty when no withheld record cited it.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -801,7 +864,7 @@ Name-derived parent claims remain predictions, never native supplied taxids.</p>
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.taxonomy_evidence.TaxonomyEvidence">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.taxonomy_evidence.</span></span><span class="sig-name descname"><span class="pre">TaxonomyEvidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bindings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optional_state</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supplied_policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.taxonomy_evidence.TaxonomyEvidence" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<p>Retain source-local support classifications without changing parent-resolution policy.</p>
+<p>Retain source-local support classifications; withheld candidates contest deposit parents, never support them.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.taxonomy_evidence.TaxonomyEvidence.capture_native">
 <span class="sig-name descname"><span class="pre">capture_native</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snapshots</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.taxonomy_evidence.TaxonomyEvidence.capture_native" title="Link to this definition"></a></dt>
@@ -923,6 +986,21 @@ The private per-batch cache preserves the old callback’s query reuse.</p>
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.taxonomy_evidence.TaxonomyEvidence.verify_output">
 <span class="sig-name descname"><span class="pre">verify_output</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quoting</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finalized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.taxonomy_evidence.TaxonomyEvidence.verify_output" title="Link to this definition"></a></dt>
 <dd><p>Require every exact lookup/deposit row while leaving other graph assertions outside this scope.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.taxonomy_evidence.TaxonomyEvidence.withheld_deposit_contests">
+<span class="sig-name descname"><span class="pre">withheld_deposit_contests</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.taxonomy_evidence.TaxonomyEvidence.withheld_deposit_contests" title="Link to this definition"></a></dt>
+<dd><p>Return the candidates of withheld records per cited deposit, for contest only.</p>
+<p>A record whose same-priority supplied taxids were withheld supports no
+deposit parent. Its normalized candidates still say which organism it
+is, so they contest the parent of every deposit it cites; dropping them
+made a deposit shared with an unrelated organism look uncontested (#1421).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">{deposit</span> <span class="pre">CURIE:</span> <span class="pre">{BacDive</span> <span class="pre">record</span> <span class="pre">ID:</span> <span class="pre">[sorted</span> <span class="pre">candidate</span> <span class="pre">CURIEs]}}</span></code>.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>

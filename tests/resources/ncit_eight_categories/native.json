@@ -1,6 +1,7 @@
 {
   "origin": {
     "authority_file": "ncit.db",
+    "authority_release": "26.02d",
     "authority_sha256": "7d1245d10a80ab29ba02e7eab03b37dd9940cdd18f92855d44c95578584f6eb5",
     "evidence": "Complete selected declarations for all 75 named ancestors; immutable excerpt, not a full NCIT database."
   },

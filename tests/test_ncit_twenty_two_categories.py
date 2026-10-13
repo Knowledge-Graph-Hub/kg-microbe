@@ -106,29 +106,23 @@ def test_new_reviewed_roots_and_lookalikes_do_not_propagate_a_category(tmp_path,
 
 
 @pytest.mark.parametrize("identifier", ["NCIT:C77500", "NCIT:C85253", "NCIT:C87343"])
-def test_real_missing_definitions_cannot_be_filled_by_native_receipt_repin(tmp_path, monkeypatch, identifier):
-    """A byte-valid new database cannot invent the missing definition behind a finite category."""
-    raw, path, policy, _, authority = prepare(tmp_path, monkeypatch)
+def test_real_missing_definitions_cannot_be_filled_by_a_new_database(tmp_path, monkeypatch, identifier):
+    """A new database, accepted by bytes since #1420, cannot invent the missing definition."""
+    raw, _, policy, _, authority = prepare(tmp_path, monkeypatch)
     assert policy["records"][identifier]["native_definitions"] == []
     with sqlite3.connect(raw / "ncit.db") as connection:
         connection.execute(
             "INSERT INTO statements VALUES(?,?,?,?,?,?)", (identifier, "IAO:0000115", None, "invented", None, None)
         )
-    policy["native_sha256"] = finite.digest((raw / "ncit.db").read_bytes())
-    path.write_text(json.dumps(policy))
-    monkeypatch.setattr(finite, "POLICY_SHA256", finite.digest(finite.canonical(policy).encode()))
     with pytest.raises(ValueError, match="native statements changed"):
         authority.category_for(identifier)
 
 
-def test_lesion_secondary_native_sense_cannot_be_dropped_after_explicit_db_repin(tmp_path, monkeypatch):
+def test_lesion_secondary_native_sense_cannot_be_dropped_by_a_new_database(tmp_path, monkeypatch):
     """Selecting a primary category does not authorize erasing inconvenient additional native meaning."""
-    raw, path, policy, _, authority = prepare(tmp_path, monkeypatch)
+    raw, _, _, _, authority = prepare(tmp_path, monkeypatch)
     with sqlite3.connect(raw / "ncit.db") as connection:
         connection.execute("DELETE FROM statements WHERE subject=? AND predicate='NCIT:P325'", (LESION,))
-    policy["native_sha256"] = finite.digest((raw / "ncit.db").read_bytes())
-    path.write_text(json.dumps(policy))
-    monkeypatch.setattr(finite, "POLICY_SHA256", finite.digest(finite.canonical(policy).encode()))
     with pytest.raises(ValueError, match="native statements changed"):
         authority.category_for(LESION)
 

@@ -22,7 +22,7 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.utils.native_rdf import decoded_iri_subject
 
 POLICY_FILE = Path(__file__).resolve().parents[2] / "mappings/mesh_finite_category_dispositions.json"
-POLICY_SHA256 = "68134819099fc24e7d011d2e725e62f042bbeeafd6b673640e95d6ac9d4550c0"
+POLICY_SHA256 = "d87a82595c9b0fa124f98db30e1531be2dce49dd0fd9f77303640c68ec5f8f15"
 CONTRACT_KEY = "mesh_finite_category_authority"
 NATIVE_ROLE = "category_authority_mesh2026.nt"
 POLICY_ROLE = "category_authority_mesh_finite_category_dispositions"
@@ -74,13 +74,13 @@ def unique_object(pairs):
 
 
 def load_policy(stream):
-    """Require the complete reviewed cohort, categories, definitions and independent byte pins."""
+    """Require the complete reviewed cohort, categories, definitions and statement digest."""
     policy = json.load(stream, object_pairs_hook=unique_object)
     if digest(canonical(policy).encode()) != POLICY_SHA256:
         raise ValueError("Unreviewed finite MeSH category policy")
     if (
         type(policy["version"]) is not int
-        or policy["version"] != 1
+        or policy["version"] != 2
         or {identifier: row["category"] for identifier, row in policy["records"].items()} != _CATEGORIES
         or policy["native_file"] != "mesh2026.nt.gz"
         or policy["native_namespace"] != "http://id.nlm.nih.gov/mesh/2026/"
@@ -175,12 +175,14 @@ def validate_model(model, policy):
 
 
 def _selected_native(raw_dir, admission, policy):
+    # Policy version 2 binds the reviewed statements, not the export's bytes (#1420).
+    # NLM republishes mesh2026.nt.gz at one URL, so any export carrying the same
+    # statements is accepted; the bytes actually read are recorded in the receipt,
+    # and every later check compares against that record.
     selected = Path(raw_dir).absolute() / policy["native_file"]
     if not selected.resolve().is_relative_to(Path(raw_dir).resolve()):
         raise ValueError("Finite MeSH native authority is outside the selected raw directory")
     observed = admission.capture(selected)
-    if observed != {"sha256": policy["native_sha256"], "bytes": policy["native_bytes"]}:
-        raise ValueError("Finite MeSH selected native export differs from the reviewed pin")
     return {"selected_path": str(selected), "resolved_path": str(selected.resolve()), **observed}
 
 
@@ -236,7 +238,7 @@ class FiniteMeshCategoryAuthority:
             hasher = hashlib.sha256()
             for block in iter(lambda: binary.read(1024 * 1024), b""):
                 hasher.update(block)
-            if hasher.hexdigest() != policy["native_sha256"]:
+            if hasher.hexdigest() != authority["sha256"]:
                 raise ValueError("Finite MeSH consumed gzip differs from original selection")
             binary.seek(0)
             evidence = read_native_evidence(binary, policy)
@@ -294,13 +296,14 @@ class FiniteMeshCategoryAuthority:
             self._admission.verify(metadata_only=True)
             contract = json.loads(self._contract_json, object_pairs_hook=unique_object)
             selected = self.raw_dir.absolute() / policy["native_file"]
+            native = self._admission.identities.get(selected.resolve(), {})
             expected = {
                 "version": 1,
                 "authority": {
                     "selected_path": str(selected),
                     "resolved_path": str(selected.resolve()),
-                    "sha256": policy["native_sha256"],
-                    "bytes": policy["native_bytes"],
+                    "sha256": native.get("sha256"),
+                    "bytes": native.get("bytes"),
                 },
                 "policy": {
                     "path": str(POLICY_FILE.resolve()),
@@ -317,7 +320,7 @@ class FiniteMeshCategoryAuthority:
             roles = {
                 POLICY_ROLE: expected["policy"],
                 MODEL_ROLE: expected["model"],
-                NATIVE_ROLE: {"path": expected["authority"]["resolved_path"], "sha256": policy["native_sha256"]},
+                NATIVE_ROLE: {"path": expected["authority"]["resolved_path"], "sha256": native.get("sha256")},
             }
             if snapshots is not None and any(snapshots.get(role) != value for role, value in roles.items()):
                 raise ValueError("Finite MeSH original consumed-input role changed")
@@ -409,8 +412,8 @@ def verify_recorded_inputs(report, report_path, *, admission=None):
             policy = load_policy(io.StringIO(content.decode()))
             authority = _selected_native(report["raw_input_directory"], guard, policy)
             if authority != contract["authority"]:
-                raise ValueError("finite native locator changed")
-            if snapshots.get(NATIVE_ROLE) != {"path": authority["resolved_path"], "sha256": policy["native_sha256"]}:
+                raise ValueError("finite native locator or bytes changed")
+            if snapshots.get(NATIVE_ROLE) != {"path": authority["resolved_path"], "sha256": authority["sha256"]}:
                 raise ValueError("finite native role changed")
             model_path = Path(report["raw_input_directory"]) / policy["model_file"]
             expected_model = {"path": str(model_path.resolve()), "sha256": policy["model_sha256"]}

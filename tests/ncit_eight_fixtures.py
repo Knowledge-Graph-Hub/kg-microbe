@@ -16,8 +16,10 @@ SOURCE_ROWS = json.loads((FIXTURE / "source_declarations.json").read_text())
 
 
 def seed_native_authority(tmp_path, monkeypatch, *, model_path=None):
-    """Create literal selected SQLite statements and explicitly repin only private fixture bytes."""
-    assert POLICY["native_sha256"] == NATIVE["origin"]["authority_sha256"]
+    """Create literal selected SQLite statements and explicitly repin only the private fixture model."""
+    # Policy version 2 binds the selected statements, not ncit.db's bytes (#1420), so the
+    # excerpt database needs no repin. The reviewed release is provenance only.
+    assert POLICY["native_reviewed_release"] == NATIVE["origin"]["authority_release"]
     assert POLICY["native_statements"] == NATIVE["statements"]
     raw = tmp_path / "raw"
     raw.mkdir(exist_ok=True)
@@ -31,9 +33,13 @@ def seed_native_authority(tmp_path, monkeypatch, *, model_path=None):
                 for row in rows
             ],
         )
+        # A SemSQL build stamps its release on the ontology node, as the reviewed ncit.db does.
+        connection.execute(
+            "INSERT INTO statements VALUES(?,?,?,?,?,?)",
+            ("obo:ncit.owl", "owl:versionInfo", None, NATIVE["origin"]["authority_release"], None, None),
+        )
     shutil.copyfile(model_path or FIXTURE / "biolink.json", raw / "biolink-model.yaml")
     policy = copy.deepcopy(POLICY)
-    policy["native_sha256"] = finite.digest((raw / "ncit.db").read_bytes())
     policy["model_sha256"] = finite.digest((raw / "biolink-model.yaml").read_bytes())
     policy_file = tmp_path / "ncit_eight_categories.json"
     policy_file.write_text(json.dumps(policy))

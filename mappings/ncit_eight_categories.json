@@ -280,7 +280,7 @@
   "model_sha256": "b6a1320772a92d69e84b8c700cd6386dffe45ed635c8197d61e22b6a6fa3b35e",
   "model_version": "4.4.2",
   "native_file": "ncit.db",
-  "native_sha256": "7d1245d10a80ab29ba02e7eab03b37dd9940cdd18f92855d44c95578584f6eb5",
+  "native_reviewed_release": "26.02d",
   "native_statements": {
     "NCIT:C106104": [
       {
@@ -39204,5 +39204,5 @@
     ]
   },
   "scope": "Twenty-two finite native class projections; no prefix/ancestor propagation or importing identity/relationship approval. Original eight and new thirteen/Lesion decisions are separately retained.",
-  "version": 1
+  "version": 2
 }

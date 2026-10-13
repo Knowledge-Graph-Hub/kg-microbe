@@ -30,9 +30,14 @@ def write_nodes(path, rows):
 
 
 def prepare(tmp_path, monkeypatch):
-    """Use honest complete native excerpts; explicitly replace only whole-file fixture identities."""
+    """Use honest complete native excerpts; explicitly replace only the fixture model identity."""
     assert finite.digest(NATIVE) == ORIGIN["origin"]["native_excerpt_sha256"]
-    assert POLICY["native_sha256"] == ORIGIN["origin"]["native_sha256"]
+    # Policy version 2 binds the statements, not the export's bytes (#1420), so the excerpt
+    # needs no repin. The reviewed export stays recorded for provenance.
+    assert POLICY["native_reviewed_export"] == {
+        "sha256": ORIGIN["origin"]["native_sha256"],
+        "bytes": ORIGIN["origin"]["native_bytes"],
+    }
     assert POLICY["native_statements_sha256"] == ORIGIN["origin"]["native_sorted_statements_sha256"]
     raw = tmp_path / "raw"
     raw.mkdir(exist_ok=True)
@@ -41,7 +46,6 @@ def prepare(tmp_path, monkeypatch):
     model = {"version": POLICY["model_version"], "classes": POLICY["model_classes"]}
     (raw / "biolink-model.yaml").write_text(json.dumps(model))
     policy = copy.deepcopy(POLICY)
-    policy["native_sha256"], policy["native_bytes"] = finite.digest(native), len(native)
     policy["model_sha256"] = finite.digest((raw / "biolink-model.yaml").read_bytes())
     policy_path = tmp_path / "mesh_finite_category_dispositions.json"
     policy_path.write_text(json.dumps(policy))
@@ -196,9 +200,9 @@ def test_duplicate_policy_keys_fail_closed():
         "invalid_escape",
     ],
 )
-def test_changed_native_records_refuse_even_with_test_only_fullfile_repin(tmp_path, monkeypatch, damage):
-    """The independent complete statement digest detects extra semantic subjects and context changes."""
-    raw, policy_path, policy, _, authority, _ = prepare(tmp_path, monkeypatch)
+def test_changed_native_records_refuse_without_any_fullfile_pin(tmp_path, monkeypatch, damage):
+    """With no whole-file pin left (#1420), the statement digest alone detects every change."""
+    raw, _, _, _, authority, _ = prepare(tmp_path, monkeypatch)
     selected = next(line for line in NATIVE.splitlines(keepends=True) if b"/D044003>" in line)
     content = NATIVE
     if damage == "missing":
@@ -221,13 +225,41 @@ def test_changed_native_records_refuse_even_with_test_only_fullfile_repin(tmp_pa
         content += selected.replace(b"/D044003>", rb"/\U00000044044003>")
     else:
         content += selected.replace(b"/D044003>", rb"/\uD800044003>")
-    compressed = gzip.compress(content, mtime=0)
-    (raw / "mesh2026.nt.gz").write_bytes(compressed)
-    policy["native_sha256"], policy["native_bytes"] = finite.digest(compressed), len(compressed)
-    policy_path.write_text(json.dumps(policy))
-    monkeypatch.setattr(finite, "POLICY_SHA256", finite.digest(finite.canonical(policy).encode()))
+    (raw / "mesh2026.nt.gz").write_bytes(gzip.compress(content, mtime=0))
     with pytest.raises(ValueError, match="Finite MeSH"):
         authority.category_for("mesh:D044003")
+
+
+def republish_export(raw):
+    """Write the reviewed statements in new export bytes, as NLM republishes mesh2026.nt.gz."""
+    unrelated = b'<http://id.nlm.nih.gov/mesh/2026/D999999> <http://www.w3.org/2000/01/rdf-schema#label> "x"@en .\n'
+    native = gzip.compress(unrelated + NATIVE, mtime=1)
+    (raw / "mesh2026.nt.gz").write_bytes(native)
+    return native
+
+
+def test_republished_export_with_reviewed_statements_is_accepted_and_recorded(tmp_path, monkeypatch):
+    """No whole-file pin (#1420): new export bytes pass on their statements, and the receipt records them."""
+    raw, _, policy, transform, authority, _ = prepare(tmp_path, monkeypatch)
+    assert {"native_sha256", "native_bytes"}.isdisjoint(policy)
+    native = republish_export(raw)
+    assert finite.digest(native) != policy["native_reviewed_export"]["sha256"]
+    assert authority.category_for("mesh:D004531") == policy["records"]["mesh:D004531"]["category"]
+    authority.verify(transform.consumed_input_snapshots)
+    recorded = json.loads(authority._contract_json)["authority"]
+    assert (recorded["sha256"], recorded["bytes"]) == (finite.digest(native), len(native))
+    assert transform.consumed_input_snapshots[finite.NATIVE_ROLE]["sha256"] == finite.digest(native)
+
+
+def test_admission_compares_the_export_this_run_read_not_the_reviewed_one(tmp_path, monkeypatch):
+    """The fixture export is not the reviewed one and is admitted; a later replacement is not."""
+    raw, _, policy, _, _, _, report, report_path = prepare_projected(tmp_path, monkeypatch)
+    assert report[finite.CONTRACT_KEY]["authority"]["sha256"] != policy["native_reviewed_export"]["sha256"]
+    finite.verify_recorded_inputs(report, report_path)
+    republish_export(raw)
+    with pytest.raises(SourceFinalizationRequired, match="finite MeSH") as info:
+        finite.verify_recorded_inputs(report, report_path)
+    assert "locator or bytes changed" in str(info.value.__cause__)
 
 
 @pytest.mark.parametrize("damage", ["policy", "witness", "receipt", "missing_role", "rebound_role", "scope"])

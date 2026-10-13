@@ -243,6 +243,15 @@ review cohorts; they are not counts from a newly rebuilt merged graph.
 | BacDive: 97 reviewed ambiguous taxid sets | Withhold their taxonomic parent proposals | Every supplied taxid and former selection; independently supported deposit contributors remain |
 | Three additional imported GO restrictions | Withhold the exact transferred assertions, extending the finite policy from 12 to 15 | Original row, would-be candidate row, native restriction and identifier history |
 
+**Follow-up rule, added 2026-10-12 (#1421), after the approval above.** The
+withheld candidates of these 97 BacDive records still contest the parent of any
+deposit a withheld record shares with another record:
+
+- The deposit keeps a parent only if every candidate is, or lies beneath, the
+  parent its other records support.
+- Otherwise it gets no parent and no record links, and it is listed in the
+  deposit-claims report as `suppressed_withheld_unresolved`.
+
 The three additional GO decisions are `GO:0006903 / RO:0002162 / NCBITaxon:2759`,
 `GO:0048199 / RO:0004009 / GO:0005798`, and
 `GO:0055108 / BFO:0000066 / GO:0005737`, all supplied by PATO. These are

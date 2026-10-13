@@ -47,12 +47,15 @@ def controls():
     return json.loads((RESOURCE / "controls.json").read_text())
 
 
-def database(path, *, object_id=None, missing_edges=False):
+def database(path, *, object_id=None, missing_edges=False, extra_edges=()):
     """Materialize the exact tiny offline SemSQL fixture only in an isolated test directory."""
     with closing(sqlite3.connect(path)) as connection, connection:
         connection.executescript((RESOURCE / "authority.sql").read_text())
         if object_id is not None:
             connection.execute("UPDATE entailed_edge SET object=? WHERE subject='NCBITaxon:20'", (object_id,))
+        connection.executemany(
+            "INSERT INTO entailed_edge VALUES (?, 'rdfs:subClassOf', ?)", [tuple(edge) for edge in extra_edges]
+        )
         if missing_edges:
             connection.execute("DROP TABLE entailed_edge")
     return path
@@ -79,6 +82,7 @@ def produce(
     missing_edges=False,
     forbid_ancestry_selection=False,
     retired_fixture=False,
+    extra_edges=(),
 ):
     """Run the real producer/readers/writers, replacing only unrelated label/assay fixture context."""
     fixture = controls()
@@ -88,7 +92,11 @@ def produce(
 
     def context(transform, _policy):
         """Use a real local query adapter and actual GSS file before production native reads begin."""
-        path = database(Path(transform.input_base_dir) / "fixture-query-authority.db", missing_edges=missing_edges)
+        path = database(
+            Path(transform.input_base_dir) / "fixture-query-authority.db",
+            missing_edges=missing_edges,
+            extra_edges=extra_edges,
+        )
         transform.ncbi_impl = adapter(path)
         owned.append(transform.ncbi_impl)
         selected = Path(transform.input_base_dir) / "fixture-selected-ncbitaxon.tsv"

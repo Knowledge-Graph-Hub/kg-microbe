@@ -52,6 +52,7 @@ from kg_microbe.transform_utils.bacdive.emission import (
     RESOLUTION_COLLAPSED,
     RESOLUTION_SUPPRESSED,
     RESOLUTION_SUPPRESSED_NO_ANCESTRY,
+    RESOLUTION_SUPPRESSED_WITHHELD,
     contested_deposit_description,
     deposit_conflict_rows,
     resolution_asserts_a_parent,
@@ -3014,6 +3015,9 @@ class BacDiveTransform(Transform):
                                 # Record this record's claim about the deposit's parent
                                 # taxon. The edge itself is written after the loop, once
                                 # every record that cites this deposit has been seen (#892).
+                                # A record whose ambiguous supplied taxids were withheld
+                                # claims nothing here; the taxonomy guard adds its
+                                # candidates to resolution as contest evidence (#1421).
                                 if ncbitaxon_id:
                                     deposit_parent_claims.setdefault(strain_curie, {}).setdefault(
                                         ncbitaxon_id, []
@@ -3610,10 +3614,28 @@ class BacDiveTransform(Transform):
                 # record to it with a symmetric, same_as-mapped predicate would put those
                 # organisms two hops apart over close_match, so the citation is recorded
                 # in the claims report instead of asserted in the graph (#899).
-                contested_claims = {curie: parents for curie, parents, _, _ in contested_deposits}
+                # Citing records that contributed neither a claim nor withheld candidates
+                # are named too, so a suppression they caused is traceable (#1421).
+                citing_records = {}
+                for citing_record, cited_deposit in deposit_citations:
+                    citing_records.setdefault(cited_deposit, set()).add(
+                        citing_record.removeprefix(self._strain_curie(""))
+                    )
+                other_citers = {
+                    curie: sorted(
+                        citing_records.get(curie, set())
+                        - {key for keys in parents.values() for key in keys}
+                        - set(withheld)
+                    )
+                    for curie, parents, _, _, withheld in contested_deposits
+                }
+                contested_claims = {
+                    curie: (parents, withheld, other_citers[curie], resolution)
+                    for curie, parents, resolution, _, withheld in contested_deposits
+                }
                 unsafe_deposits = {
                     curie
-                    for curie, _, resolution, _ in contested_deposits
+                    for curie, _, resolution, _, _ in contested_deposits
                     if not resolution_asserts_a_parent(resolution)
                 }
                 for strain_curie, strain_label in deposit_labels.items():
@@ -3623,7 +3645,7 @@ class BacDiveTransform(Transform):
                             NCBI_CATEGORY,
                             strain_label,
                             description=(
-                                contested_deposit_description(contested_claims[strain_curie])
+                                contested_deposit_description(*contested_claims[strain_curie])
                                 if strain_curie in unsafe_deposits
                                 else None
                             ),
@@ -3697,17 +3719,21 @@ class BacDiveTransform(Transform):
         with atomic_write(claims_file, newline="") as f:
             claims_writer = tsv_writer(f)
             claims_writer.writerow(DEPOSIT_CONFLICT_HEADER)
-            claims_writer.writerows(deposit_conflict_rows(contested_deposits))
-        resolution_counts = Counter(resolution for _, _, resolution, _ in contested_deposits)
+            claims_writer.writerows(deposit_conflict_rows(contested_deposits, other_citers))
+        resolution_counts = Counter(resolution for _, _, resolution, _, _ in contested_deposits)
         logger.info(
             "[bacdive] culture-collection deposits claimed by disagreeing records: "
             "%s collapsed to the taxon every claimant entails, %s disjoint, "
-            "%s undecidable because ancestry for %s taxa could not be read "
+            "%s undecidable because ancestry for %s taxa could not be read, "
+            "%s unresolved because a withheld record's candidates could not be reconciled; "
+            "%s contested by records whose ambiguous supplied taxids were withheld "
             "(all listed in %s)",
             f"{resolution_counts[RESOLUTION_COLLAPSED]:,}",
             f"{resolution_counts[RESOLUTION_SUPPRESSED]:,}",
             f"{resolution_counts[RESOLUTION_SUPPRESSED_NO_ANCESTRY]:,}",
             f"{len(self._ncbitaxon_ancestry_failures):,}",
+            f"{resolution_counts[RESOLUTION_SUPPRESSED_WITHHELD]:,}",
+            f"{sum(1 for entry in contested_deposits if entry[4]):,}",
             claims_file,
         )
 

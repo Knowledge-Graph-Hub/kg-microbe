@@ -202,7 +202,7 @@ def test_transform_outputs_carry_no_unexpected_deprecated_term():
     """
     deprecated = _require_vendored()
     transformed = REPO_ROOT / "data" / "transformed"
-    if not transformed.is_dir():
+    if not any(transformed.glob("*/edges.tsv")) and not any(transformed.glob("*/nodes.tsv")):
         pytest.skip("no transform output present")
     offenders = {}
 

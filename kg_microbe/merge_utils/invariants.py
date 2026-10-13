@@ -22,6 +22,7 @@ from kg_microbe.transform_utils.constants import (
     OBJECT_COLUMN,
     PREDICATE_COLUMN,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+    PROVIDED_BY_COLUMN,
     STRAIN_PREFIX,
     SUBCLASS_PREDICATE,
     SUBJECT_COLUMN,
@@ -238,7 +239,11 @@ def find_stub_nodes(nodes_file: Path) -> Dict[str, List[str]]:
     The merge leaves no endpoint without a node row -- KGX invents one -- so the
     question worth asking after a merge is not "what is missing" but "what arrived
     as an invention". Those rows are typed ``biolink:NamedThing`` and carry no
-    name, which is the shape #892 objected to.
+    name, which is the shape #892 objected to. They carry no ``provided_by``
+    either, which every source sets on the nodes it declares, so a declared node
+    of that shape is not an invention: GOLD types an organism it cannot resolve
+    ``biolink:NamedThing`` (#1316) and has no name for some (#1590). A nodes file
+    without a ``provided_by`` column falls back to the shape alone.
 
     :param nodes_file: Path to ``merged-kg_nodes.tsv``.
     :return: ``{CURIE prefix: [CURIEs]}``, sorted, empty when none.
@@ -257,10 +262,13 @@ def find_stub_nodes(nodes_file: Path) -> Dict[str, List[str]]:
             logger.warning("[merge-invariants] %s lacks category/name; skipping the stub-node check", nodes_file.name)
             return {}
         category_at, name_at = index[CATEGORY_COLUMN], index[NAME_COLUMN]
+        provided_at = index.get(PROVIDED_BY_COLUMN)
         for row in reader:
             if len(row) <= max(category_at, name_at):
                 continue
             if row[category_at] != NAMED_THING_CATEGORY or row[name_at].strip():
+                continue
+            if provided_at is not None and provided_at < len(row) and row[provided_at].strip():
                 continue
             by_prefix[row[0].split(":", 1)[0]].append(row[0])
     return {prefix: sorted(curies) for prefix, curies in sorted(by_prefix.items())}

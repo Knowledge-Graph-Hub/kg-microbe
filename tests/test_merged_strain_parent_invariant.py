@@ -216,6 +216,11 @@ def _node(curie, category="biolink:OrganismTaxon", name="a name"):
     return [curie, category, name, "", "", "infores:x", "", "", ""]
 
 
+def _stub(curie):
+    """Write a node the way KGX invents one: NamedThing, and no name or provided_by."""
+    return [curie, "biolink:NamedThing", "", "", "", "", "", "", ""]
+
+
 def test_a_named_node_is_not_a_stub(tmp_path):
     """Only nodes KGX invented are of interest; real ones are the whole graph."""
     from kg_microbe.merge_utils.invariants import find_stub_nodes
@@ -233,8 +238,31 @@ def test_a_namedthing_with_no_name_is_a_stub(tmp_path):
     """
     from kg_microbe.merge_utils.invariants import find_stub_nodes
 
-    path = _nodes(tmp_path, [_node("NCBITaxon:999", category="biolink:NamedThing", name="")])
+    path = _nodes(tmp_path, [_stub("NCBITaxon:999")])
     assert find_stub_nodes(path) == {"NCBITaxon": ["NCBITaxon:999"]}
+
+
+def test_a_declared_namedthing_with_no_name_is_not_a_stub(tmp_path):
+    """
+    A source that declares a node sets provided_by; KGX's inventions carry none.
+
+    GOLD types an organism it cannot resolve biolink:NamedThing (#1316), and its
+    raw data has no name for gold:Go0531699, so shape alone called it an
+    invention (#1590).
+    """
+    from kg_microbe.merge_utils.invariants import find_stub_nodes
+
+    path = _nodes(tmp_path, [_node("gold:Go0531699", category="biolink:NamedThing", name=""), _stub("IMG:1")])
+    assert find_stub_nodes(path) == {"IMG": ["IMG:1"]}
+
+
+def test_without_a_provided_by_column_the_shape_alone_decides(tmp_path):
+    """A nodes file that cannot say who declared a node keeps the earlier rule."""
+    from kg_microbe.merge_utils.invariants import find_stub_nodes
+
+    path = tmp_path / "merged-kg_nodes.tsv"
+    path.write_text("id\tcategory\tname\nX:1\tbiolink:NamedThing\t\n", encoding="utf-8")
+    assert find_stub_nodes(path) == {"X": ["X:1"]}
 
 
 def test_a_namedthing_that_carries_a_name_is_not_a_stub(tmp_path):
@@ -261,8 +289,8 @@ def test_cross_reference_prefixes_are_marked_expected(tmp_path):
     path = _nodes(
         tmp_path,
         [
-            _node("gold:Gs0022271", category="biolink:NamedThing", name=""),
-            _node("kgmicrobe.strain:ATCC-1", category="biolink:NamedThing", name=""),
+            _stub("gold:Gs0022271"),
+            _stub("kgmicrobe.strain:ATCC-1"),
         ],
     )
     rows = {row[0]: row[2] for row in stub_node_rows(find_stub_nodes(path))}
@@ -287,8 +315,7 @@ def test_stub_rows_lead_with_the_largest_prefix(tmp_path):
 
     path = _nodes(
         tmp_path,
-        [_node("A:1", category="biolink:NamedThing", name="")]
-        + [_node(f"B:{i}", category="biolink:NamedThing", name="") for i in range(3)],
+        [_stub("A:1")] + [_stub(f"B:{i}") for i in range(3)],
     )
     rows = stub_node_rows(find_stub_nodes(path))
     assert [row[0] for row in rows] == ["B", "A"]
@@ -362,8 +389,8 @@ def test_an_expected_prefix_carries_its_justification(tmp_path):
     path = _nodes(
         tmp_path,
         [
-            _node("gold:Gs1", category="biolink:NamedThing", name=""),
-            _node("kgmicrobe.strain:ATCC-1", category="biolink:NamedThing", name=""),
+            _stub("gold:Gs1"),
+            _stub("kgmicrobe.strain:ATCC-1"),
         ],
     )
     rows = {row[0]: (row[2], row[3]) for row in stub_node_rows(find_stub_nodes(path))}
@@ -387,7 +414,7 @@ def test_mixed_stub_prefixes_do_not_hide_namespace_defects(tmp_path, caplog):
     nodes = _nodes(
         tmp_path,
         [
-            _node(curie, category="biolink:NamedThing", name="")
+            _stub(curie)
             for curie in (
                 "GTDB:s__Bacillus_subtilis",
                 "GTDB:RS_GCF_000005845.2",
@@ -433,7 +460,7 @@ def test_the_nodes_path_can_be_passed_rather_than_guessed(tmp_path):
     with nodes.open("w", newline="", encoding="utf-8") as handle:
         writer = csv.writer(handle, delimiter="\t")
         writer.writerow(header)
-        writer.writerow(_node("X:1", category="biolink:NamedThing", name=""))
+        writer.writerow(_stub("X:1"))
     edges = _edges(tmp_path, [_row("kgmicrobe.strain:DSM-1", "NCBITaxon:5")])
 
     # Without the path it guesses, finds nothing, and writes no report.

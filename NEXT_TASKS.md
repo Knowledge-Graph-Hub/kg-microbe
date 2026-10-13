@@ -1,5 +1,10 @@
 # NEXT_TASKS.md
 
+> The work left after [#1401](https://github.com/Knowledge-Graph-Hub/kg-microbe/pull/1401), the
+> validation-upstream candidate, is tracked separately in
+> [`docs/NEXT_TASKS.md`](docs/NEXT_TASKS.md). That includes its rebuild blockers, the rebuild
+> sequence and the open review findings.
+
 ## Live backlog — reconciled 2026-08-16
 
 The rest of this file is a narrow 2026-07-02 untracked-file triage (still valid,

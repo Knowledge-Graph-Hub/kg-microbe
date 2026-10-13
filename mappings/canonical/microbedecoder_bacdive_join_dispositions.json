@@ -69,9 +69,9 @@
   ],
   "evidence_file": "microbedecoder_bacdive_join_evidence.json",
   "evidence_sha256": "919a2c85ace14d93e630b264c37638920fec9a3c80e9e0d64f866601a4324516",
-  "lpsn_gss_sha256": "31cb2ac2d4eaf965a92a02ad28a39cfece141f703b17815b4223ac091ea603f3",
+  "lpsn_gss_reviewed_sha256": "31cb2ac2d4eaf965a92a02ad28a39cfece141f703b17815b4223ac091ea603f3",
   "snapshot_observation_disposition": "retain_on_record_scoped_source_node_without_taxon_identity",
   "source_records": 27010,
   "source_sha256": "0c6ff730a108720a5d6972400f2bccf2eca8621713b62736abdf5df0fb188c95",
-  "version": 1
+  "version": 2
 }

@@ -61,7 +61,7 @@ from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 DEFAULT_POLICY = (
     Path(__file__).resolve().parents[3] / "mappings/canonical/microbedecoder_bacdive_join_dispositions.json"
 )
-POLICY_SHA256 = "30eaf4f30095a70e47a416763f3782dff963b8fabaacfcd3607eee11c28c1bb0"
+POLICY_SHA256 = "51c802a0650833d92d43707fd3705f1bba8d7b90f1e2a9a34b68b9562acab044"
 EVIDENCE_SHA256 = "919a2c85ace14d93e630b264c37638920fec9a3c80e9e0d64f866601a4324516"
 DECISIONS_SHA256 = "70a4563e13d1c456423cd4abdbce29d9f57c9916ebd0ebcf11e00ddf3140e42b"
 CONTRACT_KEY = "bacdive_join_dispositions"
@@ -234,20 +234,29 @@ class BacDiveJoinGuard:
         self.policy = _parsed(policy_payload)
         self.evidence = _parsed(evidence_payload)
         if (
-            self.policy.get("version") != 1
+            self.policy.get("version") != 2
             or self.evidence.get("version") != 1
             or self.policy.get("evidence_sha256") != EVIDENCE_SHA256
             or _hash(_json(self.policy.get("decisions")).encode()) != DECISIONS_SHA256
         ):
             _fail("finite witness set changed")
+        # Policy version 2 binds the GSS by the rows the six decisions use, not by its
+        # bytes (#1420): LPSN publishes a new account-gated GSS every month. Each decision
+        # below requires both of its accepted records, the MicrobeDecoder side and the
+        # distinct BacDive side, and each record's complete reviewed row, so any snapshot
+        # with those rows unchanged is accepted. The parsed GSS must still be exactly the
+        # bound read, and the receipt records it.
+        try:
+            raw_sha256, gss_sha256 = _stream_hash(raw_stream), _stream_hash(gss_stream)
+        except UnicodeDecodeError:
+            _fail("actual source/GSS read is not valid UTF-8")
         if (
             set(bindings) != set(REQUIRED_INPUTS)
             or bindings[ROLE_POLICY]["sha256"] != POLICY_SHA256
             or bindings[ROLE_EVIDENCE]["sha256"] != EVIDENCE_SHA256
             or bindings[ROLE_RAW]["sha256"] != self.policy["source_sha256"]
-            or bindings[ROLE_GSS]["sha256"] != self.policy["lpsn_gss_sha256"]
-            or _stream_hash(raw_stream) != self.policy["source_sha256"]
-            or _stream_hash(gss_stream) != self.policy["lpsn_gss_sha256"]
+            or raw_sha256 != self.policy["source_sha256"]
+            or gss_sha256 != bindings[ROLE_GSS]["sha256"]
         ):
             _fail("actual source/GSS read differs from finite policy")
         gss = {}
@@ -277,6 +286,8 @@ class BacDiveJoinGuard:
             rule = self.rules.get(observed)
             if rule is not None:
                 witness = self.witnesses[observed]
+                bacdive_side = (witness.get("bacdive_accepted_gss_row") or {}).get("full_row")
+                bacdive_id = bacdive_side.get("record_no") if isinstance(bacdive_side, dict) else None
                 if (
                     row != witness["native_md_row"]
                     or _hash(_json(row).encode()) != rule["raw_record_sha256"]
@@ -286,6 +297,9 @@ class BacDiveJoinGuard:
                     or tokens != [rule["source_token"]]
                     or rule["disposition"] != _DISPOSITION
                     or gss.get(accepted) != witness["md_accepted_gss_row"]["full_row"]
+                    or not bacdive_id
+                    or gss.get(bacdive_id) != bacdive_side
+                    or self.accepted.get(bacdive_id, bacdive_id) == accepted
                     or rule["witness_family"] != witness["primary_witness"]["witness_family"]
                     or rule["witness_family"]
                     not in {"incorrect_deposit_number", "documented_non_equivalent_historical_deposits"}

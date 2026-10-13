@@ -34,10 +34,14 @@ REVIEWED_RELEASE_URLS = {
         "https://raw.githubusercontent.com/Planteome/plant-ontology/fb1d146b95d6bfe141992d6a219b891fdef2dc54/po.owl"
     ),
     "mondo.json": "http://purl.obolibrary.org/obo/mondo/releases/2026-07-06/mondo.json",
+    # The archive itself is not pinned: its two members are, byte for byte, by
+    # mappings/rhea_release.json, and stage_snapshot extracts only those.
+    "rhea_download/142.tar.bz2": "https://ftp.expasy.org/databases/rhea/old_releases/142.tar.bz2",
 }
 
-# A dated release directory or tag, or a 40-hex commit, identifies one release.
-_IMMUTABLE = re.compile(r"/v?\d{4}-\d{2}-\d{2}/|/[0-9a-f]{40}/")
+# A dated release directory or tag, a 40-hex commit, or a numbered release
+# archive identifies one release.
+_IMMUTABLE = re.compile(r"/v?\d{4}-\d{2}-\d{2}/|/[0-9a-f]{40}/|/old_releases/\d+\.tar\.bz2$")
 
 
 def _urls_by_local_name():

@@ -2,7 +2,7 @@
 
 import json
 import re
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from kg_microbe.transform_utils.rhea_mappings.native_rdf import load_native_rdf
 from kg_microbe.transform_utils.rhea_mappings.reaction_families import (
@@ -28,10 +28,19 @@ def _unique_json_keys(pairs):
     return result
 
 
+def _is_archive_member(member, name):
+    """Return whether an archive member path is relative, traversal-free and names ``name``."""
+    if not isinstance(member, str):
+        return False
+    path = PurePosixPath(member)
+    return not path.is_absolute() and ".." not in path.parts and path.name == name
+
+
 def read_release_policy(stream):
     """Validate the finite two-file pin contract, never selecting paths from input JSON."""
     policy = json.load(stream, object_pairs_hook=_unique_json_keys)
-    if not isinstance(policy, dict) or type(policy.get("schema_version")) is not int or policy["schema_version"] != 1:
+    # Version 2 names the archived release the pinned pair is extracted from (#1420).
+    if not isinstance(policy, dict) or type(policy.get("schema_version")) is not int or policy["schema_version"] != 2:
         raise ValueError("Unsupported Rhea release pin contract")
     if not isinstance(policy.get("snapshot_id"), str) or not policy["snapshot_id"].strip():
         raise ValueError("Missing Rhea snapshot identity")
@@ -47,6 +56,17 @@ def read_release_policy(stream):
             or record["bytes"] <= 0
         ):
             raise ValueError(f"Malformed Rhea input identity: {name}")
+    archive = policy.get("archive")
+    if (
+        not isinstance(archive, dict)
+        or set(archive) != {"url", "members"}
+        or not isinstance(archive["url"], str)
+        or not archive["url"].startswith("https://")
+        or not isinstance(archive["members"], dict)
+        or set(archive["members"]) != set(NATIVE_FILES.values())
+        or not all(_is_archive_member(member, name) for name, member in archive["members"].items())
+    ):
+        raise ValueError("Rhea release must name its archive and both member paths")
     return policy
 
 

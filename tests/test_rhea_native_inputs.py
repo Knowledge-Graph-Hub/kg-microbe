@@ -38,8 +38,15 @@ def _inputs(tmp_path):
     for name, value in payloads.items():
         (raw / name).write_bytes(value)
     policy = {
-        "schema_version": 1,
+        "schema_version": 2,
         "snapshot_id": "hermetic-family",
+        "archive": {
+            "url": "https://example.org/rhea/fixture.tar.bz2",
+            "members": {
+                "rhea-directions.tsv": "fixture/tsv/rhea-directions.tsv",
+                "rhea.rdf.gz": "fixture/rdf/rhea.rdf.gz",
+            },
+        },
         "files": {
             name: {"sha256": hashlib.sha256(value).hexdigest(), "bytes": len(value)} for name, value in payloads.items()
         },
@@ -126,7 +133,35 @@ def test_release_contract_rejects_incomplete_or_malformed_pins(tmp_path, change)
         read_release_policy(io.StringIO(json.dumps(policy)))
 
 
-def test_boolean_schema_version_is_not_version_one(tmp_path):
+@pytest.mark.parametrize(
+    "change",
+    ["version_one", "no_archive", "http_url", "extra_key", "missing_member", "absolute", "traversal", "wrong_name"],
+)
+def test_release_contract_requires_its_archive_and_safe_member_paths(tmp_path, change):
+    """Version 2 names the archived release; a member path can never point outside it or rename a payload."""
+    _, _, policy = _inputs(tmp_path)
+    archive = policy["archive"]
+    if change == "version_one":
+        policy["schema_version"] = 1
+    elif change == "no_archive":
+        del policy["archive"]
+    elif change == "http_url":
+        archive["url"] = archive["url"].replace("https://", "http://")
+    elif change == "extra_key":
+        archive["sha256"] = "0" * 64
+    elif change == "missing_member":
+        del archive["members"]["rhea.rdf.gz"]
+    elif change == "absolute":
+        archive["members"]["rhea.rdf.gz"] = "/fixture/rdf/rhea.rdf.gz"
+    elif change == "traversal":
+        archive["members"]["rhea.rdf.gz"] = "fixture/../rdf/rhea.rdf.gz"
+    else:
+        archive["members"]["rhea.rdf.gz"] = "fixture/rdf/rhea.rdf"
+    with pytest.raises(ValueError, match="Unsupported Rhea release|must name its archive"):
+        read_release_policy(io.StringIO(json.dumps(policy)))
+
+
+def test_boolean_schema_version_is_not_a_version(tmp_path):
     """Python bool/int equality must not make an invalid manifest appear versioned."""
     _, _, policy = _inputs(tmp_path)
     policy["schema_version"] = True
@@ -134,7 +169,7 @@ def test_boolean_schema_version_is_not_version_one(tmp_path):
         read_release_policy(io.StringIO(json.dumps(policy)))
 
 
-@pytest.mark.parametrize("duplicate", ['"schema_version":999,', '"schema_version":1,'])
+@pytest.mark.parametrize("duplicate", ['"schema_version":999,', '"schema_version":2,'])
 def test_duplicate_contract_keys_are_rejected_even_when_last_value_is_valid(tmp_path, duplicate):
     """A parser must not silently discard an earlier conflicting pin-contract value."""
     _, _, policy = _inputs(tmp_path)

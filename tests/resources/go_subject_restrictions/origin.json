@@ -1,7 +1,11 @@
 {
   "full_sources": {
     "go.db": {
-      "sha256": "a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a"
+      "release": "2026-06-15",
+      "source": {
+        "file": "go.owl",
+        "sha256": "6200169cab2fe30be09aac3cf9c96a84e3193b6a3c6d6e0e53dd05bce74e395c"
+      }
     },
     "pato.owl": {
       "sha256": "73a80487130a81a3696f1e03c551288f741ed1be5a07639e69e7ecd8b6f0371c"
@@ -23,8 +27,20 @@
     "GO:0006903": "8daea806d1ba05d55e833b9caa2e987e0b776175f42c76eaeafc40184ff8734a",
     "GO:0048199": "6d332e5196022cac88c8a79629906e8f84e0fef0fc793f667b7a66503df9d862"
   },
-  "reviewed_policy_sha256": "4400d3628339a19fbda344c5fc4b5761fd89bbc1a8d2ad32e2898f3c7fc75498",
+  "reviewed_policy_sha256": "f8d02767086a378f3d983070ad0f4627614d3cda5dc399b94ab21d98574d2579",
   "fixture_sha256": "09f6e75f5d96fde0321a70395ec51d59574b71279dec5070c48afbb4a8bb63c4",
   "note": "Fifteen finite claims on fourteen complete native class stanzas, plus replacement-class/property context for #1357. Two byte-preserved stanzas are added for the user-approved residual-three audit-only decision; GO:0055108 already supplied the third. All twelve prior policy records are unchanged. Test SQL inputs retain each complete subject statement multiset once; excerpts are not full ontology releases.",
-  "independent_disposition_proof_sha256": "ab8884f5ac13456ab0a19cf985e18c716e7c58dd410f3ffd0090691138a28d2d"
+  "independent_disposition_proof_sha256": "ab8884f5ac13456ab0a19cf985e18c716e7c58dd410f3ffd0090691138a28d2d",
+  "superseded_policy_v4": {
+    "reviewed_policy_sha256": "4400d3628339a19fbda344c5fc4b5761fd89bbc1a8d2ad32e2898f3c7fc75498",
+    "full_sources": {
+      "go.db": {
+        "sha256": "a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a"
+      },
+      "pato.owl": {
+        "sha256": "73a80487130a81a3696f1e03c551288f741ed1be5a07639e69e7ecd8b6f0371c"
+      }
+    },
+    "note": "Version 4 pinned the locally built go.db by whole-file SHA-256; version 5 binds its GO release and go.owl instead (#1420)."
+  }
 }

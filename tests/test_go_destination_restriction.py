@@ -50,7 +50,10 @@ def test_destination_decision_has_complete_native_role_and_replacement_context()
 def test_destination_quarantine_keeps_supported_start_location_and_its_history(tmp_path, monkeypatch):
     """One destination disposition cannot erase the independent Golgi start-location claim."""
     context = json.loads((FIXTURE / "start_location_go_metadata.json").read_text())
-    assert context["source"]["sha256"] == FULL_POLICY["sources"]["go.db"]["sha256"]
+    # The rows were extracted from the reviewed go.db build. Policy v5 binds that build's
+    # GO release instead of its bytes (#1420); origin.json keeps the v4 byte pin.
+    origin = json.loads((FIXTURE / "origin.json").read_text())
+    assert context["source"]["sha256"] == origin["superseded_policy_v4"]["full_sources"]["go.db"]["sha256"]
     assert len(context["statements"]) == context["row_count"] == 26
     assert {row["subject"] for row in context["statements"]} == {"GO:0005794"}
     _, nodes, edges, audit, authority = prepare(

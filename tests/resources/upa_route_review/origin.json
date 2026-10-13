@@ -1,12 +1,21 @@
 {
   "full_sources": {
-    "upa.json": "cff92938a092dcc2e4e2e1a17266417edeacba8e7b9f51b3f183066a80fdb8bd",
+    "upa.json": {
+      "release": "http://purl.obolibrary.org/obo/upa/releases/2024-03-06/upa.owl",
+      "sha256": "cff92938a092dcc2e4e2e1a17266417edeacba8e7b9f51b3f183066a80fdb8bd"
+    },
     "upa.owl": "1ea0465c2222592bdeea3197a687ba26c74818263e1e6c5e8838baafcb6838ce",
-    "go.db": "a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a"
+    "go.db": {
+      "release": "2026-06-15",
+      "source": {
+        "file": "go.owl",
+        "sha256": "6200169cab2fe30be09aac3cf9c96a84e3193b6a3c6d6e0e53dd05bce74e395c"
+      }
+    }
   },
-  "reviewed_policy_semantic_sha256": "72388c7fff376f7d88950bd203c1d6dd7b51aea8e6cb1c5407867e4b80be08a9",
+  "reviewed_policy_semantic_sha256": "6cffa6d569ae82f4c5f4ea3aaf4bca5b495e2915ebf89ddff8fa98343a6bedf2",
   "fixtures": {
-    "upa.json": "ff3fb37e265cc64a805427e468521b4f79cab2eb1f2d9f197a9cba8b17dca2a8",
+    "upa.json": "8880cbcc1535d1d376b3b3ea058592e6ea662b65452078ddd30a36cce6bbd665",
     "upa.owl": "47c5870dc8560608a48454f69e6a2eeafd04e424c3d605feb4519154aba5baef",
     "go_statements.json": "da439d71011074ff5c35e182e716d1e615bd62682840ad64b2d4d949ca9dd282",
     "positive_route_origins.json": "12b38ea2504fc75521917954c6ec13dc8e27d8e10732a32280fb12dbd47479f1"
@@ -17,5 +26,14 @@
   "additional_positive_native_routes": 2,
   "interpretation": "Immutable decoded JSON/SQL and literal XML excerpts; not full native artifact bytes or historical consumption receipts",
   "coordinates": "Policy retains full-input zero-based JSON positions plus original evidence's explicitly one-based edge ordinal; fixture positions are independently recalculated",
-  "historical_round01_material_receipt": "native-material.json retains its historical 726629fc preimage, superseded only for integration by rebase-receipt.json"
+  "historical_round01_material_receipt": "native-material.json retains its historical 726629fc preimage, superseded only for integration by rebase-receipt.json",
+  "superseded_policy_v2": {
+    "reviewed_policy_semantic_sha256": "72388c7fff376f7d88950bd203c1d6dd7b51aea8e6cb1c5407867e4b80be08a9",
+    "full_sources": {
+      "upa.json": "cff92938a092dcc2e4e2e1a17266417edeacba8e7b9f51b3f183066a80fdb8bd",
+      "upa.owl": "1ea0465c2222592bdeea3197a687ba26c74818263e1e6c5e8838baafcb6838ce",
+      "go.db": "a3903d4ce168ac79b877891a595fc4ca1dda122e45d969e7b2948126090aa07a"
+    },
+    "note": "Version 2 pinned upa.json and the locally built go.db by whole-file SHA-256. Version 3 binds go.db by its release and the go.owl it was built from (#1420), and keeps the upa.json byte pin, which the pinned ROBOT reproduces from the pinned upa.owl, alongside its release (#1516)."
+  }
 }

@@ -221,16 +221,33 @@ def test_unverified_projection_audit_preserves_repeated_rows_and_qualifiers(tmp_
     assert all(row["witnesses"] == selected["witnesses"] for row in audit)
 
 
-@pytest.mark.parametrize("damage", ["policy", "json", "owl", "go", "sidecar", "duplicate_json_key"])
+@pytest.mark.parametrize(
+    "damage", ["policy", "json", "json_release", "owl", "go_release", "go_owl", "sidecar", "duplicate_json_key"]
+)
 def test_original_native_evidence_failures_abort_the_actual_run(tmp_path, monkeypatch, damage):
-    """A later hash or malformed native object cannot stand in for the reviewed input epoch."""
+    """
+    A different release, other bytes or a malformed native object cannot stand in for the reviewed epoch.
+
+    The locally built go.db is bound by release and content, not bytes (#1420). The converted
+    upa.json keeps its byte pin as well as its release, since the pinned ROBOT reproduces it
+    from the pinned upa.owl (#1516).
+    """
     transform, _, policy_path = prepare(tmp_path, monkeypatch)
     if damage == "policy":
         policy_path.write_text("{}")
     elif damage == "sidecar":
         (transform.input_base_dir / "go.db-wal").write_bytes(b"unexpected")
+    elif damage == "json_release":
+        path = transform.input_base_dir / "upa.json"
+        path.write_bytes(path.read_bytes().replace(b"releases/2024-03-06", b"releases/2099-01-01", 1))
+    elif damage == "go_release":
+        with sqlite3.connect(transform.input_base_dir / "go.db") as connection:
+            connection.execute("UPDATE statements SET value='2099-01-01' WHERE predicate='owl:versionInfo'")
+    elif damage == "go_owl":
+        path = transform.input_base_dir / "go.owl"
+        path.write_bytes(path.read_bytes() + b"<!-- another release -->\n")
     else:
-        filename = {"json": "upa.json", "owl": "upa.owl", "go": "go.db", "duplicate_json_key": "upa.json"}[damage]
+        filename = {"json": "upa.json", "owl": "upa.owl", "duplicate_json_key": "upa.json"}[damage]
         path = transform.input_base_dir / filename
         payload = path.read_bytes()
         path.write_bytes(
@@ -239,6 +256,34 @@ def test_original_native_evidence_failures_abort_the_actual_run(tmp_path, monkey
             else payload + b" "
         )
     with pytest.raises((SourceFinalizationRequired, ValueError)):
+        transform.run(data_file="upa.json", show_status=False)
+    assert not (transform.output_dir / "upa_source_finalization.json").exists()
+
+
+def test_a_same_release_upa_json_with_a_changed_xref_is_refused(tmp_path, monkeypatch):
+    """One changed pathway xref in a JSON that still declares the reviewed release is refused (#1516)."""
+    transform, _, _ = prepare(tmp_path, monkeypatch)
+    path = transform.input_base_dir / "upa.json"
+    document = json.loads(path.read_text())
+    node = next(node for node in document["graphs"][0]["nodes"] if node["id"].endswith("UPa_UPA00450"))
+    assert [xref["val"] for xref in node["meta"]["xrefs"]] == ["GO:0033353"]
+    node["meta"]["xrefs"][0]["val"] = "GO:0004077"
+    path.write_text(json.dumps(document))
+    with pytest.raises(SourceFinalizationRequired, match="source epoch changed"):
+        transform.run(data_file="upa.json", show_status=False)
+    assert not (transform.output_dir / "upa_source_finalization.json").exists()
+
+
+def test_a_same_release_go_db_missing_a_selected_statement_is_refused(tmp_path, monkeypatch):
+    """With no go.db byte pin, the selected GO statements alone catch a changed database (#1517)."""
+    transform, policy, _ = prepare(tmp_path, monkeypatch)
+    subject, predicate = policy["finite_go_statements"][0][:2]
+    with sqlite3.connect(transform.input_base_dir / "go.db") as connection:
+        rowid = connection.execute(
+            "SELECT rowid FROM statements WHERE subject=? AND predicate=? LIMIT 1", (subject, predicate)
+        ).fetchone()[0]
+        connection.execute("DELETE FROM statements WHERE rowid=?", (rowid,))
+    with pytest.raises(SourceFinalizationRequired, match="finite GO"):
         transform.run(data_file="upa.json", show_status=False)
     assert not (transform.output_dir / "upa_source_finalization.json").exists()
 

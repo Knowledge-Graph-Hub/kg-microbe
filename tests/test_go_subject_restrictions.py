@@ -171,6 +171,82 @@ def test_native_input_drift_is_not_a_silent_quarantine(tmp_path, monkeypatch, fi
         normalize_go_bundle([nodes], [edges], authority, audit)
 
 
+@pytest.mark.parametrize("damage", ["changed", "missing"])
+def test_go_release_file_drift_is_refused(tmp_path, monkeypatch, damage):
+    """The go.owl release behind the locally built database is bound, not the database bytes (#1420)."""
+    raw, nodes, edges, audit, authority = prepare(tmp_path, monkeypatch)
+    if damage == "changed":
+        (raw / "go.owl").write_bytes((raw / "go.owl").read_bytes() + b"<!-- another release -->\n")
+    else:
+        (raw / "go.owl").unlink()
+    with pytest.raises((ValueError, FileNotFoundError)):
+        normalize_go_bundle([nodes], [edges], authority, audit)
+
+
+@pytest.mark.parametrize("change", ["renumbered", "filler", "extra_statement", "missing_statement"])
+def test_selected_go_statements_compare_blank_nodes_by_content(tmp_path, monkeypatch, change):
+    """
+    A rebuilt go.db may number its blank nodes differently, but what they state cannot change.
+
+    rdftab's labels belong to one build (#1514). With no go.db byte pin, the selected
+    statements alone must catch a changed restriction or a missing statement (#1517).
+    """
+    from kg_microbe.utils.go_authority import load_go_authority
+
+    raw, nodes, edges, audit, _ = prepare(tmp_path, monkeypatch)
+    with sqlite3.connect(raw / "go.db") as connection:
+        if change == "renumbered":
+            for index, label in enumerate(sorted(FULL_POLICY["blank_nodes"])):
+                connection.execute("UPDATE statements SET subject=? WHERE subject=?", (f"_:rebuilt{index}", label))
+                connection.execute("UPDATE statements SET object=? WHERE object=?", (f"_:rebuilt{index}", label))
+        elif change == "filler":
+            connection.execute(
+                "UPDATE statements SET object='GO:0005737' "
+                "WHERE subject='_:riog00055663' AND predicate='owl:someValuesFrom'"
+            )
+        elif change == "extra_statement":
+            connection.execute("INSERT INTO statements VALUES('_:riog00055663', 'rdfs:comment', NULL, 'added')")
+        else:
+            row = restrictions._metadata_rows(FULL_POLICY)[0]
+            rowid = connection.execute(
+                "SELECT rowid FROM statements WHERE subject=? AND predicate=? LIMIT 1",
+                (row["subject"], row["predicate"]),
+            ).fetchone()[0]
+            connection.execute("DELETE FROM statements WHERE rowid=?", (rowid,))
+    if change == "renumbered":
+        result = normalize_go_bundle([nodes], [edges], load_go_authority(raw), audit)
+        assert result["quarantined_imported_subject_restrictions"] == len(POLICY["records"])
+    else:
+        with pytest.raises(ValueError, match="replacement metadata differs from native evidence"):
+            normalize_go_bundle([nodes], [edges], load_go_authority(raw), audit)
+
+
+def test_blank_node_entries_are_required_for_every_reachable_node():
+    """A nested blank node needs its own reviewed entry; an unreachable entry is refused (#1530)."""
+    policy = copy.deepcopy(FULL_POLICY)
+    assert restrictions._valid_blank_nodes(policy)
+    label = sorted(policy["blank_nodes"])[0]
+    policy["blank_nodes"][label].append({"predicate": "owl:annotatedSource", "object": "_:nested", "value": None})
+    assert not restrictions._valid_blank_nodes(policy)
+    policy["blank_nodes"]["_:nested"] = [{"predicate": "rdf:type", "object": "owl:Axiom", "value": None}]
+    assert restrictions._valid_blank_nodes(policy)
+    policy["blank_nodes"]["_:unreached"] = [{"predicate": "rdf:type", "object": "owl:Axiom", "value": None}]
+    assert not restrictions._valid_blank_nodes(policy)
+
+
+def test_a_database_of_another_go_release_is_refused(tmp_path, monkeypatch):
+    """A rebuilt database must still record the reviewed GO release."""
+    raw, nodes, edges, audit, _ = prepare(tmp_path, monkeypatch)
+    with sqlite3.connect(raw / "go.db") as connection:
+        connection.execute(
+            "UPDATE statements SET value='2099-01-01' WHERE subject='obo:go.owl' AND predicate='owl:versionInfo'"
+        )
+    from kg_microbe.utils.go_authority import load_go_authority
+
+    with pytest.raises(ValueError, match="reviewed GO release"):
+        normalize_go_bundle([nodes], [edges], load_go_authority(raw), audit)
+
+
 def test_old_checkpoint_rechecks_policy_and_preserves_original_audits(tmp_path, monkeypatch):
     """A legacy v2 authority fingerprint is invalidated without discarding its original rows."""
     _, nodes, edges, audit, authority = prepare(tmp_path, monkeypatch)
@@ -201,7 +277,9 @@ def test_old_checkpoint_rechecks_policy_and_preserves_original_audits(tmp_path, 
     assert before == (nodes.read_bytes(), edges.read_bytes(), audit.read_bytes())
 
 
-@pytest.mark.parametrize("role", [restrictions.POLICY_ROLE, restrictions.OWL_ROLE, restrictions.GO_ROLE])
+@pytest.mark.parametrize(
+    "role", [restrictions.POLICY_ROLE, restrictions.OWL_ROLE, restrictions.GO_ROLE, restrictions.GO_SOURCE_ROLE]
+)
 def test_original_consumed_bindings_cannot_be_removed(tmp_path, monkeypatch, role):
     """The live helper retains the original roles independently of mutable receipts."""
     raw, nodes, edges, audit, authority = prepare(tmp_path, monkeypatch)
@@ -337,16 +415,14 @@ def test_unrelated_observations_do_not_load_finite_native_evidence(tmp_path, mon
 
 @pytest.mark.parametrize("table", ["edge", "entailed_edge"])
 def test_new_authority_support_requires_review_not_automatic_quarantine(tmp_path, monkeypatch, table):
-    """Even explicitly repinned fixture input cannot contradict the finite disposition premise."""
+    """
+    A rebuilt database of the reviewed release cannot contradict the finite disposition premise.
+
+    The database bytes are not pinned (#1420), so new support reaches the content check directly.
+    """
     raw, nodes, edges, audit, _ = prepare(tmp_path, monkeypatch)
     with sqlite3.connect(raw / "go.db") as connection:
         connection.execute(f"INSERT INTO {table} VALUES(?,?,?)", ("GO:0008152", "RO:0004007", "CHEBI:64709"))
-    policy = json.loads(restrictions.POLICY_FILE.read_text())
-    policy["sources"]["go.db"]["sha256"] = hashlib.sha256((raw / "go.db").read_bytes()).hexdigest()
-    restrictions.POLICY_FILE.write_text(json.dumps(policy))
-    monkeypatch.setattr(
-        restrictions, "REVIEWED_POLICY_SHA256", restrictions._digest(restrictions._json(policy).encode())
-    )
     from kg_microbe.utils.go_authority import load_go_authority
 
     authority = load_go_authority(raw)

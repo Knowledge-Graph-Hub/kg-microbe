@@ -30,16 +30,19 @@ from kg_microbe.transform_utils.constants import (
     RELATION_COLUMN,
     SUBJECT_COLUMN,
 )
+from kg_microbe.utils.release_binding import is_release_source, semsql_go_release
 
 POLICY_FILE = Path(__file__).resolve().parents[2] / "mappings/go_imported_subject_restrictions.json"
-REVIEWED_POLICY_SHA256 = "4400d3628339a19fbda344c5fc4b5761fd89bbc1a8d2ad32e2898f3c7fc75498"
-POLICY_VERSION = 4
+REVIEWED_POLICY_SHA256 = "f8d02767086a378f3d983070ad0f4627614d3cda5dc399b94ab21d98574d2579"
+# Version 5 binds go.db to its GO release and selected content, not its file bytes (#1420).
+POLICY_VERSION = 5
 RUNTIME_VERSION = 6
 INVENTORY_KEY = "go_imported_restriction_inventory"
 INPUTS_KEY = "go_imported_restriction_inputs"
 POLICY_ROLE = "go_imported_restriction_policy"
 OWL_ROLE = "go_imported_restriction_pato_owl"
 GO_ROLE = "go_imported_restriction_go_db"
+GO_SOURCE_ROLE = "go_imported_restriction_go_owl"
 ORIGINAL_INPUT_ROLE_PREFIX = "go_imported_restriction_input:"
 ORIGINAL_INPUT_DIRECTORY = ".go-restriction-inputs"
 AUDIT_KIND = "quarantined_imported_subject_restriction"
@@ -237,9 +240,54 @@ def load_policy(stream):
         or len(policy["records"]) != len(_CLAIMS)
         or len({(replacement, key[1], key[2]) for key, (_, replacement) in _CLAIMS.items()}) != len(_CLAIMS)
         or set(policy["sources"]) != {"pato.owl", "go.db"}
+        or set(policy["sources"]["pato.owl"]) != {"sha256"}
+        or set(policy["sources"]["go.db"]) != {"release", "source"}
+        or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(policy["sources"]["go.db"]["release"]))
+        or not is_release_source(policy["sources"]["go.db"]["source"])
+        or policy["sources"]["go.db"]["source"]["file"] != "go.owl"
+        or not _valid_blank_nodes(policy)
     ):
         raise ValueError("Invalid finite imported GO subject-restriction policy")
     return policy
+
+
+def _reachable_blank_nodes(policy, blank_nodes):
+    """Return every blank node the selected rows reach, directly or through recorded blank-node statements."""
+    pending = [row["object"] for row in _metadata_rows(policy) if _is_blank(row["object"])]
+    reached = set()
+    while pending:
+        label = pending.pop()
+        if label not in reached:
+            reached.add(label)
+            statements = blank_nodes.get(label)
+            if isinstance(statements, list):
+                pending.extend(
+                    statement["object"]
+                    for statement in statements
+                    if isinstance(statement, dict) and _is_blank(statement.get("object"))
+                )
+    return reached
+
+
+def _valid_blank_nodes(policy):
+    """Require the reviewed statements of exactly the blank nodes the selected rows reach, nested ones included."""
+    blank_nodes = policy.get("blank_nodes")
+    return (
+        isinstance(blank_nodes, dict)
+        and set(blank_nodes) == _reachable_blank_nodes(policy, blank_nodes)
+        and all(
+            isinstance(statements, list)
+            and statements
+            and all(
+                isinstance(statement, dict)
+                and set(statement) == {"predicate", "object", "value"}
+                and isinstance(statement["predicate"], str)
+                and all(statement[field] is None or isinstance(statement[field], str) for field in ("object", "value"))
+                for statement in statements
+            )
+            for statements in blank_nodes.values()
+        )
+    )
 
 
 def identify(row):
@@ -344,6 +392,45 @@ def expected_candidate(row, original, style, go_identity):
     return candidate
 
 
+def _is_blank(value):
+    """Return whether a statement object is an RDF blank node, as rdftab writes one (``_:riog00055663``)."""
+    return isinstance(value, str) and value.startswith("_:")
+
+
+def _blank_node_key(label, describe, seen=()):
+    """
+    Name a blank node by what it states, not by its label.
+
+    rdftab numbers blank nodes as it reads (``_:riog00055663``), so a label belongs to one
+    local build of go.db, not to GO. The key digests the node's own statements, with each
+    nested blank node replaced by its key in turn, so every build of the same release
+    gives the same key and a different restriction gives a different one (#1514).
+
+    :param label: The blank node's label in one database or in the policy.
+    :param describe: Returns that node's ``(predicate, object, value)`` statements.
+    :param seen: Blank nodes already being keyed, to refuse a cycle.
+    :return: A label-free ``_:``-prefixed key.
+    :raises ValueError: When the node states nothing or is part of a cycle.
+    """
+    if label in seen:
+        raise ValueError(f"Cyclic GO blank node: {label}")
+    statements = describe(label)
+    if not statements:
+        raise ValueError(f"GO blank node has no statements: {label}")
+    keyed = [
+        [predicate, _blank_node_key(obj, describe, (*seen, label)) if _is_blank(obj) else obj, value]
+        for predicate, obj, value in statements
+    ]
+    return "_:" + _digest(_json(sorted(keyed, key=_json)).encode())
+
+
+def _label_free(rows, describe):
+    """Replace each blank-node object with its key, so rows compare by content."""
+    return [
+        {**row, "object": _blank_node_key(row["object"], describe)} if _is_blank(row["object"]) else row for row in rows
+    ]
+
+
 def _metadata_rows(policy):
     """Use each complete native subject statement multiset once across shared targets."""
     by_subject = {}
@@ -438,12 +525,14 @@ class ImportedGoRestrictionGuard:
             digest = hashlib.sha256()
             for block in iter(lambda: stream.buffer.read(1024 * 1024), b""):
                 digest.update(block)
-            if (
-                digest.hexdigest() != policy["sources"]["go.db"]["sha256"]
-                or digest.hexdigest() != self.authority.authority_sha256
-            ):
+            if digest.hexdigest() != self.authority.authority_sha256:
                 raise ValueError("Imported GO selected database differs from reviewed authority")
             with sqlite3.connect(Path(stream.name).as_uri() + "?mode=ro", uri=True) as connection:
+                # The database is built locally, so its bytes are not pinned. It must
+                # record the reviewed GO release, and its selected statements are
+                # compared below (#1420).
+                if semsql_go_release(connection) != policy["sources"]["go.db"]["release"]:
+                    raise ValueError("Imported GO selected database is not the reviewed GO release")
                 expected = _metadata_rows(policy)
                 identifiers = sorted({row[SUBJECT_COLUMN] for row in expected})
                 placeholders = ",".join("?" for _ in identifiers)
@@ -454,7 +543,24 @@ class ImportedGoRestrictionGuard:
                         identifiers,
                     )
                 ]
-                if sorted(map(_json, actual)) != sorted(map(_json, expected)):
+                reviewed = policy["blank_nodes"]
+
+                def stored(label):
+                    """Return a blank node's statements in this database."""
+                    return connection.execute(
+                        "SELECT predicate,object,value FROM statements WHERE subject=?", (label,)
+                    ).fetchall()
+
+                def recorded(label):
+                    """Return a blank node's statements as the policy recorded them."""
+                    if label not in reviewed:
+                        raise ValueError(f"Unreviewed GO blank node: {label}")
+                    return [(row["predicate"], row["object"], row["value"]) for row in reviewed[label]]
+
+                # Blank nodes compare by what they state, not their build-local labels (#1514).
+                if sorted(map(_json, _label_free(actual, stored))) != sorted(
+                    map(_json, _label_free(expected, recorded))
+                ):
                     raise ValueError("Imported GO replacement metadata differs from native evidence")
                 for table in ("edge", "entailed_edge"):
                     for (_, relation, obj), (_, replacement) in _CLAIMS.items():
@@ -466,6 +572,15 @@ class ImportedGoRestrictionGuard:
                                 "Imported GO restriction now has authority support; review finite disposition"
                             )
         self._remember(GO_ROLE, database, digest.hexdigest())
+        source = policy["sources"]["go.db"]["source"]
+        release = database.parent / source["file"]
+        with self._open(GO_SOURCE_ROLE, release) as stream:
+            release_digest = hashlib.sha256()
+            for block in iter(lambda: stream.buffer.read(1024 * 1024), b""):
+                release_digest.update(block)
+        if release_digest.hexdigest() != source["sha256"]:
+            raise ValueError("Imported GO release file differs from the reviewed release")
+        self._remember(GO_SOURCE_ROLE, release, release_digest.hexdigest())
         from kg_microbe.utils.go_authority import GoAuthority
 
         expected_authority = GoAuthority.from_statements(
@@ -625,7 +740,7 @@ def _owned_inputs(snapshots):
     return {
         role: identity
         for role, identity in snapshots.items()
-        if role in {POLICY_ROLE, OWL_ROLE, GO_ROLE} or role.startswith(ORIGINAL_INPUT_ROLE_PREFIX)
+        if role in {POLICY_ROLE, OWL_ROLE, GO_ROLE, GO_SOURCE_ROLE} or role.startswith(ORIGINAL_INPUT_ROLE_PREFIX)
     }
 
 
@@ -704,7 +819,7 @@ def _verify_audit_metadata(row, snapshots, *, admission=None):
             raise ValueError("unexpected evidence fields")
         if (
             context["version"] != POLICY_VERSION
-            or not {POLICY_ROLE, OWL_ROLE, GO_ROLE} < context["inputs"].keys()
+            or not {POLICY_ROLE, OWL_ROLE, GO_ROLE, GO_SOURCE_ROLE} < context["inputs"].keys()
             or context["inputs"] != _owned_inputs(snapshots)
         ):
             raise ValueError("missing evidence roles")
@@ -727,9 +842,9 @@ def _verify_audit_metadata(row, snapshots, *, admission=None):
                 raise ValueError("changed native evidence")
         policy_bytes = guard.capture(context["inputs"][POLICY_ROLE]["path"], retain=True)
         policy = load_policy(io.StringIO(policy_bytes.decode("utf-8")))
-        if any(
-            context["inputs"][role]["sha256"] != policy["sources"][name]["sha256"]
-            for role, name in ((OWL_ROLE, "pato.owl"), (GO_ROLE, "go.db"))
+        if (
+            context["inputs"][OWL_ROLE]["sha256"] != policy["sources"]["pato.owl"]["sha256"]
+            or context["inputs"][GO_SOURCE_ROLE]["sha256"] != policy["sources"]["go.db"]["source"]["sha256"]
         ):
             raise ValueError("native evidence differs from reviewed pin")
         original = json.loads(row["original_record_json"], object_pairs_hook=_unique_object)

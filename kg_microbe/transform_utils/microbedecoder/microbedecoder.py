@@ -51,6 +51,7 @@ import json
 import logging
 import shutil
 import zipfile
+import zlib
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
@@ -220,6 +221,15 @@ _GROUP_TO_KS: Dict[str, str] = {
 _PROCESS_SOURCE_COLUMNS = {
     f"{group['group_label']}:type_of_metabolism": group["columns"]["type_of_metabolism"] for group in METABOLISM_GROUPS
 }
+
+
+def _crc32(path: Path) -> int:
+    """Return a file's CRC-32, the checksum a zip records for each member."""
+    value = 0
+    with path.open("rb") as stream:
+        for block in iter(lambda: stream.read(1024 * 1024), b""):
+            value = zlib.crc32(block, value)
+    return value
 
 
 class MicrobeDecoderTransform(Transform):
@@ -464,8 +474,7 @@ class MicrobeDecoderTransform(Transform):
             raise FileNotFoundError(
                 f"MicrobeDecoder database not found at {csv_path}. "
                 "Run `poetry run kg download -t microbedecoder` to fetch it "
-                "(fetches https://github.com/thackmann/MicrobeDecoder/raw/main/"
-                "Shiny/MicrobeDecoder/data/database/database.zip; CC BY 4.0)."
+                "(fetches the database.zip upload pinned in download.yaml; CC BY 4.0)."
             )
 
         assembly_nodes = self.output_dir.parent / "gtdb" / "nodes.tsv"
@@ -1623,11 +1632,15 @@ class MicrobeDecoderTransform(Transform):
         return MICROBEDECODER_RAW_DIR / _CSV_INSIDE_ZIP
 
     def _unzip(self, zip_path: Path) -> Path:
-        """Extract ``database.csv`` from the zip to a sibling location and cache it."""
-        target_dir = zip_path.parent
-        csv_target = target_dir / _CSV_INSIDE_ZIP
-        if csv_target.is_file():
-            return csv_target
+        """
+        Extract ``database.csv`` beside the zip, again whenever it is not the zip's copy.
+
+        The zip is the pinned download (#1420) and the CSV is derived from it. An
+        existing CSV is reused only when its size and CRC-32 match the zip member's,
+        so re-fetching the zip refreshes a stale extraction. The CSV is written
+        atomically: an interrupted extraction never leaves a partial file behind.
+        """
+        csv_target = zip_path.parent / _CSV_INSIDE_ZIP
         with zipfile.ZipFile(zip_path) as zf:
             # Robust: the archive nests the CSV under a directory when
             # GitHub delivers it as a source download. Find the first entry
@@ -1637,8 +1650,16 @@ class MicrobeDecoderTransform(Transform):
                 raise FileNotFoundError(
                     f"{zip_path} does not contain {_CSV_INSIDE_ZIP}; members were {zf.namelist()!r}"
                 )
-            member = members[0]
-            with zf.open(member) as src, open(csv_target, "wb") as dst:
+            member = zf.getinfo(members[0])
+            if (
+                csv_target.is_file()
+                and csv_target.stat().st_size == member.file_size
+                and _crc32(csv_target) == member.CRC
+            ):
+                return csv_target
+            if csv_target.exists():
+                logger.info("[microbedecoder] %s is not the copy in %s; extracting it again", csv_target, zip_path)
+            with zf.open(member) as src, atomic_write(csv_target, "wb") as dst:
                 shutil.copyfileobj(src, dst)
         return csv_target
 

@@ -13,7 +13,7 @@
     "envo.json": {
       "annotation_control": "http://geneontology.org/foo/applies-pattern",
       "edges": 2,
-      "fixture_sha256": "bac6b20b3d8604d445245416ff1d5caa8fdd71095bd6b00aeb27aaf2afa831e5",
+      "fixture_sha256": "0eadfeadf5dd62abd1e0939a015edea140c01d70be4df5aa4aad69001a7d18e7",
       "full_source_bytes": 6818650,
       "full_source_sha256": "c3c288b9d95cf1e62b0146bcb2a365bdbd294b0072bbf2efab8819e5db8fff2b",
       "graph_id": "http://purl.obolibrary.org/obo/envo.json",
@@ -23,7 +23,7 @@
     "mondo.json": {
       "annotation_control": "http://protege.stanford.edu/plugins/owl/protege#defaultLanguage",
       "edges": 188,
-      "fixture_sha256": "2a40c8554a7cfffb987b4867fcd741d07fb2bac9ae9b64bfeec55a13c967dad3",
+      "fixture_sha256": "95b7ab46967c521e0305266b41152671ed03a4a9e285ecb6bb8e2d49c09b97c0",
       "full_source_bytes": 79540107,
       "full_source_sha256": "f3d7ab708cd17cba5477383c78026bfa7f0248fd36d52929087066527e9b3d6c",
       "graph_id": "http://purl.obolibrary.org/obo/mondo.owl",
@@ -32,21 +32,21 @@
     },
     "pato.json": {
       "edges": 86,
-      "fixture_sha256": "3e721264730158077ec5046d81abeeaea366aacaede00c7444f71145d3404439",
+      "fixture_sha256": "48c01499ff73c41dcd511a2fad8c1c84b759770eb921e522b14425a3a739f7b6",
       "full_source_bytes": 10075199,
       "full_source_sha256": "b129f5f5e968e4a8675bb9d6cb3a40668f1c5a2783bef81b30c86c563ce5d46d",
       "nodes": 105
     },
     "ro.json": {
       "edges": 0,
-      "fixture_sha256": "7952cc69ac2d0cf71a958a4cc21b4fda80b875ba8524ec2cfc52f3ff4c12eb38",
+      "fixture_sha256": "48344cca7591b29d0018753a3d44609d808beb3a1d09946599c8532764d7f472",
       "full_source_bytes": 874317,
       "full_source_sha256": "1ed089b1cb33d5ac9d5afee10ba98f79689af9e3b40e9940658625c09785748c",
       "nodes": 14
     },
     "uberon.json": {
       "edges": 278,
-      "fixture_sha256": "d0f8eaf20deccd8faa68f8a8a861e973fb196dd3a93767cf92abfd0847049fe8",
+      "fixture_sha256": "a0c4eb3a26e6b80769cfd6b940e38b9bcb39b44b566d176773e1ef9e69d61430",
       "full_source_bytes": 39224568,
       "full_source_sha256": "87a892da0544a82f41f0a8b2b52f7ee705ec6d5ca2c102e7d439a7086d79f428",
       "nodes": 337

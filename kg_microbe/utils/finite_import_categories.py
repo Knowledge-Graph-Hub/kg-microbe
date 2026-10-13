@@ -7,6 +7,7 @@ The existing OBO:COB graph identifiers are preserved, not equated with ChEBI.
 """
 
 import hashlib
+import io
 import json
 import re
 from collections import defaultdict, deque
@@ -19,9 +20,17 @@ from kg_microbe.transform_utils.constants import (
     PHYSICAL_ENTITY_CATEGORY,
 )
 from kg_microbe.utils.ontology_metadata import obograph_is_deprecated
+from kg_microbe.utils.release_binding import (
+    canonical_digest,
+    graph_release,
+    is_release_source,
+    read_bound_authority,
+)
 
 IMPORT_DISPOSITIONS_FILE = Path(__file__).resolve().parents[2] / "mappings/finite_import_category_dispositions.json"
 FINITE_ID_SET_SHA256 = "ae53a95abe9bcf5f9298f02e4f6ae93d7d39233462619e122c873951628d56cb"
+# Version 2 binds each authority to its release and reviewed decisions, not its file bytes (#1420).
+POLICY_VERSION = 2
 _OBO = "http://purl.obolibrary.org/obo/"
 _COB_IDS = {"OBO:COB_0000011", "OBO:COB_0000013", "OBO:COB_0000080"}
 _PCO_IDS = {"PCO:0000003", "PCO:0000004"}
@@ -52,7 +61,7 @@ def load_import_category_policy(stream):
     if (
         not isinstance(policy, dict)
         or set(policy) != {"version", "finite_id_set_sha256", "authorities", "records"}
-        or policy.get("version") != 1
+        or policy.get("version") != POLICY_VERSION
         or policy.get("finite_id_set_sha256") != FINITE_ID_SET_SHA256
         or not isinstance(policy.get("records"), dict)
         or len(policy["records"]) != 80
@@ -66,9 +75,12 @@ def load_import_category_policy(stream):
     for filename, authority in policy["authorities"].items():
         if (
             not isinstance(authority, dict)
-            or set(authority) != {"sha256", "graph_id"}
-            or not re.fullmatch(r"[0-9a-f]{64}", authority.get("sha256", ""))
+            or set(authority) != {"graph_id", "release", "source", "decisions_sha256"}
             or authority.get("graph_id") != _OBO + filename.replace(".json", ".owl")
+            or not isinstance(authority.get("release"), str)
+            or not authority["release"].startswith(_OBO)
+            or not is_release_source(authority.get("source"))
+            or not re.fullmatch(r"[0-9a-f]{64}", authority.get("decisions_sha256", ""))
         ):
             raise ValueError(f"Invalid finite import native authority: {filename}")
     for identifier, record in policy["records"].items():
@@ -117,19 +129,35 @@ class ImportCategoryEvidence:
     disposition: str = "finite_asserted_native_import"
 
 
+def decisions_digest(decisions):
+    """Digest the reviewed decisions: each record's category, root paths and supporting axioms."""
+    return canonical_digest(
+        [
+            [identifier, evidence.category, evidence.root_paths, evidence.supporting_axioms]
+            for identifier, evidence in sorted(decisions.items())
+        ]
+    )
+
+
 def load_import_category_evidence(policy, filename, native_stream):
-    """Bind complete consumed native bytes and inspect all live same-module ancestors."""
+    """
+    Inspect all live same-module ancestors of the reviewed records in one native authority.
+
+    The JSON must declare the reviewed release, and the decisions it yields must be the
+    reviewed ones. Its own bytes are not pinned: the caller binds the release file it was
+    converted from (#1420).
+    """
     authority = policy["authorities"][filename]
     payload = native_stream.buffer.read() if hasattr(native_stream, "buffer") else native_stream.read()
     if isinstance(payload, str):
         payload = payload.encode("utf-8")
-    if hashlib.sha256(payload).hexdigest() != authority["sha256"]:
-        raise ValueError(f"Finite import native authority digest changed: {filename}")
     document = json.loads(payload, object_pairs_hook=_unique_object)
     graphs = document.get("graphs")
     if not isinstance(graphs, list) or len(graphs) != 1 or graphs[0].get("id") != authority["graph_id"]:
         raise ValueError(f"Missing or unexpected finite import native graph: {filename}")
     graph = graphs[0]
+    if graph_release(graph) != authority["release"]:
+        raise ValueError(f"Unreviewed finite import native release: {filename}")
     nodes, parents, axioms = {}, defaultdict(set), defaultdict(set)
     for node in graph["nodes"]:
         identifier = node["id"]
@@ -183,8 +211,10 @@ def load_import_category_evidence(policy, filename, native_stream):
             )
         )
         decisions[identifier] = ImportCategoryEvidence(
-            identifier, record["category"], filename, authority["sha256"], paths, supporting
+            identifier, record["category"], filename, authority["source"]["sha256"], paths, supporting
         )
+    if decisions_digest(decisions) != authority["decisions_sha256"]:
+        raise ValueError(f"Finite import decisions differ from the reviewed release content: {filename}")
     return decisions
 
 
@@ -219,8 +249,7 @@ class FiniteImportCategoryAuthority:
             return None
         filename = record["authority_file"]
         if filename not in self._decisions:
-            path = self.raw_dir / filename
-            self.source_paths.add(path)
-            with self.opener(path) as stream:
-                self._decisions[filename] = load_import_category_evidence(self._policy, filename, stream)
+            source = self._policy["authorities"][filename]["source"]
+            payload = read_bound_authority(self.raw_dir, filename, source, self.opener, self.source_paths)
+            self._decisions[filename] = load_import_category_evidence(self._policy, filename, io.BytesIO(payload))
         return self._decisions[filename][identifier]

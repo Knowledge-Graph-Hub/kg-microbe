@@ -5,6 +5,7 @@ import csv
 import hashlib
 import io
 import json
+import shutil
 from collections import Counter
 from pathlib import Path
 
@@ -26,13 +27,17 @@ COHORT = sorted(POLICY["records"])
 
 
 def _policy():
-    """Bind faithful small excerpts explicitly; never pretend they are whole production files."""
+    """
+    Bind faithful small excerpts as their own release files; never pretend they are whole production files.
+
+    The excerpts declare the reviewed release and yield the reviewed decisions, so only the
+    release-file binding is substituted (#1420).
+    """
     policy = finite.load_import_category_policy(io.StringIO(json.dumps(POLICY)))
     for filename, authority in policy["authorities"].items():
         origin = ORIGIN["native_manifest"][filename]
-        assert authority["sha256"] == origin["source"]["sha256"]
         assert hashlib.sha256((NATIVE / filename).read_bytes()).hexdigest() == origin["fixture_sha256"]
-        authority["sha256"] = origin["fixture_sha256"]
+        authority["source"] = {"file": filename, "sha256": origin["fixture_sha256"]}
     return policy
 
 
@@ -176,22 +181,40 @@ def test_incomplete_or_unreviewed_policy_refuses(change):
     elif change == "wrong_iri":
         record["native_iri"] = "http://example.org/foreign"
     elif change == "wrong_hash":
-        policy["authorities"]["foodon.json"]["sha256"] = ""
+        policy["authorities"]["foodon.json"]["decisions_sha256"] = ""
     elif change == "missing_path":
         record["ancestor_paths"].clear()
     text = json.dumps(policy)
     if change == "duplicate":
-        text = text.replace('"version": 1', '"version": 1, "version": 1')
+        text = text.replace('"version": 2', '"version": 2, "version": 2')
     elif change == "truncated":
         text = text[:-8]
     with pytest.raises(ValueError):
         finite.load_import_category_policy(io.StringIO(text))
 
 
+def test_a_redundant_native_axiom_changes_the_reviewed_decisions():
+    """With no byte pin left, the decisions digest alone catches an added axiom between reviewed classes (#1517)."""
+    filename = "foodon.json"
+    policy = _policy()
+    native = json.loads((NATIVE / filename).read_text())
+    graph = native["graphs"][0]
+    identifier = sorted(key for key, record in policy["records"].items() if record["authority_file"] == filename)[0]
+    iri = policy["records"][identifier]["native_iri"]
+    direct = {edge["obj"] for edge in graph["edges"] if edge["sub"] == iri and edge["pred"] == "is_a"}
+    target = next(
+        ancestor
+        for ancestor in sorted(policy["records"][identifier]["ancestor_paths"])
+        if ancestor != iri and ancestor not in direct
+    )
+    graph["edges"].append({"sub": iri, "pred": "is_a", "obj": target})
+    with pytest.raises(ValueError, match="Finite import decisions differ"):
+        _decisions(filename, policy=policy, native=json.dumps(native))
+
+
 @pytest.mark.parametrize(
     "change",
     [
-        "bytes",
         "label",
         "metadata",
         "missing",
@@ -207,8 +230,8 @@ def test_incomplete_or_unreviewed_policy_refuses(change):
         "wrong_graph",
     ],
 )
-def test_bad_native_snapshot_refuses_even_if_test_rebinds_fullfile_hash(change):
-    """Live declared native identity and complete ancestry are checked in addition to bytes."""
+def test_bad_native_snapshot_is_refused(change):
+    """Live declared native identity, complete ancestry and the reviewed decisions are checked."""
     filename = "foodon.json"
     policy = _policy()
     native = json.loads((NATIVE / filename).read_text())
@@ -244,11 +267,54 @@ def test_bad_native_snapshot_refuses_even_if_test_rebinds_fullfile_hash(change):
         graph["nodes"].append({"id": "http://purl.obolibrary.org/obo/BFO_0000003", "type": "CLASS"})
     elif change == "wrong_graph":
         graph["id"] = "http://example.org/other.owl"
-    text = json.dumps(native)
-    if change != "bytes":
-        policy["authorities"][filename]["sha256"] = hashlib.sha256(text.encode()).hexdigest()
     with pytest.raises(ValueError):
-        _decisions(filename, policy=policy, native=text)
+        _decisions(filename, policy=policy, native=json.dumps(native))
+
+
+def test_reserialized_converted_json_keeps_the_reviewed_decisions():
+    """A different serialization of the same reviewed content is accepted; a whole-file pin refused it (#1420)."""
+    filename = "foodon.json"
+    original = _decisions(filename)
+    reserialized = json.dumps(json.loads((NATIVE / filename).read_text()), indent=4, sort_keys=True)
+    assert reserialized != (NATIVE / filename).read_text()
+    assert _decisions(filename, native=reserialized) == original
+
+
+def _release_bound(tmp_path, release):
+    """Stage the FOODON excerpt with an OWL release file beside it, bound the production way."""
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    shutil.copyfile(NATIVE / "foodon.json", raw / "foodon.json")
+    policy = _policy()
+    owl = b'<?xml version="1.0"?>\n<!-- stand-in for the pinned foodon.owl release -->\n'
+    policy["authorities"]["foodon.json"]["source"] = {"file": "foodon.owl", "sha256": hashlib.sha256(owl).hexdigest()}
+    if release is not None:
+        (raw / "foodon.owl").write_bytes(owl if release == "pinned" else owl + b"<!-- another release -->\n")
+    path = tmp_path / "policy.json"
+    path.write_text(json.dumps(policy))
+    opened = []
+
+    def opener(target):
+        """Serve the rebound fixture policy and record every consumed input."""
+        opened.append(Path(target).name)
+        return (path if Path(target) == finite.IMPORT_DISPOSITIONS_FILE else Path(target)).open(encoding="utf-8")
+
+    return finite.FiniteImportCategoryAuthority(raw, opener=opener), opened
+
+
+def test_the_owl_release_file_is_read_and_bound(tmp_path):
+    """The release file the JSON was converted from is read as a consumed input and must match."""
+    authority, opened = _release_bound(tmp_path, "pinned")
+    assert authority.evidence_for(COHORT[0]).category == finite.PHYSICAL_ENTITY_CATEGORY
+    assert opened[-2:] == ["foodon.json", "foodon.owl"]
+
+
+@pytest.mark.parametrize("release", ["changed", None], ids=["changed", "missing"])
+def test_a_different_or_missing_owl_release_is_refused(tmp_path, release):
+    """Reviewed decisions in the JSON cannot stand in for an unreviewed release file."""
+    authority, _ = _release_bound(tmp_path, release)
+    with pytest.raises((ValueError, FileNotFoundError)):
+        authority.evidence_for(COHORT[0])
 
 
 def test_rewritten_policy_paths_cannot_authenticate_material_quality_conflict():
@@ -263,10 +329,8 @@ def test_rewritten_policy_paths_cannot_authenticate_material_quality_conflict():
         if record["authority_file"] == filename:
             graph["edges"].append({"sub": record["native_iri"], "pred": "is_a", "obj": root})
             record["ancestor_paths"][root] = [record["native_iri"], root]
-    text = json.dumps(native)
-    policy["authorities"][filename]["sha256"] = hashlib.sha256(text.encode()).hexdigest()
     with pytest.raises(ValueError, match="Contradictory"):
-        _decisions(filename, policy=policy, native=text)
+        _decisions(filename, policy=policy, native=json.dumps(native))
 
 
 def _source(tmp_path, monkeypatch, provider):
@@ -424,7 +488,7 @@ def test_repeated_finalization_is_stable_and_new_run_rechecks_evidence(tmp_path,
     assert (producer.output_node_file.read_bytes(), producer.output_edge_file.read_bytes()) == expected
     path = producer.input_base_dir / "foodon.json"
     path.write_text(path.read_text() + " ")
-    with pytest.raises(ValueError, match="digest changed"):
+    with pytest.raises(ValueError, match="Unreviewed release file"):
         SourceCategoryAuthority(producer.input_base_dir, opener=lambda path: path.open()).normalize(
             {"id": COHORT[0], "category": "biolink:OntologyClass"}
         )

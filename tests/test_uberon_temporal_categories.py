@@ -2,6 +2,7 @@
 
 import copy
 import csv
+import dataclasses
 import hashlib
 import io
 import json
@@ -13,6 +14,7 @@ import yaml
 
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils import uberon_temporal_categories as temporal
+from kg_microbe.utils.graph_canonicalization import compact_identifier
 from kg_microbe.utils.ontology_resolution import uberon_category
 from kg_microbe.utils.source_category_authority import SourceCategoryAuthority
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, graph_rows, verify_finalized_source_files
@@ -24,12 +26,16 @@ COHORT = ORIGIN["cohort_ids"]
 
 
 def _policy():
-    """Use real curated decisions with an explicitly pinned offline native excerpt."""
+    """
+    Use real curated decisions with an explicitly bound offline native excerpt.
+
+    The excerpt declares the reviewed release and yields the reviewed decisions, so only
+    the release-file binding is substituted: the excerpt stands for its own release (#1420).
+    """
     with temporal.TEMPORAL_DISPOSITIONS_FILE.open() as stream:
         policy = temporal.load_temporal_category_policy(stream)
-    assert policy["native_sha256"] == ORIGIN["native_sha256"]
     assert hashlib.sha256((FIXTURE / "uberon.json").read_bytes()).hexdigest() == ORIGIN["fixture_sha256"]
-    policy["native_sha256"] = ORIGIN["fixture_sha256"]
+    policy["native_source"] = {"file": "uberon.json", "sha256": ORIGIN["fixture_sha256"]}
     return policy
 
 
@@ -124,16 +130,84 @@ def test_invalid_or_contradictory_native_evidence_aborts(change):
                 "obj": "http://purl.obolibrary.org/obo/UBERON_0000105",
             }
         )
-    text = json.dumps(native)
-    policy["native_sha256"] = hashlib.sha256(text.encode()).hexdigest()
     with pytest.raises(ValueError, match="ancestry|class|witness"):
-        _decisions(policy, text)
+        _decisions(policy, json.dumps(native))
 
 
-def test_authority_byte_drift_and_unreviewed_substantive_types_abort():
-    """Native drift cannot be repaired by restamping; unexpected existing types require review."""
-    with pytest.raises(ValueError, match="digest changed"):
-        _decisions(native=(FIXTURE / "uberon.json").read_text() + " ")
+OBO = "http://purl.obolibrary.org/obo/"
+
+
+@pytest.mark.parametrize("change", ["dropped_parent", "gained_parent", "new_life_stage", "second_graph_release"])
+def test_native_changes_within_the_release_are_refused(change):
+    """Only the reviewed native closures and life-stage inventory pass, not just the decisions (#1515)."""
+    policy = _policy()
+    native = json.loads((FIXTURE / "uberon.json").read_text())
+    graph = native["graphs"][0]
+    if change == "dropped_parent":
+        # UBERON:0035943 is asserted but on no reviewed witness path, so only the closure binds it.
+        required = {parent for path in policy["records"]["UBERON:0035944"]["required_paths"] for parent in path[1:]}
+        unneeded = [
+            edge
+            for edge in graph["edges"]
+            if edge["sub"] == OBO + "UBERON_0035944"
+            and edge["pred"] == "is_a"
+            and compact_identifier(edge["obj"]) not in required
+        ]
+        assert [compact_identifier(edge["obj"]) for edge in unneeded] == ["UBERON:0035943"]
+        graph["edges"] = [edge for edge in graph["edges"] if edge not in unneeded]
+    elif change == "gained_parent":
+        graph["edges"].append({"sub": OBO + "UBERON_0000068", "pred": "is_a", "obj": OBO + "UBERON_0000066"})
+    elif change == "new_life_stage":
+        graph["nodes"].append({"id": OBO + "UBERON_9999999", "type": "CLASS", "lbl": "unreviewed life stage"})
+        graph["edges"].append({"sub": OBO + "UBERON_9999999", "pred": "is_a", "obj": OBO + "UBERON_0000105"})
+    else:
+        native["graphs"].append(
+            {"id": OBO + "uberon/other.owl", "meta": {"version": OBO + "uberon/releases/2099-01-01/uberon.owl"}}
+        )
+    message = "release" if change == "second_graph_release" else "native ancestry differs from the reviewed"
+    with pytest.raises(ValueError, match=message):
+        _decisions(policy, json.dumps(native))
+
+
+def _bound(tmp_path, native, source):
+    """Load through the release-file binding from a temporary raw directory."""
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    (raw / "uberon.json").write_text(native)
+    policy = _policy()
+    if source is not None:
+        (raw / source[0]).write_bytes(source[1])
+        policy["native_source"] = {"file": source[0], "sha256": hashlib.sha256(source[1]).hexdigest()}
+    paths = set()
+    decisions = temporal.load_bound_temporal_evidence(
+        policy, raw, lambda target: Path(target).open(encoding="utf-8"), paths
+    )
+    return decisions, sorted(item.name for item in paths)
+
+
+def test_reserialized_converted_json_keeps_the_reviewed_decisions():
+    """A different serialization of the same reviewed content is accepted; a whole-file pin refused it (#1420)."""
+    native = (FIXTURE / "uberon.json").read_text()
+    reserialized = json.dumps(json.loads(native), indent=4)
+    assert reserialized != native
+    assert _decisions(native=reserialized) == _decisions()
+
+
+def test_the_owl_release_file_is_read_and_bound(tmp_path):
+    """The release file the JSON was converted from is read as a consumed input and must match."""
+    owl = b'<?xml version="1.0"?>\n<!-- stand-in for the pinned uberon.owl release -->\n'
+    decisions, read = _bound(tmp_path, (FIXTURE / "uberon.json").read_text(), ("uberon.owl", owl))
+    assert read == ["uberon.json", "uberon.owl"]
+    assert {item.authority_sha256 for item in decisions.values()} == {hashlib.sha256(owl).hexdigest()}
+    assert {key: dataclasses.replace(item, authority_sha256="") for key, item in decisions.items()} == {
+        key: dataclasses.replace(item, authority_sha256="") for key, item in _decisions().items()
+    }
+
+
+def test_authority_byte_drift_and_unreviewed_substantive_types_abort(tmp_path):
+    """Release-file drift cannot be repaired by restamping; unexpected existing types require review."""
+    with pytest.raises(ValueError, match="Unreviewed release file"):
+        _bound(tmp_path, (FIXTURE / "uberon.json").read_text() + " ", None)
     decision = _decisions()["UBERON:0000068"]
     assert (
         temporal.apply_temporal_category("biolink:AnatomicalEntity|biolink:OntologyClass", decision)
@@ -158,7 +232,7 @@ def test_policy_drift_requires_explicit_finite_review(change):
         policy["native_file"] = "pato.json"
     text = json.dumps(policy)
     if change == "duplicate":
-        text = text.replace('"version": 1', '"version": 1, "version": 1')
+        text = text.replace('"version": 2', '"version": 2, "version": 2')
     with pytest.raises(ValueError):
         temporal.load_temporal_category_policy(io.StringIO(text))
 

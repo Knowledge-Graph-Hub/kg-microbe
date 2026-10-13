@@ -52,10 +52,15 @@ source, plain HTTPS download).
 poetry run kg download -t microbedecoder
 ```
 
-Fetches `https://github.com/thackmann/MicrobeDecoder/raw/main/Shiny/MicrobeDecoder/data/database/database.zip`
-into `data/raw/microbedecoder_database.zip`. On first `kg transform`
-run the transform extracts the archive into
-`data/raw/microbedecoder/database.csv` (~57 MB, ~27 K rows).
+Fetches the 2025-12-18 upload of `Shiny/MicrobeDecoder/data/database/database.zip`,
+pinned to commit `ff90e9aa` in `download.yaml`, into
+`data/raw/microbedecoder_database.zip`. The reviewed join and crosswalk policies
+bind that upload's `database.csv`; upstream `main` changed on 2026-09-08 and
+fails them (#1420). The transform extracts `database.csv` (~57 MB, ~27 K rows)
+next to the zip, as `data/raw/database.csv`, and extracts it again whenever the
+existing file is not the zip's copy, so re-fetching the zip refreshes it. A zip
+downloaded before the pin, with no record in `data/raw/.download_manifest.json`,
+is not re-fetched on its own: delete it and run `kg download -t microbedecoder`.
 
 ### LPSN dependency
 

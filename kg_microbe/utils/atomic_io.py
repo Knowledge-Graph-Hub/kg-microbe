@@ -96,14 +96,15 @@ def gunzip_beside(path: Union[str, Path], *, root: Union[str, Path, None] = None
     even after a newer archive is downloaded; the release preflight reports an ``ncit.db``
     whose size is not the archive's unpacked size (#1536). Two readers that both find
     ``path`` missing both unpack it, and the later copy replaces the earlier one. A reader
-    that bound the earlier copy, as the NCIT category authority does, then refuses the
-    replaced file as changed (#1537). A reader that only opened the earlier copy keeps
-    reading it with a standard SQLite build, but not with macOS's system SQLite
-    (``/usr/lib/libsqlite3.dylib``): once the process has loaded the SystemConfiguration
-    framework, as importing oaklib does, any read of the replaced file that misses the page
-    cache fails with ``SQLITE_IOERR_VNODE``, "disk I/O error" (#1580). Partial
-    files that a killed unpack left more than a day ago are swept whenever ``path`` is
-    found or published, so a later run's early return no longer strands them (#1558).
+    that bound the earlier copy, as both NCIT readers do, fails closed: it refuses the
+    replaced file as changed, unless a read has already failed (#1537). A reader that only
+    opened it, as ``ontologies_stubs`` opens ``bto.db``, depends on the SQLite library.
+    Homebrew's SQLite 3.53.4 keeps reading the earlier copy. macOS's system SQLite (3.51.0
+    on macOS 26.5) does not once the process has used libdispatch, as importing oaklib
+    does. Reads of the replaced file then fail with ``SQLITE_IOERR_VNODE``, "disk I/O
+    error" (#1580). Partial files that a killed unpack left more than a day ago are swept
+    whenever ``path`` is found or published, so a later run's early return no longer
+    strands them (#1558).
 
     :param path: The uncompressed file the caller wants.
     :param root: When given, both files must resolve inside it; a link elsewhere is refused.

@@ -10,7 +10,7 @@ import pytest
 
 from kg_microbe.transform import DATA_SOURCES, LazyTransform, TransformBatchError, transform
 from kg_microbe.transform_utils.transform import Transform
-from kg_microbe.utils.transform_fingerprint import FINGERPRINT_FILE
+from kg_microbe.utils.transform_fingerprint import FINGERPRINT_FILE, write_fingerprint
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 ISO = "mappings/isolation_source_to_ontology.tsv"
@@ -680,14 +680,28 @@ class BatchIsolationTest(TestCase):
                 transform(None, None, sources=["dep"])
         self.assertEqual(self.log, [])
 
+    def _completed(self, name):
+        """Record a real completion marker for ``name`` under the scratch root."""
+        (self.base / name).mkdir(parents=True, exist_ok=True)
+        write_fingerprint(self.base / name, Path(__file__).parent, Path(__file__).parents[1], ())
+        return self.base / name / FINGERPRINT_FILE
+
     def test_a_completed_upstream_lets_its_dependent_run_alone(self):
         """The completion marker is the evidence the check asks for, as freshness and the merge do."""
+        self._completed("up")
+        with mock.patch.dict(DATA_SOURCES, self._upstream_and_dependent(), clear=True):
+            transform(None, self.base, sources=["dep"])
+        self.assertEqual(self.log, ["dep"])
+
+    def test_an_unreadable_upstream_marker_is_not_a_completed_output(self):
+        """Freshness and the merge reject `{}` as a marker, so the preflight must too (#1568)."""
         marker = self.base / "up" / FINGERPRINT_FILE
         marker.parent.mkdir(parents=True)
         marker.write_text("{}")
         with mock.patch.dict(DATA_SOURCES, self._upstream_and_dependent(), clear=True):
-            transform(None, self.base, sources=["dep"])
-        self.assertEqual(self.log, ["dep"])
+            with pytest.raises(FileNotFoundError, match="absent or unreadable"):
+                transform(None, self.base, sources=["dep"])
+        self.assertEqual(self.log, [])
 
     def test_explicit_selections_run_upstream_first_whatever_order_they_were_named_in(self):
         """`-s dep -s up` must not build dep against up's previous output (#1554)."""
@@ -717,7 +731,7 @@ class BatchIsolationTest(TestCase):
                 with pytest.raises(TransformBatchError) as excinfo:
                     transform(None, self.base, sources=["up", "dep"])
         self.assertEqual(self.log, ["up"])
-        self.assertIn("dep: needs a completed up output", str(excinfo.value))
+        self.assertIn("dep: up ran earlier in this batch but recorded no usable completion marker", str(excinfo.value))
 
     def _ontologies_and_dependent(self):
         """Register an ontologies stand-in that can also run one ontology, and a source that declares it."""
@@ -742,9 +756,7 @@ class BatchIsolationTest(TestCase):
 
     def test_a_single_ontology_with_a_dependent_and_no_full_rebuild_is_refused_before_it_runs(self):
         """`-s ec -s dep` would remove the marker dep needs, then build dep on part of it (#1564)."""
-        marker = self.base / "ontologies" / FINGERPRINT_FILE
-        marker.parent.mkdir(parents=True)
-        marker.write_text("{}")
+        marker = self._completed("ontologies")
         with mock.patch.dict(DATA_SOURCES, self._ontologies_and_dependent(), clear=True):
             with pytest.raises(FileNotFoundError, match="dep: .*single ontology selected in this run"):
                 transform(None, self.base, sources=["dep", "ec"])
@@ -832,7 +844,7 @@ class SingleOntologySourceTest(TestCase):
 
         return FakeOntologies
 
-    def test_an_ontology_name_runs_only_that_ontology_and_leaves_the_fingerprint_alone(self):
+    def test_an_ontology_name_runs_only_that_ontology_and_withdraws_the_directory_marker(self):
         """One ontology's file is refreshed; the directory-wide marker is not rewritten to claim the rest are."""
         calls = []
         with (
@@ -890,7 +902,7 @@ class SingleOntologySourceTest(TestCase):
             mock.patch("kg_microbe.transform._ontology_map", return_value={"ec": "ec.json"}),
         ):
             with pytest.raises(TransformBatchError) as excinfo:
-                transform(None, None, sources=["gold", "ontologies", "ec"])
+                transform(None, self.base, sources=["gold", "ontologies", "ec"])
         self.assertEqual(calls, ["ec.json", None])
         self.assertEqual(log, [])
         self.assertEqual(excinfo.value.skipped, {"gold": ["ontologies"]})
@@ -903,7 +915,7 @@ class SingleOntologySourceTest(TestCase):
             mock.patch("kg_microbe.transform._ontology_map", return_value={"ec": "ec.json"}),
         ):
             with pytest.raises(TransformBatchError) as excinfo:
-                transform(None, None, sources=["gold", "ontologies", "ec"])
+                transform(None, self.base, sources=["gold", "ontologies", "ec"])
         self.assertEqual(calls, ["ec.json", None])
         self.assertEqual(log, ["gold"])
         self.assertEqual(set(excinfo.value.failed), {"ec"})

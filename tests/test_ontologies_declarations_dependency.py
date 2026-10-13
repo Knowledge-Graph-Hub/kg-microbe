@@ -1,6 +1,7 @@
 """Source finalization reads the ontologies output only for a source that declares it (#1511)."""
 
 import importlib.util
+import json
 import sys
 from pathlib import Path
 
@@ -75,6 +76,19 @@ def test_a_source_that_does_not_declare_ontologies_reads_nothing_beside_it(tmp_p
 def test_a_declaring_source_reads_the_named_declarations_and_records_them(tmp_path):
     """Named rows count as declared, and the files read become consumed inputs."""
     path = _ontologies_output(tmp_path)
+    used = set()
+    assert _dependency_declarations(_Dependent(tmp_path, "gtdb"), used) == {"CHEBI:2509"}
+    assert used == {path}
+
+
+def test_with_a_whole_record_only_its_node_files_are_read(tmp_path):
+    """The merge gate validates the record's members; a node file left beside them is not counted (#1568)."""
+    path = _ontologies_output(tmp_path)
+    (tmp_path / "ontologies" / "stray_nodes.tsv").write_text(
+        "id\tcategory\tname\nCHEBI:60004\tbiolink:ChemicalEntity\tmixture\n"
+    )
+    record = {"version": 2, "members": {"chebi_nodes.tsv": {"bytes": 0, "sha256": ""}}}
+    (tmp_path / "ontologies" / "source_finalization.json").write_text(json.dumps(record))
     used = set()
     assert _dependency_declarations(_Dependent(tmp_path, "gtdb"), used) == {"CHEBI:2509"}
     assert used == {path}

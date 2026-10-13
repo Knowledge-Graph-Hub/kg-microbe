@@ -5,7 +5,7 @@ import traceback
 from functools import cached_property
 from importlib import import_module
 from pathlib import Path
-from typing import Any, List, Optional
+from typing import Any, Iterable, List, Optional
 
 from kg_microbe.transform_utils.constants import (
     BACDIVE,
@@ -31,6 +31,7 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.utils.transform_fingerprint import (
     FINGERPRINT_FILE,
     declared_data_inputs,
+    read_fingerprint,
     resolve_data_input,
     write_fingerprint,
 )
@@ -253,7 +254,9 @@ def _upstream_marker(source: str, upstream: str, output_dir: Optional[Path]) -> 
     return None if base is None else Path(base) / upstream / FINGERPRINT_FILE
 
 
-def _missing_upstream_outputs(runnable: List[str], selected: List[str], output_dir: Optional[Path]) -> List[str]:
+def _missing_upstream_outputs(
+    runnable: List[str], selected: List[str], output_dir: Optional[Path], ran: Iterable[str] = ()
+) -> List[str]:
     """
     Return ``"source: message"`` for each declared upstream that this run neither builds nor finds built.
 
@@ -265,6 +268,10 @@ def _missing_upstream_outputs(runnable: List[str], selected: List[str], output_d
     selected in the same run runs first and is checked again just before the
     source starts. A single ontology removes the ontologies marker, so it
     counts as removing that output unless ``ontologies`` runs after it (#1564).
+    Only a marker the freshness check and the merge can read counts (#1568).
+
+    :param ran: Sources that already ran in this batch, so a missing marker
+        is blamed on the upstream that failed to record it.
     """
     withdrawn = {ONTOLOGIES} if any(name not in DATA_SOURCES for name in selected) else set()
     missing = []
@@ -279,10 +286,17 @@ def _missing_upstream_outputs(runnable: List[str], selected: List[str], output_d
                 )
                 continue
             marker = _upstream_marker(source, upstream, output_dir)
-            if marker is not None and not marker.is_file():
+            if marker is None or read_fingerprint(marker.parent) is not None:
+                continue
+            if upstream in ran:
+                missing.append(
+                    f"{source}: {upstream} ran earlier in this batch but recorded no usable completion marker "
+                    f"at {marker} (see its log above); rerun `kg transform -s {upstream}`"
+                )
+            else:
                 missing.append(
                     f"{source}: needs a completed {upstream} output, which it declares in TRANSFORM_INPUTS, "
-                    f"but {marker} is absent; run `kg transform -s {upstream}` first, or select both"
+                    f"but {marker} is absent or unreadable; run `kg transform -s {upstream}` first, or select both"
                 )
     return missing
 
@@ -313,7 +327,11 @@ def _run_one(source: str, input_dir: Optional[Path], output_dir: Optional[Path],
     # Deliberately no fingerprint: the marker covers the whole ontologies
     # directory, and one refreshed ontology does not make the other thirteen
     # current. The previous whole-directory marker has been invalidated.
-    print(f"[transform] {source}: done — {written} (single ontology; ontologies fingerprint not updated)", flush=True)
+    print(
+        f"[transform] {source}: done — {written} (single ontology; the ontologies marker stays withdrawn "
+        "until a full `kg transform -s ontologies`)",
+        flush=True,
+    )
 
 
 def _invalidate_fingerprint(transform_obj):
@@ -446,11 +464,12 @@ def transform(
             unavailable.add(source)
             print(f"[transform] {source}: skipped — upstream {', '.join(upstream)} did not complete", flush=True)
             continue
-        # Checked again now, not only before the batch: an earlier source in this
-        # run may have left an upstream without its marker, as a single ontology
-        # does (#1564). Failing here costs seconds; finalization would fail
-        # only after the producer had run.
-        absent = _missing_upstream_outputs([source], [], output_dir) if source in DATA_SOURCES else []
+        # Checked again now, not only before the batch: an upstream that ran
+        # earlier in this batch may not have recorded its marker. Finalization
+        # does not judge whether the upstream is complete, so without this check
+        # the source would build on whatever is there and claim success
+        # (#1564, #1568).
+        absent = _missing_upstream_outputs([source], [], output_dir, ran=sources) if source in DATA_SOURCES else []
         if absent:
             failed[source] = FileNotFoundError("; ".join(absent))
             unavailable.add(source)
@@ -462,8 +481,10 @@ def transform(
         print(f"[transform] {source}: starting", flush=True)
         try:
             _run_one(source, input_dir, output_dir, show_status)
-            # A failed single ontology marks `ontologies` unavailable; a later
-            # successful ontologies run in the same batch restores it (#1564).
+            # Defence in depth with the add below: a failed single ontology marks
+            # `ontologies` unavailable, and a later successful ontologies run in
+            # the same batch restores it. The sort, the preflight and the marker
+            # recheck already prevent a dependent from building without it (#1564).
             unavailable.discard(source)
         except Exception as exc:  # noqa: BLE001 - isolate one source; BaseException still aborts the batch
             failed[source] = exc

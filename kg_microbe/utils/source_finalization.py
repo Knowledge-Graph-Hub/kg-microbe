@@ -591,12 +591,29 @@ def _dependency_declarations(transform, used_inputs):
     ontology_dir = Path(transform.output_base_dir) / ONTOLOGIES
     found = set()
     quoting = csv.QUOTE_NONE if (ontology_dir / FINALIZATION_FILE).is_file() else csv.QUOTE_MINIMAL
-    for path in sorted(ontology_dir.glob("*nodes.tsv")):
+    for path in _ontology_node_files(ontology_dir):
         used_inputs.add(path)
         for row in graph_rows(path, quoting=quoting):
             if row.get(NAME_COLUMN):
                 found.add(row[ID_COLUMN])
     return found
+
+
+def _ontology_node_files(ontology_dir):
+    """
+    Return the ontology node files whose declarations a dependent source may count.
+
+    With a whole-source record, those are the node files it lists, which are
+    what the merge gate validates; a node file left beside them is not read
+    (#1568). Without one, which fixtures and older outputs have, every node file.
+    """
+    try:
+        with (ontology_dir / FINALIZATION_FILE).open(encoding="utf-8") as stream:
+            members = json.load(stream).get("members") or {}
+    except (OSError, ValueError, AttributeError):
+        return sorted(ontology_dir.glob("*nodes.tsv"))
+    paths = (ontology_dir / name for name in sorted(members) if name.endswith("nodes.tsv"))
+    return [path for path in paths if path.is_file()]
 
 
 def _bind_finalization_members(transform, names):

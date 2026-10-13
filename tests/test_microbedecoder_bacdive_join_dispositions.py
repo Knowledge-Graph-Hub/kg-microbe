@@ -335,7 +335,7 @@ def test_the_bacdive_side_accepted_row_is_bound_too(tmp_path, monkeypatch, chang
 def test_a_gss_that_is_not_utf8_is_refused_cleanly(tmp_path, monkeypatch):
     """Undecodable bytes are a refusal through the guard, not a bare UnicodeDecodeError (#1532)."""
     transform, raw, gss, _, _ = prepare(tmp_path, monkeypatch)
-    gss.write_bytes(gss.read_bytes() + b"9000002,,caf\xe9\r\n")
+    gss.write_bytes(gss.read_bytes() + b"9000002,,correct name \xff\r\n")
     with pytest.raises(SourceFinalizationRequired, match="not valid UTF-8"):
         transform.run(raw)
 

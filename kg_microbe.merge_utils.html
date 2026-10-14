@@ -221,7 +221,7 @@ their entire prefixes hid namespace defects affecting 31 K nodes (#1050/1051).</
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.merge_utils.invariants.check_merged_invariants">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">check_merged_invariants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.invariants.check_merged_invariants" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">check_merged_invariants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">native_declarations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.invariants.check_merged_invariants" title="Link to this definition"></a></dt>
 <dd><p>Run the merged-graph invariants and write their report.</p>
 <p>The report is written whether or not anything was found: an absent file would
 be indistinguishable from a clean run, and a clean run is the thing worth
@@ -235,6 +235,8 @@ being able to demonstrate.</p>
 the edge file’s name, for callers pointing at a bare edge dump – but the
 merge hands over the path it already built, because a derivation that fails
 looks exactly like a graph with no stubs (#936).</p></li>
+<li><p><strong>native_declarations</strong> – The admitted native declarations merge validation
+checked the nodes against, passed to <a class="reference internal" href="#kg_microbe.merge_utils.invariants.find_stub_nodes" title="kg_microbe.merge_utils.invariants.find_stub_nodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">find_stub_nodes()</span></code></a>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -279,15 +281,25 @@ with more than one distinct parent. Empty when the invariant holds.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.merge_utils.invariants.find_stub_nodes">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">find_stub_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes_file</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.invariants.find_stub_nodes" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">find_stub_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nodes_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">native_declarations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.invariants.find_stub_nodes" title="Link to this definition"></a></dt>
 <dd><p>Return nodes KGX synthesized because an edge referenced something undeclared.</p>
 <p>The merge leaves no endpoint without a node row – KGX invents one – so the
 question worth asking after a merge is not “what is missing” but “what arrived
 as an invention”. Those rows are typed <code class="docutils literal notranslate"><span class="pre">biolink:NamedThing</span></code> and carry no
 name, which is the shape #892 objected to.</p>
+<p>A source can declare a node of that shape too: GOLD keeps an organism it cannot
+resolve as a nameless <code class="docutils literal notranslate"><span class="pre">biolink:NamedThing</span></code> when its raw data gives no name
+(#1316, #1590). Such a row is left out only when an admitted native
+declaration proves it exactly, the proof merge validation requires before it
+accepts a nameless node. Neither <code class="docutils literal notranslate"><span class="pre">provided_by</span></code> nor a prefix is proof.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>nodes_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Path to <code class="docutils literal notranslate"><span class="pre">merged-kg_nodes.tsv</span></code>.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nodes_file</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></span>) – Path to <code class="docutils literal notranslate"><span class="pre">merged-kg_nodes.tsv</span></code>.</p></li>
+<li><p><strong>native_declarations</strong> – The merge’s admitted native declarations, whose
+<code class="docutils literal notranslate"><span class="pre">declaration_for(id)</span></code> returns a proof with <code class="docutils literal notranslate"><span class="pre">matches(row,</span> <span class="pre">merged=True)</span></code>;
+without them every node of that shape is reported.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span></p>

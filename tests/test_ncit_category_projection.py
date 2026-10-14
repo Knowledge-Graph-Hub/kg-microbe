@@ -6,6 +6,7 @@ import gzip
 import hashlib
 import io
 import json
+import sqlite3
 from pathlib import Path
 
 import pytest
@@ -184,12 +185,44 @@ def test_relevant_infrastructure_failure_is_not_absorbed(prepared, monkeypatch, 
     transform, adapter, _, _, _ = prepared
 
     def fail(*args, **kwargs):
-        """Model an unavailable native authority rather than an obsolete unrelated identifier."""
+        """Model a reader failure that is not a database error; database errors are tested below."""
         raise RuntimeError("native reader failed")
 
     monkeypatch.setattr(adapter, method, fail)
     with pytest.raises(RuntimeError, match="native reader failed"):
         transform.run()
+    assert not (transform.output_dir / "ncit_nodes.tsv").exists()
+    with pytest.raises(SourceFinalizationRequired):
+        verify_consumed_inputs(transform)
+
+
+@pytest.mark.parametrize(
+    "method", ["label", "entity_aliases", "entity_metadata_map", "outgoing_relationships", "project_category"]
+)
+def test_a_database_error_on_a_reviewed_term_fails_the_source(prepared, monkeypatch, method):
+    """An unreadable native database fails the source the same way in all five per-term reads (#1604)."""
+    transform, adapter, _, _, _ = prepared
+    error = sqlite3.OperationalError("disk I/O error")
+    if method == "project_category":
+        read = adapter.entity_metadata_map
+
+        def fail(curie, include_all_triples=False):
+            """Fail only the full-triple read that project_category makes."""
+            if include_all_triples:
+                raise error
+            return read(curie, include_all_triples=include_all_triples)
+
+        monkeypatch.setattr(adapter, "entity_metadata_map", fail)
+    else:
+
+        def fail(*args, **kwargs):
+            """Model an unreadable native database."""
+            raise error
+
+        monkeypatch.setattr(adapter, method, fail)
+    with pytest.raises(SourceFinalizationRequired) as raised:
+        transform.run()
+    assert raised.value.__cause__ is error
     assert not (transform.output_dir / "ncit_nodes.tsv").exists()
     with pytest.raises(SourceFinalizationRequired):
         verify_consumed_inputs(transform)

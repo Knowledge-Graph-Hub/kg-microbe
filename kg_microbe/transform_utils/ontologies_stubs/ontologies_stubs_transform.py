@@ -1059,27 +1059,31 @@ class OntologiesStubsTransform(Transform):
                 raise ValueError(f"NCIT emitted label differs from reviewed native evidence: {curie}")
             return project_category(adapter, curie, disposition)
         except BaseException as error:
+            self._refuse_database_failure(curie, error)
             self._consumed_input_error = str(error)
             raise
 
-    def _refuse_database_failure(self, curie: str, error: Exception) -> None:
+    def _refuse_database_failure(self, curie: str, error: BaseException) -> None:
         """
-        Abort when a lookup failed because the SemSQL database itself could not be read.
+        Fail this source when a lookup failed because the SemSQL database could not be read.
 
         A term the database lacks comes back with no label; looking it up raises nothing. A
-        database error means the ontology has become unreadable, for example when another run's
-        unpack replaced the file under this adapter (#1537, #1580). Every later term then fails
-        the same way, so absorbing the error here wrote every stub with its identifier as its
-        name, and the run exited 0 (#1604). ``OntologyDbUnavailableError`` is a
-        ``BaseException``, so no per-term handler can absorb it.
+        database error, or SQLite running out of memory, is not a missing term. Absorbed per
+        term, it named the affected stubs by their identifiers, and the run exited 0 (#1604):
+        every stub when another run's unpack replaced the file under this adapter (#1537,
+        #1580), or when the file was damaged. ``SourceFinalizationRequired`` fails this source
+        only, as ``bacdive``'s ancestry authority does for the same errors, and ``kg
+        transform`` then skips the sources that depend on it.
         """
         from sqlalchemy.exc import SQLAlchemyError
 
-        if isinstance(error, (sqlite3.Error, SQLAlchemyError)):
-            from kg_microbe.utils.ontology_utils import OntologyDbUnavailableError
+        if isinstance(error, (sqlite3.Error, SQLAlchemyError, MemoryError)):
+            from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 
             self._consumed_input_error = str(error)
-            raise OntologyDbUnavailableError(f"Cannot read the SemSQL database to look up {curie}: {error}") from error
+            raise SourceFinalizationRequired(
+                f"ontologies_stubs cannot read the SemSQL database to look up {curie}: {error}"
+            ) from error
 
     def _fetch_metadata(self, adapter, curie: str):
         """Return (label, synonyms_list, xrefs_list) for ``curie`` via the OAK adapter."""

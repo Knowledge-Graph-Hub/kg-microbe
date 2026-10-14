@@ -35,8 +35,8 @@ from kg_microbe.utils.isolation_source_mapping_utils import (
     STUB_ONTOLOGY_CATEGORY,
     STUB_ONTOLOGY_PREFIXES,
 )
-from kg_microbe.utils.ontology_utils import OntologyDbUnavailableError
 from kg_microbe.utils.robot_utils import ROBOT_JAXP_LIMITS
+from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 from kg_microbe.utils.stub_curie_collection import collect_stub_curies
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -302,10 +302,12 @@ def test_transform_falls_back_to_curie_when_label_missing(tmp_path):
     assert rows[0]["name"] == "BTO:9999999"  # falls back to the CURIE itself
 
 
-#: The two shapes a failed SemSQL read takes: raised by sqlite3 directly, or wrapped by SQLAlchemy.
+#: How a failed SemSQL read reaches the transform: from sqlite3 directly, wrapped by SQLAlchemy, or as
+#: the MemoryError CPython raises for SQLite's out-of-memory result, which SQLAlchemy does not wrap.
 _DATABASE_ERRORS = {
     "sqlite3": lambda: sqlite3.OperationalError("disk I/O error"),
     "sqlalchemy": lambda: OperationalError("SELECT 1", {}, sqlite3.OperationalError("disk I/O error")),
+    "out-of-memory": MemoryError,
 }
 
 
@@ -338,7 +340,7 @@ def test_a_database_error_aborts_instead_of_naming_stubs_by_identifier(tmp_path,
         output_dir=tmp_path / "out",
     )
     (tmp_path / "in").mkdir()
-    with pytest.raises(OntologyDbUnavailableError) as raised:
+    with pytest.raises(SourceFinalizationRequired) as raised:
         t.run()
     assert raised.value.__cause__ is error
     assert t._consumed_input_error == str(error)
@@ -353,7 +355,7 @@ def test_a_database_error_in_the_hierarchy_walk_aborts(tmp_path, monkeypatch, ma
     monkeypatch.setattr(adapter, "outgoing_relationships", _unreadable(error))
     t = _StubbedTransform(adapters={"NCIT": adapter}, curies={}, input_dir=tmp_path / "in", output_dir=tmp_path / "out")
     (tmp_path / "in").mkdir()
-    with pytest.raises(OntologyDbUnavailableError) as raised:
+    with pytest.raises(SourceFinalizationRequired) as raised:
         t._write_stub_module_from_semsql_walk(
             prefix="NCIT",
             curies=["NCIT:C2000"],
@@ -362,7 +364,43 @@ def test_a_database_error_in_the_hierarchy_walk_aborts(tmp_path, monkeypatch, ma
             knowledge_source="infores:ncit",
         )
     assert raised.value.__cause__ is error
+    assert t._consumed_input_error == str(error)
     assert not list((tmp_path / "out" / "ontologies_stubs").glob("ncit_*.tsv"))
+
+
+def _not_semsql(path):
+    """Write a valid SQLite file that holds no SemSQL tables."""
+    with sqlite3.connect(path) as connection:
+        connection.execute("CREATE TABLE unrelated (x)")
+    connection.close()
+
+
+@pytest.mark.parametrize(
+    "damage",
+    [lambda path: path.write_bytes(b"not a database " * 1000), _not_semsql],
+    ids=["garbage", "not-semsql"],
+)
+def test_a_damaged_database_fails_the_source_through_real_oak(tmp_path, damage):
+    """
+    Nothing is injected: a damaged bto.db reaches real OAK, and its errors are not missing terms.
+
+    Before #1604 each lookup's error was absorbed, so every stub was named by its identifier.
+    """
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    damage(raw / "bto.db")
+    transform = OntologiesStubsTransform(input_dir=raw, output_dir=tmp_path / "out")
+    output = transform.output_dir / "bto_nodes.tsv"
+    with pytest.raises(SourceFinalizationRequired, match="BTO:0003114"):
+        transform._write_stub_nodes_from_semsql(
+            prefix="BTO",
+            curies=["BTO:0003114"],
+            db_path=raw / "bto.db",
+            knowledge_source="infores:bto",
+            output_file=output,
+        )
+    assert transform._consumed_input_error
+    assert not output.exists()
 
 
 def test_a_lookup_error_that_is_not_a_database_error_still_falls_back(tmp_path, monkeypatch):

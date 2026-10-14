@@ -628,6 +628,14 @@ class BatchIsolationTest(TestCase):
                 transform(None, None, sources=["a", "a"])
         self.assertEqual(str(excinfo.value).count("a: mappings/this-file-does-not-exist.tsv"), 1)
 
+    def test_an_unknown_source_named_twice_is_named_once(self):
+        """The refusal lists what was asked for, not how often it was typed (#1635)."""
+        with mock.patch.dict(DATA_SOURCES, {"a": _fake_source("a", self.log, self.base)}, clear=True):
+            with pytest.raises(ValueError, match="Unknown transform source") as excinfo:
+                transform(None, None, sources=["zzz", "zzz"])
+        self.assertIn("source(s): zzz.", str(excinfo.value))
+        self.assertEqual(self.log, [])
+
     def test_a_missing_prerequisite_tool_fails_before_anything_runs(self):
         """ROBOT absent used to fail ontologies_stubs after hours of ontologies work."""
         fake = _fake_source("a", self.log, self.base)

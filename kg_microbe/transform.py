@@ -411,6 +411,8 @@ def transform(
     if not sources:
         # run all sources
         sources = [source for source in DATA_SOURCES if source not in EXPLICIT_ONLY_SOURCES]
+    # A source named twice is one request: it is checked, reported and run once (#1562).
+    sources = list(dict.fromkeys(sources))
 
     # Refuse an unknown source instead of skipping it. The old loop guarded with
     # `if source in DATA_SOURCES:` and had no else, so a typo produced exit 0 and
@@ -430,11 +432,10 @@ def transform(
     # Named on the command line, sources still run in registry order, so each
     # follows the upstreams it declares (#1554). A single ontology removes the
     # ontologies marker, so it runs just before the ontologies source, which
-    # writes a new one (#1564). A source named twice is one request: it runs, and
-    # is checked, once (#1562).
+    # writes a new one (#1564).
     position = {name: index for index, name in enumerate(DATA_SOURCES)}
     single_ontology_slot = position.get(ONTOLOGIES, 0) - 0.5
-    sources = sorted(dict.fromkeys(sources), key=lambda name: position.get(name, single_ontology_slot))
+    sources = sorted(sources, key=lambda name: position.get(name, single_ontology_slot))
 
     absent_optional = _absent_optional_inputs(sources, input_dir)
     missing: List[str] = []

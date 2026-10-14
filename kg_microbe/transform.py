@@ -430,10 +430,11 @@ def transform(
     # Named on the command line, sources still run in registry order, so each
     # follows the upstreams it declares (#1554). A single ontology removes the
     # ontologies marker, so it runs just before the ontologies source, which
-    # writes a new one (#1564).
+    # writes a new one (#1564). A source named twice is one request: it runs, and
+    # is checked, once (#1562).
     position = {name: index for index, name in enumerate(DATA_SOURCES)}
     single_ontology_slot = position.get(ONTOLOGIES, 0) - 0.5
-    sources = sorted(sources, key=lambda name: position.get(name, single_ontology_slot))
+    sources = sorted(dict.fromkeys(sources), key=lambda name: position.get(name, single_ontology_slot))
 
     absent_optional = _absent_optional_inputs(sources, input_dir)
     missing: List[str] = []

@@ -248,7 +248,7 @@ def test_source_reconciliation_precedes_merge_diagnostics_and_manifest(tmp_path,
     )
     observed = []
 
-    def inspect_reconciled(edges_file, output_dir, nodes_file):
+    def inspect_reconciled(edges_file, output_dir, nodes_file, native_declarations=None):
         """Assert the optional checks run after source-aware normalization."""
         payload = edges_file.read_text()
         assert "NCBITaxon:3\tbiolink:related_to" in payload

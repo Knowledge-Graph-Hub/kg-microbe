@@ -107,6 +107,7 @@ def check_merged_invariants(
     edges_file: Path,
     output_dir: Optional[Path] = None,
     nodes_file: Optional[Path] = None,
+    native_declarations=None,
 ) -> int:
     """
     Run the merged-graph invariants and write their report.
@@ -121,6 +122,8 @@ def check_merged_invariants(
         the edge file's name, for callers pointing at a bare edge dump -- but the
         merge hands over the path it already built, because a derivation that fails
         looks exactly like a graph with no stubs (#936).
+    :param native_declarations: The admitted native declarations merge validation
+        checked the nodes against, passed to :func:`find_stub_nodes`.
     :return: Number of violating strain nodes.
     """
     violations = find_multi_parent_strains(edges_file)
@@ -138,7 +141,7 @@ def check_merged_invariants(
         # strain-parent report is (#903, #934): an absent file cannot be told from
         # a check that never ran, and after a multi-hour merge a demonstrably clean
         # result is worth more than a saved header row.
-        stubs = find_stub_nodes(nodes_file)
+        stubs = find_stub_nodes(nodes_file, native_declarations)
         stub_destination = Path(output_dir or edges_file.parent) / STUB_NODE_REPORT
         with atomic_write(stub_destination, newline="") as handle:
             writer = tsv_writer(handle)
@@ -231,7 +234,13 @@ def expected_stub_reason(curie: str) -> str:
 NAMED_THING_CATEGORY = "biolink:NamedThing"
 
 
-def find_stub_nodes(nodes_file: Path) -> Dict[str, List[str]]:
+def _proven_declaration(row: List[str], header: List[str], native_declarations) -> bool:
+    """Whether an admitted native declaration proves this exact merged node row."""
+    proof = native_declarations.declaration_for(row[0])
+    return proof is not None and proof.matches(dict(zip(header, row, strict=False)), merged=True)
+
+
+def find_stub_nodes(nodes_file: Path, native_declarations=None) -> Dict[str, List[str]]:
     """
     Return nodes KGX synthesized because an edge referenced something undeclared.
 
@@ -240,7 +249,16 @@ def find_stub_nodes(nodes_file: Path) -> Dict[str, List[str]]:
     as an invention". Those rows are typed ``biolink:NamedThing`` and carry no
     name, which is the shape #892 objected to.
 
+    A source can declare a node of that shape too: GOLD keeps an organism it cannot
+    resolve as a nameless ``biolink:NamedThing`` when its raw data gives no name
+    (#1316, #1590). Such a row is left out only when an admitted native
+    declaration proves it exactly, the proof merge validation requires before it
+    accepts a nameless node. Neither ``provided_by`` nor a prefix is proof.
+
     :param nodes_file: Path to ``merged-kg_nodes.tsv``.
+    :param native_declarations: The merge's admitted native declarations, whose
+        ``declaration_for(id)`` returns a proof with ``matches(row, merged=True)``;
+        without them every node of that shape is reported.
     :return: ``{CURIE prefix: [CURIEs]}``, sorted, empty when none.
     """
     by_prefix: Dict[str, List[str]] = defaultdict(list)
@@ -261,6 +279,8 @@ def find_stub_nodes(nodes_file: Path) -> Dict[str, List[str]]:
             if len(row) <= max(category_at, name_at):
                 continue
             if row[category_at] != NAMED_THING_CATEGORY or row[name_at].strip():
+                continue
+            if native_declarations is not None and _proven_declaration(row, header, native_declarations):
                 continue
             by_prefix[row[0].split(":", 1)[0]].append(row[0])
     return {prefix: sorted(curies) for prefix, curies in sorted(by_prefix.items())}

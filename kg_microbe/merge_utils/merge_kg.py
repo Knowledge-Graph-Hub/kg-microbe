@@ -506,7 +506,9 @@ def _cleanup_merged_outputs(
             # (#914). Required normalization/manifest/publication failures,
             # unlike this report, propagate to the caller (#1075).
             try:
-                check_merged_invariants(edges_file, output_dir, nodes_file=nodes_file)
+                check_merged_invariants(
+                    edges_file, output_dir, nodes_file=nodes_file, native_declarations=native_declarations
+                )
             except Exception as exc:  # noqa: BLE001
                 print(f"[merge-invariants] check skipped: {exc}")
             # The stats file KGX wrote says nothing about what produced it and

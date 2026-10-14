@@ -94,7 +94,7 @@ def gunzip_beside(path: Union[str, Path], *, root: Union[str, Path, None] = None
     more than one source. Each reader calls this instead of decompressing in place, so no
     reader ever sees a partly written file (#1526). A ``path`` that exists when this is
     called is never replaced, even after a newer archive is downloaded; the release
-    preflight reports an ``ncit.db`` whose size is not the archive's unpacked size (#1536).
+    preflight reports an ``ncit.db`` whose size or CRC-32 is not the archive's unpacked one (#1536, #1563).
     Two readers that both find ``path`` missing both unpack it, and the later copy replaces
     the earlier one. The NCIT readers, ``FiniteNcitCategoryAuthority`` and
     ``ontologies_stubs``, bind the copy they read and refuse a replaced file as changed

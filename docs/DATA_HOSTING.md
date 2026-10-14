@@ -109,7 +109,7 @@ update the md5 in `download.yaml` and in the table above as a deliberate act.
   they are downloaded as `.db.gz` with no OWL declared, so there is nothing to
   build them from, and a copy is used as it is. The release preflight accepts a
   copied `ncit.db` only with no `ncit.db.gz` beside it, or beside an archive that
-  unpacks to the same size (#1536).
+  unpacks to the same size and CRC-32 (#1536, #1563).
 
   Set `KG_SEMSQL_BUILD=off` to decline those builds — they run for tens of
   minutes (ChEBI, GO) to hours (NCBITaxon, ~13 GB, plus ~2 GB for the

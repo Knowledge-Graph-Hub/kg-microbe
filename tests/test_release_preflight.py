@@ -190,13 +190,18 @@ def test_an_existing_derived_file_must_be_the_pinned_conversion(tmp_path, monkey
 _ARCHIVE = gzip.compress(_SQLITE)
 _TRUNCATED = _ARCHIVE[:-12] + _ARCHIVE[-4:]
 _OLDER = _SQLITE + b" an older release"
+# Another release of exactly the archive's unpacked size (#1563).
+_SAME_SIZE = _SQLITE[:-1] + bytes([_SQLITE[-1] ^ 0xFF])
+_MULTI_MEMBER = gzip.compress(_SQLITE[:9]) + gzip.compress(_SQLITE[9:])
 # The files each layout puts in the raw directory; links are made in the test.
 _NCIT_LAYOUTS = {
     "neither": {},
     "database": {"ncit.db": _SQLITE},
     "archive": {"ncit.db.gz": _ARCHIVE},
     "matching_pair": {"ncit.db": _SQLITE, "ncit.db.gz": _ARCHIVE},
-    "multi_member_pair": {"ncit.db": _SQLITE, "ncit.db.gz": gzip.compress(_SQLITE[:9]) + gzip.compress(_SQLITE[9:])},
+    "multi_member_pair": {"ncit.db": _SQLITE, "ncit.db.gz": _MULTI_MEMBER},
+    "same_size_release": {"ncit.db": _SAME_SIZE, "ncit.db.gz": _ARCHIVE},
+    "same_size_release_multi_member": {"ncit.db": _SAME_SIZE, "ncit.db.gz": _MULTI_MEMBER},
     "dangling_database_link": {"ncit.db.gz": _ARCHIVE},
     "stale_database": {"ncit.db": _OLDER, "ncit.db.gz": _ARCHIVE},
     "database_beside_truncated_archive": {"ncit.db": _OLDER, "ncit.db.gz": _TRUNCATED},
@@ -225,6 +230,9 @@ _NCIT_LAYOUTS = {
         # The run replaces the link with the unpacked file.
         ("dangling_database_link", None),
         ("stale_database", "is not the copy of the ncit.db.gz beside it"),
+        # The CRC-32 tells releases of one size apart, from the trailer or by unpacking (#1563).
+        ("same_size_release", "has the size of the ncit.db.gz beside it"),
+        ("same_size_release_multi_member", "has the size of the ncit.db.gz beside it"),
         ("database_beside_truncated_archive", "cannot be unpacked"),
         ("database_beside_short_archive", "is not a gzip archive"),
         # Not "delete the database": that would leave no working copy (#1559).
@@ -284,6 +292,21 @@ def test_a_replaced_archive_is_read_again_even_with_its_size_and_mtime_kept(tmp_
     assert (archive.stat().st_size, archive.stat().st_mtime_ns) == (status.st_size, status.st_mtime_ns)
     (problem,) = release_preflight.ncit_authority_problems(tmp_path)
     assert "cannot be unpacked" in problem
+
+
+def test_a_replaced_database_is_read_again_even_with_its_size_and_mtime_kept(tmp_path):
+    """Another release copied over ncit.db with its size and modification time kept is not served from the cache."""
+    database = tmp_path / "ncit.db"
+    database.write_bytes(_SQLITE)
+    (tmp_path / "ncit.db.gz").write_bytes(_ARCHIVE)
+    assert release_preflight.ncit_authority_problems(tmp_path) == []
+    status = database.stat()
+    replacement = tmp_path / "replacement.db"
+    replacement.write_bytes(_SAME_SIZE)
+    os.utime(replacement, ns=(status.st_atime_ns, status.st_mtime_ns))
+    os.replace(replacement, database)
+    (problem,) = release_preflight.ncit_authority_problems(tmp_path)
+    assert "but not its content" in problem and "delete it to use the archive" in problem
 
 
 def test_mediadive_is_checked_for_ncit_db(tmp_path):

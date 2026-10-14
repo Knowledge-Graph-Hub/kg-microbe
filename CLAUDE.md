@@ -328,7 +328,7 @@ selected records): any export or release with those records unchanged is
 accepted, and each run's receipt records the one it read. Before the
 `ontologies` source starts, `kg transform` checks the release files the ontology
 policies pin and the Biolink model; that an existing `ncit.db` has a SQLite header
-and the unpacked size of any `ncit.db.gz` beside it (no run replaces it), or else
+and the unpacked size and CRC-32 of any `ncit.db.gz` beside it (no run replaces it), or else
 that the archive unpacks to one; and that an existing `upa.json` is the pinned
 conversion. A stale download then fails in seconds. A single ontology (`-s go`) is
 checked for the pinned files its own run reads, `ontologies_stubs` and MediaDive for

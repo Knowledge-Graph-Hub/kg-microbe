@@ -42,7 +42,6 @@ def _default_review_path(old_label: str, new_label: str) -> Path:
     safe_new = re.sub(r"[^\w.-]+", "_", new_label).strip("_") or "new"
     return out_dir / f"{ts}_{safe_old}_vs_{safe_new}.md"
 
-csv.field_size_limit(sys.maxsize)
 
 NODE_BASENAMES = ("merged-kg_nodes.tsv", "nodes.tsv")
 EDGE_BASENAMES = ("merged-kg_edges.tsv", "edges.tsv")
@@ -482,6 +481,10 @@ def build_report(old: ReleaseStats, new: ReleaseStats, include_signatures: bool)
 
 
 def main() -> None:
+    # Merged rows can exceed csv's default 131,072-character field limit. Lift it
+    # for this command, not at import: loading the module must leave the caller's
+    # limit alone (#1574).
+    csv.field_size_limit(sys.maxsize)
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--old", type=Path, help="Directory containing old release's nodes/edges TSVs")
     ap.add_argument("--new", type=Path, help="Directory containing new release's nodes/edges TSVs")

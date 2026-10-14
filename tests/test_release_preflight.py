@@ -4,6 +4,7 @@ import gzip
 import hashlib
 import json
 import os
+from pathlib import Path
 
 import pytest
 
@@ -165,6 +166,80 @@ def test_every_native_ro_supplier_is_checked_for_ro_owl():
     from kg_microbe.utils.native_ro_retention import _SUPPLIERS
 
     assert sorted(name for name in _SUPPLIERS if "ro.owl" not in release_preflight.SINGLE_ONTOLOGY_INPUTS[name]) == []
+
+
+_DECLARED = Path(__file__).parent / "resources" / "release_preflight" / "single_ontology_declared_classes.json"
+
+
+def _declared_classes(transformed_dir):
+    """Excerpt the reviewed UBERON temporal and PO classes each ontology's node output declares."""
+    import csv
+    import sys
+
+    from kg_microbe.utils.uberon_temporal_categories import TEMPORAL_DISPOSITIONS_FILE
+
+    temporal = set(json.loads(TEMPORAL_DISPOSITIONS_FILE.read_text(encoding="utf-8"))["records"])
+    declared = {"uberon_temporal": {}, "po": {}}
+    limit = csv.field_size_limit(sys.maxsize)
+    try:
+        for nodes in sorted(Path(transformed_dir).glob("*_nodes.tsv")):
+            name, found = nodes.name[: -len("_nodes.tsv")], {"uberon_temporal": set(), "po": set()}
+            with nodes.open(encoding="utf-8", newline="") as stream:
+                for row in csv.DictReader(stream, delimiter="\t"):
+                    if row["id"] in temporal:
+                        found["uberon_temporal"].add(row["id"])
+                    if row["id"].startswith("PO:"):
+                        found["po"].add(row["id"])
+            for kind, identifiers in found.items():
+                if identifiers:
+                    declared[kind][name] = sorted(identifiers)
+    finally:
+        csv.field_size_limit(limit)
+    return declared
+
+
+@pytest.mark.parametrize("kind, release", [("uberon_temporal", "uberon.owl"), ("po", "po.owl")])
+def test_a_single_ontology_is_checked_for_the_release_its_declared_classes_read(kind, release):
+    """
+    Finalization reads uberon.owl for a reviewed UBERON temporal class and po.owl for a PO class (#1649).
+
+    Which ontology declares them depends on the pinned releases, so the classes come from an
+    excerpt of a full build against those releases: a run must be checked for exactly the
+    release files its declarations will make finalization read.
+    """
+    declared = json.loads(_DECLARED.read_text(encoding="utf-8"))
+    readers = {name for name in declared[kind] if name != release.split(".")[0]}
+    checked = {
+        name
+        for name, files in release_preflight.SINGLE_ONTOLOGY_INPUTS.items()
+        if release in files and name != release.split(".")[0]
+    }
+    assert checked == readers
+    assert readers <= set(dispatcher._ontology_map())
+
+
+def test_the_declared_class_excerpt_was_taken_against_the_pinned_releases():
+    """A moved pin, or a changed temporal policy, makes the excerpt stale until it is taken again (#1649)."""
+    from kg_microbe.utils.uberon_temporal_categories import TEMPORAL_DISPOSITIONS_FILE
+
+    declared = json.loads(_DECLARED.read_text(encoding="utf-8"))
+    pins = release_preflight.reviewed_release_pins()
+    assert {name: list(pins[name]) for name in declared["built_against"]} == {
+        name: [sha256] for name, sha256 in declared["built_against"].items()
+    }
+    temporal = set(json.loads(TEMPORAL_DISPOSITIONS_FILE.read_text(encoding="utf-8"))["records"])
+    assert set(declared["uberon_temporal"]["uberon"]) == temporal
+    assert all(identifier.startswith("PO:") for identifiers in declared["po"].values() for identifier in identifiers)
+
+
+@pytest.mark.integration
+def test_the_declared_class_excerpt_matches_a_local_full_build():
+    """Compare the excerpt with a local full ontologies build; skipped where there is none."""
+    transformed = Path(__file__).parents[1] / "data" / "transformed" / "ontologies"
+    if not (transformed / "uberon_nodes.tsv").is_file():
+        pytest.skip("no local ontologies build")
+    declared = json.loads(_DECLARED.read_text(encoding="utf-8"))
+    assert _declared_classes(transformed) == {kind: declared[kind] for kind in ("uberon_temporal", "po")}
 
 
 @pytest.mark.parametrize("state", ["absent", "matching", "stale"])

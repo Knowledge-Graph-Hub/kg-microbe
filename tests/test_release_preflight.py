@@ -309,6 +309,20 @@ def test_a_replaced_database_is_read_again_even_with_its_size_and_mtime_kept(tmp
     assert "but not its content" in problem and "delete it to use the archive" in problem
 
 
+def test_a_database_that_cannot_be_read_for_its_crc_is_reported_as_such(tmp_path, monkeypatch):
+    """An I/O error reading ncit.db is the database's problem, not advice to fetch the archive again."""
+    (tmp_path / "ncit.db").write_bytes(_SQLITE)
+    (tmp_path / "ncit.db.gz").write_bytes(_ARCHIVE)
+
+    def unreadable(path, identity):
+        """Stand in for a read that fails partway through."""
+        raise ValueError(f"{path} cannot be read (Input/output error)")
+
+    monkeypatch.setattr(release_preflight, "_read_crc32", unreadable)
+    (problem,) = release_preflight.ncit_authority_problems(tmp_path)
+    assert problem == f"{tmp_path / 'ncit.db'} cannot be read (Input/output error)."
+
+
 def test_mediadive_is_checked_for_ncit_db(tmp_path):
     """MediaDive's nodes include reviewed NCIT classes, so the NCIT policy reads ncit.db when it finalizes (#1557)."""
     (tmp_path / "ncit.db").write_bytes(_OLDER)

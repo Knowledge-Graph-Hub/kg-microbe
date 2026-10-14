@@ -324,8 +324,9 @@ def ncit_authority_problems(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> Li
     ``ncit.db`` must start as a SQLite database and, with the archive beside it, have
     the size and CRC-32 of the archive unpacked: otherwise a newer download would be
     read silently in its place (#1536). The CRC-32 tells apart two releases of one size
-    (#1563); for a single-member archive it is read from the trailer and compared with
-    one read of ``ncit.db``, cached by file identity. The run's receipt records the
+    (#1563), short of a 1-in-2**32 coincidence; it is a check, not a digest. For a
+    single-member archive it is read from the trailer and compared with one read of
+    ``ncit.db``, cached by file identity. The run's receipt records the SHA-256 of the
     release it read. Without ``ncit.db``, the archive is read to its
     end, so a truncated or empty download fails here rather than hours in (#1535,
     #1544). Both files must resolve inside ``raw_dir``.

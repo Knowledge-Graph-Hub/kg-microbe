@@ -42,9 +42,11 @@ prerequisites. When `ontologies` is selected, that includes
   existing copy, so an existing `ncit.db` must have a SQLite header and, with the
   archive beside it, the archive's unpacked size and CRC-32. Otherwise a newer
   download would be read silently in its place. The CRC-32 tells apart two
-  releases of the same size (#1563): it is read from the gzip trailer and
+  releases of the same size (#1563), short of a 1-in-2^32 coincidence; it is a
+  check, not a digest. It is read from the gzip trailer and
   compared with one read of `ncit.db` (about 0.2 s for 2.7 GB once the file is
-  in the page cache), or, for a multi-member archive, computed while unpacking.
+  in the page cache; a cold read, or a network filesystem, takes longer and was
+  not measured), or, for a multi-member archive, computed while unpacking.
   The run's receipt records the release it read. Without
   `ncit.db`, the archive is read to its end and must unpack to a SQLite
   database, so a truncated, empty or wrong download fails here, not hours in;

@@ -774,11 +774,15 @@ def verify_audit_bindings(directory, snapshots, *, members, raw_dir, admission=N
                 raise SourceFinalizationRequired("UPA admitted GO database has a sidecar")
             guard.capture(sidecar, optional=True)
         # The original file remains bound before and after this read-only SQL operation.
-        with sqlite3.connect(database.as_uri() + "?mode=ro&immutable=1", uri=True) as connection:
-            if semsql_go_release(connection) != policy["sources"]["go.db"]["release"]:
-                raise SourceFinalizationRequired("UPA admitted GO database is not the reviewed release")
-            authority = _authority(connection, owned[GO_ROLE])
-            _verify_finite(policy, document, owl, connection, authority)
+        # A file SQLite cannot read is refused like any other contract failure (#1552).
+        try:
+            with sqlite3.connect(database.as_uri() + "?mode=ro&immutable=1", uri=True) as connection:
+                if semsql_go_release(connection) != policy["sources"]["go.db"]["release"]:
+                    raise SourceFinalizationRequired("UPA admitted GO database is not the reviewed release")
+                authority = _authority(connection, owned[GO_ROLE])
+                _verify_finite(policy, document, owl, connection, authority)
+        except sqlite3.Error as error:
+            raise SourceFinalizationRequired("UPA admitted GO database cannot be read") from error
         candidates = enumerate_candidates(document, authority, policy)
         generated = decode(read(GENERATED_ROLE))
         intermediate = decode(read(INTERMEDIATE_ROLE))

@@ -158,6 +158,7 @@ known-first-party = ["kg_microbe", "run"]
 norecursedirs = ["scripts", "notebooks", "docs", ".git"]
 markers = [
     "integration: tests that require external services, network access, or large data",
+    "semsql_toolchain_check: run the real read-only SemSQL toolchain check on fixture DBs (#1641)",
 ]
 
 [tool.deptry]

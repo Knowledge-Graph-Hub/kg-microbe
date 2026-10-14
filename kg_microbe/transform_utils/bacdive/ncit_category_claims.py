@@ -10,6 +10,7 @@ import ijson
 
 from kg_microbe.merge_utils.source_admission import SourceAdmission
 from kg_microbe.transform_utils.bacdive import isolation_categories
+from kg_microbe.transform_utils.bacdive.csv_field_limit import csv_field_limit_at_least
 from kg_microbe.transform_utils.constants import (
     ATTRIBUTE_CATEGORY,
     CATEGORY_COLUMN,
@@ -407,7 +408,10 @@ class ClaimGuard:
         audits = [
             _audit(row, json.loads(self._policy), json.loads(self._bindings)) for row in json.loads(self._selected)
         ]
-        actual = list(graph_rows(directory / AUDIT_FILE))
+        # A row holds a whole native record, which can exceed CSV's 128 KiB
+        # default (#1575); no cell is longer than the file.
+        with csv_field_limit_at_least((directory / AUDIT_FILE).stat().st_size):
+            actual = list(graph_rows(directory / AUDIT_FILE))
         with (directory / AUDIT_FILE).open(newline="") as stream:
             if next(csv.reader(stream, delimiter="\t"), None) != list(AUDIT_FIELDS):
                 _fail("mandatory audit header changed")

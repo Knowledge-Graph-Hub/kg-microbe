@@ -23,6 +23,7 @@ from kg_microbe.transform_utils.bacdive import (
     supplied_taxid_policy,
 )
 from kg_microbe.transform_utils.bacdive.ancestry_authority import FreshAncestryAuthority
+from kg_microbe.transform_utils.bacdive.csv_field_limit import csv_field_limit_at_least
 from kg_microbe.transform_utils.bacdive.emission import (
     RESOLUTION_COLLAPSED,
     RESOLUTION_SUPPRESSED,
@@ -1120,18 +1121,12 @@ class TaxonomyEvidence:
             _fail("output verification requires completed native accounting")
         directory = Path(directory)
         with (directory / AUDIT_FILE).open(newline="", encoding="utf-8") as stream:
-            previous_limit = csv.field_size_limit()
-            try:
-                # A row embeds the taxonomy blocks of each record it cites, which
-                # can exceed CSV's 128 KiB default (#1571). No cell is longer than
-                # the open file, so bound the parser by it, then restore the
-                # caller's limit.
-                csv.field_size_limit(max(previous_limit, os.fstat(stream.fileno()).st_size))
+            # A row embeds the taxonomy blocks of each record it cites, which can
+            # exceed CSV's 128 KiB default (#1571); bound the parser by the open file.
+            with csv_field_limit_at_least(os.fstat(stream.fileno()).st_size):
                 reader = csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE)
                 if reader.fieldnames != list(AUDIT_FIELDS) or list(reader) != self._audit_rows():
                     _fail("mandatory taxonomy audit missing, reordered, forged or incomplete")
-            finally:
-                csv.field_size_limit(previous_limit)
         expected = {}
         fallback_subjects = set()
         withheld_subjects = {

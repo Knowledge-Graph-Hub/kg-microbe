@@ -408,6 +408,41 @@ def test_cached_stale_caller_does_not_determine_new_connection_bytes(tmp_path):
         close_adapter(original)
 
 
+def test_the_authority_leaves_the_callers_session_and_engine_alone(tmp_path, monkeypatch):
+    """
+    No caller engine or session is queried, reset or closed (the module's contract, #1582).
+
+    A session reopens after close or rollback and an engine reconnects after
+    dispose, so a caller that still works proves nothing; only a spy shows them.
+    """
+    original = adapter(database(tmp_path / "authority.db"))
+    session, engine = original.session, original.engine
+    calls = []
+    spied = (
+        (session, ("close", "rollback", "commit", "execute", "connection")),
+        (engine, ("dispose", "connect", "begin", "raw_connection")),
+    )
+    for owner, names in spied:
+        for name in names:
+            real, label = getattr(owner, name), f"{type(owner).__name__}.{name}"
+
+            def spy(*args, _real=real, _label=label, **kwargs):
+                """Record a call on the caller's own session or engine, then make it."""
+                calls.append(_label)
+                return _real(*args, **kwargs)
+
+            monkeypatch.setattr(owner, name, spy)
+    try:
+        with authority.FreshAncestryAuthority.from_resolved_adapter(original) as fresh:
+            assert "NCBITaxon:10" in fresh.ancestors("NCBITaxon:20")
+            fresh.finish()
+        assert calls == []
+        assert original._session is session and original.engine is engine
+    finally:
+        monkeypatch.undo()
+        close_adapter(original)
+
+
 @pytest.mark.parametrize("damage", ["bytes", "inode", "wal", "query-table", "engine", "session"])
 def test_authority_failure_is_sticky_even_if_outer_code_catches_it(tmp_path, damage):
     """No input/connection/query failure can later become a harmless empty result or successful finish."""

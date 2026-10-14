@@ -171,7 +171,8 @@ class EnvoCrosswalkTest(TestCase):
         Without it the ecosystem vocabulary stays an island, which is the
         behaviour before this existed — not a new failure.
         """
-        t = GOLDTransform(input_dir=Path(tempfile.mkdtemp()))
+        tmp = Path(tempfile.mkdtemp())
+        t = GOLDTransform(input_dir=tmp, output_dir=tmp / "transformed")
         self.assertEqual(t._envo_crosswalk(), {})
 
 

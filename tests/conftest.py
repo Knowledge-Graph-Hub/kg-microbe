@@ -179,3 +179,43 @@ def tracked_files_unchanged():
             f"Tests modified {len(changed)} tracked file(s); write only under tmp_path: " + ", ".join(changed[:20]),
             pytrace=False,
         )
+
+
+#: Where a transform built without an output directory writes. The CLI always passes an
+#: output directory, so nothing but a test creates anything here.
+_PACKAGE_DEFAULT_DATA = Path("kg_microbe") / "transform_utils" / "data"
+#: Pipeline output folders. They count only when absent at the start of the session, so a
+#: ``kg transform`` running in the same checkout cannot trip the guard below.
+_PIPELINE_OUTPUT_DIRS = (Path("data") / "transformed", Path("data") / "merged")
+
+
+def _output_paths(root: Path) -> frozenset[str]:
+    """Every path under the package's default data folder, and each pipeline output folder present."""
+    found = {folder.as_posix() for folder in _PIPELINE_OUTPUT_DIRS if (root / folder).exists()}
+    package = root / _PACKAGE_DEFAULT_DATA
+    if package.exists():
+        found.add(_PACKAGE_DEFAULT_DATA.as_posix())
+        found.update(path.relative_to(root).as_posix() for path in package.rglob("*"))
+    return frozenset(found)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def no_output_paths_created():
+    """
+    Fail the session if a test created transform output paths in the checkout.
+
+    A transform's constructor creates its output folder. Tests that built one inside the
+    checkout left empty folders that the tracked-file guard above cannot see, and two tests
+    that read ``data/transformed`` then ran or skipped depending on what an earlier run had
+    left (#1592).
+    """
+    root = Path(__file__).resolve().parents[1]
+    before = _output_paths(root)
+    yield
+    created = sorted(_output_paths(root) - before)
+    if created:
+        pytest.fail(
+            f"Tests created {len(created)} output path(s) in the checkout; write only under tmp_path: "
+            + ", ".join(created[:20]),
+            pytrace=False,
+        )

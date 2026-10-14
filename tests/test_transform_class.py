@@ -1,7 +1,8 @@
 """Test the parent Transform class."""
 
+import tempfile
 from pathlib import Path
-from unittest import TestCase
+from unittest import TestCase, mock
 
 from parameterized import parameterized
 
@@ -13,7 +14,12 @@ class TestTransform(TestCase):
     """Tests for all transform child classes."""
 
     def setUp(self) -> None:
-        """Set up the transform tests."""
+        """Set up the transform tests, with the default output directory outside the checkout (#1592)."""
+        output = tempfile.TemporaryDirectory()
+        self.addCleanup(output.cleanup)
+        default = mock.patch.object(TransformChildClass, "DEFAULT_OUTPUT_DIR", Path(output.name))
+        default.start()
+        self.addCleanup(default.stop)
         self.transform_instance = TransformChildClass()
 
     def test_reality(self):
@@ -73,6 +79,9 @@ class TestTransform(TestCase):
         self.assertIsInstance(t.output_node_file, Path)
         self.assertIsInstance(t.output_edge_file, Path)
         self.assertIsInstance(t.output_json_file, Path)
+
+        # Built without an output directory, the transform uses the class default.
+        self.assertEqual(t.output_dir, TransformChildClass.DEFAULT_OUTPUT_DIR / "test_transform")
 
         # Check that paths have expected structure
         self.assertTrue(str(t.output_node_file).endswith("nodes.tsv"))

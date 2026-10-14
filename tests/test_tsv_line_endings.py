@@ -67,7 +67,7 @@ def test_the_scan_actually_covers_the_transforms():
         assert expected in names, f"{expected} is not being scanned"
 
 
-@pytest.mark.skipif(not TRANSFORMED.is_dir(), reason="no transform output on this checkout")
+@pytest.mark.skipif(not any(TRANSFORMED.rglob("*.tsv")), reason="no transform output on this checkout")
 def test_no_transform_output_on_disk_has_crlf():
     r"""
     Enumerate the files; never guess their paths.

@@ -1,6 +1,7 @@
 """MeSH is bridged per term, because a prefix cannot mean "is a site" (#823)."""
 
 import csv
+import tempfile
 from pathlib import Path
 from unittest import TestCase
 
@@ -62,14 +63,17 @@ class CurationFileTest(TestCase):
 class TransformGateTest(TestCase):
     """Unlisted means refused, so a new upstream label cannot readmit the error."""
 
+    def setUp(self):
+        """Give the transform an output directory outside the checkout (#1592)."""
+        output = tempfile.TemporaryDirectory()
+        self.addCleanup(output.cleanup)
+        self.output_dir = Path(output.name)
+
     def test_the_loader_returns_only_site_rows(self):
         """A REJECTED row must never reach the allow-set."""
         from kg_microbe.transform_utils.gold.gold import GOLDTransform
 
-        transform = GOLDTransform(
-            input_dir=REPO_ROOT / "data" / "raw",
-            output_dir=REPO_ROOT / "data" / "transformed",
-        )
+        transform = GOLDTransform(input_dir=REPO_ROOT / "data" / "raw", output_dir=self.output_dir)
         allowed = transform._mesh_site_terms()
         self.assertNotIn("mesh:D000038", allowed)
         self.assertIn("mesh:D000076624", allowed)
@@ -84,10 +88,7 @@ class TransformGateTest(TestCase):
         """
         from kg_microbe.transform_utils.gold import gold as gold_module
 
-        transform = gold_module.GOLDTransform(
-            input_dir=REPO_ROOT / "data" / "raw",
-            output_dir=REPO_ROOT / "data" / "transformed",
-        )
+        transform = gold_module.GOLDTransform(input_dir=REPO_ROOT / "data" / "raw", output_dir=self.output_dir)
         original = gold_module._MESH_SITE_FILE
         try:
             gold_module._MESH_SITE_FILE = "does_not_exist.tsv"

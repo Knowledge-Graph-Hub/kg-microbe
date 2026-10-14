@@ -46,7 +46,8 @@ def _tools(tmp_path: Path) -> dict:
         path.chmod(0o755)
     (bin_dir / "relation-graph").symlink_to(launcher)
     (raw / "robot.jar").write_bytes(b"robot jar")
-    return {"env": {"PATH": str(bin_dir)}, "raw": raw, "install": install}
+    (raw / "robot").write_text("#!/bin/sh\n", encoding="utf-8")
+    return {"env": {"PATH": str(bin_dir)}, "raw": raw, "install": install, "bin": bin_dir}
 
 
 def test_the_record_names_each_tool_by_version_or_digest(tmp_path):
@@ -77,7 +78,7 @@ def test_a_different_bundled_reasoner_is_a_different_relation_graph(tmp_path):
 def test_missing_tools_are_named(tmp_path):
     """A machine without rdftab and relation-graph can neither build nor vouch for a DB."""
     record = toolchain.current_toolchain(tmp_path, {"PATH": str(tmp_path / "nothing-here")})
-    assert toolchain.missing_tools(record) == ["semsql", "rdftab", "relation-graph", "the pinned robot.jar"]
+    assert toolchain.missing_tools(record) == ["semsql", "rdftab", "relation-graph", "the pinned robot and robot.jar"]
 
 
 def test_paths_and_java_do_not_make_two_toolchains_different():
@@ -98,12 +99,65 @@ def test_a_missing_or_old_record_is_a_difference():
 def test_records_round_trip_beside_the_db(tmp_path):
     """Written atomically beside the DB, read back, and discarded when it no longer applies."""
     db = tmp_path / "go.db"
+    db.write_bytes(b"a database")
     toolchain.write_record(db, FIXED_SEMSQL_TOOLCHAIN)
     assert toolchain.record_path(db) == tmp_path / "go.db.toolchain.json"
-    assert toolchain.read_record(db) == FIXED_SEMSQL_TOOLCHAIN
+    assert toolchain.read_record(db) == {**FIXED_SEMSQL_TOOLCHAIN, "database": toolchain.database_identity(db)}
+    assert toolchain.differences(toolchain.read_record(db), FIXED_SEMSQL_TOOLCHAIN, db) == []
     toolchain.discard_record(db)
     assert toolchain.read_record(db) is None
     toolchain.discard_record(db)
+
+
+@pytest.mark.parametrize(
+    "shebang",
+    ["#!/usr/bin/env python3\n", "#!/bin/sh\n'''exec' \"{python}\" \"$0\" \"$@\"\n' '''\n"],
+    ids=["env", "pip-trampoline"],
+)
+def test_semsql_versions_are_read_through_env_and_pip_trampolines(tmp_path, shebang):
+    """Conda writes env shebangs for long prefixes, and pip a /bin/sh trampoline for long or spaced paths."""
+    tools = _tools(tmp_path)
+    (tools["bin"] / "semsql").write_text(shebang.format(python=sys.executable) + "raise SystemExit(0)\n")
+    # env finds the virtualenv's own python3, as it does when the virtualenv's bin/ is on PATH.
+    env = {"PATH": os.pathsep.join([str(tools["bin"]), str(Path(sys.executable).parent)])}
+    record = toolchain.current_toolchain(tools["raw"], env)
+    assert record["semsql"]["version"] == importlib.metadata.version("semsql")
+
+
+def test_a_relation_graph_whose_version_cannot_be_read_cannot_vouch(tmp_path):
+    """A wrapper with no release lib/ beside it hides the version: unknown is not a match (#1524)."""
+    tools = _tools(tmp_path)
+    (tools["bin"] / "relation-graph").unlink()
+    wrapper = tools["bin"] / "relation-graph"
+    wrapper.write_text('#!/bin/sh\nexec /opt/relation-graph/bin/relation-graph "$@"\n', encoding="utf-8")
+    wrapper.chmod(0o755)
+    record = toolchain.current_toolchain(tools["raw"], tools["env"])
+    assert record["relation_graph"]["version"] is None
+    assert record["relation_graph"]["sha256"] is None
+    assert toolchain.missing_tools(record) == ["relation-graph (found, but its version cannot be read)"]
+    assert toolchain.differences(record, record) == [
+        "this machine cannot identify relation-graph (found, but its version cannot be read)"
+    ]
+
+
+def test_robot_jar_counts_only_beside_its_wrapper(tmp_path):
+    """Without raw/robot, SemSQL runs whatever robot is on PATH, so the pinned jar vouches for nothing."""
+    tools = _tools(tmp_path)
+    (tools["raw"] / "robot").unlink()
+    assert toolchain.current_toolchain(tools["raw"], tools["env"])["robot_jar_sha256"] is None
+
+
+def test_a_record_does_not_vouch_for_a_db_put_in_its_place(tmp_path):
+    """A prebuilt or restored DB beside an old record is another file, whatever its release."""
+    db = tmp_path / "go.db"
+    db.write_bytes(b"built here")
+    toolchain.write_record(db, FIXED_SEMSQL_TOOLCHAIN)
+    replacement = tmp_path / "staged.db"
+    replacement.write_bytes(b"copied in")
+    replacement.replace(db)
+    assert toolchain.differences(toolchain.read_record(db), FIXED_SEMSQL_TOOLCHAIN, db) == [
+        "its toolchain record describes another file (the DB was replaced, copied in or restored)"
+    ]
 
 
 def _aligned_go_db(tmp_path, monkeypatch, current) -> str:
@@ -148,6 +202,16 @@ def test_go_that_cannot_be_rebuilt_here_is_refused(tmp_path, monkeypatch, capsys
     assert ou._ensure_go_db(db) == ou.DbEnsureResult(False)
     out = capsys.readouterr().out
     assert "lacks rdftab, relation-graph" in out and "KG_SEMSQL_BUILD=off" in out
+
+
+def test_go_with_a_matching_record_is_refused_when_a_tool_cannot_be_identified(tmp_path, monkeypatch, capsys):
+    """An unreadable relation-graph version neither matches nor triggers an endless rebuild."""
+    current = {**FIXED_SEMSQL_TOOLCHAIN, "relation_graph": {"path": "/w", "version": None, "sha256": None}}
+    db = _aligned_go_db(tmp_path, monkeypatch, current)
+    toolchain.write_record(db, FIXED_SEMSQL_TOOLCHAIN)
+    monkeypatch.setattr(ou, "_build_semsql_db", _no_build)
+    assert ou._ensure_go_db(db) == ou.DbEnsureResult(False)
+    assert "relation-graph (found, but its version cannot be read)" in capsys.readouterr().out
 
 
 def test_go_opt_out_reuses_the_prebuilt_db(tmp_path, monkeypatch):
@@ -197,18 +261,38 @@ def _build_setup(tmp_path, monkeypatch, result):
     ],
 )
 def test_a_build_records_its_toolchain_or_drops_a_stale_record(tmp_path, monkeypatch, result, expected):
-    """A usable new DB gets the record of what built it; an unusable new DB keeps no old record."""
+    """A usable new DB gets the record of what built it, naming the new file; an unusable one keeps no record."""
     owl, db, _ = _build_setup(tmp_path, monkeypatch, result)
     toolchain.write_record(db, {**FIXED_SEMSQL_TOOLCHAIN, "java": "the old build"})
     ou._build_semsql_db(owl, db, 8, "GO", "cheap", ontology="go")
-    assert toolchain.read_record(db) == expected
+    record = toolchain.read_record(db)
+    if expected is None:
+        assert record is None
+    else:
+        assert {key: value for key, value in record.items() if key != "database"} == expected
+        assert record["database"] == toolchain.database_identity(db)
+
+
+def test_a_record_that_cannot_be_written_does_not_lose_the_build(tmp_path, monkeypatch, capsys):
+    """A full disk after an hours-long build warns; the next GO run rebuilds and the others warn."""
+    owl, db, _ = _build_setup(tmp_path, monkeypatch, ou.DbEnsureResult(True, built=True))
+    toolchain.write_record(db, FIXED_SEMSQL_TOOLCHAIN)
+
+    def full_disk(db_path, record):
+        """Stand in for a disk with no room for the record."""
+        raise OSError(28, "No space left on device")
+
+    monkeypatch.setattr(ou, "write_record", full_disk)
+    assert ou._build_semsql_db(owl, db, 8, "GO", "cheap", ontology="go") == ou.DbEnsureResult(True, built=True)
+    assert "could not record the toolchain" in capsys.readouterr().out
+    assert toolchain.read_record(db) is None
 
 
 def test_a_failed_build_keeps_the_restored_dbs_record(tmp_path, monkeypatch):
     """When the old DB is put back, its record still describes it."""
     owl, db, _ = _build_setup(tmp_path, monkeypatch, ou.DbEnsureResult(True))
-    old = {**FIXED_SEMSQL_TOOLCHAIN, "java": "the old build"}
-    toolchain.write_record(db, old)
+    toolchain.write_record(db, {**FIXED_SEMSQL_TOOLCHAIN, "java": "the old build"})
+    old = toolchain.read_record(db)
     ou._build_semsql_db(owl, db, 8, "GO", "cheap", ontology="go")
     assert toolchain.read_record(db) == old
 

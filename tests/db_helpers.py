@@ -165,5 +165,6 @@ def hold_semsql_toolchain(monkeypatch):
     monkeypatch.setattr(ontology_utils, "_TOOLCHAIN_PROBES", {})
     monkeypatch.setattr(ontology_utils, "_TOOLCHAIN_WARNED", set())
     monkeypatch.setattr(ontology_utils, "read_record", lambda db_path: dict(FIXED_SEMSQL_TOOLCHAIN))
+    monkeypatch.setattr(ontology_utils, "differences", lambda recorded, current, db_path=None: [])
     monkeypatch.setattr(ontology_utils, "write_record", lambda db_path, toolchain: None)
     monkeypatch.setattr(ontology_utils, "discard_record", lambda db_path: None)

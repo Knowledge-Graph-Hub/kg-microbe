@@ -483,7 +483,7 @@ def _warn_on_toolchain_drift(db_path: str, owl_source: Optional[Path]) -> None:
         return
     _TOOLCHAIN_WARNED.add(db_path)
     toolchain = _probed_toolchain(_raw_dir_for(db_path, owl_source))
-    drift = differences(read_record(db_path), toolchain)
+    drift = differences(read_record(db_path), toolchain, db_path)
     if drift:
         print(f"Warning: reusing {db_path}, which this toolchain did not build: {'; '.join(drift)}")
 
@@ -499,7 +499,7 @@ def _go_toolchain_drift(db_path: str, owl_source: Optional[Path]) -> tuple:
     if not _semsql_build_enabled():
         return [], []
     toolchain = _probed_toolchain(_raw_dir_for(db_path, owl_source))
-    drift = differences(read_record(db_path), toolchain)
+    drift = differences(read_record(db_path), toolchain, db_path)
     return drift, (missing_tools(toolchain) if drift else [])
 
 
@@ -1734,7 +1734,7 @@ def _build_semsql_db(
         # had just produced.
         reader = _DB_RELEASE_READERS.get(ontology or "")
         toolchain = current_toolchain(owl_source.parent, os.environ)
-        toolchain_ok = not strict_toolchain or not differences(read_record(db_path), toolchain)
+        toolchain_ok = not strict_toolchain or not differences(read_record(db_path), toolchain, db_path)
         if expected_release and reader:
             if (
                 toolchain_ok
@@ -1770,10 +1770,19 @@ def _build_semsql_db(
         if result.built:
             # Record what built the new DB; a build that produced no usable DB
             # must not keep the old DB's record beside it (#1524).
-            if result.usable:
-                write_record(db_path, toolchain)
-            else:
-                discard_record(db_path)
+            try:
+                if result.usable:
+                    write_record(db_path, toolchain)
+                else:
+                    discard_record(db_path)
+            except OSError as error:
+                # A missing record makes the next GO run rebuild and the others
+                # warn; a finished build is not thrown away for it.
+                print(f"Warning: could not record the toolchain that built {db_path}: {error}")
+                try:
+                    discard_record(db_path)
+                except OSError:
+                    pass
         return result
 
 
@@ -2576,8 +2585,9 @@ def _ensure_go_db(go_db_path: str, *, source_path: Optional[Path] = None) -> DbE
             if absent:
                 print(
                     f"Warning: {go_db_path} cannot be verified or rebuilt here: {'; '.join(drift)}, and this "
-                    f"machine lacks {', '.join(absent)} (#1524). Install them, or set KG_SEMSQL_BUILD=off "
-                    "to accept the prebuilt go.db and its toolchain."
+                    f"machine lacks {', '.join(absent)} (#1524). Install them (see "
+                    "docs/runbooks/ontology-caches.md), or set KG_SEMSQL_BUILD=off to accept the prebuilt "
+                    "go.db and its toolchain; that also stops every SemSQL DB from being rebuilt on release drift."
                 )
                 return DbEnsureResult(False)
             print(f"Rebuilding {go_db_path}: {'; '.join(drift)} (#1524)...")

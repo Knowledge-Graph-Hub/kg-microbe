@@ -386,6 +386,20 @@ def test_actual_public_finalize_repeat_and_retained_late_admission(tmp_path, mon
         repeat.verify_native_inputs()
 
 
+def test_a_bound_go_db_sqlite_cannot_read_is_a_clean_refusal(tmp_path, monkeypatch):
+    """A SQLite error during recorded admission is refused like any other contract failure (#1552)."""
+    transform, _, _, report = run_upa(tmp_path, monkeypatch, finalize=True)
+
+    def broken(*args, **kwargs):
+        """Stand in for a bound go.db SQLite cannot read."""
+        raise sqlite3.DatabaseError("file is not a database")
+
+    monkeypatch.setattr(upa.sqlite3, "connect", broken)
+    with pytest.raises(SourceFinalizationRequired, match="UPA admitted GO database cannot be read") as info:
+        OntologiesTransform.verify_recorded_native_inputs(report, transform.output_dir / "upa_source_finalization.json")
+    assert isinstance(info.value.__cause__, sqlite3.DatabaseError)
+
+
 @pytest.mark.parametrize("damage", ["contract", "audit", "roles", "witness", "wrong_scope"])
 def test_recorded_class_hook_refuses_missing_contract_or_evidence(tmp_path, monkeypatch, damage):
     """The producer hook independently checks native scope; public counterpart tests are separate."""

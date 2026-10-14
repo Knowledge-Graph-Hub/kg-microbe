@@ -9,7 +9,7 @@ used to fail after hours of NCBITaxon and ChEBI work. This module collects those
 pins from the policies themselves and compares them with the raw directory before
 the ontologies source, or a single ontology, runs. It also checks two things a run
 would otherwise discover late: that the raw directory holds ``ncit.db`` with a SQLite
-header and, with ``ncit.db.gz`` beside it, the archive's unpacked size, or else an
+header and, with ``ncit.db.gz`` beside it, the archive's unpacked size and CRC-32, or else an
 archive that unpacks to a SQLite database; and that an existing ``upa.json`` is the
 pinned conversion. It reads the policies' pins and never replaces them.
 ``ontologies_stubs`` and MediaDive, which also read ``ncit.db``, run the NCIT check
@@ -229,12 +229,12 @@ def stale_derived_files(raw_dir: Path, *, repo_root: Path = REPO_ROOT, names=Non
     return problems
 
 
-def _gzip_isize(archive: Path) -> int:
+def _gzip_trailer(archive: Path) -> Tuple[int, int]:
     """
-    Return the uncompressed size, modulo 2**32, that a gzip archive's trailer records.
+    Return the CRC-32 and the uncompressed size, modulo 2**32, that a gzip archive's trailer records.
 
-    It is the whole size only for a single-member archive, so a mismatch is confirmed
-    by unpacking before it is reported.
+    They describe the whole data only for a single-member archive, so a mismatch is
+    confirmed by unpacking before it is reported.
 
     :raises ValueError: When the file cannot be read, or is too short or does not start like gzip.
     """
@@ -243,16 +243,52 @@ def _gzip_isize(archive: Path) -> int:
             magic = stream.read(2)
             if magic != b"\x1f\x8b" or stream.seek(0, os.SEEK_END) < 18:
                 raise ValueError(f"{archive} is not a gzip archive")
-            stream.seek(-4, os.SEEK_END)
-            return int.from_bytes(stream.read(4), "little")
+            stream.seek(-8, os.SEEK_END)
+            trailer = stream.read(8)
+            return int.from_bytes(trailer[:4], "little"), int.from_bytes(trailer[4:], "little")
     except OSError as exc:
         raise ValueError(f"{archive} cannot be read ({exc})") from exc
 
 
-@functools.lru_cache(maxsize=4)
-def _read_archive(archive: str, identity: Tuple[int, ...]) -> Tuple[int, bytes]:
+def _identity(path: Path) -> Tuple[int, ...]:
     """
-    Read a gzip archive to its end; return its unpacked size and first 16 bytes.
+    Return what tells one file from another at ``path``: device, inode, size, modification and change times.
+
+    :raises ValueError: When the file cannot be read.
+    """
+    try:
+        status = path.stat()
+    except OSError as exc:
+        raise ValueError(f"{path} cannot be read ({exc})") from exc
+    return status.st_dev, status.st_ino, status.st_size, status.st_mtime_ns, status.st_ctime_ns
+
+
+@functools.lru_cache(maxsize=4)
+def _read_crc32(path: str, identity: Tuple[int, ...]) -> int:
+    """
+    Return the CRC-32 of a file, cached by its identity like the archive reads.
+
+    :raises ValueError: When the file cannot be read.
+    """
+    crc = 0
+    try:
+        with open(path, "rb") as stream:
+            while block := stream.read(16 * 1024 * 1024):
+                crc = zlib.crc32(block, crc)
+    except OSError as exc:
+        raise ValueError(f"{path} cannot be read ({exc})") from exc
+    return crc
+
+
+def _crc32(path: Path) -> int:
+    """Return the CRC-32 of ``path`` through the cache, keyed by its current identity."""
+    return _read_crc32(str(path), _identity(path))
+
+
+@functools.lru_cache(maxsize=4)
+def _read_archive(archive: str, identity: Tuple[int, ...]) -> Tuple[int, bytes, int]:
+    """
+    Read a gzip archive to its end; return its unpacked size, first 16 bytes and CRC-32.
 
     Keyed by the file's identity too (device, inode, size, modification and change
     times), so the checks of one batch read a 550 MB archive once, and a replaced
@@ -260,25 +296,21 @@ def _read_archive(archive: str, identity: Tuple[int, ...]) -> Tuple[int, bytes]:
 
     :raises ValueError: When the archive is damaged, truncated or unreadable.
     """
-    total, head = 0, b""
+    total, head, crc = 0, b"", 0
     try:
         with gzip.open(archive, "rb") as stream:
             while block := stream.read(16 * 1024 * 1024):
                 head = head or block[: len(SQLITE_HEADER)]
                 total += len(block)
+                crc = zlib.crc32(block, crc)
     except (EOFError, OSError, zlib.error) as exc:
         raise ValueError(f"{archive} cannot be unpacked ({exc})") from exc
-    return total, head
+    return total, head, crc
 
 
-def _unpack(archive: Path) -> Tuple[int, bytes]:
+def _unpack(archive: Path) -> Tuple[int, bytes, int]:
     """Read ``archive`` through the cache, keyed by its current identity."""
-    try:
-        status = archive.stat()
-    except OSError as exc:
-        raise ValueError(f"{archive} cannot be read ({exc})") from exc
-    identity = (status.st_dev, status.st_ino, status.st_size, status.st_mtime_ns, status.st_ctime_ns)
-    return _read_archive(str(archive), identity)
+    return _read_archive(str(archive), _identity(archive))
 
 
 def ncit_authority_problems(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> List[str]:
@@ -289,10 +321,13 @@ def ncit_authority_problems(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> Li
     classes, and FOODON does, so the ontologies source needs it when it finalizes
     (#1526); ``ontologies_stubs`` and MediaDive read it too (#1557). A run unpacks ``ncit.db.gz`` only when
     ``ncit.db`` is missing and never replaces an existing copy. So an existing
-    ``ncit.db`` must start as a SQLite database and, with the archive beside it, be as
-    large as the archive unpacked: otherwise a newer download would be read silently in
-    its place (#1536). Size cannot tell two releases of one size apart; the run's
-    receipt records the release it read. Without ``ncit.db``, the archive is read to its
+    ``ncit.db`` must start as a SQLite database and, with the archive beside it, have
+    the size and CRC-32 of the archive unpacked: otherwise a newer download would be
+    read silently in its place (#1536). The CRC-32 tells apart two releases of one size
+    (#1563), short of a 1-in-2**32 coincidence; it is a check, not a digest. For a
+    single-member archive it is read from the trailer and compared with one read of
+    ``ncit.db``, cached by file identity. The run's receipt records the SHA-256 of the
+    release it read. Without ``ncit.db``, the archive is read to its
     end, so a truncated or empty download fails here rather than hours in (#1535,
     #1544). Both files must resolve inside ``raw_dir``.
 
@@ -330,16 +365,37 @@ def ncit_authority_problems(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> Li
             f"`{fetch} -i`, or move it aside to keep the database."
         )
         try:
-            if _gzip_isize(archive) == size % 2**32:
-                return []
-            unpacked, head = _unpack(archive)
+            crc, isize = _gzip_trailer(archive)
         except ValueError as exc:
             return [f"{exc}. {unusable}"]
-        if unpacked == size:
+        try:
+            # Only a matching size is worth reading 2.7 GB for.
+            database_crc = _crc32(database) if isize == size % 2**32 else None
+        except ValueError as exc:
+            return [f"{exc}."]
+        if database_crc == crc:
+            return []
+        try:
+            unpacked, head, unpacked_crc = _unpack(archive)
+        except ValueError as exc:
+            return [f"{exc}. {unusable}"]
+        if unpacked == size and database_crc is None:  # a multi-member archive
+            try:
+                database_crc = _crc32(database)
+            except ValueError as exc:
+                return [f"{exc}."]
+        if unpacked == size and unpacked_crc == database_crc:
             return []
         if head != SQLITE_HEADER:
             # Deleting the database for this archive would leave no working copy (#1559).
             return [f"{archive} does not unpack to a SQLite database ({unpacked:,} bytes unpacked). {unusable}"]
+        if unpacked == size:
+            return [
+                f"{database} has the size of the ncit.db.gz beside it ({size:,} bytes) but not its content "
+                f"(CRC-32 {database_crc:08x}; the archive unpacks to {unpacked_crc:08x}), so it is another "
+                "release. The run reads an existing ncit.db and never replaces it: delete it to use the "
+                "archive, or move the archive aside to keep the database."
+            ]
         return [
             f"{database} ({size:,} bytes) is not the copy of the ncit.db.gz beside it, which unpacks to "
             f"{unpacked:,} bytes. The run reads an existing ncit.db and never replaces it: delete it to use "
@@ -347,7 +403,7 @@ def ncit_authority_problems(raw_dir: Path, *, repo_root: Path = REPO_ROOT) -> Li
         ]
     if archive.is_file():
         try:
-            unpacked, head = _unpack(archive)
+            unpacked, head, _ = _unpack(archive)
         except ValueError as exc:
             return [f"{exc}. Fetch it again with `{fetch} -i`."]
         if head != SQLITE_HEADER:

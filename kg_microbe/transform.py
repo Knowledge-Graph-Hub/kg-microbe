@@ -411,6 +411,8 @@ def transform(
     if not sources:
         # run all sources
         sources = [source for source in DATA_SOURCES if source not in EXPLICIT_ONLY_SOURCES]
+    # A source named twice is one request: it is checked, reported and run once (#1562).
+    sources = list(dict.fromkeys(sources))
 
     # Refuse an unknown source instead of skipping it. The old loop guarded with
     # `if source in DATA_SOURCES:` and had no else, so a typo produced exit 0 and

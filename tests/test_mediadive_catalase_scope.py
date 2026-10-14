@@ -311,7 +311,9 @@ def test_actual_native_catalase_assays_keep_activity_targets(tmp_path, monkeypat
     assert all(row["predicate"] == "MICRO:0001206" for row in edges)
     nodes = {
         row[0]: dict(zip(producer.node_header, row, strict=True))
-        for row in generate_assay_entity_nodes(assays, producer.node_header, go_authority=native)
+        for row in generate_assay_entity_nodes(
+            assays, producer.node_header, provided_by="infores:bacdive", go_authority=native
+        )
     }
     assert nodes["GO:0004096"]["category"] == "biolink:MolecularActivity"
     assert "NCIT:C61062" not in nodes

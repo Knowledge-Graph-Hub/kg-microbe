@@ -140,14 +140,14 @@ class TestAssayGeneration(unittest.TestCase):
 
     def test_generate_assay_nodes_count(self):
         """Test that generate_assay_nodes creates correct number of nodes."""
-        nodes = generate_assay_nodes(self.mock_assay_data, self.node_header)
+        nodes = generate_assay_nodes(self.mock_assay_data, self.node_header, provided_by="infores:bacdive")
 
         # Should create 5 nodes total (3 from API_20E + 2 from API_50CH)
         self.assertEqual(len(nodes), 5)
 
     def test_generate_assay_nodes_structure(self):
         """Test that generated assay nodes have correct structure."""
-        nodes = generate_assay_nodes(self.mock_assay_data, self.node_header)
+        nodes = generate_assay_nodes(self.mock_assay_data, self.node_header, provided_by="infores:bacdive")
 
         # Check first node structure
         first_node = nodes[0]
@@ -175,7 +175,7 @@ class TestAssayGeneration(unittest.TestCase):
     )
     def test_generate_assay_nodes_description_metadata(self, node_id, expected_kit, expected_well, expected_type):
         """Test that assay node description contains kit, well, and test type metadata."""
-        nodes = generate_assay_nodes(self.mock_assay_data, self.node_header)
+        nodes = generate_assay_nodes(self.mock_assay_data, self.node_header, provided_by="infores:bacdive")
 
         # Find the specific node by ID
         target_node = None
@@ -297,7 +297,7 @@ class TestAssayGeneration(unittest.TestCase):
     def test_generate_assay_nodes_empty_data(self):
         """Test that functions handle empty data gracefully."""
         empty_data = {}
-        nodes = generate_assay_nodes(empty_data, self.node_header)
+        nodes = generate_assay_nodes(empty_data, self.node_header, provided_by="infores:bacdive")
         edges = generate_assay_entity_edges(empty_data, self.edge_header)
 
         self.assertEqual(len(nodes), 0)
@@ -305,7 +305,7 @@ class TestAssayGeneration(unittest.TestCase):
 
     def test_generate_assay_nodes_id_format(self):
         """Test that assay node IDs follow correct format."""
-        nodes = generate_assay_nodes(self.mock_assay_data, self.node_header)
+        nodes = generate_assay_nodes(self.mock_assay_data, self.node_header, provided_by="infores:bacdive")
 
         for node in nodes:
             node_dict = dict(zip(self.node_header, node, strict=False))
@@ -320,7 +320,7 @@ class TestAssayGeneration(unittest.TestCase):
 
     def test_generate_assay_nodes_name_format(self):
         """Test that assay node names are human-readable."""
-        nodes = generate_assay_nodes(self.mock_assay_data, self.node_header)
+        nodes = generate_assay_nodes(self.mock_assay_data, self.node_header, provided_by="infores:bacdive")
 
         for node in nodes:
             node_dict = dict(zip(self.node_header, node, strict=False))

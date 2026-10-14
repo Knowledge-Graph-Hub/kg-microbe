@@ -18,6 +18,12 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.graph_canonicalization import compact_identifier
 from kg_microbe.utils.ontology_metadata import obograph_is_deprecated
+from kg_microbe.utils.release_binding import (
+    canonical_digest,
+    graph_release,
+    is_release_source,
+    read_bound_authority,
+)
 
 POLICY_FILE = Path(__file__).resolve().parents[2] / "mappings/native_ro_predicate_dispositions.json"
 POLICY_ROLE = "ontology_native_relation_policy"
@@ -108,9 +114,9 @@ def selected_content_sha256(name, graph):
     if name == "ro":
         nodes = {node["id"]: node for node in graph["nodes"]}
         declarations = [nodes.get(_OBO + relation.replace(":", "_", 1)) for relation in sorted(_RELATIONS)]
-        return _digest(_json(declarations).encode())
+        return canonical_digest(declarations)
     edges = [edge for edge in graph["edges"] if compact_identifier(edge["pred"]) in _RELATIONS]
-    return _digest(_json(sorted(edges, key=_json)).encode())
+    return canonical_digest(sorted(edges, key=_json))
 
 
 def _cohort(policy, name, field="records"):
@@ -156,10 +162,7 @@ def load_policy(stream):
             or not isinstance(authority.get("release"), str)
             or not authority["release"].startswith(_OBO)
             or not re.fullmatch(r"[0-9a-f]{64}", authority.get("selected_sha256", ""))
-            or not isinstance(source, dict)
-            or set(source) != {"file", "sha256"}
-            or not re.fullmatch(r"[a-z]+\.(json|owl)", source.get("file", ""))
-            or not re.fullmatch(r"[0-9a-f]{64}", source.get("sha256", ""))
+            or not is_release_source(source)
         ):
             raise ValueError(f"Invalid native RO authority: {filename}")
     for relation, declaration in policy["relations"].items():
@@ -209,17 +212,15 @@ class NativeROPredicateRetention:
         """Parse the exact admitted snapshot, never reopen mutable native bytes."""
         filename = name + ".json"
         role = "ontology_native_relation_" + name
-        with self.transform.consume_input(role, path) as stream:
-            content = stream.buffer.read()
         expected = self.policy["authorities"][filename]
+        content = self._bind_source(name, Path(path), role)
         document = json.loads(content, object_pairs_hook=_unique_object)
         graphs = document.get("graphs")
         if not isinstance(graphs, list) or len(graphs) != 1 or graphs[0].get("id") != expected["graph_id"]:
             raise ValueError(f"Unexpected native RO authority graph: {path}")
         graph = graphs[0]
-        if (graph.get("meta") or {}).get("version") != expected["release"]:
+        if graph_release(graph) != expected["release"]:
             raise ValueError(f"Unreviewed native RO authority release: {path}")
-        self._bind_source(name, Path(path), content)
         nodes = {}
         for node in graph["nodes"]:
             if node["id"] in nodes:
@@ -228,26 +229,30 @@ class NativeROPredicateRetention:
         self._identities[name] = self.transform.consumed_input_snapshots[role]
         return graph, nodes, content
 
-    def _bind_source(self, name, path, content):
+    def _bind_source(self, name, path, role):
         """
-        Bind the upstream release file this authority is, or was converted from (#1420).
+        Read an authority's JSON and bind the upstream release file it is, or was converted from (#1420).
 
         MONDO and ENVO publish JSON, so the read itself is the release file. RO, PATO
         and UBERON are converted from their OWL release beside it, which is read as
         its own consumed input so a different release cannot hide behind a JSON
-        whose reviewed content happens to match.
+        whose reviewed content happens to match. The shared
+        ``release_binding.read_bound_authority`` does both reads (#1523).
+
+        :return: The JSON's exact bytes.
         """
         source = self.policy["authorities"][name + ".json"]["source"]
-        if source["file"] == path.name:
-            digest = _digest(content)
-        else:
-            role = "ontology_native_relation_" + name + "_source"
-            with self.transform.consume_input(role, path.with_name(source["file"])) as stream:
-                stream.buffer.read()
-            self._source_identities[name] = self.transform.consumed_input_snapshots[role]
-            digest = self._source_identities[name]["sha256"]
-        if digest != source["sha256"]:
-            raise ValueError(f"Unreviewed native RO release file: {path.with_name(source['file'])}")
+        release_path = path.with_name(source["file"])
+        roles = {release_path: role + "_source", path: role}
+
+        def opener(consulted):
+            """Read each file as its own consumed input, under the role it always had."""
+            return self.transform.consume_input(roles[consulted], consulted)
+
+        content = read_bound_authority(path.parent, path.name, source, opener, set())
+        if release_path != path:
+            self._source_identities[name] = self.transform.consumed_input_snapshots[role + "_source"]
+        return content
 
     def _prepare_ro(self, path=None):
         """Require a prepared pinned RO export; absence is not an optional authority."""
@@ -483,7 +488,7 @@ def verify_audit_input_bindings(directory, snapshots, *, members=None, admission
                 not isinstance(graphs, list)
                 or len(graphs) != 1
                 or graphs[0].get("id") != authority["graph_id"]
-                or (graphs[0].get("meta") or {}).get("version") != authority["release"]
+                or graph_release(graphs[0]) != authority["release"]
             ):
                 raise SourceFinalizationRequired("Native RO audit witness graph changed")
             if selected_content_sha256(name, graphs[0]) != authority["selected_sha256"]:

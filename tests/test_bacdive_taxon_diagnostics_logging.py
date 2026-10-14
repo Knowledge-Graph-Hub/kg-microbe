@@ -1,6 +1,5 @@
 """BacDive's per-record taxon diagnostics go to its logger, not stdout (#1596)."""
 
-import io
 import logging
 
 import pytest
@@ -62,4 +61,3 @@ class _Writer:
 
     def writerow(self, row):
         """Discard the row."""
-        io.StringIO().write(str(row))

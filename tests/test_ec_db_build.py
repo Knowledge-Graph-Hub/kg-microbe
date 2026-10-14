@@ -16,8 +16,17 @@ runs a real `semsql make`: the build is mocked and size thresholds shrunk.
 
 from pathlib import Path
 
+import pytest
+
 from kg_microbe.utils import ontology_utils as ou
-from tests.db_helpers import write_semsql_db
+from tests.db_helpers import hold_semsql_toolchain, write_semsql_db
+
+
+@pytest.fixture(autouse=True)
+def _toolchain_held(monkeypatch):
+    """Hold the toolchain fixed: these tests are about release and build logic (#1524)."""
+    hold_semsql_toolchain(monkeypatch)
+
 
 _OWL = (
     '<?xml version="1.0"?>\n<rdf:RDF>\n'

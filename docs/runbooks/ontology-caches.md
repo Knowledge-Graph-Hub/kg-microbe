@@ -33,6 +33,39 @@ setting `KG_SEMSQL_BUILD=off` is the operator-controlled exception: it skips
 builds and permits an existing database with warnings. Corrupt SQLite files are
 rebuilt even if they exceed the normal size floor.
 
+### Toolchain records (#1524)
+
+Every successful `semsql make` writes `<db>.toolchain.json` beside the database:
+the SemSQL version (as its own interpreter reports it), the `rdftab` binary's
+SHA-256 (it reports no version), the `relation-graph` version with a digest of
+every jar it runs (which covers its bundled Whelk reasoner), the pinned
+`robot.jar` SHA-256, and, for provenance only, the first line of `java -version`.
+Paths and Java are recorded but not compared. A build that produces no usable
+database removes the old record; a failed build that restores the old database
+keeps it.
+
+When a database is reused at the right release, its record is compared with this
+machine's toolchain:
+
+- **`go.db` is strict.** GO's restriction policy refuses a quarantined restriction
+  once `entailed_edge` supports it, and `entailed_edge` comes from relation-graph,
+  so the same GO release built by another relation-graph can change outcomes. A
+  missing or different record rebuilds `go.db` (about a minute). If this machine
+  lacks `semsql`, `rdftab`, `relation-graph` or the pinned `robot.jar`, the
+  database can be neither rebuilt nor vouched for, so it is not used and the
+  message names what is missing. Databases built before #1524 have no record, so
+  each machine rebuilds `go.db` once.
+- **The others warn.** `chebi.db`, `ncbitaxon.db` and `ec.db` take far longer to
+  rebuild, so a missing or different record prints one warning per database per
+  process and the database is used.
+- **`KG_SEMSQL_BUILD=off`** skips both: it accepts the prebuilt databases and
+  whatever toolchain made them.
+
+The release binaries used on the M1 build recorded in #1524 are `rdftab` v0.1.1
+(`rdftab-x86_64-apple-darwin`, SHA-256 `4087e519…`, which needs Rosetta on Apple
+silicon) and `relation-graph` 2.3.2 (`relation-graph-cli-2.3.2.tgz`, put its `bin/`
+on `PATH`). Matching them keeps one machine's `go.db` record valid on another.
+
 ## Recovery
 
 1. Confirm the pinned OWL file exists and has enough free disk for a parallel

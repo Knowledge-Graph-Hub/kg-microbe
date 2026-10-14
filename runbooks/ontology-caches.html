@@ -120,6 +120,49 @@ parent process first; MetaTraits’ NCBITaxon preflight is the reference pattern
 setting <code class="docutils literal notranslate"><span class="pre">KG_SEMSQL_BUILD=off</span></code> is the operator-controlled exception: it skips
 builds and permits an existing database with warnings. Corrupt SQLite files are
 rebuilt even if they exceed the normal size floor.</p>
+<section id="toolchain-records-1524">
+<h3>Toolchain records (#1524)<a class="headerlink" href="#toolchain-records-1524" title="Link to this heading"></a></h3>
+<p>Every successful <code class="docutils literal notranslate"><span class="pre">semsql</span> <span class="pre">make</span></code> writes <code class="docutils literal notranslate"><span class="pre">&lt;db&gt;.toolchain.json</span></code> beside the database:
+the SemSQL version (as its own interpreter reports it, through an absolute, <code class="docutils literal notranslate"><span class="pre">env</span></code>
+or pip-trampoline shebang), the <code class="docutils literal notranslate"><span class="pre">rdftab</span></code> binary’s SHA-256 (it reports no version),
+the <code class="docutils literal notranslate"><span class="pre">relation-graph</span></code> version with a digest of every jar it runs (which covers its
+bundled Whelk reasoner), the pinned ROBOT’s <code class="docutils literal notranslate"><span class="pre">robot.jar</span></code> SHA-256 (only when its
+<code class="docutils literal notranslate"><span class="pre">robot</span></code> wrapper is beside it, since that is what puts it on <code class="docutils literal notranslate"><span class="pre">PATH</span></code>), and, for
+provenance only, the first line of <code class="docutils literal notranslate"><span class="pre">java</span> <span class="pre">-version</span></code>. Paths and Java are recorded
+but not compared.</p>
+<p>The record also names the database file it describes (size, modification time,
+inode). A database copied in, replaced by hand or restored from <code class="docutils literal notranslate"><span class="pre">.prev</span></code> is
+therefore another file, and the record no longer vouches for it; there is no need
+to delete the record when replacing a database. A tool whose version or digest
+cannot be read (a <code class="docutils literal notranslate"><span class="pre">relation-graph</span></code> wrapper with no release <code class="docutils literal notranslate"><span class="pre">lib/</span></code> beside it, or a
+<code class="docutils literal notranslate"><span class="pre">semsql</span></code> whose interpreter cannot be found) cannot vouch for a database either. A
+build that produces no usable database removes the old record, and a record that
+cannot be written is reported without discarding the build.</p>
+<p>When a database is reused at the right release, its record is compared with this
+machine’s toolchain:</p>
+<ul class="simple">
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">go.db</span></code> is strict.</strong> GO’s restriction policy refuses a quarantined restriction
+once <code class="docutils literal notranslate"><span class="pre">entailed_edge</span></code> supports it, and <code class="docutils literal notranslate"><span class="pre">entailed_edge</span></code> comes from relation-graph,
+so the same GO release built by another relation-graph can change outcomes. A
+missing or different record rebuilds <code class="docutils literal notranslate"><span class="pre">go.db</span></code> (about a minute on the M1). If this
+machine lacks <code class="docutils literal notranslate"><span class="pre">semsql</span></code>, <code class="docutils literal notranslate"><span class="pre">rdftab</span></code>, <code class="docutils literal notranslate"><span class="pre">relation-graph</span></code> or the pinned ROBOT, or cannot
+identify one of them, the database can be neither rebuilt nor vouched for, so it
+is not used and the message names what is missing. GO’s consumers then raise
+<code class="docutils literal notranslate"><span class="pre">OntologyDbUnavailableError</span></code>, a <code class="docutils literal notranslate"><span class="pre">FatalOntologyError</span></code>, so the whole <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">transform</span></code>
+run stops at the first source that needs GO. Databases built before #1524 have
+no record, so each machine rebuilds <code class="docutils literal notranslate"><span class="pre">go.db</span></code> once.</p></li>
+<li><p><strong>The others warn.</strong> <code class="docutils literal notranslate"><span class="pre">chebi.db</span></code>, <code class="docutils literal notranslate"><span class="pre">ncbitaxon.db</span></code> and <code class="docutils literal notranslate"><span class="pre">ec.db</span></code> take far longer to
+rebuild, so a missing or different record prints one warning per database per
+process and the database is used.</p></li>
+<li><p><strong><code class="docutils literal notranslate"><span class="pre">KG_SEMSQL_BUILD=off</span></code></strong> skips both: it accepts the prebuilt databases and
+whatever toolchain made them. It also stops every SemSQL database from being
+rebuilt on release drift.</p></li>
+</ul>
+<p>The release binaries used on the M1 build recorded in #1524 are <code class="docutils literal notranslate"><span class="pre">rdftab</span></code> v0.1.1
+(<code class="docutils literal notranslate"><span class="pre">rdftab-x86_64-apple-darwin</span></code>, SHA-256 <code class="docutils literal notranslate"><span class="pre">4087e519…</span></code>, which needs Rosetta on Apple
+silicon) and <code class="docutils literal notranslate"><span class="pre">relation-graph</span></code> 2.3.2 (<code class="docutils literal notranslate"><span class="pre">relation-graph-cli-2.3.2.tgz</span></code>, put its <code class="docutils literal notranslate"><span class="pre">bin/</span></code>
+on <code class="docutils literal notranslate"><span class="pre">PATH</span></code>). Matching them keeps one machine’s <code class="docutils literal notranslate"><span class="pre">go.db</span></code> record valid on another.</p>
+</section>
 </section>
 <section id="recovery">
 <h2>Recovery<a class="headerlink" href="#recovery" title="Link to this heading"></a></h2>

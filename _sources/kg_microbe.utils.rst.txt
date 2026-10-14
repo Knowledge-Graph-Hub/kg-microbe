@@ -484,6 +484,14 @@ kg\_microbe.utils.sanitize\_curies module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.utils.semsql\_toolchain module
+------------------------------------------
+
+.. automodule:: kg_microbe.utils.semsql_toolchain
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.utils.source\_category\_authority module
 ----------------------------------------------------
 

@@ -168,7 +168,7 @@ truncated one and was regenerated on every subsequent run forever.</p>
 more than one source. Each reader calls this instead of decompressing in place, so no
 reader ever sees a partly written file (#1526). A <code class="docutils literal notranslate"><span class="pre">path</span></code> that exists when this is
 called is never replaced, even after a newer archive is downloaded; the release
-preflight reports an <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> whose size is not the archive’s unpacked size (#1536).
+preflight reports an <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> whose size or CRC-32 is not the archive’s unpacked one (#1536, #1563).
 Two readers that both find <code class="docutils literal notranslate"><span class="pre">path</span></code> missing both unpack it, and the later copy replaces
 the earlier one. The NCIT readers, <code class="docutils literal notranslate"><span class="pre">FiniteNcitCategoryAuthority</span></code> and
 <code class="docutils literal notranslate"><span class="pre">ontologies_stubs</span></code>, bind the copy they read and refuse a replaced file as changed
@@ -5716,7 +5716,7 @@ used to fail after hours of NCBITaxon and ChEBI work. This module collects those
 pins from the policies themselves and compares them with the raw directory before
 the ontologies source, or a single ontology, runs. It also checks two things a run
 would otherwise discover late: that the raw directory holds <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> with a SQLite
-header and, with <code class="docutils literal notranslate"><span class="pre">ncit.db.gz</span></code> beside it, the archive’s unpacked size, or else an
+header and, with <code class="docutils literal notranslate"><span class="pre">ncit.db.gz</span></code> beside it, the archive’s unpacked size and CRC-32, or else an
 archive that unpacks to a SQLite database; and that an existing <code class="docutils literal notranslate"><span class="pre">upa.json</span></code> is the
 pinned conversion. It reads the policies’ pins and never replaces them.
 <code class="docutils literal notranslate"><span class="pre">ontologies_stubs</span></code> and MediaDive, which also read <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code>, run the NCIT check
@@ -5769,10 +5769,13 @@ starting a run.</p>
 classes, and FOODON does, so the ontologies source needs it when it finalizes
 (#1526); <code class="docutils literal notranslate"><span class="pre">ontologies_stubs</span></code> and MediaDive read it too (#1557). A run unpacks <code class="docutils literal notranslate"><span class="pre">ncit.db.gz</span></code> only when
 <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> is missing and never replaces an existing copy. So an existing
-<code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> must start as a SQLite database and, with the archive beside it, be as
-large as the archive unpacked: otherwise a newer download would be read silently in
-its place (#1536). Size cannot tell two releases of one size apart; the run’s
-receipt records the release it read. Without <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code>, the archive is read to its
+<code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> must start as a SQLite database and, with the archive beside it, have
+the size and CRC-32 of the archive unpacked: otherwise a newer download would be
+read silently in its place (#1536). The CRC-32 tells apart two releases of one size
+(#1563), short of a 1-in-2**32 coincidence; it is a check, not a digest. For a
+single-member archive it is read from the trailer and compared with one read of
+<code class="docutils literal notranslate"><span class="pre">ncit.db</span></code>, cached by file identity. The run’s receipt records the SHA-256 of the
+release it read. Without <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code>, the archive is read to its
 end, so a truncated or empty download fails here rather than hours in (#1535,
 #1544). Both files must resolve inside <code class="docutils literal notranslate"><span class="pre">raw_dir</span></code>.</p>
 <dl class="field-list simple">

@@ -208,7 +208,7 @@ is rebuilt on the next run anyway. <code class="docutils literal notranslate"><s
 they are downloaded as <code class="docutils literal notranslate"><span class="pre">.db.gz</span></code> with no OWL declared, so there is nothing to
 build them from, and a copy is used as it is. The release preflight accepts a
 copied <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> only with no <code class="docutils literal notranslate"><span class="pre">ncit.db.gz</span></code> beside it, or beside an archive that
-unpacks to the same size (#1536).</p>
+unpacks to the same size and CRC-32 (#1536, #1563).</p>
 <p>Set <code class="docutils literal notranslate"><span class="pre">KG_SEMSQL_BUILD=off</span></code> to decline those builds — they run for tens of
 minutes (ChEBI, GO) to hours (NCBITaxon, ~13 GB, plus ~2 GB for the
 decompressed OWL and a relation-graph intermediate). With the opt-out set the

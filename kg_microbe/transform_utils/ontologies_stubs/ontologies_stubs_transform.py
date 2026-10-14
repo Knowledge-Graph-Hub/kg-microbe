@@ -58,6 +58,7 @@ from __future__ import annotations
 import gzip
 import json
 import re
+import sqlite3
 import subprocess
 import tempfile
 from pathlib import Path
@@ -765,6 +766,7 @@ class OntologiesStubsTransform(Transform):
             try:
                 rels = list(adapter.outgoing_relationships(current, predicates=[RDFS_SUBCLASS_OF]))
             except Exception as error:
+                self._refuse_database_failure(current, error)
                 if current in REVIEWED_CATEGORIES:
                     self._consumed_input_error = str(error)
                     raise
@@ -1060,6 +1062,25 @@ class OntologiesStubsTransform(Transform):
             self._consumed_input_error = str(error)
             raise
 
+    def _refuse_database_failure(self, curie: str, error: Exception) -> None:
+        """
+        Abort when a lookup failed because the SemSQL database itself could not be read.
+
+        A term the database lacks comes back with no label; looking it up raises nothing. A
+        database error means the ontology has become unreadable, for example when another run's
+        unpack replaced the file under this adapter (#1537, #1580). Every later term then fails
+        the same way, so absorbing the error here wrote every stub with its identifier as its
+        name, and the run exited 0 (#1604). ``OntologyDbUnavailableError`` is a
+        ``BaseException``, so no per-term handler can absorb it.
+        """
+        from sqlalchemy.exc import SQLAlchemyError
+
+        if isinstance(error, (sqlite3.Error, SQLAlchemyError)):
+            from kg_microbe.utils.ontology_utils import OntologyDbUnavailableError
+
+            self._consumed_input_error = str(error)
+            raise OntologyDbUnavailableError(f"Cannot read the SemSQL database to look up {curie}: {error}") from error
+
     def _fetch_metadata(self, adapter, curie: str):
         """Return (label, synonyms_list, xrefs_list) for ``curie`` via the OAK adapter."""
         label = ""
@@ -1068,6 +1089,7 @@ class OntologiesStubsTransform(Transform):
         try:
             label = adapter.label(curie) or ""
         except Exception as error:  # noqa: S110 — obsolete CURIEs are expected to miss
+            self._refuse_database_failure(curie, error)
             if curie in REVIEWED_CATEGORIES:
                 self._consumed_input_error = str(error)
                 raise
@@ -1075,6 +1097,7 @@ class OntologiesStubsTransform(Transform):
         try:
             synonyms = {s for s in adapter.entity_aliases(curie) if s}
         except Exception as error:  # noqa: S110
+            self._refuse_database_failure(curie, error)
             if curie in REVIEWED_CATEGORIES:
                 self._consumed_input_error = str(error)
                 raise
@@ -1084,6 +1107,7 @@ class OntologiesStubsTransform(Transform):
         try:
             metadata = adapter.entity_metadata_map(curie) or {}
         except Exception as error:  # noqa: S110
+            self._refuse_database_failure(curie, error)
             if curie in REVIEWED_CATEGORIES:
                 self._consumed_input_error = str(error)
                 raise

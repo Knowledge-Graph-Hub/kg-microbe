@@ -412,13 +412,17 @@ def test_the_authority_leaves_the_callers_session_and_engine_alone(tmp_path, mon
     """
     No caller engine or session is queried, reset or closed (the module's contract, #1582).
 
-    With a StaticPool those calls would not even harm the caller, so only a spy
-    shows them.
+    A session reopens after close or rollback and an engine reconnects after
+    dispose, so a caller that still works proves nothing; only a spy shows them.
     """
     original = adapter(database(tmp_path / "authority.db"))
     session, engine = original.session, original.engine
     calls = []
-    for owner, names in ((session, ("close", "rollback", "commit")), (engine, ("dispose", "connect"))):
+    spied = (
+        (session, ("close", "rollback", "commit", "execute", "connection")),
+        (engine, ("dispose", "connect", "begin", "raw_connection")),
+    )
+    for owner, names in spied:
         for name in names:
             real, label = getattr(owner, name), f"{type(owner).__name__}.{name}"
 
@@ -433,6 +437,7 @@ def test_the_authority_leaves_the_callers_session_and_engine_alone(tmp_path, mon
             assert "NCBITaxon:10" in fresh.ancestors("NCBITaxon:20")
             fresh.finish()
         assert calls == []
+        assert original._session is session and original.engine is engine
     finally:
         monkeypatch.undo()
         close_adapter(original)

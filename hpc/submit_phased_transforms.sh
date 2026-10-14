@@ -5,6 +5,8 @@
 # phase reads only outputs that earlier phases wrote. Phase N+1 starts only if
 # every task of phase N succeeded (afterok); kg transform would refuse it anyway
 # without completed upstream outputs, and this way it never reads a partial one.
+# That is stricter than `kg transform`: one failed source cancels every later
+# phase, including sources that do not read it (#1659).
 # Each job runs `kg transform -s <source>` from the repository root, so it reads
 # data/raw there, and the plan is made against that same directory.
 #

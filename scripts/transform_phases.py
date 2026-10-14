@@ -39,7 +39,8 @@ def plan(sources: Optional[Iterable[str]] = None, input_dir: Optional[Path] = No
     :return: ``(phases, skipped)``. Each phase lists sources in registry order. An
         upstream outside the selection is not waited for: ``kg transform`` then
         requires its completed output, as it does for any single source.
-    :raises ValueError: When a source is not registered, or the declarations form a cycle.
+    :raises ValueError: When a source is not registered or is a single ontology, or the
+        declarations form a cycle.
     """
     import kg_microbe.transform as dispatcher
 
@@ -48,6 +49,14 @@ def plan(sources: Optional[Iterable[str]] = None, input_dir: Optional[Path] = No
     else:
         selected = list(dict.fromkeys(sources))
         unknown = sorted(set(selected) - set(dispatcher.DATA_SOURCES))
+        single = [name for name in unknown if name in dispatcher._ontology_map()]
+        if single:
+            # A single ontology withdraws the ontologies marker that every other
+            # phase's readers rely on, so it never runs beside them (#1660).
+            raise ValueError(
+                f"Single ontologies are not planned: {', '.join(single)}. "
+                "Run `kg transform -s <ontology>` on its own, or plan `ontologies`"
+            )
         if unknown:
             raise ValueError(
                 f"Unknown transform source(s): {', '.join(unknown)}. "

@@ -62,6 +62,12 @@ def test_an_unknown_source_is_refused(tmp_path, capsys):
     assert "Unknown transform source(s): ctd" in capsys.readouterr().err
 
 
+def test_a_single_ontology_is_refused_with_its_reason(tmp_path):
+    """It withdraws the ontologies marker, so it never runs beside readers of that output (#1660)."""
+    with pytest.raises(ValueError, match="Single ontologies are not planned: go"):
+        phases_script.plan(["go", "bacdive"], input_dir=tmp_path)
+
+
 def test_a_cycle_is_refused(monkeypatch, tmp_path):
     """Two sources that read each other cannot be phased."""
 

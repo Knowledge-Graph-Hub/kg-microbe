@@ -10,7 +10,9 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+import os
 from collections import Counter
+from contextlib import contextmanager
 from pathlib import Path
 
 from kg_microbe.merge_utils.source_admission import SourceAdmission
@@ -130,6 +132,26 @@ def _parsed(payload):
         return result
 
     return json.loads(payload, object_pairs_hook=unique)
+
+
+@contextmanager
+def _field_limit_for(stream):
+    """
+    Read ``stream`` with CSV's process-wide field limit raised to its file's size, then restore it.
+
+    The audit embeds witnesses and native records: on 2026-10-13 its longest cell
+    was 58,735 characters, 45% of CSV's 131,072 default, and a reviewed evidence
+    revision can grow past it (#1599). No cell is longer than its file. The
+    caller's limit is never lowered and is restored even when the read fails.
+    The same pattern as BacDive's ``csv_field_limit_at_least`` (#1572, #1595),
+    kept in this package so that its code fingerprint covers it.
+    """
+    previous = csv.field_size_limit()
+    csv.field_size_limit(max(previous, os.fstat(stream.fileno()).st_size))
+    try:
+        yield
+    finally:
+        csv.field_size_limit(previous)
 
 
 def _rows(stream, required):
@@ -514,7 +536,7 @@ class BacDiveJoinGuard:
         for path in (audit_path, edge_path):
             if path.is_symlink() or not path.is_file():
                 _fail("missing or symlinked source output/audit")
-        with audit_path.open(encoding="utf-8", newline="") as stream:
+        with audit_path.open(encoding="utf-8", newline="") as stream, _field_limit_for(stream):
             reader = csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE)
             if reader.fieldnames != list(AUDIT_FIELDS):
                 _fail("audit header changed")
@@ -523,7 +545,7 @@ class BacDiveJoinGuard:
         if actual_audit != expected_audit:
             _fail("original native/audit rows lost, changed or duplicated")
         actual_links, actual_snapshots = Counter(), Counter()
-        with edge_path.open(encoding="utf-8", newline="") as stream:
+        with edge_path.open(encoding="utf-8", newline="") as stream, _field_limit_for(stream):
             reader = csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE)
             if reader.fieldnames is None or len(set(reader.fieldnames)) != len(reader.fieldnames):
                 _fail("source edge header changed")
@@ -560,7 +582,7 @@ class BacDiveJoinGuard:
             path = directory / name
             if path.is_symlink() or not path.is_file():
                 _fail("missing snapshot node/phenotype member")
-            with path.open(encoding="utf-8", newline="") as stream:
+            with path.open(encoding="utf-8", newline="") as stream, _field_limit_for(stream):
                 reader = csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE)
                 if not reader.fieldnames or len(set(reader.fieldnames)) != len(reader.fieldnames):
                     _fail("invalid snapshot node/phenotype header")

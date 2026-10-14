@@ -534,4 +534,5 @@ def test_the_merge_hands_over_the_path_it_already_built():
     import kg_microbe.merge_utils.merge_kg as merge_kg
 
     source = inspect.getsource(merge_kg._cleanup_merged_outputs)
-    assert "edges_file, output_dir, nodes_file=nodes_file, native_declarations=native_declarations" in source
+    call = source[source.index("check_merged_invariants(") :].split(")", 1)[0]
+    assert "nodes_file=nodes_file" in call and "native_declarations=native_declarations" in call

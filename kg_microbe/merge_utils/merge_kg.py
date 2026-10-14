@@ -19,7 +19,7 @@ from kg_microbe.merge_utils.artifact_manifest import (
     write_graph_archive,
     write_loose_manifest,
 )
-from kg_microbe.merge_utils.invariants import check_merged_invariants
+from kg_microbe.merge_utils.invariants import check_merged_invariants, unmerged_declaration_files
 from kg_microbe.merge_utils.merge_contract import validate_merge_semantics
 from kg_microbe.merge_utils.progress import merge_phase
 from kg_microbe.merge_utils.stats_provenance import STATS_OPERATION, annotate_graph_stats, stats_filename_from_config
@@ -232,6 +232,15 @@ def load_and_merge(
         written = _publish_staged_outputs(staged_output, final_output, stats_outputs, failed_stats)
         _warn_about_stale_siblings(final_output, written)
     return merged_graph
+
+
+def _merged_input_files(config) -> List[Path]:
+    """Return the graph files a parsed merge configuration reads, as written in it."""
+    files = []
+    for source in (config.get("merged_graph", {}).get("source") or {}).values():
+        values = (source.get("input") or {}).get("filename") or []
+        files.extend(Path(value) for value in ([values] if isinstance(values, str) else values))
+    return files
 
 
 def _assert_sources_finalized(yaml_file, sources=None):
@@ -507,7 +516,11 @@ def _cleanup_merged_outputs(
             # unlike this report, propagate to the caller (#1075).
             try:
                 check_merged_invariants(
-                    edges_file, output_dir, nodes_file=nodes_file, native_declarations=native_declarations
+                    edges_file,
+                    output_dir,
+                    nodes_file=nodes_file,
+                    native_declarations=native_declarations,
+                    unmerged_declarations=unmerged_declaration_files(_merged_input_files(config)),
                 )
             except Exception as exc:  # noqa: BLE001
                 print(f"[merge-invariants] check skipped: {exc}")

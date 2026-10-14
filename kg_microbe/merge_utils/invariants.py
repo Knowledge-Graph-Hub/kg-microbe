@@ -9,14 +9,17 @@ this module is the check that notices if another source reintroduces them (#896)
 """
 
 import csv
+import json
 import logging
+import os
 import re
 from collections import defaultdict
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, Iterable, List, Optional, Set, Tuple
 
 from kg_microbe.transform_utils.constants import (
     CATEGORY_COLUMN,
+    ID_COLUMN,
     NAME_COLUMN,
     NCBITAXON_PREFIX,
     OBJECT_COLUMN,
@@ -108,6 +111,7 @@ def check_merged_invariants(
     output_dir: Optional[Path] = None,
     nodes_file: Optional[Path] = None,
     native_declarations=None,
+    unmerged_declarations: Iterable[Path] = (),
 ) -> int:
     """
     Run the merged-graph invariants and write their report.
@@ -124,6 +128,10 @@ def check_merged_invariants(
         looks exactly like a graph with no stubs (#936).
     :param native_declarations: The admitted native declarations merge validation
         checked the nodes against, passed to :func:`find_stub_nodes`.
+    :param unmerged_declarations: Node files the merged sources counted as
+        declarations that this merge does not include, from
+        :func:`unmerged_declaration_files`. A stub one of them declares is named
+        with it in the detail report (#1556).
     :return: Number of violating strain nodes.
     """
     violations = find_multi_parent_strains(edges_file)
@@ -142,6 +150,7 @@ def check_merged_invariants(
         # a check that never ran, and after a multi-hour merge a demonstrably clean
         # result is worth more than a saved header row.
         stubs = find_stub_nodes(nodes_file, native_declarations)
+        declared_outside = stubs_declared_in(stubs, unmerged_declarations)
         stub_destination = Path(output_dir or edges_file.parent) / STUB_NODE_REPORT
         with atomic_write(stub_destination, newline="") as handle:
             writer = tsv_writer(handle)
@@ -151,7 +160,20 @@ def check_merged_invariants(
         with atomic_write(detail_destination, encoding="utf-8", newline="") as handle:
             writer = tsv_writer(handle)
             writer.writerow(STUB_NODE_DETAILS_HEADER)
-            writer.writerows(stub_incident_rows(edges_file, stubs))
+            writer.writerows(stub_incident_rows(edges_file, stubs, declared_outside))
+        if declared_outside:
+            by_file: Dict[str, int] = defaultdict(int)
+            for names in declared_outside.values():
+                for name in names:
+                    by_file[name] += 1
+            logger.warning(
+                "[merge-invariants] %s nodes were invented by KGX although a node file their sources counted "
+                "as declarations declares them; this merge does not include that file (%s). Listed in %s "
+                "under declared_outside_merge (#1556).",
+                f"{len(declared_outside):,}",
+                ", ".join(f"{name}: {count:,}" for name, count in sorted(by_file.items())),
+                detail_destination,
+            )
         unexpected = {
             prefix: offenders
             for prefix, curies in stubs.items()
@@ -202,7 +224,18 @@ STUB_NODE_REPORT = "merged_stub_nodes.tsv"
 STUB_NODE_REPORT_HEADER = ["prefix", "count", "expected", "note", "examples"]
 
 STUB_NODE_DETAILS_REPORT = "merged_stub_node_details.tsv"
-STUB_NODE_DETAILS_HEADER = ["id", "expected", "note", "incident_edges", "predicates", "knowledge_sources"]
+STUB_NODE_DETAILS_HEADER = [
+    "id",
+    "expected",
+    "note",
+    "incident_edges",
+    "predicates",
+    "knowledge_sources",
+    "declared_outside_merge",
+]
+
+#: The record a finalized source writes beside its graph files, listing every input it read.
+_FINALIZATION_RECORD = "source_finalization.json"
 
 #: Only prefixes whose *every* identifier is an external cross-reference belong
 #: here. GOLD organisms and GTDB assemblies have owner transforms, so exempting
@@ -316,7 +349,85 @@ def stub_node_rows(stubs: Dict[str, List[str]]) -> List[List]:
     ]
 
 
-def stub_incident_rows(edges_file: Path, stubs: Dict[str, List[str]]) -> List[List]:
+def unmerged_declaration_files(merged_inputs: Iterable[Path]) -> List[Path]:
+    """
+    Return node files the merged sources counted as declarations that this merge leaves out.
+
+    Finalization does not declare a referenced node again when the ``ontologies``
+    output already declares it, and records each node file it counted among its
+    inputs. Which of those a merge publishes is the merge's choice
+    (``merge.yaml`` leaves out four, ``merge.minimal.yaml`` all of them), so a
+    reference to a node only they declare reaches the merged graph as a KGX
+    invention. Naming the file turns that stub from a mystery into a known
+    consequence of the configuration (#1556).
+
+    Only another finalized source's graph output counts: a node file its own
+    finalization record lists among its ``members``. A raw download that happens
+    to be named ``*nodes.tsv`` (GOLD's ``GOLD_nodes.tsv``) is an input, not a
+    declaration.
+
+    :param merged_inputs: The graph files this merge reads.
+    :return: Existing node files recorded as inputs by the finalization records
+        beside ``merged_inputs``, finalized as graph members, and not among
+        ``merged_inputs``; sorted.
+    """
+    merged = {Path(path).resolve() for path in merged_inputs}
+    found = set()
+    for directory in sorted({path.parent for path in merged}):
+        for record in sorted(directory.glob(f"*{_FINALIZATION_RECORD}")):
+            for item in json.loads(record.read_text(encoding="utf-8")).get("inputs", []):
+                path = Path(item["path"]).resolve()
+                if path.name.endswith("nodes.tsv") and path not in merged and _finalized_member(path):
+                    found.add(path)
+    return sorted(found)
+
+
+def _finalized_member(path: Path) -> bool:
+    """Whether a finalization record beside ``path`` lists it as one of that source's graph files."""
+    if not path.is_file():
+        return False
+    for record in path.parent.glob(f"*{_FINALIZATION_RECORD}"):
+        try:
+            members = json.loads(record.read_text(encoding="utf-8")).get("members") or {}
+        except (OSError, ValueError, AttributeError):
+            continue
+        if path.name in members:
+            return True
+    return False
+
+
+def stubs_declared_in(stubs: Dict[str, List[str]], node_files: Iterable[Path]) -> Dict[str, List[str]]:
+    """
+    Return ``{stub: [file names]}`` for each stub one of ``node_files`` declares.
+
+    :param stubs: Result of :func:`find_stub_nodes`.
+    :param node_files: Node TSVs to look in, typically :func:`unmerged_declaration_files`.
+    :return: The stubs found, each with the sorted names of the files declaring it.
+    """
+    wanted = {curie for curies in stubs.values() for curie in curies}
+    declared: Dict[str, Set[str]] = defaultdict(set)
+    if not wanted:
+        return {}
+    for path in node_files:
+        with Path(path).open(encoding="utf-8", errors="replace", newline="") as handle:
+            # No cell can be longer than the file. An over-limit description would
+            # otherwise end the whole optional invariants report (#1572).
+            limit = csv.field_size_limit(max(csv.field_size_limit(), os.fstat(handle.fileno()).st_size))
+            try:
+                reader = csv.reader(handle, delimiter="\t")
+                header = next(reader, [])
+                id_at = header.index(ID_COLUMN) if ID_COLUMN in header else 0
+                for row in reader:
+                    if len(row) > id_at and row[id_at] in wanted:
+                        declared[row[id_at]].add(Path(path).name)
+            finally:
+                csv.field_size_limit(limit)
+    return {curie: sorted(names) for curie, names in sorted(declared.items())}
+
+
+def stub_incident_rows(
+    edges_file: Path, stubs: Dict[str, List[str]], declared_outside: Optional[Dict[str, List[str]]] = None
+) -> List[List]:
     """
     Attribute every anonymous node to its incident assertions, not just prefix samples.
 
@@ -357,6 +468,7 @@ def stub_incident_rows(edges_file: Path, stubs: Dict[str, List[str]]) -> List[Li
             counts[curie],
             "|".join(sorted(predicates[curie])),
             "|".join(sorted(sources[curie])),
+            "|".join((declared_outside or {}).get(curie, ())),
         ]
         for curie in sorted(counts)
     ]

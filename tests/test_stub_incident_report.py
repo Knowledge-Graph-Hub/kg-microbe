@@ -48,7 +48,7 @@ def test_report_retains_unconnected_candidates_and_rejects_bad_schema(tmp_path):
     edges = tmp_path / "edges.tsv"
     edges.write_text("subject\tpredicate\tobject\tprimary_knowledge_source\n", encoding="utf-8")
     rows = stub_incident_rows(edges, {"GO": ["GO:1"]})
-    assert rows == [["GO:1", "no", "", 0, "", ""]]
+    assert rows == [["GO:1", "no", "", 0, "", "", ""]]
     edges.write_text("subject\tpredicate\tobject\n", encoding="utf-8")
     with pytest.raises(ValueError, match="lacks"):
         stub_incident_rows(edges, {"GO": ["GO:1"]})
@@ -72,4 +72,4 @@ def test_quoted_source_cells_keep_their_logical_value(tmp_path):
         writer = csv.writer(handle, delimiter="\t")
         writer.writerow(["subject", "predicate", "object", "primary_knowledge_source"])
         writer.writerow(["GO:1", "biolink:related_to", "GO:2", legacy])
-    assert stub_incident_rows(edges, {"GO": ["GO:1"]})[0][-1] == legacy
+    assert stub_incident_rows(edges, {"GO": ["GO:1"]})[0][-2] == legacy

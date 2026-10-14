@@ -17,6 +17,7 @@ from kg_microbe.transform_utils.ontologies_stubs.ncit_category_projection import
     REVIEWED_CATEGORIES,
     read_dispositions,
 )
+from kg_microbe.utils.ontology_utils import OntologyDbUnavailableError
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, verify_consumed_inputs
 
 FIXTURE = Path(__file__).parent / "resources/ncit_category_projection/native.json"
@@ -199,28 +200,21 @@ def test_relevant_infrastructure_failure_is_not_absorbed(prepared, monkeypatch, 
 @pytest.mark.parametrize(
     "method", ["label", "entity_aliases", "entity_metadata_map", "outgoing_relationships", "project_category"]
 )
-def test_a_database_error_on_a_reviewed_term_fails_the_source(prepared, monkeypatch, method):
-    """An unreadable native database fails the source the same way in all five per-term reads (#1604)."""
+def test_a_database_error_on_a_reviewed_term_stops_the_run(prepared, monkeypatch, method):
+    """An unreadable native database stops the run the same way in all five reads of a reviewed term (#1604)."""
     transform, adapter, _, _, _ = prepared
     error = sqlite3.OperationalError("disk I/O error")
-    if method == "project_category":
-        read = adapter.entity_metadata_map
+    name = "entity_metadata_map" if method == "project_category" else method
+    read = getattr(adapter, name)
 
-        def fail(curie, include_all_triples=False):
-            """Fail only the full-triple read that project_category makes."""
-            if include_all_triples:
-                raise error
-            return read(curie, include_all_triples=include_all_triples)
-
-        monkeypatch.setattr(adapter, "entity_metadata_map", fail)
-    else:
-
-        def fail(*args, **kwargs):
-            """Model an unreadable native database."""
+    def fail(curie, *args, **kwargs):
+        """Fail this read for a reviewed term only; for project_category, only its full-triple read."""
+        if curie in REVIEWED_CATEGORIES and (method != "project_category" or kwargs.get("include_all_triples")):
             raise error
+        return read(curie, *args, **kwargs)
 
-        monkeypatch.setattr(adapter, method, fail)
-    with pytest.raises(SourceFinalizationRequired) as raised:
+    monkeypatch.setattr(adapter, name, fail)
+    with pytest.raises(OntologyDbUnavailableError) as raised:
         transform.run()
     assert raised.value.__cause__ is error
     assert not (transform.output_dir / "ncit_nodes.tsv").exists()

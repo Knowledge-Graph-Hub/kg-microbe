@@ -766,7 +766,7 @@ class OntologiesStubsTransform(Transform):
             try:
                 rels = list(adapter.outgoing_relationships(current, predicates=[RDFS_SUBCLASS_OF]))
             except Exception as error:
-                self._refuse_database_failure(current, error)
+                self._refuse_database_failure(adapter, current, error)
                 if current in REVIEWED_CATEGORIES:
                     self._consumed_input_error = str(error)
                     raise
@@ -1059,31 +1059,38 @@ class OntologiesStubsTransform(Transform):
                 raise ValueError(f"NCIT emitted label differs from reviewed native evidence: {curie}")
             return project_category(adapter, curie, disposition)
         except BaseException as error:
-            self._refuse_database_failure(curie, error)
+            self._refuse_database_failure(adapter, curie, error)
             self._consumed_input_error = str(error)
             raise
 
-    def _refuse_database_failure(self, curie: str, error: BaseException) -> None:
+    def _refuse_database_failure(self, adapter, curie: str, error: BaseException) -> None:
         """
-        Fail this source when a lookup failed because the SemSQL database could not be read.
+        Stop a lookup error that is not a missing term from being absorbed as one.
 
-        A term the database lacks comes back with no label; looking it up raises nothing. A
-        database error, or SQLite running out of memory, is not a missing term. Absorbed per
-        term, it named the affected stubs by their identifiers, and the run exited 0 (#1604):
-        every stub when another run's unpack replaced the file under this adapter (#1537,
-        #1580), or when the file was damaged. ``SourceFinalizationRequired`` fails this source
-        only, as ``bacdive``'s ancestry authority does for the same errors, and ``kg
-        transform`` then skips the sources that depend on it.
+        A term the database lacks comes back with no label; looking it up raises nothing.
+        Absorbed per term, a database error named the stub by its identifier and the run
+        exited 0 (#1604). On macOS's system SQLite, every term failed that way once another
+        run's unpack had replaced the file under this adapter (#1537, #1580). A database
+        error therefore raises ``OntologyDbUnavailableError``: like any ontology adapter
+        failure it stops the run, and as a ``BaseException`` no per-term handler can absorb
+        it. A ``MemoryError`` is re-raised unchanged.
         """
         from sqlalchemy.exc import SQLAlchemyError
 
-        if isinstance(error, (sqlite3.Error, SQLAlchemyError, MemoryError)):
-            from kg_microbe.utils.source_finalization import SourceFinalizationRequired
+        if not isinstance(error, (sqlite3.Error, SQLAlchemyError, MemoryError)):
+            return
+        detail = f"{type(error).__name__}: {error}"
+        self._consumed_input_error = detail
+        if isinstance(error, MemoryError):
+            raise error
+        from kg_microbe.utils.ontology_utils import OntologyDbUnavailableError
 
-            self._consumed_input_error = str(error)
-            raise SourceFinalizationRequired(
-                f"ontologies_stubs cannot read the SemSQL database to look up {curie}: {error}"
-            ) from error
+        database = getattr(getattr(getattr(adapter, "engine", None), "url", None), "database", None)
+        where = f" {database}" if database else ""
+        raise OntologyDbUnavailableError(
+            f"ontologies_stubs cannot read its SemSQL database{where} to look up {curie} ({detail}). "
+            "If the file is damaged, delete it so that it is unpacked or downloaded again; then rerun."
+        ) from error
 
     def _fetch_metadata(self, adapter, curie: str):
         """Return (label, synonyms_list, xrefs_list) for ``curie`` via the OAK adapter."""
@@ -1093,7 +1100,7 @@ class OntologiesStubsTransform(Transform):
         try:
             label = adapter.label(curie) or ""
         except Exception as error:  # noqa: S110 — obsolete CURIEs are expected to miss
-            self._refuse_database_failure(curie, error)
+            self._refuse_database_failure(adapter, curie, error)
             if curie in REVIEWED_CATEGORIES:
                 self._consumed_input_error = str(error)
                 raise
@@ -1101,7 +1108,7 @@ class OntologiesStubsTransform(Transform):
         try:
             synonyms = {s for s in adapter.entity_aliases(curie) if s}
         except Exception as error:  # noqa: S110
-            self._refuse_database_failure(curie, error)
+            self._refuse_database_failure(adapter, curie, error)
             if curie in REVIEWED_CATEGORIES:
                 self._consumed_input_error = str(error)
                 raise
@@ -1111,7 +1118,7 @@ class OntologiesStubsTransform(Transform):
         try:
             metadata = adapter.entity_metadata_map(curie) or {}
         except Exception as error:  # noqa: S110
-            self._refuse_database_failure(curie, error)
+            self._refuse_database_failure(adapter, curie, error)
             if curie in REVIEWED_CATEGORIES:
                 self._consumed_input_error = str(error)
                 raise

@@ -35,8 +35,8 @@ from kg_microbe.utils.isolation_source_mapping_utils import (
     STUB_ONTOLOGY_CATEGORY,
     STUB_ONTOLOGY_PREFIXES,
 )
+from kg_microbe.utils.ontology_utils import OntologyDbUnavailableError
 from kg_microbe.utils.robot_utils import ROBOT_JAXP_LIMITS
-from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 from kg_microbe.utils.stub_curie_collection import collect_stub_curies
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -302,12 +302,10 @@ def test_transform_falls_back_to_curie_when_label_missing(tmp_path):
     assert rows[0]["name"] == "BTO:9999999"  # falls back to the CURIE itself
 
 
-#: How a failed SemSQL read reaches the transform: from sqlite3 directly, wrapped by SQLAlchemy, or as
-#: the MemoryError CPython raises for SQLite's out-of-memory result, which SQLAlchemy does not wrap.
+#: The two shapes a failed SemSQL read takes: raised by sqlite3 directly, or wrapped by SQLAlchemy.
 _DATABASE_ERRORS = {
     "sqlite3": lambda: sqlite3.OperationalError("disk I/O error"),
     "sqlalchemy": lambda: OperationalError("SELECT 1", {}, sqlite3.OperationalError("disk I/O error")),
-    "out-of-memory": MemoryError,
 }
 
 
@@ -340,10 +338,29 @@ def test_a_database_error_aborts_instead_of_naming_stubs_by_identifier(tmp_path,
         output_dir=tmp_path / "out",
     )
     (tmp_path / "in").mkdir()
-    with pytest.raises(SourceFinalizationRequired) as raised:
+    with pytest.raises(OntologyDbUnavailableError) as raised:
         t.run()
     assert raised.value.__cause__ is error
-    assert t._consumed_input_error == str(error)
+    assert t._consumed_input_error == f"{type(error).__name__}: {error}"
+    assert not (tmp_path / "out" / "ontologies_stubs" / "bto_nodes.tsv").exists()
+
+
+def test_a_memory_error_is_re_raised_unchanged(tmp_path, monkeypatch):
+    """SQLite running out of memory is not a missing term either, but it is not a database failure to report."""
+    error = MemoryError()
+    adapter = _FakeAdapter({"BTO:0003114": {"label": "wound fluid"}})
+    monkeypatch.setattr(adapter, "label", _unreadable(error))
+    t = _StubbedTransform(
+        adapters={"BTO": adapter},
+        curies={"BTO": {"BTO:0003114"}},
+        input_dir=tmp_path / "in",
+        output_dir=tmp_path / "out",
+    )
+    (tmp_path / "in").mkdir()
+    with pytest.raises(MemoryError) as raised:
+        t.run()
+    assert raised.value is error
+    assert t._consumed_input_error == "MemoryError: "
     assert not (tmp_path / "out" / "ontologies_stubs" / "bto_nodes.tsv").exists()
 
 
@@ -355,7 +372,7 @@ def test_a_database_error_in_the_hierarchy_walk_aborts(tmp_path, monkeypatch, ma
     monkeypatch.setattr(adapter, "outgoing_relationships", _unreadable(error))
     t = _StubbedTransform(adapters={"NCIT": adapter}, curies={}, input_dir=tmp_path / "in", output_dir=tmp_path / "out")
     (tmp_path / "in").mkdir()
-    with pytest.raises(SourceFinalizationRequired) as raised:
+    with pytest.raises(OntologyDbUnavailableError) as raised:
         t._write_stub_module_from_semsql_walk(
             prefix="NCIT",
             curies=["NCIT:C2000"],
@@ -364,7 +381,7 @@ def test_a_database_error_in_the_hierarchy_walk_aborts(tmp_path, monkeypatch, ma
             knowledge_source="infores:ncit",
         )
     assert raised.value.__cause__ is error
-    assert t._consumed_input_error == str(error)
+    assert t._consumed_input_error == f"{type(error).__name__}: {error}"
     assert not list((tmp_path / "out" / "ontologies_stubs").glob("ncit_*.tsv"))
 
 
@@ -380,7 +397,7 @@ def _not_semsql(path):
     [lambda path: path.write_bytes(b"not a database " * 1000), _not_semsql],
     ids=["garbage", "not-semsql"],
 )
-def test_a_damaged_database_fails_the_source_through_real_oak(tmp_path, damage):
+def test_a_damaged_database_stops_the_run_through_real_oak(tmp_path, damage):
     """
     Nothing is injected: a damaged bto.db reaches real OAK, and its errors are not missing terms.
 
@@ -391,7 +408,7 @@ def test_a_damaged_database_fails_the_source_through_real_oak(tmp_path, damage):
     damage(raw / "bto.db")
     transform = OntologiesStubsTransform(input_dir=raw, output_dir=tmp_path / "out")
     output = transform.output_dir / "bto_nodes.tsv"
-    with pytest.raises(SourceFinalizationRequired, match="BTO:0003114"):
+    with pytest.raises(OntologyDbUnavailableError, match="BTO:0003114") as raised:
         transform._write_stub_nodes_from_semsql(
             prefix="BTO",
             curies=["BTO:0003114"],
@@ -399,6 +416,7 @@ def test_a_damaged_database_fails_the_source_through_real_oak(tmp_path, damage):
             knowledge_source="infores:bto",
             output_file=output,
         )
+    assert "bto.db" in str(raised.value)
     assert transform._consumed_input_error
     assert not output.exists()
 

@@ -44,6 +44,14 @@ from kg_microbe.utils.ontology_resolution import (
     uberon_category,
 )
 from kg_microbe.utils.robot_utils import pinned_robot_on_path
+from kg_microbe.utils.semsql_toolchain import (
+    current_toolchain,
+    differences,
+    discard_record,
+    missing_tools,
+    read_record,
+    write_record,
+)
 
 _GO_NAMESPACE_CACHE: Optional[Dict[str, str]] = None
 
@@ -438,6 +446,61 @@ def _semsql_build_enabled() -> bool:
     :return: False when the opt-out is set, True otherwise.
     """
     return os.environ.get("KG_SEMSQL_BUILD", "").strip().lower() not in {"off", "false", "0", "no"}
+
+
+def _raw_dir_for(db_path: str, owl_source: Optional[Path]) -> Path:
+    """Return the directory a build of ``db_path`` runs in, which holds the pinned ROBOT."""
+    return owl_source.parent if owl_source is not None else Path(db_path).parent
+
+
+_TOOLCHAIN_WARNED: set = set()
+_TOOLCHAIN_PROBES: Dict[tuple, dict] = {}
+
+
+def _probed_toolchain(raw_dir: Path) -> dict:
+    """
+    Describe this machine's SemSQL toolchain once per raw directory and PATH in a process.
+
+    The probe hashes rdftab and relation-graph's jars and runs two short
+    commands, so reuse checks share it. A build re-probes, so its record
+    describes exactly what ran.
+    """
+    key = (str(raw_dir), os.environ.get("PATH"))
+    if key not in _TOOLCHAIN_PROBES:
+        _TOOLCHAIN_PROBES[key] = current_toolchain(raw_dir, os.environ)
+    return _TOOLCHAIN_PROBES[key]
+
+
+def _warn_on_toolchain_drift(db_path: str, owl_source: Optional[Path]) -> None:
+    """
+    Say once per process when a reused DB was not built by this machine's toolchain (#1524).
+
+    Only GO refuses such a DB: its restriction policy depends on relation-graph's
+    entailments, and its rebuild takes about a minute. The others take hours to
+    rebuild, so a difference is reported and the DB is still used.
+    """
+    if db_path in _TOOLCHAIN_WARNED or not _semsql_build_enabled():
+        return
+    _TOOLCHAIN_WARNED.add(db_path)
+    toolchain = _probed_toolchain(_raw_dir_for(db_path, owl_source))
+    drift = differences(read_record(db_path), toolchain, db_path)
+    if drift:
+        print(f"Warning: reusing {db_path}, which this toolchain did not build: {'; '.join(drift)}")
+
+
+def _go_toolchain_drift(db_path: str, owl_source: Optional[Path]) -> tuple:
+    """
+    Return why an existing go.db must be rebuilt for this toolchain, and which build tools are missing (#1524).
+
+    Both are empty when the DB may be reused. ``KG_SEMSQL_BUILD=off`` keeps the
+    reuse it always had. A toolchain that lacks a build tool can neither rebuild
+    the DB nor vouch for it.
+    """
+    if not _semsql_build_enabled():
+        return [], []
+    toolchain = _probed_toolchain(_raw_dir_for(db_path, owl_source))
+    drift = differences(read_record(db_path), toolchain, db_path)
+    return drift, (missing_tools(toolchain) if drift else [])
 
 
 def _usable_db(db_path: str, min_size: int, *, ontology: Optional[str] = None, require_content: bool = True) -> bool:
@@ -1587,6 +1650,7 @@ def _build_semsql_db(
     require_content: bool = True,
     ontology: Optional[str] = None,
     expected_release: Optional[str] = None,
+    strict_toolchain: bool = False,
 ) -> DbEnsureResult:
     """
     Run the guarded ``semsql make`` for one ontology.
@@ -1612,7 +1676,10 @@ def _build_semsql_db(
         cannot be rebuilt must be rejected however the rebuild fell over. An
         explicit ``KG_SEMSQL_BUILD=off`` is not covered by this — a deliberate
         opt-out always reuses what is on disk.
-    :return: Whether a usable DB exists, and whether this call built it.
+    :param strict_toolchain: Coalesce on a DB another process built only when its
+        toolchain record matches this machine's (GO, #1524).
+    :return: Whether a usable DB exists, and whether this call built it. A
+        successful build writes the toolchain that made it beside the DB.
     """
 
     def _fallback() -> DbEnsureResult:
@@ -1666,13 +1733,21 @@ def _build_semsql_db(
         # jobs ran ten sequential rebuilds of the fresh database the first job
         # had just produced.
         reader = _DB_RELEASE_READERS.get(ontology or "")
+        toolchain = current_toolchain(owl_source.parent, os.environ)
+        toolchain_ok = not strict_toolchain or not differences(read_record(db_path), toolchain, db_path)
         if expected_release and reader:
-            if reader(db_path) == expected_release and _servable_db(
-                db_path, min_size, ontology, require_content=require_content
+            if (
+                toolchain_ok
+                and reader(db_path) == expected_release
+                and _servable_db(db_path, min_size, ontology, require_content=require_content)
             ):
                 print(f"  {db_path} is already at {expected_release}; another process built it")
                 return DbEnsureResult(True)
-        elif reader is None and _servable_db(db_path, min_size, ontology, require_content=require_content):
+        elif (
+            reader is None
+            and toolchain_ok
+            and _servable_db(db_path, min_size, ontology, require_content=require_content)
+        ):
             # Keyed on the ontology having no reader at all (EC), not on the
             # caller having passed no expected_release: a release-carrying
             # ontology with no release argument is either a test exercising a
@@ -1681,7 +1756,7 @@ def _build_semsql_db(
             # drift.
             print(f"  {db_path} was produced by another process while we waited on the lock")
             return DbEnsureResult(True)
-        return _run_semsql_build(
+        result = _run_semsql_build(
             owl_source,
             db_path,
             min_size,
@@ -1692,6 +1767,23 @@ def _build_semsql_db(
             ontology=ontology,
             expected_release=expected_release,
         )
+        if result.built:
+            # Record what built the new DB; a build that produced no usable DB
+            # must not keep the old DB's record beside it (#1524).
+            try:
+                if result.usable:
+                    write_record(db_path, toolchain)
+                else:
+                    discard_record(db_path)
+            except OSError as error:
+                # A missing record makes the next GO run rebuild and the others
+                # warn; a finished build is not thrown away for it.
+                print(f"Warning: could not record the toolchain that built {db_path}: {error}")
+                try:
+                    discard_record(db_path)
+                except OSError:
+                    pass
+        return result
 
 
 def _report_release_shortfall(db_path: str, ontology: Optional[str], expected_release: Optional[str]) -> Optional[bool]:
@@ -2133,6 +2225,7 @@ def _ensure_chebi_db(db_path: str) -> DbEnsureResult:
     if _servable_db(db_path, min_size, "chebi"):
         db_release = _chebi_db_release(db_path)
         if not (owl_release and db_release and owl_release != db_release):
+            _warn_on_toolchain_drift(db_path, owl_source)
             return DbEnsureResult(True)
         print(
             f"Rebuilding {db_path}: release {db_release} drifted from "
@@ -2439,6 +2532,7 @@ def _ensure_ncbitaxon_db(db_path: str) -> DbEnsureResult:
     if _servable_db(db_path, min_size, "ncbitaxon"):
         db_release = _ncbitaxon_db_release(db_path)
         if not (owl_release and db_release and owl_release != db_release):
+            _warn_on_toolchain_drift(db_path, owl_source)
             return DbEnsureResult(True)
         print(
             f"Rebuilding {db_path}: release {db_release} drifted from "
@@ -2483,11 +2577,25 @@ def _ensure_go_db(go_db_path: str, *, source_path: Optional[Path] = None) -> DbE
         # never forces a costly spurious rebuild).
         db_release = _go_db_release(go_db_path)
         if not (owl_release and db_release and owl_release != db_release):
-            return DbEnsureResult(True)
-        print(
-            f"Rebuilding {go_db_path}: release {db_release} drifted from "
-            f"go.owl {owl_release} (single-source realign)..."
-        )
+            # The same release is reused only if this toolchain built it: GO's
+            # restriction policy depends on relation-graph's entailed edges (#1524).
+            drift, absent = _go_toolchain_drift(go_db_path, owl_source)
+            if not drift:
+                return DbEnsureResult(True)
+            if absent:
+                print(
+                    f"Warning: {go_db_path} cannot be verified or rebuilt here: {'; '.join(drift)}, and this "
+                    f"machine lacks {', '.join(absent)} (#1524). Install them (see "
+                    "docs/runbooks/ontology-caches.md), or set KG_SEMSQL_BUILD=off to accept the prebuilt "
+                    "go.db and its toolchain; that also stops every SemSQL DB from being rebuilt on release drift."
+                )
+                return DbEnsureResult(False)
+            print(f"Rebuilding {go_db_path}: {'; '.join(drift)} (#1524)...")
+        else:
+            print(
+                f"Rebuilding {go_db_path}: release {db_release} drifted from "
+                f"go.owl {owl_release} (single-source realign)..."
+            )
     return _build_semsql_db(
         owl_source,
         go_db_path,
@@ -2499,6 +2607,7 @@ def _ensure_go_db(go_db_path: str, *, source_path: Optional[Path] = None) -> DbE
         require_content=True,
         ontology="go",
         expected_release=owl_release,
+        strict_toolchain=True,
     )
 
 
@@ -2535,6 +2644,7 @@ def _ensure_ec_db(db_path: str) -> DbEnsureResult:
             # An unreadable stamp never forces a spurious rebuild; the write-
             # side gate on the strict callers is what stops an unverified
             # build from being served.
+            _warn_on_toolchain_drift(db_path, owl_source)
             return DbEnsureResult(True)
         print(
             f"Rebuilding {db_path}: release {db_release} drifted from "

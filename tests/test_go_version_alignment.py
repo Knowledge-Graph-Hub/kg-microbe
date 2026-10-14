@@ -7,7 +7,14 @@ from pathlib import Path
 import pytest
 
 from kg_microbe.utils import ontology_utils as ou
-from tests.db_helpers import valid_db_bytes, write_semsql_db
+from tests.db_helpers import hold_semsql_toolchain, valid_db_bytes, write_semsql_db
+
+
+@pytest.fixture(autouse=True)
+def _toolchain_held(monkeypatch):
+    """Hold the toolchain fixed: these tests are about release and build logic (#1524)."""
+    hold_semsql_toolchain(monkeypatch)
+
 
 _OWL = '<owl versionIRI rdf:resource="http://purl.obolibrary.org/obo/go/releases/{d}/go.owl"/>'
 _JSON = '{{"meta":{{"basicPropertyValues":[{{"pred":"owl#versionInfo","val":"{d}"}}]}}}}'

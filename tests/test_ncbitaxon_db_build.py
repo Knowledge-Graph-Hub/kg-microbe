@@ -25,10 +25,18 @@ import pytest
 from kg_microbe.utils import ontology_utils as ou
 from tests.db_helpers import (
     SEMSQL_DDL,
+    hold_semsql_toolchain,
     valid_db_bytes,
     write_semsql_db,
     write_single_ontology_db,
 )
+
+
+@pytest.fixture(autouse=True)
+def _toolchain_held(monkeypatch):
+    """Hold the toolchain fixed: these tests are about release and build logic (#1524)."""
+    hold_semsql_toolchain(monkeypatch)
+
 
 OWL_HEAD = '<owl:versionIRI rdf:resource="http://purl.obolibrary.org/obo/ncbitaxon/{d}/ncbitaxon.owl"/>\n'
 

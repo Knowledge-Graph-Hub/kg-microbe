@@ -144,3 +144,27 @@ def valid_db_bytes(marker: bytes = b"", pad: int = 0) -> bytes:
             write_semsql_db(path)
             _VALID_DB_BASE = Path(path).read_bytes()
     return _VALID_DB_BASE + marker + (b"\0" * pad)
+
+
+#: A complete toolchain record, for tests about release and build logic rather than toolchain (#1524).
+FIXED_SEMSQL_TOOLCHAIN = {
+    "version": 1,
+    "semsql": {"path": "/fixture/semsql", "version": "0.4.0"},
+    "rdftab": {"path": "/fixture/rdftab", "sha256": "0" * 64},
+    "relation_graph": {"path": "/fixture/relation-graph", "version": "2.3.2", "sha256": "1" * 64},
+    "robot_jar_sha256": "2" * 64,
+    "java": "fixture java",
+}
+
+
+def hold_semsql_toolchain(monkeypatch):
+    """Stand in one complete toolchain and treat every existing DB as built by it, writing no records."""
+    from kg_microbe.utils import ontology_utils
+
+    monkeypatch.setattr(ontology_utils, "current_toolchain", lambda raw_dir, env: dict(FIXED_SEMSQL_TOOLCHAIN))
+    monkeypatch.setattr(ontology_utils, "_TOOLCHAIN_PROBES", {})
+    monkeypatch.setattr(ontology_utils, "_TOOLCHAIN_WARNED", set())
+    monkeypatch.setattr(ontology_utils, "read_record", lambda db_path: dict(FIXED_SEMSQL_TOOLCHAIN))
+    monkeypatch.setattr(ontology_utils, "differences", lambda recorded, current, db_path=None: [])
+    monkeypatch.setattr(ontology_utils, "write_record", lambda db_path, toolchain: None)
+    monkeypatch.setattr(ontology_utils, "discard_record", lambda db_path: None)

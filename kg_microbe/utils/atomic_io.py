@@ -92,14 +92,19 @@ def gunzip_beside(path: Union[str, Path], *, root: Union[str, Path, None] = None
 
     Some raw authorities are downloaded gzipped (``ncit.db.gz``) and read uncompressed by
     more than one source. Each reader calls this instead of decompressing in place, so no
-    reader ever sees a partly written file (#1526). An existing ``path`` is never replaced,
-    even after a newer archive is downloaded; the release preflight reports an ``ncit.db``
-    whose size is not the archive's unpacked size (#1536). Two readers that both find
-    ``path`` missing both unpack it, and the later copy replaces the earlier one. A reader
-    that bound the earlier copy, as the NCIT category authority does, then refuses the
-    replaced file as changed; other readers keep the copy they opened (#1537). Partial
-    files that a killed unpack left more than a day ago are swept whenever ``path`` is
-    found or published, so a later run's early return no longer strands them (#1558).
+    reader ever sees a partly written file (#1526). A ``path`` that exists when this is
+    called is never replaced, even after a newer archive is downloaded; the release
+    preflight reports an ``ncit.db`` whose size is not the archive's unpacked size (#1536).
+    Two readers that both find ``path`` missing both unpack it, and the later copy replaces
+    the earlier one. The NCIT readers, ``FiniteNcitCategoryAuthority`` and
+    ``ontologies_stubs``, bind the copy they read and refuse a replaced file as changed
+    (#1537). A reader that only opened the earlier copy, as ``ontologies_stubs`` opens
+    ``bto.db``, keeps reading it with Homebrew's SQLite. With macOS's system SQLite, in a
+    process that has imported oaklib, its reads of the replaced file fail instead, with
+    "disk I/O error" (``SQLITE_IOERR_VNODE``). A caller must not take that error for a
+    missing row (#1580, #1604). Partial files that a killed unpack left more than a day ago
+    are swept whenever ``path`` is found or published, so a later run's early return no
+    longer strands them (#1558).
 
     :param path: The uncompressed file the caller wants.
     :param root: When given, both files must resolve inside it; a link elsewhere is refused.

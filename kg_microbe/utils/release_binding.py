@@ -75,6 +75,33 @@ def read_bound_authority(raw_dir, filename, source, opener, source_paths):
     return payload
 
 
+def bound_release_snapshot(filename, source, own, separate):
+    """
+    Return the consumed-input snapshot of the release file behind ``filename``, as finalization re-checks it.
+
+    Which file is the release is decided as ``read_bound_authority`` decides it, by
+    the policy's own file names, never by a snapshot's path: snapshots record the
+    resolved path, so a release reached through a symlink has its target's name
+    (#1645). The release snapshot must be well formed and carry the pinned SHA-256.
+
+    :param filename: The JSON the policy reads.
+    :param source: ``{"file": ..., "sha256": ...}`` naming the pinned release file.
+    :param own: The JSON's own consumed-input snapshot.
+    :param separate: The snapshot recorded for a separate release file, or None.
+    :return: ``own`` when the JSON is its own release, otherwise ``separate``.
+    :raises ValueError: When the release snapshot is missing, malformed or not the pinned release.
+    """
+    snapshot = own if source["file"] == filename else separate
+    if (
+        not isinstance(snapshot, dict)
+        or set(snapshot) != {"path", "sha256"}
+        or not isinstance(snapshot["path"], str)
+        or snapshot["sha256"] != source["sha256"]
+    ):
+        raise ValueError(f"Release file behind {filename} is not bound to its pinned release: {source['file']}")
+    return snapshot
+
+
 def semsql_release(connection, ontology):
     """
     Return the single release a SemSQL database records for ``ontology``, or None.

@@ -103,3 +103,27 @@ def test_admission_requires_the_owl_release_binding(tmp_path, monkeypatch, damag
         (transform.input_base_dir / "pato.owl").write_bytes(OWL + b"<!-- changed after the read -->\n")
     with pytest.raises(SourceFinalizationRequired, match="release"):
         native.verify_audit_input_bindings(transform.output_dir, snapshots)
+
+
+@pytest.mark.parametrize("linked", ["owl_release", "json_release"])
+def test_a_symlinked_release_file_is_admitted_as_it_was_read(tmp_path, monkeypatch, linked):
+    """
+    A release file reached through a symlink is bound the same way at read time and at finalization (#1645).
+
+    Snapshots record resolved paths, so the target's name is not the policy's file
+    name; which file is the release is decided by the policy's names on both sides.
+    """
+    policy = owl_policy() if linked == "owl_release" else fixture_policy()
+    transform, authority, audit = staged(tmp_path, monkeypatch, policy=policy)
+    raw = transform.input_base_dir
+    name = "pato.owl" if linked == "owl_release" else "pato.json"
+    target = raw / ("pato-2026-01-01" + name[4:])
+    (raw / name).rename(target)
+    (raw / name).symlink_to(target.name)
+    authority.prepare_source("pato", raw / "pato.json")
+    rows = frame("pato")
+    authority.project("pato", rows, rows, "pato_edges.tsv").to_csv(
+        transform.output_dir / "pato_edges.tsv", sep="\t", index=False
+    )
+    (transform.output_dir / native.AUDIT_FILE).write_text(audit.getvalue())
+    native.verify_audit_input_bindings(transform.output_dir, copy.deepcopy(transform.consumed_input_snapshots))

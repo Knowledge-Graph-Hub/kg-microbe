@@ -214,6 +214,9 @@ class NativeROPredicateRetention:
         filename = name + ".json"
         role = "ontology_native_relation_" + name
         expected = self.policy["authorities"][filename]
+        if Path(path).name != filename:
+            # Finalization decides which file is the release by this name (#1645).
+            raise ValueError(f"Native RO authority must be read as {filename}: {path}")
         content = self._bind_source(name, Path(path), role)
         document = json.loads(content, object_pairs_hook=_unique_object)
         graphs = document.get("graphs")

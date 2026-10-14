@@ -127,3 +127,12 @@ def test_a_symlinked_release_file_is_admitted_as_it_was_read(tmp_path, monkeypat
     )
     (transform.output_dir / native.AUDIT_FILE).write_text(audit.getvalue())
     native.verify_audit_input_bindings(transform.output_dir, copy.deepcopy(transform.consumed_input_snapshots))
+
+
+def test_an_authority_read_under_another_name_is_refused(tmp_path, monkeypatch):
+    """Finalization decides which file is the release by the policy's name, so the read must use that name (#1645)."""
+    transform, authority, _ = staged(tmp_path, monkeypatch)
+    raw = transform.input_base_dir
+    (raw / "pato.json").rename(raw / "pato-copy.json")
+    with pytest.raises(ValueError, match="must be read as pato.json"):
+        authority.prepare_source("pato", raw / "pato-copy.json")

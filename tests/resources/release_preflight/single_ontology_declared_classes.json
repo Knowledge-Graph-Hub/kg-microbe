@@ -1,9 +1,13 @@
 {
  "built_against": {
+  "envo.json": "c3c288b9d95cf1e62b0146bcb2a365bdbd294b0072bbf2efab8819e5db8fff2b",
+  "foodon.owl": "1e11fc50283c6498697a7aca9606c9d914f1cda71cc5510e006d949c32df7db0",
+  "mondo.json": "80b8658b4ec7da7699f7f8f6460425396e42f1bb7fbead837469ebf1907f7c30",
+  "pato.owl": "73a80487130a81a3696f1e03c551288f741ed1be5a07639e69e7ecd8b6f0371c",
   "po.owl": "a066a2091b96dc6c960683a67936ccda4926afd96e4edb22df9e30feec16e9e0",
   "uberon.owl": "938f51e7c3fc9fcbe5a2863eb346da8033737e568af5836958891c4c6bfb1192"
  },
- "description": "Reviewed UBERON temporal classes and PO classes each ontology's node output declares, excerpted from a full ontologies build (#1649). A single-ontology run reads uberon.owl for the first and po.owl for the second when it finalizes. Regenerate with `pytest -m integration tests/test_release_preflight.py -k declared_classes` after a pin moves.",
+ "description": "Reviewed UBERON temporal classes and PO classes each ontology's node output declares, excerpted from a full ontologies build (#1649). A single-ontology run reads uberon.owl for the first and po.owl for the second when it finalizes. Regenerate with `pytest -m integration tests/test_release_preflight.py -k declared_classes` after any release in built_against moves: the declaring ontologies' own pinned releases, uberon.owl and po.owl.",
  "po": {
   "envo": [
    "PO:0000003",

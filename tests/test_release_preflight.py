@@ -224,7 +224,12 @@ def test_the_declared_class_excerpt_was_taken_against_the_pinned_releases():
 
     declared = json.loads(_DECLARED.read_text(encoding="utf-8"))
     pins = release_preflight.reviewed_release_pins()
-    assert {name: list(pins[name]) for name in declared["built_against"]} == {
+    # The declarations come from each declaring ontology's own release as well as the
+    # two read for them, so every one of those pins binds the excerpt (#1654).
+    declaring = {name for kind in ("uberon_temporal", "po") for name in declared[kind]}
+    sources = {name for name in pins if name.split(".")[0] in declaring} | {"uberon.owl", "po.owl"}
+    assert set(declared["built_against"]) == sources
+    assert {name: list(pins[name]) for name in sources} == {
         name: [sha256] for name, sha256 in declared["built_against"].items()
     }
     temporal = set(json.loads(TEMPORAL_DISPOSITIONS_FILE.read_text(encoding="utf-8"))["records"])

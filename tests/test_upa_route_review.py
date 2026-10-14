@@ -394,7 +394,7 @@ def test_a_bound_go_db_sqlite_cannot_read_is_a_clean_refusal(tmp_path, monkeypat
         """Stand in for a bound go.db SQLite cannot read."""
         raise sqlite3.DatabaseError("file is not a database")
 
-    monkeypatch.setattr(upa.sqlite3, "connect", broken)
+    monkeypatch.setattr(sqlite3, "connect", broken)
     with pytest.raises(SourceFinalizationRequired, match="UPA admitted GO database cannot be read") as info:
         OntologiesTransform.verify_recorded_native_inputs(report, transform.output_dir / "upa_source_finalization.json")
     assert isinstance(info.value.__cause__, sqlite3.DatabaseError)
@@ -421,6 +421,59 @@ def test_a_refusal_inside_the_read_passes_through_unchanged(tmp_path, monkeypatc
     with pytest.raises(SourceFinalizationRequired, match="not the reviewed release") as info:
         OntologiesTransform.verify_recorded_native_inputs(report, transform.output_dir / "upa_source_finalization.json")
     assert info.value.__cause__ is None
+
+
+def _refuse_snapshot_reads(monkeypatch):
+    """Make SQLite fail on the immutable snapshots the readers open, not on fixture setup."""
+    real = sqlite3.connect
+
+    def connect(database, *args, **kwargs):
+        """Stand in for a bound go.db SQLite cannot read."""
+        if "immutable=1" in str(database):
+            raise sqlite3.DatabaseError("file is not a database")
+        return real(database, *args, **kwargs)
+
+    monkeypatch.setattr(sqlite3, "connect", connect)
+
+
+def test_a_go_db_sqlite_cannot_read_while_preparing_is_a_clean_refusal(tmp_path, monkeypatch):
+    """The producer refuses an unreadable go.db like its other contract failures, not with a raw error (#1636)."""
+    _refuse_snapshot_reads(monkeypatch)
+    with pytest.raises(SourceFinalizationRequired, match="UPA selected GO database cannot be read") as info:
+        run_upa(tmp_path, monkeypatch)
+    assert isinstance(info.value.__cause__, sqlite3.DatabaseError)
+
+
+def test_a_go_reference_the_admitted_database_cannot_resolve_is_a_refusal(tmp_path, monkeypatch):
+    """A GoReferenceError during admission rejects the record instead of aborting verification (#1636)."""
+    transform, _, _, report = run_upa(tmp_path, monkeypatch, finalize=True)
+
+    def unresolved(*args):
+        """Stand in for a reviewed route whose GO term the bound database lacks."""
+        raise upa.GoReferenceError("GO:0000000 is not in the selected GO authority")
+
+    monkeypatch.setattr(upa, "_verify_finite", unresolved)
+    with pytest.raises(SourceFinalizationRequired, match="does not support the reviewed routes") as info:
+        OntologiesTransform.verify_recorded_native_inputs(report, transform.output_dir / "upa_source_finalization.json")
+    assert isinstance(info.value.__cause__, upa.GoReferenceError)
+
+
+def test_admission_closes_the_go_db_connection_it_opens(tmp_path, monkeypatch):
+    """`with sqlite3.connect()` never closed it; every connection admission opens is closed (#1637)."""
+    transform, _, _, report = run_upa(tmp_path, monkeypatch, finalize=True)
+    real, opened = sqlite3.connect, []
+
+    def connect(*args, **kwargs):
+        """Record each connection admission opens."""
+        opened.append(real(*args, **kwargs))
+        return opened[-1]
+
+    monkeypatch.setattr(sqlite3, "connect", connect)
+    OntologiesTransform.verify_recorded_native_inputs(report, transform.output_dir / "upa_source_finalization.json")
+    assert opened
+    for connection in opened:
+        with pytest.raises(sqlite3.ProgrammingError, match="closed"):
+            connection.execute("SELECT 1")
 
 
 @pytest.mark.parametrize("damage", ["contract", "audit", "roles", "witness", "wrong_scope"])

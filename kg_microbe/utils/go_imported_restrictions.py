@@ -8,7 +8,6 @@ import json
 import os
 import re
 import shutil
-import sqlite3
 import stat
 import uuid
 from contextlib import contextmanager
@@ -31,6 +30,7 @@ from kg_microbe.transform_utils.constants import (
     SUBJECT_COLUMN,
 )
 from kg_microbe.utils.release_binding import is_release_source, semsql_go_release
+from kg_microbe.utils.sqlite_read import read_only_sqlite
 
 POLICY_FILE = Path(__file__).resolve().parents[2] / "mappings/go_imported_subject_restrictions.json"
 REVIEWED_POLICY_SHA256 = "f8d02767086a378f3d983070ad0f4627614d3cda5dc399b94ab21d98574d2579"
@@ -527,7 +527,11 @@ class ImportedGoRestrictionGuard:
                 digest.update(block)
             if digest.hexdigest() != self.authority.authority_sha256:
                 raise ValueError("Imported GO selected database differs from reviewed authority")
-            with sqlite3.connect(Path(stream.name).as_uri() + "?mode=ro", uri=True) as connection:
+            # A file SQLite cannot read is refused like any other contract failure (#1636).
+            with read_only_sqlite(
+                Path(stream.name).as_uri() + "?mode=ro",
+                lambda: ValueError("Imported GO selected database cannot be read"),
+            ) as connection:
                 # The database is built locally, so its bytes are not pinned. It must
                 # record the reviewed GO release, and its selected statements are
                 # compared below (#1420).

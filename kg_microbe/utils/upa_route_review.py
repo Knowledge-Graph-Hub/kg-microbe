@@ -5,7 +5,6 @@ import hashlib
 import io
 import json
 import re
-import sqlite3
 from collections import Counter, defaultdict
 from pathlib import Path
 
@@ -27,6 +26,7 @@ from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.go_authority import GoAuthority, GoReferenceError
 from kg_microbe.utils.release_binding import graph_release, is_release_source, semsql_go_release
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired
+from kg_microbe.utils.sqlite_read import read_only_sqlite
 
 POLICY_FILE = Path(__file__).resolve().parents[2] / "mappings/upa_reaction_projection_dispositions.json"
 POLICY_SHA256 = "6cffa6d569ae82f4c5f4ea3aaf4bca5b495e2915ebf89ddff8fa98343a6bedf2"
@@ -569,7 +569,11 @@ class UPARouteReview:
                 self.identities[GO_ROLE] = dict(self.transform.consumed_input_snapshots[GO_ROLE])
                 if database_identity["sha256"] != self.identities[GO_ROLE]["sha256"]:
                     raise SourceFinalizationRequired("UPA selected GO epoch changed")
-                with sqlite3.connect(Path(stream.name).as_uri() + "?mode=ro&immutable=1", uri=True) as connection:
+                # A file SQLite cannot read is refused like any other contract failure (#1636).
+                with read_only_sqlite(
+                    Path(stream.name).as_uri() + "?mode=ro&immutable=1",
+                    lambda: SourceFinalizationRequired("UPA selected GO database cannot be read"),
+                ) as connection:
                     if semsql_go_release(connection) != self.policy["sources"]["go.db"]["release"]:
                         raise SourceFinalizationRequired("UPA selected GO database is not the reviewed release")
                     self._authority = _authority(connection, self.identities[GO_ROLE])
@@ -774,15 +778,22 @@ def verify_audit_bindings(directory, snapshots, *, members, raw_dir, admission=N
                 raise SourceFinalizationRequired("UPA admitted GO database has a sidecar")
             guard.capture(sidecar, optional=True)
         # The original file remains bound before and after this read-only SQL operation.
-        # A file SQLite cannot read is refused like any other contract failure (#1552).
+        # Every failure here is a refusal of this record, so the caller can try the next
+        # one: a file SQLite cannot read (#1552), and a GO reference or GO statement the
+        # bound database does not support (#1636).
         try:
-            with sqlite3.connect(database.as_uri() + "?mode=ro&immutable=1", uri=True) as connection:
+            with read_only_sqlite(
+                database.as_uri() + "?mode=ro&immutable=1",
+                lambda: SourceFinalizationRequired("UPA admitted GO database cannot be read"),
+            ) as connection:
                 if semsql_go_release(connection) != policy["sources"]["go.db"]["release"]:
                     raise SourceFinalizationRequired("UPA admitted GO database is not the reviewed release")
                 authority = _authority(connection, owned[GO_ROLE])
                 _verify_finite(policy, document, owl, connection, authority)
-        except sqlite3.Error as error:
-            raise SourceFinalizationRequired("UPA admitted GO database cannot be read") from error
+        except SourceFinalizationRequired:
+            raise
+        except ValueError as error:
+            raise SourceFinalizationRequired("UPA admitted GO database does not support the reviewed routes") from error
         candidates = enumerate_candidates(document, authority, policy)
         generated = decode(read(GENERATED_ROLE))
         intermediate = decode(read(INTERMEDIATE_ROLE))

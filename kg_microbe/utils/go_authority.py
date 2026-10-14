@@ -39,6 +39,7 @@ from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.go_imported_restrictions import EVIDENCE_COLUMN
 from kg_microbe.utils.graph_schema import canonical_header
 from kg_microbe.utils.provenance import knowledge_source_tokens, serialize_knowledge_sources
+from kg_microbe.utils.sqlite_read import read_only_sqlite
 from kg_microbe.utils.tsv_io import tsv_dict_writer
 
 _ASPECTS = {
@@ -345,7 +346,7 @@ def load_go_authority(raw_dir: Path) -> GoAuthority:
             "SELECT subject,predicate,object,value FROM statements "  # noqa: S608 — only bound placeholders are interpolated
             f"WHERE subject LIKE 'GO:%' AND predicate IN ({placeholders})"
         )
-        with sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True) as connection:
+        with read_only_sqlite(path.resolve().as_uri() + "?mode=ro") as connection:
             structural_edges = _load_asserted_structural_edges(connection)
             rows = connection.execute(query, tuple(_PREDICATES))
             authority = GoAuthority.from_statements(

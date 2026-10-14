@@ -21,9 +21,15 @@ def test_later_optional_callback_cannot_change_earlier_loose_destination(tmp_pat
     monkeypatch.setattr(merge_kg, "_repo_root", lambda: tmp_path)
     original = merge_kg.check_merged_invariants
 
-    def edit_earlier(edges_file, output_dir, *, nodes_file, native_declarations=None):
+    def edit_earlier(edges_file, output_dir, *, nodes_file, native_declarations=None, unmerged_declarations=()):
         """Inject a mutation of an earlier destination during the later report."""
-        result = original(edges_file, output_dir, nodes_file=nodes_file, native_declarations=native_declarations)
+        result = original(
+            edges_file,
+            output_dir,
+            nodes_file=nodes_file,
+            native_declarations=native_declarations,
+            unmerged_declarations=unmerged_declarations,
+        )
         if nodes_file.name == "second_nodes.tsv":
             earlier = nodes_file.with_name("merged-kg_nodes.tsv")
             earlier.write_bytes(earlier.read_bytes().replace(b"root", b"ROOT"))
@@ -83,7 +89,7 @@ def test_optional_callback_deleting_required_pair_must_fail(tmp_path, monkeypatc
     marker.write_bytes(b"previous accepted archive")
     monkeypatch.setattr(merge_kg, "_repo_root", lambda: tmp_path)
 
-    def remove_pair(edges_file, output_dir, *, nodes_file, native_declarations=None):
+    def remove_pair(edges_file, output_dir, *, nodes_file, native_declarations=None, unmerged_declarations=()):
         """Remove a required input before raising an otherwise optional report error."""
         nodes_file.unlink()
         raise RuntimeError("optional callback failed after deleting a required graph file")

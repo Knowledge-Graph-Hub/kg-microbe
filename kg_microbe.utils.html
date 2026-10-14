@@ -166,14 +166,19 @@ truncated one and was regenerated on every subsequent run forever.</p>
 <dd><p>Make <code class="docutils literal notranslate"><span class="pre">path</span></code> exist by unpacking its <code class="docutils literal notranslate"><span class="pre">.gz</span></code> sibling, atomically, when only the archive is present.</p>
 <p>Some raw authorities are downloaded gzipped (<code class="docutils literal notranslate"><span class="pre">ncit.db.gz</span></code>) and read uncompressed by
 more than one source. Each reader calls this instead of decompressing in place, so no
-reader ever sees a partly written file (#1526). An existing <code class="docutils literal notranslate"><span class="pre">path</span></code> is never replaced,
-even after a newer archive is downloaded; the release preflight reports an <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code>
-whose size is not the archive’s unpacked size (#1536). Two readers that both find
-<code class="docutils literal notranslate"><span class="pre">path</span></code> missing both unpack it, and the later copy replaces the earlier one. A reader
-that bound the earlier copy, as the NCIT category authority does, then refuses the
-replaced file as changed; other readers keep the copy they opened (#1537). Partial
-files that a killed unpack left more than a day ago are swept whenever <code class="docutils literal notranslate"><span class="pre">path</span></code> is
-found or published, so a later run’s early return no longer strands them (#1558).</p>
+reader ever sees a partly written file (#1526). A <code class="docutils literal notranslate"><span class="pre">path</span></code> that exists when this is
+called is never replaced, even after a newer archive is downloaded; the release
+preflight reports an <code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> whose size is not the archive’s unpacked size (#1536).
+Two readers that both find <code class="docutils literal notranslate"><span class="pre">path</span></code> missing both unpack it, and the later copy replaces
+the earlier one. The NCIT readers, <code class="docutils literal notranslate"><span class="pre">FiniteNcitCategoryAuthority</span></code> and
+<code class="docutils literal notranslate"><span class="pre">ontologies_stubs</span></code>, bind the copy they read and refuse a replaced file as changed
+(#1537). A reader that only opened the earlier copy, as <code class="docutils literal notranslate"><span class="pre">ontologies_stubs</span></code> opens
+<code class="docutils literal notranslate"><span class="pre">bto.db</span></code>, keeps reading it with Homebrew’s SQLite. With macOS’s system SQLite, in a
+process that has imported oaklib, its reads of the replaced file fail instead, with
+“disk I/O error” (<code class="docutils literal notranslate"><span class="pre">SQLITE_IOERR_VNODE</span></code>). A caller must not take that error for a
+missing row (#1580, #1604). Partial files that a killed unpack left more than a day ago
+are swept whenever <code class="docutils literal notranslate"><span class="pre">path</span></code> is found or published, so a later run’s early return no
+longer strands them (#1558).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">

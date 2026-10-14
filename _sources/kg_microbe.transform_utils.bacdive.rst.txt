@@ -28,6 +28,14 @@ kg\_microbe.transform\_utils.bacdive.clinical\_categories module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.transform\_utils.bacdive.csv\_field\_limit module
+-------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bacdive.csv_field_limit
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.transform\_utils.bacdive.ec\_substrate\_corrections module
 ----------------------------------------------------------------------
 

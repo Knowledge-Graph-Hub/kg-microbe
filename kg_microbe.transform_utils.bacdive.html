@@ -284,6 +284,27 @@ path lives in constants.py, so the cross-transform guard never saw it.</p>
 </dd></dl>
 
 </section>
+<section id="module-kg_microbe.transform_utils.bacdive.csv_field_limit">
+<span id="kg-microbe-transform-utils-bacdive-csv-field-limit-module"></span><h2>kg_microbe.transform_utils.bacdive.csv_field_limit module<a class="headerlink" href="#module-kg_microbe.transform_utils.bacdive.csv_field_limit" title="Link to this heading"></a></h2>
+<p>Read BacDive audits whose cells can outgrow CSV’s field limit (#1571, #1575).</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.csv_field_limit.csv_field_limit_at_least">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.csv_field_limit.</span></span><span class="sig-name descname"><span class="pre">csv_field_limit_at_least</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.csv_field_limit.csv_field_limit_at_least" title="Link to this definition"></a></dt>
+<dd><p>Raise CSV’s process-wide field limit to at least <code class="docutils literal notranslate"><span class="pre">size</span></code> for the block, then restore it.</p>
+<p>The audits embed native BacDive records, and a cell can exceed CSV’s default
+of 131,072 characters. Pass the size in bytes of the file being read: no
+cell is longer than its file. The caller’s limit is never lowered, and is
+restored even when the read fails.</p>
+<p>Consume the reader inside the block. A generator such as <code class="docutils literal notranslate"><span class="pre">graph_rows</span></code>
+resumed after it would parse at the caller’s limit again.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>size</strong> – The size in bytes of the file the block reads.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="module-kg_microbe.transform_utils.bacdive.ec_substrate_corrections">
 <span id="kg-microbe-transform-utils-bacdive-ec-substrate-corrections-module"></span><h2>kg_microbe.transform_utils.bacdive.ec_substrate_corrections module<a class="headerlink" href="#module-kg_microbe.transform_utils.bacdive.ec_substrate_corrections" title="Link to this heading"></a></h2>
 <p>Apply finite reviewed legacy EC/substrate corrections without raw or global aliases.</p>

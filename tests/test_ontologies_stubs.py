@@ -4,11 +4,13 @@ from __future__ import annotations
 
 import csv
 import gzip
+import sqlite3
 import zipfile
 from pathlib import Path
 from typing import Dict, List, Set
 
 import pytest
+from sqlalchemy.exc import OperationalError
 
 from kg_microbe.transform_utils.constants import (
     MICRO_IMPORT_MODULES,
@@ -33,6 +35,7 @@ from kg_microbe.utils.isolation_source_mapping_utils import (
     STUB_ONTOLOGY_CATEGORY,
     STUB_ONTOLOGY_PREFIXES,
 )
+from kg_microbe.utils.ontology_utils import OntologyDbUnavailableError
 from kg_microbe.utils.robot_utils import ROBOT_JAXP_LIMITS
 from kg_microbe.utils.stub_curie_collection import collect_stub_curies
 
@@ -297,6 +300,141 @@ def test_transform_falls_back_to_curie_when_label_missing(tmp_path):
     rows = _read_tsv(tmp_path / "out" / "ontologies_stubs" / "bto_nodes.tsv")
     assert len(rows) == 1
     assert rows[0]["name"] == "BTO:9999999"  # falls back to the CURIE itself
+
+
+#: The two shapes a failed SemSQL read takes: raised by sqlite3 directly, or wrapped by SQLAlchemy.
+_DATABASE_ERRORS = {
+    "sqlite3": lambda: sqlite3.OperationalError("disk I/O error"),
+    "sqlalchemy": lambda: OperationalError("SELECT 1", {}, sqlite3.OperationalError("disk I/O error")),
+}
+
+
+def _unreadable(error):
+    """Build a lookup that fails as SemSQL does once its database file has been replaced."""
+
+    def lookup(*args, **kwargs):
+        """Raise the database error."""
+        raise error
+
+    return lookup
+
+
+@pytest.mark.parametrize("make_error", list(_DATABASE_ERRORS.values()), ids=list(_DATABASE_ERRORS))
+@pytest.mark.parametrize("method", ["label", "entity_aliases", "entity_metadata_map"])
+def test_a_database_error_aborts_instead_of_naming_stubs_by_identifier(tmp_path, monkeypatch, method, make_error):
+    """
+    A database error is the ontology becoming unreadable, not a term it lacks (#1604).
+
+    Absorbed per term, a bto.db replaced during the run wrote every stub with its
+    identifier as its name, and the run exited 0.
+    """
+    error = make_error()
+    adapter = _FakeAdapter({"BTO:0003114": {"label": "wound fluid"}})
+    monkeypatch.setattr(adapter, method, _unreadable(error))
+    t = _StubbedTransform(
+        adapters={"BTO": adapter},
+        curies={"BTO": {"BTO:0003114"}},
+        input_dir=tmp_path / "in",
+        output_dir=tmp_path / "out",
+    )
+    (tmp_path / "in").mkdir()
+    with pytest.raises(OntologyDbUnavailableError) as raised:
+        t.run()
+    assert raised.value.__cause__ is error
+    assert t._consumed_input_error == f"{type(error).__name__}: {error}"
+    assert not (tmp_path / "out" / "ontologies_stubs" / "bto_nodes.tsv").exists()
+
+
+def test_a_memory_error_is_re_raised_unchanged(tmp_path, monkeypatch):
+    """SQLite running out of memory is not a missing term either, but it is not a database failure to report."""
+    error = MemoryError()
+    adapter = _FakeAdapter({"BTO:0003114": {"label": "wound fluid"}})
+    monkeypatch.setattr(adapter, "label", _unreadable(error))
+    t = _StubbedTransform(
+        adapters={"BTO": adapter},
+        curies={"BTO": {"BTO:0003114"}},
+        input_dir=tmp_path / "in",
+        output_dir=tmp_path / "out",
+    )
+    (tmp_path / "in").mkdir()
+    with pytest.raises(MemoryError) as raised:
+        t.run()
+    assert raised.value is error
+    assert t._consumed_input_error == "MemoryError: "
+    assert not (tmp_path / "out" / "ontologies_stubs" / "bto_nodes.tsv").exists()
+
+
+@pytest.mark.parametrize("make_error", list(_DATABASE_ERRORS.values()), ids=list(_DATABASE_ERRORS))
+def test_a_database_error_in_the_hierarchy_walk_aborts(tmp_path, monkeypatch, make_error):
+    """The subclass walk refuses a database error the same way, for a term outside the reviewed categories."""
+    error = make_error()
+    adapter = _FakeAdapter({"NCIT:C2000": {"label": "child", "parents": ["NCIT:C1000"]}})
+    monkeypatch.setattr(adapter, "outgoing_relationships", _unreadable(error))
+    t = _StubbedTransform(adapters={"NCIT": adapter}, curies={}, input_dir=tmp_path / "in", output_dir=tmp_path / "out")
+    (tmp_path / "in").mkdir()
+    with pytest.raises(OntologyDbUnavailableError) as raised:
+        t._write_stub_module_from_semsql_walk(
+            prefix="NCIT",
+            curies=["NCIT:C2000"],
+            db_path=tmp_path / "in" / "ncit.db",
+            upper_terms=["NCIT:C1000"],
+            knowledge_source="infores:ncit",
+        )
+    assert raised.value.__cause__ is error
+    assert t._consumed_input_error == f"{type(error).__name__}: {error}"
+    assert not list((tmp_path / "out" / "ontologies_stubs").glob("ncit_*.tsv"))
+
+
+def _not_semsql(path):
+    """Write a valid SQLite file that holds no SemSQL tables."""
+    with sqlite3.connect(path) as connection:
+        connection.execute("CREATE TABLE unrelated (x)")
+    connection.close()
+
+
+@pytest.mark.parametrize(
+    "damage",
+    [lambda path: path.write_bytes(b"not a database " * 1000), _not_semsql],
+    ids=["garbage", "not-semsql"],
+)
+def test_a_damaged_database_stops_the_run_through_real_oak(tmp_path, damage):
+    """
+    Nothing is injected: a damaged bto.db reaches real OAK, and its errors are not missing terms.
+
+    Before #1604 each lookup's error was absorbed, so every stub was named by its identifier.
+    """
+    raw = tmp_path / "raw"
+    raw.mkdir()
+    damage(raw / "bto.db")
+    transform = OntologiesStubsTransform(input_dir=raw, output_dir=tmp_path / "out")
+    output = transform.output_dir / "bto_nodes.tsv"
+    with pytest.raises(OntologyDbUnavailableError, match="BTO:0003114") as raised:
+        transform._write_stub_nodes_from_semsql(
+            prefix="BTO",
+            curies=["BTO:0003114"],
+            db_path=raw / "bto.db",
+            knowledge_source="infores:bto",
+            output_file=output,
+        )
+    assert "bto.db" in str(raised.value)
+    assert transform._consumed_input_error
+    assert not output.exists()
+
+
+def test_a_lookup_error_that_is_not_a_database_error_still_falls_back(tmp_path, monkeypatch):
+    """Only database errors abort; any other lookup error keeps the identifier fallback, as before #1604."""
+    adapter = _FakeAdapter({})
+    monkeypatch.setattr(adapter, "label", _unreadable(ValueError("not a term this adapter can read")))
+    t = _StubbedTransform(
+        adapters={"BTO": adapter},
+        curies={"BTO": {"BTO:9999999"}},
+        input_dir=tmp_path / "in",
+        output_dir=tmp_path / "out",
+    )
+    (tmp_path / "in").mkdir()
+    t.run()
+    rows = _read_tsv(tmp_path / "out" / "ontologies_stubs" / "bto_nodes.tsv")
+    assert [row["name"] for row in rows] == ["BTO:9999999"]
 
 
 def test_transform_writes_empty_tsv_when_no_curies(tmp_path):

@@ -400,6 +400,29 @@ def test_a_bound_go_db_sqlite_cannot_read_is_a_clean_refusal(tmp_path, monkeypat
     assert isinstance(info.value.__cause__, sqlite3.DatabaseError)
 
 
+def test_a_query_sqlite_cannot_run_during_admission_is_a_clean_refusal(tmp_path, monkeypatch):
+    """A file SQLite opens under immutable=1 usually fails at its first query, not at connect (#1552)."""
+    transform, _, _, report = run_upa(tmp_path, monkeypatch, finalize=True)
+
+    def unreadable(connection):
+        """Stand in for the first query on a bound file that is not a database."""
+        raise sqlite3.DatabaseError("file is not a database")
+
+    monkeypatch.setattr(upa, "semsql_go_release", unreadable)
+    with pytest.raises(SourceFinalizationRequired, match="UPA admitted GO database cannot be read") as info:
+        OntologiesTransform.verify_recorded_native_inputs(report, transform.output_dir / "upa_source_finalization.json")
+    assert isinstance(info.value.__cause__, sqlite3.DatabaseError)
+
+
+def test_a_refusal_inside_the_read_passes_through_unchanged(tmp_path, monkeypatch):
+    """Only SQLite errors are converted; a wrong release keeps its own refusal and has no cause."""
+    transform, _, _, report = run_upa(tmp_path, monkeypatch, finalize=True)
+    monkeypatch.setattr(upa, "semsql_go_release", lambda connection: "1999-01-01")
+    with pytest.raises(SourceFinalizationRequired, match="not the reviewed release") as info:
+        OntologiesTransform.verify_recorded_native_inputs(report, transform.output_dir / "upa_source_finalization.json")
+    assert info.value.__cause__ is None
+
+
 @pytest.mark.parametrize("damage", ["contract", "audit", "roles", "witness", "wrong_scope"])
 def test_recorded_class_hook_refuses_missing_contract_or_evidence(tmp_path, monkeypatch, damage):
     """The producer hook independently checks native scope; public counterpart tests are separate."""

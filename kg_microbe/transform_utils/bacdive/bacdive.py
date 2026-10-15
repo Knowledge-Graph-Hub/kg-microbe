@@ -1108,16 +1108,15 @@ class BacDiveTransform(Transform):
             match = re.match(pattern, full_name, re.IGNORECASE)
             if match:
                 taxon_name = match.group(1).strip()
-                print("  Detected '(not further classified)' pattern")
-                print(f"  Extracted taxon name: {taxon_name}")
+                # Debug, not print: finalization and freshness checks rerun this parser (#1596).
+                logger.debug("Detected '(not further classified)' pattern. Extracted taxon name: %s", taxon_name)
                 return taxon_name, True
 
         # Pattern 2: "Unidentified [taxon]" -> "[taxon] unclassified"
         unidentified_match = re.match(r"^Unidentified\s+(.+?)$", full_name, re.IGNORECASE)
         if unidentified_match:
             taxon_name = unidentified_match.group(1).strip()
-            print("  Detected 'Unidentified [taxon]' pattern")
-            print(f"  Extracted taxon name: {taxon_name}")
+            logger.debug("Detected 'Unidentified [taxon]' pattern. Extracted taxon name: %s", taxon_name)
             return taxon_name, True
 
         return None, False
@@ -1379,7 +1378,7 @@ class BacDiveTransform(Transform):
 
         # Validate: should be alphabetic (allowing hyphens for some genera)
         if not all(c.isalpha() or c == "-" for c in genus):
-            print(f"  WARNING: Genus '{genus}' contains non-alphabetic characters, skipping")
+            logger.debug("Genus '%s' contains non-alphabetic characters, skipping", genus)
             return None
 
         return genus
@@ -1410,7 +1409,7 @@ class BacDiveTransform(Transform):
             )
         )
 
-        print(f"  Created provisional species node: {species_id}")
+        logger.debug("Created provisional species node: %s", species_id)
         return species_id
 
     def _create_provisional_genus_node(
@@ -1436,7 +1435,7 @@ class BacDiveTransform(Transform):
             )
         )
 
-        print(f"  Created provisional genus node: {genus_id}")
+        logger.debug("Created provisional genus node: %s", genus_id)
         return genus_id
 
     def _search_higher_ranks_in_ncbitaxon(
@@ -1462,7 +1461,7 @@ class BacDiveTransform(Transform):
 
             ncbitaxon_id = self._search_ncbitaxon_by_label(rank_name)
             if ncbitaxon_id:
-                print(f"  Found higher rank '{rank_name}' ({rank_field}) in NCBITaxon: {ncbitaxon_id}")
+                logger.debug("Found higher rank '%s' (%s) in NCBITaxon: %s", rank_name, rank_field, ncbitaxon_id)
                 return (ncbitaxon_id, rank_field)
 
         return None

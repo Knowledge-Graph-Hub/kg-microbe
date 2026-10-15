@@ -3443,7 +3443,7 @@ kgmicrobe.assay:API_50CHac_ERY → MICRO:0000065 → CHEBI:17113</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.mapping_file_utils.generate_assay_entity_nodes">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.mapping_file_utils.</span></span><span class="sig-name descname"><span class="pre">generate_assay_entity_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assay_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_header</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">go_authority</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.mapping_file_utils.generate_assay_entity_nodes" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.mapping_file_utils.</span></span><span class="sig-name descname"><span class="pre">generate_assay_entity_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assay_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_header</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">provided_by</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">go_authority</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.mapping_file_utils.generate_assay_entity_nodes" title="Link to this definition"></a></dt>
 <dd><p>Generate stub node rows for CHEBI / EC / GO entities referenced by assays.</p>
 <p>The companion <code class="docutils literal notranslate"><span class="pre">generate_assay_entity_edges</span></code> emits assay→CHEBI/EC/GO edges
 whose targets are normally supplied by the ontologies transform. When an
@@ -3459,6 +3459,7 @@ categories; <code class="docutils literal notranslate"><span class="pre">conside
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>assay_data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span>) – Dictionary loaded from assay_kits_simple.json</p></li>
 <li><p><strong>node_header</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Node header (from Transform base class)</p></li>
+<li><p><strong>provided_by</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The declaring source’s knowledge source, for rows the GO authority does not attribute (#1601)</p></li>
 <li><p><strong>go_authority</strong> – Validated, in-memory GO authority shared with assay edges</p></li>
 </ul>
 </dd>
@@ -3473,7 +3474,7 @@ categories; <code class="docutils literal notranslate"><span class="pre">conside
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.mapping_file_utils.generate_assay_nodes">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.mapping_file_utils.</span></span><span class="sig-name descname"><span class="pre">generate_assay_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assay_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_header</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.mapping_file_utils.generate_assay_nodes" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.mapping_file_utils.</span></span><span class="sig-name descname"><span class="pre">generate_assay_nodes</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">assay_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_header</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">provided_by</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.mapping_file_utils.generate_assay_nodes" title="Link to this definition"></a></dt>
 <dd><p>Generate assay node rows from assay_kits_simple.json data.</p>
 <p>Creates one node per well/test component across all API kits, with rich metadata
 combined into the description field (kit name, well name, test type, and original description).</p>
@@ -3482,6 +3483,7 @@ combined into the description field (kit name, well name, test type, and origina
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>assay_data</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span>) – Dictionary loaded from assay_kits_simple.json</p></li>
 <li><p><strong>node_header</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – List of column names for node rows (from Transform base class)</p></li>
+<li><p><strong>provided_by</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – The declaring source’s knowledge source (#1601)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>

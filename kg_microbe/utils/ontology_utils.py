@@ -457,6 +457,37 @@ _TOOLCHAIN_WARNED: set = set()
 _TOOLCHAIN_PROBES: Dict[tuple, dict] = {}
 
 
+def check_reused_semsql_db(db_path, raw_dir, *, strict: bool) -> None:
+    """
+    Check a SemSQL DB a reader opens directly against this machine's toolchain, without rebuilding it (#1641).
+
+    ``_ensure_go_db`` and the other ``_ensure_*`` functions check the toolchain
+    record when they reuse a DB, but some readers open the DB directly. Those
+    readers must not rebuild it, since that would race a build another process
+    may be running under the build lock. With ``strict`` (``go.db``) a DB this
+    toolchain did not build is refused, as ``_ensure_go_db`` refuses one it cannot
+    rebuild; otherwise the difference is reported once per process and the DB is
+    used. ``KG_SEMSQL_BUILD=off`` accepts any DB, as it does for builds.
+
+    :param db_path: The SemSQL DB about to be read.
+    :param raw_dir: The raw directory the DB belongs to, which holds the pinned ROBOT.
+    :raises OntologyDbUnavailableError: With ``strict``, when this toolchain did not build the DB.
+    """
+    db_path = str(db_path)
+    if not strict:
+        _warn_on_toolchain_drift(db_path, Path(raw_dir) / Path(db_path).with_suffix(".owl").name)
+        return
+    drift, absent = _go_toolchain_drift(db_path, Path(raw_dir) / "go.owl")
+    if not drift:
+        return
+    missing = f", and this machine lacks {', '.join(absent)}" if absent else ""
+    raise OntologyDbUnavailableError(
+        f"{db_path} was not built by this machine's toolchain: {'; '.join(drift)}{missing} (#1524). This reader "
+        "does not rebuild it, so as not to race a build: run the go ontology (`kg transform -s go`) to rebuild "
+        "it, or set KG_SEMSQL_BUILD=off to accept the prebuilt go.db and its toolchain (#1641)."
+    )
+
+
 def _probed_toolchain(raw_dir: Path) -> dict:
     """
     Describe this machine's SemSQL toolchain once per raw directory and PATH in a process.

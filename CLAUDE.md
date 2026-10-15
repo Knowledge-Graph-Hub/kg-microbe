@@ -32,7 +32,8 @@ lowered (they reject ChEBI and MicrO's imports, #325) unless the user sets them.
 `rdftab` and `relation-graph`, which SemSQL also runs, are separate prerequisites.
 Each build records its toolchain in `<db>.toolchain.json`; a reused `go.db` that
 this machine's toolchain did not build is rebuilt, or refused when a tool is
-missing, and other databases only warn. See #1524 and the
+missing (readers that open it directly refuse it, #1641), and other databases
+only warn. See #1524 and the
 [ontology-cache runbook](docs/runbooks/ontology-caches.md).
 
 Supported Python versions are 3.10 through 3.12. Python 3.13 is blocked by the

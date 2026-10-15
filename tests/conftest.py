@@ -111,6 +111,23 @@ def csv_field_limit_unchanged():
 
 
 @pytest.fixture(autouse=True)
+def fixture_dbs_need_no_toolchain_record(monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest) -> None:
+    """
+    Let readers open fixture SemSQL DBs, which no toolchain built, unless a test opts in (#1641).
+
+    UPA and Rhea read go.db, chebi.db and ec.db directly and refuse a go.db this
+    machine's toolchain did not build. Fixture DBs have no toolchain record, so
+    every test that reaches those readers would be refused. A test marked
+    ``semsql_toolchain_check`` gets the real check.
+    """
+    if request.node.get_closest_marker("semsql_toolchain_check"):
+        return
+    monkeypatch.setattr(
+        "kg_microbe.utils.ontology_utils.check_reused_semsql_db", lambda db_path, raw_dir, *, strict: None
+    )
+
+
+@pytest.fixture(autouse=True)
 def block_external_network(monkeypatch: pytest.MonkeyPatch, request: pytest.FixtureRequest) -> None:
     """Reject external DNS/socket use in unit tests while allowing loopback servers."""
     if request.node.get_closest_marker("integration"):

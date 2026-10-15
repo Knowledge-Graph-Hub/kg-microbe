@@ -71,8 +71,13 @@ def external_label_lookup(transform):
     with ExitStack() as stack:
         connections = {}
         missing_counts = {prefix: 0 for _, prefix, _ in LABEL_DATABASES.values()}
+        from kg_microbe.utils.ontology_utils import check_reused_semsql_db
+
         for role, (filename, prefix, ontology) in LABEL_DATABASES.items():
             path = Path(transform.input_base_dir) / filename
+            # Never built here. A go.db this toolchain did not build is refused; the others,
+            # which take hours to rebuild, are reported and read, as everywhere else (#1641).
+            check_reused_semsql_db(path, transform.input_base_dir, strict=ontology == "go")
             stream = stack.enter_context(transform.consume_input(role, path))
             _require_standalone(path)
             connection = sqlite3.connect(Path(stream.name).as_uri() + "?mode=ro&immutable=1", uri=True)

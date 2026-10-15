@@ -559,6 +559,10 @@ class UPARouteReview:
             if digest(release) != go_source["sha256"]:
                 raise SourceFinalizationRequired("UPA GO release file differs from the reviewed release")
             database = self.transform.input_base_dir / "go.db"
+            # Read directly, so never rebuilt here; one this toolchain did not build is refused (#1641).
+            from kg_microbe.utils.ontology_utils import check_reused_semsql_db
+
+            check_reused_semsql_db(database, self.transform.input_base_dir, strict=True)
             database_identity = self._admission.capture(database)
             for suffix in ("-wal", "-shm", "-journal"):
                 sidecar = Path(str(database) + suffix)

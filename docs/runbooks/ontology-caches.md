@@ -69,6 +69,13 @@ machine's toolchain:
 - **The others warn.** `chebi.db`, `ncbitaxon.db` and `ec.db` take far longer to
   rebuild, so a missing or different record prints one warning per database per
   process and the database is used.
+- **Readers that open a database directly check it too, and never rebuild it**
+  (#1641). UPA (`kg transform -s upa`) and Rhea mappings read `go.db`, and Rhea
+  also reads `chebi.db` and `ec.db`, without going through `_ensure_go_db`. A
+  `go.db` this toolchain did not build is refused there with
+  `OntologyDbUnavailableError`; run the go ontology (`kg transform -s go`) to
+  rebuild it. The others warn, as above. A reader does not rebuild, so that it
+  cannot race a build another process holds the lock for.
 - **`KG_SEMSQL_BUILD=off`** skips both: it accepts the prebuilt databases and
   whatever toolchain made them. It also stops every SemSQL database from being
   rebuilt on release drift.

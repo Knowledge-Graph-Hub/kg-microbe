@@ -212,6 +212,10 @@ deposit gets no parent and no record links (#1421).
   by identifier shape, not by a blanket GOLD/GTDB prefix exemption: a missing
   assembly or GOLD organism is unexpected even if other references in the
   same namespace are intentional. See #892, #896, #918, #1050 and #1051.
+  Finalization counts every finalized `ontologies` node file as a declaration,
+  but a merge may leave some out (`merge.yaml` drops four, `merge.minimal.yaml`
+  all), so a stub one of those declares is named with it in the
+  `declared_outside_merge` column of `merged_stub_node_details.tsv` (#1556).
 - GOLD no longer folds organism IDs onto taxa by normalized label (#1316).
   Unresolved native referents stay `biolink:NamedThing` with
   `biolink:related_to` taxon associations, backed by the mandatory

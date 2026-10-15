@@ -5019,6 +5019,33 @@ loudly but not aborting. Set <code class="docutils literal notranslate"><span cl
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.ontology_utils.check_reused_semsql_db">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.ontology_utils.</span></span><span class="sig-name descname"><span class="pre">check_reused_semsql_db</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">db_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strict</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ontology_utils.check_reused_semsql_db" title="Link to this definition"></a></dt>
+<dd><p>Check a SemSQL DB a reader opens directly against this machine’s toolchain, without rebuilding it (#1641).</p>
+<p><code class="docutils literal notranslate"><span class="pre">_ensure_go_db</span></code> and the other <code class="docutils literal notranslate"><span class="pre">_ensure_*</span></code> functions check the toolchain
+record when they reuse a DB, but some readers open the DB directly. Those
+readers must not rebuild it, since that would race a build another process
+may be running under the build lock. With <code class="docutils literal notranslate"><span class="pre">strict</span></code> (<code class="docutils literal notranslate"><span class="pre">go.db</span></code>) a DB this
+toolchain did not build is refused, as <code class="docutils literal notranslate"><span class="pre">_ensure_go_db</span></code> refuses one it cannot
+rebuild; otherwise the difference is reported once per process and the DB is
+used. <code class="docutils literal notranslate"><span class="pre">KG_SEMSQL_BUILD=off</span></code> accepts any DB, as it does for builds.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>db_path</strong> – The SemSQL DB about to be read.</p></li>
+<li><p><strong>raw_dir</strong> – The raw directory the DB belongs to, which holds the pinned ROBOT.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#kg_microbe.utils.ontology_utils.OntologyDbUnavailableError" title="kg_microbe.utils.ontology_utils.OntologyDbUnavailableError"><strong>OntologyDbUnavailableError</strong></a> – With <code class="docutils literal notranslate"><span class="pre">strict</span></code>, when this toolchain did not build the DB.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.ontology_utils.get_chebi_adapter">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.ontology_utils.</span></span><span class="sig-name descname"><span class="pre">get_chebi_adapter</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ontology_utils.get_chebi_adapter" title="Link to this definition"></a></dt>
 <dd><p>Return a lazily-resolved guarded ChEBI adapter.</p>

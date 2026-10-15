@@ -154,6 +154,13 @@ no record, so each machine rebuilds <code class="docutils literal notranslate"><
 <li><p><strong>The others warn.</strong> <code class="docutils literal notranslate"><span class="pre">chebi.db</span></code>, <code class="docutils literal notranslate"><span class="pre">ncbitaxon.db</span></code> and <code class="docutils literal notranslate"><span class="pre">ec.db</span></code> take far longer to
 rebuild, so a missing or different record prints one warning per database per
 process and the database is used.</p></li>
+<li><p><strong>Readers that open a database directly check it too, and never rebuild it</strong>
+(#1641). UPA (<code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">transform</span> <span class="pre">-s</span> <span class="pre">upa</span></code>) and Rhea mappings read <code class="docutils literal notranslate"><span class="pre">go.db</span></code>, and Rhea
+also reads <code class="docutils literal notranslate"><span class="pre">chebi.db</span></code> and <code class="docutils literal notranslate"><span class="pre">ec.db</span></code>, without going through <code class="docutils literal notranslate"><span class="pre">_ensure_go_db</span></code>. A
+<code class="docutils literal notranslate"><span class="pre">go.db</span></code> this toolchain did not build is refused there with
+<code class="docutils literal notranslate"><span class="pre">OntologyDbUnavailableError</span></code>; run the go ontology (<code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">transform</span> <span class="pre">-s</span> <span class="pre">go</span></code>) to
+rebuild it. The others warn, as above. A reader does not rebuild, so that it
+cannot race a build another process holds the lock for.</p></li>
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">KG_SEMSQL_BUILD=off</span></code></strong> skips both: it accepts the prebuilt databases and
 whatever toolchain made them. It also stops every SemSQL database from being
 rebuilt on release drift.</p></li>

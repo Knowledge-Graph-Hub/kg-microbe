@@ -43,3 +43,22 @@ it intentionally prefers explicit I/O cost over silently publishing a graph
 whose original admission evidence changed. It does not claim every raw input
 in the entire pipeline was captured: existing declared/recorded dependency
 scope remains the contract.
+
+## Errors while re-reading a bound database (#1552, #1636)
+
+Recorded admission re-reads some bound SQLite databases (`go.db` for UPA,
+`ncit.db` for the NCIT category policy). Every failure there is a refusal of
+that one record, raised as `SourceFinalizationRequired`: a file SQLite cannot
+read, and a GO reference or GO statement the bound database does not support.
+Finalization and `source_freshness.validate_path` try each candidate record
+under `except SourceFinalizationRequired`; a raw `sqlite3.Error` or
+`ValueError` would end verification before the others were tried.
+
+The producers that first read these databases during `kg transform` raise the
+exception they use for their other contract failures instead
+(`SourceFinalizationRequired` for UPA, `ValueError` for the imported GO
+restrictions and NCIT categories), chained to the SQLite error. `kg transform`
+isolates either to its source, so this changes the message, not the outcome.
+Each read goes through `kg_microbe.utils.sqlite_read.read_only_sqlite`, which
+closes the connection when the block ends (#1637); `with sqlite3.connect(...)`
+only commits or rolls back.

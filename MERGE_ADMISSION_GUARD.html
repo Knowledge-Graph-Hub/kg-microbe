@@ -112,6 +112,24 @@ it intentionally prefers explicit I/O cost over silently publishing a graph
 whose original admission evidence changed. It does not claim every raw input
 in the entire pipeline was captured: existing declared/recorded dependency
 scope remains the contract.</p>
+<section id="errors-while-re-reading-a-bound-database-1552-1636">
+<h2>Errors while re-reading a bound database (#1552, #1636)<a class="headerlink" href="#errors-while-re-reading-a-bound-database-1552-1636" title="Link to this heading"></a></h2>
+<p>Recorded admission re-reads some bound SQLite databases (<code class="docutils literal notranslate"><span class="pre">go.db</span></code> for UPA,
+<code class="docutils literal notranslate"><span class="pre">ncit.db</span></code> for the NCIT category policy). Every failure there is a refusal of
+that one record, raised as <code class="docutils literal notranslate"><span class="pre">SourceFinalizationRequired</span></code>: a file SQLite cannot
+read, and a GO reference or GO statement the bound database does not support.
+Finalization and <code class="docutils literal notranslate"><span class="pre">source_freshness.validate_path</span></code> try each candidate record
+under <code class="docutils literal notranslate"><span class="pre">except</span> <span class="pre">SourceFinalizationRequired</span></code>; a raw <code class="docutils literal notranslate"><span class="pre">sqlite3.Error</span></code> or
+<code class="docutils literal notranslate"><span class="pre">ValueError</span></code> would end verification before the others were tried.</p>
+<p>The producers that first read these databases during <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">transform</span></code> raise the
+exception they use for their other contract failures instead
+(<code class="docutils literal notranslate"><span class="pre">SourceFinalizationRequired</span></code> for UPA, <code class="docutils literal notranslate"><span class="pre">ValueError</span></code> for the imported GO
+restrictions and NCIT categories), chained to the SQLite error. <code class="docutils literal notranslate"><span class="pre">kg</span> <span class="pre">transform</span></code>
+isolates either to its source, so this changes the message, not the outcome.
+Each read goes through <code class="docutils literal notranslate"><span class="pre">kg_microbe.utils.sqlite_read.read_only_sqlite</span></code>, which
+closes the connection when the block ends (#1637); <code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">sqlite3.connect(...)</span></code>
+only commits or rolls back.</p>
+</section>
 </section>
 
 

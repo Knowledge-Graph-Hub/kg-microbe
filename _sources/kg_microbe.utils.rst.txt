@@ -508,6 +508,14 @@ kg\_microbe.utils.source\_finalization module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.utils.sqlite\_read module
+-------------------------------------
+
+.. automodule:: kg_microbe.utils.sqlite_read
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.utils.sssom\_identity\_policy module
 ------------------------------------------------
 

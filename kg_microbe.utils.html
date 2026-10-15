@@ -6317,6 +6317,37 @@ snapshots retain the exact native bytes behind each category/name decision.</p>
 </dd></dl>
 
 </section>
+<section id="module-kg_microbe.utils.sqlite_read">
+<span id="kg-microbe-utils-sqlite-read-module"></span><h2>kg_microbe.utils.sqlite_read module<a class="headerlink" href="#module-kg_microbe.utils.sqlite_read" title="Link to this heading"></a></h2>
+<p>Open a SQLite database for one block of reads, and always close it (#1637).</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.sqlite_read.read_only_sqlite">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.sqlite_read.</span></span><span class="sig-name descname"><span class="pre">read_only_sqlite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uri</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">refusal</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.sqlite_read.read_only_sqlite" title="Link to this definition"></a></dt>
+<dd><p>Yield a connection to the SQLite <code class="docutils literal notranslate"><span class="pre">uri</span></code> and close it when the block ends, however it ends.</p>
+<p><code class="docutils literal notranslate"><span class="pre">with</span> <span class="pre">sqlite3.connect(...)</span></code> only commits or rolls back: the connection stays open
+until its frame is collected, and a traceback held on an error path keeps that
+frame alive (#1637). With <code class="docutils literal notranslate"><span class="pre">refusal</span></code>, a <code class="docutils literal notranslate"><span class="pre">sqlite3.Error</span></code> from connecting or from
+the block is raised as <code class="docutils literal notranslate"><span class="pre">refusal()</span></code>, chained to the SQLite error, so a reader
+refuses a file SQLite cannot read with the exception it uses for its other contract
+failures (#1636). Every other exception passes through unchanged.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uri</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – A <code class="docutils literal notranslate"><span class="pre">file:</span></code> URI; the caller chooses <code class="docutils literal notranslate"><span class="pre">mode=ro</span></code> or <code class="docutils literal notranslate"><span class="pre">immutable=1</span></code>.</p></li>
+<li><p><strong>refusal</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[], <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code>]]</span>) – Builds the exception that replaces a SQLite error, or <code class="docutils literal notranslate"><span class="pre">None</span></code> to
+let SQLite errors through.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>Exception</strong> – <code class="docutils literal notranslate"><span class="pre">refusal()</span></code> in place of a <code class="docutils literal notranslate"><span class="pre">sqlite3.Error</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Connection</span></code>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
 <section id="module-kg_microbe.utils.sssom_identity_policy">
 <span id="kg-microbe-utils-sssom-identity-policy-module"></span><h2>kg_microbe.utils.sssom_identity_policy module<a class="headerlink" href="#module-kg_microbe.utils.sssom_identity_policy" title="Link to this heading"></a></h2>
 <p>Route SSSOM rows before they can contribute chemical identity lookups.</p>

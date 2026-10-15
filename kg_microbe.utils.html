@@ -5658,6 +5658,32 @@ bytes without changing a reviewed fact. The release file itself can be fetched a
 from its stable URL. So a policy pins that file’s SHA-256, checks the release the JSON
 declares, and digests only the content it reviewed.</p>
 <dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.release_binding.bound_release_snapshot">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.release_binding.</span></span><span class="sig-name descname"><span class="pre">bound_release_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">own</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">separate</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.release_binding.bound_release_snapshot" title="Link to this definition"></a></dt>
+<dd><p>Return the consumed-input snapshot of the release file behind <code class="docutils literal notranslate"><span class="pre">filename</span></code>, as finalization re-checks it.</p>
+<p>Which file is the release is decided as <code class="docutils literal notranslate"><span class="pre">read_bound_authority</span></code> decides it, by
+the policy’s own file names, never by a snapshot’s path: snapshots record the
+resolved path, so a release reached through a symlink has its target’s name
+(#1645). The release snapshot must be well formed and carry the pinned SHA-256.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> – The JSON the policy reads.</p></li>
+<li><p><strong>source</strong> – <code class="docutils literal notranslate"><span class="pre">{&quot;file&quot;:</span> <span class="pre">...,</span> <span class="pre">&quot;sha256&quot;:</span> <span class="pre">...}</span></code> naming the pinned release file.</p></li>
+<li><p><strong>own</strong> – The JSON’s own consumed-input snapshot.</p></li>
+<li><p><strong>separate</strong> – The snapshot recorded for a separate release file, or None.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">own</span></code> when the JSON is its own release, otherwise <code class="docutils literal notranslate"><span class="pre">separate</span></code>.</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ValueError</strong> – When the release snapshot is missing, malformed or not the pinned release.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.release_binding.canonical_digest">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.release_binding.</span></span><span class="sig-name descname"><span class="pre">canonical_digest</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.release_binding.canonical_digest" title="Link to this definition"></a></dt>
 <dd><p>SHA-256 of a value’s canonical JSON, so reviewed content is compared, not its layout.</p>

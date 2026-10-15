@@ -19,6 +19,7 @@ from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.graph_canonicalization import compact_identifier
 from kg_microbe.utils.ontology_metadata import obograph_is_deprecated
 from kg_microbe.utils.release_binding import (
+    bound_release_snapshot,
     canonical_digest,
     graph_release,
     is_release_source,
@@ -127,7 +128,7 @@ def _cohort(policy, name, field="records"):
 def load_policy(stream):
     """Bind all 516 retained and eight explicitly unchanged exact supplier/triples."""
     policy = json.load(stream, object_pairs_hook=_unique_object)
-    if _digest(_json(policy).encode()) != REVIEWED_POLICY_SHA256:
+    if canonical_digest(policy) != REVIEWED_POLICY_SHA256:
         raise ValueError("Unreviewed native RO policy evidence; changing native pins requires independent review")
     if (
         not isinstance(policy, dict)
@@ -147,7 +148,7 @@ def load_policy(stream):
         or not isinstance(policy.get("records"), list)
         or len(policy["records"]) != 516
         or len(policy.get("unchanged_records", [])) != 8
-        or _digest(_json(policy["records"]).encode()) != FINITE_COHORT_SHA256
+        or canonical_digest(policy["records"]) != FINITE_COHORT_SHA256
         or policy.get("strict_biolink_disposition") != STRICT_DISPOSITION
         or set(policy.get("authorities", {})) != set(_AUTHORITY_GRAPHS)
         or set(policy.get("relations", {})) != _RELATIONS
@@ -213,6 +214,9 @@ class NativeROPredicateRetention:
         filename = name + ".json"
         role = "ontology_native_relation_" + name
         expected = self.policy["authorities"][filename]
+        if Path(path).name != filename:
+            # Finalization decides which file is the release by this name (#1645).
+            raise ValueError(f"Native RO authority must be read as {filename}: {path}")
         content = self._bind_source(name, Path(path), role)
         document = json.loads(content, object_pairs_hook=_unique_object)
         graphs = document.get("graphs")
@@ -276,7 +280,7 @@ class NativeROPredicateRetention:
                 or node.get("propertyType") != "OBJECT"
                 or obograph_is_deprecated(node)
                 or node.get("lbl") != contract["label"]
-                or _digest(_json(node).encode()) != contract["native_node_sha256"]
+                or canonical_digest(node) != contract["native_node_sha256"]
             ):
                 raise ValueError(f"Missing or changed native RO property declaration: {relation}")
             declarations[relation] = node
@@ -316,7 +320,7 @@ class NativeROPredicateRetention:
             if selected_content_sha256(name, graph) != self.policy["authorities"][name + ".json"]["selected_sha256"]:
                 raise ValueError(f"Native RO supplier assertions differ from the reviewed release content: {name}")
             self._native[name] = {key: row for key, row in selected.items() if key in expected}
-            self._native_digests[name] = _digest(_json(sorted(self._native[name].values(), key=_json)).encode())
+            self._native_digests[name] = canonical_digest(sorted(self._native[name].values(), key=_json))
         identity = self._identities[name]
         target = self.transform.output_dir / ".ontology-inputs" / identity["sha256"] / (name + ".json")
         with atomic_write(target, "wb") as destination:
@@ -414,10 +418,10 @@ class NativeROPredicateRetention:
         """Retain mandatory read-time role identities, never accept a rebound current receipt."""
         from kg_microbe.utils.source_finalization import SourceFinalizationRequired
 
-        if _digest(_json(self.policy).encode()) != REVIEWED_POLICY_SHA256:
+        if canonical_digest(self.policy) != REVIEWED_POLICY_SHA256:
             raise SourceFinalizationRequired("Native RO cached policy changed after admission")
         if set(self._native) != set(self._native_digests) or any(
-            _digest(_json(sorted(rows.values(), key=_json)).encode()) != self._native_digests[name]
+            canonical_digest(sorted(rows.values(), key=_json)) != self._native_digests[name]
             or any(
                 key != (compact_identifier(row["sub"]), compact_identifier(row["pred"]), compact_identifier(row["obj"]))
                 for key, row in rows.items()
@@ -428,7 +432,7 @@ class NativeROPredicateRetention:
         if self._ro is not None and (
             set(self._ro[0]) != _RELATIONS
             or any(
-                _digest(_json(node).encode()) != self.policy["relations"][relation]["native_node_sha256"]
+                canonical_digest(node) != self.policy["relations"][relation]["native_node_sha256"]
                 for relation, node in self._ro[0].items()
             )
         ):
@@ -523,20 +527,14 @@ def verify_audit_input_bindings(directory, snapshots, *, members=None, admission
             if guard.capture(expected["path"])["sha256"] != expected["sha256"]:
                 raise SourceFinalizationRequired(f"Audited native RO authority bytes changed: {role}")
             source = policy["authorities"][supplier + ".json"]["source"]
-            if source["file"] == Path(expected["path"]).name:
-                if expected["sha256"] != source["sha256"]:
-                    raise SourceFinalizationRequired(f"Audited native RO input differs from pinned release: {role}")
-            else:
-                bound = snapshots.get(role + "_source")
-                if (
-                    not isinstance(bound, dict)
-                    or set(bound) != {"path", "sha256"}
-                    or Path(bound["path"]).name != source["file"]
-                    or bound["sha256"] != source["sha256"]
-                ):
-                    raise SourceFinalizationRequired(f"Audited native RO release binding missing or changed: {role}")
-                if guard.capture(bound["path"])["sha256"] != bound["sha256"]:
-                    raise SourceFinalizationRequired(f"Audited native RO release bytes changed: {role}")
+            try:
+                bound = bound_release_snapshot(supplier + ".json", source, expected, snapshots.get(role + "_source"))
+            except ValueError as exc:
+                raise SourceFinalizationRequired(
+                    f"Audited native RO release binding missing or changed: {role}"
+                ) from exc
+            if bound is not expected and guard.capture(bound["path"])["sha256"] != bound["sha256"]:
+                raise SourceFinalizationRequired(f"Audited native RO release bytes changed: {role}")
         if row["policy_sha256"] != policy_identity["sha256"] or row["strict_biolink_disposition"] != STRICT_DISPOSITION:
             raise SourceFinalizationRequired("Native RO audit policy/disposition binding changed")
         try:
@@ -565,7 +563,7 @@ def verify_audit_input_bindings(directory, snapshots, *, members=None, admission
             declaration = json.loads(row["ro_declaration_json"], object_pairs_hook=_unique_object)
             _, declarations = native_graph("ro", snapshots["ontology_native_relation_ro"])
             if declarations.get(relation) != [declaration] or (
-                _digest(_json(declaration).encode()) != policy["relations"][relation]["native_node_sha256"]
+                canonical_digest(declaration) != policy["relations"][relation]["native_node_sha256"]
             ):
                 raise ValueError("native property witness differs from actual authority")
         except (ValueError, KeyError, TypeError) as exc:

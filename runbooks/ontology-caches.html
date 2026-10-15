@@ -165,6 +165,20 @@ cannot race a build another process holds the lock for.</p></li>
 whatever toolchain made them. It also stops every SemSQL database from being
 rebuilt on release drift.</p></li>
 </ul>
+<p><strong>Use one toolchain per shared raw directory (#1643).</strong> Nodes that share one
+<code class="docutils literal notranslate"><span class="pre">data/raw</span></code> but run different tools, such as an HPC array started by
+<code class="docutils literal notranslate"><span class="pre">hpc/run_parallel_transform.slurm</span></code>, each find the other’s <code class="docutils literal notranslate"><span class="pre">go.db</span></code> record wrong and
+rebuild it in turn; the last writer wins. A process still reading the previous
+<code class="docutils literal notranslate"><span class="pre">go.db</span></code> then fails its digest check (“differs from reviewed authority”), because
+the build lock guards against concurrent writers, not readers. Install the same
+<code class="docutils literal notranslate"><span class="pre">semsql</span></code>, <code class="docutils literal notranslate"><span class="pre">rdftab</span></code>, <code class="docutils literal notranslate"><span class="pre">relation-graph</span></code> and pinned ROBOT on every node that shares a
+raw directory, or give each toolchain its own raw directory.</p>
+<p>A build first removes the <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;-relation-graph.tsv</span></code> and <code class="docutils literal notranslate"><span class="pre">&lt;name&gt;-min.owl</span></code> an
+unfinished earlier build left beside the OWL (#1642). SemSQL keeps the plain TSV
+when a build fails after relation-graph (at <code class="docutils literal notranslate"><span class="pre">rdftab</span></code>, say), and <code class="docutils literal notranslate"><span class="pre">make</span></code> would
+otherwise reuse it, so <code class="docutils literal notranslate"><span class="pre">entailed_edge</span></code> would come from the old relation-graph while
+the new record named this one. The gzipped TSV a finished build leaves is not an
+input to <code class="docutils literal notranslate"><span class="pre">make</span></code> and stays.</p>
 <p>The release binaries used on the M1 build recorded in #1524 are <code class="docutils literal notranslate"><span class="pre">rdftab</span></code> v0.1.1
 (<code class="docutils literal notranslate"><span class="pre">rdftab-x86_64-apple-darwin</span></code>, SHA-256 <code class="docutils literal notranslate"><span class="pre">4087e519…</span></code>, which needs Rosetta on Apple
 silicon) and <code class="docutils literal notranslate"><span class="pre">relation-graph</span></code> 2.3.2 (<code class="docutils literal notranslate"><span class="pre">relation-graph-cli-2.3.2.tgz</span></code>, put its <code class="docutils literal notranslate"><span class="pre">bin/</span></code>

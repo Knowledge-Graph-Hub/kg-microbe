@@ -80,6 +80,22 @@ machine's toolchain:
   whatever toolchain made them. It also stops every SemSQL database from being
   rebuilt on release drift.
 
+**Use one toolchain per shared raw directory (#1643).** Nodes that share one
+`data/raw` but run different tools, such as an HPC array started by
+`hpc/run_parallel_transform.slurm`, each find the other's `go.db` record wrong and
+rebuild it in turn; the last writer wins. A process still reading the previous
+`go.db` then fails its digest check ("differs from reviewed authority"), because
+the build lock guards against concurrent writers, not readers. Install the same
+`semsql`, `rdftab`, `relation-graph` and pinned ROBOT on every node that shares a
+raw directory, or give each toolchain its own raw directory.
+
+A build first removes the `<name>-relation-graph.tsv` and `<name>-min.owl` an
+unfinished earlier build left beside the OWL (#1642). SemSQL keeps the plain TSV
+when a build fails after relation-graph (at `rdftab`, say), and `make` would
+otherwise reuse it, so `entailed_edge` would come from the old relation-graph while
+the new record named this one. The gzipped TSV a finished build leaves is not an
+input to `make` and stays.
+
 The release binaries used on the M1 build recorded in #1524 are `rdftab` v0.1.1
 (`rdftab-x86_64-apple-darwin`, SHA-256 `4087e519…`, which needs Rosetta on Apple
 silicon) and `relation-graph` 2.3.2 (`relation-graph-cli-2.3.2.tgz`, put its `bin/`

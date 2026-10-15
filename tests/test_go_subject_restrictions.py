@@ -645,3 +645,40 @@ def test_same_count_original_and_candidate_qualifier_rewrite_is_not_conservation
     write_rows(audit, records, quoted=True)
     with pytest.raises(SourceFinalizationRequired, match="inventory"):
         restrictions.audit_inventory([audit], snapshots)
+
+
+def test_a_go_db_sqlite_cannot_read_is_refused_like_other_contract_failures(tmp_path, monkeypatch):
+    """The producer raises its own ValueError, chained to SQLite's, not a raw sqlite3 error (#1636)."""
+    _, _, _, _, authority = prepare(tmp_path, monkeypatch)
+    guard = restrictions.ImportedGoRestrictionGuard(authority)
+    real = sqlite3.connect
+
+    def connect(database, *args, **kwargs):
+        """Stand in for a consumed go.db snapshot SQLite cannot read."""
+        if "mode=ro" in str(database):
+            raise sqlite3.DatabaseError("file is not a database")
+        return real(database, *args, **kwargs)
+
+    monkeypatch.setattr(sqlite3, "connect", connect)
+    with pytest.raises(ValueError, match="Imported GO selected database cannot be read") as info:
+        guard.prepare()
+    assert isinstance(info.value.__cause__, sqlite3.DatabaseError)
+
+
+def test_preparing_closes_the_go_db_connection_it_opens(tmp_path, monkeypatch):
+    """No read-only handle outlives prepare() (#1637)."""
+    _, _, _, _, authority = prepare(tmp_path, monkeypatch)
+    guard = restrictions.ImportedGoRestrictionGuard(authority)
+    real, opened = sqlite3.connect, []
+
+    def connect(*args, **kwargs):
+        """Record each connection prepare() opens."""
+        opened.append(real(*args, **kwargs))
+        return opened[-1]
+
+    monkeypatch.setattr(sqlite3, "connect", connect)
+    guard.prepare()
+    assert opened
+    for connection in opened:
+        with pytest.raises(sqlite3.ProgrammingError, match="closed"):
+            connection.execute("SELECT 1")

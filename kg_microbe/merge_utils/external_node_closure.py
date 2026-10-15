@@ -10,7 +10,6 @@ No name matching, accession-prefix substitution, or taxonomy inference occurs.
 import csv
 import hashlib
 import json
-import sqlite3
 import tarfile
 from array import array
 from collections import Counter
@@ -36,6 +35,7 @@ from kg_microbe.utils.atomic_io import atomic_write
 from kg_microbe.utils.external_identifiers import load_taxid_merges, resolve_replacement
 from kg_microbe.utils.ontology_resolution import chebi_category
 from kg_microbe.utils.provenance import knowledge_source_tokens, serialize_knowledge_sources
+from kg_microbe.utils.sqlite_read import read_only_sqlite
 from kg_microbe.utils.tsv_io import tsv_dict_writer
 
 _SUPPORTED = ("NCBITaxon:", "GO:", "CHEBI:", "MICRO:", "OBI:", "gold:")
@@ -154,7 +154,7 @@ def _ontology_decisions(raw_dir, prefix, targets, decisions, authorities):
     if not path.is_file():
         return
     authorities[path.name] = _digest(path)
-    with sqlite3.connect(f"file:{path}?mode=ro", uri=True) as connection:
+    with read_only_sqlite(f"file:{path}?mode=ro") as connection:
         for original in targets:
             current, seen = original, set()
             while True:

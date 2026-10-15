@@ -550,3 +550,20 @@ def test_selected_and_resolved_native_sidecars_are_both_mandatory(tmp_path, monk
         authority._admission.bindings.pop(sidecar)
     with pytest.raises(SourceFinalizationRequired):
         authority.verify(transform.consumed_input_snapshots)
+
+
+def test_a_snapshot_sqlite_cannot_read_is_refused_like_other_contract_failures(tmp_path, monkeypatch):
+    """The producer raises its own ValueError, chained to SQLite's, not a raw sqlite3 error (#1636)."""
+    _, _, _, _, authority = prepare(tmp_path, monkeypatch)
+    real = sqlite3.connect
+
+    def connect(database, *args, **kwargs):
+        """Stand in for a consumed ncit.db snapshot SQLite cannot read."""
+        if "immutable=1" in str(database):
+            raise sqlite3.DatabaseError("file is not a database")
+        return real(database, *args, **kwargs)
+
+    monkeypatch.setattr(sqlite3, "connect", connect)
+    with pytest.raises(ValueError, match="Finite NCIT consumed snapshot cannot be read by SQLite") as info:
+        authority.category_for("NCIT:C14191")
+    assert isinstance(info.value.__cause__, sqlite3.DatabaseError)

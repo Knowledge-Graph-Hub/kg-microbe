@@ -24,6 +24,7 @@ from kg_microbe.transform_utils.constants import (
 from kg_microbe.transform_utils.ontologies_stubs.ncit_category_projection import native_contract
 from kg_microbe.utils.atomic_io import SQLITE_HEADER, gunzip_beside
 from kg_microbe.utils.release_binding import semsql_release
+from kg_microbe.utils.sqlite_read import read_only_sqlite
 
 POLICY_FILE = Path(__file__).resolve().parents[2] / "mappings/ncit_eight_categories.json"
 POLICY_SHA256 = "aeee20a68b51a94353eb86fa0a97d422cfe4f39b0fce3a288e9cffeee5fd2b8e"
@@ -287,7 +288,11 @@ class FiniteNcitCategoryAuthority:
                 hasher.update(block)
             if hasher.hexdigest() != authority["sha256"]:
                 raise ValueError("Finite NCIT consumed snapshot differs from the native selection")
-            with sqlite3.connect(Path(stream.name).as_uri() + "?mode=ro&immutable=1", uri=True) as connection:
+            # A file SQLite cannot read is refused like any other contract failure (#1636).
+            with read_only_sqlite(
+                Path(stream.name).as_uri() + "?mode=ro&immutable=1",
+                lambda: ValueError("Finite NCIT consumed snapshot cannot be read by SQLite"),
+            ) as connection:
                 connection.row_factory = sqlite3.Row
                 statements = {
                     identifier: sorted(
@@ -495,7 +500,7 @@ def verify_recorded_inputs(report, report_path, *, admission=None):
                 raise ValueError("finite native consumed snapshot changed")
             # The recorded release is provenance, but it must be the bound database's (#1531).
             database = Path(authority["resolved_path"]).as_uri() + "?mode=ro&immutable=1"
-            with sqlite3.connect(database, uri=True) as connection:
+            with read_only_sqlite(database) as connection:
                 if semsql_release(connection, "ncit") != contract["native_release"]:
                     raise ValueError("finite native release provenance changed")
             model_path = Path(report["raw_input_directory"]) / policy["model_file"]

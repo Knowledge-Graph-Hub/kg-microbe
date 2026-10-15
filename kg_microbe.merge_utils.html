@@ -221,7 +221,7 @@ their entire prefixes hid namespace defects affecting 31 K nodes (#1050/1051).</
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.merge_utils.invariants.check_merged_invariants">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">check_merged_invariants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">native_declarations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unmerged_declarations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.invariants.check_merged_invariants" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">check_merged_invariants</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nodes_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">native_declarations</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.invariants.check_merged_invariants" title="Link to this definition"></a></dt>
 <dd><p>Run the merged-graph invariants and write their report.</p>
 <p>The report is written whether or not anything was found: an absent file would
 be indistinguishable from a clean run, and a clean run is the thing worth
@@ -237,10 +237,6 @@ merge hands over the path it already built, because a derivation that fails
 looks exactly like a graph with no stubs (#936).</p></li>
 <li><p><strong>native_declarations</strong> – The admitted native declarations merge validation
 checked the nodes against, passed to <a class="reference internal" href="#kg_microbe.merge_utils.invariants.find_stub_nodes" title="kg_microbe.merge_utils.invariants.find_stub_nodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">find_stub_nodes()</span></code></a>.</p></li>
-<li><p><strong>unmerged_declarations</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Node files the merged sources counted as
-declarations that this merge does not include, from
-<a class="reference internal" href="#kg_microbe.merge_utils.invariants.unmerged_declaration_files" title="kg_microbe.merge_utils.invariants.unmerged_declaration_files"><code class="xref py py-func docutils literal notranslate"><span class="pre">unmerged_declaration_files()</span></code></a>. A stub one of them declares is named
-with it in the detail report (#1556).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -333,7 +329,7 @@ without them every node of that shape is reported.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.merge_utils.invariants.stub_incident_rows">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">stub_incident_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stubs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">declared_outside</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.invariants.stub_incident_rows" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">stub_incident_rows</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">edges_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">stubs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.invariants.stub_incident_rows" title="Link to this definition"></a></dt>
 <dd><p>Attribute every anonymous node to its incident assertions, not just prefix samples.</p>
 <p>Only stub IDs, counts and distinct predicate/source strings are retained in
 memory. Source cells are recorded verbatim: malformed legacy serialization
@@ -362,56 +358,6 @@ cause 15,584 mis-prefixed assembly references to be called expected (#1050).</p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Rows matching <code class="xref py py-data docutils literal notranslate"><span class="pre">STUB_NODE_REPORT_HEADER</span></code>.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="kg_microbe.merge_utils.invariants.stubs_declared_in">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">stubs_declared_in</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">stubs</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node_files</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.invariants.stubs_declared_in" title="Link to this definition"></a></dt>
-<dd><p>Return <code class="docutils literal notranslate"><span class="pre">{stub:</span> <span class="pre">[file</span> <span class="pre">names]}</span></code> for each stub one of <code class="docutils literal notranslate"><span class="pre">node_files</span></code> declares.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>stubs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span>) – Result of <a class="reference internal" href="#kg_microbe.merge_utils.invariants.find_stub_nodes" title="kg_microbe.merge_utils.invariants.find_stub_nodes"><code class="xref py py-func docutils literal notranslate"><span class="pre">find_stub_nodes()</span></code></a>.</p></li>
-<li><p><strong>node_files</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Node TSVs to look in, typically <a class="reference internal" href="#kg_microbe.merge_utils.invariants.unmerged_declaration_files" title="kg_microbe.merge_utils.invariants.unmerged_declaration_files"><code class="xref py py-func docutils literal notranslate"><span class="pre">unmerged_declaration_files()</span></code></a>.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The stubs found, each with the sorted names of the files declaring it.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="kg_microbe.merge_utils.invariants.unmerged_declaration_files">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.merge_utils.invariants.</span></span><span class="sig-name descname"><span class="pre">unmerged_declaration_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">merged_inputs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.merge_utils.invariants.unmerged_declaration_files" title="Link to this definition"></a></dt>
-<dd><p>Return node files the merged sources counted as declarations that this merge leaves out.</p>
-<p>Finalization does not declare a referenced node again when the <code class="docutils literal notranslate"><span class="pre">ontologies</span></code>
-output already declares it, and records each node file it counted among its
-inputs. Which of those a merge publishes is the merge’s choice
-(<code class="docutils literal notranslate"><span class="pre">merge.yaml</span></code> leaves out four, <code class="docutils literal notranslate"><span class="pre">merge.minimal.yaml</span></code> all of them), so a
-reference to a node only they declare reaches the merged graph as a KGX
-invention. Naming the file turns that stub from a mystery into a known
-consequence of the configuration (#1556).</p>
-<p>Only another finalized source’s graph output counts: a node file its own
-finalization record lists among its <code class="docutils literal notranslate"><span class="pre">members</span></code>. A raw download that happens
-to be named <code class="docutils literal notranslate"><span class="pre">*nodes.tsv</span></code> (GOLD’s <code class="docutils literal notranslate"><span class="pre">GOLD_nodes.tsv</span></code>) is an input, not a
-declaration.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>merged_inputs</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – The graph files this merge reads.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>Existing node files recorded as inputs by the finalization records
-beside <code class="docutils literal notranslate"><span class="pre">merged_inputs</span></code>, finalized as graph members, and not among
-<code class="docutils literal notranslate"><span class="pre">merged_inputs</span></code>; sorted.</p>
 </dd>
 </dl>
 </dd></dl>

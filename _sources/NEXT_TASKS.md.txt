@@ -131,6 +131,11 @@ KEGG and Bakta are outside the 15 standard-merge producers.
    | 3 | `gold`, `lpsn`, `mediadive`, `bactotraits`, `metatraits_gtdb` |
    | 4 | `lpsn_api`, `microbedecoder` |
 
+   `poetry run python scripts/transform_phases.py` derives these phases from each
+   source's `TRANSFORM_INPUTS`, and `hpc/submit_phased_transforms.sh` submits
+   them on Slurm, one array job per phase, each starting only after the
+   previous phase succeeded (#1567).
+
    `rhea_mappings` runs inside this rebuild, not as a separate Rhea run.
    - **Inputs.** It uses the pinned Rhea pair (`mappings/rhea_release.json`) and
      the prepared `chebi.db`, `go.db` and `ec.db` label databases, which depend

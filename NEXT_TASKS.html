@@ -236,6 +236,10 @@ relabel earlier outputs as fresh:</p></li>
 </tr>
 </tbody>
 </table>
+<p><code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">python</span> <span class="pre">scripts/transform_phases.py</span></code> derives these phases from each
+source’s <code class="docutils literal notranslate"><span class="pre">TRANSFORM_INPUTS</span></code>, and <code class="docutils literal notranslate"><span class="pre">hpc/submit_phased_transforms.sh</span></code> submits
+them on Slurm, one array job per phase, each starting only after the
+previous phase succeeded (#1567).</p>
 <p><code class="docutils literal notranslate"><span class="pre">rhea_mappings</span></code> runs inside this rebuild, not as a separate Rhea run.</p>
 <ul class="simple">
 <li><p><strong>Inputs.</strong> It uses the pinned Rhea pair (<code class="docutils literal notranslate"><span class="pre">mappings/rhea_release.json</span></code>) and

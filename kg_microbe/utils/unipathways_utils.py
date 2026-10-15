@@ -7,6 +7,7 @@ from kg_microbe.transform_utils.constants import (
     GO_PREFIX,
     ID_COLUMN,
     OBJECT_COLUMN,
+    PROVIDED_BY_COLUMN,
     RHEA_CATEGORY,
     RHEA_NEW_PREFIX,
     SUBJECT_COLUMN,
@@ -66,6 +67,11 @@ def replace_id_with_xref(line, xref_index, id_index, category_index, nodes_dicti
     """
     parts = line.strip().split("\t")
     xrefs = parts[xref_index].split("|") if parts[xref_index] != "" else None
+    # A stub is declared by the row it came from, so it names that row's source
+    # rather than leaving provided_by blank (#1601).
+    provided_by = dict(zip(node_header, project_onto_header(parts, source_header, node_header), strict=True)).get(
+        PROVIDED_BY_COLUMN, ""
+    )
     new_lines = []
     if xrefs:
         # Avoid reactions that are given GO xrefs, use Unipathways prefix instead
@@ -76,7 +82,7 @@ def replace_id_with_xref(line, xref_index, id_index, category_index, nodes_dicti
             # category-aware consumers (and validators) don't see an empty
             # category column (biolink:MolecularActivity matches the
             # rhea_mappings transform's own RHEA category).
-            stub = {ID_COLUMN: xref}
+            stub = {ID_COLUMN: xref, PROVIDED_BY_COLUMN: provided_by}
             if xref.startswith(RHEA_NEW_PREFIX):
                 # Set category on Rhea stubs so downstream category-aware
                 # consumers (and validators) don't see an empty category

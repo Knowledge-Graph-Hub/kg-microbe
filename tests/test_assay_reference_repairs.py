@@ -40,6 +40,7 @@ def transform(tmp_path):
     result = BacDiveTransform.__new__(BacDiveTransform)
     Transform.__init__(result, "bacdive", input_dir=tmp_path / "raw", output_dir=tmp_path / "out")
     result.edge_header += ["value", "unit", "publications", "original_object"]
+    result.knowledge_source = "infores:bacdive"  # as BacDiveTransform.__init__ sets it
     return result
 
 
@@ -80,7 +81,9 @@ def test_historical_activity_preserves_label_aspect_and_consider(authority, tran
     data = _read_assays()
     nodes = {
         row[0]: dict(zip(transform.node_header, row, strict=True))
-        for row in generate_assay_entity_nodes(data, transform.node_header, go_authority=authority)
+        for row in generate_assay_entity_nodes(
+            data, transform.node_header, provided_by="infores:bacdive", go_authority=authority
+        )
     }
     historical = nodes["GO:0003840"]
     assert historical["category"] == "biolink:MolecularActivity"
@@ -101,7 +104,9 @@ def test_historical_activity_preserves_label_aspect_and_consider(authority, tran
 def test_exact_replacement_nodes_and_edges_share_canonical_identity(authority, transform):
     """Only an exact replacement changes identity, retaining the original edge target."""
     data = _one_target("GO:9999002")
-    node_rows = generate_assay_entity_nodes(data, transform.node_header, go_authority=authority)
+    node_rows = generate_assay_entity_nodes(
+        data, transform.node_header, provided_by="infores:bacdive", go_authority=authority
+    )
     edge_rows = generate_assay_entity_edges(data, transform.edge_header, go_authority=authority)
     node = dict(zip(transform.node_header, node_rows[0], strict=True))
     edge = dict(zip(transform.edge_header, edge_rows[0], strict=True))
@@ -117,7 +122,9 @@ def test_authority_and_supported_aspect_are_required(authority, transform):
     with pytest.raises(ValueError, match="go_authority"):
         generate_assay_entity_edges(_one_target("GO:0004096"), transform.edge_header)
     with pytest.raises(GoReferenceError):
-        generate_assay_entity_nodes(_one_target("GO:9999999"), transform.node_header, go_authority=authority)
+        generate_assay_entity_nodes(
+            _one_target("GO:9999999"), transform.node_header, provided_by="infores:bacdive", go_authority=authority
+        )
     with pytest.raises(ValueError, match="Unsupported GO assay aspect"):
         generate_assay_entity_edges(_one_target("GO:0005575"), transform.edge_header, go_authority=authority)
 

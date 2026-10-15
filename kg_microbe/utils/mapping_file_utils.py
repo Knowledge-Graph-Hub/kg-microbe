@@ -956,7 +956,7 @@ def load_assay_kit_mappings(assay_file: Optional[Path] = None) -> Dict[str, Dict
         raise ValueError(f"Invalid JSON in assay kits file: {e}") from e
 
 
-def generate_assay_nodes(assay_data: dict, node_header: List[str]) -> List[List]:
+def generate_assay_nodes(assay_data: dict, node_header: List[str], *, provided_by: str) -> List[List]:
     """
     Generate assay node rows from assay_kits_simple.json data.
 
@@ -965,6 +965,7 @@ def generate_assay_nodes(assay_data: dict, node_header: List[str]) -> List[List]
 
     :param assay_data: Dictionary loaded from assay_kits_simple.json
     :param node_header: List of column names for node rows (from Transform base class)
+    :param provided_by: The declaring source's knowledge source (#1601)
     :return: List of node rows formatted for writerows(), each row matching node_header length
     :rtype: List[List]
 
@@ -982,6 +983,7 @@ def generate_assay_nodes(assay_data: dict, node_header: List[str]) -> List[List]
         DESCRIPTION_COLUMN,
         ID_COLUMN,
         NAME_COLUMN,
+        PROVIDED_BY_COLUMN,
     )
 
     nodes = []
@@ -990,6 +992,7 @@ def generate_assay_nodes(assay_data: dict, node_header: List[str]) -> List[List]
     id_idx = node_header.index(ID_COLUMN)
     category_idx = node_header.index(CATEGORY_COLUMN)
     name_idx = node_header.index(NAME_COLUMN)
+    provided_by_idx = node_header.index(PROVIDED_BY_COLUMN)
     description_idx = node_header.index(DESCRIPTION_COLUMN) if DESCRIPTION_COLUMN in node_header else None
 
     for kit in assay_data.get("api_kits", []):
@@ -1031,6 +1034,7 @@ def generate_assay_nodes(assay_data: dict, node_header: List[str]) -> List[List]
             node_row[id_idx] = node_id
             node_row[category_idx] = ASSAY_CATEGORY
             node_row[name_idx] = f"{kit_name} - {label}"
+            node_row[provided_by_idx] = provided_by
 
             if description_idx is not None:
                 node_row[description_idx] = combined_description
@@ -1047,7 +1051,9 @@ def _assay_go_resolution(go_authority, go_term: str):
     return go_authority.resolve(go_term)
 
 
-def generate_assay_entity_nodes(assay_data: dict, node_header: List[str], *, go_authority=None) -> List[List]:
+def generate_assay_entity_nodes(
+    assay_data: dict, node_header: List[str], *, provided_by: str, go_authority=None
+) -> List[List]:
     """
     Generate stub node rows for CHEBI / EC / GO entities referenced by assays.
 
@@ -1064,6 +1070,7 @@ def generate_assay_entity_nodes(assay_data: dict, node_header: List[str], *, go_
 
     :param assay_data: Dictionary loaded from assay_kits_simple.json
     :param node_header: Node header (from Transform base class)
+    :param provided_by: The declaring source's knowledge source, for rows the GO authority does not attribute (#1601)
     :param go_authority: Validated, in-memory GO authority shared with assay edges
     :return: List of node rows
     """
@@ -1075,11 +1082,13 @@ def generate_assay_entity_nodes(assay_data: dict, node_header: List[str], *, go_
         ID_COLUMN,
         METABOLITE_CATEGORY,
         NAME_COLUMN,
+        PROVIDED_BY_COLUMN,
     )
 
     nodes: List[List] = []
     seen: set = set()
     id_idx = node_header.index(ID_COLUMN)
+    provided_by_idx = node_header.index(PROVIDED_BY_COLUMN)
     category_idx = node_header.index(CATEGORY_COLUMN)
     name_idx = node_header.index(NAME_COLUMN)
 
@@ -1092,6 +1101,8 @@ def generate_assay_entity_nodes(assay_data: dict, node_header: List[str], *, go_
         row[id_idx] = node_id
         row[category_idx] = category
         row[name_idx] = name or ""
+        # The GO authority's own provided_by, among ``fields``, still wins.
+        row[provided_by_idx] = provided_by
         for column, value in (fields or {}).items():
             if column in node_header:
                 row[node_header.index(column)] = value

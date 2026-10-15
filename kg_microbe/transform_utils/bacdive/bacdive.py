@@ -981,12 +981,14 @@ class BacDiveTransform(Transform):
         if self.assay_raw_data is None:
             with (Path(self.input_base_dir) / ASSAY_KITS_FILE.name).open(encoding="utf-8") as stream:
                 self.assay_raw_data = json.load(stream)
-        self.assay_nodes_generated = generate_assay_nodes(self.assay_raw_data, self.node_header)
+        self.assay_nodes_generated = generate_assay_nodes(
+            self.assay_raw_data, self.node_header, provided_by=self.knowledge_source
+        )
         self.assay_edges_generated = generate_assay_entity_edges(
             self.assay_raw_data, self.edge_header, go_authority=self.go_authority
         )
         self.assay_target_nodes_generated = generate_assay_entity_nodes(
-            self.assay_raw_data, self.node_header, go_authority=self.go_authority
+            self.assay_raw_data, self.node_header, provided_by=self.knowledge_source, go_authority=self.go_authority
         )
 
     def _add_edge_metadata(self, predicate: str, relation: str, object_id: str) -> tuple[str, str]:

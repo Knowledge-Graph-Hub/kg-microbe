@@ -2061,6 +2061,33 @@ def _release_verdict_with_retry(
     return True
 
 
+# Intermediates SemSQL's Makefile can leave beside the OWL for a target it did not
+# finish. `make` treats them as up to date because they are newer than the OWL (#1642).
+_SEMSQL_INTERMEDIATES = ("{stem}-relation-graph.tsv", "{stem}-min.owl")
+
+
+def _remove_stale_intermediates(build_dir: Path, db_path: str) -> None:
+    """
+    Remove what an earlier, unfinished ``semsql make`` left for this target (#1642).
+
+    SemSQL marks ``<name>-relation-graph.tsv`` precious and gzips it only after
+    ``rdftab`` succeeds, so a build that failed at ``rdftab`` leaves the plain TSV.
+    The next ``make`` reuses it, and ``entailed_edge`` then comes from whichever
+    relation-graph wrote it while the toolchain record names this machine's.
+    ``<name>-min.owl`` comes from the pinned ROBOT the same way. Both are cheap to
+    make again. Called under the build lock, before ``semsql make``.
+
+    :param build_dir: Directory ``semsql make`` runs in (the OWL's).
+    :param db_path: Target database; only its own intermediates are removed.
+    """
+    stem = Path(db_path).name.removesuffix(".db")
+    for pattern in _SEMSQL_INTERMEDIATES:
+        path = Path(build_dir) / pattern.format(stem=stem)
+        if path.is_file() or path.is_symlink():
+            print(f"  removing {path}, left by an earlier build that did not finish (#1642)")
+            path.unlink()
+
+
 def _run_semsql_build(
     owl_source: Path,
     db_path: str,
@@ -2114,6 +2141,7 @@ def _run_semsql_build(
             reuse_on_failure and _servable_db(db_path, min_size, ontology, require_content=require_content)
         )
     kept = _clear_build_target(db_path, min_size, ontology=ontology, require_content=require_content)
+    _remove_stale_intermediates(owl_source.parent, db_path)
     print(f"Building {db_path} from {owl_source} via `semsql make`.\n  {cost_note}")
     try:
         # SemSQL runs `robot` from PATH: make that the pinned ROBOT with the

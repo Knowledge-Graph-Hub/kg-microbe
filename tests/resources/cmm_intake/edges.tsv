@@ -1,0 +1,6 @@
+subject	predicate	object	relation	primary_knowledge_source
+NCBITaxon:1	biolink:has_part	kgmicrobe.genome:GCF_000000001.1	BFO:0000051	CMM-AI
+NCBITaxon:1	biolink:has_part	kgmicrobe.genome:GCF_000000001.1	BFO:0000051	CMM-AI
+UniprotKB:P00001	biolink:enables	GO:0000001	RO:0002327	CMM-AI
+kgmicrobe.medium:example	METPO:2000517	NCBITaxon:1	METPO:2000517	CMM-AI
+kgmicrobe.genome:GCF_000000001.1	biolink:has_part	kgmicrobe.genome:GCF_000000001.1	BFO:0000051	CMM-AI

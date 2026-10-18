@@ -76,12 +76,12 @@ def test_public_merge_omits_only_empty_description_contributions(tmp_path, monke
         "fixture:blank": "",
         "fixture:left_blank": "meaningful",
         "fixture:right_blank": "meaningful",
-        "fixture:repeat": "meaningful|meaningful",
+        "fixture:repeat": "meaningful",
         "fixture:distinct": "alpha|beta",
         "fixture:whitespace": " ",
     }
     assert all(row["provided_by"] == "infores:alpha|infores:beta" for row in rows.values())
-    assert all(row["xref"] == "fixture:common|fixture:alpha|fixture:common|fixture:beta" for row in rows.values())
+    assert all(row["xref"] == "fixture:alpha|fixture:beta|fixture:common" for row in rows.values())
 
 
 @pytest.mark.parametrize(
@@ -91,9 +91,9 @@ def test_public_merge_omits_only_empty_description_contributions(tmp_path, monke
         ([None, "", None], ""),
         (["", "meaningful"], "meaningful"),
         (["meaningful", ""], "meaningful"),
-        (["meaningful", "meaningful", ""], "meaningful|meaningful"),
+        (["meaningful", "meaningful", ""], "meaningful"),
         (["", "|"], "|"),
-        (["", "literal|pipe", "literal|pipe"], "literal|pipe|literal|pipe"),
+        (["", "literal|pipe", "literal|pipe"], "literal|pipe"),
         (["", " ", "  "], " |  "),
         (["", False, 0], "0|False"),
         ((None, "", "meaningful"), "meaningful"),
@@ -109,7 +109,7 @@ def test_public_merge_omits_only_empty_description_contributions(tmp_path, monke
     ],
 )
 def test_node_description_serialization(tmp_path, value, expected):
-    """Only absent collection entries disappear, without trimming or deduplication."""
+    """Absent collection entries disappear and identical non-blank entries deduplicate (#1200, #1674)."""
     sink = kgx_source.RelationAwareTsvSink(
         None, str(tmp_path / "graph"), "tsv", node_properties=[ID_COLUMN, DESCRIPTION_COLUMN]
     )
@@ -126,7 +126,7 @@ def test_node_description_serialization(tmp_path, value, expected):
 
 
 def test_description_filter_does_not_change_other_node_or_edge_fields(tmp_path):
-    """Retain existing serialization outside the node-description boundary."""
+    """Multivalued node fields keep list serialization while scalar node fields canonicalize (#1674)."""
     sink = kgx_source.RelationAwareTsvSink(
         None,
         str(tmp_path / "graph"),
@@ -163,6 +163,87 @@ def test_description_filter_does_not_change_other_node_or_edge_fields(tmp_path):
         edge = next(csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE))
     assert node["provided_by"] == "|infores:alpha|infores:alpha"
     assert node["xref"] == "|fixture:alpha|fixture:alpha"
-    assert node["custom_node"] == "|"
+    assert node["custom_node"] == ""
     # The existing edge assertion canonicalizer already omits blank scalar contributions.
     assert edge[DESCRIPTION_COLUMN] == ""
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        (["", ""], ""),
+        ([None, ""], ""),
+        (["METPO:1000698", ""], "METPO:1000698"),
+        (["", "METPO:1000698"], "METPO:1000698"),
+        (["METPO:1000698", "METPO:1000698"], "METPO:1000698"),
+    ],
+)
+def test_scalar_node_column_canonicalization_collapses_blanks_and_duplicates(tmp_path, value, expected):
+    """Scalar node columns like has_attribute_type collapse blanks and identical values (#1674)."""
+    sink = kgx_source.RelationAwareTsvSink(
+        None,
+        str(tmp_path / "graph"),
+        "tsv",
+        node_properties=[ID_COLUMN, "has_attribute_type"],
+    )
+    try:
+        sink.write_node({ID_COLUMN: "kgmicrobe.source_attribute:1", "has_attribute_type": value})
+    finally:
+        sink.finalize()
+    with (tmp_path / "graph_nodes.tsv").open() as stream:
+        node = next(csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE))
+    assert node["has_attribute_type"] == expected
+
+
+def test_scalar_node_column_conflict_raises_value_error(tmp_path):
+    """Conflicting non-blank scalar node values raise ValueError naming node and column (#1674)."""
+    sink = kgx_source.RelationAwareTsvSink(
+        None,
+        str(tmp_path / "graph"),
+        "tsv",
+        node_properties=[ID_COLUMN, "has_attribute_type"],
+    )
+    try:
+        with pytest.raises(ValueError, match=r"has_attribute_type.*kgmicrobe\.source_attribute:1"):
+            sink.write_node(
+                {
+                    ID_COLUMN: "kgmicrobe.source_attribute:1",
+                    "has_attribute_type": ["METPO:1000698", "METPO:1000699"],
+                }
+            )
+    finally:
+        sink.finalize()
+
+
+@pytest.mark.parametrize("orders", [(["", "Bacillus"], ["Bacillus", ""])])
+def test_blank_node_name_yields_to_non_blank_across_and_within_sources(tmp_path, orders):
+    """Blank name contributions do not overwrite non-blank names within or across sources (#1674)."""
+    for idx, seq in enumerate(orders):
+        owner = kgx_source.ProvenancePreservingTransformer()
+        graph_sink = kgx_source.RelationAwareGraphSink(owner)
+        for name_val in seq:
+            graph_sink.write_node({ID_COLUMN: f"fixture:n{idx}", "category": ["biolink:NamedThing"], "name": name_val})
+        assert owner.store.graph.nodes()[f"fixture:n{idx}"]["name"] == "Bacillus"
+
+    alpha = kgx_source.ProvenancePreservingTransformer()
+    beta = kgx_source.ProvenancePreservingTransformer()
+    kgx_source.RelationAwareGraphSink(alpha).write_node(
+        {ID_COLUMN: "fixture:cross", "category": ["biolink:NamedThing"], "name": "Bacillus"}
+    )
+    kgx_source.RelationAwareGraphSink(beta).write_node(
+        {ID_COLUMN: "fixture:cross", "category": ["biolink:NamedThing"], "name": ""}
+    )
+    merged = kgx_source.merge_assertion_graphs([alpha.store.graph, beta.store.graph])
+    assert merged.nodes()["fixture:cross"]["name"] == "Bacillus"
+
+    alpha2 = kgx_source.ProvenancePreservingTransformer()
+    beta2 = kgx_source.ProvenancePreservingTransformer()
+    kgx_source.RelationAwareGraphSink(alpha2).write_node(
+        {ID_COLUMN: "fixture:cross", "category": ["biolink:NamedThing"], "name": "Bacillus"}
+    )
+    kgx_source.RelationAwareGraphSink(beta2).write_node(
+        {ID_COLUMN: "fixture:cross", "category": ["biolink:NamedThing"], "name": ""}
+    )
+    merged_reverse = kgx_source.merge_assertion_graphs([beta2.store.graph, alpha2.store.graph])
+    assert merged_reverse.nodes()["fixture:cross"]["name"] == "Bacillus"
+

@@ -128,7 +128,7 @@ def test_invalid_rhea_scalar_is_not_repaired_at_serialization(tmp_path, field, v
 
 
 def test_non_rhea_list_fields_and_literal_polymer_text_are_unchanged(tmp_path):
-    """The finite Rhea field contract does not alter general list semantics or native polymer expressions."""
+    """Multivalued list fields and native polymer expressions survive general scalar canonicalization (#1674)."""
     properties = (*FIELDS, "xref", "unrelated_extension")
     with _sink(tmp_path, node_properties=properties) as sink:
         sink.write_node(
@@ -136,13 +136,13 @@ def test_non_rhea_list_fields_and_literal_polymer_text_are_unchanged(tmp_path):
                 "id": "rheav:Polymer_1",
                 POLYMERIZATION_FIELD: ["n|m", "n|m", ""],
                 "xref": ["xref:2", "xref:1"],
-                "unrelated_extension": ["value:2", "value:1"],
+                "unrelated_extension": ["value:1", "value:1", ""],
             }
         )
     row = _rows(Path(sink.nodes_file_name))[0]
     assert row[POLYMERIZATION_FIELD] == "n|m"
     assert row["xref"] == "xref:1|xref:2"
-    assert row["unrelated_extension"] == "value:1|value:2"
+    assert row["unrelated_extension"] == "value:1"
 
 
 def test_actual_native_emission_and_duplicate_merge_preserve_rhea_scalars_and_edges(tmp_path, monkeypatch):

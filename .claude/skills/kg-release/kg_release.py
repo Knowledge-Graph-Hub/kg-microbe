@@ -11,6 +11,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -141,12 +142,32 @@ def _classify_verdict(skill: str, text: str) -> str:
     by hunting for codex-style "needs-attention" strings.
 
     - kg-model-review:  text/md output ends with `Total ERRORs: N`. N>0 => bad.
-                        json output has `summary.total_errors`. Same rule.
+                        json output has `summary.total_errors` or `total_errors`.
+                        Additionally (#810), any partial-sample coverage banner
+                        (`sampled M of N rows` with M < N, or `"coverage_pct"` < 100.0)
+                        fails the release gate (`needs-attention`), because release
+                        signoff requires 100% row coverage (`--max-rows 0` or full N).
     - kg-path-review:   archetype reports include severity rows; any `CRITICAL`
                         finding fails the gate. WARNING/INFO are advisory.
     """
     if skill == "kg-model-review":
+        for m in re.finditer(r"sampled\s+([\d,]+)\s+of\s+([\d,]+)\s+rows", text):
+            try:
+                sampled = int(m.group(1).replace(",", ""))
+                total = int(m.group(2).replace(",", ""))
+            except ValueError:
+                continue
+            if sampled < total:
+                return "needs-attention"
+        for m in re.finditer(r'"coverage_pct"\s*:\s*([0-9]+(?:\.[0-9]+)?)', text):
+            try:
+                pct = float(m.group(1))
+            except ValueError:
+                continue
+            if pct < 100.0:
+                return "needs-attention"
         # Look for "Total ERRORs: N" (text/md) or '"total_errors": N' (json).
+        verdict = "unknown"
         for line in text.splitlines():
             stripped = line.strip()
             if stripped.startswith("Total ERRORs:") or stripped.startswith("- Total ERRORs:"):
@@ -154,14 +175,18 @@ def _classify_verdict(skill: str, text: str) -> str:
                     n = int(stripped.split(":", 1)[1].strip().split()[0])
                 except (ValueError, IndexError):
                     continue
-                return "needs-attention" if n > 0 else "ok"
+                if n > 0:
+                    return "needs-attention"
+                verdict = "ok"
             if '"total_errors"' in stripped:
                 try:
                     n = int(stripped.split(":", 1)[1].strip().rstrip(","))
                 except (ValueError, IndexError):
                     continue
-                return "needs-attention" if n > 0 else "ok"
-        return "unknown"
+                if n > 0:
+                    return "needs-attention"
+                verdict = "ok"
+        return verdict
     if skill == "kg-path-review":
         # CRITICAL findings are hard fails per the skill's own contract.
         for line in text.splitlines():

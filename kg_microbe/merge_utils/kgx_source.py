@@ -26,14 +26,18 @@ from kg_microbe.transform_utils.constants import (
     DEPRECATED_COLUMN,
     DESCRIPTION_COLUMN,
     ID_COLUMN,
+    NAME_COLUMN,
     OBJECT_COLUMN,
     PREDICATE_COLUMN,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
     PROVIDED_BY_COLUMN,
     PUBLICATIONS_COLUMN,
     RELATION_COLUMN,
+    SAME_AS_COLUMN,
     SOURCE_ASSERTION_ID_COLUMN,
     SUBJECT_COLUMN,
+    SYNONYM_COLUMN,
+    XREF_COLUMN,
 )
 from kg_microbe.transform_utils.rhea_mappings.native_graph import POLYMERIZATION_FIELD
 from kg_microbe.transform_utils.rhea_mappings.reaction_families import (
@@ -84,7 +88,15 @@ _MULTIVALUED_EDGE_PROPERTIES = (
     {sentencecase_to_snakecase(slot) for slot in Toolkit().get_all_multivalued_slots()}
     | {column for column, value_type in column_types.items() if value_type is list}
 ) - {PRIMARY_KNOWLEDGE_SOURCE_COLUMN}
-_MULTIVALUED_NODE_PROPERTIES = _MULTIVALUED_EDGE_PROPERTIES | {PRIMARY_KNOWLEDGE_SOURCE_COLUMN}
+_MULTIVALUED_NODE_PROPERTIES = _MULTIVALUED_EDGE_PROPERTIES | {
+    CATEGORY_COLUMN,
+    PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+    PROVIDED_BY_COLUMN,
+    PUBLICATIONS_COLUMN,
+    SAME_AS_COLUMN,
+    SYNONYM_COLUMN,
+    XREF_COLUMN,
+}
 # The canonical node contract includes deprecated, which KGX omits from its
 # Boolean column table. Empty source declarations are not Boolean assertions.
 _BOOLEAN_NODE_PROPERTIES = {DEPRECATED_COLUMN} | {
@@ -206,6 +218,14 @@ def merge_assertion_graphs(graphs, preserve=True):
     largest = max(range(len(graphs)), key=lambda index: graphs[index].number_of_edges())
     result = graphs.pop(largest)
     for graph in graphs:
+        if preserve:
+            for node_id, data in graph.nodes(data=True):
+                if (
+                    node_id in result.nodes()
+                    and result.nodes()[node_id].get(NAME_COLUMN) in (None, "")
+                    and data.get(NAME_COLUMN) not in (None, "")
+                ):
+                    result.nodes()[node_id].pop(NAME_COLUMN, None)
         add_all_nodes(result, graph, preserve)
         for _, _, data in graph.edges(data=True):
             _add_assertion(result, data)
@@ -365,7 +385,11 @@ class RelationAwareGraphSink(GraphSink):
         """Union provenance when canonical identifier aliases converge within a source."""
         node_id = record[ID_COLUMN]
         if node_id in self.graph.nodes():
-            record = prepare_data_dict(copy.deepcopy(self.graph.nodes()[node_id]), copy.deepcopy(record), preserve=True)
+            existing = copy.deepcopy(self.graph.nodes()[node_id])
+            incoming = copy.deepcopy(record)
+            if existing.get(NAME_COLUMN) in (None, "") and incoming.get(NAME_COLUMN) not in (None, ""):
+                existing.pop(NAME_COLUMN, None)
+            record = prepare_data_dict(existing, incoming, preserve=True)
         super().write_node(record)
 
     def write_edge(self, record):
@@ -440,6 +464,26 @@ def _canonical_rhea_node_scalar(column, value):
     return next(iter(declarations), "")
 
 
+def _canonical_node_scalar(node_id, column, value):
+    """Collapse blank/identical scalar contributions across sources; reject conflicts (#1674)."""
+    if not isinstance(value, (list, tuple, set)):
+        return value
+    declarations = []
+    seen = set()
+    for item in value:
+        if item is None or item == "":
+            continue
+        key = (type(item), item)
+        if key not in seen:
+            seen.add(key)
+            declarations.append(item)
+    if len(declarations) > 1:
+        raise ValueError(
+            f"Conflicting scalar node field {column}={value!r} on node {node_id!r}; reconcile source declarations"
+        )
+    return declarations[0] if declarations else ""
+
+
 class RelationAwareTsvSink(TsvSink):
     """Write the canonical schema once, preserving literal finalized text and extensions."""
 
@@ -501,18 +545,41 @@ class RelationAwareTsvSink(TsvSink):
 
     def write_node(self, record):
         """Preserve provenance and text, validating finite scalar contracts at first serialization."""
+        node_id = record.get(ID_COLUMN, "")
         data = {
             column: _canonical_node_boolean(column, value) if column in _BOOLEAN_NODE_PROPERTIES else value
             for column, value in record.items()
         }
         for column in _RHEA_NODE_SCALAR_PROPERTIES.intersection(data):
             data[column] = _canonical_rhea_node_scalar(column, data[column])
+        name_val = data.get(NAME_COLUMN)
+        if isinstance(name_val, (list, tuple, set)):
+            data[NAME_COLUMN] = next((item for item in name_val if item is not None and item != ""), "")
         description = data.get(DESCRIPTION_COLUMN)
         if isinstance(description, (list, tuple, set)):
             # KGX retains empty scalar contributions during node overlap. They
             # are absent descriptions, not text to join into literal pipes.
-            # Keep nonempty text (including whitespace and repeats) unchanged.
-            data[DESCRIPTION_COLUMN] = [item for item in description if item is not None and item != ""]
+            # Deduplicate identical non-blank descriptions across sources (#1674)
+            # while keeping distinct source descriptions.
+            deduped = []
+            seen = set()
+            for item in description:
+                if item is None or item == "":
+                    continue
+                key = (type(item), item)
+                if key not in seen:
+                    seen.add(key)
+                    deduped.append(item)
+            data[DESCRIPTION_COLUMN] = deduped
+        scalar_exclusions = (
+            _MULTIVALUED_NODE_PROPERTIES
+            | _BOOLEAN_NODE_PROPERTIES
+            | _RHEA_NODE_SCALAR_PROPERTIES
+            | {ID_COLUMN, NAME_COLUMN, DESCRIPTION_COLUMN}
+        )
+        for column in list(data):
+            if column not in scalar_exclusions:
+                data[column] = _canonical_node_scalar(node_id, column, data[column])
         self._write_record(data, self.ordered_node_columns, self._node_writer)
 
     def write_edge(self, record):

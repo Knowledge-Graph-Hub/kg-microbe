@@ -458,6 +458,49 @@ def iter_tsv_from_tar(tar_path: Path, member_name: str, max_rows: int):
                 break
 
 
+def sample_tsv(path: Path, max_rows: int) -> tuple[list, int]:
+    """Return ``(sampled_rows, total_rows)`` from a TSV (plain or gzipped)."""
+    opener = gzip.open if path.suffix == ".gz" else open
+    mode = "rt" if path.suffix == ".gz" else "r"
+    rows: list = []
+    total = 0
+    with opener(path, mode, encoding="utf-8", errors="replace") as f:
+        reader = csv.DictReader(f, delimiter="\t")
+        for row in reader:
+            total += 1
+            if not max_rows or len(rows) < max_rows:
+                rows.append(row)
+    return rows, total
+
+
+def sample_tsv_from_tar(tar_path: Path, member_name: str, max_rows: int) -> tuple[list, int]:
+    """Return ``(sampled_rows, total_rows)`` from a TSV member inside a ``.tar.gz`` archive."""
+    rows: list = []
+    total = 0
+    with tarfile.open(tar_path, "r:gz") as tf:
+        member = None
+        try:
+            member = tf.getmember(member_name)
+        except KeyError:
+            for m in tf.getmembers():
+                if m.name.endswith("/" + member_name) or m.name == member_name:
+                    member = m
+                    break
+        if member is None:
+            return [], 0
+        f = tf.extractfile(member)
+        if f is None:
+            return [], 0
+        text = io.TextIOWrapper(f, encoding="utf-8", errors="replace")
+        reader = csv.DictReader(text, delimiter="\t")
+        for row in reader:
+            total += 1
+            if not max_rows or len(rows) < max_rows:
+                rows.append(row)
+    return rows, total
+
+
+
 def get_prefix(curie: str) -> str:
     return curie.split(":")[0] if ":" in curie else ""
 
@@ -637,7 +680,7 @@ def check_domain_range(node_rows: list, edge_rows: list, verbose: bool) -> list:
 
 # ── Per-file checks ───────────────────────────────────────────────────────────
 def check_nodes_rows(rows: list, max_rows: int, registered_prefixes: set,
-                     metpo_curies: set, verbose: bool) -> list:
+                     metpo_curies: set, verbose: bool, total_rows: int = None) -> list:
     """Check a pre-loaded list of node rows."""
     findings = []
     if not rows:
@@ -646,13 +689,21 @@ def check_nodes_rows(rows: list, max_rows: int, registered_prefixes: set,
 
     cols = set(rows[0].keys())
     total = len(rows)
+    file_total = total if total_rows is None else max(total, total_rows)
+    pct = (total / file_total * 100.0) if file_total else 100.0
 
     # KGX: required columns
     missing_cols = NODES_REQUIRED - cols
     if missing_cols:
         findings.append(Finding("ERROR", "KGX", f"Missing required columns: {missing_cols}"))
     else:
-        findings.append(Finding("INFO", "KGX", f"Required columns present ({total:,} rows sampled)"))
+        findings.append(
+            Finding(
+                "INFO",
+                "KGX",
+                f"Required columns present (**sampled {total:,} of {file_total:,} rows ({pct:.1f}%)**)",
+            )
+        )
 
     # KGX: CURIE format for id
     bad_ids = [r["id"] for r in rows if not CURIE_RE.match(r.get("id", ""))]
@@ -851,7 +902,7 @@ def check_microbedecoder_attribute_types(rows: list, verbose: bool) -> list:
 
 
 def check_edges_rows(rows: list, max_rows: int, registered_prefixes: set,
-                     metpo_curies: set, verbose: bool) -> list:
+                     metpo_curies: set, verbose: bool, total_rows: int = None) -> list:
     """Check a pre-loaded list of edge rows."""
     findings = []
     if not rows:
@@ -860,13 +911,21 @@ def check_edges_rows(rows: list, max_rows: int, registered_prefixes: set,
 
     cols = set(rows[0].keys())
     total = len(rows)
+    file_total = total if total_rows is None else max(total, total_rows)
+    pct = (total / file_total * 100.0) if file_total else 100.0
 
     # KGX: required columns
     missing_cols = EDGES_REQUIRED - cols
     if missing_cols:
         findings.append(Finding("ERROR", "KGX", f"Missing required columns: {missing_cols}"))
     else:
-        findings.append(Finding("INFO", "KGX", f"Required columns present ({total:,} rows sampled)"))
+        findings.append(
+            Finding(
+                "INFO",
+                "KGX",
+                f"Required columns present (**sampled {total:,} of {file_total:,} rows ({pct:.1f}%)**)",
+            )
+        )
 
     # KGX: CURIE format for subject/object
     bad_subj = [r["subject"] for r in rows if not CURIE_RE.match(r.get("subject", ""))]
@@ -1630,6 +1689,49 @@ def _tally(result: dict) -> dict:
     return result
 
 
+def _record_coverage(result: dict, max_rows: int, nodes_sampled: int, nodes_total: int,
+                     edges_sampled: int, edges_total: int) -> None:
+    """Attach per-file and aggregate sampling coverage metadata to a transform review result."""
+    rows_sampled = nodes_sampled + edges_sampled
+    rows_total = nodes_total + edges_total
+    nodes_pct = round((nodes_sampled / nodes_total * 100.0) if nodes_total else 100.0, 2)
+    edges_pct = round((edges_sampled / edges_total * 100.0) if edges_total else 100.0, 2)
+    result["max_rows"] = max_rows
+    result["nodes_sampled"] = nodes_sampled
+    result["nodes_total"] = nodes_total
+    result["edges_sampled"] = edges_sampled
+    result["edges_total"] = edges_total
+    result["rows_sampled"] = rows_sampled
+    result["rows_total"] = rows_total
+    result["coverage_pct"] = round((rows_sampled / rows_total * 100.0) if rows_total else 100.0, 2)
+    result["coverage"] = {
+        "nodes": {
+            "rows_sampled": nodes_sampled,
+            "rows_total": nodes_total,
+            "coverage_pct": nodes_pct,
+            "max_rows": max_rows,
+        },
+        "edges": {
+            "rows_sampled": edges_sampled,
+            "rows_total": edges_total,
+            "coverage_pct": edges_pct,
+            "max_rows": max_rows,
+        },
+    }
+
+
+def _count_physical_data_rows(path: Path) -> int:
+    """Count non-empty data rows after the header without parsing malformed tail cells."""
+    opener = gzip.open if path.suffix == ".gz" else open
+    mode = "rt" if path.suffix == ".gz" else "r"
+    try:
+        with opener(path, mode, encoding="utf-8", errors="replace") as f:
+            non_empty = sum(1 for line in f if line.strip())
+        return max(0, non_empty - 1)
+    except OSError:
+        return 0
+
+
 def review_transform(name: str, transform_dir: Path, max_rows: int,
                      registered_prefixes: set, metpo_curies: set,
                      verbose: bool, strict_kgx: bool = False) -> dict:
@@ -1641,10 +1743,15 @@ def review_transform(name: str, transform_dir: Path, max_rows: int,
     # kg_microbe/merge_utils/merge_kg.py, which uses arcname=f.name).
     tar_path = transform_dir / "merged-kg.tar.gz"
     if name == "merged" and tar_path.exists():
-        nodes_rows = list(iter_tsv_from_tar(tar_path, "merged-kg_nodes.tsv", max_rows))
-        edges_rows = list(iter_tsv_from_tar(tar_path, "merged-kg_edges.tsv", max_rows))
-        result["nodes"] = check_nodes_rows(nodes_rows, max_rows, registered_prefixes, metpo_curies, verbose)
-        result["edges"] = check_edges_rows(edges_rows, max_rows, registered_prefixes, metpo_curies, verbose)
+        nodes_rows, nodes_total = sample_tsv_from_tar(tar_path, "merged-kg_nodes.tsv", max_rows)
+        edges_rows, edges_total = sample_tsv_from_tar(tar_path, "merged-kg_edges.tsv", max_rows)
+        _record_coverage(result, max_rows, len(nodes_rows), nodes_total, len(edges_rows), edges_total)
+        result["nodes"] = check_nodes_rows(
+            nodes_rows, max_rows, registered_prefixes, metpo_curies, verbose, total_rows=nodes_total
+        )
+        result["edges"] = check_edges_rows(
+            edges_rows, max_rows, registered_prefixes, metpo_curies, verbose, total_rows=edges_total
+        )
         result["edges"].extend(check_domain_range(nodes_rows, edges_rows, verbose))
         if strict_kgx:
             # Strict validation runs against a loose TSV — extract if needed
@@ -1676,17 +1783,27 @@ def review_transform(name: str, transform_dir: Path, max_rows: int,
         if per_ont_nodes or per_ont_edges:
             all_node_rows, all_edge_rows = [], []
             seen_ids = set()
+            nodes_total = edges_total = 0
             for p in per_ont_nodes:
-                for r in iter_tsv(p, max_rows):
+                sampled_p, total_p = sample_tsv(p, max_rows)
+                nodes_total += total_p
+                for r in sampled_p:
                     nid = r.get("id", "")
                     if nid in seen_ids:
                         continue
                     seen_ids.add(nid)
                     all_node_rows.append(r)
             for p in per_ont_edges:
-                all_edge_rows.extend(iter_tsv(p, max_rows))
-            result["nodes"] = check_nodes_rows(all_node_rows, max_rows, registered_prefixes, metpo_curies, verbose)
-            result["edges"] = check_edges_rows(all_edge_rows, max_rows, registered_prefixes, metpo_curies, verbose)
+                sampled_p, total_p = sample_tsv(p, max_rows)
+                edges_total += total_p
+                all_edge_rows.extend(sampled_p)
+            _record_coverage(result, max_rows, len(all_node_rows), max(len(all_node_rows), nodes_total), len(all_edge_rows), edges_total)
+            result["nodes"] = check_nodes_rows(
+                all_node_rows, max_rows, registered_prefixes, metpo_curies, verbose, total_rows=max(len(all_node_rows), nodes_total)
+            )
+            result["edges"] = check_edges_rows(
+                all_edge_rows, max_rows, registered_prefixes, metpo_curies, verbose, total_rows=edges_total
+            )
             result["edges"].extend(check_domain_range(all_node_rows, all_edge_rows, verbose))
             return _tally(result)
         # Empty directory (transform not run) — skip silently
@@ -1700,17 +1817,25 @@ def review_transform(name: str, transform_dir: Path, max_rows: int,
         if shape_findings:
             result["nodes"] = shape_findings
             return _tally(result)
+        nodes_total = (
+            _count_physical_data_rows(nodes_path)
+            if (max_rows and len(node_rows) >= max_rows)
+            else len(node_rows)
+        )
+    elif nodes_path.exists():
+        node_rows, nodes_total = sample_tsv(nodes_path, max_rows)
     else:
-        node_rows = list(iter_tsv(nodes_path, max_rows)) if nodes_path.exists() else []
-    edge_rows = list(iter_tsv(edges_path, max_rows)) if edges_path.exists() else []
+        node_rows, nodes_total = [], 0
+    edge_rows, edges_total = sample_tsv(edges_path, max_rows) if edges_path.exists() else ([], 0)
+    _record_coverage(result, max_rows, len(node_rows), nodes_total, len(edge_rows), edges_total)
     result["nodes"] = (
-        check_nodes_rows(node_rows, max_rows, registered_prefixes, metpo_curies, verbose)
+        check_nodes_rows(node_rows, max_rows, registered_prefixes, metpo_curies, verbose, total_rows=nodes_total)
         if node_rows else [Finding("ERROR", "KGX", f"nodes.tsv not found: {nodes_path}")]
     )
     if name == MICROBEDECODER:
         result["nodes"].extend(check_microbedecoder_attribute_types(node_rows, verbose))
     result["edges"] = (
-        check_edges_rows(edge_rows, max_rows, registered_prefixes, metpo_curies, verbose)
+        check_edges_rows(edge_rows, max_rows, registered_prefixes, metpo_curies, verbose, total_rows=edges_total)
         if edge_rows else [Finding("ERROR", "KGX", f"edges.tsv not found: {edges_path}")]
     )
     result["edges"].extend(check_domain_range(node_rows, edge_rows, verbose))
@@ -1731,14 +1856,29 @@ def format_text(results: list, format_md: bool = False) -> str:
     lines.append("")
 
     total_errors = total_warnings = 0
+    total_sampled = total_available = 0
+    has_coverage = False
 
     for r in results:
         name = r["name"]
         lines.append(f"{'## ' if format_md else ''}Transform: {name}")
-        lines.append(f"  nodes.tsv")
+        if "nodes_total" in r:
+            has_coverage = True
+            ns, nt = r.get("nodes_sampled", 0), r.get("nodes_total", 0)
+            es, et = r.get("edges_sampled", 0), r.get("edges_total", 0)
+            npct = (ns / nt * 100.0) if nt else 100.0
+            epct = (es / et * 100.0) if et else 100.0
+            total_sampled += ns + es
+            total_available += nt + et
+            lines.append(f"  nodes.tsv (**sampled {ns:,} of {nt:,} rows ({npct:.1f}%)**)")
+        else:
+            lines.append("  nodes.tsv")
         for f in r["nodes"]:
             lines.append(str(f))
-        lines.append(f"  edges.tsv")
+        if "edges_total" in r:
+            lines.append(f"  edges.tsv (**sampled {es:,} of {et:,} rows ({epct:.1f}%)**)")
+        else:
+            lines.append("  edges.tsv")
         for f in r["edges"]:
             lines.append(str(f))
         lines.append("")
@@ -1748,6 +1888,11 @@ def format_text(results: list, format_md: bool = False) -> str:
     lines.append(sep)
     lines.append(f"{'## ' if format_md else ''}Summary")
     lines.append(f"  Transforms reviewed: {len(results)}")
+    if has_coverage:
+        overall_pct = (total_sampled / total_available * 100.0) if total_available else 100.0
+        lines.append(
+            f"  Coverage:            **sampled {total_sampled:,} of {total_available:,} rows ({overall_pct:.1f}%)**"
+        )
     lines.append(f"  Total ERRORs:        {total_errors}")
     lines.append(f"  Total WARNINGs:      {total_warnings}")
     if total_errors == 0 and total_warnings == 0:
@@ -2020,12 +2165,10 @@ def main():
 
     if args.merged and max_rows == 0:
         print(
-            "  Error: --max-rows 0 with --merged would materialize the full nodes+edges "
-            "tarball in memory and is likely to OOM on real releases. "
-            "Specify a finite --max-rows (e.g. 1000000) for merged review.",
+            "  Note: --max-rows 0 with --merged scans all rows in the merged tarball "
+            "(full 100% coverage required for release-gate signoff).",
             file=sys.stderr,
         )
-        sys.exit(2)
 
     registered_prefixes = load_registered_prefixes()
     metpo_curies = load_metpo_curies()
@@ -2076,7 +2219,16 @@ def main():
             entry = {
                 "transform": r["name"],
                 "errors": r["errors"],
+                "total_errors": r["errors"],
                 "warnings": r["warnings"],
+                "max_rows": r.get("max_rows", max_rows),
+                "nodes_sampled": r.get("nodes_sampled"),
+                "nodes_total": r.get("nodes_total"),
+                "edges_sampled": r.get("edges_sampled"),
+                "edges_total": r.get("edges_total"),
+                "rows_sampled": r.get("rows_sampled"),
+                "rows_total": r.get("rows_total"),
+                "coverage_pct": r.get("coverage_pct"),
                 "nodes": [{"severity": f.severity, "check": f.check, "message": f.message}
                           for f in r["nodes"]],
                 "edges": [{"severity": f.severity, "check": f.check, "message": f.message}

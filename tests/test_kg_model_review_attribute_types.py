@@ -385,3 +385,68 @@ def test_source_quoted_name_is_preserved_as_literal_tsv_data(reviewer, tmp_path,
     assert not findings
     assert rows[0][NAME_COLUMN] == literal
     assert rows[0][HAS_ATTRIBUTE_TYPE_COLUMN] == TARGET
+
+
+def test_coverage_banner_reports_sampled_vs_total_rows(reviewer, tmp_path):
+    """#810: review_transform and format_text surface explicit row-sampling coverage."""
+    directory = tmp_path / "other_source"
+    directory.mkdir()
+    _write(
+        directory / "nodes.tsv",
+        [
+            {ID_COLUMN: f"lpsn:{i}", CATEGORY_COLUMN: "biolink:OrganismTaxon", NAME_COLUMN: f"taxon {i}"}
+            for i in range(1, 5)
+        ],
+    )
+    _write(
+        directory / "edges.tsv",
+        [
+            {
+                "subject": f"lpsn:{i}",
+                "predicate": "biolink:subclass_of",
+                "object": f"lpsn:{i + 1}",
+                "relation": "rdfs:subClassOf",
+            }
+            for i in range(1, 4)
+        ],
+    )
+    partial = reviewer.review_transform("other_source", directory, 2, {"lpsn", "rdfs"}, set(), False)
+    assert partial["coverage"]["nodes"] == {"rows_sampled": 2, "rows_total": 4, "coverage_pct": 50.0, "max_rows": 2}
+    assert partial["coverage"]["edges"] == {"rows_sampled": 2, "rows_total": 3, "coverage_pct": 66.67, "max_rows": 2}
+    rendered = reviewer.format_text([partial])
+    assert "**sampled 2 of 4 rows (50.0%)**" in rendered
+    assert "**sampled 2 of 3 rows (66.7%)**" in rendered
+
+    full = reviewer.review_transform("other_source", directory, 0, {"lpsn", "rdfs"}, set(), False)
+    assert full["coverage"]["nodes"]["coverage_pct"] == 100.0
+    assert "**sampled 4 of 4 rows (100.0%)**" in reviewer.format_text([full])
+
+
+def test_kg_release_rejects_partial_sample_kg_model_review_artifact(monkeypatch):
+    """#810: kg-release marks partial-sample kg-model-review artifacts as needs-attention."""
+    skill = REPO / ".claude/skills/kg-release/kg_release.py"
+    name = "kg_release_coverage_tests"
+    spec = importlib.util.spec_from_file_location(name, skill)
+    module = importlib.util.module_from_spec(spec)
+    monkeypatch.setitem(sys.modules, name, module)
+    spec.loader.exec_module(module)
+
+    partial_md = (
+        "# Report\n"
+        "[INFO] SampledNodes: Read 50000 node rows (**sampled 50,000 of 1,355,610 rows (3.69%)**)\n"
+        "Total ERRORs: 0\n"
+        "Total WARNINGs: 0\n"
+    )
+    assert module._classify_verdict("kg-model-review", partial_md) == "needs-attention"
+
+    partial_json = '{"summary": {"errors": 0, "warnings": 0, "min_coverage_pct": 3.69}, "coverage_pct": 3.69}'
+    assert module._classify_verdict("kg-model-review", partial_json) == "needs-attention"
+
+    full_md = (
+        "# Report\n"
+        "[INFO] SampledNodes: Read 1355610 node rows (**sampled 1,355,610 of 1,355,610 rows (100.00%)**)\n"
+        "Total ERRORs: 0\n"
+        "Total WARNINGs: 0\n"
+    )
+    assert module._classify_verdict("kg-model-review", full_md) == "ok"
+

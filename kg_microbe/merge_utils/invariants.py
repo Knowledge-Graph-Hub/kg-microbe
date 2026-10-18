@@ -241,7 +241,7 @@ _FINALIZATION_RECORD = "source_finalization.json"
 #: here. GOLD organisms and GTDB assemblies have owner transforms, so exempting
 #: their entire prefixes hid namespace defects affecting 31 K nodes (#1050/1051).
 EXPECTED_STUB_PREFIXES = {
-    "IMG": "IMG genome and taxon identifiers, referenced from GOLD",
+    "IMG": "IMG genome and taxon identifiers, referenced from GOLD and MicrobeDecoder",
 }
 
 #: Narrow exceptions for identifiers we deliberately do not declare. Keep the

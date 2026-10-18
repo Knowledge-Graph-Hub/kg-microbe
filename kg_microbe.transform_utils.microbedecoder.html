@@ -795,11 +795,12 @@ fermentation profiles for anaerobes</p></li>
 citations</p></li>
 <li><p><strong>FAPROTAX</strong> — taxon-based functional predictions joined to source records</p></li>
 </ul>
-<p>Also emits a <cite>biolink:close_match</cite> crosswalk from every <cite>lpsn:&lt;LPSN_ID&gt;</cite>
-row to <cite>NCBITaxon:</cite>, <cite>ncbi.assembly:</cite> (or <cite>GTDB:</cite> taxonomy strings), and
-<cite>IMG:</cite>. Verified unresolved GOLD referents instead retain the original field
-observation as audited <cite>biolink:related_to</cite>, never identity (#1316).
-BacDive crosswalks use <cite>kgmicrobe.strain:bacdive_*</cite> subsumption.
+<p>Also emits crosswalks from every <cite>lpsn:&lt;LPSN_ID&gt;</cite> row: <cite>biolink:close_match</cite> to
+<cite>NCBITaxon:</cite>, <cite>GTDB:</cite> taxonomy strings, and <cite>gold:</cite>; <cite>&lt;genome&gt; biolink:in_taxon
+lpsn:&lt;LPSN_ID&gt;</cite> (<cite>RO:0002162</cite>) for <cite>ncbi.assembly:</cite> and <cite>IMG:</cite> genome tokens
+(#1433); and <cite>kgmicrobe.strain:bacdive_* biolink:subclass_of lpsn:&lt;LPSN_ID&gt;</cite> for
+BacDive strains. Verified unresolved GOLD referents instead retain the original
+field observation as audited <cite>biolink:related_to</cite>, never identity (#1316).
 An LPSN name record is not a strain identity, and its reported traits must not
 be propagated as universal observations about every member of the taxon.</p>
 <p>Design decisions locked from the plan-mode Q&amp;A:</p>

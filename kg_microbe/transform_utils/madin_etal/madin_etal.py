@@ -491,10 +491,9 @@ class MadinEtAlTransform(Transform):
                         )
                         predicate_biolink = metabolism.get("predicate_biolink_equivalent", "")
                         # fallback: if no biolink equivalent use `biolink:has_phenotype`
-                        if predicate_biolink:
-                            predicate = uri_to_curie(predicate_biolink)
-                        else:
-                            predicate = "biolink:has_phenotype"
+                        predicate = (
+                            uri_to_curie(predicate_biolink) if predicate_biolink else ""
+                        ) or "biolink:has_phenotype"
                         metabolism_node = self._create_node_row(
                             metabolism["curie"],
                             category,
@@ -535,10 +534,9 @@ class MadinEtAlTransform(Transform):
                                 )
                                 predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                                 # fallback: if no biolink equivalent use biolink:capable_of
-                                if predicate_biolink:
-                                    predicate = uri_to_curie(predicate_biolink)
-                                else:
-                                    predicate = "biolink:capable_of"
+                                predicate = (
+                                    uri_to_curie(predicate_biolink) if predicate_biolink else ""
+                                ) or "biolink:capable_of"
                                 pathway_nodes.append(
                                     self._create_node_row(
                                         metpo_mapping["curie"],
@@ -560,57 +558,57 @@ class MadinEtAlTransform(Transform):
                             else:
                                 pathways_not_in_metpo.append(pathway)
 
-                        # For pathways not found in METPO, fall back to NER results
-                        if pathways_not_in_metpo:
-                            go_condition = go_result[TRAITS_DATASET_LABEL_COLUMN].isin(pathways_not_in_metpo)
-                            go_result_for_tax_id = go_result.loc[go_condition]
-                            if go_result_for_tax_id.empty:
-                                # Use fallback naming if no NER results
-                                for item in pathways_not_in_metpo:
-                                    pathway_id = PATHWAY_PREFIX + item.strip()
-                                    pathway_nodes.append(
-                                        self._create_node_row(
-                                            pathway_id,
-                                            PATHWAY_CATEGORY,
-                                            item.strip(),
-                                        )
+                        # For pathways not found in METPO, fall back to NER results per item
+                        for item in pathways_not_in_metpo:
+                            item_stripped = item.strip()
+                            go_condition = go_result[TRAITS_DATASET_LABEL_COLUMN].isin([item, item_stripped])
+                            go_result_for_item = go_result.loc[go_condition]
+                            if go_result_for_item.empty:
+                                # Use fallback naming if no NER results for this pathway item
+                                pathway_id = PATHWAY_PREFIX + item_stripped
+                                pathway_nodes.append(
+                                    self._create_node_row(
+                                        pathway_id,
+                                        PATHWAY_CATEGORY,
+                                        item_stripped,
                                     )
-                                    tax_pathway_edge.append(
-                                        [
-                                            tax_id,
-                                            NCBI_TO_PATHWAY_EDGE,
-                                            pathway_id,
-                                            BIOLOGICAL_PROCESS,
-                                            self.knowledge_source,  # Use infores:madin_etal
-                                            OBSERVATION,
-                                            MANUAL_AGENT,
-                                        ]
-                                    )
-                                    # Type the kg-microbe-minted pathway placeholder under
-                                    # GO:0008152 (metabolic process) so it sits inside
-                                    # the GO biological-process hierarchy. Curated GO
-                                    # matches go through the `else` branch below and
-                                    # already use canonical GO IDs.
-                                    tax_pathway_edge.append(
-                                        [
-                                            pathway_id,
-                                            "biolink:subclass_of",
-                                            "GO:0008152",
-                                            "rdfs:subClassOf",
-                                            self.knowledge_source,
-                                            "knowledge_assertion",
-                                            MANUAL_AGENT,
-                                        ]
-                                    )
+                                )
+                                tax_pathway_edge.append(
+                                    [
+                                        tax_id,
+                                        NCBI_TO_PATHWAY_EDGE,
+                                        pathway_id,
+                                        BIOLOGICAL_PROCESS,
+                                        self.knowledge_source,  # Use infores:madin_etal
+                                        OBSERVATION,
+                                        MANUAL_AGENT,
+                                    ]
+                                )
+                                # Type the kg-microbe-minted pathway placeholder under
+                                # GO:0008152 (metabolic process) so it sits inside
+                                # the GO biological-process hierarchy. Curated GO
+                                # matches go through the `else` branch below and
+                                # already use canonical GO IDs.
+                                tax_pathway_edge.append(
+                                    [
+                                        pathway_id,
+                                        "biolink:subclass_of",
+                                        "GO:0008152",
+                                        "rdfs:subClassOf",
+                                        self.knowledge_source,
+                                        "knowledge_assertion",
+                                        MANUAL_AGENT,
+                                    ]
+                                )
                             else:
                                 exact_condition_go = (
-                                    go_result_for_tax_id[OBJECT_LABEL_COLUMN]
-                                    == go_result_for_tax_id[SUBJECT_LABEL_COLUMN]
+                                    go_result_for_item[OBJECT_LABEL_COLUMN]
+                                    == go_result_for_item[SUBJECT_LABEL_COLUMN]
                                 )
-                                exact_match_go_df = go_result_for_tax_id[exact_condition_go]
+                                exact_match_go_df = go_result_for_item[exact_condition_go]
                                 if not exact_match_go_df.empty:
-                                    go_result_for_tax_id = exact_match_go_df
-                                for row in go_result_for_tax_id.iterrows():
+                                    go_result_for_item = exact_match_go_df
+                                for row in go_result_for_item.iterrows():
                                     pathway_nodes.append(
                                         self._create_node_row(row[1].object_id, PATHWAY_CATEGORY, row[1].object_label)
                                     )
@@ -657,10 +655,9 @@ class MadinEtAlTransform(Transform):
                                 )
                                 predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                                 # fallback: if no biolink equivalent use biolink:consumes ("uses as carbon source")
-                                if predicate_biolink:
-                                    predicate = uri_to_curie(predicate_biolink)
-                                else:
-                                    predicate = "biolink:consumes"
+                                predicate = (
+                                    uri_to_curie(predicate_biolink) if predicate_biolink else ""
+                                ) or "biolink:consumes"
                                 cs_enrich = (
                                     self.chemical_loader.get_node_enrichment(metpo_mapping["curie"])
                                     if self.chemical_loader is not None
@@ -689,42 +686,42 @@ class MadinEtAlTransform(Transform):
                             else:
                                 carbon_substrates_not_in_metpo.append(substrate)
 
-                        # For carbon substrates not found in METPO, fall back to ChEBI NER results
-                        if carbon_substrates_not_in_metpo:
+                        # For carbon substrates not found in METPO, fall back to ChEBI NER results per item
+                        for item in carbon_substrates_not_in_metpo:
+                            item_stripped = item.strip()
                             chebi_condition = chebi_result[TRAITS_DATASET_LABEL_COLUMN].isin(
-                                carbon_substrates_not_in_metpo
+                                [item, item_stripped]
                             )
-                            chebi_result_for_tax_id = chebi_result.loc[chebi_condition]
-                            if chebi_result_for_tax_id.empty:
-                                # Use fallback naming if no NER results
-                                for item in carbon_substrates_not_in_metpo:
-                                    carbon_substrate_nodes.append(
-                                        self._create_node_row(
-                                            CARBON_SUBSTRATE_PREFIX + item.strip(),
-                                            CARBON_SUBSTRATE_CATEGORY,
-                                            item.strip(),
-                                        )
+                            chebi_result_for_item = chebi_result.loc[chebi_condition]
+                            if chebi_result_for_item.empty:
+                                # Use fallback naming if no NER results for this carbon substrate item
+                                carbon_substrate_nodes.append(
+                                    self._create_node_row(
+                                        CARBON_SUBSTRATE_PREFIX + item_stripped,
+                                        CARBON_SUBSTRATE_CATEGORY,
+                                        item_stripped,
                                     )
-                                    tax_carbon_substrate_edge.append(
-                                        [
-                                            tax_id,
-                                            NCBI_TO_CARBON_SUBSTRATE_EDGE,
-                                            CARBON_SUBSTRATE_PREFIX + item.strip(),
-                                            TROPHICALLY_INTERACTS_WITH,
-                                            self.knowledge_source,  # Use infores:madin_etal
-                                            OBSERVATION,
-                                            MANUAL_AGENT,
-                                        ]
-                                    )
+                                )
+                                tax_carbon_substrate_edge.append(
+                                    [
+                                        tax_id,
+                                        NCBI_TO_CARBON_SUBSTRATE_EDGE,
+                                        CARBON_SUBSTRATE_PREFIX + item_stripped,
+                                        TROPHICALLY_INTERACTS_WITH,
+                                        self.knowledge_source,  # Use infores:madin_etal
+                                        OBSERVATION,
+                                        MANUAL_AGENT,
+                                    ]
+                                )
                             else:
                                 exact_condition_chebi = (
-                                    chebi_result_for_tax_id[OBJECT_LABEL_COLUMN]
-                                    == chebi_result_for_tax_id[SUBJECT_LABEL_COLUMN]
+                                    chebi_result_for_item[OBJECT_LABEL_COLUMN]
+                                    == chebi_result_for_item[SUBJECT_LABEL_COLUMN]
                                 )
-                                exact_match_chebi_df = chebi_result_for_tax_id[exact_condition_chebi]
+                                exact_match_chebi_df = chebi_result_for_item[exact_condition_chebi]
                                 if not exact_match_chebi_df.empty:
-                                    chebi_result_for_tax_id = exact_match_chebi_df
-                                for row in chebi_result_for_tax_id.iterrows():
+                                    chebi_result_for_item = exact_match_chebi_df
+                                for row in chebi_result_for_item.iterrows():
                                     cs_chebi_enrich = (
                                         self.chemical_loader.get_node_enrichment(row[1].object_id)
                                         if self.chemical_loader is not None
@@ -772,10 +769,9 @@ class MadinEtAlTransform(Transform):
                             )
                             predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
-                            if predicate_biolink:
-                                predicate = uri_to_curie(predicate_biolink)
-                            else:
-                                predicate = "biolink:has_phenotype"
+                            predicate = (
+                                uri_to_curie(predicate_biolink) if predicate_biolink else ""
+                            ) or "biolink:has_phenotype"
                             cell_shape_node = self._create_node_row(
                                 metpo_mapping["curie"],
                                 category,
@@ -823,10 +819,9 @@ class MadinEtAlTransform(Transform):
                             )
                             predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
-                            if predicate_biolink:
-                                predicate = uri_to_curie(predicate_biolink)
-                            else:
-                                predicate = "biolink:has_phenotype"
+                            predicate = (
+                                uri_to_curie(predicate_biolink) if predicate_biolink else ""
+                            ) or "biolink:has_phenotype"
                             range_salinity_node = self._create_node_row(
                                 metpo_mapping["curie"],
                                 category,
@@ -859,10 +854,9 @@ class MadinEtAlTransform(Transform):
                             )
                             predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
-                            if predicate_biolink:
-                                predicate = uri_to_curie(predicate_biolink)
-                            else:
-                                predicate = "biolink:has_phenotype"
+                            predicate = (
+                                uri_to_curie(predicate_biolink) if predicate_biolink else ""
+                            ) or "biolink:has_phenotype"
                             motility_node = self._create_node_row(
                                 metpo_mapping["curie"],
                                 category,
@@ -894,10 +888,9 @@ class MadinEtAlTransform(Transform):
                             )
                             predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
-                            if predicate_biolink:
-                                predicate = uri_to_curie(predicate_biolink)
-                            else:
-                                predicate = "biolink:has_phenotype"
+                            predicate = (
+                                uri_to_curie(predicate_biolink) if predicate_biolink else ""
+                            ) or "biolink:has_phenotype"
                             range_tmp_node = self._create_node_row(
                                 metpo_mapping["curie"],
                                 category,
@@ -926,10 +919,9 @@ class MadinEtAlTransform(Transform):
                             )
                             predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
-                            if predicate_biolink:
-                                predicate = uri_to_curie(predicate_biolink)
-                            else:
-                                predicate = "biolink:has_phenotype"
+                            predicate = (
+                                uri_to_curie(predicate_biolink) if predicate_biolink else ""
+                            ) or "biolink:has_phenotype"
                             gram_stain_node = self._create_node_row(
                                 metpo_mapping["curie"],
                                 category,
@@ -962,10 +954,9 @@ class MadinEtAlTransform(Transform):
                             )
                             predicate_biolink = metpo_mapping.get("predicate_biolink_equivalent", "")
                             # fallback: if no biolink equivalent use `biolink:has_phenotype`
-                            if predicate_biolink:
-                                predicate = uri_to_curie(predicate_biolink)
-                            else:
-                                predicate = "biolink:has_phenotype"
+                            predicate = (
+                                uri_to_curie(predicate_biolink) if predicate_biolink else ""
+                            ) or "biolink:has_phenotype"
                             sporulation_node = self._create_node_row(
                                 metpo_mapping["curie"],
                                 category,

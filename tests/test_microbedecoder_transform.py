@@ -13,6 +13,8 @@ from kg_microbe.transform_utils.constants import (
     COMPOUND_PREFIX,
     FAPROTAX_KNOWLEDGE_SOURCE,
     GOLD_ORGANISM_FOLD_FILE,
+    IN_TAXON_PREDICATE,
+    IN_TAXON_RELATION,
     LITERATURE_KNOWLEDGE_SOURCE,
     LPSN_PREFIX,
     MICROBEDECODER_KNOWLEDGE_SOURCE,
@@ -116,10 +118,12 @@ def test_explicit_assembly_alias_and_source_reported_versions(tmp_path):
     assert {node["id"] for node in nodes} == {"ncbi.assembly:GCA_1.1", "ncbi.assembly:GCF_2.1"}
     assert all(node["category"] == "biolink:Genome" for node in nodes)
     assert all("no cross-release identity inferred" in node["description"] for node in nodes)
-    assert edges[0]["object"] == "ncbi.assembly:GCF_1.2"
+    assert all(e["predicate"] == IN_TAXON_PREDICATE and e["relation"] == IN_TAXON_RELATION for e in edges)
+    assert all(e["object"] == "lpsn:101" for e in edges)
+    assert edges[0]["subject"] == "ncbi.assembly:GCF_1.2"
     assert edges[0]["original_object"] == "ncbi.assembly:GCA_1.2"
-    assert edges[1]["object"] == "ncbi.assembly:GCA_1.1"
-    assert edges[2]["object"] == "ncbi.assembly:GCF_2.1"
+    assert edges[1]["subject"] == "ncbi.assembly:GCA_1.1"
+    assert edges[2]["subject"] == "ncbi.assembly:GCF_2.1"
 
 
 # ---------------------------------------------------------------------------
@@ -134,7 +138,7 @@ def test_lpsn_subject_nodes_are_not_stubbed(microbedecoder_transform):
     Per the add-transform skill's Phase 6 anti-patterns: "Do NOT emit
     stub nodes for cross-referenced entities that already exist in
     KG-Microbe — emit the edge, and rely on merge-time reconciliation."
-    Every ``lpsn:<LPSN_ID>`` appears as an edge subject, but never as a
+    Every ``lpsn:<LPSN_ID>`` appears as an edge endpoint, but never as a
     node in this transform's own output.
     """
     microbedecoder_transform.run()
@@ -143,11 +147,15 @@ def test_lpsn_subject_nodes_are_not_stubbed(microbedecoder_transform):
     assert lpsn_node_ids == set(), (
         f"MicrobeDecoder must not emit lpsn:* nodes (lpsn transform owns them); found: {sorted(lpsn_node_ids)}"
     )
-    # But every subject on emitted edges IS an lpsn:<id>, so downstream
+    # Every non-blank LPSN_ID row produces edges anchored on lpsn:<id>
+    # (as subject on metabolism/close_match edges, or as object on
+    # strain subclass_of and genome in_taxon edges), so downstream
     # merge glues them to the lpsn transform's authoritative rows.
     edges = _read_tsv(microbedecoder_transform.output_edge_file)
-    edge_subject_lpsn_ids = {e["subject"] for e in edges if e["subject"].startswith(LPSN_PREFIX)}
-    assert edge_subject_lpsn_ids == {
+    edge_lpsn_ids = {
+        endpoint for e in edges for endpoint in (e["subject"], e["object"]) if endpoint.startswith(LPSN_PREFIX)
+    }
+    assert edge_lpsn_ids == {
         f"{LPSN_PREFIX}101",
         f"{LPSN_PREFIX}202",
         f"{LPSN_PREFIX}303",
@@ -180,11 +188,11 @@ def test_empty_lpsn_row_is_skipped(microbedecoder_transform):
 
 def test_identifier_crosswalk_edges_use_close_match(microbedecoder_transform):
     """
-    The identifier crosswalks stay ``biolink:close_match`` from lpsn:<id>.
+    Verify crosswalk predicates for taxon, genome, and strain identifiers (#1433, #687).
 
-    Preserve the source's crosswalk predicate while fixing endpoint identifiers.
-    BacDive is excluded: it is asserted as subsumption instead (#687); see
-    :func:`test_bacdive_crosswalk_is_subsumption_not_close_match`.
+    Taxon/organism identifier crosswalks stay ``biolink:close_match`` from lpsn:<id>,
+    while genome tokens (``ncbi.assembly:``, ``IMG:``) emit ``<genome> biolink:in_taxon
+    lpsn:<id>`` (``RO:0002162``, #1433) and BacDive strains emit ``subclass_of`` (#687).
     """
     microbedecoder_transform.run()
     edges = _read_tsv(microbedecoder_transform.output_edge_file)
@@ -195,9 +203,23 @@ def test_identifier_crosswalk_edges_use_close_match(microbedecoder_transform):
     assert "NCBITaxon:1423" in objects
     assert "GTDB:d__Bacteria;g__Bacillus;s__Bacillus subtilis" in objects
     assert "gold:Gs0000101" in objects
-    assert "IMG:3300000001" in objects
+    assert not any(o.startswith(("IMG:", "ncbi.assembly:")) for o in objects), (
+        "genome tokens must use biolink:in_taxon, not close_match (#1433)"
+    )
     assert not any(o.startswith("kgmicrobe.strain:") for o in objects), (
         "the BacDive crosswalk must not be a close_match"
+    )
+    # No close_match edge anywhere in output may have an ncbi.assembly: or IMG: object
+    assert not any(
+        e["predicate"] == CLOSE_MATCH_PREDICATE and e["object"].startswith(("ncbi.assembly:", "IMG:")) for e in edges
+    )
+    # IMG genome token on LPSN_ID=101 is emitted as <genome> biolink:in_taxon lpsn:101
+    assert any(
+        e["subject"] == "IMG:3300000001"
+        and e["predicate"] == IN_TAXON_PREDICATE
+        and e["object"] == f"{LPSN_PREFIX}101"
+        and e["relation"] == IN_TAXON_RELATION
+        for e in edges
     )
 
 
@@ -294,28 +316,29 @@ def test_crosswalk_splits_multi_value_cells(microbedecoder_transform):
     Before the fix the raw cell was emitted as a single malformed CURIE
     (``IMG:3300000001,3300000002``); ~2.6 K such edges landed in the
     first live merge. The fix runs every crosswalk cell through
-    :func:`split_multivalue` so each token becomes its own
-    ``biolink:close_match`` edge.
+    :func:`split_multivalue_comma_only` so each token becomes its own
+    ``<genome> biolink:in_taxon lpsn:<id>`` edge (#1433).
 
     Fixture row LPSN_ID=707 carries a two-value IMG cell that must split
-    into two edges pointing at ``IMG:3300000001`` and ``IMG:3300000002``.
+    into two edges with subjects ``IMG:3300000001`` and ``IMG:3300000002``.
     """
     microbedecoder_transform.run()
     edges = _read_tsv(microbedecoder_transform.output_edge_file)
     img_edges_for_707 = [
         e
         for e in edges
-        if e["subject"] == f"{LPSN_PREFIX}707"
-        and e["predicate"] == CLOSE_MATCH_PREDICATE
-        and e["object"].startswith("IMG:")
+        if e["object"] == f"{LPSN_PREFIX}707"
+        and e["predicate"] == IN_TAXON_PREDICATE
+        and e["relation"] == IN_TAXON_RELATION
+        and e["subject"].startswith("IMG:")
     ]
-    objects = {e["object"] for e in img_edges_for_707}
-    assert objects == {"IMG:3300000001", "IMG:3300000002"}, (
-        f"multi-value IMG cell must split into two edges; got {objects}"
+    subjects = {e["subject"] for e in img_edges_for_707}
+    assert subjects == {"IMG:3300000001", "IMG:3300000002"}, (
+        f"multi-value IMG cell must split into two edges; got {subjects}"
     )
     # Nothing malformed: no CURIE should contain an embedded comma.
-    for obj in objects:
-        assert "," not in obj, f"multi-value cell escaped the split: {obj!r}"
+    for subj in subjects:
+        assert "," not in subj, f"multi-value cell escaped the split: {subj!r}"
 
 
 def test_missing_crosswalk_cells_are_skipped(microbedecoder_transform):
@@ -384,10 +407,11 @@ def test_crosswalk_normalizes_prefixed_source_ids(microbedecoder_transform):
         ("GOLD_Organism_ID", "GOLD:Go0000002", "gold:Go0000002"),
         ("GOLD_Organism_ID", "gold:Go0000002", "gold:Go0000002"),
         ("GOLD_Organism_ID", "Gold:Go0000002", "gold:Go0000002"),
+        ("IMG_Genome_ID", "3300000001", "IMG:3300000001"),
     ],
 )
 def test_crosswalk_uses_owner_namespaces(monkeypatch, tmp_path, column, raw, expected):
-    """Assemblies and GOLD organisms join the owner IDs, not KGX stubs (#1050/1051)."""
+    """Assemblies and GOLD organisms join the owner IDs, not KGX stubs (#1050/1051/#1433)."""
     input_dir = tmp_path / "raw"
     input_dir.mkdir()
     with (input_dir / "database.csv").open("w", newline="") as handle:
@@ -406,7 +430,15 @@ def test_crosswalk_uses_owner_namespaces(monkeypatch, tmp_path, column, raw, exp
     transform.run()
     edges = _read_tsv(transform.output_edge_file)
     assert len(edges) == 1
-    assert edges[0]["object"] == expected
+    if expected.startswith(("ncbi.assembly:", "IMG:")):
+        assert edges[0]["subject"] == expected
+        assert edges[0]["predicate"] == IN_TAXON_PREDICATE
+        assert edges[0]["object"] == "lpsn:101"
+        assert edges[0]["relation"] == IN_TAXON_RELATION
+    else:
+        assert edges[0]["subject"] == "lpsn:101"
+        assert edges[0]["predicate"] == CLOSE_MATCH_PREDICATE
+        assert edges[0]["object"] == expected
     assert edges[0]["primary_knowledge_source"] == MICROBEDECODER_KNOWLEDGE_SOURCE
     nodes = {n["id"]: n for n in _read_tsv(transform.output_node_file)}
     if expected.startswith("ncbi.assembly:") and "." in expected.split(":", 1)[1]:

@@ -38,16 +38,14 @@ LPSN_GENUS_COLUMN = "LPSN_Genus"
 LPSN_SPECIES_COLUMN = "LPSN_Species"
 LPSN_SUBSPECIES_COLUMN = "LPSN_Subspecies"
 
-# Identity crosswalk MicrobeDecoder pre-joins per row. Emit each as a
-# `biolink:close_match` edge from `lpsn:<LPSN_ID>` to the target CURIE.
+# Crosswalk columns MicrobeDecoder pre-joins per row. Taxon/organism crosswalks
+# emit `biolink:close_match` from `lpsn:<LPSN_ID>` to the target CURIE; genome
+# tokens (`ncbi.assembly:` and `IMG:`) emit `<genome> biolink:in_taxon lpsn:<id>`
+# (`RO:0002162`, #1433); and `BacDive_ID` emits `kgmicrobe.strain:bacdive_<id>
+# biolink:subclass_of lpsn:<id>` (#687).
 # `(column, emitted_prefix, source_prefix)`: `source_prefix` is the CURIE
 # prefix the raw cell may already carry when it differs from the emitted
 # one; None means the source uses the emitted prefix (or a bare local ID).
-#
-# BacDive emits `kgmicrobe.strain:bacdive_<id>` because that is the CURIE the
-# bacdive transform actually mints for a strain (99,392 node rows). The bare
-# `bacdive:<id>` form this used to emit is not a node anywhere in the graph,
-# so all ~19 K of these edges dangled and KGX turned them into empty stubs.
 CROSSWALK_COLUMNS: Tuple[Tuple[str, str, Optional[str]], ...] = (
     ("NCBI_Taxonomy_ID", NCBITAXON_PREFIX, None),
     ("GTDB_ID", GTDB_PREFIX, None),

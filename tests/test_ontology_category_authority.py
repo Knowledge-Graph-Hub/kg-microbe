@@ -215,3 +215,70 @@ def test_imported_edges_cannot_override_selected_native_authority(tmp_path):
     authority = OntologyCategoryAuthority(tmp_path)
     assert authority.category_for("ENVO:00001998") is None
     assert authority.source_paths == {tmp_path / "envo.json"}
+
+
+@pytest.mark.parametrize("identifier", ["PO:0000003", "PO:0025281", "PO:0009009", "PO:0008037"])
+def test_po_whole_plant_and_developmental_stages_resolve_to_anatomical_entity(tmp_path, identifier):
+    """Native PO terms under PO:0000003 (whole plant) resolve to AnatomicalEntity via PO:0025131 (#1427)."""
+    (tmp_path / "po.owl").write_text(
+        '<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" '
+        'xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#" '
+        'xmlns:owl="http://www.w3.org/2002/07/owl#">'
+        '<owl:Class rdf:about="http://purl.obolibrary.org/obo/PO_0025131"/>'
+        '<owl:Class rdf:about="http://purl.obolibrary.org/obo/PO_0000003">'
+        '<rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PO_0025131"/>'
+        "</owl:Class>"
+        '<owl:Class rdf:about="http://purl.obolibrary.org/obo/PO_0025281">'
+        '<rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PO_0000003"/>'
+        "</owl:Class>"
+        '<owl:Class rdf:about="http://purl.obolibrary.org/obo/PO_0009009">'
+        '<rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PO_0000003"/>'
+        "</owl:Class>"
+        '<owl:Class rdf:about="http://purl.obolibrary.org/obo/PO_0008037">'
+        '<rdfs:subClassOf rdf:resource="http://purl.obolibrary.org/obo/PO_0000003"/>'
+        "</owl:Class>"
+        "</rdf:RDF>"
+    )
+    authority = OntologyCategoryAuthority(tmp_path)
+    evidence = authority.evidence_for(identifier)
+    assert evidence.category == "biolink:AnatomicalEntity"
+    assert all(path[-1] == "PO:0025131" for path in evidence.root_paths)
+
+
+def test_envo_abiotic_features_ignore_cross_ontology_uberon_and_caro_ancestors(tmp_path):
+    """Abiotic ENVO features do not gain AnatomicalEntity from cross-ontology UBERON/CARO parents (#1428)."""
+
+    def mutate(graph):
+        """Attach cross-ontology UBERON:0001062 and CARO:0000000 ancestors to an ENVO feature."""
+        graph["nodes"].extend(
+            [
+                {"id": "ENVO:00000380", "type": "CLASS"},
+                {"id": "UBERON:0001062", "type": "CLASS"},
+                {"id": "CARO:0000000", "type": "CLASS"},
+            ]
+        )
+        graph["edges"].extend(
+            [
+                {"sub": "ENVO:00000380", "pred": "is_a", "obj": "ENVO:01000254"},
+                {"sub": "ENVO:00000380", "pred": "is_a", "obj": "UBERON:0001062"},
+                {"sub": "UBERON:0001062", "pred": "is_a", "obj": "CARO:0000000"},
+            ]
+        )
+
+    authority = _modified_authority(tmp_path, mutate)
+    evidence = authority.evidence_for("ENVO:00000380")
+    assert evidence.category == "biolink:EnvironmentalFeature"
+    assert all(path[-1] == "ENVO:01000254" for path in evidence.root_paths)
+
+
+def test_obi_culture_medium_retains_growth_medium_alone(tmp_path):
+    """OBI:0000079 and its descendants resolve to GrowthMedium alone without ChemicalMixture (#1429)."""
+
+    def mutate(graph):
+        """Declare OBI:0000079 under BFO:0000040 in envo.json."""
+        graph["nodes"].append({"id": "OBI:0000079", "type": "CLASS"})
+        graph["edges"].append({"sub": "OBI:0000079", "pred": "is_a", "obj": "BFO:0000040"})
+
+    authority = _modified_authority(tmp_path, mutate)
+    assert authority.category_for("OBI:0000079") == "biolink:GrowthMedium"
+

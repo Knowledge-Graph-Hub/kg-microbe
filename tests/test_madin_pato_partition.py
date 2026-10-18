@@ -84,3 +84,26 @@ def test_partition_unknown_prefix_treated_as_substrate() -> None:
     )
     assert len(substrates) == 3
     assert qualities == []
+
+
+def test_madin_uri_to_curie_empty_fallback_and_per_item_ner(monkeypatch, tmp_path) -> None:
+    """
+    Verify Madin predicate fallback and per-item NER loop (#458, #5).
+
+    - When uri_to_curie returns empty string for an uncontractable URI, madin_etal
+      must fall back to the default Biolink predicate rather than emitting ''.
+    - Pathways / carbon substrates not in METPO must run NER fallback per item
+      rather than skipping all remaining items when one item resolves in NER.
+    """
+    import inspect
+
+    import kg_microbe.transform_utils.madin_etal.madin_etal as madin_mod
+
+    src = " ".join(inspect.getsource(madin_mod.MadinEtAlTransform.run).split())
+    assert '( uri_to_curie(predicate_biolink) if predicate_biolink else "" ) or "biolink:capable_of"' in src
+    assert '( uri_to_curie(predicate_biolink) if predicate_biolink else "" ) or "biolink:consumes"' in src
+    assert '( uri_to_curie(predicate_biolink) if predicate_biolink else "" ) or "biolink:has_phenotype"' in src
+    assert "for item in pathways_not_in_metpo:" in src
+    assert "for item in carbon_substrates_not_in_metpo:" in src
+
+

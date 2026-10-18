@@ -127,3 +127,38 @@ def test_invalid_intermediate_cannot_bridge_native_activity_ancestry(corruption)
         node["type"] = corruption
     with pytest.raises(ValueError, match="Invalid FOODON subclass evidence"):
         policy.foodon_categories(graphs)
+
+
+def test_deparented_meat_cuts_classify_as_food_not_organism_taxon():
+    """Quarantined meat-cut -> whole-animal subclass edges (#1355, #1356) must not type meat cuts as OrganismTaxon."""
+    from kg_microbe.utils.graph_canonicalization import canonical_node_category, compact_identifier
+
+    graphs = json.loads(FIXTURE.read_text())["graphs"]
+    node_ids = {compact_identifier(n["id"]) for n in graphs[0]["nodes"]}
+    quarantined_pairs = [
+        ("FOODON:03309966", "FOODON:00003083"),
+        ("FOODON:03306418", "FOODON:00003083"),
+        ("FOODON:03308537", "FOODON:00002686"),
+        ("FOODON:03308433", "FOODON:03413856"),
+        ("FOODON:03308553", "FOODON:03411479"),
+        ("FOODON:03309141", "FOODON:03411843"),
+        ("FOODON:03309911", "FOODON:03413810"),
+    ]
+    for child, parent in quarantined_pairs:
+        if parent not in node_ids:
+            graphs[0]["nodes"].append({"id": parent, "type": "CLASS", "lbl": parent})
+            node_ids.add(parent)
+            graphs[0]["edges"].append({"sub": parent, "pred": "is_a", "obj": "COB:0000022"})
+        if child not in node_ids:
+            graphs[0]["nodes"].append({"id": child, "type": "CLASS", "lbl": child})
+            node_ids.add(child)
+        graphs[0]["edges"].append({"sub": child, "pred": "is_a", "obj": parent})
+
+    categories = policy.foodon_categories(graphs, dispositions={}, anatomical_categories={})
+    for child, parent in quarantined_pairs:
+        assert categories[parent] == "biolink:OrganismTaxon"
+        assert categories[child] == "biolink:Food"
+        assert (
+            canonical_node_category(child, "biolink:OrganismTaxon", foodon_categories=categories) == "biolink:Food"
+        )
+

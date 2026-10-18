@@ -62,6 +62,14 @@ _ROOT_CATEGORIES = {
     "IAO:0000030": INFORMATION_CONTENT_ENTITY_CATEGORY,
     "PCO:0000001": POPULATION_CATEGORY,
 }
+_ANATOMY_PREFIXES = frozenset({"UBERON", "CARO", "PO", "BSPO", "BTO", "CL", "FMA", "FAO", "FLOPO"})
+_ROOT_ALLOWED_PREFIXES = {
+    "UBERON:0001062": _ANATOMY_PREFIXES,
+    "CARO:0000000": _ANATOMY_PREFIXES,
+    "PO:0025131": _ANATOMY_PREFIXES,
+    "PO:0000003": frozenset({"FOODON"}),
+    "COB:0000022": frozenset({"FOODON"}),
+}
 _AUTHORITY_BY_PREFIX = {
     "ENVO": "envo.json",
     "BFO": "envo.json",
@@ -218,7 +226,8 @@ class OntologyCategoryAuthority:
             )
             self._decisions[identifier] = decision
             return decision
-        filename = _AUTHORITY_BY_PREFIX.get(identifier.partition(":")[0])
+        prefix = identifier.partition(":")[0]
+        filename = _AUTHORITY_BY_PREFIX.get(prefix)
         if filename is None:
             decision = CategoryEvidence(identifier, "", None, "no_selected_authority")
         else:
@@ -235,7 +244,11 @@ class OntologyCategoryAuthority:
                         if parent not in paths and declarations.get(parent) == ("CLASS", False):
                             paths[parent] = (*paths[current], parent)
                             pending.append(parent)
-                matches = {root: paths[root] for root in _ROOT_CATEGORIES if root in paths}
+                matches = {
+                    root: paths[root]
+                    for root in _ROOT_CATEGORIES
+                    if root in paths and prefix in _ROOT_ALLOWED_PREFIXES.get(root, {prefix})
+                }
                 categories = {_ROOT_CATEGORIES[root] for root in matches}
                 processes = {
                     BIOLOGICAL_PROCESS_CATEGORY,

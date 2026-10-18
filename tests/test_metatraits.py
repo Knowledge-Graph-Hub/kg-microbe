@@ -450,6 +450,39 @@ class TestMetaTraitsTransform(unittest.TestCase):
             transform.run(show_status=False)
         self.assertIn("No metatraits JSONL files found", str(ctx.exception))
 
+    def test_custom_input_dir_overrides_raw_data_dir(self, mock_adapter, mock_ensure):
+        """Issue #1437: custom input_dir is checked before RAW_DATA_DIR for metpo.json and taxonomy tables."""
+        import json
+        import shutil
+
+        from kg_microbe.transform_utils.metatraits.metatraits import _metpo_json_path
+
+        custom_dir = Path(tempfile.mkdtemp())
+        try:
+            custom_metpo = custom_dir / "metpo.json"
+            custom_metpo.write_text(json.dumps({"graphs": [{"nodes": [], "edges": []}]}), encoding="utf-8")
+            self.assertEqual(_metpo_json_path(custom_dir), custom_metpo)
+
+            custom_gtdb = custom_dir / "NCBI2GTDB.tsv.gz"
+            custom_gtdb.write_text(
+                "species (NCBI)\tgenus (GTDB)\tspecies (GTDB)\nCustom sp\tCustomGenus\tcustom_sp\n",
+                encoding="utf-8",
+            )
+            custom_names = custom_dir / "ncbitaxon_nodes.tsv"
+            custom_names.write_text(
+                "id\tcategory\tname\nNCBITaxon:999999\tbiolink:OrganismTaxon\tCustom sp\n",
+                encoding="utf-8",
+            )
+
+            transform = MetaTraitsTransform(
+                input_dir=custom_dir,
+                output_dir=self.temp_output_dir,
+            )
+            self.assertEqual(transform.ncbi_to_gtdb_mappings["custom sp"]["gtdb_genus"], "CustomGenus")
+            self.assertEqual(transform.ncbitaxon_name_to_id.get("custom sp"), "NCBITaxon:999999")
+        finally:
+            shutil.rmtree(custom_dir, ignore_errors=True)
+
 
 if __name__ == "__main__":
     unittest.main()

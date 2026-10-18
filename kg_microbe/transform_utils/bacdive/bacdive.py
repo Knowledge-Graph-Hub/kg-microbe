@@ -68,7 +68,6 @@ from kg_microbe.transform_utils.constants import (
     ASSAY_KITS_FILE,
     ASSAY_PREFIX,
     ASSOCIATED_WITH,
-    ATTRIBUTE_CATEGORY,
     AUTOMATED_AGENT,
     BACDIVE,
     BACDIVE_API_BASE_URL,
@@ -85,8 +84,9 @@ from kg_microbe.transform_utils.constants import (
     BACDIVE_MEDIUM_DICT,
     BACDIVE_PREFIX,
     BACDIVE_TMP_DIR,
-    BIOLOGICAL_PROCESS,
+    BIOSAFETY_LEVEL_PREDICATE,
     CAPABLE_OF,
+    CAPABLE_OF_PREDICATE,
     CATEGORY_COLUMN,
     CELL_MORPHOLOGY,
     CHEBI_KEY,
@@ -125,11 +125,14 @@ from kg_microbe.transform_utils.constants import (
     GENERAL_DESCRIPTION,
     GENUS,
     HALOPHILY,
+    HAS_ATTRIBUTE_PREDICATE,
+    HAS_ATTRIBUTE_RELATION,
     HAS_INPUT_RELATION,
-    HAS_PARTICIPANT,
     HAS_PHENOTYPE,
     HAS_PHENOTYPE_PREDICATE,
     ID_COLUMN,
+    IN_TAXON_PREDICATE,
+    IN_TAXON_RELATION,
     INFERRED_SUBCLASS_RELATION,
     INTERACTS_WITH_RELATION,
     IS_GROWN_IN,
@@ -198,6 +201,8 @@ from kg_microbe.transform_utils.constants import (
     PREDICATE_COLUMN,
     PREDICTION,
     PRIMARY_KNOWLEDGE_SOURCE_COLUMN,
+    PRODUCES_PREDICATE,
+    PRODUCES_RELATION,
     PRODUCTION_KEY,
     PROVIDED_BY_COLUMN,
     PROVISIONAL_GENUS_PREFIX,
@@ -278,6 +283,37 @@ POLYMYXIN_CONFLICT_DESCRIPTION = (
     "but the source calls it polymyxin b. External identity is unresolved; neither B1 nor "
     "the B1/B2 mixture is inferred. Original source context is retained in chemical_identity_conflicts.jsonl."
 )
+
+#: Single deterministic lookup from emitted BacDive predicate to relation (#431).
+#: Native METPO/MICRO predicates self-map in ``relation_for_predicate`` so negated
+#: METPO predicates never pair with affirmative RO relations (e.g. ``RO:0002215``).
+BACDIVE_PREDICATE_TO_RELATION: Dict[str, str] = {
+    HAS_PHENOTYPE_PREDICATE: HAS_PHENOTYPE,
+    HAS_ATTRIBUTE_PREDICATE: HAS_ATTRIBUTE_RELATION,
+    CAPABLE_OF_PREDICATE: CAPABLE_OF,
+    PRODUCES_PREDICATE: PRODUCES_RELATION,
+    "biolink:interacts_with": INTERACTS_WITH_RELATION,
+    NCBI_TO_ISOLATION_SOURCE_EDGE: LOCATION_OF,
+    BIOSAFETY_LEVEL_PREDICATE: ASSOCIATED_WITH,
+    NCBI_TO_METABOLITE_RESISTANCE_EDGE: ASSOCIATED_WITH,
+    NCBI_TO_METABOLITE_SENSITIVITY_EDGE: ASSOCIATED_WITH,
+    ENZYME_TO_SUBSTRATE_EDGE: HAS_INPUT_RELATION,
+    IN_TAXON_PREDICATE: IN_TAXON_RELATION,
+    CLOSE_MATCH_PREDICATE: CLOSE_MATCH_RELATION,
+    SUBCLASS_PREDICATE: RDFS_SUBCLASS_OF,
+}
+
+
+def relation_for_predicate(predicate: str) -> str:
+    """Return the deterministic edge relation for a BacDive predicate (#431)."""
+    if not isinstance(predicate, str) or not predicate:
+        raise ValueError(f"BacDive edge predicate must be a non-empty string, got {predicate!r}")
+    if predicate.startswith(("METPO:", "MICRO:")):
+        return predicate
+    try:
+        return BACDIVE_PREDICATE_TO_RELATION[predicate]
+    except KeyError as exc:
+        raise ValueError(f"No BacDive relation mapping defined for predicate {predicate!r}") from exc
 
 
 class BacDiveTransform(Transform):
@@ -1668,13 +1704,14 @@ class BacDiveTransform(Transform):
                     node_writer.writerow(self._create_node_row(node_id, category, label))
 
                     # Write edge from organism to phenotype
-                    knowledge_level, agent_type = self._add_edge_metadata(predicate, HAS_PHENOTYPE, node_id)
+                    relation = relation_for_predicate(predicate)
+                    knowledge_level, agent_type = self._add_edge_metadata(predicate, relation, node_id)
                     edge_writer.writerow(
                         [
                             organism_id,
                             predicate,
                             node_id,
-                            HAS_PHENOTYPE,
+                            relation,
                             self.knowledge_source,
                             knowledge_level,
                             agent_type,
@@ -2216,12 +2253,13 @@ class BacDiveTransform(Transform):
                     synonym=enrichment["synonym"] or None,
                 )
             )
-            knowledge_level, agent_type = self._add_edge_metadata(predicate, HAS_PARTICIPANT, chebi_id)
+            relation = relation_for_predicate(predicate)
+            knowledge_level, agent_type = self._add_edge_metadata(predicate, relation, chebi_id)
             row = [
                 organism_id,
                 predicate,
                 chebi_id,
-                HAS_PARTICIPANT,
+                relation,
                 self.knowledge_source,
                 knowledge_level,
                 agent_type,
@@ -2971,11 +3009,7 @@ class BacDiveTransform(Transform):
                         for _, value in nodes_from_keywords.items():
                             # Create edge from organism to keyword/CHEBI
                             object_id = keyword_to_chebi[value[CURIE_COLUMN]]
-                            relation = (
-                                HAS_PHENOTYPE
-                                if value[CATEGORY_COLUMN] in [PHENOTYPIC_CATEGORY, ATTRIBUTE_CATEGORY]
-                                else BIOLOGICAL_PROCESS
-                            )
+                            relation = relation_for_predicate(value[PREDICATE_COLUMN])
                             knowledge_level, agent_type = self._add_edge_metadata(
                                 value[PREDICATE_COLUMN], relation, object_id
                             )
@@ -3068,15 +3102,16 @@ class BacDiveTransform(Transform):
 
                             # Write edges from organism to enzymes using METPO predicates
                             for item in enzyme_data:
+                                relation = relation_for_predicate(item["predicate"])
                                 knowledge_level, agent_type = self._add_edge_metadata(
-                                    item["predicate"], CAPABLE_OF, item["ec_id"]
+                                    item["predicate"], relation, item["ec_id"]
                                 )
                                 edge_writer.writerow(
                                     [
                                         organism_id,
                                         item["predicate"],
                                         item["ec_id"],
-                                        CAPABLE_OF,
+                                        relation,
                                         self.knowledge_source,
                                         knowledge_level,
                                         agent_type,
@@ -3173,15 +3208,16 @@ class BacDiveTransform(Transform):
 
                             # Write edges with METPO predicates
                             for item in metabolite_production_data:
+                                relation = relation_for_predicate(item["metpo_predicate"])
                                 knowledge_level, agent_type = self._add_edge_metadata(
-                                    item["metpo_predicate"], BIOLOGICAL_PROCESS, item["chebi_key"]
+                                    item["metpo_predicate"], relation, item["chebi_key"]
                                 )
                                 edge_writer.writerow(
                                     [
                                         organism_id,
                                         item["metpo_predicate"],
                                         item["chebi_key"],
-                                        BIOLOGICAL_PROCESS,
+                                        relation,
                                         self.knowledge_source,
                                         knowledge_level,
                                         agent_type,
@@ -3242,6 +3278,7 @@ class BacDiveTransform(Transform):
 
                                     metpo_predicate_info = self.metpo_enzyme_mappings[test_result]
                                     metpo_predicate = metpo_predicate_info["curie"]
+                                    metpo_relation = relation_for_predicate(metpo_predicate)
 
                                     # Create edges for both GO terms and EC numbers
                                     go_terms = test_info.get("go_terms", [])
@@ -3252,14 +3289,14 @@ class BacDiveTransform(Transform):
                                         for go_term in go_terms:
                                             # Write edge from organism to GO term
                                             knowledge_level, agent_type = self._add_edge_metadata(
-                                                metpo_predicate, CAPABLE_OF, go_term
+                                                metpo_predicate, metpo_relation, go_term
                                             )
                                             edge_writer.writerow(
                                                 [
                                                     organism_id,
                                                     metpo_predicate,
                                                     go_term,
-                                                    CAPABLE_OF,
+                                                    metpo_relation,
                                                     self.knowledge_source,
                                                     knowledge_level,
                                                     agent_type,
@@ -3272,14 +3309,14 @@ class BacDiveTransform(Transform):
                                             ec_id = f"{EC_PREFIX}{ec_number}"
                                             # Write edge from organism to EC number
                                             knowledge_level, agent_type = self._add_edge_metadata(
-                                                metpo_predicate, CAPABLE_OF, ec_id
+                                                metpo_predicate, metpo_relation, ec_id
                                             )
                                             edge_writer.writerow(
                                                 [
                                                     organism_id,
                                                     metpo_predicate,
                                                     ec_id,
-                                                    CAPABLE_OF,
+                                                    metpo_relation,
                                                     self.knowledge_source,
                                                     knowledge_level,
                                                     agent_type,
@@ -3294,14 +3331,14 @@ class BacDiveTransform(Transform):
 
                                         # Write organism→assay edge using same METPO predicate
                                         knowledge_level, agent_type = self._add_edge_metadata(
-                                            metpo_predicate, CAPABLE_OF, assay_id
+                                            metpo_predicate, metpo_relation, assay_id
                                         )
                                         edge_writer.writerow(
                                             [
                                                 organism_id,
                                                 metpo_predicate,
                                                 assay_id,
-                                                CAPABLE_OF,
+                                                metpo_relation,
                                                 self.knowledge_source,
                                                 knowledge_level,
                                                 agent_type,
@@ -3326,6 +3363,7 @@ class BacDiveTransform(Transform):
                                     metpo_predicate = predicate_info.get("id")
                                     if not metpo_predicate:
                                         continue
+                                    metpo_relation = relation_for_predicate(metpo_predicate)
 
                                     # Get ChEBI IDs for this chemical. Target stub nodes are
                                     # emitted upfront by generate_assay_entity_nodes — covers
@@ -3336,14 +3374,14 @@ class BacDiveTransform(Transform):
                                         for chebi_id in chebi_ids:
                                             # Write edge from organism to ChEBI chemical
                                             knowledge_level, agent_type = self._add_edge_metadata(
-                                                metpo_predicate, INTERACTS_WITH_RELATION, chebi_id
+                                                metpo_predicate, metpo_relation, chebi_id
                                             )
                                             edge_writer.writerow(
                                                 [
                                                     organism_id,
                                                     metpo_predicate,
                                                     chebi_id,
-                                                    INTERACTS_WITH_RELATION,
+                                                    metpo_relation,
                                                     self.knowledge_source,
                                                     knowledge_level,
                                                     agent_type,
@@ -3368,15 +3406,16 @@ class BacDiveTransform(Transform):
                                         # for why no live term replaces it, and metpo#461 for the upstream
                                         # modelling that would.
                                         assay_predicate = BACDIVE_ASSAY_PREDICATE
+                                        assay_relation = relation_for_predicate(assay_predicate)
                                         knowledge_level, agent_type = self._add_edge_metadata(
-                                            assay_predicate, INTERACTS_WITH_RELATION, assay_id
+                                            assay_predicate, assay_relation, assay_id
                                         )
                                         edge_writer.writerow(
                                             [
                                                 organism_id,
                                                 assay_predicate,
                                                 assay_id,
-                                                INTERACTS_WITH_RELATION,
+                                                assay_relation,
                                                 self.knowledge_source,
                                                 knowledge_level,
                                                 agent_type,

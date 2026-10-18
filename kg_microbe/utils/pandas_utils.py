@@ -8,7 +8,11 @@ from typing import List
 import pandas as pd
 
 from kg_microbe.transform_utils.constants import (
+    AGENT_TYPE_COLUMN,
+    AUTOMATED_AGENT,
     ID_COLUMN,
+    KNOWLEDGE_LEVEL_COLUMN,
+    LOGICAL_ENTAILMENT,
     MEDIADIVE_MEDIUM_PREFIX,
     MEDIADIVE_SOLUTION_PREFIX,
     NAME_COLUMN,
@@ -72,6 +76,9 @@ def establish_transitive_relationship(
     intermediate_prefix: str,
     predicate: str,
     object_prefixes_list: List[str],
+    *,
+    multi_valued: bool = False,
+    mark_entailed: bool = False,
 ) -> pd.DataFrame:
     """
     Establish transitive relationship given the predicate is the same.
@@ -88,6 +95,8 @@ def establish_transitive_relationship(
     :param intermediate_prefix: Intermediate prefix that connects the subject to object (B in the example).
     :param predicate: The common predicate between all relations.
     :param object_prefixes_list: List of Object prefixes (C in the example)
+    :param multi_valued: If True, retain all subjects per intermediate object instead of last-wins dict.
+    :param mark_entailed: If True, stamp synthesized rows with logical_entailment / automated_agent.
     :return: Core dataframe with additional deduced rows.
     """
     df = drop_duplicates(file_path)
@@ -103,25 +112,42 @@ def establish_transitive_relationship(
 
     list_of_dfs_to_append = []
 
-    # for row in subject_intermediate_df.iterrows():
-    #     transitive_relations_df = intermediate_object_df.loc[
-    #         intermediate_object_df[SUBJECT_COLUMN] == row[1].object
-    #     ]
-    #     transitive_relations_df.loc[
-    #         transitive_relations_df[SUBJECT_COLUMN] == row[1].object, SUBJECT_COLUMN
-    #     ] = row[1].subject
-    #     list_of_dfs_to_append.append(transitive_relations_df)
-    # Create a dictionary to map objects to subjects
-    object_to_subject = dict(zip(subject_intermediate_df["object"], subject_intermediate_df["subject"], strict=False))
-
-    # Filter the DataFrame to include only rows where the SUBJECT_COLUMN matches any object in the mapping
-    filtered_df = intermediate_object_df[intermediate_object_df[SUBJECT_COLUMN].isin(object_to_subject.keys())]
-
-    # Map the SUBJECT_COLUMN in filtered_df to the corresponding subjects using the mapping
-    filtered_df.loc[:, SUBJECT_COLUMN] = filtered_df[SUBJECT_COLUMN].map(object_to_subject)
-
-    # Append the modified DataFrame to the list (assuming list_of_dfs_to_append is already defined)
-    list_of_dfs_to_append.append(filtered_df)
+    if multi_valued:
+        object_to_subjects: dict[str, list[str]] = {}
+        for intermediate_obj, subj in zip(
+            subject_intermediate_df[OBJECT_COLUMN], subject_intermediate_df[SUBJECT_COLUMN], strict=False
+        ):
+            subjects = object_to_subjects.setdefault(intermediate_obj, [])
+            if subj not in subjects:
+                subjects.append(subj)
+        filtered_df = intermediate_object_df[
+            intermediate_object_df[SUBJECT_COLUMN].isin(object_to_subjects.keys())
+        ].copy()
+        if not filtered_df.empty:
+            filtered_df[SUBJECT_COLUMN] = filtered_df[SUBJECT_COLUMN].map(object_to_subjects)
+            filtered_df = filtered_df.explode(SUBJECT_COLUMN, ignore_index=True)
+            if mark_entailed:
+                if KNOWLEDGE_LEVEL_COLUMN in filtered_df.columns:
+                    filtered_df[KNOWLEDGE_LEVEL_COLUMN] = LOGICAL_ENTAILMENT
+                if AGENT_TYPE_COLUMN in filtered_df.columns:
+                    filtered_df[AGENT_TYPE_COLUMN] = AUTOMATED_AGENT
+        list_of_dfs_to_append.append(filtered_df)
+    else:
+        # Legacy single-winner mapping preserved for callers audited against
+        # historical 1-to-1 transitive projection.
+        object_to_subject = dict(
+            zip(subject_intermediate_df["object"], subject_intermediate_df["subject"], strict=False)
+        )
+        filtered_df = intermediate_object_df[
+            intermediate_object_df[SUBJECT_COLUMN].isin(object_to_subject.keys())
+        ].copy()
+        filtered_df.loc[:, SUBJECT_COLUMN] = filtered_df[SUBJECT_COLUMN].map(object_to_subject)
+        if mark_entailed and not filtered_df.empty:
+            if KNOWLEDGE_LEVEL_COLUMN in filtered_df.columns:
+                filtered_df[KNOWLEDGE_LEVEL_COLUMN] = LOGICAL_ENTAILMENT
+            if AGENT_TYPE_COLUMN in filtered_df.columns:
+                filtered_df[AGENT_TYPE_COLUMN] = AUTOMATED_AGENT
+        list_of_dfs_to_append.append(filtered_df)
 
     df = pd.concat([df] + list_of_dfs_to_append).sort_values(by=[SUBJECT_COLUMN])
     df = df.dropna(subset=[SUBJECT_COLUMN])
@@ -160,7 +186,13 @@ def establish_transitive_relationship_multiple(
         predicate = predicate_list[search_number]
         object_prefixes_list = object_prefixes_lists[search_number]
         df = establish_transitive_relationship(
-            file_path, subject_prefix, intermediate_prefix, predicate, object_prefixes_list
+            file_path,
+            subject_prefix,
+            intermediate_prefix,
+            predicate,
+            object_prefixes_list,
+            multi_valued=True,
+            mark_entailed=True,
         )
     return df
 

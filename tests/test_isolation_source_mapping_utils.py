@@ -239,3 +239,17 @@ def test_bacdive_transform_imports_and_loads_mappings():
     # The module must export the loader functions (proves the import worked).
     assert hasattr(bacdive_module, "load_isolation_source_mappings")
     assert hasattr(bacdive_module, "normalize_isolation_source_label")
+
+
+def test_issue_790_curated_corrections(mappings):
+    """Issue #790: Muridae-Mouse/Rat -> NCBITaxon:10066, Reptilia/Decomposing-algae -> dropped."""
+    assert mappings.get(normalize_isolation_source_label("Muridae-Mouse/Rat")) == (
+        "NCBITaxon:10066",
+        "Muridae",
+        "NCBITaxon",
+        None,
+    )
+    assert mappings.get(normalize_isolation_source_label("Reptilia")) is None
+    assert mappings.get(normalize_isolation_source_label("Decomposing-algae")) is None
+
+

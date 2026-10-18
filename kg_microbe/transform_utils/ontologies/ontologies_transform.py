@@ -147,8 +147,12 @@ ONTOLOGIES_MAP = {
 #: file only -- `skos:closeMatch` as a relation value is legitimate and lives
 #: in a different column of a different file.
 METAMODEL_NODE_PREFIXES = frozenset(
-    {"dc", "dct", "dcterms", "terms", "doap", "foaf", "oio", "owl", "pav", "rdf", "rdfs", "skos"}
+    {"dc", "dct", "dcterms", "terms", "doap", "foaf", "oboinowl", "oio", "owl", "pav", "rdf", "rdfs", "skos"}
 )
+
+_DEFAULT_ONTOLOGIES_XREFS_DIR = ONTOLOGIES_XREFS_DIR
+_DEFAULT_MONDO_XREFS_FILEPATH = MONDO_XREFS_FILEPATH
+_DEFAULT_UNIPATHWAYS_XREFS_FILEPATH = UNIPATHWAYS_XREFS_FILEPATH
 
 METAMODEL_EDGE_PREDICATES = frozenset(
     {
@@ -1076,7 +1080,7 @@ class OntologiesTransform(Transform):
         if ID_COLUMN not in df.columns:
             return df, 0
         before = len(df)
-        prefixes = df[ID_COLUMN].astype(str).str.split(":", n=1).str[0]
+        prefixes = df[ID_COLUMN].astype(str).str.split(":", n=1).str[0].str.lower()
         annotation_ids = getattr(self, "_annotation_property_ids", set())
         contributor_ids = getattr(self, "_annotation_individual_ids", set())
         schema_property_ids = getattr(self, "_foodon_schema_property_ids", set())
@@ -1382,15 +1386,31 @@ class OntologiesTransform(Transform):
         # managed via the mappings/ directory and used by transforms through
         # ChemicalMappingLoader. See mappings/README.md for details.
         if name == "upa" or name == "mondo":
-            makedirs(ONTOLOGIES_XREFS_DIR, exist_ok=True)
             # Get two columns from the nodes file: 'id' and 'xref'
             # The xref column is | separated and contains different prefixes
             # We need to make a 1-to-1 mapping between the prefixes and the id
             if name == "upa":
-                xref_filepath = UNIPATHWAYS_XREFS_FILEPATH
+                xref_filepath = (
+                    UNIPATHWAYS_XREFS_FILEPATH
+                    if UNIPATHWAYS_XREFS_FILEPATH != _DEFAULT_UNIPATHWAYS_XREFS_FILEPATH
+                    else (
+                        ONTOLOGIES_XREFS_DIR / _DEFAULT_UNIPATHWAYS_XREFS_FILEPATH.name
+                        if ONTOLOGIES_XREFS_DIR != _DEFAULT_ONTOLOGIES_XREFS_DIR
+                        else self.output_dir / "xrefs" / _DEFAULT_UNIPATHWAYS_XREFS_FILEPATH.name
+                    )
+                )
                 unipathways_xref_dict = {}
             elif name == "mondo":
-                xref_filepath = MONDO_XREFS_FILEPATH
+                xref_filepath = (
+                    MONDO_XREFS_FILEPATH
+                    if MONDO_XREFS_FILEPATH != _DEFAULT_MONDO_XREFS_FILEPATH
+                    else (
+                        ONTOLOGIES_XREFS_DIR / _DEFAULT_MONDO_XREFS_FILEPATH.name
+                        if ONTOLOGIES_XREFS_DIR != _DEFAULT_ONTOLOGIES_XREFS_DIR
+                        else self.output_dir / "xrefs" / _DEFAULT_MONDO_XREFS_FILEPATH.name
+                    )
+                )
+            makedirs(xref_filepath.parent, exist_ok=True)
             with open(nodes_file, "r") as nf, open(xref_filepath, "w") as xref_file:
                 for line in nf:
                     if line.startswith("id"):

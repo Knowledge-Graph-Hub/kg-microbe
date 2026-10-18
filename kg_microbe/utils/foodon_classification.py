@@ -53,6 +53,22 @@ def _curated_organisms() -> set:
     return {identifier for identifier, row in foodon_dispositions().items() if row["disposition"] == "organism_class"}
 
 
+# Meat-cut child -> whole-organism parent edges quarantined by #1355 and #1356.
+# Endpoint declarations are still validated, but these de-parented edges must not
+# propagate whole-organism (biolink:OrganismTaxon) ancestry onto meat products.
+_QUARANTINED_MEAT_PARENT_EDGES = frozenset(
+    {
+        ("FOODON:03309966", "FOODON:00003083"),
+        ("FOODON:03306418", "FOODON:00003083"),
+        ("FOODON:03308537", "FOODON:00002686"),
+        ("FOODON:03308433", "FOODON:03413856"),
+        ("FOODON:03308553", "FOODON:03411479"),
+        ("FOODON:03309141", "FOODON:03411843"),
+        ("FOODON:03309911", "FOODON:03413810"),
+    }
+)
+
+
 def _asserted_hierarchy(graphs: list) -> tuple:
     """Require live class declarations for every endpoint of asserted subclass edges."""
     from kg_microbe.utils.graph_canonicalization import compact_identifier
@@ -81,6 +97,8 @@ def _asserted_hierarchy(graphs: list) -> tuple:
                         raise ValueError(
                             f"Invalid FOODON subclass evidence: {identifier} lacks a live CLASS declaration"
                         )
+                if (child, parent) in _QUARANTINED_MEAT_PARENT_EDGES:
+                    continue
                 children[parent].add(child)
     return children, live_classes
 

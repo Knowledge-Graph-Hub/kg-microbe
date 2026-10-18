@@ -37,6 +37,8 @@ def compact_identifier(identifier: str) -> str:
     # KGX uses uppercase ORCID, while the checked-in registry uses lowercase.
     if identifier.startswith("ORCID:"):
         return "orcid:" + identifier[len("ORCID:") :]
+    if identifier.startswith("WD_Entity:") and re.fullmatch(r"Q[0-9]+", identifier[len("WD_Entity:") :]):
+        return "WIKIDATA:" + identifier[len("WD_Entity:") :]
     if not identifier.startswith(("http://", "https://")):
         return identifier
     # The native namespace contains both reactions and vocabulary/compound
@@ -84,6 +86,10 @@ def canonical_node_category(
         # FOODON's previous default material category must not survive an
         # authoritative process, quality, information, or organism decision.
         categories.discard(FOOD_CATEGORY)
+    if identifier.startswith("FOODON:") and canonical == FOOD_CATEGORY:
+        # De-parented FOODON meat cuts (#1355/#1356) must not retain a stale
+        # OrganismTaxon category from an imported or pre-quarantine row.
+        categories.discard("biolink:OrganismTaxon")
     if canonical == "biolink:OrganismTaxon":
         # An imported Food or anatomical fallback cannot override an explicit
         # whole-organism class. Other legitimate multi-typing remains intact.

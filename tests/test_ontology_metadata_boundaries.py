@@ -104,3 +104,92 @@ def test_annotation_individual_state_resets_between_sources(tmp_path):
     empty.write_text('{"graphs": []}')
     transform._drop_deprecated_terms(empty)
     assert transform._annotation_individual_ids == set()
+
+
+def test_oio_and_oboinowl_metamodel_nodes_excluded_and_wd_entity_compacted(tmp_path):
+    """OIO:* and oboInOwl:* metamodel nodes are dropped and WD_Entity: compacts to WIKIDATA: (#1074)."""
+    assert compact_identifier("WD_Entity:Q2") == "WIKIDATA:Q2"
+    assert compact_identifier("WD_Entity:not_a_qid") == "WD_Entity:not_a_qid"
+
+    transform = _transform(tmp_path)
+    nodes = tmp_path / "envo_nodes.tsv"
+    edges = tmp_path / "envo_edges.tsv"
+    pd.DataFrame(
+        [
+            {"id": "OIO:hasExactSynonym", "category": "biolink:OntologyClass", "name": "has_exact_synonym"},
+            {"id": "oboInOwl:hasDbXref", "category": "biolink:OntologyClass", "name": "database_cross_reference"},
+            {"id": "WD_Entity:Q2", "category": "biolink:NamedThing", "name": "Earth"},
+            {"id": "ENVO:00000428", "category": "biolink:EnvironmentalFeature", "name": "biome"},
+        ]
+    ).to_csv(nodes, sep="\t", index=False)
+    pd.DataFrame(columns=transform.edge_header).to_csv(edges, sep="\t", index=False)
+    transform._convert_urls_to_curies(nodes, edges)
+    transform._normalize_schema(nodes, edges)
+
+    kept = set(pd.read_csv(nodes, sep="\t")["id"])
+    assert "OIO:hasExactSynonym" not in kept
+    assert "oboInOwl:hasDbXref" not in kept
+    assert {"WIKIDATA:Q2", "ENVO:00000428"} == kept
+    report = pd.read_csv(tmp_path / "envo_metadata_exclusions.tsv", sep="\t")
+    assert set(report["id"]) == {"OIO:hasExactSynonym", "oboInOwl:hasDbXref"}
+    assert set(report["reason"]) == {"metamodel_vocabulary"}
+
+
+def test_establish_transitive_relationship_multiple_retains_multi_valued_and_marks_entailed(tmp_path):
+    """Multi-hop transitive deduction keeps all subjects (#1360) and marks logical_entailment (#1362)."""
+    from kg_microbe.utils.pandas_utils import establish_transitive_relationship_multiple
+
+    edges = tmp_path / "upa_edges.tsv"
+    pd.DataFrame(
+        [
+            {
+                "subject": "RHEA:10001",
+                "predicate": "biolink:part_of",
+                "object": "UPA:UCR00001",
+                "relation": "BFO:0000050",
+                "primary_knowledge_source": "infores:upa",
+                "knowledge_level": "knowledge_assertion",
+                "agent_type": "manual_agent",
+            },
+            {
+                "subject": "RHEA:10002",
+                "predicate": "biolink:part_of",
+                "object": "UPA:UCR00001",
+                "relation": "BFO:0000050",
+                "primary_knowledge_source": "infores:upa",
+                "knowledge_level": "knowledge_assertion",
+                "agent_type": "manual_agent",
+            },
+            {
+                "subject": "UPA:UCR00001",
+                "predicate": "biolink:part_of",
+                "object": "UPA:UER00001",
+                "relation": "BFO:0000050",
+                "primary_knowledge_source": "infores:upa",
+                "knowledge_level": "knowledge_assertion",
+                "agent_type": "manual_agent",
+            },
+            {
+                "subject": "UPA:UER00001",
+                "predicate": "biolink:part_of",
+                "object": "UPA:UPA00001",
+                "relation": "BFO:0000050",
+                "primary_knowledge_source": "infores:upa",
+                "knowledge_level": "knowledge_assertion",
+                "agent_type": "manual_agent",
+            },
+        ]
+    ).to_csv(edges, sep="\t", index=False)
+
+    df = establish_transitive_relationship_multiple(
+        edges,
+        "RHEA:",
+        ["UPA:UCR", "UPA:UER"],
+        ["biolink:part_of", "biolink:part_of"],
+        [["UPA:UER"], ["UPA:UPA"]],
+    )
+    shortcut_rows = df[(df["subject"].str.startswith("RHEA:")) & (df["object"] == "UPA:UPA00001")]
+    assert set(shortcut_rows["subject"]) == {"RHEA:10001", "RHEA:10002"}
+    assert set(shortcut_rows["knowledge_level"]) == {"logical_entailment"}
+    assert set(shortcut_rows["agent_type"]) == {"automated_agent"}
+

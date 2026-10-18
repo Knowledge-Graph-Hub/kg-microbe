@@ -50,8 +50,19 @@ These are query-graph exclusions, not a blanket declaration that reflexive OWL a
 
 The policy is a declared ontology transform input and participates in its freshness fingerprint. Regression coverage is in `tests/test_ontology_self_loops.py`. Raw ontologies and existing transformed/merged artifacts are not rewritten by this code change; rebuild before reporting the released graph corrected.
 
+## Ontology metadata boundaries and CURIE alias canonicalization (#1074)
+
+Ontology source files declare annotation properties, ontology-header contributor individuals, and metamodel vocabulary terms (`OIO:*`, `oboInOwl:*`, `rdfs:*`, `owl:*`, `dc:*`, `dcterms:*`, `skos:*`, `foaf:*`, `pav:*`, `doap:*`) that annotate classes rather than denote domain entities. `_drop_metamodel_nodes` excludes:
+
+- Any node whose prefix (matched case-insensitively) belongs to `METAMODEL_NODE_PREFIXES` (`oio`, `oboinowl`, `dc`, `dct`, `dcterms`, `terms`, `doap`, `foaf`, `owl`, `pav`, `rdf`, `rdfs`, `skos`), preventing `OIO:*` and `oboInOwl:*` vocabulary terms from shipping as `biolink:OntologyClass` nodes.
+- Any node declared in the native obograph JSON as `type: "PROPERTY"` with `meta.basicPropertyValues` / `propertyType == "ANNOTATION"` (`declared_annotation_property`).
+- Any `INDIVIDUAL` node that appears solely as the target of `dc:creator` / `dc:contributor` / `dcterms:creator` / `dcterms:contributor` annotations and never participates in semantic edges or logical axioms (`annotation_only_contributor`).
+- Reviewed FOODON schema property IRIs (`reviewed_foodon_schema_property`).
+
+Every excluded node is recorded in `<ontology>_metadata_exclusions.tsv` with its normalized ID, exclusion reason, authority path/SHA-256, and original node record JSON. In addition, `compact_identifier` normalizes both human-readable Wikidata entity URLs (`https://www.wikidata.org/wiki/Q<digits>`) and KGX's `WD_Entity:Q<digits>` prefix alias to canonical `WIKIDATA:Q<digits>`, and normalizes uppercase `ORCID:` to `orcid:`.
+
 ## Verification and freshness
 
-Regression coverage is in `tests/test_semantic_model_decisions.py`, `tests/test_ontology_resolution.py`, `tests/test_assay_generation.py`, and `tests/test_kg_model_review_domain_range.py`. Negative controls cover non-class endpoints, relation mismatches, self-loops, unexpected assay ranges, chemical role-label false positives, uncertain FOODON targets, unrelated attributes/proteins, and unknown MICRO predicates.
+Regression coverage is in `tests/test_semantic_model_decisions.py`, `tests/test_ontology_resolution.py`, `tests/test_assay_generation.py`, `tests/test_ontology_metadata_boundaries.py`, and `tests/test_kg_model_review_domain_range.py`. Negative controls cover non-class endpoints, relation mismatches, self-loops, unexpected assay ranges, chemical role-label false positives, uncertain FOODON targets, unrelated attributes/proteins, and unknown MICRO predicates.
 
 The FOODON disposition file is declared by the ontology transform and content-hashed as shared curation input for all transform freshness checks. In-process ontology/disposition lookup caches use path/size/mtime invalidation only, not cryptographic release fingerprints. Existing transformed and archived graph data have not been rewritten by this change.

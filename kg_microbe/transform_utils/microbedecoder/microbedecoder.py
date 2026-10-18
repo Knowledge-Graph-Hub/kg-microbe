@@ -16,11 +16,12 @@ sources KG-Microbe does not otherwise cover:
   citations
 - **FAPROTAX** — taxon-based functional predictions joined to source records
 
-Also emits a `biolink:close_match` crosswalk from every `lpsn:<LPSN_ID>`
-row to `NCBITaxon:`, `ncbi.assembly:` (or `GTDB:` taxonomy strings), and
-`IMG:`. Verified unresolved GOLD referents instead retain the original field
-observation as audited `biolink:related_to`, never identity (#1316).
-BacDive crosswalks use `kgmicrobe.strain:bacdive_*` subsumption.
+Also emits crosswalks from every `lpsn:<LPSN_ID>` row: `biolink:close_match` to
+`NCBITaxon:`, `GTDB:` taxonomy strings, and `gold:`; `<genome> biolink:in_taxon
+lpsn:<LPSN_ID>` (`RO:0002162`) for `ncbi.assembly:` and `IMG:` genome tokens
+(#1433); and `kgmicrobe.strain:bacdive_* biolink:subclass_of lpsn:<LPSN_ID>` for
+BacDive strains. Verified unresolved GOLD referents instead retain the original
+field observation as audited `biolink:related_to`, never identity (#1316).
 An LPSN name record is not a strain identity, and its reported traits must not
 be propagated as universal observations about every member of the taxon.
 
@@ -81,6 +82,9 @@ from kg_microbe.transform_utils.constants import (
     HAS_ATTRIBUTE_TYPE_COLUMN,
     HAS_OUTPUT_RELATION,
     ID_COLUMN,
+    IMG_PREFIX,
+    IN_TAXON_PREDICATE,
+    IN_TAXON_RELATION,
     INGREDIENT_PREFIX,
     KNOWLEDGE_ASSERTION,
     KNOWLEDGE_LEVEL_COLUMN,
@@ -979,6 +983,19 @@ class MicrobeDecoderTransform(Transform):
                             self._stats["bacdive_join_quarantined"] += 1
                             continue
                     edge_writer.writerow(claim)
+                elif object_curie.startswith(NCBI_ASSEMBLY_PREFIX) or prefix == IMG_PREFIX:
+                    # Genome assembly and IMG genome tokens are individual genomes
+                    # placed in a taxon, not taxon identity equivalences (#1433).
+                    edge_writer.writerow(
+                        self._make_edge_row(
+                            object_curie,
+                            IN_TAXON_PREDICATE,
+                            subject,
+                            IN_TAXON_RELATION,
+                            self.knowledge_source,
+                            original_object=original_object if original_object != object_curie else None,
+                        )
+                    )
                 else:
                     edge_writer.writerow(
                         self._make_edge_row(

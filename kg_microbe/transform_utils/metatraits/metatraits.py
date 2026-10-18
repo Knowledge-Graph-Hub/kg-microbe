@@ -74,9 +74,20 @@ METATRAITS_INPUT_FILES = [
 ]
 
 
-def _metpo_json_path() -> Path:
+def _metpo_json_path(input_dir: Optional[Path] = None) -> Path:
     """Return the configured METPO JSON path without mutating repository data."""
-    return Path(os.environ.get("KG_MICROBE_METPO_JSON", RAW_DATA_DIR / "metpo.json"))
+    if input_dir is not None and Path(input_dir).resolve() != RAW_DATA_DIR.resolve():
+        candidate = Path(input_dir) / "metpo.json"
+        if candidate.exists():
+            return candidate
+    env_path = os.environ.get("KG_MICROBE_METPO_JSON")
+    if env_path:
+        return Path(env_path)
+    if input_dir is not None:
+        candidate = Path(input_dir) / "metpo.json"
+        if candidate.exists():
+            return candidate
+    return RAW_DATA_DIR / "metpo.json"
 
 
 def _ncbitaxon_db_paths() -> Tuple[Path, Path]:
@@ -388,7 +399,7 @@ class MetaTraitsTransform(Transform):
 
         :return: Dict mapping parameter type to list of binned class dicts
         """
-        metpo_json_path = _metpo_json_path()
+        metpo_json_path = _metpo_json_path(self.input_base_dir)
         if not metpo_json_path.exists():
             print(f"  Warning: METPO JSON not found at {metpo_json_path}, using empty ranges")
             return {}
@@ -467,7 +478,7 @@ class MetaTraitsTransform(Transform):
         - synonym → class data (for synonym matching)
         - pattern keyword → predicate ID (for trait pattern resolution)
         """
-        metpo_json_path = _metpo_json_path()
+        metpo_json_path = _metpo_json_path(self.input_base_dir)
         if not metpo_json_path.exists():
             print(f"  Warning: METPO JSON not found at {metpo_json_path}")
             return
@@ -542,9 +553,25 @@ class MetaTraitsTransform(Transform):
             print(f"  Error loading METPO lookups: {e}")
 
     def _load_ncbitaxon_labels(self) -> None:
-        """Load NCBITaxon labels from ontologies output, data/raw, or OAK fallback."""
-        # Prefer ontologies transform output, then data/raw/ncbitaxon_nodes.tsv (manual placement)
-        for path in [NCBITAXON_NODES_FILE, RAW_DATA_DIR / "ncbitaxon_nodes.tsv"]:
+        """Load NCBITaxon labels from input_dir, ontologies output, data/raw, or OAK fallback."""
+        candidate_paths = []
+        ordered_candidates = (
+            [
+                self.input_base_dir / "ncbitaxon_nodes.tsv",
+                NCBITAXON_NODES_FILE,
+                RAW_DATA_DIR / "ncbitaxon_nodes.tsv",
+            ]
+            if self.input_base_dir.resolve() != RAW_DATA_DIR.resolve()
+            else [
+                NCBITAXON_NODES_FILE,
+                self.input_base_dir / "ncbitaxon_nodes.tsv",
+                RAW_DATA_DIR / "ncbitaxon_nodes.tsv",
+            ]
+        )
+        for candidate in ordered_candidates:
+            if candidate not in candidate_paths:
+                candidate_paths.append(candidate)
+        for path in candidate_paths:
             if path.exists():
                 try:
                     with open(path) as f:
@@ -709,7 +736,8 @@ class MetaTraitsTransform(Transform):
 
         :return: Dictionary mapping ncbi_name (lowercase) -> {gtdb_genus, gtdb_species, mapping_type, confidence}
         """
-        mappings_file = RAW_DATA_DIR / "NCBI2GTDB.tsv.gz"
+        input_candidate = self.input_base_dir / "NCBI2GTDB.tsv.gz"
+        mappings_file = input_candidate if input_candidate.exists() else RAW_DATA_DIR / "NCBI2GTDB.tsv.gz"
         gtdb_mappings = {}
 
         if not mappings_file.exists():

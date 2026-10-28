@@ -1,0 +1,3 @@
+subject	predicate	object	relation	primary_knowledge_source	knowledge_level	agent_type	negated	source_assertion_id
+RHEA:10000	rheav:substrates	CHEBI:15377	rheav:substrates	infores:rhea	knowledge_assertion	manual_agent	true	example:1
+RHEA:10000	rheav:substrates	CHEBI:15377	rheav:substrates	infores:rhea	knowledge_assertion	manual_agent	false	example:2

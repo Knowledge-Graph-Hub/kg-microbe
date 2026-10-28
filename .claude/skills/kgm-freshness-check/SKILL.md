@@ -101,7 +101,9 @@ SUMMARY
 - **When debugging a CI diff** — the CI often builds from a specific
   commit, so a `FRESH` verdict locally + a different result in CI tells
   you the code hasn't diverged.
-- **Before running `poetry run tox`** in a release-adjacent state.
+- **Before the final candidate gate** in a release-adjacent state; follow the
+  [testing policy](../../../docs/TESTING.md). Its single full test run does not
+  replace source freshness or graph-release checks.
 
 ## Companion skills
 

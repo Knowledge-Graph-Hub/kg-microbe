@@ -136,6 +136,9 @@ def test_go_authority_corrects_named_nonanonymous_stub_before_merge(tmp_path, mo
 def test_dependency_declared_cross_source_target_is_not_an_anonymous_stub(tmp_path):
     """Per-transform incompleteness cannot justify dropping a valid named ontology target."""
     transform = _transform(tmp_path, producer=_OntologiesDependent)
+    from tests.test_external_node_closure import _taxdump
+
+    _taxdump(transform.input_base_dir)
     _pair(transform)
     transform.output_edge_file.write_text(
         "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\n"

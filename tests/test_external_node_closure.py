@@ -29,11 +29,12 @@ def _read(path):
         return list(csv.DictReader(handle, delimiter="\t"))
 
 
-def _taxdump(raw_dir, merged="10\t|\t11\t|\n11\t|\t12\t|\n", nodes=None):
+def _taxdump(raw_dir, merged="10\t|\t11\t|\n11\t|\t12\t|\n", nodes=None, deleted=""):
     """Supply a minimal exact retirement chain and both permitted/excluded lineages."""
     with tarfile.open(raw_dir / "taxdump.tar.gz", "w:gz") as archive:
         members = {
             "merged.dmp": merged,
+            "delnodes.dmp": deleted,
             "nodes.dmp": nodes
             if nodes is not None
             else (

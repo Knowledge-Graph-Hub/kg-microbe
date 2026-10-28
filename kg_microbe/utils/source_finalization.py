@@ -104,6 +104,10 @@ def verify_consumed_inputs(transform, *, native_output_dir=None):
     if missing:
         raise SourceFinalizationRequired(f"Required consumed inputs were not read: {', '.join(sorted(missing))}")
     for name, snapshot in snapshots.items():
+        if name == "ncbi_taxonomy_authority":
+            selected = Path(transform.input_base_dir) / "taxdump.tar.gz"
+            if selected.resolve() != Path(snapshot["path"]):
+                raise SourceFinalizationRequired("Selected NCBI authority locator changed")
         _verify_input_snapshot(name, snapshot)
     restriction_guard = getattr(transform, "_go_imported_restriction_guard", None)
     if restriction_guard is not None:
@@ -144,8 +148,8 @@ def verify_consumed_inputs(transform, *, native_output_dir=None):
 
 
 @contextmanager
-def snapshot_consumed_input(transform, name, path):
-    """Yield immutable UTF-8 text with literal newlines; stream-copy/hash before parsing."""
+def snapshot_consumed_input(transform, name, path, *, binary=False):
+    """Yield immutable text or binary bytes; stream-copy/hash before parsing."""
     path = Path(path).resolve()
     if not isinstance(name, str) or not name:
         raise ValueError("A consumed input requires a nonempty logical name")
@@ -166,7 +170,8 @@ def snapshot_consumed_input(transform, name, path):
                 raise SourceFinalizationRequired(f"Consumed input {name!r} changed within one producer run: {path}")
             _verify_input_snapshot(name, expected)
             transform._consumed_input_snapshots[name] = expected
-            with open(snapshot_file.name, encoding="utf-8", newline="") as reader:
+            options = {} if binary else {"encoding": "utf-8", "newline": ""}
+            with open(snapshot_file.name, "rb" if binary else "r", **options) as reader:
                 yield reader
             _verify_input_snapshot(name, expected)
     except BaseException as exc:
@@ -202,6 +207,18 @@ def _registered_producer(report):
     return producer
 
 
+def _bundle_has_ncbi(node_paths, edge_paths):
+    """Derive authority demand from actual source endpoints, including named declarations."""
+    return any(
+        row[ID_COLUMN].startswith("NCBITaxon:") for path in node_paths for row in graph_rows(path)
+    ) or any(
+        row[column].startswith("NCBITaxon:")
+        for path in edge_paths
+        for row in graph_rows(path)
+        for column in (SUBJECT_COLUMN, OBJECT_COLUMN)
+    )
+
+
 def _verify_recorded_consumed_inputs(report, *, report_path=None, admission=None):
     """Enforce current registered producer requirements and their persisted input identities."""
     producer = _registered_producer(report)
@@ -216,6 +233,26 @@ def _verify_recorded_consumed_inputs(report, *, report_path=None, admission=None
 
         admission = SourceAdmission()
     required = set(getattr(producer, "REQUIRED_CONSUMED_INPUTS", ()))
+    if report_path is not None:
+        directory = Path(report_path).parent
+        audit_name = Path(report_path).name.removesuffix(FINALIZATION_FILE) + "source_reference_resolution.tsv"
+        if audit_name not in report.get("audit_members", {}):
+            raise SourceFinalizationRequired("Missing mandatory external-reference audit identity")
+        node_paths = [directory / name for name in report.get("members", {}) if name.endswith("nodes.tsv")]
+        edge_paths = [directory / name for name in report.get("members", {}) if name.endswith("edges.tsv")]
+        try:
+            ncbi_present = _bundle_has_ncbi(node_paths, edge_paths)
+            if not ncbi_present:
+                # Excluded anonymous references may leave no NCBI output endpoint;
+                # their retained original dispositions still demand the authority.
+                ncbi_present = any(
+                    row.get("authority") == "taxdump.tar.gz"
+                    for row in graph_rows(directory / audit_name, quoting=csv.QUOTE_MINIMAL)
+                )
+        except OSError as exc:
+            raise SourceFinalizationRequired("Missing or unreadable NCBI authority-demand evidence") from exc
+        if ncbi_present:
+            required.add("ncbi_taxonomy_authority")
     snapshots = report.get("consumed_inputs", {})
     if not isinstance(snapshots, dict) or not required <= snapshots.keys():
         raise SourceFinalizationRequired("Missing required consumed-input snapshots; rerun the producer")
@@ -230,6 +267,15 @@ def _verify_recorded_consumed_inputs(report, *, report_path=None, admission=None
             or inputs.get(snapshot["path"]) != snapshot["sha256"]
         ):
             raise SourceFinalizationRequired(f"Invalid consumed-input snapshot {name!r}; rerun the producer")
+        if name == "ncbi_taxonomy_authority":
+            raw_directory = report.get("raw_input_directory")
+            if not isinstance(raw_directory, str):
+                raise SourceFinalizationRequired("Missing selected NCBI authority directory")
+            selected = Path(raw_directory) / "taxdump.tar.gz"
+            if selected.resolve() != Path(snapshot["path"]):
+                raise SourceFinalizationRequired("Selected NCBI authority locator changed")
+            if admission is not None:
+                admission.bind_path(selected)
         if admission is None:
             _verify_input_snapshot(name, snapshot)
         elif admission.capture(snapshot["path"])["sha256"] != snapshot["sha256"]:
@@ -840,19 +886,33 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
 
         external_report = staging / f"{file_prefix}source_reference_resolution.tsv"
         known_declarations = _dependency_declarations(transform, used_inputs)
-        summaries["external"] = resolve_external_reference_bundle(
-            staged_nodes,
-            staged_edges,
-            raw_dir,
-            external_report,
-            discover_references=True,
-            include_go=False,
-            strict=True,
-            quoting=csv.QUOTE_NONE,
-            known_declarations=known_declarations,
-            consumed_authorities=used_inputs,
-            gold_declarations=gold_guard,
-        )
+        ncbi_present = _bundle_has_ncbi(staged_nodes, staged_edges)
+        with ExitStack() as authority_stack:
+            taxdump_path = None
+            if ncbi_present:
+                # Parse the same immutable bytes whose identity the finalizer
+                # records, never a changed authority followed by a late digest.
+                stream = authority_stack.enter_context(
+                    snapshot_consumed_input(
+                        transform, "ncbi_taxonomy_authority", raw_dir / "taxdump.tar.gz", binary=True
+                    )
+                )
+                taxdump_path = Path(stream.name)
+            summaries["external"] = resolve_external_reference_bundle(
+                staged_nodes,
+                staged_edges,
+                raw_dir,
+                external_report,
+                discover_references=True,
+                include_go=False,
+                strict=True,
+                quoting=csv.QUOTE_NONE,
+                known_declarations=known_declarations,
+                consumed_authorities=used_inputs,
+                gold_declarations=gold_guard,
+                normalize_declared_ncbi=ncbi_present,
+                taxdump_path=taxdump_path,
+            )
         for row in graph_rows(external_report, quoting=csv.QUOTE_MINIMAL):
             if row["authority"]:
                 used_inputs.add(raw_dir / row["authority"])

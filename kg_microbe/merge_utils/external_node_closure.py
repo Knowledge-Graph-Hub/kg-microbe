@@ -1,7 +1,8 @@
 """
 Evidence-backed closure for referenced external nodes missing from source declarations.
 
-Only anonymous endpoints are considered. Retired identifiers use explicit
+Anonymous endpoints receive declarations; source finalization also forwards
+explicitly retired NCBITaxon IDs even when a source declares them. Retired identifiers use explicit
 authority replacements; unsupported obsolete assertions follow the ontology
 transform's exclusion policy and are retained verbatim in a disposition TSV.
 No name matching, accession-prefix substitution, or taxonomy inference occurs.
@@ -32,7 +33,7 @@ from kg_microbe.transform_utils.constants import (
     SUBJECT_COLUMN,
 )
 from kg_microbe.utils.atomic_io import atomic_write
-from kg_microbe.utils.external_identifiers import load_taxid_merges, resolve_replacement
+from kg_microbe.utils.external_identifiers import load_taxid_merges, load_taxid_retirements, resolve_replacement
 from kg_microbe.utils.ontology_resolution import chebi_category
 from kg_microbe.utils.provenance import knowledge_source_tokens, serialize_knowledge_sources
 from kg_microbe.utils.sqlite_read import read_only_sqlite
@@ -84,23 +85,35 @@ def _digest(path):
 def _taxdump_records(path, wanted):
     """Read exact scientific labels and prokaryote membership from NCBI's parent tree."""
     parents = array("I", [0])
-    records = {}
+    records, conflicting_parents = {}, set()
     with tarfile.open(path) as archive:
         for raw in archive.extractfile("nodes.dmp"):
             fields = [part.strip() for part in raw.decode("utf-8").split("|")]
             taxid, parent = int(fields[0]), int(fields[1])
+            if taxid <= 0 or parent <= 0:
+                raise ValueError(f"{path}: incomplete NCBI lineage at {taxid}: invalid parent {parent}")
             if taxid >= len(parents):
                 parents.extend(array("I", [0]) * (taxid + 1 - len(parents)))
-            parents[taxid] = parent
+            if parents[taxid] and parents[taxid] != parent:
+                conflicting_parents.add(taxid)
+            else:
+                parents[taxid] = parent
             if fields[0] in wanted:
-                records[fields[0]] = {"rank": fields[2]}
+                record = records.setdefault(fields[0], {"rank": fields[2]})
+                if record["rank"] != fields[2]:
+                    raise ValueError(f"{path}: conflicting NCBI rank declarations for {taxid}")
         for raw in archive.extractfile("names.dmp"):
             fields = [part.strip() for part in raw.decode("utf-8").split("|")]
             if fields[0] in records and fields[3] == "scientific name":
-                records[fields[0]]["name"] = fields[1]
+                record = records[fields[0]]
+                if "name" in record and record["name"] != fields[1]:
+                    raise ValueError(f"{path}: conflicting NCBI scientific names for {fields[0]}")
+                record["name"] = fields[1]
     for taxid, record in records.items():
         current, seen = int(taxid), set()
         while True:
+            if current in conflicting_parents:
+                raise ValueError(f"{path}: conflicting NCBI parent declarations at {current}")
             if current <= 0 or current >= len(parents) or not parents[current]:
                 raise ValueError(f"{path}: incomplete NCBI lineage at {taxid}: missing node {current}")
             if current in (1, 2, 2157):
@@ -292,6 +305,8 @@ def resolve_external_reference_bundle(
     known_declarations=frozenset(),
     consumed_authorities=None,
     gold_declarations=None,
+    normalize_declared_ncbi=False,
+    taxdump_path=None,
 ):
     """
     Resolve one staged source bundle, preserving file membership and every original assertion.
@@ -308,27 +323,42 @@ def resolve_external_reference_bundle(
     if not node_paths or not edge_paths:
         raise ValueError("External reference finalization requires node and edge files")
     supported = _SUPPORTED if include_go else tuple(prefix for prefix in _SUPPORTED if prefix != "GO:")
-    original_nodes, original_node_rows, declared = {}, {}, set()
+    taxdump = Path(taxdump_path) if taxdump_path is not None else raw_dir / "taxdump.tar.gz"
+    replacements, deleted = load_taxid_retirements(taxdump) if normalize_declared_ncbi else ({}, set())
+    retired_ids = {f"NCBITaxon:{taxid}" for taxid in replacements.keys() | deleted}
+    original_nodes, original_node_rows, declared, anonymous = {}, {}, set(), set()
+    declared_retirements = set()
     for row in _rows(node_paths, quoting=quoting):
         identifier = row[ID_COLUMN]
         declared.add(identifier)
-        if (
+        is_anonymous = (
             identifier.startswith(supported)
             and identifier not in known_declarations
             and not row.get(NAME_COLUMN)
             and row.get(CATEGORY_COLUMN) in ("", "biolink:NamedThing")
+        )
+        if identifier in retired_ids and (
+            row.get(NAME_COLUMN) or row.get(CATEGORY_COLUMN) not in ("", "biolink:NamedThing")
         ):
+            declared_retirements.add(identifier)
+        if is_anonymous:
+            anonymous.add(identifier)
+        if is_anonymous or identifier in retired_ids:
             original_nodes.setdefault(identifier, row)
             original_node_rows.setdefault(identifier, []).append(row)
+    anonymous.difference_update(declared_retirements)
     if discover_references:
         for row in _rows(edge_paths, quoting=quoting):
             for column in (SUBJECT_COLUMN, OBJECT_COLUMN):
                 identifier = row[column]
-                if (
+                is_anonymous = (
                     identifier.startswith(supported)
                     and identifier not in declared
                     and identifier not in known_declarations
-                ):
+                )
+                if is_anonymous:
+                    anonymous.add(identifier)
+                if is_anonymous or identifier in retired_ids:
                     original_nodes.setdefault(identifier, {ID_COLUMN: identifier})
     targets = set(original_nodes)
     if not targets:
@@ -337,29 +367,44 @@ def resolve_external_reference_bundle(
         return {}
     decisions, authorities = {}, {}
     ncbi = {curie for curie in targets if curie.startswith("NCBITaxon:")}
-    taxdump = raw_dir / "taxdump.tar.gz"
     if strict and ncbi and not taxdump.is_file():
         raise FileNotFoundError(f"Required NCBI authority is missing: {taxdump}")
     if ncbi and taxdump.is_file():
-        authorities[taxdump.name] = _digest(taxdump)
-        merges = load_taxid_merges(raw_dir)
+        authorities["taxdump.tar.gz"] = _digest(taxdump)
+        merges = replacements if normalize_declared_ncbi else load_taxid_merges(raw_dir)
         requested = {resolve_replacement(curie.removeprefix("NCBITaxon:"), merges) for curie in ncbi}
+        # A live original cannot also be valid retirement/deletion evidence.
+        requested.update(curie.removeprefix("NCBITaxon:") for curie in ncbi & retired_ids)
         records = _taxdump_records(taxdump, requested)
         for original in ncbi:
-            taxid = resolve_replacement(original.removeprefix("NCBITaxon:"), merges)
+            old = original.removeprefix("NCBITaxon:")
+            if original in retired_ids and old in records:
+                raise ValueError(f"{taxdump}: retired/deleted taxid {old} is also a live declaration")
+            if old in deleted:
+                decisions[original] = {
+                    "canonical_id": original,
+                    "disposition": "unresolved_deleted_taxid",
+                    "authority": "taxdump.tar.gz",
+                }
+                continue
+            taxid = resolve_replacement(old, merges)
             record = records.get(taxid, {})
             if not record.get("name"):
+                if original in retired_ids:
+                    raise ValueError(f"{taxdump}: replacement for {old} has no live named target {taxid}")
                 continue
             canonical = f"NCBITaxon:{taxid}"
             disposition = "retired_id_replaced" if canonical != original else "authority_declaration"
-            if not record["prokaryote"]:
+            # Existing anonymous closure follows the ontology trim. A named
+            # source/dependency declaration is not permission to trim its taxon.
+            if not record["prokaryote"] and original in anonymous:
                 canonical, disposition = "", "excluded_outside_prokaryote_trim"
             decisions[original] = {
                 "canonical_id": canonical,
                 "name": record["name"],
                 "category": NCBI_CATEGORY,
                 "disposition": disposition,
-                "authority": taxdump.name,
+                "authority": "taxdump.tar.gz",
             }
     for prefix in ("GO", "CHEBI"):
         selected = {curie for curie in targets if curie.startswith(f"{prefix}:")}

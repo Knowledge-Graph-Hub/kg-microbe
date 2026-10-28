@@ -82,6 +82,8 @@ def produce(
     missing_edges=False,
     forbid_ancestry_selection=False,
     retired_fixture=False,
+    declare_retired=False,
+    deleted_fixture=False,
     extra_edges=(),
 ):
     """Run the real producer/readers/writers, replacing only unrelated label/assay fixture context."""
@@ -109,8 +111,16 @@ def produce(
             # Suppress only the producer's unrelated local stub insertion, using
             # its existing preview-label route. Actual source finalization must
             # discover and prove this undeclared reference from real native tar.
-            transform.ncbitaxon_labels = {"NCBITaxon:10": "fixture historical preview"}
-            _taxdump(Path(transform.input_base_dir))
+            if not declare_retired:
+                transform.ncbitaxon_labels = {"NCBITaxon:10": "fixture historical preview"}
+            if deleted_fixture:
+                _taxdump(Path(transform.input_base_dir), merged="", deleted="10 |\n")
+            else:
+                _taxdump(Path(transform.input_base_dir))
+        else:
+            # Finalization checks declared taxids too; this fixture has no
+            # retirement/deletion claims unless the test explicitly selects them.
+            _taxdump(Path(transform.input_base_dir), merged="")
         transform.lpsn_name_index = {}
         transform.metpo_metabolite_production_mappings = load_metpo_metabolite_production_mappings()
         if gss:
@@ -649,23 +659,30 @@ def test_constructor_preview_and_direct_lookup_remain_compatible(tmp_path):
     assert transform._lookup_lpsn({"species": "Fixture unique"}) == "5"
 
 
-def retired_producer(tmp_path, monkeypatch):
+def retired_producer(tmp_path, monkeypatch, *, declare_retired=False, deleted_fixture=False):
     """Create one actual supplied parent with a literal native 10→11→12 retirement chain."""
     record = {
         "General": {"BacDive-ID": 31, "NCBI tax id": {"NCBI tax id": 10}},
         "External links": {"culture collection no.": "TEST RETIRED"},
     }
     transform, _, _, _ = produce(
-        tmp_path, monkeypatch, [record], gss=False, retired_fixture=True, forbid_ancestry_selection=True
+        tmp_path, monkeypatch, [record], gss=False, retired_fixture=True,
+        declare_retired=declare_retired, deleted_fixture=deleted_fixture, forbid_ancestry_selection=True,
     )
     return transform
 
 
+@pytest.mark.parametrize("declare_retired", [False, True])
 def test_actual_finalization_retirement_keeps_raw_choice_and_exact_projection(
-    tmp_path, monkeypatch, local_source_schema
+    tmp_path, monkeypatch, local_source_schema, declare_retired
 ):
     """Real source-finalizer retirement is verified separately, not mistaken for changed parent selection."""
-    transform = retired_producer(tmp_path, monkeypatch)
+    transform = retired_producer(tmp_path, monkeypatch, declare_retired=declare_retired)
+    if declare_retired:
+        assert any(
+            row["id"] == "NCBITaxon:10" and row["name"] and row["category"] == "biolink:OrganismTaxon"
+            for row in graph_rows(transform.output_node_file)
+        )
     guard = transform._taxonomy_evidence_guard
     raw_contract = copy.deepcopy(guard.contract)
     raw = next(row for row in scoped_rows(transform) if row["subject"] == "kgmicrobe.strain:TEST-RETIRED")
@@ -757,3 +774,45 @@ def test_finalized_retirement_needs_full_row_and_actual_native_proof(
             writer.writerows(rows)
     with pytest.raises((SourceFinalizationRequired, ValueError)):
         BacDiveTransform.verify_recorded_native_inputs(report, transform.output_dir / "source_finalization.json")
+
+
+@pytest.mark.parametrize("damage", [None, "wrong-hash", "wrong-row", "not-deleted"])
+def test_declared_deleted_parent_retains_assertion_and_requires_exact_proof(
+    tmp_path, monkeypatch, local_source_schema, damage
+):
+    """An unchanged deleted parent is auditable, never a guessed replacement or guard exemption."""
+    transform = retired_producer(tmp_path, monkeypatch, declare_retired=True, deleted_fixture=True)
+    raw = next(row for row in scoped_rows(transform) if row["subject"] == "kgmicrobe.strain:TEST-RETIRED")
+    report = transform.finalize()
+    final = next(
+        row for row in graph_rows(transform.output_edge_file) if row["subject"] == "kgmicrobe.strain:TEST-RETIRED"
+    )
+    assert taxonomy._equal_row(final, raw)
+    path = transform.output_dir / "source_reference_resolution.tsv"
+    with path.open(newline="") as stream:
+        reader = csv.DictReader(stream, delimiter="\t")
+        fields, rows = reader.fieldnames, list(reader)
+    assert {row["disposition"] for row in rows} == {"unresolved_deleted_taxid"}
+    if damage is None:
+        verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+        assert transform.finalize() == report
+        return
+    if damage == "not-deleted":
+        _taxdump(Path(transform.input_base_dir), merged="", deleted="")
+        digest = hashlib.sha256((Path(transform.input_base_dir) / "taxdump.tar.gz").read_bytes()).hexdigest()
+        for row in rows:
+            row["authority_sha256"] = digest
+    elif damage == "wrong-hash":
+        for row in rows:
+            row["authority_sha256"] = "0" * 64
+    else:
+        for row in rows:
+            original = json.loads(row["original_edge_json"])
+            original["relation"] = "unsupported:relation"
+            row["original_edge_json"] = json.dumps(original)
+    with path.open("w", newline="") as stream:
+        writer = csv.DictWriter(stream, fields, delimiter="\t", lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+    with pytest.raises(SourceFinalizationRequired):
+        transform._taxonomy_evidence_guard._finalized_expectations({taxonomy._row_key(raw): raw}, transform.output_dir)

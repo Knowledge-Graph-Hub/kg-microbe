@@ -1019,7 +1019,7 @@ class TaxonomyEvidence:
 
     def _finalized_expectations(self, expected, directory):
         """
-        Admit only exact native-backed object retirement at the existing upstream finalization boundary.
+        Admit exact native-backed retirement or unchanged deletion audits at source finalization.
 
         The producer contract/audit still contains its raw chosen parent. The
         source finalizer's separate report must preserve that entire row, and
@@ -1030,12 +1030,12 @@ class TaxonomyEvidence:
         import tarfile
 
         from kg_microbe.merge_utils.external_node_closure import _taxdump_records
-        from kg_microbe.utils.external_identifiers import load_taxid_merges
+        from kg_microbe.utils.external_identifiers import load_taxid_retirements
 
         report_path = Path(directory) / "source_reference_resolution.tsv"
         report_admission = SourceAdmission()
         report_admission.capture(report_path)
-        projections = {}
+        projections, deletions = {}, {}
         expected_pairs = {(row[SUBJECT_COLUMN], row[OBJECT_COLUMN]) for row in expected.values()}
         for item in graph_rows(report_path, quoting=csv.QUOTE_MINIMAL):
             if not item.get("original_edge_json"):
@@ -1048,20 +1048,23 @@ class TaxonomyEvidence:
             if key not in expected:
                 _fail("unsupported or incomplete finalized taxonomy reference disposition")
             prior = expected[key]
+            disposition = item.get("disposition")
             if (
                 not _equal_row(original, prior)
                 or not str(prior[OBJECT_COLUMN]).startswith("NCBITaxon:")
                 or item.get("original_id") != prior[OBJECT_COLUMN]
-                or item.get("disposition") != "retired_id_replaced"
+                or disposition not in {"retired_id_replaced", "unresolved_deleted_taxid"}
                 or item.get("authority") != "taxdump.tar.gz"
                 or not re.fullmatch(r"NCBITaxon:[0-9]+", item.get("canonical_id", ""))
-                or item["canonical_id"] == prior[OBJECT_COLUMN]
+                or (item["canonical_id"] == prior[OBJECT_COLUMN]) != (disposition == "unresolved_deleted_taxid")
             ):
                 _fail("unsupported or incomplete finalized taxonomy reference disposition")
             decision = item["canonical_id"], item.get("authority_sha256")
-            if projections.setdefault(key, decision) != decision:
+            selected = deletions if disposition == "unresolved_deleted_taxid" else projections
+            other = projections if disposition == "unresolved_deleted_taxid" else deletions
+            if key in other or selected.setdefault(key, decision) != decision:
                 _fail("conflicting finalized taxonomy reference dispositions")
-        if not projections:
+        if not projections and not deletions:
             report_admission.verify()
             return expected
         taxdump = self.raw_dir / "taxdump.tar.gz"
@@ -1087,11 +1090,17 @@ class TaxonomyEvidence:
                 selected = [member for member in members if member.name == name]
                 if len(selected) != 1 or not selected[0].isfile():
                     _fail("native retirement archive has missing or ambiguous authority members")
-        replacements = load_taxid_merges(self.raw_dir)
+        replacements, deleted = load_taxid_retirements(taxdump)
         targets = {canonical.removeprefix("NCBITaxon:") for canonical, _sha256 in projections.values()}
-        originals = {expected[key][OBJECT_COLUMN].removeprefix("NCBITaxon:") for key in projections}
+        originals = {
+            expected[key][OBJECT_COLUMN].removeprefix("NCBITaxon:") for key in projections.keys() | deletions.keys()
+        }
         records = _taxdump_records(taxdump, targets | originals)
         projected = dict(expected)
+        for key, (_canonical, sha256) in deletions.items():
+            old = expected[key][OBJECT_COLUMN].removeprefix("NCBITaxon:")
+            if sha256 != identity["sha256"] or old not in deleted or old in records:
+                _fail("native authority does not prove the deleted taxonomy reference")
         for key, (canonical, sha256) in projections.items():
             old = expected[key][OBJECT_COLUMN].removeprefix("NCBITaxon:")
             target = canonical.removeprefix("NCBITaxon:")

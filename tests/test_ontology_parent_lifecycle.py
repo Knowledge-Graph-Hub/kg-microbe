@@ -14,6 +14,7 @@ import pytest
 from kg_microbe.utils import ontology_parent_quarantine as native
 from kg_microbe.utils.source_finalization import graph_rows, verify_finalized_source_files
 from tests.native_ro_fixtures import bind_native_ro_fixture_policy, stage_native_ro_envo
+from tests.taxdump_controls import stage_no_retirements_taxdump
 
 FIXTURE = Path(__file__).parent / "resources/ontology_parent_dispositions"
 
@@ -29,6 +30,8 @@ def finalized_seed(tmp_path_factory, request):
         shutil.copyfile(FIXTURE / "lifecycle" / name, raw / name)
     shutil.copyfile(FIXTURE / "foodon.owl", raw / "foodon.owl")
     stage_native_ro_envo(raw)
+    if scope in {"both", "foodon"}:
+        stage_no_retirements_taxdump(raw)
     script = r"""
 import csv, hashlib, importlib, json, socket, sys
 from pathlib import Path
@@ -61,6 +64,14 @@ prefix = "" if scope == "both" else scope + "_"
 report_path = original.output_dir / (prefix + "source_finalization.json")
 assert report_path.is_file()
 report = json.loads(report_path.read_text())
+if scope in {"both", "foodon"}:
+    taxdump = raw / "taxdump.tar.gz"
+    identity = {"path": str(taxdump.resolve()), "sha256": hashlib.sha256(taxdump.read_bytes()).hexdigest()}
+    assert report["consumed_inputs"]["ncbi_taxonomy_authority"] == identity
+    assert identity in report["inputs"]
+else:
+    assert "ncbi_taxonomy_authority" not in report["consumed_inputs"]
+    assert not (raw / "taxdump.tar.gz").exists()
 names = sorted(report["members"])
 selected = ("foodon", "envo") if scope == "both" else (scope,)
 expected_names = sorted(f"{source}_{kind}.tsv" for source in selected for kind in ("nodes", "edges"))

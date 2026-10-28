@@ -155,6 +155,7 @@ max-complexity = 10
 known-first-party = ["kg_microbe", "run"]
 
 [tool.pytest.ini_options]
+testpaths = ["tests"]
 norecursedirs = ["scripts", "notebooks", "docs", ".git"]
 markers = [
     "integration: tests that require external services, network access, or large data",

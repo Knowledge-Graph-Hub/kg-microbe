@@ -11,6 +11,7 @@ import threading
 import time
 import urllib.parse
 import zlib
+from collections.abc import Mapping
 from contextlib import contextmanager
 from functools import lru_cache
 from pathlib import Path
@@ -3011,9 +3012,11 @@ def get_ncbitaxon_category(ncbitaxon_id: str) -> str:
     return ncbitaxon_category(ncbitaxon_id)
 
 
-def get_foodon_category(foodon_term_id: str) -> str:
-    """Read the local FOODON branch policy (producers use snapshot-bound finalization)."""
-    return foodon_category(foodon_term_id)
+def get_foodon_category(
+    foodon_term_id: str, *, path: Path | None = None, categories: Mapping[str, str] | None = None
+) -> str:
+    """Read an explicit FOODON authority; producers use snapshot-bound finalization."""
+    return foodon_category(foodon_term_id, path=path, categories=categories)
 
 
 def get_pato_category(pato_term_id: str) -> str:

@@ -1,0 +1,13 @@
+{
+  "graphs": [
+    {
+      "nodes": [
+        {"id": "FOODON:fixture", "type": "CLASS"},
+        {"id": "BFO:0000015", "type": "CLASS"}
+      ],
+      "edges": [
+        {"sub": "FOODON:fixture", "pred": "is_a", "obj": "BFO:0000015"}
+      ]
+    }
+  ]
+}

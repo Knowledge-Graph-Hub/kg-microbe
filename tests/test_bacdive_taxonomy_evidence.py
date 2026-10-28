@@ -666,8 +666,14 @@ def retired_producer(tmp_path, monkeypatch, *, declare_retired=False, deleted_fi
         "External links": {"culture collection no.": "TEST RETIRED"},
     }
     transform, _, _, _ = produce(
-        tmp_path, monkeypatch, [record], gss=False, retired_fixture=True,
-        declare_retired=declare_retired, deleted_fixture=deleted_fixture, forbid_ancestry_selection=True,
+        tmp_path,
+        monkeypatch,
+        [record],
+        gss=False,
+        retired_fixture=True,
+        declare_retired=declare_retired,
+        deleted_fixture=deleted_fixture,
+        forbid_ancestry_selection=True,
     )
     return transform
 

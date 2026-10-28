@@ -108,7 +108,10 @@ def test_named_taxids_forward_both_endpoints_preserve_evidence_and_repeat(tmp_pa
     assert nodes["NCBITaxon:12"]["name"] == "Existing canonical"
     assert nodes["NCBITaxon:12"]["deprecated"] == "false"
     assert set(nodes["NCBITaxon:12"]["provided_by"].split("|")) == {
-        "infores:canonical", "infores:ten", "infores:eleven", "infores:ncbitaxon"
+        "infores:canonical",
+        "infores:ten",
+        "infores:eleven",
+        "infores:ncbitaxon",
     }
     edges = list(graph_rows(source.output_edge_file))
     assert len(edges) == len(original_edges)
@@ -141,9 +144,12 @@ def test_compatibility_resolver_does_not_reclassify_named_source_nodes(tmp_path)
     """The historical anonymous API remains separate from explicit source normalization."""
     source = _source(tmp_path)
     before = source.output_node_file.read_bytes(), source.output_edge_file.read_bytes()
-    assert resolve_external_references(
-        source.output_node_file, source.output_edge_file, source.input_base_dir, source.output_dir / "audit.tsv"
-    ) == {}
+    assert (
+        resolve_external_references(
+            source.output_node_file, source.output_edge_file, source.input_base_dir, source.output_dir / "audit.tsv"
+        )
+        == {}
+    )
     assert before == (source.output_node_file.read_bytes(), source.output_edge_file.read_bytes())
 
 
@@ -345,7 +351,9 @@ def test_no_taxonomy_bundle_keeps_honestly_empty_external_audit(tmp_path):
     """Mandatory audit identity does not invent a taxdump requirement when the source has no taxa."""
     source = _source(tmp_path)
     (source.input_base_dir / "taxdump.tar.gz").unlink()
-    source.output_node_file.write_text("id\tname\tcategory\tprovided_by\nfixture:1\tEntity\tbiolink:NamedThing\tinfores:source\n")
+    source.output_node_file.write_text(
+        "id\tname\tcategory\tprovided_by\nfixture:1\tEntity\tbiolink:NamedThing\tinfores:source\n"
+    )
     source.output_edge_file.write_text(
         "subject\tpredicate\tobject\trelation\tprimary_knowledge_source\n"
         "fixture:1\tbiolink:related_to\tfixture:1\tskos:related\tinfores:source\n"

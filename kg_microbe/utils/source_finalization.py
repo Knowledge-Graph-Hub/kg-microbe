@@ -209,9 +209,7 @@ def _registered_producer(report):
 
 def _bundle_has_ncbi(node_paths, edge_paths):
     """Derive authority demand from actual source endpoints, including named declarations."""
-    return any(
-        row[ID_COLUMN].startswith("NCBITaxon:") for path in node_paths for row in graph_rows(path)
-    ) or any(
+    return any(row[ID_COLUMN].startswith("NCBITaxon:") for path in node_paths for row in graph_rows(path)) or any(
         row[column].startswith("NCBITaxon:")
         for path in edge_paths
         for row in graph_rows(path)

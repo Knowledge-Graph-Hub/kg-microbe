@@ -71,6 +71,8 @@ excerpts certify their own bytes and behavior, not the complete production data.
 
 Generation commands and source hashes are in
 `tests/resources/ingredient_bundle/native/README.md` and the adjacent origin
-files. After the focused gate, run the repository's full pytest/tox, Poetry lock
-and generated-merge-config checks. CI runs these acceptance tests as part of the
-ordinary test suite on every supported Python version.
+files. After the focused gate, follow the [testing policy](TESTING.md) to prepare
+and commit the candidate, then run
+`poetry run python scripts/run_pr_gates.py <label>`. This performs lock/config
+and code-quality checks followed by one full test run. CI runs these acceptance
+tests as part of the ordinary test suite on every supported Python version.

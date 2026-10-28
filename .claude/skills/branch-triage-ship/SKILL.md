@@ -167,20 +167,30 @@ Verify the files remain on disk after `git rm --cached` — the flag is index-on
 
 ### Phase 6 — Verify each branch
 
-Run the repo's test / lint gate on every branch. In a Python + tox repo:
+Follow the [testing policy](../../../docs/TESTING.md) for each final PR candidate.
+While editing, run the affected tests, downstream contracts and previous failures.
+In each candidate worktree, prepare formatting and spelling explicitly:
 
 ```bash
-for br in <list of branches>; do
-  git checkout "$br"
-  git checkout -- $(git diff --name-only)   # discard tox format leftovers
-  poetry run tox
-done
+poetry run tox -e format,codespell-write
 ```
+
+Review the diff and commit intended fixes before the final gate. Preserve unrelated
+work; do not discard all diffs to clean a branch. Then run on the clean tracked
+candidate:
+
+```bash
+poetry run python scripts/run_pr_gates.py <label>
+```
+
+The gate runs cheap checks first and the full test suite once. Do not add a
+standalone full pytest pass. Reuse a successful result only while the candidate
+and environment remain unchanged; do not repeat it merely to report progress.
 
 Common failure modes and what they mean:
 
 - **All branches fail the same test** → the failure is on master, unrelated to any of your branches. Identify which branch fixes it and merge that one first. Note in the other PRs' bodies that CI is inherited-broken until the fix lands.
-- **Format check leaves files dirty** → master's code fails the current formatter. Discard the changes with `git checkout --` before switching branches. Do NOT commit the auto-format changes to your topic branches; they belong in a separate "chore: apply formatter" PR.
+- **Formatting preparation changes unrelated files** → review those diffs and keep them separate from the topic change. Use an isolated worktree for unrelated formatting work; never discard a blanket set of diffs. The default validation environments check formatting and spelling without rewriting source files.
 - **Only one branch fails** → real breakage on that branch. Fix before proceeding.
 
 **Checkpoint 6**: You know exactly which branches pass, which fail, and why. Failure reasons are documented and non-blocking (either fixed, or inherited-broken with a clear owner).
@@ -196,7 +206,7 @@ gh pr create --base master --head <branch> --title "<title>" --body "$(cat <<'EO
 <what changed, in bullet points>
 
 ## Test plan
-- [x] `poetry run tox` on this branch — passes / shows only pre-existing master failures fixed by #<companion-pr>.
+- [x] `poetry run python scripts/run_pr_gates.py <label>` on the committed candidate — passes / shows only pre-existing master failures fixed by #<companion-pr>.
 - [ ] <manual verification if applicable>
 
 ## Related
@@ -331,8 +341,8 @@ After running this workflow end-to-end, you should have:
 
 ## Notes on this repo (kg-microbe)
 
-- Tests run via `poetry run tox`. Full run is ~3-5 minutes.
-- Format step (`tox -e format`) is included in the default tox run and will leave master-inherited whitespace changes in your working tree; discard before switching branches.
+- Final PR validation follows [the testing policy](../../../docs/TESTING.md) and runs the full suite once. Use recorded durations from that run to assess runtime; do not assume a fixed completion time.
+- Default tox environments check source files without rewriting them. Run `tox -e format,codespell-write` explicitly during preparation, then review and commit intended fixes.
 - Branch protection on `master` requires 1 approving review. Admin bypass available; requires explicit user opt-in.
 - Merged branches on GitHub are not auto-deleted; local branches must be deleted with `git branch -d`.
 - The three most common "misfiled commit" targets are (a) METPO snapshot integration commits, (b) SSSOM mapping refresh commits, (c) download.yaml source-disable commits. Each has its own conventional branch prefix.

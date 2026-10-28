@@ -70,6 +70,11 @@ def native_database(path):
         )
         connection.execute("CREATE INDEX statements_spv ON statements(subject,predicate,value)")
         connection.execute("CREATE INDEX statements_p ON statements(predicate)")
+        # The real OAK labels() query needs this SemSQL relation, not only statements.
+        connection.execute(
+            "CREATE VIEW rdfs_label_statement AS "
+            "SELECT subject,predicate,object,value,datatype,language FROM statements WHERE predicate='rdfs:label'"
+        )
         connection.execute("CREATE TABLE entailed_edge(subject TEXT,predicate TEXT,object TEXT)")
         for statements in native["literal_native_declarations"].values():
             connection.executemany(

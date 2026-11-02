@@ -14,7 +14,7 @@ importlib-metadata = ">=6.8,<10.0"
 kghub-downloader = ">=0.5.0,<0.6.0"
 kgx = "^2.4.0"
 koza = "*"
-biolink-model = "4.4.2"
+biolink-model = "4.4.3"
 # ! Transitive (cachier, linkml); nothing here imports it. The old `<4.0.0` cap was for a 2023 GH Actions
 # ! break that 6.0.0 no longer reproduces (CI green 2026-09-08, #995); kept as a next-major cap only.
 watchdog = "<7.0.0"

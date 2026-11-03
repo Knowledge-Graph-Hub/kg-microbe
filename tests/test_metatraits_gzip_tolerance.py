@@ -27,6 +27,14 @@ def _write_plain(path, text):
     path.write_text(text, encoding="utf-8")
 
 
+def _crosswalk_transform(tmp_path, monkeypatch):
+    """Initialize loader state with both raw-file locations confined to the fixture."""
+    monkeypatch.setattr(mt, "RAW_DATA_DIR", tmp_path)
+    transform = mt.MetaTraitsTransform.__new__(mt.MetaTraitsTransform)
+    transform.input_base_dir = tmp_path
+    return transform
+
+
 class TestOpenMaybeGzipped:
     """_open_maybe_gzipped must read both real gzip and misnamed plain text."""
 
@@ -132,8 +140,7 @@ class TestCrosswalkLoading:
     def _load_from(self, tmp_path, monkeypatch, writer):
         """Point the loader at a temp NCBI2GTDB file written by `writer`."""
         writer(tmp_path / "NCBI2GTDB.tsv.gz", CROSSWALK_HEADER + CROSSWALK_ROW)
-        monkeypatch.setattr(mt, "RAW_DATA_DIR", tmp_path)
-        transform = mt.MetaTraitsTransform.__new__(mt.MetaTraitsTransform)
+        transform = _crosswalk_transform(tmp_path, monkeypatch)
         return transform._load_ncbi_gtdb_mappings()
 
     def test_loads_from_real_gzip(self, tmp_path, monkeypatch):
@@ -158,22 +165,23 @@ class TestCrosswalkLoading:
         to say something instead of "Loaded 0 ... mappings".
         """
         (tmp_path / "NCBI2GTDB.tsv.gz").write_text("<html><body>Quota exceeded</body></html>", encoding="utf-8")
-        monkeypatch.setattr(mt, "RAW_DATA_DIR", tmp_path)
-        transform = mt.MetaTraitsTransform.__new__(mt.MetaTraitsTransform)
+        transform = _crosswalk_transform(tmp_path, monkeypatch)
 
         assert transform._load_ncbi_gtdb_mappings() == {}
         out = capsys.readouterr().out
         assert "Warning" in out, "an unusable crosswalk must warn"
         assert "no usable rows" in out or "no NCBI to GTDB mappings" in out
+        assert "Loaded " not in out
 
     def test_empty_file_is_reported(self, tmp_path, monkeypatch, capsys):
         """A 0-byte download is the other realistic gdrive failure mode."""
         (tmp_path / "NCBI2GTDB.tsv.gz").write_bytes(b"")
-        monkeypatch.setattr(mt, "RAW_DATA_DIR", tmp_path)
-        transform = mt.MetaTraitsTransform.__new__(mt.MetaTraitsTransform)
+        transform = _crosswalk_transform(tmp_path, monkeypatch)
 
         assert transform._load_ncbi_gtdb_mappings() == {}
-        assert "Warning" in capsys.readouterr().out
+        out = capsys.readouterr().out
+        assert "Warning" in out
+        assert "Loaded " not in out
 
     def test_partial_read_reports_how_much_loaded(self, tmp_path, monkeypatch, capsys):
         """A truncated body yields a partial crosswalk; the count must be stated."""
@@ -185,16 +193,15 @@ class TestCrosswalkLoading:
             f.write(CROSSWALK_HEADER + rows)
         path.write_bytes(path.read_bytes()[: path.stat().st_size // 2])  # truncate body
 
-        monkeypatch.setattr(mt, "RAW_DATA_DIR", tmp_path)
-        transform = mt.MetaTraitsTransform.__new__(mt.MetaTraitsTransform)
+        transform = _crosswalk_transform(tmp_path, monkeypatch)
         mappings = transform._load_ncbi_gtdb_mappings()
 
         out = capsys.readouterr().out
+        assert 0 < len(mappings) < 2000
         assert "Could not fully load" in out
         assert f"{len(mappings)} mappings loaded" in out
 
     def test_missing_file_yields_empty_mapping(self, tmp_path, monkeypatch):
         """An absent crosswalk is tolerated (pre-existing behaviour)."""
-        monkeypatch.setattr(mt, "RAW_DATA_DIR", tmp_path)
-        transform = mt.MetaTraitsTransform.__new__(mt.MetaTraitsTransform)
+        transform = _crosswalk_transform(tmp_path, monkeypatch)
         assert transform._load_ncbi_gtdb_mappings() == {}

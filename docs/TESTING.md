@@ -39,8 +39,10 @@ poetry run python scripts/run_pr_gates.py <label>
 
 The runner checks the Poetry lock and generated merge configuration, runs the
 read-only formatting, lint, spelling and docstring checks, then invokes the full
-pytest suite once through `tox -e py -- tests --durations=50`. Naming `tests/`
-prevents discovery in scratch worktrees and generated data. Cheap checks fail
+pytest suite once through `poetry run -- tox -e py -- tests --durations=50`.
+The first `--` separates Poetry from its child command; the second forwards the
+test arguments through tox. Naming `tests/` prevents discovery in scratch
+worktrees and generated data. Cheap checks fail
 before the expensive suite starts. The runner uses explicit tox environments,
 clears inherited `TOX*` and `PYTEST_ADDOPTS` settings, and disables tox's per-user
 configuration so development overrides cannot silently skip final checks.

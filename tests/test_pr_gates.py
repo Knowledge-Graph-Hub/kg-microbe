@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import runpy
 import shutil
 import subprocess
 import sys
@@ -25,7 +26,7 @@ if mode == 'fail-lock' and arguments == ['check', '--lock']:
     raise SystemExit(7)
 if mode == 'fail-qc' and arguments[:2] == ['run', 'tox']:
     raise SystemExit(8)
-if mode == 'fail-tests' and arguments[:4] == ['run', 'tox', '-e', 'py']:
+if mode == 'fail-tests' and arguments[:5] == ['run', '--', 'tox', '-e', 'py']:
     raise SystemExit(9)
 if mode == 'mutate' and arguments == ['check', '--lock']:
     pathlib.Path('candidate.txt').write_text('changed by gate\\n')
@@ -97,7 +98,7 @@ def test_final_gate_runs_full_suite_once_after_cheap_checks(candidate: Path) -> 
         ["check", "--lock"],
         ["run", "python", "scripts/generate_merge_configs.py", "--check"],
         ["run", "tox", "-e", "coverage-clean,format-check,lint,codespell,docstr-coverage"],
-        ["run", "tox", "-e", "py", "--", "tests", "--durations=50"],
+        ["run", "--", "tox", "-e", "py", "--", "tests", "--durations=50"],
     ]
     report = candidate / "data/validation/pr-gates/kgm-test-run-gates.json"
     entries = json.loads(report.read_text(encoding="utf-8"))
@@ -155,7 +156,7 @@ def test_dry_run_writes_nothing_and_runs_no_gates(candidate: Path) -> None:
     result = invoke(candidate, "--dry-run")
     assert result.returncode == 0, result.stderr
     plan = json.loads(result.stdout)
-    assert plan["commands"][-1] == ["poetry", "run", "tox", "-e", "py", "--", "tests", "--durations=50"]
+    assert plan["commands"][-1] == ["poetry", "run", "--", "tox", "-e", "py", "--", "tests", "--durations=50"]
     assert not (candidate.parent / "commands.jsonl").exists()
     assert not (candidate / "data").exists()
 
@@ -201,3 +202,50 @@ def test_local_subset_selectors_cannot_shorten_final_validation(
         "TOX_OVERRIDE": None,
         "TOX_USER_CONFIG_FILE": os.devnull,
     }
+
+
+def test_real_poetry_forwards_full_suite_arguments_once(tmp_path: Path) -> None:
+    """The actual Poetry parser preserves tox's separator and the child's status."""
+    poetry = shutil.which("poetry")
+    assert poetry is not None, "The gate runner requires Poetry on PATH"
+    (tmp_path / "pyproject.toml").write_text(
+        '[tool.poetry]\nname = "gate-dispatch-test"\nversion = "0.0.0"\n'
+        'description = "Offline argument forwarding probe"\nauthors = []\n'
+        '[tool.poetry.dependencies]\npython = ">=3.10"\n',
+        encoding="utf-8",
+    )
+    ledger = tmp_path / "child-arguments.jsonl"
+    recorder = tmp_path / "record-child-arguments"
+    recorder.write_text(
+        f"#!{sys.executable}\n"
+        "import json, sys\nfrom pathlib import Path\n"
+        f"with Path({str(ledger)!r}).open('a', encoding='utf-8') as handle:\n"
+        "    handle.write(json.dumps(sys.argv[1:]) + '\\n')\n"
+        "raise SystemExit(23)\n",
+        encoding="utf-8",
+    )
+    recorder.chmod(0o700)
+    # Derive the boundary from production; replacing tox must not repair its syntax.
+    command = list(runpy.run_path(str(RUNNER))["COMMANDS"][-1])
+    command[0] = poetry
+    command[command.index("tox")] = str(recorder)
+    command.insert(1, "--no-plugins")
+    environment = {name: value for name, value in os.environ.items() if not name.startswith("POETRY_")}
+    environment.update(
+        POETRY_CONFIG_DIR=str(tmp_path / "poetry-config"),
+        POETRY_CACHE_DIR=str(tmp_path / "poetry-cache"),
+        POETRY_VIRTUALENVS_CREATE="false",
+    )
+    result = subprocess.run(  # noqa: S603 - actual fixed production command with a temporary recorder
+        command,
+        cwd=tmp_path,
+        env=environment,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=30,
+    )
+    assert result.returncode == 23, (result.stdout, result.stderr)
+    assert [json.loads(line) for line in ledger.read_text(encoding="utf-8").splitlines()] == [
+        ["-e", "py", "--", "tests", "--durations=50"]
+    ]

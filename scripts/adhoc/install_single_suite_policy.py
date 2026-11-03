@@ -5,6 +5,12 @@ Purpose: install the requested KG-Microbe validation policy on M5, 2026-10-28.
 Inputs: a committed source checkout, its baseline ref, and explicit target roots.
 Outputs: policy-only target commits, preserved originals, and JSON installation receipts.
 The default prints a plan. Only --apply changes files; failures never discard local work.
+Source HEAD must be clean and committed, with the baseline as an ancestor. The
+baseline supplies comparison and collision bytes, not permission to install all
+changed paths: only changed members of POLICY_FILES are selected, and excluded
+paths are reported. Callers must still review changes within those managed files.
+Managed deletions and non-regular files are unsupported. Each target file must
+match its baseline or desired policy bytes; the scope does not relax that guard.
 """
 
 from __future__ import annotations
@@ -23,6 +29,25 @@ from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
 
 SOURCE = Path(__file__).resolve().parents[2]
+POLICY_SCOPE = "single-suite-policy-v1"
+POLICY_FILES = (
+    ".claude/skills/add-transform/SKILL.md",
+    ".claude/skills/branch-triage-ship/SKILL.md",
+    ".claude/skills/kgm-freshness-check/SKILL.md",
+    ".gitignore",
+    "AGENTS.md",
+    "CLAUDE.md",
+    "README.md",
+    "docs/INGREDIENT_ACCEPTANCE.md",
+    "docs/NEXT_TASKS.md",
+    "docs/TESTING.md",
+    "scripts/adhoc/install_single_suite_policy.py",
+    "scripts/adhoc/legacy_pr_gates.py",
+    "scripts/run_pr_gates.py",
+    "tests/test_install_single_suite_policy.py",
+    "tests/test_pr_gates.py",
+    "tox.ini",
+)
 LEGACY_NAMES = ("kgm-run-pr-gates.py", "kgm-run-pr-gates-v2.py", "kgm-run-pr-gates-v3.py")
 
 
@@ -99,20 +124,26 @@ class ManagedFile:
     baseline: bytes | None
 
 
+def changed_source_paths(base: str, head: str) -> list[str]:
+    """Inventory the full source range, retaining deletions and rename sources."""
+    names = git(SOURCE, "diff", "--name-only", "--no-renames", "-z", base, head).split(b"\0")
+    return [os.fsdecode(name) for name in names if name]
+
+
 def managed_files(base: str, head: str) -> list[ManagedFile]:
-    """Derive only added and modified policy files from the committed source diff."""
-    names = git(SOURCE, "diff", "--name-only", "--diff-filter=AM", "-z", base, head).split(b"\0")
+    """Select changed manifest members without broadening scope to the source range."""
     files = []
-    for raw_name in filter(None, names):
-        name = os.fsdecode(raw_name)
+    for name in changed_source_paths(base, head):
+        if name not in POLICY_FILES:
+            continue
         safe_path(SOURCE, name)
         current = blob(SOURCE, head, name)
         if current is None:
-            raise RuntimeError(f"Missing source file: {name}")
+            raise RuntimeError(f"Managed source files cannot be deleted or renamed away: {name}")
         baseline = blob(SOURCE, base, name)
         files.append(ManagedFile(name, current[0], current[1], None if baseline is None else baseline[0]))
     if not files:
-        raise RuntimeError("The selected baseline has no added or modified policy files")
+        raise RuntimeError("The selected baseline has no changed policy manifest files")
     return files
 
 
@@ -265,7 +296,15 @@ def main() -> int:
     """Plan all destinations before optionally installing and committing the policy."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--target", type=Path, action="append", required=True)
-    parser.add_argument("--base-ref", required=True)
+    parser.add_argument(
+        "--base-ref",
+        required=True,
+        help=(
+            "ancestor of clean source HEAD supplying comparison/collision bytes; only changed "
+            "policy manifest members are installed, excluded paths are reported, and managed "
+            "deletions or non-regular files are rejected"
+        ),
+    )
     parser.add_argument("--apply", action="store_true")
     parser.add_argument("--legacy-dir", type=Path)
     args = parser.parse_args()
@@ -275,19 +314,33 @@ def main() -> int:
         base = git_text(SOURCE, "rev-parse", "--verify", "--end-of-options", args.base_ref + "^{commit}")
         git(SOURCE, "merge-base", "--is-ancestor", base, head)
         files = managed_files(base, head)
+        scope = {
+            "policy_scope": POLICY_SCOPE,
+            "ignored_source_paths": [name for name in changed_source_paths(base, head) if name not in POLICY_FILES],
+        }
         targets = list(dict.fromkeys(path.resolve() for path in args.target))
         plans = []
         for root in targets:
             prior, branch = clean_checkout(root, feature=True)
             safe_path(root, "data/validation/pr-gates/install-check")
             plans.append(
-                {"target": str(root), "prior_head": prior, "branch": branch, "files": target_files(root, files)}
+                {
+                    **scope,
+                    "target": str(root),
+                    "prior_head": prior,
+                    "branch": branch,
+                    "files": target_files(root, files),
+                }
             )
         wrapper = blob(SOURCE, head, "scripts/adhoc/legacy_pr_gates.py")
         if wrapper is None:
             raise RuntimeError("The source commit must contain the legacy wrapper")
         legacy = legacy_plan(args.legacy_dir.resolve(), wrapper[0]) if args.legacy_dir else []
-        print(json.dumps({"source_head": head, "source_baseline": base, "targets": plans, "legacy": legacy}, indent=2))
+        print(
+            json.dumps(
+                {**scope, "source_head": head, "source_baseline": base, "targets": plans, "legacy": legacy}, indent=2
+            )
+        )
         if not args.apply:
             return 0
         stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S.%fZ")

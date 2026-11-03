@@ -22,7 +22,7 @@ COMMANDS = (
     ("poetry", "check", "--lock"),
     ("poetry", "run", "python", "scripts/generate_merge_configs.py", "--check"),
     ("poetry", "run", "tox", "-e", "coverage-clean,format-check,lint,codespell,docstr-coverage"),
-    ("poetry", "run", "tox", "-e", "py", "--", "tests", "--durations=50"),
+    ("poetry", "run", "--", "tox", "-e", "py", "--", "tests", "--durations=50"),
 )
 
 

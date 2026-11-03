@@ -420,11 +420,17 @@ def test_no_taxonomy_bundle_keeps_honestly_empty_external_audit(tmp_path):
     verify_finalized_source_files([source.output_node_file, source.output_edge_file])
 
 
+@pytest.mark.parametrize("dependent", [False, True])
 @pytest.mark.parametrize("canonical_kind", ["named", "typed", "anonymous"])
 @pytest.mark.parametrize("placement", ["first-row", "last-row", "first-file", "last-file"])
-def test_existing_canonical_declaration_keeps_one_row_and_source_context(tmp_path, canonical_kind, placement):
-    """Existing canonical declarations survive donor convergence in every bundle position (#1693)."""
-    source = _source(tmp_path)
+def test_existing_canonical_declaration_keeps_one_row_and_source_context(
+    tmp_path, canonical_kind, placement, dependent
+):
+    """Canonical coalescing survives source/dependency declaration and bundle order (#1693, #1706)."""
+    source = _source(tmp_path, dependent=dependent)
+    dependency = source.output_base_dir / "ontologies" / "ncbitaxon_nodes.tsv"
+    if dependent:
+        dependency.write_text("id\tname\tcategory\nNCBITaxon:12\tUpstream canonical\tbiolink:OrganismTaxon\n")
     rows = list(graph_rows(source.output_node_file))
     for row in rows:
         row["xref"] = f"record:{row['id'].split(':')[-1]}"
@@ -484,10 +490,50 @@ def test_existing_canonical_declaration_keeps_one_row_and_source_context(tmp_pat
     assert all(json.loads(row["original_edge_json"]) in original_edges for row in retired)
     if canonical_kind != "anonymous":
         assert not any(row["original_id"] == "NCBITaxon:12" for row in audit)
+    else:
+        # Anonymous canonical rows use the same authority-only scalar policy
+        # whether a dependency declares the ID or not; retain their full source
+        # context and verbatim original in the audit, not the synthesized row.
+        canonical_audit = [row for row in audit if row["original_id"] == "NCBITaxon:12"]
+        assert canonical_audit
+        assert all(json.loads(row["original_node_json"]) == original_canonical for row in canonical_audit)
+        assert {row["disposition"] for row in canonical_audit} == {"authority_declaration"}
+    if dependent:
+        assert {
+            "path": str(dependency.resolve()),
+            "sha256": hashlib.sha256(dependency.read_bytes()).hexdigest(),
+        } in report["inputs"]
     before = _published(source)
     assert source.finalize() == report
     assert _published(source) == before
     verify_finalized_source_files([*node_paths, source.output_edge_file])
+
+
+def test_unselected_dependency_declarations_remain_outside_retirement_coalescing(tmp_path):
+    """Coalescing one selected canonical ID cannot resolve or trim other dependency-known rows."""
+    source = _source(tmp_path, dependent=True)
+    dependency = source.output_base_dir / "ontologies" / "ncbitaxon_nodes.tsv"
+    dependency.write_text(
+        "id\tname\tcategory\n"
+        "NCBITaxon:12\tUpstream canonical\tbiolink:OrganismTaxon\n"
+        "NCBITaxon:20\tUpstream eukaryote\tbiolink:OrganismTaxon\n"
+        "NCBITaxon:99\tUpstream unknown\tbiolink:OrganismTaxon\n"
+    )
+    rows = list(graph_rows(source.output_node_file))
+    for row in rows:
+        if row["id"] in {"NCBITaxon:12", "NCBITaxon:20", "NCBITaxon:99"}:
+            row["name"], row["category"] = "", "biolink:NamedThing"
+    _write_rows(source.output_node_file, rows)
+    untouched = {row["id"]: row for row in rows if row["id"] in {"NCBITaxon:20", "NCBITaxon:99"}}
+    report = source.finalize()
+    output_rows = list(graph_rows(source.output_node_file))
+    assert len([row for row in output_rows if row["id"] == "NCBITaxon:12"]) == 1
+    assert {row["id"]: row for row in output_rows if row["id"] in untouched} == untouched
+    assert not any(row["original_id"] in untouched for row in _rows(source, "source_reference_resolution.tsv"))
+    before = _published(source)
+    assert source.finalize() == report
+    assert _published(source) == before
+    verify_finalized_source_files([source.output_node_file, source.output_edge_file])
 
 
 @pytest.mark.parametrize("anonymous_first", [False, True])

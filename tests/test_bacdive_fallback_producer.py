@@ -38,7 +38,11 @@ def produce(tmp_path, monkeypatch, records):
         monkeypatch.setattr(module, "NCBITAXON_NODES_FILE", selected)
         transform.ncbitaxon_fallback_cache = {}
         transform._ncbitaxon_ancestor_cache = {}
-        transform.ncbitaxon_labels = {}
+        transform.ncbitaxon_labels = {
+            row["id"]: row["name"]
+            for row in graph_rows(selected, quoting=csv.QUOTE_NONE)
+            if row["id"].startswith("NCBITaxon:") and row["name"]
+        }
         transform.lpsn_name_index = {}
         transform.metpo_metabolite_production_mappings = load_metpo_metabolite_production_mappings()
 

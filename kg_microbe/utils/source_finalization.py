@@ -654,6 +654,14 @@ def _dependency_declarations(transform, used_inputs):
     if ONTOLOGIES not in getattr(type(transform), "TRANSFORM_INPUTS", ()):
         return set()
     ontology_dir = Path(transform.output_base_dir) / ONTOLOGIES
+    binder = getattr(transform, "bind_ontology_dependency_declarations", None)
+    if binder is not None:
+        from kg_microbe.utils.ontology_dependency_declarations import OntologyDependencyDeclarations
+
+        dependency = OntologyDependencyDeclarations(ontology_dir)
+        binder(dependency)
+        used_inputs.update(dependency.input_paths)
+        return dependency.declarations
     found = set()
     quoting = csv.QUOTE_NONE if (ontology_dir / FINALIZATION_FILE).is_file() else csv.QUOTE_MINIMAL
     for path in _ontology_node_files(ontology_dir):
@@ -731,6 +739,22 @@ def _repeat_finalization(transform, file_prefix):
         if previous_optional["inputs"] and previous_optional != recorded_optional:
             raise SourceFinalizationRequired("Optional input state differs from finalized run; rerun the producer")
         transform._optional_input_states = {name: dict(state) for name, state in recorded_optional["inputs"].items()}
+    dependency_binder = getattr(transform, "bind_ontology_dependency_declarations", None)
+    if dependency_binder is not None:
+        from kg_microbe.utils.ontology_dependency_declarations import OntologyDependencyDeclarations
+
+        dependency_contract = report.get("ontology_dependency_declarations")
+        if not isinstance(dependency_contract, dict):
+            raise SourceFinalizationRequired(
+                "Missing original ontology dependency declaration proof; rerun the producer"
+            )
+        dependency_binder(
+            OntologyDependencyDeclarations(
+                output_dir.parent / ONTOLOGIES,
+                recorded=dependency_contract,
+                recorded_inputs=report.get("inputs"),
+            )
+        )
     if getattr(transform, "verify_native_inputs", None) is not None:
         transform.producer_native_inputs = report.get("producer_native_inputs")
     _bind_finalization_members(transform, report["members"])
@@ -1036,6 +1060,9 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
                 for path in sorted(used_inputs)
             ],
         }
+        dependency = getattr(transform, "ontology_dependency_declarations", None)
+        if dependency is not None:
+            report["ontology_dependency_declarations"] = dependency.contract
         if getattr(transform, "verify_native_inputs", None) is not None:
             report["producer_native_inputs"] = transform.producer_native_inputs
         if has_optional_inputs(type(transform)):

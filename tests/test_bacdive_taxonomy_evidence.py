@@ -8,9 +8,11 @@ fixtures explicitly make no biological/native-source identity claims.
 import copy
 import csv
 import hashlib
+import io
 import json
 import os
 import sqlite3
+import tarfile
 from collections import Counter
 from contextlib import closing
 from pathlib import Path
@@ -85,6 +87,7 @@ def produce(
     declare_retired=False,
     deleted_fixture=False,
     extra_edges=(),
+    declaration_context=None,
 ):
     """Run the real producer/readers/writers, replacing only unrelated label/assay fixture context."""
     fixture = controls()
@@ -102,25 +105,42 @@ def produce(
         transform.ncbi_impl = adapter(path)
         owned.append(transform.ncbi_impl)
         selected = Path(transform.input_base_dir) / "fixture-selected-ncbitaxon.tsv"
-        write_selected(selected, labels, {"NCBITaxon:99": "Actinobacteria"})
+        selected_labels = dict(labels)
+        if retired_fixture and declare_retired:
+            selected_labels.pop("NCBITaxon:10")
+        write_selected(selected, selected_labels, {"NCBITaxon:99": "Actinobacteria"})
         monkeypatch.setattr(bacdive_module, "NCBITAXON_NODES_FILE", selected)
         transform.ncbitaxon_fallback_cache = {}
         transform._ncbitaxon_ancestor_cache = {}
-        transform.ncbitaxon_labels = {}
+        transform.ncbitaxon_labels = dict(selected_labels)
         if retired_fixture:
-            # Suppress only the producer's unrelated local stub insertion, using
-            # its existing preview-label route. Actual source finalization must
-            # discover and prove this undeclared reference from real native tar.
-            if not declare_retired:
-                transform.ncbitaxon_labels = {"NCBITaxon:10": "fixture historical preview"}
+            # A real selected declaration suppresses the local stub. Omitting
+            # that ID from both native selected bytes and cache exercises the
+            # producer's mandatory typed-stub branch without a forged cache.
             if deleted_fixture:
                 _taxdump(Path(transform.input_base_dir), merged="", deleted="10 |\n")
             else:
                 _taxdump(Path(transform.input_base_dir))
         else:
             # Finalization checks declared taxids too; this fixture has no
-            # retirement/deletion claims unless the test explicitly selects them.
-            _taxdump(Path(transform.input_base_dir), merged="")
+            # retirement/deletion claims. The selected fixture taxa are live
+            # prokaryotes in the actual SQL context; their native tar agrees.
+            with tarfile.open(Path(transform.input_base_dir) / "taxdump.tar.gz", "w:gz") as archive:
+                members = {
+                    "merged.dmp": "",
+                    "delnodes.dmp": "",
+                    "nodes.dmp": "1 | 1 | no rank |\n2 | 1 | superkingdom |\n"
+                    + "".join(f"{identifier.removeprefix('NCBITaxon:')} | 2 | species |\n" for identifier in labels),
+                    "names.dmp": "".join(
+                        f"{identifier.removeprefix('NCBITaxon:')} | {label} | | scientific name |\n"
+                        for identifier, label in labels.items()
+                    ),
+                }
+                for name, value in members.items():
+                    payload = value.encode()
+                    member = tarfile.TarInfo(name)
+                    member.size = len(payload)
+                    archive.addfile(member, io.BytesIO(payload))
         transform.lpsn_name_index = {}
         transform.metpo_metabolite_production_mappings = load_metpo_metabolite_production_mappings()
         if gss:
@@ -132,6 +152,8 @@ def produce(
                 raise AssertionError("zero-query deposit phase resolved an adapter")
 
             monkeypatch.setattr(bacdive_module, "resolve_adapter", forbidden)
+        if declaration_context is not None:
+            declaration_context(transform)
 
     # Direct-ID preview labels remain fixture-only; actual fallback selection
     # reads the synthetic native SQL/selected files and its own private connection.
@@ -976,3 +998,286 @@ def test_public_retirement_proof_checks_every_selected_native_nonterminal(
         verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
     assert report["producer_native_inputs"] == witness_before
     assert {path: path.read_bytes() for path in graph_before} == graph_before
+
+
+@pytest.mark.parametrize("claim", [{"name": "Invented local name"}, {"category": "biolink:OrganismTaxon"}])
+def test_public_retirement_rejects_forged_original_declaration(tmp_path, monkeypatch, local_source_schema, claim):
+    """Neither audit names nor categories can invent a native-proven local producer declaration."""
+    transform = retired_producer(tmp_path, monkeypatch, declare_retired=False)
+    assert not any(row["id"] == "NCBITaxon:10" for row in graph_rows(transform.output_node_file))
+    report = transform.finalize()
+    graph_before = {
+        Path(path): Path(path).read_bytes() for path in (transform.output_node_file, transform.output_edge_file)
+    }
+    native_before = copy.deepcopy(report["producer_native_inputs"])
+    _taxdump(Path(transform.input_base_dir), nodes="1 | 1 | no rank |\n2 | 1 | superkingdom |\n12 | 1 | species |\n")
+    rows = list(graph_rows(transform.output_dir / "source_reference_resolution.tsv", quoting=csv.QUOTE_MINIMAL))
+    for row in rows:
+        if row["original_id"] == "NCBITaxon:10":
+            assert not row["original_node_json"]
+            row["original_node_json"] = json.dumps({"id": "NCBITaxon:10", **claim})
+    _restamp_retirement_authority(transform, report, audit_rows=rows)
+    with pytest.raises(SourceFinalizationRequired, match="does not prove the finalized taxonomy replacement"):
+        verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+    assert report["producer_native_inputs"] == native_before
+    assert {path: path.read_bytes() for path in graph_before} == graph_before
+
+
+@pytest.mark.parametrize("damage", ["insert", "remove", "label"])
+def test_original_declaration_requires_actual_selected_cache_membership(tmp_path, monkeypatch, damage):
+    """A mutable constructor preview cannot add, erase, or relabel native selected membership."""
+    original = taxonomy.prepare_source_declarations
+
+    def corrupt(transform, *args):
+        """Mutate only the real producer cache immediately before the proof checkpoint."""
+        if damage == "insert":
+            transform.ncbitaxon_labels["NCBITaxon:10"] = "Injected declaration"
+        elif damage == "remove":
+            transform.ncbitaxon_labels.pop("NCBITaxon:10")
+        else:
+            transform.ncbitaxon_labels["NCBITaxon:10"] = "Changed label"
+        return original(transform, *args)
+
+    monkeypatch.setattr(taxonomy, "prepare_source_declarations", corrupt)
+    with pytest.raises(SourceFinalizationRequired, match="cache differs from actual selected membership"):
+        retired_producer(tmp_path, monkeypatch, declare_retired=damage == "insert")
+
+
+@pytest.mark.parametrize("damage", ["edit", "delete", "role", "cache"])
+def test_source_declaration_input_and_cache_remain_bound_until_finalization(
+    tmp_path, monkeypatch, local_source_schema, damage
+):
+    """An earlier successful proof does not permit later source-role, input, or cache substitution."""
+    from kg_microbe.transform_utils.bacdive.source_declaration_evidence import SELECTED_ROLE
+
+    transform = retired_producer(tmp_path, monkeypatch, declare_retired=True)
+    before = {Path(path): Path(path).read_bytes() for path in (transform.output_node_file, transform.output_edge_file)}
+    selected = Path(transform.input_base_dir) / "fixture-selected-ncbitaxon.tsv"
+    if damage == "edit":
+        selected.write_text(selected.read_text() + "NCBITaxon:10\tbiolink:OrganismTaxon\tNew\t\n")
+    elif damage == "delete":
+        selected.unlink()
+    elif damage == "role":
+        transform._consumed_input_snapshots.pop(SELECTED_ROLE)
+    else:
+        transform.ncbitaxon_labels["NCBITaxon:10"] = "Changed after producer"
+    with pytest.raises(SourceFinalizationRequired):
+        transform.finalize()
+    assert {path: path.read_bytes() for path in before} == before
+    assert not (transform.output_dir / "source_finalization.json").exists()
+
+
+@pytest.mark.parametrize(
+    "route",
+    [
+        "medium",
+        "pdf-medium",
+        "custom-keyword",
+        "alias-keyword",
+        "tree-keyword",
+        "unknown-medium",
+        "ambiguous-keyword",
+        "missing-tree-context",
+    ],
+)
+@pytest.mark.parametrize("shared_parent", [False, True])
+def test_selected_member_native_emitters_prove_local_retirement_declaration(
+    tmp_path, monkeypatch, local_source_schema, route, shared_parent
+):
+    """Actual medium/keyword emitters can declare a selected parent, including for another record's edge."""
+    from kg_microbe.transform_utils.bacdive.source_declaration_evidence import CUSTOM_ROLE, METPO_ROLE, SELECTED_ROLE
+    from kg_microbe.transform_utils.constants import BACDIVE_MEDIUM_DICT
+
+    first = {
+        "General": {"BacDive-ID": 31, "NCBI tax id": {"NCBI tax id": 10}},
+        "External links": {"culture collection no.": "TEST RETIRED"},
+    }
+    records = [first]
+    emitter = first
+    if shared_parent:
+        emitter = {"General": {"BacDive-ID": 32, "NCBI tax id": {"NCBI tax id": 10}}}
+        records.append(emitter)
+    if "medium" in route:
+        url = (
+            "https://www.dsmz.de/microorganisms/medium/pdf/DSMZ_Medium1.pdf"
+            if route == "pdf-medium"
+            else next(iter(BACDIVE_MEDIUM_DICT.values())) + "1"
+        )
+        if route == "unknown-medium":
+            url = "https://example.org/unrecognized-medium"
+        emitter["Culture and growth conditions"] = {
+            "culture medium": {"link": url, "name": "Fixture medium", "growth": "yes"}
+        }
+    else:
+        emitter["General"]["keywords"] = [
+            "tree-key"
+            if route in {"tree-keyword", "missing-tree-context"}
+            else "yes"
+            if route == "ambiguous-keyword"
+            else "fixture_keyword"
+        ]
+        if route == "tree-keyword":
+            emitter["Example"] = {"values": "tree-key"}
+
+    def context(transform):
+        """Supply actual key inputs and matching constructor caches, never a claimed declaration flag."""
+        if route == "custom-keyword":
+            Path(bacdive_module.CUSTOM_CURIES_YAML_FILE).write_text(
+                "fixture:\n  fixture_keyword:\n    category: biolink:PhenotypicQuality\n"
+                "    predicate: biolink:has_phenotype\n    curie: METPO:1000001\n    name: Fixture keyword\n"
+            )
+        elif route in {"alias-keyword", "tree-keyword", "missing-tree-context", "ambiguous-keyword"}:
+            Path(bacdive_module.CUSTOM_CURIES_YAML_FILE).write_text("{}\n")
+            templates = tmp_path / "keyword-templates"
+            templates.mkdir()
+            fixture_templates = Path(__file__).parent / "resources/metpo_templates"
+            (templates / "metpo-properties.tsv").write_text(
+                (fixture_templates / "metpo-properties.tsv")
+                .read_text()
+                .replace("http://w3id.org/biolink/vocab/", "biolink:")
+            )
+            alias = "fixture_keyword" if route == "alias-keyword" else ""
+            path = "Example.values" if route in {"tree-keyword", "missing-tree-context"} else ""
+            synonym = "tree-key" if route in {"tree-keyword", "missing-tree-context"} else ""
+            classes = (
+                "ID\tlabel\tparent classes (one strongly preferred)\tmadin synonym or field\tbacdive keyword synonym\n"
+                "ID\tLABEL\tSC %\tA synonym\tA synonym\n"
+                f"METPO:1000059\tphenotype\t\t\t{path}\n"
+                f"METPO:1000001\tFixture keyword\tphenotype\t{synonym}\t{alias}\n"
+            )
+            if route == "ambiguous-keyword":
+                classes += (
+                    "METPO:1000010\tfirst context\tphenotype\t\t\n"
+                    "METPO:1000011\tsecond context\tphenotype\t\t\n"
+                    "METPO:1000012\tfirst yes\tfirst context\t\tyes\n"
+                    "METPO:1000013\tsecond yes\tsecond context\t\tyes\n"
+                )
+            (templates / "metpo_sheet.tsv").write_text(classes)
+            monkeypatch.setenv("KG_MICROBE_METPO_TEMPLATE_DIR", str(templates))
+            transform.bacdive_metpo_mappings = bacdive_module.load_metpo_mappings("bacdive keyword synonym")
+            transform.bacdive_metpo_tree = bacdive_module._build_metpo_tree()
+            transform.metpo_iri_to_mapping = transform._build_metpo_iri_index()
+            transform.__dict__.pop("_ambiguous_metpo_aliases", None)
+
+    transform, _, _, _ = produce(
+        tmp_path,
+        monkeypatch,
+        records,
+        gss=False,
+        retired_fixture=True,
+        forbid_ancestry_selection=True,
+        declaration_context=context,
+    )
+    has_local = route not in {"unknown-medium", "ambiguous-keyword", "missing-tree-context"}
+    assert any(row["id"] == "NCBITaxon:10" for row in graph_rows(transform.output_node_file)) == has_local
+    if not has_local:
+        report = transform.finalize()
+        assert report["producer_native_inputs"]["taxonomy"]["source_declarations"]["native_emissions"] == []
+        _taxdump(
+            Path(transform.input_base_dir), nodes="1 | 1 | no rank |\n2 | 1 | superkingdom |\n12 | 1 | species |\n"
+        )
+        rows = list(graph_rows(transform.output_dir / "source_reference_resolution.tsv", quoting=csv.QUOTE_MINIMAL))
+        for row in rows:
+            if row["original_id"] == "NCBITaxon:10":
+                row["original_node_json"] = json.dumps({"id": "NCBITaxon:10", "category": "biolink:OrganismTaxon"})
+        _restamp_retirement_authority(transform, report, audit_rows=rows)
+        with pytest.raises(SourceFinalizationRequired, match="does not prove the finalized taxonomy replacement"):
+            verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+        return
+    _taxdump(Path(transform.input_base_dir), merged="10 | 20 |\n")
+    report = transform.finalize()
+    proof = report["producer_native_inputs"]["taxonomy"]["source_declarations"]
+    assert proof["native_emissions"] and {entry["target"] for entry in proof["native_emissions"]} == {"NCBITaxon:10"}
+    assert SELECTED_ROLE in report["consumed_inputs"]
+    if "keyword" in route:
+        assert {CUSTOM_ROLE, METPO_ROLE} <= report["consumed_inputs"].keys()
+    final = next(row for row in scoped_rows(transform) if row["subject"] == "kgmicrobe.strain:TEST-RETIRED")
+    assert final["object"] == "NCBITaxon:20" and final["original_object"] == "NCBITaxon:10"
+    verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+    assert transform.finalize() == report
+
+
+@pytest.mark.parametrize("damage", ["bytes", "same-byte-retarget", "lost-admission"])
+def test_public_original_declaration_keeps_selected_input_binding_alive(
+    tmp_path, monkeypatch, local_source_schema, damage
+):
+    """Fresh public admission retains selected locator, bytes, and guard membership after returning."""
+    selected_paths = {}
+
+    def context(transform):
+        """Select a real symlink before the original producer proof consumes it."""
+        locator = Path(transform.input_base_dir) / "fixture-selected-ncbitaxon.tsv"
+        original = locator.with_name("original-selected.tsv")
+        locator.rename(original)
+        locator.symlink_to(original)
+        selected_paths.update(locator=locator, original=original)
+
+    record = {
+        "General": {"BacDive-ID": 31, "NCBI tax id": {"NCBI tax id": 10}},
+        "External links": {"culture collection no.": "TEST RETIRED"},
+    }
+    transform, _, _, _ = produce(
+        tmp_path,
+        monkeypatch,
+        [record],
+        gss=False,
+        retired_fixture=True,
+        declare_retired=True,
+        forbid_ancestry_selection=True,
+        declaration_context=context,
+    )
+    report = transform.finalize()
+    verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+    admission = BacDiveTransform.verify_recorded_native_inputs(
+        report, transform.output_dir / "source_finalization.json", admission=SourceAdmission()
+    )
+    locator, original = selected_paths["locator"], selected_paths["original"]
+    if damage == "bytes":
+        original.write_text(original.read_text() + "NCBITaxon:10\tbiolink:OrganismTaxon\tInserted\t\n")
+    elif damage == "same-byte-retarget":
+        replacement = original.with_name("replacement-selected.tsv")
+        replacement.write_bytes(original.read_bytes())
+        locator.unlink()
+        locator.symlink_to(replacement)
+    else:
+        admission.identities.pop(original.resolve())
+        admission.stamps.pop(original.resolve())
+    with pytest.raises(SourceFinalizationRequired):
+        admission.verify()
+
+
+def test_genuine_zero_source_declaration_demand_consumes_no_authority(tmp_path, monkeypatch):
+    """No native NCBI parent demand must not fabricate selected or keyword read obligations."""
+    from kg_microbe.transform_utils.bacdive.source_declaration_evidence import (
+        ALIASES_ROLE,
+        CUSTOM_ROLE,
+        METPO_ROLE,
+        SELECTED_ROLE,
+    )
+
+    def context(_transform):
+        """Leave an unused selected locator absent without weakening any actual parent proof."""
+        monkeypatch.setattr(bacdive_module, "NCBITAXON_NODES_FILE", tmp_path / "unused-nonexistent-selected.tsv")
+
+    transform, _, _, _ = produce(
+        tmp_path,
+        monkeypatch,
+        [{"General": {"BacDive-ID": 31}}],
+        gss=False,
+        forbid_ancestry_selection=True,
+        declaration_context=context,
+    )
+    proof = transform._taxonomy_evidence_guard.contract["source_declarations"]
+    assert proof["targets"] == [] and proof["selected_input"] is None
+    assert proof["keyword_inputs"] == {} and proof["native_emissions"] == []
+    assert not {SELECTED_ROLE, CUSTOM_ROLE, METPO_ROLE, ALIASES_ROLE} & transform.consumed_input_snapshots.keys()
+    assert transform._taxonomy_evidence_guard.contract["fallback_native_evidence"]["selected_input"] is None
+
+
+def test_prior_taxonomy_contract_requires_independent_declaration_proof(tmp_path, monkeypatch, local_source_schema):
+    """Version three already had withheld contests but cannot authorize the new declaration exception."""
+    transform = retired_producer(tmp_path, monkeypatch, declare_retired=True)
+    report = transform.finalize()
+    report["producer_native_inputs"]["taxonomy"]["version"] = 3
+    with pytest.raises(SourceFinalizationRequired, match="predates independent original source declaration proof"):
+        BacDiveTransform.verify_recorded_native_inputs(report, transform.output_dir / "source_finalization.json")

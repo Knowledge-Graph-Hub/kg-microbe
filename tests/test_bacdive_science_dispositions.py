@@ -279,7 +279,7 @@ def test_withheld_contest_replays_and_cannot_be_dropped_from_the_record(tmp_path
     report = transform.finalize()
     native = report["producer_native_inputs"]["taxonomy"]
     assert native["ancestry"]["callback_demand_counts"] == [["NCBITaxon:1236527", 1]]
-    assert native["version"] == taxonomy.CONTRACT_VERSION == 3
+    assert native["version"] == taxonomy.CONTRACT_VERSION == 4
     assert native["contested"] == [
         [
             "kgmicrobe.strain:TEST-SHARED",

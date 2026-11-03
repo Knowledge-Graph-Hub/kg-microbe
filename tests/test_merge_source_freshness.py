@@ -161,6 +161,15 @@ def prepare_bacdive_ec_correction_inputs(transform):
     transform._ncit_claim_output_ready = True
     resolved, contested = taxonomy_guard.resolve_deposits({})
     assert resolved == [] and contested == []
+    original_inputs = transform.consumed_input_snapshots
+    taxonomy_evidence.prepare_source_declarations(
+        transform,
+        transform.input_base_dir / "never-read-selected-ncbitaxon.tsv",
+        transform.input_base_dir / "never-read-custom-curies.yaml",
+        {},
+    )
+    assert taxonomy_guard._source_declarations.contract["targets"] == []
+    assert transform.consumed_input_snapshots == original_inputs
     with (transform.output_dir / taxonomy_evidence.AUDIT_FILE).open("w", encoding="utf-8", newline="") as stream:
         writer = tsv_writer(stream)
         writer.writerow(taxonomy_evidence.AUDIT_FIELDS)

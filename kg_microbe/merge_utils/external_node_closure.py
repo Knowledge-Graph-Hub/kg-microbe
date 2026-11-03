@@ -448,6 +448,29 @@ def resolve_external_reference_bundle(
             "disposition": "unresolved_no_exact_local_authority",
             "authority": "",
         }
+    # Dependency declarations exclude their anonymous source rows from general
+    # authority discovery. If a selected retirement actually converges there,
+    # coalesce those rows using the already proven target declaration as well.
+    # Unrelated known IDs remain outside this source's resolution/audit scope.
+    selected_retirement_targets = {
+        decision["canonical_id"]: decision
+        for original, decision in decisions.items()
+        if normalize_declared_ncbi
+        and original.startswith("NCBITaxon:")
+        and decision["disposition"] == "retired_id_replaced"
+        and decision["canonical_id"] in known_declarations
+    }
+    if selected_retirement_targets:
+        for row in _rows(node_paths, quoting=quoting):
+            identifier = row[ID_COLUMN]
+            if identifier in selected_retirement_targets and not _is_declaration(row):
+                targets.add(identifier)
+                original_nodes.setdefault(identifier, row)
+                original_node_rows.setdefault(identifier, []).append(row)
+                decisions.setdefault(
+                    identifier,
+                    dict(selected_retirement_targets[identifier], disposition="authority_declaration"),
+                )
     replacements = {old: value["canonical_id"] for old, value in decisions.items() if value["canonical_id"] != old}
     canonical_ids = {value["canonical_id"] for value in decisions.values()} - {""}
     existing = {

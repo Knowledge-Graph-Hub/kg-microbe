@@ -36,6 +36,12 @@ from kg_microbe.transform_utils.bacdive.fallback_evidence import (
     FallbackEvidence,
     recorded_selected_opener,
 )
+from kg_microbe.transform_utils.bacdive.source_declaration_evidence import (
+    ALIASES_ROLE,
+    CUSTOM_ROLE,
+    METPO_ROLE,
+    SourceDeclarationEvidence,
+)
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
     AUTOMATED_AGENT,
@@ -80,8 +86,8 @@ AUDIT_FIELDS = (
     "consumed_inputs_json",
 )
 _MEMBERS = {"nodes.tsv", "edges.tsv"}
-# Version 3 adds withheld candidates to every contested deposit entry (#1421).
-CONTRACT_VERSION = 3
+# Version 4 independently proves original local NCBI declarations (#1705).
+CONTRACT_VERSION = 4
 _RAW_FILE = "bacdive_strains.json"
 _PREFIX = "kgmicrobe.strain:bacdive_"
 
@@ -326,6 +332,8 @@ class TaxonomyEvidence:
         self._ancestry = None
         self._ancestry_owner = None
         self._fallback = None
+        self._source_declarations = None
+        self._ontology_dependencies = None
         self._resolver_result = None
         self._completed = False
         self._outputs_ready = False
@@ -883,6 +891,8 @@ class TaxonomyEvidence:
         """Reconcile every original claim and write the mandatory audit before publication."""
         if self._failed or self._completed or self._ancestry is None:
             _fail("taxonomy completion repeated")
+        if self._source_declarations is None:
+            _fail("original source declaration evidence was not prepared")
         if _json((resolved, contested)) != self._resolver_result:
             _fail("emitter result differs from the unchanged resolver's actual decision")
         expected_keys = set(range(len(self.records)))
@@ -959,6 +969,7 @@ class TaxonomyEvidence:
             "members": sorted(_MEMBERS),
             "fallback_native_evidence": self._fallback.contract,
             "fallback_target_identity_independently_validated": True,
+            "source_declarations": self._source_declarations.contract,
         }
         self._contract = _json(contract)
         self._completed = True
@@ -994,6 +1005,12 @@ class TaxonomyEvidence:
             self.gss.verify()
             self.require_fallback()
             self._fallback.verify(snapshots)
+            if self._source_declarations is not None:
+                self._source_declarations.verify(snapshots)
+            elif self._completed:
+                _fail("original source declaration evidence was lost")
+            if self._ontology_dependencies is not None:
+                self._ontology_dependencies.verify(metadata_only=True)
             if self._ancestry_owner is not None:
                 self._ancestry_owner.verify()
             for key in self.parent_choices:
@@ -1070,7 +1087,10 @@ class TaxonomyEvidence:
                 original_node = json.loads(item["original_node_json"])
                 if not isinstance(original_node, dict) or original_node.get(ID_COLUMN) != item["original_id"]:
                     _fail("finalized taxonomy source declaration has the wrong original identifier")
-                if _is_declaration(original_node):
+                if (
+                    _is_declaration(original_node)
+                    and item["original_id"] in self._source_declarations.proved_declarations
+                ):
                     declared_originals.add(item["original_id"])
         if not projections and not deletions:
             report_admission.verify()
@@ -1115,6 +1135,11 @@ class TaxonomyEvidence:
         records = _taxdump_records(taxdump, targets | originals | nonterminals)
         if nonterminals.intersection(records):
             _fail("native authority does not prove the finalized taxonomy replacement: live chain member")
+        dependency_declarations = (
+            self._ontology_dependencies.declarations_for({f"NCBITaxon:{identifier}" for identifier in originals})
+            if self._ontology_dependencies is not None
+            else frozenset()
+        )
         projected = dict(expected)
         for key, (_canonical, sha256) in deletions.items():
             old = expected[key][OBJECT_COLUMN].removeprefix("NCBITaxon:")
@@ -1132,7 +1157,10 @@ class TaxonomyEvidence:
                 # Source-declared taxa are forwarded from exact retirement
                 # proof without the anonymous-reference prokaryote trim. The
                 # final projected label is not evidence of that original state.
-                or (not declaration.get("prokaryote") and expected[key][OBJECT_COLUMN] not in declared_originals)
+                or (
+                    not declaration.get("prokaryote")
+                    and expected[key][OBJECT_COLUMN] not in declared_originals | dependency_declarations
+                )
             ):
                 _fail("native authority does not prove the finalized taxonomy replacement")
             row = dict(projected.pop(key))
@@ -1223,6 +1251,68 @@ class TaxonomyEvidence:
             found[key] += 1
         if found != Counter({key: 1 for key in expected}):
             _fail("missing or duplicate scoped taxonomy row")
+        if not finalized:
+            from kg_microbe.merge_utils.external_node_closure import _is_declaration
+
+            declared = {
+                row[ID_COLUMN] for row in graph_rows(directory / "nodes.tsv", quoting=quoting) if _is_declaration(row)
+            }
+            if not self._source_declarations.proved_declarations <= declared:
+                _fail("native source declaration emitter omitted a required local taxon")
+
+    def prepare_source_declarations(
+        self,
+        snapshots,
+        *,
+        selected_path,
+        opener,
+        keyword_paths,
+        cache_reader=None,
+        producer_keyword_matcher=None,
+        keyword_cache_reader=None,
+        recorded=None,
+    ):
+        """Derive declaration demand from native parent choices and complete deposit resolution."""
+        try:
+            if self._source_declarations is not None or self._completed:
+                _fail("source declaration preparation was repeated or late")
+            early = {ordinal: self._choice(ordinal)["target"] for ordinal in range(len(self.records))}
+            targets = {target for target in early.values() if target}
+            targets.update(item["target"] for item in self.deposit_rows.values())
+            for ordinal, entry in enumerate(self.records):
+                if entry["direct_taxid"] is None:
+                    targets.update(target for _subject, target in self._fallback.plan(ordinal)["parent_pairs"])
+            targets = {target for target in targets if target.startswith("NCBITaxon:")}
+            self._source_declarations = SourceDeclarationEvidence(
+                targets,
+                snapshots,
+                selected_path=selected_path,
+                opener=opener,
+                admission=self.admission,
+                entries=self.records,
+                early_parents=early,
+                raw_role=RAW_ROLE,
+                keyword_paths=keyword_paths,
+                cache_reader=cache_reader,
+                producer_keyword_matcher=producer_keyword_matcher,
+                keyword_cache_reader=keyword_cache_reader,
+                recorded=recorded,
+            )
+            self.admission.capture_resolution(lambda: id(self._source_declarations))
+        except BaseException:
+            self._poison()
+            raise
+
+    def bind_ontology_dependencies(self, child):
+        """Retain the finalizer's actual ontology dependency proof separately from producer-time evidence."""
+        if self._ontology_dependencies is child:
+            child.verify(metadata_only=True)
+            return
+        if self._ontology_dependencies is not None:
+            _fail("original finalizer ontology dependency proof was replaced")
+        child.verify(metadata_only=True)
+        self._ontology_dependencies = child
+        self.admission.capture_resolution(lambda: id(self._ontology_dependencies))
 
     def require_fallback(self):
         """Refuse a lost child instead of downgrading inference to old unaudited choices."""
@@ -1318,6 +1408,65 @@ def prepare(transform):
     return guard
 
 
+def prepare_source_declarations(transform, selected_path, custom_path, custom_data):
+    """Bind actual selected membership and any native medium/keyword declaration triggers."""
+    from kg_microbe.transform_utils.constants import GENERAL, KEYWORDS, RAW_DATA_DIR
+    from kg_microbe.utils.mapping_file_utils import LOCAL_METPO_ALIAS_OVERRIDES_PATH
+
+    snapshots = transform.consumed_input_snapshots
+
+    @contextmanager
+    def opener(role, path):
+        """Use exact immutable reads, retaining the transform's original named consumed roles."""
+        with transform.consume_input(role, path) as stream:
+            snapshots[role] = transform.consumed_input_snapshots[role]
+            yield stream
+
+    def keyword_matches(record):
+        """Compare only the existing emitter trigger, without performing chemical annotation."""
+        keys = transform._build_keyword_map_from_record(record, custom_data)
+        return [
+            key
+            for key in record.get(GENERAL, {}).get(KEYWORDS, "")
+            if key.lower().replace(" ", "_").replace("-", "_") in keys
+        ]
+
+    def keyword_cache():
+        """Keep the actual key-affecting constructor state and parsers fixed after reconstruction."""
+        return (
+            {key: value["curie"] for key, value in transform.bacdive_metpo_mappings.items()},
+            {
+                key: (
+                    node.label,
+                    sorted(node.synonyms),
+                    node.bacdive_json_paths,
+                    [child.iri for child in node.children],
+                )
+                for key, node in transform.bacdive_metpo_tree.items()
+            },
+            sorted(transform._ambiguous_metpo_aliases),
+            custom_data,
+            tuple(
+                id(getattr(type(transform), name))
+                for name in ("_build_keyword_map_from_record", "_extract_value_from_json_path", "_values_at_leaf")
+            ),
+        )
+
+    transform._taxonomy_evidence_guard.prepare_source_declarations(
+        snapshots,
+        selected_path=selected_path,
+        opener=opener,
+        keyword_paths={
+            CUSTOM_ROLE: custom_path,
+            METPO_ROLE: Path(os.environ.get("KG_MICROBE_METPO_TEMPLATE_DIR", RAW_DATA_DIR)) / "metpo_sheet.tsv",
+            ALIASES_ROLE: LOCAL_METPO_ALIAS_OVERRIDES_PATH,
+        },
+        cache_reader=lambda: getattr(transform, "ncbitaxon_labels", None),
+        producer_keyword_matcher=keyword_matches,
+        keyword_cache_reader=keyword_cache,
+    )
+
+
 def split_native_contract(recorded):
     """Require the new child while preserving the exact independently reviewed NCIT contract."""
     if not isinstance(recorded, dict) or not isinstance(recorded.get("taxonomy"), dict):
@@ -1327,7 +1476,17 @@ def split_native_contract(recorded):
     return ncit, taxonomy
 
 
-def verify_recorded(contract, snapshots, raw_dir, output_dir, *, optional_state, members=None, admission=None):
+def verify_recorded(
+    contract,
+    snapshots,
+    raw_dir,
+    output_dir,
+    *,
+    optional_state,
+    members=None,
+    admission=None,
+    ontology_dependencies=None,
+):
     """
     Rejoin the mandatory complete native cohort and exact lookup decisions during admission.
 
@@ -1342,10 +1501,12 @@ def verify_recorded(contract, snapshots, raw_dir, output_dir, *, optional_state,
         and isinstance(contract.get("version"), int)
         and contract["version"] < CONTRACT_VERSION
     ):
-        _fail(
-            f"taxonomy contract version {contract['version']} predates withheld deposit contests (#1421); "
-            "rerun kg transform -s bacdive"
+        missing = (
+            "withheld deposit contests (#1421)"
+            if contract["version"] < 3
+            else "independent original source declaration proof (#1705)"
         )
+        _fail(f"taxonomy contract version {contract['version']} predates {missing}; rerun kg transform -s bacdive")
     if (
         not isinstance(contract, dict)
         or contract.get("version") != CONTRACT_VERSION
@@ -1384,6 +1545,8 @@ def verify_recorded(contract, snapshots, raw_dir, output_dir, *, optional_state,
         policy = supplied_taxid_policy.load_policy(stream)
     bindings[supplied_taxid_policy.ROLE] = policy_binding
     guard = TaxonomyEvidence(raw_dir, index, bindings, optional_state, supplied_policy=policy, admission=admission)
+    if ontology_dependencies is not None:
+        guard.bind_ontology_dependencies(ontology_dependencies)
     with (raw_dir / _RAW_FILE).open("rb") as stream:
         guard.capture_records(ncit_category_claims._native_records(stream), snapshots)
     native_fallback = contract.get("fallback_native_evidence")
@@ -1431,6 +1594,18 @@ def verify_recorded(contract, snapshots, raw_dir, output_dir, *, optional_state,
     resolved, contested = guard.resolve_deposits(claims, recorded_ancestry=ancestry)
     for subject, target in resolved:
         guard.classify_deposit(subject, target, claims[subject])
+    source_declarations = contract.get("source_declarations")
+    if not isinstance(source_declarations, dict):
+        _fail("mandatory original source declaration contract missing")
+    selected = source_declarations.get("selected_input")
+    keyword_inputs = source_declarations.get("keyword_inputs", {})
+    guard.prepare_source_declarations(
+        snapshots,
+        selected_path=selected.get("locator") if isinstance(selected, dict) else raw_dir / "unused-zero-declarations",
+        opener=lambda role, path: recorded_selected_opener(snapshots, admission, role, path),
+        keyword_paths={role: item["locator"] for role, item in keyword_inputs.items()},
+        recorded=source_declarations,
+    )
     guard.complete(claims, resolved, contested)
     if _json(guard.contract) != _json(contract):
         _fail("recorded taxonomy contract does not equal complete actual-native reconstruction")

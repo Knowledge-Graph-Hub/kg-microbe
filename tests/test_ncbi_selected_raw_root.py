@@ -5,7 +5,9 @@ from pathlib import Path
 
 import pytest
 
+from kg_microbe.merge_utils import external_node_closure
 from kg_microbe.merge_utils.source_admission import SourceAdmission
+from kg_microbe.utils import source_finalization
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, verify_finalized_source_files
 from tests.test_declared_taxid_retirement import _authority, _published, _source
 
@@ -138,4 +140,96 @@ def test_ncbi_receipt_requires_original_absolute_raw_locator(tmp_path, damage):
     before = _published(source)
     with pytest.raises(SourceFinalizationRequired):
         verify_finalized_source_files([source.output_node_file, source.output_edge_file])
+    assert _published(source) == before
+
+
+def _shared_archive_root(first):
+    """Select the exact same archive through another, independently identifiable raw root."""
+    second = first.with_name("authority-b")
+    second.mkdir()
+    (second / "taxdump.tar.gz").symlink_to(first / "taxdump.tar.gz")
+    assert second.resolve() != first.resolve()
+    assert (second / "taxdump.tar.gz").resolve() == (first / "taxdump.tar.gz").resolve()
+    return second
+
+
+@pytest.mark.parametrize("relative", [False, True])
+def test_unchanged_raw_root_with_shared_archive_admits(tmp_path, monkeypatch, relative):
+    """Sharing an archive is valid until the selected raw root changes."""
+    source, selected, first = _selected_source(tmp_path)
+    second = _shared_archive_root(first)
+    if relative:
+        monkeypatch.chdir(tmp_path)
+        source.input_base_dir = Path("raw")
+    report = source.finalize()
+    assert report["raw_input_locator"] == str(selected.absolute())
+    assert report["raw_input_directory"] == str(first.resolve())
+    before = _published(source)
+    verify_finalized_source_files([source.output_node_file, source.output_edge_file])
+    assert source.finalize() == report
+    assert _published(source) == before
+    _retarget(selected, second)
+    with pytest.raises(SourceFinalizationRequired, match="authority directory"):
+        verify_finalized_source_files([source.output_node_file, source.output_edge_file])
+    assert _published(source) == before
+
+
+@pytest.mark.parametrize("prior_publication", [False, True])
+@pytest.mark.parametrize("timing", ["during-parse", "before-publish", "publication-audit"])
+def test_initial_finalization_keeps_raw_root_bound_through_publication(
+    tmp_path, monkeypatch, prior_publication, timing
+):
+    """A shared archive cannot hide a raw-root retarget during parsing or publication."""
+    source, selected, first = _selected_source(tmp_path)
+    second = _shared_archive_root(first)
+    archive = first / "taxdump.tar.gz"
+    original_authority = archive.read_bytes()
+    if prior_publication:
+        source.finalize()
+    before = _published(source)
+    parse = external_node_closure.load_taxid_retirements
+    publish = source_finalization._publish_finalization
+    verify_audits = source_finalization.verify_producer_audits
+    changed = False
+    publishing = False
+
+    def retarget():
+        """Change only the root while preserving the resolved archive and its original bytes."""
+        nonlocal changed
+        assert not changed
+        _retarget(selected, second)
+        changed = True
+        assert (selected / "taxdump.tar.gz").resolve() == archive.resolve()
+
+    def parse_then_retarget(*args, **kwargs):
+        """Change the selection after the original authority has actually been parsed."""
+        result = parse(*args, **kwargs)
+        if timing == "during-parse":
+            retarget()
+        return result
+
+    def publish_after_retarget(transform, prepared):
+        """Exercise the boundary after a complete staging report has been prepared."""
+        nonlocal publishing
+        publishing = True
+        assert prepared[3]["raw_input_directory"] == str(first.resolve())
+        assert prepared[3]["raw_input_locator"] == str(selected.absolute())
+        if timing == "before-publish":
+            retarget()
+        return publish(transform, prepared)
+
+    def verify_audits_then_retarget(transform, **kwargs):
+        """Change the root during the last publication check, before any graph replacement."""
+        result = verify_audits(transform, **kwargs)
+        if timing == "publication-audit" and publishing and kwargs.get("output_dir") is not None:
+            retarget()
+        return result
+
+    monkeypatch.setattr(external_node_closure, "load_taxid_retirements", parse_then_retarget)
+    monkeypatch.setattr(source_finalization, "_publish_finalization", publish_after_retarget)
+    monkeypatch.setattr(source_finalization, "verify_producer_audits", verify_audits_then_retarget)
+    with pytest.raises(SourceFinalizationRequired, match="raw-root locator changed"):
+        source.finalize(fresh_run=prior_publication)
+    assert changed
+    assert archive.read_bytes() == original_authority
     assert _published(source) == before

@@ -105,6 +105,18 @@ def _write_rows(path, rows):
         writer.writerows(rows)
 
 
+def _place_canonical_companion(source, rows, canonical, companion, placement):
+    """Place a canonical row before or after its anonymous donor in one or two members."""
+    canonical_path = source.output_node_file
+    if placement.endswith("row"):
+        _write_rows(canonical_path, [companion, *rows] if placement == "first-row" else [*rows, companion])
+    else:
+        canonical_path = source.output_dir / ("a_nodes.tsv" if placement == "first-file" else "z_nodes.tsv")
+        _write_rows(canonical_path, [canonical])
+        _write_rows(source.output_node_file, [row for row in rows if row is not canonical] + [companion])
+    return canonical_path
+
+
 def _select_ten(source, *, endpoint, dependency_only):
     """Select only original 10 so replacement intermediates cannot enter through source rows."""
     nodes = [
@@ -495,6 +507,132 @@ def test_typed_canonical_survives_same_id_anonymous_companion(tmp_path, anonymou
     assert actual[0]["deprecated"] == "false"
     assert "infores:companion" in actual[0]["provided_by"].split("|")
     verify_finalized_source_files([source.output_node_file, source.output_edge_file])
+
+
+@pytest.mark.parametrize("canonical_kind", ["named", "typed"])
+@pytest.mark.parametrize("placement", ["first-row", "last-row", "first-file", "last-file"])
+@pytest.mark.parametrize("endpoint", ["subject", "object"])
+def test_explicit_nonprokaryote_canonical_keeps_companion_context(tmp_path, canonical_kind, placement, endpoint):
+    """Anonymous companions cannot erase a declared retirement target or its observations (#1700)."""
+    source = _source(tmp_path)
+    authority = _authority(source.input_base_dir, merged="10 | 20 |\n11 | 20 |\n")
+    rows = list(graph_rows(source.output_node_file))
+    canonical = next(row for row in rows if row["id"] == "NCBITaxon:20")
+    if canonical_kind == "typed":
+        canonical["name"] = ""
+    original_canonical = dict(canonical)
+    companion = dict(
+        canonical,
+        name="",
+        category="biolink:NamedThing",
+        provided_by="infores:companion",
+        description="Anonymous companion context",
+        deprecated="true",
+    )
+    canonical_path = _place_canonical_companion(source, rows, canonical, companion, placement)
+    donors = {row["id"]: row for row in rows if row["id"] in {"NCBITaxon:10", "NCBITaxon:11"}}
+    original_edges = list(graph_rows(source.output_edge_file))
+    if endpoint == "object":
+        for row in original_edges:
+            row["subject"], row["object"] = row["object"], row["subject"]
+        _write_rows(source.output_edge_file, original_edges)
+    report = source.finalize()
+    node_paths = sorted(source.output_dir.glob("*nodes.tsv"))
+    published_rows = [(path, row) for path in node_paths for row in graph_rows(path)]
+    matches = [(path, row) for path, row in published_rows if row["id"] == "NCBITaxon:20"]
+    assert len(matches) == 1
+    actual_path, actual = matches[0]
+    assert actual_path == canonical_path
+    for field in ("id", "name", "category", "deprecated"):
+        assert actual[field] == original_canonical[field]
+    assert set(actual["provided_by"].split("|")) == {
+        "infores:source",
+        "infores:companion",
+        "infores:ten",
+        "infores:eleven",
+        "infores:ncbitaxon",
+    }
+    for row in [original_canonical, companion, *donors.values()]:
+        assert row["description"] in actual["description"]
+    edges = list(graph_rows(source.output_edge_file))
+    node_ids = {row["id"] for _, row in published_rows}
+    assert len(edges) == len(original_edges)
+    for original, actual_edge in zip(original_edges, edges, strict=True):
+        for field, value in original.items():
+            if field in {"subject", "object"} and value in donors:
+                assert actual_edge[field] == "NCBITaxon:20"
+                assert actual_edge[f"original_{field}"] == value
+            else:
+                assert actual_edge[field] == value
+        assert actual_edge["subject"] in node_ids
+        assert actual_edge["object"] in node_ids
+    audit = _rows(source, "source_reference_resolution.tsv")
+    assert not any(row["disposition"].startswith("excluded") for row in audit)
+    for original in [companion, *donors.values()]:
+        assert any(json.loads(row["original_node_json"]) == original for row in audit if row["original_node_json"])
+    identity = {"path": str(authority.resolve()), "sha256": hashlib.sha256(authority.read_bytes()).hexdigest()}
+    assert report["consumed_inputs"]["ncbi_taxonomy_authority"] == identity
+    assert {row["authority_sha256"] for row in audit} == {identity["sha256"]}
+    before = _published(source)
+    assert source.finalize() == report
+    assert _published(source) == before
+    verify_finalized_source_files([*node_paths, source.output_edge_file])
+
+
+@pytest.mark.parametrize("canonical_kind", ["named", "typed"])
+@pytest.mark.parametrize("placement", ["first-row", "last-row", "first-file", "last-file"])
+@pytest.mark.parametrize("taxid", ["30", "99"])
+def test_unresolved_canonical_keeps_companion_context(tmp_path, canonical_kind, placement, taxid):
+    """Unresolved companion coalescing preserves source context without inventing native proof (#1701)."""
+    source = _source(tmp_path)
+    identifier = f"NCBITaxon:{taxid}"
+    rows = list(graph_rows(source.output_node_file))
+    canonical = next(row for row in rows if row["id"] == identifier)
+    if canonical_kind == "typed":
+        canonical["name"] = ""
+    original_canonical = dict(canonical)
+    companion = dict(
+        canonical,
+        name="",
+        category="biolink:NamedThing",
+        provided_by="infores:companion",
+        description="Additional unresolved source context",
+        deprecated="opposite scalar value",
+    )
+    canonical_path = _place_canonical_companion(source, rows, canonical, companion, placement)
+    original_edges = [
+        row for row in graph_rows(source.output_edge_file) if identifier in (row["subject"], row["object"])
+    ]
+    report = source.finalize()
+    node_paths = sorted(source.output_dir.glob("*nodes.tsv"))
+    matches = [(path, row) for path in node_paths for row in graph_rows(path) if row["id"] == identifier]
+    assert len(matches) == 1
+    actual_path, actual = matches[0]
+    assert actual_path == canonical_path
+    for field in ("id", "name", "category", "deprecated"):
+        assert actual[field] == original_canonical[field]
+    assert set(actual["provided_by"].split("|")) == {"infores:source", "infores:companion"}
+    assert original_canonical["description"] in actual["description"]
+    assert companion["description"] in actual["description"]
+    actual_edges = [row for row in graph_rows(source.output_edge_file) if identifier in (row["subject"], row["object"])]
+    assert len(actual_edges) == len(original_edges) == 1
+    assert all(actual_edges[0][field] == value for field, value in original_edges[0].items())
+    assert actual_edges[0]["original_subject"] == actual_edges[0]["original_object"] == ""
+    audit = [row for row in _rows(source, "source_reference_resolution.tsv") if row["original_id"] == identifier]
+    disposition = "unresolved_deleted_taxid" if taxid == "30" else "unresolved_no_exact_local_authority"
+    assert {row["disposition"] for row in audit} == {disposition}
+    assert {row["canonical_id"] for row in audit} == {identifier}
+    originals = [json.loads(row["original_node_json"]) for row in audit]
+    assert companion in originals
+    if taxid == "30":
+        assert original_canonical in originals
+    else:
+        assert all(row["authority"] == row["authority_sha256"] == "" for row in audit)
+    assert all(json.loads(row["original_edge_json"]) in original_edges for row in audit)
+    before = _published(source)
+    assert source.finalize() == report
+    assert _published(source) == before
+    verify_finalized_source_files([*node_paths, source.output_edge_file])
 
 
 @pytest.mark.parametrize("reverse", [False, True])

@@ -90,7 +90,14 @@ def _verify_input_snapshot(name, snapshot):
         raise SourceFinalizationRequired(f"Consumed input {name!r} changed or missing: {path}; rerun the producer")
 
 
-def verify_consumed_inputs(transform, *, native_output_dir=None):
+def _verify_ncbi_raw_root(transform, binding):
+    """Keep the caller's raw root tied to the target selected before authority consumption."""
+    locator, directory = binding
+    if Path(transform.input_base_dir).absolute() != locator or locator.resolve() != directory:
+        raise SourceFinalizationRequired("Selected NCBI raw-root locator changed")
+
+
+def verify_consumed_inputs(transform, *, native_output_dir=None, raw_input_binding=None):
     """Require every declared producer read and verify its immutable path/digest snapshot."""
     verifier = getattr(transform, "verify_declared_dependencies", None)
     if verifier is not None:
@@ -105,6 +112,8 @@ def verify_consumed_inputs(transform, *, native_output_dir=None):
         raise SourceFinalizationRequired(f"Required consumed inputs were not read: {', '.join(sorted(missing))}")
     for name, snapshot in snapshots.items():
         if name == "ncbi_taxonomy_authority":
+            if raw_input_binding is not None:
+                _verify_ncbi_raw_root(transform, raw_input_binding)
             selected = Path(transform.input_base_dir) / "taxdump.tar.gz"
             if selected.resolve() != Path(snapshot["path"]):
                 raise SourceFinalizationRequired("Selected NCBI authority locator changed")
@@ -145,6 +154,8 @@ def verify_consumed_inputs(transform, *, native_output_dir=None):
     native_verifier = getattr(transform, "verify_native_inputs", None)
     if native_verifier is not None:
         native_verifier(byte_verified=True, output_dir=native_output_dir)
+    if raw_input_binding is not None and "ncbi_taxonomy_authority" in snapshots:
+        _verify_ncbi_raw_root(transform, raw_input_binding)
 
 
 @contextmanager
@@ -746,9 +757,14 @@ def _repeat_finalization(transform, file_prefix):
 def _publish_finalization(transform, prepared):
     """Publish one validated staging area, with its exact-byte completion record last."""
     staging, report_path, used_inputs, report = prepared
-    verify_consumed_inputs(transform, native_output_dir=staging)
+    raw_input_binding = None
+    if "ncbi_taxonomy_authority" in report["consumed_inputs"]:
+        raw_input_binding = (Path(report["raw_input_locator"]), Path(report["raw_input_directory"]))
+    verify_consumed_inputs(transform, native_output_dir=staging, raw_input_binding=raw_input_binding)
     verify_producer_audits(transform)
     verify_producer_audits(transform, output_dir=staging)
+    if raw_input_binding is not None:
+        _verify_ncbi_raw_root(transform, raw_input_binding)
     for path in sorted(staging.iterdir(), key=lambda path: (path == report_path, path.name)):
         os.replace(path, Path(transform.output_dir) / path.name)
     transform.finalization_inputs = tuple(str(path.resolve()) for path in sorted(used_inputs))
@@ -799,13 +815,16 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
     No ontology adapter is opened inside producer workers.
     """
     output_dir, raw_dir = Path(transform.output_dir), Path(transform.input_base_dir)
+    # Freeze the root independently of its archive: distinct roots may point
+    # to the same taxdump, so archive identity alone cannot bind this choice.
+    raw_input_binding = (raw_dir.absolute(), raw_dir.resolve())
     node_paths = sorted(output_dir.glob(f"{file_prefix or '*'}nodes.tsv"))
     edge_paths = sorted(output_dir.glob(f"{file_prefix or '*'}edges.tsv"))
     if not node_paths or not edge_paths:
         raise SourceFinalizationRequired(f"{output_dir}: source finalization requires node and edge TSV files")
     repo_root = Path(__file__).resolve().parents[2]
     _bind_finalization_members(transform, (path.name for path in (*node_paths, *edge_paths)))
-    verify_consumed_inputs(transform)
+    verify_consumed_inputs(transform, raw_input_binding=raw_input_binding)
     producer_audits = verify_producer_audits(transform)
     consumed = getattr(transform, "consumed_input_snapshots", {})
     used_inputs = {
@@ -898,6 +917,7 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
         with ExitStack() as authority_stack:
             taxdump_path = None
             if ncbi_present:
+                _verify_ncbi_raw_root(transform, raw_input_binding)
                 # Parse the same immutable bytes whose identity the finalizer
                 # records, never a changed authority followed by a late digest.
                 stream = authority_stack.enter_context(
@@ -921,6 +941,8 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
                 normalize_declared_ncbi=ncbi_present,
                 taxdump_path=taxdump_path,
             )
+        if ncbi_present:
+            _verify_ncbi_raw_root(transform, raw_input_binding)
         for row in graph_rows(external_report, quoting=csv.QUOTE_MINIMAL):
             if row["authority"]:
                 used_inputs.add(raw_dir / row["authority"])
@@ -969,7 +991,7 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
             for path in paths:
                 _order_finalized_schema(path, is_node)
         summaries["rows"] = validate_graph_bundle(staged_nodes, staged_edges, require_contract=True)
-        verify_consumed_inputs(transform, native_output_dir=staging)
+        verify_consumed_inputs(transform, native_output_dir=staging, raw_input_binding=raw_input_binding)
         verify_producer_audits(transform)
         verify_producer_audits(transform, output_dir=staging)
         consumed = getattr(transform, "consumed_input_snapshots", {})
@@ -978,7 +1000,7 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
         report = {
             "version": FINALIZATION_VERSION,
             "source": transform.source_name,
-            "raw_input_directory": str(raw_dir.resolve()),
+            "raw_input_directory": str(raw_input_binding[1]),
             "tsv_quoting": "none",
             "summaries": summaries,
             INVENTORY_KEY: restriction_inventory,
@@ -1019,7 +1041,7 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
         if has_optional_inputs(type(transform)):
             report["optional_consumed_inputs"] = transform.optional_consumed_inputs
         if "ncbi_taxonomy_authority" in consumed or getattr(type(transform), "OPTIONAL_RAW_CONSUMED_INPUTS", ()):
-            report["raw_input_locator"] = str(raw_dir.absolute())
+            report["raw_input_locator"] = str(raw_input_binding[0])
         try:
             producer_file = inspect.getsourcefile(type(transform))
         except TypeError:

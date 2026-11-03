@@ -822,3 +822,157 @@ def test_declared_deleted_parent_retains_assertion_and_requires_exact_proof(
         writer.writerows(rows)
     with pytest.raises(SourceFinalizationRequired):
         transform._taxonomy_evidence_guard._finalized_expectations({taxonomy._row_key(raw): raw}, transform.output_dir)
+
+
+def _restamp_retirement_authority(transform, report, *, audit_rows=None):
+    """Keep bounded fixture receipts coherent so public admission must inspect native semantics."""
+    taxdump = Path(transform.input_base_dir) / "taxdump.tar.gz"
+    digest = hashlib.sha256(taxdump.read_bytes()).hexdigest()
+    report["consumed_inputs"]["ncbi_taxonomy_authority"]["sha256"] = digest
+    for item in report["inputs"]:
+        if item["path"] == str(taxdump.resolve()):
+            item["sha256"] = digest
+    audit = transform.output_dir / "source_reference_resolution.tsv"
+    with audit.open(newline="") as stream:
+        reader = csv.DictReader(stream, delimiter="\t")
+        fields = reader.fieldnames
+        rows = list(reader) if audit_rows is None else audit_rows
+    for row in rows:
+        if row["authority"] == "taxdump.tar.gz":
+            row["authority_sha256"] = digest
+    with audit.open("w", newline="") as stream:
+        writer = csv.DictWriter(stream, fields, delimiter="\t", lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+    report["audit_members"][audit.name] = {
+        "bytes": audit.stat().st_size,
+        "sha256": hashlib.sha256(audit.read_bytes()).hexdigest(),
+    }
+    (transform.output_dir / "source_finalization.json").write_text(json.dumps(report))
+
+
+@pytest.mark.parametrize("declaration", ["named", "typed"])
+def test_declared_nonprokaryote_retirement_passes_independent_bacdive_admission(
+    tmp_path, monkeypatch, local_source_schema, declaration
+):
+    """Explicit original declarations keep exact nonprokaryote replacements and all observation fields."""
+    transform = retired_producer(tmp_path, monkeypatch, declare_retired=True)
+    if declaration == "typed":
+        # Retain the producer's specific category while exercising a blank
+        # original label; only the original declaration, not the new label,
+        # determines whether anonymous-reference trimming applies.
+        path = Path(transform.output_node_file)
+        with path.open(newline="") as stream:
+            reader = csv.DictReader(stream, delimiter="\t", quoting=csv.QUOTE_NONE)
+            fields, rows = reader.fieldnames, list(reader)
+        for row in rows:
+            if row["id"] == "NCBITaxon:10":
+                row["name"] = ""
+        with path.open("w", newline="") as stream:
+            writer = csv.DictWriter(stream, fields, delimiter="\t", lineterminator="\n", quoting=csv.QUOTE_NONE)
+            writer.writeheader()
+            writer.writerows(rows)
+    _taxdump(Path(transform.input_base_dir), merged="10 | 20 |\n")
+    raw = next(row for row in scoped_rows(transform) if row["subject"] == "kgmicrobe.strain:TEST-RETIRED")
+    contract = copy.deepcopy(transform._taxonomy_evidence_guard.contract)
+    report = transform.finalize()
+    final = next(row for row in scoped_rows(transform) if row["subject"] == raw["subject"])
+    assert taxonomy._equal_row(final, {**raw, "object": "NCBITaxon:20", "original_object": "NCBITaxon:10"})
+    assert report["producer_native_inputs"]["taxonomy"] == contract
+    originals = [
+        json.loads(row["original_node_json"])
+        for row in graph_rows(transform.output_dir / "source_reference_resolution.tsv", quoting=csv.QUOTE_MINIMAL)
+        if row["original_id"] == "NCBITaxon:10" and row["original_node_json"]
+    ]
+    assert originals and all(row["category"] == "biolink:OrganismTaxon" for row in originals)
+    assert all(bool(row["name"]) == (declaration == "named") for row in originals)
+    verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+    fresh = BacDiveTransform.__new__(BacDiveTransform)
+    Transform.__init__(fresh, "bacdive", transform.input_base_dir, transform.output_base_dir)
+    assert fresh.finalize() == report
+
+
+def test_anonymous_nonprokaryote_retirement_does_not_relax_bacdive_assertion_guard(
+    tmp_path, monkeypatch, local_source_schema
+):
+    """The declared-taxid exception cannot authorize dropping an anonymous scoped observation."""
+    transform = retired_producer(tmp_path, monkeypatch, declare_retired=False)
+    _taxdump(Path(transform.input_base_dir), merged="10 | 20 |\n")
+    paths = [Path(transform.output_node_file), Path(transform.output_edge_file)]
+    before = {path: path.read_bytes() for path in paths}
+    with pytest.raises(SourceFinalizationRequired, match="unsupported or incomplete finalized taxonomy"):
+        transform.finalize()
+    assert {path: path.read_bytes() for path in paths} == before
+    assert not (transform.output_dir / "source_finalization.json").exists()
+
+
+@pytest.mark.parametrize("damage", ["missing", "anonymous", "wrong-id"])
+def test_nonprokaryote_retirement_needs_its_original_source_declaration(
+    tmp_path, monkeypatch, local_source_schema, damage
+):
+    """A named projected node cannot substitute for a matching explicit original source declaration."""
+    transform = retired_producer(tmp_path, monkeypatch, declare_retired=True)
+    _taxdump(Path(transform.input_base_dir), merged="10 | 20 |\n")
+    report = transform.finalize()
+    rows = list(graph_rows(transform.output_dir / "source_reference_resolution.tsv", quoting=csv.QUOTE_MINIMAL))
+    assert any(row["original_node_json"] for row in rows)
+    for row in rows:
+        if not row["original_node_json"]:
+            continue
+        original = json.loads(row["original_node_json"])
+        if damage == "missing":
+            row["original_node_json"] = ""
+        else:
+            if damage == "anonymous":
+                original.update(name="", category="biolink:NamedThing")
+            else:
+                original["id"] = "NCBITaxon:999"
+            row["original_node_json"] = json.dumps(original)
+    _restamp_retirement_authority(transform, report, audit_rows=rows)
+    message = "wrong original identifier" if damage == "wrong-id" else "does not prove the finalized taxonomy"
+    with pytest.raises(SourceFinalizationRequired, match=message):
+        verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+
+
+def test_public_anonymous_retirement_still_requires_prokaryote_authority(tmp_path, monkeypatch, local_source_schema):
+    """Restamping a nonprokaryote lineage cannot use the generated final label as declaration proof."""
+    transform = retired_producer(tmp_path, monkeypatch, declare_retired=False)
+    report = transform.finalize()
+    _taxdump(
+        Path(transform.input_base_dir),
+        nodes="1 | 1 | no rank |\n2 | 1 | superkingdom |\n12 | 1 | species |\n",
+    )
+    _restamp_retirement_authority(transform, report)
+    with pytest.raises(SourceFinalizationRequired, match="does not prove the finalized taxonomy replacement"):
+        verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+
+
+@pytest.mark.parametrize("reverse_chain", [False, True])
+@pytest.mark.parametrize("live_chain_member", [None, "10", "11", "31"])
+def test_public_retirement_proof_checks_every_selected_native_nonterminal(
+    tmp_path, monkeypatch, local_source_schema, reverse_chain, live_chain_member
+):
+    """Fresh admission rejects live hidden chain members, but leaves unrelated chains outside this proof."""
+    transform = retired_producer(tmp_path, monkeypatch, declare_retired=True)
+    report = transform.finalize()
+    graph_before = {
+        Path(path): Path(path).read_bytes() for path in (transform.output_node_file, transform.output_edge_file)
+    }
+    witness_before = copy.deepcopy(report["producer_native_inputs"])
+    chain = ["10 | 11 |\n", "11 | 12 |\n", "30 | 31 |\n", "31 | 12 |\n"]
+    if reverse_chain:
+        chain.reverse()
+    nodes = "1 | 1 | no rank |\n2 | 1 | superkingdom |\n12 | 2 | species |\n"
+    if live_chain_member:
+        # No scientific name for these extra nodes: nodes.dmp membership itself
+        # contradicts retirement, even when that taxid was never a source endpoint.
+        nodes += f"{live_chain_member} | 2 | species |\n"
+    _taxdump(Path(transform.input_base_dir), merged="".join(chain), nodes=nodes)
+    _restamp_retirement_authority(transform, report)
+    if live_chain_member in {"10", "11"}:
+        with pytest.raises(SourceFinalizationRequired, match="live chain member"):
+            verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+    else:
+        verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+    assert report["producer_native_inputs"] == witness_before
+    assert {path: path.read_bytes() for path in graph_before} == graph_before

@@ -333,21 +333,23 @@ def resolve_external_reference_bundle(
     replacements, deleted = load_taxid_retirements(taxdump, flatten=False) if normalize_declared_ncbi else ({}, set())
     retired_ids = {f"NCBITaxon:{taxid}" for taxid in replacements.keys() | deleted}
     original_nodes, original_node_rows, declared, anonymous = {}, {}, set(), set()
-    declared_retirements = set()
+    explicit_declarations = set()
     for row in _rows(node_paths, quoting=quoting):
         identifier = row[ID_COLUMN]
         declared.add(identifier)
         is_anonymous = (
             identifier.startswith(supported) and identifier not in known_declarations and not _is_declaration(row)
         )
-        if identifier in retired_ids and _is_declaration(row):
-            declared_retirements.add(identifier)
+        if _is_declaration(row):
+            explicit_declarations.add(identifier)
         if is_anonymous:
             anonymous.add(identifier)
         if is_anonymous or identifier in retired_ids:
             original_nodes.setdefault(identifier, row)
             original_node_rows.setdefault(identifier, []).append(row)
-    anonymous.difference_update(declared_retirements)
+    # A same-ID anonymous companion cannot place an explicit source declaration
+    # in trim scope, including the live target of a retired source identifier.
+    anonymous.difference_update(explicit_declarations)
     if discover_references:
         for row in _rows(edge_paths, quoting=quoting):
             for column in (SUBJECT_COLUMN, OBJECT_COLUMN):
@@ -463,15 +465,19 @@ def resolve_external_reference_bundle(
             # Do not invent a label/description for the actual nameless native
             # referent. Its complete declaration is copied verbatim below.
             continue
-        if not decision.get("name") or not decision["canonical_id"]:
+        canonical = decision["canonical_id"]
+        if not canonical or (not decision.get("name") and canonical not in existing):
             continue
-        details = enrichment.setdefault(decision["canonical_id"], {"providers": set(), "descriptions": set()})
+        details = enrichment.setdefault(canonical, {"providers": set(), "descriptions": set()})
         for original_row in original_node_rows.get(original, [original_nodes[original]]):
             details["providers"].update(knowledge_source_tokens(original_row.get(PROVIDED_BY_COLUMN)))
             description = original_row.get(DESCRIPTION_COLUMN)
             if description:
                 details["descriptions"].add(description)
-        details["providers"].add(_AUTHORITY_SOURCES[decision["authority"]])
+        # Unresolved/deleted companions still contribute their source context,
+        # but cannot supply a native declaration or its provider attribution.
+        if decision.get("name"):
+            details["providers"].add(_AUTHORITY_SOURCES[decision["authority"]])
     counts = Counter(value["disposition"] for value in decisions.values())
     # Nested atomic contexts stage all outputs before any replacement. Merge
     # publication is a separate outer boundary; no claim of multi-file rename

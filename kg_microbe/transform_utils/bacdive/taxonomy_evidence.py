@@ -39,6 +39,7 @@ from kg_microbe.transform_utils.bacdive.fallback_evidence import (
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
     AUTOMATED_AGENT,
+    ID_COLUMN,
     INFERRED_SUBCLASS_RELATION,
     KNOWLEDGE_LEVEL_COLUMN,
     MANUAL_AGENT,
@@ -1029,13 +1030,14 @@ class TaxonomyEvidence:
         """
         import tarfile
 
-        from kg_microbe.merge_utils.external_node_closure import _taxdump_records
-        from kg_microbe.utils.external_identifiers import load_taxid_retirements
+        from kg_microbe.merge_utils.external_node_closure import _is_declaration, _taxdump_records
+        from kg_microbe.utils.external_identifiers import load_taxid_retirements, resolve_replacement
 
         report_path = Path(directory) / "source_reference_resolution.tsv"
         report_admission = SourceAdmission()
         report_admission.capture(report_path)
         projections, deletions = {}, {}
+        declared_originals = set()
         expected_pairs = {(row[SUBJECT_COLUMN], row[OBJECT_COLUMN]) for row in expected.values()}
         for item in graph_rows(report_path, quoting=csv.QUOTE_MINIMAL):
             if not item.get("original_edge_json"):
@@ -1064,6 +1066,12 @@ class TaxonomyEvidence:
             other = projections if disposition == "unresolved_deleted_taxid" else deletions
             if key in other or selected.setdefault(key, decision) != decision:
                 _fail("conflicting finalized taxonomy reference dispositions")
+            if item.get("original_node_json"):
+                original_node = json.loads(item["original_node_json"])
+                if not isinstance(original_node, dict) or original_node.get(ID_COLUMN) != item["original_id"]:
+                    _fail("finalized taxonomy source declaration has the wrong original identifier")
+                if _is_declaration(original_node):
+                    declared_originals.add(item["original_id"])
         if not projections and not deletions:
             report_admission.verify()
             return expected
@@ -1090,12 +1098,23 @@ class TaxonomyEvidence:
                 selected = [member for member in members if member.name == name]
                 if len(selected) != 1 or not selected[0].isfile():
                     _fail("native retirement archive has missing or ambiguous authority members")
-        replacements, deleted = load_taxid_retirements(taxdump)
+        replacements, deleted = load_taxid_retirements(taxdump, flatten=False)
         targets = {canonical.removeprefix("NCBITaxon:") for canonical, _sha256 in projections.values()}
         originals = {
             expected[key][OBJECT_COLUMN].removeprefix("NCBITaxon:") for key in projections.keys() | deletions.keys()
         }
-        records = _taxdump_records(taxdump, targets | originals)
+        # A hidden intermediate is part of the selected proof even if no
+        # source assertion names it. Preserve native links until every selected
+        # nonterminal has been checked against nodes.dmp, including nameless ones.
+        nonterminals = set()
+        for old in originals:
+            current = old
+            while current in replacements and current not in nonterminals:
+                nonterminals.add(current)
+                current = replacements[current]
+        records = _taxdump_records(taxdump, targets | originals | nonterminals)
+        if nonterminals.intersection(records):
+            _fail("native authority does not prove the finalized taxonomy replacement: live chain member")
         projected = dict(expected)
         for key, (_canonical, sha256) in deletions.items():
             old = expected[key][OBJECT_COLUMN].removeprefix("NCBITaxon:")
@@ -1107,10 +1126,13 @@ class TaxonomyEvidence:
             declaration = records.get(target, {})
             if (
                 sha256 != identity["sha256"]
-                or replacements.get(old) != target
+                or resolve_replacement(old, replacements) != target
                 or old in records
                 or not declaration.get("name")
-                or not declaration.get("prokaryote")
+                # Source-declared taxa are forwarded from exact retirement
+                # proof without the anonymous-reference prokaryote trim. The
+                # final projected label is not evidence of that original state.
+                or (not declaration.get("prokaryote") and expected[key][OBJECT_COLUMN] not in declared_originals)
             ):
                 _fail("native authority does not prove the finalized taxonomy replacement")
             row = dict(projected.pop(key))

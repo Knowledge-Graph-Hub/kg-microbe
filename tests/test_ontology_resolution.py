@@ -1,5 +1,7 @@
 """Focused tests for ontology category policy without databases or network."""
 
+from pathlib import Path
+
 from kg_microbe.utils.ontology_resolution import (
     chebi_category,
     foodon_category,
@@ -58,7 +60,8 @@ def test_simple_category_policies() -> None:
     assert replace_category_by_prefix("GO:1\told", 0, 1) == "GO:1\tbiolink:BiologicalProcess"
     assert uberon_category("UBERON:1") == "biolink:AnatomicalEntity"
     # #1015: the ontologies transform typed these OntologyClass while sources typed them Food / PhenotypicQuality.
-    assert foodon_category("FOODON:03301710") == "biolink:Food"
+    fixture = Path(__file__).parent / "resources" / "foodon_category_ancestry.json"
+    assert foodon_category("FOODON:03307083", path=fixture) == "biolink:Food"
     assert pato_category("PATO:0001421") == "biolink:PhenotypicQuality"
     assert ncbitaxon_category("NCBITaxon:1") == "biolink:OrganismTaxon"
     assert replace_deprecated_category_names("biolink:ChemicalSubstance") == "biolink:ChemicalEntity"

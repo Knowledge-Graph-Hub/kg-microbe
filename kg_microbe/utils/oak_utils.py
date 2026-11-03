@@ -1,25 +1,26 @@
 """Description: This file contains utility functions for the OAK client."""
 
+import sqlite3
 from typing import List
 
 from oaklib.datamodels.search import SearchConfiguration, SearchProperty
+from sqlalchemy.exc import SQLAlchemyError
 
-from kg_microbe.utils.ontology_utils import OntologyDbUnavailableError
+from kg_microbe.utils.ontology_utils import FatalOntologyError
 
 
 def get_label(oi, curie: str):
-    """Return the label of a given curie via oaklib."""
+    """Return a label, keeping an absent term distinct from an unusable authority."""
     try:
-        _, label = list(oi.labels([curie]))[0]
-        return label
-    except OntologyDbUnavailableError:
-        # Not a lookup miss: the ontology DB itself is unusable. Swallowing it
-        # here would emit bare numeric IDs as labels for every term.
-        raise
-    except Exception as e:
-        print(f"Warning: Could not get label for {curie}: {e}")
-        # Return the curie without prefix as fallback
-        return curie.split(":")[-1] if ":" in curie else curie
+        labels = list(oi.labels([curie]))
+    except (sqlite3.Error, SQLAlchemyError, OSError) as error:
+        # These failures can occur after successful adapter preflight. They
+        # must escape per-record ``except Exception`` fallback handlers too.
+        raise FatalOntologyError(f"Ontology label lookup failed for {curie}: {error}") from error
+    if labels:
+        return labels[0][1]
+    # A successful empty lookup is the ordinary missing-term fallback.
+    return curie.split(":")[-1] if ":" in curie else curie
 
 
 def search_by_label(oi, label: str, limit: int = 5) -> List[str]:

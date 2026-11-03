@@ -247,8 +247,17 @@ class OfflineRobotEnvTest(TestCase):
         self.assertNotIn("_JAVA_OPTIONS", offline)
         args = offline["ROBOT_JAVA_ARGS"]
         self.assertLess(args.index("-Dhttps.proxyHost=proxy.corp"), args.rindex("-Dhttps.proxyHost=127.0.0.1"))
-        for flag in ("-Dhttp.nonProxyHosts=", "-DsocksProxyHost=127.0.0.1"):
-            self.assertIn(flag, args)
+        properties = dict(flag[2:].split("=", 1) for flag in args.split() if flag.startswith("-D"))
+        for name, value in {
+            "http.proxyHost": "127.0.0.1",
+            "http.proxyPort": "9",
+            "https.proxyHost": "127.0.0.1",
+            "https.proxyPort": "9",
+            "http.nonProxyHosts": "",
+            "socksProxyHost": "127.0.0.1",
+            "socksProxyPort": "9",
+        }.items():
+            self.assertEqual(properties[name], value)
         self.assertEqual(env["_JAVA_OPTIONS"], "-Dhttps.proxyHost=proxy.corp -Dhttps.proxyPort=3128", "input untouched")
 
     def test_the_pinned_robot_refuses_an_unmapped_import(self):
@@ -263,20 +272,43 @@ class OfflineRobotEnvTest(TestCase):
         if robot_utils.missing_robot(raw):
             self.skipTest("pinned ROBOT or a working java is not available")
         with tempfile.TemporaryDirectory() as tmp:
+            robot_file, env = robot_utils.initialize_robot(str(raw))
+            offline_env = robot_utils.offline_robot_env(env)
+
+            def convert(source, target):
+                """Use the same real ROBOT and offline environment for both controls."""
+                return subprocess.run(  # noqa: S603
+                    ["bash", robot_file, "-vvv", "convert", "--input", str(source), "--output", str(target)],  # noqa: S607
+                    env=offline_env,
+                    capture_output=True,
+                    text=True,
+                    timeout=300,
+                )
+
             owl = Path(tmp, "m.owl")
-            owl.write_text(
+            opening = (
                 '<?xml version="1.0"?>\n<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" '
                 'xmlns:owl="http://www.w3.org/2002/07/owl#"><owl:Ontology rdf:about="https://example.invalid/m.owl">'
-                '<owl:imports rdf:resource="https://example.invalid/A_imports.owl"/></owl:Ontology></rdf:RDF>\n',
+            )
+            closing = "</owl:Ontology></rdf:RDF>\n"
+            owl.write_text(opening + closing, encoding="utf-8")
+            local_output = Path(tmp, "local.json")
+            control = convert(owl, local_output)
+            self.assertEqual(control.returncode, 0, control.stdout + control.stderr)
+            self.assertTrue(local_output.is_file())
+            self.assertGreater(local_output.stat().st_size, 0)
+
+            unmapped_import = "https://example.invalid/A_imports.owl"
+            owl.write_text(
+                opening + f'<owl:imports rdf:resource="{unmapped_import}"/>' + closing,
                 encoding="utf-8",
             )
-            robot_file, env = robot_utils.initialize_robot(str(raw))
-            result = subprocess.run(  # noqa: S603
-                ["bash", robot_file, "-vvv", "convert", "--input", str(owl), "--output", str(Path(tmp, "m.json"))],  # noqa: S607
-                env=robot_utils.offline_robot_env(env),
-                capture_output=True,
-                text=True,
-                timeout=300,
-            )
-        self.assertNotEqual(result.returncode, 0)
-        self.assertIn("Connection refused", result.stdout + result.stderr)
+            output = Path(tmp, "m.json")
+            result = convert(owl, output)
+            diagnostics = result.stdout + result.stderr
+            self.assertNotEqual(result.returncode, 0, diagnostics)
+            self.assertIn("UnloadableImportException", diagnostics)
+            self.assertIn(f"Could not load imported ontology: <{unmapped_import}>", diagnostics)
+            # The OS may report a refused connection or deny the socket entirely.
+            self.assertRegex(diagnostics, r"java\.net\.(?:ConnectException|SocketException):")
+            self.assertFalse(output.exists(), "an unmapped import must not publish an output")

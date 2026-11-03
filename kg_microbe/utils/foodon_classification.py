@@ -3,6 +3,7 @@
 import csv
 import json
 from collections import defaultdict
+from collections.abc import Mapping
 from functools import lru_cache
 from pathlib import Path
 from types import MappingProxyType
@@ -197,21 +198,28 @@ def foodon_organism_classes(path: Path | None = None) -> frozenset:
     return frozenset(identifier for identifier, category in categories.items() if category == NCBI_CATEGORY)
 
 
-def authoritative_foodon_category(identifier: str, *, path: Path | None = None, categories=None) -> str:
-    """Use native branch evidence consistently for the producer and import routes."""
+def authoritative_foodon_category(
+    identifier: str, *, path: Path | None = None, categories: Mapping[str, str] | None = None
+) -> str:
+    """
+    Use exactly one caller-selected native path or admitted category mapping.
+
+    A mapping authorizes only its explicit entries; missing entries never fall
+    back to checkout data or a namespace-derived category. Producers pass the
+    decisions from their consumed-input snapshot, preserving its stronger
+    native evidence and publication checks.
+    """
+    if (path is None) == (categories is None):
+        raise ValueError("Provide exactly one explicit FOODON authority: path or categories")
     # KGX has historically compacted this imported COB root through OBO:.
     if identifier == "OBO:COB_0000022":
         identifier = "COB:0000022"
     if categories is None:
-        from kg_microbe.utils.foodon_anatomical_categories import FINITE_IDS, cache_signature
+        from kg_microbe.utils.foodon_anatomical_categories import cache_signature
 
-        path = FOODON_GRAPH if path is None else Path(path)
+        path = Path(path)
         if not path.is_file():
-            if identifier in FINITE_IDS:
-                raise FileNotFoundError(f"Required FOODON anatomical category authority is missing: {path}")
-            # Direct offline callers preserve the historical fallback. Producer
-            # finalization separately requires the native authority when consumed.
-            return NCBI_CATEGORY if identifier in foodon_organism_classes(path) else FOOD_CATEGORY
+            raise FileNotFoundError(f"Required FOODON category authority is missing: {path}")
         stat = path.stat()
         curation_stat = DISPOSITIONS_FILE.stat()
         categories = _load_categories(

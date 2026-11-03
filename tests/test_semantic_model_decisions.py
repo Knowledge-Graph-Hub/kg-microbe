@@ -9,7 +9,6 @@ import pytest
 from kg_microbe.transform_utils.constants import ASSAY_HAS_INPUT_PREDICATE, ASSAY_HAS_OUTPUT_PREDICATE
 from kg_microbe.transform_utils.ontologies.ontologies_transform import OntologiesTransform
 from kg_microbe.transform_utils.rhea_mappings.rhea_mappings import RheaMappingsTransform
-from kg_microbe.utils import foodon_classification
 from kg_microbe.utils.graph_canonicalization import canonical_node_category
 from kg_microbe.utils.transform_fingerprint import data_fingerprint
 from tests.test_kg_model_review_domain_range import _load
@@ -62,7 +61,7 @@ def test_curated_rhea_activity_mapping_is_not_physical_enablement(target):
         transform._curated_xref_row("RHEA:10000", "UniProtKB:P12345")
 
 
-def test_foodon_asserted_organism_branch_and_curated_kelp_preserve_food_parts(tmp_path, monkeypatch):
+def test_foodon_asserted_organism_branch_and_curated_kelp_preserve_food_parts(tmp_path):
     """Whole-plant ancestry is positive evidence; in_taxon alone cannot change a fruit into a taxon."""
     raw = tmp_path / "foodon.json"
     raw.write_text(
@@ -91,11 +90,13 @@ def test_foodon_asserted_organism_branch_and_curated_kelp_preserve_food_parts(tm
             }
         )
     )
-    monkeypatch.setattr(foodon_classification, "FOODON_GRAPH", raw)
-    assert canonical_node_category("FOODON:2", "biolink:Food|biolink:OntologyClass") == "biolink:OrganismTaxon"
-    assert canonical_node_category("FOODON:3", "biolink:Food") == "biolink:Food"
-    assert canonical_node_category("FOODON:03411744", "biolink:Food") == "biolink:OrganismTaxon"
-    assert canonical_node_category("FOODON:00003673", "biolink:Food") == "biolink:Food"
+    assert (
+        canonical_node_category("FOODON:2", "biolink:Food|biolink:OntologyClass", foodon_path=raw)
+        == "biolink:OrganismTaxon"
+    )
+    assert canonical_node_category("FOODON:3", "biolink:Food", foodon_path=raw) == "biolink:Food"
+    assert canonical_node_category("FOODON:03411744", "biolink:Food", foodon_path=raw) == "biolink:OrganismTaxon"
+    assert canonical_node_category("FOODON:00003673", "biolink:Food", foodon_path=raw) == "biolink:Food"
 
 
 def test_foodon_quarantine_is_exact_lossless_and_does_not_drop_uncertain_taxa(tmp_path):

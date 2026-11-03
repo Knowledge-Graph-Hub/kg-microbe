@@ -32,16 +32,34 @@ def git_output(root: Path, *arguments: str) -> str:
     if git is None:
         raise RuntimeError("git is required on PATH")
     result = subprocess.run(  # noqa: S603 - git and arguments are controlled by this module
-        [git, *arguments], cwd=root, text=True, capture_output=True, check=True
+        [git, *arguments],
+        cwd=root,
+        text=True,
+        encoding="utf-8",
+        errors="surrogateescape",
+        capture_output=True,
+        check=True,
     )
     return result.stdout.strip()
 
 
 def check_candidate(root: Path, commit: str) -> None:
-    """Reject a moved HEAD or any staged or unstaged tracked changes."""
+    """Reject moved HEAD, hidden index entries, or staged/unstaged tracked changes."""
     if git_output(root, "rev-parse", "HEAD") != commit:
         raise RuntimeError("HEAD moved during validation; validate the final candidate again")
-    if git_output(root, "status", "--porcelain=v1", "--untracked-files=no"):
+    # Status deliberately hides these paths; inspect NUL-delimited tags without
+    # changing the index. Lowercase tags mean assume-unchanged; S/s means skip-worktree.
+    hidden_paths = [
+        record[2:]
+        for record in git_output(root, "ls-files", "-v", "-z").split("\0")
+        if record and (record[0].islower() or record[0] == "S")
+    ]
+    if hidden_paths:
+        raise RuntimeError(
+            "Candidate has assume-unchanged or skip-worktree index flags. "
+            "Review and clear these flags before validation: " + ", ".join(repr(path) for path in hidden_paths)
+        )
+    if git_output(root, "--no-optional-locks", "status", "--porcelain=v1", "--untracked-files=no"):
         raise RuntimeError(
             "Candidate has tracked changes. Finish formatting, review and commit the changes, "
             "then validate the final candidate again."

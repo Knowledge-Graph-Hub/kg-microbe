@@ -10,7 +10,8 @@ baseline supplies comparison and collision bytes, not permission to install all
 changed paths: only changed members of POLICY_FILES are selected, and excluded
 paths are reported. Callers must still review changes within those managed files.
 Managed deletions and non-regular files are unsupported. Each target file must
-match its baseline or desired policy bytes; the scope does not relax that guard.
+match its baseline or desired bytes and Git executable mode; the scope does not
+relax that guard. Hidden index entries are rejected without clearing user flags.
 """
 
 from __future__ import annotations
@@ -24,6 +25,7 @@ import shutil
 import stat
 import subprocess
 import sys
+import tempfile
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
@@ -90,7 +92,14 @@ def clean_checkout(root: Path, *, feature: bool) -> tuple[str, str]:
     """Require a checkout root with no tracked edits and optionally a feature branch."""
     if Path(git_text(root, "rev-parse", "--show-toplevel")).resolve() != root:
         raise RuntimeError(f"Not a checkout root: {root}")
-    if git_text(root, "status", "--porcelain=v1", "--untracked-files=no"):
+    hidden = [
+        os.fsdecode(entry[2:])
+        for entry in git(root, "ls-files", "-v", "-z").split(b"\0")
+        if entry and (entry[:1].islower() or entry[:1] == b"S")
+    ]
+    if hidden:
+        raise RuntimeError(f"Tracked entries hide changes (assume-unchanged/skip-worktree): {hidden!r}")
+    if git_text(root, "-c", "core.fileMode=true", "status", "--porcelain=v1", "--untracked-files=no"):
         raise RuntimeError(f"Tracked edits must be reviewed and committed before installation: {root}")
     try:
         branch = git_text(root, "symbolic-ref", "--quiet", "--short", "HEAD")
@@ -114,6 +123,23 @@ def blob(root: Path, revision: str, name: str) -> tuple[bytes, int] | None:
     return git(root, "show", f"{revision}:{name}"), 0o755 if mode == b"100755" else 0o644
 
 
+def index_blob(root: Path, name: str) -> tuple[bytes, int] | None:
+    """Read the selected file's staged bytes and executable mode independently of config."""
+    entries = list(filter(None, git(root, "ls-files", "--stage", "-z", "--", name).split(b"\0")))
+    if not entries:
+        return None
+    metadata, path = entries[0].split(b"\t", 1)
+    mode, _, stage = metadata.split(b" ")
+    if len(entries) != 1 or path != os.fsencode(name) or stage != b"0" or mode not in {b"100644", b"100755"}:
+        raise RuntimeError(f"Managed index paths must be regular files at stage zero: {name}")
+    return git(root, "show", f":{name}"), 0o755 if mode == b"100755" else 0o644
+
+
+def git_mode(mode: int) -> int:
+    """Normalize filesystem permissions using Git's owner-execute bit rule."""
+    return 0o755 if mode & stat.S_IXUSR else 0o644
+
+
 @dataclass(frozen=True)
 class ManagedFile:
     """Hold the committed replacement and the baseline used to detect collisions."""
@@ -122,6 +148,7 @@ class ManagedFile:
     data: bytes
     mode: int
     baseline: bytes | None
+    baseline_mode: int | None
 
 
 def changed_source_paths(base: str, head: str) -> list[str]:
@@ -141,40 +168,74 @@ def managed_files(base: str, head: str) -> list[ManagedFile]:
         if current is None:
             raise RuntimeError(f"Managed source files cannot be deleted or renamed away: {name}")
         baseline = blob(SOURCE, base, name)
-        files.append(ManagedFile(name, current[0], current[1], None if baseline is None else baseline[0]))
+        files.append(
+            ManagedFile(
+                name,
+                current[0],
+                current[1],
+                None if baseline is None else baseline[0],
+                None if baseline is None else baseline[1],
+            )
+        )
     if not files:
         raise RuntimeError("The selected baseline has no changed policy manifest files")
     return files
 
 
 def target_files(root: Path, files: list[ManagedFile]) -> list[dict]:
-    """Validate every managed path before any write, including untracked collisions."""
+    """Validate complete byte/mode states, including untracked and ignored-mode collisions."""
     result = []
     for item in files:
         path = safe_path(root, item.name)
         if path.exists() and not path.is_file():
             raise RuntimeError(f"Managed path is not a regular file: {path}")
         current = path.read_bytes() if path.exists() else None
-        if current != item.data and current != item.baseline:
-            raise RuntimeError(f"Target differs from both baseline and installed policy: {path}")
+        permissions = stat.S_IMODE(path.stat().st_mode) if current is not None else None
+        mode = None if permissions is None else git_mode(permissions)
+        current_state = None if current is None else (current, mode)
+        desired_state = (item.data, item.mode)
+        baseline_state = None if item.baseline is None else (item.baseline, item.baseline_mode)
+        committed = blob(root, "HEAD", item.name)
+        staged = index_blob(root, item.name)
+        if committed != staged:
+            raise RuntimeError(f"Managed index differs from committed bytes or executable mode: {path}")
+        if staged is not None and current_state != staged:
+            raise RuntimeError(f"Managed filesystem differs from index bytes or executable mode: {path}")
+        if current_state != desired_state and current_state != baseline_state:
+            raise RuntimeError(f"Target differs from both baseline and installed policy bytes/mode: {path}")
         if current is None and item.baseline is not None:
             raise RuntimeError(f"A baseline file is missing from the target: {path}")
         result.append(
             {
                 "path": item.name,
                 "before_sha256": None if current is None else digest(current),
+                "before_mode": mode,
+                "before_filesystem_mode": permissions,
+                "before_committed_mode": None if committed is None else committed[1],
+                "before_index_mode": None if staged is None else staged[1],
                 "after_sha256": digest(item.data),
+                "after_mode": item.mode,
                 "content_changes": current != item.data,
+                "mode_changes": mode != item.mode,
             }
         )
     return result
 
 
 def write_file(path: Path, data: bytes, mode: int) -> None:
-    """Write a checked destination while retaining the requested executable bit."""
+    """Replace a checked path atomically without altering any old hard-linked inode."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(data)
-    path.chmod(mode)
+    pending = None
+    try:
+        with tempfile.NamedTemporaryFile(dir=path.parent, prefix=f".{path.name}.", delete=False) as handle:
+            pending = Path(handle.name)
+            handle.write(data)
+            handle.flush()
+            os.fchmod(handle.fileno(), mode)
+        pending.replace(path)
+    finally:
+        if pending is not None:
+            pending.unlink(missing_ok=True)
 
 
 def write_receipt(path: Path, receipt: dict) -> None:
@@ -203,24 +264,42 @@ def install_target(root: Path, head: str, base: str, files: list[ManagedFile], p
             if path.exists():
                 backup = safe_path(evidence, "backups/" + item.name)
                 original = path.read_bytes()
-                if digest(original) != record["before_sha256"]:
-                    raise RuntimeError(f"File changed before copying: {path}")
-                write_file(backup, original, stat.S_IMODE(path.stat().st_mode))
+                permissions = stat.S_IMODE(path.stat().st_mode)
+                if digest(original) != record["before_sha256"] or permissions != record["before_filesystem_mode"]:
+                    raise RuntimeError(f"File bytes or mode changed before copying: {path}")
+                write_file(backup, original, permissions)
                 record["backup"] = str(backup)
             write_file(path, item.data, item.mode)
             write_receipt(receipt_path, receipt)
         if (git_text(root, "rev-parse", "HEAD"), git_text(root, "symbolic-ref", "--short", "HEAD")) != (prior, branch):
             raise RuntimeError(f"HEAD or branch moved during installation: {root}")
         names = [item.name for item in files]
-        changed = set(filter(None, git(root, "diff", "--name-only", "HEAD", "-z").split(b"\0")))
+        changed = set(
+            filter(None, git(root, "-c", "core.fileMode=true", "diff", "--name-only", "HEAD", "-z").split(b"\0"))
+        )
         if changed - {os.fsencode(name) for name in names}:
             raise RuntimeError(f"Unrelated tracked files changed during installation: {root}")
-        git(root, "add", "--", *names)
+        git(root, "-c", "core.fileMode=true", "add", "--", *names)
         if git(root, "diff", "--cached", "--name-only", "-z"):
-            git(root, "commit", "--only", "-m", f"Install single-suite validation policy from {head}", "--", *names)
+            git(
+                root,
+                "-c",
+                "core.fileMode=true",
+                "commit",
+                "--only",
+                "-m",
+                f"Install single-suite validation policy from {head}",
+                "--",
+                *names,
+            )
         post, current_branch = clean_checkout(root, feature=True)
-        if current_branch != branch or any(record["content_changes"] for record in target_files(root, files)):
+        if current_branch != branch or any(
+            record["content_changes"] or record["mode_changes"] for record in target_files(root, files)
+        ):
             raise RuntimeError(f"Installed policy changed during the commit: {root}")
+        for item in files:
+            if blob(root, post, item.name) != (item.data, item.mode):
+                raise RuntimeError(f"Installed commit has incorrect policy bytes or mode: {item.name}")
         receipt.update({"post_head": post, "status": "installed"})
         write_receipt(receipt_path, receipt)
         return receipt_path
@@ -261,7 +340,16 @@ def legacy_plan(directory: Path, wrapper: bytes) -> list[dict]:
                         break
             if not recognized:
                 raise RuntimeError(f"Unrecognized legacy runner; leaving it untouched: {path}")
-        result.append({"path": str(path), "before_sha256": digest(data), "after_sha256": digest(wrapper)})
+        permissions = stat.S_IMODE(path.stat().st_mode)
+        result.append(
+            {
+                "path": str(path),
+                "before_sha256": digest(data),
+                "after_sha256": digest(wrapper),
+                "before_mode": permissions,
+                "after_mode": permissions,
+            }
+        )
     return result
 
 
@@ -276,10 +364,10 @@ def install_legacy(entries: list[dict], wrapper: bytes, receipt_path: Path) -> N
             path = Path(item["path"])
             safe_path(path.parent, path.name)
             current = path.read_bytes()
-            if digest(current) != item["before_sha256"]:
-                raise RuntimeError(f"Legacy runner changed after planning: {path}")
-            backup = safe_path(receipt_path.parent, "legacy/" + path.name)
             mode = stat.S_IMODE(path.stat().st_mode)
+            if digest(current) != item["before_sha256"] or mode != item["before_mode"]:
+                raise RuntimeError(f"Legacy runner bytes or mode changed after planning: {path}")
+            backup = safe_path(receipt_path.parent, "legacy/" + path.name)
             write_file(backup, current, mode)
             write_file(path, wrapper, mode)
             receipt["legacy_entrypoints"].append({**item, "backup": str(backup)})

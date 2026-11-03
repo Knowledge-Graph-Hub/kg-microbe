@@ -33,6 +33,12 @@ if mode == 'mutate' and arguments == ['check', '--lock']:
 if mode == 'move-head' and arguments == ['check', '--lock']:
     subprocess.run([os.environ['KGM_GATE_TEST_GIT'], '-c', 'commit.gpgsign=false',
                     'commit', '--allow-empty', '-m', 'Moved during gate'], check=True)
+if mode in ('flag-assume-unchanged', 'flag-skip-worktree') and arguments == ['check', '--lock']:
+    git = os.environ['KGM_GATE_TEST_GIT']
+    subprocess.run([git, 'update-index', '--' + mode.removeprefix('flag-'), '--', 'candidate.txt'], check=True)
+    pathlib.Path('candidate.txt').write_text('hidden change by gate\\n')
+    index = pathlib.Path(subprocess.check_output([git, 'rev-parse', '--git-path', 'index'], text=True).strip())
+    pathlib.Path(os.environ['KGM_GATE_TEST_INDEX_SNAPSHOT']).write_bytes(index.read_bytes())
 names = ['TOXENV', 'PYTEST_ADDOPTS', 'PYTEST_PLUGINS', 'TOX_NO_TEST', 'TOXNO_TEST',
          'TOX_PACKAGE_ONLY', 'TOXPACKAGE_ONLY', 'TOX_SKIP_ENV', 'TOX_OVERRIDE', 'TOX_USER_CONFIG_FILE']
 print(json.dumps({name: os.environ.get(name) for name in names}))
@@ -133,6 +139,70 @@ def test_dirty_candidate_is_rejected_before_gates(candidate: Path, staged: bool)
     assert "review and commit" in result.stderr
     assert not (candidate.parent / "commands.jsonl").exists()
     assert not (candidate / "data").exists()
+
+
+@pytest.mark.parametrize("flags", [("assume-unchanged",), ("skip-worktree",), ("assume-unchanged", "skip-worktree")])
+@pytest.mark.parametrize("dirty", [False, True])
+@pytest.mark.parametrize("filename", ["candidate.txt", " leading\ncandidate\t name.txt "])
+def test_hidden_index_entries_are_rejected_before_evidence(
+    candidate: Path, flags: tuple[str, ...], dirty: bool, filename: str
+) -> None:
+    """Reject clean or dirty flagged paths without changing flags, bytes or HEAD."""
+    target = candidate / filename
+    if filename != "candidate.txt":
+        target.write_text("committed unusual path\n", encoding="utf-8")
+        git(candidate, "add", "--", filename)
+        git(candidate, "commit", "-qm", "Add unusual tracked path")
+    head = git(candidate, "rev-parse", "HEAD")
+    for flag in flags:
+        git(candidate, "update-index", f"--{flag}", "--", filename)
+    if dirty:
+        target.write_text("hidden uncommitted code\n", encoding="utf-8")
+    # Demonstrate why status alone is not proof of a committed candidate.
+    assert git(candidate, "--no-optional-locks", "status", "--porcelain=v1", "--untracked-files=no") == ""
+    before_bytes = target.read_bytes()
+    before_flags = git(candidate, "ls-files", "-v", "-z")
+    index = candidate / git(candidate, "rev-parse", "--git-path", "index")
+    before_index = index.read_bytes()
+
+    result = invoke(candidate)
+
+    assert result.returncode != 0
+    assert "assume-unchanged or skip-worktree index flags" in result.stderr
+    assert repr(filename) in result.stderr
+    assert "GATES_COMPLETE" not in result.stdout
+    assert not (candidate.parent / "commands.jsonl").exists()
+    assert not (candidate / "data").exists()
+    assert git(candidate, "rev-parse", "HEAD") == head
+    assert target.read_bytes() == before_bytes
+    assert git(candidate, "ls-files", "-v", "-z") == before_flags
+    assert index.read_bytes() == before_index
+
+
+@pytest.mark.parametrize("flag,tag", [("assume-unchanged", "h"), ("skip-worktree", "S")])
+def test_index_flag_introduced_by_gate_aborts_before_full_suite(
+    candidate: Path, monkeypatch: pytest.MonkeyPatch, flag: str, tag: str
+) -> None:
+    """Inspect flags again after gates, preserving any hidden change on rejection."""
+    head = git(candidate, "rev-parse", "HEAD")
+    snapshot = candidate.parent / "index-after-gate"
+    monkeypatch.setenv("KGM_GATE_TEST_MODE", f"flag-{flag}")
+    monkeypatch.setenv("KGM_GATE_TEST_INDEX_SNAPSHOT", str(snapshot))
+
+    result = invoke(candidate)
+
+    assert result.returncode != 0
+    assert recorded_commands(candidate) == [["check", "--lock"]]
+    assert "GATES_COMPLETE" not in result.stdout
+    entries = json.loads((candidate / "data/validation/pr-gates/kgm-test-run-gates.json").read_text(encoding="utf-8"))
+    assert len(entries) == 1
+    assert entries[0]["exit_code"] == 0
+    assert "assume-unchanged or skip-worktree index flags" in entries[0]["candidate_error"]
+    assert git(candidate, "rev-parse", "HEAD") == head
+    assert (candidate / "candidate.txt").read_text(encoding="utf-8") == "hidden change by gate\n"
+    assert git(candidate, "ls-files", "-v", "-z") == f"{tag} candidate.txt\0"
+    index = candidate / git(candidate, "rev-parse", "--git-path", "index")
+    assert index.read_bytes() == snapshot.read_bytes()
 
 
 @pytest.mark.parametrize("mode", ["mutate", "move-head"])

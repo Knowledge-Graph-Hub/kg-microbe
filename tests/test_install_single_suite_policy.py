@@ -305,3 +305,165 @@ def test_legacy_recognition_keeps_historical_commands_and_rejects_unknown(
     with pytest.raises(RuntimeError, match="Unrecognized legacy runner"):
         installer.legacy_plan(tmp_path, wrapper)
     assert path.read_text() == "commands = [['unrecognized']]\n"
+
+
+def installed_receipt(result: subprocess.CompletedProcess[str]) -> dict:
+    """Read evidence from a successful temporary CLI installation."""
+    assert result.returncode == 0, result.stderr
+    path = Path(
+        next(line.removeprefix("INSTALLED ") for line in result.stdout.splitlines() if line.startswith("INSTALLED "))
+    )
+    return json.loads(path.read_text())
+
+
+@pytest.mark.parametrize("kind", ["managed", "legacy"])
+def test_installation_does_not_write_through_external_hard_links(
+    repositories: tuple[Path, Path, str], tmp_path: Path, kind: str
+) -> None:
+    """Replacing selected paths preserves external alias bytes, permissions and inode."""
+    source, target, base = repositories
+    write(source, "README.md", b"policy\n")
+    commit(source)
+    outside = tmp_path / "external-alias"
+    legacy = tmp_path / "legacy"
+    if kind == "managed":
+        original, permissions = b"baseline\n", 0o654
+        destination = target / "README.md"
+        destination.unlink()
+        arguments = ()
+    else:
+        original = b"commands = [['poetry', 'run', 'pytest'], ['poetry', 'run', 'tox']]\n"
+        permissions = 0o751
+        legacy.mkdir()
+        destination = legacy / "kgm-run-pr-gates.py"
+        arguments = ("--legacy-dir", str(legacy))
+    outside.write_bytes(original)
+    outside.chmod(permissions)
+    os.link(outside, destination)
+    outside_inode = outside.stat().st_ino
+    result = invoke(source, target, base, "--apply", *arguments)
+    receipt = installed_receipt(result)
+    assert outside.read_bytes() == original
+    assert stat.S_IMODE(outside.stat().st_mode) == permissions
+    assert outside.stat().st_ino == outside_inode
+    assert destination.stat().st_ino != outside_inode
+    assert receipt["status"] == "installed"
+    if kind == "managed":
+        record = next(item for item in receipt["files"] if item["path"] == "README.md")
+        assert destination.read_bytes() == b"policy\n"
+        assert record["before_mode"] == 0o644
+        assert record["before_filesystem_mode"] == permissions
+        assert record["after_mode"] == 0o644
+    else:
+        assert receipt["legacy_status"] == "installed"
+        record = receipt["legacy_entrypoints"][0]
+        assert destination.read_bytes() == (source / "scripts/adhoc/legacy_pr_gates.py").read_bytes()
+        assert record["before_mode"] == record["after_mode"] == permissions
+        assert stat.S_IMODE(destination.stat().st_mode) == permissions
+    backup = Path(record["backup"])
+    assert backup.read_bytes() == original
+    assert stat.S_IMODE(backup.stat().st_mode) == permissions
+
+
+@pytest.mark.parametrize("file_mode", ["true", "false"])
+def test_committed_target_mode_collision_rejects_before_writes(
+    repositories: tuple[Path, Path, str], file_mode: str
+) -> None:
+    """Matching bytes do not authorize discarding a target-only committed executable bit."""
+    source, target, base = repositories
+    write(source, "README.md", b"policy\n")
+    commit(source)
+    (target / "README.md").chmod(0o755)
+    commit(target)
+    git(target, "config", "core.fileMode", file_mode)
+    before = snapshot(target)
+    result = invoke(source, target, base, "--apply")
+    assert result.returncode == 1
+    assert "differs from both baseline and installed policy bytes/mode" in result.stderr
+    assert snapshot(target) == before
+    assert git(target, "config", "--bool", "core.fileMode") == file_mode
+    assert git(target, "ls-tree", "HEAD", "--", "README.md").startswith("100755 ")
+
+
+@pytest.mark.parametrize("role", ["source", "target"])
+def test_ignored_filesystem_executable_drift_rejects_without_changing_config(
+    repositories: tuple[Path, Path, str], role: str
+) -> None:
+    """Ignoring executable changes in local Git settings cannot hide uncommitted work."""
+    source, target, base = repositories
+    write(source, "README.md", b"policy\n")
+    commit(source)
+    root = source if role == "source" else target
+    git(root, "config", "core.fileMode", "false")
+    (root / "README.md").chmod(0o755)
+    assert git(root, "status", "--porcelain=v1") == ""
+    before = snapshot(target)
+    result = invoke(source, target, base, "--apply")
+    assert result.returncode == 1
+    assert "Tracked edits" in result.stderr
+    assert snapshot(target) == before
+    assert git(root, "config", "--bool", "core.fileMode") == "false"
+    assert stat.S_IMODE((root / "README.md").stat().st_mode) == 0o755
+    assert git(root, "ls-tree", "HEAD", "--", "README.md").startswith("100644 ")
+
+
+@pytest.mark.parametrize("file_mode", ["true", "false"])
+def test_mode_only_policy_install_proves_tree_mode_and_is_idempotent(
+    repositories: tuple[Path, Path, str], file_mode: str
+) -> None:
+    """A real mode-only policy change reaches HEAD without changing user configuration."""
+    source, target, base = repositories
+    (source / "README.md").chmod(0o755)
+    commit(source)
+    git(target, "config", "core.fileMode", file_mode)
+    before_head = git(target, "rev-parse", "HEAD")
+    result = invoke(source, target, base, "--apply")
+    receipt = installed_receipt(result)
+    assert git(target, "rev-parse", "HEAD") != before_head
+    assert git(target, "ls-tree", "HEAD", "--", "README.md").startswith("100755 ")
+    assert git(target, "ls-files", "--stage", "--", "README.md").startswith("100755 ")
+    assert git(target, "show", "HEAD:README.md") == "baseline"
+    assert stat.S_IMODE((target / "README.md").stat().st_mode) == 0o755
+    assert git(target, "config", "--bool", "core.fileMode") == file_mode
+    assert receipt["status"] == "installed"
+    record = receipt["files"][0]
+    assert record["before_mode"] == record["before_index_mode"] == record["before_committed_mode"] == 0o644
+    assert record["after_mode"] == 0o755
+    assert not record["content_changes"] and record["mode_changes"]
+    assert stat.S_IMODE(Path(record["backup"]).stat().st_mode) == 0o644
+    installed_head = git(target, "rev-parse", "HEAD")
+    repeated = installed_receipt(invoke(source, target, base, "--apply"))
+    assert repeated["post_head"] == installed_head
+    assert git(target, "rev-parse", "HEAD") == installed_head
+    assert not repeated["files"][0]["mode_changes"]
+    assert git(target, "config", "--bool", "core.fileMode") == file_mode
+
+
+@pytest.mark.parametrize("role", ["source", "target"])
+@pytest.mark.parametrize("flag", ["assume-unchanged", "skip-worktree", "both"])
+@pytest.mark.parametrize("hidden_edit", [False, True])
+def test_hidden_index_flags_reject_read_only_before_any_installation(
+    repositories: tuple[Path, Path, str], role: str, flag: str, hidden_edit: bool
+) -> None:
+    """Masked entries reject even when their working bytes already equal desired policy."""
+    source, target, base = repositories
+    write(source, "README.md", b"policy\n")
+    commit(source)
+    root = source if role == "source" else target
+    flags = ("assume-unchanged", "skip-worktree") if flag == "both" else (flag,)
+    for name in flags:
+        git(root, "update-index", "--" + name, "--", "README.md")
+    if hidden_edit:
+        write(root, "README.md", b"hidden source work\n" if role == "source" else b"policy\n")
+    index_before = git(root, "ls-files", "-v", "--", "README.md")
+    committed_before = git(root, "show", "HEAD:README.md")
+    working_before = (root / "README.md").read_bytes()
+    before = snapshot(target)
+    result = invoke(source, target, base, "--apply")
+    assert result.returncode == 1
+    assert "assume-unchanged/skip-worktree" in result.stderr
+    assert result.stdout == ""
+    assert snapshot(target) == before
+    assert git(root, "ls-files", "-v", "--", "README.md") == index_before
+    assert git(root, "show", "HEAD:README.md") == committed_before
+    assert (root / "README.md").read_bytes() == working_before

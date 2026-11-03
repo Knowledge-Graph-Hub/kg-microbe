@@ -59,7 +59,10 @@ def check_candidate(root: Path, commit: str) -> None:
             "Candidate has assume-unchanged or skip-worktree index flags. "
             "Review and clear these flags before validation: " + ", ".join(repr(path) for path in hidden_paths)
         )
-    if git_output(root, "--no-optional-locks", "status", "--porcelain=v1", "--untracked-files=no"):
+    # A local core.fileMode=false must not hide executable-bit drift from HEAD.
+    if git_output(
+        root, "--no-optional-locks", "-c", "core.fileMode=true", "status", "--porcelain=v1", "--untracked-files=no"
+    ):
         raise RuntimeError(
             "Candidate has tracked changes. Finish formatting, review and commit the changes, "
             "then validate the final candidate again."

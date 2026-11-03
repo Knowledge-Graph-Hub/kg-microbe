@@ -6,6 +6,7 @@ import json
 import os
 import runpy
 import shutil
+import stat
 import subprocess
 import sys
 from pathlib import Path
@@ -30,6 +31,8 @@ if mode == 'fail-tests' and arguments[:5] == ['run', '--', 'tox', '-e', 'py']:
     raise SystemExit(9)
 if mode == 'mutate' and arguments == ['check', '--lock']:
     pathlib.Path('candidate.txt').write_text('changed by gate\\n')
+if mode == 'chmod' and arguments == ['check', '--lock']:
+    pathlib.Path('candidate.txt').chmod(int(os.environ['KGM_GATE_TEST_CHMOD']))
 if mode == 'move-head' and arguments == ['check', '--lock']:
     subprocess.run([os.environ['KGM_GATE_TEST_GIT'], '-c', 'commit.gpgsign=false',
                     'commit', '--allow-empty', '-m', 'Moved during gate'], check=True)
@@ -139,6 +142,101 @@ def test_dirty_candidate_is_rejected_before_gates(candidate: Path, staged: bool)
     assert "review and commit" in result.stderr
     assert not (candidate.parent / "commands.jsonl").exists()
     assert not (candidate / "data").exists()
+
+
+def commit_candidate_mode(candidate: Path, mode: int) -> None:
+    """Commit a test file's mode, then disable ordinary Git mode reporting locally."""
+    (candidate / "candidate.txt").chmod(mode)
+    git(candidate, "-c", "core.fileMode=true", "add", "candidate.txt")
+    git(candidate, "commit", "--allow-empty", "-qm", "Record candidate file mode")
+    git(candidate, "config", "core.fileMode", "false")
+
+
+@pytest.mark.parametrize("committed_mode,working_mode", [(0o644, 0o755), (0o755, 0o644)])
+def test_ignored_executable_mode_change_is_rejected_before_evidence(
+    candidate: Path, committed_mode: int, working_mode: int
+) -> None:
+    """Reject ignored executable-bit changes without changing work, index or config."""
+    commit_candidate_mode(candidate, committed_mode)
+    target = candidate / "candidate.txt"
+    target.chmod(working_mode)
+    assert git(candidate, "--no-optional-locks", "status", "--porcelain=v1", "--untracked-files=no") == ""
+    head = git(candidate, "rev-parse", "HEAD")
+    before_bytes = target.read_bytes()
+    index = candidate / git(candidate, "rev-parse", "--git-path", "index")
+    config = candidate / git(candidate, "rev-parse", "--git-path", "config")
+    before_index, before_config = index.read_bytes(), config.read_bytes()
+
+    result = invoke(candidate)
+
+    assert result.returncode != 0
+    assert "Candidate has tracked changes" in result.stderr
+    assert "GATES_COMPLETE" not in result.stdout
+    assert not (candidate.parent / "commands.jsonl").exists()
+    assert not (candidate / "data").exists()
+    assert git(candidate, "rev-parse", "HEAD") == head
+    assert target.read_bytes() == before_bytes
+    assert stat.S_IMODE(target.stat().st_mode) == working_mode
+    assert index.read_bytes() == before_index
+    assert config.read_bytes() == before_config
+    assert git(candidate, "config", "core.fileMode") == "false"
+
+
+@pytest.mark.parametrize("committed_mode,working_mode", [(0o644, 0o755), (0o755, 0o644)])
+def test_executable_mode_change_during_gate_aborts_before_full_suite(
+    candidate: Path, monkeypatch: pytest.MonkeyPatch, committed_mode: int, working_mode: int
+) -> None:
+    """Repeat mode checks after a gate even when local Git ignores mode changes."""
+    commit_candidate_mode(candidate, committed_mode)
+    target = candidate / "candidate.txt"
+    head = git(candidate, "rev-parse", "HEAD")
+    before_bytes = target.read_bytes()
+    index = candidate / git(candidate, "rev-parse", "--git-path", "index")
+    config = candidate / git(candidate, "rev-parse", "--git-path", "config")
+    before_index, before_config = index.read_bytes(), config.read_bytes()
+    monkeypatch.setenv("KGM_GATE_TEST_MODE", "chmod")
+    monkeypatch.setenv("KGM_GATE_TEST_CHMOD", str(working_mode))
+
+    result = invoke(candidate)
+
+    assert result.returncode != 0
+    assert recorded_commands(candidate) == [["check", "--lock"]]
+    assert "GATES_COMPLETE" not in result.stdout
+    entries = json.loads((candidate / "data/validation/pr-gates/kgm-test-run-gates.json").read_text(encoding="utf-8"))
+    assert len(entries) == 1
+    assert entries[0]["exit_code"] == 0
+    assert "Candidate has tracked changes" in entries[0]["candidate_error"]
+    assert git(candidate, "rev-parse", "HEAD") == head
+    assert target.read_bytes() == before_bytes
+    assert stat.S_IMODE(target.stat().st_mode) == working_mode
+    assert index.read_bytes() == before_index
+    assert config.read_bytes() == before_config
+    assert git(candidate, "config", "core.fileMode") == "false"
+
+
+def test_committed_executable_is_accepted_with_filemode_disabled(candidate: Path) -> None:
+    """A committed executable remains a valid candidate under core.fileMode=false."""
+    commit_candidate_mode(candidate, 0o755)
+    target = candidate / "candidate.txt"
+    head = git(candidate, "rev-parse", "HEAD")
+    before_bytes = target.read_bytes()
+    index = candidate / git(candidate, "rev-parse", "--git-path", "index")
+    config = candidate / git(candidate, "rev-parse", "--git-path", "config")
+    before_index, before_config = index.read_bytes(), config.read_bytes()
+
+    result = invoke(candidate)
+
+    assert result.returncode == 0, result.stderr
+    commands = recorded_commands(candidate)
+    assert len(commands) == 4
+    assert commands[-1] == ["run", "--", "tox", "-e", "py", "--", "tests", "--durations=50"]
+    assert f"GATES_COMPLETE {head}" in result.stdout
+    assert git(candidate, "rev-parse", "HEAD") == head
+    assert target.read_bytes() == before_bytes
+    assert stat.S_IMODE(target.stat().st_mode) == 0o755
+    assert index.read_bytes() == before_index
+    assert config.read_bytes() == before_config
+    assert git(candidate, "config", "core.fileMode") == "false"
 
 
 @pytest.mark.parametrize("flags", [("assume-unchanged",), ("skip-worktree",), ("assume-unchanged", "skip-worktree")])

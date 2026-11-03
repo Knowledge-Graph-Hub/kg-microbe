@@ -266,14 +266,24 @@ def _verify_recorded_consumed_inputs(report, *, report_path=None, admission=None
         ):
             raise SourceFinalizationRequired(f"Invalid consumed-input snapshot {name!r}; rerun the producer")
         if name == "ncbi_taxonomy_authority":
+            if admission is None:
+                from kg_microbe.merge_utils.source_admission import SourceAdmission
+
+                admission = SourceAdmission()
+            raw_locator = report.get("raw_input_locator")
             raw_directory = report.get("raw_input_directory")
-            if not isinstance(raw_directory, str):
-                raise SourceFinalizationRequired("Missing selected NCBI authority directory")
-            selected = Path(raw_directory) / "taxdump.tar.gz"
-            if selected.resolve() != Path(snapshot["path"]):
+            if (
+                not isinstance(raw_locator, str)
+                or not Path(raw_locator).is_absolute()
+                or not isinstance(raw_directory, str)
+                or not Path(raw_directory).is_absolute()
+                or not Path(raw_locator).is_dir()
+                or str(admission.bind_path(raw_locator)) != raw_directory
+            ):
+                raise SourceFinalizationRequired("Missing or changed selected NCBI authority directory")
+            selected = Path(raw_locator) / "taxdump.tar.gz"
+            if admission.bind_path(selected) != Path(snapshot["path"]):
                 raise SourceFinalizationRequired("Selected NCBI authority locator changed")
-            if admission is not None:
-                admission.bind_path(selected)
         if admission is None:
             _verify_input_snapshot(name, snapshot)
         elif admission.capture(snapshot["path"])["sha256"] != snapshot["sha256"]:
@@ -1008,7 +1018,7 @@ def _stage_source(transform, *, file_prefix="", inherit_audit=False):
             report["producer_native_inputs"] = transform.producer_native_inputs
         if has_optional_inputs(type(transform)):
             report["optional_consumed_inputs"] = transform.optional_consumed_inputs
-        if getattr(type(transform), "OPTIONAL_RAW_CONSUMED_INPUTS", ()):
+        if "ncbi_taxonomy_authority" in consumed or getattr(type(transform), "OPTIONAL_RAW_CONSUMED_INPUTS", ()):
             report["raw_input_locator"] = str(raw_dir.absolute())
         try:
             producer_file = inspect.getsourcefile(type(transform))

@@ -27,6 +27,7 @@ from kg_microbe.transform_utils.constants import (
     ID_COLUMN,
     MOLECULAR_ACTIVITY_CATEGORY,
     NAME_COLUMN,
+    NAMED_THING_CATEGORY,
     NCBI_CATEGORY,
     OBJECT_COLUMN,
     PROVIDED_BY_COLUMN,
@@ -80,6 +81,11 @@ def _digest(path):
         for block in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(block)
     return digest.hexdigest()
+
+
+def _is_declaration(row):
+    """Recognize a source label or specific category independently of authority resolution."""
+    return bool(row.get(NAME_COLUMN) or row.get(CATEGORY_COLUMN) not in (None, "", NAMED_THING_CATEGORY))
 
 
 def _taxdump_records(path, wanted):
@@ -324,7 +330,7 @@ def resolve_external_reference_bundle(
         raise ValueError("External reference finalization requires node and edge files")
     supported = _SUPPORTED if include_go else tuple(prefix for prefix in _SUPPORTED if prefix != "GO:")
     taxdump = Path(taxdump_path) if taxdump_path is not None else raw_dir / "taxdump.tar.gz"
-    replacements, deleted = load_taxid_retirements(taxdump) if normalize_declared_ncbi else ({}, set())
+    replacements, deleted = load_taxid_retirements(taxdump, flatten=False) if normalize_declared_ncbi else ({}, set())
     retired_ids = {f"NCBITaxon:{taxid}" for taxid in replacements.keys() | deleted}
     original_nodes, original_node_rows, declared, anonymous = {}, {}, set(), set()
     declared_retirements = set()
@@ -332,14 +338,9 @@ def resolve_external_reference_bundle(
         identifier = row[ID_COLUMN]
         declared.add(identifier)
         is_anonymous = (
-            identifier.startswith(supported)
-            and identifier not in known_declarations
-            and not row.get(NAME_COLUMN)
-            and row.get(CATEGORY_COLUMN) in ("", "biolink:NamedThing")
+            identifier.startswith(supported) and identifier not in known_declarations and not _is_declaration(row)
         )
-        if identifier in retired_ids and (
-            row.get(NAME_COLUMN) or row.get(CATEGORY_COLUMN) not in ("", "biolink:NamedThing")
-        ):
+        if identifier in retired_ids and _is_declaration(row):
             declared_retirements.add(identifier)
         if is_anonymous:
             anonymous.add(identifier)
@@ -373,9 +374,22 @@ def resolve_external_reference_bundle(
         authorities["taxdump.tar.gz"] = _digest(taxdump)
         merges = replacements if normalize_declared_ncbi else load_taxid_merges(raw_dir)
         requested = {resolve_replacement(curie.removeprefix("NCBITaxon:"), merges) for curie in ncbi}
+        # Direct native links retain every nonterminal used to justify a new
+        # rewrite. An unreferenced intermediate is still selected chain proof,
+        # while unrelated retirement chains remain outside live-ID validation.
+        nonterminals = set()
+        if normalize_declared_ncbi:
+            for curie in ncbi:
+                current = curie.removeprefix("NCBITaxon:")
+                while current in merges and current not in nonterminals:
+                    nonterminals.add(current)
+                    current = merges[current]
+            requested.update(nonterminals)
         # A live original cannot also be valid retirement/deletion evidence.
         requested.update(curie.removeprefix("NCBITaxon:") for curie in ncbi & retired_ids)
         records = _taxdump_records(taxdump, requested)
+        for taxid in sorted(nonterminals.intersection(records)):
+            raise ValueError(f"{taxdump}: retired/deleted taxid {taxid} is also a live declaration")
         for original in ncbi:
             old = original.removeprefix("NCBITaxon:")
             if original in retired_ids and old in records:
@@ -437,7 +451,7 @@ def resolve_external_reference_bundle(
     existing = {
         row[ID_COLUMN]
         for row in _rows(node_paths, quoting=quoting)
-        if row[ID_COLUMN] in canonical_ids and row.get(NAME_COLUMN)
+        if row[ID_COLUMN] in canonical_ids and _is_declaration(row)
     }
     # Anonymous donors may converge on a declaration already in the graph.
     # Preserve their provenance and descriptive context without copying stale
@@ -481,10 +495,10 @@ def resolve_external_reference_bundle(
                     existing.add(canonical)
                     return {column: decision["native_declaration"].get(column, "") for column in node_header}
                 if canonical in existing:
-                    # A donor and a named declaration can share one ID across
+                    # A donor and a source declaration can share one ID across
                     # source files. Only discard the anonymous donor, never
-                    # the named row which receives its provenance below.
-                    if original != canonical or not row.get(NAME_COLUMN):
+                    # the declared row which receives its provenance below.
+                    if original != canonical or not _is_declaration(row):
                         return None
                 elif decision.get("name"):
                     row = {column: "" for column in node_header}

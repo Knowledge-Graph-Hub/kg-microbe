@@ -34,7 +34,7 @@ def load_taxid_merges(raw_dir: Path) -> Dict[str, str]:
         return _taxid_merges(stream, path)
 
 
-def _taxid_merges(stream, path):
+def _taxid_merges(stream, path, *, flatten=True):
     """Validate explicit numeric retirement chains without ranking alternate identities."""
     replacements = {}
     for line in stream:
@@ -47,18 +47,19 @@ def _taxid_merges(stream, path):
         if old in replacements and replacements[old] != new:
             raise ValueError(f"{path}: conflicting replacements for {old}")
         replacements[old] = new
-    return {old: resolve_replacement(old, replacements) for old in replacements}
+    resolved = {old: resolve_replacement(old, replacements) for old in replacements}
+    return resolved if flatten else replacements
 
 
-def load_taxid_retirements(path: Path) -> tuple[Dict[str, str], set[str]]:
-    """Read complete, unambiguous NCBI retirement/deletion proof for source finalization."""
+def load_taxid_retirements(path: Path, *, flatten=True) -> tuple[Dict[str, str], set[str]]:
+    """Read validated NCBI retirements, optionally retaining links for selected-chain validation."""
     with tarfile.open(path) as archive:
         members = archive.getmembers()
         for name in ("merged.dmp", "delnodes.dmp", "nodes.dmp", "names.dmp"):
             selected = [member for member in members if member.name == name]
             if len(selected) != 1 or not selected[0].isfile():
                 raise ValueError(f"{path}: missing or ambiguous NCBI authority member {name}")
-        replacements = _taxid_merges(archive.extractfile("merged.dmp"), path)
+        replacements = _taxid_merges(archive.extractfile("merged.dmp"), path, flatten=flatten)
         deleted = set()
         for line in archive.extractfile("delnodes.dmp"):
             taxid = line.decode("utf-8").split("|", 1)[0].strip()

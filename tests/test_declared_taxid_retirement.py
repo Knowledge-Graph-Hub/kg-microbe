@@ -10,6 +10,7 @@ import pytest
 
 from kg_microbe.merge_utils.external_node_closure import resolve_external_references
 from kg_microbe.transform_utils.transform import Transform
+from kg_microbe.utils.external_identifiers import load_taxid_merges, load_taxid_retirements
 from kg_microbe.utils.source_finalization import (
     SourceFinalizationRequired,
     graph_rows,
@@ -94,6 +95,48 @@ def _rows(source, filename):
 def _published(source):
     """Capture existing publication bytes so a failed finalizer cannot silently repair them."""
     return {path.name: path.read_bytes() for path in source.output_dir.iterdir() if path.is_file()}
+
+
+def _write_rows(path, rows):
+    """Write bounded producer fixtures without changing their complete column inventory."""
+    with path.open("w", newline="") as stream:
+        writer = csv.DictWriter(stream, fieldnames=list(rows[0]), delimiter="\t", lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+
+
+def _select_ten(source, *, endpoint, dependency_only):
+    """Select only original 10 so replacement intermediates cannot enter through source rows."""
+    nodes = [
+        row
+        for row in graph_rows(source.output_node_file)
+        if row["id"] == "fixture:1" or (row["id"] == "NCBITaxon:10" and not dependency_only)
+    ]
+    edge = next(row for row in graph_rows(source.output_edge_file) if row["value"] == "ten")
+    if endpoint == "object":
+        edge["subject"], edge["object"] = edge["object"], edge["subject"]
+    _write_rows(source.output_node_file, nodes)
+    _write_rows(source.output_edge_file, [dict(edge, value=value) for value in ("first", "second")])
+
+
+def _chain_authority(raw, intermediates, *, live=(), reverse=False):
+    """Place nameless live contradictions only on the requested hidden native chain members."""
+    chain = ["10", *intermediates, "12"]
+    merged = [f"{old} | {new} |" for old, new in zip(chain[:-1], chain[1:], strict=True)]
+    nodes = ["1 | 1 | no rank |", "2 | 1 | superkingdom |", "12 | 2 | species |"]
+    nodes.extend(f"{taxid} | 2 | species |" for taxid in live)
+    if reverse:
+        merged.reverse()
+        nodes.reverse()
+    return _authority(
+        raw,
+        merged="\n".join(merged) + "\n",
+        deleted="",
+        overrides={
+            "nodes.dmp": "\n".join(nodes) + "\n",
+            "names.dmp": "12 | Accepted bacterium | | scientific name |\n",
+        },
+    )
 
 
 @pytest.mark.parametrize("dependent", [False, True])
@@ -198,9 +241,9 @@ def test_authority_mutation_during_parse_cannot_attest_old_decisions(tmp_path, m
     source = _source(tmp_path)
     original = external_node_closure.load_taxid_retirements
 
-    def mutate_after_read(path):
+    def mutate_after_read(path, **kwargs):
         """Change the real authority after parsing the private immutable snapshot."""
-        result = original(path)
+        result = original(path, **kwargs)
         assert path != source.input_base_dir / "taxdump.tar.gz"
         _authority(source.input_base_dir, merged="10 | 20 |\n11 | 20 |\n")
         return result
@@ -363,3 +406,217 @@ def test_no_taxonomy_bundle_keeps_honestly_empty_external_audit(tmp_path):
     assert _rows(source, "source_reference_resolution.tsv") == []
     assert source.finalize() == report
     verify_finalized_source_files([source.output_node_file, source.output_edge_file])
+
+
+@pytest.mark.parametrize("canonical_kind", ["named", "typed", "anonymous"])
+@pytest.mark.parametrize("placement", ["first-row", "last-row", "first-file", "last-file"])
+def test_existing_canonical_declaration_keeps_one_row_and_source_context(tmp_path, canonical_kind, placement):
+    """Existing canonical declarations survive donor convergence in every bundle position (#1693)."""
+    source = _source(tmp_path)
+    rows = list(graph_rows(source.output_node_file))
+    for row in rows:
+        row["xref"] = f"record:{row['id'].split(':')[-1]}"
+    canonical = next(row for row in rows if row["id"] == "NCBITaxon:12")
+    if canonical_kind != "named":
+        canonical["name"] = ""
+    if canonical_kind == "anonymous":
+        canonical["category"] = "biolink:NamedThing"
+    original_canonical = dict(canonical)
+    donors = {row["id"]: dict(row) for row in rows if row["id"] in {"NCBITaxon:10", "NCBITaxon:11"}}
+    others = [row for row in rows if row is not canonical]
+    canonical_path = source.output_node_file
+    if placement.endswith("row"):
+        _write_rows(canonical_path, [canonical, *others] if placement == "first-row" else [*others, canonical])
+    else:
+        canonical_path = source.output_dir / ("a_nodes.tsv" if placement == "first-file" else "z_nodes.tsv")
+        _write_rows(canonical_path, [canonical])
+        _write_rows(source.output_dir / "middle_nodes.tsv", [donors["NCBITaxon:11"]])
+        _write_rows(source.output_node_file, [row for row in others if row["id"] != "NCBITaxon:11"])
+    original_edges = list(graph_rows(source.output_edge_file))
+    report = source.finalize()
+    node_paths = sorted(source.output_dir.glob("*nodes.tsv"))
+    actual_rows = [(path, row) for path in node_paths for row in graph_rows(path)]
+    canonical_rows = [(path, row) for path, row in actual_rows if row["id"] == "NCBITaxon:12"]
+    assert len(canonical_rows) == 1
+    actual_path, actual = canonical_rows[0]
+    assert len(actual_rows) == len({row["id"] for _, row in actual_rows}) == 5
+    if canonical_kind == "anonymous":
+        assert actual["name"] == "Accepted bacterium"
+        assert actual["deprecated"] == actual["xref"] == ""
+    else:
+        assert actual_path == canonical_path
+        for field in ("name", "category", "deprecated", "xref"):
+            assert actual[field] == original_canonical[field]
+    assert actual["category"] == "biolink:OrganismTaxon"
+    assert set(actual["provided_by"].split("|")) == {
+        "infores:canonical",
+        "infores:ten",
+        "infores:eleven",
+        "infores:ncbitaxon",
+    }
+    assert all(row["description"] in actual["description"] for row in [original_canonical, *donors.values()])
+    edges = list(graph_rows(source.output_edge_file))
+    assert len(edges) == len(original_edges)
+    for original, actual_edge in zip(original_edges, edges, strict=True):
+        for endpoint in ("subject", "object"):
+            if original[endpoint] in donors:
+                assert actual_edge[endpoint] == "NCBITaxon:12"
+                assert actual_edge[f"original_{endpoint}"] == original[endpoint]
+            else:
+                assert actual_edge[endpoint] == original[endpoint]
+        assert actual_edge["value"] == original["value"]
+    audit = _rows(source, "source_reference_resolution.tsv")
+    retired = [row for row in audit if row["disposition"] == "retired_id_replaced"]
+    assert {row["original_id"] for row in retired} == set(donors)
+    assert all(json.loads(row["original_node_json"]) == donors[row["original_id"]] for row in retired)
+    assert all(json.loads(row["original_edge_json"]) in original_edges for row in retired)
+    if canonical_kind != "anonymous":
+        assert not any(row["original_id"] == "NCBITaxon:12" for row in audit)
+    before = _published(source)
+    assert source.finalize() == report
+    assert _published(source) == before
+    verify_finalized_source_files([*node_paths, source.output_edge_file])
+
+
+@pytest.mark.parametrize("anonymous_first", [False, True])
+def test_typed_canonical_survives_same_id_anonymous_companion(tmp_path, anonymous_first):
+    """A same-ID authority decision cannot discard an unnamed specific-category declaration."""
+    source = _source(tmp_path)
+    rows = list(graph_rows(source.output_node_file))
+    canonical = next(row for row in rows if row["id"] == "NCBITaxon:12")
+    canonical["name"] = ""
+    companion = dict(canonical, category="biolink:NamedThing", provided_by="infores:companion", deprecated="true")
+    _write_rows(source.output_node_file, [companion, *rows] if anonymous_first else [*rows, companion])
+    source.finalize()
+    actual = [row for row in graph_rows(source.output_node_file) if row["id"] == "NCBITaxon:12"]
+    assert len(actual) == 1
+    assert actual[0]["name"] == ""
+    assert actual[0]["category"] == "biolink:OrganismTaxon"
+    assert actual[0]["deprecated"] == "false"
+    assert "infores:companion" in actual[0]["provided_by"].split("|")
+    verify_finalized_source_files([source.output_node_file, source.output_edge_file])
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize("endpoint", ["subject", "object"])
+@pytest.mark.parametrize("dependency_only", [False, True])
+@pytest.mark.parametrize(
+    "intermediates,live",
+    [
+        (("11",), ("10",)),
+        (("11",), ("11",)),
+        (("11", "13"), ("11",)),
+        (("11", "13"), ("13",)),
+        (("11", "13"), ("11", "13")),
+    ],
+)
+def test_hidden_live_chain_members_preserve_complete_previous_publication(
+    tmp_path, reverse, endpoint, dependency_only, intermediates, live
+):
+    """Every selected nonterminal must be absent from nodes.dmp before any publication (#1695)."""
+    source = _source(tmp_path, dependent=dependency_only)
+    _select_ten(source, endpoint=endpoint, dependency_only=dependency_only)
+    # Establish a genuine complete earlier publication where 10 is live. A new
+    # producer instance then selects new native bytes without reusing snapshots.
+    _authority(
+        source.input_base_dir,
+        merged="",
+        deleted="",
+        overrides={
+            "nodes.dmp": "1 | 1 | no rank |\n2 | 1 | superkingdom |\n10 | 2 | species |\n",
+            "names.dmp": "10 | Earlier live taxon | | scientific name |\n",
+        },
+    )
+    source.finalize()
+    verify_finalized_source_files([source.output_node_file, source.output_edge_file])
+    (source.output_dir / "transform.complete").write_text("previous complete producer marker\n")
+    (source.output_dir / "transform_fingerprint.json").write_text('{"previous": "complete"}\n')
+    before = _published(source)
+    _chain_authority(source.input_base_dir, intermediates, live=live, reverse=reverse)
+    current = type(source)("fixture", source.input_base_dir, source.output_base_dir)
+    with pytest.raises(ValueError, match=r"retired/deleted taxid (10|11|13) is also a live declaration"):
+        current.finalize(fresh_run=True)
+    assert _published(current) == before
+
+
+@pytest.mark.parametrize("reverse", [False, True])
+@pytest.mark.parametrize("endpoint", ["subject", "object"])
+@pytest.mark.parametrize("dependency_only", [False, True])
+@pytest.mark.parametrize("intermediates", [("11",), ("11", "13")])
+def test_clean_selected_chain_preserves_observations_evidence_and_admission(
+    tmp_path, reverse, endpoint, dependency_only, intermediates
+):
+    """Valid hidden chains forward every observation and keep exact authority/original-row evidence."""
+    source = _source(tmp_path, dependent=dependency_only)
+    _select_ten(source, endpoint=endpoint, dependency_only=dependency_only)
+    authority = _chain_authority(source.input_base_dir, intermediates, reverse=reverse)
+    original_nodes = {row["id"]: row for row in graph_rows(source.output_node_file)}
+    original_edges = list(graph_rows(source.output_edge_file))
+    report = source.finalize()
+    edges = list(graph_rows(source.output_edge_file))
+    assert len(edges) == len(original_edges) == 2
+    assert {row["value"] for row in edges} == {"first", "second"}
+    assert all(row[endpoint] == "NCBITaxon:12" and row[f"original_{endpoint}"] == "NCBITaxon:10" for row in edges)
+    nodes = [row for row in graph_rows(source.output_node_file) if row["id"] == "NCBITaxon:12"]
+    assert len(nodes) == 1
+    assert nodes[0]["name"] == "Accepted bacterium"
+    assert nodes[0]["deprecated"] == ""
+    audit = _rows(source, "source_reference_resolution.tsv")
+    assert len(audit) == 2
+    assert {row["original_id"] for row in audit} == {"NCBITaxon:10"}
+    assert {row["disposition"] for row in audit} == {"retired_id_replaced"}
+    assert [json.loads(row["original_edge_json"]) for row in audit] == original_edges
+    if dependency_only:
+        assert all(row["original_node_json"] == "" for row in audit)
+    else:
+        assert all(json.loads(row["original_node_json"]) == original_nodes["NCBITaxon:10"] for row in audit)
+    identity = {"path": str(authority.resolve()), "sha256": hashlib.sha256(authority.read_bytes()).hexdigest()}
+    assert report["consumed_inputs"]["ncbi_taxonomy_authority"] == identity
+    assert {row["authority_sha256"] for row in audit} == {identity["sha256"]}
+    before = _published(source)
+    assert source.finalize() == report
+    assert _published(source) == before
+    verify_finalized_source_files([source.output_node_file, source.output_edge_file])
+
+
+def test_live_nonterminal_outside_selected_chain_is_not_new_validation_scope(tmp_path):
+    """An unrelated live/retired contradiction is not proof for the selected replacement."""
+    source = _source(tmp_path)
+    _select_ten(source, endpoint="subject", dependency_only=False)
+    _authority(
+        source.input_base_dir,
+        merged="10 | 11 |\n11 | 12 |\n40 | 41 |\n41 | 12 |\n",
+        deleted="",
+        overrides={"nodes.dmp": "1 | 1 | no rank |\n2 | 1 | superkingdom |\n12 | 2 | species |\n41 | 2 | species |\n"},
+    )
+    source.finalize()
+    assert all(row["subject"] == "NCBITaxon:12" for row in graph_rows(source.output_edge_file))
+    verify_finalized_source_files([source.output_node_file, source.output_edge_file])
+
+
+@pytest.mark.parametrize("flatten", [False, True])
+@pytest.mark.parametrize("reverse", [False, True])
+def test_retirement_loader_preserves_flattened_default_and_validated_native_links(tmp_path, flatten, reverse):
+    """Optional direct links retain chain proof while existing producer consumers get terminal IDs."""
+    path = _chain_authority(tmp_path, ("11", "13"), reverse=reverse)
+    flattened = {"10": "12", "11": "12", "13": "12"}
+    direct = {"10": "11", "11": "13", "13": "12"}
+    assert load_taxid_merges(tmp_path) == flattened
+    assert load_taxid_retirements(path) == (flattened, set())
+    assert load_taxid_retirements(path, flatten=flatten) == (flattened if flatten else direct, set())
+
+
+@pytest.mark.parametrize("flatten", [False, True])
+@pytest.mark.parametrize(
+    "kwargs,match",
+    [
+        ({"merged": "10 | 11 |\n11 | 10 |\n"}, "Cyclic"),
+        ({"merged": "10 | 11 |\n10 | 12 |\n"}, "conflicting"),
+        ({"deleted": "11 |\n"}, "both deleted"),
+    ],
+)
+def test_retirement_loader_keeps_structural_checks_in_both_modes(tmp_path, flatten, kwargs, match):
+    """Retaining native links never bypasses cycle, conflicting-map or intermediate-deletion checks."""
+    path = _authority(tmp_path, **kwargs)
+    with pytest.raises(ValueError, match=match):
+        load_taxid_retirements(path, flatten=flatten)

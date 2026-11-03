@@ -1881,7 +1881,11 @@ deduplicate: Remove duplicates while preserving order (default: True)</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.foodon_classification.authoritative_foodon_category">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.foodon_classification.</span></span><span class="sig-name descname"><span class="pre">authoritative_foodon_category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categories</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.foodon_classification.authoritative_foodon_category" title="Link to this definition"></a></dt>
-<dd><p>Use native branch evidence consistently for the producer and import routes.</p>
+<dd><p>Use exactly one caller-selected native path or admitted category mapping.</p>
+<p>A mapping authorizes only its explicit entries; missing entries never fall
+back to checkout data or a namespace-derived category. Producers pass the
+decisions from their consumed-input snapshot, preserving its stronger
+native evidence and publication checks.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
@@ -4761,8 +4765,8 @@ module’s converter receipt is a byte-bound trace, not an independent ontology.
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.ontology_resolution.foodon_category">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.ontology_resolution.</span></span><span class="sig-name descname"><span class="pre">foodon_category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">term_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ontology_resolution.foodon_category" title="Link to this definition"></a></dt>
-<dd><p>Read asserted FOODON organism, process, quality and information branches.</p>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.ontology_resolution.</span></span><span class="sig-name descname"><span class="pre">foodon_category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">term_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categories</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ontology_resolution.foodon_category" title="Link to this definition"></a></dt>
+<dd><p>Read FOODON branches from an explicit native path or admitted category mapping.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
@@ -5096,8 +5100,8 @@ chebi_adapter: Optional OAK adapter for ChEBI ontology</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.ontology_utils.get_foodon_category">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.ontology_utils.</span></span><span class="sig-name descname"><span class="pre">get_foodon_category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">foodon_term_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ontology_utils.get_foodon_category" title="Link to this definition"></a></dt>
-<dd><p>Read the local FOODON branch policy (producers use snapshot-bound finalization).</p>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.ontology_utils.</span></span><span class="sig-name descname"><span class="pre">get_foodon_category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">foodon_term_id</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">categories</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ontology_utils.get_foodon_category" title="Link to this definition"></a></dt>
+<dd><p>Read an explicit FOODON authority; producers use snapshot-bound finalization.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>

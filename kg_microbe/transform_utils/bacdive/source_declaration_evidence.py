@@ -298,12 +298,11 @@ class SourceDeclarationEvidence:
 
     def _bind_selector(self, role, path, recorded):
         """Keep actual demand-driven selection fixed before trusting any file, including an absent one."""
-        locator = producer_input_path(role)
+        locator = Path(self.admission.capture_resolution(lambda: str(producer_input_path(role))))
         if Path(path).absolute() != locator or (
             recorded is not None and (not isinstance(recorded, dict) or recorded.get("locator") != str(locator))
         ):
             _fail("recorded or live input locator differs from actual producer selector: " + role)
-        self.admission.capture_resolution(lambda: str(producer_input_path(role)))
         return locator
 
     def _read_keyword_inputs(self, paths, snapshots, opener, recorded):

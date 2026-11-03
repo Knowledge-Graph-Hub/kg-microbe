@@ -2,6 +2,7 @@
 
 import csv
 import hashlib
+import inspect
 import json
 from pathlib import Path
 
@@ -26,6 +27,58 @@ from kg_microbe.utils.source_finalization import (
 )
 from tests.test_bacdive_taxonomy_evidence import _restamp_retirement_authority, produce, retired_producer
 from tests.test_external_node_closure import _taxdump
+
+
+def _select_alternative(monkeypatch, role, substitute):
+    """Change the actual configured producer selector without changing any authority bytes."""
+    if role == SELECTED_ROLE:
+        monkeypatch.setattr(bacdive_module, "NCBITAXON_NODES_FILE", substitute)
+    elif role == CUSTOM_ROLE:
+        monkeypatch.setattr(bacdive_module, "CUSTOM_CURIES_YAML_FILE", substitute)
+    elif role == METPO_ROLE:
+        monkeypatch.setenv("KG_MICROBE_METPO_TEMPLATE_DIR", str(substitute.parent))
+    else:
+        assert role == ALIASES_ROLE
+        monkeypatch.setattr(mapping_file_utils, "LOCAL_METPO_ALIAS_OVERRIDES_PATH", substitute)
+
+
+def _identical_selector_alternative(tmp_path, role):
+    """Prepare a distinct lexical selection whose bytes equal the actual selected input."""
+    actual = producer_input_path(role)
+    if role == METPO_ROLE:
+        substitute = tmp_path / "different-template-selection" / actual.name
+        substitute.parent.mkdir()
+    else:
+        substitute = tmp_path / ("different-selection" + actual.suffix)
+    substitute.write_bytes(actual.read_bytes())
+    return substitute
+
+
+def _selector_capture_timing(monkeypatch, role, timing, change):
+    """Inject only a real configuration change at the first selected resolver capture, retaining verification."""
+    original = SourceAdmission.capture_resolution
+    observations = {"captures": 0, "changes": 0}
+
+    def capture(admission, resolver, *args):
+        """Run the real capture and resolver; never replace their selected value or skip later admission checks."""
+        selected = (
+            getattr(resolver, "__qualname__", "") == "SourceDeclarationEvidence._bind_selector.<locals>.<lambda>"
+            and inspect.getclosurevars(resolver).nonlocals.get("role") == role
+        )
+        first = selected and observations["captures"] == 0
+        if selected:
+            observations["captures"] += 1
+        if first and timing == "before-capture":
+            change()
+            observations["changes"] += 1
+        result = original(admission, resolver, *args)
+        if first and timing == "after-capture":
+            change()
+            observations["changes"] += 1
+        return result
+
+    monkeypatch.setattr(SourceAdmission, "capture_resolution", capture)
+    return observations
 
 
 def _keyword_source(tmp_path, monkeypatch, *, matched=False):
@@ -194,21 +247,8 @@ def test_actual_input_selector_stays_bound(tmp_path, monkeypatch, local_source_s
         guard = BacDiveTransform.verify_recorded_native_inputs(
             report, source.output_dir / "source_finalization.json", admission=SourceAdmission()
         )
-    actual = producer_input_path(role)
-    if role == METPO_ROLE:
-        substitute = tmp_path / "different-template-selection" / actual.name
-        substitute.parent.mkdir()
-    else:
-        substitute = tmp_path / ("different-selection" + actual.suffix)
-    substitute.write_bytes(actual.read_bytes())
-    if role == SELECTED_ROLE:
-        monkeypatch.setattr(bacdive_module, "NCBITAXON_NODES_FILE", substitute)
-    elif role == CUSTOM_ROLE:
-        monkeypatch.setattr(bacdive_module, "CUSTOM_CURIES_YAML_FILE", substitute)
-    elif role == METPO_ROLE:
-        monkeypatch.setenv("KG_MICROBE_METPO_TEMPLATE_DIR", str(substitute.parent))
-    else:
-        monkeypatch.setattr(mapping_file_utils, "LOCAL_METPO_ALIAS_OVERRIDES_PATH", substitute)
+    substitute = _identical_selector_alternative(tmp_path, role)
+    _select_alternative(monkeypatch, role, substitute)
     error = (
         "locator differs from actual producer selector"
         if checkpoint == "before-public-admission"
@@ -221,6 +261,65 @@ def test_actual_input_selector_stays_bound(tmp_path, monkeypatch, local_source_s
             guard.verify()
         else:
             source.finalize()
+
+
+@pytest.mark.parametrize("role", [SELECTED_ROLE, CUSTOM_ROLE, METPO_ROLE, ALIASES_ROLE])
+@pytest.mark.parametrize("timing", ["unchanged", "before-call", "before-capture", "after-capture"])
+def test_public_admission_binds_initial_selector_observation(tmp_path, monkeypatch, local_source_schema, role, timing):
+    """A selector change cannot become a new capture baseline while public admission reads its old selection."""
+    source = _keyword_source(tmp_path, monkeypatch, matched=True)
+    source.finalize()
+    verify_finalized_source_files([source.output_node_file, source.output_edge_file])
+    actual = producer_input_path(role)
+    substitute = _identical_selector_alternative(tmp_path, role)
+    unchanged = _unchanged_native_and_graph(source, include_audit=True)
+    for path in (
+        Path(source.input_base_dir) / "taxdump.tar.gz",
+        source.output_dir / "source_finalization.json",
+        substitute,
+    ):
+        unchanged[path] = path.read_bytes()
+
+    def change():
+        """Change only the genuine selector; graph, receipt, native inputs and alternative bytes stay fixed."""
+        _select_alternative(monkeypatch, role, substitute)
+
+    observations = _selector_capture_timing(monkeypatch, role, timing, change)
+    if timing == "before-call":
+        change()
+    if timing == "unchanged":
+        verify_finalized_source_files([source.output_node_file, source.output_edge_file])
+    else:
+        with pytest.raises(SourceFinalizationRequired):
+            verify_finalized_source_files([source.output_node_file, source.output_edge_file])
+    assert observations["captures"] >= 1
+    assert observations["changes"] == int(timing in {"before-capture", "after-capture"})
+    assert producer_input_path(role) == (actual if timing == "unchanged" else substitute)
+    assert {path: path.read_bytes() for path in unchanged} == unchanged
+
+
+@pytest.mark.parametrize("role", [SELECTED_ROLE, CUSTOM_ROLE, METPO_ROLE, ALIASES_ROLE])
+def test_live_source_rejects_selector_change_at_initial_capture(tmp_path, monkeypatch, role):
+    """The real producer fails its initial declaration proof before a finalized receipt can be published."""
+    unchanged = {}
+
+    def change():
+        """Wait for native fixture selection, then change only one actual selector at initial proof capture."""
+        for selected_role in (SELECTED_ROLE, CUSTOM_ROLE, METPO_ROLE, ALIASES_ROLE):
+            path = producer_input_path(selected_role)
+            unchanged[path] = path.read_bytes()
+        raw = tmp_path / "raw" / "bacdive_strains.json"
+        unchanged[raw] = raw.read_bytes()
+        substitute = _identical_selector_alternative(tmp_path, role)
+        unchanged[substitute] = substitute.read_bytes()
+        _select_alternative(monkeypatch, role, substitute)
+
+    observations = _selector_capture_timing(monkeypatch, role, "before-capture", change)
+    with pytest.raises(SourceFinalizationRequired):
+        _keyword_source(tmp_path, monkeypatch, matched=True)
+    assert observations == {"captures": 1, "changes": 1}
+    assert {path: path.read_bytes() for path in unchanged} == unchanged
+    assert not list(tmp_path.rglob("source_finalization.json"))
 
 
 def test_original_keyword_selectors_reject_forged_declaration(tmp_path, monkeypatch, local_source_schema):

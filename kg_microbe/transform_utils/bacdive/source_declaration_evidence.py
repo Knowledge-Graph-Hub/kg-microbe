@@ -3,6 +3,7 @@
 import csv
 import hashlib
 import json
+import os
 import re
 from pathlib import Path
 
@@ -26,6 +27,26 @@ SELECTED_ROLE = "bacdive_source_declaration_selected_ncbitaxon"
 CUSTOM_ROLE = "bacdive_source_declaration_custom_curies"
 METPO_ROLE = "bacdive_source_declaration_metpo_classes"
 ALIASES_ROLE = "bacdive_source_declaration_metpo_aliases"
+
+
+def producer_input_path(role):
+    """Resolve the producer's actual input selection independently of mutable receipt locators."""
+    from kg_microbe.transform_utils.bacdive import bacdive
+    from kg_microbe.utils import mapping_file_utils
+
+    if role == SELECTED_ROLE:
+        selected = bacdive.NCBITAXON_NODES_FILE
+    elif role == CUSTOM_ROLE:
+        selected = bacdive.CUSTOM_CURIES_YAML_FILE
+    elif role == METPO_ROLE:
+        selected = (
+            Path(os.environ.get("KG_MICROBE_METPO_TEMPLATE_DIR", mapping_file_utils.RAW_DATA_DIR)) / "metpo_sheet.tsv"
+        )
+    elif role == ALIASES_ROLE:
+        selected = mapping_file_utils.LOCAL_METPO_ALIAS_OVERRIDES_PATH
+    else:
+        _fail("unknown producer declaration input role")
+    return Path(selected).absolute()
 
 
 def _json(value):
@@ -144,7 +165,9 @@ class SourceDeclarationEvidence:
         selected_rows, selected_labels = [], {}
         selected_input = None
         if targets:
-            locator = Path(selected_path).absolute()
+            locator = self._bind_selector(
+                SELECTED_ROLE, selected_path, recorded.get("selected_input") if recorded is not None else None
+            )
             resolved = self.admission.bind_path(locator)
             identity = self.admission.capture(locator, optional=True)
             if identity is not None:
@@ -205,6 +228,7 @@ class SourceDeclarationEvidence:
         self._targets = targets
         self._selected_labels = _json(selected_labels)
         self._input_bindings = {}
+        recorded_keywords = recorded.get("keyword_inputs", {}) if recorded is not None else {}
         keyword_inputs, native_emissions = {}, []
         parser, custom = None, None
         # Only selected early parents need positive medium/keyword proof: an
@@ -230,7 +254,9 @@ class SourceDeclarationEvidence:
                     matches = []
                     if keywords:
                         if parser is None:
-                            parser, custom, keyword_inputs = self._read_keyword_inputs(keyword_paths, snapshots, opener)
+                            parser, custom, keyword_inputs = self._read_keyword_inputs(
+                                keyword_paths, snapshots, opener, recorded_keywords
+                            )
                             if keyword_cache_reader is not None:
                                 self.admission.capture_resolution(lambda: _json(keyword_cache_reader()))
                         keys = parser._build_keyword_map_from_record(record, custom)
@@ -270,11 +296,21 @@ class SourceDeclarationEvidence:
             _fail("recorded declaration proof differs from actual native membership reconstruction")
         self.verify(snapshots)
 
-    def _read_keyword_inputs(self, paths, snapshots, opener):
+    def _bind_selector(self, role, path, recorded):
+        """Keep actual demand-driven selection fixed before trusting any file, including an absent one."""
+        locator = producer_input_path(role)
+        if Path(path).absolute() != locator or (
+            recorded is not None and (not isinstance(recorded, dict) or recorded.get("locator") != str(locator))
+        ):
+            _fail("recorded or live input locator differs from actual producer selector: " + role)
+        self.admission.capture_resolution(lambda: str(producer_input_path(role)))
+        return locator
+
+    def _read_keyword_inputs(self, paths, snapshots, opener, recorded):
         """Bind only local key authorities used by the existing keyword-trigger parser."""
         inputs, tables = {}, {}
         for role in (CUSTOM_ROLE, METPO_ROLE, ALIASES_ROLE):
-            locator = Path(paths[role]).absolute()
+            locator = self._bind_selector(role, paths[role], recorded.get(role))
             identity = self.admission.capture(locator, optional=role == ALIASES_ROLE)
             binding = {"path": str(locator.resolve()), "sha256": identity["sha256"]} if identity else None
             if identity:

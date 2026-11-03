@@ -40,7 +40,9 @@ from kg_microbe.transform_utils.bacdive.source_declaration_evidence import (
     ALIASES_ROLE,
     CUSTOM_ROLE,
     METPO_ROLE,
+    SELECTED_ROLE,
     SourceDeclarationEvidence,
+    producer_input_path,
 )
 from kg_microbe.transform_utils.constants import (
     AGENT_TYPE_COLUMN,
@@ -1410,8 +1412,7 @@ def prepare(transform):
 
 def prepare_source_declarations(transform, selected_path, custom_path, custom_data):
     """Bind actual selected membership and any native medium/keyword declaration triggers."""
-    from kg_microbe.transform_utils.constants import GENERAL, KEYWORDS, RAW_DATA_DIR
-    from kg_microbe.utils.mapping_file_utils import LOCAL_METPO_ALIAS_OVERRIDES_PATH
+    from kg_microbe.transform_utils.constants import GENERAL, KEYWORDS
 
     snapshots = transform.consumed_input_snapshots
 
@@ -1458,8 +1459,8 @@ def prepare_source_declarations(transform, selected_path, custom_path, custom_da
         opener=opener,
         keyword_paths={
             CUSTOM_ROLE: custom_path,
-            METPO_ROLE: Path(os.environ.get("KG_MICROBE_METPO_TEMPLATE_DIR", RAW_DATA_DIR)) / "metpo_sheet.tsv",
-            ALIASES_ROLE: LOCAL_METPO_ALIAS_OVERRIDES_PATH,
+            METPO_ROLE: producer_input_path(METPO_ROLE),
+            ALIASES_ROLE: producer_input_path(ALIASES_ROLE),
         },
         cache_reader=lambda: getattr(transform, "ncbitaxon_labels", None),
         producer_keyword_matcher=keyword_matches,
@@ -1597,13 +1598,11 @@ def verify_recorded(
     source_declarations = contract.get("source_declarations")
     if not isinstance(source_declarations, dict):
         _fail("mandatory original source declaration contract missing")
-    selected = source_declarations.get("selected_input")
-    keyword_inputs = source_declarations.get("keyword_inputs", {})
     guard.prepare_source_declarations(
         snapshots,
-        selected_path=selected.get("locator") if isinstance(selected, dict) else raw_dir / "unused-zero-declarations",
+        selected_path=producer_input_path(SELECTED_ROLE),
         opener=lambda role, path: recorded_selected_opener(snapshots, admission, role, path),
-        keyword_paths={role: item["locator"] for role, item in keyword_inputs.items()},
+        keyword_paths={role: producer_input_path(role) for role in (CUSTOM_ROLE, METPO_ROLE, ALIASES_ROLE)},
         recorded=source_declarations,
     )
     guard.complete(claims, resolved, contested)

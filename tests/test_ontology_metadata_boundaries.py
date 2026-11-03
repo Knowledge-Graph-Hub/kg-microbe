@@ -192,4 +192,3 @@ def test_establish_transitive_relationship_multiple_retains_multi_valued_and_mar
     assert set(shortcut_rows["subject"]) == {"RHEA:10001", "RHEA:10002"}
     assert set(shortcut_rows["knowledge_level"]) == {"logical_entailment"}
     assert set(shortcut_rows["agent_type"]) == {"automated_agent"}
-

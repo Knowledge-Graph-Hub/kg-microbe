@@ -246,4 +246,3 @@ def test_blank_node_name_yields_to_non_blank_across_and_within_sources(tmp_path,
     )
     merged_reverse = kgx_source.merge_assertion_graphs([beta2.store.graph, alpha2.store.graph])
     assert merged_reverse.nodes()["fixture:cross"]["name"] == "Bacillus"
-

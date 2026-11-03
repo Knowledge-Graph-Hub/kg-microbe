@@ -449,4 +449,3 @@ def test_kg_release_rejects_partial_sample_kg_model_review_artifact(monkeypatch)
         "Total WARNINGs: 0\n"
     )
     assert module._classify_verdict("kg-model-review", full_md) == "ok"
-

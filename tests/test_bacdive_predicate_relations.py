@@ -73,9 +73,7 @@ def test_relation_for_predicate_lookup_and_metpo_self_mapping():
             relation_for_predicate(invalid)  # type: ignore[arg-type]
 
 
-def test_bacdive_run_enforces_single_relation_per_predicate_and_no_negated_ro_affirmation(
-    tmp_path, monkeypatch
-):
+def test_bacdive_run_enforces_single_relation_per_predicate_and_no_negated_ro_affirmation(tmp_path, monkeypatch):
     """Full BacDiveTransform.run() emits a single deterministic relation per predicate (#431)."""
     records = [
         {

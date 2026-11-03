@@ -602,8 +602,7 @@ class MadinEtAlTransform(Transform):
                                 )
                             else:
                                 exact_condition_go = (
-                                    go_result_for_item[OBJECT_LABEL_COLUMN]
-                                    == go_result_for_item[SUBJECT_LABEL_COLUMN]
+                                    go_result_for_item[OBJECT_LABEL_COLUMN] == go_result_for_item[SUBJECT_LABEL_COLUMN]
                                 )
                                 exact_match_go_df = go_result_for_item[exact_condition_go]
                                 if not exact_match_go_df.empty:
@@ -689,9 +688,7 @@ class MadinEtAlTransform(Transform):
                         # For carbon substrates not found in METPO, fall back to ChEBI NER results per item
                         for item in carbon_substrates_not_in_metpo:
                             item_stripped = item.strip()
-                            chebi_condition = chebi_result[TRAITS_DATASET_LABEL_COLUMN].isin(
-                                [item, item_stripped]
-                            )
+                            chebi_condition = chebi_result[TRAITS_DATASET_LABEL_COLUMN].isin([item, item_stripped])
                             chebi_result_for_item = chebi_result.loc[chebi_condition]
                             if chebi_result_for_item.empty:
                                 # Use fallback naming if no NER results for this carbon substrate item

@@ -7,6 +7,11 @@ import json
 
 import pytest
 
+from kg_microbe.transform_utils.constants import (
+    IN_TAXON_PREDICATE,
+    IN_TAXON_RELATION,
+    MICROBEDECODER_KNOWLEDGE_SOURCE,
+)
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
 from tests.microbedecoder_inactive_join_fixtures import bind_inactive_join_policy, write_empty_join_gss
 from tests.microbedecoder_quarantine_fixtures import bind_fixture_quarantine_policy
@@ -60,7 +65,16 @@ def test_actual_producer_quarantines_only_exact_records_and_preserves_all_other_
     first = [edge for edge in edges if edge["subject"] == "lpsn:101"]
     assert "NCBITaxon:1352" not in {edge["object"] for edge in first}
     assert "gold:Go0020981" not in {edge["object"] for edge in first}
-    assert {"ncbi.assembly:GCF_027571405.1", "IMG:2548876819"} <= {edge["object"] for edge in first}
+    genomes = {"ncbi.assembly:GCF_027571405.1", "IMG:2548876819"}
+    genome_edges = [edge for edge in edges if edge["subject"] in genomes]
+    assert len(genome_edges) == 2
+    assert {(edge["subject"], edge["predicate"], edge["object"], edge["relation"]) for edge in genome_edges} == {
+        (genome, IN_TAXON_PREDICATE, "lpsn:101", IN_TAXON_RELATION) for genome in genomes
+    }
+    assert genomes.isdisjoint(edge["object"] for edge in first), "no obsolete taxon-to-genome assertions"
+    for edge in genome_edges:
+        assert edge["source_record"].endswith("#record=1")
+        assert edge["primary_knowledge_source"] == MICROBEDECODER_KNOWLEDGE_SOURCE
     assert {"NCBITaxon:1352", "gold:Go0020981"} <= {edge["object"] for edge in edges if edge["subject"] == "lpsn:102"}
     audit = _read(transform.output_dir / "crosswalk_quarantine.tsv")
     assert len(audit) == 2 and transform._stats["crosswalk_quarantined"] == 2

@@ -20,6 +20,20 @@ from tests.test_bacdive_isolation_categories import _run
 RESOURCE = Path(__file__).parent / "resources/bacdive_ncit_category_claims"
 
 
+class _FiniteTaxonLabelMisses:
+    """Model successful missing labels only for this fixture's four unrelated native taxids."""
+
+    def labels(self, identifiers):
+        """Keep unrelated label lookup explicit without authorizing new taxonomy or hiding errors."""
+        assert len(identifiers) == 1 and identifiers[0] in {
+            "NCBITaxon:317",
+            "NCBITaxon:1673609",
+            "NCBITaxon:306",
+            "NCBITaxon:29446",
+        }, f"Unexpected taxon label request: {identifiers}"
+        return iter(())
+
+
 def records():
     """Use complete immutable native records, not a fabricated target-only biology excerpt."""
     return json.loads((RESOURCE / "records.json").read_text())["records"]
@@ -30,6 +44,7 @@ def run_native(tmp_path, monkeypatch, native):
 
     def context(transform, policy):
         """Supply only the offline context needed by the native category fixture."""
+        transform.ncbi_impl = _FiniteTaxonLabelMisses()
         transform.lpsn_name_index = {}
         transform.metpo_metabolite_production_mappings = load_metpo_metabolite_production_mappings()
 

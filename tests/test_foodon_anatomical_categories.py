@@ -211,7 +211,7 @@ def test_policy_cannot_be_restamped_as_an_unreviewed_decision(damage):
 
 def test_missing_native_path_cannot_use_legacy_food_fallback(tmp_path):
     """An exact reviewed anatomical ID must not become Food merely because its authority is absent."""
-    with pytest.raises(FileNotFoundError, match="anatomical category authority"):
+    with pytest.raises(FileNotFoundError, match="FOODON category authority"):
         authoritative_foodon_category("FOODON:00002894", path=tmp_path / "absent.json")
 
 

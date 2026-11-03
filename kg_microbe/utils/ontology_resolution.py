@@ -1,5 +1,7 @@
 """Pure ontology category policies over explicit lookup results and adapters."""
 
+from collections.abc import Mapping
+from pathlib import Path
 from typing import Protocol
 
 from kg_microbe.transform_utils.constants import (
@@ -88,11 +90,11 @@ def ncbitaxon_category(_term_id: str) -> str:
     return NCBI_CATEGORY
 
 
-def foodon_category(term_id: str) -> str:
-    """Read asserted FOODON organism, process, quality and information branches."""
+def foodon_category(term_id: str, *, path: Path | None = None, categories: Mapping[str, str] | None = None) -> str:
+    """Read FOODON branches from an explicit native path or admitted category mapping."""
     from kg_microbe.utils.foodon_classification import authoritative_foodon_category
 
-    return authoritative_foodon_category(term_id)
+    return authoritative_foodon_category(term_id, path=path, categories=categories)
 
 
 def pato_category(_term_id: str) -> str:

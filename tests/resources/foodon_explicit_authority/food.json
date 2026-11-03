@@ -1,0 +1,12 @@
+{
+  "graphs": [
+    {
+      "nodes": [
+        {"id": "FOODON:fixture", "type": "CLASS"},
+        {"id": "FOODON:retired", "type": "CLASS", "meta": {"deprecated": true}},
+        {"id": "FOODON:property", "type": "PROPERTY"}
+      ],
+      "edges": []
+    }
+  ]
+}

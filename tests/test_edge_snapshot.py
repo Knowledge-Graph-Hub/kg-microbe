@@ -230,6 +230,7 @@ def test_input_change_after_scanning_prevents_publication(source, tmp_path, monk
     real_open = snapshot._regular_open
 
     def mutate_when_opening_reference(path):
+        """Simulate replacing an earlier member while a later member is read."""
         if path.name == "reference_resolution.tsv":
             edges = source.parent / "edges.tsv"
             edges.write_bytes(edges.read_bytes() + b"changed\n")
@@ -246,6 +247,7 @@ def test_write_failure_cleans_only_own_stage(source, tmp_path, monkeypatch):
     real_write = snapshot._Shards.write
 
     def fail_after_one(self, row):
+        """Simulate a disk failure after the first occurrence has been staged."""
         if self.total:
             raise OSError("simulated disk failure")
         real_write(self, row)

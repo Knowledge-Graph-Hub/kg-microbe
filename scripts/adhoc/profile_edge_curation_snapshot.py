@@ -2,9 +2,9 @@
 """
 Profile an immutable KG-Microbe snapshot for the 2026-11-03 curation plan.
 
-Inputs: snapshot directory containing KGX TSVs and manifest.json.
-Output: JSON counts, field coverage and byte hashes; no source files are changed.
-Purpose: size and partition the proposed edge-curation architecture (no issue yet).
+Inputs: snapshot directory containing KGX TSVs and manifest.json; optional prior profile.
+Output: new JSON counts, field coverage, byte hashes and optional comparison.
+Purpose: size the edge-curation architecture; literal TSV repair for #1719, 2026-11-04.
 """
 
 import argparse
@@ -45,13 +45,14 @@ def profile(snapshot, max_rows):
         with path.open("rb") as handle:
 
             def lines(current_digest=digest):
+                """Hash exact physical lines before interpreting their literal TSV cells."""
                 nonlocal byte_count
                 for line in handle:
                     current_digest.update(line)
                     byte_count += len(line)
                     yield line.decode("utf-8")
 
-            reader = csv.reader(lines(), delimiter="\t")
+            reader = csv.reader(lines(), delimiter="\t", quoting=csv.QUOTE_NONE, quotechar=None)
             header = next(reader)
             fields = (
                 ("predicate", "relation", "primary_knowledge_source", "knowledge_level", "agent_type")
@@ -111,24 +112,80 @@ def profile(snapshot, max_rows):
     return result
 
 
+def compare_profiles(baseline, current):
+    """Compare measured fields only after both scans verify the same source snapshot."""
+    if baseline["manifest_sha256"] != current["manifest_sha256"]:
+        raise ValueError("Profile comparison requires the same source manifest")
+    if set(baseline["members"]) != set(current["members"]):
+        raise ValueError("Profile comparison requires the same source members")
+    if not all(
+        member["complete_scan"] is True and member["matches_manifest"] is True
+        for profile_result in (baseline, current)
+        for member in profile_result["members"].values()
+    ):
+        raise ValueError("Profile comparison requires complete manifest-verified scans")
+    fields = (
+        "rows",
+        "bytes_read",
+        "file_bytes",
+        "sha256",
+        "row_width_errors",
+        "header",
+        "nonempty_fields",
+        "counts",
+        "source_predicate_counts",
+    )
+    members = {}
+    for name, member in current["members"].items():
+        previous = baseline["members"][name]
+        changed = [field for field in fields if previous[field] != member[field]]
+        members[name] = {
+            "changed_fields": changed,
+            "raw_counts_equal": previous["counts"] == member["counts"],
+            "nonempty_fields_equal": previous["nonempty_fields"] == member["nonempty_fields"],
+            "statistics_equal": not changed,
+        }
+    return {
+        "same_source_manifest": True,
+        "members": members,
+        "statistics_equal": all(member["statistics_equal"] for member in members.values()),
+    }
+
+
 def main():
     """Write a bounded or complete profile to the requested output path."""
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("snapshot", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--max-rows", type=int, default=0)
+    parser.add_argument("--compare-profile", type=Path, help="Compare complete verified counts with a prior profile")
     args = parser.parse_args()
     if args.max_rows < 0:
         parser.error("--max-rows must be nonnegative")
+    if args.output.exists() or args.output.is_symlink():
+        parser.error("output already exists; use a new profile path")
+    baseline_bytes = args.compare_profile.read_bytes() if args.compare_profile else None
+    baseline = json.loads(baseline_bytes) if baseline_bytes is not None else None
     csv.field_size_limit(16 * 1024 * 1024)
     result = profile(args.snapshot, args.max_rows)
+    if baseline is not None:
+        result["comparison"] = compare_profiles(baseline, result)
+        result["comparison"].update(
+            baseline_path=str(args.compare_profile.resolve()),
+            baseline_sha256=hashlib.sha256(baseline_bytes).hexdigest(),
+        )
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
+    with args.output.open("x", encoding="utf-8") as output:
+        output.write(json.dumps(result, indent=2) + "\n")
     summary = {
         name: {key: value[key] for key in ("rows", "complete_scan", "matches_manifest", "elapsed_seconds")}
         for name, value in result["members"].items()
     }
+    if "comparison" in result:
+        summary["comparison"] = result["comparison"]
     print(json.dumps(summary, indent=2))
+    if "comparison" in result and not result["comparison"]["statistics_equal"]:
+        parser.exit(1, "Profile statistics changed; inspect the saved comparison before reusing prior numbers.\n")
 
 
 if __name__ == "__main__":

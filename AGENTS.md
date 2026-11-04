@@ -6,14 +6,24 @@ data/merged/merged-kg.tar.gz`.
 
 ## Before handing off a change
 
-Run the smallest relevant tests while iterating, then:
+Follow [the testing policy](docs/TESTING.md). While editing, run affected tests,
+downstream contract tests and previous failures; a full suite is not required
+for every commit. Before final PR validation, prepare formatting and spelling:
 
 ```bash
-poetry run pytest
-poetry run tox
-poetry check --lock
-python scripts/generate_merge_configs.py --check
+poetry run tox -e format,codespell-write
 ```
+
+Review and commit any intended fixes, then validate the clean tracked candidate:
+
+```bash
+poetry run python scripts/run_pr_gates.py <label>
+```
+
+The runner checks lock/config and code quality before running the full test suite
+once, with duration reporting. Do not add a separate full `pytest` run. Default
+tox checks do not rewrite source files. Preserve unrelated work and never discard
+all diffs to obtain a clean candidate.
 
 Unit tests are offline and hermetic. Add immutable fixtures under
 `tests/resources`, write output under `tmp_path`, and mark deliberate

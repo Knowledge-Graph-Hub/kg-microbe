@@ -105,5 +105,3 @@ def test_madin_uri_to_curie_empty_fallback_and_per_item_ner(monkeypatch, tmp_pat
     assert '( uri_to_curie(predicate_biolink) if predicate_biolink else "" ) or "biolink:has_phenotype"' in src
     assert "for item in pathways_not_in_metpo:" in src
     assert "for item in carbon_substrates_not_in_metpo:" in src
-
-

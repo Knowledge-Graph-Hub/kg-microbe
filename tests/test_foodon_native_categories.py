@@ -158,7 +158,4 @@ def test_deparented_meat_cuts_classify_as_food_not_organism_taxon():
     for child, parent in quarantined_pairs:
         assert categories[parent] == "biolink:OrganismTaxon"
         assert categories[child] == "biolink:Food"
-        assert (
-            canonical_node_category(child, "biolink:OrganismTaxon", foodon_categories=categories) == "biolink:Food"
-        )
-
+        assert canonical_node_category(child, "biolink:OrganismTaxon", foodon_categories=categories) == "biolink:Food"

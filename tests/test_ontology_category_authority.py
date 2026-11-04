@@ -281,4 +281,3 @@ def test_obi_culture_medium_retains_growth_medium_alone(tmp_path):
 
     authority = _modified_authority(tmp_path, mutate)
     assert authority.category_for("OBI:0000079") == "biolink:GrowthMedium"
-

@@ -32,6 +32,7 @@ ENV/
 __pypackages__/
 
 # Test, coverage, type-checker, and documentation output
+/data/validation/pr-gates/
 htmlcov/
 .tox/
 .nox/

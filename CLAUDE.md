@@ -9,17 +9,20 @@ Use the linked runbooks for operational history and source-specific details.
 ```bash
 poetry install --with docs
 poetry run kg --help
-poetry run pytest
-poetry run tox
-poetry check --lock
-python scripts/generate_merge_configs.py --check
 ```
 
-Tox uses Ruff for formatting and linting. Run the relevant tests while editing
-and the full `poetry run tox` suite before committing. Unit tests must not need
-network access or modify `data/raw`; put small immutable inputs under
-`tests/resources` and use `tmp_path` for output. Mark intentional live-service
-coverage with `@pytest.mark.integration`.
+Follow [the testing policy](docs/TESTING.md): run affected tests, downstream
+contracts and previous failures while editing, without a full run per commit.
+Before final PR validation, run `poetry run tox -e format,codespell-write`, review
+and commit any intended fixes, then run
+`poetry run python scripts/run_pr_gates.py <label>` on the clean tracked
+candidate. It runs cheap checks first and the full pytest suite once. Do not
+pair it with another full `pytest` run. Default tox checks do not rewrite source
+files; explicit preparation is separate from validation.
+
+Unit tests must not need network access or modify `data/raw`; put small immutable
+inputs under `tests/resources` and use `tmp_path` for output. Mark intentional
+live-service coverage with `@pytest.mark.integration`.
 
 The ontology transforms run the ROBOT pinned in `download.yaml`
 (`kg download -t tools` puts `robot` and `robot.jar` in the raw directory)

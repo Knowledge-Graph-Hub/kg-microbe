@@ -273,10 +273,15 @@ Test at least:
 
 ```bash
 poetry run pytest tests/test_<source_name>_transform.py -v
-poetry run tox  # runs the full gate; must pass
 ```
 
-**Gate 8 — the new tests pass; `tox` passes (or fails only on pre-existing master issues you didn't introduce).**
+Also run affected downstream contract tests and previous failures while editing.
+For final PR validation, follow the [testing policy](../../../docs/TESTING.md):
+prepare formatting/spelling, review and commit intended fixes, then run
+`poetry run python scripts/run_pr_gates.py <label>` on the clean tracked
+candidate. It runs the full suite once; do not add a separate full pytest pass.
+
+**Gate 8 — the new and affected tests pass; the final candidate gate passes (or fails only on documented pre-existing master issues you didn't introduce).**
 
 ### Phase 9 — Ship
 

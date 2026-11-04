@@ -251,5 +251,3 @@ def test_issue_790_curated_corrections(mappings):
     )
     assert mappings.get(normalize_isolation_source_label("Reptilia")) is None
     assert mappings.get(normalize_isolation_source_label("Decomposing-algae")) is None
-
-

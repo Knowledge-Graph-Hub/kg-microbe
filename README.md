@@ -91,7 +91,10 @@ supported distribution channel.
 It should be noted that the KG construction process, particularly the transform step  involving trimming of NCBI Taxonomy for any KG and the steps involving the microbial UniProt dataset for KG-Microbe-Function and KG-Microbe-Biomedical-Function, is computationally intensive. Successful execution on a local machine may require significant memory resources (e.g., >500 GB of RAM), further details can be found in the project's code repository.
 
 # Contributors
-Please remember to run `poetry run tox` before every commit to make sure the code you commit is error-free.
+Follow the [testing policy](docs/TESTING.md): use focused tests while editing and
+run `poetry run python scripts/run_pr_gates.py <label>` once on the prepared,
+committed PR candidate. The gate runs code-quality checks and one full test
+suite; a full run is not required for every commit.
 
 ## Environment Variables
 If you need to use environment variables for this project, copy `.env.example` to `.env` and set the environment variables accordingly:

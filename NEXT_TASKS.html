@@ -178,10 +178,12 @@ and its negative controls.</p></li>
 <section id="freeze-gate-and-rebuild">
 <h2>2. Freeze, gate and rebuild<a class="headerlink" href="#freeze-gate-and-rebuild" title="Link to this heading"></a></h2>
 <ol class="arabic">
-<li><p><strong>Freeze and gate.</strong> Freeze the final head and run the full gates on it:
-<code class="docutils literal notranslate"><span class="pre">pytest</span></code>, <code class="docutils literal notranslate"><span class="pre">tox</span></code>, <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">check</span> <span class="pre">--lock</span></code> and
-<code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">scripts/generate_merge_configs.py</span> <span class="pre">--check</span></code>. Passing the frozen-head
-gate closes the three gate-only holds (<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1324">#1324</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1343">#1343</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1346">#1346</a>).</p></li>
+<li><p><strong>Freeze and gate.</strong> Prepare and commit the final candidate following the
+<a class="reference internal" href="TESTING.html"><span class="std std-doc">testing policy</span></a>, then run
+<code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">python</span> <span class="pre">scripts/run_pr_gates.py</span> <span class="pre">&lt;label&gt;</span></code> on its clean tracked tree.
+This checks lock/config and code quality before one full pytest run; do not
+add a duplicate standalone full run. Passing the frozen-head gate closes the
+three gate-only holds (<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1324">#1324</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1343">#1343</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1346">#1346</a>).</p></li>
 <li><p><strong>Stage the rebuild worktree.</strong></p>
 <ul class="simple">
 <li><p><strong>On the M1 host:</strong> The staged worktree

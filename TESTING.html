@@ -1,0 +1,167 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Testing policy &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Testing policy</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/TESTING.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="testing-policy">
+<h1>Testing policy<a class="headerlink" href="#testing-policy" title="Link to this heading"></a></h1>
+<p>Use focused tests during development and one full suite for final PR validation.
+This changes when tests run, not their assertions, markers or coverage. Repository
+validation remains separate from source freshness and graph-release acceptance.</p>
+<section id="while-editing">
+<h2>While editing<a class="headerlink" href="#while-editing" title="Link to this heading"></a></h2>
+<p>Run the tests for the changed behavior, affected downstream contracts and previous
+failures. Name the relevant files or node IDs explicitly, for example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>pytest<span class="w"> </span>tests/test_bacdive_provenance.py<span class="w"> </span>-q
+</pre></div>
+</div>
+<p>Expand the selection when changes affect shared behavior or a failure exposes
+another dependency. A full suite is not required for every commit. Do not rerun
+unrelated tests merely to produce a progress update.</p>
+</section>
+<section id="prepare-the-final-candidate">
+<h2>Prepare the final candidate<a class="headerlink" href="#prepare-the-final-candidate" title="Link to this heading"></a></h2>
+<p>Run the explicit source-editing tools before final validation:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>tox<span class="w"> </span>-e<span class="w"> </span>format,codespell-write
+</pre></div>
+</div>
+<p>Review the diff and commit the intended changes. Preserve unrelated work; never
+discard all diffs to obtain a clean tree. Use an isolated worktree when needed.
+The final gate requires a clean tracked candidate, including the staging area.</p>
+</section>
+<section id="validate-once">
+<h2>Validate once<a class="headerlink" href="#validate-once" title="Link to this heading"></a></h2>
+<p>On the prepared, committed candidate, choose a descriptive run label and run:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>scripts/run_pr_gates.py<span class="w"> </span>&lt;label&gt;
+</pre></div>
+</div>
+<p>The runner checks the Poetry lock and generated merge configuration, runs the
+read-only formatting, lint, spelling and docstring checks, then invokes the full
+pytest suite once through <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">--</span> <span class="pre">tox</span> <span class="pre">-e</span> <span class="pre">py</span> <span class="pre">--</span> <span class="pre">tests</span> <span class="pre">--durations=50</span></code>.
+The first <code class="docutils literal notranslate"><span class="pre">--</span></code> separates Poetry from its child command; the second forwards the
+test arguments through tox. Naming <code class="docutils literal notranslate"><span class="pre">tests/</span></code> prevents discovery in scratch
+worktrees and generated data. Cheap checks fail
+before the expensive suite starts. The runner uses explicit tox environments,
+clears inherited <code class="docutils literal notranslate"><span class="pre">TOX*</span></code> and <code class="docutils literal notranslate"><span class="pre">PYTEST_ADDOPTS</span></code> settings, and disables tox’s per-user
+configuration so development overrides cannot silently skip final checks.
+It records the candidate and gate results for review.</p>
+<p>Do not run a separate full <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">pytest</span></code> before or after this command.
+Default <code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">tox</span></code> also contains one full test run and checks source files
+without rewriting them; the runner additionally provides lock/config checks and
+the final-candidate record. Test outputs and tool caches may still be written.</p>
+<p>Reuse successful evidence only for the unchanged candidate and environment.
+Changed code, dependencies or test inputs require validation appropriate to that
+change; do not relabel an earlier run as evidence for a new candidate. Fix failures
+with focused tests, prepare the new candidate, and complete its final gate before
+handoff. A failed gate is not a passing result.</p>
+</section>
+<section id="ci-and-release-checks">
+<h2>CI and release checks<a class="headerlink" href="#ci-and-release-checks" title="Link to this heading"></a></h2>
+<p>CI continues to run the test suite across supported Python versions. Those
+environment checks remain necessary even after a local pass. Source freshness,
+transform replay, graph/model/path review and release checks retain their own
+requirements; a green code test suite does not establish graph-release readiness.</p>
+<p>Use the final run’s duration report to identify expensive tests before proposing
+fixture or test changes. Do not remove cases, weaken assertions, exclude markers
+or reduce coverage merely to shorten validation. Historical reports retain the
+commands and results actually used at the time.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

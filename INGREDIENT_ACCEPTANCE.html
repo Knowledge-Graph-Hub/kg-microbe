@@ -157,9 +157,11 @@ coverage comparison and inspection of production merged output. The small native
 excerpts certify their own bytes and behavior, not the complete production data.</p>
 <p>Generation commands and source hashes are in
 <code class="docutils literal notranslate"><span class="pre">tests/resources/ingredient_bundle/native/README.md</span></code> and the adjacent origin
-files. After the focused gate, run the repository’s full pytest/tox, Poetry lock
-and generated-merge-config checks. CI runs these acceptance tests as part of the
-ordinary test suite on every supported Python version.</p>
+files. After the focused gate, follow the <a class="reference internal" href="TESTING.html"><span class="std std-doc">testing policy</span></a> to prepare
+and commit the candidate, then run
+<code class="docutils literal notranslate"><span class="pre">poetry</span> <span class="pre">run</span> <span class="pre">python</span> <span class="pre">scripts/run_pr_gates.py</span> <span class="pre">&lt;label&gt;</span></code>. This performs lock/config
+and code-quality checks followed by one full test run. CI runs these acceptance
+tests as part of the ordinary test suite on every supported Python version.</p>
 </section>
 
 

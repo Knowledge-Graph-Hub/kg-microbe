@@ -94,10 +94,12 @@ Still open outside the 15 standard-merge producers:
 
 ## 2. Freeze, gate and rebuild
 
-1. **Freeze and gate.** Freeze the final head and run the full gates on it:
-   `pytest`, `tox`, `poetry check --lock` and
-   `python scripts/generate_merge_configs.py --check`. Passing the frozen-head
-   gate closes the three gate-only holds ([#1324], [#1343], [#1346]).
+1. **Freeze and gate.** Prepare and commit the final candidate following the
+   [testing policy](TESTING.md), then run
+   `poetry run python scripts/run_pr_gates.py <label>` on its clean tracked tree.
+   This checks lock/config and code quality before one full pytest run; do not
+   add a duplicate standalone full run. Passing the frozen-head gate closes the
+   three gate-only holds ([#1324], [#1343], [#1346]).
 2. **Stage the rebuild worktree.**
    - **On the M1 host:** The staged worktree
      (`data/validation-upstream-20260930.DbltzT/worktree`) is host-local to that

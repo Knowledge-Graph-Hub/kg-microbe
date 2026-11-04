@@ -4,6 +4,8 @@ import copy
 import hashlib
 import importlib.util
 import json
+import subprocess
+import sys
 from pathlib import Path
 
 import pytest
@@ -70,3 +72,31 @@ def test_partial_profile_cannot_certify_count_equality(source):
     partial = profiler.profile(source, 1)
     with pytest.raises(ValueError, match="complete manifest-verified"):
         profiler.compare_profiles(partial, current)
+
+
+@pytest.mark.parametrize("invalid", [None, [], "text", 17, True])
+def test_cli_rejects_nonobject_comparison_before_scanning(tmp_path, invalid):
+    """An explicit invalid baseline cannot silently disable comparison or start a scan."""
+    baseline = tmp_path / "baseline.json"
+    baseline.write_text(json.dumps(invalid), encoding="utf-8")
+    output = tmp_path / "not-created" / "profile.json"
+    result = subprocess.run(  # noqa: S603 - fixed interpreter/script and test-owned paths
+        [
+            sys.executable,
+            "-S",
+            str(SCRIPT),
+            str(tmp_path / "missing-snapshot"),
+            str(output),
+            "--compare-profile",
+            str(baseline),
+        ],
+        capture_output=True,
+        text=True,
+        timeout=5,
+        check=False,
+    )
+    assert result.returncode == 2
+    assert "--compare-profile must contain a JSON object" in result.stderr
+    assert result.stdout == ""
+    assert not output.parent.exists()
+    assert baseline.read_text(encoding="utf-8") == json.dumps(invalid)

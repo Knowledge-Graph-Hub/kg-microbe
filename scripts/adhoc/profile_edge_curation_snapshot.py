@@ -166,6 +166,8 @@ def main():
         parser.error("output already exists; use a new profile path")
     baseline_bytes = args.compare_profile.read_bytes() if args.compare_profile else None
     baseline = json.loads(baseline_bytes) if baseline_bytes is not None else None
+    if args.compare_profile is not None and not isinstance(baseline, dict):
+        parser.error("--compare-profile must contain a JSON object")
     csv.field_size_limit(16 * 1024 * 1024)
     result = profile(args.snapshot, args.max_rows)
     if baseline is not None:

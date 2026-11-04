@@ -244,9 +244,21 @@ path lives in constants.py, so the cross-transform guard never saw it.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.bind_ontology_dependency_declarations">
+<span class="sig-name descname"><span class="pre">bind_ontology_dependency_declarations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">child</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.bind_ontology_dependency_declarations" title="Link to this definition"></a></dt>
+<dd><p>Retain the exact ontology inventory that licenses the source finalizer’s declaration exception.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.finalize">
 <span class="sig-name descname"><span class="pre">finalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fresh_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.finalize" title="Link to this definition"></a></dt>
 <dd><p>Record the canonical TSV dialect only after successful source publication.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.ontology_dependency_declarations">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ontology_dependency_declarations</span></span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.bacdive.BacDiveTransform.ontology_dependency_declarations" title="Link to this definition"></a></dt>
+<dd><p>Expose only the actual source-finalizer dependency proof, never constructor label membership.</p>
 </dd></dl>
 
 <dl class="py property">
@@ -847,6 +859,47 @@ replacement biological identity or trusting a source field’s rank as evidence.
 </dd></dl>
 
 </section>
+<section id="module-kg_microbe.transform_utils.bacdive.source_declaration_evidence">
+<span id="kg-microbe-transform-utils-bacdive-source-declaration-evidence-module"></span><h2>kg_microbe.transform_utils.bacdive.source_declaration_evidence module<a class="headerlink" href="#module-kg_microbe.transform_utils.bacdive.source_declaration_evidence" title="Link to this heading"></a></h2>
+<p>Reconstruct source-local NCBI declaration guarantees from actual selected-input membership.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.source_declaration_evidence.SourceDeclarationEvidence">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.source_declaration_evidence.</span></span><span class="sig-name descname"><span class="pre">SourceDeclarationEvidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">targets</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snapshots</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opener</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">entries</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">early_parents</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_role</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyword_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_reader</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">producer_keyword_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyword_cache_reader</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recorded</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.source_declaration_evidence.SourceDeclarationEvidence" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Bind the selected membership used by the producer’s mandatory missing-parent stub route.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.source_declaration_evidence.SourceDeclarationEvidence.contract">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">contract</span></span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.source_declaration_evidence.SourceDeclarationEvidence.contract" title="Link to this definition"></a></dt>
+<dd><p>Expose a detached input contract that admission independently reconstructs.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.source_declaration_evidence.SourceDeclarationEvidence.guaranteed_stubs">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">guaranteed_stubs</span></span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.source_declaration_evidence.SourceDeclarationEvidence.guaranteed_stubs" title="Link to this definition"></a></dt>
+<dd><p>Predict typed local rows from native endpoints absent from the selected named declarations.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.source_declaration_evidence.SourceDeclarationEvidence.proved_declarations">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">proved_declarations</span></span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.source_declaration_evidence.SourceDeclarationEvidence.proved_declarations" title="Link to this definition"></a></dt>
+<dd><p>Union mandatory stubs with positive native medium/keyword emitters across the source cohort.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.source_declaration_evidence.SourceDeclarationEvidence.verify">
+<span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshots</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.source_declaration_evidence.SourceDeclarationEvidence.verify" title="Link to this definition"></a></dt>
+<dd><p>Keep source roles, selected bytes and original producer-cache semantics fixed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.source_declaration_evidence.producer_input_path">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.source_declaration_evidence.</span></span><span class="sig-name descname"><span class="pre">producer_input_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">role</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.source_declaration_evidence.producer_input_path" title="Link to this definition"></a></dt>
+<dd><p>Resolve the producer’s actual input selection independently of mutable receipt locators.</p>
+</dd></dl>
+
+</section>
 <section id="module-kg_microbe.transform_utils.bacdive.supplied_taxid_policy">
 <span id="kg-microbe-transform-utils-bacdive-supplied-taxid-policy-module"></span><h2>kg_microbe.transform_utils.bacdive.supplied_taxid_policy module<a class="headerlink" href="#module-kg_microbe.transform_utils.bacdive.supplied_taxid_policy" title="Link to this heading"></a></h2>
 <p>Finite approved withholding of 97 same-priority, normalized-multivalent records.</p>
@@ -905,6 +958,12 @@ Name-derived parent claims remain predictions, never native supplied taxids.</p>
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.taxonomy_evidence.</span></span><span class="sig-name descname"><span class="pre">TaxonomyEvidence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gss</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bindings</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optional_state</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supplied_policy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.taxonomy_evidence.TaxonomyEvidence" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Retain source-local support classifications; withheld candidates contest deposit parents, never support them.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.taxonomy_evidence.TaxonomyEvidence.bind_ontology_dependencies">
+<span class="sig-name descname"><span class="pre">bind_ontology_dependencies</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">child</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.taxonomy_evidence.TaxonomyEvidence.bind_ontology_dependencies" title="Link to this definition"></a></dt>
+<dd><p>Retain the finalizer’s actual ontology dependency proof separately from producer-time evidence.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.taxonomy_evidence.TaxonomyEvidence.capture_native">
 <span class="sig-name descname"><span class="pre">capture_native</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snapshots</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.taxonomy_evidence.TaxonomyEvidence.capture_native" title="Link to this definition"></a></dt>
@@ -990,6 +1049,12 @@ Name-derived parent claims remain predictions, never native supplied taxids.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.taxonomy_evidence.TaxonomyEvidence.prepare_source_declarations">
+<span class="sig-name descname"><span class="pre">prepare_source_declarations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snapshots</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">opener</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyword_paths</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_reader</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">producer_keyword_matcher</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keyword_cache_reader</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recorded</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.taxonomy_evidence.TaxonomyEvidence.prepare_source_declarations" title="Link to this definition"></a></dt>
+<dd><p>Derive declaration demand from native parent choices and complete deposit resolution.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.taxonomy_evidence.TaxonomyEvidence.require_fallback">
 <span class="sig-name descname"><span class="pre">require_fallback</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.taxonomy_evidence.TaxonomyEvidence.require_fallback" title="Link to this definition"></a></dt>
 <dd><p>Refuse a lost child instead of downgrading inference to old unaudited choices.</p>
@@ -1058,6 +1123,12 @@ made a deposit shared with an unrelated organism look uncontested (#1421).</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.taxonomy_evidence.prepare_source_declarations">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.taxonomy_evidence.</span></span><span class="sig-name descname"><span class="pre">prepare_source_declarations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">selected_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_data</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.taxonomy_evidence.prepare_source_declarations" title="Link to this definition"></a></dt>
+<dd><p>Bind actual selected membership and any native medium/keyword declaration triggers.</p>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.taxonomy_evidence.split_native_contract">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.taxonomy_evidence.</span></span><span class="sig-name descname"><span class="pre">split_native_contract</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">recorded</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.taxonomy_evidence.split_native_contract" title="Link to this definition"></a></dt>
 <dd><p>Require the new child while preserving the exact independently reviewed NCIT contract.</p>
@@ -1065,7 +1136,7 @@ made a deposit shared with an unrelated organism look uncontested (#1421).</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.taxonomy_evidence.verify_recorded">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.taxonomy_evidence.</span></span><span class="sig-name descname"><span class="pre">verify_recorded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snapshots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optional_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">members</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.taxonomy_evidence.verify_recorded" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.transform_utils.bacdive.taxonomy_evidence.</span></span><span class="sig-name descname"><span class="pre">verify_recorded</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contract</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snapshots</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_dir</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_dir</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optional_state</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">members</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ontology_dependencies</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.taxonomy_evidence.verify_recorded" title="Link to this definition"></a></dt>
 <dd><p>Rejoin the mandatory complete native cohort and exact lookup decisions during admission.</p>
 <p>The mandatory fallback child re-reads the original selected/native inputs,
 rederives all eligible records and predicts exact current parent rows. This
@@ -1157,6 +1228,12 @@ path lives in constants.py, so the cross-transform guard never saw it.</p>
 <dd><p>Reset source-local claim state only when starting a genuine producer run.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.bind_ontology_dependency_declarations">
+<span class="sig-name descname"><span class="pre">bind_ontology_dependency_declarations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">child</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.bind_ontology_dependency_declarations" title="Link to this definition"></a></dt>
+<dd><p>Retain the exact ontology inventory that licenses the source finalizer’s declaration exception.</p>
+</dd></dl>
+
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.chebi_categories">
 <span class="sig-name descname"><span class="pre">chebi_categories</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.chebi_categories" title="Link to this definition"></a></dt>
@@ -1192,6 +1269,12 @@ path lives in constants.py, so the cross-transform guard never saw it.</p>
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.ncbitaxon_synonyms">
 <span class="sig-name descname"><span class="pre">ncbitaxon_synonyms</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code><span class="pre">[</span><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code><span class="pre">,</span> <code class="xref py py-class docutils literal notranslate"><span class="pre">frozenset</span></code><span class="pre">]</span></em><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.ncbitaxon_synonyms" title="Link to this definition"></a></dt>
 <dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.ontology_dependency_declarations">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">ontology_dependency_declarations</span></span><a class="headerlink" href="#kg_microbe.transform_utils.bacdive.BacDiveTransform.ontology_dependency_declarations" title="Link to this definition"></a></dt>
+<dd><p>Expose only the actual source-finalizer dependency proof, never constructor label membership.</p>
+</dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="kg_microbe.transform_utils.bacdive.BacDiveTransform.pathogenicity_mappings">

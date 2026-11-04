@@ -1522,6 +1522,17 @@ accessions come from the GTDB row, and accession versions remain intact.</p>
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.utils.external_identifiers.load_taxid_retirements">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.external_identifiers.</span></span><span class="sig-name descname"><span class="pre">load_taxid_retirements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.external_identifiers.load_taxid_retirements" title="Link to this definition"></a></dt>
+<dd><p>Read validated NCBI retirements, optionally retaining links for selected-chain validation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">set</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.external_identifiers.resolve_replacement">
 <span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.external_identifiers.</span></span><span class="sig-name descname"><span class="pre">resolve_replacement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replacements</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.external_identifiers.resolve_replacement" title="Link to this definition"></a></dt>
 <dd><p>Follow only explicitly supplied replacements, rejecting cyclic evidence.</p>
@@ -4524,6 +4535,47 @@ opens local files directly; callers then own input fingerprint verification.</p>
 </dd></dl>
 
 </section>
+<section id="module-kg_microbe.utils.ontology_dependency_declarations">
+<span id="kg-microbe-utils-ontology-dependency-declarations-module"></span><h2>kg_microbe.utils.ontology_dependency_declarations module<a class="headerlink" href="#module-kg_microbe.utils.ontology_dependency_declarations" title="Link to this heading"></a></h2>
+<p>Bind named ontology dependency declarations to the finalizer’s actual selected files.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="kg_microbe.utils.ontology_dependency_declarations.OntologyDependencyDeclarations">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.ontology_dependency_declarations.</span></span><span class="sig-name descname"><span class="pre">OntologyDependencyDeclarations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">directory</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">admission</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recorded</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">recorded_inputs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ontology_dependency_declarations.OntologyDependencyDeclarations" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Read the same selected dependency inventory used for finalizer declaration precedence.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.utils.ontology_dependency_declarations.OntologyDependencyDeclarations.contract">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">contract</span></span><a class="headerlink" href="#kg_microbe.utils.ontology_dependency_declarations.OntologyDependencyDeclarations.contract" title="Link to this definition"></a></dt>
+<dd><p>Expose detached inventory identities; public verification re-reads actual native rows.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.utils.ontology_dependency_declarations.OntologyDependencyDeclarations.declarations">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">declarations</span></span><a class="headerlink" href="#kg_microbe.utils.ontology_dependency_declarations.OntologyDependencyDeclarations.declarations" title="Link to this definition"></a></dt>
+<dd><p>Return the immutable native named-ID set used by generic finalizer precedence.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.utils.ontology_dependency_declarations.OntologyDependencyDeclarations.declarations_for">
+<span class="sig-name descname"><span class="pre">declarations_for</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">identifiers</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ontology_dependency_declarations.OntologyDependencyDeclarations.declarations_for" title="Link to this definition"></a></dt>
+<dd><p>Query only selected original retirement IDs without trusting projected graph labels.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="kg_microbe.utils.ontology_dependency_declarations.OntologyDependencyDeclarations.input_paths">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">input_paths</span></span><a class="headerlink" href="#kg_microbe.utils.ontology_dependency_declarations.OntologyDependencyDeclarations.input_paths" title="Link to this definition"></a></dt>
+<dd><p>Return selected dependency members and the receipt that selected them, when present.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="kg_microbe.utils.ontology_dependency_declarations.OntologyDependencyDeclarations.verify">
+<span class="sig-name descname"><span class="pre">verify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metadata_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.ontology_dependency_declarations.OntologyDependencyDeclarations.verify" title="Link to this definition"></a></dt>
+<dd><p>Retain the initial selection and read identities through final publication or admission.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
 <section id="module-kg_microbe.utils.ontology_metadata">
 <span id="kg-microbe-utils-ontology-metadata-module"></span><h2>kg_microbe.utils.ontology_metadata module<a class="headerlink" href="#module-kg_microbe.utils.ontology_metadata" title="Link to this heading"></a></h2>
 <p>Evidence-backed ontology metadata matching, without rewriting entity identifiers.</p>
@@ -6337,8 +6389,8 @@ snapshots retain the exact native bytes behind each category/name decision.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.source_finalization.snapshot_consumed_input">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.source_finalization.</span></span><span class="sig-name descname"><span class="pre">snapshot_consumed_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.source_finalization.snapshot_consumed_input" title="Link to this definition"></a></dt>
-<dd><p>Yield immutable UTF-8 text with literal newlines; stream-copy/hash before parsing.</p>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.source_finalization.</span></span><span class="sig-name descname"><span class="pre">snapshot_consumed_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">binary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.source_finalization.snapshot_consumed_input" title="Link to this definition"></a></dt>
+<dd><p>Yield immutable text or binary bytes; stream-copy/hash before parsing.</p>
 </dd></dl>
 
 <dl class="py function">
@@ -6361,7 +6413,7 @@ snapshots retain the exact native bytes behind each category/name decision.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="kg_microbe.utils.source_finalization.verify_consumed_inputs">
-<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.source_finalization.</span></span><span class="sig-name descname"><span class="pre">verify_consumed_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">native_output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.source_finalization.verify_consumed_inputs" title="Link to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.utils.source_finalization.</span></span><span class="sig-name descname"><span class="pre">verify_consumed_inputs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">native_output_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raw_input_binding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.utils.source_finalization.verify_consumed_inputs" title="Link to this definition"></a></dt>
 <dd><p>Require every declared producer read and verify its immutable path/digest snapshot.</p>
 </dd></dl>
 

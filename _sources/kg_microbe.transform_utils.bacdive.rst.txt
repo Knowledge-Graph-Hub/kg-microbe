@@ -100,6 +100,14 @@ kg\_microbe.transform\_utils.bacdive.references module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.transform\_utils.bacdive.source\_declaration\_evidence module
+-------------------------------------------------------------------------
+
+.. automodule:: kg_microbe.transform_utils.bacdive.source_declaration_evidence
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.transform\_utils.bacdive.supplied\_taxid\_policy module
 -------------------------------------------------------------------
 

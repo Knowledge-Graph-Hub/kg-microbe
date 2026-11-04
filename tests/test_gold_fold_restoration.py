@@ -2,9 +2,7 @@
 
 import csv
 import hashlib
-import io
 import json
-import tarfile
 from collections import Counter
 from pathlib import Path
 
@@ -15,6 +13,7 @@ from kg_microbe.transform_utils.gold import taxon_dispositions as policy
 from kg_microbe.transform_utils.gold.fold_restoration import AUDIT_FILE, AUDIT_HEADER
 from kg_microbe.transform_utils.gold.gold import GOLDTransform
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, verify_finalized_source_files
+from tests.gold_taxdump_fixtures import stage_native_gold_taxdump
 from tests.test_gold_taxon_dispositions import _read, _report, _write
 
 FIXTURE = Path(__file__).parent / "resources/gold_taxonomy/fold_native_contexts.json"
@@ -43,11 +42,7 @@ def restored(tmp_path, monkeypatch):
         evidence["selected_ncbi_header"],
         (item["row"] for item in evidence["selected_ncbi_declarations"].values()),
     )
-    with tarfile.open(raw / "taxdump.tar.gz", "w:gz") as archive:
-        literal = "".join(item["literal"] for item in evidence["native_taxdump_remaps"]).encode()
-        member = tarfile.TarInfo("merged.dmp")
-        member.size = len(literal)
-        archive.addfile(member, io.BytesIO(literal))
+    stage_native_gold_taxdump(raw, "fold_restoration")
     monkeypatch.setenv("GOLD_APPLY_TAXON_TRIM", "true")
     result = GOLDTransform(raw, output)
     result.run()

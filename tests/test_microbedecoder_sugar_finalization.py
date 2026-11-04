@@ -151,13 +151,17 @@ def _child_bound(monkeypatch, root):
     inputs = {item["path"]: item["sha256"] for item in report["inputs"]}
     assert inputs[str(mapping)] == hashlib.sha256(mapping.read_bytes()).hexdigest()
     assert inputs[str(authority)] == hashlib.sha256(authority.read_bytes()).hexdigest()
+    taxdump = raw / "taxdump.tar.gz"
+    identity = {"path": str(taxdump.resolve()), "sha256": hashlib.sha256(taxdump.read_bytes()).hexdigest()}
+    assert report["consumed_inputs"]["ncbi_taxonomy_authority"] == identity
+    assert identity in report["inputs"]
     verify_finalized_source_files(paths)
     dispatcher._record_fingerprint(transform, "microbedecoder")
     marker = json.loads((transform.output_dir / "source_fingerprint.json").read_text())
     assert marker["schema"] is not None
     # No upstream completion receipts are fabricated: the stronger recursive
     # public-admission gate is outside this source-finalization regression.
-    for changed in (paths[1], mapping, authority):
+    for changed in (paths[1], mapping, authority, taxdump):
         original = changed.read_bytes()
         changed.write_bytes(original + b"\n")
         with pytest.raises(SourceFinalizationRequired):
@@ -204,6 +208,7 @@ def test_registered_sugar_finalization_preserves_full_observations(tmp_path):
     shutil.copytree(ROOT / "tests/resources/gold_abscess", root / "tests/resources/gold_abscess")
     from kg_microbe.transform_utils.gold.gold import GOLDTransform
     from kg_microbe.utils.transform_fingerprint import SHARED_DATA_INPUTS
+    from tests.taxdump_controls import stage_no_retirements_taxdump
 
     for relative in (*SHARED_DATA_INPUTS, *GOLDTransform.DATA_INPUTS):
         destination = root / relative
@@ -236,6 +241,9 @@ def test_registered_sugar_finalization_preserves_full_observations(tmp_path):
         writer.writerows(controls)
     raw = root / "data/raw"
     raw.mkdir(parents=True)
+    # The Sugar lifecycle control assumes no retirements for its already
+    # declared synthetic dependencies; it supplies no new taxonomy claims.
+    stage_no_retirements_taxdump(raw)
     for fixture, name in (
         ("biolink-model-minimal.yaml", "biolink-model.yaml"),
         ("predicate_mapping_minimal.yaml", "predicate_mapping.yaml"),

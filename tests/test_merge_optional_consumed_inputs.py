@@ -331,6 +331,8 @@ def integration_results(tmp_path_factory, record_testsuite_property):
             member = tarfile.TarInfo("nodes.dmp")
             member.size = len(content)
             archive.addfile(member, io.BytesIO(content))
+            for name in ("merged.dmp", "delnodes.dmp", "names.dmp"):
+                archive.addfile(tarfile.TarInfo(name), io.BytesIO(b""))
         require({name: digest(Path(name)) for name in before} == before, "Fixture setup input drift")
         env = {
             key: value

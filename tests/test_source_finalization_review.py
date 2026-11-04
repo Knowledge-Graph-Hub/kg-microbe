@@ -25,7 +25,7 @@ def test_named_and_anonymous_same_id_keep_authoritative_declaration(tmp_path, sp
     raw = tmp_path / "raw"
     raw.mkdir()
     with tarfile.open(raw / "taxdump.tar.gz", "w:gz") as archive:
-        for name in ("nodes.dmp", "names.dmp", "merged.dmp"):
+        for name in ("nodes.dmp", "names.dmp", "merged.dmp", "delnodes.dmp"):
             archive.add(FIXTURES / name, arcname=name)
     transform = Transform("fixture", raw, tmp_path / "transformed")
     node_paths = [transform.output_node_file]

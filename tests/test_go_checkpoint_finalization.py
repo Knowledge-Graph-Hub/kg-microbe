@@ -99,7 +99,7 @@ def _prepare(tmp_path, monkeypatch, target):
                 (tuple(row[key] or None for key in ("subject", "predicate", "object", "value")) for row in reader),
             )
     with tarfile.open(raw / "taxdump.tar.gz", "w:gz") as archive:
-        for name in ("nodes.dmp", "names.dmp", "merged.dmp"):
+        for name in ("nodes.dmp", "names.dmp", "merged.dmp", "delnodes.dmp"):
             archive.add(FIXTURES / "source_finalization_review" / name, arcname=name)
     # Only bypass the production-sized GO cache builder; the real loader,
     # SQLite evidence, hashes, external closure and source finalizer all run.

@@ -478,6 +478,8 @@ def lifecycle(tmp_path_factory, record_testsuite_property):
         member = tarfile.TarInfo("nodes.dmp")
         member.size = len(content)
         archive.addfile(member, io.BytesIO(content))
+        for name in ("merged.dmp", "delnodes.dmp", "names.dmp"):
+            archive.addfile(tarfile.TarInfo(name), io.BytesIO(b""))
     shutil.copytree(ROOT / "tests/resources/merge_source_freshness", root / "fixture")
     shutil.copytree(FIXTURE, root / "ec-fixture")
     diagnostic = Path(".claude/skills/kgm-freshness-check/kgm_freshness_check.py")

@@ -11,6 +11,7 @@ import pytest
 from kg_microbe.transform_utils.bacdive import taxonomy_evidence as taxonomy
 from kg_microbe.transform_utils.bacdive.fallback_evidence import SELECTED_ROLE
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, graph_rows, verify_finalized_source_files
+from tests.bacdive_fallback_admission_fixtures import assert_native_ncbi_admission, with_native_ncbi_control
 from tests.bacdive_fallback_fixtures import records_by_id
 from tests.test_bacdive_fallback_producer import produce
 
@@ -64,8 +65,16 @@ def test_generic_public_admission_rejoins_scope_after_outer_receipt_restamping(
 ):
     """A graph hash mismatch is not accepted as proof of scientific scope enforcement."""
     identifier = "134696" if damage == "filled_qualifier" else "24851" if damage == "reversed_provisional" else "175523"
-    transform, _, _, _ = produce(tmp_path, monkeypatch, [records_by_id()[identifier]["record"]])
+    records = [records_by_id()[identifier]["record"]]
+    added_ncbi_parent = damage in {"record_parent", "deposit_parent", "reversed_record", "reversed_provisional"}
+    if added_ncbi_parent:
+        # Keep the native subject untouched while making the independent
+        # authority precondition true before attempting a scientific attack.
+        records = with_native_ncbi_control(records)
+    transform, _, _, _ = produce(tmp_path, monkeypatch, records)
     report = transform.finalize()
+    if added_ncbi_parent or damage == "filled_qualifier":
+        assert_native_ncbi_admission(transform, report)
     paths = [transform.output_node_file, transform.output_edge_file]
     # Positive control must exercise exactly the same generic route.
     verify_finalized_source_files(paths)

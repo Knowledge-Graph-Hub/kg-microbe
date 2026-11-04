@@ -1,0 +1,3131 @@
+{
+  "cohorts": {
+    "fold_restoration": {
+      "members": {
+        "delnodes.dmp": [],
+        "merged.dmp": [
+          {
+            "literal": "2777964\t|\t767427\t|\n",
+            "physical_line": 85412
+          }
+        ],
+        "names.dmp": [
+          {
+            "literal": "1\t|\tall\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 1
+          },
+          {
+            "literal": "1\t|\troot\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 2
+          },
+          {
+            "literal": "2\t|\tBacteria\t|\tBacteria <bacteria>\t|\tscientific name\t|\n",
+            "physical_line": 3
+          },
+          {
+            "literal": "2\t|\tbacteria\t|\tbacteria <blast name>\t|\tblast name\t|\n",
+            "physical_line": 4
+          },
+          {
+            "literal": "2\t|\tbacteria\t|\tbacteria <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 5
+          },
+          {
+            "literal": "2\t|\t\"Bacteria\" Cavalier-Smith 1987\t|\t\t|\tauthority\t|\n",
+            "physical_line": 6
+          },
+          {
+            "literal": "2\t|\tBacteria (ex Cavalier-Smith 1987)\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 7
+          },
+          {
+            "literal": "2\t|\tBacteria Woese et al. 2024\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 8
+          },
+          {
+            "literal": "2\t|\t\"Bacteriobiota\" Luketa 2012\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9
+          },
+          {
+            "literal": "2\t|\tBacteriobiota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 10
+          },
+          {
+            "literal": "2\t|\teubacteria\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 11
+          },
+          {
+            "literal": "2\t|\tMonera\t|\tMonera <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 12
+          },
+          {
+            "literal": "2\t|\tProcaryotae\t|\tProcaryotae <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 13
+          },
+          {
+            "literal": "2\t|\tProkaryotae\t|\tProkaryotae <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 14
+          },
+          {
+            "literal": "2\t|\tProkaryota\t|\tProkaryota <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 15
+          },
+          {
+            "literal": "2\t|\tprokaryote\t|\tprokaryote <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 16
+          },
+          {
+            "literal": "2\t|\tprokaryotes\t|\tprokaryotes <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 17
+          },
+          {
+            "literal": "543\t|\tEnterobacteraceae (ex Lapage 1979) Lapage 1982\t|\t\t|\tauthority\t|\n",
+            "physical_line": 4871
+          },
+          {
+            "literal": "543\t|\tEnterobacteraceae\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 4872
+          },
+          {
+            "literal": "543\t|\tEnterobacteriaceae (ex Rahn 1937) Ewing et al. 1980\t|\t\t|\tauthority\t|\n",
+            "physical_line": 4873
+          },
+          {
+            "literal": "543\t|\tEnterobacteriaceae Rahn 1937 (Approved Lists 1980) emend. Adeolu et al. 2016\t|\t\t|\tauthority\t|\n",
+            "physical_line": 4874
+          },
+          {
+            "literal": "543\t|\tEnterobacteriaceae\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 4875
+          },
+          {
+            "literal": "543\t|\tenterobacteria\t|\tenterobacteria <blast name>\t|\tblast name\t|\n",
+            "physical_line": 4876
+          },
+          {
+            "literal": "543\t|\tenterobacteria\t|\tenterobacteria <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 4877
+          },
+          {
+            "literal": "543\t|\tgamma-3 proteobacteria\t|\tgamma-3 proteobacteria <enterobacteria,Enterobacteriaceae>\t|\tin-part\t|\n",
+            "physical_line": 4878
+          },
+          {
+            "literal": "561\t|\tEscherichia Castellani and Chalmers 1919\t|\t\t|\tauthority\t|\n",
+            "physical_line": 5177
+          },
+          {
+            "literal": "561\t|\tEscherichia\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 5178
+          },
+          {
+            "literal": "562\t|\tAchromobacter sp. ATCC 35328\t|\t\t|\tincludes\t|\n",
+            "physical_line": 5179
+          },
+          {
+            "literal": "562\t|\tATCC 11775\t|\tATCC 11775 <neotype strain>\t|\ttype material\t|\n",
+            "physical_line": 5180
+          },
+          {
+            "literal": "562\t|\t\"Bacillus coli\" Migula 1895\t|\t\t|\tauthority\t|\n",
+            "physical_line": 5181
+          },
+          {
+            "literal": "562\t|\tBacillus coli\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 5182
+          },
+          {
+            "literal": "562\t|\tbacterium 10a\t|\t\t|\tincludes\t|\n",
+            "physical_line": 5183
+          },
+          {
+            "literal": "562\t|\t\"Bacterium coli commune\" Escherich 1885\t|\t\t|\tauthority\t|\n",
+            "physical_line": 5184
+          },
+          {
+            "literal": "562\t|\tBacterium coli commune\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 5185
+          },
+          {
+            "literal": "562\t|\t\"Bacterium coli\" (Migula 1895) Lehmann and Neumann 1896\t|\t\t|\tauthority\t|\n",
+            "physical_line": 5186
+          },
+          {
+            "literal": "562\t|\tBacterium coli\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 5187
+          },
+          {
+            "literal": "562\t|\tbacterium E3\t|\t\t|\tincludes\t|\n",
+            "physical_line": 5188
+          },
+          {
+            "literal": "562\t|\tCCUG 24\t|\tCCUG 24 <neotype strain>\t|\ttype material\t|\n",
+            "physical_line": 5189
+          },
+          {
+            "literal": "562\t|\tCCUG 29300\t|\tCCUG 29300 <neotype strain>\t|\ttype material\t|\n",
+            "physical_line": 5190
+          },
+          {
+            "literal": "562\t|\tCIP 54.8\t|\tCIP 54.8 <neotype strain>\t|\ttype material\t|\n",
+            "physical_line": 5191
+          },
+          {
+            "literal": "562\t|\tDSM 30083\t|\tDSM 30083 <neotype strain>\t|\ttype material\t|\n",
+            "physical_line": 5192
+          },
+          {
+            "literal": "562\t|\tE. coli\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 5193
+          },
+          {
+            "literal": "562\t|\tEnterococcus coli\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 5194
+          },
+          {
+            "literal": "562\t|\tEscherichia coli (Migula 1895) Castellani and Chalmers 1919 (Approved Lists 1980)\t|\t\t|\tauthority\t|\n",
+            "physical_line": 5195
+          },
+          {
+            "literal": "562\t|\tEscherichia coli\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 5196
+          },
+          {
+            "literal": "562\t|\tEscherichia/Shigella coli\t|\t\t|\tequivalent name\t|\n",
+            "physical_line": 5197
+          },
+          {
+            "literal": "562\t|\tEscherichia sp. 3_2_53FAA\t|\t\t|\tincludes\t|\n",
+            "physical_line": 5198
+          },
+          {
+            "literal": "562\t|\tEscherichia sp. MAR\t|\t\t|\tincludes\t|\n",
+            "physical_line": 5199
+          },
+          {
+            "literal": "562\t|\tIAM 12119\t|\tIAM 12119 <neotype strain>\t|\ttype material\t|\n",
+            "physical_line": 5200
+          },
+          {
+            "literal": "562\t|\tJCM 1649\t|\tJCM 1649 <neotype strain>\t|\ttype material\t|\n",
+            "physical_line": 5201
+          },
+          {
+            "literal": "562\t|\tLMG 2092\t|\tLMG 2092 <neotype strain>\t|\ttype material\t|\n",
+            "physical_line": 5202
+          },
+          {
+            "literal": "562\t|\tLMG:2092\t|\tLMG:2092 <neotype strain>\t|\ttype material\t|\n",
+            "physical_line": 5203
+          },
+          {
+            "literal": "562\t|\tNBRC 102203\t|\tNBRC 102203 <neotype strain>\t|\ttype material\t|\n",
+            "physical_line": 5204
+          },
+          {
+            "literal": "562\t|\tNCCB 54008\t|\tNCCB 54008 <neotype strain>\t|\ttype material\t|\n",
+            "physical_line": 5205
+          },
+          {
+            "literal": "562\t|\tNCTC 9001\t|\tNCTC 9001 <neotype strain>\t|\ttype material\t|\n",
+            "physical_line": 5206
+          },
+          {
+            "literal": "562\t|\tstrain U5/41\t|\tstrain U5/41 <neotype strain>\t|\ttype material\t|\n",
+            "physical_line": 5207
+          },
+          {
+            "literal": "1117\t|\tblue-green algae\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 9581
+          },
+          {
+            "literal": "1117\t|\tblue-green bacteria\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 9582
+          },
+          {
+            "literal": "1117\t|\tcyanobacteria\t|\tcyanobacteria <blast name>\t|\tblast name\t|\n",
+            "physical_line": 9583
+          },
+          {
+            "literal": "1117\t|\tcyanobacteria\t|\tcyanobacteria <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 9584
+          },
+          {
+            "literal": "1117\t|\t\"Cyanobacteria\" (ex Stanier 1974) Cavalier-Smith, 2002\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9585
+          },
+          {
+            "literal": "1117\t|\tCyanobacteriophyta Oren, Mares & Rippka, 2022\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9586
+          },
+          {
+            "literal": "1117\t|\tCyanobacteriophyta\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9587
+          },
+          {
+            "literal": "1117\t|\tCyanobacteriota Oren et al. 2022\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9588
+          },
+          {
+            "literal": "1117\t|\tCyanobacteriota\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 9589
+          },
+          {
+            "literal": "1117\t|\tCyanophycota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9590
+          },
+          {
+            "literal": "1117\t|\tCyanophyta\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9591
+          },
+          {
+            "literal": "1117\t|\tcyanophytes\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 9592
+          },
+          {
+            "literal": "1117\t|\tOxygenic photosynthetic bacteria\t|\t\t|\tequivalent name\t|\n",
+            "physical_line": 9593
+          },
+          {
+            "literal": "1117\t|\tOxyphotobacteria\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9594
+          },
+          {
+            "literal": "1224\t|\tAlphaproteobacteriota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9855
+          },
+          {
+            "literal": "1224\t|\t\"Alphaproteobacteriota\" Whitman et al. 2018\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9856
+          },
+          {
+            "literal": "1224\t|\t\"Proteobacteria\" Garrity et al. 2005\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9857
+          },
+          {
+            "literal": "1224\t|\tproteobacteria\t|\tproteobacteria <blast name>\t|\tblast name\t|\n",
+            "physical_line": 9858
+          },
+          {
+            "literal": "1224\t|\tproteobacteria\t|\tproteobacteria <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 9859
+          },
+          {
+            "literal": "1224\t|\tProteobacteria Stackebrandt et al. 1988\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9860
+          },
+          {
+            "literal": "1224\t|\tProteobacteria\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9861
+          },
+          {
+            "literal": "1224\t|\t\"Proteobacteriota\" Panda et al. 2022\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9862
+          },
+          {
+            "literal": "1224\t|\tProteobacteriota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9863
+          },
+          {
+            "literal": "1224\t|\tPseudomonadota corrig. Garrity et al. 2021\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9864
+          },
+          {
+            "literal": "1224\t|\tPseudomonadota\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 9865
+          },
+          {
+            "literal": "1224\t|\tpurple photosynthetic bacteria and relatives\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 9866
+          },
+          {
+            "literal": "1236\t|\tGammaproteobacteria Garrity et al. 2005 emend. Williams and Kelly 2013\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9895
+          },
+          {
+            "literal": "1236\t|\tGammaproteobacteria\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 9896
+          },
+          {
+            "literal": "1236\t|\tgamma proteobacteria\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9897
+          },
+          {
+            "literal": "1236\t|\tgamma subdivision\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9898
+          },
+          {
+            "literal": "1236\t|\tgamma subgroup\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9899
+          },
+          {
+            "literal": "1236\t|\tg-proteobacteria\t|\tg-proteobacteria <blast name>\t|\tblast name\t|\n",
+            "physical_line": 9900
+          },
+          {
+            "literal": "1236\t|\tg-proteobacteria\t|\tg-proteobacteria <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 9901
+          },
+          {
+            "literal": "1236\t|\tProteobacteria gamma subdivision\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9902
+          },
+          {
+            "literal": "1236\t|\t\"Pseudomonadia\" Oren et al. 2016\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9903
+          },
+          {
+            "literal": "1236\t|\tPseudomonadia\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9904
+          },
+          {
+            "literal": "1236\t|\tPurple bacteria, gamma subdivision\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9905
+          },
+          {
+            "literal": "2759\t|\tEucarya\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 23686
+          },
+          {
+            "literal": "2759\t|\tEucaryotae\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 23687
+          },
+          {
+            "literal": "2759\t|\tEukarya\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 23688
+          },
+          {
+            "literal": "2759\t|\tEukaryotae\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 23689
+          },
+          {
+            "literal": "2759\t|\tEukaryota\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 23690
+          },
+          {
+            "literal": "2759\t|\teukaryotes\t|\teukaryotes <blast name>\t|\tblast name\t|\n",
+            "physical_line": 23691
+          },
+          {
+            "literal": "2759\t|\teukaryotes\t|\teukaryotes <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 23692
+          },
+          {
+            "literal": "4751\t|\tfungi\t|\t\t|\tblast name\t|\n",
+            "physical_line": 30069
+          },
+          {
+            "literal": "4751\t|\tFungi\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 30070
+          },
+          {
+            "literal": "4751\t|\tMycota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 30071
+          },
+          {
+            "literal": "4890\t|\tascomycete fungi\t|\tascomycete fungi <blast name>\t|\tblast name\t|\n",
+            "physical_line": 30596
+          },
+          {
+            "literal": "4890\t|\tascomycete fungi\t|\tascomycete fungi <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 30597
+          },
+          {
+            "literal": "4890\t|\tAscomycota\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 30598
+          },
+          {
+            "literal": "4890\t|\tsac fungi\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 30599
+          },
+          {
+            "literal": "5008\t|\tProtomycetales\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 31486
+          },
+          {
+            "literal": "5008\t|\tTaphrinales Haeckel, 1894\t|\t\t|\tauthority\t|\n",
+            "physical_line": 31487
+          },
+          {
+            "literal": "5008\t|\tTaphrinales\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 31488
+          },
+          {
+            "literal": "5009\t|\tTaphrinaceae\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 31489
+          },
+          {
+            "literal": "5010\t|\tLalaria\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 31490
+          },
+          {
+            "literal": "5010\t|\tmitosporic Taphrina\t|\t\t|\tincludes\t|\n",
+            "physical_line": 31491
+          },
+          {
+            "literal": "5010\t|\tTaphrina Fr., 1815\t|\t\t|\tauthority\t|\n",
+            "physical_line": 31492
+          },
+          {
+            "literal": "5010\t|\tTaphrina\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 31493
+          },
+          {
+            "literal": "5011\t|\tAscomyces deformans Berk., 1857\t|\t\t|\tauthority\t|\n",
+            "physical_line": 31494
+          },
+          {
+            "literal": "5011\t|\tAscomyces deformans\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 31495
+          },
+          {
+            "literal": "5011\t|\tCBS 356.35\t|\tCBS 356.35 <type material>\t|\ttype material\t|\n",
+            "physical_line": 31496
+          },
+          {
+            "literal": "5011\t|\tLalaria deformans R.T. Moore, 1990\t|\t\t|\tauthority\t|\n",
+            "physical_line": 31497
+          },
+          {
+            "literal": "5011\t|\tLalaria deformans\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 31498
+          },
+          {
+            "literal": "5011\t|\tpeach leaf curl fungus\t|\t\t|\tgenbank common name\t|\n",
+            "physical_line": 31499
+          },
+          {
+            "literal": "5011\t|\tTaphrina deformans (Berk.) Tul., 1866\t|\t\t|\tauthority\t|\n",
+            "physical_line": 31500
+          },
+          {
+            "literal": "5011\t|\tTaphrina deformans\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 31501
+          },
+          {
+            "literal": "28216\t|\tBetaproteobacteria Garrity et al. 2006 emend. Boden et al. 2017\t|\t\t|\tauthority\t|\n",
+            "physical_line": 58547
+          },
+          {
+            "literal": "28216\t|\tBetaproteobacteria\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 58548
+          },
+          {
+            "literal": "28216\t|\tbeta proteobacteria\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 58549
+          },
+          {
+            "literal": "28216\t|\tbeta subdivision\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 58550
+          },
+          {
+            "literal": "28216\t|\tbeta subgroup\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 58551
+          },
+          {
+            "literal": "28216\t|\tb-proteobacteria\t|\tb-proteobacteria <blast name>\t|\tblast name\t|\n",
+            "physical_line": 58552
+          },
+          {
+            "literal": "28216\t|\tb-proteobacteria\t|\tb-proteobacteria <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 58553
+          },
+          {
+            "literal": "28216\t|\tProteobacteria beta subdivision\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 58554
+          },
+          {
+            "literal": "28216\t|\tPurple bacteria, beta subdivision\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 58555
+          },
+          {
+            "literal": "33154\t|\tFungi/Metazoa group\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 71818
+          },
+          {
+            "literal": "33154\t|\tOpisthokonta Cavalier-Smith 1987\t|\t\t|\tauthority\t|\n",
+            "physical_line": 71819
+          },
+          {
+            "literal": "33154\t|\tOpisthokonta\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 71820
+          },
+          {
+            "literal": "33154\t|\topisthokonts\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 71821
+          },
+          {
+            "literal": "34072\t|\tVariovorax\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 74757
+          },
+          {
+            "literal": "34072\t|\tVariovorax Willems et al. 1991\t|\t\t|\tauthority\t|\n",
+            "physical_line": 74758
+          },
+          {
+            "literal": "80840\t|\tBurkholderiales Garrity et al. 2006\t|\t\t|\tauthority\t|\n",
+            "physical_line": 203305
+          },
+          {
+            "literal": "80840\t|\tBurkholderiales\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 203306
+          },
+          {
+            "literal": "80840\t|\tBurkholderia/Oxalobacter/Ralstonia group\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 203307
+          },
+          {
+            "literal": "80864\t|\tbeta-1 subgroup\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 203385
+          },
+          {
+            "literal": "80864\t|\tComamonadaceae\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 203386
+          },
+          {
+            "literal": "80864\t|\tComamonadaceae Willems et al. 1991\t|\t\t|\tauthority\t|\n",
+            "physical_line": 203387
+          },
+          {
+            "literal": "91347\t|\tEnterobacterales Adeolu et al. 2016\t|\t\t|\tauthority\t|\n",
+            "physical_line": 228521
+          },
+          {
+            "literal": "91347\t|\tEnterobacterales\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 228522
+          },
+          {
+            "literal": "91347\t|\tEnterobacteriaceae and related endosymbionts\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 228523
+          },
+          {
+            "literal": "91347\t|\tEnterobacteriaceae group\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 228524
+          },
+          {
+            "literal": "91347\t|\tEnterobacteriales\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 228525
+          },
+          {
+            "literal": "91347\t|\tgamma-3 proteobacteria\t|\tgamma-3 proteobacteria <enterobacteria,Enterobacterales>\t|\tin-part\t|\n",
+            "physical_line": 228526
+          },
+          {
+            "literal": "131567\t|\tbiota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 311651
+          },
+          {
+            "literal": "131567\t|\tcellular organisms\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 311652
+          },
+          {
+            "literal": "147555\t|\tArchiascomycota\t|\tArchiascomycota <Taphrinomycetes>\t|\tin-part\t|\n",
+            "physical_line": 342126
+          },
+          {
+            "literal": "147555\t|\tTaphrinomycetes O.E. Erikss. & Winka, 1997\t|\t\t|\tauthority\t|\n",
+            "physical_line": 342127
+          },
+          {
+            "literal": "147555\t|\tTaphrinomycetes\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 342128
+          },
+          {
+            "literal": "282217\t|\tVariovorax sp. SRS16\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 605934
+          },
+          {
+            "literal": "451864\t|\tDikarya\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 903029
+          },
+          {
+            "literal": "451866\t|\tTaphrinomycotina\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 903031
+          },
+          {
+            "literal": "663243\t|\tunclassified Variovorax\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 1237343
+          },
+          {
+            "literal": "767427\t|\tOscillatoria sp. LEGE 05292\t|\t\t|\tequivalent name\t|\n",
+            "physical_line": 1364316
+          },
+          {
+            "literal": "767427\t|\t[Phormidium] sp. LEGE 05292\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 1364317
+          },
+          {
+            "literal": "1301283\t|\tOscillatoriophycideae L.Hoffmann, J.Komarek & J. Kastovsky, 2005\t|\t\t|\tauthority\t|\n",
+            "physical_line": 2000379
+          },
+          {
+            "literal": "1301283\t|\tOscillatoriophycideae\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 2000380
+          },
+          {
+            "literal": "1783272\t|\tBacillati (Gibbons and Murray 1978) Oren and Goker 2024\t|\t\t|\tauthority\t|\n",
+            "physical_line": 2658666
+          },
+          {
+            "literal": "1783272\t|\tBacillati\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 2658667
+          },
+          {
+            "literal": "1783272\t|\tFirmacutes Gibbons and Murray 1978 (Approved Lists 1980)\t|\t\t|\tauthority\t|\n",
+            "physical_line": 2658668
+          },
+          {
+            "literal": "1783272\t|\tFirmacutes\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658669
+          },
+          {
+            "literal": "1783272\t|\t\"Firmicuteota\" Panda et al. 2022\t|\t\t|\tauthority\t|\n",
+            "physical_line": 2658670
+          },
+          {
+            "literal": "1783272\t|\tFirmicuteota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658671
+          },
+          {
+            "literal": "1783272\t|\tFirmicutes corrig. Gibbons and Murray 1978 (Approved Lists 1980)\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658672
+          },
+          {
+            "literal": "1783272\t|\tFirmicutes\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658673
+          },
+          {
+            "literal": "1783272\t|\t\"Terrabacteria\" Battistuzzi et al. 2004\t|\t\t|\tauthority\t|\n",
+            "physical_line": 2658674
+          },
+          {
+            "literal": "1783272\t|\tTerrabacteria group\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 2658675
+          },
+          {
+            "literal": "1783272\t|\tTerrabacteria\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658676
+          },
+          {
+            "literal": "1783272\t|\t\"Terrabacterida\" Luketa 2012\t|\t\t|\tauthority\t|\n",
+            "physical_line": 2658677
+          },
+          {
+            "literal": "1783272\t|\tTerrabacterida\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658678
+          },
+          {
+            "literal": "1798711\t|\tCyanobacteriota/Melainabacteria group\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 2674502
+          },
+          {
+            "literal": "3028117\t|\tc__Cyanobacteriia\t|\t\t|\tequivalent name\t|\n",
+            "physical_line": 4309867
+          },
+          {
+            "literal": "3028117\t|\tCyanophyceae Hauck, 1884\t|\t\t|\tauthority\t|\n",
+            "physical_line": 4309868
+          },
+          {
+            "literal": "3028117\t|\tCyanophyceae Schaffner, 1909\t|\t\t|\tauthority\t|\n",
+            "physical_line": 4309869
+          },
+          {
+            "literal": "3028117\t|\tCyanophyceae\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 4309870
+          },
+          {
+            "literal": "3028117\t|\tGloeobacteria Cavalier-Smith, 2002\t|\t\t|\tauthority\t|\n",
+            "physical_line": 4309871
+          },
+          {
+            "literal": "3028117\t|\tGloeobacteria\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 4309872
+          },
+          {
+            "literal": "3079643\t|\tAerosakkonemataceae\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 4407346
+          },
+          {
+            "literal": "3079643\t|\tAerosakkonemataceae Strunecky & Mares, 2023\t|\t\t|\tauthority\t|\n",
+            "physical_line": 4407347
+          },
+          {
+            "literal": "3379134\t|\tPseudomonadati (Gibbons and Murray 1978) Oren and Goker 2024\t|\t\t|\tauthority\t|\n",
+            "physical_line": 4616030
+          },
+          {
+            "literal": "3379134\t|\tPseudomonadati\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 4616031
+          },
+          {
+            "literal": "3396146\t|\tAerosakkonematales Lefler, D.E.Berthold, Moretto & Laughinghouse, 2024\t|\t\t|\tauthority\t|\n",
+            "physical_line": 4642303
+          },
+          {
+            "literal": "3396146\t|\tAerosakkonematales\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 4642304
+          },
+          {
+            "literal": "3396149\t|\tFloridanema D.E.Berthold, Moretto, Lefler & Laughinghouse, 2025\t|\t\t|\tauthority\t|\n",
+            "physical_line": 4642307
+          },
+          {
+            "literal": "3396149\t|\tFloridanema\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 4642308
+          },
+          {
+            "literal": "3396208\t|\tunclassified Floridanema\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 4642570
+          }
+        ],
+        "nodes.dmp": [
+          {
+            "literal": "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 1
+          },
+          {
+            "literal": "2\t|\t131567\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 2
+          },
+          {
+            "literal": "543\t|\t91347\t|\tfamily\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 421
+          },
+          {
+            "literal": "561\t|\t543\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 436
+          },
+          {
+            "literal": "562\t|\t561\t|\tspecies\t|\tEC\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\tcode compliant; specified\t|\n",
+            "physical_line": 437
+          },
+          {
+            "literal": "1117\t|\t1798711\t|\tphylum\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 869
+          },
+          {
+            "literal": "1224\t|\t3379134\t|\tphylum\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 944
+          },
+          {
+            "literal": "1236\t|\t1224\t|\tclass\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 951
+          },
+          {
+            "literal": "2759\t|\t131567\t|\tdomain\t|\t\t|\t1\t|\t0\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 2221
+          },
+          {
+            "literal": "4751\t|\t33154\t|\tkingdom\t|\t\t|\t4\t|\t0\t|\t1\t|\t1\t|\t4\t|\t0\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 3918
+          },
+          {
+            "literal": "4890\t|\t451864\t|\tphylum\t|\t\t|\t4\t|\t1\t|\t1\t|\t1\t|\t4\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 4031
+          },
+          {
+            "literal": "5008\t|\t147555\t|\torder\t|\t\t|\t4\t|\t1\t|\t1\t|\t1\t|\t4\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 4107
+          },
+          {
+            "literal": "5009\t|\t5008\t|\tfamily\t|\t\t|\t4\t|\t1\t|\t1\t|\t1\t|\t4\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 4108
+          },
+          {
+            "literal": "5010\t|\t5009\t|\tgenus\t|\t\t|\t4\t|\t1\t|\t1\t|\t1\t|\t4\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 4109
+          },
+          {
+            "literal": "5011\t|\t5010\t|\tspecies\t|\tTD\t|\t4\t|\t1\t|\t1\t|\t1\t|\t4\t|\t1\t|\t1\t|\t0\t|\tcode compliant; specified\t|\n",
+            "physical_line": 4110
+          },
+          {
+            "literal": "28216\t|\t1224\t|\tclass\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 11980
+          },
+          {
+            "literal": "33154\t|\t2759\t|\tclade\t|\t\t|\t4\t|\t0\t|\t1\t|\t1\t|\t1\t|\t1\t|\t1\t|\t0\t|\t\t|\n",
+            "physical_line": 15491
+          },
+          {
+            "literal": "34072\t|\t80864\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 16183
+          },
+          {
+            "literal": "80840\t|\t28216\t|\torder\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 56487
+          },
+          {
+            "literal": "80864\t|\t80840\t|\tfamily\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 56507
+          },
+          {
+            "literal": "91347\t|\t1236\t|\torder\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 65661
+          },
+          {
+            "literal": "131567\t|\t1\t|\tcellular root\t|\tCO\t|\t8\t|\t1\t|\t1\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|\n",
+            "physical_line": 100665
+          },
+          {
+            "literal": "147555\t|\t451866\t|\tclass\t|\t\t|\t4\t|\t1\t|\t1\t|\t1\t|\t4\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 114709
+          },
+          {
+            "literal": "282217\t|\t663243\t|\tspecies\t|\tVS\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|\n",
+            "physical_line": 231503
+          },
+          {
+            "literal": "451864\t|\t4751\t|\tsubkingdom\t|\t\t|\t4\t|\t1\t|\t1\t|\t1\t|\t4\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 383070
+          },
+          {
+            "literal": "451866\t|\t4890\t|\tsubphylum\t|\t\t|\t4\t|\t1\t|\t1\t|\t1\t|\t4\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 383072
+          },
+          {
+            "literal": "663243\t|\t34072\t|\tno rank\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|\n",
+            "physical_line": 568227
+          },
+          {
+            "literal": "767427\t|\t3396208\t|\tspecies\t|\tPS\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|\n",
+            "physical_line": 642642
+          },
+          {
+            "literal": "1301283\t|\t3028117\t|\tsubclass\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 1069127
+          },
+          {
+            "literal": "1783272\t|\t2\t|\tkingdom\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 1504194
+          },
+          {
+            "literal": "1798711\t|\t1783272\t|\tclade\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|\n",
+            "physical_line": 1515721
+          },
+          {
+            "literal": "3028117\t|\t1117\t|\tclass\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 2597906
+          },
+          {
+            "literal": "3079643\t|\t3396146\t|\tfamily\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 2642231
+          },
+          {
+            "literal": "3379134\t|\t2\t|\tkingdom\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 2743439
+          },
+          {
+            "literal": "3396146\t|\t1301283\t|\torder\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 2756908
+          },
+          {
+            "literal": "3396149\t|\t3079643\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 2756911
+          },
+          {
+            "literal": "3396208\t|\t3396149\t|\tno rank\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|\n",
+            "physical_line": 2756955
+          }
+        ]
+      },
+      "selected_fixture_files": {
+        "gold_taxonomy/fold_native_contexts.json": "30ab94905b00e22ed20403c9268ade4c61b26a80e926fc19eecc293d69099b49"
+      },
+      "selected_taxids": [
+        "562",
+        "5011",
+        "282217",
+        "767427",
+        "2777964"
+      ],
+      "taxids_with_chain_and_parent_context": [
+        "1",
+        "2",
+        "543",
+        "561",
+        "562",
+        "1117",
+        "1224",
+        "1236",
+        "2759",
+        "4751",
+        "4890",
+        "5008",
+        "5009",
+        "5010",
+        "5011",
+        "28216",
+        "33154",
+        "34072",
+        "80840",
+        "80864",
+        "91347",
+        "131567",
+        "147555",
+        "282217",
+        "451864",
+        "451866",
+        "663243",
+        "767427",
+        "1301283",
+        "1783272",
+        "1798711",
+        "2777964",
+        "3028117",
+        "3079643",
+        "3379134",
+        "3396146",
+        "3396149",
+        "3396208"
+      ]
+    },
+    "microbedecoder_native": {
+      "members": {
+        "delnodes.dmp": [],
+        "merged.dmp": [],
+        "names.dmp": [
+          {
+            "literal": "1\t|\tall\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 1
+          },
+          {
+            "literal": "1\t|\troot\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 2
+          },
+          {
+            "literal": "2\t|\tBacteria\t|\tBacteria <bacteria>\t|\tscientific name\t|\n",
+            "physical_line": 3
+          },
+          {
+            "literal": "2\t|\tbacteria\t|\tbacteria <blast name>\t|\tblast name\t|\n",
+            "physical_line": 4
+          },
+          {
+            "literal": "2\t|\tbacteria\t|\tbacteria <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 5
+          },
+          {
+            "literal": "2\t|\t\"Bacteria\" Cavalier-Smith 1987\t|\t\t|\tauthority\t|\n",
+            "physical_line": 6
+          },
+          {
+            "literal": "2\t|\tBacteria (ex Cavalier-Smith 1987)\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 7
+          },
+          {
+            "literal": "2\t|\tBacteria Woese et al. 2024\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 8
+          },
+          {
+            "literal": "2\t|\t\"Bacteriobiota\" Luketa 2012\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9
+          },
+          {
+            "literal": "2\t|\tBacteriobiota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 10
+          },
+          {
+            "literal": "2\t|\teubacteria\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 11
+          },
+          {
+            "literal": "2\t|\tMonera\t|\tMonera <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 12
+          },
+          {
+            "literal": "2\t|\tProcaryotae\t|\tProcaryotae <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 13
+          },
+          {
+            "literal": "2\t|\tProkaryotae\t|\tProkaryotae <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 14
+          },
+          {
+            "literal": "2\t|\tProkaryota\t|\tProkaryota <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 15
+          },
+          {
+            "literal": "2\t|\tprokaryote\t|\tprokaryote <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 16
+          },
+          {
+            "literal": "2\t|\tprokaryotes\t|\tprokaryotes <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 17
+          },
+          {
+            "literal": "1239\t|\t\"Bacillaeota\" Oren et al. 2015\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9913
+          },
+          {
+            "literal": "1239\t|\tBacillaeota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9914
+          },
+          {
+            "literal": "1239\t|\tBacillota corrig. Gibbons and Murray 2021\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9915
+          },
+          {
+            "literal": "1239\t|\tBacillota\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 9916
+          },
+          {
+            "literal": "1239\t|\tBacillus/Clostridium group\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9917
+          },
+          {
+            "literal": "1239\t|\tclostridial firmicutes\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 9918
+          },
+          {
+            "literal": "1239\t|\tClostridium group firmicutes\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9919
+          },
+          {
+            "literal": "1239\t|\tfirmicutes\t|\tfirmicutes <blast name>\t|\tblast name\t|\n",
+            "physical_line": 9920
+          },
+          {
+            "literal": "1239\t|\tfirmicutes\t|\tfirmicutes <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 9921
+          },
+          {
+            "literal": "1239\t|\tLow G+C firmicutes\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9922
+          },
+          {
+            "literal": "1239\t|\tlow GC Gram+\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 9923
+          },
+          {
+            "literal": "1239\t|\tlow G+C Gram-positive bacteria\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 9924
+          },
+          {
+            "literal": "1279\t|\tAurococcus\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 10382
+          },
+          {
+            "literal": "1279\t|\t\"Aurococcus\" Winslow and Rogers 1906\t|\t\t|\tauthority\t|\n",
+            "physical_line": 10383
+          },
+          {
+            "literal": "1279\t|\tStaphylococcus Rosenbach 1884 (Approved Lists 1980)\t|\t\t|\tauthority\t|\n",
+            "physical_line": 10384
+          },
+          {
+            "literal": "1279\t|\tStaphylococcus Rosenbach 1884 (Approved Lists 1980) emend. Bello et al. 2023\t|\t\t|\tauthority\t|\n",
+            "physical_line": 10385
+          },
+          {
+            "literal": "1279\t|\tStaphylococcus\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 10386
+          },
+          {
+            "literal": "1282\t|\tAlbococcus epidermidis\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 10447
+          },
+          {
+            "literal": "1282\t|\t\"Albococcus epidermidis\" Winslow and Winslow 1908\t|\t\t|\tauthority\t|\n",
+            "physical_line": 10448
+          },
+          {
+            "literal": "1282\t|\tATCC 14990\t|\tATCC 14990 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 10449
+          },
+          {
+            "literal": "1282\t|\tCCM 2124\t|\tCCM 2124 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 10450
+          },
+          {
+            "literal": "1282\t|\tCCUG 18000 A\t|\tCCUG 18000 A <type strain>\t|\ttype material\t|\n",
+            "physical_line": 10451
+          },
+          {
+            "literal": "1282\t|\tCCUG 39508\t|\tCCUG 39508 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 10452
+          },
+          {
+            "literal": "1282\t|\tCIP 81.55\t|\tCIP 81.55 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 10453
+          },
+          {
+            "literal": "1282\t|\tDSM 20044\t|\tDSM 20044 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 10454
+          },
+          {
+            "literal": "1282\t|\tJCM 2414\t|\tJCM 2414 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 10455
+          },
+          {
+            "literal": "1282\t|\tLMG 10474\t|\tLMG 10474 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 10456
+          },
+          {
+            "literal": "1282\t|\tLMG:10474\t|\tLMG:10474 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 10457
+          },
+          {
+            "literal": "1282\t|\tMicrococcus epidermidis\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 10458
+          },
+          {
+            "literal": "1282\t|\t\"Micrococcus epidermidis\" (Winslow and Winslow 1908) Hucker 1924\t|\t\t|\tauthority\t|\n",
+            "physical_line": 10459
+          },
+          {
+            "literal": "1282\t|\tNBRC 100911\t|\tNBRC 100911 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 10460
+          },
+          {
+            "literal": "1282\t|\tNCAIM B.01066\t|\tNCAIM B.01066 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 10461
+          },
+          {
+            "literal": "1282\t|\tNCTC 11047\t|\tNCTC 11047 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 10462
+          },
+          {
+            "literal": "1282\t|\tStaphylococcus epidermidis albus\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 10463
+          },
+          {
+            "literal": "1282\t|\t\"Staphylococcus epidermidis albus\" Welch 1891\t|\t\t|\tauthority\t|\n",
+            "physical_line": 10464
+          },
+          {
+            "literal": "1282\t|\tStaphylococcus epidermidis\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 10465
+          },
+          {
+            "literal": "1385\t|\tBacillales Prevot 1953 (Approved Lists 1980)\t|\t\t|\tauthority\t|\n",
+            "physical_line": 11600
+          },
+          {
+            "literal": "1385\t|\tBacillales\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 11601
+          },
+          {
+            "literal": "1385\t|\tBacillus/Staphylococcus group\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 11602
+          },
+          {
+            "literal": "1385\t|\tCaryophanales Peshkoff 1939 (Approved Lists 1980)\t|\t\t|\tauthority\t|\n",
+            "physical_line": 11603
+          },
+          {
+            "literal": "1385\t|\tCaryophanales\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 11604
+          },
+          {
+            "literal": "90964\t|\t\"Staphylococcaceae\" Schleifer and Bell 2009\t|\t\t|\tauthority\t|\n",
+            "physical_line": 227557
+          },
+          {
+            "literal": "90964\t|\tStaphylococcaceae Schleifer and Bell 2010\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 227558
+          },
+          {
+            "literal": "90964\t|\tStaphylococcaceae\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 227559
+          },
+          {
+            "literal": "90964\t|\tStaphylococceae\t|\t\t|\tincludes\t|\n",
+            "physical_line": 227560
+          },
+          {
+            "literal": "90964\t|\tStaphylococceae Prevot 1940 (Approved Lists 1980)\t|\t\t|\tauthority\t|\n",
+            "physical_line": 227561
+          },
+          {
+            "literal": "90964\t|\tStaphylococcus group\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 227562
+          },
+          {
+            "literal": "91061\t|\tBacilli Ludwig et al. 2010\t|\t\t|\tauthority\t|\n",
+            "physical_line": 227826
+          },
+          {
+            "literal": "91061\t|\tBacilli\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 227827
+          },
+          {
+            "literal": "91061\t|\tBacillus/Lactobacillus/Streptococcus group\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 227828
+          },
+          {
+            "literal": "91061\t|\tFirmibacteria Murray 1988\t|\t\t|\tauthority\t|\n",
+            "physical_line": 227829
+          },
+          {
+            "literal": "91061\t|\tFirmibacteria\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 227830
+          },
+          {
+            "literal": "131567\t|\tbiota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 311651
+          },
+          {
+            "literal": "131567\t|\tcellular organisms\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 311652
+          },
+          {
+            "literal": "1783272\t|\tBacillati (Gibbons and Murray 1978) Oren and Goker 2024\t|\t\t|\tauthority\t|\n",
+            "physical_line": 2658666
+          },
+          {
+            "literal": "1783272\t|\tBacillati\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 2658667
+          },
+          {
+            "literal": "1783272\t|\tFirmacutes Gibbons and Murray 1978 (Approved Lists 1980)\t|\t\t|\tauthority\t|\n",
+            "physical_line": 2658668
+          },
+          {
+            "literal": "1783272\t|\tFirmacutes\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658669
+          },
+          {
+            "literal": "1783272\t|\t\"Firmicuteota\" Panda et al. 2022\t|\t\t|\tauthority\t|\n",
+            "physical_line": 2658670
+          },
+          {
+            "literal": "1783272\t|\tFirmicuteota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658671
+          },
+          {
+            "literal": "1783272\t|\tFirmicutes corrig. Gibbons and Murray 1978 (Approved Lists 1980)\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658672
+          },
+          {
+            "literal": "1783272\t|\tFirmicutes\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658673
+          },
+          {
+            "literal": "1783272\t|\t\"Terrabacteria\" Battistuzzi et al. 2004\t|\t\t|\tauthority\t|\n",
+            "physical_line": 2658674
+          },
+          {
+            "literal": "1783272\t|\tTerrabacteria group\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 2658675
+          },
+          {
+            "literal": "1783272\t|\tTerrabacteria\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658676
+          },
+          {
+            "literal": "1783272\t|\t\"Terrabacterida\" Luketa 2012\t|\t\t|\tauthority\t|\n",
+            "physical_line": 2658677
+          },
+          {
+            "literal": "1783272\t|\tTerrabacterida\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658678
+          }
+        ],
+        "nodes.dmp": [
+          {
+            "literal": "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 1
+          },
+          {
+            "literal": "2\t|\t131567\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 2
+          },
+          {
+            "literal": "1239\t|\t1783272\t|\tphylum\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 954
+          },
+          {
+            "literal": "1279\t|\t90964\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 986
+          },
+          {
+            "literal": "1282\t|\t1279\t|\tspecies\t|\tSE\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\tcode compliant; specified\t|\n",
+            "physical_line": 989
+          },
+          {
+            "literal": "1385\t|\t91061\t|\torder\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 1075
+          },
+          {
+            "literal": "90964\t|\t1385\t|\tfamily\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 65301
+          },
+          {
+            "literal": "91061\t|\t1239\t|\tclass\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 65392
+          },
+          {
+            "literal": "131567\t|\t1\t|\tcellular root\t|\tCO\t|\t8\t|\t1\t|\t1\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|\n",
+            "physical_line": 100665
+          },
+          {
+            "literal": "1783272\t|\t2\t|\tkingdom\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 1504194
+          }
+        ]
+      },
+      "selected_fixture_files": {
+        "gold_taxonomy/microbedecoder_native_context.json": "c92039bb5a1d772e03064a62d9fcb36c4ab41aa7d8de8581e893ad16c5c9c0e6"
+      },
+      "selected_taxids": [
+        "1282"
+      ],
+      "taxids_with_chain_and_parent_context": [
+        "1",
+        "2",
+        "1239",
+        "1279",
+        "1282",
+        "1385",
+        "90964",
+        "91061",
+        "131567",
+        "1783272"
+      ]
+    },
+    "selected_aliases": {
+      "members": {
+        "delnodes.dmp": [],
+        "merged.dmp": [
+          {
+            "literal": "1194211\t|\t36030\t|\n",
+            "physical_line": 51437
+          }
+        ],
+        "names.dmp": [
+          {
+            "literal": "1\t|\tall\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 1
+          },
+          {
+            "literal": "1\t|\troot\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 2
+          },
+          {
+            "literal": "2\t|\tBacteria\t|\tBacteria <bacteria>\t|\tscientific name\t|\n",
+            "physical_line": 3
+          },
+          {
+            "literal": "2\t|\tbacteria\t|\tbacteria <blast name>\t|\tblast name\t|\n",
+            "physical_line": 4
+          },
+          {
+            "literal": "2\t|\tbacteria\t|\tbacteria <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 5
+          },
+          {
+            "literal": "2\t|\t\"Bacteria\" Cavalier-Smith 1987\t|\t\t|\tauthority\t|\n",
+            "physical_line": 6
+          },
+          {
+            "literal": "2\t|\tBacteria (ex Cavalier-Smith 1987)\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 7
+          },
+          {
+            "literal": "2\t|\tBacteria Woese et al. 2024\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 8
+          },
+          {
+            "literal": "2\t|\t\"Bacteriobiota\" Luketa 2012\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9
+          },
+          {
+            "literal": "2\t|\tBacteriobiota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 10
+          },
+          {
+            "literal": "2\t|\teubacteria\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 11
+          },
+          {
+            "literal": "2\t|\tMonera\t|\tMonera <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 12
+          },
+          {
+            "literal": "2\t|\tProcaryotae\t|\tProcaryotae <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 13
+          },
+          {
+            "literal": "2\t|\tProkaryotae\t|\tProkaryotae <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 14
+          },
+          {
+            "literal": "2\t|\tProkaryota\t|\tProkaryota <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 15
+          },
+          {
+            "literal": "2\t|\tprokaryote\t|\tprokaryote <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 16
+          },
+          {
+            "literal": "2\t|\tprokaryotes\t|\tprokaryotes <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 17
+          },
+          {
+            "literal": "1760\t|\tActinobacteria Stackebrandt et al. 1997\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 16579
+          },
+          {
+            "literal": "1760\t|\tActinobacteridae\t|\t\t|\tincludes\t|\n",
+            "physical_line": 16580
+          },
+          {
+            "literal": "1760\t|\tActinobacteridae Stackebrandt et al. 1997 emend. Zhi et al. 2009\t|\t\t|\tauthority\t|\n",
+            "physical_line": 16581
+          },
+          {
+            "literal": "1760\t|\tActinomycetes Krasil'nikov 1949 (Approved Lists 1980)\t|\t\t|\tauthority\t|\n",
+            "physical_line": 16582
+          },
+          {
+            "literal": "1760\t|\tActinomycetes\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 16583
+          },
+          {
+            "literal": "1760\t|\tActinomycetia Salam et al. 2020\t|\t\t|\tauthority\t|\n",
+            "physical_line": 16584
+          },
+          {
+            "literal": "1760\t|\tActinomycetia\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 16585
+          },
+          {
+            "literal": "1760\t|\thigh G+C Gram-positive bacteria\t|\thigh G+C Gram-positive bacteria <blast name>\t|\tblast name\t|\n",
+            "physical_line": 16586
+          },
+          {
+            "literal": "1760\t|\thigh G+C Gram-positive bacteria\t|\thigh G+C Gram-positive bacteria <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 16587
+          },
+          {
+            "literal": "2070\t|\tActinosynnemataceae Labeda and Kroppenstedt 2000\t|\t\t|\tauthority\t|\n",
+            "physical_line": 21243
+          },
+          {
+            "literal": "2070\t|\tActinosynnemataceae Labeda and Kroppenstedt 2000 emend. Zhi et al. 2009\t|\t\t|\tauthority\t|\n",
+            "physical_line": 21244
+          },
+          {
+            "literal": "2070\t|\tActinosynnemataceae\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 21245
+          },
+          {
+            "literal": "2070\t|\t\"Pseudonocardiaceae\" Embley et al. 1988\t|\t\t|\tauthority\t|\n",
+            "physical_line": 21246
+          },
+          {
+            "literal": "2070\t|\tPseudonocardiaceae Embley et al. 1989\t|\t\t|\tauthority\t|\n",
+            "physical_line": 21247
+          },
+          {
+            "literal": "2070\t|\tPseudonocardiaceae Embley et al. 1989 emend. Labeda et al. 2011\t|\t\t|\tauthority\t|\n",
+            "physical_line": 21248
+          },
+          {
+            "literal": "2070\t|\tPseudonocardiaceae Embley et al. 1989 emend. Nouioui et al. 2018\t|\t\t|\tauthority\t|\n",
+            "physical_line": 21249
+          },
+          {
+            "literal": "2070\t|\tPseudonocardiaceae Embley et al. 1989 emend. Stackebrandt et al. 1997\t|\t\t|\tauthority\t|\n",
+            "physical_line": 21250
+          },
+          {
+            "literal": "2070\t|\tPseudonocardiaceae Embley et al. 1989 emend. Teo et al. 2021\t|\t\t|\tauthority\t|\n",
+            "physical_line": 21251
+          },
+          {
+            "literal": "2070\t|\tPseudonocardiaceae Embley et al. 1989 emend. Zhi et al. 2009\t|\t\t|\tauthority\t|\n",
+            "physical_line": 21252
+          },
+          {
+            "literal": "2070\t|\tPseudonocardiaceae\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 21253
+          },
+          {
+            "literal": "2070\t|\tPseudonocardiaceae (Warwick et al. 1994) (sic) emend. Stackebrandt et al. 1997\t|\t\t|\tauthority\t|\n",
+            "physical_line": 21254
+          },
+          {
+            "literal": "2071\t|\tSaccharothrix Labeda et al. 1984\t|\t\t|\tauthority\t|\n",
+            "physical_line": 21255
+          },
+          {
+            "literal": "2071\t|\tSaccharothrix Labeda et al. 1984 emend. He et al. 2022\t|\t\t|\tauthority\t|\n",
+            "physical_line": 21256
+          },
+          {
+            "literal": "2071\t|\tSaccharothrix Labeda et al. 1984 emend. Labeda and Lechevalier 1989\t|\t\t|\tauthority\t|\n",
+            "physical_line": 21257
+          },
+          {
+            "literal": "2071\t|\tSaccharothrix\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 21258
+          },
+          {
+            "literal": "2759\t|\tEucarya\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 23686
+          },
+          {
+            "literal": "2759\t|\tEucaryotae\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 23687
+          },
+          {
+            "literal": "2759\t|\tEukarya\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 23688
+          },
+          {
+            "literal": "2759\t|\tEukaryotae\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 23689
+          },
+          {
+            "literal": "2759\t|\tEukaryota\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 23690
+          },
+          {
+            "literal": "2759\t|\teukaryotes\t|\teukaryotes <blast name>\t|\tblast name\t|\n",
+            "physical_line": 23691
+          },
+          {
+            "literal": "2759\t|\teukaryotes\t|\teukaryotes <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 23692
+          },
+          {
+            "literal": "4751\t|\tfungi\t|\t\t|\tblast name\t|\n",
+            "physical_line": 30069
+          },
+          {
+            "literal": "4751\t|\tFungi\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 30070
+          },
+          {
+            "literal": "4751\t|\tMycota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 30071
+          },
+          {
+            "literal": "4890\t|\tascomycete fungi\t|\tascomycete fungi <blast name>\t|\tblast name\t|\n",
+            "physical_line": 30596
+          },
+          {
+            "literal": "4890\t|\tascomycete fungi\t|\tascomycete fungi <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 30597
+          },
+          {
+            "literal": "4890\t|\tAscomycota\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 30598
+          },
+          {
+            "literal": "4890\t|\tsac fungi\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 30599
+          },
+          {
+            "literal": "4891\t|\tHemiascomycetes\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 30600
+          },
+          {
+            "literal": "4891\t|\tSaccharomycetes G. Winter, 1880\t|\t\t|\tauthority\t|\n",
+            "physical_line": 30601
+          },
+          {
+            "literal": "4891\t|\tSaccharomycetes\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 30602
+          },
+          {
+            "literal": "4927\t|\tBCRC 22583\t|\tBCRC 22583 <culture from type material>\t|\ttype material\t|\n",
+            "physical_line": 30896
+          },
+          {
+            "literal": "4927\t|\tCandida beverwijkiae E.K. Novak & Vitez, 1964\t|\t\t|\tauthority\t|\n",
+            "physical_line": 30897
+          },
+          {
+            "literal": "4927\t|\tCandida beverwijkiae\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 30898
+          },
+          {
+            "literal": "4927\t|\tCandida pelliculosa Redaelli, 1925\t|\t\t|\tauthority\t|\n",
+            "physical_line": 30899
+          },
+          {
+            "literal": "4927\t|\tCandida pelliculosa\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 30900
+          },
+          {
+            "literal": "4927\t|\tCBS 5759\t|\tCBS 5759 <culture from type material>\t|\ttype material\t|\n",
+            "physical_line": 30901
+          },
+          {
+            "literal": "4927\t|\tDSM 6766\t|\tDSM 6766 <culture from type material>\t|\ttype material\t|\n",
+            "physical_line": 30902
+          },
+          {
+            "literal": "4927\t|\tEndomyces anomalus (E.C. Hansen) Zender, 1926\t|\t\t|\tauthority\t|\n",
+            "physical_line": 30903
+          },
+          {
+            "literal": "4927\t|\tEndomyces anomalus\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 30904
+          },
+          {
+            "literal": "4927\t|\tHansenula anomala (E.C. Hansen) Syd. & P. Syd., 1919\t|\t\t|\tauthority\t|\n",
+            "physical_line": 30905
+          },
+          {
+            "literal": "4927\t|\tHansenula anomala\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 30906
+          },
+          {
+            "literal": "4927\t|\tNRRL Y-366\t|\tNRRL Y-366 <culture from type material>\t|\ttype material\t|\n",
+            "physical_line": 30907
+          },
+          {
+            "literal": "4927\t|\tNRRL:Y:366\t|\tNRRL:Y:366 <culture from type material>\t|\ttype material\t|\n",
+            "physical_line": 30908
+          },
+          {
+            "literal": "4927\t|\tPichia anomala (E.C. Hansen) Kurtzman, 1984\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 30909
+          },
+          {
+            "literal": "4927\t|\tPichia anomala NRRL Y-366-8\t|\t\t|\tincludes\t|\n",
+            "physical_line": 30910
+          },
+          {
+            "literal": "4927\t|\tPichia anomala NRRL Y-366\t|\t\t|\tincludes\t|\n",
+            "physical_line": 30911
+          },
+          {
+            "literal": "4927\t|\tSaccharomyces anomalus E.C. Hansen, 1889\t|\t\t|\tauthority\t|\n",
+            "physical_line": 30912
+          },
+          {
+            "literal": "4927\t|\tSaccharomyces anomalus\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 30913
+          },
+          {
+            "literal": "4927\t|\tWickerhamomyces anomalus (E.C. Hansen) Kurtzman, Robnett & Bas.-Powers, 2008\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 30914
+          },
+          {
+            "literal": "4927\t|\tWickerhamomyces anomalus NRRL Y-366-8\t|\t\t|\tincludes\t|\n",
+            "physical_line": 30915
+          },
+          {
+            "literal": "4927\t|\tWickerhamomyces anomalus NRRL Y-366\t|\t\t|\tincludes\t|\n",
+            "physical_line": 30916
+          },
+          {
+            "literal": "4927\t|\tWickerhamomyces sp. DBL01s1Shirosato\t|\t\t|\tincludes\t|\n",
+            "physical_line": 30917
+          },
+          {
+            "literal": "4927\t|\tWickerhamomyces sp. DBL05Kawaminami\t|\t\t|\tincludes\t|\n",
+            "physical_line": 30918
+          },
+          {
+            "literal": "4927\t|\tWickerhamomyces sp. DBMYC09Kawaminami\t|\t\t|\tincludes\t|\n",
+            "physical_line": 30919
+          },
+          {
+            "literal": "4927\t|\tWickerhamomyces sp. DBMYCb03Nankyudai\t|\t\t|\tincludes\t|\n",
+            "physical_line": 30920
+          },
+          {
+            "literal": "4927\t|\tWickerhamomyces sp. WT-2012\t|\t\t|\tincludes\t|\n",
+            "physical_line": 30921
+          },
+          {
+            "literal": "4927\t|\tWillia anomala E.C. Hansen, 1904\t|\t\t|\tauthority\t|\n",
+            "physical_line": 30922
+          },
+          {
+            "literal": "4927\t|\tWillia anomala\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 30923
+          },
+          {
+            "literal": "28056\t|\tActinocatenisporaceae Salam et al. 2020\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 57258
+          },
+          {
+            "literal": "28056\t|\tActinoplanaceae\t|\tActinoplanaceae <Micromonosporaceae>\t|\tin-part\t|\n",
+            "physical_line": 57259
+          },
+          {
+            "literal": "28056\t|\tActinoplanaceae Couch 1955\t|\tActinoplanaceae Couch 1955 <Micromonosporaceae>\t|\tin-part\t|\n",
+            "physical_line": 57260
+          },
+          {
+            "literal": "28056\t|\tActinoplanetes\t|\t\t|\tincludes\t|\n",
+            "physical_line": 57261
+          },
+          {
+            "literal": "28056\t|\tMicromonosporaceae Krasil'nikov 1938 (Approved Lists 1980) emend Koch et al. 1996\t|\t\t|\tauthority\t|\n",
+            "physical_line": 57262
+          },
+          {
+            "literal": "28056\t|\tMicromonosporaceae Krasil'nikov 1938 (Approved Lists 1980) emend. Nouioui et al. 2018\t|\t\t|\tauthority\t|\n",
+            "physical_line": 57263
+          },
+          {
+            "literal": "28056\t|\tMicromonosporaceae Krasil'nikov 1938 (Approved Lists 1980) emend. Stackebrandt et al. 1997\t|\t\t|\tauthority\t|\n",
+            "physical_line": 57264
+          },
+          {
+            "literal": "28056\t|\tMicromonosporaceae Krasil'nikov 1938 (Approved Lists 1980) emend. Zhi et al. 2009\t|\t\t|\tauthority\t|\n",
+            "physical_line": 57265
+          },
+          {
+            "literal": "28056\t|\tMicromonosporaceae\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 57266
+          },
+          {
+            "literal": "33154\t|\tFungi/Metazoa group\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 71818
+          },
+          {
+            "literal": "33154\t|\tOpisthokonta Cavalier-Smith 1987\t|\t\t|\tauthority\t|\n",
+            "physical_line": 71819
+          },
+          {
+            "literal": "33154\t|\tOpisthokonta\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 71820
+          },
+          {
+            "literal": "33154\t|\topisthokonts\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 71821
+          },
+          {
+            "literal": "33920\t|\tActinomadura longispora Preobrazhenskaya and Sveshnikova 1974 (Approved Lists 1980)\t|\t\t|\tauthority\t|\n",
+            "physical_line": 73753
+          },
+          {
+            "literal": "33920\t|\tActinomadura longispora\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 73754
+          },
+          {
+            "literal": "33920\t|\tATCC 35109\t|\tATCC 35109 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 73755
+          },
+          {
+            "literal": "33920\t|\tDSM 43749\t|\tDSM 43749 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 73756
+          },
+          {
+            "literal": "33920\t|\tIFO 14522\t|\tIFO 14522 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 73757
+          },
+          {
+            "literal": "33920\t|\tINA 10222\t|\tINA 10222 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 73758
+          },
+          {
+            "literal": "33920\t|\tJCM 3314\t|\tJCM 3314 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 73759
+          },
+          {
+            "literal": "33920\t|\tNBRC 14522\t|\tNBRC 14522 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 73760
+          },
+          {
+            "literal": "33920\t|\tNocardiopsis longispora (Preobrazhenskaya and Sveshnikova 1974) Preobrazhenskaya and Sveshnikov 1985\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 73761
+          },
+          {
+            "literal": "33920\t|\tNRRL B-16116\t|\tNRRL B-16116 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 73762
+          },
+          {
+            "literal": "33920\t|\tNRRL:B:16116\t|\tNRRL:B:16116 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 73763
+          },
+          {
+            "literal": "33920\t|\t\"Saccharothrix longispora\" (Preobrazhenskaya and Sveshnikova 1974) Grund and Kroppenstedt 1989\t|\t\t|\tauthority\t|\n",
+            "physical_line": 73764
+          },
+          {
+            "literal": "33920\t|\tSaccharothrix longispora (Preobrazhenskaya and Sveshnikova 1974) Grund and Kroppenstedt 1990\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 73765
+          },
+          {
+            "literal": "33920\t|\tSaccharothrix longispora\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 73766
+          },
+          {
+            "literal": "33920\t|\tVKM Ac-907\t|\tVKM Ac-907 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 73767
+          },
+          {
+            "literal": "34359\t|\tHansenula\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 75706
+          },
+          {
+            "literal": "34359\t|\tHansenula Syd. & P. Syd., 1919\t|\t\t|\tauthority\t|\n",
+            "physical_line": 75707
+          },
+          {
+            "literal": "35753\t|\tDactylosporangium\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 78938
+          },
+          {
+            "literal": "35753\t|\tDactylosporangium Thiemann et al. 1967\t|\t\t|\tauthority\t|\n",
+            "physical_line": 78939
+          },
+          {
+            "literal": "36030\t|\tBCRC 20480 [[Pichia subpelliculosa]]\t|\tBCRC 20480 [[Pichia subpelliculosa]] <culture from type material>\t|\ttype material\t|\n",
+            "physical_line": 80148
+          },
+          {
+            "literal": "36030\t|\tCBS 5767 [[Pichia subpelliculosa]]\t|\tCBS 5767 [[Pichia subpelliculosa]] <culture from type material>\t|\ttype material\t|\n",
+            "physical_line": 80149
+          },
+          {
+            "literal": "36030\t|\tHansenula subpelliculosa Bedford ex J.A. Barnett, 1983\t|\t\t|\tauthority\t|\n",
+            "physical_line": 80150
+          },
+          {
+            "literal": "36030\t|\tHansenula subpelliculosa\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 80151
+          },
+          {
+            "literal": "36030\t|\tLee763 [[Pichia subpelliculosa]]\t|\tLee763 [[Pichia subpelliculosa]] <culture from type material>\t|\ttype material\t|\n",
+            "physical_line": 80152
+          },
+          {
+            "literal": "36030\t|\tNRRL Y-1683 [[Pichia subpelliculosa]]\t|\tNRRL Y-1683 [[Pichia subpelliculosa]] <culture from type material>\t|\ttype material\t|\n",
+            "physical_line": 80153
+          },
+          {
+            "literal": "36030\t|\tNRRL:Y:1683 [[Pichia subpelliculosa]]\t|\tNRRL:Y:1683 [[Pichia subpelliculosa]] <culture from type material>\t|\ttype material\t|\n",
+            "physical_line": 80154
+          },
+          {
+            "literal": "36030\t|\tPichia subpelliculosa Kurtzman, 1984\t|\t\t|\tauthority\t|\n",
+            "physical_line": 80155
+          },
+          {
+            "literal": "36030\t|\tPichia subpelliculosa\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 80156
+          },
+          {
+            "literal": "36030\t|\tWickerhamomyces subpelliculosa (Kurtzman) Kurtzman, Robnett & Basehoar-Powers 2008\t|\t\t|\tauthority\t|\n",
+            "physical_line": 80157
+          },
+          {
+            "literal": "36030\t|\tWickerhamomyces subpelliculosa\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 80158
+          },
+          {
+            "literal": "36030\t|\tWickerhamomyces subpelliculosus (Kurtzman) Kurtzman, Robnett & Basehoar-Powers, 2008\t|\t\t|\tauthority\t|\n",
+            "physical_line": 80159
+          },
+          {
+            "literal": "36030\t|\tWickerhamomyces subpelliculosus\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 80160
+          },
+          {
+            "literal": "53360\t|\tATCC 31570\t|\tATCC 31570 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131211
+          },
+          {
+            "literal": "53360\t|\tDactylosporangium matsuzakiense Shomora (sic) and Niida 1983\t|\t\t|\tauthority\t|\n",
+            "physical_line": 131212
+          },
+          {
+            "literal": "53360\t|\tDactylosporangium matsuzakiense Shomura and Niida 1983\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 131213
+          },
+          {
+            "literal": "53360\t|\tDactylosporangium matsuzakiense\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 131214
+          },
+          {
+            "literal": "53360\t|\tDactylosporangium vinaceum subsp. matsuzakiense\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 131215
+          },
+          {
+            "literal": "53360\t|\tDactylosporangium vinaceum subsp. matsuzakiense (Shomura and Niida 1983) Ould Taleb et al. 2026\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 131216
+          },
+          {
+            "literal": "53360\t|\tDSM 43810\t|\tDSM 43810 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131217
+          },
+          {
+            "literal": "53360\t|\tFERM P 4670\t|\tFERM P 4670 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131218
+          },
+          {
+            "literal": "53360\t|\tIFO 14259\t|\tIFO 14259 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131219
+          },
+          {
+            "literal": "53360\t|\tJCM 3311\t|\tJCM 3311 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131220
+          },
+          {
+            "literal": "53360\t|\tNBRC 14259\t|\tNBRC 14259 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131221
+          },
+          {
+            "literal": "53360\t|\tNRRL B-16293\t|\tNRRL B-16293 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131222
+          },
+          {
+            "literal": "53360\t|\tNRRL:B:16293\t|\tNRRL:B:16293 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131223
+          },
+          {
+            "literal": "53360\t|\tstrain SF-2052\t|\tstrain SF-2052 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131224
+          },
+          {
+            "literal": "53360\t|\tVKM Ac-1321\t|\tVKM Ac-1321 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131225
+          },
+          {
+            "literal": "53360\t|\tVKM-Ac-1321\t|\tVKM-Ac-1321 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131226
+          },
+          {
+            "literal": "53360\t|\tVKM:Ac-1321\t|\tVKM:Ac-1321 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131227
+          },
+          {
+            "literal": "53360\t|\tVKMAc-1321\t|\tVKMAc-1321 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131228
+          },
+          {
+            "literal": "53362\t|\tATCC 35207\t|\tATCC 35207 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131239
+          },
+          {
+            "literal": "53362\t|\tDactylosporangium vinaceum\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 131240
+          },
+          {
+            "literal": "53362\t|\tDactylosporangium vinaceum Shomura et al. 1983\t|\t\t|\tauthority\t|\n",
+            "physical_line": 131241
+          },
+          {
+            "literal": "53362\t|\tDactylosporangium vinaceum Shomura et al. 1983 emend. Ould Taleb et al. 2025\t|\t\t|\tauthority\t|\n",
+            "physical_line": 131242
+          },
+          {
+            "literal": "53362\t|\tDSM 43823\t|\tDSM 43823 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131243
+          },
+          {
+            "literal": "53362\t|\tIFO 14181\t|\tIFO 14181 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131244
+          },
+          {
+            "literal": "53362\t|\tJCM 3307\t|\tJCM 3307 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131245
+          },
+          {
+            "literal": "53362\t|\tNBRC 14181\t|\tNBRC 14181 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131246
+          },
+          {
+            "literal": "53362\t|\tNRRL B-16297\t|\tNRRL B-16297 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131247
+          },
+          {
+            "literal": "53362\t|\tNRRL:B:16297\t|\tNRRL:B:16297 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131248
+          },
+          {
+            "literal": "53362\t|\tstrain SF-2127\t|\tstrain SF-2127 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131249
+          },
+          {
+            "literal": "53362\t|\tVKM Ac-1322\t|\tVKM Ac-1322 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131250
+          },
+          {
+            "literal": "53362\t|\tVKM-Ac-1322\t|\tVKM-Ac-1322 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131251
+          },
+          {
+            "literal": "53362\t|\tVKM:Ac-1322\t|\tVKM:Ac-1322 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131252
+          },
+          {
+            "literal": "53362\t|\tVKMAc-1322\t|\tVKMAc-1322 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 131253
+          },
+          {
+            "literal": "85008\t|\tMicromonosporales Genilloud 2015\t|\t\t|\tauthority\t|\n",
+            "physical_line": 213386
+          },
+          {
+            "literal": "85008\t|\tMicromonosporales\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 213387
+          },
+          {
+            "literal": "85008\t|\tMicromonosporineae Stackebrandt et al. 1997 emend. Zhi et al. 2009\t|\t\t|\tauthority\t|\n",
+            "physical_line": 213388
+          },
+          {
+            "literal": "85008\t|\tMicromonosporineae\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 213389
+          },
+          {
+            "literal": "85010\t|\tPseudonocardiales Labeda and Goodfellow 2015\t|\t\t|\tauthority\t|\n",
+            "physical_line": 213395
+          },
+          {
+            "literal": "85010\t|\tPseudonocardiales\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 213396
+          },
+          {
+            "literal": "85010\t|\tPseudonocardineae Stackebrandt et al. 1997 emend. Labeda et al. 2011\t|\t\t|\tauthority\t|\n",
+            "physical_line": 213397
+          },
+          {
+            "literal": "85010\t|\tPseudonocardineae Stackebrandt et al. 1997 emend. Zhi et al. 2009\t|\t\t|\tauthority\t|\n",
+            "physical_line": 213398
+          },
+          {
+            "literal": "85010\t|\tPseudonocardineae\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 213399
+          },
+          {
+            "literal": "131567\t|\tbiota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 311651
+          },
+          {
+            "literal": "131567\t|\tcellular organisms\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 311652
+          },
+          {
+            "literal": "147537\t|\tbudding yeasts & allies\t|\tbudding yeasts & allies <blast name>\t|\tblast name\t|\n",
+            "physical_line": 342084
+          },
+          {
+            "literal": "147537\t|\tbudding yeasts & allies\t|\tbudding yeasts & allies <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 342085
+          },
+          {
+            "literal": "147537\t|\tSaccharomycotina\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 342086
+          },
+          {
+            "literal": "147537\t|\ttrue yeasts\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 342087
+          },
+          {
+            "literal": "201174\t|\tActinobacteraeota Oren et al. 2015\t|\t\t|\tauthority\t|\n",
+            "physical_line": 455777
+          },
+          {
+            "literal": "201174\t|\tActinobacteraeota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 455778
+          },
+          {
+            "literal": "201174\t|\tactinobacteria\t|\tactinobacteria <blast name>\t|\tblast name\t|\n",
+            "physical_line": 455779
+          },
+          {
+            "literal": "201174\t|\tactinobacteria\t|\tactinobacteria <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 455780
+          },
+          {
+            "literal": "201174\t|\t\"Actinobacteria\" (ex Margulis 1974) Cavalier-Smith 2020\t|\t\t|\tauthority\t|\n",
+            "physical_line": 455781
+          },
+          {
+            "literal": "201174\t|\t\"Actinobacteria\" Goodfellow 2012\t|\t\t|\tauthority\t|\n",
+            "physical_line": 455782
+          },
+          {
+            "literal": "201174\t|\tActinobacteria\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 455783
+          },
+          {
+            "literal": "201174\t|\t\"Actinobacteriota\" Panda et al. 2022\t|\t\t|\tauthority\t|\n",
+            "physical_line": 455784
+          },
+          {
+            "literal": "201174\t|\tActinobacteriota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 455785
+          },
+          {
+            "literal": "201174\t|\t\"Actinobacteriota\" Whitman et al. 2018\t|\t\t|\tauthority\t|\n",
+            "physical_line": 455786
+          },
+          {
+            "literal": "201174\t|\tActinomycetota corrig. Goodfellow 2021\t|\t\t|\tauthority\t|\n",
+            "physical_line": 455787
+          },
+          {
+            "literal": "201174\t|\tActinomycetota\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 455788
+          },
+          {
+            "literal": "451864\t|\tDikarya\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 903029
+          },
+          {
+            "literal": "599729\t|\tWickerhamomycetaceae Kurtzman, Robnett & Bas.-Powers, 2008\t|\t\t|\tauthority\t|\n",
+            "physical_line": 1136010
+          },
+          {
+            "literal": "599729\t|\tWickerhamomycetaceae\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 1136011
+          },
+          {
+            "literal": "659496\t|\tCGMCC 4.5627\t|\tCGMCC 4.5627 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 1232471
+          },
+          {
+            "literal": "659496\t|\tDSM 45665\t|\tDSM 45665 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 1232472
+          },
+          {
+            "literal": "659496\t|\tDSM-45665\t|\tDSM-45665 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 1232473
+          },
+          {
+            "literal": "659496\t|\tDSM:45665\t|\tDSM:45665 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 1232474
+          },
+          {
+            "literal": "659496\t|\tDSM45665\t|\tDSM45665 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 1232475
+          },
+          {
+            "literal": "659496\t|\tKCTC 19722\t|\tKCTC 19722 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 1232476
+          },
+          {
+            "literal": "659496\t|\tSaccharothrix longispora subsp. yanglingensis\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 1232477
+          },
+          {
+            "literal": "659496\t|\tSaccharothrix longispora subsp. yanglingensis (Yan et al. 2025) Dif et al. 2026\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 1232478
+          },
+          {
+            "literal": "659496\t|\tSaccharothrix sp. Hhs.015\t|\t\t|\tincludes\t|\n",
+            "physical_line": 1232479
+          },
+          {
+            "literal": "659496\t|\tSaccharothrix yanglingensis\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 1232480
+          },
+          {
+            "literal": "659496\t|\t\"Saccharothrix yanglingensis\" Wang et al. 2010\t|\t\t|\tauthority\t|\n",
+            "physical_line": 1232481
+          },
+          {
+            "literal": "659496\t|\tSaccharothrix yanglingensis Yan et al. 2025\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 1232482
+          },
+          {
+            "literal": "659496\t|\ts__Actinosynnema yanglingensis\t|\t\t|\tequivalent name\t|\n",
+            "physical_line": 1232483
+          },
+          {
+            "literal": "659496\t|\tstrain Hhs.015\t|\tstrain Hhs.015 <type strain>\t|\ttype material\t|\n",
+            "physical_line": 1232484
+          },
+          {
+            "literal": "716545\t|\tsaccharomyceta\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 1317580
+          },
+          {
+            "literal": "1783272\t|\tBacillati (Gibbons and Murray 1978) Oren and Goker 2024\t|\t\t|\tauthority\t|\n",
+            "physical_line": 2658666
+          },
+          {
+            "literal": "1783272\t|\tBacillati\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 2658667
+          },
+          {
+            "literal": "1783272\t|\tFirmacutes Gibbons and Murray 1978 (Approved Lists 1980)\t|\t\t|\tauthority\t|\n",
+            "physical_line": 2658668
+          },
+          {
+            "literal": "1783272\t|\tFirmacutes\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658669
+          },
+          {
+            "literal": "1783272\t|\t\"Firmicuteota\" Panda et al. 2022\t|\t\t|\tauthority\t|\n",
+            "physical_line": 2658670
+          },
+          {
+            "literal": "1783272\t|\tFirmicuteota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658671
+          },
+          {
+            "literal": "1783272\t|\tFirmicutes corrig. Gibbons and Murray 1978 (Approved Lists 1980)\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658672
+          },
+          {
+            "literal": "1783272\t|\tFirmicutes\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658673
+          },
+          {
+            "literal": "1783272\t|\t\"Terrabacteria\" Battistuzzi et al. 2004\t|\t\t|\tauthority\t|\n",
+            "physical_line": 2658674
+          },
+          {
+            "literal": "1783272\t|\tTerrabacteria group\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 2658675
+          },
+          {
+            "literal": "1783272\t|\tTerrabacteria\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658676
+          },
+          {
+            "literal": "1783272\t|\t\"Terrabacterida\" Luketa 2012\t|\t\t|\tauthority\t|\n",
+            "physical_line": 2658677
+          },
+          {
+            "literal": "1783272\t|\tTerrabacterida\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658678
+          },
+          {
+            "literal": "3243778\t|\tPhaffomycetales M. Groenew., Hittinger, Opulente & A. Rokas, 2023\t|\t\t|\tauthority\t|\n",
+            "physical_line": 4565648
+          },
+          {
+            "literal": "3243778\t|\tPhaffomycetales\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 4565649
+          }
+        ],
+        "nodes.dmp": [
+          {
+            "literal": "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 1
+          },
+          {
+            "literal": "2\t|\t131567\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 2
+          },
+          {
+            "literal": "1760\t|\t201174\t|\tclass\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 1377
+          },
+          {
+            "literal": "2070\t|\t85010\t|\tfamily\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 1621
+          },
+          {
+            "literal": "2071\t|\t2070\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 1622
+          },
+          {
+            "literal": "2759\t|\t131567\t|\tdomain\t|\t\t|\t1\t|\t0\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 2221
+          },
+          {
+            "literal": "4751\t|\t33154\t|\tkingdom\t|\t\t|\t4\t|\t0\t|\t1\t|\t1\t|\t4\t|\t0\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 3918
+          },
+          {
+            "literal": "4890\t|\t451864\t|\tphylum\t|\t\t|\t4\t|\t1\t|\t1\t|\t1\t|\t4\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 4031
+          },
+          {
+            "literal": "4891\t|\t147537\t|\tclass\t|\t\t|\t4\t|\t0\t|\t1\t|\t1\t|\t3\t|\t0\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 4032
+          },
+          {
+            "literal": "4927\t|\t34359\t|\tspecies\t|\tHA\t|\t4\t|\t1\t|\t1\t|\t1\t|\t3\t|\t1\t|\t1\t|\t0\t|\tcode compliant; specified\t|\n",
+            "physical_line": 4055
+          },
+          {
+            "literal": "28056\t|\t85008\t|\tfamily\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 11857
+          },
+          {
+            "literal": "33154\t|\t2759\t|\tclade\t|\t\t|\t4\t|\t0\t|\t1\t|\t1\t|\t1\t|\t1\t|\t1\t|\t0\t|\t\t|\n",
+            "physical_line": 15491
+          },
+          {
+            "literal": "33920\t|\t2071\t|\tspecies\t|\tSL\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\tcode compliant; specified\t|\n",
+            "physical_line": 16045
+          },
+          {
+            "literal": "34359\t|\t599729\t|\tgenus\t|\t\t|\t4\t|\t1\t|\t1\t|\t1\t|\t3\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 16432
+          },
+          {
+            "literal": "35753\t|\t28056\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 17514
+          },
+          {
+            "literal": "36030\t|\t34359\t|\tspecies\t|\tHS\t|\t4\t|\t1\t|\t1\t|\t1\t|\t3\t|\t1\t|\t0\t|\t0\t|\tcode compliant; specified\t|\n",
+            "physical_line": 17770
+          },
+          {
+            "literal": "53360\t|\t53362\t|\tsubspecies\t|\tDV\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant; specified\t|\n",
+            "physical_line": 32803
+          },
+          {
+            "literal": "53362\t|\t35753\t|\tspecies\t|\tDV\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\tcode compliant; specified\t|\n",
+            "physical_line": 32805
+          },
+          {
+            "literal": "85008\t|\t1760\t|\torder\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 60097
+          },
+          {
+            "literal": "85010\t|\t1760\t|\torder\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 60099
+          },
+          {
+            "literal": "131567\t|\t1\t|\tcellular root\t|\tCO\t|\t8\t|\t1\t|\t1\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|\n",
+            "physical_line": 100665
+          },
+          {
+            "literal": "147537\t|\t716545\t|\tsubphylum\t|\t\t|\t4\t|\t1\t|\t1\t|\t1\t|\t4\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 114695
+          },
+          {
+            "literal": "201174\t|\t1783272\t|\tphylum\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 162489
+          },
+          {
+            "literal": "451864\t|\t4751\t|\tsubkingdom\t|\t\t|\t4\t|\t1\t|\t1\t|\t1\t|\t4\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 383070
+          },
+          {
+            "literal": "599729\t|\t3243778\t|\tfamily\t|\t\t|\t4\t|\t1\t|\t1\t|\t1\t|\t3\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 513733
+          },
+          {
+            "literal": "659496\t|\t33920\t|\tsubspecies\t|\tSL\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant; specified\t|\n",
+            "physical_line": 565153
+          },
+          {
+            "literal": "716545\t|\t4890\t|\tclade\t|\t\t|\t4\t|\t1\t|\t1\t|\t1\t|\t4\t|\t1\t|\t1\t|\t0\t|\t\t|\n",
+            "physical_line": 614786
+          },
+          {
+            "literal": "1783272\t|\t2\t|\tkingdom\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 1504194
+          },
+          {
+            "literal": "3243778\t|\t4891\t|\torder\t|\t\t|\t4\t|\t1\t|\t1\t|\t1\t|\t3\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 2718775
+          }
+        ]
+      },
+      "selected_fixture_files": {
+        "gold_selected_taxon_aliases/native_evidence.json": "7941533fac837d2e3b06e7b1d55f5eacd7d26f7e337c14e8965d7407ce89cba8",
+        "gold_selected_taxon_aliases/producer_contexts.json": "48232c91e25aa97b5bcac631eccd41c702d6369ecec7cd484ba9deb89c3bf1e0"
+      },
+      "selected_taxids": [
+        "4927",
+        "33920",
+        "53360",
+        "53362",
+        "659496",
+        "1194211"
+      ],
+      "taxids_with_chain_and_parent_context": [
+        "1",
+        "2",
+        "1760",
+        "2070",
+        "2071",
+        "2759",
+        "4751",
+        "4890",
+        "4891",
+        "4927",
+        "28056",
+        "33154",
+        "33920",
+        "34359",
+        "35753",
+        "36030",
+        "53360",
+        "53362",
+        "85008",
+        "85010",
+        "131567",
+        "147537",
+        "201174",
+        "451864",
+        "599729",
+        "659496",
+        "716545",
+        "1194211",
+        "1783272",
+        "3243778"
+      ]
+    },
+    "taxon_dispositions": {
+      "members": {
+        "delnodes.dmp": [],
+        "merged.dmp": [],
+        "names.dmp": [
+          {
+            "literal": "1\t|\tall\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 1
+          },
+          {
+            "literal": "1\t|\troot\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 2
+          },
+          {
+            "literal": "2\t|\tBacteria\t|\tBacteria <bacteria>\t|\tscientific name\t|\n",
+            "physical_line": 3
+          },
+          {
+            "literal": "2\t|\tbacteria\t|\tbacteria <blast name>\t|\tblast name\t|\n",
+            "physical_line": 4
+          },
+          {
+            "literal": "2\t|\tbacteria\t|\tbacteria <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 5
+          },
+          {
+            "literal": "2\t|\t\"Bacteria\" Cavalier-Smith 1987\t|\t\t|\tauthority\t|\n",
+            "physical_line": 6
+          },
+          {
+            "literal": "2\t|\tBacteria (ex Cavalier-Smith 1987)\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 7
+          },
+          {
+            "literal": "2\t|\tBacteria Woese et al. 2024\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 8
+          },
+          {
+            "literal": "2\t|\t\"Bacteriobiota\" Luketa 2012\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9
+          },
+          {
+            "literal": "2\t|\tBacteriobiota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 10
+          },
+          {
+            "literal": "2\t|\teubacteria\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 11
+          },
+          {
+            "literal": "2\t|\tMonera\t|\tMonera <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 12
+          },
+          {
+            "literal": "2\t|\tProcaryotae\t|\tProcaryotae <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 13
+          },
+          {
+            "literal": "2\t|\tProkaryotae\t|\tProkaryotae <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 14
+          },
+          {
+            "literal": "2\t|\tProkaryota\t|\tProkaryota <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 15
+          },
+          {
+            "literal": "2\t|\tprokaryote\t|\tprokaryote <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 16
+          },
+          {
+            "literal": "2\t|\tprokaryotes\t|\tprokaryotes <bacteria>\t|\tin-part\t|\n",
+            "physical_line": 17
+          },
+          {
+            "literal": "832\t|\tFibribacter\t|\t\t|\tequivalent name\t|\n",
+            "physical_line": 7567
+          },
+          {
+            "literal": "832\t|\tFibrobacter Montgomery et al. 1988\t|\t\t|\tauthority\t|\n",
+            "physical_line": 7568
+          },
+          {
+            "literal": "832\t|\tFibrobacter\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 7569
+          },
+          {
+            "literal": "976\t|\tBacteroides-Cytophaga-Flexibacter group\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 8536
+          },
+          {
+            "literal": "976\t|\tBacteroidetes\t|\tBacteroidetes <Bacteroidota>\t|\tsynonym\t|\n",
+            "physical_line": 8537
+          },
+          {
+            "literal": "976\t|\t\"Bacteroidetes\" Krieg et al. 2012\t|\t\t|\tauthority\t|\n",
+            "physical_line": 8538
+          },
+          {
+            "literal": "976\t|\tBacteroidota corrig. Krieg et al. 2021\t|\t\t|\tauthority\t|\n",
+            "physical_line": 8539
+          },
+          {
+            "literal": "976\t|\tBacteroidota\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 8540
+          },
+          {
+            "literal": "976\t|\t\"Bacteroidota\" Whitman et al. 2018\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 8541
+          },
+          {
+            "literal": "976\t|\tBCF group\t|\t\t|\tequivalent name\t|\n",
+            "physical_line": 8542
+          },
+          {
+            "literal": "976\t|\t\"Candidatus Kapaibacteriota\" Kantor et al. 2015\t|\t\t|\tauthority\t|\n",
+            "physical_line": 8543
+          },
+          {
+            "literal": "976\t|\tCandidatus Kapaibacteriota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 8544
+          },
+          {
+            "literal": "976\t|\tCFB group bacteria\t|\tCFB group bacteria <blast name>\t|\tblast name\t|\n",
+            "physical_line": 8545
+          },
+          {
+            "literal": "976\t|\tCFB group bacteria\t|\tCFB group bacteria <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 8546
+          },
+          {
+            "literal": "976\t|\tCFB group\t|\t\t|\tequivalent name\t|\n",
+            "physical_line": 8547
+          },
+          {
+            "literal": "976\t|\tCytophaga-Flexibacter-Bacteroides phylum\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 8548
+          },
+          {
+            "literal": "976\t|\tKapaibacteriota\t|\t\t|\tequivalent name\t|\n",
+            "physical_line": 8549
+          },
+          {
+            "literal": "976\t|\tOPB56 group\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 8550
+          },
+          {
+            "literal": "976\t|\t\"Sphingobacteria\" Cavalier-Smith, 2002\t|\t\t|\tauthority\t|\n",
+            "physical_line": 8551
+          },
+          {
+            "literal": "976\t|\tSphingobacteria\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 8552
+          },
+          {
+            "literal": "1224\t|\tAlphaproteobacteriota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9855
+          },
+          {
+            "literal": "1224\t|\t\"Alphaproteobacteriota\" Whitman et al. 2018\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9856
+          },
+          {
+            "literal": "1224\t|\t\"Proteobacteria\" Garrity et al. 2005\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9857
+          },
+          {
+            "literal": "1224\t|\tproteobacteria\t|\tproteobacteria <blast name>\t|\tblast name\t|\n",
+            "physical_line": 9858
+          },
+          {
+            "literal": "1224\t|\tproteobacteria\t|\tproteobacteria <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 9859
+          },
+          {
+            "literal": "1224\t|\tProteobacteria Stackebrandt et al. 1988\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9860
+          },
+          {
+            "literal": "1224\t|\tProteobacteria\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9861
+          },
+          {
+            "literal": "1224\t|\t\"Proteobacteriota\" Panda et al. 2022\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9862
+          },
+          {
+            "literal": "1224\t|\tProteobacteriota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9863
+          },
+          {
+            "literal": "1224\t|\tPseudomonadota corrig. Garrity et al. 2021\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9864
+          },
+          {
+            "literal": "1224\t|\tPseudomonadota\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 9865
+          },
+          {
+            "literal": "1224\t|\tpurple photosynthetic bacteria and relatives\t|\t\t|\tcommon name\t|\n",
+            "physical_line": 9866
+          },
+          {
+            "literal": "1236\t|\tGammaproteobacteria Garrity et al. 2005 emend. Williams and Kelly 2013\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9895
+          },
+          {
+            "literal": "1236\t|\tGammaproteobacteria\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 9896
+          },
+          {
+            "literal": "1236\t|\tgamma proteobacteria\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9897
+          },
+          {
+            "literal": "1236\t|\tgamma subdivision\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9898
+          },
+          {
+            "literal": "1236\t|\tgamma subgroup\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9899
+          },
+          {
+            "literal": "1236\t|\tg-proteobacteria\t|\tg-proteobacteria <blast name>\t|\tblast name\t|\n",
+            "physical_line": 9900
+          },
+          {
+            "literal": "1236\t|\tg-proteobacteria\t|\tg-proteobacteria <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 9901
+          },
+          {
+            "literal": "1236\t|\tProteobacteria gamma subdivision\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9902
+          },
+          {
+            "literal": "1236\t|\t\"Pseudomonadia\" Oren et al. 2016\t|\t\t|\tauthority\t|\n",
+            "physical_line": 9903
+          },
+          {
+            "literal": "1236\t|\tPseudomonadia\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9904
+          },
+          {
+            "literal": "1236\t|\tPurple bacteria, gamma subdivision\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 9905
+          },
+          {
+            "literal": "12908\t|\tunclassified\t|\t\t|\tequivalent name\t|\n",
+            "physical_line": 50736
+          },
+          {
+            "literal": "12908\t|\tunclassified sequences\t|\tunclassified sequences <blast name>\t|\tblast name\t|\n",
+            "physical_line": 50737
+          },
+          {
+            "literal": "12908\t|\tunclassified sequences\t|\tunclassified sequences <scientific name>\t|\tscientific name\t|\n",
+            "physical_line": 50738
+          },
+          {
+            "literal": "28216\t|\tBetaproteobacteria Garrity et al. 2006 emend. Boden et al. 2017\t|\t\t|\tauthority\t|\n",
+            "physical_line": 58547
+          },
+          {
+            "literal": "28216\t|\tBetaproteobacteria\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 58548
+          },
+          {
+            "literal": "28216\t|\tbeta proteobacteria\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 58549
+          },
+          {
+            "literal": "28216\t|\tbeta subdivision\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 58550
+          },
+          {
+            "literal": "28216\t|\tbeta subgroup\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 58551
+          },
+          {
+            "literal": "28216\t|\tb-proteobacteria\t|\tb-proteobacteria <blast name>\t|\tblast name\t|\n",
+            "physical_line": 58552
+          },
+          {
+            "literal": "28216\t|\tb-proteobacteria\t|\tb-proteobacteria <genbank common name>\t|\tgenbank common name\t|\n",
+            "physical_line": 58553
+          },
+          {
+            "literal": "28216\t|\tProteobacteria beta subdivision\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 58554
+          },
+          {
+            "literal": "28216\t|\tPurple bacteria, beta subdivision\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 58555
+          },
+          {
+            "literal": "32008\t|\tBurkholderia\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 69367
+          },
+          {
+            "literal": "32008\t|\tBurkholderia Yabuuchi et al. 1993\t|\t\t|\tauthority\t|\n",
+            "physical_line": 69368
+          },
+          {
+            "literal": "32008\t|\tBurkholderia Yabuuchi et al. 1993 emend. Dobritsa and Samadpour 2019\t|\t\t|\tauthority\t|\n",
+            "physical_line": 69369
+          },
+          {
+            "literal": "32008\t|\tBurkholderia Yabuuchi et al. 1993 emend. Gillis et al. 1995\t|\t\t|\tauthority\t|\n",
+            "physical_line": 69370
+          },
+          {
+            "literal": "32008\t|\tBurkholderia Yabuuchi et al. 1993 emend. Sawana et al. 2014\t|\t\t|\tauthority\t|\n",
+            "physical_line": 69371
+          },
+          {
+            "literal": "32008\t|\tPseudomonas RNA homology group II\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 69372
+          },
+          {
+            "literal": "65842\t|\t\"Fibrobacteraeota\" Oren et al. 2015\t|\t\t|\tauthority\t|\n",
+            "physical_line": 164119
+          },
+          {
+            "literal": "65842\t|\tFibrobacteraeota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 164120
+          },
+          {
+            "literal": "65842\t|\tFibrobacteres\t|\tFibrobacteres <Fibrobacterota>\t|\tsynonym\t|\n",
+            "physical_line": 164121
+          },
+          {
+            "literal": "65842\t|\t\"Fibrobacteres\" Garrity and Holt 2001\t|\t\t|\tauthority\t|\n",
+            "physical_line": 164122
+          },
+          {
+            "literal": "65842\t|\t\"Fibrobacteres\" Garrity and Holt 2012\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 164123
+          },
+          {
+            "literal": "65842\t|\tFibrobacter group\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 164124
+          },
+          {
+            "literal": "65842\t|\tFibrobacterota corrig. Garrity and Holt 2021\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 164125
+          },
+          {
+            "literal": "65842\t|\tFibrobacterota\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 164126
+          },
+          {
+            "literal": "68336\t|\tBacteroidetes/Chlorobi group\t|\t\t|\tequivalent name\t|\n",
+            "physical_line": 173517
+          },
+          {
+            "literal": "68336\t|\tBacteroidota/Chlorobiota group\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 173518
+          },
+          {
+            "literal": "68336\t|\tCFB/Chlorobi group\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 173519
+          },
+          {
+            "literal": "68336\t|\tCFB/Green sulfur bacteria group\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 173520
+          },
+          {
+            "literal": "68336\t|\tCytophagales/Green sulfur bacteria group\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 173521
+          },
+          {
+            "literal": "80840\t|\tBurkholderiales Garrity et al. 2006\t|\t\t|\tauthority\t|\n",
+            "physical_line": 203305
+          },
+          {
+            "literal": "80840\t|\tBurkholderiales\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 203306
+          },
+          {
+            "literal": "80840\t|\tBurkholderia/Oxalobacter/Ralstonia group\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 203307
+          },
+          {
+            "literal": "117747\t|\tSphingobacteriia Kampfer 2012\t|\t\t|\tauthority\t|\n",
+            "physical_line": 282923
+          },
+          {
+            "literal": "117747\t|\tSphingobacteriia\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 282924
+          },
+          {
+            "literal": "119060\t|\tBurkholderiaceae Garrity et al. 2006\t|\t\t|\tauthority\t|\n",
+            "physical_line": 285467
+          },
+          {
+            "literal": "119060\t|\tBurkholderiaceae\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 285468
+          },
+          {
+            "literal": "119060\t|\tBurkholderia group\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 285469
+          },
+          {
+            "literal": "119060\t|\t'Ralstoniaceae'\t|\t\t|\tincludes\t|\n",
+            "physical_line": 285470
+          },
+          {
+            "literal": "119060\t|\tRalstoniaceae\t|\t\t|\tincludes\t|\n",
+            "physical_line": 285471
+          },
+          {
+            "literal": "119060\t|\tRalstonia group\t|\t\t|\tincludes\t|\n",
+            "physical_line": 285472
+          },
+          {
+            "literal": "131567\t|\tbiota\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 311651
+          },
+          {
+            "literal": "131567\t|\tcellular organisms\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 311652
+          },
+          {
+            "literal": "200666\t|\tSphingobacteriales Kampfer 2012\t|\t\t|\tauthority\t|\n",
+            "physical_line": 454523
+          },
+          {
+            "literal": "200666\t|\tSphingobacteriales\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 454524
+          },
+          {
+            "literal": "204430\t|\t\"Fibrobacteres\" Cavalier-Smith 2020\t|\t\t|\tauthority\t|\n",
+            "physical_line": 463030
+          },
+          {
+            "literal": "204430\t|\tFibrobacteres\t|\tFibrobacteres <Fibrobacteria>\t|\tsynonym\t|\n",
+            "physical_line": 463031
+          },
+          {
+            "literal": "204430\t|\tFibrobacteria\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 463032
+          },
+          {
+            "literal": "204430\t|\tFibrobacteria Spain et al. 2012\t|\t\t|\tauthority\t|\n",
+            "physical_line": 463033
+          },
+          {
+            "literal": "204431\t|\tFibrobacteraceae\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 463034
+          },
+          {
+            "literal": "204431\t|\tFibrobacteraceae Spain et al. 2012\t|\t\t|\tauthority\t|\n",
+            "physical_line": 463035
+          },
+          {
+            "literal": "218872\t|\tFibrobacterales\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 492263
+          },
+          {
+            "literal": "218872\t|\tFibrobacterales Spain et al. 2012\t|\t\t|\tauthority\t|\n",
+            "physical_line": 492264
+          },
+          {
+            "literal": "408169\t|\tmetagenomes\t|\tmetagenomes <blast name>\t|\tblast name\t|\n",
+            "physical_line": 830453
+          },
+          {
+            "literal": "408169\t|\tmetagenomes\t|\tmetagenomes <scientific name>\t|\tscientific name\t|\n",
+            "physical_line": 830454
+          },
+          {
+            "literal": "410657\t|\tecological metagenomes\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 833839
+          },
+          {
+            "literal": "410657\t|\tgeographical metagenomes\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 833840
+          },
+          {
+            "literal": "1263854\t|\tanaerobic digester metagenome\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 1949344
+          },
+          {
+            "literal": "1263854\t|\tanaerobic digester microbiota\t|\t\t|\tincludes\t|\n",
+            "physical_line": 1949345
+          },
+          {
+            "literal": "1263854\t|\tdigester metagenome\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 1949346
+          },
+          {
+            "literal": "1783270\t|\tFCB group\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 2658661
+          },
+          {
+            "literal": "1783270\t|\tFibrobacter/Acidobacteria group\t|\tFibrobacter/Acidobacteria group <FCB group>\t|\tin-part\t|\n",
+            "physical_line": 2658662
+          },
+          {
+            "literal": "1783270\t|\tFibrobacteres/Acidobacteria group\t|\tFibrobacteres/Acidobacteria group <FCB group>\t|\tin-part\t|\n",
+            "physical_line": 2658663
+          },
+          {
+            "literal": "1783270\t|\tFibrobacteres-Chlorobi-Bacteroidetes superphylum\t|\t\t|\tsynonym\t|\n",
+            "physical_line": 2658664
+          },
+          {
+            "literal": "2787823\t|\tunclassified entries\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 3913979
+          },
+          {
+            "literal": "3379134\t|\tPseudomonadati (Gibbons and Murray 1978) Oren and Goker 2024\t|\t\t|\tauthority\t|\n",
+            "physical_line": 4616030
+          },
+          {
+            "literal": "3379134\t|\tPseudomonadati\t|\t\t|\tscientific name\t|\n",
+            "physical_line": 4616031
+          }
+        ],
+        "nodes.dmp": [
+          {
+            "literal": "1\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 1
+          },
+          {
+            "literal": "2\t|\t131567\t|\tdomain\t|\t\t|\t0\t|\t0\t|\t11\t|\t0\t|\t0\t|\t0\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 2
+          },
+          {
+            "literal": "832\t|\t204431\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 632
+          },
+          {
+            "literal": "976\t|\t68336\t|\tphylum\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 753
+          },
+          {
+            "literal": "1224\t|\t3379134\t|\tphylum\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 944
+          },
+          {
+            "literal": "1236\t|\t1224\t|\tclass\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 951
+          },
+          {
+            "literal": "12908\t|\t2787823\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t2\t|\t0\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 9912
+          },
+          {
+            "literal": "28216\t|\t1224\t|\tclass\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 11980
+          },
+          {
+            "literal": "32008\t|\t119060\t|\tgenus\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 14840
+          },
+          {
+            "literal": "65842\t|\t1783270\t|\tphylum\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 43670
+          },
+          {
+            "literal": "68336\t|\t1783270\t|\tclade\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|\n",
+            "physical_line": 45543
+          },
+          {
+            "literal": "80840\t|\t28216\t|\torder\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 56487
+          },
+          {
+            "literal": "117747\t|\t976\t|\tclass\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 88579
+          },
+          {
+            "literal": "119060\t|\t80840\t|\tfamily\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 89776
+          },
+          {
+            "literal": "131567\t|\t1\t|\tcellular root\t|\tCO\t|\t8\t|\t1\t|\t1\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|\n",
+            "physical_line": 100665
+          },
+          {
+            "literal": "200666\t|\t117747\t|\torder\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 162009
+          },
+          {
+            "literal": "204430\t|\t65842\t|\tclass\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 165414
+          },
+          {
+            "literal": "204431\t|\t218872\t|\tfamily\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 165415
+          },
+          {
+            "literal": "218872\t|\t204430\t|\torder\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\tcode compliant\t|\n",
+            "physical_line": 178559
+          },
+          {
+            "literal": "408169\t|\t12908\t|\tno rank\t|\t\t|\t11\t|\t0\t|\t11\t|\t0\t|\t2\t|\t1\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 343602
+          },
+          {
+            "literal": "410657\t|\t408169\t|\tno rank\t|\t\t|\t11\t|\t1\t|\t11\t|\t1\t|\t2\t|\t1\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 345681
+          },
+          {
+            "literal": "1263854\t|\t410657\t|\tspecies\t|\tAD\t|\t11\t|\t1\t|\t11\t|\t1\t|\t2\t|\t1\t|\t1\t|\t0\t|\t\t|\n",
+            "physical_line": 1034870
+          },
+          {
+            "literal": "1783270\t|\t3379134\t|\tclade\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t1\t|\t0\t|\t\t|\n",
+            "physical_line": 1504192
+          },
+          {
+            "literal": "2787823\t|\t1\t|\tno rank\t|\t\t|\t8\t|\t0\t|\t1\t|\t0\t|\t2\t|\t0\t|\t1\t|\t0\t|\t\t|\n",
+            "physical_line": 2394532
+          },
+          {
+            "literal": "3379134\t|\t2\t|\tkingdom\t|\t\t|\t0\t|\t1\t|\t11\t|\t1\t|\t0\t|\t1\t|\t0\t|\t0\t|\t\t|\n",
+            "physical_line": 2743439
+          }
+        ]
+      },
+      "selected_fixture_files": {
+        "gold_taxonomy/native_contexts.json": "d86cdc298718d8463b6429d68fa4b2b7104dbf9c0d3ca4bd84534f42aa5f27d0"
+      },
+      "selected_taxids": [
+        "2",
+        "832",
+        "1224",
+        "1236",
+        "32008",
+        "200666",
+        "1263854"
+      ],
+      "taxids_with_chain_and_parent_context": [
+        "1",
+        "2",
+        "832",
+        "976",
+        "1224",
+        "1236",
+        "12908",
+        "28216",
+        "32008",
+        "65842",
+        "68336",
+        "80840",
+        "117747",
+        "119060",
+        "131567",
+        "200666",
+        "204430",
+        "204431",
+        "218872",
+        "408169",
+        "410657",
+        "1263854",
+        "1783270",
+        "2787823",
+        "3379134"
+      ]
+    }
+  },
+  "scope": "Bounded literal taxdump member excerpts for existing native GOLD fixture cohorts, including complete parent context. Not a full NCBI release. Member coordinates refer to the original archive, not staged excerpts. Empty selected retirement/deletion arrays report a complete native-member scan with no selected matches.",
+  "source_archive": {
+    "bytes": 77752405,
+    "path": "data/raw/taxdump.tar.gz",
+    "sha256": "2e9675bdb2c353aae185316319c23c06955eec1bbf9efed4e39875661ee8d2d1"
+  }
+}

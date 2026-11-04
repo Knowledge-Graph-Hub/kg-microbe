@@ -532,7 +532,10 @@ def test_partial_or_total_audit_loss_refuses_direct_checkpoint_reuse(tmp_path, m
 @pytest.mark.parametrize("has_go", [False, True])
 def test_truthful_empty_inventory_for_ordinary_source(tmp_path, monkeypatch, has_go):
     """No GO or ordinary organism-to-GO observations need no finite PATO evidence."""
+    from tests.taxdump_controls import stage_no_retirements_taxdump
+
     raw, nodes, edges, _, _ = prepare(tmp_path, monkeypatch)
+    stage_no_retirements_taxdump(raw)
     transform = Transform("fixture", raw, tmp_path / "transformed")
     transform.TSV_QUOTING = csv.QUOTE_NONE
     node_rows = [
@@ -555,6 +558,10 @@ def test_truthful_empty_inventory_for_ordinary_source(tmp_path, monkeypatch, has
     )
     (raw / "pato.owl").unlink()
     report = transform.finalize(fresh_run=True)
+    taxdump = raw / "taxdump.tar.gz"
+    identity = {"path": str(taxdump.resolve()), "sha256": hashlib.sha256(taxdump.read_bytes()).hexdigest()}
+    assert report["consumed_inputs"]["ncbi_taxonomy_authority"] == identity
+    assert identity in report["inputs"]
     assert report[restrictions.INVENTORY_KEY] == restrictions.inventory_contract(0, hashlib.sha256().hexdigest())
     assert (
         not {restrictions.POLICY_ROLE, restrictions.OWL_ROLE, restrictions.GO_ROLE} & report["consumed_inputs"].keys()

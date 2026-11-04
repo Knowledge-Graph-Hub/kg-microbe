@@ -1,0 +1,12 @@
+# Literal synthetic behavior mappings; these do not assert native biological identities.
+fixture:
+  fixture_keyword:
+    category: biolink:PhenotypicQuality
+    predicate: biolink:has_phenotype
+    curie: METPO:1000001
+    name: fixture keyword
+  fixture phenotype:
+    category: biolink:PhenotypicQuality
+    predicate: biolink:has_phenotype
+    curie: METPO:1000002
+    name: fixture phenotype

@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 import pytest
+import yaml
 
 from kg_microbe.transform_utils.bacdive import bacdive as module
 from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
@@ -27,7 +28,8 @@ def _run_fixture(tmp_path, monkeypatch, records, native_context=False):
     scratch.mkdir()
     (scratch / module.BACDIVE_MAPPING_FILE).write_text("EC_ID\tCHEBI_ID\tsubstrate\n")
     custom = tmp_path / "custom.yaml"
-    custom.write_text("{}\n")
+    fixture_mappings = FIXTURE.parent / "fixture_custom_curies.yaml"
+    custom.write_bytes(b"{}\n" if native_context else fixture_mappings.read_bytes())
     monkeypatch.setattr(module, "BACDIVE_TMP_DIR", scratch)
     monkeypatch.setattr(module, "CUSTOM_CURIES_YAML_FILE", custom)
     monkeypatch.setattr(module, "METABOLITE_MAP", {})
@@ -45,9 +47,11 @@ def _run_fixture(tmp_path, monkeypatch, records, native_context=False):
     transform.pathogenicity_mappings = {}
     transform._ncbitaxon_ancestry_failures = set()
     transform._lpsn_stats = {"matched": 0, "unmatched": 0, "ambiguous": 0}
+    # Keep synthetic preview context consistent with a literal source input;
+    # declaration evidence must not certify a mutable test-only keyword cache.
     transform.bacdive_metpo_mappings = {
-        "fixture_keyword": {"curie": "METPO:1000001", "label": "fixture keyword"},
-        "fixture phenotype": {"curie": "METPO:1000002", "label": "fixture phenotype"},
+        key: {"curie": row["curie"], "label": row["name"]}
+        for key, row in yaml.safe_load(fixture_mappings.read_text())["fixture"].items()
     }
     parent = MetpoTreeNode(
         "METPO:1000000", "fixture parent", bacdive_json_paths=["Physiology and metabolism.oxygen tolerance"]

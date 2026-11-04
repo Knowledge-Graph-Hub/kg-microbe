@@ -13,6 +13,7 @@ from kg_microbe.transform_utils import constants as C
 from kg_microbe.transform_utils.madin_etal import madin_etal
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, verify_finalized_source_files
 from kg_microbe.utils.transform_fingerprint import data_fingerprint, declared_data_inputs
+from tests.taxdump_controls import stage_no_retirements_taxdump
 
 FIXTURE = Path(__file__).parent / "resources" / "madin_foodon_retirement"
 CORRECTION_DECLARATION = "mappings/madin_environment_id_corrections.tsv"
@@ -126,6 +127,9 @@ def test_finalized_correction_snapshot_rejects_later_mapping_edit(producer, monk
     from kg_microbe.utils import go_authority
 
     transform, correction = producer
+    # This correction-lifecycle test assumes no taxid retirements; its source
+    # declarations remain unchanged and do not require invented taxonomy rows.
+    taxdump = stage_no_retirements_taxdump(transform.input_base_dir)
     # The native records also emit metabolic-process ancestry. Supply the
     # existing hermetic GO authority instead of requiring the production DB.
     authority_path = transform.input_base_dir / "go-statements.tsv"
@@ -140,6 +144,15 @@ def test_finalized_correction_snapshot_rejects_later_mapping_edit(producer, monk
     transform.run(show_status=False)
     report = transform.finalize()
     assert report["consumed_inputs"][CONSUMED_NAME] == transform.consumed_input_snapshots[CONSUMED_NAME]
+    identity = {"path": str(taxdump.resolve()), "sha256": hashlib.sha256(taxdump.read_bytes()).hexdigest()}
+    assert report["consumed_inputs"]["ncbi_taxonomy_authority"] == identity
+    assert identity in report["inputs"]
+    verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+    original_taxdump = taxdump.read_bytes()
+    taxdump.write_bytes(original_taxdump + b"\n")
+    with pytest.raises(SourceFinalizationRequired, match="changed|missing"):
+        verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+    taxdump.write_bytes(original_taxdump)
     verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
     correction.write_text(correction.read_text().replace("PO:0009011", "PO:0025131"))
     with pytest.raises(SourceFinalizationRequired, match="changed|missing"):

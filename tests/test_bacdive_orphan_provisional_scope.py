@@ -12,6 +12,7 @@ from kg_microbe.merge_utils.source_admission import SourceAdmission
 from kg_microbe.transform_utils.bacdive import taxonomy_evidence as taxonomy
 from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, graph_rows, verify_finalized_source_files
+from tests.bacdive_fallback_admission_fixtures import assert_native_ncbi_admission, with_native_ncbi_control
 from tests.bacdive_fallback_fixtures import records_by_id
 from tests.test_bacdive_fallback_producer import produce
 
@@ -32,8 +33,13 @@ def test_selected_orphan_provisional_parent_addition_refused(
     tmp_path, monkeypatch, local_source_schema, direction, route
 ):
     """Keep all real claims/audits while adding one unproved parent at a selected orphan genus."""
-    transform, _, _, _ = produce(tmp_path, monkeypatch, [records_by_id()["24851"]["record"]])
+    records = [records_by_id()["24851"]["record"]]
+    if route == "generic_public":
+        records = with_native_ncbi_control(records)
+    transform, _, _, _ = produce(tmp_path, monkeypatch, records)
     report = transform.finalize()
+    if route == "generic_public":
+        assert_native_ncbi_admission(transform, report)
     paths = [transform.output_node_file, transform.output_edge_file]
     verify_finalized_source_files(paths)
     before = list(graph_rows(transform.output_edge_file))

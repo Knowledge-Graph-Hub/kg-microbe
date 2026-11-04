@@ -14,6 +14,7 @@ from kg_microbe.utils import source_finalization
 from kg_microbe.utils.go_authority import normalize_go_bundle
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, verify_finalized_source_files
 from tests.go_subject_restrictions_fixtures import FULL_POLICY, prepare, rows, write_rows
+from tests.taxdump_controls import stage_no_retirements_taxdump
 
 pytestmark = pytest.mark.usefixtures("local_source_schema")
 EXPECTED_CLAIMS = len(FULL_POLICY["records"])
@@ -62,6 +63,9 @@ def _stage(tmp_path, monkeypatch, *, historical_go_object=False):
     import csv
 
     raw, nodes, edges, _, authority = prepare(tmp_path, monkeypatch, all_claims=True)
+    # Named taxon declarations need explicit retirement evidence even though
+    # their category/label is supplied by this source, not the synthetic archive.
+    stage_no_retirements_taxdump(raw)
     transform = Transform("fixture", raw, tmp_path / "transformed")
     transform.TSV_QUOTING = csv.QUOTE_NONE
     declarations = rows(nodes)
@@ -143,6 +147,10 @@ def test_full_cohort_public_finalization_same_and_fresh_repeat(tmp_path, monkeyp
     transform, authority, originals = _stage(tmp_path, monkeypatch, historical_go_object=historical_go_object)
     report = transform.finalize(fresh_run=True)
     graph, audit, _ = _paths(transform)
+    taxdump = transform.input_base_dir / "taxdump.tar.gz"
+    identity = {"path": str(taxdump.resolve()), "sha256": hashlib.sha256(taxdump.read_bytes()).hexdigest()}
+    assert report["consumed_inputs"]["ncbi_taxonomy_authority"] == identity
+    assert identity in report["inputs"]
     assert rows(transform.output_edge_file) == []
     assert report["summaries"]["go"]["quarantined_imported_subject_restrictions"] == EXPECTED_CLAIMS
     assert report[restrictions.INVENTORY_KEY]["quarantined_occurrences"] == EXPECTED_CLAIMS

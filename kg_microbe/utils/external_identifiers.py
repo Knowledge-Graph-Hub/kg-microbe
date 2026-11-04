@@ -27,20 +27,48 @@ def load_taxid_merges(raw_dir: Path) -> Dict[str, str]:
     path = Path(raw_dir) / "taxdump.tar.gz"
     if not path.is_file():
         return {}
-    replacements = {}
     with tarfile.open(path) as archive:
         stream = archive.extractfile("merged.dmp")
         if stream is None:
             raise ValueError(f"{path}: no merged.dmp member")
-        for line in stream:
-            fields = [item.strip() for item in line.decode("utf-8").split("|")]
-            old, new = fields[:2]
-            if not old.isdigit() or not new.isdigit():
-                raise ValueError(f"{path}: invalid taxid replacement {old!r} -> {new!r}")
-            if old in replacements and replacements[old] != new:
-                raise ValueError(f"{path}: conflicting replacements for {old}")
-            replacements[old] = new
-    return {old: resolve_replacement(old, replacements) for old in replacements}
+        return _taxid_merges(stream, path)
+
+
+def _taxid_merges(stream, path, *, flatten=True):
+    """Validate explicit numeric retirement chains without ranking alternate identities."""
+    replacements = {}
+    for line in stream:
+        fields = [item.strip() for item in line.decode("utf-8").split("|")]
+        if len(fields) < 2:
+            raise ValueError(f"{path}: malformed taxid replacement")
+        old, new = fields[:2]
+        if not old.isdigit() or not new.isdigit() or int(old) == 0 or int(new) == 0:
+            raise ValueError(f"{path}: invalid taxid replacement {old!r} -> {new!r}")
+        if old in replacements and replacements[old] != new:
+            raise ValueError(f"{path}: conflicting replacements for {old}")
+        replacements[old] = new
+    resolved = {old: resolve_replacement(old, replacements) for old in replacements}
+    return resolved if flatten else replacements
+
+
+def load_taxid_retirements(path: Path, *, flatten=True) -> tuple[Dict[str, str], set[str]]:
+    """Read validated NCBI retirements, optionally retaining links for selected-chain validation."""
+    with tarfile.open(path) as archive:
+        members = archive.getmembers()
+        for name in ("merged.dmp", "delnodes.dmp", "nodes.dmp", "names.dmp"):
+            selected = [member for member in members if member.name == name]
+            if len(selected) != 1 or not selected[0].isfile():
+                raise ValueError(f"{path}: missing or ambiguous NCBI authority member {name}")
+        replacements = _taxid_merges(archive.extractfile("merged.dmp"), path, flatten=flatten)
+        deleted = set()
+        for line in archive.extractfile("delnodes.dmp"):
+            taxid = line.decode("utf-8").split("|", 1)[0].strip()
+            if not taxid.isdigit() or int(taxid) == 0:
+                raise ValueError(f"{path}: invalid deleted taxid {taxid!r}")
+            deleted.add(taxid)
+        if deleted.intersection(replacements) or deleted.intersection(replacements.values()):
+            raise ValueError(f"{path}: taxid is both deleted and part of a replacement chain")
+    return replacements, deleted
 
 
 def load_assembly_aliases(nodes_file: Path) -> tuple:

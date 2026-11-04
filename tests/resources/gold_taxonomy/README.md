@@ -37,3 +37,19 @@ It is evidence for the original crosswalk observation, not evidence that the
 LPSN and GOLD referents are identical (their displayed taxonomic names differ).
 The bounded dispatcher test makes no whole-producer freshness claim and does
 not invent a new accepted strain or repair the source's claim.
+
+`selected_taxdump_contexts.json` completes the authority prerequisite for the
+actual finalization tests. Its four bounded cohorts retain exact `nodes.dmp`
+and `names.dmp` lines plus complete parent context from the same native archive
+already pinned by the alias and fold-restoration witnesses (SHA-256
+`2e9675bdb2c353aae185316319c23c06955eec1bbf9efed4e39875661ee8d2d1`). The archive hash
+was verified before and after two streaming extraction passes; original member
+line coordinates and hashes of the existing selected fixture files are saved.
+The original alias/remap lines are unchanged. Empty selected `merged.dmp` or
+`delnodes.dmp` arrays mean a complete member scan found no selected matches;
+they do not claim the whole native archive has no retirements or deletions.
+All native names for selected live nodes and their ancestors are retained, not
+only favorable scientific-name lines. These are excerpts, not complete releases
+or evidence of GOLD organism identity. The separately synthetic `gold_folds`
+routing fixture keeps its own existing `100 -> 10` remap and is not represented
+as native NCBI evidence.

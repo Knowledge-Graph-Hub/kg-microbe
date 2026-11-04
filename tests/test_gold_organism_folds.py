@@ -34,11 +34,30 @@ def transformed_gold(tmp_path, monkeypatch):
         shutil.copyfile(FIXTURES / name, raw / "gold" / name)
     shutil.copyfile(FIXTURES / "ncbitaxon_nodes.tsv", out / "ontologies" / "ncbitaxon_nodes.tsv")
     shutil.copyfile(FIXTURES / "database.csv", raw / "database.csv")
-    merged = b"100\t|\t10\t|\n"
+    # This fixture's IDs, names and retirement are synthetic routing controls.
+    # Complete the archive before producer consumption without claiming native
+    # NCBI ancestry or introducing any additional replacement/deletion.
+    members = {
+        "merged.dmp": "100\t|\t10\t|\n",
+        "delnodes.dmp": "",
+        "nodes.dmp": "1 | 1 | no rank |\n10 | 1 | species |\n20 | 1 | species |\n",
+        "names.dmp": (
+            "1 | synthetic root | | scientific name |\n"
+            "10 | Species alpha | | scientific name |\n"
+            "20 | Species alpha | | scientific name |\n"
+        ),
+        "fixture_scope.txt": (
+            "Synthetic GOLD routing authority, not native NCBI evidence. "
+            "Only the pre-existing 100 -> 10 retirement is asserted. "
+            "The synthetic parent context makes no prokaryote claim.\n"
+        ),
+    }
     with tarfile.open(raw / "taxdump.tar.gz", "w:gz") as archive:
-        info = tarfile.TarInfo("merged.dmp")
-        info.size = len(merged)
-        archive.addfile(info, io.BytesIO(merged))
+        for name, content in members.items():
+            data = content.encode()
+            info = tarfile.TarInfo(name)
+            info.size = len(data)
+            archive.addfile(info, io.BytesIO(data))
     transform = GOLDTransform(input_dir=raw, output_dir=out)
     transform.run()
     return transform

@@ -17,6 +17,7 @@ from kg_microbe.utils import foodon_kernel_quarantine as native
 from kg_microbe.utils.foodon_kernel_producer import MEMBERS, verify_kernel_audit_bindings
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, graph_rows, verify_finalized_source_files
 from tests.native_ro_fixtures import bind_native_ro_fixture_policy, stage_native_ro_envo
+from tests.taxdump_controls import stage_no_retirements_taxdump
 from tests.test_foodon_kernel_quarantine import prepare, publish
 from tests.test_merge_source_freshness import prepare_source
 
@@ -98,8 +99,9 @@ def shared_directory_run(tmp_path_factory):
         shutil.copyfile(FIXTURE / "lifecycle" / name, raw / name)
     shutil.copyfile(FIXTURE / "foodon.owl", raw / "foodon.owl")
     stage_native_ro_envo(raw)
+    stage_no_retirements_taxdump(raw)
     script = r"""
-import importlib, json, shutil, socket, sys
+import hashlib, importlib, json, shutil, socket, sys
 from pathlib import Path
 def offline(*args, **kwargs):
     raise AssertionError("Kernel selected-source control must stay offline")
@@ -116,6 +118,10 @@ dispatcher._run_one("foodon", raw, output, False)
 directory = output / "ontologies"
 foodon_path = directory / "foodon_source_finalization.json"
 first = json.loads(foodon_path.read_text())
+taxdump = raw / "taxdump.tar.gz"
+identity = {"path": str(taxdump.resolve()), "sha256": hashlib.sha256(taxdump.read_bytes()).hexdigest()}
+assert first["consumed_inputs"]["ncbi_taxonomy_authority"] == identity
+assert identity in first["inputs"]
 assert set(first["members"]) == {"foodon_nodes.tsv", "foodon_edges.tsv"}
 verify_finalized_source_files([directory / name for name in first["members"]])
 fresh = module.OntologiesTransform(raw, output)
@@ -130,6 +136,8 @@ report = json.loads(report_path.read_text())
 assert set(report["members"]) == {"envo_nodes.tsv", "envo_edges.tsv"}
 assert "ontology_foodon_kernel_json" not in report["consumed_inputs"]
 assert "ontology_foodon_kernel_owl" not in report["consumed_inputs"]
+assert "ncbi_taxonomy_authority" not in report["consumed_inputs"]
+assert taxdump.is_file()
 fresh = module.OntologiesTransform(raw, output)
 assert fresh.finalize(file_prefix="envo_") == report
 fresh.verify_consumed_inputs()

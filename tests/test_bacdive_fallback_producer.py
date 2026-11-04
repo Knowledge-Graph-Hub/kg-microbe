@@ -16,6 +16,7 @@ from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform, load_me
 from kg_microbe.transform_utils.bacdive.fallback_evidence import SELECTED_ROLE
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, graph_rows, verify_finalized_source_files
+from tests.bacdive_fallback_admission_fixtures import write_selected_taxdump
 from tests.bacdive_fallback_fixtures import RESOURCE, adapter, close_adapter, native_database, records_by_id, write_rows
 from tests.test_bacdive_isolation_categories import _run
 
@@ -26,6 +27,9 @@ def produce(tmp_path, monkeypatch, records):
 
     def context(transform, _policy):
         """Seed actual files before native fallback preparation; never mock a fallback selection."""
+        # Establish selected retirement evidence before fallback planning;
+        # source finalization reads it only when this fixture emits NCBI IDs.
+        write_selected_taxdump(transform.input_base_dir)
         db = native_database(Path(transform.input_base_dir) / "test-native-excerpt.db")
         transform.ncbi_impl = adapter(db)
         originals.append(transform.ncbi_impl)
@@ -34,7 +38,11 @@ def produce(tmp_path, monkeypatch, records):
         monkeypatch.setattr(module, "NCBITAXON_NODES_FILE", selected)
         transform.ncbitaxon_fallback_cache = {}
         transform._ncbitaxon_ancestor_cache = {}
-        transform.ncbitaxon_labels = {}
+        transform.ncbitaxon_labels = {
+            row["id"]: row["name"]
+            for row in graph_rows(selected, quoting=csv.QUOTE_NONE)
+            if row["id"].startswith("NCBITaxon:") and row["name"]
+        }
         transform.lpsn_name_index = {}
         transform.metpo_metabolite_production_mappings = load_metpo_metabolite_production_mappings()
 

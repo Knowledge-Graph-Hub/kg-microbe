@@ -10,6 +10,7 @@ import pytest
 from kg_microbe.transform_utils.gold.gold import GOLDTransform
 from kg_microbe.transform_utils.gold.taxon_dispositions import load_gold_declarations
 from kg_microbe.transform_utils.microbedecoder.microbedecoder import MicrobeDecoderTransform
+from tests.gold_taxdump_fixtures import stage_native_gold_taxdump
 from tests.test_gold_taxon_dispositions import _write
 
 FIXTURE = Path(__file__).parent / "resources/gold_taxonomy/microbedecoder_native_context.json"
@@ -41,6 +42,7 @@ def native_dispatch(tmp_path, monkeypatch):
         nodes[0].keys(),
         [node for node in nodes if node["id"].startswith("NCBITaxon:")],
     )
+    stage_native_gold_taxdump(raw, "microbedecoder_native")
     monkeypatch.setenv("GOLD_APPLY_TAXON_TRIM", "true")
     gold = GOLDTransform(raw, output)
     gold.run()

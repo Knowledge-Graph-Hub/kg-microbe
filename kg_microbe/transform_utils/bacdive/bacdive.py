@@ -191,6 +191,7 @@ from kg_microbe.transform_utils.constants import (
     NUTRITION_TYPE,
     OBJECT_COLUMN,
     OBSERVATION,
+    ONTOLOGIES,
     ORDER,
     ORIGINAL_OBJECT_COLUMN,
     OXYGEN_TOLERANCE,
@@ -356,6 +357,7 @@ class BacDiveTransform(Transform):
         self._ncit_category_claim_guard = None
         self.ncbitaxon_fallback_cache = {}
         self._taxonomy_evidence_guard = None
+        self._ontology_dependency_declarations = None
         self._lpsn_stats = {"matched": 0, "unmatched": 0, "ambiguous": 0}
         self._ncbitaxon_ancestor_cache = {}
         self._ncbitaxon_ancestry_failures = set()
@@ -395,9 +397,28 @@ class BacDiveTransform(Transform):
             self.output_dir,
             optional_state=self.optional_consumed_inputs["inputs"].get(taxonomy_evidence.GSS_ROLE),
             admission=self._ncit_category_claim_guard.admission,
+            ontology_dependencies=self.ontology_dependency_declarations,
         )
         self._ncit_claim_output_ready = True
         self._ncit_claim_graph_quoting = csv.QUOTE_NONE
+
+    @property
+    def ontology_dependency_declarations(self):
+        """Expose only the actual source-finalizer dependency proof, never constructor label membership."""
+        return getattr(self, "_ontology_dependency_declarations", None)
+
+    def bind_ontology_dependency_declarations(self, child):
+        """Retain the exact ontology inventory that licenses the source finalizer's declaration exception."""
+        existing = self.ontology_dependency_declarations
+        if existing is not None:
+            existing.verify(metadata_only=True)
+            if existing.contract != child.contract:
+                raise ValueError("BacDive original ontology dependency declaration proof changed")
+            child = existing
+        self._ontology_dependency_declarations = child
+        guard = getattr(self, "_taxonomy_evidence_guard", None)
+        if guard is not None:
+            guard.bind_ontology_dependencies(child)
 
     def verify_native_inputs(self, *, byte_verified=False, output_dir=None):
         """Keep native roles and lossless source-claim dispositions fixed through publication."""
@@ -441,6 +462,18 @@ class BacDiveTransform(Transform):
             members=report.get("members", {}),
             admission=admission,
         )
+        from kg_microbe.utils.ontology_dependency_declarations import OntologyDependencyDeclarations
+        from kg_microbe.utils.source_finalization import SourceFinalizationRequired
+
+        if not isinstance(report.get("ontology_dependency_declarations"), dict):
+            raise SourceFinalizationRequired("BacDive original ontology dependency declaration proof is missing")
+
+        dependency = OntologyDependencyDeclarations(
+            Path(report_path).parent.parent / ONTOLOGIES,
+            admission=ncit_guard.admission,
+            recorded=report.get("ontology_dependency_declarations"),
+            recorded_inputs=report.get("inputs"),
+        )
         return taxonomy_evidence.verify_recorded(
             taxonomy_contract,
             report.get("consumed_inputs", {}),
@@ -449,6 +482,7 @@ class BacDiveTransform(Transform):
             optional_state=report.get("optional_consumed_inputs", {}).get("inputs", {}).get(taxonomy_evidence.GSS_ROLE),
             members=report.get("members", {}),
             admission=ncit_guard.admission,
+            ontology_dependencies=dependency,
         ).admission
 
     def _scoped_isolation_leaf(self, index, category, field, value, *, record, ncit_audit_writer, **clinical):
@@ -3723,6 +3757,9 @@ class BacDiveTransform(Transform):
 
             ec_substrate_admission.verify()
             self._ncit_category_claim_guard.finish(self.consumed_input_snapshots)
+            taxonomy_evidence.prepare_source_declarations(
+                self, NCBITAXON_NODES_FILE, CUSTOM_CURIES_YAML_FILE, custom_curie_data
+            )
             self._taxonomy_evidence_guard.complete(
                 deposit_parent_claims, resolved_deposits, contested_deposits, taxonomy_audit_writer
             )

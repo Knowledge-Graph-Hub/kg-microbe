@@ -9,7 +9,12 @@ import tarfile
 import pytest
 
 from kg_microbe.transform_utils.prego.native_inputs import archive_payload_identity, verify_native_contract
-from kg_microbe.utils.source_finalization import SourceFinalizationRequired, graph_rows
+from kg_microbe.utils.source_finalization import (
+    SourceFinalizationRequired,
+    graph_rows,
+    verify_finalized_source_files,
+)
+from tests.taxdump_controls import stage_no_retirements_taxdump
 from tests.test_prego_envo_identity import _producer
 
 
@@ -63,12 +68,26 @@ def test_saved_payload_claim_requires_native_archive_content(tmp_path):
 def test_foodon_successor_does_not_inherit_legacy_envo_environmental_feature_category(tmp_path):
     """The reviewed successor receives its own meaning, never a donor namespace default."""
     producer = _producer(tmp_path)
+    # This category control assumes no recorded retirements for the already
+    # typed source taxa; the native PREGO records and archive proof stay exact.
+    taxdump = stage_no_retirements_taxdump(producer.input_base_dir)
     producer.run(show_status=False)
-    producer.finalize(fresh_run=True)
+    report = producer.finalize(fresh_run=True)
     nodes = {row["id"]: row for row in graph_rows(producer.output_node_file)}
     assert nodes["FOODON:00001002"]["category"] == "biolink:Food"
     assert nodes["FOODON:00001002"]["name"] == "food product"
     assert nodes["ENVO:01000159"]["deprecated"] == "True"
+    identity = {"path": str(taxdump.resolve()), "sha256": hashlib.sha256(taxdump.read_bytes()).hexdigest()}
+    assert report["consumed_inputs"]["ncbi_taxonomy_authority"] == identity
+    assert identity in report["inputs"]
+    paths = [producer.output_node_file, producer.output_edge_file]
+    verify_finalized_source_files(paths)
+    original_taxdump = taxdump.read_bytes()
+    taxdump.write_bytes(original_taxdump + b"\n")
+    with pytest.raises(SourceFinalizationRequired, match="changed|missing"):
+        verify_finalized_source_files(paths)
+    taxdump.write_bytes(original_taxdump)
+    verify_finalized_source_files(paths)
 
 
 @pytest.mark.parametrize("damage", ["missing", "duplicate", "symlink"])

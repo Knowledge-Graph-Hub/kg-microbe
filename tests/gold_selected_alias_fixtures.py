@@ -9,6 +9,7 @@ from pathlib import Path
 
 from kg_microbe.transform_utils.gold import selected_taxon_aliases as aliases
 from kg_microbe.transform_utils.transform import Transform
+from tests.gold_taxdump_fixtures import stage_native_gold_taxdump
 
 FIXTURE = Path(__file__).parent / "resources/gold_selected_taxon_aliases/native_evidence.json"
 
@@ -49,7 +50,7 @@ def stage(tmp_path, *, empty=False):
                 {"graphs": [{"meta": evidence["selected_ontology_metadata"][0], "nodes": evidence["selected_nodes"]}]}
             )
         )
-        write_taxdump(raw / "taxdump.tar.gz", "".join(item["literal"] for item in evidence["taxdump_merged_dmp"]))
+        stage_native_gold_taxdump(raw, "selected_aliases")
     return transform, evidence
 
 

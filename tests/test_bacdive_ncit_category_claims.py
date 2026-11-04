@@ -2,8 +2,10 @@
 
 import copy
 import csv
+import hashlib
 import io
 import json
+import os
 from pathlib import Path
 
 import pytest
@@ -15,6 +17,7 @@ from kg_microbe.transform_utils.bacdive.bacdive import BacDiveTransform, load_me
 from kg_microbe.transform_utils.transform import Transform
 from kg_microbe.utils.isolation_source_mapping_utils import load_isolation_source_mappings
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, graph_rows, verify_finalized_source_files
+from tests.taxdump_controls import stage_no_retirements_taxdump
 from tests.test_bacdive_isolation_categories import _run
 
 RESOURCE = Path(__file__).parent / "resources/bacdive_ncit_category_claims"
@@ -44,6 +47,10 @@ def run_native(tmp_path, monkeypatch, native):
 
     def context(transform, policy):
         """Supply only the offline context needed by the native category fixture."""
+        if native:
+            # These already declared taxa need retirement evidence, not new
+            # biological classification. Keep the empty-source control unbound.
+            stage_no_retirements_taxdump(transform.input_base_dir)
         transform.ncbi_impl = _FiniteTaxonLabelMisses()
         transform.lpsn_name_index = {}
         transform.metpo_metabolite_production_mappings = load_metpo_metabolite_production_mappings()
@@ -182,9 +189,26 @@ def test_policy_cannot_self_reauthorize_changed_scope(damage):
 
 def test_public_finalization_repeat_and_merge_admission(tmp_path, monkeypatch, local_source_schema):
     """Nonempty actual producer outputs must survive real finalization, repeat and read-only admission."""
-    transform, _, _, _ = run_native(tmp_path, monkeypatch, records())
+    transform, _, nodes, _ = run_native(tmp_path, monkeypatch, records())
+    native_taxa = {row["id"]: row for row in nodes if row["id"].startswith("NCBITaxon:")}
+    assert set(native_taxa) == {
+        "NCBITaxon:317",
+        "NCBITaxon:1673609",
+        "NCBITaxon:306",
+        "NCBITaxon:29446",
+        "NCBITaxon:33090",
+    }
+    assert native_taxa["NCBITaxon:33090"]["name"] == "Viridiplantae"
     report = transform.finalize()
     assert len(report["producer_native_inputs"]["selected_records"]) == 4
+    assert {
+        row["id"]: row for row in graph_rows(transform.output_node_file) if row["id"].startswith("NCBITaxon:")
+    } == native_taxa
+    taxdump = transform.input_base_dir / "taxdump.tar.gz"
+    original_taxdump = taxdump.read_bytes()
+    identity = {"path": str(taxdump.resolve()), "sha256": hashlib.sha256(original_taxdump).hexdigest()}
+    assert report["consumed_inputs"]["ncbi_taxonomy_authority"] == identity
+    assert identity in report["inputs"]
     verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
     admission = BacDiveTransform.verify_recorded_native_inputs(
         report, transform.output_dir / "source_finalization.json", admission=SourceAdmission()
@@ -196,6 +220,21 @@ def test_public_finalization_repeat_and_merge_admission(tmp_path, monkeypatch, l
     Transform.__init__(fresh, "bacdive", transform.input_base_dir, transform.output_base_dir)
     assert fresh.finalize() == report
     fresh.verify_native_inputs()
+
+    # Change only gzip's timestamp byte: the archive stays valid and the same
+    # size, while the actual selected bytes differ from the consumed snapshot.
+    original_stat = taxdump.stat()
+    changed = bytearray(original_taxdump)
+    changed[4] ^= 1
+    taxdump.write_bytes(changed)
+    os.utime(taxdump, ns=(original_stat.st_atime_ns, original_stat.st_mtime_ns))
+    with pytest.raises(SourceFinalizationRequired, match="changed|missing"):
+        verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+    with pytest.raises(SourceFinalizationRequired, match="changed|missing"):
+        fresh.finalize()
+    taxdump.write_bytes(original_taxdump)
+    verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
+    assert transform.finalize() == report
 
 
 @pytest.mark.parametrize(
@@ -323,6 +362,8 @@ def test_truthful_zero_target_run_has_native_contract_and_audit(tmp_path, monkey
     assert report["producer_native_inputs"]["selected_records"] == []
     assert list(graph_rows(transform.output_dir / claims.AUDIT_FILE)) == []
     assert set(report["producer_native_inputs"]["consumed_inputs"]) == set(claims.ROLES)
+    assert not (transform.input_base_dir / "taxdump.tar.gz").exists()
+    assert "ncbi_taxonomy_authority" not in report["consumed_inputs"]
     verify_finalized_source_files([transform.output_node_file, transform.output_edge_file])
 
 

@@ -15,7 +15,13 @@ from kg_microbe.transform_utils.transform import Transform
 
 
 def _finalize_fixture(output_dir, raw_dir):
-    """Use the real producer lifecycle without inventing native reads for NCBI-only fixtures (#1293)."""
+    """Use real finalization with explicit empty retirement proof for live NCBI-only fixtures."""
+    taxdump = raw_dir / "taxdump.tar.gz"
+    if not taxdump.exists():
+        raw_dir.mkdir(parents=True, exist_ok=True)
+        with tarfile.open(taxdump, "w:gz") as archive:
+            for name in ("merged.dmp", "delnodes.dmp", "nodes.dmp", "names.dmp"):
+                archive.addfile(tarfile.TarInfo(name), io.BytesIO(b""))
     producer = Transform(output_dir.name, input_dir=raw_dir, output_dir=output_dir.parent)
     report = producer.finalize()
     producer.verify_consumed_inputs()
@@ -30,7 +36,12 @@ def _finalize_fixture(output_dir, raw_dir):
         "occurrences": {},
         "bindings": {},
     }
-    assert report["consumed_inputs"] == {}
+    assert report["consumed_inputs"] == {
+        "ncbi_taxonomy_authority": {
+            "path": str(taxdump.resolve()),
+            "sha256": hashlib.sha256(taxdump.read_bytes()).hexdigest(),
+        }
+    }
     return report
 
 
@@ -213,6 +224,7 @@ def test_source_reconciliation_precedes_merge_diagnostics_and_manifest(tmp_path,
             "nodes.dmp": b"1\t|\t1\t|\tno rank\t|\n2\t|\t1\t|\tsuperkingdom\t|\n3\t|\t2\t|\tspecies\t|\n",
             "names.dmp": b"3\t|\tFixture bacterium\t|\t\t|\tscientific name\t|\n",
             "merged.dmp": b"33\t|\t3\t|\n",
+            "delnodes.dmp": b"",
         }.items():
             member = tarfile.TarInfo(name)
             member.size = len(payload)

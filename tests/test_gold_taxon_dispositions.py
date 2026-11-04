@@ -11,6 +11,7 @@ from kg_microbe.merge_utils.source_admission import SourceAdmission
 from kg_microbe.transform_utils.gold import taxon_dispositions as policy
 from kg_microbe.transform_utils.gold.gold import GOLDTransform
 from kg_microbe.utils.source_finalization import SourceFinalizationRequired, finalize_source
+from tests.gold_taxdump_fixtures import stage_native_gold_taxdump
 
 FIXTURE = Path(__file__).parent / "resources/gold_taxonomy/native_contexts.json"
 
@@ -53,6 +54,7 @@ def source(tmp_path, monkeypatch):
         ("id", "category", "name", "provided_by", "xref"),
         (row for row in nodes.values() if row["id"].startswith("NCBITaxon:")),
     )
+    stage_native_gold_taxdump(raw, "taxon_dispositions")
     monkeypatch.setenv("GOLD_APPLY_TAXON_TRIM", "true")
     return GOLDTransform(raw, output)
 

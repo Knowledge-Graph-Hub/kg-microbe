@@ -270,11 +270,15 @@ def export_snapshot(
         stage = None
         return result
     finally:
-        if writer is not None:
-            writer.close()
-        if stage is not None:
-            shutil.rmtree(stage)
-        lock.unlink()
+        try:
+            if writer is not None:
+                writer.close()
+        finally:
+            try:
+                if stage is not None:
+                    shutil.rmtree(stage)
+            finally:
+                lock.unlink()
 
 
 def main(argv: list[str] | None = None) -> None:

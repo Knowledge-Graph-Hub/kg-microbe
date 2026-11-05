@@ -260,6 +260,41 @@ def test_write_failure_cleans_only_own_stage(source, tmp_path, monkeypatch):
     assert not list(tmp_path.glob(".export.export-*"))
 
 
+def test_close_failure_cannot_skip_cleanup_after_write_failure(source, tmp_path, monkeypatch):
+    """KG #1720: failure flushing a failed write must not retain the stage or retry lock."""
+    before = {path.name: path.read_bytes() for path in source.parent.iterdir()}
+    real_write = snapshot._Shards.write
+    real_close = snapshot._Shards.close
+    failures = []
+
+    def fail_after_one(self, row):
+        """Leave a real shard open before simulating the failed buffered write."""
+        if self.total:
+            failures.append("write")
+            raise OSError("simulated write failure")
+        real_write(self, row)
+
+    def fail_close(self):
+        """Close the real descriptor but report a flush failure during unwinding."""
+        real_close(self)
+        failures.append("close")
+        raise OSError("simulated close failure")
+
+    unrelated = tmp_path / ".other.export-keep"
+    unrelated.mkdir()
+    (unrelated / "keep").write_text("untouched")
+    monkeypatch.setattr(snapshot._Shards, "write", fail_after_one)
+    monkeypatch.setattr(snapshot._Shards, "close", fail_close)
+    with pytest.raises(OSError, match="simulated close failure"):
+        _export(source, tmp_path / "export")
+    assert failures == ["write", "close"]
+    assert not (tmp_path / "export").exists()
+    assert not (tmp_path / ".export.export-lock").exists()
+    assert not list(tmp_path.glob(".export.export-*"))
+    assert {path.name: path.read_bytes() for path in source.parent.iterdir()} == before
+    assert (unrelated / "keep").read_text() == "untouched"
+
+
 def test_empty_edge_table_is_a_complete_empty_export(source, tmp_path):
     """Header-only input needs no placeholder shard or invented occurrence."""
     path = source.parent / "edges.tsv"

@@ -265,6 +265,7 @@ def test_runtime_drift_prevents_batch(scenario, transport, monkeypatch):
     calls = []
 
     def changed(*values):
+        """Return a changed runtime identity after the canary begins."""
         calls.append(None)
         identity = original(*values)
         if len(calls) >= 3:
@@ -355,6 +356,7 @@ def test_original_cache_metadata_tampering_is_rejected(scenario, transport, monk
     native = production.download_medium_strains
 
     def changed(*values, **kwargs):
+        """Alter an original cached response header after the native request."""
         result = native(*values, **kwargs)
         production._reset_sessions()
         with sqlite3.connect(output / refresh.CACHE_NAME) as connection:
@@ -396,6 +398,7 @@ def test_interruption_after_http_persistence_preserves_evidence(scenario, transp
     native = production.download_medium_strains
 
     def interrupted(*values, **kwargs):
+        """Interrupt after the production request has persisted its response."""
         native(*values, **kwargs)
         raise KeyboardInterrupt("Synthetic interruption after HTTP persistence")
 
@@ -419,6 +422,7 @@ def test_final_receipt_failure_cannot_claim_admission(scenario, transport, monke
     final = root / retry.RETRY / "attempts/retry-test/receipt.json"
 
     def fail_final(path, payload):
+        """Refuse only the final receipt publication while retaining prior evidence."""
         if path == final:
             raise OSError("Synthetic final receipt publication failure")
         return write(path, payload)
@@ -474,6 +478,7 @@ def test_final_cache_and_retained_snapshot_are_verified_before_admission(scenari
     root, output, args = scenario
 
     def mutate_cache(cache, extra=False):
+        """Change persisted metadata or insert an unselected response row."""
         with sqlite3.connect(cache) as connection:
             key, blob = next(
                 (key, blob)
@@ -498,12 +503,14 @@ def test_final_cache_and_retained_snapshot_are_verified_before_admission(scenari
     native_snapshot = refresh.snapshot_artifacts
 
     def phase_with_final_mutation(*values, **kwargs):
+        """Mutate the live cache after the batch has completed its phase checks."""
         result = native_phase(*values, **kwargs)
         if values[0].name == "batch" and change.startswith("live_"):
             mutate_cache(output / refresh.CACHE_NAME, extra=change == "live_extra")
         return result
 
     def snapshot_with_retained_mutation(source, destination):
+        """Alter retained final evidence after the native snapshot is created."""
         result = native_snapshot(source, destination)
         if destination.name == "after":
             if change == "retained_metadata":

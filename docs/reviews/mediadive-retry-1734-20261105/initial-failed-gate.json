@@ -1,0 +1,39 @@
+[
+  {
+    "command": [
+      "poetry",
+      "check",
+      "--lock"
+    ],
+    "commit": "ff11e479f8575d3ddcf446a464451c8f42c16c34",
+    "exit_code": 0,
+    "seconds": 0.25,
+    "log": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/validation/pr-gates/kgm-mediadive-retry-1734-20261105-1.log"
+  },
+  {
+    "command": [
+      "poetry",
+      "run",
+      "python",
+      "scripts/generate_merge_configs.py",
+      "--check"
+    ],
+    "commit": "ff11e479f8575d3ddcf446a464451c8f42c16c34",
+    "exit_code": 0,
+    "seconds": 0.26,
+    "log": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/validation/pr-gates/kgm-mediadive-retry-1734-20261105-2.log"
+  },
+  {
+    "command": [
+      "poetry",
+      "run",
+      "tox",
+      "-e",
+      "coverage-clean,format-check,lint,codespell,docstr-coverage"
+    ],
+    "commit": "ff11e479f8575d3ddcf446a464451c8f42c16c34",
+    "exit_code": 255,
+    "seconds": 3.63,
+    "log": "/Users/marcin/Documents/VIMSS/ontology/KG-Hub/KG-Microbe/kg-microbe-rebuild-20261105/data/validation/pr-gates/kgm-mediadive-retry-1734-20261105-3.log"
+  }
+]

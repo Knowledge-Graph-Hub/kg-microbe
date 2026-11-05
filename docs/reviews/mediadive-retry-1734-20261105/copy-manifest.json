@@ -162,6 +162,18 @@
       "destination": "independent-admission-code-review.json",
       "sha256": "5d7a3fab1643263b9e15963d7b048af4e706621bf35761f19065bd3ba5922b42",
       "bytes": 6042
+    },
+    {
+      "path": "data/validation/pr-gates/kgm-mediadive-retry-1734-20261105-gates.json",
+      "destination": "initial-failed-gate.json",
+      "sha256": "4b77b082341f855c497bf1e5877a39587ab333f42899e4aaea474488524de378",
+      "bytes": 1161
+    },
+    {
+      "path": "data/rebuild-evidence/20261105/mediadive-retry-1734/docstring-repair-ast-check.json",
+      "destination": "docstring-repair-ast-check.json",
+      "bytes": 726,
+      "sha256": "54db9c2ba21e33035f9c246a4e59296a786d4552d5270c2e41de4e0e8185bacd"
     }
   ]
 }

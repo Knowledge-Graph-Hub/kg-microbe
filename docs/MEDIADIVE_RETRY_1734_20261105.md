@@ -109,6 +109,7 @@ record was created.
 | [#1753](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1753): cache identity and final coverage gaps | Fixed in the retry helper. Exact blob/key preservation, fresh-response union and final active/retained cache checks are required. |
 | [#1754](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1754): interrupted-generation recovery | Follow-up. No automatic resume or atomic multi-file transaction is claimed. Failed or incomplete verification cannot grant admission; a changed baseline is refused. |
 | [#1755](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1755): catalogue-order validation | Fixed. The initial read-only plan exposed SQLite iteration order changing first-occurrence compound selection. Validation now reconstructs original catalogue order; production compound bytes were not changed. |
+| [#1756](https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1756): missing nested-test docstrings | Fixed with documentation-only additions; executable AST equality is checked. The initial cheap gate is retained and did not start the full suite. |
 
 ## Validation and retained evidence
 
@@ -121,8 +122,12 @@ interruption, final receipt failure and order-sensitive extraction.
 
 The corrected read-only plan passed through the actual saved launcher. Required
 `poetry run tox -e format,codespell-write` preparation passed without changing
-reviewed code bytes. The clean committed candidate is validated once through
-`poetry run python scripts/run_pr_gates.py mediadive-retry-1734-20261105`; its actual
+reviewed code bytes. The first final gate on `ff11e479` passed lock/config,
+formatting, lint and spelling, then stopped before the full suite for seven missing
+nested-test docstrings (#1756). The added docstrings do not change the executable
+AST; the production helper and all live-run evidence retain their original bytes.
+The repaired clean candidate is validated once through
+`poetry run python scripts/run_pr_gates.py mediadive-retry-1734-20261105-r2`; its actual
 result and candidate SHA are recorded in the PR after execution. No separate full
 pytest run is used, and earlier evidence is not relabeled for this candidate.
 

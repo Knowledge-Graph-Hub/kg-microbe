@@ -159,6 +159,7 @@ def test_failures_before_first_move_leave_all_raw_unchanged(prepared, monkeypatc
     if when == "copy":
 
         def fail(*args):
+            """Fail verified copying before activation can move any originals."""
             raise OSError("injected copy failure")
 
         monkeypatch.setattr(activation, "copy_verified", fail)
@@ -186,6 +187,7 @@ def test_partial_publication_failure_retains_originals_and_never_claims_completi
     real_link, calls = os.link, []
 
     def fail_second(source, destination, **kwargs):
+        """Allow one real publication link, then inject a partial-publication failure."""
         calls.append(destination)
         if len(calls) == 2:
             raise OSError("injected publication failure")
@@ -207,6 +209,7 @@ def test_rhea_gate_failure_keeps_complete142_directory_and_no_success_receipt(pr
     """Post-staging scientific failure cannot approve a partially activated input cohort."""
 
     def fail(*args):
+        """Reject the Rhea scientific gate after preservation has completed."""
         raise ValueError("Rhea native audit failed")
 
     monkeypatch.setattr(activation, "activate_rhea", fail)
@@ -234,6 +237,7 @@ def test_directory_scan_error_cannot_certify_complete_rhea_preservation(prepared
     """Ignored/hidden directory contents count, and an unreadable traversal is a hard failure."""
 
     def denied(*args, **kwargs):
+        """Deliver a traversal error through the actual inventory error callback."""
         kwargs["onerror"](PermissionError("unreadable Rhea directory"))
 
     monkeypatch.setattr(activation.os, "walk", denied)

@@ -69,6 +69,7 @@ def test_annotation_literal_transport_survives_source_finalization_and_merge(tmp
     expected = literal if column == NOTES_COLUMN else json.dumps(expected_values, separators=(",", ":"))
 
     def annotate(document):
+        """Attach exact literal payloads to one assertion for end-to-end transport checks."""
         graph = document["graphs"][0]
         graph["edges"] = [graph["edges"][0]]
         graph["edges"][0].update(
@@ -132,6 +133,7 @@ def test_unreviewed_annotation_column_still_fails(tmp_path):
     """A known note never grants permission for arbitrary KGX annotation output."""
 
     def annotate(document):
+        """Introduce an unreviewed native annotation to exercise the closed-field guard."""
         document["graphs"][0]["edges"][0]["meta"] = {
             "basicPropertyValues": [{"pred": "https://w3id.org/sssom/unreviewed_evidence", "val": "unreviewed"}]
         }

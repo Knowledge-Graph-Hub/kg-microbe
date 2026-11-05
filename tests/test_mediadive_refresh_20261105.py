@@ -30,6 +30,7 @@ def transport(monkeypatch, payloads):
     strain_status = [200]
 
     def send(adapter, request, **kwargs):
+        """Serve immutable endpoint fixtures through the real requests/cache layer."""
         url = request.url
         hits.append(url)
         is_strain = "/medium-strains/" in url
@@ -248,6 +249,7 @@ def test_sequence_admits_real_canary_before_same_process_full(sequence_args, tra
     original = production.download_mediadive_bulk
 
     def observed(*args, **kwargs):
+        """Record launch arguments and process identity while running production code."""
         calls.append((args, kwargs, os.getpid()))
         return original(*args, **kwargs)
 
@@ -270,6 +272,7 @@ def test_sequence_environment_mismatch_stops_before_full_http(sequence_args, tra
     original = refresh.run
 
     def changed_after_verified_canary(args):
+        """Change the bound environment only after successful canary verification."""
         result = original(args)
         if args.phase == "canary":
             monkeypatch.setenv("TEST_MEDIADIVE_BOUND_ENV", "changed")

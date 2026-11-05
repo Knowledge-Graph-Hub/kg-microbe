@@ -72,6 +72,14 @@
 <li class="toctree-l4"><a class="reference internal" href="#kg_microbe.download.download"><code class="docutils literal notranslate"><span class="pre">download()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#module-kg_microbe.edge_snapshot">kg_microbe.edge_snapshot module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#kg_microbe.edge_snapshot.canonical_json"><code class="docutils literal notranslate"><span class="pre">canonical_json()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#kg_microbe.edge_snapshot.export_snapshot"><code class="docutils literal notranslate"><span class="pre">export_snapshot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#kg_microbe.edge_snapshot.inventory_snapshot"><code class="docutils literal notranslate"><span class="pre">inventory_snapshot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#kg_microbe.edge_snapshot.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#kg_microbe.edge_snapshot.occurrence_id"><code class="docutils literal notranslate"><span class="pre">occurrence_id()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#module-kg_microbe.query">kg_microbe.query module</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#kg_microbe.query.parse_query_yaml"><code class="docutils literal notranslate"><span class="pre">parse_query_yaml()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#kg_microbe.query.result_dict_to_tsv"><code class="docutils literal notranslate"><span class="pre">result_dict_to_tsv()</span></code></a></li>
@@ -1559,6 +1567,65 @@ into data directory (default: data/).</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>None.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-kg_microbe.edge_snapshot">
+<span id="kg-microbe-edge-snapshot-module"></span><h2>kg_microbe.edge_snapshot module<a class="headerlink" href="#module-kg_microbe.edge_snapshot" title="Link to this heading"></a></h2>
+<p>Verify immutable KGX snapshots and export lossless, bounded occurrence shards.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.edge_snapshot.canonical_json">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.edge_snapshot.</span></span><span class="sig-name descname"><span class="pre">canonical_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.edge_snapshot.canonical_json" title="Link to this definition"></a></dt>
+<dd><p>Encode the shared identity contract without lexical or semantic normalization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bytes</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.edge_snapshot.export_snapshot">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.edge_snapshot.</span></span><span class="sig-name descname"><span class="pre">export_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manifest</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_member</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'merged-kg_edges.tsv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shard_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shard_bytes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">33554432</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_row_bytes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16777216</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.edge_snapshot.export_snapshot" title="Link to this definition"></a></dt>
+<dd><p>Stage new occurrence shards, verify the whole snapshot, then publish one directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.edge_snapshot.inventory_snapshot">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.edge_snapshot.</span></span><span class="sig-name descname"><span class="pre">inventory_snapshot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">manifest</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">edge_member</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'merged-kg_edges.tsv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_row_bytes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16777216</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.edge_snapshot.inventory_snapshot" title="Link to this definition"></a></dt>
+<dd><p>Verify every listed member in full and return headers, hashes, counts, and provenance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.edge_snapshot.main">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.edge_snapshot.</span></span><span class="sig-name descname"><span class="pre">main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">argv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.edge_snapshot.main" title="Link to this definition"></a></dt>
+<dd><p>Run a local inventory or export without downloading or modifying graph inputs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="kg_microbe.edge_snapshot.occurrence_id">
+<span class="sig-prename descclassname"><span class="pre">kg_microbe.edge_snapshot.</span></span><span class="sig-name descname"><span class="pre">occurrence_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">payload</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#kg_microbe.edge_snapshot.occurrence_id" title="Link to this definition"></a></dt>
+<dd><p>Identify one release occurrence, never a canonical biological assertion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>

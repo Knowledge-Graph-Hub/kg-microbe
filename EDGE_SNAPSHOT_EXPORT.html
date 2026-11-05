@@ -1,0 +1,206 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verified edge occurrence exports &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7026087e"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Verified edge occurrence exports</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/EDGE_SNAPSHOT_EXPORT.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="verified-edge-occurrence-exports">
+<h1>Verified edge occurrence exports<a class="headerlink" href="#verified-edge-occurrence-exports" title="Link to this heading"></a></h1>
+<p><code class="docutils literal notranslate"><span class="pre">kg_microbe.edge_snapshot</span></code> inventories an existing local KGX snapshot or exports
+its edge rows for a curation consumer. It does not download data, run transforms,
+normalize identifiers, merge duplicate observations, or certify scientific review.
+The exporter uses Python 3.10+ and the standard library; it adds no CLAW dependency.</p>
+<p>The input is an explicit version-1 graph manifest beside its uncompressed TSV
+members. Both the archive’s extracted <code class="docutils literal notranslate"><span class="pre">manifest.json</span></code> and a loose merge’s
+<code class="docutils literal notranslate"><span class="pre">merged-kg_manifest.json</span></code> work. Archive extraction and remote acquisition are
+separate steps. All manifest members must be regular files with safe basename
+names; links, duplicate JSON keys, unsupported manifest versions, and malformed
+TSV rows are refused. The input manifest may include auxiliary tables in addition
+to edges and nodes: every listed member is verified.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>kg_microbe.edge_snapshot<span class="w"> </span>inventory<span class="w"> </span>data/snapshot/manifest.json
+poetry<span class="w"> </span>run<span class="w"> </span>python<span class="w"> </span>-m<span class="w"> </span>kg_microbe.edge_snapshot<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>data/snapshot/manifest.json<span class="w"> </span>data/edge-exports/canary<span class="w"> </span>--max-rows<span class="w"> </span><span class="m">100</span>
+</pre></div>
+</div>
+<p>The default edge member is <code class="docutils literal notranslate"><span class="pre">merged-kg_edges.tsv</span></code>; use <code class="docutils literal notranslate"><span class="pre">--edge-member</span> <span class="pre">NAME.tsv</span></code>
+for other manifest-bound filenames. <code class="docutils literal notranslate"><span class="pre">--max-rows</span> <span class="pre">0</span></code> (the default) exports all edges.
+An explicit bound exports the first N data rows, keeping their original ordinals.
+<strong>Even a one-row export reads and verifies the complete snapshot.</strong> A checksum,
+byte count, row count, encoding, or structural failure anywhere prevents publication.
+An inventory also always verifies all members; it is not a sampling command.</p>
+<p>For a standalone checkout without KG-Microbe’s installed dependencies, run
+<code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">kg_microbe/edge_snapshot.py</span> <span class="pre">...</span></code>. The module itself imports only standard
+library modules. The <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span></code> form additionally executes KG-Microbe’s existing
+package initializer and therefore uses the normal installed project environment.</p>
+<section id="output-and-identity-contract">
+<h2>Output and identity contract<a class="headerlink" href="#output-and-identity-contract" title="Link to this heading"></a></h2>
+<p>A successful export creates a new directory containing:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">manifest.json</span></code>: export contract <code class="docutils literal notranslate"><span class="pre">kg-microbe-curation/v1</span></code>, format
+<code class="docutils literal notranslate"><span class="pre">edge-occurrence-export</span></code>, version 1, verified input identities, headers,
+selection, shard bounds, and ordered shard descriptors.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">source-manifest.json</span></code>: the exact original manifest bytes, independently
+verifiable against <code class="docutils literal notranslate"><span class="pre">source_manifest_sha256</span></code>; <code class="docutils literal notranslate"><span class="pre">source_manifest_file</span></code> names it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">occurrences-000001.jsonl</span></code>, etc.: newline-delimited UTF-8 JSON occurrences.
+An empty edge table produces zero shards and a complete empty export.</p></li>
+</ul>
+<p>Each occurrence has <code class="docutils literal notranslate"><span class="pre">occurrence_id</span></code>, <code class="docutils literal notranslate"><span class="pre">manifest_sha256</span></code>, <code class="docutils literal notranslate"><span class="pre">member</span></code>,
+<code class="docutils literal notranslate"><span class="pre">member_sha256</span></code>, <code class="docutils literal notranslate"><span class="pre">row_number</span></code>, <code class="docutils literal notranslate"><span class="pre">row_sha256</span></code>, and <code class="docutils literal notranslate"><span class="pre">source_row</span></code>.
+<code class="docutils literal notranslate"><span class="pre">row_number</span></code> starts at 1 and excludes the header. <code class="docutils literal notranslate"><span class="pre">source_row</span></code> preserves the exact
+UTF-8 source text, including its original LF/CRLF terminator or the absence of a
+final terminator. Quotes, backslashes, pipe-separated strings, empty fields,
+negation, qualifiers, and unfamiliar extension columns remain literal values.
+The source row SHA-256 hashes its exact UTF-8 bytes, including the terminator.
+The member descriptor includes both ordered <code class="docutils literal notranslate"><span class="pre">header</span></code> cells and exact <code class="docutils literal notranslate"><span class="pre">header_row</span></code>
+text. Concatenating <code class="docutils literal notranslate"><span class="pre">header_row</span></code> and all occurrences’ <code class="docutils literal notranslate"><span class="pre">source_row</span></code> in row order
+reconstructs a complete exported edge member byte for byte.</p>
+<p>The occurrence ID is <code class="docutils literal notranslate"><span class="pre">urn:kg-microbe:occurrence:v1:</span></code> followed by the SHA-256 of
+the UTF-8 canonical JSON encoding of this envelope:</p>
+<div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;contract&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;kg-microbe-curation/v1&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;kind&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;occurrence&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;payload&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;manifest_sha256&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;exact source manifest SHA-256&gt;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;member&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;merged-kg_edges.tsv&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;member_sha256&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;complete member SHA-256&gt;&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;row_number&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;row_sha256&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;&lt;exact source row SHA-256&gt;&quot;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>Canonical JSON uses <code class="docutils literal notranslate"><span class="pre">sort_keys=True</span></code>, <code class="docutils literal notranslate"><span class="pre">separators=(&quot;,&quot;,</span> <span class="pre">&quot;:&quot;)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ensure_ascii=False</span></code>, and <code class="docutils literal notranslate"><span class="pre">allow_nan=False</span></code>. It applies no Unicode, identifier,
+case, whitespace, or biological normalization. Location is not part of identity:
+moving an unchanged snapshot preserves IDs. Changing manifest bytes changes its
+snapshot identity, even if the only change is JSON formatting. Repeated identical
+rows have distinct occurrence IDs because their ordinals differ. These IDs are
+release occurrences, <strong>not semantic observation IDs</strong>, and do not match the
+prefix-context-dependent RDF statement identifiers proposed in PR #1585.</p>
+<p><code class="docutils literal notranslate"><span class="pre">input_complete:</span> <span class="pre">true</span></code> means every input member was fully verified.
+<code class="docutils literal notranslate"><span class="pre">selection.complete_export</span></code> independently reports whether all input edges were
+exported. <code class="docutils literal notranslate"><span class="pre">selection.exported_rows</span></code> is the number actually persisted. Every shard
+descriptor records its filename, SHA-256, byte count, row count, and first/last
+source row number. No metadata marks an imported occurrence as reviewed.</p>
+</section>
+<section id="bounds-and-publication">
+<h2>Bounds and publication<a class="headerlink" href="#bounds-and-publication" title="Link to this heading"></a></h2>
+<p>Default shard bounds are 100,000 occurrences and 32 MiB, whichever is reached
+first (<code class="docutils literal notranslate"><span class="pre">--shard-rows</span></code>, <code class="docutils literal notranslate"><span class="pre">--shard-bytes</span></code>). A single serialized occurrence exceeding
+the byte bound fails rather than violating it. Input rows, including headers,
+are capped at 16 MiB (<code class="docutils literal notranslate"><span class="pre">--max-row-bytes</span></code>); source manifests are capped at 4 MiB.
+Memory holds one input row, one serialized occurrence, and small file/shard
+metadata, never the full graph. Compression and analytical Parquet exports are
+separate future consumers of this lossless interchange.</p>
+<p>All outputs are staged in a private sibling directory. Only after all checks
+succeed is the directory renamed into its final location. Existing output is
+refused. An exclusive sibling <code class="docutils literal notranslate"><span class="pre">.NAME.export-lock</span></code> serializes cooperating
+exporters; unexpected termination can leave this lock or a private staging
+directory, which requires inspection before a retry. Ordinary failures remove
+only this invocation’s stage and lock. Inputs and pre-existing outputs are never
+rewritten. Do not concurrently create or replace the chosen destination through
+another program during publication.</p>
+<p>The command prints metadata, not source rows, and returns nonzero on failure.
+Consumers should verify the source-manifest copy, each shard identity, contiguous
+ordinals, exact row hashes, and occurrence IDs before admitting an export. The
+first production use should be one bounded export through the real consuming
+launcher, followed by verification that persisted counters and artifacts match.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

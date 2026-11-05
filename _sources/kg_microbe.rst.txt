@@ -31,6 +31,14 @@ kg\_microbe.download module
    :undoc-members:
    :show-inheritance:
 
+kg\_microbe.edge\_snapshot module
+---------------------------------
+
+.. automodule:: kg_microbe.edge_snapshot
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 kg\_microbe.query module
 ------------------------
 

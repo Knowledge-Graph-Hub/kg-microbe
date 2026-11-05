@@ -1,0 +1,702 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Plan for release-wide KG-Microbe edge curation &mdash; kg-microbe 0.0.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=7026087e"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            kg-microbe
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../static/intro.html">Knowledge Graphs for Microbial data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">kg_microbe</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sources/index.html">Bacteria-Archaea-Traits schema</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">kg-microbe</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Plan for release-wide KG-Microbe edge curation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/plans/edge-curation-architecture-20261103.md.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="plan-for-release-wide-kg-microbe-edge-curation">
+<h1>Plan for release-wide KG-Microbe edge curation<a class="headerlink" href="#plan-for-release-wide-kg-microbe-edge-curation" title="Link to this heading"></a></h1>
+<p>This is the historical architecture review. Subsequent implementation is tracked
+in the <a class="reference internal" href="edge-curation-implementation-20261103.html"><span class="std std-doc">implementation plan</span></a>.</p>
+<p>Prepared 2026-11-03 Pacific / 2026-11-04 UTC. This is a local architecture review
+and implementation plan, not a new scientific review of the graph. No curation
+batch, repository creation, deployment, or remote session change was performed.</p>
+<p><strong>Recommendation: one new federating Mech, provisionally <code class="docutils literal notranslate"><span class="pre">EdgeMech</span></code>, with
+scientific curation delegated to the existing specialist Mechs.</strong> Its job is to
+account for every edge in a pinned KG-Microbe build, connect it to evidence and
+review decisions, route unresolved work, and produce reproducible curation
+overlays. Keep bulk graph data and the complete row ledger outside Git. Keep
+reviewable policies, compact scientific review bundles, schemas, code, manifests,
+and exception decisions in Git. Do not create one YAML file, test case, issue,
+agent invocation, or HTML file per edge.</p>
+<p>The first deliverable should be an evidence and coverage inventory plus one
+complete source-to-Mech-to-KG curation round trip. It should establish how much
+existing reviewed material actually applies before commissioning new literature
+review at scale.</p>
+<section id="evidence-baseline-and-scale">
+<h2>Evidence baseline and scale<a class="headerlink" href="#evidence-baseline-and-scale" title="Link to this heading"></a></h2>
+<p>The requested intermediate snapshot is
+<code class="docutils literal notranslate"><span class="pre">kg-microbe/data/merged/20260929</span></code>. A streaming scan verified its exact edge and
+node hashes, row counts, and byte sizes against <code class="docutils literal notranslate"><span class="pre">manifest.json</span></code>; both TSVs had
+zero row-width errors. This verifies file integrity and the inventory, not the
+truth or freshness of their assertions.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Measurement</p></th>
+<th class="head text-right"><p>Result</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Edges</p></td>
+<td class="text-right"><p>17,637,435</p></td>
+</tr>
+<tr class="row-odd"><td><p>Nodes</p></td>
+<td class="text-right"><p>3,354,500</p></td>
+</tr>
+<tr class="row-even"><td><p>Edge TSV bytes</p></td>
+<td class="text-right"><p>2,787,420,483</p></td>
+</tr>
+<tr class="row-odd"><td><p>Node TSV bytes</p></td>
+<td class="text-right"><p>479,594,588</p></td>
+</tr>
+<tr class="row-even"><td><p>Distinct raw predicate values</p></td>
+<td class="text-right"><p>114</p></td>
+</tr>
+<tr class="row-odd"><td><p>Distinct primary-knowledge-source field values</p></td>
+<td class="text-right"><p>31</p></td>
+</tr>
+<tr class="row-even"><td><p>METPO-predicated edges</p></td>
+<td class="text-right"><p>9,167,205 (51.976%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Nonempty <code class="docutils literal notranslate"><span class="pre">publications</span></code></p></td>
+<td class="text-right"><p>4,381,907 (24.844%)</p></td>
+</tr>
+<tr class="row-even"><td><p>Nonempty <code class="docutils literal notranslate"><span class="pre">source_record</span></code></p></td>
+<td class="text-right"><p>551,030 (3.124%)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Nonempty <code class="docutils literal notranslate"><span class="pre">source_assertion_id</span></code></p></td>
+<td class="text-right"><p>39,879 (0.226%)</p></td>
+</tr>
+</tbody>
+</table>
+<p>Missing publication fields do not establish missing evidence: ontology releases,
+database records, and source-specific columns can provide other provenance.
+Conversely, a populated publication field does not establish that the cited work
+supports this particular assertion. Existing <code class="docutils literal notranslate"><span class="pre">manual_agent</span></code> and
+<code class="docutils literal notranslate"><span class="pre">manual_validation_of_automated_agent</span></code> values are upstream metadata, not evidence
+that a Mech or a human has reviewed these released rows.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Largest source labels</p></th>
+<th class="head text-right"><p>Rows</p></th>
+<th class="head text-right"><p>Share</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>BacDive</p></td>
+<td class="text-right"><p>4,518,786</p></td>
+<td class="text-right"><p>25.620%</p></td>
+</tr>
+<tr class="row-odd"><td><p>MetaTraits</p></td>
+<td class="text-right"><p>4,365,897</p></td>
+<td class="text-right"><p>24.754%</p></td>
+</tr>
+<tr class="row-even"><td><p>GTDB–MetaTraits</p></td>
+<td class="text-right"><p>3,417,267</p></td>
+<td class="text-right"><p>19.375%</p></td>
+</tr>
+<tr class="row-odd"><td><p>GTDB</p></td>
+<td class="text-right"><p>1,471,034</p></td>
+<td class="text-right"><p>8.340%</p></td>
+</tr>
+<tr class="row-even"><td><p>NCBITaxon</p></td>
+<td class="text-right"><p>925,267</p></td>
+<td class="text-right"><p>5.246%</p></td>
+</tr>
+<tr class="row-odd"><td><p>GOLD</p></td>
+<td class="text-right"><p>705,750</p></td>
+<td class="text-right"><p>4.001%</p></td>
+</tr>
+</tbody>
+</table>
+<p>The first three source labels account for 69.749% of rows. This is a useful
+engineering priority, not a reason to grant those sources blanket scientific
+approval. <code class="docutils literal notranslate"><span class="pre">biolink:subclass_of</span></code> alone accounts for 3,409,292 edges, illustrating
+why ontology/taxonomy validation and experimental-claim review need different
+workflows. The snapshot also contains 706,765 <code class="docutils literal notranslate"><span class="pre">METPO:2000511</span></code> edges covered by
+the existing obsolete-assay-predicate issue <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/909">KG-Microbe #909</a>.
+One modeling decision can therefore matter more than hundreds of thousands of
+separate record edits.</p>
+<p>The snapshot manifest identifies its producer as <code class="docutils literal notranslate"><span class="pre">1408e7099-dirty</span></code>, generated
+2026-09-30T03:47:12Z. Preserve it as an explicitly identified historical pilot;
+do not relabel it as a clean current build. As checked during this review,
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/releases/tag/2025-03-07">GitHub’s latest published KG-Microbe release</a>
+is still <code class="docutils literal notranslate"><span class="pre">2025-03-07</span></code>. The supported-release documentation still identifies
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/887">publication issue #887</a>
+as open. Before production curation, choose and pin the intended new build and
+its actual admitted source receipts; “latest” must resolve to an immutable
+manifest, not a moving directory or branch.</p>
+<p>Code review used KG-Microbe published master
+<code class="docutils literal notranslate"><span class="pre">ba19536867b1d1e93fe14745dac6b232bffcd4d3</span></code>. Fleet scope used published CLAW
+<code class="docutils literal notranslate"><span class="pre">3022b8738dcc9e01c7464a8d5c95aa9be2eef141</span></code>, whose manifest hash is
+<code class="docutils literal notranslate"><span class="pre">ffc1d462cdeac0f699fd24273ce66857856aa2f0ce07a25e93ec4a70e4c043fb</span></code>.
+Its 14 Mechs define the scope; CLAW itself is the control plane. This was a
+targeted capability and dependency review, not an exhaustive audit of every
+fleet issue, record, or live website. Reviewed-claim overlap with this graph
+has not yet been counted.</p>
+</section>
+<section id="curation-model-and-scientific-boundaries">
+<h2>Curation model and scientific boundaries<a class="headerlink" href="#curation-model-and-scientific-boundaries" title="Link to this heading"></a></h2>
+<p>Separate six objects rather than treating an edge row as the whole scientific
+record:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Object</p></th>
+<th class="head"><p>Identity and purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Release occurrence</p></td>
+<td><p>Manifest hash, member, row position and complete row hash; accounts for every occurrence, including duplicates.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Source observation</p></td>
+<td><p>Versioned source record/assertion and complete normalized payload; preserves relation, provider, methods, conditions, values, units, polarity and evidence.</p></td>
+</tr>
+<tr class="row-even"><td><p>Scoped claim</p></td>
+<td><p>A scientific proposition that can group compatible observations without discarding their identity or disagreements.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Evidence item</p></td>
+<td><p>Pinned source, passage/table/figure or database field, retrieval/version/license metadata, and the experiment or analysis it reports.</p></td>
+</tr>
+<tr class="row-even"><td><p>Review decision</p></td>
+<td><p>Exact claim/observation scope, evidence hashes, reasoning, actor type, model/tool versions where applicable, review status and supersession history.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Coverage membership</p></td>
+<td><p>Explicit, hash-bound list of release occurrences covered by a particular decision or validation policy.</p></td>
+</tr>
+</tbody>
+</table>
+<p>KG-Microbe already hashes the <strong>entire normalized observation</strong>, not merely
+subject/predicate/object/relation, in
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/blob/ba19536867b1d1e93fe14745dac6b232bffcd4d3/kg_microbe/merge_utils/kgx_source.py"><code class="docutils literal notranslate"><span class="pre">kgx_source.py</span></code></a>.
+Reuse that behavior. A separate occurrence identity remains necessary for exact
+release accounting; a grouped claim must not collapse independent observations.
+Bind observation and claim IDs to a named, versioned canonicalization contract
+and pinned schema/prefix interpretation. Identical payload bytes interpreted
+under different contexts must not silently acquire the same scientific identity.
+Canonicalizer changes require explicit migration/alias mappings and review
+invalidation rules; coordinate this with the context-dependent identity work in
+PR #1585.</p>
+<p>Every released edge receives exactly one current accounting disposition from a
+mutually exclusive lifecycle such as unprocessed, pending review, admitted,
+withheld or superseded. Retain multiple historical decisions and disagreements;
+an explicit versioned current-state view supplies the unique counting row.
+Validation outcome, review depth, review origin and conflict flags are separate
+attributes. Thus an admitted row can be structurally validated and matched to a
+Mech decision without being counted twice. Distinguish upstream-import assurance,
+scoped Mech review and independently rechecked evidence; publish both their
+disjoint reporting buckets and detailed attributes. Track agent-assisted review
+separately from human signoff. Missing or inaccessible evidence is distinct from
+negative experimental evidence. A withheld mapping is not a globally false
+biological assertion.</p>
+<p>“All edges covered” means no rows fall out of the ledger. It must never be used
+as a synonym for “all edges independently supported by literature.” Publish
+separate coverage metrics by predicate, source, review depth, and unresolved
+reason, with both edge-weighted and distinct-claim/experiment counts.</p>
+<p>Use the following review paths:</p>
+<ol class="arabic simple">
+<li><p><strong>Ontology and taxonomy imports:</strong> verify the pinned source statement,
+relation semantics, identifiers, taxon/strain scope and transformation.
+Route scientific or modeling disputes to their owning source. Import
+validation is an explicit level of assurance, not a fresh literature review
+of every ontology axiom.</p></li>
+<li><p><strong>Existing reviewed Mech claims:</strong> match exact scientific scope and evidence
+lineage, import the pinned decision, and retain its limits. Matching names,
+endpoints, or a passing schema check is insufficient.</p></li>
+<li><p><strong>New or conflicting biological claims:</strong> assemble one coherent evidence
+packet, ask an agent for a structured decision, run deterministic checks,
+then perform an independent adversarial review before publishing a supported
+claim. Escalate ambiguous/high-impact decisions for domain review and allow
+an unresolved result.</p></li>
+<li><p><strong>Predictions and text mining:</strong> preserve their computational origin and
+uncertainty. Agreement or a PREGO score is not experimental confirmation.</p></li>
+</ol>
+<p>A packet can cover multiple edges only when it retains a frozen selector,
+explicit membership, and a reason the same decision applies to each member.
+Changes to evidence, source version, mapping policy, or claim scope invalidate
+the affected review. Do not simply carry “reviewed” forward across releases.</p>
+<p>Store provenance links across Mechs to detect shared publications, experiments,
+and copied assertions. KG-derived content subsequently curated in a Mech must
+not return as independent corroboration of its own ancestor. Evidence graphs,
+ontological relationships, statistical associations, and biological causal
+graphs remain different products. Causal interpretation requires the native
+Mech’s mechanistic evidence and scope rules.</p>
+</section>
+<section id="storage-website-and-ci-design">
+<h2>Storage, website and CI design<a class="headerlink" href="#storage-website-and-ci-design" title="Link to this heading"></a></h2>
+<p>At a hypothetical 1,000 bytes per edge record, 17.6 million records require
+17.64 GB before Git history and filesystem overhead. At 5,000 bytes per HTML
+page, edge pages require 88.19 GB. These are sizing scenarios, not measured
+serialization sizes. Both make a per-edge Git/Pages design unsuitable.</p>
+<p>GitHub Pages limits published sites to 1 GB and deployments to 10 minutes; the
+100 GB/month bandwidth limit is soft. Custom Actions builds are exempt from
+the soft ten-builds/hour limit, not from the site-size limit.
+<a class="reference external" href="https://docs.github.com/en/pages/getting-started-with-github-pages/github-pages-limits">GitHub Pages limits</a></p>
+<p>Use this division:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Location</p></th>
+<th class="head"><p>Contents</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>EdgeMech Git repository</p></td>
+<td><p>Schema/contracts, routing rules, small fixtures, reviewed policy changes, bounded review bundles/selected adjudications, release manifests and checksums.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Specialist Mech repositories</p></td>
+<td><p>Native scientific records, evidence-linked decisions and histories; exporters of explicitly supported scoped assertions.</p></td>
+</tr>
+<tr class="row-even"><td><p>Versioned artifact storage</p></td>
+<td><p>Original KGX snapshots; partitioned Parquet observation, membership and decision tables; authoritative complete decision/review histories; evidence snapshots where licensing permits; immutable machine-readable exports.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Local analysis</p></td>
+<td><p>DuckDB over those versioned files; repeatable full reconciliation and analytical queries.</p></td>
+</tr>
+<tr class="row-even"><td><p>GitHub Pages</p></td>
+<td><p>Small release dashboard, aggregate counts, bounded search/index shards, and a reusable record viewer that fetches only the selected packet/detail shard.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Optional read-only query service</p></td>
+<td><p>Bounded cross-partition filtering and graph queries when precomputed indexes are insufficient; introduced after measuring real reader needs.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Partition the bulk tables by release and stable ID ranges/hash buckets, with
+source/predicate-aware indexes and columnar row groups. Set partition sizes from
+a benchmark; avoid an uncontrolled source × predicate × taxon directory fanout.
+Publish atomically by replacing a small manifest only after every referenced
+object is verified. Keep all historical manifests addressable.</p>
+<p>Bound Git growth as well as page growth: replacing per-edge files with millions
+of per-packet files would recreate the problem. Full review histories are durable
+versioned artifacts. Git retains selected authored adjudications, policies and
+manifests. Large proposed decision changes need deterministic semantic diffs,
+readable summaries and access to every changed decision for review; approving a
+hash alone does not approve its scientific contents. Establish tracked-byte,
+authored-file and Git-object growth budgets, then compact derived indexes without
+discarding the immutable review history.</p>
+<p>Release assets are a suitable initial distribution channel for downloads:
+GitHub allows up to 1,000 assets per release, each under 2 GiB. The 178 MiB
+compressed September archive fits, but its uncompressed edge TSV does not fit
+as one asset. Pack or partition as necessary. These limits do not establish
+that release hosting is suitable for browser range queries; test CORS, byte
+ranges and caching, or use object storage/CDN for the interactive data layer.
+<a class="reference external" href="https://docs.github.com/en/repositories/releasing-projects-on-github/about-releases">GitHub release limits</a></p>
+<p>Reuse the published ProteinTraitsMech browser pattern:
+<a class="reference external" href="https://github.com/CultureBotAI/proteintraitsmech/blob/490bbfd5284a45cb0aeca181b706045a149a08e0/scripts/build_docs_index.py"><code class="docutils literal notranslate"><span class="pre">scripts/build_docs_index.py</span></code></a>
+uses lean search shards, bounded detail buckets and exact-ID routing rather
+than generating a file for every record. Its constants are useful starting
+points, not evidence that the implementation already scales to this graph.
+Its authoritative per-record YAML storage and in-memory builder must be adapted
+to bulk-table inputs; copying the browser pattern alone does not solve ingestion.
+TaxonMech’s shared viewer is another useful example, but its whole compressed
+search index should not be copied into a 17.6-million-edge browser.</p>
+<p>The viewer should expose the original row, grouped claim, evidence, decision,
+review depth, unresolved reason, and owning Mech link. Arbitrary edge links
+should resolve through a release-and-ID URL; they do not need a dedicated HTML
+file. Show failed data loads distinctly from “no matching records.” Retain
+offline bulk downloads as a complete access path.</p>
+<p><strong>CI validates changes; it does not run literature curation.</strong> During iteration,
+check changed review bundles, their dependency closure, the schema, exporter
+contracts, and small immutable fixtures. Changes to shared schemas, identifiers,
+mapping rules or validators trigger broader checks. Run the required code suite
+once on the final candidate, following KG-Microbe’s now-merged
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/blob/ba19536867b1d1e93fe14745dac6b232bffcd4d3/docs/TESTING.md">single-suite policy</a>.
+Validate all rows with streaming data checks, not millions of parametrized tests.
+ProteinTraitsMech’s published
+<a class="reference external" href="https://github.com/CultureBotAI/proteintraitsmech/blob/490bbfd5284a45cb0aeca181b706045a149a08e0/scripts/validation_scope.py"><code class="docutils literal notranslate"><span class="pre">validation_scope.py</span></code></a>
+provides a concrete changed-data/dependency-invalidation starting point. DUFMech’s
+published Pages workflow provides exact-validated-commit deployment and explicit
+artifact budgets. CultureMech’s current full-corpus PR job is not the incremental
+validation pattern proposed here.</p>
+<p>Run full corpus reconciliation at release boundaries and after changes that can
+invalidate broad coverage. Cache by complete dependency fingerprints, including
+validator/schema versions. Never reuse an old “pass” against changed evidence.
+Long-running agent tasks belong in resumable leased queues with idempotent writes,
+bounded concurrency, retry and cost limits; use fleet workers or dedicated batch
+compute. Do not create an Actions matrix job per edge. GitHub-hosted jobs have a
+six-hour limit and matrices a 256-job limit.
+<a class="reference external" href="https://docs.github.com/en/actions/reference/limits">Actions limits</a></p>
+</section>
+<section id="existing-assets-and-dependent-work">
+<h2>Existing assets and dependent work<a class="headerlink" href="#existing-assets-and-dependent-work" title="Link to this heading"></a></h2>
+<p>The most concrete precedent is MediaIngredientMech. KG-Microbe’s
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/blob/ba19536867b1d1e93fe14745dac6b232bffcd4d3/scripts/mim_reviewed_release.py"><code class="docutils literal notranslate"><span class="pre">mim_reviewed_release.py</span></code></a>
+validates supported/withheld exports, complete-row hashes and exactly one
+disposition per source position. Generalize this accounting contract.
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/blob/ba19536867b1d1e93fe14745dac6b232bffcd4d3/kg_microbe/utils/review_claims.py"><code class="docutils literal notranslate"><span class="pre">review_claims.py</span></code></a>
+binds scientific decisions to exact owning-record/evidence bytes and explicitly
+distinguishes such decisions from integrity receipts.</p>
+<p>The basic four-file MIM bundle contains publisher claims about original
+source/review hashes. KG-Microbe’s schema-v2 pinned-archive consumption can also
+verify those original bytes. Neither step independently redoes the scientific
+review. Preserve these distinct assurance levels. The scoped integration issue
+<a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/1123">#1123</a> is closed;
+do not schedule it again as wholly unfinished. Its accepted scope does not imply
+general CultureMech ingestion or approval to replace production mappings.</p>
+<p>Proposed scientific routing follows below. A native review capability or record
+count is not evidence that all records are reviewed or exportable.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Owning repository</p></th>
+<th class="head"><p>Suitable edge/claim scope</p></th>
+<th class="head"><p>Required work or condition</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CultureBotAI/TraitMech</p></td>
+<td><p>Microbial phenotype, physiology, growth and assay claims</p></td>
+<td><p>Export qualified observations and reviewed claims; preserve organism/strain, condition, measurement, polarity and source lineage. Prioritize BacDive/MetaTraits compatibility.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CultureBotAI/CultureMech</p></td>
+<td><p>Medium composition, recipes, organism growth in a specified medium</p></td>
+<td><p>Distinguish a listed target organism from experimentally demonstrated growth; preserve recipe versions and culture conditions.</p></td>
+</tr>
+<tr class="row-even"><td><p>CultureBotAI/MediaIngredientMech</p></td>
+<td><p>Ingredient identity, hydration/material scope and supported mappings</p></td>
+<td><p>Reuse the reviewed export/disposition contract; reconcile native exporter capabilities with CLAW manifest declarations.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CultureBotAI/TaxonMech</p></td>
+<td><p>Taxonomic identity, strain/species placement and GTDB/NCBI mappings</p></td>
+<td><p>Versioned crosswalk and scope policies; no broad/close match promoted to exact identity.</p></td>
+</tr>
+<tr class="row-even"><td><p>CultureBotAI/HabitatMech</p></td>
+<td><p>Habitat, isolation source, host/environment claims</p></td>
+<td><p>Preserve isolation provenance, nesting and sampling context; distinguish occurrence from ecological preference or function.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CultureBotAI/CommunityMech</p></td>
+<td><p>Microbe–microbe interactions and community context</p></td>
+<td><p>Separate co-occurrence from experimentally supported interaction and mechanism.</p></td>
+</tr>
+<tr class="row-even"><td><p>CultureBotAI/AntibioticMech</p></td>
+<td><p>Resistance/sensitivity and drug-response evidence</p></td>
+<td><p>Preserve assay, concentration, medium and strain; distinguish molecular mechanism from observed phenotype.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CultureBotAI/CellStructureMech</p></td>
+<td><p>Morphology and cellular structures</p></td>
+<td><p>Match native claim scope and experimental versus inferred evidence before reuse.</p></td>
+</tr>
+<tr class="row-even"><td><p>CultureBotAI/PathwayMech</p></td>
+<td><p>Processes, reactions, pathways and organism-level capacity</p></td>
+<td><p>Retain reaction direction and organism/protein evidence; inferred capacity is not demonstrated flux.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CultureBotAI/DUFMech; CultureBotAI/proteintraitsmech</p></td>
+<td><p>Protein/domain function and measured protein traits</p></td>
+<td><p>Reuse only exact sequence/version/coordinate/construct scope. DUF coordinate-reasoning work is a dependency for relevant claims, not a prerequisite for all edge curation.</p></td>
+</tr>
+<tr class="row-even"><td><p>CultureBotAI/NaturalProductMech; CultureBotAI/CMMMech</p></td>
+<td><p>Specialized natural-product or material claims when their native scopes match</p></td>
+<td><p>Adopt explicit adapters after inspecting eligible native review exports; do not infer general coverage from repository identity.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CultureBotAI/AIMech</p></td>
+<td><p>Only explicitly matching claims under its native scientific scope</p></td>
+<td><p>No initial scientific routing assumed; determine applicability from actual records.</p></td>
+</tr>
+<tr class="row-even"><td><p>CultureBotAI/culturebotai-claw</p></td>
+<td><p>Shared contracts, scheduling, provenance/evidence validation, fleet registration and publication budgets</p></td>
+<td><p>Publish one canonical versioned contract and consumer conformance fixtures before parallel adapter rollout. It is not the scientific authority for every claim.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Only create another domain Mech if the coverage inventory reveals a substantial
+unowned claim class. Most new infrastructure belongs in EdgeMech and the shared
+contract; scientific fixes belong in existing owners.</p>
+<p>The following native capabilities were checked at published revisions. Routing
+for the remaining specialist repositories above is provisional: their full
+scientific export contracts were not inspected during this review.</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Published source</p></th>
+<th class="head"><p>Verified asset</p></th>
+<th class="head"><p>Remaining adoption work</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/CultureBotAI/MediaIngredientMech/blob/0ee56c11a2894ed50a476b331d56297be0a3ee12/src/mediaingredientmech/export/supported_kgx.py">MediaIngredientMech <code class="docutils literal notranslate"><span class="pre">0ee56c11</span></code></a></p></td>
+<td><p>Native approved-assertion KGX exporter and supported/withheld SSSOM export; exact source-position decisions and record/evidence hashes.</p></td>
+<td><p>The CLAW manifest still declares KGX disabled while native code has advanced. Reconcile the declaration with verified consumer acceptance; do not flip it solely because an exporter exists.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/CultureBotAI/TraitMech/blob/6c40bd0fdd324c2dfa3c79061be085988c8de004/src/traitmech/schema/traitmech.yaml">TraitMech <code class="docutils literal notranslate"><span class="pre">6c40bd0f</span></code></a></p></td>
+<td><p>Trait records, evidence-bearing causal graphs and protein examples; taxon-agnostic mechanisms distinct from organism examples.</p></td>
+<td><p>Add a downstream scoped-assertion exporter. Generic mechanism review does not establish a particular organism’s trait. <a class="reference external" href="https://github.com/CultureBotAI/TraitMech/issues/1982">#1982</a> records source-limited/nonmechanistic cases.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/CultureBotAI/HabitatMech/blob/95a1eb1b6a5b18b8a5c3b135222b1118f7506ef0/src/habitatmech/schema/habitatmech.yaml">HabitatMech <code class="docutils literal notranslate"><span class="pre">95a1eb1b</span></code></a></p></td>
+<td><p>GOLD/BacDive/PREGO source attestations and habitat grounding; observed association distinguished from characteristic taxon.</p></td>
+<td><p>Add a downstream assertion exporter; preserve shared source lineage. <a class="reference external" href="https://github.com/CultureBotAI/HabitatMech/issues/2284">#2284</a> records quote-check exceptions in one audit, not graph-wide error rates.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference external" href="https://github.com/CultureBotAI/CommunityMech/blob/898c839a50e08b75609d6ac6fa0659fcdb001f80/src/communitymech/export/kgx_export.py">CommunityMech <code class="docutils literal notranslate"><span class="pre">898c839a</span></code></a></p></td>
+<td><p>KGX transport with deterministic edge IDs, publications, supporting text and source attribution.</p></td>
+<td><p>Add an approved-only partition; retain richer KG-Microbe observation identity. <a class="reference external" href="https://github.com/CultureBotAI/CommunityMech/issues/765">#765</a> identifies claims needing renewed evidence.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/CultureBotAI/culturebotai-claw/blob/3022b8738dcc9e01c7464a8d5c95aa9be2eef141/src/kg_microbe_governance/artifacts/schema/record_review.yaml">CLAW <code class="docutils literal notranslate"><span class="pre">3022b873</span></code></a></p></td>
+<td><p>Canonical review envelope, selectors, semantic digests, input provenance, independence and coverage; quote-checking machinery.</p></td>
+<td><p>Extend the envelope for release occurrences/export accounting. Quote checks and valid review documents do not establish scientific truth. The research package supplies policy/result schemas, not provider execution; choose a supported native worker path for the canary.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Additional site/CI baselines: CultureMech <code class="docutils literal notranslate"><span class="pre">a74dd489720c9df96cc073ffd11568d407d3c06c</span></code>,
+DUFMech <code class="docutils literal notranslate"><span class="pre">aa7d08bcf3a9a03879d06cffd075bc083d29788f</span></code>, TaxonMech
+<code class="docutils literal notranslate"><span class="pre">b04590a7a416eb934f67e7c04416e37924f10ec8</span></code>, and proteintraitsmech
+<code class="docutils literal notranslate"><span class="pre">490bbfd5284a45cb0aeca181b706045a149a08e0</span></code>. These were source reviews, not rendered
+browser checks or scale benchmarks.</p>
+<p>Several KG-Microbe dependencies already have records:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Dependency</p></th>
+<th class="head"><p>Existing work</p></th>
+<th class="head"><p>Plan treatment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Reproducible current publication</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/887">#887</a>, open</p></td>
+<td><p>Fix and verify the publication source before calling a production corpus the latest release. Historical pilot can proceed independently.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Item-level BacDive attribution</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/770">#770</a>, open</p></td>
+<td><p>Extend beyond currently supported metabolite-utilization evidence; never attach every record citation to every edge.</p></td>
+</tr>
+<tr class="row-even"><td><p>Agreeing observations and grouped claims</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/794">#794</a>, open</p></td>
+<td><p>Preserve individual observations and add a derived claim layer; do not overwrite raw evidence to aggregate it.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Contradictions and unmapped values</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/737">#737</a>, open</p></td>
+<td><p>Use as a pilot, after distinguishing real contradictions from different specificity/conditions. Historical issue counts are not current measurements.</p></td>
+</tr>
+<tr class="row-even"><td><p>Obsolete assay predicate</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/909">#909</a>, open; berkeleybop/metpo as ontology owner</p></td>
+<td><p>Resolve the scientific modeling upstream; no invented successor. Can be accounted as unresolved without blocking unrelated cohorts.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Evaluation without copied evidence</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/issues/698">#698</a>, open</p></td>
+<td><p>Require provenance-disjoint evaluation and uncertainty. Current PREGO quality code retracts older discrimination claims; do not reuse those figures.</p></td>
+</tr>
+<tr class="row-even"><td><p>Lossless evidence serialization</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/pull/1585">PR #1585</a>, draft/open</p></td>
+<td><p>Coordinate with this work; it is not yet a shipped contract.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Isolation and reaction-direction evidence</p></td>
+<td><p><a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/pull/1587">PR #1587</a>, <a class="reference external" href="https://github.com/Knowledge-Graph-Hub/kg-microbe/pull/1589">PR #1589</a>, open</p></td>
+<td><p>Inspect current scope before assigning overlapping adapters.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Additional gaps in this plan are proposed work packages, not newly filed issues.
+Refresh issue/PR states before implementation. For governed shared artifacts,
+change and release the canonical CLAW source before updating consumer pins.</p>
+</section>
+<section id="dependency-ordered-implementation">
+<h2>Dependency-ordered implementation<a class="headerlink" href="#dependency-ordered-implementation" title="Link to this heading"></a></h2>
+<p><strong>Wave 0 — establish the denominator and reuse opportunity.</strong> Owner: KG-Microbe
+integration lead, with one fleet-contract reviewer. Preserve the September pilot,
+select the intended production build, and inventory every row by source,
+predicate, evidence availability and routing outcome. Join against pinned,
+eligible reviewed Mech exports; report exact matches, incompatible scope,
+shared evidence, unmapped IDs and unavailable exports separately. Deliver a
+machine-readable eligibility/coverage matrix and source-lineage report. Do not
+promise a reuse percentage until this join is measured. This work can proceed
+alongside the publication repair.</p>
+<p><strong>Wave 1 — shared contract and thin registry.</strong> Owner: CLAW contract maintainer
+and EdgeMech lead. Agree the six identities, review envelope, dispositions,
+evidence lineage and invalidation rules; version the contract and supply offline
+positive/adversarial fixtures. Implement an EdgeMech registry over bulk tables,
+an immutable manifest and a complete pending ledger. Use the MIM exhaustive
+partition model and KG-Microbe observation/manifest invariants. Deliver one
+coverage count query and one edge-to-owning-review lookup. Shared schema changes
+must precede consumer rollout.</p>
+<p><strong>Wave 2 — exactly one real end-to-end canary.</strong> Owner: one specialist maintainer
+plus the KG-Microbe adapter owner. Start with a tightly scoped MediaIngredientMech
+mapping because the reviewed export and consumer already exist. Carry one
+evidence packet through acquisition/cache, native review, supported/withheld
+export, EdgeMech membership, KG candidate ingestion, serialized archive and
+viewer. Verify the persisted artifacts and hashes, a scope mismatch/withhold,
+and invalidation after a relevant input changes. Use the actual launcher,
+environment, storage and worker path intended for subsequent jobs. Repair and
+repeat this canary before any fanout.</p>
+<p><strong>Wave 3 — stratified pilot and independent adapters.</strong> Once the contract and
+canary pass, run a bounded pilot of roughly 500–1,000 rows grouped into coherent
+packets across BacDive/MetaTraits traits, taxonomy, habitat, media and a
+conflicting/negative-evidence cohort. Preserve source proportions for coverage
+reporting but oversample difficult cases for error discovery. Evaluate against
+independently adjudicated evidence, with shared experiments/sources kept out of
+both sides of a claimed independent evaluation. Estimate time and cost per
+new packet, reuse rate, abstention/conflict rates and corrected-source impact.
+This is a proposed sample size, not a powered estimate of graph-wide accuracy.</p>
+<p>Parallel work after the shared contract can split into TraitMech provenance,
+HabitatMech context, TaxonMech mapping, and the browser/storage implementation.
+Give each native schema/exporter one owner; serialize overlapping CLAW contract
+changes. Coordinate with existing PRs rather than creating competing writers.</p>
+<p><strong>Wave 4 — bounded production queue.</strong> Prioritize source/predicate cohorts by
+downstream use, known defect impact, available evidence and reuse opportunity.
+Start with systematic provenance/mapping corrections affecting many rows, then
+unresolved high-value claims. Record leases/checkpoints and deduplicate evidence
+retrieval; cache only when licenses and source versions allow it. Set budget and
+concurrency from the pilot. Do not estimate LLM cost as one call per graph row.
+Forecast total cost as ingestion + unique new packet review + re-review after
+invalidation + storage/publication, using measured pilot rates and uncertainty.</p>
+<p><strong>Wave 5 — reviewed release and continuing updates.</strong> Produce an immutable
+curation overlay and separately named candidate graph. KG-Microbe’s merge is
+transport of finalized inputs, so semantic corrections must enter the owning
+transform/mapping and regenerate affected products; do not patch the canonical
+merge to rewrite meaning. Verify the producer→finalizer→archive round trip and
+all row dispositions. Publish only after review and the user’s merge/release
+decision. On the next release, compare observations and evidence dependencies,
+carry forward only still-valid decisions, and queue additions/changes/removals.</p>
+</section>
+<section id="acceptance-and-unresolved-choices">
+<h2>Acceptance and unresolved choices<a class="headerlink" href="#acceptance-and-unresolved-choices" title="Link to this heading"></a></h2>
+<p>Acceptance for the first implementation:</p>
+<ul class="simple">
+<li><p>Every input occurrence appears exactly once in the current accounting ledger;
+all totals reconcile to the pinned manifest. Every supported outcome resolves
+to a scoped decision and its evidence or an explicitly named import policy.</p></li>
+<li><p>Independent source observations and contradictions survive aggregation and
+export. Wrong strain, wrong hydration, changed evidence, copied evidence,
+missing source and incompatible function scope all produce explicit failures
+or withheld decisions in adversarial fixtures.</p></li>
+<li><p>One end-to-end canary leaves nonempty, hash-verified artifacts using the
+production execution path. It proves that path, not rate-limit behavior or
+accuracy across other source types.</p></li>
+<li><p>Changed-data checks do not scan unrelated scientific records during ordinary
+iteration. The final code suite and full release data reconciliation still
+run where required; duplicate full-suite execution is not reintroduced.</p></li>
+<li><p>Proposed initial performance targets: changed-bundle CI below 10 minutes,
+Pages payload below 250 MB, typical detail data fetch below 2 MB, and a bounded
+first search response. Initial EdgeMech repository budgets: 250 MB of tracked
+files, 10,000 authored files and a 1 GB Git-object growth alert. Adjust only
+from measured workload needs while keeping bulk history outside Git. Benchmark
+on documented hardware/network; these are targets, not measured performance or
+platform guarantees.</p></li>
+<li><p>Users can retrieve any edge by ID/release, see what was actually reviewed,
+follow its owning Mech/evidence, and download the full bulk data.</p></li>
+</ul>
+<p>Before production rollout, settle the repository name, intended production
+release, durable storage/egress budget, source redistribution permissions,
+human-review escalation rules and worker budget. None blocks the local inventory
+or the proposed contract/canary work. No domain-wide evidence review, exact Mech
+overlap rate, compression benchmark, throughput benchmark or paid-provider cost
+measurement was performed in this planning review.</p>
+</section>
+<section id="reproduction-and-retained-evidence">
+<h2>Reproduction and retained evidence<a class="headerlink" href="#reproduction-and-retained-evidence" title="Link to this heading"></a></h2>
+<p>The original checkout and its modified statistics file were preserved. Local
+planning work is isolated on <code class="docutils literal notranslate"><span class="pre">plan/edge-curation-architecture-20261103</span></code> in
+<code class="docutils literal notranslate"><span class="pre">kg-microbe-curation-plan-20261103</span></code>. At the end of that planning turn no commit or
+PR had been created and no implementation had been installed. The subsequent
+implementation worktree retains this report and its helper scripts.</p>
+<p>Scripts retained with this report:</p>
+<ul class="simple">
+<li><p><a class="reference download internal" download="" href="../_downloads/402f22cfccfad14979385afc8d056276/profile_edge_curation_snapshot.py"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">profile_edge_curation_snapshot.py</span></code></span></a>: streams both TSVs, hashes exact bytes, checks manifest counts and profiles raw fields.</p></li>
+<li><p><a class="reference download internal" download="" href="../_downloads/7cc7ab712e9ebfdff461cc66013309d6/summarize_edge_curation_profile.py"><span class="xref download myst"><code class="docutils literal notranslate"><span class="pre">summarize_edge_curation_profile.py</span></code></span></a>: derives percentages and explicitly hypothetical sizing scenarios from the verified scan.</p></li>
+</ul>
+<p>The 10,000-row-per-file canary used the same profiling command and output area;
+its nonempty JSON explicitly marks the scans partial. The full scan took about
+107 seconds for edges and 11 seconds for nodes in this run. The saved outputs
+are <a class="reference internal" href="#../../data/edge-curation-plan/profile.json"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">profile.json</span></code></span></a>,
+<a class="reference internal" href="#../../data/edge-curation-plan/summary.json"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">summary.json</span></code></span></a>, and
+<a class="reference internal" href="#../../data/edge-curation-plan/canary.json"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">canary.json</span></code></span></a>. Raw release metadata,
+the manifest and fleet manifest are in
+<a class="reference internal" href="#../../data/edge-curation-plan/evidence/"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">data/edge-curation-plan/evidence/</span></code></span></a>.
+These generated data files are local, untracked evidence, not committed Git data.
+Both helper scripts pass the repository’s Ruff checks. The final formatted
+profiler was rechecked with a 10,000-row-per-file canary under Python 3.10;
+<a class="reference internal" href="#../../data/edge-curation-plan/canary-final.json"><span class="xref myst"><code class="docutils literal notranslate"><span class="pre">canary-final.json</span></code></span></a> retains that
+result. Run these helpers with the repository’s supported Python 3.10–3.12.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Harshad Hegde &lt;hhegde@lbl.gov&gt;.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
